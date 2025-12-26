@@ -634,248 +634,272 @@
 </section>
         
         <!-- RULES & MATERIALS -->
-        <section id="rules" class="py-20 lg:py-28 bg-white relative">
-    <div class="absolute top-0 left-0 w-64 h-64 bg-slate-100 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2 opacity-50 pointer-events-none"></div>
+        <section id="rules" class="py-24 lg:py-32 bg-white relative">
+    
+    <div class="absolute top-0 right-0 w-96 h-96 bg-zinc-100 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 opacity-60 pointer-events-none"></div>
 
     <div class="container mx-auto px-6 relative z-10">
         <div class="mb-16 text-center">
-            <span class="text-red-600 font-bold tracking-wider text-xs uppercase mb-2 block">Technical Guidelines</span>
-            <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight mb-4">
-                Juknis & <span class="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-blue-600">Materi Lomba</span>
+            <span class="text-lbb-gold font-bold tracking-[0.2em] text-xs uppercase mb-3 block">Technical Guidelines</span>
+            <h2 class="text-4xl md:text-5xl font-black text-lbb-dark uppercase italic tracking-tighter mb-4">
+                Juknis & <span class="text-lbb-red border-b-4 border-lbb-gold">Materi</span>
             </h2>
-            <p class="text-slate-500 max-w-2xl mx-auto text-lg">Pedoman teknis lapangan dan detail materi gerakan yang dilombakan.</p>
+            <p class="text-zinc-500 mt-6 max-w-2xl mx-auto text-lg font-medium">Pedoman teknis lapangan, penilaian, dan detail gerakan yang dilombakan.</p>
         </div>
 
-        <div class="grid lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+        <div class="grid lg:grid-cols-12 gap-12 lg:gap-20 items-start">
             
-            <div class="lg:col-span-7 space-y-8">
-                <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-xl font-bold text-slate-900 flex items-center gap-3">
-                        <div class="p-2 bg-red-100 text-red-600 rounded-lg">
-                            <i data-lucide="book-open" width="20"></i>
-                        </div>
-                        Petunjuk Teknis Lapangan
+            <div class="lg:col-span-7 flex flex-col gap-6">
+                
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2 pb-4 border-b border-zinc-100">
+                    <h3 class="text-2xl font-black text-lbb-dark uppercase flex items-center gap-3">
+                        <span class="w-10 h-10 bg-red-100 text-lbb-red rounded-lg flex items-center justify-center text-lg"><i data-lucide="book-open"></i></span>
+                        Petunjuk Teknis
                     </h3>
-                    <a href="#downloads" class="text-sm font-semibold text-blue-600 hover:text-blue-700 flex items-center gap-1 group">
-                        Download PDF <i data-lucide="arrow-down-to-line" width="16" class="transition-transform group-hover:translate-y-1"></i>
+                    <a href="#downloads" class="inline-flex items-center gap-2 text-sm font-bold text-lbb-red hover:text-red-800 transition-colors group px-4 py-2 bg-red-50 rounded-full">
+                        Download PDF Lengkap <i data-lucide="arrow-down-to-line" width="16" class="transition-transform group-hover:translate-y-1"></i>
                     </a>
                 </div>
 
                 <div class="space-y-4" id="rules-accordion">
-                    <div class="group border border-slate-200 rounded-xl overflow-hidden bg-white hover:border-red-200 transition-all duration-300 hover:shadow-md">
-                        <button class="accordion-btn w-full flex justify-between items-center p-5 text-left bg-white hover:bg-slate-50 transition-colors">
-                            <span class="font-bold text-slate-700 group-hover:text-red-700 transition-colors">Definisi Istilah</span>
-                            <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-red-100 group-hover:text-red-600 transition-all">
-                                <i data-lucide="chevron-down" class="rotate-icon" width="18"></i>
+                    <div class="group border border-zinc-200 rounded-xl overflow-hidden bg-white hover:border-lbb-red/50 hover:shadow-lg transition-all duration-300">
+                        <button class="accordion-btn w-full flex justify-between items-center p-5 text-left bg-white hover:bg-zinc-50 transition-colors">
+                            <span class="font-bold text-lg text-lbb-dark group-hover:text-lbb-red transition-colors">Definisi Istilah</span>
+                            <div class="w-8 h-8 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-400 group-hover:bg-lbb-red group-hover:text-white transition-all">
+                                <i data-lucide="chevron-down" class="rotate-icon transition-transform duration-300" width="18"></i>
                             </div>
                         </button>
-                        <div class="accordion-content bg-slate-50">
-                            <div class="p-6 text-slate-600 text-sm leading-relaxed border-t border-slate-100">
-                                <p>Penjelasan detail mengenai istilah teknis lapangan seperti <strong>Aba-aba</strong> (Petunjuk/Peringatan/Pelaksanaan), posisi <strong>Penjuru</strong>, peran <strong>Danton</strong>, dan batas area <strong>Formasi</strong>.</p>
+                        <div class="accordion-content bg-zinc-50 border-t border-zinc-100">
+                            <div class="p-6 text-zinc-600 text-sm leading-relaxed">
+                                <p>Penjelasan detail mengenai istilah teknis lapangan seperti <strong>Aba-aba</strong> (Petunjuk, Peringatan, Pelaksanaan), posisi <strong>Penjuru</strong>, peran <strong>Danton</strong>, dan batas area <strong>Formasi</strong> dalam arena lomba.</p>
                             </div>
                         </div>
                     </div>
 
-                    <div class="group border border-slate-200 rounded-xl overflow-hidden bg-white hover:border-red-200 transition-all duration-300 hover:shadow-md">
-                        <button class="accordion-btn w-full flex justify-between items-center p-5 text-left bg-white hover:bg-slate-50 transition-colors">
-                            <span class="font-bold text-slate-700 group-hover:text-red-700 transition-colors">Ketentuan Umum Peserta</span>
-                            <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-red-100 group-hover:text-red-600 transition-all">
-                                <i data-lucide="chevron-down" class="rotate-icon" width="18"></i>
+                    <div class="group border border-zinc-200 rounded-xl overflow-hidden bg-white hover:border-lbb-red/50 hover:shadow-lg transition-all duration-300">
+                        <button class="accordion-btn w-full flex justify-between items-center p-5 text-left bg-white hover:bg-zinc-50 transition-colors">
+                            <span class="font-bold text-lg text-lbb-dark group-hover:text-lbb-red transition-colors">Ketentuan Umum Peserta</span>
+                            <div class="w-8 h-8 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-400 group-hover:bg-lbb-red group-hover:text-white transition-all">
+                                <i data-lucide="chevron-down" class="rotate-icon transition-transform duration-300" width="18"></i>
                             </div>
                         </button>
-                        <div class="accordion-content bg-slate-50">
-                            <div class="p-6 text-slate-600 text-sm leading-relaxed border-t border-slate-100">
-                                <ul class="list-disc list-inside space-y-2">
+                        <div class="accordion-content bg-zinc-50 border-t border-zinc-100">
+                            <div class="p-6 text-zinc-600 text-sm leading-relaxed">
+                                <ul class="list-disc list-inside space-y-2 marker:text-lbb-red">
                                     <li>Peserta wajib hadir dan registrasi ulang <strong>60 menit</strong> sebelum apel pembukaan.</li>
                                     <li>Seragam menggunakan PDU/PDH/Seragam Sekolah masing-masing instansi (tanpa atribut senjata tajam).</li>
-                                    <li>Nomor dada wajib dikenakan oleh Danton.</li>
+                                    <li>Nomor dada wajib dikenakan oleh Danton selama tampil.</li>
                                 </ul>
                             </div>
                         </div>
                     </div>
 
-                    <div class="group border border-slate-200 rounded-xl overflow-hidden bg-white hover:border-red-200 transition-all duration-300 hover:shadow-md">
-                        <button class="accordion-btn w-full flex justify-between items-center p-5 text-left bg-white hover:bg-slate-50 transition-colors">
-                            <span class="font-bold text-slate-700 group-hover:text-red-700 transition-colors">Mekanisme Penilaian</span>
-                            <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-red-100 group-hover:text-red-600 transition-all">
-                                <i data-lucide="chevron-down" class="rotate-icon" width="18"></i>
+                    <div class="group border border-zinc-200 rounded-xl overflow-hidden bg-white hover:border-lbb-red/50 hover:shadow-lg transition-all duration-300">
+                        <button class="accordion-btn w-full flex justify-between items-center p-5 text-left bg-white hover:bg-zinc-50 transition-colors">
+                            <span class="font-bold text-lg text-lbb-dark group-hover:text-lbb-red transition-colors">Mekanisme Penilaian</span>
+                            <div class="w-8 h-8 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-400 group-hover:bg-lbb-red group-hover:text-white transition-all">
+                                <i data-lucide="chevron-down" class="rotate-icon transition-transform duration-300" width="18"></i>
                             </div>
                         </button>
-                        <div class="accordion-content bg-slate-50">
-                            <div class="p-6 text-slate-600 text-sm leading-relaxed border-t border-slate-100">
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <h5 class="font-bold text-slate-800 mb-1">Pos Penilaian:</h5>
-                                        <ul class="list-disc list-inside text-xs space-y-1">
-                                            <li>Gerakan di Tempat</li>
-                                            <li>Gerakan Berjalan</li>
-                                            <li>Variasi & Formasi</li>
-                                            <li>Danton Terbaik</li>
+                        <div class="accordion-content bg-zinc-50 border-t border-zinc-100">
+                            <div class="p-6 text-zinc-600 text-sm leading-relaxed">
+                                <div class="grid sm:grid-cols-2 gap-4">
+                                    <div class="bg-white p-3 rounded border border-zinc-200">
+                                        <h5 class="font-bold text-lbb-dark mb-2 border-b border-zinc-100 pb-1">Pos Penilaian</h5>
+                                        <ul class="space-y-1 text-xs font-medium">
+                                            <li class="flex items-center gap-2"><i data-lucide="check" width="12" class="text-green-500"></i> Gerakan di Tempat</li>
+                                            <li class="flex items-center gap-2"><i data-lucide="check" width="12" class="text-green-500"></i> Gerakan Berjalan</li>
+                                            <li class="flex items-center gap-2"><i data-lucide="check" width="12" class="text-green-500"></i> Variasi & Formasi</li>
+                                            <li class="flex items-center gap-2"><i data-lucide="check" width="12" class="text-green-500"></i> Danton Terbaik</li>
                                         </ul>
                                     </div>
-                                    <div>
-                                        <h5 class="font-bold text-slate-800 mb-1">Range Nilai:</h5>
-                                        <p class="text-xs">Skala 50 - 100 per juri. Keputusan juri bersifat mutlak dan tidak dapat diganggu gugat.</p>
+                                    <div class="bg-white p-3 rounded border border-zinc-200">
+                                        <h5 class="font-bold text-lbb-dark mb-2 border-b border-zinc-100 pb-1">Range Nilai</h5>
+                                        <p class="text-xs">Skala <strong>50 - 100</strong> per juri.</p>
+                                        <p class="text-[10px] mt-2 text-zinc-400 italic">Keputusan juri bersifat mutlak dan tidak dapat diganggu gugat.</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="group border border-slate-200 rounded-xl overflow-hidden bg-white hover:border-red-200 transition-all duration-300 hover:shadow-md">
-                        <button class="accordion-btn w-full flex justify-between items-center p-5 text-left bg-white hover:bg-slate-50 transition-colors">
-                            <span class="font-bold text-slate-700 group-hover:text-red-700 transition-colors">Sanksi & Pengurangan Nilai</span>
-                            <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-red-100 group-hover:text-red-600 transition-all">
-                                <i data-lucide="chevron-down" class="rotate-icon" width="18"></i>
+                    <div class="group border border-zinc-200 rounded-xl overflow-hidden bg-white hover:border-lbb-red/50 hover:shadow-lg transition-all duration-300">
+                        <button class="accordion-btn w-full flex justify-between items-center p-5 text-left bg-white hover:bg-zinc-50 transition-colors">
+                            <span class="font-bold text-lg text-lbb-dark group-hover:text-lbb-red transition-colors">Sanksi & Penalti</span>
+                            <div class="w-8 h-8 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-400 group-hover:bg-lbb-red group-hover:text-white transition-all">
+                                <i data-lucide="chevron-down" class="rotate-icon transition-transform duration-300" width="18"></i>
                             </div>
                         </button>
-                        <div class="accordion-content bg-slate-50">
-                            <div class="p-6 text-slate-600 text-sm leading-relaxed border-t border-slate-100">
-                                <p class="mb-2">Pengurangan poin (penalti) diberlakukan jika:</p>
-                                <ul class="list-disc list-inside space-y-1 text-red-600 font-medium">
-                                    <li>Melebihi durasi waktu tampil (-5 poin/menit).</li>
-                                    <li>Menginjak garis batas lapangan (-2 poin/orang).</li>
-                                    <li>Atribut tidak lengkap (-1 poin/item).</li>
+                        <div class="accordion-content bg-zinc-50 border-t border-zinc-100">
+                            <div class="p-6 text-zinc-600 text-sm leading-relaxed">
+                                <p class="mb-3 font-bold text-lbb-red">Pengurangan poin diberlakukan jika:</p>
+                                <ul class="space-y-2">
+                                    <li class="flex items-start gap-3 bg-white p-2 rounded border border-zinc-200">
+                                        <span class="text-xs font-bold bg-red-100 text-red-700 px-2 py-0.5 rounded">-5 Poin</span>
+                                        <span>Melebihi durasi waktu tampil (per menit).</span>
+                                    </li>
+                                    <li class="flex items-start gap-3 bg-white p-2 rounded border border-zinc-200">
+                                        <span class="text-xs font-bold bg-red-100 text-red-700 px-2 py-0.5 rounded">-2 Poin</span>
+                                        <span>Menginjak garis batas lapangan (per orang).</span>
+                                    </li>
+                                    <li class="flex items-start gap-3 bg-white p-2 rounded border border-zinc-200">
+                                        <span class="text-xs font-bold bg-red-100 text-red-700 px-2 py-0.5 rounded">-1 Poin</span>
+                                        <span>Atribut tidak lengkap (per item).</span>
+                                    </li>
                                 </ul>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="mt-6 p-4 rounded-xl bg-red-50 border border-red-100 flex gap-4 items-start">
-                    <i data-lucide="shield-alert" class="text-red-600 shrink-0 mt-1"></i>
+                <div class="mt-4 p-5 rounded-xl bg-red-50 border-l-4 border-lbb-red flex gap-4 items-start shadow-sm">
+                    <div class="bg-white p-2 rounded-full text-lbb-red shrink-0 shadow-sm">
+                        <i data-lucide="shield-alert" width="20"></i>
+                    </div>
                     <div>
-                        <h4 class="font-bold text-red-800 text-sm">Larangan Keras</h4>
-                        <p class="text-xs text-red-700/80 mt-1 leading-relaxed">
-                            Dilarang membawa senjata tajam, rokok, miras, atau benda berbahaya. Provokasi fisik/verbal akan mengakibatkan <strong>Diskualifikasi Instan</strong>.
+                        <h4 class="font-bold text-lbb-dark text-sm uppercase mb-1">Larangan Keras (Diskualifikasi)</h4>
+                        <p class="text-sm text-zinc-600 leading-relaxed">
+                            Dilarang membawa senjata tajam, rokok, miras, atau benda berbahaya. Segala bentuk <strong>provokasi fisik/verbal</strong> antar suporter/peserta akan mengakibatkan diskualifikasi instan dari panitia keamanan.
                         </p>
                     </div>
                 </div>
             </div>
 
             <div class="lg:col-span-5 relative">
-                <div class="bg-white rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-200 overflow-hidden relative">
+                <div class="bg-white rounded-2xl shadow-2xl shadow-zinc-200 border border-zinc-200 overflow-hidden relative sticky top-24">
                     
-                    <div class="h-2 bg-gradient-to-r from-blue-500 to-cyan-500"></div>
+                    <div class="h-1.5 bg-gradient-to-r from-lbb-gold via-lbb-red to-lbb-gold"></div>
 
                     <div class="p-6 pb-0">
-                        <h3 class="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
-                            <span class="text-blue-500"><i data-lucide="layers"></i></span> Materi Lomba
+                        <h3 class="text-2xl font-black text-lbb-dark mb-6 flex items-center gap-3 uppercase italic">
+                            <span class="text-lbb-red"><i data-lucide="layers" width="28"></i></span> Materi Lomba
                         </h3>
-                        <div class="p-1 bg-slate-100 rounded-lg flex gap-1 relative">
-                            <button id="btn-sd" onclick="switchTab('sd')" class="flex-1 py-2.5 text-center text-sm font-bold rounded-md transition-all shadow-sm bg-white text-blue-700 ring-1 ring-black/5">
+                        <div class="p-1.5 bg-zinc-100 rounded-xl flex gap-1 relative border border-zinc-200">
+                            <button id="btn-sd" onclick="switchTab('sd')" class="flex-1 py-3 text-center text-sm font-black rounded-lg transition-all shadow-md bg-white text-lbb-red ring-1 ring-black/5 uppercase tracking-wide">
                                 SD / MI
                             </button>
-                            <button id="btn-smp" onclick="switchTab('smp')" class="flex-1 py-2.5 text-center text-sm font-bold rounded-md transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-200/50">
+                            <button id="btn-smp" onclick="switchTab('smp')" class="flex-1 py-3 text-center text-sm font-bold rounded-lg transition-all text-zinc-400 hover:text-zinc-600 hover:bg-zinc-200/50 uppercase tracking-wide">
                                 SMP / MTs
                             </button>
                         </div>
                     </div>
 
                     <div class="p-6 relative min-h-[400px]">
+                        
                         <div id="content-sd" class="block animate-fade space-y-6">
-                            <div class="bg-slate-50 border-2 border-dashed border-slate-300 rounded-lg p-4 flex flex-col items-center justify-center relative h-32">
-                                <div class="absolute inset-0 flex items-center justify-center opacity-10 font-black text-4xl text-slate-400">ARENA</div>
-                                <div class="w-full flex justify-between text-[10px] font-mono text-slate-500 mb-1 px-2">
-                                    <span>Start</span>
-                                    <span>20 Meter</span>
-                                    <span>Finish</span>
+                            <div class="bg-lbb-dark rounded-xl p-6 text-white text-center border border-zinc-700 relative overflow-hidden group">
+                                <div class="absolute inset-0 opacity-20" style="background-image: linear-gradient(#333 1px, transparent 1px), linear-gradient(90deg, #333 1px, transparent 1px); background-size: 20px 20px;"></div>
+                                
+                                <span class="absolute top-3 left-3 text-[10px] text-zinc-500 font-mono tracking-widest border border-zinc-700 px-2 py-0.5 rounded">FIELD DIAGRAM A</span>
+                                
+                                <div class="w-full flex justify-between text-[10px] font-mono text-zinc-400 mb-2 px-2 relative z-10">
+                                    <span>START</span>
+                                    <span class="text-lbb-gold font-bold">20 METER</span>
+                                    <span>FINISH</span>
                                 </div>
-                                <div class="w-3/4 h-16 border-2 border-slate-800 bg-white shadow-sm flex items-center justify-center text-xs font-bold text-slate-800 relative">
+                                
+                                <div class="w-3/4 mx-auto h-24 border-2 border-white/30 bg-white/5 flex items-center justify-center font-mono font-bold text-xl relative z-10 backdrop-blur-sm group-hover:border-lbb-gold/50 transition-colors">
                                     10m x 20m
-                                    <div class="absolute -right-6 h-full border-l border-slate-400 flex items-center"><span class="ml-1 text-[10px] rotate-90">10m</span></div>
+                                    <div class="absolute -right-8 h-full border-l border-zinc-600 flex items-center"><span class="ml-2 text-[10px] rotate-90 text-zinc-500">10m</span></div>
                                 </div>
-                                <div class="mt-2 text-xs font-bold text-red-500 flex items-center gap-1">
-                                    <i data-lucide="timer" width="12"></i> Durasi: 10 Menit
+                                
+                                <div class="mt-4 flex justify-center gap-2 text-sm font-bold text-lbb-gold relative z-10 bg-black/30 inline-block px-4 py-1 rounded-full border border-lbb-gold/20">
+                                    <i data-lucide="timer" width="16" class="inline align-middle"></i> Durasi: 10 Menit
                                 </div>
                             </div>
 
                             <div>
-                                <h4 class="text-sm font-bold text-slate-900 uppercase tracking-wider mb-3">Gerakan Wajib:</h4>
-                                <ol class="space-y-2 h-64 overflow-y-auto custom-scrollbar pr-2">
-                                    <li class="flex items-center gap-3 text-sm text-slate-600 bg-slate-50 p-2 rounded border border-slate-100">
-                                        <span class="w-5 h-5 rounded bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold shrink-0">1</span>
+                                <h4 class="text-xs font-black text-zinc-400 uppercase tracking-widest mb-4 border-b border-zinc-100 pb-2">Daftar Gerakan Wajib</h4>
+                                <ol class="space-y-3 h-72 overflow-y-auto custom-scrollbar pr-2">
+                                    <li class="flex items-center gap-4 text-sm font-medium text-zinc-700 bg-zinc-50 p-3 rounded-lg border border-zinc-100 hover:border-lbb-red/30 hover:bg-white hover:shadow-sm transition-all group/item">
+                                        <span class="w-6 h-6 rounded bg-zinc-200 text-zinc-500 flex items-center justify-center text-xs font-black shrink-0 group-hover/item:bg-lbb-red group-hover/item:text-white transition-colors">1</span>
                                         Sikap Sempurna
                                     </li>
-                                    <li class="flex items-center gap-3 text-sm text-slate-600 bg-slate-50 p-2 rounded border border-slate-100">
-                                        <span class="w-5 h-5 rounded bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold shrink-0">2</span>
+                                    <li class="flex items-center gap-4 text-sm font-medium text-zinc-700 bg-zinc-50 p-3 rounded-lg border border-zinc-100 hover:border-lbb-red/30 hover:bg-white hover:shadow-sm transition-all group/item">
+                                        <span class="w-6 h-6 rounded bg-zinc-200 text-zinc-500 flex items-center justify-center text-xs font-black shrink-0 group-hover/item:bg-lbb-red group-hover/item:text-white transition-colors">2</span>
                                         Hormat
                                     </li>
-                                    <li class="flex items-center gap-3 text-sm text-slate-600 bg-slate-50 p-2 rounded border border-slate-100">
-                                        <span class="w-5 h-5 rounded bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold shrink-0">3</span>
+                                    <li class="flex items-center gap-4 text-sm font-medium text-zinc-700 bg-zinc-50 p-3 rounded-lg border border-zinc-100 hover:border-lbb-red/30 hover:bg-white hover:shadow-sm transition-all group/item">
+                                        <span class="w-6 h-6 rounded bg-zinc-200 text-zinc-500 flex items-center justify-center text-xs font-black shrink-0 group-hover/item:bg-lbb-red group-hover/item:text-white transition-colors">3</span>
                                         Lencang Kanan / Kiri
                                     </li>
-                                    <li class="flex items-center gap-3 text-sm text-slate-600 bg-slate-50 p-2 rounded border border-slate-100">
-                                        <span class="w-5 h-5 rounded bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold shrink-0">4</span>
+                                    <li class="flex items-center gap-4 text-sm font-medium text-zinc-700 bg-zinc-50 p-3 rounded-lg border border-zinc-100 hover:border-lbb-red/30 hover:bg-white hover:shadow-sm transition-all group/item">
+                                        <span class="w-6 h-6 rounded bg-zinc-200 text-zinc-500 flex items-center justify-center text-xs font-black shrink-0 group-hover/item:bg-lbb-red group-hover/item:text-white transition-colors">4</span>
                                         Berhitung
                                     </li>
-                                    <li class="flex items-center gap-3 text-sm text-slate-600 bg-slate-50 p-2 rounded border border-slate-100">
-                                        <span class="w-5 h-5 rounded bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold shrink-0">5</span>
+                                    <li class="flex items-center gap-4 text-sm font-medium text-zinc-700 bg-zinc-50 p-3 rounded-lg border border-zinc-100 hover:border-lbb-red/30 hover:bg-white hover:shadow-sm transition-all group/item">
+                                        <span class="w-6 h-6 rounded bg-zinc-200 text-zinc-500 flex items-center justify-center text-xs font-black shrink-0 group-hover/item:bg-lbb-red group-hover/item:text-white transition-colors">5</span>
                                         Hadap Kanan / Kiri
                                     </li>
-                                    <li class="flex items-center gap-3 text-sm text-slate-600 bg-slate-50 p-2 rounded border border-slate-100">
-                                        <span class="w-5 h-5 rounded bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold shrink-0">6</span>
+                                    <li class="flex items-center gap-4 text-sm font-medium text-zinc-700 bg-zinc-50 p-3 rounded-lg border border-zinc-100 hover:border-lbb-red/30 hover:bg-white hover:shadow-sm transition-all group/item">
+                                        <span class="w-6 h-6 rounded bg-zinc-200 text-zinc-500 flex items-center justify-center text-xs font-black shrink-0 group-hover/item:bg-lbb-red group-hover/item:text-white transition-colors">6</span>
                                         Balik Kanan
                                     </li>
-                                    <li class="flex items-center gap-3 text-sm text-slate-600 bg-slate-50 p-2 rounded border border-slate-100">
-                                        <span class="w-5 h-5 rounded bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold shrink-0">7</span>
-                                        Jalan di Tempat
-                                    </li>
-                                    <li class="flex items-center gap-3 text-sm text-slate-600 bg-slate-50 p-2 rounded border border-slate-100">
-                                        <span class="w-5 h-5 rounded bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold shrink-0">8</span>
+                                    <li class="flex items-center gap-4 text-sm font-medium text-zinc-700 bg-zinc-50 p-3 rounded-lg border border-zinc-100 hover:border-lbb-red/30 hover:bg-white hover:shadow-sm transition-all group/item">
+                                        <span class="w-6 h-6 rounded bg-zinc-200 text-zinc-500 flex items-center justify-center text-xs font-black shrink-0 group-hover/item:bg-lbb-red group-hover/item:text-white transition-colors">7</span>
                                         Langkah Tegap Maju
+                                    </li>
+                                    <li class="flex items-center gap-4 text-sm font-bold text-lbb-red bg-red-50 p-3 rounded-lg border border-red-100 hover:shadow-md transition-all group/item">
+                                        <span class="w-6 h-6 rounded bg-lbb-red text-white flex items-center justify-center text-xs font-black shrink-0">8</span>
+                                        Variasi & Formasi (Wajib)
                                     </li>
                                 </ol>
                             </div>
                         </div>
 
                         <div id="content-smp" class="hidden animate-fade space-y-6">
-                            <div class="bg-slate-50 border-2 border-dashed border-slate-300 rounded-lg p-4 flex flex-col items-center justify-center relative h-32">
-                                <div class="absolute inset-0 flex items-center justify-center opacity-10 font-black text-4xl text-slate-400">ARENA</div>
-                                <div class="w-full flex justify-between text-[10px] font-mono text-slate-500 mb-1 px-1">
-                                    <span>Start</span>
-                                    <span>22 Meter</span>
-                                    <span>Finish</span>
+                            <div class="bg-lbb-dark rounded-xl p-6 text-white text-center border border-zinc-700 relative overflow-hidden group">
+                                <div class="absolute inset-0 opacity-20" style="background-image: linear-gradient(#333 1px, transparent 1px), linear-gradient(90deg, #333 1px, transparent 1px); background-size: 20px 20px;"></div>
+                                <span class="absolute top-3 left-3 text-[10px] text-zinc-500 font-mono tracking-widest border border-zinc-700 px-2 py-0.5 rounded">FIELD DIAGRAM B</span>
+                                
+                                <div class="w-full flex justify-between text-[10px] font-mono text-zinc-400 mb-2 px-1 relative z-10">
+                                    <span>START</span>
+                                    <span class="text-blue-400 font-bold">22 METER</span>
+                                    <span>FINISH</span>
                                 </div>
-                                <div class="w-5/6 h-20 border-2 border-slate-800 bg-white shadow-sm flex items-center justify-center text-xs font-bold text-slate-800 relative">
+                                <div class="w-full mx-auto h-24 border-2 border-white/30 bg-white/5 flex items-center justify-center font-mono font-bold text-xl relative z-10 backdrop-blur-sm group-hover:border-blue-400/50 transition-colors">
                                     15m x 22m
-                                    <div class="absolute -right-6 h-full border-l border-slate-400 flex items-center"><span class="ml-1 text-[10px] rotate-90">15m</span></div>
+                                    <div class="absolute -right-8 h-full border-l border-zinc-600 flex items-center"><span class="ml-2 text-[10px] rotate-90 text-zinc-500">15m</span></div>
                                 </div>
-                                <div class="mt-2 text-xs font-bold text-red-500 flex items-center gap-1">
-                                    <i data-lucide="timer" width="12"></i> Durasi: 12 Menit
+                                <div class="mt-4 flex justify-center gap-2 text-sm font-bold text-blue-400 relative z-10 bg-black/30 inline-block px-4 py-1 rounded-full border border-blue-400/20">
+                                    <i data-lucide="timer" width="16" class="inline align-middle"></i> Durasi: 12 Menit
                                 </div>
                             </div>
 
                             <div>
-                                <h4 class="text-sm font-bold text-slate-900 uppercase tracking-wider mb-3">Gerakan Wajib:</h4>
-                                <ol class="space-y-2 h-64 overflow-y-auto custom-scrollbar pr-2">
-                                    <li class="flex items-center gap-3 text-sm text-slate-600 bg-slate-50 p-2 rounded border border-slate-100">
-                                        <span class="w-5 h-5 rounded bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold shrink-0">1</span>
+                                <h4 class="text-xs font-black text-zinc-400 uppercase tracking-widest mb-4 border-b border-zinc-100 pb-2">Daftar Gerakan Wajib</h4>
+                                <ol class="space-y-3 h-72 overflow-y-auto custom-scrollbar pr-2">
+                                    <li class="flex items-center gap-4 text-sm font-medium text-zinc-700 bg-zinc-50 p-3 rounded-lg border border-zinc-100 hover:border-blue-500/30 hover:bg-white hover:shadow-sm transition-all group/item">
+                                        <span class="w-6 h-6 rounded bg-zinc-200 text-zinc-500 flex items-center justify-center text-xs font-black shrink-0 group-hover/item:bg-blue-600 group-hover/item:text-white transition-colors">1</span>
                                         Sikap Sempurna & Istirahat
                                     </li>
-                                    <li class="flex items-center gap-3 text-sm text-slate-600 bg-slate-50 p-2 rounded border border-slate-100">
-                                        <span class="w-5 h-5 rounded bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold shrink-0">2</span>
+                                    <li class="flex items-center gap-4 text-sm font-medium text-zinc-700 bg-zinc-50 p-3 rounded-lg border border-zinc-100 hover:border-blue-500/30 hover:bg-white hover:shadow-sm transition-all group/item">
+                                        <span class="w-6 h-6 rounded bg-zinc-200 text-zinc-500 flex items-center justify-center text-xs font-black shrink-0 group-hover/item:bg-blue-600 group-hover/item:text-white transition-colors">2</span>
                                         Periksa Kerapian
                                     </li>
-                                    <li class="flex items-center gap-3 text-sm text-slate-600 bg-slate-50 p-2 rounded border border-slate-100">
-                                        <span class="w-5 h-5 rounded bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold shrink-0">3</span>
+                                    <li class="flex items-center gap-4 text-sm font-medium text-zinc-700 bg-zinc-50 p-3 rounded-lg border border-zinc-100 hover:border-blue-500/30 hover:bg-white hover:shadow-sm transition-all group/item">
+                                        <span class="w-6 h-6 rounded bg-zinc-200 text-zinc-500 flex items-center justify-center text-xs font-black shrink-0 group-hover/item:bg-blue-600 group-hover/item:text-white transition-colors">3</span>
                                         Hormat Kanan / Kiri
                                     </li>
-                                    <li class="flex items-center gap-3 text-sm text-slate-600 bg-slate-50 p-2 rounded border border-slate-100">
-                                        <span class="w-5 h-5 rounded bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold shrink-0">4</span>
+                                    <li class="flex items-center gap-4 text-sm font-medium text-zinc-700 bg-zinc-50 p-3 rounded-lg border border-zinc-100 hover:border-blue-500/30 hover:bg-white hover:shadow-sm transition-all group/item">
+                                        <span class="w-6 h-6 rounded bg-zinc-200 text-zinc-500 flex items-center justify-center text-xs font-black shrink-0 group-hover/item:bg-blue-600 group-hover/item:text-white transition-colors">4</span>
                                         Jalan di Tempat
                                     </li>
-                                    <li class="flex items-center gap-3 text-sm text-slate-600 bg-slate-50 p-2 rounded border border-slate-100">
-                                        <span class="w-5 h-5 rounded bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold shrink-0">5</span>
+                                    <li class="flex items-center gap-4 text-sm font-medium text-zinc-700 bg-zinc-50 p-3 rounded-lg border border-zinc-100 hover:border-blue-500/30 hover:bg-white hover:shadow-sm transition-all group/item">
+                                        <span class="w-6 h-6 rounded bg-zinc-200 text-zinc-500 flex items-center justify-center text-xs font-black shrink-0 group-hover/item:bg-blue-600 group-hover/item:text-white transition-colors">5</span>
                                         4 Langkah Kanan / Kiri
                                     </li>
-                                    <li class="flex items-center gap-3 text-sm text-slate-600 bg-slate-50 p-2 rounded border border-slate-100">
-                                        <span class="w-5 h-5 rounded bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold shrink-0">6</span>
+                                    <li class="flex items-center gap-4 text-sm font-medium text-zinc-700 bg-zinc-50 p-3 rounded-lg border border-zinc-100 hover:border-blue-500/30 hover:bg-white hover:shadow-sm transition-all group/item">
+                                        <span class="w-6 h-6 rounded bg-zinc-200 text-zinc-500 flex items-center justify-center text-xs font-black shrink-0 group-hover/item:bg-blue-600 group-hover/item:text-white transition-colors">6</span>
                                         Langkah Perlahan
                                     </li>
-                                    <li class="flex items-center gap-3 text-sm text-slate-600 bg-slate-50 p-2 rounded border border-slate-100">
-                                        <span class="w-5 h-5 rounded bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold shrink-0">7</span>
-                                        <span class="font-bold text-red-600">Variasi & Formasi</span>
+                                    <li class="flex items-center gap-4 text-sm font-medium text-zinc-700 bg-zinc-50 p-3 rounded-lg border border-zinc-100 hover:border-blue-500/30 hover:bg-white hover:shadow-sm transition-all group/item">
+                                        <span class="w-6 h-6 rounded bg-zinc-200 text-zinc-500 flex items-center justify-center text-xs font-black shrink-0 group-hover/item:bg-blue-600 group-hover/item:text-white transition-colors">7</span>
+                                        Langkah Tegap Maju
+                                    </li>
+                                    <li class="flex items-center gap-4 text-sm font-bold text-blue-700 bg-blue-50 p-3 rounded-lg border border-blue-100 hover:shadow-md transition-all group/item">
+                                        <span class="w-6 h-6 rounded bg-blue-600 text-white flex items-center justify-center text-xs font-black shrink-0">8</span>
+                                        Variasi & Formasi (Wajib)
                                     </li>
                                 </ol>
                             </div>
@@ -883,15 +907,17 @@
                     </div>
                 </div>
                 
-                <p class="text-center text-xs text-slate-400 mt-4 italic">
-                    * Urutan gerakan lengkap dapat dilihat pada dokumen PDF Juknis.
-                </p>
+                <div class="text-center mt-6">
+                    <p class="text-[10px] text-zinc-400 italic">
+                        * Referensi urutan gerakan lengkap wajib mengacu pada dokumen PDF Juknis Resmi.
+                    </p>
+                </div>
             </div>
 
         </div>
     </div>
 </section>
-
+        
         <!-- PRIZES -->
         <section id="prizes" class="py-20 lg:py-28 bg-slate-900 relative overflow-hidden">
     
