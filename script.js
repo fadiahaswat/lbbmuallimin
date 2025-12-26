@@ -184,3 +184,41 @@ function copyRekening(btn) {
         alert('Gagal menyalin otomatis. Silakan salin manual.');
     });
 }
+
+// 6. COUNTDOWN TIMER LOGIC
+function startCountdown() {
+    // Set target tanggal: 28 Juli 2026 pukul 23:59:59
+    const targetDate = new Date("July 28, 2026 23:59:59").getTime();
+
+    const timer = setInterval(function() {
+        const now = new Date().getTime();
+        const distance = targetDate - now;
+
+        // Perhitungan waktu
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        // Update HTML (dengan pengecekan elemen ada/tidak)
+        const elDays = document.getElementById("cd-days");
+        const elHours = document.getElementById("cd-hours");
+        const elMinutes = document.getElementById("cd-minutes");
+        const elSeconds = document.getElementById("cd-seconds");
+
+        if (elDays) elDays.innerText = days < 10 ? "0" + days : days;
+        if (elHours) elHours.innerText = hours < 10 ? "0" + hours : hours;
+        if (elMinutes) elMinutes.innerText = minutes < 10 ? "0" + minutes : minutes;
+        if (elSeconds) elSeconds.innerText = seconds < 10 ? "0" + seconds : seconds;
+
+        // Jika waktu habis
+        if (distance < 0) {
+            clearInterval(timer);
+            // Opsional: Tampilkan pesan 'Pendaftaran Tutup'
+            document.querySelector('.flex.gap-3.text-slate-400').innerHTML = "<span class='text-red-500 font-bold'>PENDAFTARAN DITUTUP</span>";
+        }
+    }, 1000);
+}
+
+// Jalankan fungsi
+startCountdown();
