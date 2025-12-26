@@ -89,33 +89,22 @@ function switchTab(tab) {
     const contentSD = document.getElementById('content-sd');
     const contentSMP = document.getElementById('content-smp');
 
-    // Class untuk Tab Aktif (Style Kapsul Putih)
-    const activeClasses = ['bg-white', 'text-blue-700', 'shadow-sm', 'ring-1', 'ring-black/5'];
-    // Class untuk Tab Pasif (Style Abu-abu transparan)
-    const inactiveClasses = ['text-slate-500', 'hover:bg-slate-200/50'];
+    // Style Aktif: Background Putih, Teks Merah, Border Bawah Merah Tebal
+    const activeClass = "bg-white text-lbb-red border-b-4 border-lbb-red font-black shadow-sm";
+    // Style Tidak Aktif: Background Abu, Teks Abu
+    const inactiveClass = "text-zinc-400 bg-zinc-100 hover:text-zinc-600 font-bold border-b-0";
+
+    // Reset base classes (opsional, tergantung implementasi HTML Anda)
+    const baseClass = "flex-1 py-4 text-center transition-colors uppercase tracking-wider";
 
     if (tab === 'sd') {
-        // Aktifkan SD
-        btnSD.classList.add(...activeClasses);
-        btnSD.classList.remove(...inactiveClasses);
-        
-        // Matikan SMP
-        btnSMP.classList.remove(...activeClasses);
-        btnSMP.classList.add(...inactiveClasses);
-        
-        // Toggle Content (Animasi Fade In)
+        btnSD.className = `${baseClass} ${activeClass}`;
+        btnSMP.className = `${baseClass} ${inactiveClass}`;
         contentSD.classList.remove('hidden');
         contentSMP.classList.add('hidden');
     } else {
-        // Aktifkan SMP
-        btnSMP.classList.add(...activeClasses);
-        btnSMP.classList.remove(...inactiveClasses);
-        
-        // Matikan SD
-        btnSD.classList.remove(...activeClasses);
-        btnSD.classList.add(...inactiveClasses);
-        
-        // Toggle Content
+        btnSMP.className = `${baseClass} ${activeClass}`;
+        btnSD.className = `${baseClass} ${inactiveClass}`;
         contentSMP.classList.remove('hidden');
         contentSD.classList.add('hidden');
     }
