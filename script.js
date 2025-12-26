@@ -6,14 +6,19 @@
 // Initialize Icons (Lucide)
 lucide.createIcons();
 
-// 1. SCROLL LISTENER (Navbar Style)
+// 1. SCROLL LISTENER (Navbar & Sticky CTA)
 const navbar = document.getElementById('navbar');
 const logoText = document.getElementById('nav-logo-text');
 const desktopLinks = document.querySelectorAll('.nav-link');
 const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+const stickyCta = document.getElementById('sticky-cta'); // Elemen baru
+const waFab = document.querySelector('.fixed.bottom-6.right-6'); // Tombol WA
 
 window.addEventListener('scroll', () => {
-    if (window.scrollY > 20) {
+    const scrollPos = window.scrollY;
+
+    // A. Logika Navbar (Seperti sebelumnya)
+    if (scrollPos > 20) {
         navbar.classList.add('bg-white', 'shadow-md', 'py-3');
         navbar.classList.remove('bg-transparent', 'py-5');
         
@@ -41,6 +46,20 @@ window.addEventListener('scroll', () => {
             link.classList.add('text-slate-200');
             link.classList.remove('text-slate-700');
         });
+    }
+
+    // B. Logika Sticky CTA (Baru)
+    // Muncul setelah user melewati Hero Section (kira-kira 600px)
+    if (scrollPos > 600) {
+        if(stickyCta) stickyCta.classList.remove('translate-y-full'); // Slide Up (Muncul)
+        
+        // Geser tombol WA ke atas agar tidak tertutup CTA
+        if(waFab) waFab.style.bottom = "90px"; 
+    } else {
+        if(stickyCta) stickyCta.classList.add('translate-y-full'); // Slide Down (Sembunyi)
+        
+        // Kembalikan posisi tombol WA
+        if(waFab) waFab.style.bottom = "24px"; // 6 tailwind = 24px
     }
 });
 
