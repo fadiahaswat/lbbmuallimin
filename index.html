@@ -215,110 +215,136 @@
     <!-- MAIN CONTENT -->
     <main>
         <!-- HERO SECTION -->
-        <section id="home" class="relative bg-lbb-red text-white py-24 lg:py-40 overflow-hidden isolate">
+        <section id="home" class="relative bg-gradient-to-b from-red-900 via-lbb-red to-red-900 text-white py-24 lg:py-40 overflow-hidden isolate">
     
-    <div class="absolute inset-0 z-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20 mix-blend-overlay"></div>
+    <div class="absolute inset-0 z-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-30 mix-blend-multiply"></div>
     <div class="absolute inset-0 bg-halftone z-0"></div>
     
-    <div class="absolute top-0 right-0 w-[600px] h-[600px] bg-red-600 rounded-full blur-[150px] -translate-y-1/2 translate-x-1/2 opacity-50"></div>
-    <div class="absolute bottom-0 left-0 w-[600px] h-[600px] bg-black rounded-full blur-[150px] translate-y-1/2 -translate-x-1/2 opacity-60"></div>
+    <div class="absolute top-0 right-0 w-[800px] h-[800px] bg-red-600 rounded-full blur-[180px] -translate-y-1/2 translate-x-1/2 opacity-40 mix-blend-screen"></div>
+    <div class="absolute bottom-0 left-0 w-[800px] h-[800px] bg-black rounded-full blur-[180px] translate-y-1/2 -translate-x-1/2 opacity-70"></div>
 
     <div class="container mx-auto px-6 relative z-10 text-center">
         
-        <div class="flex flex-col items-center gap-6 mb-8">
-            <div class="inline-flex items-center gap-2 px-6 py-2 bg-black/40 border border-lbb-gold/50 rounded-full text-lbb-gold text-xs font-black tracking-widest uppercase shadow-[0_0_20px_rgba(255,215,0,0.2)] backdrop-blur-sm">
-                <span class="relative flex h-2 w-2">
+        <div class="flex flex-col items-center gap-8 mb-10">
+            <div class="group inline-flex items-center gap-3 px-6 py-2 bg-black/40 border border-yellow-500/30 rounded-full backdrop-blur-md shadow-[0_0_25px_rgba(234,179,8,0.15)] hover:border-lbb-gold/80 transition-all duration-500">
+                <span class="relative flex h-2.5 w-2.5">
                   <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-lbb-gold opacity-75"></span>
-                  <span class="relative inline-flex rounded-full h-2 w-2 bg-yellow-400"></span>
+                  <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-yellow-400 shadow-[0_0_10px_rgba(250,204,21,0.8)]"></span>
                 </span>
-                Open Registration: 14 - 28 Juli 2025
+                <span class="text-xs font-bold tracking-[0.2em] uppercase text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 via-lbb-gold to-yellow-200">
+                    Open Registration: 14 - 28 Juli 2025
+                </span>
             </div>
             
-            <div class="flex gap-3 md:gap-6 text-gray-300 text-xs font-mono font-bold">
-                <div class="flex flex-col items-center">
-                    <div class="bg-black/30 border border-white/10 rounded-lg p-2 md:p-3 w-12 md:w-16 backdrop-blur-sm shadow-inner">
-                        <span id="cd-days" class="block text-xl md:text-2xl text-lbb-gold font-black">00</span>
+            <div class="flex items-start gap-3 md:gap-6">
+                <div class="flex flex-col items-center gap-2 group">
+                    <div class="bg-gradient-to-b from-white/10 to-white/5 border border-white/10 rounded-xl p-3 md:p-4 w-16 md:w-20 backdrop-blur-md shadow-2xl group-hover:border-lbb-gold/50 transition-colors">
+                        <span id="cd-days" class="block text-2xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-b from-yellow-300 to-yellow-600 drop-shadow-sm">00</span>
                     </div>
-                    <span class="mt-1 uppercase tracking-wider text-[10px] text-lbb-gold/80">Hari</span>
+                    <span class="text-[10px] font-bold uppercase tracking-widest text-white/60">Hari</span>
                 </div>
-                <div class="text-lbb-gold text-xl pt-2 font-black">:</div>
-                <div class="flex flex-col items-center">
-                    <div class="bg-black/30 border border-white/10 rounded-lg p-2 md:p-3 w-12 md:w-16 backdrop-blur-sm shadow-inner">
-                        <span id="cd-hours" class="block text-xl md:text-2xl text-lbb-gold font-black">00</span>
+                
+                <div class="text-lbb-gold text-2xl pt-2 font-black opacity-50">:</div>
+                
+                <div class="flex flex-col items-center gap-2 group">
+                    <div class="bg-gradient-to-b from-white/10 to-white/5 border border-white/10 rounded-xl p-3 md:p-4 w-16 md:w-20 backdrop-blur-md shadow-2xl group-hover:border-lbb-gold/50 transition-colors">
+                        <span id="cd-hours" class="block text-2xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-b from-yellow-300 to-yellow-600 drop-shadow-sm">00</span>
                     </div>
-                    <span class="mt-1 uppercase tracking-wider text-[10px] text-lbb-gold/80">Jam</span>
+                    <span class="text-[10px] font-bold uppercase tracking-widest text-white/60">Jam</span>
                 </div>
-                <div class="text-lbb-gold text-xl pt-2 font-black">:</div>
-                <div class="flex flex-col items-center">
-                    <div class="bg-black/30 border border-white/10 rounded-lg p-2 md:p-3 w-12 md:w-16 backdrop-blur-sm shadow-inner">
-                        <span id="cd-minutes" class="block text-xl md:text-2xl text-lbb-gold font-black">00</span>
+
+                <div class="text-lbb-gold text-2xl pt-2 font-black opacity-50">:</div>
+
+                <div class="flex flex-col items-center gap-2 group">
+                    <div class="bg-gradient-to-b from-white/10 to-white/5 border border-white/10 rounded-xl p-3 md:p-4 w-16 md:w-20 backdrop-blur-md shadow-2xl group-hover:border-lbb-gold/50 transition-colors">
+                        <span id="cd-minutes" class="block text-2xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-b from-yellow-300 to-yellow-600 drop-shadow-sm">00</span>
                     </div>
-                    <span class="mt-1 uppercase tracking-wider text-[10px] text-lbb-gold/80">Min</span>
+                    <span class="text-[10px] font-bold uppercase tracking-widest text-white/60">Min</span>
                 </div>
-                <div class="text-lbb-gold text-xl pt-2 font-black">:</div>
-                <div class="flex flex-col items-center">
-                    <div class="bg-black/30 border border-white/10 rounded-lg p-2 md:p-3 w-12 md:w-16 backdrop-blur-sm shadow-inner">
-                        <span id="cd-seconds" class="block text-xl md:text-2xl text-lbb-gold font-black">00</span>
+
+                <div class="text-lbb-gold text-2xl pt-2 font-black opacity-50">:</div>
+
+                <div class="flex flex-col items-center gap-2 group">
+                    <div class="bg-gradient-to-b from-white/10 to-white/5 border border-white/10 rounded-xl p-3 md:p-4 w-16 md:w-20 backdrop-blur-md shadow-2xl group-hover:border-lbb-gold/50 transition-colors">
+                        <span id="cd-seconds" class="block text-2xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-b from-yellow-300 to-yellow-600 drop-shadow-sm">00</span>
                     </div>
-                    <span class="mt-1 uppercase tracking-wider text-[10px] text-lbb-gold/80">Det</span>
+                    <span class="text-[10px] font-bold uppercase tracking-widest text-white/60">Det</span>
                 </div>
             </div>
         </div>
 
-        <h1 class="text-5xl md:text-7xl lg:text-8xl font-black mb-6 leading-tight tracking-tighter drop-shadow-2xl italic">
-            LOMBA <span class="text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-400 text-stroke-white">BARIS-BERBARIS</span><br />
-            <span class="text-lbb-gold drop-shadow-[0_4px_0_rgba(0,0,0,0.5)]">
-                MU’ALLIMIN 2025
-            </span>
-        </h1>
+        <div class="relative mb-8">
+            <h1 class="text-6xl md:text-8xl lg:text-9xl font-black leading-none tracking-tighter italic drop-shadow-2xl transform -rotate-1">
+                <span class="block text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-300" style="-webkit-text-stroke: 1px rgba(255,255,255,0.3);">
+                    LOMBA
+                </span>
+                <span class="block text-transparent" style="-webkit-text-stroke: 2px rgba(255,255,255,0.8);">
+                    BARIS-BERBARIS
+                </span>
+                <span class="block text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-yellow-500 to-yellow-600 mt-2 filter drop-shadow-[0_5px_5px_rgba(0,0,0,0.8)]" style="-webkit-text-stroke: 0px;">
+                    MU’ALLIMIN 2025
+                </span>
+            </h1>
+        </div>
         
-        <p class="text-lg md:text-xl text-gray-200 mb-12 max-w-2xl mx-auto font-medium leading-relaxed">
-            Tingkat SD/MI & SMP/MTs Se-DIY. Tunjukkan <span class="text-lbb-gold font-bold">ketangkasan, disiplin,</span> dan <span class="text-lbb-gold font-bold">semangat juang</span> peleton terbaikmu!
+        <p class="text-lg md:text-xl text-red-100/90 mb-12 max-w-2xl mx-auto font-medium leading-relaxed">
+            Tingkat SD/MI & SMP/MTs Se-DIY. Tunjukkan <span class="text-yellow-400 font-bold border-b-2 border-yellow-500/50">ketangkasan</span>, <span class="text-yellow-400 font-bold border-b-2 border-yellow-500/50">disiplin</span>, dan <span class="text-yellow-400 font-bold border-b-2 border-yellow-500/50">semangat juang</span> peleton terbaikmu!
         </p>
         
-        <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-20">
-            <a href="#registration" class="group relative px-10 py-4 bg-lbb-gold text-lbb-red font-black rounded-xl overflow-hidden transition-all hover:scale-105 hover:shadow-[0_0_30px_rgba(255,215,0,0.5)] active:scale-95 w-full sm:w-auto flex justify-center items-center gap-2 uppercase tracking-wide border-2 border-lbb-gold">
-                <div class="absolute inset-0 bg-white/40 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-                <span class="relative">Daftar Sekarang</span>
-                <i data-lucide="arrow-right" width="20" class="relative transition-transform group-hover:translate-x-1"></i>
+        <div class="flex flex-col sm:flex-row gap-5 justify-center items-center mb-24">
+            <a href="#registration" class="group relative px-10 py-4 bg-gradient-to-r from-yellow-500 to-yellow-600 text-red-950 font-black rounded-xl overflow-hidden transition-all hover:scale-105 hover:shadow-[0_0_40px_rgba(234,179,8,0.4)] active:scale-95 w-full sm:w-auto flex justify-center items-center gap-3 uppercase tracking-widest border border-yellow-400">
+                <div class="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/40 to-transparent z-10"></div>
+                
+                <span class="relative z-20">Daftar Sekarang</span>
+                <i data-lucide="arrow-right" width="20" class="relative z-20 transition-transform group-hover:translate-x-1"></i>
             </a>
             
-            <a href="#downloads" class="group px-10 py-4 bg-black/20 border-2 border-white/30 text-white font-bold rounded-xl backdrop-blur-sm transition-all hover:bg-white/10 hover:border-lbb-gold hover:text-lbb-gold w-full sm:w-auto flex justify-center items-center gap-2">
+            <a href="#downloads" class="group px-10 py-4 bg-white/5 border border-white/20 text-white font-bold rounded-xl backdrop-blur-md transition-all hover:bg-white/10 hover:border-yellow-500 hover:text-yellow-400 w-full sm:w-auto flex justify-center items-center gap-2">
                 <span>Unduh Juknis</span>
                 <i data-lucide="download" width="20" class="transition-transform group-hover:translate-y-1"></i>
             </a>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-            <div class="group bg-black/40 backdrop-blur-md p-6 rounded-2xl border border-white/10 hover:border-lbb-gold/50 transition-all duration-300 hover:-translate-y-1 flex flex-col items-center justify-center text-center">
-                <div class="w-12 h-12 bg-lbb-red rounded-xl flex items-center justify-center mb-3 text-lbb-gold group-hover:scale-110 transition-all shadow-lg border border-white/10">
-                    <i data-lucide="calendar" width="24"></i>
+            <div class="group bg-black/40 backdrop-blur-md p-8 rounded-2xl border border-white/10 hover:border-red-500/50 hover:bg-red-950/40 transition-all duration-500 hover:-translate-y-2 flex flex-col items-center justify-center text-center relative overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-br from-red-600/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                
+                <div class="w-14 h-14 bg-gradient-to-br from-red-700 to-red-900 rounded-2xl flex items-center justify-center mb-4 text-white group-hover:scale-110 transition-all shadow-lg border border-white/10 relative z-10">
+                    <i data-lucide="calendar" width="28"></i>
                 </div>
-                <p class="font-bold text-lg text-white">7 September 2025</p>
-                <p class="text-xs text-gray-400 uppercase tracking-wider font-bold">Waktu Pelaksanaan</p>
+                <div class="relative z-10">
+                    <p class="font-black text-2xl text-white mb-1">7 Sept 2025</p>
+                    <p class="text-[10px] text-red-200 uppercase tracking-[0.2em] font-bold">Waktu Pelaksanaan</p>
+                </div>
             </div>
             
-            <div class="group bg-black/40 backdrop-blur-md p-6 rounded-2xl border border-white/10 hover:border-lbb-gold/50 transition-all duration-300 hover:-translate-y-1 flex flex-col items-center justify-center text-center">
-                <div class="w-12 h-12 bg-lbb-red rounded-xl flex items-center justify-center mb-3 text-lbb-gold group-hover:scale-110 transition-all shadow-lg border border-white/10">
-                    <i data-lucide="map-pin" width="24"></i>
+            <div class="group bg-black/40 backdrop-blur-md p-8 rounded-2xl border border-white/10 hover:border-red-500/50 hover:bg-red-950/40 transition-all duration-500 hover:-translate-y-2 flex flex-col items-center justify-center text-center relative overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-br from-red-600/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+                <div class="w-14 h-14 bg-gradient-to-br from-red-700 to-red-900 rounded-2xl flex items-center justify-center mb-4 text-white group-hover:scale-110 transition-all shadow-lg border border-white/10 relative z-10">
+                    <i data-lucide="map-pin" width="28"></i>
                 </div>
-                <p class="font-bold text-lg text-white">Kampus Terpadu</p>
-                <p class="text-xs text-gray-400 uppercase tracking-wider font-bold">Madrasah Mu'allimin</p>
+                <div class="relative z-10">
+                    <p class="font-black text-2xl text-white mb-1">Kampus Terpadu</p>
+                    <p class="text-[10px] text-red-200 uppercase tracking-[0.2em] font-bold">Madrasah Mu'allimin</p>
+                </div>
             </div>
             
-            <div class="group bg-black/40 backdrop-blur-md p-6 rounded-2xl border border-white/10 hover:border-lbb-gold/50 transition-all duration-300 hover:-translate-y-1 flex flex-col items-center justify-center text-center">
-                <div class="w-12 h-12 bg-lbb-red rounded-xl flex items-center justify-center mb-3 text-lbb-gold group-hover:scale-110 transition-all shadow-lg border border-white/10">
-                    <i data-lucide="trophy" width="24"></i>
+            <div class="group bg-black/40 backdrop-blur-md p-8 rounded-2xl border border-white/10 hover:border-yellow-500/50 hover:bg-yellow-900/20 transition-all duration-500 hover:-translate-y-2 flex flex-col items-center justify-center text-center relative overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-br from-yellow-600/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+                <div class="w-14 h-14 bg-gradient-to-br from-yellow-600 to-yellow-800 rounded-2xl flex items-center justify-center mb-4 text-white group-hover:scale-110 transition-all shadow-lg border border-white/10 relative z-10">
+                    <i data-lucide="trophy" width="28"></i>
                 </div>
-                <div class="flex flex-col">
-                    <p class="font-bold text-lg text-white">Piala Gubernur DIY</p>
-                    <p class="text-xs text-gray-400 uppercase tracking-wider font-bold">Perebutan Juara Umum</p>
+                <div class="relative z-10">
+                    <p class="font-black text-2xl text-white mb-1">Piala Gubernur</p>
+                    <p class="text-[10px] text-yellow-200 uppercase tracking-[0.2em] font-bold">Perebutan Juara Umum</p>
                 </div>
             </div>
         </div>
     </div>
 </section>
-
+        
         <!-- ABOUT SECTION -->
         <section id="about" class="py-20 lg:py-28 bg-slate-50 relative overflow-hidden">
     <div class="absolute inset-0 opacity-[0.03]" style="background-image: radial-gradient(#475569 1px, transparent 1px); background-size: 24px 24px;"></div>
