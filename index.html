@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <title>Sistem LBB Mu'allimin 2025 - Premium Edition</title>
+    <title>Sistem LBB Mu'allimin 2025 - Command Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Oswald:wght@500;700&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
     
     <script>
         tailwind.config = {
@@ -12,12 +12,25 @@
                 extend: {
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
-                        heading: ['Montserrat', 'sans-serif'],
-                        mono: ['Courier Prime', 'monospace'], // Font timer lebih bagus
+                        heading: ['Montserrat', 'sans-serif'], // Font judul tebal
+                        condensed: ['Oswald', 'sans-serif'], // Font angka/label tegas
+                        mono: ['Courier Prime', 'monospace'],
                     },
                     colors: {
-                        navy: { 800: '#1e293b', 900: '#0f172a' },
-                        gold: { 400: '#facc15', 500: '#eab308', 600: '#ca8a04' }
+                        // Palette Baru: Merah, Hitam, Kuning, Abu
+                        cmd: {
+                            black: '#111111',       // Hitam pekat
+                            dark: '#1c1c1c',        // Abu gelap (background)
+                            gray: '#2d2d2d',        // Abu elemen
+                            red: '#e60000',         // Merah Ferrari (Primary)
+                            red_dark: '#990000',    // Merah darah
+                            gold: '#fbbf24',        // Kuning Emas
+                            gold_dim: '#d97706',    // Emas redup
+                            silver: '#e5e7eb',      // Putih abu
+                        }
+                    },
+                    backgroundImage: {
+                        'pattern-carbon': "url('data:image/svg+xml,%3Csvg width=\\'20\\' height=\\'20\\' viewBox=\\'0 0 20 20\\' xmlns=\\'http://www.w3.org/2000/svg\\'%3E%3Cg fill=\\'%232d2d2d\\' fill-opacity=\\'0.4\\' fill-rule=\\'evenodd\\'%3E%3Ccircle cx=\\'3\\' cy=\\'3\\' r=\\'3\\'/%3E%3Ccircle cx=\\'13\\' cy=\\'13\\' r=\\'3\\'/%3E%3C/g%3E%3C/svg%3E')",
                     }
                 }
             }
@@ -25,433 +38,461 @@
     </script>
 
     <style>
-        /* Tambahkan ini di dalam tag <style> index.html */
-        .hide {
-            display: none !important;
-        }
-        /* Modern Scrollbar */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        /* Utility Wajib */
+        .hide { display: none !important; }
 
-        /* Glassmorphism Class */
-        .glass {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-        
+        /* Custom Scrollbar (Tema Gelap) */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #111; }
+        ::-webkit-scrollbar-thumb { background: #e60000; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #ff3333; }
+
+        /* Glassmorphism Dark */
         .glass-dark {
-            background: rgba(15, 23, 42, 0.6); /* Navy transparan */
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: white;
+            background: rgba(28, 28, 28, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
         }
 
-        /* Smooth Transition */
+        /* View Transitions */
         .view-section {
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             opacity: 1;
-            transform: translateY(0);
+            transform: translateY(0) scale(1);
         }
         .view-section.hide {
-            display: none; /* Tetap perlu display none agar tidak menumpuk layout */
+            display: none;
             opacity: 0;
-            transform: translateY(10px);
+            transform: translateY(20px) scale(0.98);
         }
 
-        /* Animasi Pulse untuk Timer Kritis */
-        @keyframes pulse-red {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-            70% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); }
+        /* Animasi Timer Kritis (Merah Berkedip Tajam) */
+        @keyframes flash-red {
+            0%, 50%, 100% { background-color: transparent; box-shadow: none; }
+            25%, 75% { background-color: rgba(230, 0, 0, 0.1); box-shadow: inset 0 0 50px rgba(230, 0, 0, 0.5); }
         }
-        .timer-critical { animation: pulse-red 1s infinite; }
+        .timer-critical-bg { animation: flash-red 1s infinite; border-color: #e60000 !important; }
+        
+        /* Neon Glow Text */
+        .text-glow-red { text-shadow: 0 0 10px rgba(230, 0, 0, 0.8); }
+        .text-glow-gold { text-shadow: 0 0 10px rgba(251, 191, 36, 0.6); }
+
+        /* Sidebar Link Active State */
+        .sidebar-link.active {
+            background: linear-gradient(90deg, rgba(230,0,0,0.2) 0%, transparent 100%);
+            border-left: 4px solid #e60000;
+            color: #fff;
+        }
     </style>
 </head>
-<body class="bg-gray-100 text-gray-800 h-screen overflow-hidden flex flex-col">
+<body class="bg-cmd-dark text-gray-200 h-screen overflow-hidden flex flex-col font-sans">
 
-    <!-- LOGIN SCREEN -->
-    <div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-navy-900">
-    <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1526662092394-e9a69134a564?q=80&w=2500')] bg-cover bg-center opacity-40"></div>
-    <div class="absolute inset-0 bg-gradient-to-t from-navy-900 via-navy-900/80 to-transparent"></div>
-
-    <div class="relative glass p-10 rounded-2xl shadow-2xl w-full max-w-md mx-4 border-t border-white/50 transform transition hover:scale-[1.01] duration-300">
-        <div class="text-center mb-8">
-            <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-navy-900 text-gold-400 mb-4 shadow-lg border-2 border-gold-500">
-                <i class="fa-solid fa-crown text-4xl"></i>
-            </div>
-            <h1 class="text-3xl font-heading font-extrabold text-navy-900 tracking-tight">LBB MU'ALLIMIN <span class="text-gold-600">2025</span></h1>
-            <p class="text-slate-600 text-sm font-medium mt-1 tracking-wide">Official Competition System</p>
-        </div>
+    <div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-black">
+        <div class="absolute inset-0 bg-pattern-carbon opacity-30"></div>
+        <div class="absolute inset-0 bg-gradient-to-br from-cmd-black via-black to-cmd-red_dark opacity-80"></div>
         
-        <div class="space-y-5">
-            <div class="group">
-                <label class="block text-xs font-bold text-slate-500 uppercase mb-1 ml-1 group-focus-within:text-blue-600 transition">Username</label>
-                <div class="relative">
-                    <i class="fa-solid fa-user absolute left-4 top-3.5 text-slate-400"></i>
-                    <input type="text" id="login-user" class="w-full pl-10 pr-4 py-3 bg-white/50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white transition shadow-sm outline-none" placeholder="Masukkan ID Peserta/Panitia">
-                </div>
-            </div>
-            <div class="group">
-                <label class="block text-xs font-bold text-slate-500 uppercase mb-1 ml-1 group-focus-within:text-blue-600 transition">Password</label>
-                <div class="relative">
-                    <i class="fa-solid fa-lock absolute left-4 top-3.5 text-slate-400"></i>
-                    <input type="password" id="login-pass" class="w-full pl-10 pr-4 py-3 bg-white/50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white transition shadow-sm outline-none" placeholder="••••••••">
-                </div>
-            </div>
-            <button id="btn-login" class="w-full bg-gradient-to-r from-blue-800 to-navy-900 hover:from-blue-700 hover:to-navy-800 text-white font-heading font-bold py-3.5 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300">
-                MASUK SEKARANG <i class="fa-solid fa-arrow-right ml-2"></i>
-            </button>
-        </div>
+        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-cmd-red to-transparent opacity-50"></div>
 
-        <div class="mt-8 pt-6 border-t border-slate-200/60">
-            <p class="text-[10px] text-center text-slate-400 font-bold tracking-widest uppercase mb-3">Quick Access (Demo Mode)</p>
-            <div class="flex justify-center gap-2">
-                <button class="sim-login-btn px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-600 transition" data-user="admin" data-pass="admin">Admin</button>
-                <button class="sim-login-btn px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-600 transition" data-user="panitia" data-pass="panitia">Juri/Panitia</button>
-                <button class="sim-login-btn px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-600 transition" data-user="peserta" data-pass="peserta">Peserta</button>
+        <div class="relative glass-dark p-10 rounded-none border-l-4 border-cmd-red shadow-[0_0_50px_rgba(0,0,0,0.8)] w-full max-w-md mx-4 transform transition hover:scale-[1.01] duration-500">
+            <div class="text-center mb-10">
+                <div class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-black border-2 border-cmd-red mb-6 shadow-[0_0_20px_rgba(230,0,0,0.4)] relative">
+                    <i class="fa-solid fa-person-military-pointing text-5xl text-gray-200"></i>
+                    <div class="absolute -bottom-2 -right-2 bg-cmd-gold text-black text-xs font-bold px-2 py-1 rounded">2025</div>
+                </div>
+                <h1 class="text-4xl font-heading font-black text-white tracking-tighter uppercase italic">LBB <span class="text-cmd-red text-glow-red">MU'ALLIMIN</span></h1>
+                <p class="text-gray-400 text-xs font-condensed tracking-[0.3em] uppercase mt-2">Disiplin . Tegas . Berprestasi</p>
+            </div>
+            
+            <div class="space-y-6">
+                <div class="group relative">
+                    <input type="text" id="login-user" class="peer w-full pl-12 pr-4 py-4 bg-black/50 border border-gray-700 focus:border-cmd-red text-white placeholder-transparent transition-all outline-none" placeholder="Username">
+                    <label class="absolute left-12 top-4 text-gray-500 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-4 peer-focus:-top-2 peer-focus:text-xs peer-focus:text-cmd-red bg-black/50 px-1 pointer-events-none">USERNAME ID</label>
+                    <i class="fa-solid fa-fingerprint absolute left-4 top-5 text-gray-600 peer-focus:text-cmd-red transition"></i>
+                </div>
+                <div class="group relative">
+                    <input type="password" id="login-pass" class="peer w-full pl-12 pr-4 py-4 bg-black/50 border border-gray-700 focus:border-cmd-red text-white placeholder-transparent transition-all outline-none" placeholder="Password">
+                    <label class="absolute left-12 top-4 text-gray-500 text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-4 peer-focus:-top-2 peer-focus:text-xs peer-focus:text-cmd-red bg-black/50 px-1 pointer-events-none">PASSWORD</label>
+                    <i class="fa-solid fa-shield-halved absolute left-4 top-5 text-gray-600 peer-focus:text-cmd-red transition"></i>
+                </div>
+                <button id="btn-login" class="w-full bg-cmd-red hover:bg-red-600 text-white font-condensed font-bold text-xl py-4 uppercase tracking-wider shadow-[0_4px_0_rgb(153,0,0)] hover:shadow-[0_2px_0_rgb(153,0,0)] hover:translate-y-[2px] transition-all clip-path-polygon">
+                    ACCESS SYSTEM
+                </button>
+            </div>
+
+            <div class="mt-10 pt-6 border-t border-gray-800 text-center">
+                <p class="text-[10px] text-gray-600 font-bold uppercase mb-4 tracking-widest">Select Role (Demo Mode)</p>
+                <div class="grid grid-cols-3 gap-2">
+                    <button class="sim-login-btn py-2 bg-gray-900 border border-gray-800 hover:border-cmd-red text-gray-400 hover:text-white text-xs font-bold transition" data-user="admin" data-pass="admin">ADMIN</button>
+                    <button class="sim-login-btn py-2 bg-gray-900 border border-gray-800 hover:border-cmd-red text-gray-400 hover:text-white text-xs font-bold transition" data-user="panitia" data-pass="panitia">JURI</button>
+                    <button class="sim-login-btn py-2 bg-gray-900 border border-gray-800 hover:border-cmd-red text-gray-400 hover:text-white text-xs font-bold transition" data-user="peserta" data-pass="peserta">PESERTA</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
     
-    <!-- DASHBOARD LAYOUT -->
-    <div id="dashboard-layout" class="flex h-screen hide">
+    <div id="dashboard-layout" class="flex h-screen hide bg-cmd-dark">
         
-        <!-- Sidebar -->
-        <aside class="w-64 bg-blue-900 text-white flex flex-col shadow-xl z-20 hidden md:flex">
-            <div class="p-6 border-b border-blue-800 flex items-center gap-3">
-                <i class="fa-solid fa-trophy text-yellow-400 text-2xl"></i>
+        <aside class="w-72 bg-black border-r border-gray-800 flex flex-col z-20 hidden md:flex">
+            <div class="p-8 flex items-center gap-4 bg-gradient-to-b from-gray-900 to-black">
+                <i class="fa-solid fa-shield-cat text-cmd-red text-3xl drop-shadow-[0_0_8px_rgba(230,0,0,0.8)]"></i>
                 <div>
-                    <h2 class="font-bold text-lg tracking-wide">LBB 2025</h2>
-                    <span id="role-badge" class="text-xs bg-blue-700 px-2 py-0.5 rounded text-blue-100 uppercase">Role</span>
+                    <h2 class="font-heading font-bold text-xl tracking-tight text-white leading-none">COMMAND<br><span class="text-cmd-red">CENTER</span></h2>
+                    <span id="role-badge" class="text-[10px] bg-gray-800 px-2 py-0.5 mt-1 inline-block text-gray-400 uppercase tracking-widest border border-gray-700">Role</span>
                 </div>
             </div>
-            <nav id="sidebar-menu" class="flex-1 py-4 space-y-1 overflow-y-auto">
-                <!-- Menu items injected via JS -->
-            </nav>
-            <div class="p-4 border-t border-blue-800">
-                <button id="btn-logout" class="flex items-center gap-3 text-red-300 hover:text-white w-full px-4 py-2 rounded transition">
-                    <i class="fa-solid fa-sign-out-alt"></i> Keluar
+            
+            <nav id="sidebar-menu" class="flex-1 py-6 space-y-2 overflow-y-auto px-4">
+                </nav>
+
+            <div class="p-6 border-t border-gray-900">
+                <button id="btn-logout" class="flex items-center justify-center gap-3 text-gray-500 hover:text-cmd-red w-full px-4 py-3 border border-gray-800 hover:border-cmd-red transition group">
+                    <i class="fa-solid fa-power-off group-hover:animate-pulse"></i> <span class="font-bold text-sm uppercase">Logout System</span>
                 </button>
             </div>
         </aside>
 
-        <!-- Main Content Wrapper -->
-        <div class="flex-1 flex flex-col min-w-0 overflow-hidden bg-gray-100">
-            <!-- Mobile Header -->
-            <header class="bg-navy-900 text-white shadow-md z-30 p-4 flex justify-between items-center md:hidden sticky top-0">
-    <div class="flex items-center gap-3">
-        <button id="btn-mobile-menu" class="text-gold-400 hover:text-white transition">
-            <i class="fa-solid fa-bars text-xl"></i>
-        </button>
-        <span class="font-heading font-bold tracking-wide">LBB 2025</span>
-    </div>
-    <button id="btn-logout-mobile" class="text-red-300"><i class="fa-solid fa-power-off"></i></button>
-</header>
+        <div class="flex-1 flex flex-col min-w-0 overflow-hidden relative">
+            <header class="bg-black border-b border-gray-800 text-white p-4 flex justify-between items-center md:hidden sticky top-0 z-30">
+                <div class="flex items-center gap-4">
+                    <button id="btn-mobile-menu" class="text-cmd-red hover:text-white transition"><i class="fa-solid fa-bars-staggered text-xl"></i></button>
+                    <span class="font-heading font-black tracking-tighter text-lg">LBB<span class="text-cmd-red">2025</span></span>
+                </div>
+                <button id="btn-logout-mobile" class="text-gray-500"><i class="fa-solid fa-power-off"></i></button>
+            </header>
 
-<div id="mobile-overlay" class="fixed inset-0 bg-black/50 z-20 hidden md:hidden glass"></div>
+            <div id="mobile-overlay" class="fixed inset-0 bg-black/80 z-20 hidden md:hidden backdrop-blur-sm"></div>
 
-            <!-- Dynamic Content Container -->
-            <main id="main-content" class="flex-1 overflow-auto p-4 sm:p-8 fade-in relative">
-                
-                <!-- VIEW: ADMIN DASHBOARD -->
+            <main id="main-content" class="flex-1 overflow-auto p-4 sm:p-10 fade-in bg-cmd-dark relative">
+                <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-cmd-red opacity-5 blur-[150px] pointer-events-none rounded-full"></div>
+
                 <section id="view-admin-dashboard" class="view-section hide">
-    <div class="mb-8">
-        <h1 class="text-3xl font-heading font-bold text-navy-900">Dashboard Overview</h1>
-        <p class="text-slate-500">Pantau statistik lomba secara real-time.</p>
-    </div>
+                    <div class="mb-10 border-b border-gray-800 pb-6">
+                        <h1 class="text-4xl font-heading font-black text-white uppercase italic">Dashboard <span class="text-transparent bg-clip-text bg-gradient-to-r from-cmd-red to-orange-600">Overview</span></h1>
+                        <p class="text-gray-500 font-mono text-sm mt-2">SYSTEM STATUS: <span class="text-green-500">OPERATIONAL</span></p>
+                    </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 relative overflow-hidden group hover:shadow-md transition">
-            <div class="absolute right-0 top-0 p-4 opacity-10 group-hover:scale-110 transition transform">
-                <i class="fa-solid fa-users text-8xl text-blue-900"></i>
-            </div>
-            <p class="text-sm font-bold text-slate-400 uppercase tracking-wider">Total Tim</p>
-            <p class="text-4xl font-heading font-bold text-navy-900 mt-2" id="admin-total-teams">0</p>
-            <div class="mt-4 text-xs text-green-600 font-bold bg-green-50 inline-block px-2 py-1 rounded">
-                <i class="fa-solid fa-arrow-up"></i> Data Updated
-            </div>
-        </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                        <div class="bg-gray-900 p-6 border-l-4 border-cmd-red relative overflow-hidden group">
+                            <div class="absolute right-0 top-0 p-4 opacity-5 group-hover:opacity-10 transition duration-500 transform group-hover:scale-125">
+                                <i class="fa-solid fa-users-line text-9xl text-white"></i>
+                            </div>
+                            <p class="text-xs font-bold text-gray-500 uppercase tracking-[0.2em] mb-2">Total Pasukan</p>
+                            <p class="text-5xl font-condensed font-bold text-white" id="admin-total-teams">0</p>
+                        </div>
 
-        <div class="bg-gradient-to-br from-blue-600 to-navy-900 p-6 rounded-2xl shadow-lg text-white relative overflow-hidden">
-            <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-white opacity-10 rounded-full blur-2xl"></div>
-            <p class="text-sm font-bold text-blue-200 uppercase tracking-wider">Status Server</p>
-            <p class="text-2xl font-heading font-bold mt-2">ONLINE</p>
-            <p class="text-xs text-blue-200 mt-1">Local Storage Active</p>
-        </div>
-    </div>
-    
-    <button id="btn-add-dummy" class="group flex items-center gap-3 bg-white border border-slate-200 text-slate-700 px-6 py-3 rounded-xl shadow-sm hover:border-blue-500 hover:text-blue-600 transition">
-        <div class="bg-slate-100 group-hover:bg-blue-50 p-2 rounded-lg transition">
-            <i class="fa-solid fa-plus"></i>
-        </div>
-        <span class="font-bold">Generate Dummy Data</span>
-    </button>
-</section>
+                        <div class="bg-gradient-to-br from-gray-900 to-black p-6 border border-gray-800 relative">
+                            <p class="text-xs font-bold text-cmd-gold uppercase tracking-[0.2em] mb-2">Server Node</p>
+                            <div class="flex items-center gap-3">
+                                <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                                <p class="text-2xl font-heading font-bold text-white">ONLINE</p>
+                            </div>
+                            <p class="text-xs text-gray-600 mt-2 font-mono">Lat: 24ms | LocalStorage</p>
+                        </div>
+                    </div>
+                    
+                    <button id="btn-add-dummy" class="bg-white text-black px-6 py-3 font-bold uppercase hover:bg-gray-200 transition flex items-center gap-2">
+                        <i class="fa-solid fa-plus-square"></i> Generate Dummy Data
+                    </button>
+                </section>
 
-                <!-- VIEW: ADMIN TEAMS -->
                 <section id="view-admin-teams" class="view-section hide">
-                    <h1 class="text-2xl font-bold mb-4">Data Seluruh Peserta</h1>
-                    <div class="bg-white rounded shadow overflow-x-auto">
-                        <table class="w-full text-sm text-left">
-                            <thead class="bg-gray-100 border-b">
+                    <h1 class="text-3xl font-heading font-black text-white mb-6">DATABASE PESERTA</h1>
+                    <div class="bg-gray-900 border border-gray-800 overflow-hidden">
+                        <table class="w-full text-sm text-left text-gray-400">
+                            <thead class="bg-black text-white uppercase font-bold text-xs tracking-wider">
                                 <tr>
-                                    <th class="p-3">Nama Peleton</th>
-                                    <th class="p-3">Official</th>
-                                    <th class="p-3">Status</th>
+                                    <th class="p-4 border-b border-gray-800">Nama Peleton</th>
+                                    <th class="p-4 border-b border-gray-800">Kontak Official</th>
+                                    <th class="p-4 border-b border-gray-800">Status</th>
                                 </tr>
                             </thead>
-                            <tbody id="admin-teams-list">
-                                <!-- JS inserts rows here -->
-                            </tbody>
+                            <tbody id="admin-teams-list" class="divide-y divide-gray-800">
+                                </tbody>
                         </table>
                     </div>
                 </section>
 
-                <!-- VIEW: PANITIA VERIFICATION -->
                 <section id="view-panitia-verification" class="view-section hide">
-                    <h1 class="text-2xl font-bold mb-4">Verifikasi Berkas</h1>
+                    <h1 class="text-3xl font-heading font-black text-white mb-6">VERIFIKASI BERKAS</h1>
                     <div id="verification-list" class="grid gap-4">
-                        <!-- JS inserts cards here -->
-                    </div>
+                        </div>
                 </section>
 
-                <!-- VIEW: PANITIA LIVE SCORING (Complex Form) -->
                 <section id="view-panitia-live" class="view-section hide h-full">
-                    <div class="flex flex-col lg:flex-row gap-6 h-full">
-                        <!-- Left Column -->
-                        <div class="lg:w-2/3 flex flex-col gap-6 overflow-y-auto pr-2 pb-10">
-                            <!-- Team Select -->
-                            <div class="bg-white p-4 rounded-xl shadow border-l-4 border-blue-600">
-                                <label class="block text-sm font-bold mb-2">Pilih Peleton</label>
-                                <select id="live-team-select" class="w-full p-2 border rounded bg-gray-50 font-semibold">
-                                    <option value="">-- Pilih Tim --</option>
-                                    <!-- JS inserts options here -->
-                                </select>
+                    <div class="flex flex-col lg:flex-row gap-8 h-full">
+                        <div class="lg:w-2/3 flex flex-col gap-6">
+                            <div class="bg-gray-900 p-6 border-t-4 border-cmd-gold">
+                                <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Target Penilaian</label>
+                                <select id="live-team-select" class="w-full p-4 bg-black border border-gray-700 text-white font-bold text-lg focus:border-cmd-gold outline-none">
+                                    <option value="">-- PILIH PELETON --</option>
+                                    </select>
                             </div>
                             
-                            <!-- Timer -->
-                            <div class="bg-navy-900 text-white p-8 rounded-2xl shadow-2xl text-center relative border border-slate-700 overflow-hidden group">
-    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-32 bg-blue-500 rounded-full blur-[100px] opacity-20"></div>
-    
-    <div class="flex justify-between items-center mb-6 relative z-10">
-        <span class="text-xs font-bold text-blue-400 uppercase tracking-[0.2em]"><i class="fa-solid fa-stopwatch mr-1"></i> Match Timer</span>
-        <span id="timer-limit-label" class="bg-slate-800 px-3 py-1 rounded-full text-xs font-bold text-gold-400 border border-slate-700">Limit: -</span>
-    </div>
-    
-    <div class="relative py-4">
-        <div id="timer-display" class="text-8xl md:text-9xl font-mono font-bold tracking-tight text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.3)] transition-colors duration-300">
-            00:00
-        </div>
-        <div class="w-full h-2 bg-slate-800 rounded-full mt-4 overflow-hidden">
-            <div id="timer-progress" class="h-full bg-gradient-to-r from-blue-500 to-cyan-400 w-0 transition-all duration-1000"></div>
-        </div>
-    </div>
+                            <div class="bg-black border-2 border-gray-800 p-8 text-center relative overflow-hidden shadow-2xl">
+                                <div class="absolute inset-0 bg-[linear-gradient(rgba(30,30,30,0.5)_1px,transparent_1px),linear-gradient(90deg,rgba(30,30,30,0.5)_1px,transparent_1px)] bg-[size:20px_20px] opacity-20"></div>
+                                
+                                <div class="flex justify-between items-center mb-8 relative z-10 border-b border-gray-800 pb-4">
+                                    <div class="flex items-center gap-2 text-cmd-red">
+                                        <i class="fa-solid fa-circle animate-pulse text-[10px]"></i>
+                                        <span class="text-xs font-bold uppercase tracking-[0.3em]">Live Timer</span>
+                                    </div>
+                                    <span id="timer-limit-label" class="bg-gray-900 px-4 py-1 text-xs font-bold text-white border border-gray-700">LIMIT: --</span>
+                                </div>
+                                
+                                <div class="relative py-2 mb-8">
+                                    <div id="timer-display" class="text-8xl md:text-[10rem] font-mono font-bold leading-none text-white tracking-tight drop-shadow-2xl transition-colors duration-200">
+                                        00:00
+                                    </div>
+                                    <div class="w-full h-4 bg-gray-900 mt-6 border border-gray-800 flex p-0.5">
+                                        <div id="timer-progress" class="h-full bg-cmd-gold w-0 transition-all duration-1000 shadow-[0_0_10px_#fbbf24]"></div>
+                                    </div>
+                                </div>
 
-    <div class="flex justify-center gap-6 mt-8 relative z-10">
-        <button id="btn-timer-start" class="group bg-green-500 hover:bg-green-400 w-16 h-16 rounded-2xl flex items-center justify-center text-2xl shadow-lg shadow-green-500/30 transition-all hover:-translate-y-1">
-            <i class="fa-solid fa-play text-navy-900 ml-1"></i>
-        </button>
-        <button id="btn-timer-stop" class="bg-red-500 hover:bg-red-400 w-16 h-16 rounded-2xl flex items-center justify-center text-2xl shadow-lg shadow-red-500/30 transition-all hover:-translate-y-1 opacity-50 cursor-not-allowed" disabled>
-            <i class="fa-solid fa-pause text-white"></i>
-        </button>
-        <button id="btn-timer-reset" class="bg-slate-700 hover:bg-slate-600 w-16 h-16 rounded-2xl flex items-center justify-center text-2xl shadow-lg border border-slate-600 transition-all hover:-translate-y-1">
-            <i class="fa-solid fa-rotate-left text-slate-300 group-hover:rotate-180 transition-transform duration-500"></i>
-        </button>
-    </div>
-</div>
+                                <div class="grid grid-cols-3 gap-4 relative z-10 max-w-md mx-auto">
+                                    <button id="btn-timer-start" class="bg-gray-900 text-green-500 border border-green-900 hover:bg-green-900 hover:text-white h-16 text-2xl transition flex items-center justify-center group"><i class="fa-solid fa-play group-hover:scale-125 transition"></i></button>
+                                    <button id="btn-timer-stop" class="bg-gray-900 text-red-500 border border-red-900 hover:bg-red-900 hover:text-white h-16 text-2xl transition flex items-center justify-center opacity-50 cursor-not-allowed" disabled><i class="fa-solid fa-stop"></i></button>
+                                    <button id="btn-timer-reset" class="bg-gray-900 text-gray-400 border border-gray-700 hover:bg-gray-800 hover:text-white h-16 text-2xl transition flex items-center justify-center"><i class="fa-solid fa-rotate-left"></i></button>
+                                </div>
+                            </div>
 
-                            <!-- Scoring Form -->
-                            <div id="scoring-panel" class="bg-white rounded-xl shadow-lg opacity-50 pointer-events-none transition-opacity duration-300">
-                                <div class="p-4 bg-gray-50 border-b flex justify-between items-center"><h2 class="font-bold text-lg"><i class="fa-solid fa-pen-to-square"></i> Form Penilaian</h2></div>
-                                <div class="p-6 space-y-6">
+                            <div id="scoring-panel" class="bg-gray-900 border border-gray-800 opacity-50 pointer-events-none transition-opacity duration-300">
+                                <div class="p-4 bg-black border-b border-gray-800 flex items-center gap-3">
+                                    <div class="w-2 h-8 bg-blue-600"></div>
+                                    <h2 class="font-bold text-white uppercase tracking-wider">Input Nilai</h2>
+                                </div>
+                                <div class="p-6 grid gap-8">
                                     <div>
-                                        <h3 class="font-bold text-blue-800 border-b border-blue-200 mb-3 pb-1">A. Peleton (70/30)</h3>
+                                        <h3 class="text-blue-500 font-bold text-sm uppercase mb-4 border-b border-gray-800 pb-2">A. Peleton</h3>
                                         <div class="grid grid-cols-2 gap-4">
-                                            <div><label class="block text-xs font-bold text-gray-600">Teknik PBB</label><input type="number" id="score-pbb" class="w-full border p-2 rounded"></div>
-                                            <div><label class="block text-xs font-bold text-gray-600">Kekompakan</label><input type="number" id="score-kompak" class="w-full border p-2 rounded"></div>
+                                            <div>
+                                                <label class="text-xs text-gray-500 font-bold uppercase">Teknik PBB</label>
+                                                <input type="number" id="score-pbb" class="w-full bg-black border border-gray-700 text-white p-3 mt-1 focus:border-blue-500 outline-none font-mono">
+                                            </div>
+                                            <div>
+                                                <label class="text-xs text-gray-500 font-bold uppercase">Kekompakan</label>
+                                                <input type="number" id="score-kompak" class="w-full bg-black border border-gray-700 text-white p-3 mt-1 focus:border-blue-500 outline-none font-mono">
+                                            </div>
                                         </div>
                                     </div>
                                     <div>
-                                        <h3 class="font-bold text-blue-800 border-b border-blue-200 mb-3 pb-1">B. Danton</h3>
-                                        <div class="grid grid-cols-2 gap-4">
-                                            <div><label class="block text-xs font-bold text-gray-600">Materi</label><input type="number" id="score-danton-materi" class="w-full border p-2 rounded"></div>
-                                            <div><label class="block text-xs font-bold text-gray-600">Suara</label><input type="number" id="score-danton-suara" class="w-full border p-2 rounded"></div>
-                                            <div><label class="block text-xs font-bold text-gray-600">Sikap</label><input type="number" id="score-danton-sikap" class="w-full border p-2 rounded"></div>
-                                            <div><label class="block text-xs font-bold text-gray-600">Medan</label><input type="number" id="score-danton-medan" class="w-full border p-2 rounded"></div>
+                                        <h3 class="text-blue-500 font-bold text-sm uppercase mb-4 border-b border-gray-800 pb-2">B. Danton</h3>
+                                        <div class="grid grid-cols-4 gap-2">
+                                            <div><label class="text-[10px] text-gray-500 font-bold uppercase">Materi</label><input type="number" id="score-danton-materi" class="w-full bg-black border border-gray-700 text-white p-2 mt-1 focus:border-blue-500 outline-none font-mono text-center"></div>
+                                            <div><label class="text-[10px] text-gray-500 font-bold uppercase">Suara</label><input type="number" id="score-danton-suara" class="w-full bg-black border border-gray-700 text-white p-2 mt-1 focus:border-blue-500 outline-none font-mono text-center"></div>
+                                            <div><label class="text-[10px] text-gray-500 font-bold uppercase">Sikap</label><input type="number" id="score-danton-sikap" class="w-full bg-black border border-gray-700 text-white p-2 mt-1 focus:border-blue-500 outline-none font-mono text-center"></div>
+                                            <div><label class="text-[10px] text-gray-500 font-bold uppercase">Medan</label><input type="number" id="score-danton-medan" class="w-full bg-black border border-gray-700 text-white p-2 mt-1 focus:border-blue-500 outline-none font-mono text-center"></div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Right Column (Penalty) -->
-                        <div class="lg:w-1/3 flex flex-col gap-4">
-                            <div id="penalty-panel" class="bg-red-50 p-4 rounded-xl shadow border border-red-200 opacity-50 pointer-events-none">
-                                <h3 class="font-bold text-red-800 border-b border-red-200 mb-3 pb-1">Sanksi & Denda</h3>
-                                <div class="space-y-3 text-sm">
-                                    <label class="flex justify-between"><span>Tidak Upacara (-150)</span><input type="checkbox" id="pen-upacara"></label>
-                                    <label class="flex justify-between"><span>Telat 3x (-100)</span><input type="checkbox" id="pen-late"></label>
-                                    <label class="flex justify-between"><span>Personel < 22 (-75)</span><input type="checkbox" id="pen-personel"></label>
-                                    <div class="border-t pt-2 space-y-2">
-                                        <div class="flex justify-between"><span>Injak Garis (-50)</span><input type="number" id="pen-garis" class="w-12 border text-center" value="0"></div>
-                                        <div class="flex justify-between"><span>Penyesuaian > 3 (-25)</span><input type="number" id="pen-adjustment" class="w-12 border text-center" value="0"></div>
-                                        <div class="flex justify-between bg-red-100 p-1"><span>Overtime (-50)</span><input type="number" id="pen-time" class="w-12 border text-center bg-transparent font-bold" value="0" readonly></div>
+                        <div class="lg:w-1/3 flex flex-col gap-6">
+                            <div id="penalty-panel" class="bg-gray-900 border border-red-900/30 opacity-50 pointer-events-none">
+                                <div class="p-4 bg-red-900/20 border-b border-red-900/30 flex items-center gap-3">
+                                    <div class="w-2 h-8 bg-cmd-red"></div>
+                                    <h3 class="font-bold text-red-500 uppercase tracking-wider">Sanksi & Denda</h3>
+                                </div>
+                                <div class="p-6 space-y-4">
+                                    <label class="flex justify-between items-center group cursor-pointer">
+                                        <span class="text-gray-400 text-sm group-hover:text-red-400 transition">Tidak Upacara (-150)</span>
+                                        <input type="checkbox" id="pen-upacara" class="w-5 h-5 accent-red-600 bg-black border-gray-700">
+                                    </label>
+                                    <label class="flex justify-between items-center group cursor-pointer">
+                                        <span class="text-gray-400 text-sm group-hover:text-red-400 transition">Telat 3x (-100)</span>
+                                        <input type="checkbox" id="pen-late" class="w-5 h-5 accent-red-600 bg-black border-gray-700">
+                                    </label>
+                                    <label class="flex justify-between items-center group cursor-pointer">
+                                        <span class="text-gray-400 text-sm group-hover:text-red-400 transition">Personel < 22 (-75)</span>
+                                        <input type="checkbox" id="pen-personel" class="w-5 h-5 accent-red-600 bg-black border-gray-700">
+                                    </label>
+                                    
+                                    <div class="border-t border-gray-800 pt-4 space-y-4">
+                                        <div class="flex justify-between items-center">
+                                            <span class="text-gray-400 text-sm">Injak Garis (-50)</span>
+                                            <input type="number" id="pen-garis" class="w-16 bg-black border border-gray-700 text-white text-center p-1" value="0">
+                                        </div>
+                                        <div class="flex justify-between items-center">
+                                            <span class="text-gray-400 text-sm">Penyesuaian > 3 (-25)</span>
+                                            <input type="number" id="pen-adjustment" class="w-16 bg-black border border-gray-700 text-white text-center p-1" value="0">
+                                        </div>
+                                        <div class="flex justify-between items-center bg-red-900/10 p-2 border border-red-900/20">
+                                            <span class="text-red-400 text-sm font-bold uppercase">Overtime (-50)</span>
+                                            <input type="number" id="pen-time" class="w-16 bg-transparent border-none text-red-500 font-bold text-center" value="0" readonly>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <button id="btn-submit-score" class="w-full bg-blue-800 text-white font-bold py-4 rounded-xl shadow-lg opacity-50 pointer-events-none hover:bg-blue-900 transition">SIMPAN HASIL</button>
+                            <button id="btn-submit-score" class="w-full bg-white hover:bg-gray-200 text-black font-black py-5 uppercase tracking-widest shadow-lg opacity-50 pointer-events-none transition transform active:scale-95">
+                                Kunci & Simpan Nilai
+                            </button>
                         </div>
                     </div>
                 </section>
 
-                <!-- VIEW: PESERTA DASHBOARD -->
                 <section id="view-peserta-dashboard" class="view-section hide">
                     <div class="max-w-4xl mx-auto">
-                        <div class="bg-white p-6 rounded-xl shadow-lg border-t-4 border-blue-600 mb-6">
-                            <h1 class="text-2xl font-bold mb-2">Selamat Datang, <span id="dash-peserta-name"></span>!</h1>
-                            <p class="text-gray-600 text-sm">Informasi pendaftaran Lomba Baris-Berbaris Mu'allimin 2025.</p>
+                        <div class="bg-gray-900 border-l-8 border-cmd-red p-8 mb-8 relative overflow-hidden">
+                            <div class="absolute right-0 top-0 w-32 h-32 bg-cmd-red opacity-10 blur-[40px]"></div>
+                            <h1 class="text-3xl font-heading font-black text-white mb-2 uppercase">Selamat Datang, <span id="dash-peserta-name" class="text-cmd-red"></span></h1>
+                            <p class="text-gray-400">Pusat Informasi & Administrasi Tim.</p>
                         </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                            <div id="card-status" class="bg-white p-5 rounded-lg shadow border-l-4">
-                                <div class="text-xs text-gray-500 uppercase tracking-wider">Status</div>
-                                <div class="text-lg font-bold mt-1" id="val-status">BELUM LENGKAP</div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                            <div id="card-status" class="bg-gray-900 p-6 border border-gray-800">
+                                <div class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Status Verifikasi</div>
+                                <div class="text-xl font-bold mt-2 text-white" id="val-status">BELUM LENGKAP</div>
                             </div>
-                            <div class="bg-white p-5 rounded-lg shadow border-l-4 border-blue-500">
-                                <div class="text-xs text-gray-500 uppercase tracking-wider">Kategori</div>
-                                <div class="text-lg font-bold mt-1" id="val-level">-</div>
+                            <div class="bg-gray-900 p-6 border border-gray-800">
+                                <div class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Kategori</div>
+                                <div class="text-xl font-bold mt-2 text-cmd-gold" id="val-level">-</div>
                             </div>
-                            <div class="bg-white p-5 rounded-lg shadow border-l-4 border-purple-500">
-                                <div class="text-xs text-gray-500 uppercase tracking-wider">Deadline</div>
-                                <div class="text-lg font-bold mt-1">28 Juli 2025</div>
+                            <div class="bg-gray-900 p-6 border border-gray-800">
+                                <div class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Deadline</div>
+                                <div class="text-xl font-bold mt-2 text-white">28 Juli 2025</div>
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <!-- Info Pembayaran -->
-                            <div class="bg-blue-50 p-6 rounded-lg border border-blue-200">
-                                <h3 class="font-bold text-blue-900 mb-4 flex items-center gap-2"><i class="fa-solid fa-money-bill-wave"></i> Pembayaran</h3>
-                                <div class="space-y-3 text-sm text-blue-800">
-                                    <div class="flex justify-between border-b border-blue-200 pb-2">
-                                        <span>Biaya</span><span class="font-bold">Rp325.000,-</span>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div class="bg-black border border-gray-800 p-8">
+                                <h3 class="font-bold text-white mb-6 flex items-center gap-3 uppercase tracking-wider"><i class="fa-solid fa-money-bill-wave text-cmd-gold"></i> Pembayaran</h3>
+                                <div class="space-y-4 text-sm text-gray-400">
+                                    <div class="flex justify-between border-b border-gray-800 pb-3">
+                                        <span>Biaya Pendaftaran</span><span class="font-bold text-white text-lg">Rp325.000,-</span>
                                     </div>
-                                    <div>
-                                        <span class="block text-xs text-blue-600 mb-1">Bank BRI:</span>
-                                        <span class="text-xl font-mono font-bold bg-white px-2 py-1 rounded border">300701003561505</span>
-                                        <div class="mt-1 font-semibold">a.n. FALHAN ZUHDI MUBAROK</div>
+                                    <div class="bg-gray-900 p-4 border border-gray-800">
+                                        <span class="block text-xs text-blue-500 font-bold mb-2">BANK BRI</span>
+                                        <span class="text-2xl font-mono font-bold text-white tracking-widest">3007 0100 3561 505</span>
+                                        <div class="mt-2 text-xs font-bold text-gray-500">A.N. FALHAN ZUHDI MUBAROK</div>
                                     </div>
-                                    <div class="bg-yellow-100 text-yellow-800 p-2 rounded text-xs mt-2"><i class="fa-solid fa-triangle-exclamation"></i> Non-refundable.</div>
+                                    <p class="text-xs text-red-500 italic">* Biaya tidak dapat dikembalikan.</p>
                                 </div>
                             </div>
-                            <!-- Jadwal -->
-                            <div class="bg-gray-50 p-6 rounded-lg border border-gray-200">
-                                <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2"><i class="fa-solid fa-calendar-days"></i> Jadwal</h3>
-                                <ul class="space-y-3 text-sm text-gray-600">
-                                    <li class="flex gap-2"><i class="fa-solid fa-clock w-5 text-center mt-1"></i><div><strong>14-28 Juli:</strong> Daftar Daring</div></li>
-                                    <li class="flex gap-2"><i class="fa-solid fa-folder w-5 text-center mt-1"></i><div><strong>3 Agst:</strong> Berkas Fisik</div></li>
+                            <div class="bg-black border border-gray-800 p-8">
+                                <h3 class="font-bold text-white mb-6 flex items-center gap-3 uppercase tracking-wider"><i class="fa-solid fa-calendar-days text-cmd-red"></i> Timeline</h3>
+                                <ul class="space-y-4">
+                                    <li class="flex gap-4 items-start">
+                                        <div class="w-8 h-8 bg-gray-900 flex items-center justify-center text-xs font-bold text-gray-500">01</div>
+                                        <div><strong class="text-white block">14-28 Juli</strong><span class="text-xs text-gray-500">Pendaftaran Daring</span></div>
+                                    </li>
+                                    <li class="flex gap-4 items-start">
+                                        <div class="w-8 h-8 bg-gray-900 flex items-center justify-center text-xs font-bold text-gray-500">02</div>
+                                        <div><strong class="text-white block">3 Agustus</strong><span class="text-xs text-gray-500">Pengumpulan Berkas Fisik</span></div>
+                                    </li>
                                 </ul>
-                                <a href="https://lbbmuallimin.carrd.co/" target="_blank" class="mt-4 block text-center bg-gray-800 text-white py-2 rounded text-sm hover:bg-gray-900 transition">Pusat Informasi</a>
+                                <a href="https://lbbmuallimin.carrd.co/" target="_blank" class="mt-6 block text-center bg-gray-900 text-white py-3 text-xs font-bold uppercase hover:bg-cmd-red transition border border-gray-800 hover:border-cmd-red">Akses Juknis Lengkap</a>
                             </div>
                         </div>
                     </div>
                 </section>
 
-                <!-- VIEW: PESERTA DATA FORM -->
                 <section id="view-peserta-data" class="view-section hide">
                     <div class="max-w-4xl mx-auto">
-                        <h1 class="text-2xl font-bold mb-6">Data Sekolah & Peleton</h1>
-                        <div class="bg-white p-6 rounded-xl shadow-md">
-                            <form id="form-peserta-data">
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                                    <div class="space-y-4">
-                                        <div>
-                                            <label class="block text-sm font-semibold text-gray-700 mb-1">Tingkat Sekolah</label>
-                                            <select id="team-level" class="w-full p-2 border rounded bg-gray-50">
-                                                <option value="SD/MI">SD / MI</option>
-                                                <option value="SMP/MTs">SMP / MTs</option>
-                                            </select>
-                                        </div>
-                                        <div><label class="block text-sm font-semibold text-gray-700 mb-1">Nama Sekolah</label><input type="text" id="team-school" class="w-full p-2 border rounded"></div>
-                                        <div><label class="block text-sm font-semibold text-gray-700 mb-1">Nama Peleton</label><input type="text" id="team-name" class="w-full p-2 border rounded"></div>
-                                        <div><label class="block text-sm font-semibold text-gray-700 mb-1">Nama Danton</label><input type="text" id="team-danton" class="w-full p-2 border rounded"></div>
+                        <h1 class="text-3xl font-heading font-black text-white mb-8">DATA PELETON</h1>
+                        <form id="form-peserta-data" class="bg-gray-900 border border-gray-800 p-8">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                                <div class="space-y-6">
+                                    <div>
+                                        <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Tingkat</label>
+                                        <select id="team-level" class="w-full bg-black border border-gray-700 text-white p-3 focus:border-cmd-red outline-none">
+                                            <option value="SD/MI">SD / MI</option>
+                                            <option value="SMP/MTs">SMP / MTs</option>
+                                        </select>
                                     </div>
+                                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-2">Nama Sekolah</label><input type="text" id="team-school" class="w-full bg-black border border-gray-700 text-white p-3 focus:border-cmd-red outline-none"></div>
+                                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-2">Nama Peleton</label><input type="text" id="team-name" class="w-full bg-black border border-gray-700 text-white p-3 focus:border-cmd-red outline-none"></div>
+                                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-2">Nama Danton</label><input type="text" id="team-danton" class="w-full bg-black border border-gray-700 text-white p-3 focus:border-cmd-red outline-none"></div>
+                                </div>
+                                <div class="bg-black p-6 border border-gray-800 h-fit">
+                                    <h3 class="font-bold text-white uppercase mb-4 text-sm border-b border-gray-800 pb-2">Data Official</h3>
                                     <div class="space-y-4">
-                                        <div class="bg-gray-50 p-4 rounded border">
-                                            <h3 class="font-bold text-gray-700 text-sm mb-3">Data Official</h3>
-                                            <div class="mb-3"><label class="block text-xs font-semibold text-gray-600 mb-1">Nama Official 1</label><input type="text" id="team-off1" class="w-full p-2 border rounded text-sm"></div>
-                                            <div class="mb-3"><label class="block text-xs font-semibold text-gray-600 mb-1">No. HP / WA</label><input type="text" id="team-phone1" class="w-full p-2 border rounded text-sm"></div>
-                                            <div class="mb-3"><label class="block text-xs font-semibold text-gray-600 mb-1">Nama Official 2</label><input type="text" id="team-off2" class="w-full p-2 border rounded text-sm"></div>
-                                        </div>
+                                        <div><label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Official 1</label><input type="text" id="team-off1" class="w-full bg-gray-900 border border-gray-700 text-white p-2 text-sm focus:border-cmd-red outline-none"></div>
+                                        <div><label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">WhatsApp</label><input type="text" id="team-phone1" class="w-full bg-gray-900 border border-gray-700 text-white p-2 text-sm focus:border-cmd-red outline-none"></div>
+                                        <div><label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Official 2</label><input type="text" id="team-off2" class="w-full bg-gray-900 border border-gray-700 text-white p-2 text-sm focus:border-cmd-red outline-none"></div>
                                     </div>
                                 </div>
-                                <div class="flex justify-end">
-                                    <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-blue-700 shadow transition">Simpan Data</button>
-                                </div>
-                            </form>
-                        </div>
+                            </div>
+                            <div class="flex justify-end pt-6 border-t border-gray-800">
+                                <button type="submit" class="bg-cmd-red hover:bg-red-700 text-white px-8 py-3 font-bold uppercase tracking-wider transition">Simpan Perubahan</button>
+                            </div>
+                        </form>
                     </div>
                 </section>
 
-                <!-- VIEW: PESERTA DOCS -->
                 <section id="view-peserta-docs" class="view-section hide">
                     <div class="max-w-4xl mx-auto">
-                        <h1 class="text-2xl font-bold mb-4">Upload Dokumen</h1>
+                        <h1 class="text-3xl font-heading font-black text-white mb-8">DOKUMEN</h1>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="space-y-4">
-                                <!-- Bukti Bayar -->
-                                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-100">
-                                    <div class="flex justify-between items-start mb-2">
-                                        <div><h3 class="font-bold text-gray-800">1. Bukti Pembayaran</h3><p class="text-xs text-gray-500">.JPG / .PNG</p></div>
-                                        <div id="icon-doc-payment"><i class="fa-regular fa-circle text-gray-300 text-xl"></i></div>
+                            <div class="bg-gray-900 border border-gray-800 p-6 flex flex-col justify-between hover:border-gray-600 transition">
+                                <div>
+                                    <div class="flex justify-between items-start mb-4">
+                                        <div class="bg-gray-800 p-3 rounded"><i class="fa-solid fa-receipt text-2xl text-white"></i></div>
+                                        <div id="icon-doc-payment"><i class="fa-regular fa-circle text-gray-600 text-xl"></i></div>
                                     </div>
-                                    <div class="mt-4" id="action-doc-payment">
-                                        <button class="w-full bg-blue-600 text-white py-2 rounded text-sm hover:bg-blue-700">Upload</button>
-                                    </div>
+                                    <h3 class="font-bold text-white text-lg">Bukti Pembayaran</h3>
+                                    <p class="text-xs text-gray-500 mt-1 uppercase">Format: JPG/PNG (Max 2MB)</p>
                                 </div>
-                                <!-- Form B -->
-                                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-100">
-                                    <div class="flex justify-between items-start mb-2">
-                                        <div><h3 class="font-bold text-gray-800">2. Formulir B</h3><p class="text-xs text-gray-500">.DOCX (SEKOLAH_PELETON.docx)</p></div>
-                                        <div id="icon-doc-formB"><i class="fa-regular fa-circle text-gray-300 text-xl"></i></div>
-                                    </div>
-                                    <div class="mt-4" id="action-doc-formB">
-                                        <button class="w-full bg-blue-600 text-white py-2 rounded text-sm hover:bg-blue-700">Upload</button>
-                                    </div>
+                                <div class="mt-6" id="action-doc-payment">
+                                    <button class="w-full bg-white text-black font-bold py-2 uppercase text-xs hover:bg-gray-200">Upload File</button>
                                 </div>
                             </div>
-                            <div class="bg-yellow-50 p-6 rounded-xl border border-yellow-200 h-fit">
-                                <h3 class="font-bold text-yellow-800 mb-3"><i class="fa-solid fa-folder-open"></i> Berkas Fisik (3 Agst)</h3>
-                                <div class="bg-white p-3 rounded border border-yellow-300"><p class="font-bold text-gray-800">Warna Map: <span id="val-map-color" class="text-xl">BIRU</span></p></div>
+                            
+                            <div class="bg-gray-900 border border-gray-800 p-6 flex flex-col justify-between hover:border-gray-600 transition">
+                                <div>
+                                    <div class="flex justify-between items-start mb-4">
+                                        <div class="bg-gray-800 p-3 rounded"><i class="fa-solid fa-file-word text-2xl text-blue-400"></i></div>
+                                        <div id="icon-doc-formB"><i class="fa-regular fa-circle text-gray-600 text-xl"></i></div>
+                                    </div>
+                                    <h3 class="font-bold text-white text-lg">Formulir B</h3>
+                                    <p class="text-xs text-gray-500 mt-1 uppercase">Format: DOCX</p>
+                                </div>
+                                <div class="mt-6" id="action-doc-formB">
+                                    <button class="w-full bg-white text-black font-bold py-2 uppercase text-xs hover:bg-gray-200">Upload File</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-8 bg-black border border-cmd-gold p-6 flex items-center gap-4">
+                            <i class="fa-solid fa-folder-open text-3xl text-cmd-gold"></i>
+                            <div>
+                                <h3 class="font-bold text-white uppercase">Berkas Fisik</h3>
+                                <p class="text-sm text-gray-400">Wajib dibawa saat Technical Meeting. Warna Map: <span id="val-map-color" class="font-bold text-cmd-gold text-lg">BIRU</span></p>
                             </div>
                         </div>
                     </div>
                 </section>
 
-                <!-- VIEW: PESERTA JUKNIS -->
                 <section id="view-peserta-juknis" class="view-section hide">
-                    <div class="max-w-4xl mx-auto bg-white p-8 rounded-xl shadow-lg">
-                        <h1 class="text-3xl font-bold text-blue-900 mb-6 border-b pb-4">Petunjuk Teknis Lapangan</h1>
-                        <div class="space-y-6 text-gray-700">
-                            <section><h2 class="font-bold text-lg text-blue-800 mb-2">A. Definisi Istilah</h2><ul class="list-disc pl-5 space-y-1 text-sm"><li><strong>Clear Area:</strong> Hanya peleton, official, dan dokumentasi.</li><li><strong>Garis sebagai Dinding:</strong> Menginjak garis = Pelanggaran (-50).</li></ul></section>
-                            <section><h2 class="font-bold text-lg text-blue-800 mb-2">C. Prosedur Lapangan</h2><div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm"><div class="bg-gray-50 p-3 rounded border"><span class="font-bold block mb-1">Ukuran Lapangan</span><p>SD/MI: 25m x 14m</p><p>SMP/MTs: 26m x 15m</p></div><div class="bg-gray-50 p-3 rounded border"><span class="font-bold block mb-1">Durasi Maksimal</span><p>SD/MI: 8 Menit</p><p>SMP/MTs: 13 Menit</p></div></div></section>
-                            <section><h2 class="font-bold text-lg text-blue-800 mb-2">E. Aspek Penilaian</h2><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div class="border p-4 rounded"><h3 class="font-bold text-center border-b pb-2 mb-2">Peleton</h3><div class="flex justify-between text-sm"><span>Teknik PBB</span> <span>70%</span></div><div class="flex justify-between text-sm"><span>Kekompakan</span> <span>30%</span></div></div><div class="border p-4 rounded"><h3 class="font-bold text-center border-b pb-2 mb-2">Komandan</h3><div class="flex justify-between text-sm"><span>Materi</span> <span>35%</span></div><div class="flex justify-between text-sm"><span>Suara</span> <span>25%</span></div></div></div></section>
-                            <section><h2 class="font-bold text-lg text-red-700 mb-2">F. Sanksi</h2><ul class="text-sm space-y-2"><li class="flex justify-between border-b border-dashed pb-1"><span>Tidak Ikut Upacara</span> <span class="font-bold text-red-600">-150</span></li><li class="flex justify-between border-b border-dashed pb-1"><span>Injak Garis</span> <span class="font-bold text-red-600">-50 / kejadian</span></li></ul></section>
+                    <div class="max-w-4xl mx-auto bg-gray-900 border border-gray-800 p-10">
+                        <h1 class="text-3xl font-heading font-black text-white mb-8 border-b border-gray-800 pb-4">JUKNIS LAPANGAN</h1>
+                        <div class="space-y-8 text-gray-400">
+                            <div>
+                                <h2 class="text-xl font-bold text-white mb-2">A. Area Lomba</h2>
+                                <p>Area steril hanya untuk Peleton, Danton, dan Official terdaftar. Pelanggaran area dikenakan sanksi diskualifikasi jika mengganggu jalannya lomba.</p>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="bg-black p-4 border border-gray-800">
+                                    <span class="block text-xs font-bold text-gray-500 uppercase">Dimensi SD/MI</span>
+                                    <span class="text-white font-mono text-xl">25m x 14m</span>
+                                </div>
+                                <div class="bg-black p-4 border border-gray-800">
+                                    <span class="block text-xs font-bold text-gray-500 uppercase">Dimensi SMP/MTs</span>
+                                    <span class="text-white font-mono text-xl">26m x 15m</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </section>
-
-                <!-- VIEW: PESERTA SCHEDULE -->
-                <section id="view-peserta-schedule" class="view-section hide">
-                    <div class="max-w-4xl mx-auto">
-                        <h1 class="text-2xl font-bold mb-6">Pengumuman</h1>
-                        <div class="bg-white p-8 rounded-xl shadow text-center">
-                            <i class="fa-solid fa-bullhorn text-4xl text-gray-300 mb-4"></i>
-                            <h2 class="text-lg font-bold text-gray-700">Belum ada pengumuman resmi.</h2>
+                
+                 <section id="view-peserta-schedule" class="view-section hide">
+                    <div class="max-w-4xl mx-auto text-center py-20">
+                        <div class="inline-block p-6 rounded-full bg-gray-900 border border-gray-800 mb-6">
+                            <i class="fa-solid fa-bullhorn text-4xl text-gray-600"></i>
                         </div>
+                        <h1 class="text-2xl font-bold text-white uppercase">Tidak Ada Pengumuman</h1>
+                        <p class="text-gray-500 mt-2">Cek kembali secara berkala untuk update terbaru.</p>
                     </div>
                 </section>
 
@@ -459,13 +500,66 @@
         </div>
     </div>
 
-    <!-- TOAST NOTIFICATION -->
-    <div id="toast" class="fixed top-5 right-5 bg-white border-l-4 border-green-500 shadow-lg rounded-r px-4 py-3 transform translate-x-full transition-transform duration-300 z-50 flex items-center gap-3">
-        <i id="toast-icon" class="fa-solid fa-info-circle text-green-500"></i>
-        <div id="toast-msg" class="text-sm font-medium text-gray-700">Notification</div>
+    <div id="toast" class="fixed top-5 right-5 bg-black border border-gray-800 text-white shadow-2xl rounded px-6 py-4 transform translate-x-full transition-transform duration-300 z-50 flex items-center gap-4">
+        <i id="toast-icon" class="fa-solid fa-check-circle text-green-500 text-xl"></i>
+        <div id="toast-msg" class="text-sm font-bold uppercase tracking-wide">Notification</div>
     </div>
 
-    <!-- LINK TO LOGIC -->
     <script src="logic.js"></script>
+    
+    <script>
+        // Override renderSidebar di logic.js agar styling sesuai tema baru
+        // Kita menunggu logic.js load dulu, lalu timpa fungsinya (Monkey Patching sederhana untuk UI)
+        window.addEventListener('load', () => {
+             const originalRender = window.renderSidebar;
+             if(originalRender) {
+                 window.renderSidebar = function() {
+                     const menu = document.getElementById('sidebar-menu');
+                     menu.innerHTML = '';
+                     
+                     const links = [];
+                     // Re-define links based on user role logic (sama seperti logic.js asli)
+                     if (currentUser.role === 'admin') {
+                         links.push({ id: 'admin-dashboard', icon: 'fa-chart-line', label: 'DASHBOARD' });
+                         links.push({ id: 'admin-teams', icon: 'fa-users', label: 'DATA PESERTA' });
+                     } else if (currentUser.role === 'panitia') {
+                         links.push({ id: 'panitia-verification', icon: 'fa-clipboard-check', label: 'VERIFIKASI' });
+                         links.push({ id: 'panitia-live', icon: 'fa-stopwatch', label: 'LIVE SCORING' });
+                     } else if (currentUser.role === 'peserta') {
+                         links.push({ id: 'peserta-dashboard', icon: 'fa-info-circle', label: 'INFO TIM' });
+                         links.push({ id: 'peserta-juknis', icon: 'fa-book-open', label: 'JUKNIS' });
+                         links.push({ id: 'peserta-data', icon: 'fa-id-card', label: 'DATA PELETON' });
+                         links.push({ id: 'peserta-docs', icon: 'fa-file-upload', label: 'DOKUMEN' });
+                         links.push({ id: 'peserta-schedule', icon: 'fa-bullhorn', label: 'PENGUMUMAN' });
+                     }
+
+                     links.forEach(link => {
+                         const btn = document.createElement('button');
+                         // Style Baru: Hitam/Merah Hover
+                         btn.className = 'sidebar-link w-full text-left px-6 py-4 text-gray-500 hover:text-white hover:bg-gray-900 transition flex items-center gap-4 text-sm font-bold uppercase tracking-wider border-l-4 border-transparent';
+                         btn.onclick = () => {
+                             // Remove active from all
+                             document.querySelectorAll('.sidebar-link').forEach(b => {
+                                 b.classList.remove('active', 'text-white', 'bg-gray-900', 'border-cmd-red');
+                                 b.classList.add('text-gray-500', 'border-transparent');
+                             });
+                             // Add active to current
+                             btn.classList.add('active', 'text-white', 'bg-gray-900', 'border-cmd-red');
+                             btn.classList.remove('text-gray-500', 'border-transparent');
+                             
+                             navigate(link.id);
+                         };
+                         btn.innerHTML = `<i class="fa-solid ${link.icon} w-5 text-center"></i> ${link.label}`;
+                         menu.appendChild(btn);
+                     });
+                     
+                     // Set first item active default visually
+                     if(menu.firstChild) menu.firstChild.click();
+                 }
+                 // Re-run render if user is already logged in
+                 if(currentUser) window.renderSidebar();
+             }
+        });
+    </script>
 </body>
 </html>
