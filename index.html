@@ -119,15 +119,36 @@
 </nav>
 
     <!-- MOBILE MENU OVERLAY -->
-    <div id="mobile-menu" class="fixed inset-0 z-40 bg-slate-900/95 backdrop-blur-sm pt-24 px-6 hidden flex-col gap-6 transition-opacity duration-300">
-        <a href="#home" class="mobile-link text-white text-xl font-bold border-b border-white/10 pb-4 text-left">Beranda</a>
-        <a href="#about" class="mobile-link text-white text-xl font-bold border-b border-white/10 pb-4 text-left">Tentang</a>
-        <a href="#registration" class="mobile-link text-white text-xl font-bold border-b border-white/10 pb-4 text-left">Pendaftaran</a>
-        <a href="#rules" class="mobile-link text-white text-xl font-bold border-b border-white/10 pb-4 text-left">Juknis & Materi</a>
-        <a href="#downloads" class="mobile-link text-white text-xl font-bold border-b border-white/10 pb-4 text-left">Unduhan</a>
-        <a href="#contact" class="mobile-link text-white text-xl font-bold border-b border-white/10 pb-4 text-left">Kontak</a>
-        <a href="#registration" class="mobile-link w-full py-4 bg-red-600 text-white font-bold rounded-lg mt-4 text-center">Daftar Sekarang</a>
-    </div>
+    <div id="mobile-menu" class="fixed inset-0 z-40 bg-slate-900/95 backdrop-blur-sm pt-24 px-6 hidden flex-col gap-4 transition-opacity duration-300 overflow-y-auto">
+    
+    <a href="#home" class="mobile-link flex items-center gap-4 text-slate-300 text-lg font-bold border-b border-white/10 pb-4 hover:text-white transition-colors">
+        <i data-lucide="home" class="text-red-500"></i> Beranda
+    </a>
+    
+    <a href="#about" class="mobile-link flex items-center gap-4 text-slate-300 text-lg font-bold border-b border-white/10 pb-4 hover:text-white transition-colors">
+        <i data-lucide="info" class="text-red-500"></i> Tentang
+    </a>
+    
+    <a href="#registration" class="mobile-link flex items-center gap-4 text-slate-300 text-lg font-bold border-b border-white/10 pb-4 hover:text-white transition-colors">
+        <i data-lucide="clipboard-list" class="text-red-500"></i> Pendaftaran
+    </a>
+    
+    <a href="#rules" class="mobile-link flex items-center gap-4 text-slate-300 text-lg font-bold border-b border-white/10 pb-4 hover:text-white transition-colors">
+        <i data-lucide="book-open" class="text-red-500"></i> Juknis & Materi
+    </a>
+    
+    <a href="#downloads" class="mobile-link flex items-center gap-4 text-slate-300 text-lg font-bold border-b border-white/10 pb-4 hover:text-white transition-colors">
+        <i data-lucide="download" class="text-red-500"></i> Unduhan
+    </a>
+    
+    <a href="#contact" class="mobile-link flex items-center gap-4 text-slate-300 text-lg font-bold border-b border-white/10 pb-4 hover:text-white transition-colors">
+        <i data-lucide="phone" class="text-red-500"></i> Kontak
+    </a>
+
+    <a href="#registration" class="mobile-link w-full py-4 bg-gradient-to-r from-red-600 to-red-500 text-white font-bold rounded-xl mt-4 text-center shadow-lg shadow-red-900/20 flex justify-center items-center gap-2">
+        Daftar Sekarang <i data-lucide="arrow-right" width="20"></i>
+    </a>
+</div>
 
     <!-- MAIN CONTENT -->
     <main>
@@ -1239,7 +1260,7 @@
 </footer>
 
     <!-- FAB WhatsApp -->
-    <a href="#" class="fixed bottom-6 right-6 z-40 bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-lg shadow-green-500/40 transition-transform hover:scale-110 flex items-center justify-center">
+    <a href="#" class="fixed bottom-6 right-6 z-40 bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-lg shadow-green-500/40 transition-all duration-300 ease-in-out hover:scale-110 flex items-center justify-center">
         <i data-lucide="phone" width="24" height="24"></i>
     </a>
 
