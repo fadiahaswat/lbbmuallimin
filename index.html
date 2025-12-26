@@ -56,33 +56,64 @@
 <body class="bg-white text-slate-900 selection:bg-red-200">
 
     <!-- NAVIGATION -->
-    <nav id="navbar" class="fixed top-0 w-full z-50 transition-all duration-300 bg-transparent py-5">
+    <nav id="navbar" class="fixed top-0 w-full z-50 transition-all duration-300 py-4 border-b border-transparent">
     <div class="container mx-auto px-6 flex justify-between items-center">
-        <a href="#home" class="group flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-red-500 rounded-lg p-1 transition-opacity hover:opacity-90">
-            <div class="w-10 h-10 bg-red-700 rounded-lg flex items-center justify-center text-white font-bold text-xl shadow-lg transition-transform group-hover:scale-105">
-                M
+        
+        <a href="#home" class="group flex items-center gap-3 focus:outline-none rounded-xl p-1 transition-all">
+            <div class="w-10 h-10 bg-gradient-to-br from-red-600 to-red-800 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-red-900/20 group-hover:shadow-red-600/40 group-hover:scale-105 transition-all duration-300 relative overflow-hidden border border-white/10">
+                <div class="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <span class="relative z-10">M</span>
             </div>
-            <div id="nav-logo-text" class="font-bold text-xl leading-none text-white transition-colors">
-                LBB <span class="text-red-500">2025</span>
-                <span class="block text-xs font-normal opacity-80">Mu'allimin Yogyakarta</span>
+            
+            <div id="nav-logo-text" class="flex flex-col justify-center transition-colors text-white">
+                <span class="font-black text-xl leading-none tracking-tight">
+                    LBB <span class="text-red-500">2025</span>
+                </span>
+                <span class="text-[10px] font-medium opacity-80 uppercase tracking-widest leading-none mt-0.5">
+                    Mu'allimin Yogyakarta
+                </span>
             </div>
         </a>
 
-        <div class="hidden lg:flex items-center gap-8">
-            <a href="#home" class="nav-link text-sm font-semibold uppercase tracking-wide text-slate-200 hover:text-red-500 transition-colors py-2">Beranda</a>
-            <a href="#about" class="nav-link text-sm font-semibold uppercase tracking-wide text-slate-200 hover:text-red-500 transition-colors py-2">Tentang</a>
-            <a href="#registration" class="nav-link text-sm font-semibold uppercase tracking-wide text-slate-200 hover:text-red-500 transition-colors py-2">Pendaftaran</a>
-            <a href="#rules" class="nav-link text-sm font-semibold uppercase tracking-wide text-slate-200 hover:text-red-500 transition-colors py-2">Juknis</a>
-            <a href="#downloads" class="nav-link text-sm font-semibold uppercase tracking-wide text-slate-200 hover:text-red-500 transition-colors py-2">Unduhan</a>
-            <a href="#contact" class="nav-link text-sm font-semibold uppercase tracking-wide text-slate-200 hover:text-red-500 transition-colors py-2">Kontak</a>
+        <div class="hidden lg:flex items-center gap-1">
+            <div class="flex items-center gap-6 mr-6 bg-white/5 backdrop-blur-sm px-6 py-2 rounded-full border border-white/10">
+                <a href="#home" class="nav-link relative text-sm font-bold uppercase tracking-wide text-slate-200 hover:text-white transition-colors py-2 group">
+                    Beranda
+                    <span class="absolute bottom-1 left-0 w-0 h-0.5 bg-red-500 transition-all duration-300 group-hover:w-full"></span>
+                </a>
+                <a href="#about" class="nav-link relative text-sm font-bold uppercase tracking-wide text-slate-200 hover:text-white transition-colors py-2 group">
+                    Tentang
+                    <span class="absolute bottom-1 left-0 w-0 h-0.5 bg-red-500 transition-all duration-300 group-hover:w-full"></span>
+                </a>
+                <a href="#registration" class="nav-link relative text-sm font-bold uppercase tracking-wide text-slate-200 hover:text-white transition-colors py-2 group">
+                    Pendaftaran
+                    <span class="absolute bottom-1 left-0 w-0 h-0.5 bg-red-500 transition-all duration-300 group-hover:w-full"></span>
+                </a>
+                <a href="#rules" class="nav-link relative text-sm font-bold uppercase tracking-wide text-slate-200 hover:text-white transition-colors py-2 group">
+                    Juknis
+                    <span class="absolute bottom-1 left-0 w-0 h-0.5 bg-red-500 transition-all duration-300 group-hover:w-full"></span>
+                </a>
+                <a href="#downloads" class="nav-link relative text-sm font-bold uppercase tracking-wide text-slate-200 hover:text-white transition-colors py-2 group">
+                    Unduhan
+                    <span class="absolute bottom-1 left-0 w-0 h-0.5 bg-red-500 transition-all duration-300 group-hover:w-full"></span>
+                </a>
+                <a href="#contact" class="nav-link relative text-sm font-bold uppercase tracking-wide text-slate-200 hover:text-white transition-colors py-2 group">
+                    Kontak
+                    <span class="absolute bottom-1 left-0 w-0 h-0.5 bg-red-500 transition-all duration-300 group-hover:w-full"></span>
+                </a>
+            </div>
             
-            <a href="#registration" class="px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-md font-bold transition-all shadow-lg shadow-red-600/20 hover:-translate-y-0.5">
-                Daftar
+            <a href="#registration" class="group relative px-6 py-2.5 bg-red-600 text-white rounded-full font-bold transition-all shadow-lg shadow-red-600/30 hover:shadow-red-600/50 hover:-translate-y-0.5 overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-r from-red-600 to-red-500 opacity-100 group-hover:opacity-0 transition-opacity"></div>
+                <div class="absolute inset-0 bg-gradient-to-r from-red-700 to-red-600 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <span class="relative flex items-center gap-2">
+                    Daftar <i data-lucide="arrow-right" width="16" class="transition-transform group-hover:translate-x-1"></i>
+                </span>
             </a>
         </div>
 
-        <button id="mobile-menu-btn" aria-label="Buka Menu Navigasi" class="lg:hidden text-white transition-colors p-2 -mr-2 rounded-md hover:bg-white/10 active:bg-white/20 focus:outline-none focus:ring-2 focus:ring-red-500">
-            <i data-lucide="menu" width="32" height="32"></i>
+        <button id="mobile-menu-btn" aria-label="Buka Menu Navigasi" class="lg:hidden text-white transition-colors p-2 rounded-lg hover:bg-white/10 active:bg-white/20 focus:outline-none focus:ring-2 focus:ring-red-500">
+            <i data-lucide="menu" width="28" height="28"></i>
         </button>
     </div>
 </nav>
