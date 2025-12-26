@@ -1,425 +1,746 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem LBB Mu'allimin 2025 - Professional Edition</title>
+    <title>Lomba Baris-Berbaris Mu'allimin 2025</title>
+    <meta name="description" content="Website Resmi Lomba Baris-Berbaris Mu'allimin 2025 Tingkat SD/MI & SMP/MTs Se-DIY.">
     
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        heading: ['Outfit', 'sans-serif'],
-                        mono: ['JetBrains Mono', 'monospace'], 
-                    },
-                    colors: {
-                        slate: { 850: '#1e293b', 900: '#0f172a', 950: '#020617' },
-                        primary: { 500: '#f43f5e', 600: '#e11d48', 900: '#881337' },
-                        gold: { 400: '#fbbf24', 500: '#f59e0b' }
-                    },
-                    backgroundImage: {
-                        'grid-pattern': "linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px)",
-                    }
-                }
-            }
-        }
-    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 
     <style>
-        .hide { display: none !important; }
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #475569; }
-        .glass-panel {
-            background: rgba(30, 41, 59, 0.75);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        body { font-family: 'Inter', sans-serif; }
+        
+        /* Custom Scrollbar for Material List */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
         }
-        .view-section { animation: slideUpFade 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        @keyframes slideUpFade { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .input-field:focus { outline: none; border-color: #f43f5e; box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.25); }
-        .timer-glow { text-shadow: 0 0 30px rgba(255, 255, 255, 0.15); }
-        .bg-tech-grid {
-            background-size: 40px 40px;
-            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-                              linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9; 
         }
-        /* Custom Tab Style */
-        .tab-btn.active { background-color: #f43f5e; color: white; border-color: #f43f5e; }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1; 
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; 
+        }
+
+        /* Accordion Animation */
+        .accordion-content {
+            transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+        }
+        .accordion-content.active {
+            max-height: 500px; /* Arbitrary large height */
+            opacity: 1;
+        }
+        
+        .rotate-icon {
+            transition: transform 0.3s ease;
+        }
+        .rotate-180 {
+            transform: rotate(180deg);
+        }
     </style>
 </head>
-<body class="bg-slate-900 text-slate-200 h-screen overflow-hidden flex flex-col font-sans selection:bg-primary-500 selection:text-white bg-tech-grid">
+<body class="bg-white text-slate-900 selection:bg-red-200">
 
-    <div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950">
-        <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1557683316-973673baf926?q=80&w=2000')] bg-cover bg-center opacity-20 mix-blend-overlay"></div>
-        <div class="absolute inset-0 bg-gradient-to-tr from-slate-950 via-slate-900 to-slate-900/90"></div>
-        <div class="relative glass-panel p-8 md:p-12 rounded-2xl shadow-2xl w-full max-w-sm mx-4 border-t border-white/10">
-            <div class="text-center mb-10">
-                <div class="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-primary-600 to-primary-900 shadow-xl shadow-primary-900/40 mb-6 transform rotate-3 border border-white/10">
-                    <i class="fa-solid fa-medal text-4xl text-white drop-shadow-md"></i>
+    <!-- NAVIGATION -->
+    <nav id="navbar" class="fixed top-0 w-full z-50 transition-all duration-300 bg-transparent py-5">
+        <div class="container mx-auto px-6 flex justify-between items-center">
+            <!-- Logo -->
+            <div class="flex items-center gap-2">
+                <div class="w-10 h-10 bg-red-700 rounded-lg flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                    M
                 </div>
-                <h1 class="text-3xl font-heading font-black text-white tracking-wide leading-tight">LBB MU'ALLIMIN <span class="text-primary-500">2025</span></h1>
-                <div class="h-1 w-20 bg-primary-600 mx-auto mt-3 rounded-full"></div>
-                <p class="text-slate-400 text-xs mt-3 uppercase tracking-[0.2em] font-bold">Official Scoring System</p>
-            </div>
-            <div class="space-y-5">
-                <div class="group">
-                    <label class="block text-xs font-bold text-slate-400 uppercase mb-2 ml-1">ID Pengguna</label>
-                    <div class="relative">
-                        <i class="fa-solid fa-user absolute left-4 top-4 text-slate-500"></i>
-                        <input type="text" id="login-user" class="input-field w-full pl-12 pr-4 py-3.5 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder-slate-600 transition-all font-medium" placeholder="Masukkan Username">
-                    </div>
-                </div>
-                <div class="group">
-                    <label class="block text-xs font-bold text-slate-400 uppercase mb-2 ml-1">Kata Sandi</label>
-                    <div class="relative">
-                        <i class="fa-solid fa-key absolute left-4 top-4 text-slate-500"></i>
-                        <input type="password" id="login-pass" class="input-field w-full pl-12 pr-4 py-3.5 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder-slate-600 transition-all font-medium" placeholder="••••••••">
-                    </div>
-                </div>
-                <button id="btn-login" class="w-full bg-gradient-to-r from-primary-600 to-primary-500 hover:from-primary-500 hover:to-primary-400 text-white font-bold py-4 rounded-xl shadow-lg shadow-primary-600/20 transition-all transform active:scale-[0.98] mt-4 uppercase tracking-wide text-sm">Masuk Sistem</button>
-            </div>
-            <div class="mt-10 pt-6 border-t border-white/5">
-                <p class="text-[10px] text-center text-slate-500 font-bold uppercase mb-3 tracking-wider">Akses Cepat (Simulasi)</p>
-                <div class="flex justify-center gap-2">
-                    <button class="sim-login-btn px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-[10px] font-bold text-slate-300 uppercase transition" data-user="admin" data-pass="admin">Admin</button>
-                    <button class="sim-login-btn px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-[10px] font-bold text-slate-300 uppercase transition" data-user="panitia" data-pass="panitia">Panitia</button>
-                    <button class="sim-login-btn px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-[10px] font-bold text-slate-300 uppercase transition" data-user="peserta" data-pass="peserta">Peserta</button>
+                <div id="nav-logo-text" class="font-bold text-xl leading-none text-white transition-colors">
+                    LBB <span class="text-red-500">2025</span>
+                    <span class="block text-xs font-normal opacity-80">Mu'allimin Yogyakarta</span>
                 </div>
             </div>
-        </div>
-    </div>
-    
-    <div id="dashboard-layout" class="flex h-screen hide">
-        <aside class="w-72 bg-slate-900 border-r border-slate-800/60 flex flex-col z-20 hidden md:flex shadow-2xl">
-            <div class="p-8 border-b border-slate-800/60 flex items-center gap-4">
-                <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-primary-600 to-primary-800 flex items-center justify-center text-white font-bold shadow-lg text-sm">LM</div>
-                <div>
-                    <h2 class="font-heading font-bold text-xl text-white leading-none tracking-tight">LBB 2025</h2>
-                    <span id="role-badge" class="text-[10px] text-primary-400 font-bold uppercase tracking-widest mt-1 block">Role</span>
-                </div>
-            </div>
-            <nav id="sidebar-menu" class="flex-1 py-6 px-4 space-y-2 overflow-y-auto"></nav>
-            <div class="p-6 border-t border-slate-800/60">
-                <button id="btn-logout" class="flex items-center justify-center gap-3 text-slate-400 hover:text-white hover:bg-slate-800 w-full px-4 py-3 rounded-xl transition-all text-sm font-bold border border-transparent hover:border-slate-700">
-                    <i class="fa-solid fa-arrow-right-from-bracket"></i> Keluar
-                </button>
-            </div>
-        </aside>
 
-        <div class="flex-1 flex flex-col min-w-0 overflow-hidden relative">
-            <header class="bg-slate-900/90 backdrop-blur-md border-b border-slate-800 text-white p-4 flex justify-between items-center md:hidden sticky top-0 z-30">
-                <div class="flex items-center gap-3">
-                    <button id="btn-mobile-menu" class="text-slate-300 hover:text-white p-2"><i class="fa-solid fa-bars text-xl"></i></button>
-                    <span class="font-heading font-bold text-lg">LBB 2025</span>
-                </div>
-                <button id="btn-logout-mobile" class="text-slate-400 p-2"><i class="fa-solid fa-power-off"></i></button>
-            </header>
-            <div id="mobile-overlay" class="fixed inset-0 bg-slate-950/80 z-20 hidden md:hidden backdrop-blur-sm"></div>
-
-            <main id="main-content" class="flex-1 overflow-auto p-4 sm:p-8 lg:p-10 relative scroll-smooth">
+            <!-- Desktop Menu -->
+            <div class="hidden lg:flex items-center gap-8">
+                <a href="#home" class="nav-link text-sm font-semibold uppercase tracking-wide text-slate-200 hover:text-red-500 transition-colors">Beranda</a>
+                <a href="#about" class="nav-link text-sm font-semibold uppercase tracking-wide text-slate-200 hover:text-red-500 transition-colors">Tentang</a>
+                <a href="#registration" class="nav-link text-sm font-semibold uppercase tracking-wide text-slate-200 hover:text-red-500 transition-colors">Pendaftaran</a>
+                <a href="#rules" class="nav-link text-sm font-semibold uppercase tracking-wide text-slate-200 hover:text-red-500 transition-colors">Juknis</a>
+                <a href="#downloads" class="nav-link text-sm font-semibold uppercase tracking-wide text-slate-200 hover:text-red-500 transition-colors">Unduhan</a>
+                <a href="#contact" class="nav-link text-sm font-semibold uppercase tracking-wide text-slate-200 hover:text-red-500 transition-colors">Kontak</a>
                 
-                <section id="view-admin-dashboard" class="view-section hide">
-                    <div class="mb-10 border-b border-slate-800 pb-6"><h1 class="text-3xl font-heading font-bold text-white mb-2">Dashboard Overview</h1><p class="text-slate-400">Ringkasan statistik kompetisi.</p></div>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-                        <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-lg relative overflow-hidden"><i class="fa-solid fa-users text-4xl text-primary-500 mb-4"></i><p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Total Tim</p><p class="text-4xl font-heading font-bold text-white" id="admin-total-teams">0</p></div>
+                <a href="#registration" class="px-5 py-2 bg-red-600 hover:bg-red-700 text-white rounded font-bold transition-all shadow-lg shadow-red-600/20">
+                    Daftar
+                </a>
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <button id="mobile-menu-btn" class="lg:hidden text-white transition-colors">
+                <i data-lucide="menu" width="28" height="28"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- MOBILE MENU OVERLAY -->
+    <div id="mobile-menu" class="fixed inset-0 z-40 bg-slate-900/95 backdrop-blur-sm pt-24 px-6 hidden flex-col gap-6 transition-opacity duration-300">
+        <a href="#home" class="mobile-link text-white text-xl font-bold border-b border-white/10 pb-4 text-left">Beranda</a>
+        <a href="#about" class="mobile-link text-white text-xl font-bold border-b border-white/10 pb-4 text-left">Tentang</a>
+        <a href="#registration" class="mobile-link text-white text-xl font-bold border-b border-white/10 pb-4 text-left">Pendaftaran</a>
+        <a href="#rules" class="mobile-link text-white text-xl font-bold border-b border-white/10 pb-4 text-left">Juknis & Materi</a>
+        <a href="#downloads" class="mobile-link text-white text-xl font-bold border-b border-white/10 pb-4 text-left">Unduhan</a>
+        <a href="#contact" class="mobile-link text-white text-xl font-bold border-b border-white/10 pb-4 text-left">Kontak</a>
+        <a href="#registration" class="mobile-link w-full py-4 bg-red-600 text-white font-bold rounded-lg mt-4 text-center">Daftar Sekarang</a>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <main>
+        <!-- HERO SECTION -->
+        <section id="home" class="relative bg-slate-900 text-white py-20 lg:py-32 overflow-hidden">
+            <!-- Abstract Background -->
+            <div class="absolute top-0 right-0 w-1/2 h-full bg-red-700 opacity-10 skew-x-12 transform origin-top-right"></div>
+            <div class="absolute bottom-0 left-0 w-1/3 h-full bg-blue-700 opacity-10 -skew-x-12 transform origin-bottom-left"></div>
+            
+            <div class="container mx-auto px-6 relative z-10 text-center">
+                <div class="inline-block px-4 py-1 bg-red-600 rounded-full text-xs font-bold tracking-wider mb-6 animate-pulse">
+                    OPEN REGISTRATION: 14 - 28 JULI 2025
+                </div>
+                <h1 class="text-4xl md:text-6xl font-extrabold mb-4 leading-tight">
+                    LOMBA BARIS–BERBARIS <br />
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-white">
+                        MU’ALLIMIN 2025
+                    </span>
+                </h1>
+                <p class="text-lg md:text-xl text-slate-300 mb-8 max-w-2xl mx-auto">
+                    Tingkat SD/MI & SMP/MTs Se-DIY. Tunjukkan ketangkasan, disiplin, dan semangat juang peleton terbaikmu!
+                </p>
+                
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                    <a href="#registration" class="px-8 py-4 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg shadow-lg hover:shadow-red-500/30 transition-all flex items-center gap-2 w-full sm:w-auto justify-center">
+                        Daftar Sekarang <i data-lucide="external-link" width="18"></i>
+                    </a>
+                    <a href="#downloads" class="px-8 py-4 bg-transparent border-2 border-white hover:bg-white/10 text-white font-bold rounded-lg transition-all flex items-center gap-2 w-full sm:w-auto justify-center">
+                        Unduh Juknis <i data-lucide="download" width="18"></i>
+                    </a>
+                </div>
+
+                <!-- Quick Info Bar -->
+                <div class="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+                    <div class="bg-white/10 backdrop-blur-md p-4 rounded-lg border border-white/20">
+                        <div class="flex justify-center mb-2 text-red-400"><i data-lucide="calendar"></i></div>
+                        <p class="font-bold">7 September 2025</p>
+                        <p class="text-xs text-slate-400">Waktu Pelaksanaan</p>
                     </div>
-                    <button id="btn-add-dummy" class="bg-white hover:bg-slate-200 text-slate-900 px-6 py-3 rounded-xl font-bold text-sm shadow-lg transition flex items-center gap-3"><i class="fa-solid fa-wand-magic-sparkles"></i> Generate Data Dummy</button>
-                </section>
+                    <div class="bg-white/10 backdrop-blur-md p-4 rounded-lg border border-white/20">
+                        <div class="flex justify-center mb-2 text-red-400"><i data-lucide="map-pin"></i></div>
+                        <p class="font-bold">Kampus Terpadu</p>
+                        <p class="text-xs text-slate-400">Madrasah Mu'allimin</p>
+                    </div>
+                    <div class="bg-white/10 backdrop-blur-md p-4 rounded-lg border border-white/20">
+                        <div class="flex justify-center mb-2 text-red-400"><i data-lucide="dollar-sign"></i></div>
+                        <p class="font-bold">Rp325.000</p>
+                        <p class="text-xs text-slate-400">Per Peleton</p>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-                <section id="view-admin-teams" class="view-section hide">
-                    <h1 class="text-3xl font-heading font-bold text-white mb-8">Database Peserta</h1>
-                    <div class="bg-slate-800/50 rounded-2xl border border-slate-700 overflow-hidden shadow-xl backdrop-blur-sm"><table class="w-full text-sm text-left text-slate-300"><thead class="bg-slate-900/80 text-slate-400 uppercase font-bold text-xs tracking-wider border-b border-slate-700"><tr><th class="p-5">Tim & Sekolah</th><th class="p-5">Kontak</th><th class="p-5">Status</th></tr></thead><tbody id="admin-teams-list" class="divide-y divide-slate-700/50"></tbody></table></div>
-                </section>
-
-                <section id="view-panitia-verification" class="view-section hide">
-                    <h1 class="text-3xl font-heading font-bold text-white mb-8">Antrean Verifikasi</h1>
-                    <div id="verification-list" class="grid gap-4"></div>
-                </section>
-
-                <section id="view-panitia-live" class="view-section hide h-full">
-                    <div class="flex flex-col lg:flex-row gap-8 h-full">
-                        <div class="lg:w-2/3 flex flex-col gap-6">
-                            <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-md">
-                                <label class="block text-xs font-bold text-slate-400 uppercase mb-3 tracking-wider">Pilih Peleton</label>
-                                <select id="live-team-select" class="w-full pl-4 pr-4 py-3 bg-slate-900 border border-slate-600 rounded-xl text-white outline-none"><option value="">-- Pilih --</option></select>
-                            </div>
-                            <div class="bg-slate-850 rounded-3xl border border-slate-700 p-12 text-center relative shadow-2xl">
-                                <div class="flex justify-between items-center mb-8 relative z-10"><span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Live Stage</span><span id="timer-limit-label" class="bg-slate-800 px-4 py-1.5 rounded-full text-xs font-bold text-gold-400 border border-slate-700">Limit: -</span></div>
-                                <div class="relative py-4 mb-8">
-                                    <div id="timer-display" class="text-8xl md:text-9xl font-mono font-bold text-white tracking-tighter leading-none timer-glow">00:00</div>
-                                    <div class="w-full h-4 bg-slate-800 rounded-full mt-10 overflow-hidden border border-slate-700/50"><div id="timer-progress" class="h-full bg-blue-500 w-0 transition-all duration-1000"></div></div>
+        <!-- ABOUT SECTION -->
+        <section id="about" class="py-16 bg-white">
+            <div class="container mx-auto px-6">
+                <div class="grid md:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <div class="mb-8 text-center md:text-left">
+                            <h2 class="text-3xl font-bold text-slate-900 uppercase tracking-wide relative inline-block">
+                                Tentang Kegiatan
+                                <span class="block h-1 w-1/2 bg-red-600 mt-2 rounded-full md:mx-0 mx-auto"></span>
+                            </h2>
+                        </div>
+                        <p class="text-slate-600 leading-relaxed mb-6">
+                            Lomba Baris-Berbaris (LBB) Mu'allimin 2025 adalah ajang kompetisi bergengsi tahunan yang diselenggarakan oleh Madrasah Mu'allimin Muhammadiyah Yogyakarta. Kegiatan ini bertujuan untuk menumbuhkan karakter disiplin, kepemimpinan, dan kerja sama tim di kalangan pelajar.
+                        </p>
+                        <ul class="space-y-3">
+                            <li class="flex items-start gap-3">
+                                <i data-lucide="check-circle" class="text-green-500 mt-1 shrink-0" width="20"></i>
+                                <span class="text-slate-700">Meningkatkan patriotisme dan cinta tanah air.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i data-lucide="check-circle" class="text-green-500 mt-1 shrink-0" width="20"></i>
+                                <span class="text-slate-700">Wadah silaturahmi antar pelajar SD/MI & SMP/MTs se-DIY.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i data-lucide="check-circle" class="text-green-500 mt-1 shrink-0" width="20"></i>
+                                <span class="text-slate-700">Memperebutkan Piala Bergilir Gubernur DIY & Total Hadiah Jutaan Rupiah.</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-100 rounded-2xl p-8 border-l-8 border-blue-900">
+                        <h3 class="font-bold text-xl mb-4 text-blue-900">Sasaran Peserta</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center gap-4 bg-white p-4 rounded-lg shadow-sm">
+                                <div class="text-red-600"><i data-lucide="users"></i></div>
+                                <div>
+                                    <p class="font-bold">Tingkat SD / MI</p>
+                                    <p class="text-sm text-slate-500">Sederajat Se-DIY</p>
                                 </div>
-                                <div class="flex justify-center gap-6 relative z-20">
-                                    <button id="btn-timer-start" class="bg-green-600 hover:bg-green-500 w-20 h-20 rounded-2xl flex items-center justify-center text-3xl text-white shadow-lg"><i class="fa-solid fa-play ml-1"></i></button>
-                                    <button id="btn-timer-stop" class="bg-red-600 hover:bg-red-500 w-20 h-20 rounded-2xl flex items-center justify-center text-3xl text-white shadow-lg opacity-50" disabled><i class="fa-solid fa-stop"></i></button>
-                                    <button id="btn-timer-reset" class="bg-slate-700 hover:bg-slate-600 w-20 h-20 rounded-2xl flex items-center justify-center text-2xl text-slate-300 shadow-lg"><i class="fa-solid fa-rotate-left"></i></button>
+                            </div>
+                            <div class="flex items-center gap-4 bg-white p-4 rounded-lg shadow-sm">
+                                <div class="text-blue-600"><i data-lucide="users"></i></div>
+                                <div>
+                                    <p class="font-bold">Tingkat SMP / MTs</p>
+                                    <p class="text-sm text-slate-500">Sederajat Se-DIY</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- REGISTRATION SECTION -->
+        <section id="registration" class="py-16 bg-slate-50">
+            <div class="container mx-auto px-6">
+                <div class="mb-8 text-center">
+                    <h2 class="text-3xl font-bold text-slate-900 uppercase tracking-wide relative inline-block">
+                        Informasi Pendaftaran
+                        <span class="block h-1 w-1/2 bg-red-600 mx-auto mt-2 rounded-full"></span>
+                    </h2>
+                    <p class="text-slate-500 mt-2 max-w-2xl mx-auto">Simak ketentuan dan alur pendaftaran dengan seksama.</p>
+                </div>
+
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+                    <!-- Ketentuan Card -->
+                    <div class="p-6 rounded-xl border border-blue-500 bg-blue-50 shadow-md h-full transition-transform hover:-translate-y-1">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="p-3 rounded-lg bg-blue-600 text-white">
+                                <i data-lucide="info" width="24"></i>
+                            </div>
+                            <h3 class="font-bold text-lg text-slate-800">Ketentuan Umum</h3>
+                        </div>
+                        <div class="text-slate-600 text-sm leading-relaxed">
+                            <ul class="list-disc list-outside ml-4 space-y-2">
+                                <li>Peserta adalah pelajar aktif SD/MI atau SMP/MTs di DIY.</li>
+                                <li>Satu peleton terdiri dari 16 orang (termasuk Danton).</li>
+                                <li>Maksimal 2 peleton per sekolah.</li>
+                                <li>Kuata terbatas! Sistem <em>First Come First Served</em>.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Biaya Card -->
+                    <div class="p-6 rounded-xl border border-slate-200 bg-white shadow-sm h-full transition-transform hover:-translate-y-1">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="p-3 rounded-lg bg-red-100 text-red-600">
+                                <i data-lucide="dollar-sign" width="24"></i>
+                            </div>
+                            <h3 class="font-bold text-lg text-slate-800">Biaya & Pembayaran</h3>
+                        </div>
+                        <div class="text-slate-600 text-sm leading-relaxed">
+                            <p class="text-3xl font-bold text-slate-800 mb-2">Rp325.000</p>
+                            <p class="text-sm text-slate-500 mb-4">/ Peleton (Non-Refundable)</p>
+                            <div class="border-t pt-4">
+                                <p class="font-semibold text-sm">Transfer ke:</p>
+                                <p class="font-mono text-lg text-blue-800 bg-blue-50 p-2 rounded mt-1">BSI 7123456789</p>
+                                <p class="text-xs text-slate-500 mt-1">a.n. LBB Mu'allimin 2025</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Jadwal Card -->
+                    <div class="p-6 rounded-xl border border-slate-200 bg-white shadow-sm h-full transition-transform hover:-translate-y-1">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="p-3 rounded-lg bg-red-100 text-red-600">
+                                <i data-lucide="clock" width="24"></i>
+                            </div>
+                            <h3 class="font-bold text-lg text-slate-800">Jadwal Penting</h3>
+                        </div>
+                        <div class="space-y-3 text-slate-600 text-sm">
+                            <div class="flex justify-between border-b pb-2">
+                                <span class="font-semibold text-slate-800">14 - 28 Juli 2025</span>
+                                <span class="text-xs text-slate-500 text-right max-w-[50%]">Pendaftaran Peserta (Daring)</span>
+                            </div>
+                            <div class="flex justify-between border-b pb-2">
+                                <span class="font-semibold text-slate-800">28 Juli 2025</span>
+                                <span class="text-xs text-slate-500 text-right max-w-[50%]">Batas Akhir Upload Berkas</span>
+                            </div>
+                            <div class="flex justify-between border-b pb-2">
+                                <span class="font-semibold text-slate-800">30 Juli 2025</span>
+                                <span class="text-xs text-slate-500 text-right max-w-[50%]">Technical Meeting (Online)</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="font-semibold text-slate-800">7 Sep 2025</span>
+                                <span class="text-xs text-slate-500 text-right max-w-[50%]">Pelaksanaan Lomba</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Alur Stepper -->
+                <div class="bg-white rounded-2xl shadow-lg p-8">
+                    <h3 class="text-xl font-bold text-center mb-8">Alur Pendaftaran</h3>
+                    <div class="flex flex-col md:flex-row justify-between relative">
+                        <div class="hidden md:block absolute top-1/2 left-0 w-full h-1 bg-slate-200 -z-0 -translate-y-1/2"></div>
+                        
+                        <!-- Step 1 -->
+                        <div class="relative z-10 bg-white md:px-4 text-center flex md:block items-center mb-6 md:mb-0">
+                            <div class="w-10 h-10 md:w-12 md:h-12 bg-red-600 text-white rounded-full flex items-center justify-center font-bold text-lg mx-auto shrink-0 shadow-lg">1</div>
+                            <div class="ml-4 md:ml-0 md:mt-4">
+                                <h4 class="font-bold text-slate-800">Transfer</h4>
+                                <p class="text-xs text-slate-500">Lakukan pembayaran ke rek. resmi</p>
+                            </div>
+                        </div>
+                        <!-- Step 2 -->
+                        <div class="relative z-10 bg-white md:px-4 text-center flex md:block items-center mb-6 md:mb-0">
+                            <div class="w-10 h-10 md:w-12 md:h-12 bg-red-600 text-white rounded-full flex items-center justify-center font-bold text-lg mx-auto shrink-0 shadow-lg">2</div>
+                            <div class="ml-4 md:ml-0 md:mt-4">
+                                <h4 class="font-bold text-slate-800">Isi Form</h4>
+                                <p class="text-xs text-slate-500">Isi formulir daring & upload bukti</p>
+                            </div>
+                        </div>
+                        <!-- Step 3 -->
+                        <div class="relative z-10 bg-white md:px-4 text-center flex md:block items-center mb-6 md:mb-0">
+                            <div class="w-10 h-10 md:w-12 md:h-12 bg-red-600 text-white rounded-full flex items-center justify-center font-bold text-lg mx-auto shrink-0 shadow-lg">3</div>
+                            <div class="ml-4 md:ml-0 md:mt-4">
+                                <h4 class="font-bold text-slate-800">Upload Berkas</h4>
+                                <p class="text-xs text-slate-500">Upload scan Formulir A, B, & C</p>
+                            </div>
+                        </div>
+                        <!-- Step 4 -->
+                        <div class="relative z-10 bg-white md:px-4 text-center flex md:block items-center mb-6 md:mb-0">
+                            <div class="w-10 h-10 md:w-12 md:h-12 bg-red-600 text-white rounded-full flex items-center justify-center font-bold text-lg mx-auto shrink-0 shadow-lg">4</div>
+                            <div class="ml-4 md:ml-0 md:mt-4">
+                                <h4 class="font-bold text-slate-800">Konfirmasi</h4>
+                                <p class="text-xs text-slate-500">Hubungi CP untuk verifikasi</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-8 bg-amber-50 border border-amber-200 p-4 rounded-lg flex items-start gap-3">
+                        <div class="text-amber-600 shrink-0"><i data-lucide="alert-circle"></i></div>
+                        <p class="text-sm text-amber-800">
+                            <strong>Perhatian:</strong> Data pada Formulir B (Biodata) bersifat final setelah H-3 Technical Meeting. Harap teliti sebelum mengunggah. Tidak ada sistem booking kuota, peserta resmi terdaftar setelah melunasi pembayaran.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- RULES & MATERIALS -->
+        <section id="rules" class="py-16 bg-white">
+            <div class="container mx-auto px-6">
+                <div class="mb-8 text-center">
+                    <h2 class="text-3xl font-bold text-slate-900 uppercase tracking-wide relative inline-block">
+                        Juknis & Materi Lomba
+                        <span class="block h-1 w-1/2 bg-red-600 mx-auto mt-2 rounded-full"></span>
+                    </h2>
+                    <p class="text-slate-500 mt-2 max-w-2xl mx-auto">Pedoman teknis pelaksanaan di lapangan.</p>
+                </div>
+
+                <div class="grid lg:grid-cols-2 gap-12">
+                    <!-- Left: Technical Rules Accordion -->
+                    <div>
+                        <h3 class="text-xl font-bold mb-6 flex items-center gap-2">
+                            <span class="text-red-600"><i data-lucide="file-text"></i></span>
+                            Petunjuk Teknis Lapangan
+                        </h3>
+                        
+                        <div class="space-y-3" id="rules-accordion">
+                            <!-- Accordion Items populated via JS or hardcoded below -->
+                            <div class="border border-slate-200 rounded-lg overflow-hidden bg-white shadow-sm">
+                                <button class="accordion-btn w-full flex justify-between items-center p-4 text-left bg-slate-50 hover:bg-slate-100 transition-colors">
+                                    <span class="font-semibold text-slate-800">Definisi Istilah</span>
+                                    <i data-lucide="chevron-down" class="rotate-icon" width="20"></i>
+                                </button>
+                                <div class="accordion-content">
+                                    <div class="p-4 text-slate-600 border-t border-slate-200 bg-white">
+                                        Penjelasan mengenai istilah teknis seperti Aba-aba, Penjuru, Danton, dan Formasi.
+                                    </div>
                                 </div>
                             </div>
                             
-                            <div id="scoring-panel" class="bg-slate-800 rounded-2xl border border-slate-700 opacity-50 pointer-events-none p-8">
-                                <div class="flex items-center justify-between mb-6">
-                                    <h3 class="text-white font-bold uppercase tracking-wider text-sm"><i class="fa-solid fa-pen-nib mr-2"></i>Input Nilai (50 - 90)</h3>
-                                    <span class="text-xs text-slate-500">Interval: 2 Poin</span>
+                            <div class="border border-slate-200 rounded-lg overflow-hidden bg-white shadow-sm">
+                                <button class="accordion-btn w-full flex justify-between items-center p-4 text-left bg-slate-50 hover:bg-slate-100 transition-colors">
+                                    <span class="font-semibold text-slate-800">Ketentuan Umum</span>
+                                    <i data-lucide="chevron-down" class="rotate-icon" width="20"></i>
+                                </button>
+                                <div class="accordion-content">
+                                    <div class="p-4 text-slate-600 border-t border-slate-200 bg-white">
+                                        Peserta wajib hadir 60 menit sebelum apel pembukaan. Seragam sesuai dengan ketentuan PDU/PDH masing-masing instansi.
+                                    </div>
                                 </div>
-                                <div class="grid grid-cols-2 gap-6 mb-6">
-                                    <div><label class="text-xs text-slate-400 block mb-2 font-bold uppercase">Teknik PBB (70%)</label><input id="score-pbb" type="number" min="50" max="90" step="2" class="input-field w-full bg-slate-900 border border-slate-600 rounded-xl text-white p-3 text-lg font-mono text-center"></div>
-                                    <div><label class="text-xs text-slate-400 block mb-2 font-bold uppercase">Kekompakan (30%)</label><input id="score-kompak" type="number" min="50" max="90" step="2" class="input-field w-full bg-slate-900 border border-slate-600 rounded-xl text-white p-3 text-lg font-mono text-center"></div>
+                            </div>
+
+                            <div class="border border-slate-200 rounded-lg overflow-hidden bg-white shadow-sm">
+                                <button class="accordion-btn w-full flex justify-between items-center p-4 text-left bg-slate-50 hover:bg-slate-100 transition-colors">
+                                    <span class="font-semibold text-slate-800">Mekanisme Penilaian</span>
+                                    <i data-lucide="chevron-down" class="rotate-icon" width="20"></i>
+                                </button>
+                                <div class="accordion-content">
+                                    <div class="p-4 text-slate-600 border-t border-slate-200 bg-white">
+                                        Penilaian mencakup: Gerakan di Tempat, Gerakan Berjalan, Variasi & Formasi, serta Danton Terbaik. Sistem penilaian menggunakan rentang nilai 50-100.
+                                    </div>
                                 </div>
-                                <div class="border-t border-slate-700 pt-6">
-                                    <label class="text-xs text-primary-400 block mb-4 font-bold uppercase">Nilai Komandan (Total 100%)</label>
-                                    <div class="grid grid-cols-4 gap-4">
-                                        <div><label class="text-[10px] text-slate-500 block mb-1 text-center">Materi (35%)</label><input id="score-danton-materi" type="number" min="50" max="90" step="2" class="input-field w-full bg-slate-900 border border-slate-600 rounded-lg text-white p-2 text-center font-mono"></div>
-                                        <div><label class="text-[10px] text-slate-500 block mb-1 text-center">Suara (25%)</label><input id="score-danton-suara" type="number" min="50" max="90" step="2" class="input-field w-full bg-slate-900 border border-slate-600 rounded-lg text-white p-2 text-center font-mono"></div>
-                                        <div><label class="text-[10px] text-slate-500 block mb-1 text-center">Sikap (20%)</label><input id="score-danton-sikap" type="number" min="50" max="90" step="2" class="input-field w-full bg-slate-900 border border-slate-600 rounded-lg text-white p-2 text-center font-mono"></div>
-                                        <div><label class="text-[10px] text-slate-500 block mb-1 text-center">Medan (20%)</label><input id="score-danton-medan" type="number" min="50" max="90" step="2" class="input-field w-full bg-slate-900 border border-slate-600 rounded-lg text-white p-2 text-center font-mono"></div>
+                            </div>
+
+                            <div class="border border-slate-200 rounded-lg overflow-hidden bg-white shadow-sm">
+                                <button class="accordion-btn w-full flex justify-between items-center p-4 text-left bg-slate-50 hover:bg-slate-100 transition-colors">
+                                    <span class="font-semibold text-slate-800">Sanksi & Penalti</span>
+                                    <i data-lucide="chevron-down" class="rotate-icon" width="20"></i>
+                                </button>
+                                <div class="accordion-content">
+                                    <div class="p-4 text-slate-600 border-t border-slate-200 bg-white">
+                                        Pengurangan poin akan diberlakukan untuk keterlambatan, atribut tidak lengkap, dan melebihi durasi waktu tampil.
                                     </div>
                                 </div>
                             </div>
                         </div>
+
+                        <div class="mt-6">
+                            <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+                                <span class="text-red-600"><i data-lucide="shield-alert"></i></span>
+                                Tata Tertib & Larangan
+                            </h3>
+                            <div class="bg-red-50 border-l-4 border-red-600 p-4">
+                                <ul class="list-disc ml-4 text-sm text-red-800 space-y-2">
+                                    <li>Dilarang keras membawa senjata tajam, rokok, atau benda berbahaya lainnya.</li>
+                                    <li>Dilarang melakukan tindakan provokasi atau kekerasan fisik maupun verbal.</li>
+                                    <li>Wajib menjaga kebersihan lingkungan Madrasah. Sampah dibawa pulang.</li>
+                                    <li>Pelanggaran berat akan mengakibatkan diskualifikasi instan.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Material Tabs -->
+                    <div>
+                        <h3 class="text-xl font-bold mb-6 flex items-center gap-2">
+                            <span class="text-blue-600"><i data-lucide="trophy"></i></span>
+                            Materi Lomba
+                        </h3>
                         
-                        <div class="lg:w-1/3 flex flex-col gap-6">
-                            <div id="penalty-panel" class="bg-red-950/20 rounded-2xl border border-red-900/40 p-6 opacity-50 pointer-events-none">
-                                <h3 class="text-red-400 font-bold mb-4 uppercase text-sm border-b border-red-900/30 pb-2">Sanksi Pengurangan</h3>
-                                <div class="space-y-3 text-slate-300 text-sm">
-                                    <label class="flex justify-between items-center bg-slate-900/40 p-2 rounded hover:bg-slate-900 cursor-pointer"><span class="flex-1">Tidak Upacara</span><span class="text-red-500 font-bold mr-2">-150</span><input type="checkbox" id="pen-upacara" class="accent-red-500"></label>
-                                    <label class="flex justify-between items-center bg-slate-900/40 p-2 rounded hover:bg-slate-900 cursor-pointer"><span class="flex-1">Terlambat DP1</span><span class="text-red-500 font-bold mr-2">-100</span><input type="checkbox" id="pen-late" class="accent-red-500"></label>
-                                    <label class="flex justify-between items-center bg-slate-900/40 p-2 rounded hover:bg-slate-900 cursor-pointer"><span class="flex-1">Personel &lt; 22</span><span class="text-red-500 font-bold mr-2">-75</span><input type="checkbox" id="pen-personel" class="accent-red-500"></label>
-                                    
-                                    <div class="pt-2 border-t border-red-900/20 mt-2 space-y-2">
-                                        <div class="flex justify-between items-center">
-                                            <span class="text-xs text-slate-400">Injak Garis (x50)</span>
-                                            <input type="number" id="count-garis" class="w-12 bg-slate-900 border border-slate-600 text-center rounded text-white" value="0" min="0">
-                                        </div>
-                                        <div class="flex justify-between items-center">
-                                            <span class="text-xs text-slate-400">Penyesuaian >3 (x25)</span>
-                                            <input type="number" id="count-adjustment" class="w-12 bg-slate-900 border border-slate-600 text-center rounded text-white" value="0" min="0">
-                                        </div>
-                                        <div class="flex justify-between items-center bg-red-900/20 p-2 rounded">
-                                            <span class="text-xs text-red-300 font-bold">Total Overtime (-50/30s)</span>
-                                            <input type="number" id="pen-time" class="w-16 bg-transparent border-none text-red-400 font-bold text-right" value="0" readonly>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <button id="btn-submit-score" class="w-full bg-gradient-to-r from-blue-600 to-blue-500 text-white font-bold py-4 rounded-xl opacity-50 pointer-events-none shadow-lg">KUNCI & SIMPAN</button>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="view-peserta-dashboard" class="view-section hide">
-                    <div class="max-w-4xl mx-auto">
-                        <div class="bg-gradient-to-r from-slate-800 to-slate-900 border border-slate-700 rounded-3xl p-10 mb-8 relative overflow-hidden shadow-2xl">
-                            <div class="absolute right-0 top-0 w-64 h-64 bg-primary-500 opacity-10 rounded-full blur-[100px]"></div>
-                            <h1 class="text-3xl font-heading font-bold text-white mb-2 relative z-10">Halo, <span id="dash-peserta-name" class="text-primary-400"></span>!</h1>
-                            <p class="text-slate-400 relative z-10">Status Pendaftaran Anda saat ini.</p>
-                        </div>
-                        </div>
-                </section>
-
-                <section id="view-peserta-juknis" class="view-section hide">
-                    <div class="max-w-6xl mx-auto">
-                        <div class="text-center mb-8">
-                            <h1 class="text-3xl font-heading font-bold text-white mb-2">Buku Panduan (Juknis)</h1>
-                            <p class="text-slate-400 text-sm">Pilih kategori panduan yang ingin Anda pelajari.</p>
-                        </div>
-
-                        <div class="flex justify-center gap-4 mb-8">
-                            <button id="btn-tab-daftar" class="tab-btn active px-6 py-2 rounded-full border border-slate-600 text-sm font-bold text-white transition bg-slate-800 hover:bg-slate-700">Juknis Pendaftaran</button>
-                            <button id="btn-tab-lomba" class="tab-btn px-6 py-2 rounded-full border border-slate-600 text-sm font-bold text-slate-400 transition hover:bg-slate-800 hover:text-white">Juknis Lapangan</button>
-                        </div>
-
-                        <div id="content-juknis-daftar" class="space-y-8 animate-fade-in">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 relative overflow-hidden">
-                                    <div class="absolute top-0 right-0 p-4 opacity-10"><i class="fa-solid fa-money-bill-wave text-6xl text-white"></i></div>
-                                    <h3 class="text-primary-500 font-bold uppercase text-xs tracking-wider mb-2">Biaya Pendaftaran</h3>
-                                    <p class="text-3xl font-heading font-bold text-white mb-1">Rp325.000,-</p>
-                                    <p class="text-slate-400 text-sm">per peleton (Non-refundable)</p>
-                                </div>
-                                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6">
-                                    <h3 class="text-primary-500 font-bold uppercase text-xs tracking-wider mb-2">Transfer ke (BRI)</h3>
-                                    <div class="flex items-center gap-3 mb-2">
-                                        <span class="text-2xl font-mono font-bold text-white tracking-widest select-all">300701003561505</span>
-                                        <button onclick="navigator.clipboard.writeText('300701003561505')" class="text-slate-500 hover:text-white"><i class="fa-solid fa-copy"></i></button>
-                                    </div>
-                                    <p class="text-slate-400 text-sm uppercase font-bold">a.n. Falhan Zuhdi Mubarok</p>
-                                </div>
-                            </div>
+                        <div class="bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden">
+                            <!-- Tabs Buttons -->
+                            <div class="flex border-b bg-slate-50">
+                                <button id="btn-sd" onclick="switchTab('sd')" class="flex-1 py-4 text-center font-bold transition-colors bg-white text-blue-600 border-b-2 border-blue-600">
+                                    Tingkat SD/MI
+                                </button>
+                                <button id="btn-smp" onclick="switchTab('smp')" class="flex-1 py-4 text-center font-bold transition-colors text-slate-500 hover:text-slate-700">
+                                    Tingkat SMP/MTs
+                                </button>
                             </div>
 
-                        <div id="content-juknis-lomba" class="hidden space-y-8 animate-fade-in">
-                            <div class="grid md:grid-cols-2 gap-6">
-                                <div class="bg-slate-800 border border-slate-700 p-6 rounded-2xl">
-                                    <h3 class="text-white font-bold text-lg mb-4 flex items-center gap-2"><i class="fa-solid fa-book-open text-gold-400"></i> Definisi & Area</h3>
-                                    <ul class="space-y-3 text-sm text-slate-300">
-                                        <li class="flex gap-2"><span class="text-primary-500 font-bold">Clear Area:</span> Steril, hanya peleton + 2 official + 1 dokum.</li>
-                                        <li class="flex gap-2"><span class="text-primary-500 font-bold">Ukuran Lapangan:</span> SD (25x14m), SMP (26x15m).</li>
-                                        <li class="flex gap-2"><span class="text-primary-500 font-bold">DP 1 & 2:</span> Wajib hadir di DP 1 min. 15 menit sebelum tampil.</li>
-                                    </ul>
-                                </div>
-                                <div class="bg-slate-800 border border-slate-700 p-6 rounded-2xl">
-                                    <h3 class="text-white font-bold text-lg mb-4 flex items-center gap-2"><i class="fa-solid fa-stopwatch text-gold-400"></i> Durasi Tampil</h3>
-                                    <div class="grid grid-cols-2 gap-4">
-                                        <div class="bg-slate-900 p-4 rounded text-center"><p class="text-slate-400 text-xs uppercase">SD / MI</p><p class="text-2xl font-bold text-white">8 Menit</p></div>
-                                        <div class="bg-slate-900 p-4 rounded text-center"><p class="text-slate-400 text-xs uppercase">SMP / MTs</p><p class="text-2xl font-bold text-white">13 Menit</p></div>
-                                    </div>
-                                    <p class="text-xs text-red-400 mt-2 text-center">*Waktu mulai/habis saat hormat pembuka/penutup.</p>
-                                </div>
-                            </div>
-
-                            <div class="bg-slate-900 border-l-4 border-blue-500 p-6 rounded-r-2xl">
-                                <h3 class="text-white font-bold text-lg mb-6">Bobot Penilaian (Range 50-90)</h3>
-                                <div class="grid md:grid-cols-2 gap-8">
-                                    <div>
-                                        <h4 class="text-blue-400 font-bold uppercase text-xs mb-3">1. Peleton (100%)</h4>
-                                        <div class="space-y-2">
-                                            <div class="flex justify-between text-sm text-slate-300 border-b border-slate-800 pb-1"><span>Kebenaran Teknik PBB</span><span class="font-bold text-white">70%</span></div>
-                                            <div class="flex justify-between text-sm text-slate-300 border-b border-slate-800 pb-1"><span>Kekompakan</span><span class="font-bold text-white">30%</span></div>
+                            <div class="p-6 relative">
+                                <!-- CONTENT SD -->
+                                <div id="content-sd" class="block animate-fade">
+                                    <div class="mb-4 grid grid-cols-2 gap-4 text-sm">
+                                        <div class="bg-slate-50 p-3 rounded">
+                                            <span class="block text-slate-500 text-xs uppercase">Ukuran Lapangan</span>
+                                            <span class="font-bold text-slate-800">10m x 20m</span>
+                                        </div>
+                                        <div class="bg-slate-50 p-3 rounded">
+                                            <span class="block text-slate-500 text-xs uppercase">Durasi Waktu</span>
+                                            <span class="font-bold text-slate-800">10 Menit</span>
                                         </div>
                                     </div>
-                                    <div>
-                                        <h4 class="text-blue-400 font-bold uppercase text-xs mb-3">2. Komandan (100%)</h4>
-                                        <div class="space-y-2">
-                                            <div class="flex justify-between text-sm text-slate-300 border-b border-slate-800 pb-1"><span>Penguasaan Materi</span><span class="font-bold text-white">35%</span></div>
-                                            <div class="flex justify-between text-sm text-slate-300 border-b border-slate-800 pb-1"><span>Kualitas Suara</span><span class="font-bold text-white">25%</span></div>
-                                            <div class="flex justify-between text-sm text-slate-300 border-b border-slate-800 pb-1"><span>Sikap & Pelaporan</span><span class="font-bold text-white">20%</span></div>
-                                            <div class="flex justify-between text-sm text-slate-300 border-b border-slate-800 pb-1"><span>Penguasaan Medan</span><span class="font-bold text-white">20%</span></div>
+                                    <h4 class="font-bold text-slate-800 mb-2">Daftar Materi Gerakan:</h4>
+                                    <ol class="list-decimal list-inside space-y-2 text-sm text-slate-600 h-64 overflow-y-auto pr-2 custom-scrollbar">
+                                        <li>Sikap Sempurna</li>
+                                        <li>Hormat</li>
+                                        <li>Lencang Kanan/Kiri</li>
+                                        <li>Berhitung</li>
+                                        <li>Hadap Kanan/Kiri</li>
+                                        <li>Balik Kanan</li>
+                                        <li>Jalan di Tempat</li>
+                                        <li>Langkah Tegap Maju</li>
+                                        <li>Langkah Biasa</li>
+                                        <li>Belok Kanan/Kiri</li>
+                                    </ol>
+                                </div>
+
+                                <!-- CONTENT SMP -->
+                                <div id="content-smp" class="hidden animate-fade">
+                                    <div class="mb-4 grid grid-cols-2 gap-4 text-sm">
+                                        <div class="bg-slate-50 p-3 rounded">
+                                            <span class="block text-slate-500 text-xs uppercase">Ukuran Lapangan</span>
+                                            <span class="font-bold text-slate-800">15m x 22m</span>
+                                        </div>
+                                        <div class="bg-slate-50 p-3 rounded">
+                                            <span class="block text-slate-500 text-xs uppercase">Durasi Waktu</span>
+                                            <span class="font-bold text-slate-800">12 Menit</span>
                                         </div>
                                     </div>
+                                    <h4 class="font-bold text-slate-800 mb-2">Daftar Materi Gerakan:</h4>
+                                    <ol class="list-decimal list-inside space-y-2 text-sm text-slate-600 h-64 overflow-y-auto pr-2 custom-scrollbar">
+                                        <li>Sikap Sempurna & Istirahat</li>
+                                        <li>Periksa Kerapian</li>
+                                        <li>Hormat Kanan/Kiri</li>
+                                        <li>Jalan di Tempat</li>
+                                        <li>4 Langkah ke Kanan/Kiri</li>
+                                        <li>4 Langkah ke Depan/Belakang</li>
+                                        <li>Langkah Perlahan</li>
+                                        <li>Langkah Tegap Maju</li>
+                                        <li>Ganti Langkah</li>
+                                        <li>Variasi & Formasi (Wajib)</li>
+                                    </ol>
                                 </div>
-                            </div>
 
-                            <div class="bg-slate-800 border border-slate-700 rounded-2xl overflow-hidden">
-                                <div class="bg-red-900/20 p-4 border-b border-red-900/30"><h3 class="text-red-400 font-bold text-sm uppercase">Daftar Pelanggaran & Penalti</h3></div>
-                                <table class="w-full text-sm text-left text-slate-300">
-                                    <tbody class="divide-y divide-slate-700">
-                                        <tr><td class="p-4">Tidak Upacara Pembukaan</td><td class="p-4 text-right font-bold text-red-500">-150</td></tr>
-                                        <tr><td class="p-4">Terlambat Masuk DP 1 (3x Panggilan)</td><td class="p-4 text-right font-bold text-red-500">-100</td></tr>
-                                        <tr><td class="p-4">Personel Kurang (< 22 Orang)</td><td class="p-4 text-right font-bold text-red-500">-75</td></tr>
-                                        <tr><td class="p-4">Melanggar Garis Batas</td><td class="p-4 text-right font-bold text-red-500">-50 / kejadian</td></tr>
-                                        <tr><td class="p-4">Gerakan Penyesuaian > 3 kali</td><td class="p-4 text-right font-bold text-red-500">-25 / gerakan</td></tr>
-                                        <tr><td class="p-4">Overtime (Kelebihan Waktu)</td><td class="p-4 text-right font-bold text-red-500">-50 / 30 detik</td></tr>
-                                    </tbody>
-                                </table>
+                                <div class="mt-4 pt-4 border-t text-xs text-slate-400 italic">
+                                    * Urutan gerakan dapat dilihat detail pada dokumen Juknis Lapangan.
+                                </div>
                             </div>
                         </div>
                     </div>
-                </section>
+                </div>
+            </div>
+        </section>
 
-                <section id="view-peserta-data" class="view-section hide">
-                    <div class="max-w-4xl mx-auto">
-                        <h1 class="text-3xl font-heading font-bold text-white mb-8">Data Peleton</h1>
-                        <form id="form-peserta-data" class="bg-slate-800 border border-slate-700 rounded-3xl p-8 md:p-10 shadow-2xl">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-10 mb-10">
-                                <div class="space-y-6">
-                                    <div><label class="block text-xs font-bold text-slate-400 uppercase mb-2 ml-1">Tingkat Sekolah</label><select id="team-level" class="input-field w-full bg-slate-900 border border-slate-600 text-white p-3.5 rounded-xl"><option value="SD/MI">SD / MI</option><option value="SMP/MTs">SMP / MTs</option></select></div>
-                                    <div><label class="block text-xs font-bold text-slate-400 uppercase mb-2 ml-1">Nama Sekolah</label><input type="text" id="team-school" class="input-field w-full bg-slate-900 border border-slate-600 text-white p-3.5 rounded-xl"></div>
-                                    <div><label class="block text-xs font-bold text-slate-400 uppercase mb-2 ml-1">Nama Peleton</label><input type="text" id="team-name" class="input-field w-full bg-slate-900 border border-slate-600 text-white p-3.5 rounded-xl"></div>
-                                    <div><label class="block text-xs font-bold text-slate-400 uppercase mb-2 ml-1">Nama Danton</label><input type="text" id="team-danton" class="input-field w-full bg-slate-900 border border-slate-600 text-white p-3.5 rounded-xl"></div>
-                                </div>
-                                <div class="space-y-5">
-                                    <div><label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Nama Official 1</label><input type="text" id="team-off1" class="input-field w-full bg-slate-800 border border-slate-600 text-white p-3 rounded-lg"></div>
-                                    <div><label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">No. WhatsApp</label><input type="text" id="team-phone1" class="input-field w-full bg-slate-800 border border-slate-600 text-white p-3 rounded-lg"></div>
-                                    <div><label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Nama Official 2</label><input type="text" id="team-off2" class="input-field w-full bg-slate-800 border border-slate-600 text-white p-3 rounded-lg"></div>
-                                </div>
-                            </div>
-                            <div class="flex justify-end pt-8 border-t border-slate-700"><button type="submit" class="bg-primary-600 text-white px-8 py-3.5 rounded-xl font-bold text-sm shadow-lg hover:-translate-y-1 transition">Simpan Data</button></div>
-                        </form>
+        <!-- PRIZES -->
+        <section id="prizes" class="py-16 bg-white">
+            <div class="container mx-auto px-6 text-center">
+                <div class="mb-8 text-center">
+                    <h2 class="text-3xl font-bold text-slate-900 uppercase tracking-wide relative inline-block">
+                        Hadiah & Kejuaraan
+                        <span class="block h-1 w-1/2 bg-red-600 mx-auto mt-2 rounded-full"></span>
+                    </h2>
+                </div>
+                <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Juara 2 & 3 -->
+                    <div class="p-6 bg-gradient-to-b from-slate-100 to-white rounded-xl border border-slate-200 order-2 md:order-1">
+                        <div class="mx-auto text-slate-400 mb-3 flex justify-center"><i data-lucide="trophy" width="40" height="40"></i></div>
+                        <h3 class="font-bold text-xl">Juara 2 & 3</h3>
+                        <p class="text-slate-600 text-sm">Tiap Kategori</p>
+                        <hr class="my-4" />
+                        <ul class="text-sm space-y-2">
+                            <li>Piala Tetap</li>
+                            <li>Sertifikat</li>
+                            <li>Uang Pembinaan</li>
+                        </ul>
                     </div>
-                </section>
+                    
+                    <!-- Juara Umum -->
+                    <div class="p-8 bg-gradient-to-b from-yellow-50 to-white rounded-xl border-2 border-yellow-400 shadow-xl transform md:-translate-y-4 order-1 md:order-2">
+                        <div class="mx-auto text-yellow-500 mb-4 animate-bounce flex justify-center"><i data-lucide="trophy" width="56" height="56"></i></div>
+                        <div class="uppercase tracking-widest text-xs font-bold text-yellow-600 mb-2">Grand Prize</div>
+                        <h3 class="font-bold text-2xl text-slate-900">JUARA UMUM</h3>
+                        <p class="text-slate-600">Piala Bergilir Gubernur DIY</p>
+                        <hr class="my-6 border-yellow-200" />
+                        <ul class="text-sm font-bold space-y-2 text-slate-800">
+                            <li>Piala Bergilir</li>
+                            <li>Piala Tetap Juara 1</li>
+                            <li>Uang Pembinaan Utama</li>
+                            <li>Sertifikat Eksklusif</li>
+                        </ul>
+                    </div>
 
-                <section id="view-peserta-docs" class="view-section hide">
-                    <div class="max-w-4xl mx-auto">
-                        <h1 class="text-3xl font-heading font-bold text-white mb-8">Upload Dokumen</h1>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-8 flex flex-col justify-between">
-                                <div><h3 class="font-bold text-white text-xl mb-1">Bukti Pembayaran</h3><p class="text-xs text-slate-500 uppercase">JPG/PNG (Max 2MB)</p></div>
-                                <div class="mt-8" id="action-doc-payment"><button class="w-full bg-slate-700 text-white font-bold py-3 rounded-xl text-sm border border-slate-600 hover:bg-slate-600 transition">Pilih File</button></div>
+                    <!-- Kategori Terbaik -->
+                    <div class="p-6 bg-gradient-to-b from-slate-100 to-white rounded-xl border border-slate-200 order-3">
+                        <div class="mx-auto text-orange-400 mb-3 flex justify-center"><i data-lucide="trophy" width="40" height="40"></i></div>
+                        <h3 class="font-bold text-xl">Kategori Terbaik</h3>
+                        <p class="text-slate-600 text-sm">Danton & Kostum</p>
+                        <hr class="my-4" />
+                        <ul class="text-sm space-y-2">
+                            <li>Piala Tetap</li>
+                            <li>Sertifikat</li>
+                            <li>Merchandise</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- DOWNLOADS -->
+        <section id="downloads" class="py-16 bg-slate-50">
+            <div class="container mx-auto px-6">
+                <div class="mb-8 text-center">
+                    <h2 class="text-3xl font-bold text-slate-900 uppercase tracking-wide relative inline-block">
+                        Unduh Dokumen
+                        <span class="block h-1 w-1/2 bg-red-600 mx-auto mt-2 rounded-full"></span>
+                    </h2>
+                    <p class="text-slate-500 mt-2 max-w-2xl mx-auto">Kelengkapan administrasi yang wajib dipenuhi.</p>
+                </div>
+                
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Item 1 -->
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200 flex flex-col justify-between hover:shadow-md transition-shadow">
+                        <div>
+                            <div class="bg-red-50 text-red-600 w-12 h-12 rounded-lg flex items-center justify-center mb-4"><i data-lucide="file-text"></i></div>
+                            <h4 class="font-bold text-slate-800 mb-1">Formulir A (Pendaftaran Sekolah)</h4>
+                            <p class="text-xs text-slate-500 mb-4">PDF • 1.2 MB</p>
+                        </div>
+                        <button class="w-full py-2 border border-blue-600 text-blue-600 rounded hover:bg-blue-50 transition-colors flex items-center justify-center gap-2 text-sm font-semibold">
+                            <i data-lucide="download" width="16"></i> Download
+                        </button>
+                    </div>
+                    <!-- Item 2 -->
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200 flex flex-col justify-between hover:shadow-md transition-shadow">
+                        <div>
+                            <div class="bg-red-50 text-red-600 w-12 h-12 rounded-lg flex items-center justify-center mb-4"><i data-lucide="file-text"></i></div>
+                            <h4 class="font-bold text-slate-800 mb-1">Formulir B (Biodata Peserta)</h4>
+                            <p class="text-xs text-slate-500 mb-4">DOCX • 500 KB</p>
+                        </div>
+                        <button class="w-full py-2 border border-blue-600 text-blue-600 rounded hover:bg-blue-50 transition-colors flex items-center justify-center gap-2 text-sm font-semibold">
+                            <i data-lucide="download" width="16"></i> Download
+                        </button>
+                    </div>
+                    <!-- Item 3 -->
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200 flex flex-col justify-between hover:shadow-md transition-shadow">
+                        <div>
+                            <div class="bg-red-50 text-red-600 w-12 h-12 rounded-lg flex items-center justify-center mb-4"><i data-lucide="file-text"></i></div>
+                            <h4 class="font-bold text-slate-800 mb-1">Formulir C (Surat Pernyataan)</h4>
+                            <p class="text-xs text-slate-500 mb-4">PDF • 800 KB</p>
+                        </div>
+                        <button class="w-full py-2 border border-blue-600 text-blue-600 rounded hover:bg-blue-50 transition-colors flex items-center justify-center gap-2 text-sm font-semibold">
+                            <i data-lucide="download" width="16"></i> Download
+                        </button>
+                    </div>
+                    <!-- Item 4 -->
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200 flex flex-col justify-between hover:shadow-md transition-shadow">
+                        <div>
+                            <div class="bg-red-50 text-red-600 w-12 h-12 rounded-lg flex items-center justify-center mb-4"><i data-lucide="file-text"></i></div>
+                            <h4 class="font-bold text-slate-800 mb-1">Juknis Pendaftaran Lengkap</h4>
+                            <p class="text-xs text-slate-500 mb-4">PDF • 2.5 MB</p>
+                        </div>
+                        <button class="w-full py-2 border border-blue-600 text-blue-600 rounded hover:bg-blue-50 transition-colors flex items-center justify-center gap-2 text-sm font-semibold">
+                            <i data-lucide="download" width="16"></i> Download
+                        </button>
+                    </div>
+                     <!-- Item 5 -->
+                     <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200 flex flex-col justify-between hover:shadow-md transition-shadow">
+                        <div>
+                            <div class="bg-red-50 text-red-600 w-12 h-12 rounded-lg flex items-center justify-center mb-4"><i data-lucide="file-text"></i></div>
+                            <h4 class="font-bold text-slate-800 mb-1">Petunjuk Teknis Lapangan</h4>
+                            <p class="text-xs text-slate-500 mb-4">PDF • 3.1 MB</p>
+                        </div>
+                        <button class="w-full py-2 border border-blue-600 text-blue-600 rounded hover:bg-blue-50 transition-colors flex items-center justify-center gap-2 text-sm font-semibold">
+                            <i data-lucide="download" width="16"></i> Download
+                        </button>
+                    </div>
+                     <!-- Item 6 -->
+                     <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200 flex flex-col justify-between hover:shadow-md transition-shadow">
+                        <div>
+                            <div class="bg-red-50 text-red-600 w-12 h-12 rounded-lg flex items-center justify-center mb-4"><i data-lucide="file-text"></i></div>
+                            <h4 class="font-bold text-slate-800 mb-1">Tata Tertib Peserta</h4>
+                            <p class="text-xs text-slate-500 mb-4">PDF • 1.0 MB</p>
+                        </div>
+                        <button class="w-full py-2 border border-blue-600 text-blue-600 rounded hover:bg-blue-50 transition-colors flex items-center justify-center gap-2 text-sm font-semibold">
+                            <i data-lucide="download" width="16"></i> Download
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ & CONTACT -->
+        <section id="contact" class="py-16 bg-slate-900 text-white">
+            <div class="container mx-auto px-6">
+                <div class="grid lg:grid-cols-2 gap-16">
+                    <!-- FAQ -->
+                    <div>
+                        <h2 class="text-3xl font-bold mb-8">Pertanyaan Umum (FAQ)</h2>
+                        <div class="space-y-3" id="faq-accordion">
+                            <!-- FAQ Item 1 -->
+                            <div class="border border-slate-700 rounded-lg overflow-hidden bg-slate-800 shadow-sm">
+                                <button class="accordion-btn w-full flex justify-between items-center p-4 text-left hover:bg-slate-700 transition-colors">
+                                    <span class="font-semibold text-slate-200">Apakah bisa mengganti anggota setelah mendaftar?</span>
+                                    <i data-lucide="chevron-down" class="rotate-icon text-slate-400" width="20"></i>
+                                </button>
+                                <div class="accordion-content">
+                                    <div class="p-4 text-slate-300 border-t border-slate-700">
+                                        Pergantian anggota diperbolehkan maksimal H-3 Technical Meeting dengan menyertakan surat keterangan dari sekolah.
+                                    </div>
+                                </div>
                             </div>
-                            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-8 flex flex-col justify-between">
-                                <div><h3 class="font-bold text-white text-xl mb-1">Formulir B</h3><p class="text-xs text-slate-500 uppercase">DOCX (KAPITAL)</p></div>
-                                <div class="mt-8" id="action-doc-formB"><button class="w-full bg-slate-700 text-white font-bold py-3 rounded-xl text-sm border border-slate-600 hover:bg-slate-600 transition">Pilih File</button></div>
+                             <!-- FAQ Item 2 -->
+                             <div class="border border-slate-700 rounded-lg overflow-hidden bg-slate-800 shadow-sm">
+                                <button class="accordion-btn w-full flex justify-between items-center p-4 text-left hover:bg-slate-700 transition-colors">
+                                    <span class="font-semibold text-slate-200">Apakah biaya pendaftaran bisa dikembalikan?</span>
+                                    <i data-lucide="chevron-down" class="rotate-icon text-slate-400" width="20"></i>
+                                </button>
+                                <div class="accordion-content">
+                                    <div class="p-4 text-slate-300 border-t border-slate-700">
+                                        Tidak. Biaya pendaftaran bersifat non-refundable (tidak dapat dikembalikan) jika peserta mengundurkan diri.
+                                    </div>
+                                </div>
+                            </div>
+                             <!-- FAQ Item 3 -->
+                             <div class="border border-slate-700 rounded-lg overflow-hidden bg-slate-800 shadow-sm">
+                                <button class="accordion-btn w-full flex justify-between items-center p-4 text-left hover:bg-slate-700 transition-colors">
+                                    <span class="font-semibold text-slate-200">Berapa maksimal peleton per sekolah?</span>
+                                    <i data-lucide="chevron-down" class="rotate-icon text-slate-400" width="20"></i>
+                                </button>
+                                <div class="accordion-content">
+                                    <div class="p-4 text-slate-300 border-t border-slate-700">
+                                        Setiap sekolah diperbolehkan mengirimkan maksimal 2 peleton (1 Putra & 1 Putri atau 2 Campuran sesuai kuota).
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </section>
 
-                <section id="view-peserta-schedule" class="view-section hide">
-                    <div class="max-w-4xl mx-auto text-center py-24">
-                        <div class="inline-block p-6 rounded-full bg-slate-800 border border-slate-700 mb-6 shadow-lg"><i class="fa-solid fa-bullhorn text-4xl text-slate-600"></i></div>
-                        <h1 class="text-2xl font-bold text-white mb-2">Belum Ada Pengumuman</h1>
+                    <!-- CONTACT -->
+                    <div>
+                        <h2 class="text-3xl font-bold mb-8">Hubungi Kami</h2>
+                        <div class="space-y-6">
+                            <div class="bg-white/10 p-6 rounded-xl border border-white/20">
+                                <h3 class="font-bold text-xl mb-4 text-red-400">Narahubung (WhatsApp)</h3>
+                                <div class="space-y-4">
+                                    <button class="flex items-center gap-4 w-full p-3 bg-green-600 hover:bg-green-700 rounded-lg transition-colors">
+                                        <i data-lucide="phone" class="text-white"></i>
+                                        <div class="text-left">
+                                            <p class="font-bold text-white">Kak Arhan</p>
+                                            <p class="text-xs text-green-100">Info Pendaftaran</p>
+                                        </div>
+                                    </button>
+                                    <button class="flex items-center gap-4 w-full p-3 bg-green-600 hover:bg-green-700 rounded-lg transition-colors">
+                                        <i data-lucide="phone" class="text-white"></i>
+                                        <div class="text-left">
+                                            <p class="font-bold text-white">Kak Dandi</p>
+                                            <p class="text-xs text-green-100">Info Teknis Lomba</p>
+                                        </div>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start gap-4 text-slate-300">
+                                <span class="text-red-500 mt-1"><i data-lucide="map-pin"></i></span>
+                                <p>
+                                    <strong>Kampus Terpadu Madrasah Mu'allimin</strong><br/>
+                                    Jl. Bantul Km 3, Yogyakarta
+                                </p>
+                            </div>
+                        </div>
                     </div>
-                </section>
+                </div>
+            </div>
+        </section>
+    </main>
 
-            </main>
+    <!-- FOOTER -->
+    <footer class="bg-slate-950 text-slate-500 py-8 border-t border-slate-800">
+        <div class="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4">
+            <p class="text-sm">© 2025 LBB Mu'allimin. All rights reserved.</p>
+            <div class="flex gap-6 text-sm">
+                <a href="#home" class="hover:text-white transition-colors">Beranda</a>
+                <a href="#rules" class="hover:text-white transition-colors">Juknis</a>
+                <a href="#contact" class="hover:text-white transition-colors">Kontak</a>
+            </div>
         </div>
-    </div>
+    </footer>
 
-    <div id="toast" class="fixed top-5 right-5 bg-slate-800 border-l-4 border-green-500 text-white shadow-2xl rounded-r px-6 py-4 transform translate-x-full transition-transform duration-300 z-50 flex items-center gap-4">
-        <i id="toast-icon" class="fa-solid fa-check-circle text-green-500 text-xl"></i>
-        <div id="toast-msg" class="text-sm font-bold">Notification</div>
-    </div>
+    <!-- FAB WhatsApp -->
+    <a href="#" class="fixed bottom-6 right-6 z-40 bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-lg shadow-green-500/40 transition-transform hover:scale-110 flex items-center justify-center">
+        <i data-lucide="phone" width="24" height="24"></i>
+    </a>
 
-    <script src="logic.js"></script>
-    <script>
-        // Sidebar & UI Logic
-        window.addEventListener('load', () => {
-             // Juknis Tab Logic
-             const btnDaftar = document.getElementById('btn-tab-daftar');
-             const btnLomba = document.getElementById('btn-tab-lomba');
-             const contentDaftar = document.getElementById('content-juknis-daftar');
-             const contentLomba = document.getElementById('content-juknis-lomba');
-
-             if(btnDaftar && btnLomba){
-                 btnDaftar.onclick = () => {
-                     btnDaftar.classList.add('active', 'bg-slate-800', 'text-white'); btnDaftar.classList.remove('text-slate-400');
-                     btnLomba.classList.remove('active', 'bg-slate-800', 'text-white'); btnLomba.classList.add('text-slate-400');
-                     contentDaftar.classList.remove('hidden'); contentLomba.classList.add('hidden');
-                 };
-                 btnLomba.onclick = () => {
-                     btnLomba.classList.add('active', 'bg-slate-800', 'text-white'); btnLomba.classList.remove('text-slate-400');
-                     btnDaftar.classList.remove('active', 'bg-slate-800', 'text-white'); btnDaftar.classList.add('text-slate-400');
-                     contentLomba.classList.remove('hidden'); contentDaftar.classList.add('hidden');
-                 };
-             }
-
-             // Sidebar Render
-             const originalRender = window.renderSidebar;
-             if(originalRender) {
-                 window.renderSidebar = function() {
-                     const menu = document.getElementById('sidebar-menu'); menu.innerHTML = '';
-                     const links = [];
-                     if (currentUser.role === 'admin') { links.push({ id: 'admin-dashboard', icon: 'fa-chart-pie', label: 'Dashboard' }); links.push({ id: 'admin-teams', icon: 'fa-users-gear', label: 'Data Peserta' }); } 
-                     else if (currentUser.role === 'panitia') { links.push({ id: 'panitia-verification', icon: 'fa-list-check', label: 'Verifikasi' }); links.push({ id: 'panitia-live', icon: 'fa-stopwatch-20', label: 'Live Scoring' }); } 
-                     else if (currentUser.role === 'peserta') { links.push({ id: 'peserta-dashboard', icon: 'fa-house-user', label: 'Beranda Tim' }); links.push({ id: 'peserta-juknis', icon: 'fa-book-open-reader', label: 'Buku Panduan' }); links.push({ id: 'peserta-data', icon: 'fa-file-signature', label: 'Data Peleton' }); links.push({ id: 'peserta-docs', icon: 'fa-cloud-arrow-up', label: 'Upload Berkas' }); links.push({ id: 'peserta-schedule', icon: 'fa-bullhorn', label: 'Pengumuman' }); }
-
-                     links.forEach(link => {
-                         const btn = document.createElement('button');
-                         btn.className = 'sidebar-link w-full text-left px-4 py-3.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl transition-all flex items-center gap-4 text-sm font-bold tracking-wide mb-1 group';
-                         btn.onclick = () => {
-                             document.querySelectorAll('.sidebar-link').forEach(b => { b.classList.remove('bg-primary-600/10', 'text-primary-400', 'shadow-inner'); b.classList.add('text-slate-400'); });
-                             btn.classList.add('bg-primary-600/10', 'text-primary-400', 'shadow-inner'); btn.classList.remove('text-slate-400');
-                             navigate(link.id);
-                         };
-                         btn.innerHTML = `<i class="fa-solid ${link.icon} w-5 text-center transition-transform group-hover:scale-110"></i> ${link.label}`;
-                         menu.appendChild(btn);
-                     });
-                     if(menu.firstChild) menu.firstChild.click();
-                 }
-                 if(currentUser) window.renderSidebar();
-             }
-        });
-    </script>
+    <!-- SCRIPTS -->
+    <script src="script.js"></script>
 </body>
 </html>
