@@ -337,6 +337,8 @@ window.uploadDoc = function(type) {
 
 // --- LIVE SCORING LOGIC ---
 
+// --- LIVE SCORING LOGIC (REVAMPED) ---
+
 el('live-team-select').addEventListener('change', (e) => selectLiveTeam(e.target.value));
 
 function selectLiveTeam(tid) {
@@ -349,6 +351,8 @@ function selectLiveTeam(tid) {
         scorePanel.classList.add('opacity-50', 'pointer-events-none');
         penPanel.classList.add('opacity-50', 'pointer-events-none');
         subBtn.classList.add('opacity-50', 'pointer-events-none');
+        el('timer-limit-label').innerText = "Limit: -";
+        resetTimerVisuals(); // Reset tampilan saat ganti tim
         return;
     }
     
@@ -360,10 +364,15 @@ function selectLiveTeam(tid) {
     const limit = team.level === 'SD/MI' ? 8 : 13;
     el('timer-limit-label').innerText = `Limit: ${limit} Menit`;
 
+    // Reset visual dulu
+    resetTimerVisuals();
+
     if (db.activeRun && db.activeRun.teamId === tid) {
+        // Jika sedang berjalan, lanjutkan
         elapsedTime = Math.floor((Date.now() - db.activeRun.startTime) / 1000);
         startTimerUI();
     } else {
+        // Jika baru/berhenti
         elapsedTime = 0;
         updateTimerDisplay(0);
         el('btn-timer-start').disabled = false;
@@ -392,11 +401,14 @@ el('btn-timer-reset').addEventListener('click', () => {
     clearInterval(timerInterval);
     db.activeRun = null;
     saveDB(db);
+    
     el('btn-timer-start').disabled = false;
     el('btn-timer-stop').disabled = true;
     el('live-team-select').disabled = false;
+    
     elapsedTime = 0;
     updateTimerDisplay(0);
+    resetTimerVisuals(); // Wajib reset warna & progress bar
     el('pen-time').value = 0;
 });
 
@@ -404,35 +416,85 @@ function startTimerUI() {
     el('btn-timer-start').disabled = true;
     el('btn-timer-stop').disabled = false;
     el('live-team-select').disabled = true;
+    
     clearInterval(timerInterval);
     timerInterval = setInterval(() => {
         elapsedTime = Math.floor((Date.now() - db.activeRun.startTime) / 1000);
         updateTimerDisplay(elapsedTime);
         checkOvertime(elapsedTime);
-    }, 1000);
+    }, 1000); // Update tiap 1 detik
 }
 
+// Fungsi Update Tampilan & Progress Bar
 function updateTimerDisplay(seconds) {
     const m = Math.floor(seconds / 60);
     const s = seconds % 60;
-    el('timer-display').innerText = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    const formatted = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    
+    el('timer-display').innerText = formatted;
+    document.title = `${formatted} - Live LBB`;
+
+    // Logic Progress Bar Baru
+    if(selectedTeamId) {
+        const team = db.teams.find(t => t.id === selectedTeamId);
+        if(!team) return;
+
+        const limitSec = (team.level === 'SD/MI' ? 8 : 13) * 60;
+        // Hitung persentase (max 100%)
+        const percent = Math.min((seconds / limitSec) * 100, 100);
+        
+        const progressBar = el('timer-progress');
+        if(progressBar) {
+            progressBar.style.width = `${percent}%`;
+        }
+    }
 }
 
+// Fungsi Cek Overtime & Ubah Warna
 function checkOvertime(seconds) {
     const team = db.teams.find(t => t.id === selectedTeamId);
+    if(!team) return;
+
     const limitSec = (team.level === 'SD/MI' ? 8 : 13) * 60;
     const display = el('timer-display');
-    
+    const progressBar = el('timer-progress');
+
     if (seconds > limitSec) {
+        // KONDISI OVERTIME (Merah & Berkedip)
         const diff = seconds - limitSec;
         const penaltyScore = Math.ceil(diff / 30) * 50;
-        display.classList.add('text-red-500');
-        display.classList.remove('text-green-400');
+        
+        // Ubah teks jadi Merah
+        display.classList.add('text-red-500', 'drop-shadow-[0_0_15px_rgba(239,68,68,0.8)]', 'timer-critical');
+        display.classList.remove('text-white', 'drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]');
+        
+        // Ubah Progress Bar jadi Merah
+        if(progressBar) {
+            progressBar.classList.remove('from-blue-500', 'to-cyan-400');
+            progressBar.classList.add('from-red-600', 'to-red-400');
+        }
+
         el('pen-time').value = penaltyScore;
     } else {
-        display.classList.remove('text-red-500');
-        display.classList.add('text-green-400');
+        // KONDISI NORMAL (Pastikan tetap putih)
+        resetTimerVisuals();
         el('pen-time').value = 0;
+    }
+}
+
+// Helper untuk mengembalikan warna ke semula (Putih/Biru)
+function resetTimerVisuals() {
+    const display = el('timer-display');
+    const progressBar = el('timer-progress');
+    
+    // Reset Teks ke Putih
+    display.classList.add('text-white', 'drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]');
+    display.classList.remove('text-red-500', 'drop-shadow-[0_0_15px_rgba(239,68,68,0.8)]', 'timer-critical', 'text-green-400'); // Hapus juga text-green-400 lama
+    
+    // Reset Progress Bar ke Biru
+    if(progressBar) {
+        progressBar.classList.add('from-blue-500', 'to-cyan-400');
+        progressBar.classList.remove('from-red-600', 'to-red-400');
     }
 }
 
