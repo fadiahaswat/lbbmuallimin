@@ -1,5 +1,5 @@
 // --- DATA & STATE MANAGEMENT ---
-const DB_KEY = 'lbb_muallimin_v3_fix'; // Versi baru agar cache bersih
+const DB_KEY = 'lbb_muallimin_v4_juknis'; // New version
 
 const initialData = {
     users: [
@@ -31,13 +31,12 @@ const el = (id) => document.getElementById(id);
 const hide = (id) => el(id)?.classList.add('hide');
 const show = (id) => el(id)?.classList.remove('hide');
 
-// --- AUTO-FIX UI LAYOUT (Untuk masalah tombol ketutupan) ---
+// --- AUTO-FIX UI LAYOUT ---
 function fixButtonZIndex() {
-    // Memaksa container tombol timer agar ada di layer paling atas
     const startBtn = el('btn-timer-start');
     if (startBtn && startBtn.parentElement) {
         startBtn.parentElement.style.position = 'relative';
-        startBtn.parentElement.style.zIndex = '100'; // Layer teratas
+        startBtn.parentElement.style.zIndex = '100';
     }
 }
 
@@ -46,7 +45,6 @@ function handleLogin() {
     const u = el('login-user').value;
     const p = el('login-pass').value;
     
-    // Cek akun dummy tim
     if (u.startsWith('team_')) {
         const team = db.teams.find(t => t.username === u && t.pass === p);
         if (team) { 
@@ -78,9 +76,8 @@ function enterDashboard() {
     show('dashboard-layout');
     el('role-badge').textContent = currentUser.role.toUpperCase();
     
-    renderSidebar(); // Render menu sesuai role
+    renderSidebar();
     
-    // Default Routes
     if(currentUser.role === 'admin') navigate('admin-dashboard');
     else if(currentUser.role === 'panitia') navigate('panitia-dashboard');
     else navigate('peserta-dashboard');
@@ -100,7 +97,7 @@ function renderSidebar() {
         links.push({ id: 'panitia-live', icon: 'fa-stopwatch-20', label: 'Live Scoring' });
     } else if (currentUser.role === 'peserta') {
         links.push({ id: 'peserta-dashboard', icon: 'fa-house-user', label: 'Beranda Tim' });
-        links.push({ id: 'peserta-juknis', icon: 'fa-book-open-reader', label: 'Juknis' });
+        links.push({ id: 'peserta-juknis', icon: 'fa-book-open-reader', label: 'Juknis Pendaftaran' });
         links.push({ id: 'peserta-data', icon: 'fa-file-signature', label: 'Data Peleton' });
         links.push({ id: 'peserta-docs', icon: 'fa-cloud-arrow-up', label: 'Upload Berkas' });
         links.push({ id: 'peserta-schedule', icon: 'fa-bullhorn', label: 'Pengumuman' });
@@ -108,15 +105,12 @@ function renderSidebar() {
 
     links.forEach(link => {
         const btn = document.createElement('button');
-        // Style Menu Dark Mode
         btn.className = 'sidebar-link w-full text-left px-4 py-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all flex items-center gap-3 text-sm font-medium mb-1';
         btn.onclick = () => {
-            // Reset active state
             document.querySelectorAll('.sidebar-link').forEach(b => {
                 b.classList.remove('bg-primary-600/10', 'text-primary-400');
                 b.classList.add('text-slate-400');
             });
-            // Set active
             btn.classList.add('bg-primary-600/10', 'text-primary-400');
             btn.classList.remove('text-slate-400');
             navigate(link.id);
@@ -130,11 +124,10 @@ function navigate(viewId) {
     document.querySelectorAll('.view-section').forEach(s => s.classList.add('hide'));
     show('view-' + viewId);
 
-    // Refresh Data & Fix UI
     db = loadDB(); 
     if(viewId === 'panitia-live') {
         initPanitiaLive();
-        setTimeout(fixButtonZIndex, 100); // Pastikan tombol muncul paling atas
+        setTimeout(fixButtonZIndex, 100);
     }
     if(viewId === 'admin-dashboard') initAdminDashboard();
     if(viewId === 'admin-teams') initAdminTeams();
@@ -350,9 +343,15 @@ window.verifyTeam = function(id) {
 window.uploadDoc = function(type) {
     currentUser.documents = currentUser.documents || {};
     if(type === 'formB') {
-        const naming = prompt("Simulasi: Masukkan nama file (Wajib: NAMA SEKOLAH_NAMA PELETON.docx)");
-        if(!naming || !naming.toLowerCase().endsWith('.docx')) { alert("Format salah!"); return; }
+        const naming = prompt("Simulasi: Masukkan nama file (WAJIB KAPITAL: NAMA SEKOLAH_NAMA PELETON.docx)");
+        if(!naming) return;
+        
+        // VALIDASI BARU SESUAI JUKNIS
+        if(!naming.toLowerCase().endsWith('.docx')) { alert("Format salah! Harus .docx"); return; }
+        if(naming !== naming.toUpperCase()) { alert("Nama file harus HURUF KAPITAL semua!"); return; }
+        if(!naming.includes('_')) { alert("Gunakan underscore (_) pemisah Sekolah dan Peleton"); return; }
     }
+    
     currentUser.documents[type] = true;
     const idx = db.teams.findIndex(t => t.id === currentUser.id);
     if(idx !== -1) db.teams[idx] = currentUser;
@@ -363,7 +362,7 @@ window.uploadDoc = function(type) {
     initPesertaDocs();
 }
 
-// --- LIVE SCORING ENGINE (FIXED) ---
+// --- LIVE SCORING ENGINE ---
 
 if(el('live-team-select')) {
     el('live-team-select').addEventListener('change', (e) => selectLiveTeam(e.target.value));
@@ -375,7 +374,6 @@ function selectLiveTeam(tid) {
     const penPanel = el('penalty-panel');
     const subBtn = el('btn-submit-score');
     
-    // Reset tampilan awal
     resetTimerVisuals();
 
     if (!tid) {
@@ -386,7 +384,6 @@ function selectLiveTeam(tid) {
         return;
     }
     
-    // Aktifkan panel
     scorePanel.classList.remove('opacity-50', 'pointer-events-none');
     penPanel.classList.remove('opacity-50', 'pointer-events-none');
     subBtn.classList.remove('opacity-50', 'pointer-events-none');
@@ -395,7 +392,6 @@ function selectLiveTeam(tid) {
     const limit = team.level === 'SD/MI' ? 8 : 13;
     el('timer-limit-label').innerText = `Limit: ${limit} Menit`;
 
-    // Pastikan tombol tidak ketutupan!
     fixButtonZIndex();
 
     if (db.activeRun && db.activeRun.teamId === tid) {
@@ -475,7 +471,6 @@ function updateTimerDisplay(seconds) {
     }
 }
 
-// FIX WARNA & LOGIC TIMER (Sinkron dengan HTML Baru)
 function checkOvertime(seconds) {
     const team = db.teams.find(t => t.id === selectedTeamId);
     if(!team) return;
@@ -488,11 +483,9 @@ function checkOvertime(seconds) {
         const diff = seconds - limitSec;
         const penaltyScore = Math.ceil(diff / 30) * 50;
         
-        // Ubah Teks jadi Merah
         display.classList.add('text-red-500');
         display.classList.remove('text-white');
         
-        // Ubah Bar jadi Merah
         if(progressBar) {
             progressBar.classList.remove('bg-blue-500');
             progressBar.classList.add('bg-red-600');
@@ -557,16 +550,17 @@ function showToast(msg, type='success') {
     const icon = el('toast-icon');
     
     toastMsg.innerText = msg;
+    
     if(type === 'error') {
         icon.className = 'fa-solid fa-circle-xmark text-red-500 text-lg';
-        toast.classList.add('border-red-500');
-        toast.classList.remove('border-green-500');
+        toast.className = 'fixed top-5 right-5 bg-slate-800 border-l-4 border-red-500 text-white shadow-xl rounded-r px-5 py-4 transform transition-transform duration-300 z-50 flex items-center gap-3 translate-x-0';
     } else {
         icon.className = 'fa-solid fa-check-circle text-green-500 text-lg';
-        toast.classList.add('border-green-500');
-        toast.classList.remove('border-red-500');
+        toast.className = 'fixed top-5 right-5 bg-slate-800 border-l-4 border-green-500 text-white shadow-xl rounded-r px-5 py-4 transform transition-transform duration-300 z-50 flex items-center gap-3 translate-x-0';
     }
     
-    toast.classList.remove('translate-x-full');
-    setTimeout(() => toast.classList.add('translate-x-full'), 3000);
+    setTimeout(() => {
+        toast.classList.add('translate-x-full');
+        toast.classList.remove('translate-x-0');
+    }, 3000);
 }
