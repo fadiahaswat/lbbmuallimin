@@ -113,3 +113,41 @@ accordions.forEach(acc => {
         }
     });
 });
+
+// 5. COPY TO CLIPBOARD FUNCTION
+function copyRekening(btn) {
+    const nomorRekening = "7123456789"; // Hardcoded untuk keamanan data
+    const feedback = document.getElementById('copy-feedback');
+    
+    // API Clipboard Modern
+    navigator.clipboard.writeText(nomorRekening).then(() => {
+        // 1. Ubah Ikon jadi Ceklis
+        // Kita ganti innerHTML tombol sementara
+        btn.innerHTML = '<i data-lucide="check" width="18" height="18"></i>';
+        lucide.createIcons(); // Render ulang ikon baru
+        
+        // Ubah style tombol jadi hijau (sukses)
+        btn.classList.remove('text-blue-600', 'hover:bg-blue-600', 'hover:text-white');
+        btn.classList.add('bg-green-500', 'text-white', 'border-green-500');
+
+        // 2. Munculkan Teks Feedback "Berhasil disalin!"
+        feedback.classList.remove('opacity-0');
+
+        // 3. Reset kembali setelah 2 detik
+        setTimeout(() => {
+            btn.innerHTML = '<i data-lucide="copy" width="18" height="18"></i>';
+            lucide.createIcons();
+            
+            // Kembalikan style tombol biru
+            btn.classList.add('text-blue-600', 'hover:bg-blue-600', 'hover:text-white');
+            btn.classList.remove('bg-green-500', 'text-white', 'border-green-500');
+            
+            // Sembunyikan feedback
+            feedback.classList.add('opacity-0');
+        }, 2000);
+
+    }).catch(err => {
+        console.error('Gagal menyalin: ', err);
+        alert('Gagal menyalin otomatis. Silakan salin manual.');
+    });
+}
