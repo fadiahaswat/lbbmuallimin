@@ -86,27 +86,50 @@
     <!-- NAVIGATION -->
     <nav id="navbar" class="fixed top-0 w-full z-50 transition-all duration-300 py-4 border-b border-transparent">
     <div class="container mx-auto px-6 flex justify-between items-center">
-        <a href="#home" class="group flex items-center gap-3 focus:outline-none transition-all">
-            <img src="LOGO LOGOTYPE2.png" alt="LBB Logo" class="h-12 w-auto drop-shadow-md hover:scale-105 transition-transform duration-300">
+        
+        <a href="#home" class="group flex items-center gap-3 focus:outline-none transition-transform hover:scale-105 duration-300" aria-label="Kembali ke Beranda">
+            <img src="LOGO TONTI 400px.png" alt="Logo LBB Tonti" class="h-12 md:h-14 w-auto drop-shadow-lg filter brightness-110">
         </a>
 
-        <div class="hidden lg:flex items-center gap-2">
-            <div class="flex items-center gap-6 mr-6 bg-black/40 backdrop-blur-md px-6 py-2.5 rounded-full border border-white/10 shadow-lg">
-                <a href="#home" class="nav-link text-sm font-bold uppercase text-gray-300 hover:text-lbb-gold transition-colors py-2">Beranda</a>
-                <a href="#about" class="nav-link text-sm font-bold uppercase text-gray-300 hover:text-lbb-gold transition-colors py-2">Tentang</a>
-                <a href="#registration" class="nav-link text-sm font-bold uppercase text-gray-300 hover:text-lbb-gold transition-colors py-2">Pendaftaran</a>
-                <a href="#rules" class="nav-link text-sm font-bold uppercase text-gray-300 hover:text-lbb-gold transition-colors py-2">Juknis</a>
-                <a href="#downloads" class="nav-link text-sm font-bold uppercase text-gray-300 hover:text-lbb-gold transition-colors py-2">Unduhan</a>
-                <a href="#contact" class="nav-link text-sm font-bold uppercase text-gray-300 hover:text-lbb-gold transition-colors py-2">Kontak</a>
+        <div class="hidden lg:flex items-center gap-4">
+            <div class="flex items-center gap-1 px-2 py-1.5 rounded-full bg-black/30 backdrop-blur-md border border-white/10 shadow-2xl">
+                <a href="#home" class="nav-link relative px-5 py-2 text-sm font-bold uppercase text-gray-200 hover:text-white transition-colors group">
+                    Beranda
+                    <span class="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-lbb-gold transition-all duration-300 group-hover:w-[60%] shadow-[0_0_8px_rgba(255,215,0,0.8)]"></span>
+                </a>
+                <a href="#about" class="nav-link relative px-5 py-2 text-sm font-bold uppercase text-gray-200 hover:text-white transition-colors group">
+                    Tentang
+                    <span class="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-lbb-gold transition-all duration-300 group-hover:w-[60%] shadow-[0_0_8px_rgba(255,215,0,0.8)]"></span>
+                </a>
+                <a href="#registration" class="nav-link relative px-5 py-2 text-sm font-bold uppercase text-gray-200 hover:text-white transition-colors group">
+                    Pendaftaran
+                    <span class="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-lbb-gold transition-all duration-300 group-hover:w-[60%] shadow-[0_0_8px_rgba(255,215,0,0.8)]"></span>
+                </a>
+                <a href="#rules" class="nav-link relative px-5 py-2 text-sm font-bold uppercase text-gray-200 hover:text-white transition-colors group">
+                    Juknis
+                    <span class="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-lbb-gold transition-all duration-300 group-hover:w-[60%] shadow-[0_0_8px_rgba(255,215,0,0.8)]"></span>
+                </a>
+                <a href="#downloads" class="nav-link relative px-5 py-2 text-sm font-bold uppercase text-gray-200 hover:text-white transition-colors group">
+                    Unduhan
+                    <span class="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-lbb-gold transition-all duration-300 group-hover:w-[60%] shadow-[0_0_8px_rgba(255,215,0,0.8)]"></span>
+                </a>
+                <a href="#contact" class="nav-link relative px-5 py-2 text-sm font-bold uppercase text-gray-200 hover:text-white transition-colors group">
+                    Kontak
+                    <span class="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-lbb-gold transition-all duration-300 group-hover:w-[60%] shadow-[0_0_8px_rgba(255,215,0,0.8)]"></span>
+                </a>
             </div>
             
-            <a href="#registration" class="px-6 py-2.5 bg-lbb-gold text-lbb-red rounded-full font-black hover:shadow-[0_0_15px_rgba(255,215,0,0.6)] hover:-translate-y-0.5 transition-all uppercase border-2 border-lbb-gold">
-                Daftar <i data-lucide="arrow-right" class="inline w-4 ml-1"></i>
+            <a href="#registration" class="group relative px-6 py-2.5 bg-gradient-to-br from-lbb-gold to-yellow-600 text-lbb-red rounded-full font-black hover:shadow-[0_0_20px_rgba(255,215,0,0.5)] hover:-translate-y-0.5 active:scale-95 transition-all border border-yellow-400/50 overflow-hidden">
+                <div class="absolute inset-0 bg-white/30 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+                
+                <span class="relative flex items-center gap-2 uppercase tracking-wide text-xs md:text-sm">
+                    Daftar <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-1"></i>
+                </span>
             </a>
         </div>
 
-        <button id="mobile-menu-btn" class="lg:hidden text-white hover:text-lbb-gold transition-colors">
-            <i data-lucide="menu" width="32" height="32"></i>
+        <button id="mobile-menu-btn" class="lg:hidden p-2.5 rounded-xl bg-black/30 backdrop-blur-md border border-white/10 text-white hover:bg-black/50 hover:text-lbb-gold hover:border-lbb-gold/50 transition-all active:scale-95" aria-label="Buka Menu">
+            <i data-lucide="menu" width="28" height="28"></i>
         </button>
     </div>
 </nav>
