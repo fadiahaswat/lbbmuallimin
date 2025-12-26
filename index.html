@@ -135,66 +135,186 @@
 </nav>
 
     <!-- MOBILE MENU OVERLAY -->
-    <div id="mobile-menu" class="fixed inset-0 z-40 bg-slate-900/95 backdrop-blur-sm pt-24 px-6 hidden flex-col gap-4 transition-opacity duration-300 overflow-y-auto">
+    <div id="mobile-menu" class="fixed inset-0 z-40 bg-zinc-950/98 backdrop-blur-2xl pt-28 px-6 hidden flex-col transition-opacity duration-300 overflow-y-auto">
     
-    <a href="#home" class="mobile-link flex items-center gap-4 text-slate-300 text-lg font-bold border-b border-white/10 pb-4 hover:text-white transition-colors">
-        <i data-lucide="home" class="text-red-500"></i> Beranda
-    </a>
-    
-    <a href="#about" class="mobile-link flex items-center gap-4 text-slate-300 text-lg font-bold border-b border-white/10 pb-4 hover:text-white transition-colors">
-        <i data-lucide="info" class="text-red-500"></i> Tentang
-    </a>
-    
-    <a href="#registration" class="mobile-link flex items-center gap-4 text-slate-300 text-lg font-bold border-b border-white/10 pb-4 hover:text-white transition-colors">
-        <i data-lucide="clipboard-list" class="text-red-500"></i> Pendaftaran
-    </a>
-    
-    <a href="#rules" class="mobile-link flex items-center gap-4 text-slate-300 text-lg font-bold border-b border-white/10 pb-4 hover:text-white transition-colors">
-        <i data-lucide="book-open" class="text-red-500"></i> Juknis & Materi
-    </a>
-    
-    <a href="#downloads" class="mobile-link flex items-center gap-4 text-slate-300 text-lg font-bold border-b border-white/10 pb-4 hover:text-white transition-colors">
-        <i data-lucide="download" class="text-red-500"></i> Unduhan
-    </a>
-    
-    <a href="#contact" class="mobile-link flex items-center gap-4 text-slate-300 text-lg font-bold border-b border-white/10 pb-4 hover:text-white transition-colors">
-        <i data-lucide="phone" class="text-red-500"></i> Kontak
-    </a>
+    <div class="absolute top-0 right-0 w-64 h-64 bg-red-900/20 rounded-full blur-3xl pointer-events-none -z-10"></div>
 
-    <a href="#registration" class="mobile-link w-full py-4 bg-gradient-to-r from-red-600 to-red-500 text-white font-bold rounded-xl mt-4 text-center shadow-lg shadow-red-900/20 flex justify-center items-center gap-2">
-        Daftar Sekarang <i data-lucide="arrow-right" width="20"></i>
-    </a>
+    <div class="flex flex-col h-full pb-8">
+        
+        <div class="flex-1 flex flex-col gap-3">
+            
+            <a href="#home" class="mobile-link group flex items-center gap-4 p-3 rounded-xl hover:bg-white/5 border border-transparent hover:border-white/10 transition-all duration-300">
+                <div class="w-10 h-10 rounded-lg bg-zinc-900 flex items-center justify-center text-gray-400 group-hover:text-lbb-gold group-hover:bg-black transition-colors shadow-inner">
+                    <i data-lucide="home" width="20"></i>
+                </div>
+                <span class="text-lg font-bold text-gray-300 group-hover:text-white tracking-wide">Beranda</span>
+                <i data-lucide="chevron-right" class="ml-auto text-zinc-700 group-hover:text-lbb-gold opacity-0 group-hover:opacity-100 transition-all transform group-hover:translate-x-1" width="18"></i>
+            </a>
+
+            <a href="#about" class="mobile-link group flex items-center gap-4 p-3 rounded-xl hover:bg-white/5 border border-transparent hover:border-white/10 transition-all duration-300">
+                <div class="w-10 h-10 rounded-lg bg-zinc-900 flex items-center justify-center text-gray-400 group-hover:text-lbb-gold group-hover:bg-black transition-colors shadow-inner">
+                    <i data-lucide="info" width="20"></i>
+                </div>
+                <span class="text-lg font-bold text-gray-300 group-hover:text-white tracking-wide">Tentang</span>
+                <i data-lucide="chevron-right" class="ml-auto text-zinc-700 group-hover:text-lbb-gold opacity-0 group-hover:opacity-100 transition-all transform group-hover:translate-x-1" width="18"></i>
+            </a>
+
+            <a href="#registration" class="mobile-link group flex items-center gap-4 p-3 rounded-xl hover:bg-white/5 border border-transparent hover:border-white/10 transition-all duration-300">
+                <div class="w-10 h-10 rounded-lg bg-zinc-900 flex items-center justify-center text-gray-400 group-hover:text-lbb-gold group-hover:bg-black transition-colors shadow-inner">
+                    <i data-lucide="clipboard-list" width="20"></i>
+                </div>
+                <span class="text-lg font-bold text-gray-300 group-hover:text-white tracking-wide">Pendaftaran</span>
+                <i data-lucide="chevron-right" class="ml-auto text-zinc-700 group-hover:text-lbb-gold opacity-0 group-hover:opacity-100 transition-all transform group-hover:translate-x-1" width="18"></i>
+            </a>
+
+            <a href="#rules" class="mobile-link group flex items-center gap-4 p-3 rounded-xl hover:bg-white/5 border border-transparent hover:border-white/10 transition-all duration-300">
+                <div class="w-10 h-10 rounded-lg bg-zinc-900 flex items-center justify-center text-gray-400 group-hover:text-lbb-gold group-hover:bg-black transition-colors shadow-inner">
+                    <i data-lucide="book-open" width="20"></i>
+                </div>
+                <span class="text-lg font-bold text-gray-300 group-hover:text-white tracking-wide">Juknis & Materi</span>
+                <i data-lucide="chevron-right" class="ml-auto text-zinc-700 group-hover:text-lbb-gold opacity-0 group-hover:opacity-100 transition-all transform group-hover:translate-x-1" width="18"></i>
+            </a>
+
+            <a href="#downloads" class="mobile-link group flex items-center gap-4 p-3 rounded-xl hover:bg-white/5 border border-transparent hover:border-white/10 transition-all duration-300">
+                <div class="w-10 h-10 rounded-lg bg-zinc-900 flex items-center justify-center text-gray-400 group-hover:text-lbb-gold group-hover:bg-black transition-colors shadow-inner">
+                    <i data-lucide="download" width="20"></i>
+                </div>
+                <span class="text-lg font-bold text-gray-300 group-hover:text-white tracking-wide">Unduhan</span>
+                <i data-lucide="chevron-right" class="ml-auto text-zinc-700 group-hover:text-lbb-gold opacity-0 group-hover:opacity-100 transition-all transform group-hover:translate-x-1" width="18"></i>
+            </a>
+
+            <a href="#contact" class="mobile-link group flex items-center gap-4 p-3 rounded-xl hover:bg-white/5 border border-transparent hover:border-white/10 transition-all duration-300">
+                <div class="w-10 h-10 rounded-lg bg-zinc-900 flex items-center justify-center text-gray-400 group-hover:text-lbb-gold group-hover:bg-black transition-colors shadow-inner">
+                    <i data-lucide="phone" width="20"></i>
+                </div>
+                <span class="text-lg font-bold text-gray-300 group-hover:text-white tracking-wide">Kontak</span>
+                <i data-lucide="chevron-right" class="ml-auto text-zinc-700 group-hover:text-lbb-gold opacity-0 group-hover:opacity-100 transition-all transform group-hover:translate-x-1" width="18"></i>
+            </a>
+
+        </div>
+
+        <div class="mt-6 pt-6 border-t border-white/10 space-y-6">
+            
+            <a href="#registration" class="mobile-link w-full py-4 bg-gradient-to-r from-lbb-gold to-yellow-600 text-red-950 font-black rounded-xl text-center shadow-lg shadow-yellow-600/20 active:scale-95 transition-transform flex justify-center items-center gap-3 uppercase tracking-widest">
+                Daftar Sekarang <i data-lucide="arrow-right" width="20"></i>
+            </a>
+
+            <div class="flex justify-between items-center px-4">
+                <span class="text-xs text-zinc-500 font-medium">Ikuti Update:</span>
+                <div class="flex gap-4">
+                    <a href="#" class="text-zinc-400 hover:text-white transition-colors"><i data-lucide="instagram" width="20"></i></a>
+                    <a href="#" class="text-zinc-400 hover:text-white transition-colors"><i data-lucide="youtube" width="20"></i></a>
+                    <a href="#" class="text-zinc-400 hover:text-white transition-colors"><i data-lucide="globe" width="20"></i></a>
+                </div>
+            </div>
+        </div>
+
+    </div>
 </div>
 
     <!-- MAIN CONTENT -->
     <main>
         <!-- HERO SECTION -->
         <section id="home" class="relative bg-lbb-red text-white py-24 lg:py-40 overflow-hidden isolate">
+    
+    <div class="absolute inset-0 z-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20 mix-blend-overlay"></div>
     <div class="absolute inset-0 bg-halftone z-0"></div>
-    <div class="absolute top-0 right-0 w-[600px] h-[600px] bg-red-600 rounded-full blur-[150px] opacity-50 -z-10"></div>
+    
+    <div class="absolute top-0 right-0 w-[600px] h-[600px] bg-red-600 rounded-full blur-[150px] -translate-y-1/2 translate-x-1/2 opacity-50"></div>
+    <div class="absolute bottom-0 left-0 w-[600px] h-[600px] bg-black rounded-full blur-[150px] translate-y-1/2 -translate-x-1/2 opacity-60"></div>
 
     <div class="container mx-auto px-6 relative z-10 text-center">
-        <div class="inline-flex items-center gap-2 px-6 py-2 mb-8 bg-black/40 border border-lbb-gold/50 rounded-full text-lbb-gold text-xs font-black tracking-widest uppercase backdrop-blur-sm">
-            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-lbb-gold opacity-20"></span>
-            Open Registration: 14 - 28 Juli 2025
+        
+        <div class="flex flex-col items-center gap-6 mb-8">
+            <div class="inline-flex items-center gap-2 px-6 py-2 bg-black/40 border border-lbb-gold/50 rounded-full text-lbb-gold text-xs font-black tracking-widest uppercase shadow-[0_0_20px_rgba(255,215,0,0.2)] backdrop-blur-sm">
+                <span class="relative flex h-2 w-2">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-lbb-gold opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-2 w-2 bg-yellow-400"></span>
+                </span>
+                Open Registration: 14 - 28 Juli 2025
+            </div>
+            
+            <div class="flex gap-3 md:gap-6 text-gray-300 text-xs font-mono font-bold">
+                <div class="flex flex-col items-center">
+                    <div class="bg-black/30 border border-white/10 rounded-lg p-2 md:p-3 w-12 md:w-16 backdrop-blur-sm shadow-inner">
+                        <span id="cd-days" class="block text-xl md:text-2xl text-lbb-gold font-black">00</span>
+                    </div>
+                    <span class="mt-1 uppercase tracking-wider text-[10px] text-lbb-gold/80">Hari</span>
+                </div>
+                <div class="text-lbb-gold text-xl pt-2 font-black">:</div>
+                <div class="flex flex-col items-center">
+                    <div class="bg-black/30 border border-white/10 rounded-lg p-2 md:p-3 w-12 md:w-16 backdrop-blur-sm shadow-inner">
+                        <span id="cd-hours" class="block text-xl md:text-2xl text-lbb-gold font-black">00</span>
+                    </div>
+                    <span class="mt-1 uppercase tracking-wider text-[10px] text-lbb-gold/80">Jam</span>
+                </div>
+                <div class="text-lbb-gold text-xl pt-2 font-black">:</div>
+                <div class="flex flex-col items-center">
+                    <div class="bg-black/30 border border-white/10 rounded-lg p-2 md:p-3 w-12 md:w-16 backdrop-blur-sm shadow-inner">
+                        <span id="cd-minutes" class="block text-xl md:text-2xl text-lbb-gold font-black">00</span>
+                    </div>
+                    <span class="mt-1 uppercase tracking-wider text-[10px] text-lbb-gold/80">Min</span>
+                </div>
+                <div class="text-lbb-gold text-xl pt-2 font-black">:</div>
+                <div class="flex flex-col items-center">
+                    <div class="bg-black/30 border border-white/10 rounded-lg p-2 md:p-3 w-12 md:w-16 backdrop-blur-sm shadow-inner">
+                        <span id="cd-seconds" class="block text-xl md:text-2xl text-lbb-gold font-black">00</span>
+                    </div>
+                    <span class="mt-1 uppercase tracking-wider text-[10px] text-lbb-gold/80">Det</span>
+                </div>
+            </div>
         </div>
 
-        <h1 class="text-5xl md:text-8xl font-black mb-6 leading-tight tracking-tighter drop-shadow-2xl italic">
-            LOMBA <span class="text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-400">BARIS-BERBARIS</span><br />
-            <span class="text-lbb-gold">MU’ALLIMIN 2025</span>
+        <h1 class="text-5xl md:text-7xl lg:text-8xl font-black mb-6 leading-tight tracking-tighter drop-shadow-2xl italic">
+            LOMBA <span class="text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-400 text-stroke-white">BARIS-BERBARIS</span><br />
+            <span class="text-lbb-gold drop-shadow-[0_4px_0_rgba(0,0,0,0.5)]">
+                MU’ALLIMIN 2025
+            </span>
         </h1>
         
-        <p class="text-lg md:text-xl text-gray-200 mb-12 max-w-2xl mx-auto font-medium">
-            Tingkat SD/MI & SMP/MTs Se-DIY. Tunjukkan <span class="text-lbb-gold font-bold">ketangkasan & disiplin</span> peleton terbaikmu!
+        <p class="text-lg md:text-xl text-gray-200 mb-12 max-w-2xl mx-auto font-medium leading-relaxed">
+            Tingkat SD/MI & SMP/MTs Se-DIY. Tunjukkan <span class="text-lbb-gold font-bold">ketangkasan, disiplin,</span> dan <span class="text-lbb-gold font-bold">semangat juang</span> peleton terbaikmu!
         </p>
         
         <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-20">
-            <a href="#registration" class="px-10 py-4 bg-lbb-gold text-lbb-red font-black rounded-xl hover:scale-105 hover:shadow-[0_0_30px_rgba(255,215,0,0.5)] transition-all uppercase tracking-wide">
-                Daftar Sekarang
+            <a href="#registration" class="group relative px-10 py-4 bg-lbb-gold text-lbb-red font-black rounded-xl overflow-hidden transition-all hover:scale-105 hover:shadow-[0_0_30px_rgba(255,215,0,0.5)] active:scale-95 w-full sm:w-auto flex justify-center items-center gap-2 uppercase tracking-wide border-2 border-lbb-gold">
+                <div class="absolute inset-0 bg-white/40 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+                <span class="relative">Daftar Sekarang</span>
+                <i data-lucide="arrow-right" width="20" class="relative transition-transform group-hover:translate-x-1"></i>
             </a>
-            <a href="#downloads" class="px-10 py-4 border-2 border-white/30 text-white font-bold rounded-xl hover:bg-white/10 hover:border-lbb-gold hover:text-lbb-gold transition-all">
-                Unduh Juknis
+            
+            <a href="#downloads" class="group px-10 py-4 bg-black/20 border-2 border-white/30 text-white font-bold rounded-xl backdrop-blur-sm transition-all hover:bg-white/10 hover:border-lbb-gold hover:text-lbb-gold w-full sm:w-auto flex justify-center items-center gap-2">
+                <span>Unduh Juknis</span>
+                <i data-lucide="download" width="20" class="transition-transform group-hover:translate-y-1"></i>
             </a>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            <div class="group bg-black/40 backdrop-blur-md p-6 rounded-2xl border border-white/10 hover:border-lbb-gold/50 transition-all duration-300 hover:-translate-y-1 flex flex-col items-center justify-center text-center">
+                <div class="w-12 h-12 bg-lbb-red rounded-xl flex items-center justify-center mb-3 text-lbb-gold group-hover:scale-110 transition-all shadow-lg border border-white/10">
+                    <i data-lucide="calendar" width="24"></i>
+                </div>
+                <p class="font-bold text-lg text-white">7 September 2025</p>
+                <p class="text-xs text-gray-400 uppercase tracking-wider font-bold">Waktu Pelaksanaan</p>
+            </div>
+            
+            <div class="group bg-black/40 backdrop-blur-md p-6 rounded-2xl border border-white/10 hover:border-lbb-gold/50 transition-all duration-300 hover:-translate-y-1 flex flex-col items-center justify-center text-center">
+                <div class="w-12 h-12 bg-lbb-red rounded-xl flex items-center justify-center mb-3 text-lbb-gold group-hover:scale-110 transition-all shadow-lg border border-white/10">
+                    <i data-lucide="map-pin" width="24"></i>
+                </div>
+                <p class="font-bold text-lg text-white">Kampus Terpadu</p>
+                <p class="text-xs text-gray-400 uppercase tracking-wider font-bold">Madrasah Mu'allimin</p>
+            </div>
+            
+            <div class="group bg-black/40 backdrop-blur-md p-6 rounded-2xl border border-white/10 hover:border-lbb-gold/50 transition-all duration-300 hover:-translate-y-1 flex flex-col items-center justify-center text-center">
+                <div class="w-12 h-12 bg-lbb-red rounded-xl flex items-center justify-center mb-3 text-lbb-gold group-hover:scale-110 transition-all shadow-lg border border-white/10">
+                    <i data-lucide="trophy" width="24"></i>
+                </div>
+                <div class="flex flex-col">
+                    <p class="font-bold text-lg text-white">Piala Gubernur DIY</p>
+                    <p class="text-xs text-gray-400 uppercase tracking-wider font-bold">Perebutan Juara Umum</p>
+                </div>
+            </div>
         </div>
     </div>
 </section>
