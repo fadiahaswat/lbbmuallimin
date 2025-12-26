@@ -235,27 +235,30 @@ function initPesertaDocs() {
 
 // --- EVENT LISTENERS & ACTIONS ---
 
-// Tambahkan di bagian Event Listeners logic.js
-
+// Sidebar Toggle (Mobile)
 const sidebar = document.querySelector('aside');
 const mobileOverlay = el('mobile-overlay');
 
-el('btn-mobile-menu').addEventListener('click', () => {
-    sidebar.classList.remove('hidden'); // Tampilkan sidebar
-    sidebar.classList.add('fixed', 'inset-y-0', 'left-0'); // Paksa posisi fixed
-    mobileOverlay.classList.remove('hidden');
-});
+if(el('btn-mobile-menu')) {
+    el('btn-mobile-menu').addEventListener('click', () => {
+        sidebar.classList.remove('hidden'); 
+        sidebar.classList.add('fixed', 'inset-y-0', 'left-0'); 
+        mobileOverlay.classList.remove('hidden');
+    });
+}
 
-mobileOverlay.addEventListener('click', () => {
-    sidebar.classList.add('hidden'); // Sembunyikan lagi
-    sidebar.classList.remove('fixed', 'inset-y-0', 'left-0');
-    mobileOverlay.classList.add('hidden');
-});
+if(mobileOverlay) {
+    mobileOverlay.addEventListener('click', () => {
+        sidebar.classList.add('hidden'); 
+        sidebar.classList.remove('fixed', 'inset-y-0', 'left-0');
+        mobileOverlay.classList.add('hidden');
+    });
+}
 
 // Login Buttons
 el('btn-login').addEventListener('click', handleLogin);
 el('btn-logout').addEventListener('click', logout);
-el('btn-logout-mobile').addEventListener('click', logout);
+if(el('btn-logout-mobile')) el('btn-logout-mobile').addEventListener('click', logout);
 
 // Simulation Quick Login
 document.querySelectorAll('.sim-login-btn').forEach(btn => {
@@ -304,7 +307,7 @@ el('form-peserta-data').addEventListener('submit', (e) => {
     db = loadDB();
 });
 
-// --- GLOBAL FUNCTIONS (Called by onclick in HTML) ---
+// --- GLOBAL FUNCTIONS ---
 
 window.verifyTeam = function(id) {
     const t = db.teams.find(team => team.id === id);
@@ -335,9 +338,7 @@ window.uploadDoc = function(type) {
     initPesertaDocs();
 }
 
-// --- LIVE SCORING LOGIC ---
-
-// --- LIVE SCORING LOGIC (REVAMPED) ---
+// --- LIVE SCORING LOGIC (CLEAN & FIXED) ---
 
 el('live-team-select').addEventListener('change', (e) => selectLiveTeam(e.target.value));
 
@@ -352,7 +353,7 @@ function selectLiveTeam(tid) {
         penPanel.classList.add('opacity-50', 'pointer-events-none');
         subBtn.classList.add('opacity-50', 'pointer-events-none');
         el('timer-limit-label').innerText = "Limit: -";
-        resetTimerVisuals(); // Reset tampilan saat ganti tim
+        resetTimerVisuals(); 
         return;
     }
     
@@ -364,15 +365,14 @@ function selectLiveTeam(tid) {
     const limit = team.level === 'SD/MI' ? 8 : 13;
     el('timer-limit-label').innerText = `Limit: ${limit} Menit`;
 
-    // Reset visual dulu
     resetTimerVisuals();
 
     if (db.activeRun && db.activeRun.teamId === tid) {
-        // Jika sedang berjalan, lanjutkan
+        // Jika sedang berjalan
         elapsedTime = Math.floor((Date.now() - db.activeRun.startTime) / 1000);
         startTimerUI();
     } else {
-        // Jika baru/berhenti
+        // Jika berhenti/baru
         elapsedTime = 0;
         updateTimerDisplay(0);
         el('btn-timer-start').disabled = false;
@@ -380,7 +380,7 @@ function selectLiveTeam(tid) {
     }
 }
 
-// Timer Controls
+// Timer Buttons
 el('btn-timer-start').addEventListener('click', () => {
     if (!selectedTeamId) return alert("Pilih Tim!");
     db.activeRun = { teamId: selectedTeamId, startTime: Date.now() - (elapsedTime * 1000) };
@@ -408,7 +408,7 @@ el('btn-timer-reset').addEventListener('click', () => {
     
     elapsedTime = 0;
     updateTimerDisplay(0);
-    resetTimerVisuals(); // Wajib reset warna & progress bar
+    resetTimerVisuals();
     el('pen-time').value = 0;
 });
 
@@ -422,10 +422,10 @@ function startTimerUI() {
         elapsedTime = Math.floor((Date.now() - db.activeRun.startTime) / 1000);
         updateTimerDisplay(elapsedTime);
         checkOvertime(elapsedTime);
-    }, 1000); // Update tiap 1 detik
+    }, 1000); 
 }
 
-// Fungsi Update Tampilan & Progress Bar
+// Update UI Timer & Progress Bar
 function updateTimerDisplay(seconds) {
     const m = Math.floor(seconds / 60);
     const s = seconds % 60;
@@ -434,13 +434,11 @@ function updateTimerDisplay(seconds) {
     el('timer-display').innerText = formatted;
     document.title = `${formatted} - Live LBB`;
 
-    // Logic Progress Bar Baru
     if(selectedTeamId) {
         const team = db.teams.find(t => t.id === selectedTeamId);
         if(!team) return;
 
         const limitSec = (team.level === 'SD/MI' ? 8 : 13) * 60;
-        // Hitung persentase (max 100%)
         const percent = Math.min((seconds / limitSec) * 100, 100);
         
         const progressBar = el('timer-progress');
@@ -450,7 +448,7 @@ function updateTimerDisplay(seconds) {
     }
 }
 
-// Fungsi Cek Overtime & Ubah Warna
+// Cek Overtime & Ganti Warna Merah
 function checkOvertime(seconds) {
     const team = db.teams.find(t => t.id === selectedTeamId);
     if(!team) return;
@@ -460,15 +458,13 @@ function checkOvertime(seconds) {
     const progressBar = el('timer-progress');
 
     if (seconds > limitSec) {
-        // KONDISI OVERTIME (Merah & Berkedip)
+        // OVERTIME
         const diff = seconds - limitSec;
         const penaltyScore = Math.ceil(diff / 30) * 50;
         
-        // Ubah teks jadi Merah
         display.classList.add('text-red-500', 'drop-shadow-[0_0_15px_rgba(239,68,68,0.8)]', 'timer-critical');
         display.classList.remove('text-white', 'drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]');
         
-        // Ubah Progress Bar jadi Merah
         if(progressBar) {
             progressBar.classList.remove('from-blue-500', 'to-cyan-400');
             progressBar.classList.add('from-red-600', 'to-red-400');
@@ -476,22 +472,20 @@ function checkOvertime(seconds) {
 
         el('pen-time').value = penaltyScore;
     } else {
-        // KONDISI NORMAL (Pastikan tetap putih)
+        // NORMAL
         resetTimerVisuals();
         el('pen-time').value = 0;
     }
 }
 
-// Helper untuk mengembalikan warna ke semula (Putih/Biru)
+// Reset Visual ke Normal (Putih/Biru)
 function resetTimerVisuals() {
     const display = el('timer-display');
     const progressBar = el('timer-progress');
     
-    // Reset Teks ke Putih
     display.classList.add('text-white', 'drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]');
-    display.classList.remove('text-red-500', 'drop-shadow-[0_0_15px_rgba(239,68,68,0.8)]', 'timer-critical', 'text-green-400'); // Hapus juga text-green-400 lama
+    display.classList.remove('text-red-500', 'drop-shadow-[0_0_15px_rgba(239,68,68,0.8)]', 'timer-critical', 'text-green-400');
     
-    // Reset Progress Bar ke Biru
     if(progressBar) {
         progressBar.classList.add('from-blue-500', 'to-cyan-400');
         progressBar.classList.remove('from-red-600', 'to-red-400');
@@ -502,7 +496,6 @@ function resetTimerVisuals() {
 el('btn-submit-score').addEventListener('click', () => {
     if (!selectedTeamId || !confirm("Simpan Nilai Akhir?")) return;
     
-    // Calculate
     const pbb = parseFloat(el('score-pbb').value)||0;
     const kompak = parseFloat(el('score-kompak').value)||0;
     const dMateri = parseFloat(el('score-danton-materi').value)||0;
@@ -551,28 +544,4 @@ function showToast(msg, type='success') {
     
     toast.classList.remove('translate-x-full');
     setTimeout(() => toast.classList.add('translate-x-full'), 3000);
-}
-
-// Tambahkan di fungsi updateTimerDisplay(seconds)
-function updateTimerDisplay(seconds) {
-    const m = Math.floor(seconds / 60);
-    const s = seconds % 60;
-    const formatted = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-    el('timer-display').innerText = formatted;
-    document.title = `${formatted} - Live LBB`; // UX: Update tab browser
-
-    // Update Progress Bar (Visual Baru)
-    if(selectedTeamId) {
-        const team = db.teams.find(t => t.id === selectedTeamId);
-        const limitSec = (team.level === 'SD/MI' ? 8 : 13) * 60;
-        const percent = Math.min((seconds / limitSec) * 100, 100);
-        
-        const progressBar = el('timer-progress');
-        if(progressBar) {
-            progressBar.style.width = `${percent}%`;
-            // Ganti warna bar jika overtime
-            if(seconds > limitSec) progressBar.classList.replace('from-blue-500', 'from-red-500');
-            else progressBar.classList.replace('from-red-500', 'from-blue-500');
-        }
-    }
 }
