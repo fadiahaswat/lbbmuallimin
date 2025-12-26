@@ -20,20 +20,9 @@
                         mono: ['JetBrains Mono', 'monospace'], 
                     },
                     colors: {
-                        slate: {
-                            850: '#1e293b', 
-                            900: '#0f172a', 
-                            950: '#020617', 
-                        },
-                        primary: {
-                            500: '#f43f5e', // Rose Red (Soft)
-                            600: '#e11d48', // Rose Red (Deep)
-                            900: '#881337', // Rose Dark
-                        },
-                        gold: {
-                            400: '#fbbf24', 
-                            500: '#f59e0b',
-                        }
+                        slate: { 850: '#1e293b', 900: '#0f172a', 950: '#020617' },
+                        primary: { 500: '#f43f5e', 600: '#e11d48', 900: '#881337' },
+                        gold: { 400: '#fbbf24', 500: '#f59e0b' }
                     },
                     backgroundImage: {
                         'grid-pattern': "linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px)",
@@ -49,7 +38,6 @@
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #475569; }
-
         .glass-panel {
             background: rgba(30, 41, 59, 0.75);
             backdrop-filter: blur(16px);
@@ -57,26 +45,17 @@
             border: 1px solid rgba(255, 255, 255, 0.08);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
         }
-
-        .view-section {
-            animation: slideUpFade 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-        @keyframes slideUpFade {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .input-field:focus {
-            outline: none;
-            border-color: #f43f5e;
-            box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.25);
-        }
-        
+        .view-section { animation: slideUpFade 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes slideUpFade { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .input-field:focus { outline: none; border-color: #f43f5e; box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.25); }
+        .timer-glow { text-shadow: 0 0 30px rgba(255, 255, 255, 0.15); }
         .bg-tech-grid {
             background-size: 40px 40px;
             background-image: linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
                               linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
         }
+        /* Custom Tab Style */
+        .tab-btn.active { background-color: #f43f5e; color: white; border-color: #f43f5e; }
     </style>
 </head>
 <body class="bg-slate-900 text-slate-200 h-screen overflow-hidden flex flex-col font-sans selection:bg-primary-500 selection:text-white bg-tech-grid">
@@ -84,7 +63,6 @@
     <div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950">
         <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1557683316-973673baf926?q=80&w=2000')] bg-cover bg-center opacity-20 mix-blend-overlay"></div>
         <div class="absolute inset-0 bg-gradient-to-tr from-slate-950 via-slate-900 to-slate-900/90"></div>
-
         <div class="relative glass-panel p-8 md:p-12 rounded-2xl shadow-2xl w-full max-w-sm mx-4 border-t border-white/10">
             <div class="text-center mb-10">
                 <div class="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-primary-600 to-primary-900 shadow-xl shadow-primary-900/40 mb-6 transform rotate-3 border border-white/10">
@@ -92,9 +70,8 @@
                 </div>
                 <h1 class="text-3xl font-heading font-black text-white tracking-wide leading-tight">LBB MU'ALLIMIN <span class="text-primary-500">2025</span></h1>
                 <div class="h-1 w-20 bg-primary-600 mx-auto mt-3 rounded-full"></div>
-                <p class="text-slate-400 text-xs mt-3 uppercase tracking-[0.2em] font-bold">Sistem Pendaftaran Resmi</p>
+                <p class="text-slate-400 text-xs mt-3 uppercase tracking-[0.2em] font-bold">Official Scoring System</p>
             </div>
-            
             <div class="space-y-5">
                 <div class="group">
                     <label class="block text-xs font-bold text-slate-400 uppercase mb-2 ml-1">ID Pengguna</label>
@@ -110,11 +87,8 @@
                         <input type="password" id="login-pass" class="input-field w-full pl-12 pr-4 py-3.5 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder-slate-600 transition-all font-medium" placeholder="••••••••">
                     </div>
                 </div>
-                <button id="btn-login" class="w-full bg-gradient-to-r from-primary-600 to-primary-500 hover:from-primary-500 hover:to-primary-400 text-white font-bold py-4 rounded-xl shadow-lg shadow-primary-600/20 transition-all transform active:scale-[0.98] mt-4 uppercase tracking-wide text-sm">
-                    Masuk Sistem
-                </button>
+                <button id="btn-login" class="w-full bg-gradient-to-r from-primary-600 to-primary-500 hover:from-primary-500 hover:to-primary-400 text-white font-bold py-4 rounded-xl shadow-lg shadow-primary-600/20 transition-all transform active:scale-[0.98] mt-4 uppercase tracking-wide text-sm">Masuk Sistem</button>
             </div>
-
             <div class="mt-10 pt-6 border-t border-white/5">
                 <p class="text-[10px] text-center text-slate-500 font-bold uppercase mb-3 tracking-wider">Akses Cepat (Simulasi)</p>
                 <div class="flex justify-center gap-2">
@@ -127,7 +101,6 @@
     </div>
     
     <div id="dashboard-layout" class="flex h-screen hide">
-        
         <aside class="w-72 bg-slate-900 border-r border-slate-800/60 flex flex-col z-20 hidden md:flex shadow-2xl">
             <div class="p-8 border-b border-slate-800/60 flex items-center gap-4">
                 <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-primary-600 to-primary-800 flex items-center justify-center text-white font-bold shadow-lg text-sm">LM</div>
@@ -136,10 +109,7 @@
                     <span id="role-badge" class="text-[10px] text-primary-400 font-bold uppercase tracking-widest mt-1 block">Role</span>
                 </div>
             </div>
-            
-            <nav id="sidebar-menu" class="flex-1 py-6 px-4 space-y-2 overflow-y-auto">
-                </nav>
-
+            <nav id="sidebar-menu" class="flex-1 py-6 px-4 space-y-2 overflow-y-auto"></nav>
             <div class="p-6 border-t border-slate-800/60">
                 <button id="btn-logout" class="flex items-center justify-center gap-3 text-slate-400 hover:text-white hover:bg-slate-800 w-full px-4 py-3 rounded-xl transition-all text-sm font-bold border border-transparent hover:border-slate-700">
                     <i class="fa-solid fa-arrow-right-from-bracket"></i> Keluar
@@ -155,38 +125,21 @@
                 </div>
                 <button id="btn-logout-mobile" class="text-slate-400 p-2"><i class="fa-solid fa-power-off"></i></button>
             </header>
-
             <div id="mobile-overlay" class="fixed inset-0 bg-slate-950/80 z-20 hidden md:hidden backdrop-blur-sm"></div>
 
             <main id="main-content" class="flex-1 overflow-auto p-4 sm:p-8 lg:p-10 relative scroll-smooth">
                 
                 <section id="view-admin-dashboard" class="view-section hide">
-                    <div class="mb-10 border-b border-slate-800 pb-6">
-                        <h1 class="text-3xl font-heading font-bold text-white mb-2">Dashboard Overview</h1>
-                        <p class="text-slate-400">Ringkasan statistik kompetisi secara real-time.</p>
-                    </div>
+                    <div class="mb-10 border-b border-slate-800 pb-6"><h1 class="text-3xl font-heading font-bold text-white mb-2">Dashboard Overview</h1><p class="text-slate-400">Ringkasan statistik kompetisi.</p></div>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-                        <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-lg relative overflow-hidden">
-                            <i class="fa-solid fa-users text-4xl text-primary-500 mb-4"></i>
-                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Total Tim</p>
-                            <p class="text-4xl font-heading font-bold text-white" id="admin-total-teams">0</p>
-                        </div>
+                        <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-lg relative overflow-hidden"><i class="fa-solid fa-users text-4xl text-primary-500 mb-4"></i><p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Total Tim</p><p class="text-4xl font-heading font-bold text-white" id="admin-total-teams">0</p></div>
                     </div>
-                    <button id="btn-add-dummy" class="bg-white hover:bg-slate-200 text-slate-900 px-6 py-3 rounded-xl font-bold text-sm shadow-lg transition flex items-center gap-3">
-                        <i class="fa-solid fa-wand-magic-sparkles"></i> Generate Data Dummy
-                    </button>
+                    <button id="btn-add-dummy" class="bg-white hover:bg-slate-200 text-slate-900 px-6 py-3 rounded-xl font-bold text-sm shadow-lg transition flex items-center gap-3"><i class="fa-solid fa-wand-magic-sparkles"></i> Generate Data Dummy</button>
                 </section>
 
                 <section id="view-admin-teams" class="view-section hide">
                     <h1 class="text-3xl font-heading font-bold text-white mb-8">Database Peserta</h1>
-                    <div class="bg-slate-800/50 rounded-2xl border border-slate-700 overflow-hidden shadow-xl backdrop-blur-sm">
-                        <table class="w-full text-sm text-left text-slate-300">
-                            <thead class="bg-slate-900/80 text-slate-400 uppercase font-bold text-xs tracking-wider border-b border-slate-700">
-                                <tr><th class="p-5">Tim & Sekolah</th><th class="p-5">Kontak</th><th class="p-5">Status</th></tr>
-                            </thead>
-                            <tbody id="admin-teams-list" class="divide-y divide-slate-700/50"></tbody>
-                        </table>
-                    </div>
+                    <div class="bg-slate-800/50 rounded-2xl border border-slate-700 overflow-hidden shadow-xl backdrop-blur-sm"><table class="w-full text-sm text-left text-slate-300"><thead class="bg-slate-900/80 text-slate-400 uppercase font-bold text-xs tracking-wider border-b border-slate-700"><tr><th class="p-5">Tim & Sekolah</th><th class="p-5">Kontak</th><th class="p-5">Status</th></tr></thead><tbody id="admin-teams-list" class="divide-y divide-slate-700/50"></tbody></table></div>
                 </section>
 
                 <section id="view-panitia-verification" class="view-section hide">
@@ -202,10 +155,7 @@
                                 <select id="live-team-select" class="w-full pl-4 pr-4 py-3 bg-slate-900 border border-slate-600 rounded-xl text-white outline-none"><option value="">-- Pilih --</option></select>
                             </div>
                             <div class="bg-slate-850 rounded-3xl border border-slate-700 p-12 text-center relative shadow-2xl">
-                                <div class="flex justify-between items-center mb-8 relative z-10">
-                                    <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Live Stage</span>
-                                    <span id="timer-limit-label" class="bg-slate-800 px-4 py-1.5 rounded-full text-xs font-bold text-gold-400 border border-slate-700">Limit: -</span>
-                                </div>
+                                <div class="flex justify-between items-center mb-8 relative z-10"><span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Live Stage</span><span id="timer-limit-label" class="bg-slate-800 px-4 py-1.5 rounded-full text-xs font-bold text-gold-400 border border-slate-700">Limit: -</span></div>
                                 <div class="relative py-4 mb-8">
                                     <div id="timer-display" class="text-8xl md:text-9xl font-mono font-bold text-white tracking-tighter leading-none timer-glow">00:00</div>
                                     <div class="w-full h-4 bg-slate-800 rounded-full mt-10 overflow-hidden border border-slate-700/50"><div id="timer-progress" class="h-full bg-blue-500 w-0 transition-all duration-1000"></div></div>
@@ -216,22 +166,53 @@
                                     <button id="btn-timer-reset" class="bg-slate-700 hover:bg-slate-600 w-20 h-20 rounded-2xl flex items-center justify-center text-2xl text-slate-300 shadow-lg"><i class="fa-solid fa-rotate-left"></i></button>
                                 </div>
                             </div>
-                            <div id="scoring-panel" class="bg-slate-800 rounded-2xl border border-slate-700 opacity-50 pointer-events-none p-8"><h3 class="text-white mb-4">Input Nilai</h3>
-                                <div class="grid grid-cols-2 gap-4"><input id="score-pbb" type="number" class="bg-slate-900 border border-slate-600 text-white p-2 rounded" placeholder="PBB"><input id="score-kompak" type="number" class="bg-slate-900 border border-slate-600 text-white p-2 rounded" placeholder="Kekompakan"></div>
-                                <div class="grid grid-cols-4 gap-2 mt-4"><input id="score-danton-materi" type="number" class="bg-slate-900 border border-slate-600 text-white p-2 rounded" placeholder="Materi"><input id="score-danton-suara" type="number" class="bg-slate-900 border border-slate-600 text-white p-2 rounded" placeholder="Suara"><input id="score-danton-sikap" type="number" class="bg-slate-900 border border-slate-600 text-white p-2 rounded" placeholder="Sikap"><input id="score-danton-medan" type="number" class="bg-slate-900 border border-slate-600 text-white p-2 rounded" placeholder="Medan"></div>
-                            </div>
-                        </div>
-                        <div class="lg:w-1/3 flex flex-col gap-6">
-                            <div id="penalty-panel" class="bg-red-950/20 rounded-2xl border border-red-900/40 p-6 opacity-50 pointer-events-none">
-                                <h3 class="text-red-400 font-bold mb-4">Sanksi</h3>
-                                <div class="space-y-2 text-slate-300">
-                                    <label class="flex justify-between"><input type="checkbox" id="pen-upacara" class="mr-2"> Tidak Upacara (-150)</label>
-                                    <label class="flex justify-between"><input type="checkbox" id="pen-late" class="mr-2"> Telat (-100)</label>
-                                    <label class="flex justify-between"><input type="checkbox" id="pen-personel" class="mr-2"> Personel Kurang (-75)</label>
-                                    <div class="pt-2"><input type="number" id="pen-garis" class="bg-slate-900 border border-slate-700 text-white w-full p-1 mb-2" placeholder="Injak Garis (-50)"><input type="number" id="pen-adjustment" class="bg-slate-900 border border-slate-700 text-white w-full p-1 mb-2" placeholder="Penyesuaian (-25)"><input type="number" id="pen-time" class="bg-transparent border-none text-red-400 font-bold w-full text-center" value="0" readonly></div>
+                            
+                            <div id="scoring-panel" class="bg-slate-800 rounded-2xl border border-slate-700 opacity-50 pointer-events-none p-8">
+                                <div class="flex items-center justify-between mb-6">
+                                    <h3 class="text-white font-bold uppercase tracking-wider text-sm"><i class="fa-solid fa-pen-nib mr-2"></i>Input Nilai (50 - 90)</h3>
+                                    <span class="text-xs text-slate-500">Interval: 2 Poin</span>
+                                </div>
+                                <div class="grid grid-cols-2 gap-6 mb-6">
+                                    <div><label class="text-xs text-slate-400 block mb-2 font-bold uppercase">Teknik PBB (70%)</label><input id="score-pbb" type="number" min="50" max="90" step="2" class="input-field w-full bg-slate-900 border border-slate-600 rounded-xl text-white p-3 text-lg font-mono text-center"></div>
+                                    <div><label class="text-xs text-slate-400 block mb-2 font-bold uppercase">Kekompakan (30%)</label><input id="score-kompak" type="number" min="50" max="90" step="2" class="input-field w-full bg-slate-900 border border-slate-600 rounded-xl text-white p-3 text-lg font-mono text-center"></div>
+                                </div>
+                                <div class="border-t border-slate-700 pt-6">
+                                    <label class="text-xs text-primary-400 block mb-4 font-bold uppercase">Nilai Komandan (Total 100%)</label>
+                                    <div class="grid grid-cols-4 gap-4">
+                                        <div><label class="text-[10px] text-slate-500 block mb-1 text-center">Materi (35%)</label><input id="score-danton-materi" type="number" min="50" max="90" step="2" class="input-field w-full bg-slate-900 border border-slate-600 rounded-lg text-white p-2 text-center font-mono"></div>
+                                        <div><label class="text-[10px] text-slate-500 block mb-1 text-center">Suara (25%)</label><input id="score-danton-suara" type="number" min="50" max="90" step="2" class="input-field w-full bg-slate-900 border border-slate-600 rounded-lg text-white p-2 text-center font-mono"></div>
+                                        <div><label class="text-[10px] text-slate-500 block mb-1 text-center">Sikap (20%)</label><input id="score-danton-sikap" type="number" min="50" max="90" step="2" class="input-field w-full bg-slate-900 border border-slate-600 rounded-lg text-white p-2 text-center font-mono"></div>
+                                        <div><label class="text-[10px] text-slate-500 block mb-1 text-center">Medan (20%)</label><input id="score-danton-medan" type="number" min="50" max="90" step="2" class="input-field w-full bg-slate-900 border border-slate-600 rounded-lg text-white p-2 text-center font-mono"></div>
+                                    </div>
                                 </div>
                             </div>
-                            <button id="btn-submit-score" class="w-full bg-blue-600 text-white font-bold py-4 rounded-xl opacity-50 pointer-events-none">SIMPAN</button>
+                        </div>
+                        
+                        <div class="lg:w-1/3 flex flex-col gap-6">
+                            <div id="penalty-panel" class="bg-red-950/20 rounded-2xl border border-red-900/40 p-6 opacity-50 pointer-events-none">
+                                <h3 class="text-red-400 font-bold mb-4 uppercase text-sm border-b border-red-900/30 pb-2">Sanksi Pengurangan</h3>
+                                <div class="space-y-3 text-slate-300 text-sm">
+                                    <label class="flex justify-between items-center bg-slate-900/40 p-2 rounded hover:bg-slate-900 cursor-pointer"><span class="flex-1">Tidak Upacara</span><span class="text-red-500 font-bold mr-2">-150</span><input type="checkbox" id="pen-upacara" class="accent-red-500"></label>
+                                    <label class="flex justify-between items-center bg-slate-900/40 p-2 rounded hover:bg-slate-900 cursor-pointer"><span class="flex-1">Terlambat DP1</span><span class="text-red-500 font-bold mr-2">-100</span><input type="checkbox" id="pen-late" class="accent-red-500"></label>
+                                    <label class="flex justify-between items-center bg-slate-900/40 p-2 rounded hover:bg-slate-900 cursor-pointer"><span class="flex-1">Personel &lt; 22</span><span class="text-red-500 font-bold mr-2">-75</span><input type="checkbox" id="pen-personel" class="accent-red-500"></label>
+                                    
+                                    <div class="pt-2 border-t border-red-900/20 mt-2 space-y-2">
+                                        <div class="flex justify-between items-center">
+                                            <span class="text-xs text-slate-400">Injak Garis (x50)</span>
+                                            <input type="number" id="count-garis" class="w-12 bg-slate-900 border border-slate-600 text-center rounded text-white" value="0" min="0">
+                                        </div>
+                                        <div class="flex justify-between items-center">
+                                            <span class="text-xs text-slate-400">Penyesuaian >3 (x25)</span>
+                                            <input type="number" id="count-adjustment" class="w-12 bg-slate-900 border border-slate-600 text-center rounded text-white" value="0" min="0">
+                                        </div>
+                                        <div class="flex justify-between items-center bg-red-900/20 p-2 rounded">
+                                            <span class="text-xs text-red-300 font-bold">Total Overtime (-50/30s)</span>
+                                            <input type="number" id="pen-time" class="w-16 bg-transparent border-none text-red-400 font-bold text-right" value="0" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <button id="btn-submit-score" class="w-full bg-gradient-to-r from-blue-600 to-blue-500 text-white font-bold py-4 rounded-xl opacity-50 pointer-events-none shadow-lg">KUNCI & SIMPAN</button>
                         </div>
                     </div>
                 </section>
@@ -243,158 +224,96 @@
                             <h1 class="text-3xl font-heading font-bold text-white mb-2 relative z-10">Halo, <span id="dash-peserta-name" class="text-primary-400"></span>!</h1>
                             <p class="text-slate-400 relative z-10">Status Pendaftaran Anda saat ini.</p>
                         </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                            <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700">
-                                <div class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Status Data</div>
-                                <div class="text-xl font-bold text-white" id="val-status">BELUM LENGKAP</div>
-                            </div>
-                            <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700">
-                                <div class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Kategori</div>
-                                <div class="text-xl font-bold text-gold-400" id="val-level">-</div>
-                            </div>
-                            <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700">
-                                <div class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Deadline Daring</div>
-                                <div class="text-xl font-bold text-white">28 Juli 2025</div>
-                            </div>
                         </div>
-                    </div>
                 </section>
 
                 <section id="view-peserta-juknis" class="view-section hide">
-                    <div class="max-w-5xl mx-auto space-y-8">
-                        
-                        <div class="text-center mb-10">
-                            <h1 class="text-3xl md:text-4xl font-heading font-black text-white mb-2">PETUNJUK TEKNIS PENDAFTARAN</h1>
-                            <p class="text-slate-400 uppercase tracking-widest text-sm">LBB Mu'allimin 2025</p>
+                    <div class="max-w-6xl mx-auto">
+                        <div class="text-center mb-8">
+                            <h1 class="text-3xl font-heading font-bold text-white mb-2">Buku Panduan (Juknis)</h1>
+                            <p class="text-slate-400 text-sm">Pilih kategori panduan yang ingin Anda pelajari.</p>
                         </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 relative overflow-hidden">
-                                <div class="absolute top-0 right-0 p-4 opacity-10"><i class="fa-solid fa-money-bill-wave text-6xl text-white"></i></div>
-                                <h3 class="text-primary-500 font-bold uppercase text-xs tracking-wider mb-2">Biaya Pendaftaran</h3>
-                                <p class="text-3xl font-heading font-bold text-white mb-1">Rp325.000,-</p>
-                                <p class="text-slate-400 text-sm">per peleton (Non-refundable)</p>
-                            </div>
-                            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 relative group">
-                                <h3 class="text-primary-500 font-bold uppercase text-xs tracking-wider mb-2">Transfer ke (BRI)</h3>
-                                <div class="flex items-center gap-3 mb-2">
-                                    <span class="text-2xl font-mono font-bold text-white tracking-widest select-all">300701003561505</span>
-                                    <button onclick="navigator.clipboard.writeText('300701003561505'); alert('Disalin!')" class="text-slate-500 hover:text-white transition"><i class="fa-solid fa-copy"></i></button>
-                                </div>
-                                <p class="text-slate-400 text-sm uppercase font-bold">a.n. Falhan Zuhdi Mubarok</p>
-                            </div>
-                            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6">
-                                <h3 class="text-primary-500 font-bold uppercase text-xs tracking-wider mb-4">Jadwal Penting</h3>
-                                <ul class="space-y-4">
-                                    <li class="flex gap-4">
-                                        <div class="w-12 h-12 bg-slate-900 rounded-lg flex flex-col items-center justify-center border border-slate-700">
-                                            <span class="text-[10px] text-slate-500 uppercase">Jul</span>
-                                            <span class="text-lg font-bold text-white">28</span>
-                                        </div>
-                                        <div>
-                                            <strong class="text-white block text-sm">Batas Pendaftaran Daring</strong>
-                                            <span class="text-xs text-slate-500">Pukul 23.59 WIB</span>
-                                        </div>
-                                    </li>
-                                    <li class="flex gap-4">
-                                        <div class="w-12 h-12 bg-slate-900 rounded-lg flex flex-col items-center justify-center border border-slate-700">
-                                            <span class="text-[10px] text-slate-500 uppercase">Agt</span>
-                                            <span class="text-lg font-bold text-white">03</span>
-                                        </div>
-                                        <div>
-                                            <strong class="text-white block text-sm">Penyerahan Berkas Fisik</strong>
-                                            <span class="text-xs text-slate-500">09.00 - 15.00 WIB @ Lobby Mu'allimin</span>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6">
-                                <h3 class="text-primary-500 font-bold uppercase text-xs tracking-wider mb-4">Narahubung</h3>
-                                <div class="space-y-3">
-                                    <a href="https://wa.me/6285314209369" target="_blank" class="flex items-center gap-3 p-3 rounded-xl bg-slate-900/50 hover:bg-slate-700 transition border border-slate-700/50">
-                                        <i class="fa-brands fa-whatsapp text-green-500 text-xl"></i>
-                                        <div>
-                                            <p class="text-white font-bold text-sm">Sdr. Arhan</p>
-                                            <p class="text-xs text-slate-500">0853-1420-9369</p>
-                                        </div>
-                                    </a>
-                                    <a href="https://wa.me/6282329483126" target="_blank" class="flex items-center gap-3 p-3 rounded-xl bg-slate-900/50 hover:bg-slate-700 transition border border-slate-700/50">
-                                        <i class="fa-brands fa-whatsapp text-green-500 text-xl"></i>
-                                        <div>
-                                            <p class="text-white font-bold text-sm">Sdr. Dandi</p>
-                                            <p class="text-xs text-slate-500">0823-2948-3126</p>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
+                        <div class="flex justify-center gap-4 mb-8">
+                            <button id="btn-tab-daftar" class="tab-btn active px-6 py-2 rounded-full border border-slate-600 text-sm font-bold text-white transition bg-slate-800 hover:bg-slate-700">Juknis Pendaftaran</button>
+                            <button id="btn-tab-lomba" class="tab-btn px-6 py-2 rounded-full border border-slate-600 text-sm font-bold text-slate-400 transition hover:bg-slate-800 hover:text-white">Juknis Lapangan</button>
                         </div>
 
-                        <div class="bg-slate-900 border-l-4 border-primary-500 p-6 md:p-8 rounded-r-2xl">
-                            <h2 class="text-xl font-heading font-bold text-white mb-6">B. Ketentuan Peserta</h2>
-                            <ul class="grid md:grid-cols-2 gap-4 text-sm text-slate-300">
-                                <li class="flex gap-3"><i class="fa-solid fa-check text-green-500 mt-1"></i><span>Maksimal 2 Peleton per sekolah.</span></li>
-                                <li class="flex gap-3"><i class="fa-solid fa-check text-green-500 mt-1"></i><span>1 Peleton = Max 25 Orang (1 Danton + 21 Pasukan + 3 Cadangan).</span></li>
-                                <li class="flex gap-3"><i class="fa-solid fa-check text-green-500 mt-1"></i><span>Peleton boleh Heterogen (Putra/Putri Campur).</span></li>
-                                <li class="flex gap-3"><i class="fa-solid fa-check text-green-500 mt-1"></i><span>Pendamping: Max 2 Official + 1 Dokumentasi.</span></li>
-                                <li class="flex gap-3"><i class="fa-solid fa-triangle-exclamation text-yellow-500 mt-1"></i><span>Satu orang hanya boleh terdaftar di 1 peleton.</span></li>
-                            </ul>
-                        </div>
-
-                        <div class="bg-slate-800 border border-slate-700 rounded-2xl p-8">
-                            <h2 class="text-xl font-heading font-bold text-white mb-8">C. Alur Pendaftaran</h2>
-                            <div class="space-y-8 relative before:absolute before:left-4 before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-700">
-                                <div class="relative pl-12">
-                                    <div class="absolute left-0 top-0 w-8 h-8 bg-slate-900 border-2 border-primary-500 rounded-full flex items-center justify-center text-primary-500 font-bold text-xs">1</div>
-                                    <h4 class="text-white font-bold mb-1">Transfer Biaya</h4>
-                                    <p class="text-sm text-slate-400">Lakukan pembayaran ke rekening BRI panitia. Simpan bukti transfer (JPG/PNG).</p>
+                        <div id="content-juknis-daftar" class="space-y-8 animate-fade-in">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 relative overflow-hidden">
+                                    <div class="absolute top-0 right-0 p-4 opacity-10"><i class="fa-solid fa-money-bill-wave text-6xl text-white"></i></div>
+                                    <h3 class="text-primary-500 font-bold uppercase text-xs tracking-wider mb-2">Biaya Pendaftaran</h3>
+                                    <p class="text-3xl font-heading font-bold text-white mb-1">Rp325.000,-</p>
+                                    <p class="text-slate-400 text-sm">per peleton (Non-refundable)</p>
                                 </div>
-                                <div class="relative pl-12">
-                                    <div class="absolute left-0 top-0 w-8 h-8 bg-slate-900 border-2 border-primary-500 rounded-full flex items-center justify-center text-primary-500 font-bold text-xs">2</div>
-                                    <h4 class="text-white font-bold mb-1">Pendaftaran Daring (Disini)</h4>
-                                    <p class="text-sm text-slate-400 mb-2">Isi form data peleton dan upload dokumen:</p>
-                                    <ul class="text-xs text-slate-500 list-disc pl-4 space-y-1">
-                                        <li>Bukti Pembayaran</li>
-                                        <li>Formulir B (Format: <span class="text-primary-400 font-mono">SEKOLAH_PELETON.docx</span>)</li>
+                                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6">
+                                    <h3 class="text-primary-500 font-bold uppercase text-xs tracking-wider mb-2">Transfer ke (BRI)</h3>
+                                    <div class="flex items-center gap-3 mb-2">
+                                        <span class="text-2xl font-mono font-bold text-white tracking-widest select-all">300701003561505</span>
+                                        <button onclick="navigator.clipboard.writeText('300701003561505')" class="text-slate-500 hover:text-white"><i class="fa-solid fa-copy"></i></button>
+                                    </div>
+                                    <p class="text-slate-400 text-sm uppercase font-bold">a.n. Falhan Zuhdi Mubarok</p>
+                                </div>
+                            </div>
+                            </div>
+
+                        <div id="content-juknis-lomba" class="hidden space-y-8 animate-fade-in">
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div class="bg-slate-800 border border-slate-700 p-6 rounded-2xl">
+                                    <h3 class="text-white font-bold text-lg mb-4 flex items-center gap-2"><i class="fa-solid fa-book-open text-gold-400"></i> Definisi & Area</h3>
+                                    <ul class="space-y-3 text-sm text-slate-300">
+                                        <li class="flex gap-2"><span class="text-primary-500 font-bold">Clear Area:</span> Steril, hanya peleton + 2 official + 1 dokum.</li>
+                                        <li class="flex gap-2"><span class="text-primary-500 font-bold">Ukuran Lapangan:</span> SD (25x14m), SMP (26x15m).</li>
+                                        <li class="flex gap-2"><span class="text-primary-500 font-bold">DP 1 & 2:</span> Wajib hadir di DP 1 min. 15 menit sebelum tampil.</li>
                                     </ul>
                                 </div>
-                                <div class="relative pl-12">
-                                    <div class="absolute left-0 top-0 w-8 h-8 bg-slate-900 border-2 border-primary-500 rounded-full flex items-center justify-center text-primary-500 font-bold text-xs">3</div>
-                                    <h4 class="text-white font-bold mb-1">Pemberkasan Fisik (3 Agustus)</h4>
-                                    <p class="text-sm text-slate-400 mb-2">Serahkan berkas Formulir A, B, dan C dalam <strong>Map Biola</strong>:</p>
-                                    <div class="flex gap-4">
-                                        <div class="bg-red-900/30 text-red-400 border border-red-900/50 px-3 py-1 rounded text-xs font-bold">SD/MI: MERAH</div>
-                                        <div class="bg-blue-900/30 text-blue-400 border border-blue-900/50 px-3 py-1 rounded text-xs font-bold">SMP/MTs: BIRU</div>
+                                <div class="bg-slate-800 border border-slate-700 p-6 rounded-2xl">
+                                    <h3 class="text-white font-bold text-lg mb-4 flex items-center gap-2"><i class="fa-solid fa-stopwatch text-gold-400"></i> Durasi Tampil</h3>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div class="bg-slate-900 p-4 rounded text-center"><p class="text-slate-400 text-xs uppercase">SD / MI</p><p class="text-2xl font-bold text-white">8 Menit</p></div>
+                                        <div class="bg-slate-900 p-4 rounded text-center"><p class="text-slate-400 text-xs uppercase">SMP / MTs</p><p class="text-2xl font-bold text-white">13 Menit</p></div>
+                                    </div>
+                                    <p class="text-xs text-red-400 mt-2 text-center">*Waktu mulai/habis saat hormat pembuka/penutup.</p>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-900 border-l-4 border-blue-500 p-6 rounded-r-2xl">
+                                <h3 class="text-white font-bold text-lg mb-6">Bobot Penilaian (Range 50-90)</h3>
+                                <div class="grid md:grid-cols-2 gap-8">
+                                    <div>
+                                        <h4 class="text-blue-400 font-bold uppercase text-xs mb-3">1. Peleton (100%)</h4>
+                                        <div class="space-y-2">
+                                            <div class="flex justify-between text-sm text-slate-300 border-b border-slate-800 pb-1"><span>Kebenaran Teknik PBB</span><span class="font-bold text-white">70%</span></div>
+                                            <div class="flex justify-between text-sm text-slate-300 border-b border-slate-800 pb-1"><span>Kekompakan</span><span class="font-bold text-white">30%</span></div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-blue-400 font-bold uppercase text-xs mb-3">2. Komandan (100%)</h4>
+                                        <div class="space-y-2">
+                                            <div class="flex justify-between text-sm text-slate-300 border-b border-slate-800 pb-1"><span>Penguasaan Materi</span><span class="font-bold text-white">35%</span></div>
+                                            <div class="flex justify-between text-sm text-slate-300 border-b border-slate-800 pb-1"><span>Kualitas Suara</span><span class="font-bold text-white">25%</span></div>
+                                            <div class="flex justify-between text-sm text-slate-300 border-b border-slate-800 pb-1"><span>Sikap & Pelaporan</span><span class="font-bold text-white">20%</span></div>
+                                            <div class="flex justify-between text-sm text-slate-300 border-b border-slate-800 pb-1"><span>Penguasaan Medan</span><span class="font-bold text-white">20%</span></div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div>
-                            <h2 class="text-xl font-heading font-bold text-white mb-6">D. Kelengkapan Berkas Fisik</h2>
-                            <div class="grid md:grid-cols-3 gap-6">
-                                <div class="bg-slate-800 p-6 rounded-xl border border-slate-700">
-                                    <div class="w-10 h-10 bg-slate-700 rounded-lg flex items-center justify-center text-white font-bold mb-4">A</div>
-                                    <h4 class="text-white font-bold mb-2">Surat Rekomendasi</h4>
-                                    <p class="text-xs text-slate-400 leading-relaxed">Diketik, cetak A4. Wajib tanda tangan asli Kepala Sekolah & Stempel Basah.</p>
-                                </div>
-                                <div class="bg-slate-800 p-6 rounded-xl border border-slate-700">
-                                    <div class="w-10 h-10 bg-slate-700 rounded-lg flex items-center justify-center text-white font-bold mb-4">B</div>
-                                    <h4 class="text-white font-bold mb-2">Daftar Peserta</h4>
-                                    <p class="text-xs text-slate-400 leading-relaxed">Urutan: 1 (Danton), 2-22 (Pasukan), 23-25 (Cadangan). Data harus sesuai Akta/Ijazah.</p>
-                                </div>
-                                <div class="bg-slate-800 p-6 rounded-xl border border-slate-700">
-                                    <div class="w-10 h-10 bg-slate-700 rounded-lg flex items-center justify-center text-white font-bold mb-4">C</div>
-                                    <h4 class="text-white font-bold mb-2">Biodata & Foto</h4>
-                                    <p class="text-xs text-slate-400 leading-relaxed mb-2">Tempel Foto 3x4:</p>
-                                    <div class="space-y-1">
-                                        <div class="text-[10px] bg-red-900/20 text-red-300 px-2 py-0.5 rounded inline-block">SD: Latar Merah</div>
-                                        <div class="text-[10px] bg-blue-900/20 text-blue-300 px-2 py-0.5 rounded inline-block">SMP: Latar Biru</div>
-                                    </div>
-                                </div>
+                            <div class="bg-slate-800 border border-slate-700 rounded-2xl overflow-hidden">
+                                <div class="bg-red-900/20 p-4 border-b border-red-900/30"><h3 class="text-red-400 font-bold text-sm uppercase">Daftar Pelanggaran & Penalti</h3></div>
+                                <table class="w-full text-sm text-left text-slate-300">
+                                    <tbody class="divide-y divide-slate-700">
+                                        <tr><td class="p-4">Tidak Upacara Pembukaan</td><td class="p-4 text-right font-bold text-red-500">-150</td></tr>
+                                        <tr><td class="p-4">Terlambat Masuk DP 1 (3x Panggilan)</td><td class="p-4 text-right font-bold text-red-500">-100</td></tr>
+                                        <tr><td class="p-4">Personel Kurang (< 22 Orang)</td><td class="p-4 text-right font-bold text-red-500">-75</td></tr>
+                                        <tr><td class="p-4">Melanggar Garis Batas</td><td class="p-4 text-right font-bold text-red-500">-50 / kejadian</td></tr>
+                                        <tr><td class="p-4">Gerakan Penyesuaian > 3 kali</td><td class="p-4 text-right font-bold text-red-500">-25 / gerakan</td></tr>
+                                        <tr><td class="p-4">Overtime (Kelebihan Waktu)</td><td class="p-4 text-right font-bold text-red-500">-50 / 30 detik</td></tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
-
                     </div>
                 </section>
 
@@ -404,29 +323,18 @@
                         <form id="form-peserta-data" class="bg-slate-800 border border-slate-700 rounded-3xl p-8 md:p-10 shadow-2xl">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-10 mb-10">
                                 <div class="space-y-6">
-                                    <div>
-                                        <label class="block text-xs font-bold text-slate-400 uppercase mb-2 ml-1">Tingkat Sekolah</label>
-                                        <select id="team-level" class="input-field w-full bg-slate-900 border border-slate-600 text-white p-3.5 rounded-xl focus:border-primary-500 outline-none transition">
-                                            <option value="SD/MI">SD / MI</option>
-                                            <option value="SMP/MTs">SMP / MTs</option>
-                                        </select>
-                                    </div>
-                                    <div><label class="block text-xs font-bold text-slate-400 uppercase mb-2 ml-1">Nama Sekolah</label><input type="text" id="team-school" class="input-field w-full bg-slate-900 border border-slate-600 text-white p-3.5 rounded-xl focus:border-primary-500 outline-none transition"></div>
-                                    <div><label class="block text-xs font-bold text-slate-400 uppercase mb-2 ml-1">Nama Peleton</label><input type="text" id="team-name" class="input-field w-full bg-slate-900 border border-slate-600 text-white p-3.5 rounded-xl focus:border-primary-500 outline-none transition"></div>
-                                    <div><label class="block text-xs font-bold text-slate-400 uppercase mb-2 ml-1">Nama Danton</label><input type="text" id="team-danton" class="input-field w-full bg-slate-900 border border-slate-600 text-white p-3.5 rounded-xl focus:border-primary-500 outline-none transition"></div>
+                                    <div><label class="block text-xs font-bold text-slate-400 uppercase mb-2 ml-1">Tingkat Sekolah</label><select id="team-level" class="input-field w-full bg-slate-900 border border-slate-600 text-white p-3.5 rounded-xl"><option value="SD/MI">SD / MI</option><option value="SMP/MTs">SMP / MTs</option></select></div>
+                                    <div><label class="block text-xs font-bold text-slate-400 uppercase mb-2 ml-1">Nama Sekolah</label><input type="text" id="team-school" class="input-field w-full bg-slate-900 border border-slate-600 text-white p-3.5 rounded-xl"></div>
+                                    <div><label class="block text-xs font-bold text-slate-400 uppercase mb-2 ml-1">Nama Peleton</label><input type="text" id="team-name" class="input-field w-full bg-slate-900 border border-slate-600 text-white p-3.5 rounded-xl"></div>
+                                    <div><label class="block text-xs font-bold text-slate-400 uppercase mb-2 ml-1">Nama Danton</label><input type="text" id="team-danton" class="input-field w-full bg-slate-900 border border-slate-600 text-white p-3.5 rounded-xl"></div>
                                 </div>
-                                <div class="bg-slate-900/50 p-8 rounded-2xl border border-slate-700/50 h-fit">
-                                    <h3 class="font-bold text-white uppercase mb-6 text-xs tracking-wider border-b border-slate-700 pb-3">Kontak Official</h3>
-                                    <div class="space-y-5">
-                                        <div><label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Nama Official 1</label><input type="text" id="team-off1" class="input-field w-full bg-slate-800 border border-slate-600 text-white p-3 rounded-lg text-sm focus:border-primary-500 outline-none transition"></div>
-                                        <div><label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">No. WhatsApp</label><input type="text" id="team-phone1" class="input-field w-full bg-slate-800 border border-slate-600 text-white p-3 rounded-lg text-sm focus:border-primary-500 outline-none transition"></div>
-                                        <div><label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Nama Official 2</label><input type="text" id="team-off2" class="input-field w-full bg-slate-800 border border-slate-600 text-white p-3 rounded-lg text-sm focus:border-primary-500 outline-none transition"></div>
-                                    </div>
+                                <div class="space-y-5">
+                                    <div><label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Nama Official 1</label><input type="text" id="team-off1" class="input-field w-full bg-slate-800 border border-slate-600 text-white p-3 rounded-lg"></div>
+                                    <div><label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">No. WhatsApp</label><input type="text" id="team-phone1" class="input-field w-full bg-slate-800 border border-slate-600 text-white p-3 rounded-lg"></div>
+                                    <div><label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Nama Official 2</label><input type="text" id="team-off2" class="input-field w-full bg-slate-800 border border-slate-600 text-white p-3 rounded-lg"></div>
                                 </div>
                             </div>
-                            <div class="flex justify-end pt-8 border-t border-slate-700">
-                                <button type="submit" class="bg-primary-600 hover:bg-primary-500 text-white px-8 py-3.5 rounded-xl font-bold text-sm shadow-lg shadow-primary-600/20 transition-all transform hover:-translate-y-1 uppercase tracking-wide">Simpan Data</button>
-                            </div>
+                            <div class="flex justify-end pt-8 border-t border-slate-700"><button type="submit" class="bg-primary-600 text-white px-8 py-3.5 rounded-xl font-bold text-sm shadow-lg hover:-translate-y-1 transition">Simpan Data</button></div>
                         </form>
                     </div>
                 </section>
@@ -435,54 +343,22 @@
                     <div class="max-w-4xl mx-auto">
                         <h1 class="text-3xl font-heading font-bold text-white mb-8">Upload Dokumen</h1>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-8 flex flex-col justify-between hover:border-slate-600 transition duration-300">
-                                <div>
-                                    <div class="flex justify-between items-start mb-6">
-                                        <div class="bg-slate-700/50 p-4 rounded-xl"><i class="fa-solid fa-receipt text-3xl text-slate-300"></i></div>
-                                        <div id="icon-doc-payment"><i class="fa-regular fa-circle text-slate-600 text-2xl"></i></div>
-                                    </div>
-                                    <h3 class="font-bold text-white text-xl mb-1">Bukti Pembayaran</h3>
-                                    <p class="text-xs text-slate-500 uppercase tracking-wide">Format: JPG/PNG (Max 2MB)</p>
-                                </div>
-                                <div class="mt-8" id="action-doc-payment">
-                                    <button class="w-full bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 rounded-xl text-sm transition border border-slate-600">Pilih File</button>
-                                </div>
+                            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-8 flex flex-col justify-between">
+                                <div><h3 class="font-bold text-white text-xl mb-1">Bukti Pembayaran</h3><p class="text-xs text-slate-500 uppercase">JPG/PNG (Max 2MB)</p></div>
+                                <div class="mt-8" id="action-doc-payment"><button class="w-full bg-slate-700 text-white font-bold py-3 rounded-xl text-sm border border-slate-600 hover:bg-slate-600 transition">Pilih File</button></div>
                             </div>
-                            
-                            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-8 flex flex-col justify-between hover:border-slate-600 transition duration-300">
-                                <div>
-                                    <div class="flex justify-between items-start mb-6">
-                                        <div class="bg-slate-700/50 p-4 rounded-xl"><i class="fa-solid fa-file-word text-3xl text-blue-400"></i></div>
-                                        <div id="icon-doc-formB"><i class="fa-regular fa-circle text-slate-600 text-2xl"></i></div>
-                                    </div>
-                                    <h3 class="font-bold text-white text-xl mb-1">Formulir B</h3>
-                                    <p class="text-xs text-slate-500 uppercase tracking-wide">Format: <span class="text-primary-400 font-mono">SEKOLAH_PELETON.docx</span></p>
-                                </div>
-                                <div class="mt-8" id="action-doc-formB">
-                                    <button class="w-full bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 rounded-xl text-sm transition border border-slate-600">Pilih File</button>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="mt-8 bg-slate-800/50 border border-gold-500/20 rounded-2xl p-6 flex items-center gap-6">
-                            <div class="bg-gold-500/10 p-4 rounded-full">
-                                <i class="fa-solid fa-folder-open text-2xl text-gold-500"></i>
-                            </div>
-                            <div>
-                                <h3 class="font-bold text-white text-sm uppercase tracking-wide">Berkas Fisik (3 Agustus 2025)</h3>
-                                <p class="text-xs text-slate-400 mt-1">Wajib membawa map berwarna: <span id="val-map-color" class="font-bold text-gold-400 text-sm ml-1">BIRU</span></p>
+                            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-8 flex flex-col justify-between">
+                                <div><h3 class="font-bold text-white text-xl mb-1">Formulir B</h3><p class="text-xs text-slate-500 uppercase">DOCX (KAPITAL)</p></div>
+                                <div class="mt-8" id="action-doc-formB"><button class="w-full bg-slate-700 text-white font-bold py-3 rounded-xl text-sm border border-slate-600 hover:bg-slate-600 transition">Pilih File</button></div>
                             </div>
                         </div>
                     </div>
                 </section>
 
-                 <section id="view-peserta-schedule" class="view-section hide">
+                <section id="view-peserta-schedule" class="view-section hide">
                     <div class="max-w-4xl mx-auto text-center py-24">
-                        <div class="inline-block p-6 rounded-full bg-slate-800 border border-slate-700 mb-6 shadow-lg">
-                            <i class="fa-solid fa-bullhorn text-4xl text-slate-600"></i>
-                        </div>
+                        <div class="inline-block p-6 rounded-full bg-slate-800 border border-slate-700 mb-6 shadow-lg"><i class="fa-solid fa-bullhorn text-4xl text-slate-600"></i></div>
                         <h1 class="text-2xl font-bold text-white mb-2">Belum Ada Pengumuman</h1>
-                        <p class="text-slate-500 text-sm">Informasi terbaru dari panitia akan muncul di halaman ini.</p>
                     </div>
                 </section>
 
@@ -497,44 +373,48 @@
 
     <script src="logic.js"></script>
     <script>
+        // Sidebar & UI Logic
         window.addEventListener('load', () => {
+             // Juknis Tab Logic
+             const btnDaftar = document.getElementById('btn-tab-daftar');
+             const btnLomba = document.getElementById('btn-tab-lomba');
+             const contentDaftar = document.getElementById('content-juknis-daftar');
+             const contentLomba = document.getElementById('content-juknis-lomba');
+
+             if(btnDaftar && btnLomba){
+                 btnDaftar.onclick = () => {
+                     btnDaftar.classList.add('active', 'bg-slate-800', 'text-white'); btnDaftar.classList.remove('text-slate-400');
+                     btnLomba.classList.remove('active', 'bg-slate-800', 'text-white'); btnLomba.classList.add('text-slate-400');
+                     contentDaftar.classList.remove('hidden'); contentLomba.classList.add('hidden');
+                 };
+                 btnLomba.onclick = () => {
+                     btnLomba.classList.add('active', 'bg-slate-800', 'text-white'); btnLomba.classList.remove('text-slate-400');
+                     btnDaftar.classList.remove('active', 'bg-slate-800', 'text-white'); btnDaftar.classList.add('text-slate-400');
+                     contentLomba.classList.remove('hidden'); contentDaftar.classList.add('hidden');
+                 };
+             }
+
+             // Sidebar Render
              const originalRender = window.renderSidebar;
              if(originalRender) {
                  window.renderSidebar = function() {
-                     const menu = document.getElementById('sidebar-menu');
-                     menu.innerHTML = '';
-                     
+                     const menu = document.getElementById('sidebar-menu'); menu.innerHTML = '';
                      const links = [];
-                     if (currentUser.role === 'admin') {
-                         links.push({ id: 'admin-dashboard', icon: 'fa-chart-pie', label: 'Dashboard' });
-                         links.push({ id: 'admin-teams', icon: 'fa-users-gear', label: 'Data Peserta' });
-                     } else if (currentUser.role === 'panitia') {
-                         links.push({ id: 'panitia-verification', icon: 'fa-list-check', label: 'Verifikasi' });
-                         links.push({ id: 'panitia-live', icon: 'fa-stopwatch-20', label: 'Live Scoring' });
-                     } else if (currentUser.role === 'peserta') {
-                         links.push({ id: 'peserta-dashboard', icon: 'fa-house-user', label: 'Beranda Tim' });
-                         links.push({ id: 'peserta-juknis', icon: 'fa-book-open-reader', label: 'Juknis Pendaftaran' });
-                         links.push({ id: 'peserta-data', icon: 'fa-file-signature', label: 'Data Peleton' });
-                         links.push({ id: 'peserta-docs', icon: 'fa-cloud-arrow-up', label: 'Upload Berkas' });
-                         links.push({ id: 'peserta-schedule', icon: 'fa-bullhorn', label: 'Pengumuman' });
-                     }
+                     if (currentUser.role === 'admin') { links.push({ id: 'admin-dashboard', icon: 'fa-chart-pie', label: 'Dashboard' }); links.push({ id: 'admin-teams', icon: 'fa-users-gear', label: 'Data Peserta' }); } 
+                     else if (currentUser.role === 'panitia') { links.push({ id: 'panitia-verification', icon: 'fa-list-check', label: 'Verifikasi' }); links.push({ id: 'panitia-live', icon: 'fa-stopwatch-20', label: 'Live Scoring' }); } 
+                     else if (currentUser.role === 'peserta') { links.push({ id: 'peserta-dashboard', icon: 'fa-house-user', label: 'Beranda Tim' }); links.push({ id: 'peserta-juknis', icon: 'fa-book-open-reader', label: 'Buku Panduan' }); links.push({ id: 'peserta-data', icon: 'fa-file-signature', label: 'Data Peleton' }); links.push({ id: 'peserta-docs', icon: 'fa-cloud-arrow-up', label: 'Upload Berkas' }); links.push({ id: 'peserta-schedule', icon: 'fa-bullhorn', label: 'Pengumuman' }); }
 
                      links.forEach(link => {
                          const btn = document.createElement('button');
                          btn.className = 'sidebar-link w-full text-left px-4 py-3.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl transition-all flex items-center gap-4 text-sm font-bold tracking-wide mb-1 group';
                          btn.onclick = () => {
-                             document.querySelectorAll('.sidebar-link').forEach(b => {
-                                 b.classList.remove('bg-primary-600/10', 'text-primary-400', 'shadow-inner');
-                                 b.classList.add('text-slate-400');
-                             });
-                             btn.classList.add('bg-primary-600/10', 'text-primary-400', 'shadow-inner');
-                             btn.classList.remove('text-slate-400');
+                             document.querySelectorAll('.sidebar-link').forEach(b => { b.classList.remove('bg-primary-600/10', 'text-primary-400', 'shadow-inner'); b.classList.add('text-slate-400'); });
+                             btn.classList.add('bg-primary-600/10', 'text-primary-400', 'shadow-inner'); btn.classList.remove('text-slate-400');
                              navigate(link.id);
                          };
                          btn.innerHTML = `<i class="fa-solid ${link.icon} w-5 text-center transition-transform group-hover:scale-110"></i> ${link.label}`;
                          menu.appendChild(btn);
                      });
-                     
                      if(menu.firstChild) menu.firstChild.click();
                  }
                  if(currentUser) window.renderSidebar();
