@@ -83,24 +83,38 @@ mobileLinks.forEach(link => {
 });
 
 // 3. TAB SWITCHING (SD vs SMP)
-// Defined as a global function because it is called via onclick="" in HTML
 function switchTab(tab) {
     const btnSD = document.getElementById('btn-sd');
     const btnSMP = document.getElementById('btn-smp');
     const contentSD = document.getElementById('content-sd');
     const contentSMP = document.getElementById('content-smp');
 
+    // Class untuk Tab Aktif (Style Kapsul Putih)
+    const activeClasses = ['bg-white', 'text-blue-700', 'shadow-sm', 'ring-1', 'ring-black/5'];
+    // Class untuk Tab Pasif (Style Abu-abu transparan)
+    const inactiveClasses = ['text-slate-500', 'hover:bg-slate-200/50'];
+
     if (tab === 'sd') {
-        // Style Buttons
-        btnSD.className = "flex-1 py-4 text-center font-bold transition-colors bg-white text-blue-600 border-b-2 border-blue-600";
-        btnSMP.className = "flex-1 py-4 text-center font-bold transition-colors text-slate-500 hover:text-slate-700";
-        // Toggle Content
+        // Aktifkan SD
+        btnSD.classList.add(...activeClasses);
+        btnSD.classList.remove(...inactiveClasses);
+        
+        // Matikan SMP
+        btnSMP.classList.remove(...activeClasses);
+        btnSMP.classList.add(...inactiveClasses);
+        
+        // Toggle Content (Animasi Fade In)
         contentSD.classList.remove('hidden');
         contentSMP.classList.add('hidden');
     } else {
-        // Style Buttons
-        btnSMP.className = "flex-1 py-4 text-center font-bold transition-colors bg-white text-blue-600 border-b-2 border-blue-600";
-        btnSD.className = "flex-1 py-4 text-center font-bold transition-colors text-slate-500 hover:text-slate-700";
+        // Aktifkan SMP
+        btnSMP.classList.add(...activeClasses);
+        btnSMP.classList.remove(...inactiveClasses);
+        
+        // Matikan SD
+        btnSD.classList.remove(...activeClasses);
+        btnSD.classList.add(...inactiveClasses);
+        
         // Toggle Content
         contentSMP.classList.remove('hidden');
         contentSD.classList.add('hidden');
