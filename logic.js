@@ -235,6 +235,23 @@ function initPesertaDocs() {
 
 // --- EVENT LISTENERS & ACTIONS ---
 
+// Tambahkan di bagian Event Listeners logic.js
+
+const sidebar = document.querySelector('aside');
+const mobileOverlay = el('mobile-overlay');
+
+el('btn-mobile-menu').addEventListener('click', () => {
+    sidebar.classList.remove('hidden'); // Tampilkan sidebar
+    sidebar.classList.add('fixed', 'inset-y-0', 'left-0'); // Paksa posisi fixed
+    mobileOverlay.classList.remove('hidden');
+});
+
+mobileOverlay.addEventListener('click', () => {
+    sidebar.classList.add('hidden'); // Sembunyikan lagi
+    sidebar.classList.remove('fixed', 'inset-y-0', 'left-0');
+    mobileOverlay.classList.add('hidden');
+});
+
 // Login Buttons
 el('btn-login').addEventListener('click', handleLogin);
 el('btn-logout').addEventListener('click', logout);
@@ -472,4 +489,28 @@ function showToast(msg, type='success') {
     
     toast.classList.remove('translate-x-full');
     setTimeout(() => toast.classList.add('translate-x-full'), 3000);
+}
+
+// Tambahkan di fungsi updateTimerDisplay(seconds)
+function updateTimerDisplay(seconds) {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    const formatted = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    el('timer-display').innerText = formatted;
+    document.title = `${formatted} - Live LBB`; // UX: Update tab browser
+
+    // Update Progress Bar (Visual Baru)
+    if(selectedTeamId) {
+        const team = db.teams.find(t => t.id === selectedTeamId);
+        const limitSec = (team.level === 'SD/MI' ? 8 : 13) * 60;
+        const percent = Math.min((seconds / limitSec) * 100, 100);
+        
+        const progressBar = el('timer-progress');
+        if(progressBar) {
+            progressBar.style.width = `${percent}%`;
+            // Ganti warna bar jika overtime
+            if(seconds > limitSec) progressBar.classList.replace('from-blue-500', 'from-red-500');
+            else progressBar.classList.replace('from-red-500', 'from-blue-500');
+        }
+    }
 }
