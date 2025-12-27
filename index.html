@@ -215,96 +215,90 @@
     <!-- MAIN CONTENT -->
     <main>
         <!-- HERO SECTION -->
-        <section id="home" class="relative w-full h-screen supports-[height:100svh]:h-[100svh] flex flex-col items-center justify-center bg-zinc-950 text-white overflow-hidden isolate">
+        <section id="home" class="relative w-full h-screen supports-[height:100svh]:h-[100svh] flex flex-col items-center justify-center bg-gradient-to-b from-red-950 via-[#8B0000] to-red-950 text-white overflow-hidden isolate">
     
-    <div class="absolute inset-0 z-0">
-        <video autoplay loop muted playsinline class="w-full h-full object-cover opacity-50 mix-blend-hard-light filter contrast-125 brightness-75">
+    <div class="absolute inset-0 z-0 pointer-events-none">
+        <video autoplay loop muted playsinline class="w-full h-full object-cover opacity-20 mix-blend-multiply filter grayscale-[0.3]">
             <source src="https://assets.mixkit.co/videos/preview/mixkit-red-smoke-on-a-black-background-video-2953-large.mp4" type="video/mp4">
         </video>
         
-        <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/80"></div>
-        <div class="absolute inset-0 bg-gradient-to-b from-red-950/30 via-transparent to-black/90 mix-blend-overlay"></div>
+        <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/80"></div>
         
-        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-20 animate-pulse-slow"></div>
+        <div class="absolute inset-0 bg-halftone z-0 opacity-10"></div>
     </div>
 
-    <div class="absolute top-1/4 right-1/4 w-96 h-96 bg-red-600/30 rounded-full blur-[100px] mix-blend-screen animate-pulse-slow pointer-events-none"></div>
-    <div class="absolute bottom-1/4 left-1/4 w-96 h-96 bg-yellow-600/20 rounded-full blur-[100px] mix-blend-screen pointer-events-none"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-red-600 rounded-full blur-[120px] opacity-20 mix-blend-screen pointer-events-none"></div>
 
-    <div class="container mx-auto px-4 relative z-10 flex flex-col items-center justify-center h-full w-full">
+    <div class="container mx-auto px-4 relative z-10 flex flex-col items-center justify-center h-full">
         
-        <div class="flex flex-col items-center justify-center w-full max-w-5xl space-y-6 md:space-y-8 lg:space-y-10 transform translate-y-[-2%]">
+        <div class="flex flex-col items-center justify-center w-full max-w-4xl space-y-5 md:space-y-6 transform translate-y-[-2%]">
             
-            <div class="flex flex-col items-center gap-5 animate-fade-down">
-                <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-black/50 border border-yellow-500/40 rounded-full backdrop-blur-md shadow-[0_0_20px_rgba(234,179,8,0.2)] hover:border-lbb-gold/80 transition-all cursor-default">
+            <div class="flex flex-col items-center gap-3 md:gap-4 animate-fade-down">
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-black/40 border border-yellow-500/30 rounded-full backdrop-blur-md shadow-lg hover:border-lbb-gold/60 transition-all cursor-default">
                     <span class="relative flex h-2 w-2">
-                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75"></span>
-                      <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.8)]"></span>
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-lbb-gold opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-2 w-2 bg-yellow-500"></span>
                     </span>
-                    <span class="text-[10px] md:text-xs font-bold tracking-[0.15em] uppercase text-yellow-100">
-                        Open Registration: 14 - 28 Juli 2026
+                    <span class="text-[10px] font-bold tracking-[0.15em] uppercase text-yellow-100/90">
+                        Open Reg: 14 - 28 Juli 2026
                     </span>
                 </div>
                 
-                <div class="flex items-center gap-3 md:gap-4">
-                    <div class="flex flex-col items-center gap-1">
-                        <div class="bg-white/5 border border-white/10 rounded-lg w-12 h-12 md:w-14 md:h-14 flex items-center justify-center backdrop-blur-sm">
-                            <span id="cd-days" class="text-lg md:text-xl font-black text-lbb-gold">00</span>
+                <div class="flex items-center gap-3">
+                    <div class="flex flex-col items-center">
+                        <div class="bg-black/20 border border-white/10 rounded-lg w-10 h-10 md:w-12 md:h-12 flex items-center justify-center backdrop-blur-sm">
+                            <span id="cd-days" class="text-base md:text-xl font-black text-lbb-gold">00</span>
                         </div>
-                        <span class="text-[8px] md:text-[10px] font-bold uppercase tracking-widest text-zinc-500">Hari</span>
+                        <span class="text-[8px] font-bold uppercase tracking-wider text-white/60 mt-1">Hari</span>
                     </div>
-                    <div class="text-lbb-gold text-lg font-black opacity-30 pb-4">:</div>
-                    <div class="flex flex-col items-center gap-1">
-                        <div class="bg-white/5 border border-white/10 rounded-lg w-12 h-12 md:w-14 md:h-14 flex items-center justify-center backdrop-blur-sm">
-                            <span id="cd-hours" class="text-lg md:text-xl font-black text-lbb-gold">00</span>
+                    <div class="text-white/30 text-lg font-black pb-4">:</div>
+                    <div class="flex flex-col items-center">
+                        <div class="bg-black/20 border border-white/10 rounded-lg w-10 h-10 md:w-12 md:h-12 flex items-center justify-center backdrop-blur-sm">
+                            <span id="cd-hours" class="text-base md:text-xl font-black text-lbb-gold">00</span>
                         </div>
-                        <span class="text-[8px] md:text-[10px] font-bold uppercase tracking-widest text-zinc-500">Jam</span>
+                        <span class="text-[8px] font-bold uppercase tracking-wider text-white/60 mt-1">Jam</span>
                     </div>
-                    <div class="text-lbb-gold text-lg font-black opacity-30 pb-4">:</div>
-                    <div class="flex flex-col items-center gap-1">
-                        <div class="bg-white/5 border border-white/10 rounded-lg w-12 h-12 md:w-14 md:h-14 flex items-center justify-center backdrop-blur-sm">
-                            <span id="cd-minutes" class="text-lg md:text-xl font-black text-lbb-gold">00</span>
+                    <div class="text-white/30 text-lg font-black pb-4">:</div>
+                    <div class="flex flex-col items-center">
+                        <div class="bg-black/20 border border-white/10 rounded-lg w-10 h-10 md:w-12 md:h-12 flex items-center justify-center backdrop-blur-sm">
+                            <span id="cd-minutes" class="text-base md:text-xl font-black text-lbb-gold">00</span>
                         </div>
-                        <span class="text-[8px] md:text-[10px] font-bold uppercase tracking-widest text-zinc-500">Min</span>
+                        <span class="text-[8px] font-bold uppercase tracking-wider text-white/60 mt-1">Min</span>
                     </div>
-                    <div class="text-lbb-gold text-lg font-black opacity-30 pb-4">:</div>
-                    <div class="flex flex-col items-center gap-1">
-                        <div class="bg-white/5 border border-white/10 rounded-lg w-12 h-12 md:w-14 md:h-14 flex items-center justify-center backdrop-blur-sm">
-                            <span id="cd-seconds" class="text-lg md:text-xl font-black text-lbb-gold">00</span>
+                    <div class="text-white/30 text-lg font-black pb-4">:</div>
+                    <div class="flex flex-col items-center">
+                        <div class="bg-black/20 border border-white/10 rounded-lg w-10 h-10 md:w-12 md:h-12 flex items-center justify-center backdrop-blur-sm">
+                            <span id="cd-seconds" class="text-base md:text-xl font-black text-lbb-gold">00</span>
                         </div>
-                        <span class="text-[8px] md:text-[10px] font-bold uppercase tracking-widest text-zinc-500">Det</span>
+                        <span class="text-[8px] font-bold uppercase tracking-wider text-white/60 mt-1">Det</span>
                     </div>
                 </div>
             </div>
 
-            <div class="relative text-center z-10 group cursor-default">
-                <h1 class="text-5xl md:text-7xl lg:text-8xl font-black leading-[0.9] tracking-tighter italic transform -rotate-1 transition-transform group-hover:rotate-0 duration-500">
-                    <span class="block text-transparent bg-clip-text bg-gradient-to-b from-zinc-200 to-zinc-600 opacity-80" style="-webkit-text-stroke: 1px rgba(255,255,255,0.3);">
-                        LOMBA
+            <div class="relative text-center z-10">
+                <h1 class="font-black leading-none tracking-tighter italic drop-shadow-2xl flex flex-col gap-1 md:gap-2">
+                    <span class="text-3xl md:text-5xl lg:text-7xl text-white block">
+                        LOMBA BARIS BERBARIS
                     </span>
-                    <span class="block text-white drop-shadow-[0_10px_10px_rgba(0,0,0,0.8)] relative z-20">
-                        BARIS-BERBARIS
-                    </span>
-                    <span class="block text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-lbb-gold to-yellow-600 mt-1 md:mt-2 filter drop-shadow-[0_0_25px_rgba(234,179,8,0.5)]">
+                    <span class="text-4xl md:text-6xl lg:text-8xl block text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-lbb-gold to-yellow-600 filter drop-shadow-[0_0_20px_rgba(234,179,8,0.3)]">
                         MU’ALLIMIN 2026
                     </span>
                 </h1>
             </div>
             
-            <div class="flex flex-col items-center gap-8 w-full animate-fade-up">
-                <p class="text-sm md:text-lg text-zinc-300 max-w-xl text-center font-medium leading-relaxed hidden sm:block">
+            <div class="flex flex-col items-center gap-6 w-full animate-fade-up">
+                <p class="text-sm md:text-base text-red-100/80 max-w-lg text-center font-medium leading-relaxed hidden sm:block">
                     Ajang pembuktian <span class="text-white font-bold border-b border-lbb-gold/50">Disiplin</span>, <span class="text-white font-bold border-b border-lbb-gold/50">Karakter</span>, dan <span class="text-white font-bold border-b border-lbb-gold/50">Solidaritas</span> pelajar terbaik se-DIY.
                 </p>
             
-                <div class="flex flex-col sm:flex-row gap-4 w-full justify-center px-6">
-                    <a href="#registration" class="group relative px-8 py-3.5 bg-lbb-gold text-red-950 font-black rounded-xl overflow-hidden transition-all hover:scale-105 hover:shadow-[0_0_30px_rgba(234,179,8,0.6)] w-full sm:w-auto text-center flex justify-center items-center gap-2">
-                        <div class="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_1s_infinite] bg-gradient-to-r from-transparent via-white/50 to-transparent z-10"></div>
-                        <span class="relative z-20 uppercase tracking-widest text-sm">Daftar Sekarang</span>
+                <div class="flex flex-col sm:flex-row gap-3 w-full justify-center px-6">
+                    <a href="#registration" class="group relative px-8 py-3 bg-lbb-gold text-red-950 font-black rounded-xl overflow-hidden transition-all hover:scale-105 hover:shadow-[0_0_25px_rgba(234,179,8,0.5)] w-full sm:w-auto text-center flex justify-center items-center gap-2">
+                        <span class="relative z-20 uppercase tracking-widest text-xs md:text-sm">Daftar Sekarang</span>
                         <i data-lucide="arrow-right" width="16" class="relative z-20 transition-transform group-hover:translate-x-1"></i>
                     </a>
                     
-                    <a href="#downloads" class="group px-8 py-3.5 bg-white/5 border border-white/10 text-white font-bold rounded-xl backdrop-blur-md transition-all hover:bg-white/10 hover:border-white/30 w-full sm:w-auto text-center flex justify-center items-center gap-2">
-                        <span class="uppercase tracking-widest text-sm">Unduh Juknis</span>
+                    <a href="#downloads" class="group px-8 py-3 bg-white/10 border border-white/20 text-white font-bold rounded-xl backdrop-blur-md transition-all hover:bg-white/20 hover:border-yellow-500/50 w-full sm:w-auto text-center flex justify-center items-center gap-2">
+                        <span class="uppercase tracking-widest text-xs md:text-sm">Unduh Juknis</span>
                         <i data-lucide="download" width="16" class="transition-transform group-hover:translate-y-1 text-lbb-gold"></i>
                     </a>
                 </div>
@@ -312,12 +306,6 @@
 
         </div>
     </div>
-
-    <div class="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-50 animate-bounce cursor-pointer z-20" onclick="document.getElementById('about').scrollIntoView({behavior: 'smooth'})">
-        <span class="text-[8px] uppercase tracking-[0.3em] text-white">Scroll Down</span>
-        <i data-lucide="chevrons-down" width="14" class="text-lbb-gold"></i>
-    </div>
-
 </section>
         
         <!-- ABOUT SECTION -->
@@ -1663,7 +1651,7 @@
                 Tata Tertib <span class="text-red-700 decoration-4 decoration-slate-900 underline-offset-4">Peserta</span>
             </h2>
             <p class="text-slate-500 font-mono text-sm uppercase tracking-wide">
-                LOMBA BARIS – BERBARIS MUALLIMIN TAHUN 2025
+                LOMBA BARIS – BERBARIS MUALLIMIN TAHUN 2026
             </p>
         </div>
 
@@ -1675,9 +1663,9 @@
                     <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Ketentuan Umum</span>
                 </div>
                 <ol class="list-decimal list-outside pl-5 space-y-3 text-sm text-slate-600 leading-relaxed marker:font-bold marker:text-slate-900">
-                    <li>Lomba Baris –Berbaris Mu’allimin Tahun 2025 (selanjutnya disingkat LBB MU’ALLIMIN 2025) merupakan lomba baris-berbaris tingkat Daerah Istimewa Yogyakarta yang diselenggarakan oleh Madrasah Mu’allimin Muhammadiyah Yogyakarta</li>
-                    <li>LBB MU’ALLIMIN 2025 dilaksanakan pada tanggal7 September di Kampus Terpadu Madrasah Muallimin Muhammadiyah Yogyakarta</li>
-                    <li>Peserta LBB MU’ALLIMIN 2025 merupakan siswa SD/MI sederajat dan SMP/MTs sederajat dalam lingkup Daerah Istimewa Yogyakarta, sesuai yang tertera pada formulir pendaftaran.</li>
+                    <li>Lomba Baris –Berbaris Mu’allimin Tahun 2026 (selanjutnya disingkat LBB MU’ALLIMIN 2026) merupakan lomba baris-berbaris tingkat Daerah Istimewa Yogyakarta yang diselenggarakan oleh Madrasah Mu’allimin Muhammadiyah Yogyakarta</li>
+                    <li>LBB MU’ALLIMIN 2026 dilaksanakan pada tanggal7 September di Kampus Terpadu Madrasah Muallimin Muhammadiyah Yogyakarta</li>
+                    <li>Peserta LBB MU’ALLIMIN 2026 merupakan siswa SD/MI sederajat dan SMP/MTs sederajat dalam lingkup Daerah Istimewa Yogyakarta, sesuai yang tertera pada formulir pendaftaran.</li>
                     <li>Tata tertib ini berlaku selama pelaksanaan lomba berlangsung.</li>
                     <li>Seragam SD menggunakan seragam tonti sekolah atau seragam nasional merah putih lengkap beserta atributnya dan Seragam SMP menggunakan seragam tonti sekolah atau seragam OSIS lengkap beserta atributnya.</li>
                 </ol>
@@ -1689,7 +1677,7 @@
                     <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Technical Meeting</span>
                 </div>
                 <ol class="list-decimal list-outside pl-5 space-y-3 text-sm text-slate-600 leading-relaxed marker:font-bold marker:text-slate-900">
-                    <li>Tata tertib dan penilaian perlombaan disampaikan ketika Technical Meeting Peserta pada tanggal 24 Agustus 2025 pukul 13.00 WIB - selesai.Hasil technical meeting wajib dipatuhi dan dilaksanakan selama perlombaan berlangsung.</li>
+                    <li>Tata tertib dan penilaian perlombaan disampaikan ketika Technical Meeting Peserta pada tanggal 24 Agustus 2026 pukul 13.00 WIB - selesai.Hasil technical meeting wajib dipatuhi dan dilaksanakan selama perlombaan berlangsung.</li>
                     <li>Pada hari pelaksanaan perlombaan, panitia tidak menerima protes tentang ketentuan-ketentuan yang sudah disepakati pada saat technical meeting, baik yang berupa ketentuan tertulis maupun yang tidak tertulis.</li>
                     <li>Penukaran nomor urut dan nomor dada antar peserta hanya dapat dilakukan saat technical meeting dengan sepengetahuan panitia dan peserta lomba.</li>
                 </ol>
@@ -1759,7 +1747,7 @@
                 
                 <ol class="list-decimal list-outside pl-5 space-y-6 text-sm leading-relaxed marker:font-bold marker:text-white">
                     <li>
-                        Sebagai bentuk apresiasi dan motivasi bagi peserta, panitia LBB Mu'allimin Tahun 2025 menyediakan hadiah dan penghargaan berikut:
+                        Sebagai bentuk apresiasi dan motivasi bagi peserta, panitia LBB Mu'allimin Tahun 2026 menyediakan hadiah dan penghargaan berikut:
                         <div class="mt-4 grid md:grid-cols-2 gap-6">
                             <div class="bg-white/5 p-4 rounded-lg border border-white/5">
                                 <span class="block font-bold text-white mb-2">a. Piala Bergilir Juara Umum:</span>
@@ -1926,14 +1914,14 @@
                         <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Ketentuan Tambahan</span>
                     </div>
                     <ol class="list-decimal list-outside pl-5 space-y-3 text-sm text-slate-600 leading-relaxed marker:font-bold marker:text-slate-900">
-                        <li>Peserta dan para pendukungnya dilarang menggunakan area Kampus Terpadu Madrasah Mu’allimin Muhammadiyah Yogyakarta untuk kegiatan lain yang tidak berkaitan dengan kepentingan Lomba Baris-Berbaris Mu'allimin 2025.</li>
-                        <li>Barang bawaan peserta menjadi tanggung jawab masing-masing peserta. Apabila terjadi kerusakan dan/atau kehilangan, bukan menjadi tanggung jawab panitia LBB MUALLIMIN 2025</li>
+                        <li>Peserta dan para pendukungnya dilarang menggunakan area Kampus Terpadu Madrasah Mu’allimin Muhammadiyah Yogyakarta untuk kegiatan lain yang tidak berkaitan dengan kepentingan Lomba Baris-Berbaris Mu'allimin 2026.</li>
+                        <li>Barang bawaan peserta menjadi tanggung jawab masing-masing peserta. Apabila terjadi kerusakan dan/atau kehilangan, bukan menjadi tanggung jawab panitia LBB MUALLIMIN 2026</li>
                         <li>Seluruh peserta dan pendukung wajib menjaga ketertiban, kebersihan, dan kelancaran lomba.</li>
                         <li>Peserta dan seluruh unsur pendukungnya DILARANG membawa senjata tajam dan/atau senjata api dalambentuk apapun dan dengan alasanapapun. Pelanggaran terhadap hal ini akan dikenakan sanksi DISKUALIFIKASI.</li>
                         <li>Peserta dan seluruh unsur pendukungnya DILARANG terlibat dalam tindakan kekerasan dalam bentuk apapun dan alasan apapun. Pelanggaran atas hal ini dikenakan sanksi DISKUALIFIKASI.</li>
                         <li>Peserta dan seluruh unsur pendukungnya DILARANG melakukan perusakan area lomba, fasilitas area Kampus Terpadu Madrasah Mu’allimin Muhammadiyah Yogyakarta dan sekelilingnya. Pelanggaran terhadap hal ini dikenakan sanksi DISKUALIFIKASI.</li>
                         <li>Keputusan dewan juri terkait aspek penilaian dan penentuan peringkat kejuaraan bersifat mutlak dan tidak dapat diganggu gugat, sesuai dengan mekanisme protes yang telah ditetapkan.</li>
-                        <li>Hal-hal yang belum tercantum dalam tata tertib akan ditentukan kemudian oleh Panitia LBB MUALLIMIN 2025.</li>
+                        <li>Hal-hal yang belum tercantum dalam tata tertib akan ditentukan kemudian oleh Panitia LBB MUALLIMIN 2026.</li>
                     </ol>
                 </div>
 
@@ -1943,7 +1931,7 @@
                         <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Penutup</span>
                     </div>
                     <ol class="list-decimal list-outside pl-5 space-y-3 text-sm text-slate-300 leading-relaxed marker:font-bold marker:text-white">
-                        <li>Demikian Tata Tertib ini dibuat untuk menjadi pedoman resmi bagi seluruh pihak yang terlibat dalam Lomba Baris-Berbaris Mu'allimin Tahun 2025.</li>
+                        <li>Demikian Tata Tertib ini dibuat untuk menjadi pedoman resmi bagi seluruh pihak yang terlibat dalam Lomba Baris-Berbaris Mu'allimin Tahun 2026.</li>
                         <li>Hal-hal yang belum tercantum dalam dokumen ini akan diatur kemudian oleh panitia dan akan disampaikan pada saat Rapat Teknis (Technical Meeting).</li>
                         <li>Dengan keikutsertaannya, seluruh peserta dianggap telah memahami dan bersedia mematuhi seluruh isi Tata Tertib ini tanpa terkecuali.</li>
                     </ol>
@@ -2136,12 +2124,12 @@
                     
                     <div class="bg-zinc-900/50 border border-zinc-800 rounded-xl overflow-hidden">
                         <button class="accordion-btn w-full flex justify-between items-center p-4 text-left hover:bg-zinc-800/50 transition-colors">
-                            <span class="font-bold text-zinc-200 text-sm">Apa itu LBB Mu’allimin Tahun 2025?</span>
+                            <span class="font-bold text-zinc-200 text-sm">Apa itu LBB Mu’allimin Tahun 2026?</span>
                             <i data-lucide="chevron-down" class="text-zinc-500 w-4 h-4 rotate-icon transition-transform"></i>
                         </button>
                         <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800 hidden">
                             <div class="p-4 text-xs text-zinc-400 leading-relaxed">
-                                LBB Mu’allimin Tahun 2025 adalah ajang perlombaan baris-berbaris antar pelajar tingkat SD/MI dan SMP/MTs atau sederajat di wilayah Daerah Istimewa Yogyakarta yang diselenggarakan oleh Madrasah Mu’allimin Muhammadiyah Yogyakarta.
+                                LBB Mu’allimin Tahun 2026 adalah ajang perlombaan baris-berbaris antar pelajar tingkat SD/MI dan SMP/MTs atau sederajat di wilayah Daerah Istimewa Yogyakarta yang diselenggarakan oleh Madrasah Mu’allimin Muhammadiyah Yogyakarta.
                             </div>
                         </div>
                     </div>
@@ -2241,7 +2229,7 @@
                         </button>
                         <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800 hidden">
                             <div class="p-4 text-xs text-zinc-400 leading-relaxed">
-                                Pendaftaran daring: 14 Juli 2025 – 28 Juli 2025 pukul 23.59 WIB.
+                                Pendaftaran daring: 14 Juli 2026 – 28 Juli 2026 pukul 23.59 WIB.
                             </div>
                         </div>
                     </div>
@@ -2253,7 +2241,7 @@
                         </button>
                         <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800 hidden">
                             <div class="p-4 text-xs text-zinc-400 leading-relaxed">
-                                <p><strong>Waktu:</strong> Ahad, 3 Agustus 2025 (09.00 – 15.00 WIB)</p>
+                                <p><strong>Waktu:</strong> Ahad, 3 Agustus 2026 (09.00 – 15.00 WIB)</p>
                                 <p><strong>Lokasi:</strong> Lobby Kampus Induk Madrasah Mu’allimin Muhammadiyah Yogyakarta, Jl. Letjen S. Parman No. 68, Wirobrajan, Kota Yogyakarta.</p>
                             </div>
                         </div>
