@@ -2123,129 +2123,328 @@
 </section>
         
         <!-- FAQ & CONTACT -->
-        <section id="contact" class="relative py-24 lg:py-32 bg-zinc-950 overflow-hidden text-white">
+        <section id="contact" class="relative py-24 lg:py-32 bg-zinc-950 overflow-hidden text-white border-t border-zinc-900 font-sans">
     
-    <div class="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] mix-blend-overlay"></div>
-    <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-red-900/20 rounded-full blur-[120px] pointer-events-none"></div>
+    <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] mix-blend-overlay"></div>
+    <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-red-900/10 rounded-full blur-[120px] pointer-events-none"></div>
     <div class="absolute bottom-0 left-0 w-[500px] h-[500px] bg-yellow-600/10 rounded-full blur-[120px] pointer-events-none"></div>
 
     <div class="container mx-auto px-6 relative z-10">
-        <div class="grid lg:grid-cols-12 gap-12 lg:gap-20">
+        
+        <div class="text-center mb-16">
+            <span class="text-yellow-500 font-bold tracking-[0.2em] text-xs uppercase mb-2 block animate-pulse">Knowledge Base</span>
+            <h2 class="text-3xl md:text-5xl font-black text-white uppercase italic tracking-tighter mb-4">
+                FAQ & <span class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-600">Bantuan</span>
+            </h2>
+            <p class="text-zinc-400 text-lg max-w-2xl mx-auto">
+                Temukan jawaban lengkap seputar pendaftaran, teknis lomba, hingga aturan main di sini.
+            </p>
+        </div>
+
+        <div class="grid lg:grid-cols-12 gap-12 lg:gap-16">
             
-            <div class="lg:col-span-7">
-                <div class="mb-10">
-                    <span class="text-lbb-gold font-bold tracking-[0.2em] text-xs uppercase mb-2 block">Help Center</span>
-                    <h2 class="text-3xl md:text-4xl font-black text-white uppercase italic tracking-tighter mb-4">
-                        Pertanyaan <span class="text-transparent bg-clip-text bg-gradient-to-r from-lbb-gold to-yellow-600">Umum</span>
-                    </h2>
-                    <p class="text-zinc-400 text-lg leading-relaxed">Jawaban atas pertanyaan teknis dan administratif yang paling sering diajukan peserta.</p>
+            <div class="lg:col-span-8">
+                <div class="flex flex-wrap gap-2 mb-6" id="faq-filters">
+                    <button class="px-4 py-2 rounded-full bg-red-600 text-white text-xs font-bold hover:bg-red-700 transition-colors">Semua</button>
+                    <button class="px-4 py-2 rounded-full bg-zinc-800 text-zinc-400 text-xs font-bold hover:bg-zinc-700 hover:text-white transition-colors">Umum</button>
+                    <button class="px-4 py-2 rounded-full bg-zinc-800 text-zinc-400 text-xs font-bold hover:bg-zinc-700 hover:text-white transition-colors">Biaya</button>
+                    <button class="px-4 py-2 rounded-full bg-zinc-800 text-zinc-400 text-xs font-bold hover:bg-zinc-700 hover:text-white transition-colors">Teknis</button>
                 </div>
 
-                <div class="space-y-4" id="faq-accordion">
-                    <div class="group border border-zinc-800 bg-zinc-900/50 rounded-xl overflow-hidden transition-all hover:border-lbb-gold/50">
-                        <button class="accordion-btn w-full flex justify-between items-center p-5 text-left focus:outline-none">
-                            <span class="font-bold text-zinc-300 group-hover:text-white transition-colors text-lg">Apakah bisa mengganti anggota tim?</span>
-                            <div class="w-8 h-8 rounded-lg bg-zinc-800 flex items-center justify-center text-zinc-500 group-hover:bg-lbb-gold group-hover:text-black transition-all">
-                                <i data-lucide="plus" class="transition-transform duration-300 group-[.open]:rotate-45" width="18"></i>
-                            </div>
+                <div class="space-y-3 h-[800px] overflow-y-auto custom-scrollbar pr-2" id="faq-accordion">
+                    
+                    <div class="bg-zinc-900/50 border border-zinc-800 rounded-xl overflow-hidden">
+                        <button class="accordion-btn w-full flex justify-between items-center p-4 text-left hover:bg-zinc-800/50 transition-colors">
+                            <span class="font-bold text-zinc-200 text-sm">Apa itu LBB Mu’allimin Tahun 2025?</span>
+                            <i data-lucide="chevron-down" class="text-zinc-500 w-4 h-4 rotate-icon transition-transform"></i>
                         </button>
-                        <div class="accordion-content bg-black/20">
-                            <div class="p-5 pt-0 text-zinc-400 leading-relaxed border-t border-zinc-800/50 mt-2 text-sm">
-                                <p>Bisa. Pergantian anggota diperbolehkan maksimal <strong>H-3 Technical Meeting</strong>. Wajib menyertakan surat keterangan resmi dari sekolah dan biodata pengganti.</p>
+                        <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800 hidden">
+                            <div class="p-4 text-xs text-zinc-400 leading-relaxed">
+                                LBB Mu’allimin Tahun 2025 adalah ajang perlombaan baris-berbaris antar pelajar tingkat SD/MI dan SMP/MTs atau sederajat di wilayah Daerah Istimewa Yogyakarta yang diselenggarakan oleh Madrasah Mu’allimin Muhammadiyah Yogyakarta.
                             </div>
                         </div>
                     </div>
 
-                    <div class="group border border-zinc-800 bg-zinc-900/50 rounded-xl overflow-hidden transition-all hover:border-lbb-gold/50">
-                        <button class="accordion-btn w-full flex justify-between items-center p-5 text-left focus:outline-none">
-                            <span class="font-bold text-zinc-300 group-hover:text-white transition-colors text-lg">Apakah biaya pendaftaran refundable?</span>
-                            <div class="w-8 h-8 rounded-lg bg-zinc-800 flex items-center justify-center text-zinc-500 group-hover:bg-lbb-gold group-hover:text-black transition-all">
-                                <i data-lucide="plus" class="transition-transform duration-300 group-[.open]:rotate-45" width="18"></i>
-                            </div>
+                    <div class="bg-zinc-900/50 border border-zinc-800 rounded-xl overflow-hidden">
+                        <button class="accordion-btn w-full flex justify-between items-center p-4 text-left hover:bg-zinc-800/50 transition-colors">
+                            <span class="font-bold text-zinc-200 text-sm">Siapa saja yang boleh mengikuti lomba ini?</span>
+                            <i data-lucide="chevron-down" class="text-zinc-500 w-4 h-4 rotate-icon transition-transform"></i>
                         </button>
-                        <div class="accordion-content bg-black/20">
-                            <div class="p-5 pt-0 text-zinc-400 leading-relaxed border-t border-zinc-800/50 mt-2 text-sm">
-                                <p>Tidak. Biaya pendaftaran bersifat <strong>Non-Refundable</strong> (hangus) jika peserta mengundurkan diri dengan alasan apapun.</p>
+                        <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800 hidden">
+                            <div class="p-4 text-xs text-zinc-400 leading-relaxed">
+                                Peserta adalah siswa/i aktif SD/MI, SMP/MTs atau yang sederajat, berasal dari sekolah di wilayah Daerah Istimewa Yogyakarta.
                             </div>
                         </div>
                     </div>
 
-                    <div class="group border border-zinc-800 bg-zinc-900/50 rounded-xl overflow-hidden transition-all hover:border-lbb-gold/50">
-                        <button class="accordion-btn w-full flex justify-between items-center p-5 text-left focus:outline-none">
-                            <span class="font-bold text-zinc-300 group-hover:text-white transition-colors text-lg">Berapa maksimal peleton per sekolah?</span>
-                            <div class="w-8 h-8 rounded-lg bg-zinc-800 flex items-center justify-center text-zinc-500 group-hover:bg-lbb-gold group-hover:text-black transition-all">
-                                <i data-lucide="plus" class="transition-transform duration-300 group-[.open]:rotate-45" width="18"></i>
-                            </div>
+                    <div class="bg-zinc-900/50 border border-zinc-800 rounded-xl overflow-hidden">
+                        <button class="accordion-btn w-full flex justify-between items-center p-4 text-left hover:bg-zinc-800/50 transition-colors">
+                            <span class="font-bold text-zinc-200 text-sm">Apakah sekolah boleh mengirim lebih dari satu tim?</span>
+                            <i data-lucide="chevron-down" class="text-zinc-500 w-4 h-4 rotate-icon transition-transform"></i>
                         </button>
-                        <div class="accordion-content bg-black/20">
-                            <div class="p-5 pt-0 text-zinc-400 leading-relaxed border-t border-zinc-800/50 mt-2 text-sm">
-                                <p>Setiap sekolah berhak mengirimkan maksimal <strong>2 (dua) peleton</strong>. Bisa terdiri dari 1 Putra & 1 Putri, atau 2 Campuran sesuai ketersediaan kuota.</p>
+                        <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800 hidden">
+                            <div class="p-4 text-xs text-zinc-400 leading-relaxed">
+                                Ya. Setiap sekolah maksimal boleh mendaftarkan 2 (dua) peleton.
                             </div>
                         </div>
                     </div>
+
+                    <div class="bg-zinc-900/50 border border-zinc-800 rounded-xl overflow-hidden">
+                        <button class="accordion-btn w-full flex justify-between items-center p-4 text-left hover:bg-zinc-800/50 transition-colors">
+                            <span class="font-bold text-zinc-200 text-sm">Apakah peleton boleh campuran putra dan putri?</span>
+                            <i data-lucide="chevron-down" class="text-zinc-500 w-4 h-4 rotate-icon transition-transform"></i>
+                        </button>
+                        <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800 hidden">
+                            <div class="p-4 text-xs text-zinc-400 leading-relaxed">
+                                Boleh. Komposisi peleton diperbolehkan heterogen (putra dan putri).
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-zinc-900/50 border border-zinc-800 rounded-xl overflow-hidden">
+                        <button class="accordion-btn w-full flex justify-between items-center p-4 text-left hover:bg-zinc-800/50 transition-colors">
+                            <span class="font-bold text-zinc-200 text-sm">Berapa biaya pendaftaran lomba?</span>
+                            <i data-lucide="chevron-down" class="text-zinc-500 w-4 h-4 rotate-icon transition-transform"></i>
+                        </button>
+                        <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800 hidden">
+                            <div class="p-4 text-xs text-zinc-400 leading-relaxed">
+                                Biaya pendaftaran sebesar Rp325.000,- per peleton.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-zinc-900/50 border border-zinc-800 rounded-xl overflow-hidden">
+                        <button class="accordion-btn w-full flex justify-between items-center p-4 text-left hover:bg-zinc-800/50 transition-colors">
+                            <span class="font-bold text-zinc-200 text-sm">Ke mana biaya pendaftaran ditransfer?</span>
+                            <i data-lucide="chevron-down" class="text-zinc-500 w-4 h-4 rotate-icon transition-transform"></i>
+                        </button>
+                        <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800 hidden">
+                            <div class="p-4 text-xs text-zinc-400 leading-relaxed">
+                                <ul class="list-disc pl-4 space-y-1">
+                                    <li>Bank: BRI</li>
+                                    <li>No. Rekening: 300701003561505</li>
+                                    <li>Atas Nama: FALHAN ZUHDI MUBAROK</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-zinc-900/50 border border-zinc-800 rounded-xl overflow-hidden">
+                        <button class="accordion-btn w-full flex justify-between items-center p-4 text-left hover:bg-zinc-800/50 transition-colors">
+                            <span class="font-bold text-zinc-200 text-sm">Apakah biaya pendaftaran bisa dikembalikan?</span>
+                            <i data-lucide="chevron-down" class="text-zinc-500 w-4 h-4 rotate-icon transition-transform"></i>
+                        </button>
+                        <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800 hidden">
+                            <div class="p-4 text-xs text-zinc-400 leading-relaxed">
+                                Tidak. Biaya pendaftaran bersifat non-refundable dengan alasan apa pun.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-zinc-900/50 border border-zinc-800 rounded-xl overflow-hidden">
+                        <button class="accordion-btn w-full flex justify-between items-center p-4 text-left hover:bg-zinc-800/50 transition-colors">
+                            <span class="font-bold text-zinc-200 text-sm">Apakah ada sistem booking kuota?</span>
+                            <i data-lucide="chevron-down" class="text-zinc-500 w-4 h-4 rotate-icon transition-transform"></i>
+                        </button>
+                        <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800 hidden">
+                            <div class="p-4 text-xs text-zinc-400 leading-relaxed">
+                                Tidak. Status pendaftaran hanya sah setelah seluruh prosedur dan pembayaran diselesaikan.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-zinc-900/50 border border-zinc-800 rounded-xl overflow-hidden">
+                        <button class="accordion-btn w-full flex justify-between items-center p-4 text-left hover:bg-zinc-800/50 transition-colors">
+                            <span class="font-bold text-zinc-200 text-sm">Kapan pendaftaran dibuka dan ditutup?</span>
+                            <i data-lucide="chevron-down" class="text-zinc-500 w-4 h-4 rotate-icon transition-transform"></i>
+                        </button>
+                        <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800 hidden">
+                            <div class="p-4 text-xs text-zinc-400 leading-relaxed">
+                                Pendaftaran daring: 14 Juli 2025 – 28 Juli 2025 pukul 23.59 WIB.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-zinc-900/50 border border-zinc-800 rounded-xl overflow-hidden">
+                        <button class="accordion-btn w-full flex justify-between items-center p-4 text-left hover:bg-zinc-800/50 transition-colors">
+                            <span class="font-bold text-zinc-200 text-sm">Kapan & Dimana penyerahan berkas fisik?</span>
+                            <i data-lucide="chevron-down" class="text-zinc-500 w-4 h-4 rotate-icon transition-transform"></i>
+                        </button>
+                        <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800 hidden">
+                            <div class="p-4 text-xs text-zinc-400 leading-relaxed">
+                                <p><strong>Waktu:</strong> Ahad, 3 Agustus 2025 (09.00 – 15.00 WIB)</p>
+                                <p><strong>Lokasi:</strong> Lobby Kampus Induk Madrasah Mu’allimin Muhammadiyah Yogyakarta, Jl. Letjen S. Parman No. 68, Wirobrajan, Kota Yogyakarta.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-zinc-900/50 border border-zinc-800 rounded-xl overflow-hidden">
+                        <button class="accordion-btn w-full flex justify-between items-center p-4 text-left hover:bg-zinc-800/50 transition-colors">
+                            <span class="font-bold text-zinc-200 text-sm">Ketentuan jumlah personel peleton?</span>
+                            <i data-lucide="chevron-down" class="text-zinc-500 w-4 h-4 rotate-icon transition-transform"></i>
+                        </button>
+                        <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800 hidden">
+                            <div class="p-4 text-xs text-zinc-400 leading-relaxed">
+                                <p><strong>Maksimal 25 orang:</strong> 1 Komandan, 21 Pasukan, 3 Cadangan.</p>
+                                <p><strong>Minimal Tampil:</strong> 22 orang (1 Komandan + 21 Pasukan).</p>
+                                <p>Satu personel TIDAK boleh terdaftar di dua peleton berbeda.</p>
+                                <p><strong>Official:</strong> Max 2 official + 1 dokumentasi.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-zinc-900/50 border border-zinc-800 rounded-xl overflow-hidden">
+                        <button class="accordion-btn w-full flex justify-between items-center p-4 text-left hover:bg-zinc-800/50 transition-colors">
+                            <span class="font-bold text-zinc-200 text-sm">Bagaimana prosedur pendaftaran?</span>
+                            <i data-lucide="chevron-down" class="text-zinc-500 w-4 h-4 rotate-icon transition-transform"></i>
+                        </button>
+                        <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800 hidden">
+                            <div class="p-4 text-xs text-zinc-400 leading-relaxed">
+                                <ol class="list-decimal pl-4 space-y-1">
+                                    <li>Transfer biaya pendaftaran</li>
+                                    <li>Isi formulir daring & Upload Formulir B (.docx) + Bukti Bayar</li>
+                                    <li>Formulir B tidak perlu TTD Kepala Sekolah saat upload</li>
+                                    <li>Data online dianggap final (tidak bisa ubah kecuali force majeure)</li>
+                                    <li>Serahkan berkas fisik (Form A, B, C)</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-zinc-900/50 border border-zinc-800 rounded-xl overflow-hidden">
+                        <button class="accordion-btn w-full flex justify-between items-center p-4 text-left hover:bg-zinc-800/50 transition-colors">
+                            <span class="font-bold text-zinc-200 text-sm">Ketentuan berkas fisik & map?</span>
+                            <i data-lucide="chevron-down" class="text-zinc-500 w-4 h-4 rotate-icon transition-transform"></i>
+                        </button>
+                        <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800 hidden">
+                            <div class="p-4 text-xs text-zinc-400 leading-relaxed">
+                                <p>Berkas: Formulir A, B, dan C.</p>
+                                <p><strong>Map SD/MI:</strong> MERAH (Biola)</p>
+                                <p><strong>Map SMP/MTs:</strong> BIRU (Biola)</p>
+                                <p>Wajib diserahkan langsung, tidak boleh via pos.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-zinc-900/50 border border-zinc-800 rounded-xl overflow-hidden">
+                        <button class="accordion-btn w-full flex justify-between items-center p-4 text-left hover:bg-zinc-800/50 transition-colors">
+                            <span class="font-bold text-zinc-200 text-sm">Info Teknis Lapangan (Clear Area, DP, Ukuran)?</span>
+                            <i data-lucide="chevron-down" class="text-zinc-500 w-4 h-4 rotate-icon transition-transform"></i>
+                        </button>
+                        <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800 hidden">
+                            <div class="p-4 text-xs text-zinc-400 leading-relaxed space-y-2">
+                                <p><strong>Clear Area:</strong> Area steril (Peleton, 2 Official, 1 Dokum, Panitia).</p>
+                                <p><strong>DP 1:</strong> Tunggu/Verifikasi (Hadir min 15 menit sebelum tampil).</p>
+                                <p><strong>DP 2:</strong> Persiapan akhir.</p>
+                                <p><strong>Ukuran Lapangan:</strong> SD (25x14m), SMP (26x15m).</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-zinc-900/50 border border-zinc-800 rounded-xl overflow-hidden">
+                        <button class="accordion-btn w-full flex justify-between items-center p-4 text-left hover:bg-zinc-800/50 transition-colors">
+                            <span class="font-bold text-zinc-200 text-sm">Aturan Pergantian Pemain & Danton?</span>
+                            <i data-lucide="chevron-down" class="text-zinc-500 w-4 h-4 rotate-icon transition-transform"></i>
+                        </button>
+                        <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800 hidden">
+                            <div class="p-4 text-xs text-zinc-400 leading-relaxed">
+                                <p>Boleh di DP atau Jeda Materi (SD: Materi 20-21, SMP: Materi 17-18).</p>
+                                <p><strong>Danton:</strong> TIDAK BOLEH diganti kecuali darurat (pingsan/sakit parah).</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-zinc-900/50 border border-zinc-800 rounded-xl overflow-hidden">
+                        <button class="accordion-btn w-full flex justify-between items-center p-4 text-left hover:bg-zinc-800/50 transition-colors">
+                            <span class="font-bold text-zinc-200 text-sm">Penilaian, Waktu, & Sanksi?</span>
+                            <i data-lucide="chevron-down" class="text-zinc-500 w-4 h-4 rotate-icon transition-transform"></i>
+                        </button>
+                        <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800 hidden">
+                            <div class="p-4 text-xs text-zinc-400 leading-relaxed space-y-2">
+                                <p><strong>Dasar:</strong> Perpang TNI No. 57 & 58 Tahun 2018.</p>
+                                <p><strong>Durasi:</strong> SD (8 menit), SMP (13 menit).</p>
+                                <p><strong>Sanksi:</strong> Tidak ikut Upacara (-150), Terlambat DP 1 (-100), Tidak hadir (Diskualifikasi).</p>
+                                <p><strong>Protes:</strong> Max 60 menit setelah rekap. Hanya teknis, bukan penilaian subjektif.</p>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
-            <div class="lg:col-span-5">
+            <div class="lg:col-span-4 space-y-6">
+                
                 <div class="bg-zinc-900/80 backdrop-blur-md rounded-3xl p-8 border border-zinc-800 shadow-2xl relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-lbb-red/20 rounded-bl-full -mr-8 -mt-8 blur-xl"></div>
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-yellow-600/20 rounded-bl-full -mr-8 -mt-8 blur-xl"></div>
 
-                    <h3 class="text-2xl font-black text-white mb-8 uppercase italic flex items-center gap-3">
-                        <i data-lucide="headset" class="text-lbb-gold"></i> Hubungi Kami
+                    <h3 class="text-xl font-black text-white mb-6 uppercase italic flex items-center gap-3">
+                        <i data-lucide="headset" class="text-yellow-500"></i> Hubungi Panitia
                     </h3>
 
-                    <div class="space-y-4 mb-8">
-                        <a href="#" class="group flex items-center gap-4 p-4 rounded-xl bg-black/40 border border-zinc-800 hover:border-green-600 hover:bg-zinc-800 transition-all duration-300">
-                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-green-600 to-green-800 flex items-center justify-center text-white font-bold text-lg shadow-lg group-hover:scale-110 transition-transform border border-green-500/30">
-                                <i data-lucide="message-circle" width="20"></i>
+                    <div class="space-y-4">
+                        <a href="https://wa.me/6285314209369" target="_blank" class="group flex items-center gap-4 p-4 rounded-xl bg-black/40 border border-zinc-800 hover:border-green-600 hover:bg-zinc-800 transition-all duration-300">
+                            <div class="w-10 h-10 rounded-full bg-green-900/50 flex items-center justify-center text-green-500 border border-green-800">
+                                <i data-lucide="message-circle" width="18"></i>
                             </div>
                             <div class="flex-grow">
-                                <h4 class="font-bold text-white text-lg group-hover:text-green-500 transition-colors">Kak Arhan</h4>
-                                <p class="text-xs text-zinc-500 uppercase tracking-wide font-bold group-hover:text-zinc-400">Info Pendaftaran</p>
-                            </div>
-                            <div class="text-zinc-600 group-hover:text-white transition-colors transform group-hover:translate-x-1">
-                                <i data-lucide="arrow-up-right" width="24"></i>
+                                <h4 class="font-bold text-white text-sm group-hover:text-green-500 transition-colors">Kak Arhan</h4>
+                                <p class="text-[10px] text-zinc-500 font-mono">0853-1420-9369</p>
                             </div>
                         </a>
 
-                        <a href="#" class="group flex items-center gap-4 p-4 rounded-xl bg-black/40 border border-zinc-800 hover:border-green-600 hover:bg-zinc-800 transition-all duration-300">
-                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-green-600 to-green-800 flex items-center justify-center text-white font-bold text-lg shadow-lg group-hover:scale-110 transition-transform border border-green-500/30">
-                                <i data-lucide="message-circle" width="20"></i>
+                        <a href="https://wa.me/6282329483126" target="_blank" class="group flex items-center gap-4 p-4 rounded-xl bg-black/40 border border-zinc-800 hover:border-green-600 hover:bg-zinc-800 transition-all duration-300">
+                            <div class="w-10 h-10 rounded-full bg-green-900/50 flex items-center justify-center text-green-500 border border-green-800">
+                                <i data-lucide="message-circle" width="18"></i>
                             </div>
                             <div class="flex-grow">
-                                <h4 class="font-bold text-white text-lg group-hover:text-green-500 transition-colors">Kak Dandi</h4>
-                                <p class="text-xs text-zinc-500 uppercase tracking-wide font-bold group-hover:text-zinc-400">Teknis Lapangan</p>
-                            </div>
-                            <div class="text-zinc-600 group-hover:text-white transition-colors transform group-hover:translate-x-1">
-                                <i data-lucide="arrow-up-right" width="24"></i>
+                                <h4 class="font-bold text-white text-sm group-hover:text-green-500 transition-colors">Kak Dandi</h4>
+                                <p class="text-[10px] text-zinc-500 font-mono">0823-2948-3126</p>
                             </div>
                         </a>
                     </div>
-
-                    <div class="rounded-xl overflow-hidden relative border border-zinc-700 group hover:border-lbb-red/50 transition-colors">
-                        <div class="h-36 w-full bg-zinc-800 flex items-center justify-center relative">
-                            <div class="absolute inset-0 opacity-20" style="background-image: repeating-linear-gradient(45deg, #333 0, #333 1px, transparent 0, transparent 50%); background-size: 10px 10px;"></div>
-                            
-                            <div class="z-10 flex flex-col items-center">
-                                <i data-lucide="map-pin" class="text-lbb-red fill-red-900/20 mb-2 animate-bounce"></i>
-                                <span class="text-xs font-bold text-white bg-zinc-900/90 px-4 py-1.5 rounded-full backdrop-blur-sm border border-zinc-700 group-hover:border-lbb-red/50 group-hover:text-lbb-gold transition-colors">Buka Google Maps</span>
-                            </div>
-                        </div>
-                        
-                        <div class="p-4 bg-zinc-800/80 border-t border-zinc-700">
-                            <h5 class="font-bold text-white text-sm mb-1">Kampus Terpadu Madrasah Mu'allimin</h5>
-                            <p class="text-xs text-zinc-400">Jl. Bantul Km 3, Yogyakarta</p>
-                        </div>
-                        
-                        <a href="https://maps.google.com" target="_blank" class="absolute inset-0 z-20" aria-label="Buka Peta"></a>
-                    </div>
-
                 </div>
+
+                <a href="https://lbbmuallimin.carrd.co/" target="_blank" class="block bg-zinc-800/50 p-6 rounded-2xl border border-zinc-700 hover:border-yellow-500 transition-all group">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-bold text-yellow-500 uppercase tracking-widest">Portal Resmi</span>
+                        <i data-lucide="external-link" width="16" class="text-zinc-500 group-hover:text-white"></i>
+                    </div>
+                    <h4 class="text-lg font-black text-white group-hover:underline decoration-yellow-500 underline-offset-4">lbbmuallimin.carrd.co</h4>
+                    <p class="text-xs text-zinc-400 mt-2">Unduh Juknis, Formulir, & Info Terbaru.</p>
+                </a>
+
+                <div class="rounded-xl overflow-hidden relative border border-zinc-800 h-40 group">
+                    <div class="absolute inset-0 bg-zinc-900 flex items-center justify-center">
+                        <span class="text-xs text-zinc-500 font-mono">MAPS PREVIEW</span>
+                    </div>
+                    <div class="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-black to-transparent">
+                        <p class="text-xs font-bold text-white">Madrasah Mu'allimin</p>
+                        <p class="text-[10px] text-zinc-400">Jl. Letjen S. Parman No. 68</p>
+                    </div>
+                </div>
+
             </div>
 
         </div>
     </div>
 </section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const accordions = document.querySelectorAll('#faq-accordion .accordion-btn');
+        
+        accordions.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const content = this.nextElementSibling;
+                const icon = this.querySelector('i');
+                
+                // Toggle current
+                content.classList.toggle('hidden');
+                icon.classList.toggle('rotate-180');
+            });
+        });
+    });
+</script>
     </main>
 
     <!-- FOOTER -->
