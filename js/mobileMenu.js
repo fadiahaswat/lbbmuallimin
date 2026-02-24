@@ -9,15 +9,31 @@ export function initMobileMenu() {
 
     if (!mobileMenuBtn || !mobileMenu) return;
 
+    function openMenu() {
+        mobileMenu.classList.remove('hidden');
+        mobileMenu.classList.add('flex');
+        mobileMenuBtn.setAttribute('aria-label', 'Tutup Menu');
+        document.body.classList.add('overflow-hidden');
+    }
+
+    function closeMenu() {
+        mobileMenu.classList.add('hidden');
+        mobileMenu.classList.remove('flex');
+        mobileMenuBtn.setAttribute('aria-label', 'Buka Menu');
+        document.body.classList.remove('overflow-hidden');
+    }
+
     mobileMenuBtn.addEventListener('click', () => {
-        mobileMenu.classList.toggle('hidden');
-        mobileMenu.classList.toggle('flex');
+        mobileMenu.classList.contains('hidden') ? openMenu() : closeMenu();
     });
 
     mobileLinks.forEach(link => {
-        link.addEventListener('click', () => {
-            mobileMenu.classList.add('hidden');
-            mobileMenu.classList.remove('flex');
-        });
+        link.addEventListener('click', closeMenu);
+    });
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && !mobileMenu.classList.contains('hidden')) {
+            closeMenu();
+        }
     });
 }

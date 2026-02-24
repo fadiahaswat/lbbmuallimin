@@ -1,0 +1,24 @@
+{
+  "name": "lbbmuallimin",
+  "version": "1.0.0",
+  "description": "Website resmi Lomba Baris-Berbaris Mu'allimin 2026",
+  "scripts": {
+    "build:css": "tailwindcss -i css/input.css -o css/tailwind.css --minify",
+    "watch:css": "tailwindcss -i css/input.css -o css/tailwind.css --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fadiahaswat/lbbmuallimin.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/fadiahaswat/lbbmuallimin/issues"
+  },
+  "homepage": "https://github.com/fadiahaswat/lbbmuallimin#readme",
+  "devDependencies": {
+    "tailwindcss": "^3.4.19"
+  }
+}

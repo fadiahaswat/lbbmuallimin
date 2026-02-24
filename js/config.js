@@ -121,6 +121,14 @@ export const VENUE = {
 
     /** URL Google Maps – ganti dengan link Maps yang benar */
     MAPS_URL: 'https://maps.app.goo.gl/fVMgg5xZcwRQ4kN78',
+
+    /**
+     * Label mini-map di bagian kontak/FAQ.
+     * Ini merujuk ke kampus induk (kota) yang berbeda dari lokasi lomba
+     * di Bandut Lor – ganti jika peta berubah.
+     */
+    MAPS_PREVIEW_NAME:    "Madrasah Mu\u2019allimin",
+    MAPS_PREVIEW_ADDRESS: 'Jl. Letjen S. Parman No. 68',
 };
 
 // ---------------------------------------------------------------------------
@@ -149,10 +157,22 @@ export const COMPETITION = {
     SD: {
         TARGET_PLATOONS: 16,
         TOTAL_PERSONNEL_LABEL: 'Total: 25 Personil',
+        ARENA_SIZE: '25m \u00D7 14m',
+        ARENA_WIDTH_LABEL: '25 METER',
+        ARENA_HEIGHT_LABEL: '14m',
+        DURATION_LABEL: 'Durasi Max: 8 Menit',
+        SUBSTITUTION_LABEL: 'Gerakan No. 20 & 21',
+        ARENA_SPEC_LABEL: 'Ukuran Pos 25 \u00D7 14 Meter \u2013 Waktu 8 Menit',
     },
     SMP: {
         TARGET_PLATOONS: 16,
         TOTAL_PERSONNEL_LABEL: 'Total: 25 Personil',
+        ARENA_SIZE: '26m \u00D7 15m',
+        ARENA_WIDTH_LABEL: '26 METER',
+        ARENA_HEIGHT_LABEL: '15m',
+        DURATION_LABEL: 'Durasi Max: 13 Menit',
+        SUBSTITUTION_LABEL: 'Gerakan No. 17 & 18',
+        ARENA_SPEC_LABEL: 'Ukuran Pos 26 \u00D7 15 Meter \u2013 Waktu 13 Menit',
     },
 };
 
@@ -359,4 +379,101 @@ export const COUNTDOWN = {
 
     /** HTML yang ditampilkan saat pendaftaran ditutup */
     EXPIRED_HTML: "<span class='text-red-500 font-bold'>PENDAFTARAN DITUTUP</span>",
+};
+
+// ---------------------------------------------------------------------------
+// SCORING – bobot penilaian
+// ---------------------------------------------------------------------------
+export const SCORING = {
+    PLATOON_TECHNIQUE_PCT: 70,
+    PLATOON_COHESION_PCT: 30,
+    DANTON_MASTERY_PCT: 35,
+    DANTON_VOICE_PCT: 25,
+    DANTON_ATTITUDE_PCT: 20,
+    DANTON_FIELD_PCT: 20,
+    SCORE_RANGE_LABEL: '50-90 (Interval 2 poin)',
+};
+
+// ---------------------------------------------------------------------------
+// PENALTIES – daftar sanksi & pengurangan nilai
+// ---------------------------------------------------------------------------
+export const PENALTIES = [
+    { label: 'Tidak ikut Upacara Pembukaan',      value: '-150 Poin' },
+    { label: 'Tidak Hadir DP 1 (3x Panggilan)',   value: 'Urutan Akhir & -100 Poin' },
+    { label: 'Personel Kurang (< 22 orang)',       value: '-75 Poin' },
+    { label: 'Kelebihan Waktu (per 30 detik)',     value: '-50 Poin' },
+    { label: 'Injak Garis / Keluar Batas',         value: '-50 Poin' },
+    { label: 'Gerakan Penyesuaian > 3x',           value: '-25 Poin' },
+];
+
+// ---------------------------------------------------------------------------
+// PRIZES – penghargaan & piala bergilir
+// ---------------------------------------------------------------------------
+export const PRIZES = {
+    TOTAL_LABEL:           'Total Hadiah Jutaan Rupiah',
+    ROLLING_TROPHY_TITLE:  'Piala Bergilir Juara Umum',
+    ROLLING_TROPHY_SD:     'Piala Bergilir Gubernur DIY',
+    ROLLING_TROPHY_SMP:    'Piala Bergilir Gubernur DIY',
+};
+
+// ---------------------------------------------------------------------------
+// MATERIALS – daftar gerakan materi lomba
+// ---------------------------------------------------------------------------
+export const MATERIALS = {
+    SD: [
+        'Penghormatan Dewan Juri(Aba-aba Pelaksanaan Waktu Dimulai) \u2013 Laporan Pembuka',
+        'Istirahat Di Tempat(Parade)',
+        'Periksa Kerapian(Parade) \u2013 Sikap Sempurna',
+        'Setengah Lengan Lencang Kanan \u2013 Tegak',
+        'Lencang Kanan \u2013 Tegak',
+        'Hitung(Bersaf)',
+        'Hadap Kanan',
+        'Lencang Depan \u2013 Tegak',
+        'Hitung(Berbanjar)',
+        'Buka Barisan \u2013 Tutup Barisan',
+        'Jalan Di Tempat',
+        'Hadap Kiri Jalan Di Tempat',
+        'Hadap Serong Kanan Jalan Di Tempat',
+        'Balik Kanan Jalan Di Tempat',
+        'Hadap Serong Kiri Jalan Di Tempat \u2013 Henti',
+        '3 Langkah Ke Kiri \u2013 Balik Kanan',
+        '4 Langkah Ke Kanan',
+        'Hadap Kiri Jalan Di Tempat',
+        '3 Langkah Ke Depan(Dari Posisi Jalan Di Tempat) \u2013 Balik Kanan Jalan Di Tempat',
+        '4 Langkah Ke Belakang(Dari Posisi Jalan Di Tempat) \u2013 Henti',
+        'Maju Jalan \u2013 Tiap-tiap Banjar 2X Belok Kiri',
+        'Langkah Tegap(Dari Posisi Langkah Biasa)',
+        'Hormat Kanan \u2013 Tegak \u2013 Jalan Di Tempat \u2013 Henti',
+        'Tiap-tiap Banjar 2X Belok Kanan Maju(Dari Posisi Berhenti) \u2013 Henti',
+        'Melintang Kanan(Berhenti ke Berhenti) \u2013 Henti \u2013 Balik Kanan',
+        'Maju Jalan \u2013 Haluan Kanan(Berjalan ke Berhenti) \u2013 Henti',
+        'Laporan Penutup \u2013 Penghormatan Dewan Juri(Aba-aba Pelaksanaan Waktu Berakhir)',
+    ],
+    SMP: [
+        'Penghormatan Dewan Juri(Aba-aba Pelaksanaan Waktu Dimulai) \u2013 Laporan Pembuka',
+        'Bubar \u2013 Berhimpun',
+        'Berkumpul Berbanjar \u2013 Langkah Biasa(Dari Posisi Berhenti)',
+        'Melintang Kanan(Berjalan ke Berjalan) \u2013 Langkah Biasa \u2013 Balik Kanan Henti',
+        'Jalan Di Tempat \u2013 Langkah Tegap \u2013 Haluan Kanan(Berjalan ke Berjalan) \u2013 Langkah Biasa \u2013 Henti)',
+        'Hadap Kiri Maju(Dari Posisi Berhenti) \u2013 Tiap-tiap Banjar 2X Belok Kanan \u2013 Balik Kanan Maju',
+        'Ganti Langkah \u2013 2X Belok Kiri',
+        'Lari(Dari Langkah Biasa) \u2013 2X Belok Kanan',
+        'Langkah Biasa \u2013 Tiap-tiap Banjar 2X Belok Kanan \u2013 Hadap Serong Kiri Henti',
+        'Lari(Dari Posisi Berhenti) \u2013 Balik Kanan Lari Maju \u2013 Hadap Kiri Henti',
+        'Hadap Serong Kiri Maju \u2013 2X Belok Kiri',
+        'Langkah Tegap \u2013 Hormat Kanan',
+        'Tiap-tiap Banjar 2X Belok Kiri(Dari Langkah Tegap) \u2013 Langkah Biasa',
+        'Langkah Perlahan(Dari Langkah Biasa) \u2013 Henti',
+        'Tiap-tiap Banjar 2X Belok Kanan Maju \u2013 3 Langkah Ke Kanan',
+        'Balik Kanan Maju \u2013 Hadap Kiri Henti',
+        'Bubar \u2013 Berkumpul Bersaf',
+        'Jalan Di Tempat \u2013 Hadap Serong Kiri(Jalan Di Tempat)\u2013 3 Langkah Ke Depan',
+        'Hadap Kanan(Jalan Di Tempat) \u2013 2 Langkah Ke Kanan \u2013 Balik Kanan(Jalan Di Tempat)',
+        'Hadap Serong Kanan(Jalan Di Tempat) \u2013 Balik Kanan Henti',
+        'Buka Barisan \u2013 Tutup Barisan',
+        'Lencang Depan \u2013 Hitung(Berbanjar) \u2013 Hadap Kanan',
+        'Setengah Lengan Lencang Kiri \u2013 Lencang Kiri \u2013 Hitung(Bersaf) \u2013 Balik Kanan',
+        'Istirahat Di Tempat(Parade) \u2013 Periksa Kerapian(Parade)\u2013 Sikap Sempurna',
+        'Laporan Penutup \u2013 Penghormatan Dewan Juri(Aba-aba Pelaksanaan Waktu Berakhir)',
+    ],
 };

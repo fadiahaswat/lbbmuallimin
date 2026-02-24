@@ -31,4 +31,8 @@ export function initTabs() {
 
     if (btnSD) btnSD.addEventListener('click', () => switchTab('sd'));
     if (btnSMP) btnSMP.addEventListener('click', () => switchTab('smp'));
+
+    // Initialise the active tab using config classes so HTML fallback
+    // styles and runtime styles are always in sync.
+    switchTab('sd');
 }
