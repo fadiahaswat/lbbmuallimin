@@ -32,54 +32,8 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-        
-        /* Custom Scrollbar for Material List */
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 6px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: #f1f5f9; 
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #cbd5e1; 
-            border-radius: 4px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8; 
-        }
-
-        /* Accordion Animation */
-        .accordion-content {
-            transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
-            max-height: 0;
-            opacity: 0;
-            overflow: hidden;
-        }
-        .accordion-content.active {
-            max-height: 500px; /* Arbitrary large height */
-            opacity: 1;
-        }
-        
-        .rotate-icon {
-            transition: transform 0.3s ease;
-        }
-        .rotate-180 {
-            transform: rotate(180deg);
-        }
-
-        .bg-halftone {
-            background-image: radial-gradient(#ffffff 1px, transparent 1px);
-            background-size: 20px 20px;
-            opacity: 0.05;
-        }
-        .bg-halftone-dark {
-            background-image: radial-gradient(#000000 1px, transparent 1px);
-            background-size: 20px 20px;
-            opacity: 0.1;
-        }
-    </style>
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body class="bg-white text-slate-900 selection:bg-red-200">
 
@@ -219,7 +173,7 @@
     
     <div class="absolute inset-0 z-0 pointer-events-none">
         <video autoplay loop muted playsinline class="w-full h-full object-cover opacity-20 mix-blend-multiply filter grayscale-[0.3]">
-            <source src="https://assets.mixkit.co/videos/preview/mixkit-red-smoke-on-a-black-background-video-2953-large.mp4" type="video/mp4">
+            <source data-config-src="HERO.VIDEO_URL" src="https://assets.mixkit.co/videos/preview/mixkit-red-smoke-on-a-black-background-video-2953-large.mp4" type="video/mp4">
         </video>
         
         <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/80"></div>
@@ -239,7 +193,7 @@
                       <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-lbb-gold opacity-75"></span>
                       <span class="relative inline-flex rounded-full h-2 w-2 bg-yellow-500"></span>
                     </span>
-                    <span class="text-[10px] font-bold tracking-[0.15em] uppercase text-yellow-100/90">
+                    <span class="text-[10px] font-bold tracking-[0.15em] uppercase text-yellow-100/90" data-config="EVENT.REGISTRATION_BADGE">
                         Open Reg: 14 - 28 Juli 2026
                     </span>
                 </div>
@@ -279,24 +233,24 @@
     <h1 class="font-black leading-none tracking-tighter italic flex flex-col gap-1 md:gap-2">
         
         <span class="relative block text-3xl md:text-5xl lg:text-7xl">
-            <span class="absolute inset-0 text-transparent" style="-webkit-text-stroke: 1px rgba(255,255,255,0.2);">
+            <span class="absolute inset-0 text-transparent" style="-webkit-text-stroke: 1px rgba(255,255,255,0.2);" data-config="HERO.TITLE_LINE1">
                 LOMBA BARIS BERBARIS
             </span>
-            <span class="relative text-transparent bg-clip-text bg-gradient-to-b from-white via-zinc-200 to-zinc-400 drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
+            <span class="relative text-transparent bg-clip-text bg-gradient-to-b from-white via-zinc-200 to-zinc-400 drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]" data-config="HERO.TITLE_LINE1">
                 LOMBA BARIS BERBARIS
             </span>
         </span>
 
         <span class="relative block text-4xl md:text-6xl lg:text-8xl mt-1">
-            <span class="absolute inset-0 text-lbb-gold blur-2xl opacity-40 group-hover:opacity-60 transition-opacity duration-500">
+            <span class="absolute inset-0 text-lbb-gold blur-2xl opacity-40 group-hover:opacity-60 transition-opacity duration-500" data-config="HERO.TITLE_LINE2">
                 MU’ALLIMIN 2026
             </span>
             
-            <span class="relative text-transparent bg-clip-text bg-gradient-to-br from-yellow-200 via-lbb-gold to-yellow-600 filter drop-shadow-[0_0_30px_rgba(234,179,8,0.4)] group-hover:drop-shadow-[0_0_50px_rgba(234,179,8,0.6)] transition-all duration-300">
+            <span class="relative text-transparent bg-clip-text bg-gradient-to-br from-yellow-200 via-lbb-gold to-yellow-600 filter drop-shadow-[0_0_30px_rgba(234,179,8,0.4)] group-hover:drop-shadow-[0_0_50px_rgba(234,179,8,0.6)] transition-all duration-300" data-config="HERO.TITLE_LINE2">
                 MU’ALLIMIN 2026
             </span>
             
-            <span class="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent bg-clip-text text-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" style="mix-blend-mode: overlay;">
+            <span class="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent bg-clip-text text-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" style="mix-blend-mode: overlay;" data-config="HERO.TITLE_LINE2">
                 MU’ALLIMIN 2026
             </span>
         </span>
@@ -305,7 +259,7 @@
 </div>
             
             <div class="flex flex-col items-center gap-6 w-full animate-fade-up">
-                <p class="text-sm md:text-base text-red-100/80 max-w-lg text-center font-medium leading-relaxed hidden sm:block">
+                <p class="text-sm md:text-base text-red-100/80 max-w-lg text-center font-medium leading-relaxed hidden sm:block" data-config-html="HERO.SUBTITLE">
                     Ajang pembuktian <span class="text-white font-bold border-b border-lbb-gold/50">Disiplin</span>, <span class="text-white font-bold border-b border-lbb-gold/50">Karakter</span>, dan <span class="text-white font-bold border-b border-lbb-gold/50">Solidaritas</span> pelajar terbaik se-DIY.
                 </p>
             
@@ -404,7 +358,7 @@
                         Diinisiasi oleh <strong>Peleton Inti (Tonti) Mu'allimin "Caraka Bhaskara Muda"</strong> yang telah terbukti mencetak prestasi gemilang:
                     </p>
                     
-                    <div class="flex flex-wrap gap-2 mb-8">
+                    <div class="flex flex-wrap gap-2 mb-8" data-config-render="achievements">
                         <span class="px-3 py-1 bg-white border border-slate-200 rounded-lg text-[10px] font-bold text-slate-600 shadow-sm">🏆 Juara Umum LBB Prayata 2024</span>
                         <span class="px-3 py-1 bg-white border border-slate-200 rounded-lg text-[10px] font-bold text-slate-600 shadow-sm">🏆 Juara Umum LKBB Bela Negara</span>
                         <span class="px-3 py-1 bg-white border border-slate-200 rounded-lg text-[10px] font-bold text-slate-600 shadow-sm">🏆 Piala Walikota Yogyakarta</span>
@@ -465,7 +419,7 @@
                             <span class="bg-white text-red-700 font-black px-4 py-2 rounded-lg shadow-sm text-sm border border-red-100">SD / MI</span>
                             <div class="text-right">
                                 <p class="text-[10px] uppercase font-bold text-red-400">Target</p>
-                                <p class="text-2xl font-black text-slate-800">16 <span class="text-sm font-medium text-slate-500">Peleton</span></p>
+                                <p class="text-2xl font-black text-slate-800"><span data-config="COMPETITION.SD.TARGET_PLATOONS">16</span> <span class="text-sm font-medium text-slate-500">Peleton</span></p>
                             </div>
                         </div>
 
@@ -485,7 +439,7 @@
                         </div>
 
                         <div class="mt-auto pt-6 border-t border-red-200/50 flex items-center justify-between relative z-10">
-                            <span class="text-xs font-bold text-red-800 bg-red-100 px-2 py-1 rounded">Total: 25 Personil</span>
+                            <span class="text-xs font-bold text-red-800 bg-red-100 px-2 py-1 rounded" data-config="COMPETITION.SD.TOTAL_PERSONNEL_LABEL">Total: 25 Personil</span>
                             <i data-lucide="arrow-right" class="text-red-400 group-hover:translate-x-1 transition-transform"></i>
                         </div>
                     </div>
@@ -499,7 +453,7 @@
                             <span class="bg-white text-blue-700 font-black px-4 py-2 rounded-lg shadow-sm text-sm border border-blue-100">SMP / MTs</span>
                             <div class="text-right">
                                 <p class="text-[10px] uppercase font-bold text-blue-400">Target</p>
-                                <p class="text-2xl font-black text-slate-800">16 <span class="text-sm font-medium text-slate-500">Peleton</span></p>
+                                <p class="text-2xl font-black text-slate-800"><span data-config="COMPETITION.SMP.TARGET_PLATOONS">16</span> <span class="text-sm font-medium text-slate-500">Peleton</span></p>
                             </div>
                         </div>
 
@@ -519,7 +473,7 @@
                         </div>
 
                         <div class="mt-auto pt-6 border-t border-blue-200/50 flex items-center justify-between relative z-10">
-                            <span class="text-xs font-bold text-blue-800 bg-blue-100 px-2 py-1 rounded">Total: 25 Personil</span>
+                            <span class="text-xs font-bold text-blue-800 bg-blue-100 px-2 py-1 rounded" data-config="COMPETITION.SMP.TOTAL_PERSONNEL_LABEL">Total: 25 Personil</span>
                             <i data-lucide="arrow-right" class="text-blue-400 group-hover:translate-x-1 transition-transform"></i>
                         </div>
                     </div>
@@ -563,7 +517,7 @@
                             <i data-lucide="calendar-days" class="lg:hidden text-yellow-500"></i>
                             Hari, Tanggal
                         </h3>
-                        <p class="text-2xl md:text-3xl font-black text-yellow-500 mb-6 tracking-tight">Sabtu, 6 September 2026</p>
+                        <p class="text-2xl md:text-3xl font-black text-yellow-500 mb-6 tracking-tight" data-config="EVENT.COMPETITION_DATE">Sabtu, 6 September 2026</p>
                         
                         <div class="bg-black/40 rounded-xl p-4 border-l-2 border-slate-700">
                             <span class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-2">Alasan Pemilihan Tanggal:</span>
@@ -584,7 +538,7 @@
                             <i data-lucide="clock" class="lg:hidden text-red-500"></i>
                             Waktu Pelaksanaan
                         </h3>
-                        <p class="text-2xl md:text-3xl font-black text-white mb-6 tracking-tight">06.00 WIB – 17.00 WIB</p>
+                        <p class="text-2xl md:text-3xl font-black text-white mb-6 tracking-tight" data-config="EVENT.COMPETITION_TIME_RANGE">06.00 WIB – 17.00 WIB</p>
                         
                         <div class="bg-black/40 rounded-xl p-4 border-l-2 border-slate-700">
                             <span class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-2">Alasan Pemilihan Waktu:</span>
@@ -606,12 +560,12 @@
                                 <i data-lucide="map-pin" width="32"></i>
                             </div>
                             <div>
-                                <h3 class="text-xl font-bold text-white uppercase mb-2">Kampus Terpadu Madrasah Mu’allimin</h3>
+                                <h3 class="text-xl font-bold text-white uppercase mb-2" data-config="VENUE.NAME">Kampus Terpadu Madrasah Mu’allimin</h3>
                                 <p class="text-slate-400 font-mono text-sm leading-relaxed">
                                     <i data-lucide="navigation" width="14" class="inline mr-1"></i> 
-                                    Bandut Lor, Argorejo, Sedayu, Kabupaten Bantul, Daerah Istimewa Yogyakarta, 55752.
+                                    <span data-config="VENUE.ADDRESS">Bandut Lor, Argorejo, Sedayu, Kabupaten Bantul, Daerah Istimewa Yogyakarta, 55752.</span>
                                 </p>
-                                <a href="https://goo.gl/maps/placeholder" target="_blank" class="inline-flex items-center gap-2 text-xs font-bold text-yellow-500 mt-4 hover:text-white transition-colors border border-yellow-500/30 px-4 py-2 rounded-full hover:bg-yellow-500/10">
+                                <a href="https://goo.gl/maps/placeholder" data-config-href="VENUE.MAPS_URL" target="_blank" class="inline-flex items-center gap-2 text-xs font-bold text-yellow-500 mt-4 hover:text-white transition-colors border border-yellow-500/30 px-4 py-2 rounded-full hover:bg-yellow-500/10">
                                     Buka Google Maps <i data-lucide="external-link" width="12"></i>
                                 </a>
                             </div>
@@ -775,19 +729,19 @@
                     <div class="relative pl-6 border-l-2 border-slate-100 space-y-6">
                         <div class="relative">
                             <div class="absolute -left-[29px] top-1.5 w-3 h-3 rounded-full bg-yellow-500 border-2 border-white shadow-sm"></div>
-                            <p class="text-[10px] font-bold text-yellow-600 mb-0.5 uppercase tracking-wider">14 – 28 Juli 2026</p>
+                            <p class="text-[10px] font-bold text-yellow-600 mb-0.5 uppercase tracking-wider" data-config="EVENT.REGISTRATION_RANGE">14 – 28 Juli 2026</p>
                             <p class="text-sm font-bold text-slate-900">Pendaftaran Daring</p>
                             <p class="text-xs text-slate-500">s.d. 23.59 WIB</p>
                         </div>
                         <div class="relative">
                             <div class="absolute -left-[29px] top-1.5 w-3 h-3 rounded-full bg-blue-500 border-2 border-white shadow-sm"></div>
-                            <p class="text-[10px] font-bold text-blue-600 mb-0.5 uppercase tracking-wider">15 – 29 Juli 2026</p>
+                            <p class="text-[10px] font-bold text-blue-600 mb-0.5 uppercase tracking-wider" data-config="EVENT.VERIFICATION_RANGE">15 – 29 Juli 2026</p>
                             <p class="text-sm font-bold text-slate-900">Verifikasi Berkas</p>
                             <p class="text-xs text-slate-500">Oleh Panitia</p>
                         </div>
                         <div class="relative">
                             <div class="absolute -left-[29px] top-1.5 w-3 h-3 rounded-full bg-slate-400 border-2 border-white shadow-sm"></div>
-                            <p class="text-[10px] font-bold text-slate-500 mb-0.5 uppercase tracking-wider">3 Agustus 2026</p>
+                            <p class="text-[10px] font-bold text-slate-500 mb-0.5 uppercase tracking-wider" data-config="EVENT.TECHNICAL_MEETING_DATE">3 Agustus 2026</p>
                             <p class="text-sm font-bold text-slate-900">Technical Meeting</p>
                             <p class="text-xs text-slate-500">08.00 WIB - Selesai</p>
                         </div>
@@ -795,7 +749,7 @@
                             <div class="absolute -left-[29px] top-1.5 w-3 h-3 rounded-full bg-red-600 border-2 border-white shadow-sm animate-pulse"></div>
                             <p class="text-[10px] font-bold text-red-600 mb-0.5 uppercase tracking-wider">Hari H Pelaksanaan</p>
                             <p class="text-sm font-bold text-slate-900">Daftar Ulang & Lomba</p>
-                            <p class="text-xs text-slate-500">Mulai 06.00 WIB</p>
+                            <p class="text-xs text-slate-500" data-config="EVENT.COMPETITION_TIME_START_LABEL">Mulai 06.00 WIB</p>
                         </div>
                     </div>
                 </div>
@@ -814,13 +768,13 @@
                             <i data-lucide="check-circle-2" width="18" class="text-red-600 shrink-0 mt-0.5"></i>
                             <div>
                                 <span class="block font-bold text-slate-800">Kuota Sekolah</span>
-                                <span>Max 2 Peleton per sekolah.</span>
+                                <span data-config="COMPETITION.MAX_PLATOONS_PER_SCHOOL_LABEL">Max 2 Peleton per sekolah.</span>
                             </div>
                         </li>
                         <li class="flex items-start gap-3 text-sm text-slate-600">
                             <i data-lucide="check-circle-2" width="18" class="text-red-600 shrink-0 mt-0.5"></i>
                             <div>
-                                <span class="block font-bold text-slate-800">Komposisi (Max 25 Orang)</span>
+                                <span class="block font-bold text-slate-800" data-config="COMPETITION.MAX_PERSONNEL_LABEL">Komposisi (Max 25 Orang)</span>
                                 <ul class="list-disc list-inside text-xs mt-1 text-slate-500">
                                     <li>1 Danton</li>
                                     <li>21 Pasukan Inti</li>
@@ -839,7 +793,7 @@
                             <i data-lucide="check-circle-2" width="18" class="text-red-600 shrink-0 mt-0.5"></i>
                             <div>
                                 <span class="block font-bold text-slate-800">Official Team</span>
-                                <span>Max 2 Pelatih + 1 Dokumentasi.</span>
+                                <span data-config="COMPETITION.OFFICIAL_TEAM_LABEL">Max 2 Pelatih + 1 Dokumentasi.</span>
                             </div>
                         </li>
                     </ul>
@@ -858,24 +812,24 @@
                 <h3 class="font-black text-xl text-slate-900 uppercase italic mb-2">Biaya Pendaftaran</h3>
                 <div class="flex items-baseline gap-1 mb-2">
                     <span class="text-sm text-slate-500 font-bold">Rp</span>
-                    <span class="text-5xl font-black text-red-700 tracking-tighter">350.000</span>
+                    <span class="text-5xl font-black text-red-700 tracking-tighter" data-config="PAYMENT.FEE_DISPLAY">350.000</span>
                 </div>
                 <p class="text-xs text-slate-400 font-medium mb-6">/ Peleton (Termasuk Atribut & Sertifikat)</p>
 
                 <div class="bg-slate-50 rounded-xl p-5 border border-slate-200 border-dashed relative">
                     <div class="flex justify-between items-center mb-3">
                         <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Bank Tujuan</span>
-                        <span class="text-[10px] font-black text-white bg-blue-700 px-2 py-0.5 rounded">BRI</span>
+                        <span class="text-[10px] font-black text-white bg-blue-700 px-2 py-0.5 rounded" data-config="PAYMENT.BANK_NAME">BRI</span>
                     </div>
                     <div class="flex items-center justify-between gap-2 bg-white border border-slate-200 p-3 rounded-lg shadow-sm mb-3">
-                        <span id="rek-number" class="font-mono text-lg font-bold text-slate-800 tracking-widest truncate">300701003561505</span>
-                        <button onclick="copyRekening(this)" class="text-slate-400 hover:text-blue-600 transition-colors p-1.5 hover:bg-blue-50 rounded-md">
+                        <span id="rek-number" class="font-mono text-lg font-bold text-slate-800 tracking-widest truncate" data-config="PAYMENT.ACCOUNT_NUMBER">300701003561505</span>
+                        <button data-action="copy-rekening" class="text-slate-400 hover:text-blue-600 transition-colors p-1.5 hover:bg-blue-50 rounded-md">
                             <i data-lucide="copy" width="18"></i>
                         </button>
                     </div>
                     <div class="space-y-1">
-                        <p class="text-[10px] text-slate-500 uppercase font-bold">Atas Nama: <span class="text-slate-900">FALHAN ZUHDI MUBAROK</span></p>
-                        <p class="text-[10px] text-slate-500 uppercase font-bold">Berita: <span class="text-red-600 bg-red-50 px-1 rounded">NAMA SEKOLAH_JUMLAH PELETON</span></p>
+                        <p class="text-[10px] text-slate-500 uppercase font-bold">Atas Nama: <span class="text-slate-900" data-config="PAYMENT.ACCOUNT_NAME">FALHAN ZUHDI MUBAROK</span></p>
+                        <p class="text-[10px] text-slate-500 uppercase font-bold">Berita: <span class="text-red-600 bg-red-50 px-1 rounded" data-config="PAYMENT.TRANSFER_NOTE_FORMAT">NAMA SEKOLAH_JUMLAH PELETON</span></p>
                     </div>
                     <div class="absolute -bottom-8 left-0 w-full flex justify-center">
                         <span id="copy-feedback" class="text-[10px] font-bold text-green-700 bg-green-100 border border-green-200 px-3 py-1 rounded-full opacity-0 transition-opacity duration-300 flex items-center gap-1">
@@ -899,7 +853,7 @@
                     <div class="flex flex-col items-center text-center group">
                         <div class="w-16 h-16 rounded-2xl bg-white border-2 border-slate-200 text-slate-400 flex items-center justify-center text-xl font-black shadow-sm mb-4 group-hover:border-red-600 group-hover:text-red-600 transition-all duration-300 bg-white">1</div>
                         <h4 class="font-bold text-slate-900 mb-1 text-sm uppercase">Akses Portal</h4>
-                        <p class="text-xs text-slate-500 px-1">Kunjungi <strong>tontimuallimin.com</strong></p>
+                        <p class="text-xs text-slate-500 px-1">Kunjungi <strong data-config="REGISTRATION.PORTAL_NAME">tontimuallimin.com</strong></p>
                     </div>
                     <div class="flex flex-col items-center text-center group">
                         <div class="w-16 h-16 rounded-2xl bg-white border-2 border-slate-200 text-slate-400 flex items-center justify-center text-xl font-black shadow-sm mb-4 group-hover:border-red-600 group-hover:text-red-600 transition-all duration-300 bg-white">2</div>
@@ -925,7 +879,7 @@
             </div>
             
             <div class="mt-12 text-center">
-                <a href="https://tontimuallimin.com/" target="_blank" class="inline-flex items-center gap-2 px-8 py-3 bg-red-700 text-white font-bold rounded-full hover:bg-red-800 hover:shadow-lg transition-all transform hover:-translate-y-1">
+                <a href="https://tontimuallimin.com/" data-config-href="REGISTRATION.PORTAL_URL" target="_blank" class="inline-flex items-center gap-2 px-8 py-3 bg-red-700 text-white font-bold rounded-full hover:bg-red-800 hover:shadow-lg transition-all transform hover:-translate-y-1">
                     Buka Portal Pendaftaran <i data-lucide="external-link" width="18"></i>
                 </a>
             </div>
@@ -991,17 +945,17 @@
                         <i data-lucide="headset" class="text-yellow-500"></i> Pusat Informasi
                     </h4>
                     <div class="space-y-4 text-sm">
-                        <div class="flex items-center gap-3">
+                        <div class="flex items-center gap-3" data-config-render="contact-persons-inline" data-config-index="0">
                             <i data-lucide="phone" width="16" class="text-slate-400"></i>
-                            <span>Sdr. Arhan: <a href="https://wa.me/6285314209369" class="font-bold text-yellow-500 hover:underline">0853-1420-9369</a></span>
+                            <span><span data-slot="name">Sdr. Arhan</span>: <a data-slot="link" href="https://wa.me/6285314209369" class="font-bold text-yellow-500 hover:underline">0853-1420-9369</a></span>
                         </div>
-                        <div class="flex items-center gap-3">
+                        <div class="flex items-center gap-3" data-config-render="contact-persons-inline" data-config-index="1">
                             <i data-lucide="phone" width="16" class="text-slate-400"></i>
-                            <span>Sdr. Dandi: <a href="https://wa.me/6282329483126" class="font-bold text-yellow-500 hover:underline">0823-2948-3126</a></span>
+                            <span><span data-slot="name">Sdr. Dandi</span>: <a data-slot="link" href="https://wa.me/6282329483126" class="font-bold text-yellow-500 hover:underline">0823-2948-3126</a></span>
                         </div>
                         <div class="flex items-center gap-3">
                             <i data-lucide="instagram" width="16" class="text-slate-400"></i>
-                            <span>@lbbmuallimin // @tontimuallimin</span>
+                            <span data-config="SOCIAL.HANDLES_DISPLAY">@lbbmuallimin // @tontimuallimin</span>
                         </div>
                     </div>
                 </div>
@@ -1233,10 +1187,10 @@
                         </h3>
                         
                         <div class="p-1 bg-slate-800 rounded-lg flex gap-1">
-                            <button id="btn-sd" onclick="switchTab('sd')" class="flex-1 py-2 text-center text-xs font-black rounded-md transition-all bg-white text-slate-900 shadow-sm uppercase tracking-wider">
+                            <button id="btn-sd" class="flex-1 py-2 text-center text-xs font-black rounded-md transition-all bg-white text-slate-900 shadow-sm uppercase tracking-wider">
                                 SD / MI
                             </button>
-                            <button id="btn-smp" onclick="switchTab('smp')" class="flex-1 py-2 text-center text-xs font-bold rounded-md transition-all text-slate-400 hover:text-white hover:bg-slate-700 uppercase tracking-wider">
+                            <button id="btn-smp" class="flex-1 py-2 text-center text-xs font-bold rounded-md transition-all text-slate-400 hover:text-white hover:bg-slate-700 uppercase tracking-wider">
                                 SMP / MTs
                             </button>
                         </div>
@@ -2014,7 +1968,7 @@
             <p class="text-zinc-500 max-w-2xl mx-auto text-lg font-medium">Akses seluruh dokumen resmi dan kelengkapan administrasi lomba.</p>
         </div>
         
-        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8" data-config-render="downloads">
             
             <div class="group bg-slate-900 rounded-2xl p-8 shadow-2xl hover:shadow-slate-900/40 hover:-translate-y-2 transition-all duration-300 relative overflow-hidden flex flex-col border border-slate-700 md:col-span-2 lg:col-span-1 lg:row-span-2">
                 <div class="absolute -top-12 -right-12 w-32 h-32 bg-blue-600/30 rounded-full blur-3xl group-hover:bg-blue-500/50 transition-all duration-500"></div>
@@ -2211,7 +2165,7 @@
                         </button>
                         <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800 hidden">
                             <div class="p-4 text-xs text-zinc-400 leading-relaxed">
-                                Ya. Setiap sekolah maksimal boleh mendaftarkan 2 (dua) peleton.
+                                Ya. Setiap sekolah maksimal boleh mendaftarkan <span data-config="COMPETITION.MAX_PLATOONS_PER_SCHOOL">2</span> peleton.
                             </div>
                         </div>
                     </div>
@@ -2235,7 +2189,7 @@
                         </button>
                         <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800 hidden">
                             <div class="p-4 text-xs text-zinc-400 leading-relaxed">
-                                Biaya pendaftaran sebesar Rp325.000,- per peleton.
+                                Biaya pendaftaran sebesar <span data-config="PAYMENT.FEE_FULL">Rp350.000,- per peleton.</span>
                             </div>
                         </div>
                     </div>
@@ -2248,9 +2202,9 @@
                         <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800 hidden">
                             <div class="p-4 text-xs text-zinc-400 leading-relaxed">
                                 <ul class="list-disc pl-4 space-y-1">
-                                    <li>Bank: BRI</li>
-                                    <li>No. Rekening: 300701003561505</li>
-                                    <li>Atas Nama: FALHAN ZUHDI MUBAROK</li>
+                                    <li>Bank: <span data-config="PAYMENT.BANK_NAME">BRI</span></li>
+                                    <li>No. Rekening: <span data-config="PAYMENT.ACCOUNT_NUMBER">300701003561505</span></li>
+                                    <li>Atas Nama: <span data-config="PAYMENT.ACCOUNT_NAME">FALHAN ZUHDI MUBAROK</span></li>
                                 </ul>
                             </div>
                         </div>
@@ -2287,7 +2241,7 @@
                         </button>
                         <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800 hidden">
                             <div class="p-4 text-xs text-zinc-400 leading-relaxed">
-                                Pendaftaran daring: 14 Juli 2026 – 28 Juli 2026 pukul 23.59 WIB.
+                                Pendaftaran daring: <span data-config="EVENT.REGISTRATION_RANGE">14 – 28 Juli 2026</span> pukul 23.59 WIB.
                             </div>
                         </div>
                     </div>
@@ -2299,8 +2253,8 @@
                         </button>
                         <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800 hidden">
                             <div class="p-4 text-xs text-zinc-400 leading-relaxed">
-                                <p><strong>Waktu:</strong> Ahad, 3 Agustus 2026 (09.00 – 15.00 WIB)</p>
-                                <p><strong>Lokasi:</strong> Lobby Kampus Induk Madrasah Mu’allimin Muhammadiyah Yogyakarta, Jl. Letjen S. Parman No. 68, Wirobrajan, Kota Yogyakarta.</p>
+                                <p><strong>Waktu:</strong> <span data-config="EVENT.TECHNICAL_MEETING_FULL_DATE">Ahad, 3 Agustus 2026</span> (<span data-config="EVENT.TECHNICAL_MEETING_TIME_RANGE">09.00 – 15.00 WIB</span>)</p>
+                                <p><strong>Lokasi:</strong> <span data-config="EVENT.TECHNICAL_MEETING_VENUE">Lobby Kampus Induk Madrasah Mu’allimin Muhammadiyah Yogyakarta, Jl. Letjen S. Parman No. 68, Wirobrajan, Kota Yogyakarta.</span></p>
                             </div>
                         </div>
                     </div>
@@ -2312,8 +2266,8 @@
                         </button>
                         <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800 hidden">
                             <div class="p-4 text-xs text-zinc-400 leading-relaxed">
-                                <p><strong>Maksimal 25 orang:</strong> 1 Komandan, 21 Pasukan, 3 Cadangan.</p>
-                                <p><strong>Minimal Tampil:</strong> 22 orang (1 Komandan + 21 Pasukan).</p>
+                                <p><strong data-config="COMPETITION.COMPOSITION_DETAIL">Maksimal 25 orang: 1 Komandan, 21 Pasukan, 3 Cadangan.</strong></p>
+                                <p><strong>Minimal Tampil:</strong> <span data-config="COMPETITION.MIN_PERFORM_DETAIL">22 orang (1 Komandan + 21 Pasukan).</span></p>
                                 <p>Satu personel TIDAK boleh terdaftar di dua peleton berbeda.</p>
                                 <p><strong>Official:</strong> Max 2 official + 1 dokumentasi.</p>
                             </div>
@@ -2409,34 +2363,34 @@
                     </h3>
 
                     <div class="space-y-4">
-                        <a href="https://wa.me/6285314209369" target="_blank" class="group flex items-center gap-4 p-4 rounded-xl bg-black/40 border border-zinc-800 hover:border-green-600 hover:bg-zinc-800 transition-all duration-300">
+                        <a href="https://wa.me/6285314209369" data-config-render="contact-persons" data-config-index="0" target="_blank" class="group flex items-center gap-4 p-4 rounded-xl bg-black/40 border border-zinc-800 hover:border-green-600 hover:bg-zinc-800 transition-all duration-300">
                             <div class="w-10 h-10 rounded-full bg-green-900/50 flex items-center justify-center text-green-500 border border-green-800">
                                 <i data-lucide="message-circle" width="18"></i>
                             </div>
                             <div class="flex-grow">
-                                <h4 class="font-bold text-white text-sm group-hover:text-green-500 transition-colors">Kak Arhan</h4>
-                                <p class="text-[10px] text-zinc-500 font-mono">0853-1420-9369</p>
+                                <h4 class="font-bold text-white text-sm group-hover:text-green-500 transition-colors" data-slot="name">Kak Arhan</h4>
+                                <p class="text-[10px] text-zinc-500 font-mono" data-slot="phone">0853-1420-9369</p>
                             </div>
                         </a>
 
-                        <a href="https://wa.me/6282329483126" target="_blank" class="group flex items-center gap-4 p-4 rounded-xl bg-black/40 border border-zinc-800 hover:border-green-600 hover:bg-zinc-800 transition-all duration-300">
+                        <a href="https://wa.me/6282329483126" data-config-render="contact-persons" data-config-index="1" target="_blank" class="group flex items-center gap-4 p-4 rounded-xl bg-black/40 border border-zinc-800 hover:border-green-600 hover:bg-zinc-800 transition-all duration-300">
                             <div class="w-10 h-10 rounded-full bg-green-900/50 flex items-center justify-center text-green-500 border border-green-800">
                                 <i data-lucide="message-circle" width="18"></i>
                             </div>
                             <div class="flex-grow">
-                                <h4 class="font-bold text-white text-sm group-hover:text-green-500 transition-colors">Kak Dandi</h4>
-                                <p class="text-[10px] text-zinc-500 font-mono">0823-2948-3126</p>
+                                <h4 class="font-bold text-white text-sm group-hover:text-green-500 transition-colors" data-slot="name">Kak Dandi</h4>
+                                <p class="text-[10px] text-zinc-500 font-mono" data-slot="phone">0823-2948-3126</p>
                             </div>
                         </a>
                     </div>
                 </div>
 
-                <a href="https://lbbmuallimin.carrd.co/" target="_blank" class="block bg-zinc-800/50 p-6 rounded-2xl border border-zinc-700 hover:border-yellow-500 transition-all group">
+                <a href="https://lbbmuallimin.carrd.co/" data-config-href="CONTACT.PORTAL_URL" target="_blank" class="block bg-zinc-800/50 p-6 rounded-2xl border border-zinc-700 hover:border-yellow-500 transition-all group">
                     <div class="flex items-center justify-between mb-2">
                         <span class="text-xs font-bold text-yellow-500 uppercase tracking-widest">Portal Resmi</span>
                         <i data-lucide="external-link" width="16" class="text-zinc-500 group-hover:text-white"></i>
                     </div>
-                    <h4 class="text-lg font-black text-white group-hover:underline decoration-yellow-500 underline-offset-4">lbbmuallimin.carrd.co</h4>
+                    <h4 class="text-lg font-black text-white group-hover:underline decoration-yellow-500 underline-offset-4" data-config="CONTACT.PORTAL_DISPLAY">lbbmuallimin.carrd.co</h4>
                     <p class="text-xs text-zinc-400 mt-2">Unduh Juknis, Formulir, & Info Terbaru.</p>
                 </a>
 
@@ -2456,22 +2410,6 @@
     </div>
 </section>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const accordions = document.querySelectorAll('#faq-accordion .accordion-btn');
-        
-        accordions.forEach(btn => {
-            btn.addEventListener('click', function() {
-                const content = this.nextElementSibling;
-                const icon = this.querySelector('i');
-                
-                // Toggle current
-                content.classList.toggle('hidden');
-                icon.classList.toggle('rotate-180');
-            });
-        });
-    });
-</script>
     </main>
 
     <!-- FOOTER -->
@@ -2488,23 +2426,23 @@
                 <a href="#home" class="flex items-center gap-3 group w-fit">
                     <img src="LOGO TONTI 400px.png" alt="LBB Logo" class="h-12 w-auto filter drop-shadow-lg opacity-90 group-hover:opacity-100 transition-opacity">
                     <div class="flex flex-col">
-                        <span class="font-black text-2xl text-white leading-none tracking-tight">LBB <span class="text-lbb-gold">2026</span></span>
-                        <span class="text-[10px] uppercase tracking-[0.2em] text-slate-500 font-bold group-hover:text-lbb-red transition-colors">Mu'allimin Yogyakarta</span>
+                        <span class="font-black text-2xl text-white leading-none tracking-tight">LBB <span class="text-lbb-gold" data-config="SITE.YEAR">2026</span></span>
+                        <span class="text-[10px] uppercase tracking-[0.2em] text-slate-500 font-bold group-hover:text-lbb-red transition-colors" data-config="SITE.TAGLINE">Mu'allimin Yogyakarta</span>
                     </div>
                 </a>
                 
-                <p class="text-sm leading-relaxed text-slate-500 max-w-sm">
+                <p class="text-sm leading-relaxed text-slate-500 max-w-sm" data-config="SITE.FOOTER_DESCRIPTION">
                     Ajang kompetisi baris-berbaris tingkat pelajar terbesar se-DIY. Menjunjung tinggi sportivitas, kreativitas, dan disiplin untuk mencetak generasi pemimpin masa depan.
                 </p>
                 
                 <div class="flex gap-3">
-                    <a href="#" class="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-slate-400 hover:bg-lbb-red hover:text-white hover:border-lbb-red transition-all duration-300 group shadow-lg" aria-label="Instagram">
+                    <a href="#" data-config-href="SOCIAL.INSTAGRAM_URL" class="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-slate-400 hover:bg-lbb-red hover:text-white hover:border-lbb-red transition-all duration-300 group shadow-lg" aria-label="Instagram">
                         <i data-lucide="instagram" width="18"></i>
                     </a>
-                    <a href="#" class="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-slate-400 hover:bg-red-600 hover:text-white hover:border-red-600 transition-all duration-300 group shadow-lg" aria-label="YouTube">
+                    <a href="#" data-config-href="SOCIAL.YOUTUBE_URL" class="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-slate-400 hover:bg-red-600 hover:text-white hover:border-red-600 transition-all duration-300 group shadow-lg" aria-label="YouTube">
                         <i data-lucide="youtube" width="18"></i>
                     </a>
-                    <a href="#" class="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-slate-400 hover:bg-black hover:text-white hover:border-white/20 transition-all duration-300 group shadow-lg" aria-label="TikTok">
+                    <a href="#" data-config-href="SOCIAL.TIKTOK_URL" class="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-slate-400 hover:bg-black hover:text-white hover:border-white/20 transition-all duration-300 group shadow-lg" aria-label="TikTok">
                         <i data-lucide="video" width="18"></i>
                     </a>
                 </div>
@@ -2544,23 +2482,23 @@
                         <span class="leading-relaxed text-slate-400 group-hover:text-slate-200 transition-colors">
                             <strong>Kampus Terpadu</strong><br>
                             Madrasah Mu'allimin Muhammadiyah<br>
-                            Jl. Bantul Km 3, Yogyakarta
+                            <span data-config="VENUE.SHORT_ADDRESS">Jl. Bantul Km 3, Yogyakarta</span>
                         </span>
                     </li>
                     <li class="flex items-center gap-4 group">
                         <div class="text-lbb-red group-hover:scale-110 transition-transform"><i data-lucide="mail" width="18"></i></div>
-                        <a href="mailto:panitia@lbbmuallimin.com" class="hover:text-white transition-colors text-slate-400">panitia@lbbmuallimin.com</a>
+                        <a href="mailto:panitia@lbbmuallimin.com" data-config="CONTACT.EMAIL" data-config-href="CONTACT.EMAIL_HREF" class="hover:text-white transition-colors text-slate-400">panitia@lbbmuallimin.com</a>
                     </li>
                     <li class="flex items-center gap-4 group">
                         <div class="text-lbb-red group-hover:scale-110 transition-transform"><i data-lucide="phone" width="18"></i></div>
-                        <span class="text-slate-400 group-hover:text-white transition-colors">+62 812-3456-7890 (Panitia)</span>
+                        <span class="text-slate-400 group-hover:text-white transition-colors" data-config="CONTACT.PHONE_DISPLAY">+62 812-3456-7890 (Panitia)</span>
                     </li>
                 </ul>
             </div>
         </div>
 
         <div class="border-t border-zinc-900 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-600">
-            <p>© 2026 LBB Mu'allimin. All rights reserved.</p>
+            <p data-config="SITE.COPYRIGHT">© 2026 LBB Mu’allimin. All rights reserved.</p>
             <div class="flex gap-6">
                 <a href="#" class="hover:text-lbb-gold transition-colors">Privacy Policy</a>
                 <a href="#" class="hover:text-lbb-gold transition-colors">Terms of Service</a>
@@ -2571,7 +2509,7 @@
 </footer>
 
     <!-- FAB WhatsApp -->
-    <a href="#" class="fixed bottom-6 right-6 z-40 bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-lg shadow-green-500/40 transition-all duration-300 ease-in-out hover:scale-110 flex items-center justify-center">
+    <a href="#" data-config-href="CONTACT.WA_FAB_URL" class="fixed bottom-6 right-6 z-40 bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-lg shadow-green-500/40 transition-all duration-300 ease-in-out hover:scale-110 flex items-center justify-center">
         <i data-lucide="phone" width="24" height="24"></i>
     </a>
 
@@ -2585,6 +2523,6 @@
     </div>
 
     <!-- SCRIPTS -->
-    <script src="script.js"></script>
+    <script type="module" src="js/main.js"></script>
 </body>
 </html>
