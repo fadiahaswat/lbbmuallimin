@@ -119,6 +119,14 @@ export const VENUE = {
     /** Alamat singkat untuk footer */
     SHORT_ADDRESS: 'Bandut Lor, Argorejo, Sedayu, Bantul, DIY.',
 
+    /** URL Google Maps – ganti dengan link Maps yang benar */
+    MAPS_URL: 'https://maps.app.goo.gl/fVMgg5xZcwRQ4kN78',
+
+    /**
+     * Label mini-map di bagian kontak/FAQ.
+     * Ini merujuk ke kampus induk (kota) yang berbeda dari lokasi lomba
+     * di Bandut Lor – ganti jika peta berubah.
+     */
     MAPS_PREVIEW_NAME:    "Madrasah Mu\u2019allimin",
     MAPS_PREVIEW_ADDRESS: 'Jl. Letjen S. Parman No. 68',
 };
