@@ -27,7 +27,7 @@ body {
     overflow: hidden;
 }
 .accordion-content.active {
-    max-height: 500px;
+    max-height: 1200px;
     opacity: 1;
 }
 

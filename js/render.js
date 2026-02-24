@@ -189,8 +189,46 @@ function renderDownloads() {
 }
 
 // ---------------------------------------------------------------------------
-// Entry point
+// Penalties list
 // ---------------------------------------------------------------------------
+
+function renderPenalties() {
+    document.querySelectorAll('[data-config-render="penalties"]').forEach(container => {
+        container.innerHTML = CONFIG.PENALTIES.map(p => `
+<li class="flex items-center justify-between bg-slate-50 p-2 px-3 rounded border border-slate-100">
+  <span>${p.label}</span>
+  <span class="font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded border border-red-100">${p.value}</span>
+</li>`).join('');
+    });
+}
+
+// ---------------------------------------------------------------------------
+// Materials movement lists
+// ---------------------------------------------------------------------------
+
+function renderMaterials() {
+    const sdContainer = document.querySelector('[data-config-render="materials-sd"]');
+    if (sdContainer) {
+        sdContainer.innerHTML = CONFIG.MATERIALS.SD.map(item => `<li>${item}</li>`).join('');
+    }
+    const smpContainer = document.querySelector('[data-config-render="materials-smp"]');
+    if (smpContainer) {
+        smpContainer.innerHTML = CONFIG.MATERIALS.SMP.map(item => `<li>${item}</li>`).join('');
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Config-driven width attributes
+// ---------------------------------------------------------------------------
+
+function renderConfigWidths() {
+    document.querySelectorAll('[data-config-width]').forEach(el => {
+        const val = get(el.dataset.configWidth);
+        if (val !== undefined) el.style.width = val + '%';
+    });
+}
+
+
 
 export function initRender() {
     renderMeta();
@@ -202,4 +240,7 @@ export function initRender() {
     renderContactPersons();
     renderContactPersonsInline();
     renderDownloads();
+    renderPenalties();
+    renderMaterials();
+    renderConfigWidths();
 }
