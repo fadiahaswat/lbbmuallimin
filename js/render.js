@@ -224,7 +224,7 @@ function renderMaterials() {
 function renderConfigWidths() {
     document.querySelectorAll('[data-config-width]').forEach(el => {
         const val = get(el.dataset.configWidth);
-        if (val !== undefined) el.style.width = val + '%';
+        if (val !== undefined && !isNaN(Number(val))) el.style.width = Number(val) + '%';
     });
 }
 
