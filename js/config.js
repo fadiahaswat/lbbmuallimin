@@ -69,36 +69,36 @@ export const HERO = {
 // ---------------------------------------------------------------------------
 export const EVENT = {
     /** Teks badge di hero (contoh: "Open Reg: 14 – 28 Juli 2026") */
-    REGISTRATION_BADGE: 'Open Reg: 14 \u2013 28 Juli 2026',
+    REGISTRATION_BADGE: 'Open Reg: 1 \u2013 24 April 2026',
 
     /** Rentang pendaftaran daring */
-    REGISTRATION_RANGE: '14 \u2013 28 Juli 2026',
+    REGISTRATION_RANGE: '1 \u2013 24 April 2026',
 
     /** Rentang verifikasi berkas oleh panitia */
-    VERIFICATION_RANGE: '15 \u2013 29 Juli 2026',
+    VERIFICATION_RANGE: '25 \u2013 1 Mei 2026',
 
     /** Tanggal batas akhir pendaftaran – dipakai countdown timer */
-    REGISTRATION_DEADLINE: 'July 28, 2026 23:59:59',
+    REGISTRATION_DEADLINE: 'April 24, 2026 23:59:59',
 
     /** Tanggal Technical Meeting */
-    TECHNICAL_MEETING_DATE: '3 Agustus 2026',
+    TECHNICAL_MEETING_DATE: '10 Mei 2026',
 
     /** Waktu Technical Meeting (singkat, di timeline) */
     TECHNICAL_MEETING_TIME: '08.00 WIB - Selesai',
 
     /** Hari + tanggal lengkap Technical Meeting (untuk FAQ) */
-    TECHNICAL_MEETING_FULL_DATE: 'Ahad, 3 Agustus 2026',
+    TECHNICAL_MEETING_FULL_DATE: 'Ahad, 10 Mei 2026',
 
     /** Rentang jam Technical Meeting */
-    TECHNICAL_MEETING_TIME_RANGE: '09.00 \u2013 15.00 WIB',
+    TECHNICAL_MEETING_TIME_RANGE: '09.00 WIB \u2013 Selesai',
 
     /** Lokasi / venue Technical Meeting */
     TECHNICAL_MEETING_VENUE:
-        "Lobby Kampus Induk Madrasah Mu\u2019allimin Muhammadiyah Yogyakarta, "
-        + "Jl. Letjen S. Parman No. 68, Wirobrajan, Kota Yogyakarta.",
+        "Perpustakaan Ahmad Syafii Maarif Kampus Terpadu Madrasah Mu\u2019allimin Muhammadiyah Yogyakarta, "
+        + "Dusun Badut Lor, Argorejo, Kec. Sedayu, Kabupaten Bantul, Daerah Istimewa Yogyakarta.",
 
     /** Hari & tanggal hari-H */
-    COMPETITION_DATE: 'Sabtu, 6 September 2026',
+    COMPETITION_DATE: 'Ahad, 24 Mei 2026',
 
     /** Rentang waktu hari-H */
     COMPETITION_TIME_RANGE: '06.00 WIB \u2013 17.00 WIB',
@@ -114,13 +114,13 @@ export const VENUE = {
     NAME: "Kampus Terpadu Madrasah Mu\u2019allimin",
 
     /** Alamat lengkap yang tampil di kartu lokasi */
-    ADDRESS: 'Bandut Lor, Argorejo, Sedayu, Kabupaten Bantul, Daerah Istimewa Yogyakarta, 55752.',
+    ADDRESS: 'Bandut Lor, Argorejo, Sedayu, Kabupaten Bantul, Daerah Istimewa Yogyakarta.',
 
     /** Alamat singkat untuk footer */
-    SHORT_ADDRESS: 'Jl. Bantul Km 3, Yogyakarta',
+    SHORT_ADDRESS: 'Bandut Lor, Argorejo, Sedayu, Bantul, DIY.',
 
     /** URL Google Maps – ganti dengan link Maps yang benar */
-    MAPS_URL: 'https://goo.gl/maps/placeholder',
+    MAPS_URL: 'https://maps.app.goo.gl/fVMgg5xZcwRQ4kN78',
 };
 
 // ---------------------------------------------------------------------------
@@ -160,9 +160,9 @@ export const COMPETITION = {
 // ACHIEVEMENTS – prestasi panitia (tampil sebagai badge)
 // ---------------------------------------------------------------------------
 export const ACHIEVEMENTS = [
-    '\uD83C\uDFC6 Juara Umum LBB Prayata 2024',
-    '\uD83C\uDFC6 Juara Umum LKBB Bela Negara',
-    '\uD83C\uDFC6 Piala Walikota Yogyakarta',
+    '\uD83C\uDFC6 Juara Umum LBB Manggala Bhakti 2025',
+    '\uD83C\uDFC6 Juara Umum LKBB Bela Negara 2025',
+    '\uD83C\uDFC6 Juara 1 LBB Piala Walikota Yogyakarta 2025',
 ];
 
 // ---------------------------------------------------------------------------
