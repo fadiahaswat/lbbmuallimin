@@ -46,7 +46,7 @@
         </a>
 
         <div class="hidden lg:flex items-center gap-4">
-            <div class="flex items-center gap-1 px-2 py-1.5 rounded-full bg-black/30 backdrop-blur-md border border-white/10 shadow-2xl">
+            <div id="nav-pill" class="flex items-center gap-1 px-2 py-1.5 rounded-full bg-black/30 backdrop-blur-md border border-white/10 shadow-2xl transition-colors duration-300">
                 <a href="#home" class="nav-link relative px-5 py-2 text-sm font-bold uppercase text-gray-200 hover:text-white transition-colors group">
                     Beranda
                     <span class="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-lbb-gold transition-all duration-300 group-hover:w-[60%] shadow-[0_0_8px_rgba(255,215,0,0.8)]"></span>
@@ -2139,7 +2139,7 @@
                             <span class="font-bold text-zinc-200 text-sm">Apa itu LBB Mu’allimin Tahun 2026?</span>
                             <i data-lucide="chevron-down" class="text-zinc-500 w-4 h-4 rotate-icon transition-transform"></i>
                         </button>
-                        <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800 hidden">
+                        <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800">
                             <div class="p-4 text-xs text-zinc-400 leading-relaxed">
                                 LBB Mu’allimin Tahun 2026 adalah ajang perlombaan baris-berbaris antar pelajar tingkat SD/MI dan SMP/MTs atau sederajat di wilayah Daerah Istimewa Yogyakarta yang diselenggarakan oleh Madrasah Mu’allimin Muhammadiyah Yogyakarta.
                             </div>
@@ -2151,7 +2151,7 @@
                             <span class="font-bold text-zinc-200 text-sm">Siapa saja yang boleh mengikuti lomba ini?</span>
                             <i data-lucide="chevron-down" class="text-zinc-500 w-4 h-4 rotate-icon transition-transform"></i>
                         </button>
-                        <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800 hidden">
+                        <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800">
                             <div class="p-4 text-xs text-zinc-400 leading-relaxed">
                                 Peserta adalah siswa/i aktif SD/MI, SMP/MTs atau yang sederajat, berasal dari sekolah di wilayah Daerah Istimewa Yogyakarta.
                             </div>
@@ -2163,7 +2163,7 @@
                             <span class="font-bold text-zinc-200 text-sm">Apakah sekolah boleh mengirim lebih dari satu tim?</span>
                             <i data-lucide="chevron-down" class="text-zinc-500 w-4 h-4 rotate-icon transition-transform"></i>
                         </button>
-                        <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800 hidden">
+                        <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800">
                             <div class="p-4 text-xs text-zinc-400 leading-relaxed">
                                 Ya. Setiap sekolah maksimal boleh mendaftarkan <span data-config="COMPETITION.MAX_PLATOONS_PER_SCHOOL">2</span> peleton.
                             </div>
@@ -2175,7 +2175,7 @@
                             <span class="font-bold text-zinc-200 text-sm">Apakah peleton boleh campuran putra dan putri?</span>
                             <i data-lucide="chevron-down" class="text-zinc-500 w-4 h-4 rotate-icon transition-transform"></i>
                         </button>
-                        <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800 hidden">
+                        <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800">
                             <div class="p-4 text-xs text-zinc-400 leading-relaxed">
                                 Boleh. Komposisi peleton diperbolehkan heterogen (putra dan putri).
                             </div>
@@ -2187,7 +2187,7 @@
                             <span class="font-bold text-zinc-200 text-sm">Berapa biaya pendaftaran lomba?</span>
                             <i data-lucide="chevron-down" class="text-zinc-500 w-4 h-4 rotate-icon transition-transform"></i>
                         </button>
-                        <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800 hidden">
+                        <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800">
                             <div class="p-4 text-xs text-zinc-400 leading-relaxed">
                                 Biaya pendaftaran sebesar <span data-config="PAYMENT.FEE_FULL">Rp350.000,- per peleton.</span>
                             </div>
@@ -2199,7 +2199,7 @@
                             <span class="font-bold text-zinc-200 text-sm">Ke mana biaya pendaftaran ditransfer?</span>
                             <i data-lucide="chevron-down" class="text-zinc-500 w-4 h-4 rotate-icon transition-transform"></i>
                         </button>
-                        <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800 hidden">
+                        <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800">
                             <div class="p-4 text-xs text-zinc-400 leading-relaxed">
                                 <ul class="list-disc pl-4 space-y-1">
                                     <li>Bank: <span data-config="PAYMENT.BANK_NAME">BRI</span></li>
@@ -2215,7 +2215,7 @@
                             <span class="font-bold text-zinc-200 text-sm">Apakah biaya pendaftaran bisa dikembalikan?</span>
                             <i data-lucide="chevron-down" class="text-zinc-500 w-4 h-4 rotate-icon transition-transform"></i>
                         </button>
-                        <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800 hidden">
+                        <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800">
                             <div class="p-4 text-xs text-zinc-400 leading-relaxed">
                                 Tidak. Biaya pendaftaran bersifat non-refundable dengan alasan apa pun.
                             </div>
@@ -2227,7 +2227,7 @@
                             <span class="font-bold text-zinc-200 text-sm">Apakah ada sistem booking kuota?</span>
                             <i data-lucide="chevron-down" class="text-zinc-500 w-4 h-4 rotate-icon transition-transform"></i>
                         </button>
-                        <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800 hidden">
+                        <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800">
                             <div class="p-4 text-xs text-zinc-400 leading-relaxed">
                                 Tidak. Status pendaftaran hanya sah setelah seluruh prosedur dan pembayaran diselesaikan.
                             </div>
@@ -2239,7 +2239,7 @@
                             <span class="font-bold text-zinc-200 text-sm">Kapan pendaftaran dibuka dan ditutup?</span>
                             <i data-lucide="chevron-down" class="text-zinc-500 w-4 h-4 rotate-icon transition-transform"></i>
                         </button>
-                        <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800 hidden">
+                        <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800">
                             <div class="p-4 text-xs text-zinc-400 leading-relaxed">
                                 Pendaftaran daring: <span data-config="EVENT.REGISTRATION_RANGE">14 – 28 Juli 2026</span> pukul 23.59 WIB.
                             </div>
@@ -2251,7 +2251,7 @@
                             <span class="font-bold text-zinc-200 text-sm">Kapan & Dimana penyerahan berkas fisik?</span>
                             <i data-lucide="chevron-down" class="text-zinc-500 w-4 h-4 rotate-icon transition-transform"></i>
                         </button>
-                        <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800 hidden">
+                        <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800">
                             <div class="p-4 text-xs text-zinc-400 leading-relaxed">
                                 <p><strong>Waktu:</strong> <span data-config="EVENT.TECHNICAL_MEETING_FULL_DATE">Ahad, 3 Agustus 2026</span> (<span data-config="EVENT.TECHNICAL_MEETING_TIME_RANGE">09.00 – 15.00 WIB</span>)</p>
                                 <p><strong>Lokasi:</strong> <span data-config="EVENT.TECHNICAL_MEETING_VENUE">Lobby Kampus Induk Madrasah Mu’allimin Muhammadiyah Yogyakarta, Jl. Letjen S. Parman No. 68, Wirobrajan, Kota Yogyakarta.</span></p>
@@ -2264,7 +2264,7 @@
                             <span class="font-bold text-zinc-200 text-sm">Ketentuan jumlah personel peleton?</span>
                             <i data-lucide="chevron-down" class="text-zinc-500 w-4 h-4 rotate-icon transition-transform"></i>
                         </button>
-                        <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800 hidden">
+                        <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800">
                             <div class="p-4 text-xs text-zinc-400 leading-relaxed">
                                 <p><strong data-config="COMPETITION.COMPOSITION_DETAIL">Maksimal 25 orang: 1 Komandan, 21 Pasukan, 3 Cadangan.</strong></p>
                                 <p><strong>Minimal Tampil:</strong> <span data-config="COMPETITION.MIN_PERFORM_DETAIL">22 orang (1 Komandan + 21 Pasukan).</span></p>
@@ -2279,7 +2279,7 @@
                             <span class="font-bold text-zinc-200 text-sm">Bagaimana prosedur pendaftaran?</span>
                             <i data-lucide="chevron-down" class="text-zinc-500 w-4 h-4 rotate-icon transition-transform"></i>
                         </button>
-                        <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800 hidden">
+                        <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800">
                             <div class="p-4 text-xs text-zinc-400 leading-relaxed">
                                 <ol class="list-decimal pl-4 space-y-1">
                                     <li>Transfer biaya pendaftaran</li>
@@ -2297,7 +2297,7 @@
                             <span class="font-bold text-zinc-200 text-sm">Ketentuan berkas fisik & map?</span>
                             <i data-lucide="chevron-down" class="text-zinc-500 w-4 h-4 rotate-icon transition-transform"></i>
                         </button>
-                        <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800 hidden">
+                        <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800">
                             <div class="p-4 text-xs text-zinc-400 leading-relaxed">
                                 <p>Berkas: Formulir A, B, dan C.</p>
                                 <p><strong>Map SD/MI:</strong> MERAH (Biola)</p>
@@ -2312,7 +2312,7 @@
                             <span class="font-bold text-zinc-200 text-sm">Info Teknis Lapangan (Clear Area, DP, Ukuran)?</span>
                             <i data-lucide="chevron-down" class="text-zinc-500 w-4 h-4 rotate-icon transition-transform"></i>
                         </button>
-                        <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800 hidden">
+                        <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800">
                             <div class="p-4 text-xs text-zinc-400 leading-relaxed space-y-2">
                                 <p><strong>Clear Area:</strong> Area steril (Peleton, 2 Official, 1 Dokum, Panitia).</p>
                                 <p><strong>DP 1:</strong> Tunggu/Verifikasi (Hadir min 15 menit sebelum tampil).</p>
@@ -2327,7 +2327,7 @@
                             <span class="font-bold text-zinc-200 text-sm">Aturan Pergantian Pemain & Danton?</span>
                             <i data-lucide="chevron-down" class="text-zinc-500 w-4 h-4 rotate-icon transition-transform"></i>
                         </button>
-                        <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800 hidden">
+                        <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800">
                             <div class="p-4 text-xs text-zinc-400 leading-relaxed">
                                 <p>Boleh di DP atau Jeda Materi (SD: Materi 20-21, SMP: Materi 17-18).</p>
                                 <p><strong>Danton:</strong> TIDAK BOLEH diganti kecuali darurat (pingsan/sakit parah).</p>
@@ -2340,7 +2340,7 @@
                             <span class="font-bold text-zinc-200 text-sm">Penilaian, Waktu, & Sanksi?</span>
                             <i data-lucide="chevron-down" class="text-zinc-500 w-4 h-4 rotate-icon transition-transform"></i>
                         </button>
-                        <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800 hidden">
+                        <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800">
                             <div class="p-4 text-xs text-zinc-400 leading-relaxed space-y-2">
                                 <p><strong>Dasar:</strong> Perpang TNI No. 57 & 58 Tahun 2018.</p>
                                 <p><strong>Durasi:</strong> SD (8 menit), SMP (13 menit).</p>
