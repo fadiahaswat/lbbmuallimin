@@ -2,12 +2,7 @@
  * tabs.js
  * Handles SD / SMP tab switching in the Materi Lomba section.
  */
-
-const TAB_CLASSES = {
-    base: 'flex-1 py-4 text-center transition-colors uppercase tracking-wider',
-    active: 'bg-white text-lbb-red border-b-4 border-lbb-red font-black shadow-sm',
-    inactive: 'text-zinc-400 bg-zinc-100 hover:text-zinc-600 font-bold border-b-0',
-};
+import { TABS } from './config.js';
 
 function switchTab(tab) {
     const btnSD = document.getElementById('btn-sd');
@@ -18,13 +13,13 @@ function switchTab(tab) {
     if (!btnSD || !btnSMP || !contentSD || !contentSMP) return;
 
     if (tab === 'sd') {
-        btnSD.className = `${TAB_CLASSES.base} ${TAB_CLASSES.active}`;
-        btnSMP.className = `${TAB_CLASSES.base} ${TAB_CLASSES.inactive}`;
+        btnSD.className = `${TABS.BASE_CLASS} ${TABS.ACTIVE_CLASS}`;
+        btnSMP.className = `${TABS.BASE_CLASS} ${TABS.INACTIVE_CLASS}`;
         contentSD.classList.remove('hidden');
         contentSMP.classList.add('hidden');
     } else {
-        btnSMP.className = `${TAB_CLASSES.base} ${TAB_CLASSES.active}`;
-        btnSD.className = `${TAB_CLASSES.base} ${TAB_CLASSES.inactive}`;
+        btnSMP.className = `${TABS.BASE_CLASS} ${TABS.ACTIVE_CLASS}`;
+        btnSD.className = `${TABS.BASE_CLASS} ${TABS.INACTIVE_CLASS}`;
         contentSMP.classList.remove('hidden');
         contentSD.classList.add('hidden');
     }

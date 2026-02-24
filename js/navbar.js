@@ -2,6 +2,8 @@
  * navbar.js
  * Handles navbar scroll appearance and sticky CTA visibility.
  */
+import { NAVBAR } from './config.js';
+
 export function initNavbar() {
     const navbar = document.getElementById('navbar');
     const logoText = document.getElementById('nav-logo-text');
@@ -13,7 +15,7 @@ export function initNavbar() {
     function onScroll() {
         const scrollPos = window.scrollY;
 
-        if (scrollPos > 20) {
+        if (scrollPos > NAVBAR.SCROLL_SOLID_THRESHOLD) {
             navbar.classList.add('bg-white', 'shadow-md', 'py-3');
             navbar.classList.remove('bg-transparent', 'py-5');
 
@@ -47,12 +49,12 @@ export function initNavbar() {
             });
         }
 
-        if (scrollPos > 600) {
+        if (scrollPos > NAVBAR.STICKY_CTA_THRESHOLD) {
             if (stickyCta) stickyCta.classList.remove('translate-y-full');
-            if (waFab) waFab.style.bottom = '90px';
+            if (waFab) waFab.style.bottom = NAVBAR.WA_FAB_BOTTOM_SHIFTED;
         } else {
             if (stickyCta) stickyCta.classList.add('translate-y-full');
-            if (waFab) waFab.style.bottom = '24px';
+            if (waFab) waFab.style.bottom = NAVBAR.WA_FAB_BOTTOM_DEFAULT;
         }
     }
 

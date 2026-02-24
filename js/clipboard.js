@@ -2,13 +2,12 @@
  * clipboard.js
  * Handles copy-to-clipboard for the bank account number.
  */
-
-const REKENING_NUMBER = '300701003561505';
+import { PAYMENT, CLIPBOARD } from './config.js';
 
 function copyToClipboard(btn) {
     const feedback = document.getElementById('copy-feedback');
 
-    navigator.clipboard.writeText(REKENING_NUMBER).then(() => {
+    navigator.clipboard.writeText(PAYMENT.ACCOUNT_NUMBER).then(() => {
         btn.innerHTML = '<i data-lucide="check" width="18" height="18"></i>';
         lucide.createIcons();
 
@@ -25,7 +24,7 @@ function copyToClipboard(btn) {
             btn.classList.remove('bg-green-500', 'text-white', 'border-green-500');
 
             if (feedback) feedback.classList.add('opacity-0');
-        }, 2000);
+        }, CLIPBOARD.RESET_DELAY_MS);
     }).catch(err => {
         console.error('Gagal menyalin: ', err);
         alert('Gagal menyalin otomatis. Silakan salin manual.');
