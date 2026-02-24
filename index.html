@@ -173,7 +173,7 @@
     
     <div class="absolute inset-0 z-0 pointer-events-none">
         <video autoplay loop muted playsinline class="w-full h-full object-cover opacity-20 mix-blend-multiply filter grayscale-[0.3]">
-            <source src="https://assets.mixkit.co/videos/preview/mixkit-red-smoke-on-a-black-background-video-2953-large.mp4" type="video/mp4">
+            <source data-config-src="HERO.VIDEO_URL" src="https://assets.mixkit.co/videos/preview/mixkit-red-smoke-on-a-black-background-video-2953-large.mp4" type="video/mp4">
         </video>
         
         <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/80"></div>
@@ -233,24 +233,24 @@
     <h1 class="font-black leading-none tracking-tighter italic flex flex-col gap-1 md:gap-2">
         
         <span class="relative block text-3xl md:text-5xl lg:text-7xl">
-            <span class="absolute inset-0 text-transparent" style="-webkit-text-stroke: 1px rgba(255,255,255,0.2);">
+            <span class="absolute inset-0 text-transparent" style="-webkit-text-stroke: 1px rgba(255,255,255,0.2);" data-config="HERO.TITLE_LINE1">
                 LOMBA BARIS BERBARIS
             </span>
-            <span class="relative text-transparent bg-clip-text bg-gradient-to-b from-white via-zinc-200 to-zinc-400 drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
+            <span class="relative text-transparent bg-clip-text bg-gradient-to-b from-white via-zinc-200 to-zinc-400 drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]" data-config="HERO.TITLE_LINE1">
                 LOMBA BARIS BERBARIS
             </span>
         </span>
 
         <span class="relative block text-4xl md:text-6xl lg:text-8xl mt-1">
-            <span class="absolute inset-0 text-lbb-gold blur-2xl opacity-40 group-hover:opacity-60 transition-opacity duration-500">
+            <span class="absolute inset-0 text-lbb-gold blur-2xl opacity-40 group-hover:opacity-60 transition-opacity duration-500" data-config="HERO.TITLE_LINE2">
                 MU’ALLIMIN 2026
             </span>
             
-            <span class="relative text-transparent bg-clip-text bg-gradient-to-br from-yellow-200 via-lbb-gold to-yellow-600 filter drop-shadow-[0_0_30px_rgba(234,179,8,0.4)] group-hover:drop-shadow-[0_0_50px_rgba(234,179,8,0.6)] transition-all duration-300">
+            <span class="relative text-transparent bg-clip-text bg-gradient-to-br from-yellow-200 via-lbb-gold to-yellow-600 filter drop-shadow-[0_0_30px_rgba(234,179,8,0.4)] group-hover:drop-shadow-[0_0_50px_rgba(234,179,8,0.6)] transition-all duration-300" data-config="HERO.TITLE_LINE2">
                 MU’ALLIMIN 2026
             </span>
             
-            <span class="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent bg-clip-text text-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" style="mix-blend-mode: overlay;">
+            <span class="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent bg-clip-text text-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" style="mix-blend-mode: overlay;" data-config="HERO.TITLE_LINE2">
                 MU’ALLIMIN 2026
             </span>
         </span>
@@ -259,7 +259,7 @@
 </div>
             
             <div class="flex flex-col items-center gap-6 w-full animate-fade-up">
-                <p class="text-sm md:text-base text-red-100/80 max-w-lg text-center font-medium leading-relaxed hidden sm:block">
+                <p class="text-sm md:text-base text-red-100/80 max-w-lg text-center font-medium leading-relaxed hidden sm:block" data-config-html="HERO.SUBTITLE">
                     Ajang pembuktian <span class="text-white font-bold border-b border-lbb-gold/50">Disiplin</span>, <span class="text-white font-bold border-b border-lbb-gold/50">Karakter</span>, dan <span class="text-white font-bold border-b border-lbb-gold/50">Solidaritas</span> pelajar terbaik se-DIY.
                 </p>
             
@@ -853,7 +853,7 @@
                     <div class="flex flex-col items-center text-center group">
                         <div class="w-16 h-16 rounded-2xl bg-white border-2 border-slate-200 text-slate-400 flex items-center justify-center text-xl font-black shadow-sm mb-4 group-hover:border-red-600 group-hover:text-red-600 transition-all duration-300 bg-white">1</div>
                         <h4 class="font-bold text-slate-900 mb-1 text-sm uppercase">Akses Portal</h4>
-                        <p class="text-xs text-slate-500 px-1">Kunjungi <strong>tontimuallimin.com</strong></p>
+                        <p class="text-xs text-slate-500 px-1">Kunjungi <strong data-config="REGISTRATION.PORTAL_NAME">tontimuallimin.com</strong></p>
                     </div>
                     <div class="flex flex-col items-center text-center group">
                         <div class="w-16 h-16 rounded-2xl bg-white border-2 border-slate-200 text-slate-400 flex items-center justify-center text-xl font-black shadow-sm mb-4 group-hover:border-red-600 group-hover:text-red-600 transition-all duration-300 bg-white">2</div>
@@ -879,7 +879,7 @@
             </div>
             
             <div class="mt-12 text-center">
-                <a href="https://tontimuallimin.com/" target="_blank" class="inline-flex items-center gap-2 px-8 py-3 bg-red-700 text-white font-bold rounded-full hover:bg-red-800 hover:shadow-lg transition-all transform hover:-translate-y-1">
+                <a href="https://tontimuallimin.com/" data-config-href="REGISTRATION.PORTAL_URL" target="_blank" class="inline-flex items-center gap-2 px-8 py-3 bg-red-700 text-white font-bold rounded-full hover:bg-red-800 hover:shadow-lg transition-all transform hover:-translate-y-1">
                     Buka Portal Pendaftaran <i data-lucide="external-link" width="18"></i>
                 </a>
             </div>
@@ -945,17 +945,17 @@
                         <i data-lucide="headset" class="text-yellow-500"></i> Pusat Informasi
                     </h4>
                     <div class="space-y-4 text-sm">
-                        <div class="flex items-center gap-3">
+                        <div class="flex items-center gap-3" data-config-render="contact-persons-inline" data-config-index="0">
                             <i data-lucide="phone" width="16" class="text-slate-400"></i>
-                            <span>Sdr. Arhan: <a href="https://wa.me/6285314209369" class="font-bold text-yellow-500 hover:underline">0853-1420-9369</a></span>
+                            <span><span data-slot="name">Sdr. Arhan</span>: <a data-slot="link" href="https://wa.me/6285314209369" class="font-bold text-yellow-500 hover:underline">0853-1420-9369</a></span>
                         </div>
-                        <div class="flex items-center gap-3">
+                        <div class="flex items-center gap-3" data-config-render="contact-persons-inline" data-config-index="1">
                             <i data-lucide="phone" width="16" class="text-slate-400"></i>
-                            <span>Sdr. Dandi: <a href="https://wa.me/6282329483126" class="font-bold text-yellow-500 hover:underline">0823-2948-3126</a></span>
+                            <span><span data-slot="name">Sdr. Dandi</span>: <a data-slot="link" href="https://wa.me/6282329483126" class="font-bold text-yellow-500 hover:underline">0823-2948-3126</a></span>
                         </div>
                         <div class="flex items-center gap-3">
                             <i data-lucide="instagram" width="16" class="text-slate-400"></i>
-                            <span>@lbbmuallimin // @tontimuallimin</span>
+                            <span data-config="SOCIAL.HANDLES_DISPLAY">@lbbmuallimin // @tontimuallimin</span>
                         </div>
                     </div>
                 </div>
@@ -1968,7 +1968,7 @@
             <p class="text-zinc-500 max-w-2xl mx-auto text-lg font-medium">Akses seluruh dokumen resmi dan kelengkapan administrasi lomba.</p>
         </div>
         
-        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8" data-config-render="downloads">
             
             <div class="group bg-slate-900 rounded-2xl p-8 shadow-2xl hover:shadow-slate-900/40 hover:-translate-y-2 transition-all duration-300 relative overflow-hidden flex flex-col border border-slate-700 md:col-span-2 lg:col-span-1 lg:row-span-2">
                 <div class="absolute -top-12 -right-12 w-32 h-32 bg-blue-600/30 rounded-full blur-3xl group-hover:bg-blue-500/50 transition-all duration-500"></div>
@@ -2165,7 +2165,7 @@
                         </button>
                         <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800 hidden">
                             <div class="p-4 text-xs text-zinc-400 leading-relaxed">
-                                Ya. Setiap sekolah maksimal boleh mendaftarkan 2 (dua) peleton.
+                                Ya. Setiap sekolah maksimal boleh mendaftarkan <span data-config="COMPETITION.MAX_PLATOONS_PER_SCHOOL">2</span> peleton.
                             </div>
                         </div>
                     </div>
@@ -2189,7 +2189,7 @@
                         </button>
                         <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800 hidden">
                             <div class="p-4 text-xs text-zinc-400 leading-relaxed">
-                                Biaya pendaftaran sebesar Rp325.000,- per peleton.
+                                Biaya pendaftaran sebesar <span data-config="PAYMENT.FEE_FULL">Rp350.000,- per peleton.</span>
                             </div>
                         </div>
                     </div>
@@ -2202,9 +2202,9 @@
                         <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800 hidden">
                             <div class="p-4 text-xs text-zinc-400 leading-relaxed">
                                 <ul class="list-disc pl-4 space-y-1">
-                                    <li>Bank: BRI</li>
-                                    <li>No. Rekening: 300701003561505</li>
-                                    <li>Atas Nama: FALHAN ZUHDI MUBAROK</li>
+                                    <li>Bank: <span data-config="PAYMENT.BANK_NAME">BRI</span></li>
+                                    <li>No. Rekening: <span data-config="PAYMENT.ACCOUNT_NUMBER">300701003561505</span></li>
+                                    <li>Atas Nama: <span data-config="PAYMENT.ACCOUNT_NAME">FALHAN ZUHDI MUBAROK</span></li>
                                 </ul>
                             </div>
                         </div>
@@ -2241,7 +2241,7 @@
                         </button>
                         <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800 hidden">
                             <div class="p-4 text-xs text-zinc-400 leading-relaxed">
-                                Pendaftaran daring: 14 Juli 2026 – 28 Juli 2026 pukul 23.59 WIB.
+                                Pendaftaran daring: <span data-config="EVENT.REGISTRATION_RANGE">14 – 28 Juli 2026</span> pukul 23.59 WIB.
                             </div>
                         </div>
                     </div>
@@ -2253,8 +2253,8 @@
                         </button>
                         <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800 hidden">
                             <div class="p-4 text-xs text-zinc-400 leading-relaxed">
-                                <p><strong>Waktu:</strong> Ahad, 3 Agustus 2026 (09.00 – 15.00 WIB)</p>
-                                <p><strong>Lokasi:</strong> Lobby Kampus Induk Madrasah Mu’allimin Muhammadiyah Yogyakarta, Jl. Letjen S. Parman No. 68, Wirobrajan, Kota Yogyakarta.</p>
+                                <p><strong>Waktu:</strong> <span data-config="EVENT.TECHNICAL_MEETING_FULL_DATE">Ahad, 3 Agustus 2026</span> (<span data-config="EVENT.TECHNICAL_MEETING_TIME_RANGE">09.00 – 15.00 WIB</span>)</p>
+                                <p><strong>Lokasi:</strong> <span data-config="EVENT.TECHNICAL_MEETING_VENUE">Lobby Kampus Induk Madrasah Mu’allimin Muhammadiyah Yogyakarta, Jl. Letjen S. Parman No. 68, Wirobrajan, Kota Yogyakarta.</span></p>
                             </div>
                         </div>
                     </div>
@@ -2266,8 +2266,8 @@
                         </button>
                         <div class="accordion-content bg-zinc-950/30 border-t border-zinc-800 hidden">
                             <div class="p-4 text-xs text-zinc-400 leading-relaxed">
-                                <p><strong>Maksimal 25 orang:</strong> 1 Komandan, 21 Pasukan, 3 Cadangan.</p>
-                                <p><strong>Minimal Tampil:</strong> 22 orang (1 Komandan + 21 Pasukan).</p>
+                                <p><strong data-config="COMPETITION.COMPOSITION_DETAIL">Maksimal 25 orang: 1 Komandan, 21 Pasukan, 3 Cadangan.</strong></p>
+                                <p><strong>Minimal Tampil:</strong> <span data-config="COMPETITION.MIN_PERFORM_DETAIL">22 orang (1 Komandan + 21 Pasukan).</span></p>
                                 <p>Satu personel TIDAK boleh terdaftar di dua peleton berbeda.</p>
                                 <p><strong>Official:</strong> Max 2 official + 1 dokumentasi.</p>
                             </div>
@@ -2426,12 +2426,12 @@
                 <a href="#home" class="flex items-center gap-3 group w-fit">
                     <img src="LOGO TONTI 400px.png" alt="LBB Logo" class="h-12 w-auto filter drop-shadow-lg opacity-90 group-hover:opacity-100 transition-opacity">
                     <div class="flex flex-col">
-                        <span class="font-black text-2xl text-white leading-none tracking-tight">LBB <span class="text-lbb-gold">2026</span></span>
-                        <span class="text-[10px] uppercase tracking-[0.2em] text-slate-500 font-bold group-hover:text-lbb-red transition-colors">Mu'allimin Yogyakarta</span>
+                        <span class="font-black text-2xl text-white leading-none tracking-tight">LBB <span class="text-lbb-gold" data-config="SITE.YEAR">2026</span></span>
+                        <span class="text-[10px] uppercase tracking-[0.2em] text-slate-500 font-bold group-hover:text-lbb-red transition-colors" data-config="SITE.TAGLINE">Mu'allimin Yogyakarta</span>
                     </div>
                 </a>
                 
-                <p class="text-sm leading-relaxed text-slate-500 max-w-sm">
+                <p class="text-sm leading-relaxed text-slate-500 max-w-sm" data-config="SITE.FOOTER_DESCRIPTION">
                     Ajang kompetisi baris-berbaris tingkat pelajar terbesar se-DIY. Menjunjung tinggi sportivitas, kreativitas, dan disiplin untuk mencetak generasi pemimpin masa depan.
                 </p>
                 
@@ -2498,7 +2498,7 @@
         </div>
 
         <div class="border-t border-zinc-900 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-600">
-            <p>© 2026 LBB Mu'allimin. All rights reserved.</p>
+            <p data-config="SITE.COPYRIGHT">© 2026 LBB Mu’allimin. All rights reserved.</p>
             <div class="flex gap-6">
                 <a href="#" class="hover:text-lbb-gold transition-colors">Privacy Policy</a>
                 <a href="#" class="hover:text-lbb-gold transition-colors">Terms of Service</a>

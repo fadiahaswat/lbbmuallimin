@@ -12,8 +12,8 @@ import { initClipboard } from './clipboard.js';
 import { initCountdown } from './countdown.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-    initRender();    // fill content from config.js first
-    lucide.createIcons();
+    initRender();       // fill content from config.js first
+    lucide.createIcons(); // render icons (including those injected by renderDownloads)
 
     initNavbar();
     initMobileMenu();
