@@ -1,5 +1,6 @@
 import React from 'react';
 import { Scale } from 'lucide-react';
+import { EVENT } from '../config.js';
 
 export default function TataTertib() {
   return (
@@ -32,7 +33,7 @@ export default function TataTertib() {
             </div>
             <ol className="list-decimal list-outside pl-5 space-y-3 text-sm text-slate-600 leading-relaxed marker:font-bold marker:text-slate-900">
               <li>Lomba Baris – Berbaris Mu’allimin Tahun 2026 (selanjutnya disingkat LBB MU’ALLIMIN 2026) merupakan lomba baris-berbaris tingkat Daerah Istimewa Yogyakarta yang diselenggarakan oleh Madrasah Mu’allimin Muhammadiyah Yogyakarta.</li>
-              <li>LBB MU’ALLIMIN 2026 dilaksanakan pada tanggal 24 Mei 2026 di Kampus Terpadu Madrasah Muallimin Muhammadiyah Yogyakarta.</li>
+              <li>LBB MU’ALLIMIN 2026 dilaksanakan pada tanggal {EVENT.COMPETITION_DATE} di Kampus Terpadu Madrasah Muallimin Muhammadiyah Yogyakarta.</li>
               <li>Peserta LBB MU’ALLIMIN 2026 merupakan siswa SD/MI sederajat dan SMP/MTs sederajat dalam lingkup Daerah Istimewa Yogyakarta, sesuai yang tertera pada formulir pendaftaran.</li>
               <li>Tata tertib ini berlaku selama pelaksanaan lomba berlangsung.</li>
               <li>Seragam SD menggunakan seragam tonti sekolah atau seragam nasional merah putih lengkap beserta atributnya dan Seragam SMP menggunakan seragam tonti sekolah atau seragam OSIS lengkap beserta atributnya.</li>

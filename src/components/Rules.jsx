@@ -12,7 +12,7 @@ import { COMPETITION, SCORING, PENALTIES } from '../config.js';
 export default function Rules() {
   const [activeTab, setActiveTab] = useState('sd'); // 'sd' | 'smp'
   const [openAccordions, setOpenAccordions] = useState({
-    def: false,
+    def: true,
     proc: false,
     sub: false,
     score: false,
@@ -29,7 +29,7 @@ export default function Rules() {
 
   return (
     <section id="rules" className="py-24 lg:py-32 bg-white relative overflow-hidden font-sans">
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-zinc-100 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 opacity-60 pointer-events-none"></div>
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-slate-100 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 opacity-60 pointer-events-none"></div>
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-red-50 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 opacity-60 pointer-events-none"></div>
 
       <div className="container mx-auto px-6 relative z-10">
@@ -38,9 +38,9 @@ export default function Rules() {
             <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse"></span>
             Official Technical Guide 2026
           </div>
-          <h2 className="text-4xl md:text-5xl font-black text-slate-900 uppercase italic tracking-tighter mb-4">
+          <h2 className="text-4xl md:text-5xl font-black text-slate-900 uppercase italic tracking-tighter mb-4 leading-tight py-1">
             Petunjuk Teknis{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-900">
+            <span className="inline-block pr-3 sm:pr-4 pb-1 text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-800">
               Lapangan
             </span>
           </h2>
@@ -364,9 +364,9 @@ export default function Rules() {
                     </div>
 
                     <div className="flex items-start gap-3 p-3 rounded-lg bg-yellow-900/10 border border-yellow-700/20">
-                      <Info className="w-4 h-4 text-yellow-600 mt-0.5 shrink-0" />
+                      <Info className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
                       <div className="text-xs text-slate-400">
-                        <p className="font-bold text-yellow-600 mb-1">Materi Gerakan:</p>
+                        <p className="font-bold text-amber-400 mb-1">Materi Gerakan:</p>
                         <p>
                           Mengacu pada daftar gerakan resmi (Urutan Wajib). Pergantian pemain dilakukan di antara{' '}
                           <strong className="text-slate-200">{COMPETITION.SD.SUBSTITUTION_LABEL}</strong>.
@@ -411,9 +411,9 @@ export default function Rules() {
                     </div>
 
                     <div className="flex items-start gap-3 p-3 rounded-lg bg-yellow-900/10 border border-yellow-700/20">
-                      <Info className="w-4 h-4 text-yellow-600 mt-0.5 shrink-0" />
+                      <Info className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
                       <div className="text-xs text-slate-400">
-                        <p className="font-bold text-yellow-600 mb-1">Materi Gerakan:</p>
+                        <p className="font-bold text-amber-400 mb-1">Materi Gerakan:</p>
                         <p>
                           Mengacu pada daftar gerakan resmi (Urutan Wajib). Pergantian pemain dilakukan di antara{' '}
                           <strong className="text-slate-200">{COMPETITION.SMP.SUBSTITUTION_LABEL}</strong>.

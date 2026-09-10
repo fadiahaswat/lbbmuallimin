@@ -10,14 +10,14 @@ export default function MateriLomba() {
 
       <div className="container mx-auto px-6 relative z-10">
         <div className="mb-16 text-center">
-          <span className="text-red-600 font-bold tracking-[0.3em] text-xs uppercase mb-3 block animate-pulse">
-            Classified Protocols
+          <span className="text-yellow-500 font-bold tracking-[0.25em] text-xs uppercase mb-3 block">
+            Regulasi Resmi PBB
           </span>
-          <h2 className="text-4xl md:text-5xl font-black text-white uppercase italic tracking-tighter mb-4">
-            Materi <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 to-yellow-700">Lomba 2026</span>
+          <h2 className="text-4xl md:text-5xl font-black text-white uppercase italic tracking-tighter mb-4 leading-tight py-1">
+            Materi <span className="inline-block pr-3 sm:pr-4 pb-1 text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500">Lomba 2026</span>
           </h2>
-          <p className="text-slate-500 max-w-2xl mx-auto text-sm font-mono">
-            // DATA VITAL: URUTAN GERAKAN & KETENTUAN TEKNIS
+          <p className="text-slate-400 max-w-2xl mx-auto text-sm font-medium">
+            Urutan Gerakan Wajib Sesuai Petunjuk Teknis Resmi LBB Mu’allimin 2026
           </p>
         </div>
 

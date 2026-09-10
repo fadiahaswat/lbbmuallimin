@@ -26,11 +26,11 @@ export default function TimeLocation() {
 
       <div className="container mx-auto px-6 relative z-10">
         <div className="mb-16 md:mb-24 text-center">
-          <span className="text-yellow-500 font-bold tracking-[0.3em] text-xs uppercase mb-3 block animate-pulse">
-            Mission Intelligence
+          <span className="text-yellow-500 font-bold tracking-[0.25em] text-xs uppercase mb-3 block">
+            Informasi Pelaksanaan
           </span>
-          <h2 className="text-4xl md:text-5xl font-black text-white uppercase italic tracking-tighter">
-            Waktu & <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-red-800">Tempat</span>
+          <h2 className="text-4xl md:text-5xl font-black text-white uppercase italic tracking-tighter leading-tight py-1">
+            Waktu & <span className="inline-block pr-3 sm:pr-4 pb-1 text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-red-600">Tempat</span>
           </h2>
           <div className="w-20 h-1.5 bg-red-700 mx-auto mt-6 rounded-full skew-x-12 shadow-[0_0_15px_rgba(185,28,28,0.5)]"></div>
         </div>
@@ -54,12 +54,12 @@ export default function TimeLocation() {
                   {EVENT.COMPETITION_DATE}
                 </p>
 
-                <div className="bg-black/40 rounded-xl p-4 border-l-2 border-slate-700">
-                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-2">
-                    Alasan Pemilihan Tanggal:
+                <div className="bg-black/40 rounded-xl p-4 border-l-2 border-yellow-500/60">
+                  <span className="text-xs font-bold text-yellow-400 uppercase tracking-wider block mb-1">
+                    Agenda Utama:
                   </span>
-                  <p className="text-sm text-slate-400 leading-relaxed text-justify">
-                    Tanggal ini dipilih dengan beberapa pertimbangan. Pertama, memberikan waktu persiapan yang memadai bagi panitia maupun sekolah peserta setelah periode awal semester/tahun ajaran baru. Kedua, untuk mengoptimalkan ketersediaan dan kesiapan fasilitas di Kampus Terpadu Madrasah Mu'allimin. Ketiga, hari Sabtu/Ahad dipilih agar tidak mengganggu hari efektif belajar-mengajar di sekolah-sekolah peserta, sehingga memungkinkan partisipasi yang lebih luas.
+                  <p className="text-sm text-slate-300 leading-relaxed">
+                    Pelaksanaan lomba untuk kategori SD/MI dan SMP/MTs, rangkaian apel pembukaan & penutupan, hingga pengumuman juara umum dalam 1 hari.
                   </p>
                 </div>
               </div>
@@ -79,12 +79,12 @@ export default function TimeLocation() {
                   {EVENT.COMPETITION_TIME_RANGE}
                 </p>
 
-                <div className="bg-black/40 rounded-xl p-4 border-l-2 border-slate-700">
-                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-2">
-                    Alasan Pemilihan Waktu:
+                <div className="bg-black/40 rounded-xl p-4 border-l-2 border-red-500/60">
+                  <span className="text-xs font-bold text-red-400 uppercase tracking-wider block mb-1">
+                    Ketentuan Kehadiran:
                   </span>
-                  <p className="text-sm text-slate-400 leading-relaxed text-justify">
-                    Waktu pelaksanaan dimulai pukul 06.00 WIB untuk memaksimalkan penggunaan waktu efektif di pagi hari yang cenderung lebih sejuk dan kondusif untuk aktivitas fisik seperti baris-berbaris. Durasi hingga pukul 17.00 WIB dirancang untuk mengakomodasi keseluruhan rangkaian acara—mulai dari registrasi ulang peserta, upacara pembukaan, pelaksanaan lomba untuk 32 peleton dari dua kategori (SD/MI dan SMP/MTs), waktu istirahat dan ibadah, proses penjurian, hingga upacara penutupan dan pengumuman kejuaraan—agar dapat berjalan dengan lancar, tertib, dan selesai sebelum menjelang malam.
+                  <p className="text-sm text-slate-300 leading-relaxed">
+                    Daftar ulang peserta & pengambilan nomor dada dibuka pukul 06.00 WIB. Seluruh kontingen wajib hadir tepat waktu sebelum Upacara Pembukaan.
                   </p>
                 </div>
               </div>

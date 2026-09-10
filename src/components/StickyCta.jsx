@@ -17,7 +17,7 @@ export default function StickyCta({ isVisible }) {
       </a>
       <a
         href="#registration"
-        className="flex-[2] flex items-center justify-center gap-2 py-3 text-sm font-bold text-white bg-red-600 rounded-lg shadow-lg shadow-red-600/20 active:scale-95 transition-transform hover:bg-red-700"
+        className="flex-[2] flex items-center justify-center gap-2 py-3 text-sm font-bold text-white bg-red-700 rounded-lg shadow-lg shadow-red-700/25 active:scale-95 transition-transform hover:bg-red-800"
       >
         Daftar Sekarang <ArrowRight className="w-4 h-4" />
       </a>

@@ -14,8 +14,8 @@ export default function Prizes() {
             <Crown className="w-3.5 h-3.5" />
             <span>{PRIZES.TOTAL_LABEL}</span>
           </div>
-          <h2 className="text-4xl md:text-5xl font-black text-white uppercase italic tracking-tighter mb-4">
-            Kategori & <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-600">Penghargaan</span>
+          <h2 className="text-4xl md:text-5xl font-black text-white uppercase italic tracking-tighter mb-4 leading-tight py-1">
+            Kategori & <span className="inline-block pr-3 sm:pr-4 pb-1 text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-600">Penghargaan</span>
           </h2>
           <div className="w-32 h-1 bg-gradient-to-r from-transparent via-red-600 to-transparent mx-auto rounded-full"></div>
         </div>

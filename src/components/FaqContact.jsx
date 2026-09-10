@@ -3,7 +3,8 @@ import {
   ChevronDown,
   Headset,
   MessageCircle,
-  ExternalLink
+  ExternalLink,
+  MapPin
 } from 'lucide-react';
 import { CONTACT, EVENT, COMPETITION, PAYMENT, VENUE } from '../config.js';
 
@@ -60,7 +61,7 @@ const FAQ_DATA = [
     id: 9,
     category: 'Umum',
     q: 'Kapan pendaftaran dibuka dan ditutup?',
-    a: `Pendaftaran daring dibuka rentang ${EVENT.REGISTRATION_RANGE} pukul 23.59 WIB.`,
+    a: `Pendaftaran daring resmi dibuka mulai 14 September 2026 dan batas akhir pendaftaran adalah 30 September 2026 pukul 23.59 WIB.`,
   },
   {
     id: 10,
@@ -102,7 +103,7 @@ const FAQ_DATA = [
     id: 16,
     category: 'Teknis',
     q: 'Penilaian, Waktu, & Sanksi?',
-    a: 'Dasar: Perpang TNI No. 57 & 58 Tahun 2018. Durasi: SD (8 menit), SMP (13 menit). Sanksi: Tidak ikut Upacara (-150), Terlambat DP 1 (-100). Protes: Max 60 menit setelah rekap. Hanya teknis.',
+    a: 'Dasar: Perpang TNI No. 57 & 58 Tahun 2018. Durasi: SD (10 menit), SMP (13 menit). Sanksi: Tidak ikut Upacara (-150), Terlambat DP 1 (-100). Protes: Max 60 menit setelah rekap. Hanya teknis.',
   },
 ];
 
@@ -123,7 +124,7 @@ export default function FaqContact() {
   });
 
   return (
-    <section id="contact" className="relative py-24 lg:py-32 bg-zinc-950 overflow-hidden text-white border-t border-zinc-900 font-sans">
+    <section id="contact" className="relative py-24 lg:py-32 bg-slate-950 overflow-hidden text-white border-t border-slate-900 font-sans">
       <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] mix-blend-overlay"></div>
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-red-900/10 rounded-full blur-[120px] pointer-events-none"></div>
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-yellow-600/10 rounded-full blur-[120px] pointer-events-none"></div>
@@ -133,10 +134,10 @@ export default function FaqContact() {
           <span className="text-yellow-500 font-bold tracking-[0.2em] text-xs uppercase mb-2 block animate-pulse">
             Knowledge Base
           </span>
-          <h2 className="text-3xl md:text-5xl font-black text-white uppercase italic tracking-tighter mb-4">
-            FAQ & <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-600">Bantuan</span>
+          <h2 className="text-3xl md:text-5xl font-black text-white uppercase italic tracking-tighter mb-4 leading-tight py-1">
+            FAQ & <span className="inline-block pr-3 sm:pr-4 pb-1 text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-600">Bantuan</span>
           </h2>
-          <p className="text-zinc-400 text-lg max-w-2xl mx-auto">
+          <p className="text-slate-400 text-lg max-w-2xl mx-auto">
             Temukan jawaban lengkap seputar pendaftaran, teknis lomba, hingga aturan main di sini.
           </p>
         </div>
@@ -153,7 +154,7 @@ export default function FaqContact() {
                   className={`px-4 py-2 rounded-full text-xs font-bold transition-colors ${
                     selectedFilter === category
                       ? 'bg-red-600 text-white'
-                      : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-white'
+                      : 'bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white'
                   }`}
                 >
                   {category}
@@ -166,20 +167,20 @@ export default function FaqContact() {
               {filteredFaqs.map(faq => {
                 const isOpen = !!openIds[faq.id];
                 return (
-                  <div key={faq.id} className="bg-zinc-900/50 border border-zinc-800 rounded-xl overflow-hidden">
+                  <div key={faq.id} className="bg-slate-900/50 border border-slate-800 rounded-xl overflow-hidden">
                     <button
                       onClick={() => toggleFaq(faq.id)}
-                      className="w-full flex justify-between items-center p-4 text-left hover:bg-zinc-800/50 transition-colors"
+                      className="w-full flex justify-between items-center p-4 text-left hover:bg-slate-800/50 transition-colors"
                     >
-                      <span className="font-bold text-zinc-200 text-sm">{faq.q}</span>
+                      <span className="font-bold text-slate-200 text-sm">{faq.q}</span>
                       <ChevronDown
-                        className={`text-zinc-500 w-4 h-4 transition-transform duration-300 shrink-0 ml-2 ${
+                        className={`text-slate-400 w-4 h-4 transition-transform duration-300 shrink-0 ml-2 ${
                           isOpen ? 'rotate-180' : ''
                         }`}
                       />
                     </button>
                     {isOpen && (
-                      <div className="bg-zinc-950/30 border-t border-zinc-800 p-4 text-xs text-zinc-400 leading-relaxed animate-fade">
+                      <div className="bg-slate-950/30 border-t border-slate-800 p-4 text-xs text-slate-400 leading-relaxed animate-fade">
                         {faq.a}
                       </div>
                     )}
@@ -191,7 +192,7 @@ export default function FaqContact() {
 
           {/* Right Column: Contact Cards */}
           <div className="lg:col-span-4 space-y-6">
-            <div className="bg-zinc-900/80 backdrop-blur-md rounded-3xl p-8 border border-zinc-800 shadow-2xl relative overflow-hidden">
+            <div className="bg-slate-900/80 backdrop-blur-md rounded-3xl p-8 border border-slate-800 shadow-2xl relative overflow-hidden">
               <div className="absolute top-0 right-0 w-32 h-32 bg-yellow-600/20 rounded-bl-full -mr-8 -mt-8 blur-xl"></div>
 
               <h3 className="text-xl font-black text-white mb-6 uppercase italic flex items-center gap-3">
@@ -205,7 +206,7 @@ export default function FaqContact() {
                     href={person.WA_URL}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group flex items-center gap-4 p-4 rounded-xl bg-black/40 border border-zinc-800 hover:border-green-600 hover:bg-zinc-800 transition-all duration-300"
+                    className="group flex items-center gap-4 p-4 rounded-xl bg-black/40 border border-slate-800 hover:border-green-600 hover:bg-slate-800 transition-all duration-300"
                   >
                     <div className="w-10 h-10 rounded-full bg-green-900/50 flex items-center justify-center text-green-500 border border-green-800">
                       <MessageCircle className="w-4 h-4" />
@@ -214,7 +215,7 @@ export default function FaqContact() {
                       <h4 className="font-bold text-white text-sm group-hover:text-green-500 transition-colors">
                         {person.NAME}
                       </h4>
-                      <p className="text-[10px] text-zinc-500 font-mono">{person.PHONE_DISPLAY}</p>
+                      <p className="text-[10px] text-slate-400 font-mono">{person.PHONE_DISPLAY}</p>
                     </div>
                   </a>
                 ))}
@@ -225,27 +226,41 @@ export default function FaqContact() {
               href={CONTACT.PORTAL_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="block bg-zinc-800/50 p-6 rounded-2xl border border-zinc-700 hover:border-yellow-500 transition-all group"
+              className="block bg-slate-800/50 p-6 rounded-2xl border border-slate-700 hover:border-yellow-500 transition-all group"
             >
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-bold text-yellow-500 uppercase tracking-widest">Portal Resmi</span>
-                <ExternalLink className="w-4 h-4 text-zinc-500 group-hover:text-white" />
+                <ExternalLink className="w-4 h-4 text-slate-400 group-hover:text-white" />
               </div>
               <h4 className="text-lg font-black text-white group-hover:underline decoration-yellow-500 underline-offset-4">
                 {CONTACT.PORTAL_DISPLAY}
               </h4>
-              <p className="text-xs text-zinc-400 mt-2">Unduh Juknis, Formulir, & Info Terbaru.</p>
+              <p className="text-xs text-slate-400 mt-2">Unduh Juknis, Formulir, & Info Terbaru.</p>
             </a>
 
-            <div className="rounded-xl overflow-hidden relative border border-zinc-800 h-40 group">
-              <div className="absolute inset-0 bg-zinc-900 flex items-center justify-center">
-                <span className="text-xs text-zinc-500 font-mono">MAPS PREVIEW</span>
+            <a
+              href={VENUE.MAPS_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-xl overflow-hidden relative border border-slate-800 hover:border-red-500/50 transition-all h-36 group block bg-slate-900/90 shadow-md"
+            >
+              <div className="absolute inset-0 bg-[radial-gradient(#334155_1px,transparent_1px)] [background-size:16px_16px] opacity-25 group-hover:opacity-45 transition-opacity"></div>
+              <div className="absolute top-3 right-3 z-10">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-800/90 border border-slate-700 text-[10px] font-bold text-yellow-500 group-hover:bg-red-950 group-hover:border-red-500/50 group-hover:text-red-300 transition-all">
+                  <MapPin className="w-3 h-3 text-red-500" />
+                  Buka Maps
+                  <ExternalLink className="w-3 h-3" />
+                </span>
               </div>
-              <div className="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-black to-transparent">
-                <p className="text-xs font-bold text-white">{VENUE.MAPS_PREVIEW_NAME}</p>
-                <p className="text-[10px] text-zinc-400">{VENUE.MAPS_PREVIEW_ADDRESS}</p>
+              <div className="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-black via-black/85 to-transparent">
+                <p className="text-xs font-bold text-white group-hover:text-yellow-400 transition-colors">
+                  {VENUE.MAPS_PREVIEW_NAME}
+                </p>
+                <p className="text-[11px] text-slate-400 mt-0.5">
+                  {VENUE.MAPS_PREVIEW_ADDRESS}
+                </p>
               </div>
-            </div>
+            </a>
           </div>
         </div>
       </div>

@@ -56,9 +56,9 @@ export const HERO = {
 
     /** Teks deskripsi singkat di bawah judul (HTML) */
     SUBTITLE:
-        'Ajang pembuktian <span class="text-white font-bold border-b border-lbb-gold/50">Disiplin</span>, '
-        + '<span class="text-white font-bold border-b border-lbb-gold/50">Karakter</span>, dan '
-        + '<span class="text-white font-bold border-b border-lbb-gold/50">Solidaritas</span> pelajar terbaik se-DIY.',
+        'Ajang pembuktian <span class="text-white font-bold">Disiplin</span>, '
+        + '<span class="text-white font-bold">Karakter</span>, dan '
+        + '<span class="text-white font-bold">Solidaritas</span> pelajar terbaik se-DIY.',
 
     /** URL video background hero */
     VIDEO_URL: 'https://assets.mixkit.co/videos/preview/mixkit-red-smoke-on-a-black-background-video-2953-large.mp4',
@@ -69,36 +69,39 @@ export const HERO = {
 // ---------------------------------------------------------------------------
 export const EVENT = {
     /** Teks badge di hero (contoh: "Open Reg: 14 – 28 Juli 2026") */
-    REGISTRATION_BADGE: 'Open Reg: 1 \u2013 24 April 2026',
+    REGISTRATION_BADGE: 'Open Reg: 14 \u2013 30 September 2026',
 
     /** Rentang pendaftaran daring */
-    REGISTRATION_RANGE: '1 \u2013 24 April 2026',
+    REGISTRATION_RANGE: '14 \u2013 30 September 2026',
 
     /** Rentang verifikasi berkas oleh panitia */
-    VERIFICATION_RANGE: '25 \u2013 1 Mei 2026',
+    VERIFICATION_RANGE: '1 \u2013 4 Oktober 2026',
+
+    /** Tanggal pembukaan pendaftaran daring */
+    REGISTRATION_START: '2026-09-14T00:00:00+07:00',
 
     /** Tanggal batas akhir pendaftaran – dipakai countdown timer */
-    REGISTRATION_DEADLINE: 'April 24, 2026 23:59:59',
+    REGISTRATION_DEADLINE: '2026-09-30T23:59:59+07:00',
 
     /** Tanggal Technical Meeting */
-    TECHNICAL_MEETING_DATE: '10 Mei 2026',
+    TECHNICAL_MEETING_DATE: '23 Oktober 2026',
 
     /** Waktu Technical Meeting (singkat, di timeline) */
-    TECHNICAL_MEETING_TIME: '08.00 WIB - Selesai',
+    TECHNICAL_MEETING_TIME: '13.00 WIB - Selesai',
 
     /** Hari + tanggal lengkap Technical Meeting (untuk FAQ) */
-    TECHNICAL_MEETING_FULL_DATE: 'Ahad, 10 Mei 2026',
+    TECHNICAL_MEETING_FULL_DATE: 'Jumat, 23 Oktober 2026',
 
     /** Rentang jam Technical Meeting */
-    TECHNICAL_MEETING_TIME_RANGE: '09.00 WIB \u2013 Selesai',
+    TECHNICAL_MEETING_TIME_RANGE: '13.00 WIB \u2013 Selesai',
 
     /** Lokasi / venue Technical Meeting */
     TECHNICAL_MEETING_VENUE:
         "Perpustakaan Ahmad Syafii Maarif Kampus Terpadu Madrasah Mu\u2019allimin Muhammadiyah Yogyakarta, "
-        + "Dusun Badut Lor, Argorejo, Kec. Sedayu, Kabupaten Bantul, Daerah Istimewa Yogyakarta.",
+        + "Dusun Bandut Lor, Argorejo, Kec. Sedayu, Kabupaten Bantul, Daerah Istimewa Yogyakarta.",
 
     /** Hari & tanggal hari-H */
-    COMPETITION_DATE: 'Ahad, 24 Mei 2026',
+    COMPETITION_DATE: 'Ahad, 8 November 2026',
 
     /** Rentang waktu hari-H */
     COMPETITION_TIME_RANGE: '06.00 WIB \u2013 17.00 WIB',
@@ -123,8 +126,8 @@ export const VENUE = {
     MAPS_URL: 'https://maps.app.goo.gl/fVMgg5xZcwRQ4kN78',
 
     /** Label mini-map di bagian kontak/FAQ */
-    MAPS_PREVIEW_NAME: "Madrasah Mu\u2019allimin",
-    MAPS_PREVIEW_ADDRESS: 'Jl. Letjen S. Parman No. 68',
+    MAPS_PREVIEW_NAME: "Kampus Terpadu Mu\u2019allimin",
+    MAPS_PREVIEW_ADDRESS: 'Bandut Lor, Argorejo, Sedayu, Bantul, DIY',
 };
 
 // ---------------------------------------------------------------------------
@@ -151,17 +154,17 @@ export const COMPETITION = {
     MIN_PERFORM_DETAIL: 'Minimal Tampil: 22 orang (1 Komandan + 21 Pasukan).',
 
     SD: {
-        TARGET_PLATOONS: 16,
+        TARGET_PLATOONS: 18,
         TOTAL_PERSONNEL_LABEL: 'Total: 25 Personil',
         ARENA_SIZE: '25m \u00D7 14m',
         ARENA_WIDTH_LABEL: '25 METER',
         ARENA_HEIGHT_LABEL: '14m',
-        DURATION_LABEL: 'Durasi Max: 8 Menit',
+        DURATION_LABEL: 'Durasi Max: 10 Menit',
         SUBSTITUTION_LABEL: 'Gerakan No. 20 & 21',
-        ARENA_SPEC_LABEL: 'Ukuran Pos 25 \u00D7 14 Meter \u2013 Waktu 8 Menit',
+        ARENA_SPEC_LABEL: 'Ukuran Pos 25 \u00D7 14 Meter \u2013 Waktu 10 Menit',
     },
     SMP: {
-        TARGET_PLATOONS: 16,
+        TARGET_PLATOONS: 18,
         TOTAL_PERSONNEL_LABEL: 'Total: 25 Personil',
         ARENA_SIZE: '26m \u00D7 15m',
         ARENA_WIDTH_LABEL: '26 METER',
@@ -186,10 +189,10 @@ export const ACHIEVEMENTS = [
 // ---------------------------------------------------------------------------
 export const REGISTRATION = {
     /** URL portal pendaftaran online */
-    PORTAL_URL: 'https://tontimuallimin.com/',
+    PORTAL_URL: 'https://lbb.tontimuallimin.com/',
 
     /** Nama domain yang tampil di UI */
-    PORTAL_NAME: 'tontimuallimin.com',
+    PORTAL_NAME: 'lbb.tontimuallimin.com',
 };
 
 // ---------------------------------------------------------------------------
@@ -203,10 +206,16 @@ export const PAYMENT = {
     BANK_NAME: 'BRI',
 
     /** Teks biaya yang tampil di UI (tanpa "Rp") */
-    FEE_DISPLAY: '350.000',
+    FEE_DISPLAY: '450.000',
+
+    /** Daftar gelombang / tier biaya pendaftaran */
+    FEE_TIERS: [
+        { name: 'Gelombang 1 (14 \u2013 20 Sep)', amount: '450.000', label: '14 \u2013 20 September 2026', endDate: '2026-09-20T23:59:59+07:00' },
+        { name: 'Gelombang 2 (21 \u2013 30 Sep)', amount: '500.000', label: '21 \u2013 30 September 2026', endDate: '2026-09-30T23:59:59+07:00' },
+    ],
 
     /** Teks biaya lengkap untuk FAQ */
-    FEE_FULL: 'Rp350.000,- per peleton.',
+    FEE_FULL: 'Rp450.000,- (14–20 September 2026) dan Rp500.000,- (21–30 September 2026) per peleton.',
 
     /** Keterangan format berita transfer */
     TRANSFER_NOTE_FORMAT: 'NAMA SEKOLAH_JUMLAH PELETON',
@@ -288,28 +297,22 @@ export const DOWNLOADS = [
 export const CONTACT = {
     EMAIL: 'panitia@lbbmuallimin.com',
     EMAIL_HREF: 'mailto:panitia@lbbmuallimin.com',
-    PHONE_DISPLAY: '+62 812-3456-7890',
+    PHONE_DISPLAY: '0812-3009-3737',
 
     /** URL tombol WA mengambang (FAB) */
-    WA_FAB_URL: 'https://wa.me/6285314209369',
+    WA_FAB_URL: 'https://wa.me/6281230093737',
 
-    /** Portal pendaftaran resmi */
-    PORTAL_URL: 'https://lbbmuallimin.carrd.co/',
-    PORTAL_DISPLAY: 'lbbmuallimin.carrd.co',
+    /** Portal resmi informasi & pendaftaran */
+    PORTAL_URL: 'https://lbb.tontimuallimin.com/',
+    PORTAL_DISPLAY: 'lbb.tontimuallimin.com',
 
     /** Daftar contact person panitia */
     PERSONS: [
         {
-            NAME: 'Kak Arhan',
-            SHORT_NAME: 'Sdr. Arhan',
-            PHONE_DISPLAY: '0853-1420-9369',
-            WA_URL: 'https://wa.me/6285314209369',
-        },
-        {
-            NAME: 'Kak Dandi',
-            SHORT_NAME: 'Sdr. Dandi',
-            PHONE_DISPLAY: '0823-2948-3126',
-            WA_URL: 'https://wa.me/6282329483126',
+            NAME: 'Kak Rusyda',
+            SHORT_NAME: 'Kak Rusyda',
+            PHONE_DISPLAY: '0812-3009-3737',
+            WA_URL: 'https://wa.me/6281230093737',
         },
     ],
 };
@@ -318,18 +321,18 @@ export const CONTACT = {
 // SOCIAL – link & handle media sosial
 // ---------------------------------------------------------------------------
 export const SOCIAL = {
-    INSTAGRAM_URL: '#',
+    INSTAGRAM_URL: 'https://www.instagram.com/lbbmuallimin/',
     YOUTUBE_URL: '#',
-    TIKTOK_URL: '#',
+    TIKTOK_URL: 'https://www.tiktok.com/@tontimuallimin',
 
-    /** Handle Instagram event */
+    /** Handle Instagram resmi event */
     INSTAGRAM_HANDLE: '@lbbmuallimin',
 
-    /** Handle TikTok / sekunder */
+    /** Handle TikTok resmi */
     TIKTOK_HANDLE: '@tontimuallimin',
 
     /** Teks gabungan handle yang ditampilkan di info section */
-    HANDLES_DISPLAY: '@lbbmuallimin // @tontimuallimin',
+    HANDLES_DISPLAY: '@lbbmuallimin • @tontimuallimin',
 };
 
 // ---------------------------------------------------------------------------

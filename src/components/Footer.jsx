@@ -8,11 +8,11 @@ import {
   Youtube,
   Video
 } from 'lucide-react';
-import { SITE, SOCIAL, CONTACT, VENUE } from '../config.js';
+import { SITE, SOCIAL, CONTACT, VENUE, REGISTRATION } from '../config.js';
 
 export default function Footer() {
   return (
-    <footer className="bg-zinc-950 text-slate-400 pt-20 pb-10 border-t border-zinc-900 relative overflow-hidden font-sans">
+    <footer className="bg-slate-950 text-slate-400 pt-20 pb-24 lg:pb-10 border-t border-slate-900 relative overflow-hidden font-sans">
       <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-red-900 via-lbb-gold to-red-900"></div>
       <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] pointer-events-none"></div>
       <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-red-900/10 rounded-full blur-3xl pointer-events-none"></div>
@@ -44,22 +44,19 @@ export default function Footer() {
             <div className="flex gap-3">
               <a
                 href={SOCIAL.INSTAGRAM_URL}
-                className="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-slate-400 hover:bg-lbb-red hover:text-white hover:border-lbb-red transition-all duration-300 shadow-lg"
-                aria-label="Instagram"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 hover:bg-lbb-red hover:text-white hover:border-lbb-red transition-all duration-300 shadow-lg"
+                aria-label="Instagram Resmi LBB"
               >
                 <Instagram className="w-4 h-4" />
               </a>
               <a
-                href={SOCIAL.YOUTUBE_URL}
-                className="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-slate-400 hover:bg-red-600 hover:text-white hover:border-red-600 transition-all duration-300 shadow-lg"
-                aria-label="YouTube"
-              >
-                <Youtube className="w-4 h-4" />
-              </a>
-              <a
                 href={SOCIAL.TIKTOK_URL}
-                className="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-slate-400 hover:bg-black hover:text-white hover:border-white/20 transition-all duration-300 shadow-lg"
-                aria-label="TikTok"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 hover:bg-black hover:text-white hover:border-white/20 transition-all duration-300 shadow-lg"
+                aria-label="TikTok Resmi Tonti"
               >
                 <Video className="w-4 h-4" />
               </a>
@@ -68,31 +65,31 @@ export default function Footer() {
 
           {/* Col 2: Menu Utama */}
           <div>
-            <h4 className="text-white font-bold mb-6 tracking-widest text-xs uppercase border-b border-zinc-800 pb-2 inline-block">
+            <h4 className="text-white font-bold mb-6 tracking-widest text-xs uppercase border-b border-slate-800 pb-2 inline-block">
               Menu Utama
             </h4>
             <ul className="space-y-3 text-sm">
               <li>
                 <a href="#about" className="hover:text-lbb-gold transition-colors flex items-center gap-2 group">
-                  <ChevronRight className="w-3.5 h-3.5 text-lbb-red opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all duration-300" />{' '}
+                  <ChevronRight className="w-3.5 h-3.5 text-amber-400 opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all duration-300" />{' '}
                   Tentang
                 </a>
               </li>
               <li>
                 <a href="#rules" className="hover:text-lbb-gold transition-colors flex items-center gap-2 group">
-                  <ChevronRight className="w-3.5 h-3.5 text-lbb-red opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all duration-300" />{' '}
+                  <ChevronRight className="w-3.5 h-3.5 text-amber-400 opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all duration-300" />{' '}
                   Juknis Lomba
                 </a>
               </li>
               <li>
                 <a href="#downloads" className="hover:text-lbb-gold transition-colors flex items-center gap-2 group">
-                  <ChevronRight className="w-3.5 h-3.5 text-lbb-red opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all duration-300" />{' '}
+                  <ChevronRight className="w-3.5 h-3.5 text-amber-400 opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all duration-300" />{' '}
                   Pusat Unduhan
                 </a>
               </li>
               <li>
                 <a href="#prizes" className="hover:text-lbb-gold transition-colors flex items-center gap-2 group">
-                  <ChevronRight className="w-3.5 h-3.5 text-lbb-red opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all duration-300" />{' '}
+                  <ChevronRight className="w-3.5 h-3.5 text-amber-400 opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all duration-300" />{' '}
                   Hadiah
                 </a>
               </li>
@@ -101,23 +98,30 @@ export default function Footer() {
 
           {/* Col 3: Sekretariat */}
           <div>
-            <h4 className="text-white font-bold mb-6 tracking-widest text-xs uppercase border-b border-zinc-800 pb-2 inline-block">
+            <h4 className="text-white font-bold mb-6 tracking-widest text-xs uppercase border-b border-slate-800 pb-2 inline-block">
               Sekretariat
             </h4>
             <ul className="space-y-5 text-sm">
-              <li className="flex items-start gap-4 group cursor-pointer">
-                <div className="mt-1 text-lbb-red group-hover:scale-110 transition-transform">
-                  <MapPin className="w-4 h-4" />
-                </div>
-                <span className="leading-relaxed text-slate-400 group-hover:text-slate-200 transition-colors">
-                  <strong>Kampus Terpadu</strong><br />
-                  Madrasah Mu'allimin Muhammadiyah<br />
-                  <span>{VENUE.SHORT_ADDRESS}</span>
-                </span>
+              <li>
+                <a
+                  href={VENUE.MAPS_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-start gap-4 group"
+                >
+                  <div className="mt-1 text-amber-400 group-hover:scale-110 transition-transform">
+                    <MapPin className="w-4 h-4" />
+                  </div>
+                  <span className="leading-relaxed text-slate-400 group-hover:text-slate-200 transition-colors">
+                    <strong className="text-slate-200 group-hover:text-yellow-400 transition-colors">Kampus Terpadu</strong><br />
+                    Madrasah Mu'allimin Muhammadiyah<br />
+                    <span>{VENUE.SHORT_ADDRESS}</span>
+                  </span>
+                </a>
               </li>
 
               <li className="flex items-center gap-4 group">
-                <div className="text-lbb-red group-hover:scale-110 transition-transform">
+                <div className="text-amber-400 group-hover:scale-110 transition-transform">
                   <Mail className="w-4 h-4" />
                 </div>
                 <a
@@ -129,24 +133,38 @@ export default function Footer() {
               </li>
 
               <li className="flex items-center gap-4 group">
-                <div className="text-lbb-red group-hover:scale-110 transition-transform">
+                <div className="text-amber-400 group-hover:scale-110 transition-transform">
                   <Phone className="w-4 h-4" />
                 </div>
-                <span className="text-slate-400 group-hover:text-white transition-colors">
-                  {CONTACT.PHONE_DISPLAY} (Panitia)
-                </span>
+                <a
+                  href={CONTACT.WA_FAB_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-slate-400 hover:text-white transition-colors"
+                >
+                  {CONTACT.PHONE_DISPLAY} (Kak Rusyda)
+                </a>
               </li>
             </ul>
           </div>
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-zinc-900 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-600">
+        <div className="border-t border-slate-900 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-500">
           <p>{SITE.COPYRIGHT}</p>
-          <div className="flex gap-6">
-            <a href="#" className="hover:text-lbb-gold transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-lbb-gold transition-colors">Terms of Service</a>
-            <a href="#" className="hover:text-lbb-gold transition-colors">Sitemap</a>
+          <div className="flex items-center gap-6">
+            <a
+              href={REGISTRATION.PORTAL_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-yellow-500 hover:text-yellow-400 transition-colors font-medium"
+            >
+              Portal Resmi: {REGISTRATION.PORTAL_NAME}
+            </a>
+            <span className="text-slate-800">•</span>
+            <a href="#home" className="hover:text-slate-300 transition-colors">
+              Kembali ke Atas ↑
+            </a>
           </div>
         </div>
       </div>

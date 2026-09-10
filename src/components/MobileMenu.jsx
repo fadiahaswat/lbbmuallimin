@@ -4,13 +4,13 @@ import {
   Info,
   ClipboardList,
   BookOpen,
+  Trophy,
   Download,
   Phone,
   ChevronRight,
   ArrowRight,
   Instagram,
-  Youtube,
-  Globe,
+  Video,
   X
 } from 'lucide-react';
 import { SOCIAL } from '../config.js';
@@ -43,6 +43,7 @@ export default function MobileMenu({ isOpen, onClose }) {
     { href: '#about', label: 'Tentang', icon: Info },
     { href: '#registration', label: 'Pendaftaran', icon: ClipboardList },
     { href: '#rules', label: 'Juknis & Materi', icon: BookOpen },
+    { href: '#prizes', label: 'Kategori & Hadiah', icon: Trophy },
     { href: '#downloads', label: 'Unduhan', icon: Download },
     { href: '#contact', label: 'Kontak', icon: Phone },
   ];
@@ -50,7 +51,7 @@ export default function MobileMenu({ isOpen, onClose }) {
   return (
     <div
       id="mobile-menu"
-      className="fixed inset-0 z-50 bg-zinc-950/98 backdrop-blur-2xl pt-24 px-6 flex flex-col transition-opacity duration-300 overflow-y-auto"
+      className="fixed inset-0 z-50 bg-slate-950/98 backdrop-blur-2xl pt-24 px-6 flex flex-col transition-opacity duration-300 overflow-y-auto"
     >
       <div className="absolute top-0 right-0 w-64 h-64 bg-red-900/20 rounded-full blur-3xl pointer-events-none -z-10"></div>
 
@@ -73,13 +74,13 @@ export default function MobileMenu({ isOpen, onClose }) {
                 onClick={onClose}
                 className="group flex items-center gap-4 p-3 rounded-xl hover:bg-white/5 border border-transparent hover:border-white/10 transition-all duration-300"
               >
-                <div className="w-10 h-10 rounded-lg bg-zinc-900 flex items-center justify-center text-gray-400 group-hover:text-lbb-gold group-hover:bg-black transition-colors shadow-inner">
+                <div className="w-10 h-10 rounded-lg bg-slate-900 flex items-center justify-center text-slate-400 group-hover:text-lbb-gold group-hover:bg-slate-950 transition-colors shadow-inner">
                   <Icon className="w-5 h-5" />
                 </div>
-                <span className="text-lg font-bold text-gray-300 group-hover:text-white tracking-wide">
+                <span className="text-lg font-bold text-slate-200 group-hover:text-white tracking-wide">
                   {item.label}
                 </span>
-                <ChevronRight className="ml-auto text-zinc-700 group-hover:text-lbb-gold opacity-0 group-hover:opacity-100 transition-all transform group-hover:translate-x-1 w-5 h-5" />
+                <ChevronRight className="ml-auto text-slate-600 group-hover:text-lbb-gold opacity-0 group-hover:opacity-100 transition-all transform group-hover:translate-x-1 w-5 h-5" />
               </a>
             );
           })}
@@ -89,34 +90,31 @@ export default function MobileMenu({ isOpen, onClose }) {
           <a
             href="#registration"
             onClick={onClose}
-            className="w-full py-4 bg-gradient-to-r from-lbb-gold to-yellow-600 text-red-950 font-black rounded-xl text-center shadow-lg shadow-yellow-600/20 active:scale-95 transition-transform flex justify-center items-center gap-3 uppercase tracking-widest text-sm"
+            className="w-full py-4 bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 hover:from-yellow-300 hover:to-yellow-400 text-slate-950 font-black rounded-xl text-center shadow-lg shadow-yellow-500/20 active:scale-95 transition-transform flex justify-center items-center gap-3 uppercase tracking-widest text-sm"
           >
             Daftar Sekarang <ArrowRight className="w-5 h-5" />
           </a>
 
           <div className="flex justify-between items-center px-4">
-            <span className="text-xs text-zinc-500 font-medium">Ikuti Update:</span>
+            <span className="text-xs text-slate-400 font-medium">Ikuti Update:</span>
             <div className="flex gap-4">
               <a
                 href={SOCIAL.INSTAGRAM_URL}
-                className="text-zinc-400 hover:text-white transition-colors"
-                aria-label="Instagram"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-slate-400 hover:text-white transition-colors"
+                aria-label="Instagram Resmi LBB"
               >
                 <Instagram className="w-5 h-5" />
               </a>
               <a
-                href={SOCIAL.YOUTUBE_URL}
-                className="text-zinc-400 hover:text-white transition-colors"
-                aria-label="YouTube"
-              >
-                <Youtube className="w-5 h-5" />
-              </a>
-              <a
                 href={SOCIAL.TIKTOK_URL}
-                className="text-zinc-400 hover:text-white transition-colors"
-                aria-label="TikTok"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-slate-400 hover:text-white transition-colors"
+                aria-label="TikTok Resmi Tonti"
               >
-                <Globe className="w-5 h-5" />
+                <Video className="w-5 h-5" />
               </a>
             </div>
           </div>
