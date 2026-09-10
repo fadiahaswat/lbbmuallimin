@@ -1,24 +1,23 @@
 {
   "name": "lbbmuallimin",
-  "version": "1.0.0",
-  "description": "Website resmi Lomba Baris-Berbaris Mu'allimin 2026",
+  "version": "2.0.0",
+  "description": "Website resmi Lomba Baris-Berbaris Mu'allimin 2026 (React + Vite)",
+  "type": "module",
   "scripts": {
-    "build:css": "tailwindcss -i css/input.css -o css/tailwind.css --minify",
-    "watch:css": "tailwindcss -i css/input.css -o css/tailwind.css --watch"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/fadiahaswat/lbbmuallimin.git"
+  "dependencies": {
+    "lucide-react": "^0.475.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
-  "bugs": {
-    "url": "https://github.com/fadiahaswat/lbbmuallimin/issues"
-  },
-  "homepage": "https://github.com/fadiahaswat/lbbmuallimin#readme",
   "devDependencies": {
-    "tailwindcss": "^3.4.19"
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.17",
+    "vite": "^6.1.0"
   }
 }
