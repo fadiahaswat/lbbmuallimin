@@ -347,12 +347,19 @@ export default function JuryScoringApp() {
                 ) : (
                   verifiedTeams.map(team => {
                     const isSelected = selectedTeamId === team.id;
-                    const hasScore = !!scores[team.id];
+                    const teamScore = scores[team.id];
+                    const juries = teamScore?.juries || {};
+                    const hasPos1 = !!juries.pos1 || (teamScore?.pbb?.total !== undefined);
+                    const hasPos2 = !!juries.pos2 || (teamScore?.vafor?.total !== undefined);
+                    const hasPos3 = !!juries.pos3 || (teamScore?.danton?.total !== undefined);
+                    const isComplete = hasPos1 && hasPos2 && hasPos3;
+                    const hasAny = hasPos1 || hasPos2 || hasPos3;
+
                     return (
                       <div
                         key={team.id}
                         onClick={() => handleSelectTeam(team.id)}
-                        className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-3 ${
+                        className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
                           isSelected
                             ? 'bg-emerald-50/90 border-emerald-400 shadow-sm ring-2 ring-emerald-200'
                             : 'bg-slate-50/60 border-slate-200/80 hover:bg-slate-100'
@@ -369,13 +376,45 @@ export default function JuryScoringApp() {
                             <span className="text-[10px] text-slate-500">
                               {team.jenjang} • Danton: {team.roster.danton.name}
                             </span>
+                            
+                            {/* Live Pos Scoring Indicators (SIMPASKOR Standard) */}
+                            <div className="flex items-center gap-1 mt-1">
+                              <span
+                                title="Pos 1: PBB"
+                                className={`text-[8px] font-bold px-1.5 py-0.2 rounded ${
+                                  hasPos1 ? 'bg-blue-100 text-blue-800 border border-blue-200' : 'bg-slate-200 text-slate-500'
+                                }`}
+                              >
+                                P1: {hasPos1 ? '✓' : '...'}
+                              </span>
+                              <span
+                                title="Pos 2: Vafor & Kostum"
+                                className={`text-[8px] font-bold px-1.5 py-0.2 rounded ${
+                                  hasPos2 ? 'bg-purple-100 text-purple-800 border border-purple-200' : 'bg-slate-200 text-slate-500'
+                                }`}
+                              >
+                                P2: {hasPos2 ? '✓' : '...'}
+                              </span>
+                              <span
+                                title="Pos 3: Danton"
+                                className={`text-[8px] font-bold px-1.5 py-0.2 rounded ${
+                                  hasPos3 ? 'bg-red-100 text-red-800 border border-red-200' : 'bg-slate-200 text-slate-500'
+                                }`}
+                              >
+                                P3: {hasPos3 ? '✓' : '...'}
+                              </span>
+                            </div>
                           </div>
                         </div>
 
                         <div className="text-right shrink-0">
-                          {hasScore ? (
+                          {isComplete ? (
                             <span className="text-[10px] font-mono font-black bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded block">
-                              {scores[team.id].finalScore} pt
+                              {teamScore?.finalScore ?? 0} pt
+                            </span>
+                          ) : hasAny ? (
+                            <span className="text-[10px] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded block">
+                              Parsial
                             </span>
                           ) : (
                             <span className="text-[10px] font-bold text-slate-400 bg-slate-200/60 px-2 py-0.5 rounded block">

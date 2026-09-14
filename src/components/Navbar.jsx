@@ -100,7 +100,11 @@ export default function Navbar({ onOpenMobileMenu }) {
       <div className="container mx-auto px-6 flex justify-between items-center">
         <a
           href="#home"
-          className="group flex items-center gap-3 focus:outline-none transition-transform hover:scale-105 duration-300"
+          className={`group flex items-center gap-3 focus:outline-none transition-all duration-300 ${
+            activeSection === 'home' && !isScrolled
+              ? 'opacity-0 -translate-x-4 pointer-events-none'
+              : 'opacity-100 translate-x-0 pointer-events-auto hover:scale-105'
+          }`}
           aria-label="Kembali ke Beranda"
         >
           <img

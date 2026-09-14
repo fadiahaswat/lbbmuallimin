@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { ArrowRight, Download, ChevronsDown } from 'lucide-react';
 import { HERO, EVENT, VENUE } from '../config.js';
 import { useCompetition } from '../context/CompetitionContext.jsx';
+import logoImg from '../assets/logo-tonti.png';
+import logoMuallimin from '../assets/logo-muallimin.png';
 
 const CADET_FIGURES = [
   {
@@ -84,8 +86,37 @@ export default function Hero() {
         <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-center w-full max-w-7xl mx-auto">
 
           {/* Left Columns: Text Content & Actions */}
-          <div className="lg:col-span-7 flex flex-col items-center lg:items-start text-center lg:text-left space-y-6 sm:space-y-7">
+          <div className="lg:col-span-7 flex flex-col items-center lg:items-start text-center lg:text-left space-y-5 sm:space-y-6">
             
+            {/* Logo Group in Hero Section: Big LBB Logo + Smaller White Mu'allimin Logo */}
+            <div className="flex items-center gap-4 sm:gap-6">
+              {/* Logo Utama LBB Mu'allimin 2026 */}
+              <div className="relative group transition-transform duration-300 hover:scale-105">
+                <div className="absolute -inset-2 bg-gradient-to-r from-red-600/30 via-yellow-500/20 to-amber-500/30 rounded-2xl blur-xl opacity-60 group-hover:opacity-100 transition-opacity pointer-events-none" />
+                <img
+                  src={logoImg}
+                  alt="Logo Resmi LBB Mu'allimin 2026"
+                  className="relative h-20 sm:h-24 md:h-28 w-auto object-contain drop-shadow-[0_10px_20px_rgba(0,0,0,0.65)] filter brightness-110"
+                  width="140"
+                  height="140"
+                  loading="eager"
+                />
+              </div>
+
+              {/* Garis Pemisah Halus */}
+              <div className="h-12 sm:h-16 w-px bg-gradient-to-b from-transparent via-white/30 to-transparent" />
+
+              {/* Logo Madrasah Mu'allimin (Lebih Kecil & Warna Putih) */}
+              <div className="relative group transition-transform duration-300 hover:scale-105 opacity-90 hover:opacity-100">
+                <img
+                  src={logoMuallimin}
+                  alt="Logo Madrasah Mu'allimin Muhammadiyah Yogyakarta"
+                  className="h-10 sm:h-12 md:h-14 w-auto object-contain filter brightness-0 invert drop-shadow-[0_4px_12px_rgba(255,255,255,0.25)]"
+                  loading="eager"
+                />
+              </div>
+            </div>
+
             {/* Event Registration Status Badge */}
             <div className="inline-flex items-center gap-2.5 px-4 py-1.5 bg-black/50 border border-white/15 rounded-full backdrop-blur-md shadow-sm cursor-default">
               <span className="relative flex h-2 w-2">

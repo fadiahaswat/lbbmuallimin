@@ -19,6 +19,7 @@ import logoImg from '../../assets/logo-tonti.png';
 export default function OfficialScoreRecapModal({ isOpen, onClose, initialJenjang = 'ALL' }) {
   const { teams, scores } = useCompetition();
   const [selectedJenjang, setSelectedJenjang] = useState(initialJenjang);
+  const [awardCategory, setAwardCategory] = useState('all'); // 'all' | 'danton' | 'pbb' | 'vafor'
 
   if (!isOpen) return null;
 
@@ -28,7 +29,7 @@ export default function OfficialScoreRecapModal({ isOpen, onClose, initialJenjan
     .filter(t => selectedJenjang === 'ALL' || t.jenjang === selectedJenjang);
 
   // Compute ranks
-  const rankedTeams = [...targetTeams].map(team => {
+  const computedTeams = [...targetTeams].map(team => {
     const s = scores[team.id];
     const juries = s?.juries || {};
 
@@ -61,7 +62,15 @@ export default function OfficialScoreRecapModal({ isOpen, onClose, initialJenjan
       finalScore: isNaN(finalScore) ? 0 : finalScore,
       scored: Boolean(s),
     };
-  }).sort((a, b) => b.finalScore - a.finalScore);
+  });
+
+  // Sort based on award category
+  const rankedTeams = computedTeams.sort((a, b) => {
+    if (awardCategory === 'danton') return b.pos3Score - a.pos3Score;
+    if (awardCategory === 'pbb') return b.pos1Score - a.pos1Score;
+    if (awardCategory === 'vafor') return b.pos2Score - a.pos2Score;
+    return b.finalScore - a.finalScore;
+  });
 
   function handlePrint() {
     window.print();
@@ -82,7 +91,43 @@ export default function OfficialScoreRecapModal({ isOpen, onClose, initialJenjan
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 flex-wrap">
+            {/* Filter Kategori Juara */}
+            <div className="flex items-center bg-slate-800 rounded-xl p-1 border border-slate-700">
+              <button
+                onClick={() => setAwardCategory('all')}
+                className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
+                  awardCategory === 'all' ? 'bg-amber-400 text-slate-950 font-black' : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                Juara Umum
+              </button>
+              <button
+                onClick={() => setAwardCategory('danton')}
+                className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
+                  awardCategory === 'danton' ? 'bg-red-500 text-white font-black' : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                Danton Terbaik
+              </button>
+              <button
+                onClick={() => setAwardCategory('pbb')}
+                className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
+                  awardCategory === 'pbb' ? 'bg-blue-500 text-white font-black' : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                PBB Terbaik
+              </button>
+              <button
+                onClick={() => setAwardCategory('vafor')}
+                className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
+                  awardCategory === 'vafor' ? 'bg-purple-500 text-white font-black' : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                Vafor Terbaik
+              </button>
+            </div>
+
             {/* Filter Jenjang */}
             <div className="flex items-center bg-slate-800 rounded-xl p-1 border border-slate-700">
               <button
@@ -167,9 +212,16 @@ export default function OfficialScoreRecapModal({ isOpen, onClose, initialJenjan
               Nomor: 042/BA-JURI/LBB-MUALLIMIN/{new Date().getFullYear()}
             </p>
             <div className="flex flex-wrap items-center justify-center gap-4 text-xs font-semibold text-slate-700 mt-3 bg-slate-50 border border-slate-200 py-2 px-4 rounded-xl">
-              <span><strong>Kategori:</strong> {selectedJenjang === 'ALL' ? 'SD/MI & SMP/MTs' : (selectedJenjang === 'SMP' ? 'Tingkat SMP/MTs' : 'Tingkat SD/MI')}</span>
+              <span><strong>Jenjang:</strong> {selectedJenjang === 'ALL' ? 'SD/MI & SMP/MTs' : (selectedJenjang === 'SMP' ? 'Tingkat SMP/MTs' : 'Tingkat SD/MI')}</span>
               <span>•</span>
-              <span><strong>Tanggal Pelaksanaan:</strong> {TIMELINE.COMPETITION_DATE}</span>
+              <span><strong>Rekapitulasi:</strong> {
+                awardCategory === 'danton' ? '🎖️ Komandan Peleton (Danton) Terbaik' :
+                awardCategory === 'pbb' ? '🎖️ PBB Murni Terbaik' :
+                awardCategory === 'vafor' ? '🎖️ Variasi & Formasi Terbaik' :
+                '🏆 Juara Umum & Akumulasi Nilai'
+              }</span>
+              <span>•</span>
+              <span><strong>Tanggal:</strong> {TIMELINE.COMPETITION_DATE}</span>
               <span>•</span>
               <span><strong>Lokasi:</strong> {VENUE.NAME}</span>
             </div>
@@ -184,13 +236,13 @@ export default function OfficialScoreRecapModal({ isOpen, onClose, initialJenjan
                   <th className="py-2.5 px-2 border-r border-slate-700 w-12">No. Undi</th>
                   <th className="py-2.5 px-3 border-r border-slate-700 text-left">Peleton & Asal Sekolah</th>
                   <th className="py-2.5 px-2 border-r border-slate-700 w-14">Jenjang</th>
-                  <th className="py-2.5 px-2 border-r border-slate-700 w-20 bg-slate-800">
+                  <th className={`py-2.5 px-2 border-r border-slate-700 w-20 ${awardCategory === 'pbb' ? 'bg-blue-600 text-white font-black ring-2 ring-blue-300' : 'bg-slate-800'}`}>
                     Pos 1<br /><span className="text-[9px] font-normal text-slate-300">(PBB)</span>
                   </th>
-                  <th className="py-2.5 px-2 border-r border-slate-700 w-20 bg-slate-800">
+                  <th className={`py-2.5 px-2 border-r border-slate-700 w-20 ${awardCategory === 'vafor' ? 'bg-purple-600 text-white font-black ring-2 ring-purple-300' : 'bg-slate-800'}`}>
                     Pos 2<br /><span className="text-[9px] font-normal text-slate-300">(Vafor)</span>
                   </th>
-                  <th className="py-2.5 px-2 border-r border-slate-700 w-20 bg-slate-800">
+                  <th className={`py-2.5 px-2 border-r border-slate-700 w-20 ${awardCategory === 'danton' ? 'bg-red-600 text-white font-black ring-2 ring-red-300' : 'bg-slate-800'}`}>
                     Pos 3<br /><span className="text-[9px] font-normal text-slate-300">(Danton)</span>
                   </th>
                   <th className="py-2.5 px-2 border-r border-slate-700 w-16 text-red-300">

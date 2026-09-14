@@ -900,6 +900,8 @@ function safeSetItem(key, value) {
         danton: updatedJuries.pos3 ? { ...updatedJuries.pos3, total: dantonTotal } : (currentTeamScore.danton || { total: dantonTotal }),
         finalScore,
         scoredAt: new Date().toISOString(),
+        lastUpdatedBy: postScoreData.juryName || 'Juri Pos',
+        isLocked: Boolean(updatedJuries.pos1 && updatedJuries.pos2 && updatedJuries.pos3),
         notes: postScoreData.notes || currentTeamScore.notes || '',
       };
 
