@@ -191,20 +191,6 @@ export default function Hero() {
               />
             </div>
 
-            {/* Slider Dots - Fixed at Bottom */}
-            <div className="flex items-center gap-2 mt-4 z-10 shrink-0">
-              {CADET_FIGURES.map((_, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setActiveCadetIndex(idx)}
-                  className={`h-2 rounded-full transition-all cursor-pointer ${
-                    activeCadetIndex === idx ? 'w-6 bg-yellow-400' : 'w-2 bg-white/30 hover:bg-white/60'
-                  }`}
-                  aria-label={`Pilih figur ${idx + 1}`}
-                />
-              ))}
-            </div>
-
           </div>
 
         </div>
