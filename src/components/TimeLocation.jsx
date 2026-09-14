@@ -19,7 +19,7 @@ import { EVENT, VENUE } from '../config.js';
 export default function TimeLocation() {
   return (
     <section id="time-location" className="py-24 lg:py-32 bg-slate-950 relative overflow-hidden border-t border-slate-900 font-sans">
-      <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20 mix-blend-overlay"></div>
+      <div className="absolute inset-0 bg-carbon-pattern opacity-20 pointer-events-none"></div>
       <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-red-900 to-transparent"></div>
       <div className="absolute -left-20 top-1/2 w-96 h-96 bg-red-900/10 rounded-full blur-[128px] pointer-events-none"></div>
       <div className="absolute -right-20 bottom-0 w-96 h-96 bg-yellow-600/10 rounded-full blur-[128px] pointer-events-none"></div>

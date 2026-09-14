@@ -20,8 +20,8 @@ import {
   ExternalLink,
   ChevronRight,
   DollarSign,
-  Calendar,
-  Sparkles
+  Sparkles,
+  ArrowLeft
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
 import { COMPETITION, EVENT } from '../../config.js';
@@ -576,95 +576,163 @@ export default function AdminDashboard() {
 
       </div>
 
-      {/* INSPECTION MODAL */}
+      {/* INSPECTION VIEW (PAGE VIEW, NO MODAL OVERLAY) */}
       {inspectingTeam && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
-          <div className="bg-white rounded-3xl max-w-4xl w-full shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[90vh] my-auto animate-in fade-in zoom-in-95 duration-200">
-            
-            {/* Modal Header */}
-            <div className="bg-slate-900 text-white p-5 sm:p-6 flex items-center justify-between border-b border-slate-800">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-black">
-                  {inspectingTeam.jenjang}
-                </div>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="font-mono text-xs font-bold text-yellow-400 bg-yellow-400/10 px-2 py-0.5 rounded">
-                      {inspectingTeam.regCode}
-                    </span>
-                    <span className="text-xs text-slate-400">Status: <strong className="text-white capitalize">{inspectingTeam.status}</strong></span>
-                  </div>
-                  <h3 className="font-black text-lg sm:text-xl text-white mt-0.5">{inspectingTeam.schoolName}</h3>
-                </div>
-              </div>
+        <div className="bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden flex flex-col mb-8 animate-in fade-in slide-in-from-top-4 duration-200">
+          
+          {/* Header */}
+          <div className="bg-slate-900 text-white p-5 sm:p-6 flex flex-wrap items-center justify-between gap-4 border-b border-slate-800">
+            <div className="flex items-center gap-3">
               <button
                 onClick={() => setInspectingTeam(null)}
-                className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white transition-all"
+                className="px-3.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-slate-200 hover:text-white transition-all text-xs font-bold flex items-center gap-2 mr-1"
               >
-                <X className="w-5 h-5" />
+                <ArrowLeft className="w-4 h-4" />
+                <span>Kembali ke Daftar Peleton</span>
               </button>
+              <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-black">
+                {inspectingTeam.jenjang}
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="font-mono text-xs font-bold text-yellow-400 bg-yellow-400/10 px-2 py-0.5 rounded">
+                    {inspectingTeam.regCode}
+                  </span>
+                  <span className="text-xs text-slate-400">Status: <strong className="text-white capitalize">{inspectingTeam.status}</strong></span>
+                </div>
+                <h3 className="font-black text-lg sm:text-xl text-white mt-0.5">{inspectingTeam.schoolName}</h3>
+              </div>
             </div>
+            <button
+              onClick={() => setInspectingTeam(null)}
+              className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white transition-all"
+              title="Tutup Pemeriksaan"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
 
             {/* Modal Body */}
             <div className="p-6 overflow-y-auto flex-1 space-y-6">
               
-              {/* Documents Inspection Grid */}
+              {/* Team Data Overview */}
+              <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                  <div>
+                    <span className="text-[10px] font-bold text-slate-400 uppercase block">Email Akun Portal</span>
+                    <span className="font-mono font-bold text-slate-900 truncate block">{inspectingTeam.email || '-'}</span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-bold text-slate-400 uppercase block">Tipe Pasukan</span>
+                    <span className="font-bold text-slate-900 block">{inspectingTeam.teamType || inspectingTeam.category || 'Homogen'} ({inspectingTeam.jenjang})</span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-bold text-slate-400 uppercase block">Komandan (Danton)</span>
+                    <span className="font-bold text-slate-900 block">{inspectingTeam.dantonName || inspectingTeam.roster?.danton?.name || '-'}</span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-bold text-slate-400 uppercase block">Official / Pelatih</span>
+                    <span className="font-bold text-slate-900 block">{inspectingTeam.officialName || inspectingTeam.coachName || '-'}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Documents Inspection Grid (6 Uploaded Files) */}
               <div>
                 <h4 className="font-black text-sm uppercase tracking-wider text-slate-900 mb-3">
-                  Kelengkapan Berkas Persyaratan (Preview Dokumen)
+                  Kelengkapan 6 Berkas Unggahan Persyaratan
                 </h4>
-                <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
                   
-                  {/* 1. Logo */}
+                  {/* 1. Logo Sekolah */}
                   <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 text-center">
-                    <span className="text-[10px] font-bold text-slate-500 uppercase block mb-1">Logo Sekolah</span>
-                    <div className="h-24 bg-white rounded-lg border border-slate-200 flex items-center justify-center overflow-hidden mb-2 p-1">
-                      {inspectingTeam.files.schoolLogo?.url && inspectingTeam.files.schoolLogo.url !== '#' ? (
-                        <img src={inspectingTeam.files.schoolLogo.url} alt="Logo" className="h-full object-contain" />
+                    <span className="text-[10px] font-bold text-slate-500 uppercase block mb-1">1. Logo Sekolah</span>
+                    <div className="h-28 bg-white rounded-lg border border-slate-200 flex items-center justify-center overflow-hidden mb-2 p-2">
+                      {inspectingTeam.files?.schoolLogo?.url && inspectingTeam.files?.schoolLogo?.url !== '#' ? (
+                        <img src={inspectingTeam.files.schoolLogo.url} alt="Logo Sekolah" className="h-full object-contain" />
                       ) : (
-                        <span className="text-xs text-slate-400 italic">Tidak ada</span>
+                        <span className="text-xs text-slate-400 italic">Belum ada file</span>
                       )}
                     </div>
-                    <span className="text-[10px] text-slate-600 block truncate">{inspectingTeam.files.schoolLogo?.name}</span>
+                    <span className="text-[10px] text-slate-600 block truncate">{inspectingTeam.files?.schoolLogo?.name || 'Logo_Sekolah'}</span>
                   </div>
 
-                  {/* 2. Bukti Transfer */}
+                  {/* 2. Kartu Pelajar Komandan */}
                   <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 text-center">
-                    <span className="text-[10px] font-bold text-emerald-700 uppercase block mb-1">Bukti Transfer</span>
-                    <div className="h-24 bg-white rounded-lg border border-slate-200 flex items-center justify-center overflow-hidden mb-2 p-1">
-                      {inspectingTeam.files.paymentProof?.url && inspectingTeam.files.paymentProof.url.startsWith('data:image') ? (
-                        <img src={inspectingTeam.files.paymentProof.url} alt="Bukti" className="h-full object-contain" />
+                    <span className="text-[10px] font-bold text-blue-700 uppercase block mb-1">2. Kartu Pelajar Danton</span>
+                    <div className="h-28 bg-white rounded-lg border border-slate-200 flex items-center justify-center overflow-hidden mb-2 p-2">
+                      {inspectingTeam.files?.dantonCard?.url && inspectingTeam.files?.dantonCard?.url !== '#' ? (
+                        <img src={inspectingTeam.files.dantonCard.url} alt="Kartu Pelajar" className="h-full object-contain" />
                       ) : (
-                        <span className="text-xs text-emerald-700 font-bold">{inspectingTeam.files.paymentProof?.name}</span>
+                        <span className="text-xs text-slate-400 italic">{inspectingTeam.files?.dantonCard?.name || 'Dokumen Kartu Pelajar'}</span>
                       )}
                     </div>
-                    <span className="text-[10px] text-slate-600 block truncate">Nominal: Rp{inspectingTeam.feeAmount?.toLocaleString('id-ID')}</span>
+                    <span className="text-[10px] text-slate-600 block truncate">{inspectingTeam.files?.dantonCard?.name || 'Kartu Pelajar'}</span>
                   </div>
 
-                  {/* 3. Pasfoto Personel */}
+                  {/* 3. KTP Official / Pelatih */}
                   <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 text-center">
-                    <span className="text-[10px] font-bold text-blue-700 uppercase block mb-1">Pasfoto Personel</span>
-                    <div className="h-24 bg-white rounded-lg border border-slate-200 flex items-center justify-center overflow-hidden mb-2 p-1">
-                      {inspectingTeam.files.personnelPhotos?.url && inspectingTeam.files.personnelPhotos.url.startsWith('data:image') ? (
-                        <img src={inspectingTeam.files.personnelPhotos.url} alt="Foto" className="h-full object-contain" />
+                    <span className="text-[10px] font-bold text-indigo-700 uppercase block mb-1">3. KTP Official / Pelatih</span>
+                    <div className="h-28 bg-white rounded-lg border border-slate-200 flex items-center justify-center overflow-hidden mb-2 p-2">
+                      {inspectingTeam.files?.officialKtp?.url && inspectingTeam.files?.officialKtp?.url !== '#' ? (
+                        <img src={inspectingTeam.files.officialKtp.url} alt="KTP Official" className="h-full object-contain" />
                       ) : (
-                        <span className="text-xs text-blue-700 font-bold">{inspectingTeam.files.personnelPhotos?.name}</span>
+                        <span className="text-xs text-slate-400 italic">{inspectingTeam.files?.officialKtp?.name || 'Dokumen KTP'}</span>
                       )}
                     </div>
-                    <span className="text-[10px] text-slate-600 block truncate">25 Personel</span>
+                    <span className="text-[10px] text-slate-600 block truncate">{inspectingTeam.files?.officialKtp?.name || 'KTP_Official'}</span>
                   </div>
 
-                  {/* 4. Surat Rekomendasi */}
+                  {/* 4. Bukti Transfer Pembayaran */}
                   <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 text-center">
-                    <span className="text-[10px] font-bold text-red-700 uppercase block mb-1">Surat Rekomendasi</span>
-                    <div className="h-24 bg-white rounded-lg border border-slate-200 flex items-center justify-center overflow-hidden mb-2 p-1">
-                      {inspectingTeam.files.recommendationLetter?.url && inspectingTeam.files.recommendationLetter.url.startsWith('data:image') ? (
-                        <img src={inspectingTeam.files.recommendationLetter.url} alt="Rekom" className="h-full object-contain" />
+                    <span className="text-[10px] font-bold text-emerald-700 uppercase block mb-1">4. Bukti Pembayaran</span>
+                    <div className="h-28 bg-white rounded-lg border border-slate-200 flex items-center justify-center overflow-hidden mb-2 p-2">
+                      {inspectingTeam.files?.paymentProof?.url && inspectingTeam.files?.paymentProof?.url !== '#' ? (
+                        <img src={inspectingTeam.files.paymentProof.url} alt="Bukti Transfer" className="h-full object-contain" />
                       ) : (
-                        <span className="text-xs text-red-700 font-bold">{inspectingTeam.files.recommendationLetter?.name}</span>
+                        <span className="text-xs text-emerald-700 font-bold">{inspectingTeam.files?.paymentProof?.name || 'Bukti Transfer'}</span>
                       )}
                     </div>
-                    <span className="text-[10px] text-slate-600 block truncate">Cap Basah Kepala Sekolah</span>
+                    <span className="text-[10px] text-slate-600 block truncate">Biaya: Rp{inspectingTeam.feeAmount?.toLocaleString('id-ID')}</span>
+                  </div>
+
+                  {/* 5. Foto Selfie Pemohon (Watchfinder) */}
+                  <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 text-center">
+                    <div className="flex items-center justify-center gap-1 mb-1">
+                      <span className="text-[10px] font-bold text-amber-700 uppercase">5. Selfie Pemohon</span>
+                      <span className="text-[8px] bg-amber-200 text-amber-900 font-black px-1 rounded">Watchfinder</span>
+                    </div>
+                    <div className="h-28 bg-white rounded-lg border border-slate-200 flex items-center justify-center overflow-hidden mb-2 p-1">
+                      {inspectingTeam.files?.selfie?.url && inspectingTeam.files?.selfie?.url !== '#' ? (
+                        <img src={inspectingTeam.files.selfie.url} alt="Foto Selfie Watchfinder" className="h-full object-cover rounded" />
+                      ) : (
+                        <span className="text-xs text-slate-400 italic">{inspectingTeam.files?.selfie?.name || 'Foto Selfie'}</span>
+                      )}
+                    </div>
+                    <span className="text-[10px] text-slate-600 block truncate">{inspectingTeam.files?.selfie?.name || 'Selfie_Watchfinder'}</span>
+                  </div>
+
+                  {/* 6. Pakta Integritas (Online / Upload) */}
+                  <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 text-center">
+                    <div className="flex items-center justify-center gap-1 mb-1">
+                      <span className="text-[10px] font-bold text-red-700 uppercase">6. Pakta Integritas</span>
+                      {inspectingTeam.files?.integrityPact?.type === 'online' && (
+                        <span className="text-[8px] bg-emerald-100 text-emerald-800 font-black px-1 rounded">Online TTD</span>
+                      )}
+                    </div>
+                    <div className="h-28 bg-white rounded-lg border border-slate-200 flex flex-col items-center justify-center overflow-hidden mb-2 p-1">
+                      {inspectingTeam.files?.integrityPact?.signatureUrl || (inspectingTeam.files?.integrityPact?.url && inspectingTeam.files?.integrityPact?.url.startsWith('data:image')) ? (
+                        <div className="w-full h-full flex flex-col items-center justify-center">
+                          <img src={inspectingTeam.files.integrityPact.signatureUrl || inspectingTeam.files.integrityPact.url} alt="TTD Pakta" className="h-14 object-contain" />
+                          <span className="text-[8px] font-mono font-bold text-emerald-700 mt-1">{inspectingTeam.files.integrityPact.signCode || 'TTD Sah'}</span>
+                        </div>
+                      ) : inspectingTeam.files?.integrityPact?.url && inspectingTeam.files?.integrityPact?.url !== '#' ? (
+                        <span className="text-xs text-red-700 font-bold">{inspectingTeam.files.integrityPact.name}</span>
+                      ) : (
+                        <span className="text-xs text-slate-400 italic">Pakta Integritas Sah</span>
+                      )}
+                    </div>
+                    <span className="text-[10px] text-slate-600 block truncate">{inspectingTeam.files?.integrityPact?.name || 'Pakta Integritas'}</span>
                   </div>
 
                 </div>
@@ -759,14 +827,12 @@ export default function AdminDashboard() {
                     handleQuickVerify(inspectingTeam.id, 'verified');
                     setInspectingTeam(null);
                   }}
-                  className="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black rounded-xl shadow-md shadow-emerald-950/20 transition-all flex items-center gap-1.5"
+                  className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black uppercase tracking-wider rounded-xl shadow-lg shadow-emerald-950/30 hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
                 >
                   <CheckCircle2 className="w-4 h-4" />
-                  <span>Verifikasi & Setujui</span>
+                  <span>ACC / Setujui Pendaftaran Peleton</span>
                 </button>
               </div>
-            </div>
-
           </div>
         </div>
       )}

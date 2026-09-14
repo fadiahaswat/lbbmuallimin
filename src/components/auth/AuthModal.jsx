@@ -1,574 +1,394 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
-  X,
   Shield,
   Award,
-  Crown,
-  Users,
   Mail,
   Lock,
-  User,
   School,
   ArrowRight,
-  CheckCircle2,
-  Sparkles,
+  ArrowLeft,
   AlertCircle,
   LogIn,
-  UserPlus
+  Eye,
+  EyeOff,
+  Clock,
+  ExternalLink
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
+import logoImg from '../../assets/logo-tonti.png';
+import { SITE, CONTACT } from '../../config.js';
 
 export default function AuthModal() {
   const {
     authModal,
     closeAuthModal,
     loginUser,
-    registerUser,
-    users
+    goBack,
+    activeView,
+    setActiveView
   } = useCompetition();
 
-  const [activeTab, setActiveTab] = useState('login');
-  const [showGoogleChooser, setShowGoogleChooser] = useState(false);
-  const [customGoogleEmail, setCustomGoogleEmail] = useState('');
-  const [customGoogleName, setCustomGoogleName] = useState('');
-
-  // Form State - Login
+  const [showPassword, setShowPassword] = useState(false);
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [loginError, setLoginError] = useState('');
+  const [errorType, setErrorType] = useState('');
+  const [rememberMe, setRememberMe] = useState(true);
 
-  // Form State - Register
-  const [regName, setRegName] = useState('');
-  const [regSchool, setRegSchool] = useState('');
-  const [regEmail, setRegEmail] = useState('');
-  const [regPassword, setRegPassword] = useState('');
-  const [regRole, setRegRole] = useState('peserta');
-  const [regError, setRegError] = useState('');
-  const [regSuccess, setRegSuccess] = useState('');
-
-  useEffect(() => {
-    if (authModal.isOpen) {
-      setActiveTab(authModal.tab || 'login');
-      setShowGoogleChooser(false);
-      setLoginError('');
-      setRegError('');
-      setRegSuccess('');
+  const handleClose = () => {
+    if (closeAuthModal) {
+      closeAuthModal();
+    } else {
+      goBack();
     }
-  }, [authModal]);
+  };
 
-  // Handle ESC key
-  useEffect(() => {
-    function handleKeyDown(e) {
-      if (e.key === 'Escape' && authModal.isOpen) {
-        closeAuthModal();
-      }
-    }
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [authModal.isOpen, closeAuthModal]);
+  if (activeView !== 'auth' && !authModal?.isOpen) return null;
 
-  if (!authModal.isOpen) return null;
-
-  // Handle Traditional Login
+  // Handle Login
   function handleTraditionalLogin(e) {
     e.preventDefault();
     setLoginError('');
+    setErrorType('');
 
-    if (!loginEmail.trim()) {
-      setLoginError('Harap masukkan alamat email Anda.');
+    const cleanEmail = loginEmail.trim();
+    if (!cleanEmail) {
+      setLoginError('Silakan masukkan alamat email yang terdaftar.');
       return;
     }
 
-    loginUser(loginEmail.trim());
-  }
-
-  // Handle Traditional Register
-  function handleTraditionalRegister(e) {
-    e.preventDefault();
-    setRegError('');
-    setRegSuccess('');
-
-    if (!regName.trim() || !regEmail.trim()) {
-      setRegError('Nama dan email wajib diisi.');
+    if (!loginPassword) {
+      setLoginError('Silakan masukkan kata sandi akun Anda.');
       return;
     }
 
-    const res = registerUser(
-      regName.trim(),
-      regEmail.trim(),
-      regPassword,
-      regRole,
-      regSchool.trim()
-    );
-
-    if (!res.success) {
-      setRegError(res.message);
+    const res = loginUser(cleanEmail);
+    if (!res?.success) {
+      setLoginError(res?.message || 'Email tidak sesuai atau belum di-ACC oleh admin.');
+      setErrorType(res?.error || 'unknown');
     }
   }
 
-  // Handle Google Login Select
-  function handleSelectGoogleAccount(account) {
-    loginUser(account.email, account.name);
-  }
-
-  // Handle Custom Google Login
-  function handleCustomGoogleSubmit(e) {
-    e.preventDefault();
-    if (!customGoogleEmail.trim()) return;
-    loginUser(
-      customGoogleEmail.trim(),
-      customGoogleName.trim() || customGoogleEmail.split('@')[0]
+  // Handle Google Login
+  function handleGoogleLogin() {
+    setLoginError('');
+    setErrorType('');
+    const promptEmail = window.prompt(
+      'Masukkan alamat email Google Anda untuk masuk:',
+      loginEmail || 'official@sekolah.sch.id'
     );
+    if (promptEmail && promptEmail.trim()) {
+      const email = promptEmail.trim();
+      const res = loginUser(email);
+      if (!res?.success) {
+        setLoginError(res?.message || 'Email tidak sesuai atau belum di-ACC oleh admin.');
+        setErrorType(res?.error || 'unknown');
+      }
+    }
   }
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 animate-in fade-in duration-200">
-      <div
-        className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col my-auto"
-        onClick={e => e.stopPropagation()}
-      >
-        {/* Modal Top Decoration Header */}
-        <div className="relative bg-gradient-to-r from-red-800 via-red-700 to-amber-700 text-white p-6 pb-7">
-          <button
-            type="button"
-            onClick={closeAuthModal}
-            className="absolute top-4 right-4 w-9 h-9 rounded-full bg-black/20 hover:bg-black/40 text-white flex items-center justify-center transition-colors"
-            aria-label="Tutup"
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col selection:bg-red-500 selection:text-white font-sans">
+      
+      {/* Top Navbar */}
+      <header className="sticky top-0 z-30 bg-slate-900/95 backdrop-blur-md border-b border-slate-800 text-white py-3 px-4 sm:px-8">
+        <div className="max-w-6xl mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={handleClose}
+              className="px-3.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-slate-200 hover:text-white transition-all text-xs font-bold flex items-center gap-2"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Kembali ke Beranda</span>
+            </button>
+            <div className="h-5 w-px bg-slate-800 hidden sm:block"></div>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-black uppercase tracking-widest text-amber-400 bg-amber-400/10 px-2.5 py-0.5 rounded border border-amber-400/20">
+                Portal Akun Resmi
+              </span>
+              <span className="text-xs text-slate-400 hidden md:inline">LBB Mu'allimin Muhammadiyah Yogyakarta 2026</span>
+            </div>
+          </div>
+
+          <a
+            href={`https://wa.me/${CONTACT.WHATSAPP}?text=Halo%20Panitia%20LBB%20Muallimin%202026,%20saya%20membutuhkan%20bantuan%20akses%20akun.`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs text-slate-300 hover:text-yellow-400 font-bold transition-colors hidden sm:flex items-center gap-1.5"
           >
-            <X className="w-5 h-5" />
-          </button>
-
-          <div className="flex items-center gap-2 text-yellow-300 text-xs font-bold uppercase tracking-wider mb-1">
-            <Sparkles className="w-4 h-4" />
-            <span>Sistem Masuk Terpadu</span>
-          </div>
-
-          <h2 className="text-2xl font-black tracking-tight text-white">
-            {activeTab === 'login' ? 'Masuk ke Portal LBB' : 'Daftar Akun Baru'}
-          </h2>
-          <p className="text-red-100 text-xs mt-1">
-            Lomba Baris-Berbaris Mu'allimin 2026 tingkat SD & SMP se-DIY
-          </p>
-
-          {/* Tab Navigation Switch */}
-          <div className="flex gap-2 mt-4 bg-black/25 p-1 rounded-2xl backdrop-blur-md">
-            <button
-              type="button"
-              onClick={() => {
-                setActiveTab('login');
-                setShowGoogleChooser(false);
-              }}
-              className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
-                activeTab === 'login'
-                  ? 'bg-white text-slate-900 shadow-md'
-                  : 'text-white/80 hover:text-white hover:bg-white/10'
-              }`}
-            >
-              <LogIn className="w-3.5 h-3.5" />
-              <span>Masuk</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setActiveTab('register');
-                setShowGoogleChooser(false);
-              }}
-              className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
-                activeTab === 'register'
-                  ? 'bg-white text-slate-900 shadow-md'
-                  : 'text-white/80 hover:text-white hover:bg-white/10'
-              }`}
-            >
-              <UserPlus className="w-3.5 h-3.5" />
-              <span>Daftar Akun</span>
-            </button>
-          </div>
+            <span>Bantuan Panitia</span>
+            <ExternalLink className="w-3 h-3" />
+          </a>
         </div>
+      </header>
 
-        {/* Modal Body */}
-        <div className="p-6 overflow-y-auto max-h-[75vh]">
-          {/* GOOGLE SIGN IN BUTTON */}
-          {!showGoogleChooser ? (
-            <div>
+      {/* Main Container */}
+      <main className="flex-1 max-w-6xl w-full mx-auto p-4 sm:p-8 flex items-center justify-center">
+        <div className="w-full grid lg:grid-cols-12 rounded-3xl overflow-hidden shadow-2xl border border-slate-800 bg-slate-900">
+          
+          {/* Left Column: Official Branding & Information */}
+          <div className="lg:col-span-5 bg-gradient-to-br from-red-950 via-slate-950 to-slate-950 p-6 sm:p-10 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-slate-800 relative overflow-hidden">
+            <div className="absolute top-0 right-0 -translate-y-12 translate-x-12 w-64 h-64 bg-red-600/15 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div className="relative z-10 space-y-6">
+              <div className="flex items-center gap-3.5">
+                <img
+                  src={logoImg}
+                  alt="Logo Tonti Mu'allimin"
+                  className="h-14 w-auto filter drop-shadow-md"
+                  width="56"
+                  height="56"
+                  decoding="async"
+                />
+                <div>
+                  <span className="text-[11px] font-black uppercase tracking-widest text-yellow-400 block">
+                    Website Resmi
+                  </span>
+                  <h2 className="font-black text-xl text-white tracking-tight leading-none mt-0.5">
+                    LBB Mu'allimin <span className="text-yellow-400">2026</span>
+                  </h2>
+                </div>
+              </div>
+
+              <div className="space-y-2 pt-2">
+                <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight uppercase italic leading-tight">
+                  Portal Calon Peserta & Panitia
+                </h1>
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  Akses portal resmi bagi kontingen sekolah yang pendaftarannya telah <strong>disetujui (di-ACC) oleh Admin</strong>, serta panitia sekretariat dan dewan juri.
+                </p>
+              </div>
+
+              {/* Event Key Facts */}
+              <div className="space-y-3 pt-4 border-t border-white/10 text-xs">
+                <div className="flex items-start gap-3 text-slate-300">
+                  <div className="w-6 h-6 rounded-lg bg-red-900/50 border border-red-500/30 flex items-center justify-center shrink-0 mt-0.5 text-yellow-400">
+                    <Award className="w-3.5 h-3.5" />
+                  </div>
+                  <div>
+                    <strong className="text-white block font-bold">Tingkat SD/MI & SMP/MTs</strong>
+                    <span className="text-slate-400 text-[11px]">Se-Daerah Istimewa Yogyakarta (DIY)</span>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3 text-slate-300">
+                  <div className="w-6 h-6 rounded-lg bg-red-900/50 border border-red-500/30 flex items-center justify-center shrink-0 mt-0.5 text-yellow-400">
+                    <School className="w-3.5 h-3.5" />
+                  </div>
+                  <div>
+                    <strong className="text-white block font-bold">Kampus Terpadu Mu'allimin</strong>
+                    <span className="text-slate-400 text-[11px]">Sedayu, Bantul, D.I. Yogyakarta</span>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3 text-slate-300">
+                  <div className="w-6 h-6 rounded-lg bg-red-900/50 border border-red-500/30 flex items-center justify-center shrink-0 mt-0.5 text-yellow-400">
+                    <Shield className="w-3.5 h-3.5" />
+                  </div>
+                  <div>
+                    <strong className="text-white block font-bold">Verifikasi Berkas Resmi</strong>
+                    <span className="text-slate-400 text-[11px]">Hanya pendaftar yang telah di-ACC dapat mengakses dasbor peserta</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="relative z-10 pt-8 border-t border-white/10 mt-6 text-[11px] text-slate-500">
+              <p>© {SITE.YEAR} Madrasah Mu'allimin Muhammadiyah Yogyakarta</p>
+            </div>
+          </div>
+
+          {/* Right Column: Authentication Form */}
+          <div className="lg:col-span-7 bg-white text-slate-900 p-6 sm:p-10 flex flex-col justify-center">
+            
+            <div className="mb-6">
+              <h2 className="text-2xl font-black text-slate-900 uppercase italic">
+                Masuk ke Portal Resmi
+              </h2>
+              <p className="text-xs text-slate-500 mt-1">
+                Gunakan email aktif yang Anda daftarkan pada formulir pendaftaran lomba.
+              </p>
+            </div>
+
+            {/* Error Message Banners */}
+            {loginError && (
+              <div className={`p-4 rounded-2xl border mb-6 text-xs leading-relaxed animate-shake ${
+                errorType === 'pending_approval'
+                  ? 'bg-amber-50 border-amber-300 text-amber-900'
+                  : 'bg-red-50 border-red-200 text-red-700'
+              }`}>
+                <div className="flex items-start gap-3">
+                  {errorType === 'pending_approval' ? (
+                    <Clock className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+                  ) : (
+                    <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+                  )}
+                  <div className="space-y-1">
+                    <span className="font-bold block">
+                      {errorType === 'pending_approval' ? 'Pendaftaran Masih Dalam Antrean Verifikasi' : 'Gagal Masuk Portal'}
+                    </span>
+                    <p>{loginError}</p>
+                    {errorType === 'not_registered' && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          handleClose();
+                          setActiveView('register');
+                        }}
+                        className="mt-2 text-xs font-black text-red-800 underline block"
+                      >
+                        Buka Formulir Pendaftaran Lomba Sekarang →
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Google Sign-In */}
+            <div className="mb-6">
               <button
                 type="button"
-                onClick={() => setShowGoogleChooser(true)}
-                className="w-full py-3 px-4 bg-white hover:bg-slate-50 text-slate-700 font-bold text-sm rounded-2xl border-2 border-slate-200 hover:border-slate-300 shadow-sm transition-all flex items-center justify-center gap-3 active:scale-[0.98] group"
+                onClick={handleGoogleLogin}
+                className="w-full py-3.5 px-4 bg-white hover:bg-slate-50 text-slate-700 font-bold text-sm rounded-2xl border-2 border-slate-200 hover:border-slate-300 shadow-xs transition-all flex items-center justify-center gap-3 active:scale-[0.99]"
               >
-                {/* Official Google Icon SVG */}
                 <svg className="w-5 h-5" viewBox="0 0 24 24">
                   <path
                     fill="#4285F4"
-                    d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.64v3.03h3.88c2.27-2.09 3.665-5.17 3.665-9.11z"
+                    d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"
                   />
                   <path
                     fill="#34A853"
-                    d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.03c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.13C3.26 21.36 7.33 24 12 24z"
+                    d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"
                   />
                   <path
                     fill="#FBBC05"
-                    d="M5.28 14.29c-.25-.72-.38-1.49-.38-2.29s.13-1.57.38-2.29V6.58H1.25C.45 8.18 0 9.98 0 12s.45 3.82 1.25 5.42l4.03-3.13z"
+                    d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.98 0 12s.45 3.82 1.25 5.42l4.03-3.15z"
                   />
                   <path
                     fill="#EA4335"
-                    d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.13c.95-2.83 3.6-4.96 6.72-4.96z"
+                    d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"
                   />
                 </svg>
                 <span>Lanjutkan dengan Akun Google</span>
-                <span className="text-[11px] bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-semibold ml-auto group-hover:bg-red-200">
-                  Role Otomatis
-                </span>
               </button>
 
-              <div className="relative my-5">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-slate-200"></div>
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-white px-3 text-slate-400 font-semibold tracking-wider">
-                    atau dengan email & sandi
-                  </span>
-                </div>
+              <div className="relative flex py-5 items-center">
+                <div className="flex-grow border-t border-slate-200"></div>
+                <span className="flex-shrink mx-4 text-slate-400 text-xs font-semibold uppercase tracking-wider">
+                  atau email terdaftar
+                </span>
+                <div className="flex-grow border-t border-slate-200"></div>
               </div>
             </div>
-          ) : (
-            /* Interactive Google Account Chooser Simulation */
-            <div className="mb-6 p-4 rounded-2xl bg-slate-50 border border-slate-200 animate-in fade-in zoom-in-95 duration-150">
-              <div className="flex items-center justify-between mb-3 pb-2 border-b border-slate-200">
-                <div className="flex items-center gap-2">
-                  <svg className="w-4 h-4" viewBox="0 0 24 24">
-                    <path
-                      fill="#4285F4"
-                      d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.64v3.03h3.88c2.27-2.09 3.665-5.17 3.665-9.11z"
-                    />
-                    <path
-                      fill="#34A853"
-                      d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.03c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.13C3.26 21.36 7.33 24 12 24z"
-                    />
-                    <path
-                      fill="#FBBC05"
-                      d="M5.28 14.29c-.25-.72-.38-1.49-.38-2.29s.13-1.57.38-2.29V6.58H1.25C.45 8.18 0 9.98 0 12s.45 3.82 1.25 5.42l4.03-3.13z"
-                    />
-                    <path
-                      fill="#EA4335"
-                      d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.13c.95-2.83 3.6-4.96 6.72-4.96z"
-                    />
-                  </svg>
-                  <span className="text-xs font-extrabold text-slate-800">
-                    Pilih Akun Google (Demo Role)
-                  </span>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setShowGoogleChooser(false)}
-                  className="text-xs text-slate-500 hover:text-slate-800 font-semibold"
-                >
-                  Kembali
-                </button>
-              </div>
 
-              <div className="space-y-2 mb-3">
-                {users.slice(0, 5).map(u => {
-                  let roleColor = 'bg-blue-100 text-blue-700 border-blue-200';
-                  let icon = <Users className="w-3.5 h-3.5" />;
-                  if (u.role === 'admin') {
-                    roleColor = 'bg-indigo-100 text-indigo-700 border-indigo-200';
-                    icon = <Shield className="w-3.5 h-3.5" />;
-                  } else if (u.role === 'juri') {
-                    roleColor = 'bg-emerald-100 text-emerald-700 border-emerald-200';
-                    icon = <Award className="w-3.5 h-3.5" />;
-                  } else if (u.role === 'superadmin') {
-                    roleColor = 'bg-rose-100 text-rose-700 border-rose-200';
-                    icon = <Crown className="w-3.5 h-3.5" />;
-                  }
-
-                  return (
-                    <button
-                      key={u.id}
-                      type="button"
-                      onClick={() => handleSelectGoogleAccount(u)}
-                      className="w-full flex items-center justify-between p-2.5 bg-white hover:bg-slate-100/80 rounded-xl border border-slate-200 text-left transition-all hover:shadow-sm group"
-                    >
-                      <div className="flex items-center gap-2.5 min-w-0">
-                        <img
-                          src={u.avatar}
-                          alt={u.name}
-                          className="w-8 h-8 rounded-full border border-slate-200 shrink-0"
-                        />
-                        <div className="min-w-0">
-                          <p className="text-xs font-bold text-slate-900 truncate">
-                            {u.name}
-                          </p>
-                          <p className="text-[11px] text-slate-500 truncate">
-                            {u.email}
-                          </p>
-                        </div>
-                      </div>
-                      <span
-                        className={`text-[10px] font-bold px-2 py-0.5 rounded-full border flex items-center gap-1 shrink-0 ml-2 ${roleColor}`}
-                      >
-                        {icon}
-                        <span>{u.roleLabel || u.role.toUpperCase()}</span>
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* Custom Google Email Input */}
-              <form onSubmit={handleCustomGoogleSubmit} className="pt-2 border-t border-slate-200">
-                <p className="text-[11px] text-slate-500 mb-1.5 font-medium">
-                  Atau login dengan akun Google kustom:
-                </p>
-                <div className="flex gap-1.5">
-                  <input
-                    type="email"
-                    required
-                    placeholder="nama@gmail.com"
-                    value={customGoogleEmail}
-                    onChange={e => setCustomGoogleEmail(e.target.value)}
-                    className="flex-1 px-3 py-1.5 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-red-500"
-                  />
-                  <button
-                    type="submit"
-                    className="px-3 py-1.5 bg-slate-900 hover:bg-black text-white text-xs font-bold rounded-xl"
-                  >
-                    Masuk
-                  </button>
-                </div>
-              </form>
-            </div>
-          )}
-
-          {/* TAB 1: FORM MASUK (LOGIN) */}
-          {activeTab === 'login' && (
+            {/* FORM MASUK (LOGIN) */}
             <form onSubmit={handleTraditionalLogin} className="space-y-4">
-              {loginError && (
-                <div className="p-3 bg-red-50 border border-red-200 rounded-xl flex items-center gap-2 text-xs text-red-700 font-semibold">
-                  <AlertCircle className="w-4 h-4 shrink-0" />
-                  <span>{loginError}</span>
-                </div>
-              )}
-
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
-                  Alamat Email Terdaftar
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+                  Alamat Email Pendaftaran
                 </label>
                 <div className="relative">
-                  <Mail className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+                  <Mail className="w-5 h-5 text-slate-400 absolute left-3.5 top-3.5" />
                   <input
                     type="email"
                     required
+                    autoFocus
                     value={loginEmail}
                     onChange={e => setLoginEmail(e.target.value)}
-                    placeholder="misal: admin@lbbmuallimin.com atau sekolah@gmail.com"
-                    className="w-full pl-9 pr-4 py-2.5 text-xs bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white transition-colors"
+                    placeholder="email.pendaftar@gmail.com"
+                    className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-red-600 focus:bg-white transition-all"
                   />
                 </div>
-                <p className="text-[11px] text-slate-400 mt-1">
-                  Sistem otomatis menyesuaikan peran berdasarkan email Anda di database.
-                </p>
               </div>
 
               <div>
-                <div className="flex justify-between items-center mb-1">
-                  <label className="block text-xs font-bold text-slate-700">
-                    Kata Sandi
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+                    Kata Sandi Akun
                   </label>
-                  <span className="text-[11px] text-slate-400">Demo: bebas isi apa saja</span>
+                  <button
+                    type="button"
+                    onClick={() => alert('Silakan hubungi Sekretariat Panitia via WhatsApp jika Anda mengalami kendala sandi akun.')}
+                    className="text-xs text-red-700 hover:text-red-800 font-bold hover:underline"
+                  >
+                    Bantuan Sandi?
+                  </button>
                 </div>
                 <div className="relative">
-                  <Lock className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+                  <Lock className="w-5 h-5 text-slate-400 absolute left-3.5 top-3.5" />
                   <input
-                    type="password"
+                    type={showPassword ? 'text' : 'password'}
+                    required
                     value={loginPassword}
                     onChange={e => setLoginPassword(e.target.value)}
-                    placeholder="••••••••"
-                    className="w-full pl-9 pr-4 py-2.5 text-xs bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white transition-colors"
+                    placeholder="Masukkan kata sandi..."
+                    className="w-full pl-11 pr-11 py-3 bg-slate-50 border border-slate-300 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-red-600 focus:bg-white transition-all"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3.5 top-3.5 text-slate-400 hover:text-slate-600 transition-colors"
+                    title={showPassword ? 'Sembunyikan sandi' : 'Lihat sandi'}
+                  >
+                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  </button>
                 </div>
               </div>
 
-              {/* Quick Demo Fill Buttons */}
-              <div className="p-3 bg-slate-50 rounded-2xl border border-slate-200">
-                <p className="text-[11px] font-bold text-slate-600 mb-2">
-                  ⚡ Isi Cepat Akun Demo:
-                </p>
-                <div className="flex flex-wrap gap-1.5">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setLoginEmail('admin@lbbmuallimin.com');
-                      setLoginPassword('admin2026');
-                    }}
-                    className="px-2 py-1 text-[10px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200 rounded-lg hover:bg-indigo-100"
-                  >
-                    🛡️ Admin Sekretariat
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setLoginEmail('juri@lbbmuallimin.com');
-                      setLoginPassword('juri2026');
-                    }}
-                    className="px-2 py-1 text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg hover:bg-emerald-100"
-                  >
-                    ⚖️ Dewan Juri
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setLoginEmail('ketua@lbbmuallimin.com');
-                      setLoginPassword('super2026');
-                    }}
-                    className="px-2 py-1 text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200 rounded-lg hover:bg-rose-100"
-                  >
-                    👑 Superadmin
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setLoginEmail('smpn1yk.tonti@gmail.com');
-                      setLoginPassword('smpn1yk');
-                    }}
-                    className="px-2 py-1 text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200 rounded-lg hover:bg-amber-100"
-                  >
-                    🚩 Official Peserta (SMPN 1)
-                  </button>
-                </div>
+              <div className="flex items-center justify-between pt-1 text-xs">
+                <label className="flex items-center gap-2 cursor-pointer text-slate-600">
+                  <input
+                    type="checkbox"
+                    checked={rememberMe}
+                    onChange={e => setRememberMe(e.target.checked)}
+                    className="rounded border-slate-300 text-red-600 focus:ring-red-500"
+                  />
+                  <span>Ingat sesi saya</span>
+                </label>
               </div>
 
               <button
                 type="submit"
-                className="w-full py-3 bg-gradient-to-r from-red-700 to-red-800 hover:from-red-800 hover:to-red-900 text-white font-black text-xs uppercase tracking-wider rounded-2xl shadow-lg shadow-red-700/30 transition-all flex items-center justify-center gap-2 active:scale-[0.98]"
+                className="w-full py-3.5 bg-red-700 hover:bg-red-600 text-white font-black text-xs uppercase tracking-wider rounded-xl shadow-lg shadow-red-950/20 transition-all flex items-center justify-center gap-2 mt-2"
               >
-                <span>Masuk Sekarang</span>
-                <ArrowRight className="w-4 h-4" />
+                <LogIn className="w-4 h-4" />
+                <span>Masuk ke Portal Peserta</span>
               </button>
             </form>
-          )}
 
-          {/* TAB 2: FORM DAFTAR (REGISTER) */}
-          {activeTab === 'register' && (
-            <form onSubmit={handleTraditionalRegister} className="space-y-3.5">
-              {regError && (
-                <div className="p-3 bg-red-50 border border-red-200 rounded-xl flex items-center gap-2 text-xs text-red-700 font-semibold">
-                  <AlertCircle className="w-4 h-4 shrink-0" />
-                  <span>{regError}</span>
-                </div>
-              )}
-
-              {regSuccess && (
-                <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center gap-2 text-xs text-emerald-700 font-semibold">
-                  <CheckCircle2 className="w-4 h-4 shrink-0" />
-                  <span>{regSuccess}</span>
-                </div>
-              )}
-
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
-                  Nama Lengkap / Nama Pembina *
-                </label>
-                <div className="relative">
-                  <User className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
-                  <input
-                    type="text"
-                    required
-                    value={regName}
-                    onChange={e => setRegName(e.target.value)}
-                    placeholder="misal: Kak Ahmad Fauzi, S.Pd."
-                    className="w-full pl-9 pr-4 py-2.5 text-xs bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
-                  Asal Sekolah / Satuan
-                </label>
-                <div className="relative">
-                  <School className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
-                  <input
-                    type="text"
-                    value={regSchool}
-                    onChange={e => setRegSchool(e.target.value)}
-                    placeholder="misal: SMP Negeri 5 Yogyakarta"
-                    className="w-full pl-9 pr-4 py-2.5 text-xs bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
-                  Alamat Email Akun *
-                </label>
-                <div className="relative">
-                  <Mail className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
-                  <input
-                    type="email"
-                    required
-                    value={regEmail}
-                    onChange={e => setRegEmail(e.target.value)}
-                    placeholder="misal: pembina.smp5@gmail.com"
-                    className="w-full pl-9 pr-4 py-2.5 text-xs bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
-                  Kata Sandi
-                </label>
-                <div className="relative">
-                  <Lock className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
-                  <input
-                    type="password"
-                    value={regPassword}
-                    onChange={e => setRegPassword(e.target.value)}
-                    placeholder="Minimal 6 karakter"
-                    className="w-full pl-9 pr-4 py-2.5 text-xs bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:bg-white"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
-                  Daftar Sebagai (Peran Akun)
-                </label>
-                <select
-                  value={regRole}
-                  onChange={e => setRegRole(e.target.value)}
-                  className="w-full px-3 py-2.5 text-xs bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 font-semibold"
-                >
-                  <option value="peserta">🚩 Official Tim Peserta (SD / SMP)</option>
-                  <option value="admin">🛡️ Panitia Pelaksana (Sekretariat)</option>
-                  <option value="juri">⚖️ Dewan Juri Lapangan</option>
-                  <option value="superadmin">👑 Pengarah / Superadmin</option>
-                </select>
-              </div>
-
+            {/* Registration Banner for Unregistered Users */}
+            <div className="mt-8 p-5 bg-slate-50 border border-slate-200 rounded-2xl text-center space-y-2">
+              <h3 className="text-xs font-black uppercase tracking-wider text-slate-800">
+                Belum Mendaftarkan Peleton Sekolah Anda?
+              </h3>
+              <p className="text-[11px] text-slate-500 max-w-sm mx-auto leading-relaxed">
+                Akun calon peserta dibuat secara resmi melalui pengisian 12 data dan berkas formulir pendaftaran lomba.
+              </p>
               <button
-                type="submit"
-                className="w-full py-3 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-slate-950 font-black text-xs uppercase tracking-wider rounded-2xl shadow-lg shadow-yellow-500/30 transition-all flex items-center justify-center gap-2 active:scale-[0.98] mt-2"
+                type="button"
+                onClick={() => {
+                  handleClose();
+                  setActiveView('register');
+                }}
+                className="mt-2 inline-flex items-center gap-1.5 px-5 py-2.5 bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl shadow-sm hover:shadow-md transition-all active:scale-95"
               >
-                <span>Daftar Akun Baru</span>
+                <span>Daftar Lomba Sekarang</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
-            </form>
-          )}
+            </div>
 
-          {/* Database Role Info Card */}
-          <div className="mt-5 p-3 rounded-2xl bg-amber-50/60 border border-amber-200/80 text-[11px] text-amber-900 space-y-1">
-            <p className="font-bold flex items-center gap-1.5 text-amber-950">
-              <CheckCircle2 className="w-3.5 h-3.5 text-amber-700" />
-              Integrasi Peran Otomatis:
-            </p>
-            <p className="text-amber-800 leading-relaxed">
-              Email yang login akan dicocokkan ke database: jika email admin ➜ masuk sebagai <strong>Admin</strong>, jika juri ➜ masuk sebagai <strong>Dewan Juri</strong>, jika ketua ➜ <strong>Superadmin</strong>, dan jika peserta/sekolah ➜ diarahkan ke <strong>Portal Peserta</strong>.
-            </p>
           </div>
+
         </div>
-      </div>
+      </main>
+
+      {/* Footer */}
+      <footer className="border-t border-slate-900 bg-slate-950 py-4 px-6 text-center text-xs text-slate-500">
+        <p>© {SITE.YEAR} Panitia LBB Mu'allimin • Sistem Portal Resmi Terpadu</p>
+      </footer>
+
     </div>
   );
 }

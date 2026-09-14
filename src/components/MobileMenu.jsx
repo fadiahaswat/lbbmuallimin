@@ -144,54 +144,30 @@ export default function MobileMenu({ isOpen, onClose }) {
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                type="button"
-                onClick={() => {
-                  onClose();
-                  openAuthModal('login');
-                }}
-                className="py-3 bg-white/15 hover:bg-white/25 text-white font-bold rounded-xl text-center border border-white/20 transition-colors text-xs uppercase tracking-wider flex items-center justify-center gap-1.5"
-              >
-                <LogIn className="w-3.5 h-3.5 text-yellow-400" />
-                <span>Masuk</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => {
-                  onClose();
-                  openAuthModal('register');
-                }}
-                className="py-3 bg-gradient-to-r from-yellow-400 to-amber-500 text-slate-950 font-black rounded-xl text-center shadow-md active:scale-95 transition-transform text-xs uppercase tracking-wider flex items-center justify-center gap-1"
-              >
-                <span>Daftar</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          )}
-
-          <div className="grid grid-cols-2 gap-2">
             <button
               type="button"
               onClick={() => {
                 onClose();
-                openModal('statusCheck');
+                openAuthModal('login');
               }}
-              className="py-2.5 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl text-center border border-white/10 transition-colors text-xs"
+              className="w-full py-3.5 bg-gradient-to-r from-yellow-400 to-amber-500 text-slate-950 font-black rounded-xl text-center shadow-md active:scale-95 transition-transform text-xs uppercase tracking-wider flex items-center justify-center gap-2"
             >
-              Cek Status Tim
+              <LogIn className="w-4 h-4 text-slate-950" />
+              <span>Masuk / Daftar</span>
             </button>
+          )}
 
+          <div>
             <button
               type="button"
               onClick={() => {
                 onClose();
                 setActiveView('announcement');
               }}
-              className="py-2.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 font-semibold rounded-xl text-center border border-amber-500/20 transition-colors text-xs"
+              className="w-full py-2.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 font-semibold rounded-xl text-center border border-amber-500/20 transition-colors text-xs flex items-center justify-center gap-2"
             >
-              Papan Juara
+              <Trophy className="w-4 h-4 text-yellow-400" />
+              <span>Papan Juara & Pengumuman</span>
             </button>
           </div>
 

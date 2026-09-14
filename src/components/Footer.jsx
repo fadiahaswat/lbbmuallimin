@@ -15,7 +15,7 @@ export default function Footer() {
   return (
     <footer className="bg-slate-950 text-slate-400 pt-20 pb-24 lg:pb-10 border-t border-slate-900 relative overflow-hidden font-sans">
       <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-red-900 via-lbb-gold to-red-900"></div>
-      <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] pointer-events-none"></div>
+      <div className="absolute inset-0 opacity-10 bg-carbon-pattern pointer-events-none"></div>
       <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-red-900/10 rounded-full blur-3xl pointer-events-none"></div>
 
       <div className="container mx-auto px-6 relative z-10">
@@ -27,6 +27,10 @@ export default function Footer() {
                 src={logoImg}
                 alt="LBB Logo"
                 className="h-12 w-auto filter drop-shadow-lg opacity-90 group-hover:opacity-100 transition-opacity"
+                width="48"
+                height="48"
+                loading="lazy"
+                decoding="async"
               />
               <div className="flex flex-col">
                 <span className="font-black text-2xl text-white leading-none tracking-tight">

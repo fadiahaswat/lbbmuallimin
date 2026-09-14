@@ -23,6 +23,7 @@ export default function Hero() {
           loop
           muted
           playsInline
+          preload="none"
           className="w-full h-full object-cover opacity-25 mix-blend-screen filter grayscale-[0.2]"
         >
           <source src={HERO.VIDEO_URL} type="video/mp4" />

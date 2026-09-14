@@ -125,7 +125,7 @@ export default function FaqContact() {
 
   return (
     <section id="contact" className="relative py-24 lg:py-32 bg-slate-950 overflow-hidden text-white border-t border-slate-900 font-sans">
-      <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] mix-blend-overlay"></div>
+      <div className="absolute inset-0 opacity-10 bg-carbon-pattern pointer-events-none"></div>
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-red-900/10 rounded-full blur-[120px] pointer-events-none"></div>
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-yellow-600/10 rounded-full blur-[120px] pointer-events-none"></div>
 

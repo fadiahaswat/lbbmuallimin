@@ -45,16 +45,16 @@ export default function ParticipantDashboard() {
         <div className="w-16 h-16 bg-red-100 text-red-700 rounded-3xl flex items-center justify-center mb-4 shadow-sm">
           <Users className="w-8 h-8" />
         </div>
-        <h3 className="text-2xl font-black text-slate-900 uppercase italic">Belum Ada Sesi Tim</h3>
+        <h3 className="text-2xl font-black text-slate-900 uppercase italic">Belum Ada Peleton Terdaftar</h3>
         <p className="text-slate-500 text-sm max-w-md mt-1 mb-6">
-          Silakan lakukan pencarian status pendaftaran atau masuk dengan Kode Registrasi Peleton Anda.
+          Akun Anda belum memiliki peleton yang didaftarkan. Daftarkan peleton sekolah Anda sekarang untuk mengikuti perlombaan.
         </p>
         <div className="flex gap-3">
           <button
-            onClick={() => openModal('statusCheck')}
+            onClick={() => setActiveView('register')}
             className="px-6 py-2.5 bg-red-700 hover:bg-red-600 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-all shadow-md"
           >
-            Cek Status Pendaftaran
+            Daftar Peleton Sekarang
           </button>
           <button
             onClick={() => setActiveView('landing')}

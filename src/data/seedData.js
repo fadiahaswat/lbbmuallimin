@@ -7,7 +7,7 @@
 export const INITIAL_SETTINGS = {
   registrationOpen: true,
   scoringOpen: true,
-  announcementPublished: true, // Hasil sudah dapat dilihat publik untuk demo awal
+  announcementPublished: true, // Publikasi pengumuman hasil kejuaraan
   activeAcademicYear: '2026',
   quotaSD: 18,
   quotaSMP: 18,

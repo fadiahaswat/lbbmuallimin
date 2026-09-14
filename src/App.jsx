@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { SITE, NAVBAR } from './config.js';
 import { CompetitionProvider, useCompetition } from './context/CompetitionContext.jsx';
-import RoleBar from './components/layout/RoleBar.jsx';
 import Navbar from './components/Navbar.jsx';
 import MobileMenu from './components/MobileMenu.jsx';
 import Hero from './components/Hero.jsx';
@@ -18,19 +17,31 @@ import Footer from './components/Footer.jsx';
 import FabWhatsApp from './components/FabWhatsApp.jsx';
 import StickyCta from './components/StickyCta.jsx';
 
-// Portal & Management Systems
-import RegistrationWizard from './components/portal/RegistrationWizard.jsx';
-import RegistrationStatusModal from './components/portal/RegistrationStatusModal.jsx';
-import ParticipantDashboard from './components/portal/ParticipantDashboard.jsx';
-import AdminDashboard from './components/admin/AdminDashboard.jsx';
-import JuryScoringApp from './components/scoring/JuryScoringApp.jsx';
-import AnnouncementPortal from './components/announcement/AnnouncementPortal.jsx';
-import SuperadminPanel from './components/superadmin/SuperadminPanel.jsx';
-import DocumentViewerModal from './components/documents/DocumentViewerModal.jsx';
-import AuthModal from './components/auth/AuthModal.jsx';
+// Dedicated Full Pages & Views (Lazy loaded for optimal initial bundle performance)
+const RegistrationWizard = React.lazy(() => import('./components/portal/RegistrationWizard.jsx'));
+const RegistrationStatusModal = React.lazy(() => import('./components/portal/RegistrationStatusModal.jsx'));
+const DocumentViewerModal = React.lazy(() => import('./components/documents/DocumentViewerModal.jsx'));
+const AuthModal = React.lazy(() => import('./components/auth/AuthModal.jsx'));
+const PinAuthModal = React.lazy(() => import('./components/auth/PinAuthModal.jsx'));
+
+// Portals & Backoffice Dashboards (Lazy loaded on demand)
+const ParticipantDashboard = React.lazy(() => import('./components/portal/ParticipantDashboard.jsx'));
+const AdminDashboard = React.lazy(() => import('./components/admin/AdminDashboard.jsx'));
+const JuryScoringApp = React.lazy(() => import('./components/scoring/JuryScoringApp.jsx'));
+const AnnouncementPortal = React.lazy(() => import('./components/announcement/AnnouncementPortal.jsx'));
+const SuperadminPanel = React.lazy(() => import('./components/superadmin/SuperadminPanel.jsx'));
+
+function ViewLoader() {
+  return (
+    <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-6 text-center">
+      <div className="w-10 h-10 border-3 border-yellow-400/30 border-t-yellow-400 rounded-full animate-spin mb-4" />
+      <p className="text-slate-400 font-mono text-xs tracking-widest uppercase">Memuat Tampilan...</p>
+    </div>
+  );
+}
 
 function MainApp() {
-  const { activeView, activeModal, modalData, closeModal } = useCompetition();
+  const { activeView } = useCompetition();
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showStickyCta, setShowStickyCta] = useState(false);
@@ -43,25 +54,25 @@ function MainApp() {
       metaDesc.setAttribute('content', SITE.DESCRIPTION);
     }
 
+    let ticking = false;
     function handleScroll() {
-      if (window.scrollY > NAVBAR.STICKY_CTA_THRESHOLD) {
-        setShowStickyCta(true);
-      } else {
-        setShowStickyCta(false);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setShowStickyCta(window.scrollY > NAVBAR.STICKY_CTA_THRESHOLD);
+          ticking = false;
+        });
+        ticking = true;
       }
     }
 
-    window.addEventListener('scroll', handleScroll);
-    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    setShowStickyCta(window.scrollY > NAVBAR.STICKY_CTA_THRESHOLD);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   return (
     <div className="min-h-screen bg-white text-slate-900 selection:bg-red-200 font-sans">
-      {/* 1. Global Role Switcher Bar (Only in administrative / dedicated back-office views) */}
-      {activeView !== 'landing' && <RoleBar />}
-
-      {/* 2. Active View Routing */}
+      {/* 1. Public Landing Page */}
       {activeView === 'landing' && (
         <>
           <Navbar onOpenMobileMenu={() => setIsMobileMenuOpen(true)} />
@@ -86,38 +97,69 @@ function MainApp() {
         </>
       )}
 
-      {activeView === 'peserta_dashboard' && <ParticipantDashboard />}
-      {activeView === 'admin' && <AdminDashboard />}
-      {activeView === 'juri' && <JuryScoringApp />}
-      {activeView === 'superadmin' && <SuperadminPanel />}
-      {activeView === 'announcement' && <AnnouncementPortal />}
-
-      {/* 3. Global Modals */}
-      <RegistrationWizard
-        isOpen={activeModal === 'regWizard'}
-        onClose={closeModal}
-      />
-
-      <RegistrationStatusModal
-        isOpen={activeModal === 'statusCheck'}
-        onClose={closeModal}
-      />
-
-      <DocumentViewerModal
-        isOpen={activeModal === 'docViewer'}
-        onClose={closeModal}
-        data={modalData}
-      />
-
-      <AuthModal />
+      {/* 2. Secondary Full Pages & Backoffice (Lazy-Loaded in Suspense) */}
+      <React.Suspense fallback={<ViewLoader />}>
+        {activeView === 'register' && <RegistrationWizard />}
+        {activeView === 'status_check' && <RegistrationStatusModal />}
+        {activeView === 'document_viewer' && <DocumentViewerModal />}
+        {activeView === 'auth' && <AuthModal />}
+        {activeView === 'pin_auth' && <PinAuthModal />}
+        {activeView === 'peserta_dashboard' && <ParticipantDashboard />}
+        {activeView === 'admin' && <AdminDashboard />}
+        {activeView === 'juri' && <JuryScoringApp />}
+        {activeView === 'superadmin' && <SuperadminPanel />}
+        {activeView === 'announcement' && <AnnouncementPortal />}
+      </React.Suspense>
     </div>
   );
 }
 
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error('ErrorBoundary caught:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center p-6 text-center">
+          <div className="max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-6 space-y-4 shadow-2xl">
+            <div className="w-12 h-12 rounded-full bg-red-500/20 border border-red-500/30 text-red-400 flex items-center justify-center mx-auto font-black text-xl">
+              !
+            </div>
+            <h2 className="text-xl font-black text-white uppercase italic">Penyegaran Sistem</h2>
+            <p className="text-xs text-slate-400 leading-relaxed">
+              Sistem telah diperbarui. Silakan klik tombol di bawah untuk memuat ulang halaman secara bersih.
+            </p>
+            <button
+              onClick={() => window.location.reload()}
+              className="w-full py-3 bg-gradient-to-r from-yellow-400 to-amber-500 text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl shadow-md hover:shadow-lg transition-all active:scale-95"
+            >
+              Muat Ulang Halaman
+            </button>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 export default function App() {
   return (
-    <CompetitionProvider>
-      <MainApp />
-    </CompetitionProvider>
+    <ErrorBoundary>
+      <CompetitionProvider>
+        <MainApp />
+      </CompetitionProvider>
+    </ErrorBoundary>
   );
 }

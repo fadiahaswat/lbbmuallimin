@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import {
   INITIAL_TEAMS,
   INITIAL_SCORES,
@@ -41,14 +41,17 @@ export function CompetitionProvider({ children }) {
   });
 
   const [authModal, setAuthModal] = useState({ isOpen: false, tab: 'login' });
+  const [authTab, setAuthTab] = useState('login');
 
   // 1. Roles: 'publik' | 'peserta' | 'admin' | 'juri' | 'superadmin'
   const [role, setRole] = useState(() => {
     return localStorage.getItem(STORAGE_KEYS.ROLE) || 'publik';
   });
 
-  // 2. Active View: 'landing' | 'admin' | 'juri' | 'superadmin' | 'announcement' | 'peserta_dashboard'
+  // 2. Active View: 'landing' | 'register' | 'status_check' | 'document_viewer' | 'auth' | 'pin_auth' | 'admin' | 'juri' | 'superadmin' | 'announcement' | 'peserta_dashboard'
   const [activeView, setActiveView] = useState('landing');
+  const [previousView, setPreviousView] = useState('landing');
+  const [docViewerData, setDocViewerData] = useState(null);
 
   // 3. Teams data
   const [teams, setTeams] = useState(() => {
@@ -89,95 +92,240 @@ export function CompetitionProvider({ children }) {
   const [activeModal, setActiveModal] = useState(null); // 'regWizard' | 'statusCheck' | 'docViewer' | 'teamDetail' | 'pinModal'
   const [modalData, setModalData] = useState(null);
 
+// Helper for resilient localStorage access without crashing on QuotaExceededError
+function safeSetItem(key, value) {
+  try {
+    localStorage.setItem(key, value);
+  } catch (e) {
+    console.warn(`[CompetitionContext] Storage quota warning for key "${key}":`, e);
+    // If it's TEAMS, strip out oversized base64 data URLs to save critical metadata safely
+    if (key === STORAGE_KEYS.TEAMS) {
+      try {
+        const teamsData = JSON.parse(value);
+        const slimTeams = teamsData.map(team => {
+          if (!team.files) return team;
+          const slimFiles = {};
+          for (const [fKey, fVal] of Object.entries(team.files)) {
+            if (fVal && typeof fVal === 'object') {
+              const isLargeUrl = typeof fVal.url === 'string' && fVal.url.length > 50000;
+              const isLargeSig = typeof fVal.signatureUrl === 'string' && fVal.signatureUrl.length > 50000;
+              slimFiles[fKey] = {
+                ...fVal,
+                url: isLargeUrl ? '' : fVal.url,
+                signatureUrl: isLargeSig ? '' : fVal.signatureUrl,
+              };
+            } else {
+              slimFiles[fKey] = fVal;
+            }
+          }
+          return { ...team, files: slimFiles };
+        });
+        localStorage.setItem(key, JSON.stringify(slimTeams));
+      } catch (innerErr) {
+        console.error(`[CompetitionContext] Fallback storage save failed:`, innerErr);
+      }
+    }
+  }
+}
+
   // Sync to localStorage
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEYS.ROLE, role);
+    safeSetItem(STORAGE_KEYS.ROLE, role);
   }, [role]);
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEYS.TEAMS, JSON.stringify(teams));
+    safeSetItem(STORAGE_KEYS.TEAMS, JSON.stringify(teams));
   }, [teams]);
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEYS.SCORES, JSON.stringify(scores));
+    safeSetItem(STORAGE_KEYS.SCORES, JSON.stringify(scores));
   }, [scores]);
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(settings));
+    safeSetItem(STORAGE_KEYS.SETTINGS, JSON.stringify(settings));
   }, [settings]);
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(users));
+    safeSetItem(STORAGE_KEYS.USERS, JSON.stringify(users));
   }, [users]);
 
   useEffect(() => {
     if (currentUser) {
-      localStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(currentUser));
+      safeSetItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(currentUser));
     } else {
-      localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
+      try {
+        localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
+      } catch (e) {
+        // ignore
+      }
     }
   }, [currentUser]);
 
+  useEffect(() => {
+    if (currentTeamId) {
+      safeSetItem(STORAGE_KEYS.CURRENT_TEAM_ID, currentTeamId);
+    } else {
+      try {
+        localStorage.removeItem(STORAGE_KEYS.CURRENT_TEAM_ID);
+      } catch (e) {
+        // ignore
+      }
+    }
+  }, [currentTeamId]);
+
+  function navigateTo(targetView, data = null) {
+    setPreviousView(activeView);
+    if (data) {
+      setModalData(data);
+      if (targetView === 'document_viewer') {
+        setDocViewerData(data);
+      }
+    }
+    setActiveView(targetView);
+    try {
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    } catch {
+      window.scrollTo(0, 0);
+    }
+  }
+
+  function goBack() {
+    const fallback = previousView && previousView !== activeView ? previousView : 'landing';
+    setActiveView(fallback);
+    try {
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    } catch {
+      window.scrollTo(0, 0);
+    }
+  }
+
   function openAuthModal(tab = 'login') {
+    setAuthTab(tab);
     setAuthModal({ isOpen: true, tab });
+    navigateTo('auth');
   }
 
   function closeAuthModal() {
     setAuthModal({ isOpen: false, tab: 'login' });
+    goBack();
   }
 
   function loginUser(email, name = null) {
     const cleanEmail = email.trim().toLowerCase();
-    let user = users.find(u => u.email.toLowerCase() === cleanEmail);
 
-    if (!user) {
-      let detectedRole = 'peserta';
-      let detectedLabel = 'Official Peserta';
-      if (cleanEmail.includes('admin')) {
-        detectedRole = 'admin';
-        detectedLabel = 'Panitia Sekretariat';
-      } else if (cleanEmail.includes('juri')) {
-        detectedRole = 'juri';
-        detectedLabel = 'Dewan Juri';
-      } else if (cleanEmail.includes('ketua') || cleanEmail.includes('super')) {
-        detectedRole = 'superadmin';
-        detectedLabel = 'Ketua Panitia';
+    // 1. Cek kredensial admin / panitia / juri / superadmin
+    if (
+      cleanEmail.includes('admin') ||
+      cleanEmail.includes('juri') ||
+      cleanEmail.includes('ketua') ||
+      cleanEmail.includes('super')
+    ) {
+      let user = users.find(u => u.email.toLowerCase() === cleanEmail);
+      if (!user) {
+        let detectedRole = 'admin';
+        let detectedLabel = 'Panitia Sekretariat';
+        if (cleanEmail.includes('juri')) {
+          detectedRole = 'juri';
+          detectedLabel = 'Dewan Juri';
+        } else if (cleanEmail.includes('ketua') || cleanEmail.includes('super')) {
+          detectedRole = 'superadmin';
+          detectedLabel = 'Ketua Panitia';
+        }
+
+        user = {
+          id: `user-${Date.now()}`,
+          name: name || cleanEmail.split('@')[0].toUpperCase(),
+          email: cleanEmail,
+          role: detectedRole,
+          roleLabel: detectedLabel,
+          avatar: `https://api.dicebear.com/7.x/bottts/svg?seed=${cleanEmail}`,
+        };
+        setUsers(prev => [user, ...prev]);
       }
 
-      // Check if email matches existing registered team
-      const matchedTeam = teams.find(t => t.email.toLowerCase() === cleanEmail);
+      setCurrentUser(user);
+      setRole(user.role);
+      if (user.role === 'admin') setActiveView('admin');
+      else if (user.role === 'juri') setActiveView('juri');
+      else if (user.role === 'superadmin') setActiveView('superadmin');
+      closeAuthModal();
+      return { success: true, user };
+    }
 
-      user = {
-        id: `user-${Date.now()}`,
-        name: name || cleanEmail.split('@')[0].toUpperCase(),
+    // 2. Cek pendaftaran tim peserta berdasarkan email
+    const matchedTeam = teams.find(t => t.email && t.email.toLowerCase() === cleanEmail);
+    const existingUser = users.find(u => u.email.toLowerCase() === cleanEmail);
+
+    if (!matchedTeam && !existingUser) {
+      return {
+        success: false,
+        error: 'not_registered',
+        message: `Email "${cleanEmail}" belum terdaftar di pendaftaran lomba. Silakan daftarkan peleton sekolah Anda terlebih dahulu melalui menu Daftar Lomba.`
+      };
+    }
+
+    const team = matchedTeam || (existingUser?.teamId ? teams.find(t => t.id === existingUser.teamId) : null);
+
+    if (team) {
+      if (team.status === 'pending') {
+        return {
+          success: false,
+          error: 'pending_approval',
+          message: `Pendaftaran peleton ${team.schoolName} (${team.regCode}) masih dalam antrean verifikasi dan BELUM DI-ACC oleh Admin. Silakan tunggu persetujuan oleh panitia sekretariat.`
+        };
+      }
+      if (team.status === 'revision') {
+        return {
+          success: false,
+          error: 'revision',
+          message: `Pendaftaran peleton ${team.schoolName} memerlukan perbaikan berkas: "${team.revisionNote || 'Mohon lengkapi berkas'}". Hubungi panitia untuk informasi revisi.`
+        };
+      }
+      if (team.status === 'rejected') {
+        return {
+          success: false,
+          error: 'rejected',
+          message: `Pendaftaran peleton ${team.schoolName} ditolak oleh panitia. Silakan hubungi Sekretariat Panitia.`
+        };
+      }
+
+      // Status 'verified' -> Di-ACC oleh Admin!
+      const user = {
+        id: existingUser?.id || `user-${Date.now()}`,
+        name: team.officialName || team.coachName || existingUser?.name || team.schoolName,
         email: cleanEmail,
-        role: detectedRole,
-        roleLabel: detectedLabel,
-        teamId: matchedTeam ? matchedTeam.id : null,
-        avatar: `https://api.dicebear.com/7.x/bottts/svg?seed=${cleanEmail}`,
+        role: 'peserta',
+        roleLabel: 'Calon Peserta Resmi',
+        teamId: team.id,
+        schoolName: team.schoolName,
+        avatar: existingUser?.avatar || team.files?.schoolLogo?.url || `https://api.dicebear.com/7.x/bottts/svg?seed=${cleanEmail}`,
       };
 
-      setUsers(prev => [user, ...prev]);
-    }
-
-    setCurrentUser(user);
-    setRole(user.role);
-
-    if (user.role === 'admin') {
-      setActiveView('admin');
-    } else if (user.role === 'juri') {
-      setActiveView('juri');
-    } else if (user.role === 'superadmin') {
-      setActiveView('superadmin');
-    } else if (user.role === 'peserta') {
-      if (user.teamId) {
-        setCurrentTeamId(user.teamId);
+      if (!existingUser) {
+        setUsers(prev => [user, ...prev]);
       }
+      setCurrentUser(user);
+      setRole('peserta');
+      setCurrentTeamId(team.id);
       setActiveView('peserta_dashboard');
+      closeAuthModal();
+      return { success: true, user };
     }
 
-    closeAuthModal();
-    return user;
+    if (existingUser) {
+      setCurrentUser(existingUser);
+      setRole(existingUser.role);
+      if (existingUser.teamId) setCurrentTeamId(existingUser.teamId);
+      setActiveView(existingUser.role === 'peserta' ? 'peserta_dashboard' : 'landing');
+      closeAuthModal();
+      return { success: true, user: existingUser };
+    }
+
+    return {
+      success: false,
+      error: 'unknown',
+      message: 'Gagal melakukan otentikasi. Silakan periksa kembali email Anda.'
+    };
   }
 
   function registerUser(name, email, password, requestedRole = 'peserta', schoolName = '') {
@@ -278,7 +426,7 @@ export function CompetitionProvider({ children }) {
       if (currentTeamId) {
         switchRole('peserta');
       } else {
-        openModal('statusCheck');
+        navigateTo('peserta_dashboard');
       }
       return;
     }
@@ -296,29 +444,31 @@ export function CompetitionProvider({ children }) {
       return;
     }
 
-    // Open PIN prompt
+    // Open PIN prompt as dedicated page
     setPinPrompt({
       isOpen: true,
       targetRole,
       pin: '',
       error: '',
     });
+    navigateTo('pin_auth');
   }
 
   function closePinPrompt() {
     setPinPrompt({ isOpen: false, targetRole: null, pin: '', error: '' });
+    goBack();
   }
 
   function submitPinPrompt(enteredPin) {
     const target = pinPrompt.targetRole;
     const success = switchRole(target, enteredPin);
     if (success) {
-      closePinPrompt();
+      setPinPrompt({ isOpen: false, targetRole: null, pin: '', error: '' });
       return true;
     } else {
       setPinPrompt(prev => ({
         ...prev,
-        error: `PIN salah! Petunjuk demo: admin='admin2026', juri='juri2026', super='super2026'`,
+        error: 'PIN keamanan tidak valid. Silakan periksa kembali atau hubungi Sekretariat Panitia jika Anda mengalami kendala akses.',
       }));
       return false;
     }
@@ -337,32 +487,36 @@ export function CompetitionProvider({ children }) {
       regCode,
       schoolName: newTeamData.schoolName,
       jenjang: newTeamData.jenjang,
-      category: newTeamData.category || 'Campuran',
+      teamType: newTeamData.teamType || 'Homogen', // 'Homogen' | 'Heterogen'
+      category: newTeamData.teamType || 'Homogen',
       platoonName: newTeamData.platoonName || `Pleton ${newTeamData.schoolName}`,
-      coachName: newTeamData.coachName,
-      waNumber: newTeamData.waNumber,
-      email: newTeamData.email,
+      dantonName: newTeamData.dantonName || '',
+      officialName: newTeamData.officialName || '',
+      coachName: newTeamData.officialName || '',
+      waNumber: newTeamData.waNumber || '',
+      email: (newTeamData.email || '').trim().toLowerCase(),
       address: newTeamData.address || '',
-      status: 'pending', // Awal pendaftaran selalu 'pending'
+      status: 'pending', // Awal pendaftaran selalu 'pending' sampai di-ACC oleh Admin
       lotNumber: null,
       drawTime: null,
       registeredAt: new Date().toISOString(),
       wave: newTeamData.wave || 1,
       feeAmount: newTeamData.feeAmount || 450000,
       paymentStatus: 'paid',
-      files: newTeamData.files || {
-        recommendationLetter: { name: 'Surat_Rekomendasi.pdf', uploadedAt: new Date().toISOString(), url: '#' },
-        paymentProof: { name: 'Bukti_Transfer_BRI.jpg', uploadedAt: new Date().toISOString(), url: '#' },
-        personnelPhotos: { name: 'Pasfoto_Personil.zip', uploadedAt: new Date().toISOString(), url: '#' },
-        schoolLogo: { name: 'Logo_Sekolah.png', uploadedAt: new Date().toISOString(), url: '#' },
+      files: {
+        schoolLogo: newTeamData.files?.schoolLogo || null,
+        dantonCard: newTeamData.files?.dantonCard || null,
+        officialKtp: newTeamData.files?.officialKtp || null,
+        paymentProof: newTeamData.files?.paymentProof || null,
+        selfie: newTeamData.files?.selfie || null,
+        integrityPact: newTeamData.files?.integrityPact || null,
       },
       revisionNote: '',
-      roster: newTeamData.roster || generatePersonnels(newTeamData.schoolName, jenjang, 'Anggota'),
+      roster: generatePersonnels(newTeamData.schoolName, jenjang, 'Anggota'),
     };
 
     setTeams(prev => [createdTeam, ...prev]);
-    setCurrentTeamId(createdTeam.id);
-    setRole('peserta');
+    // Status PENDING: Pengguna belum otomatis login sebelum di-ACC Admin
     return createdTeam;
   }
 
@@ -528,15 +682,27 @@ export function CompetitionProvider({ children }) {
     localStorage.removeItem(STORAGE_KEYS.CURRENT_TEAM_ID);
   }
 
-  // --- Modal Helpers ---
+  // --- Page / Modal Navigation Helpers ---
   function openModal(modalName, data = null) {
-    setActiveModal(modalName);
     setModalData(data);
+    if (modalName === 'regWizard') {
+      navigateTo('register');
+    } else if (modalName === 'statusCheck') {
+      navigateTo('status_check');
+    } else if (modalName === 'docViewer') {
+      setDocViewerData(data);
+      navigateTo('document_viewer', data);
+    } else if (modalName === 'pinModal') {
+      navigateTo('pin_auth');
+    } else {
+      setActiveModal(modalName);
+    }
   }
 
   function closeModal() {
     setActiveModal(null);
     setModalData(null);
+    goBack();
   }
 
   // --- Export Data ---
@@ -583,62 +749,89 @@ export function CompetitionProvider({ children }) {
     document.body.removeChild(link);
   }
 
+  const contextValue = useMemo(
+    () => ({
+      // State & Navigation
+      role,
+      activeView,
+      setActiveView,
+      previousView,
+      navigateTo,
+      goBack,
+      teams,
+      scores,
+      settings,
+      currentTeam,
+      currentTeamId,
+      activeModal,
+      modalData,
+      docViewerData,
+      setDocViewerData,
+
+      // User Auth
+      currentUser,
+      users,
+      authModal,
+      authTab,
+      setAuthTab,
+      openAuthModal,
+      closeAuthModal,
+      loginUser,
+      registerUser,
+      logoutUser,
+
+      // Auth & Role
+      switchRole,
+      loginAsTeam,
+      logoutTeam,
+      pinPrompt,
+      setPinPrompt,
+      requestRoleAccess,
+      closePinPrompt,
+      submitPinPrompt,
+
+      // Teams
+      registerTeam,
+      updateTeamFiles,
+      verifyTeam,
+      assignLotNumber,
+      randomizeLotNumbers,
+      deleteTeam,
+
+      // Scoring
+      saveScore,
+
+      // Settings & System
+      updateSettings,
+      resetToSeedData,
+      exportTeamsCSV,
+
+      // Modals / Pages Navigation
+      openModal,
+      closeModal,
+    }),
+    [
+      role,
+      activeView,
+      previousView,
+      teams,
+      scores,
+      settings,
+      currentTeam,
+      currentTeamId,
+      activeModal,
+      modalData,
+      docViewerData,
+      currentUser,
+      users,
+      authModal,
+      authTab,
+      pinPrompt,
+    ]
+  );
+
   return (
-    <CompetitionContext.Provider
-      value={{
-        // State
-        role,
-        activeView,
-        setActiveView,
-        teams,
-        scores,
-        settings,
-        currentTeam,
-        currentTeamId,
-        activeModal,
-        modalData,
-
-        // User Auth
-        currentUser,
-        users,
-        authModal,
-        openAuthModal,
-        closeAuthModal,
-        loginUser,
-        registerUser,
-        logoutUser,
-
-        // Auth & Role
-        switchRole,
-        loginAsTeam,
-        logoutTeam,
-        pinPrompt,
-        setPinPrompt,
-        requestRoleAccess,
-        closePinPrompt,
-        submitPinPrompt,
-
-        // Teams
-        registerTeam,
-        updateTeamFiles,
-        verifyTeam,
-        assignLotNumber,
-        randomizeLotNumbers,
-        deleteTeam,
-
-        // Scoring
-        saveScore,
-
-        // Settings & System
-        updateSettings,
-        resetToSeedData,
-        exportTeamsCSV,
-
-        // Modals
-        openModal,
-        closeModal,
-      }}
-    >
+    <CompetitionContext.Provider value={contextValue}>
       {children}
     </CompetitionContext.Provider>
   );

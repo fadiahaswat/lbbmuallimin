@@ -203,6 +203,7 @@ export const PAYMENT = {
     ACCOUNT_NUMBER: '300701003561505',
 
     ACCOUNT_NAME: 'FALHAN ZUHDI MUBAROK',
+    ACCOUNT_HOLDER: 'FALHAN ZUHDI MUBAROK',
     BANK_NAME: 'BRI',
 
     /** Teks biaya yang tampil di UI (tanpa "Rp") */

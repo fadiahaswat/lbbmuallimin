@@ -5,7 +5,7 @@ import { PRIZES } from '../config.js';
 export default function Prizes() {
   return (
     <section id="prizes" className="py-24 lg:py-32 bg-slate-950 relative overflow-hidden font-sans border-t border-slate-900">
-      <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] mix-blend-overlay"></div>
+      <div className="absolute inset-0 opacity-10 bg-carbon-pattern pointer-events-none"></div>
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-red-900/10 rounded-full blur-[120px] pointer-events-none"></div>
 
       <div className="container mx-auto px-6 relative z-10">

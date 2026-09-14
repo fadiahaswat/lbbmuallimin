@@ -213,9 +213,9 @@ export default function SuperadminPanel() {
               className="p-5 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-2xl text-left transition-all group"
             >
               <RotateCcw className="w-6 h-6 text-rose-600 mb-2 group-hover:rotate-180 transition-transform" />
-              <span className="font-black text-sm text-rose-900 block">Reset ke Data Awal Demo</span>
+              <span className="font-black text-sm text-rose-900 block">Reset Basis Data Sistem</span>
               <span className="text-xs text-rose-700/80 mt-1 block leading-relaxed">
-                Kembalikan data 8 sekolah SD/SMP contoh jika diperlukan.
+                Kembalikan master data sekolah ke konfigurasi awal sistem.
               </span>
             </button>
           </div>

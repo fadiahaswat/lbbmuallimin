@@ -21,22 +21,23 @@ export default function Navbar({ onOpenMobileMenu }) {
 
   useEffect(() => {
     const sections = ['home', 'about', 'registration', 'rules', 'prizes', 'downloads', 'contact'];
+    let ticking = false;
 
-    function handleScroll() {
-      setIsScrolled(window.scrollY > NAVBAR.SCROLL_SOLID_THRESHOLD);
+    function checkActiveSection() {
+      const scrollY = window.scrollY;
+      setIsScrolled(scrollY > NAVBAR.SCROLL_SOLID_THRESHOLD);
 
       // Jika user sudah sampai dekat dasar halaman, aktifkan kontak
-      if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 60) {
+      if (window.innerHeight + scrollY >= document.documentElement.scrollHeight - 60) {
         setActiveSection('contact');
         return;
       }
 
-      const scrollPosition = window.scrollY + 200;
+      const scrollPosition = scrollY + 200;
       for (const sectionId of sections) {
         const el = document.getElementById(sectionId);
         if (el) {
-          const rect = el.getBoundingClientRect();
-          const top = rect.top + window.scrollY;
+          const top = el.offsetTop;
           const height = el.offsetHeight;
           if (scrollPosition >= top && scrollPosition < top + height) {
             setActiveSection(sectionId);
@@ -46,8 +47,18 @@ export default function Navbar({ onOpenMobileMenu }) {
       }
     }
 
+    function handleScroll() {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          checkActiveSection();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }
+
     window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
+    checkActiveSection();
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -89,6 +100,9 @@ export default function Navbar({ onOpenMobileMenu }) {
             src={logoImg}
             alt="Logo LBB Tonti"
             className="h-11 md:h-13 w-auto drop-shadow-md filter brightness-105"
+            width="52"
+            height="52"
+            decoding="async"
           />
         </a>
 
@@ -134,44 +148,17 @@ export default function Navbar({ onOpenMobileMenu }) {
             })}
           </div>
 
-          <button
-            type="button"
-            onClick={() => openModal('statusCheck')}
-            className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
-              isScrolled
-                ? 'bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200'
-                : 'bg-black/30 hover:bg-black/50 text-slate-200 border border-white/15'
-            }`}
-          >
-            Cek Status
-          </button>
-
           {!currentUser ? (
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => openAuthModal('login')}
-                className={`px-4 py-1.5 rounded-full text-xs font-extrabold transition-all flex items-center gap-1.5 ${
-                  isScrolled
-                    ? 'bg-slate-100 hover:bg-slate-200 text-slate-900 border border-slate-300'
-                    : 'bg-white/15 hover:bg-white/25 text-white border border-white/25 backdrop-blur-md'
-                }`}
-              >
-                <LogIn className="w-3.5 h-3.5 text-yellow-400" />
-                <span>Masuk</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => openAuthModal('register')}
-                className="group relative px-5 py-2 bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 text-slate-950 rounded-full font-black hover:shadow-[0_0_20px_rgba(255,215,0,0.4)] hover:-translate-y-0.5 active:scale-95 transition-all border border-yellow-400/60 overflow-hidden shadow-md"
-              >
-                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-                <span className="relative flex items-center gap-1.5 uppercase tracking-wider text-xs font-black">
-                  Daftar <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
-                </span>
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={() => openAuthModal('login')}
+              className="group relative px-5 py-2 bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 text-slate-950 rounded-full font-black hover:shadow-[0_0_20px_rgba(255,215,0,0.4)] hover:-translate-y-0.5 active:scale-95 transition-all border border-yellow-400/60 overflow-hidden shadow-md flex items-center gap-2"
+            >
+              <LogIn className="w-3.5 h-3.5 text-slate-950" />
+              <span className="uppercase tracking-wider text-xs font-black">
+                Masuk / Daftar
+              </span>
+            </button>
           ) : (
             <div className="relative" ref={dropdownRef}>
               <button
@@ -187,6 +174,10 @@ export default function Navbar({ onOpenMobileMenu }) {
                   src={currentUser.avatar}
                   alt={currentUser.name}
                   className="w-7 h-7 rounded-full border border-yellow-400 object-cover"
+                  width="28"
+                  height="28"
+                  loading="lazy"
+                  decoding="async"
                 />
                 <div className="text-left">
                   <div className="text-xs font-bold truncate max-w-[110px] leading-tight">
