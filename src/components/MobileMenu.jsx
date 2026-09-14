@@ -14,8 +14,11 @@ import {
   X
 } from 'lucide-react';
 import { SOCIAL } from '../config.js';
+import { useCompetition } from '../context/CompetitionContext.jsx';
 
 export default function MobileMenu({ isOpen, onClose }) {
+  const { openModal, setActiveView } = useCompetition();
+
   useEffect(() => {
     function handleKeyDown(e) {
       if (e.key === 'Escape' && isOpen) {
@@ -86,14 +89,40 @@ export default function MobileMenu({ isOpen, onClose }) {
           })}
         </div>
 
-        <div className="mt-6 pt-6 border-t border-white/10 space-y-6">
-          <a
-            href="#registration"
-            onClick={onClose}
-            className="w-full py-4 bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 hover:from-yellow-300 hover:to-yellow-400 text-slate-950 font-black rounded-xl text-center shadow-lg shadow-yellow-500/20 active:scale-95 transition-transform flex justify-center items-center gap-3 uppercase tracking-widest text-sm"
+        <div className="mt-6 pt-6 border-t border-white/10 space-y-2.5">
+          <button
+            type="button"
+            onClick={() => {
+              onClose();
+              openModal('regWizard');
+            }}
+            className="w-full py-3.5 bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 hover:from-yellow-300 hover:to-yellow-400 text-slate-950 font-black rounded-xl text-center shadow-lg shadow-yellow-500/20 active:scale-95 transition-transform flex justify-center items-center gap-2 uppercase tracking-widest text-xs"
           >
-            Daftar Sekarang <ArrowRight className="w-5 h-5" />
-          </a>
+            <span>Daftar Sekarang</span>
+            <ArrowRight className="w-4 h-4" />
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              onClose();
+              openModal('statusCheck');
+            }}
+            className="w-full py-3 bg-white/10 hover:bg-white/20 text-white font-bold rounded-xl text-center border border-white/15 transition-colors text-xs uppercase tracking-wider"
+          >
+            Cek Status Tim & Undian
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              onClose();
+              setActiveView('announcement');
+            }}
+            className="w-full py-3 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 font-bold rounded-xl text-center border border-amber-500/30 transition-colors text-xs uppercase tracking-wider"
+          >
+            Pengumuman Juara & Rekap
+          </button>
 
           <div className="flex justify-between items-center px-4">
             <span className="text-xs text-slate-400 font-medium">Ikuti Update:</span>

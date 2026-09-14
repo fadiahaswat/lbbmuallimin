@@ -11,6 +11,7 @@ import {
   Info
 } from 'lucide-react';
 import { DOWNLOADS } from '../config.js';
+import { useCompetition } from '../context/CompetitionContext.jsx';
 
 const ICON_MAP = {
   BookOpen: BookOpen,
@@ -43,14 +44,11 @@ const COLOR_MAP = {
 };
 
 export default function Downloads() {
-  const [toastMessage, setToastMessage] = useState('');
+  const { openModal } = useCompetition();
 
   function handleDownload(e, item) {
-    if (!item.url || item.url === '#') {
-      e.preventDefault();
-      setToastMessage(`Dokumen "${item.title}" akan segera dirilis oleh panitia.`);
-      setTimeout(() => setToastMessage(''), 4000);
-    }
+    e.preventDefault();
+    openModal('docViewer', { docId: item.id });
   }
   return (
     <section id="downloads" className="py-24 lg:py-32 bg-slate-50 relative overflow-hidden font-sans">

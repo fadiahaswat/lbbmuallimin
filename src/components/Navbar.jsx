@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowRight, Menu } from 'lucide-react';
 import { NAVBAR } from '../config.js';
+import { useCompetition } from '../context/CompetitionContext.jsx';
 import logoImg from '../assets/logo-tonti.png';
 
 export default function Navbar({ onOpenMobileMenu }) {
+  const { openModal } = useCompetition();
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
 
@@ -103,15 +105,28 @@ export default function Navbar({ onOpenMobileMenu }) {
             })}
           </div>
 
-          <a
-            href="#registration"
+          <button
+            type="button"
+            onClick={() => openModal('statusCheck')}
+            className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all ${
+              isScrolled
+                ? 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                : 'bg-white/10 hover:bg-white/20 text-white'
+            }`}
+          >
+            Cek Status Tim
+          </button>
+
+          <button
+            type="button"
+            onClick={() => openModal('regWizard')}
             className="group relative px-5 xl:px-6 py-2 bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 text-slate-950 rounded-full font-black hover:shadow-[0_0_20px_rgba(255,215,0,0.4)] hover:-translate-y-0.5 active:scale-95 transition-all border border-yellow-400/60 overflow-hidden shadow-md"
           >
             <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
             <span className="relative flex items-center gap-1.5 uppercase tracking-wider text-xs md:text-xs xl:text-sm font-black">
               Daftar <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
             </span>
-          </a>
+          </button>
         </div>
 
         <button

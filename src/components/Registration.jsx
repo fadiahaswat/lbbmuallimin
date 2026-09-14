@@ -24,9 +24,11 @@ import {
   Video
 } from 'lucide-react';
 import { EVENT, COMPETITION, PAYMENT, REGISTRATION, CONTACT, SOCIAL, CLIPBOARD } from '../config.js';
+import { useCompetition } from '../context/CompetitionContext.jsx';
 import CountdownTimer from './CountdownTimer.jsx';
 
 export default function Registration() {
+  const { openModal, setActiveView } = useCompetition();
   const [copied, setCopied] = useState(false);
 
   function triggerCopied() {
@@ -643,15 +645,22 @@ export default function Registration() {
                 Akses formulir digital, pastikan kelengkapan berkas, dan amankan kuota sebelum pendaftaran ditutup.
               </p>
             </div>
-            <div className="relative z-10 shrink-0 w-full sm:w-auto text-center">
-              <a
-                href={REGISTRATION.PORTAL_URL}
-                target="_blank"
-                rel="noopener noreferrer"
+            <div className="relative z-10 shrink-0 w-full sm:w-auto flex flex-col sm:flex-row items-center gap-3">
+              <button
+                type="button"
+                onClick={() => openModal('regWizard')}
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-gradient-to-r from-red-700 via-red-600 to-red-700 text-white font-extrabold rounded-xl hover:from-red-600 hover:to-red-700 shadow-lg shadow-red-950/40 hover:shadow-red-700/30 transition-all transform hover:-translate-y-0.5 text-sm uppercase tracking-wide"
               >
-                Buka Portal Pendaftaran <ExternalLink className="w-4 h-4" />
-              </a>
+                <span>Buka Formulir Pendaftaran</span>
+                <ExternalLink className="w-4 h-4" />
+              </button>
+              <button
+                type="button"
+                onClick={() => openModal('statusCheck')}
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-white/10 hover:bg-white/20 text-white font-bold rounded-xl border border-white/20 transition-all text-sm uppercase tracking-wide"
+              >
+                <span>Cek Status / Undian Tim</span>
+              </button>
             </div>
           </div>
         </div>

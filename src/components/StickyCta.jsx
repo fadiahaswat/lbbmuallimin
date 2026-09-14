@@ -1,7 +1,10 @@
 import React from 'react';
 import { Download, ArrowRight } from 'lucide-react';
+import { useCompetition } from '../context/CompetitionContext.jsx';
 
 export default function StickyCta({ isVisible }) {
+  const { openModal } = useCompetition();
+
   return (
     <div
       id="sticky-cta"
@@ -9,18 +12,20 @@ export default function StickyCta({ isVisible }) {
         isVisible ? 'translate-y-0' : 'translate-y-full'
       }`}
     >
-      <a
-        href="#downloads"
+      <button
+        type="button"
+        onClick={() => openModal('docViewer', { docId: 'juknis' })}
         className="flex-1 flex items-center justify-center gap-2 py-3 text-sm font-bold text-slate-700 bg-slate-100 border border-slate-200 rounded-lg active:scale-95 transition-transform"
       >
         <Download className="w-4 h-4" /> Juknis
-      </a>
-      <a
-        href="#registration"
+      </button>
+      <button
+        type="button"
+        onClick={() => openModal('regWizard')}
         className="flex-[2] flex items-center justify-center gap-2 py-3 text-sm font-bold text-white bg-red-700 rounded-lg shadow-lg shadow-red-700/25 active:scale-95 transition-transform hover:bg-red-800"
       >
         Daftar Sekarang <ArrowRight className="w-4 h-4" />
-      </a>
+      </button>
     </div>
   );
 }

@@ -1,8 +1,11 @@
 import React from 'react';
 import { ArrowRight, Download, ChevronsDown } from 'lucide-react';
 import { HERO, EVENT } from '../config.js';
+import { useCompetition } from '../context/CompetitionContext.jsx';
 
 export default function Hero() {
+  const { openModal } = useCompetition();
+
   function scrollToAbout() {
     const el = document.getElementById('about');
     if (el) el.scrollIntoView({ behavior: 'smooth' });
@@ -63,21 +66,23 @@ export default function Hero() {
             />
 
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full justify-center px-4 sm:px-0">
-              <a
-                href="#registration"
+              <button
+                type="button"
+                onClick={() => openModal('regWizard')}
                 className="group px-8 py-3.5 bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 hover:from-yellow-300 hover:to-amber-400 text-slate-950 font-black rounded-xl shadow-lg shadow-yellow-500/25 hover:shadow-yellow-500/40 hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2 text-xs sm:text-sm tracking-widest uppercase"
               >
                 <span>Daftar Sekarang</span>
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-              </a>
+              </button>
 
-              <a
-                href="#downloads"
+              <button
+                type="button"
+                onClick={() => openModal('docViewer', { docId: 'juknis' })}
                 className="group px-8 py-3.5 bg-black/40 hover:bg-black/60 text-white hover:text-yellow-400 border border-white/20 hover:border-yellow-400/50 rounded-xl backdrop-blur-md shadow-lg shadow-black/20 hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2 text-xs sm:text-sm font-bold tracking-widest uppercase"
               >
                 <span>Unduh Juknis</span>
                 <Download className="w-4 h-4 transition-transform group-hover:translate-y-0.5 text-yellow-400" />
-              </a>
+              </button>
             </div>
           </div>
 
