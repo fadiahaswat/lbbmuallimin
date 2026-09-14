@@ -20,6 +20,54 @@ export const INITIAL_PINS = {
   superadmin: 'super2026',
 };
 
+// Database pengguna awal: email dipetakan ke role (admin, juri, superadmin, peserta)
+export const INITIAL_USERS = [
+  {
+    id: 'user-admin',
+    name: 'Kak Rusyda (Sekretariat)',
+    email: 'admin@lbbmuallimin.com',
+    role: 'admin',
+    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=faces',
+    roleLabel: 'Panitia Sekretariat',
+  },
+  {
+    id: 'user-juri',
+    name: 'Mayor (Mar) Bambang S., S.E.',
+    email: 'juri@lbbmuallimin.com',
+    role: 'juri',
+    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=faces',
+    roleLabel: 'Dewan Juri Utama',
+  },
+  {
+    id: 'user-super',
+    name: 'Falhan Zuhdi Mubarok',
+    email: 'ketua@lbbmuallimin.com',
+    role: 'superadmin',
+    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=faces',
+    roleLabel: 'Ketua Panitia',
+  },
+  {
+    id: 'user-smp1',
+    name: 'Dian Permata (SMPN 1 YK)',
+    email: 'smpn1yk.tonti@gmail.com',
+    role: 'peserta',
+    teamId: 'TEAM-SMP-01',
+    schoolName: 'SMP Negeri 1 Yogyakarta',
+    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=faces',
+    roleLabel: 'Official Peserta',
+  },
+  {
+    id: 'user-sapen',
+    name: 'Bambang Irawan (SD Sapen)',
+    email: 'sdmsapen.yk@gmail.com',
+    role: 'peserta',
+    teamId: 'TEAM-SD-01',
+    schoolName: 'SD Muhammadiyah Sapen Yogyakarta',
+    avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=faces',
+    roleLabel: 'Official Peserta',
+  },
+];
+
 // Helper untuk membuat susunan 25 personel standar
 export function generatePersonnels(schoolName, jenjang, prefixName) {
   const danton = {

@@ -4,6 +4,7 @@ import {
   INITIAL_SCORES,
   INITIAL_SETTINGS,
   INITIAL_PINS,
+  INITIAL_USERS,
   generatePersonnels
 } from '../data/seedData.js';
 
@@ -15,9 +16,32 @@ const STORAGE_KEYS = {
   SETTINGS: 'lbb_muallimin_settings_v2',
   ROLE: 'lbb_muallimin_active_role_v2',
   CURRENT_TEAM_ID: 'lbb_muallimin_current_team_id_v2',
+  USERS: 'lbb_muallimin_users_v2',
+  CURRENT_USER: 'lbb_muallimin_current_user_v2',
 };
 
 export function CompetitionProvider({ children }) {
+  // 0. User Auth State
+  const [users, setUsers] = useState(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.USERS);
+      return saved ? JSON.parse(saved) : INITIAL_USERS;
+    } catch {
+      return INITIAL_USERS;
+    }
+  });
+
+  const [currentUser, setCurrentUser] = useState(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.CURRENT_USER);
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
+
+  const [authModal, setAuthModal] = useState({ isOpen: false, tab: 'login' });
+
   // 1. Roles: 'publik' | 'peserta' | 'admin' | 'juri' | 'superadmin'
   const [role, setRole] = useState(() => {
     return localStorage.getItem(STORAGE_KEYS.ROLE) || 'publik';
@@ -83,12 +107,136 @@ export function CompetitionProvider({ children }) {
   }, [settings]);
 
   useEffect(() => {
-    if (currentTeamId) {
-      localStorage.setItem(STORAGE_KEYS.CURRENT_TEAM_ID, currentTeamId);
+    localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(users));
+  }, [users]);
+
+  useEffect(() => {
+    if (currentUser) {
+      localStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(currentUser));
     } else {
-      localStorage.removeItem(STORAGE_KEYS.CURRENT_TEAM_ID);
+      localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
     }
-  }, [currentTeamId]);
+  }, [currentUser]);
+
+  function openAuthModal(tab = 'login') {
+    setAuthModal({ isOpen: true, tab });
+  }
+
+  function closeAuthModal() {
+    setAuthModal({ isOpen: false, tab: 'login' });
+  }
+
+  function loginUser(email, name = null) {
+    const cleanEmail = email.trim().toLowerCase();
+    let user = users.find(u => u.email.toLowerCase() === cleanEmail);
+
+    if (!user) {
+      let detectedRole = 'peserta';
+      let detectedLabel = 'Official Peserta';
+      if (cleanEmail.includes('admin')) {
+        detectedRole = 'admin';
+        detectedLabel = 'Panitia Sekretariat';
+      } else if (cleanEmail.includes('juri')) {
+        detectedRole = 'juri';
+        detectedLabel = 'Dewan Juri';
+      } else if (cleanEmail.includes('ketua') || cleanEmail.includes('super')) {
+        detectedRole = 'superadmin';
+        detectedLabel = 'Ketua Panitia';
+      }
+
+      // Check if email matches existing registered team
+      const matchedTeam = teams.find(t => t.email.toLowerCase() === cleanEmail);
+
+      user = {
+        id: `user-${Date.now()}`,
+        name: name || cleanEmail.split('@')[0].toUpperCase(),
+        email: cleanEmail,
+        role: detectedRole,
+        roleLabel: detectedLabel,
+        teamId: matchedTeam ? matchedTeam.id : null,
+        avatar: `https://api.dicebear.com/7.x/bottts/svg?seed=${cleanEmail}`,
+      };
+
+      setUsers(prev => [user, ...prev]);
+    }
+
+    setCurrentUser(user);
+    setRole(user.role);
+
+    if (user.role === 'admin') {
+      setActiveView('admin');
+    } else if (user.role === 'juri') {
+      setActiveView('juri');
+    } else if (user.role === 'superadmin') {
+      setActiveView('superadmin');
+    } else if (user.role === 'peserta') {
+      if (user.teamId) {
+        setCurrentTeamId(user.teamId);
+      }
+      setActiveView('peserta_dashboard');
+    }
+
+    closeAuthModal();
+    return user;
+  }
+
+  function registerUser(name, email, password, requestedRole = 'peserta', schoolName = '') {
+    const cleanEmail = email.trim().toLowerCase();
+    const existing = users.find(u => u.email.toLowerCase() === cleanEmail);
+    if (existing) {
+      return { success: false, message: 'Email sudah terdaftar. Silakan gunakan tab Masuk.' };
+    }
+
+    const newUser = {
+      id: `user-${Date.now()}`,
+      name,
+      email: cleanEmail,
+      role: requestedRole,
+      roleLabel:
+        requestedRole === 'admin'
+          ? 'Panitia Sekretariat'
+          : requestedRole === 'juri'
+          ? 'Dewan Juri'
+          : requestedRole === 'superadmin'
+          ? 'Ketua Panitia'
+          : 'Official Peserta',
+      teamId: null,
+      schoolName,
+      avatar: `https://api.dicebear.com/7.x/bottts/svg?seed=${cleanEmail}`,
+    };
+
+    setUsers(prev => [newUser, ...prev]);
+    setCurrentUser(newUser);
+    setRole(newUser.role);
+
+    if (newUser.role === 'admin') {
+      setActiveView('admin');
+    } else if (newUser.role === 'juri') {
+      setActiveView('juri');
+    } else if (newUser.role === 'superadmin') {
+      setActiveView('superadmin');
+    } else {
+      setActiveView('peserta_dashboard');
+    }
+
+    closeAuthModal();
+    return { success: true, user: newUser };
+  }
+
+  function logoutUser() {
+    setCurrentUser(null);
+    setRole('publik');
+    setActiveView('landing');
+    setCurrentTeamId(null);
+  }
+
+  // 8. Global PIN Prompt State
+  const [pinPrompt, setPinPrompt] = useState({
+    isOpen: false,
+    targetRole: null,
+    pin: '',
+    error: '',
+  });
 
   // Current active team object
   const currentTeam = teams.find(t => t.id === currentTeamId) || null;
@@ -118,6 +266,62 @@ export function CompetitionProvider({ children }) {
     }
 
     return false;
+  }
+
+  function requestRoleAccess(targetRole) {
+    if (targetRole === 'publik') {
+      switchRole('publik');
+      return;
+    }
+
+    if (targetRole === 'peserta') {
+      if (currentTeamId) {
+        switchRole('peserta');
+      } else {
+        openModal('statusCheck');
+      }
+      return;
+    }
+
+    if (targetRole === 'announcement') {
+      setActiveView('announcement');
+      return;
+    }
+
+    // If already in that role
+    if (role === targetRole) {
+      if (targetRole === 'admin') setActiveView('admin');
+      if (targetRole === 'juri') setActiveView('juri');
+      if (targetRole === 'superadmin') setActiveView('superadmin');
+      return;
+    }
+
+    // Open PIN prompt
+    setPinPrompt({
+      isOpen: true,
+      targetRole,
+      pin: '',
+      error: '',
+    });
+  }
+
+  function closePinPrompt() {
+    setPinPrompt({ isOpen: false, targetRole: null, pin: '', error: '' });
+  }
+
+  function submitPinPrompt(enteredPin) {
+    const target = pinPrompt.targetRole;
+    const success = switchRole(target, enteredPin);
+    if (success) {
+      closePinPrompt();
+      return true;
+    } else {
+      setPinPrompt(prev => ({
+        ...prev,
+        error: `PIN salah! Petunjuk demo: admin='admin2026', juri='juri2026', super='super2026'`,
+      }));
+      return false;
+    }
   }
 
   // --- Participant Operations ---
@@ -394,10 +598,25 @@ export function CompetitionProvider({ children }) {
         activeModal,
         modalData,
 
+        // User Auth
+        currentUser,
+        users,
+        authModal,
+        openAuthModal,
+        closeAuthModal,
+        loginUser,
+        registerUser,
+        logoutUser,
+
         // Auth & Role
         switchRole,
         loginAsTeam,
         logoutTeam,
+        pinPrompt,
+        setPinPrompt,
+        requestRoleAccess,
+        closePinPrompt,
+        submitPinPrompt,
 
         // Teams
         registerTeam,

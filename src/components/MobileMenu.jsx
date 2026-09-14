@@ -11,13 +11,22 @@ import {
   ArrowRight,
   Instagram,
   Video,
-  X
+  X,
+  LogIn,
+  LogOut,
+  LayoutDashboard
 } from 'lucide-react';
 import { SOCIAL } from '../config.js';
 import { useCompetition } from '../context/CompetitionContext.jsx';
 
 export default function MobileMenu({ isOpen, onClose }) {
-  const { openModal, setActiveView } = useCompetition();
+  const {
+    openModal,
+    setActiveView,
+    currentUser,
+    openAuthModal,
+    logoutUser
+  } = useCompetition();
 
   useEffect(() => {
     function handleKeyDown(e) {
@@ -90,39 +99,101 @@ export default function MobileMenu({ isOpen, onClose }) {
         </div>
 
         <div className="mt-6 pt-6 border-t border-white/10 space-y-2.5">
-          <button
-            type="button"
-            onClick={() => {
-              onClose();
-              openModal('regWizard');
-            }}
-            className="w-full py-3.5 bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 hover:from-yellow-300 hover:to-yellow-400 text-slate-950 font-black rounded-xl text-center shadow-lg shadow-yellow-500/20 active:scale-95 transition-transform flex justify-center items-center gap-2 uppercase tracking-widest text-xs"
-          >
-            <span>Daftar Sekarang</span>
-            <ArrowRight className="w-4 h-4" />
-          </button>
+          {currentUser ? (
+            <div className="space-y-2">
+              <div className="p-3 bg-white/10 rounded-2xl border border-white/15 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <img
+                    src={currentUser.avatar}
+                    alt={currentUser.name}
+                    className="w-10 h-10 rounded-full border border-yellow-400 object-cover"
+                  />
+                  <div>
+                    <p className="text-sm font-bold text-white leading-tight">{currentUser.name}</p>
+                    <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-md bg-yellow-400/20 text-yellow-300">
+                      {currentUser.roleLabel || currentUser.role}
+                    </span>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    onClose();
+                    logoutUser();
+                  }}
+                  className="p-2 text-red-400 hover:text-red-300 hover:bg-white/5 rounded-xl transition-colors"
+                  title="Keluar"
+                >
+                  <LogOut className="w-5 h-5" />
+                </button>
+              </div>
 
-          <button
-            type="button"
-            onClick={() => {
-              onClose();
-              openModal('statusCheck');
-            }}
-            className="w-full py-3 bg-white/10 hover:bg-white/20 text-white font-bold rounded-xl text-center border border-white/15 transition-colors text-xs uppercase tracking-wider"
-          >
-            Cek Status Tim & Undian
-          </button>
+              <button
+                type="button"
+                onClick={() => {
+                  onClose();
+                  if (currentUser.role === 'admin') setActiveView('admin');
+                  else if (currentUser.role === 'juri') setActiveView('juri');
+                  else if (currentUser.role === 'superadmin') setActiveView('superadmin');
+                  else setActiveView('peserta_dashboard');
+                }}
+                className="w-full py-3.5 bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 text-slate-950 font-black rounded-xl text-center shadow-lg shadow-yellow-500/20 active:scale-95 transition-transform flex justify-center items-center gap-2 uppercase tracking-widest text-xs"
+              >
+                <LayoutDashboard className="w-4 h-4" />
+                <span>Buka Dashboard ({currentUser.role.toUpperCase()})</span>
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  onClose();
+                  openAuthModal('login');
+                }}
+                className="py-3 bg-white/15 hover:bg-white/25 text-white font-bold rounded-xl text-center border border-white/20 transition-colors text-xs uppercase tracking-wider flex items-center justify-center gap-1.5"
+              >
+                <LogIn className="w-3.5 h-3.5 text-yellow-400" />
+                <span>Masuk</span>
+              </button>
 
-          <button
-            type="button"
-            onClick={() => {
-              onClose();
-              setActiveView('announcement');
-            }}
-            className="w-full py-3 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 font-bold rounded-xl text-center border border-amber-500/30 transition-colors text-xs uppercase tracking-wider"
-          >
-            Pengumuman Juara & Rekap
-          </button>
+              <button
+                type="button"
+                onClick={() => {
+                  onClose();
+                  openAuthModal('register');
+                }}
+                className="py-3 bg-gradient-to-r from-yellow-400 to-amber-500 text-slate-950 font-black rounded-xl text-center shadow-md active:scale-95 transition-transform text-xs uppercase tracking-wider flex items-center justify-center gap-1"
+              >
+                <span>Daftar</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          )}
+
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                onClose();
+                openModal('statusCheck');
+              }}
+              className="py-2.5 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl text-center border border-white/10 transition-colors text-xs"
+            >
+              Cek Status Tim
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                onClose();
+                setActiveView('announcement');
+              }}
+              className="py-2.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 font-semibold rounded-xl text-center border border-amber-500/20 transition-colors text-xs"
+            >
+              Papan Juara
+            </button>
+          </div>
 
           <div className="flex justify-between items-center px-4">
             <span className="text-xs text-slate-400 font-medium">Ikuti Update:</span>

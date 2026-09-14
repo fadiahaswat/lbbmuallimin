@@ -27,6 +27,7 @@ import JuryScoringApp from './components/scoring/JuryScoringApp.jsx';
 import AnnouncementPortal from './components/announcement/AnnouncementPortal.jsx';
 import SuperadminPanel from './components/superadmin/SuperadminPanel.jsx';
 import DocumentViewerModal from './components/documents/DocumentViewerModal.jsx';
+import AuthModal from './components/auth/AuthModal.jsx';
 
 function MainApp() {
   const { activeView, activeModal, modalData, closeModal } = useCompetition();
@@ -57,8 +58,8 @@ function MainApp() {
 
   return (
     <div className="min-h-screen bg-white text-slate-900 selection:bg-red-200 font-sans">
-      {/* 1. Global Role Switcher Bar */}
-      <RoleBar />
+      {/* 1. Global Role Switcher Bar (Only in administrative / dedicated back-office views) */}
+      {activeView !== 'landing' && <RoleBar />}
 
       {/* 2. Active View Routing */}
       {activeView === 'landing' && (
@@ -107,6 +108,8 @@ function MainApp() {
         onClose={closeModal}
         data={modalData}
       />
+
+      <AuthModal />
     </div>
   );
 }
