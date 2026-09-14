@@ -44,11 +44,17 @@ const COLOR_MAP = {
 };
 
 export default function Downloads() {
+  const [toastMessage, setToastMessage] = useState('');
   const { openModal } = useCompetition();
 
   function handleDownload(e, item) {
     e.preventDefault();
-    openModal('docViewer', { docId: item.id });
+    if (openModal) {
+      openModal('docViewer', { docId: item.id });
+    } else {
+      setToastMessage(`Dokumen "${item.title}" akan segera dibuka.`);
+      setTimeout(() => setToastMessage(''), 4000);
+    }
   }
   return (
     <section id="downloads" className="py-24 lg:py-32 bg-slate-50 relative overflow-hidden font-sans">
