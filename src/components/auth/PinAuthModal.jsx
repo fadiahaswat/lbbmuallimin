@@ -25,21 +25,18 @@ export default function PinAuthModal() {
       desc: 'Akses verifikasi berkas pendaftaran, approval pembayaran, dan pengundian nomor urut tampil.',
       icon: Shield,
       color: 'text-blue-400 bg-blue-500/20 border-blue-400/30',
-      hint: 'admin2026',
     },
     juri: {
       title: 'Dewan Juri Perlombaan',
       desc: 'Akses formulir digital E-Scoring penilaian Danton dan Pasukan PBB secara langsung.',
       icon: Award,
       color: 'text-emerald-400 bg-emerald-500/20 border-emerald-400/30',
-      hint: 'juri2026',
     },
     superadmin: {
       title: 'Superadmin / Master Control',
       desc: 'Akses penuh kontrol sistem, saklar pembukaan pendaftaran, dan konfigurasi master data.',
       icon: Crown,
       color: 'text-rose-400 bg-rose-500/20 border-rose-400/30',
-      hint: 'super2026',
     },
   };
 

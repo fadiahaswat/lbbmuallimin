@@ -75,10 +75,35 @@ export default function RegistrationWizard({ isOpen, onClose }) {
   // Submission result
   const [createdTeam, setCreatedTeam] = useState(null);
 
-  // Helper to compress uploaded image files to prevent localStorage quota overflow
-  function processUploadedFile(file) {
+  // Helper to validate and compress uploaded files (Security Checklist #19)
+  const MAX_IMAGE_SIZE = 3 * 1024 * 1024; // 3 MB
+  const MAX_DOC_SIZE = 5 * 1024 * 1024; // 5 MB
+  const ALLOWED_IMAGE_EXTS = ['.jpg', '.jpeg', '.png'];
+  const ALLOWED_DOC_EXTS = ['.pdf', '.jpg', '.jpeg', '.png'];
+
+  function processUploadedFile(file, isDocument = false) {
     return new Promise((resolve) => {
       if (!file) {
+        resolve(null);
+        return;
+      }
+
+      const fileName = (file.name || '').toLowerCase();
+      const ext = fileName.slice(fileName.lastIndexOf('.'));
+      const allowedList = isDocument ? ALLOWED_DOC_EXTS : ALLOWED_IMAGE_EXTS;
+
+      // 1. Whitelist extension check (Anti-XSS & Anti-Malware check)
+      if (!allowedList.includes(ext)) {
+        alert(`Format file "${file.name}" tidak diizinkan! Format yang diterima hanya: ${allowedList.join(', ')}`);
+        resolve(null);
+        return;
+      }
+
+      // 2. Hard File Size Limit check
+      const maxLimit = isDocument ? MAX_DOC_SIZE : MAX_IMAGE_SIZE;
+      if (file.size > maxLimit) {
+        const limitMb = Math.round(maxLimit / (1024 * 1024));
+        alert(`Ukuran file "${file.name}" (${(file.size / (1024 * 1024)).toFixed(2)} MB) melebihi batas maksimal ${limitMb} MB!`);
         resolve(null);
         return;
       }
@@ -133,7 +158,7 @@ export default function RegistrationWizard({ isOpen, onClose }) {
         return;
       }
 
-      // For PDF or other documents
+      // For PDF documents
       const reader = new FileReader();
       reader.onload = (uploadEvent) => {
         resolve({
@@ -151,7 +176,8 @@ export default function RegistrationWizard({ isOpen, onClose }) {
   async function handleFileChange(key, e) {
     const file = e.target.files?.[0];
     if (file) {
-      const processed = await processUploadedFile(file);
+      const isDocument = ['dantonCard', 'officialKtp', 'paymentProof'].includes(key);
+      const processed = await processUploadedFile(file, isDocument);
       if (processed) {
         setFiles(prev => ({
           ...prev,

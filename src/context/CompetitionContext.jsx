@@ -213,43 +213,37 @@ function safeSetItem(key, value) {
   function loginUser(email, name = null) {
     const cleanEmail = email.trim().toLowerCase();
 
-    // 1. Cek kredensial admin / panitia / juri / superadmin
-    if (
-      cleanEmail.includes('admin') ||
-      cleanEmail.includes('juri') ||
-      cleanEmail.includes('ketua') ||
-      cleanEmail.includes('super')
-    ) {
-      let user = users.find(u => u.email.toLowerCase() === cleanEmail);
-      if (!user) {
-        let detectedRole = 'admin';
-        let detectedLabel = 'Panitia Sekretariat';
-        if (cleanEmail.includes('juri')) {
-          detectedRole = 'juri';
-          detectedLabel = 'Dewan Juri';
-        } else if (cleanEmail.includes('ketua') || cleanEmail.includes('super')) {
-          detectedRole = 'superadmin';
-          detectedLabel = 'Ketua Panitia';
-        }
+    // 1. Cek kredensial admin / panitia / juri / superadmin (Strict Match)
+    const OFFICIAL_STAFF_EMAILS = {
+      'admin@lbbmuallimin.com': { role: 'admin', roleLabel: 'Panitia Sekretariat' },
+      'juri@lbbmuallimin.com': { role: 'juri', roleLabel: 'Dewan Juri' },
+      'ketua@lbbmuallimin.com': { role: 'superadmin', roleLabel: 'Ketua Panitia' },
+    };
 
+    if (OFFICIAL_STAFF_EMAILS[cleanEmail] || users.some(u => u.email.toLowerCase() === cleanEmail && ['admin', 'juri', 'superadmin'].includes(u.role))) {
+      let user = users.find(u => u.email.toLowerCase() === cleanEmail);
+      if (!user && OFFICIAL_STAFF_EMAILS[cleanEmail]) {
+        const staffMeta = OFFICIAL_STAFF_EMAILS[cleanEmail];
         user = {
           id: `user-${Date.now()}`,
           name: name || cleanEmail.split('@')[0].toUpperCase(),
           email: cleanEmail,
-          role: detectedRole,
-          roleLabel: detectedLabel,
+          role: staffMeta.role,
+          roleLabel: staffMeta.roleLabel,
           avatar: `https://api.dicebear.com/7.x/bottts/svg?seed=${cleanEmail}`,
         };
         setUsers(prev => [user, ...prev]);
       }
 
-      setCurrentUser(user);
-      setRole(user.role);
-      if (user.role === 'admin') setActiveView('admin');
-      else if (user.role === 'juri') setActiveView('juri');
-      else if (user.role === 'superadmin') setActiveView('superadmin');
-      closeAuthModal();
-      return { success: true, user };
+      if (user) {
+        setCurrentUser(user);
+        setRole(user.role);
+        if (user.role === 'admin') setActiveView('admin');
+        else if (user.role === 'juri') setActiveView('juri');
+        else if (user.role === 'superadmin') setActiveView('superadmin');
+        closeAuthModal();
+        return { success: true, user };
+      }
     }
 
     // 2. Cek pendaftaran tim peserta berdasarkan email
@@ -723,20 +717,31 @@ function safeSetItem(key, value) {
       'Tanggal Daftar'
     ];
 
+    // Helper sanitasi CSV Formula Injection (CWE-1236)
+    const sanitizeCsvCell = (val) => {
+      if (val === null || val === undefined) return '""';
+      let str = String(val).replace(/"/g, '""');
+      // Bila diawali simbol kalkulasi excel/csv, prefix dengan tanda petik tunggal (')
+      if (/^[=+\-@\t\r]/.test(str)) {
+        str = `'${str}`;
+      }
+      return `"${str}"`;
+    };
+
     const rows = teams.map(t => [
-      `"${t.regCode}"`,
-      `"${t.schoolName}"`,
-      `"${t.jenjang}"`,
-      `"${t.category}"`,
-      `"${t.platoonName}"`,
-      `"${t.status.toUpperCase()}"`,
-      `"${t.lotNumber || '-'}"`,
-      `"${t.coachName}"`,
-      `"${t.waNumber}"`,
-      `"${t.email}"`,
-      `"${t.feeAmount}"`,
-      `"${t.paymentStatus}"`,
-      `"${new Date(t.registeredAt).toLocaleString('id-ID')}"`,
+      sanitizeCsvCell(t.regCode),
+      sanitizeCsvCell(t.schoolName),
+      sanitizeCsvCell(t.jenjang),
+      sanitizeCsvCell(t.category),
+      sanitizeCsvCell(t.platoonName),
+      sanitizeCsvCell(t.status ? t.status.toUpperCase() : ''),
+      sanitizeCsvCell(t.lotNumber || '-'),
+      sanitizeCsvCell(t.coachName),
+      sanitizeCsvCell(t.waNumber),
+      sanitizeCsvCell(t.email),
+      sanitizeCsvCell(t.feeAmount),
+      sanitizeCsvCell(t.paymentStatus),
+      sanitizeCsvCell(new Date(t.registeredAt).toLocaleString('id-ID')),
     ]);
 
     const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
