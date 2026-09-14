@@ -28,8 +28,9 @@ export default function About() {
       <div className="container mx-auto px-6 relative z-10">
         {/* Header */}
         <div className="max-w-4xl mx-auto text-center mb-20">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-100/50 border border-red-200 text-red-800 text-xs font-bold uppercase tracking-widest mb-6">
-            <Scroll className="w-3.5 h-3.5" /> Dasar Pelaksanaan: QS. As-Saff Ayat 4
+          <div className="inline-flex items-center justify-center gap-2 px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full bg-red-100/60 border border-red-200 text-red-800 text-[10px] sm:text-xs font-bold uppercase tracking-wider sm:tracking-widest mb-6 max-w-full text-center leading-normal">
+            <Scroll className="w-3.5 h-3.5 shrink-0" />
+            <span className="truncate sm:whitespace-normal">Dasar Pelaksanaan: QS. As-Saff Ayat 4</span>
           </div>
 
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 uppercase italic tracking-tighter mb-6 leading-tight py-1">
@@ -61,6 +62,16 @@ export default function About() {
 
           <div className="relative bg-slate-900 text-white p-8 sm:p-12 lg:p-14 rounded-2xl shadow-2xl border border-slate-800 overflow-hidden">
             <div className="absolute inset-0 bg-carbon-pattern opacity-20 pointer-events-none"></div>
+            
+            {/* Integrated Cadet Silhouette Artwork from fotoslide */}
+            <div className="absolute right-0 bottom-0 h-full w-1/2 max-w-[280px] pointer-events-none opacity-20 group-hover:opacity-30 transition-opacity duration-700 hidden sm:block">
+              <img
+                src="/fotoslide/2.PNG"
+                alt="Paskibra Cadet"
+                className="w-full h-full object-contain object-bottom [mask-image:linear-gradient(to_left,black_40%,transparent_100%)]"
+                loading="lazy"
+              />
+            </div>
             <Shield className="absolute -right-10 -bottom-10 text-white/5 w-64 h-64 pointer-events-none" />
 
             <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">

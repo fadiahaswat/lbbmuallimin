@@ -31,6 +31,11 @@ const JuryScoringApp = React.lazy(() => import('./components/scoring/JuryScoring
 const AnnouncementPortal = React.lazy(() => import('./components/announcement/AnnouncementPortal.jsx'));
 const SuperadminPanel = React.lazy(() => import('./components/superadmin/SuperadminPanel.jsx'));
 
+// Adapted from Simpaskor (Fase 1 - 3): Lapangan, Klasemen & E-Voting
+const StagingDashboard = React.lazy(() => import('./components/staging/StagingDashboard.jsx'));
+const LiveLeaderboard = React.lazy(() => import('./components/leaderboard/LiveLeaderboard.jsx'));
+const VotingArena = React.lazy(() => import('./components/voting/VotingArena.jsx'));
+
 function ViewLoader() {
   return (
     <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-6 text-center">
@@ -109,6 +114,9 @@ function MainApp() {
         {activeView === 'juri' && <JuryScoringApp />}
         {activeView === 'superadmin' && <SuperadminPanel />}
         {activeView === 'announcement' && <AnnouncementPortal />}
+        {activeView === 'staging' && <StagingDashboard />}
+        {activeView === 'live_leaderboard' && <LiveLeaderboard />}
+        {activeView === 'voting_arena' && <VotingArena />}
       </React.Suspense>
     </div>
   );

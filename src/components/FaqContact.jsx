@@ -61,7 +61,7 @@ const FAQ_DATA = [
     id: 9,
     category: 'Umum',
     q: 'Kapan pendaftaran dibuka dan ditutup?',
-    a: `Pendaftaran daring resmi dibuka mulai 14 September 2026 dan batas akhir pendaftaran adalah 30 September 2026 pukul 23.59 WIB.`,
+    a: `Pendaftaran daring resmi dibuka mulai ${EVENT.REGISTRATION_RANGE} s.d. pukul 23.59 WIB.`,
   },
   {
     id: 10,

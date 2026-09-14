@@ -4,6 +4,8 @@
  * Berisi data realistis sekolah SD & SMP di DIY dengan berbagai status
  */
 
+import logoImg from '../assets/logo-tonti.png';
+
 export const INITIAL_SETTINGS = {
   registrationOpen: true,
   scoringOpen: true,
@@ -47,12 +49,21 @@ export const INITIAL_USERS = [
     roleLabel: 'Ketua Panitia',
   },
   {
+    id: 'user-fadia',
+    name: 'Andi Aqillah Fadia Haswat',
+    email: 'andiaqillahfadiahaswat@gmail.com',
+    role: 'superadmin',
+    avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop&crop=faces',
+    googleAvatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop&crop=faces',
+    roleLabel: 'Ketua Panitia / Administrator',
+  },
+  {
     id: 'user-smp1',
-    name: 'Dian Permata (SMPN 1 YK)',
-    email: 'smpn1yk.tonti@gmail.com',
+    name: 'Dian Permata (MTs Mu\'allimin)',
+    email: 'tonti.mtsmuallimin@gmail.com',
     role: 'peserta',
     teamId: 'TEAM-SMP-01',
-    schoolName: 'SMP Negeri 1 Yogyakarta',
+    schoolName: 'MTs Mu\'allimin Yogyakarta',
     avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=faces',
     roleLabel: 'Official Peserta',
   },
@@ -111,18 +122,18 @@ export function generatePersonnels(schoolName, jenjang, prefixName) {
 }
 
 export const INITIAL_TEAMS = [
-  // 1. SMPN 1 Yogyakarta (Terverifikasi, No Undian 03 SMP, Sudah ada Nilai Juri)
+  // 1. MTs Mu'allimin Yogyakarta (Terverifikasi, No Undian 03 SMP, Sudah ada Nilai Juri)
   {
     id: 'TEAM-SMP-01',
     regCode: 'LBB26-SMP-001',
-    schoolName: 'SMP Negeri 1 Yogyakarta',
+    schoolName: 'MTs Mu\'allimin Yogyakarta',
     jenjang: 'SMP',
     category: 'Putra',
     platoonName: 'Pleton Satria Utama',
     coachName: 'Dian Permata, S.Pd.',
     waNumber: '081223344552',
-    email: 'smpn1yk.tonti@gmail.com',
-    address: 'Jl. Cik Di Tiro No. 29, Terban, Gondokusuman, Kota Yogyakarta',
+    email: 'tonti.mtsmuallimin@gmail.com',
+    address: 'Jl. Letjen S. Parman No. 68, Patangpuluhan, Wirobrajan, Kota Yogyakarta',
     status: 'verified', // 'pending' | 'verified' | 'revision' | 'rejected'
     lotNumber: 3, // Nomor Undian TM
     drawTime: '2026-10-23T14:15:00+07:00',
@@ -131,13 +142,13 @@ export const INITIAL_TEAMS = [
     feeAmount: 450000,
     paymentStatus: 'paid', // 'unpaid' | 'paid'
     files: {
-      recommendationLetter: { name: 'Surat_Rekomendasi_SMPN1.pdf', uploadedAt: '2026-09-14T08:35:00+07:00', url: '#' },
+      recommendationLetter: { name: 'Surat_Rekomendasi_Muallimin.pdf', uploadedAt: '2026-09-14T08:35:00+07:00', url: '#' },
       paymentProof: { name: 'Bukti_Transfer_BRI_450rb.jpg', uploadedAt: '2026-09-14T08:36:00+07:00', url: '#' },
-      personnelPhotos: { name: 'Pasfoto_SMPN1_25Personil.zip', uploadedAt: '2026-09-14T08:38:00+07:00', url: '#' },
-      schoolLogo: { name: 'Logo_SMPN1_YK.png', uploadedAt: '2026-09-14T08:38:00+07:00', url: '#' },
+      personnelPhotos: { name: 'Pasfoto_Muallimin_25Personil.zip', uploadedAt: '2026-09-14T08:38:00+07:00', url: '#' },
+      schoolLogo: { name: 'Logo_Muallimin_YK.png', uploadedAt: '2026-09-14T08:38:00+07:00', url: logoImg },
     },
     revisionNote: '',
-    roster: generatePersonnels('SMP Negeri 1 Yogyakarta', 'SMP', 'Satria'),
+    roster: generatePersonnels('MTs Mu\'allimin Yogyakarta', 'SMP', 'Satria'),
   },
 
   // 2. SMP Muhammadiyah 2 Yogyakarta (Terverifikasi, No Undian 07 SMP, Sudah dinilai)
@@ -491,3 +502,67 @@ export const INITIAL_SCORES = {
     notes: 'Gerakan dasar rapi, aba-aba danton terdengar jelas.',
   },
 };
+
+// INITIAL_STAGING: Data alur lapangan & antrean pleton (Fase 2)
+export const INITIAL_STAGING = {
+  'TEAM-SMP-01': {
+    teamId: 'TEAM-SMP-01',
+    stage: 'finished',
+    checklist: { personnelCount: true, chestNumber: true, whiteGloves: true, beretCap: true, footwear: true },
+    durationSeconds: 742,
+    overtimePenaltyBlocks: 0,
+    enteredArenaAt: '2026-11-08T09:15:00+07:00',
+    finishedAt: '2026-11-08T09:27:22+07:00',
+    notes: 'Penampilan lancar tanpa insiden.',
+  },
+  'TEAM-SMP-02': {
+    teamId: 'TEAM-SMP-02',
+    stage: 'finished',
+    checklist: { personnelCount: true, chestNumber: true, whiteGloves: true, beretCap: true, footwear: true },
+    durationSeconds: 765,
+    overtimePenaltyBlocks: 0,
+    enteredArenaAt: '2026-11-08T09:35:00+07:00',
+    finishedAt: '2026-11-08T09:47:45+07:00',
+    notes: 'Kekompakan terjaga.',
+  },
+  'TEAM-SMP-03': {
+    teamId: 'TEAM-SMP-03',
+    stage: 'arena',
+    checklist: { personnelCount: true, chestNumber: true, whiteGloves: true, beretCap: true, footwear: true },
+    durationSeconds: 310,
+    overtimePenaltyBlocks: 0,
+    enteredArenaAt: '2026-11-08T10:00:00+07:00',
+    notes: 'Sedang melaksanakan materi langkah tegap di kotak lomba.',
+  },
+  'TEAM-SMP-04': {
+    teamId: 'TEAM-SMP-04',
+    stage: 'dp3',
+    checklist: { personnelCount: true, chestNumber: true, whiteGloves: true, beretCap: true, footwear: true },
+    notes: 'Peleton sudah berbaris di gerbang masuk.',
+  },
+  'TEAM-SD-01': {
+    teamId: 'TEAM-SD-01',
+    stage: 'dp2',
+    checklist: { personnelCount: true, chestNumber: true, whiteGloves: true, beretCap: false, footwear: true },
+    notes: 'Pemeriksaan kelengkapan lencana baret.',
+  },
+  'TEAM-SD-02': {
+    teamId: 'TEAM-SD-02',
+    stage: 'dp1',
+    checklist: { personnelCount: true, chestNumber: false, whiteGloves: false, beretCap: false, footwear: false },
+    notes: 'Peleton baru tiba di tenda absensi.',
+  },
+};
+
+// INITIAL_VOTES: Data perolehan suara suporter online (Fase 3)
+export const INITIAL_VOTES = {
+  'TEAM-SMP-01': { peleton: 342, danton: 289 },
+  'TEAM-SMP-02': { peleton: 418, danton: 375 },
+  'TEAM-SMP-03': { peleton: 215, danton: 194 },
+  'TEAM-SMP-04': { peleton: 180, danton: 160 },
+  'TEAM-SD-01': { peleton: 512, danton: 490 },
+  'TEAM-SD-02': { peleton: 295, danton: 260 },
+  'TEAM-SD-03': { peleton: 140, danton: 125 },
+  'TEAM-SD-04': { peleton: 98, danton: 84 },
+};
+

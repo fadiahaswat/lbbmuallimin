@@ -1,12 +1,15 @@
-import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo, useRef } from 'react';
 import {
   INITIAL_TEAMS,
   INITIAL_SCORES,
   INITIAL_SETTINGS,
   INITIAL_PINS,
   INITIAL_USERS,
+  INITIAL_STAGING,
+  INITIAL_VOTES,
   generatePersonnels
 } from '../data/seedData.js';
+import { JURY_POSTS, STAGING_CONFIG, VOTING_CONFIG } from '../config.js';
 
 const CompetitionContext = createContext(null);
 
@@ -18,7 +21,51 @@ const STORAGE_KEYS = {
   CURRENT_TEAM_ID: 'lbb_muallimin_current_team_id_v2',
   USERS: 'lbb_muallimin_users_v2',
   CURRENT_USER: 'lbb_muallimin_current_user_v2',
+  STAGING: 'lbb_muallimin_staging_v2',
+  VOTES: 'lbb_muallimin_votes_v2',
+  USER_VOTES: 'lbb_muallimin_user_votes_v2',
 };
+
+// Resolusi foto profil:
+// - Untuk peserta: Prioritas 1: Logo sekolah, Prioritas 2: Profil Google, Fallback: Inisial sekolah
+// - Untuk non-peserta: Profil Google, Fallback: Inisial staff
+export function resolveUserAvatar(user, teamsList = []) {
+  if (!user) return null;
+
+  if (user.role === 'peserta') {
+    const matchedTeam = teamsList.find(
+      t => t.id === user.teamId || (user.schoolName && t.schoolName === user.schoolName)
+    );
+    const schoolLogoUrl = matchedTeam?.files?.schoolLogo?.url;
+    if (schoolLogoUrl && schoolLogoUrl !== '#' && !schoolLogoUrl.startsWith('#')) {
+      return { url: schoolLogoUrl, isSchoolLogo: true };
+    }
+    if (user.googleAvatar) {
+      return { url: user.googleAvatar, isSchoolLogo: false };
+    }
+    if (user.avatar && !user.avatar.includes('dicebear.com/7.x/bottts')) {
+      return { url: user.avatar, isSchoolLogo: false };
+    }
+    const label = user.schoolName || user.name || 'Peserta';
+    return {
+      url: `https://ui-avatars.com/api/?name=${encodeURIComponent(label)}&background=8B0000&color=fff&bold=true`,
+      isSchoolLogo: false,
+    };
+  }
+
+  // Non-peserta (admin, superadmin, juri)
+  if (user.googleAvatar) {
+    return { url: user.googleAvatar, isSchoolLogo: false };
+  }
+  if (user.avatar && !user.avatar.includes('dicebear.com/7.x/bottts')) {
+    return { url: user.avatar, isSchoolLogo: false };
+  }
+  const staffName = user.name || user.email || 'Admin';
+  return {
+    url: `https://ui-avatars.com/api/?name=${encodeURIComponent(staffName)}&background=020617&color=fbbf24&bold=true`,
+    isSchoolLogo: false,
+  };
+}
 
 export function CompetitionProvider({ children }) {
   // 0. User Auth State
@@ -91,6 +138,73 @@ export function CompetitionProvider({ children }) {
   // 7. Modals
   const [activeModal, setActiveModal] = useState(null); // 'regWizard' | 'statusCheck' | 'docViewer' | 'teamDetail' | 'pinModal'
   const [modalData, setModalData] = useState(null);
+
+  // 8. Staging & Field Operations (Fase 2)
+  const [staging, setStaging] = useState(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.STAGING);
+      return saved ? JSON.parse(saved) : INITIAL_STAGING;
+    } catch {
+      return INITIAL_STAGING;
+    }
+  });
+
+  // 9. E-Voting Suporter (Fase 3)
+  const [votes, setVotes] = useState(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.VOTES);
+      return saved ? JSON.parse(saved) : INITIAL_VOTES;
+    } catch {
+      return INITIAL_VOTES;
+    }
+  });
+
+  // 10. User Device Vote History (Anti-Spam Daily Limit Check)
+  const [userVotes, setUserVotes] = useState(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.USER_VOTES);
+      return saved ? JSON.parse(saved) : {};
+    } catch {
+      return {};
+    }
+  });
+
+  // 11. Stopwatch / Field Timer (Fase 2)
+  const [fieldTimer, setFieldTimer] = useState({
+    isRunning: false,
+    elapsedSeconds: 0,
+    activeTeamId: null,
+  });
+  const timerIntervalRef = useRef(null);
+
+  useEffect(() => {
+    if (fieldTimer.isRunning) {
+      timerIntervalRef.current = setInterval(() => {
+        setFieldTimer(prev => ({
+          ...prev,
+          elapsedSeconds: prev.elapsedSeconds + 1,
+        }));
+      }, 1000);
+    } else if (timerIntervalRef.current) {
+      clearInterval(timerIntervalRef.current);
+    }
+    return () => {
+      if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
+    };
+  }, [fieldTimer.isRunning]);
+
+  // Sync staging, votes, userVotes to localStorage
+  useEffect(() => {
+    safeSetItem(STORAGE_KEYS.STAGING, JSON.stringify(staging));
+  }, [staging]);
+
+  useEffect(() => {
+    safeSetItem(STORAGE_KEYS.VOTES, JSON.stringify(votes));
+  }, [votes]);
+
+  useEffect(() => {
+    safeSetItem(STORAGE_KEYS.USER_VOTES, JSON.stringify(userVotes));
+  }, [userVotes]);
 
 // Helper for resilient localStorage access without crashing on QuotaExceededError
 function safeSetItem(key, value) {
@@ -210,7 +324,7 @@ function safeSetItem(key, value) {
     goBack();
   }
 
-  function loginUser(email, name = null) {
+  function loginUser(email, name = null, googleAvatar = null) {
     const cleanEmail = email.trim().toLowerCase();
 
     // 1. Cek kredensial admin / panitia / juri / superadmin (Strict Match)
@@ -218,21 +332,34 @@ function safeSetItem(key, value) {
       'admin@lbbmuallimin.com': { role: 'admin', roleLabel: 'Panitia Sekretariat' },
       'juri@lbbmuallimin.com': { role: 'juri', roleLabel: 'Dewan Juri' },
       'ketua@lbbmuallimin.com': { role: 'superadmin', roleLabel: 'Ketua Panitia' },
+      'andiaqillahfadiahaswat@gmail.com': { role: 'superadmin', roleLabel: 'Ketua Panitia / Administrator' },
     };
 
     if (OFFICIAL_STAFF_EMAILS[cleanEmail] || users.some(u => u.email.toLowerCase() === cleanEmail && ['admin', 'juri', 'superadmin'].includes(u.role))) {
       let user = users.find(u => u.email.toLowerCase() === cleanEmail);
       if (!user && OFFICIAL_STAFF_EMAILS[cleanEmail]) {
         const staffMeta = OFFICIAL_STAFF_EMAILS[cleanEmail];
+        const staffName = name || cleanEmail.split('@')[0].toUpperCase();
         user = {
           id: `user-${Date.now()}`,
-          name: name || cleanEmail.split('@')[0].toUpperCase(),
+          name: staffName,
           email: cleanEmail,
           role: staffMeta.role,
           roleLabel: staffMeta.roleLabel,
-          avatar: `https://api.dicebear.com/7.x/bottts/svg?seed=${cleanEmail}`,
+          avatar: googleAvatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(staffName)}&background=020617&color=fbbf24&bold=true`,
+          googleAvatar: googleAvatar || null,
         };
         setUsers(prev => [user, ...prev]);
+      } else if (user) {
+        if (googleAvatar) {
+          user = {
+            ...user,
+            avatar: googleAvatar,
+            googleAvatar,
+            name: name || user.name,
+          };
+          setUsers(prev => prev.map(u => (u.id === user.id ? user : u)));
+        }
       }
 
       if (user) {
@@ -284,19 +411,36 @@ function safeSetItem(key, value) {
       }
 
       // Status 'verified' -> Di-ACC oleh Admin!
+      // Foto profil untuk peserta:
+      // Prioritas 1: Logo sekolah yang diunggah
+      // Prioritas 2: Profil Google
+      // Prioritas 3: Inisial sekolah
+      const schoolLogoUrl = team.files?.schoolLogo?.url && team.files?.schoolLogo?.url !== '#' && !team.files?.schoolLogo?.url.startsWith('#')
+        ? team.files.schoolLogo.url
+        : null;
+
+      const resolvedAvatar = schoolLogoUrl
+        || googleAvatar
+        || existingUser?.googleAvatar
+        || (existingUser?.avatar && !existingUser.avatar.includes('dicebear') ? existingUser.avatar : null)
+        || `https://ui-avatars.com/api/?name=${encodeURIComponent(team.schoolName)}&background=8B0000&color=fff&bold=true`;
+
       const user = {
         id: existingUser?.id || `user-${Date.now()}`,
-        name: team.officialName || team.coachName || existingUser?.name || team.schoolName,
+        name: team.officialName || team.coachName || name || existingUser?.name || team.schoolName,
         email: cleanEmail,
         role: 'peserta',
         roleLabel: 'Calon Peserta Resmi',
         teamId: team.id,
         schoolName: team.schoolName,
-        avatar: existingUser?.avatar || team.files?.schoolLogo?.url || `https://api.dicebear.com/7.x/bottts/svg?seed=${cleanEmail}`,
+        avatar: resolvedAvatar,
+        googleAvatar: googleAvatar || existingUser?.googleAvatar || null,
       };
 
       if (!existingUser) {
         setUsers(prev => [user, ...prev]);
+      } else {
+        setUsers(prev => prev.map(u => (u.id === user.id ? user : u)));
       }
       setCurrentUser(user);
       setRole('peserta');
@@ -344,7 +488,7 @@ function safeSetItem(key, value) {
           : 'Official Peserta',
       teamId: null,
       schoolName,
-      avatar: `https://api.dicebear.com/7.x/bottts/svg?seed=${cleanEmail}`,
+      avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(name || cleanEmail)}&background=${requestedRole === 'peserta' ? '8B0000' : '020617'}&color=${requestedRole === 'peserta' ? 'fff' : 'fbbf24'}&bold=true`,
     };
 
     setUsers(prev => [newUser, ...prev]);
@@ -480,9 +624,11 @@ function safeSetItem(key, value) {
       id,
       regCode,
       schoolName: newTeamData.schoolName,
+      schoolBaseName: newTeamData.schoolBaseName || newTeamData.schoolName,
+      teamUnit: newTeamData.teamUnit || 'Tim A',
       jenjang: newTeamData.jenjang,
       teamType: newTeamData.teamType || 'Homogen', // 'Homogen' | 'Heterogen'
-      category: newTeamData.teamType || 'Homogen',
+      category: newTeamData.category || newTeamData.teamType || 'Homogen',
       platoonName: newTeamData.platoonName || `Pleton ${newTeamData.schoolName}`,
       dantonName: newTeamData.dantonName || '',
       officialName: newTeamData.officialName || '',
@@ -523,6 +669,20 @@ function safeSetItem(key, value) {
     if (found) {
       setCurrentTeamId(found.id);
       setRole('peserta');
+      const schoolLogo = found.files?.schoolLogo?.url && found.files?.schoolLogo?.url !== '#' && !found.files?.schoolLogo?.url.startsWith('#')
+        ? found.files.schoolLogo.url
+        : null;
+      const teamUser = {
+        id: `user-team-${found.id}`,
+        name: found.officialName || found.schoolName,
+        email: found.email || '',
+        role: 'peserta',
+        roleLabel: 'Official Tim',
+        teamId: found.id,
+        schoolName: found.schoolName,
+        avatar: schoolLogo || `https://ui-avatars.com/api/?name=${encodeURIComponent(found.schoolName)}&background=8B0000&color=fff&bold=true`,
+      };
+      setCurrentUser(teamUser);
       setActiveView('peserta_dashboard');
       return { success: true, team: found };
     }
@@ -554,6 +714,20 @@ function safeSetItem(key, value) {
         return team;
       })
     );
+
+    // Jika yang di-upload adalah logo sekolah, sinkronkan ke avatar profil pengguna peserta
+    if (fileKey === 'schoolLogo' && fileData?.url && fileData.url !== '#' && !fileData.url.startsWith('#')) {
+      setCurrentUser(prev => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          avatar: fileData.url,
+        };
+      });
+      setUsers(prev =>
+        prev.map(u => (u.teamId === teamId ? { ...u, avatar: fileData.url } : u))
+      );
+    }
   }
 
   // --- Admin Operations ---
@@ -657,6 +831,249 @@ function safeSetItem(key, value) {
     return record;
   }
 
+  // Multi-Juri Scoring Engine (Pos 1: PBB, Pos 2: Vafor & Kostum, Pos 3: Danton)
+  function saveJuryPostScore(teamId, postKey, postScoreData) {
+    let updatedRecord = null;
+    setScores(prev => {
+      const currentTeamScore = prev[teamId] || {
+        teamId,
+        juries: {},
+        penalties: {
+          upacara: false,
+          dp1: false,
+          personelKurang: false,
+          overTimeBlocks: 0,
+          injakGarisCount: 0,
+          penyesuaianCount: 0,
+          totalPenalty: 0,
+        },
+        notes: '',
+      };
+
+      const updatedJuries = {
+        ...(currentTeamScore.juries || {}),
+        [postKey]: {
+          ...postScoreData,
+          savedAt: new Date().toISOString(),
+        },
+      };
+
+      // Recalculate combined penalties
+      const incomingPen = postScoreData.penalties || currentTeamScore.penalties || {};
+      let totalPenalty = 0;
+      if (incomingPen.upacara) totalPenalty += 150;
+      if (incomingPen.dp1) totalPenalty += 100;
+      if (incomingPen.personelKurang) totalPenalty += 75;
+      totalPenalty += (incomingPen.overTimeBlocks || 0) * 50;
+      totalPenalty += (incomingPen.injakGarisCount || 0) * 50;
+      if ((incomingPen.penyesuaianCount || 0) > 3) totalPenalty += 25;
+      const mergedPenalties = {
+        ...incomingPen,
+        totalPenalty,
+      };
+
+      // Extract Pos 1 (PBB)
+      const pbbTotal = updatedJuries.pos1?.total !== undefined
+        ? Number(updatedJuries.pos1.total)
+        : (currentTeamScore.pbb?.total !== undefined ? Number(currentTeamScore.pbb.total) : 85);
+
+      // Extract Pos 2 (Vafor & Kerapian)
+      const vaforTotal = updatedJuries.pos2?.total !== undefined
+        ? Number(updatedJuries.pos2.total)
+        : (currentTeamScore.vafor?.total !== undefined ? Number(currentTeamScore.vafor.total) : 84);
+
+      // Extract Pos 3 (Danton)
+      const dantonTotal = updatedJuries.pos3?.total !== undefined
+        ? Number(updatedJuries.pos3.total)
+        : (currentTeamScore.danton?.total !== undefined ? Number(currentTeamScore.danton.total) : 85);
+
+      // Grand Total: Pos 1 + Pos 2 + Pos 3 - Penalti
+      const finalScore = Math.max(0, parseFloat((pbbTotal + vaforTotal + dantonTotal - totalPenalty).toFixed(2)));
+
+      updatedRecord = {
+        ...currentTeamScore,
+        teamId,
+        juries: updatedJuries,
+        penalties: mergedPenalties,
+        pbb: updatedJuries.pos1 ? { ...updatedJuries.pos1, total: pbbTotal } : (currentTeamScore.pbb || { total: pbbTotal }),
+        vafor: updatedJuries.pos2 ? { ...updatedJuries.pos2, total: vaforTotal } : (currentTeamScore.vafor || { total: vaforTotal }),
+        danton: updatedJuries.pos3 ? { ...updatedJuries.pos3, total: dantonTotal } : (currentTeamScore.danton || { total: dantonTotal }),
+        finalScore,
+        scoredAt: new Date().toISOString(),
+        notes: postScoreData.notes || currentTeamScore.notes || '',
+      };
+
+      return {
+        ...prev,
+        [teamId]: updatedRecord,
+      };
+    });
+    return updatedRecord;
+  }
+
+  function getAggregatedScore(teamId) {
+    return scores[teamId] || null;
+  }
+
+  // --- Staging & Field Operations (Fase 2) ---
+  function updateTeamStaging(teamId, newStage, updates = {}) {
+    setStaging(prev => {
+      const current = prev[teamId] || {
+        teamId,
+        stage: 'waiting',
+        checklist: {},
+        durationSeconds: 0,
+        overtimePenaltyBlocks: 0,
+        notes: '',
+      };
+
+      const next = {
+        ...current,
+        stage: newStage,
+        ...updates,
+        checklist: {
+          ...(current.checklist || {}),
+          ...(updates.checklist || {}),
+        },
+        updatedAt: new Date().toISOString(),
+      };
+
+      if (newStage === 'arena' && !next.enteredArenaAt) {
+        next.enteredArenaAt = new Date().toISOString();
+      }
+      if (newStage === 'finished' && !next.finishedAt) {
+        next.finishedAt = new Date().toISOString();
+      }
+
+      return {
+        ...prev,
+        [teamId]: next,
+      };
+    });
+  }
+
+  // Stopwatch / Timer Controls
+  function startFieldTimer(teamId) {
+    setFieldTimer({
+      isRunning: true,
+      elapsedSeconds: 0,
+      activeTeamId: teamId,
+    });
+    updateTeamStaging(teamId, 'arena');
+  }
+
+  function pauseFieldTimer() {
+    setFieldTimer(prev => ({ ...prev, isRunning: false }));
+  }
+
+  function resumeFieldTimer() {
+    setFieldTimer(prev => ({ ...prev, isRunning: true }));
+  }
+
+  function resetFieldTimer() {
+    setFieldTimer({
+      isRunning: false,
+      elapsedSeconds: 0,
+      activeTeamId: null,
+    });
+  }
+
+  function stopAndSaveFieldTimer(teamId, jenjang = 'SMP') {
+    const maxSeconds = jenjang === 'SD' ? STAGING_CONFIG.DURATIONS.SD : STAGING_CONFIG.DURATIONS.SMP;
+    const elapsed = fieldTimer.elapsedSeconds;
+    const overtimeSeconds = Math.max(0, elapsed - maxSeconds);
+    const overtimeBlocks = Math.ceil(overtimeSeconds / 30);
+
+    updateTeamStaging(teamId, 'finished', {
+      durationSeconds: elapsed,
+      overtimePenaltyBlocks: overtimeBlocks,
+    });
+
+    // Otomatis sinkronkan penalti overtime ke data skor tim
+    setScores(prev => {
+      const existing = prev[teamId];
+      if (!existing) return prev;
+      const pen = {
+        ...(existing.penalties || {}),
+        overTimeBlocks: overtimeBlocks,
+      };
+      let totalPenalty = 0;
+      if (pen.upacara) totalPenalty += 150;
+      if (pen.dp1) totalPenalty += 100;
+      if (pen.personelKurang) totalPenalty += 75;
+      totalPenalty += (pen.overTimeBlocks || 0) * 50;
+      totalPenalty += (pen.injakGarisCount || 0) * 50;
+      if ((pen.penyesuaianCount || 0) > 3) totalPenalty += 25;
+      pen.totalPenalty = totalPenalty;
+
+      const pbbTotal = existing.pbb?.total || 0;
+      const vaforTotal = existing.vafor?.total || 0;
+      const dantonTotal = existing.danton?.total || 0;
+      const finalScore = Math.max(0, parseFloat((pbbTotal + vaforTotal + dantonTotal - totalPenalty).toFixed(2)));
+
+      return {
+        ...prev,
+        [teamId]: {
+          ...existing,
+          penalties: pen,
+          finalScore,
+        },
+      };
+    });
+
+    resetFieldTimer();
+  }
+
+  // --- E-Voting Suporter (Fase 3) ---
+  function getTodayKey() {
+    return new Date().toISOString().slice(0, 10);
+  }
+
+  function hasVotedToday(teamId, category = 'peleton') {
+    const today = getTodayKey();
+    const voteKey = `${teamId}_${category}`;
+    return Boolean(userVotes[today]?.[voteKey]);
+  }
+
+  function castVote(teamId, category = 'peleton') {
+    const today = getTodayKey();
+    const voteKey = `${teamId}_${category}`;
+
+    if (userVotes[today]?.[voteKey]) {
+      return {
+        success: false,
+        message: 'Perangkat Anda sudah memberikan suara untuk kategori ini hari ini. Kuota harian diperbarui besok.',
+      };
+    }
+
+    setVotes(prev => {
+      const cur = prev[teamId] || { peleton: 0, danton: 0 };
+      return {
+        ...prev,
+        [teamId]: {
+          ...cur,
+          [category]: (cur[category] || 0) + 1,
+        },
+      };
+    });
+
+    setUserVotes(prev => {
+      const todayVotes = prev[today] || {};
+      return {
+        ...prev,
+        [today]: {
+          ...todayVotes,
+          [voteKey]: true,
+        },
+      };
+    });
+
+    return {
+      success: true,
+      message: 'Alhamdulillah! Dukungan Anda untuk pleton sekolah berhasil dicatat.',
+    };
+  }
+
   // --- Superadmin / System Settings Operations ---
   function updateSettings(newSettings) {
     setSettings(prev => ({ ...prev, ...newSettings }));
@@ -666,12 +1083,19 @@ function safeSetItem(key, value) {
     setTeams(INITIAL_TEAMS);
     setScores(INITIAL_SCORES);
     setSettings(INITIAL_SETTINGS);
+    setStaging(INITIAL_STAGING);
+    setVotes(INITIAL_VOTES);
+    setUserVotes({});
+    setFieldTimer({ isRunning: false, elapsedSeconds: 0, activeTeamId: null });
     setRole('publik');
     setActiveView('landing');
     setCurrentTeamId(null);
     localStorage.removeItem(STORAGE_KEYS.TEAMS);
     localStorage.removeItem(STORAGE_KEYS.SCORES);
     localStorage.removeItem(STORAGE_KEYS.SETTINGS);
+    localStorage.removeItem(STORAGE_KEYS.STAGING);
+    localStorage.removeItem(STORAGE_KEYS.VOTES);
+    localStorage.removeItem(STORAGE_KEYS.USER_VOTES);
     localStorage.removeItem(STORAGE_KEYS.ROLE);
     localStorage.removeItem(STORAGE_KEYS.CURRENT_TEAM_ID);
   }
@@ -784,6 +1208,7 @@ function safeSetItem(key, value) {
       loginUser,
       registerUser,
       logoutUser,
+      getUserAvatar: (u = currentUser) => resolveUserAvatar(u, teams),
 
       // Auth & Role
       switchRole,
@@ -803,8 +1228,25 @@ function safeSetItem(key, value) {
       randomizeLotNumbers,
       deleteTeam,
 
-      // Scoring
+      // Scoring (Fase 1)
       saveScore,
+      saveJuryPostScore,
+      getAggregatedScore,
+
+      // Staging & Field Operations (Fase 2)
+      staging,
+      updateTeamStaging,
+      fieldTimer,
+      startFieldTimer,
+      pauseFieldTimer,
+      resumeFieldTimer,
+      resetFieldTimer,
+      stopAndSaveFieldTimer,
+
+      // E-Voting Suporter (Fase 3)
+      votes,
+      castVote,
+      hasVotedToday,
 
       // Settings & System
       updateSettings,
@@ -832,6 +1274,10 @@ function safeSetItem(key, value) {
       authModal,
       authTab,
       pinPrompt,
+      staging,
+      votes,
+      userVotes,
+      fieldTimer,
     ]
   );
 

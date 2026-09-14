@@ -42,8 +42,13 @@ export default function ParticipantDashboard() {
   if (!currentTeam) {
     return (
       <div className="min-h-[70vh] flex flex-col items-center justify-center p-6 text-center">
-        <div className="w-16 h-16 bg-red-100 text-red-700 rounded-3xl flex items-center justify-center mb-4 shadow-sm">
-          <Users className="w-8 h-8" />
+        <div className="w-24 h-24 rounded-full bg-red-50 border border-red-200 flex items-center justify-center p-2 mb-4 shadow-sm overflow-hidden">
+          <img
+            src="/fotoslide/5.PNG"
+            alt="Paskibra Cadet"
+            className="w-full h-full object-contain object-top"
+            loading="lazy"
+          />
         </div>
         <h3 className="text-2xl font-black text-slate-900 uppercase italic">Belum Ada Peleton Terdaftar</h3>
         <p className="text-slate-500 text-sm max-w-md mt-1 mb-6">

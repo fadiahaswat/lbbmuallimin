@@ -195,7 +195,7 @@ export default function DocumentViewerModal({ isOpen, onClose, data }) {
                 <tbody>
                   <tr>
                     <td className="border border-slate-300 p-2 font-bold bg-slate-50 w-1/3">Nama Sekolah/Madrasah</td>
-                    <td className="border border-slate-300 p-2 font-bold text-slate-900">{team?.schoolName || 'SMP Muhammadiyah 1 Yogyakarta'}</td>
+                    <td className="border border-slate-300 p-2 font-bold text-slate-900">{team?.schoolName || 'MTs Mu\'allimin Yogyakarta'}</td>
                   </tr>
                   <tr>
                     <td className="border border-slate-300 p-2 font-bold bg-slate-50">Jenjang Pendidikan</td>
@@ -252,7 +252,7 @@ export default function DocumentViewerModal({ isOpen, onClose, data }) {
               <div className="text-center mb-4">
                 <h3 className="font-black text-base sm:text-lg uppercase underline">FORMULIR B: DAFTAR SUSUNAN 25 PERSONEL PELETON</h3>
                 <p className="font-bold text-xs text-slate-600">
-                  {team?.schoolName || 'SMP Muhammadiyah 1 Yogyakarta'} ({team?.regCode || 'LBB26-SMP-001'})
+                  {team?.schoolName || 'MTs Mu\'allimin Yogyakarta'} ({team?.regCode || 'LBB26-SMP-001'})
                 </p>
               </div>
 

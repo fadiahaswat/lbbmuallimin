@@ -18,12 +18,16 @@ import {
   ArrowLeft
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
-import { MATERIALS, SCORING, PENALTIES } from '../../config.js';
+import { MATERIALS, SCORING, PENALTIES, JURY_POSTS } from '../../config.js';
+import OfficialScoreRecapModal from './OfficialScoreRecapModal.jsx';
 
 export default function JuryScoringApp() {
-  const { teams, scores, saveScore, setActiveView, openModal } = useCompetition();
+  const { teams, scores, saveScore, saveJuryPostScore, setActiveView, openModal } = useCompetition();
 
   const [activeTab, setActiveTab] = useState('scoring'); // 'scoring' | 'leaderboard'
+  const [activeJuryPost, setActiveJuryPost] = useState('all'); // 'all' | 'pos1' | 'pos2' | 'pos3'
+  const [isRecapModalOpen, setIsRecapModalOpen] = useState(false);
+
   const [selectedTeamId, setSelectedTeamId] = useState(() => {
     // Default to first verified team
     const first = teams.find(t => t.status === 'verified');
@@ -37,7 +41,7 @@ export default function JuryScoringApp() {
   const [juryName, setJuryName] = useState('Mayor (Mar) Bambang S., S.E.');
   const [juryRole, setJuryRole] = useState('Dewan Juri Utama (TNI/Polri)');
 
-  // Danton: range 50-90 (interval 2)
+  // Pos 3: Danton (range 50-90, interval 2)
   const [dantonScores, setDantonScores] = useState({
     penguasaan: 86,
     vokal: 84,
@@ -45,10 +49,17 @@ export default function JuryScoringApp() {
     lapangan: 84,
   });
 
-  // PBB: Teknik (70%), Kekompakan (30%)
+  // Pos 1: PBB (Teknik 70%, Kekompakan 30%)
   const [pbbScores, setPbbScores] = useState({
     teknik: 86,
     kekompakan: 84,
+  });
+
+  // Pos 2: Variasi, Formasi & Kostum (Kreativitas 40%, Keindahan 35%, Kostum 25%)
+  const [vaforScores, setVaforScores] = useState({
+    kreativitas: 85,
+    keindahan: 84,
+    kostum: 86,
   });
 
   // Penalties
@@ -69,16 +80,18 @@ export default function JuryScoringApp() {
     setSelectedTeamId(teamId);
     const score = scores[teamId];
     if (score) {
-      setJuryName(score.juryName);
-      setJuryRole(score.juryRole);
-      setDantonScores(score.danton);
-      setPbbScores(score.pbb);
-      setPenalties(score.penalties);
+      setJuryName(score.juryName || JURY_POSTS[activeJuryPost]?.defaultName || 'Dewan Juri LBB');
+      setJuryRole(score.juryRole || JURY_POSTS[activeJuryPost]?.title || 'Dewan Juri');
+      setDantonScores(score.danton || { penguasaan: 86, vokal: 84, sikap: 86, lapangan: 84 });
+      setPbbScores(score.pbb || { teknik: 86, kekompakan: 84 });
+      setVaforScores(score.vafor || { kreativitas: 85, keindahan: 84, kostum: 86 });
+      setPenalties(score.penalties || { upacara: false, dp1: false, personelKurang: false, overTimeBlocks: 0, injakGarisCount: 0, penyesuaianCount: 0 });
       setJuryNotes(score.notes || '');
     } else {
       // Default standard values
       setDantonScores({ penguasaan: 84, vokal: 84, sikap: 84, lapangan: 84 });
       setPbbScores({ teknik: 84, kekompakan: 84 });
+      setVaforScores({ kreativitas: 84, keindahan: 84, kostum: 84 });
       setPenalties({ upacara: false, dp1: false, personelKurang: false, overTimeBlocks: 0, injakGarisCount: 0, penyesuaianCount: 0 });
       setJuryNotes('');
     }
@@ -98,6 +111,14 @@ export default function JuryScoringApp() {
     (pbbScores.teknik * 0.70 + pbbScores.kekompakan * 0.30).toFixed(2)
   );
 
+  const vaforTotal = parseFloat(
+    (
+      vaforScores.kreativitas * 0.40 +
+      vaforScores.keindahan * 0.35 +
+      vaforScores.kostum * 0.25
+    ).toFixed(2)
+  );
+
   let penaltyDeduction = 0;
   if (penalties.upacara) penaltyDeduction += 150;
   if (penalties.dp1) penaltyDeduction += 100;
@@ -107,32 +128,43 @@ export default function JuryScoringApp() {
   if ((penalties.penyesuaianCount || 0) > 3) penaltyDeduction += 25;
 
   const totalCalculatedScore = parseFloat(
-    Math.max(0, dantonTotal + pbbTotal - penaltyDeduction).toFixed(2)
+    Math.max(0, dantonTotal + pbbTotal + vaforTotal - penaltyDeduction).toFixed(2)
   );
 
   function handleSaveScore(e) {
     e.preventDefault();
     if (!selectedTeam) return;
 
-    saveScore(selectedTeam.id, {
-      juryName,
-      juryRole,
-      danton: {
-        ...dantonScores,
-        total: dantonTotal,
-      },
-      pbb: {
-        ...pbbScores,
-        total: pbbTotal,
-      },
-      penalties: {
-        ...penalties,
-        totalPenalty: penaltyDeduction,
-      },
-      notes: juryNotes,
-    });
+    if (activeJuryPost !== 'all') {
+      let postPayload = {
+        juryName: JURY_POSTS[activeJuryPost]?.defaultName || juryName,
+        juryRole: JURY_POSTS[activeJuryPost]?.title || juryRole,
+        penalties: { ...penalties, totalPenalty: penaltyDeduction },
+        notes: juryNotes,
+      };
 
-    setSaveSuccessMsg(`Nilai untuk ${selectedTeam.schoolName} (${selectedTeam.regCode}) berhasil disimpan!`);
+      if (activeJuryPost === 'pos1') {
+        postPayload = { ...postPayload, ...pbbScores, total: pbbTotal };
+      } else if (activeJuryPost === 'pos2') {
+        postPayload = { ...postPayload, ...vaforScores, total: vaforTotal };
+      } else if (activeJuryPost === 'pos3') {
+        postPayload = { ...postPayload, ...dantonScores, total: dantonTotal };
+      }
+
+      saveJuryPostScore(selectedTeam.id, activeJuryPost, postPayload);
+    } else {
+      saveScore(selectedTeam.id, {
+        juryName,
+        juryRole,
+        danton: { ...dantonScores, total: dantonTotal },
+        pbb: { ...pbbScores, total: pbbTotal },
+        vafor: { ...vaforScores, total: vaforTotal },
+        penalties: { ...penalties, totalPenalty: penaltyDeduction },
+        notes: juryNotes,
+      });
+    }
+
+    setSaveSuccessMsg(`Nilai untuk ${selectedTeam.schoolName} berhasil disimpan & disinkronkan ke Rekapitulasi!`);
     setTimeout(() => setSaveSuccessMsg(''), 4000);
   }
 
@@ -165,15 +197,22 @@ export default function JuryScoringApp() {
 
           <div className="flex flex-wrap items-center gap-2">
             <button
+              onClick={() => setIsRecapModalOpen(true)}
+              className="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 shadow-md cursor-pointer"
+            >
+              <Printer className="w-4 h-4" />
+              <span>Berita Acara Resmi (PDF)</span>
+            </button>
+            <button
               onClick={() => setActiveTab(activeTab === 'scoring' ? 'leaderboard' : 'scoring')}
-              className="px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 shadow-md"
+              className="px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 shadow-md cursor-pointer"
             >
               <Trophy className="w-4 h-4" />
               <span>{activeTab === 'scoring' ? 'Lihat Klasemen Juara' : 'Input Nilai Juri'}</span>
             </button>
             <button
               onClick={() => setActiveView('landing')}
-              className="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold transition-all"
+              className="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold transition-all cursor-pointer"
             >
               Beranda
             </button>
@@ -201,6 +240,82 @@ export default function JuryScoringApp() {
             <span>Rekapitulasi Nilai & Papan Juara</span>
           </button>
         </div>
+
+        {/* Pos Juri Selector Bar (Fase 1: Multi-Jury Engine) */}
+        {activeTab === 'scoring' && (
+          <div className="bg-white rounded-2xl p-3 border border-slate-200 shadow-xs flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Pilih Pos Juri:</span>
+              <div className="flex flex-wrap items-center gap-1.5 bg-slate-100 p-1 rounded-xl">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveJuryPost('all');
+                    setJuryName('Mayor (Mar) Bambang S., S.E.');
+                    setJuryRole('Dewan Juri Utama');
+                  }}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                    activeJuryPost === 'all'
+                      ? 'bg-slate-900 text-white shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  Semua Pos (Full)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveJuryPost('pos1');
+                    setJuryName(JURY_POSTS.pos1.defaultName);
+                    setJuryRole(JURY_POSTS.pos1.title);
+                  }}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                    activeJuryPost === 'pos1'
+                      ? 'bg-blue-700 text-white shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  Pos 1: PBB Dasar
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveJuryPost('pos2');
+                    setJuryName(JURY_POSTS.pos2.defaultName);
+                    setJuryRole(JURY_POSTS.pos2.title);
+                  }}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                    activeJuryPost === 'pos2'
+                      ? 'bg-purple-700 text-white shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  Pos 2: Vafor & Kostum
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveJuryPost('pos3');
+                    setJuryName(JURY_POSTS.pos3.defaultName);
+                    setJuryRole(JURY_POSTS.pos3.title);
+                  }}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                    activeJuryPost === 'pos3'
+                      ? 'bg-red-700 text-white shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  Pos 3: Komandan (Danton)
+                </button>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 text-xs font-semibold text-emerald-700 bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-200">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span>Offline-First (Tersimpan Lokal)</span>
+            </div>
+          </div>
+        )}
 
         {saveSuccessMsg && (
           <div className="bg-emerald-600 text-white p-4 rounded-2xl text-xs font-bold flex items-center gap-2 shadow-lg animate-in fade-in duration-300">
@@ -306,186 +421,281 @@ export default function JuryScoringApp() {
                     </div>
                   </div>
 
-                  {/* 1. Penilaian Danton (Bobot: 35%, 25%, 20%, 20%) */}
-                  <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs space-y-4">
-                    <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                      <div>
-                        <span className="text-[10px] font-black uppercase text-red-700 tracking-wider block">
-                          Kategori 1
+                  {/* Pos 3: Penilaian Danton (Bobot: 35%, 25%, 20%, 20%) */}
+                  {(activeJuryPost === 'all' || activeJuryPost === 'pos3') && (
+                    <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs space-y-4">
+                      <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                        <div>
+                          <span className="text-[10px] font-black uppercase text-red-700 tracking-wider block">
+                            Pos 3 • Wewenang Juri Danton
+                          </span>
+                          <h4 className="font-black text-base text-slate-900 uppercase">
+                            Penilaian Komandan Peleton (Danton)
+                          </h4>
+                        </div>
+                        <div className="text-right">
+                          <span className="text-[10px] text-slate-400 uppercase block">Subtotal Danton</span>
+                          <span className="font-mono font-black text-base text-red-700">{dantonTotal}</span>
+                        </div>
+                      </div>
+
+                      <div className="grid sm:grid-cols-2 gap-4">
+                        {/* Penguasaan Materi (35%) */}
+                        <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+                          <div className="flex justify-between items-center mb-2">
+                            <label className="text-xs font-bold text-slate-800">Penguasaan Materi (35%)</label>
+                            <span className="font-mono font-black text-sm text-red-700">{dantonScores.penguasaan}</span>
+                          </div>
+                          <input
+                            type="range"
+                            min={50}
+                            max={90}
+                            step={2}
+                            value={dantonScores.penguasaan}
+                            onChange={e => setDantonScores({ ...dantonScores, penguasaan: parseInt(e.target.value, 10) })}
+                            className="w-full accent-red-700"
+                          />
+                          <div className="flex justify-between text-[10px] text-slate-400 font-mono mt-1">
+                            <span>50</span><span>70</span><span>90</span>
+                          </div>
+                        </div>
+
+                        {/* Vokal / Aba-aba (25%) */}
+                        <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+                          <div className="flex justify-between items-center mb-2">
+                            <label className="text-xs font-bold text-slate-800">Vokal & Kejelasan Aba-aba (25%)</label>
+                            <span className="font-mono font-black text-sm text-red-700">{dantonScores.vokal}</span>
+                          </div>
+                          <input
+                            type="range"
+                            min={50}
+                            max={90}
+                            step={2}
+                            value={dantonScores.vokal}
+                            onChange={e => setDantonScores({ ...dantonScores, vokal: parseInt(e.target.value, 10) })}
+                            className="w-full accent-red-700"
+                          />
+                          <div className="flex justify-between text-[10px] text-slate-400 font-mono mt-1">
+                            <span>50</span><span>70</span><span>90</span>
+                          </div>
+                        </div>
+
+                        {/* Sikap Tampang (20%) */}
+                        <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+                          <div className="flex justify-between items-center mb-2">
+                            <label className="text-xs font-bold text-slate-800">Sikap Tampang & Kerapian (20%)</label>
+                            <span className="font-mono font-black text-sm text-red-700">{dantonScores.sikap}</span>
+                          </div>
+                          <input
+                            type="range"
+                            min={50}
+                            max={90}
+                            step={2}
+                            value={dantonScores.sikap}
+                            onChange={e => setDantonScores({ ...dantonScores, sikap: parseInt(e.target.value, 10) })}
+                            className="w-full accent-red-700"
+                          />
+                          <div className="flex justify-between text-[10px] text-slate-400 font-mono mt-1">
+                            <span>50</span><span>70</span><span>90</span>
+                          </div>
+                        </div>
+
+                        {/* Penguasaan Lapangan (20%) */}
+                        <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+                          <div className="flex justify-between items-center mb-2">
+                            <label className="text-xs font-bold text-slate-800">Penguasaan & Penempatan Lapangan (20%)</label>
+                            <span className="font-mono font-black text-sm text-red-700">{dantonScores.lapangan}</span>
+                          </div>
+                          <input
+                            type="range"
+                            min={50}
+                            max={90}
+                            step={2}
+                            value={dantonScores.lapangan}
+                            onChange={e => setDantonScores({ ...dantonScores, lapangan: parseInt(e.target.value, 10) })}
+                            className="w-full accent-red-700"
+                          />
+                          <div className="flex justify-between text-[10px] text-slate-400 font-mono mt-1">
+                            <span>50</span><span>70</span><span>90</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Pos 1: Penilaian Gerakan PBB Pasukan (Teknik 70%, Kekompakan 30%) */}
+                  {(activeJuryPost === 'all' || activeJuryPost === 'pos1') && (
+                    <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs space-y-4">
+                      <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                        <div>
+                          <span className="text-[10px] font-black uppercase text-blue-700 tracking-wider block">
+                            Pos 1 • Wewenang Juri PBB
+                          </span>
+                          <h4 className="font-black text-base text-slate-900 uppercase">
+                            Penilaian Gerakan PBB Pasukan
+                          </h4>
+                        </div>
+                        <div className="text-right">
+                          <span className="text-[10px] text-slate-400 uppercase block">Subtotal PBB</span>
+                          <span className="font-mono font-black text-base text-blue-700">{pbbTotal}</span>
+                        </div>
+                      </div>
+
+                      <div className="grid sm:grid-cols-2 gap-4">
+                        {/* Teknik Gerakan (70%) */}
+                        <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                          <div className="flex justify-between items-center mb-2">
+                            <div>
+                              <label className="text-xs font-bold text-slate-800 block">Teknik Gerakan (70%)</label>
+                              <span className="text-[10px] text-slate-500">Kesesuaian dengan PBB TNI/Polri</span>
+                            </div>
+                            <span className="font-mono font-black text-base text-blue-700">{pbbScores.teknik}</span>
+                          </div>
+                          <input
+                            type="range"
+                            min={50}
+                            max={90}
+                            step={2}
+                            value={pbbScores.teknik}
+                            onChange={e => setPbbScores({ ...pbbScores, teknik: parseInt(e.target.value, 10) })}
+                            className="w-full accent-blue-700"
+                          />
+                          <div className="flex justify-between text-[10px] text-slate-400 font-mono mt-1">
+                            <span>50</span><span>70</span><span>90</span>
+                          </div>
+                        </div>
+
+                        {/* Kekompakan (30%) */}
+                        <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                          <div className="flex justify-between items-center mb-2">
+                            <div>
+                              <label className="text-xs font-bold text-slate-800 block">Kekompakan & Keselarasan (30%)</label>
+                              <span className="text-[10px] text-slate-500">Irama langkah & keseragaman</span>
+                            </div>
+                            <span className="font-mono font-black text-base text-blue-700">{pbbScores.kekompakan}</span>
+                          </div>
+                          <input
+                            type="range"
+                            min={50}
+                            max={90}
+                            step={2}
+                            value={pbbScores.kekompakan}
+                            onChange={e => setPbbScores({ ...pbbScores, kekompakan: parseInt(e.target.value, 10) })}
+                            className="w-full accent-blue-700"
+                          />
+                          <div className="flex justify-between text-[10px] text-slate-400 font-mono mt-1">
+                            <span>50</span><span>70</span><span>90</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Materi Gerakan List Accordion */}
+                      <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200">
+                        <span className="text-xs font-bold uppercase text-slate-700 block mb-2">
+                          Daftar Materi Gerakan Wajib ({selectedTeam.jenjang} - {materialsList.length} Gerakan):
                         </span>
-                        <h4 className="font-black text-base text-slate-900 uppercase">
-                          Penilaian Komandan Peleton (Danton)
-                        </h4>
-                      </div>
-                      <div className="text-right">
-                        <span className="text-[10px] text-slate-400 uppercase block">Subtotal Danton</span>
-                        <span className="font-mono font-black text-base text-red-700">{dantonTotal}</span>
-                      </div>
-                    </div>
-
-                    <div className="grid sm:grid-cols-2 gap-4">
-                      {/* Penguasaan Materi (35%) */}
-                      <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
-                        <div className="flex justify-between items-center mb-2">
-                          <label className="text-xs font-bold text-slate-800">Penguasaan Materi (35%)</label>
-                          <span className="font-mono font-black text-sm text-red-700">{dantonScores.penguasaan}</span>
-                        </div>
-                        <input
-                          type="range"
-                          min={50}
-                          max={90}
-                          step={2}
-                          value={dantonScores.penguasaan}
-                          onChange={e => setDantonScores({ ...dantonScores, penguasaan: parseInt(e.target.value, 10) })}
-                          className="w-full accent-red-700"
-                        />
-                        <div className="flex justify-between text-[10px] text-slate-400 font-mono mt-1">
-                          <span>50</span><span>70</span><span>90</span>
-                        </div>
-                      </div>
-
-                      {/* Vokal / Aba-aba (25%) */}
-                      <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
-                        <div className="flex justify-between items-center mb-2">
-                          <label className="text-xs font-bold text-slate-800">Vokal & Kejelasan Aba-aba (25%)</label>
-                          <span className="font-mono font-black text-sm text-red-700">{dantonScores.vokal}</span>
-                        </div>
-                        <input
-                          type="range"
-                          min={50}
-                          max={90}
-                          step={2}
-                          value={dantonScores.vokal}
-                          onChange={e => setDantonScores({ ...dantonScores, vokal: parseInt(e.target.value, 10) })}
-                          className="w-full accent-red-700"
-                        />
-                        <div className="flex justify-between text-[10px] text-slate-400 font-mono mt-1">
-                          <span>50</span><span>70</span><span>90</span>
-                        </div>
-                      </div>
-
-                      {/* Sikap Tampang (20%) */}
-                      <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
-                        <div className="flex justify-between items-center mb-2">
-                          <label className="text-xs font-bold text-slate-800">Sikap Tampang & Kerapian (20%)</label>
-                          <span className="font-mono font-black text-sm text-red-700">{dantonScores.sikap}</span>
-                        </div>
-                        <input
-                          type="range"
-                          min={50}
-                          max={90}
-                          step={2}
-                          value={dantonScores.sikap}
-                          onChange={e => setDantonScores({ ...dantonScores, sikap: parseInt(e.target.value, 10) })}
-                          className="w-full accent-red-700"
-                        />
-                        <div className="flex justify-between text-[10px] text-slate-400 font-mono mt-1">
-                          <span>50</span><span>70</span><span>90</span>
-                        </div>
-                      </div>
-
-                      {/* Penguasaan Lapangan (20%) */}
-                      <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
-                        <div className="flex justify-between items-center mb-2">
-                          <label className="text-xs font-bold text-slate-800">Penguasaan & Penempatan Lapangan (20%)</label>
-                          <span className="font-mono font-black text-sm text-red-700">{dantonScores.lapangan}</span>
-                        </div>
-                        <input
-                          type="range"
-                          min={50}
-                          max={90}
-                          step={2}
-                          value={dantonScores.lapangan}
-                          onChange={e => setDantonScores({ ...dantonScores, lapangan: parseInt(e.target.value, 10) })}
-                          className="w-full accent-red-700"
-                        />
-                        <div className="flex justify-between text-[10px] text-slate-400 font-mono mt-1">
-                          <span>50</span><span>70</span><span>90</span>
+                        <div className="max-h-48 overflow-y-auto pr-2 space-y-1">
+                          {materialsList.map((m, idx) => (
+                            <div key={idx} className="text-[11px] text-slate-600 bg-white p-2 rounded-lg border border-slate-100 flex items-center justify-between">
+                              <span><strong>#{idx + 1}.</strong> {m}</span>
+                              <span className="text-[10px] text-emerald-600 font-bold bg-emerald-50 px-1.5 py-0.5 rounded">Terekam</span>
+                            </div>
+                          ))}
                         </div>
                       </div>
                     </div>
-                  </div>
+                  )}
 
-                  {/* 2. Penilaian Gerakan PBB Pasukan (Teknik 70%, Kekompakan 30%) */}
-                  <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs space-y-4">
-                    <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                      <div>
-                        <span className="text-[10px] font-black uppercase text-blue-700 tracking-wider block">
-                          Kategori 2
-                        </span>
-                        <h4 className="font-black text-base text-slate-900 uppercase">
-                          Penilaian Gerakan PBB Pasukan
-                        </h4>
+                  {/* Pos 2: Penilaian Variasi, Formasi & Kerapian (Fase 1: Multi-Jury) */}
+                  {(activeJuryPost === 'all' || activeJuryPost === 'pos2') && (
+                    <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs space-y-4">
+                      <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                        <div>
+                          <span className="text-[10px] font-black uppercase text-purple-700 tracking-wider block">
+                            Pos 2 • Wewenang Juri Variasi, Formasi & Kostum
+                          </span>
+                          <h4 className="font-black text-base text-slate-900 uppercase">
+                            Penilaian Variasi, Formasi & Seragam
+                          </h4>
+                        </div>
+                        <div className="text-right">
+                          <span className="text-[10px] text-slate-400 uppercase block">Subtotal Vafor</span>
+                          <span className="font-mono font-black text-base text-purple-700">{vaforTotal}</span>
+                        </div>
                       </div>
-                      <div className="text-right">
-                        <span className="text-[10px] text-slate-400 uppercase block">Subtotal Pasukan</span>
-                        <span className="font-mono font-black text-base text-blue-700">{pbbTotal}</span>
-                      </div>
-                    </div>
 
-                    <div className="grid sm:grid-cols-2 gap-4">
-                      {/* Teknik Gerakan (70%) */}
-                      <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                        <div className="flex justify-between items-center mb-2">
-                          <div>
-                            <label className="text-xs font-bold text-slate-800 block">Teknik Gerakan (70%)</label>
-                            <span className="text-[10px] text-slate-500">Kesesuaian dengan PBB TNI/Polri</span>
+                      <div className="grid sm:grid-cols-3 gap-4">
+                        {/* Kreativitas & Tingkat Kesulitan (40%) */}
+                        <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                          <div className="flex justify-between items-center mb-2">
+                            <div>
+                              <label className="text-xs font-bold text-slate-800 block">Kreativitas (40%)</label>
+                              <span className="text-[10px] text-slate-500">Tingkat kesulitan & orisinalitas</span>
+                            </div>
+                            <span className="font-mono font-black text-base text-purple-700">{vaforScores.kreativitas}</span>
                           </div>
-                          <span className="font-mono font-black text-base text-blue-700">{pbbScores.teknik}</span>
-                        </div>
-                        <input
-                          type="range"
-                          min={50}
-                          max={90}
-                          step={2}
-                          value={pbbScores.teknik}
-                          onChange={e => setPbbScores({ ...pbbScores, teknik: parseInt(e.target.value, 10) })}
-                          className="w-full accent-blue-700"
-                        />
-                        <div className="flex justify-between text-[10px] text-slate-400 font-mono mt-1">
-                          <span>50</span><span>70</span><span>90</span>
-                        </div>
-                      </div>
-
-                      {/* Kekompakan (30%) */}
-                      <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                        <div className="flex justify-between items-center mb-2">
-                          <div>
-                            <label className="text-xs font-bold text-slate-800 block">Kekompakan & Keselarasan (30%)</label>
-                            <span className="text-[10px] text-slate-500">Irama langkah & keseragaman</span>
+                          <input
+                            type="range"
+                            min={50}
+                            max={90}
+                            step={2}
+                            value={vaforScores.kreativitas}
+                            onChange={e => setVaforScores({ ...vaforScores, kreativitas: parseInt(e.target.value, 10) })}
+                            className="w-full accent-purple-700"
+                          />
+                          <div className="flex justify-between text-[10px] text-slate-400 font-mono mt-1">
+                            <span>50</span><span>70</span><span>90</span>
                           </div>
-                          <span className="font-mono font-black text-base text-blue-700">{pbbScores.kekompakan}</span>
                         </div>
-                        <input
-                          type="range"
-                          min={50}
-                          max={90}
-                          step={2}
-                          value={pbbScores.kekompakan}
-                          onChange={e => setPbbScores({ ...pbbScores, kekompakan: parseInt(e.target.value, 10) })}
-                          className="w-full accent-blue-700"
-                        />
-                        <div className="flex justify-between text-[10px] text-slate-400 font-mono mt-1">
-                          <span>50</span><span>70</span><span>90</span>
+
+                        {/* Keindahan Formasi (35%) */}
+                        <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                          <div className="flex justify-between items-center mb-2">
+                            <div>
+                              <label className="text-xs font-bold text-slate-800 block">Keindahan Formasi (35%)</label>
+                              <span className="text-[10px] text-slate-500">Transisi bentuk & estetika</span>
+                            </div>
+                            <span className="font-mono font-black text-base text-purple-700">{vaforScores.keindahan}</span>
+                          </div>
+                          <input
+                            type="range"
+                            min={50}
+                            max={90}
+                            step={2}
+                            value={vaforScores.keindahan}
+                            onChange={e => setVaforScores({ ...vaforScores, keindahan: parseInt(e.target.value, 10) })}
+                            className="w-full accent-purple-700"
+                          />
+                          <div className="flex justify-between text-[10px] text-slate-400 font-mono mt-1">
+                            <span>50</span><span>70</span><span>90</span>
+                          </div>
+                        </div>
+
+                        {/* Kerapian Kostum & Seragam (25%) */}
+                        <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                          <div className="flex justify-between items-center mb-2">
+                            <div>
+                              <label className="text-xs font-bold text-slate-800 block">Kerapian Kostum (25%)</label>
+                              <span className="text-[10px] text-slate-500">Atribut & keseragaman pakaian</span>
+                            </div>
+                            <span className="font-mono font-black text-base text-purple-700">{vaforScores.kostum}</span>
+                          </div>
+                          <input
+                            type="range"
+                            min={50}
+                            max={90}
+                            step={2}
+                            value={vaforScores.kostum}
+                            onChange={e => setVaforScores({ ...vaforScores, kostum: parseInt(e.target.value, 10) })}
+                            className="w-full accent-purple-700"
+                          />
+                          <div className="flex justify-between text-[10px] text-slate-400 font-mono mt-1">
+                            <span>50</span><span>70</span><span>90</span>
+                          </div>
                         </div>
                       </div>
                     </div>
-
-                    {/* Materi Gerakan List Accordion */}
-                    <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200">
-                      <span className="text-xs font-bold uppercase text-slate-700 block mb-2">
-                        Daftar Materi Gerakan Wajib ({selectedTeam.jenjang} - {materialsList.length} Gerakan):
-                      </span>
-                      <div className="max-h-48 overflow-y-auto pr-2 space-y-1">
-                        {materialsList.map((m, idx) => (
-                          <div key={idx} className="text-[11px] text-slate-600 bg-white p-2 rounded-lg border border-slate-100 flex items-center justify-between">
-                            <span><strong>#{idx + 1}.</strong> {m}</span>
-                            <span className="text-[10px] text-emerald-600 font-bold bg-emerald-50 px-1.5 py-0.5 rounded">Terekam</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
+                  )}
 
                   {/* 3. Pengurangan Nilai (Penalties / Sanksi) */}
                   <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs space-y-4">
@@ -676,8 +886,8 @@ export default function JuryScoringApp() {
                 </div>
 
                 <button
-                  onClick={() => openModal('docViewer', { docId: 'berita-acara' })}
-                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold rounded-xl flex items-center gap-2 transition-all shrink-0"
+                  onClick={() => setIsRecapModalOpen(true)}
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-xl flex items-center gap-2 transition-all shrink-0 cursor-pointer shadow-sm"
                 >
                   <Printer className="w-4 h-4" />
                   <span>Cetak Berita Acara Rekap Nilai</span>
@@ -768,6 +978,12 @@ export default function JuryScoringApp() {
             </div>
           </div>
         )}
+
+        {/* Modal Berita Acara Rekap Nilai Resmi (Print-Ready) */}
+        <OfficialScoreRecapModal
+          isOpen={isRecapModalOpen}
+          onClose={() => setIsRecapModalOpen(false)}
+        />
 
       </div>
     </div>

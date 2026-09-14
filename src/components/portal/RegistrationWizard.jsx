@@ -23,10 +23,16 @@ import {
   PenTool,
   RotateCcw,
   X,
-  MapPin
+  MapPin,
+  ExternalLink,
+  Sparkles,
+  Shield,
+  FileCheck,
+  ChevronDown
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
-import { PAYMENT } from '../../config.js';
+import { PAYMENT, CONTACT, SITE } from '../../config.js';
+import logoImg from '../../assets/logo-tonti.png';
 
 export default function RegistrationWizard({ isOpen, onClose }) {
   const { registerTeam, setActiveView, goBack, openAuthModal } = useCompetition();
@@ -48,13 +54,28 @@ export default function RegistrationWizard({ isOpen, onClose }) {
     email: '', // 1. Email aktif untuk akun
     jenjang: 'SMP', // 2. Jenjang sekolah SD apa SMP
     schoolName: '', // 3. Nama Sekolah
+    teamUnit: 'Tim A', // Pembeda Peleton: 'Tim A' | 'Tim B' | 'Tunggal'
     teamType: 'Homogen', // 5. Homogen apa Heterogen
+    homogenGender: 'Putra', // Pilihan jika homogen: Putra | Putri
     dantonName: '', // 6. Nama Komandan
     officialName: '', // 8. Nama Official/Pelatih
     waNumber: '',
-    confirmWatchfinder: false, // Konfirmasi foto selfie watchfinder
     agreeJuknis: false,
   });
+
+  // Helper untuk mendapatkan nama lengkap sekolah beserta pembeda peleton (Tim A / Tim B)
+  const getFullSchoolName = () => {
+    const raw = (formData.schoolName || '').trim();
+    if (!raw) return '';
+    if (formData.teamUnit && formData.teamUnit !== 'Tunggal') {
+      const tag = `(${formData.teamUnit})`;
+      if (raw.toLowerCase().endsWith(tag.toLowerCase())) {
+        return raw;
+      }
+      return `${raw} ${tag}`;
+    }
+    return raw;
+  };
 
   // Files State for the required uploads
   const [files, setFiles] = useState({
@@ -62,7 +83,7 @@ export default function RegistrationWizard({ isOpen, onClose }) {
     dantonCard: null, // 7. Upload Kartu Pelajar Komandan
     officialKtp: null, // 9. Upload KTP Official/Pelatih
     paymentProof: null, // 10. Bukti Pembayaran
-    selfie: null, // 11. Foto Selfie untuk verifikasi (Watchfinder)
+    selfie: null, // 11. Foto Selfie / Swafoto Pemohon
     integrityPact: null, // 12. Pakta Integritas (Online / Digital Signed)
   });
 
@@ -255,7 +276,7 @@ export default function RegistrationWizard({ isOpen, onClose }) {
       ...prev,
       integrityPact: {
         type: 'online',
-        name: `Pakta_Integritas_${formData.schoolName.replace(/\s+/g, '_') || 'Resmi'}.pdf`,
+        name: `Pakta_Integritas_${(getFullSchoolName() || 'Resmi').replace(/[^\w\s-]/g, '').replace(/\s+/g, '_')}.pdf`,
         signedBy: formData.officialName || 'Official Tim',
         signedAt: signTime,
         signCode: signCode,
@@ -312,11 +333,7 @@ export default function RegistrationWizard({ isOpen, onClose }) {
       return false;
     }
     if (!files.selfie) {
-      setValidationError('Foto selfie pemohon wajib diunggah (wajib aplikasi Watchfinder).');
-      return false;
-    }
-    if (!formData.confirmWatchfinder) {
-      setValidationError('Centang konfirmasi bahwa foto selfie diambil menggunakan aplikasi Watchfinder.');
+      setValidationError('Foto selfie/swafoto pemohon wajib diunggah.');
       return false;
     }
     if (!files.integrityPact) {
@@ -351,11 +368,25 @@ export default function RegistrationWizard({ isOpen, onClose }) {
 
     const feeAmount = parseInt(PAYMENT.FEE_DISPLAY.replace(/\D/g, ''), 10) || 450000;
 
+    const teamTypeLabel = formData.teamType === 'Homogen'
+      ? `Homogen (${formData.homogenGender || 'Putra'})`
+      : 'Heterogen';
+    const categoryLabel = formData.teamType === 'Homogen'
+      ? (formData.homogenGender || 'Putra')
+      : 'Campuran';
+
+    const finalSchoolName = getFullSchoolName();
+
     const newTeam = registerTeam({
       email: formData.email,
       jenjang: formData.jenjang,
-      schoolName: formData.schoolName,
-      teamType: formData.teamType,
+      schoolName: finalSchoolName,
+      schoolBaseName: formData.schoolName.trim(),
+      teamUnit: formData.teamUnit,
+      platoonName: `Pleton ${finalSchoolName}`,
+      teamType: teamTypeLabel,
+      category: categoryLabel,
+      homogenGender: formData.teamType === 'Homogen' ? (formData.homogenGender || 'Putra') : null,
       dantonName: formData.dantonName,
       officialName: formData.officialName,
       waNumber: formData.waNumber,
@@ -371,202 +402,265 @@ export default function RegistrationWizard({ isOpen, onClose }) {
   const feeDisplay = `Rp${PAYMENT.FEE_DISPLAY}`;
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-between">
-      {/* Top Header */}
-      <header className="sticky top-0 z-40 bg-slate-950/95 backdrop-blur-md border-b border-slate-800">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between">
+    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col justify-between relative font-sans">
+      {/* Background Subtle Grid Pattern (Consistent with Home Page Registration Section) */}
+      <div
+        className="absolute inset-0 opacity-[0.03] pointer-events-none z-0"
+        style={{
+          backgroundImage:
+            'linear-gradient(#8B0000 1px, transparent 1px), linear-gradient(to right, #8B0000 1px, transparent 1px)',
+          backgroundSize: '40px 40px',
+        }}
+      />
+      <div className="absolute left-0 top-1/4 w-96 h-96 bg-yellow-500/5 rounded-full blur-3xl pointer-events-none z-0" />
+      <div className="absolute right-0 bottom-1/4 w-96 h-96 bg-red-900/5 rounded-full blur-3xl pointer-events-none z-0" />
+
+      {/* Top Header - Clean White Frosted Navbar matching Homepage */}
+      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-xs">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
           <button
             onClick={handleClose}
-            className="flex items-center gap-2 text-xs font-bold text-slate-400 hover:text-white px-3 py-1.5 rounded-lg hover:bg-white/5 transition-colors"
+            className="flex items-center gap-2 text-xs font-bold text-slate-600 hover:text-slate-950 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 transition-all group"
           >
-            <ArrowLeft className="w-4 h-4 text-yellow-400" />
-            <span>Kembali ke Beranda</span>
+            <ArrowLeft className="w-4 h-4 text-slate-500 group-hover:text-slate-950 group-hover:-translate-x-0.5 transition-transform" />
+            <span className="hidden sm:inline">Kembali ke Beranda</span>
+            <span className="sm:hidden">Beranda</span>
           </button>
-          <div className="text-right">
-            <span className="text-[10px] font-black uppercase tracking-wider text-yellow-400 block">
-              Pendaftaran Lomba
-            </span>
-            <span className="text-xs font-bold text-slate-300">
-              LBB Mu'allimin 2026
-            </span>
+
+          {/* Official Brand Logo */}
+          <div className="flex items-center">
+            <img
+              src={logoImg}
+              alt="Logo Tonti Mu'allimin"
+              className="h-9 sm:h-10 w-auto filter drop-shadow-xs"
+            />
+          </div>
+
+          {/* Right Action: WhatsApp Panitia Help */}
+          <div className="flex items-center gap-2">
+            <a
+              href={`https://wa.me/${CONTACT?.WHATSAPP || '6281230093737'}?text=Halo%20Panitia%20LBB%20Mu'allimin%202026,%20saya%20membutuhkan%20bantuan%20pengisian%20formulir%20pendaftaran.`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-50 hover:bg-red-100 border border-red-200 text-[11px] font-bold text-red-700 transition-colors shadow-xs"
+              title="Bantuan Panitia via WhatsApp"
+            >
+              <span>Bantuan Panitia</span>
+              <ExternalLink className="w-3 h-3 text-red-600" />
+            </a>
           </div>
         </div>
       </header>
 
       {/* Main Content Area */}
-      <main className="max-w-4xl w-full mx-auto px-4 sm:px-6 py-8 flex-1">
+      <main className="max-w-4xl w-full mx-auto px-4 sm:px-6 py-8 sm:py-10 flex-1 relative z-10">
         {step < 4 && (
-          <div className="mb-8">
-            <div className="text-center max-w-xl mx-auto mb-6">
-              <h1 className="text-2xl sm:text-3xl font-black uppercase italic tracking-tight text-white">
-                Formulir Pendaftaran Lomba
-              </h1>
-              <p className="text-xs sm:text-sm text-slate-400 mt-1.5">
-                Lengkapi 12 data dan berkas persyaratan peleton. Foto selfie wajib menggunakan aplikasi Watchfinder dan Pakta Integritas ditandatangani secara online.
-              </p>
+          <div className="text-center max-w-2xl mx-auto mb-8">
+            {/* Event Badge with Pulse */}
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-red-50 border border-red-100 text-red-700 text-[10px] sm:text-xs font-bold uppercase tracking-[0.15em] mb-3 shadow-xs cursor-default">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-red-600"></span>
+              </span>
+              Juknis Resmi & Registrasi 2026
             </div>
 
-            {/* Stepper Progress */}
-            <div className="flex items-center justify-between relative max-w-lg mx-auto px-4">
-              <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-slate-800 -translate-y-1/2 z-0"></div>
-              <div
-                className="absolute top-1/2 left-0 h-0.5 bg-gradient-to-r from-yellow-500 to-amber-500 -translate-y-1/2 z-0 transition-all duration-300"
-                style={{ width: step === 1 ? '0%' : step === 2 ? '50%' : '100%' }}
-              ></div>
-
-              {/* Step 1 indicator */}
-              <div className="relative z-10 flex flex-col items-center">
-                <div
-                  className={`w-9 h-9 rounded-full flex items-center justify-center font-black text-xs transition-all ${
-                    step >= 1
-                      ? 'bg-yellow-400 text-slate-950 ring-4 ring-yellow-400/20 shadow-lg'
-                      : 'bg-slate-800 text-slate-400'
-                  }`}
-                >
-                  1
-                </div>
-                <span className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-wider">
-                  Sekolah & Akun
-                </span>
-              </div>
-
-              {/* Step 2 indicator */}
-              <div className="relative z-10 flex flex-col items-center">
-                <div
-                  className={`w-9 h-9 rounded-full flex items-center justify-center font-black text-xs transition-all ${
-                    step >= 2
-                      ? 'bg-yellow-400 text-slate-950 ring-4 ring-yellow-400/20 shadow-lg'
-                      : 'bg-slate-800 text-slate-400'
-                  }`}
-                >
-                  2
-                </div>
-                <span className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-wider">
-                  Danton & Official
-                </span>
-              </div>
-
-              {/* Step 3 indicator */}
-              <div className="relative z-10 flex flex-col items-center">
-                <div
-                  className={`w-9 h-9 rounded-full flex items-center justify-center font-black text-xs transition-all ${
-                    step >= 3
-                      ? 'bg-yellow-400 text-slate-950 ring-4 ring-yellow-400/20 shadow-lg'
-                      : 'bg-slate-800 text-slate-400'
-                  }`}
-                >
-                  3
-                </div>
-                <span className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-wider">
-                  Watchfinder & Pakta
-                </span>
-              </div>
-            </div>
+            {/* Clean Brand Heading matching Home Page Registration */}
+            <h1 className="text-2xl sm:text-4xl font-black uppercase italic tracking-tight text-slate-900 select-none leading-tight py-0.5">
+              Formulir{' '}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-700 to-red-600">
+                Pendaftaran
+              </span>
+            </h1>
+            <p className="text-xs sm:text-sm text-slate-600 mt-1.5 leading-relaxed">
+              Lengkapi data dan berkas persyaratan peleton secara lengkap dan sah melalui formulir pendaftaran resmi LBB Mu'allimin 2026.
+            </p>
           </div>
         )}
 
         {/* Validation error banner */}
         {validationError && (
-          <div className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/30 flex items-center gap-3 text-red-400 text-xs animate-shake">
-            <AlertCircle className="w-5 h-5 shrink-0" />
-            <span className="font-semibold">{validationError}</span>
+          <div className="mb-6 p-4 rounded-2xl bg-red-50 border border-red-200 flex items-center gap-3 text-red-700 text-xs shadow-xs animate-shake">
+            <AlertCircle className="w-5 h-5 shrink-0 text-red-600" />
+            <span className="font-bold">{validationError}</span>
           </div>
         )}
 
         {/* ================= STEP 1: SEKOLAH & AKUN ================= */}
         {step === 1 && (
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 animate-fade">
-            <div className="border-b border-slate-800 pb-4">
-              <h2 className="text-lg font-black text-white uppercase tracking-wide flex items-center gap-2">
-                <School className="w-5 h-5 text-yellow-400" />
-                <span>1. Identitas Sekolah, Akun & Tipe Pasukan</span>
-              </h2>
-              <p className="text-xs text-slate-400 mt-1">
-                Lengkapi data dasar sekolah, email aktif untuk akses login calon peserta, dan tipe peleton.
-              </p>
+          <div className="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-9 shadow-sm hover:shadow-md transition-shadow space-y-6 animate-fade">
+            <div className="border-b border-slate-100 pb-4 flex items-start gap-3.5">
+              <div className="w-10 h-10 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center text-red-700 shrink-0">
+                <School className="w-5 h-5" />
+              </div>
+              <div>
+                <h2 className="text-lg sm:text-xl font-black text-slate-900 uppercase italic tracking-wide">
+                  1. Identitas Sekolah, Akun & Tipe Pasukan
+                </h2>
+                <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">
+                  Lengkapi data dasar sekolah, email aktif untuk akses login calon peserta, dan tipe peleton.
+                </p>
+              </div>
             </div>
 
             <div className="space-y-5">
               {/* 1. Email aktif untuk akun */}
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5 flex items-center gap-1.5">
-                  <Mail className="w-3.5 h-3.5 text-yellow-400" />
-                  <span>1. Email Aktif untuk Akun Portal <span className="text-red-400">*</span></span>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5 flex items-center gap-1.5">
+                  <Mail className="w-3.5 h-3.5 text-red-600" />
+                  <span>
+                    1. Email Aktif untuk Akun Portal <span className="text-red-600 font-bold">*</span>
+                  </span>
                 </label>
                 <input
                   type="email"
                   required
-                  placeholder="contoh: tonti.smpn1yk@gmail.com"
+                  placeholder="contoh: tonti.mtsmuallimin@gmail.com"
                   value={formData.email}
                   onChange={e => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-sm text-white placeholder-slate-600 focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400"
+                  className="w-full px-4 py-3 bg-slate-50 hover:bg-white border border-slate-200 focus:border-red-600 focus:bg-white focus:ring-2 focus:ring-red-600/10 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 transition-all outline-none"
                 />
-                <p className="text-[11px] text-amber-400/90 mt-1.5 flex items-center gap-1">
-                  <Lock className="w-3 h-3 shrink-0" />
-                  <span>Email ini akan digunakan untuk masuk ke portal setelah pendaftaran Anda di-ACC oleh Admin.</span>
-                </p>
+                <div className="mt-2 p-2.5 rounded-xl bg-amber-50/80 border border-amber-200/80 flex items-start gap-2">
+                  <Lock className="w-3.5 h-3.5 text-amber-700 shrink-0 mt-0.5" />
+                  <span className="text-[11px] text-amber-800 leading-relaxed">
+                    Gunakan akun email Google aktif. Akses masuk ke portal akun resmi hanya dapat dilakukan melalui Akun Google setelah pendaftaran di-ACC oleh Admin.
+                  </span>
+                </div>
               </div>
 
               {/* 2. Jenjang Sekolah */}
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
-                  2. Jenjang Sekolah <span className="text-red-400">*</span>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
+                  2. Jenjang Sekolah <span className="text-red-600 font-bold">*</span>
                 </label>
-                <div className="grid grid-cols-2 gap-3">
-                  {['SD', 'SMP'].map(j => (
-                    <button
-                      key={j}
-                      type="button"
-                      onClick={() => setFormData({ ...formData, jenjang: j })}
-                      className={`py-3 px-4 rounded-xl border text-center transition-all font-black text-sm flex items-center justify-center gap-2 ${
-                        formData.jenjang === j
-                          ? 'bg-yellow-400/10 border-yellow-400 text-yellow-400 shadow-md ring-1 ring-yellow-400'
-                          : 'bg-slate-950 border-slate-800 text-slate-400 hover:border-slate-700'
-                      }`}
-                    >
-                      <Building2 className="w-4 h-4" />
-                      <span>Tingkat {j === 'SD' ? 'SD / MI' : 'SMP / MTs'}</span>
-                    </button>
-                  ))}
+                <div className="grid grid-cols-2 gap-3.5">
+                  {[
+                    {
+                      id: 'SD',
+                      label: 'Tingkat SD / MI',
+                      badge: 'Kategori SD',
+                      activeClass: 'bg-red-50 border-2 border-red-700 text-red-900 shadow-xs ring-2 ring-red-600/10',
+                      activeIcon: 'text-red-700',
+                      activeBadge: 'bg-red-100 text-red-800 border border-red-200',
+                      hoverBorder: 'hover:border-red-300',
+                    },
+                    {
+                      id: 'SMP',
+                      label: 'Tingkat SMP / MTs',
+                      badge: 'Kategori SMP',
+                      activeClass: 'bg-blue-50 border-2 border-blue-600 text-blue-950 shadow-xs ring-2 ring-blue-600/10',
+                      activeIcon: 'text-blue-600',
+                      activeBadge: 'bg-blue-100 text-blue-800 border border-blue-200',
+                      hoverBorder: 'hover:border-blue-300',
+                    },
+                  ].map(item => {
+                    const isSelected = formData.jenjang === item.id;
+                    return (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => setFormData({ ...formData, jenjang: item.id })}
+                        className={`py-3.5 px-4 rounded-2xl border text-center transition-all duration-200 font-black text-xs sm:text-sm flex flex-col items-center justify-center gap-1.5 ${
+                          isSelected
+                            ? item.activeClass
+                            : `bg-white border border-slate-200 text-slate-600 ${item.hoverBorder} hover:text-slate-900`
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          <Building2 className={`w-4 h-4 ${isSelected ? item.activeIcon : 'text-slate-400'}`} />
+                          <span>{item.label}</span>
+                        </div>
+                        <span
+                          className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider ${
+                            isSelected
+                              ? item.activeBadge
+                              : 'bg-slate-100 text-slate-500'
+                          }`}
+                        >
+                          {item.badge}
+                        </span>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
-              {/* 3. Nama Sekolah */}
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
-                  3. Nama Resmi Sekolah <span className="text-red-400">*</span>
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="Contoh: SMP Negeri 1 Yogyakarta"
-                  value={formData.schoolName}
-                  onChange={e => setFormData({ ...formData, schoolName: e.target.value })}
-                  className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-sm text-white placeholder-slate-600 focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400"
-                />
+              {/* 3. Nama Sekolah & Pembeda Peleton (Tim A / Tim B) */}
+              <div className="space-y-2">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div className="sm:col-span-2">
+                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+                      3. Nama Resmi Sekolah <span className="text-red-600 font-bold">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="Contoh: MTs Mu'allimin Yogyakarta"
+                      value={formData.schoolName}
+                      onChange={e => setFormData({ ...formData, schoolName: e.target.value })}
+                      className="w-full px-4 py-3 bg-slate-50 hover:bg-white border border-slate-200 focus:border-red-600 focus:bg-white focus:ring-2 focus:ring-red-600/10 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 transition-all outline-none font-medium"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5 flex items-center justify-between">
+                      <span>Pembeda Peleton</span>
+                      <span className="text-[10px] text-slate-400 font-normal lowercase">Maks. 2 tim</span>
+                    </label>
+                    <div className="relative">
+                      <select
+                        value={formData.teamUnit}
+                        onChange={e => setFormData({ ...formData, teamUnit: e.target.value })}
+                        className="w-full px-3.5 py-3 bg-slate-50 hover:bg-white border border-slate-200 focus:border-red-600 focus:bg-white focus:ring-2 focus:ring-red-600/10 rounded-xl text-sm font-bold text-slate-900 transition-all outline-none cursor-pointer appearance-none"
+                      >
+                        <option value="Tim A">Peleton A (Tim A)</option>
+                        <option value="Tim B">Peleton B (Tim B)</option>
+                        <option value="Tunggal">Peleton Tunggal (Tanpa Label)</option>
+                      </select>
+                      <ChevronDown className="w-4 h-4 text-slate-500 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Live Preview Label Format Terdaftar */}
+                {formData.schoolName.trim() && (
+                  <div className="flex items-center gap-2 px-3.5 py-2 bg-red-50/80 border border-red-100 rounded-xl text-xs text-slate-700 animate-fade">
+                    <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 bg-red-700 text-white rounded-md shrink-0">
+                      Format Terdaftar:
+                    </span>
+                    <span className="font-bold text-red-950 truncate">
+                      {getFullSchoolName()}
+                    </span>
+                  </div>
+                )}
               </div>
 
               {/* 4. Upload Logo Sekolah */}
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5 flex items-center gap-1.5">
-                  <ImageIcon className="w-3.5 h-3.5 text-yellow-400" />
-                  <span>4. Upload Logo Sekolah (Format Gambar) <span className="text-red-400">*</span></span>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5 flex items-center gap-1.5">
+                  <ImageIcon className="w-3.5 h-3.5 text-red-600" />
+                  <span>
+                    4. Upload Logo Sekolah (Format Gambar) <span className="text-red-600 font-bold">*</span>
+                  </span>
                 </label>
-                <div className="p-4 bg-slate-950 border border-dashed border-slate-800 hover:border-yellow-400/60 rounded-2xl transition-colors text-center">
+                <div className="p-4 bg-slate-50/70 border-2 border-dashed border-slate-200 hover:border-red-400 rounded-2xl transition-all text-center group">
                   {files.schoolLogo ? (
-                    <div className="flex items-center justify-between bg-slate-900 p-3 rounded-xl border border-slate-800">
-                      <div className="flex items-center gap-3">
+                    <div className="flex items-center justify-between bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs">
+                      <div className="flex items-center gap-3.5">
                         <img
                           src={files.schoolLogo.url}
                           alt="Logo Preview"
-                          className="w-12 h-12 object-contain bg-white rounded-lg p-1"
+                          className="w-12 h-12 object-contain bg-slate-50 rounded-lg p-1 border border-slate-100"
                         />
                         <div className="text-left">
-                          <p className="text-xs font-bold text-white truncate max-w-xs">{files.schoolLogo.name}</p>
-                          <span className="text-[10px] text-emerald-400 font-semibold">✓ Siap diunggah ({files.schoolLogo.size})</span>
+                          <p className="text-xs font-bold text-slate-900 truncate max-w-xs">{files.schoolLogo.name}</p>
+                          <span className="text-[10px] text-emerald-600 font-semibold flex items-center gap-1 mt-0.5">
+                            <Check className="w-3 h-3 text-emerald-600 stroke-[3]" />
+                            <span>Siap diunggah ({files.schoolLogo.size})</span>
+                          </span>
                         </div>
                       </div>
-                      <label className="cursor-pointer text-xs font-bold text-yellow-400 hover:underline px-3 py-1 bg-yellow-400/10 rounded-lg">
+                      <label className="cursor-pointer text-xs font-bold text-red-700 hover:text-red-800 px-3.5 py-1.5 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg transition-colors">
                         Ganti
                         <input
                           type="file"
@@ -577,10 +671,12 @@ export default function RegistrationWizard({ isOpen, onClose }) {
                       </label>
                     </div>
                   ) : (
-                    <label className="cursor-pointer flex flex-col items-center justify-center py-4">
-                      <UploadCloud className="w-8 h-8 text-yellow-400 mb-2" />
-                      <span className="text-xs font-bold text-slate-200">Klik untuk memilih file Logo Sekolah</span>
-                      <span className="text-[11px] text-slate-500 mt-1">PNG, JPG, JPEG (Maks. 3 MB)</span>
+                    <label className="cursor-pointer flex flex-col items-center justify-center py-5">
+                      <div className="w-11 h-11 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center text-red-700 mb-2 group-hover:scale-105 transition-transform">
+                        <UploadCloud className="w-5 h-5 text-red-700" />
+                      </div>
+                      <span className="text-xs font-bold text-slate-800">Klik untuk memilih file Logo Sekolah</span>
+                      <span className="text-[11px] text-slate-500 mt-1">Format PNG, JPG, JPEG (Maks. 3 MB)</span>
                       <input
                         type="file"
                         accept="image/*"
@@ -594,37 +690,149 @@ export default function RegistrationWizard({ isOpen, onClose }) {
 
               {/* 5. Homogen apa Heterogen */}
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
-                  5. Tipe Pasukan Peleton <span className="text-red-400">*</span>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
+                  5. Tipe Pasukan Peleton <span className="text-red-600 font-bold">*</span>
                 </label>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 gap-3.5">
                   {[
                     { id: 'Homogen', title: 'Homogen', desc: 'Seluruh personil sejenis (Putra semua / Putri semua)' },
                     { id: 'Heterogen', title: 'Heterogen', desc: 'Personil campuran (Kombinasi Putra & Putri)' },
-                  ].map(t => (
-                    <button
-                      key={t.id}
-                      type="button"
-                      onClick={() => setFormData({ ...formData, teamType: t.id })}
-                      className={`p-4 rounded-xl border text-left transition-all ${
-                        formData.teamType === t.id
-                          ? 'bg-yellow-400/10 border-yellow-400 text-white ring-1 ring-yellow-400'
-                          : 'bg-slate-950 border-slate-800 text-slate-400 hover:border-slate-700'
-                      }`}
-                    >
-                      <span className="text-xs font-black uppercase block text-yellow-400">{t.title}</span>
-                      <span className="text-[11px] text-slate-400 mt-1 block leading-relaxed">{t.desc}</span>
-                    </button>
-                  ))}
+                  ].map(t => {
+                    const isSelected = formData.teamType === t.id;
+                    return (
+                      <button
+                        key={t.id}
+                        type="button"
+                        onClick={() => setFormData({ ...formData, teamType: t.id })}
+                        className={`p-4 rounded-2xl border text-left transition-all duration-200 ${
+                          isSelected
+                            ? 'bg-red-50 border-2 border-red-700 shadow-xs ring-2 ring-red-600/10'
+                            : 'bg-white border border-slate-200 text-slate-600 hover:border-slate-300'
+                        }`}
+                      >
+                        <span className={`text-xs font-black uppercase block ${isSelected ? 'text-red-800' : 'text-slate-800'}`}>
+                          {t.title}
+                        </span>
+                        <span className="text-[11px] text-slate-500 mt-1 block leading-relaxed">{t.desc}</span>
+                      </button>
+                    );
+                  })}
                 </div>
+
+                {/* Pilihan Khusus Pasukan Homogen: Putra atau Putri */}
+                {formData.teamType === 'Homogen' && (
+                  <div className="mt-3.5 p-4 sm:p-5 bg-gradient-to-b from-slate-50 to-white rounded-2xl border border-slate-200/90 shadow-xs animate-fade">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3.5 pb-2.5 border-b border-slate-100">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-7 h-7 rounded-lg bg-red-100/80 flex items-center justify-center text-red-700 shrink-0 shadow-xs">
+                          <Users className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <label className="text-xs font-black uppercase tracking-wider text-slate-900 block leading-tight">
+                            Pilihan Pasukan Homogen <span className="text-red-600 font-bold">*</span>
+                          </label>
+                          <span className="text-[11px] text-slate-500">
+                            Pilih komposisi jenis kelamin seluruh personil peleton
+                          </span>
+                        </div>
+                      </div>
+                      <span className={`self-start sm:self-center text-[11px] font-black uppercase tracking-wider px-3 py-1 rounded-full border transition-all ${
+                        formData.homogenGender === 'Putri'
+                          ? 'bg-red-50 text-red-700 border-red-200'
+                          : 'bg-slate-100 text-slate-800 border-slate-200'
+                      }`}>
+                        {formData.homogenGender === 'Putri' ? '👧 Peleton Putri' : '👦 Peleton Putra'}
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {[
+                        {
+                          id: 'Putra',
+                          label: 'Pasukan Putra',
+                          tag: 'Putra Semua',
+                          desc: 'Seluruh 25 personil peleton adalah siswa putra',
+                          avatarBg: 'bg-slate-900 text-yellow-400',
+                        },
+                        {
+                          id: 'Putri',
+                          label: 'Pasukan Putri',
+                          tag: 'Putri Semua',
+                          desc: 'Seluruh 25 personil peleton adalah siswi putri',
+                          avatarBg: 'bg-red-700 text-white',
+                        },
+                      ].map(g => {
+                        const isGenderActive = (formData.homogenGender || 'Putra') === g.id;
+                        return (
+                          <button
+                            key={g.id}
+                            type="button"
+                            onClick={() => setFormData({ ...formData, homogenGender: g.id })}
+                            className={`p-4 rounded-2xl border text-left transition-all duration-200 relative group flex items-start gap-3.5 ${
+                              isGenderActive
+                                ? 'bg-white border-2 border-red-700 shadow-sm ring-2 ring-red-600/10'
+                                : 'bg-slate-50/70 hover:bg-white border border-slate-200/90 text-slate-600 hover:border-slate-300'
+                            }`}
+                          >
+                            <div
+                              className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-105 shadow-xs ${
+                                isGenderActive
+                                  ? g.avatarBg
+                                  : 'bg-slate-100 text-slate-500'
+                              }`}
+                            >
+                              <UserCheck className="w-5 h-5" />
+                            </div>
+
+                            <div className="flex-1 min-w-0 pr-6">
+                              <div className="flex items-center gap-2">
+                                <span
+                                  className={`text-xs sm:text-sm font-black uppercase tracking-tight block ${
+                                    isGenderActive ? 'text-slate-950' : 'text-slate-700'
+                                  }`}
+                                >
+                                  {g.label}
+                                </span>
+                                <span
+                                  className={`text-[9px] font-black uppercase px-1.5 py-0.5 rounded ${
+                                    isGenderActive
+                                      ? 'bg-red-100 text-red-800'
+                                      : 'bg-slate-200/70 text-slate-600'
+                                  }`}
+                                >
+                                  {g.tag}
+                                </span>
+                              </div>
+                              <p className="text-[11px] text-slate-500 mt-1 leading-snug">
+                                {g.desc}
+                              </p>
+                            </div>
+
+                            <div className="absolute top-4 right-4">
+                              <div
+                                className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
+                                  isGenderActive
+                                    ? 'border-red-700 bg-red-700 text-white shadow-xs'
+                                    : 'border-slate-300 bg-white'
+                                }`}
+                              >
+                                {isGenderActive && <Check className="w-3 h-3 stroke-[3]" />}
+                              </div>
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
-            <div className="pt-4 flex justify-end">
+            <div className="pt-4 flex justify-end border-t border-slate-100">
               <button
                 type="button"
                 onClick={handleNext}
-                className="px-6 py-3 bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider flex items-center gap-2 hover:shadow-lg hover:shadow-yellow-500/20 active:scale-95 transition-all"
+                className="px-7 py-3 bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 hover:from-yellow-300 hover:to-amber-400 text-slate-950 font-black rounded-xl shadow-md text-xs sm:text-sm uppercase tracking-wider flex items-center gap-2 active:scale-95 transition-all"
               >
                 <span>Lanjut ke Danton & Official</span>
                 <ArrowRight className="w-4 h-4" />
@@ -635,29 +843,33 @@ export default function RegistrationWizard({ isOpen, onClose }) {
 
         {/* ================= STEP 2: KOMANDAN & OFFICIAL ================= */}
         {step === 2 && (
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 animate-fade">
-            <div className="border-b border-slate-800 pb-4">
-              <h2 className="text-lg font-black text-white uppercase tracking-wide flex items-center gap-2">
-                <Users className="w-5 h-5 text-yellow-400" />
-                <span>2. Komandan Peleton & Official Pelatih</span>
-              </h2>
-              <p className="text-xs text-slate-400 mt-1">
-                Lengkapi identitas komandan peleton beserta kartu pelajar, serta data pelatih/official dengan KTP.
-              </p>
+          <div className="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-9 shadow-sm hover:shadow-md transition-shadow space-y-6 animate-fade">
+            <div className="border-b border-slate-100 pb-4 flex items-start gap-3.5">
+              <div className="w-10 h-10 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center text-red-700 shrink-0">
+                <Users className="w-5 h-5" />
+              </div>
+              <div>
+                <h2 className="text-lg sm:text-xl font-black text-slate-900 uppercase italic tracking-wide">
+                  2. Komandan Peleton & Official Pelatih
+                </h2>
+                <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">
+                  Lengkapi identitas komandan peleton beserta kartu pelajar, serta data pelatih/official dengan KTP.
+                </p>
+              </div>
             </div>
 
             <div className="space-y-6">
               {/* Box Komandan (Danton) */}
-              <div className="p-5 bg-slate-950 rounded-2xl border border-slate-800 space-y-4">
-                <div className="flex items-center gap-2 text-yellow-400 font-black text-xs uppercase tracking-wider">
-                  <UserCheck className="w-4 h-4" />
+              <div className="p-5 sm:p-6 bg-slate-50/80 rounded-2xl border border-slate-200 space-y-4">
+                <div className="flex items-center gap-2 text-slate-800 font-black text-xs uppercase tracking-wider bg-white border border-slate-200 px-3 py-1.5 rounded-xl w-fit shadow-xs">
+                  <UserCheck className="w-4 h-4 text-red-600" />
                   <span>Data Komandan Peleton (Danton)</span>
                 </div>
 
                 {/* 6. Nama Komandan */}
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
-                    6. Nama Komandan Peleton (Danton) <span className="text-red-400">*</span>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+                    6. Nama Komandan Peleton (Danton) <span className="text-red-600 font-bold">*</span>
                   </label>
                   <input
                     type="text"
@@ -665,30 +877,45 @@ export default function RegistrationWizard({ isOpen, onClose }) {
                     placeholder="Nama lengkap komandan siswa"
                     value={formData.dantonName}
                     onChange={e => setFormData({ ...formData, dantonName: e.target.value })}
-                    className="w-full px-4 py-3 bg-slate-900 border border-slate-800 rounded-xl text-sm text-white placeholder-slate-600 focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400"
+                    className="w-full px-4 py-3 bg-white border border-slate-200 focus:border-red-600 focus:ring-2 focus:ring-red-600/10 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 transition-all outline-none"
                   />
                 </div>
 
                 {/* 7. Upload Kartu Pelajar Komandan */}
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5 flex items-center gap-1.5">
-                    <FileUp className="w-3.5 h-3.5 text-yellow-400" />
-                    <span>7. Upload Kartu Pelajar Komandan (Foto / PDF) <span className="text-red-400">*</span></span>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5 flex items-center gap-1.5">
+                    <FileUp className="w-3.5 h-3.5 text-red-600" />
+                    <span>
+                      7. Upload Kartu Pelajar Komandan (Foto / PDF) <span className="text-red-600 font-bold">*</span>
+                    </span>
                   </label>
-                  <div className="p-3 bg-slate-900 border border-dashed border-slate-800 hover:border-yellow-400/60 rounded-xl transition-colors">
+                  <div className="p-3.5 bg-white border-2 border-dashed border-slate-200 hover:border-red-400 rounded-xl transition-all">
                     {files.dantonCard ? (
                       <div className="flex items-center justify-between p-2">
-                        <span className="text-xs font-bold text-white truncate max-w-sm">✓ {files.dantonCard.name} ({files.dantonCard.size})</span>
-                        <label className="cursor-pointer text-xs font-bold text-yellow-400 hover:underline px-3 py-1 bg-yellow-400/10 rounded-lg">
+                        <span className="text-xs font-bold text-slate-900 truncate max-w-sm flex items-center gap-1.5">
+                          <Check className="w-3.5 h-3.5 text-emerald-600 stroke-[3]" />
+                          <span>{files.dantonCard.name} ({files.dantonCard.size})</span>
+                        </span>
+                        <label className="cursor-pointer text-xs font-bold text-red-700 hover:text-red-800 px-3 py-1 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg transition-colors">
                           Ganti File
-                          <input type="file" accept="image/*,.pdf" onChange={e => handleFileChange('dantonCard', e)} className="hidden" />
+                          <input
+                            type="file"
+                            accept="image/*,.pdf"
+                            onChange={e => handleFileChange('dantonCard', e)}
+                            className="hidden"
+                          />
                         </label>
                       </div>
                     ) : (
-                      <label className="cursor-pointer flex items-center justify-center gap-2 py-3 text-xs font-bold text-slate-300">
-                        <UploadCloud className="w-4 h-4 text-yellow-400" />
+                      <label className="cursor-pointer flex items-center justify-center gap-2 py-3.5 text-xs font-bold text-slate-700 hover:text-red-700 transition-colors">
+                        <UploadCloud className="w-4 h-4 text-red-600" />
                         <span>Pilih Foto Kartu Pelajar Danton</span>
-                        <input type="file" accept="image/*,.pdf" onChange={e => handleFileChange('dantonCard', e)} className="hidden" />
+                        <input
+                          type="file"
+                          accept="image/*,.pdf"
+                          onChange={e => handleFileChange('dantonCard', e)}
+                          className="hidden"
+                        />
                       </label>
                     )}
                   </div>
@@ -696,16 +923,16 @@ export default function RegistrationWizard({ isOpen, onClose }) {
               </div>
 
               {/* Box Official / Pelatih */}
-              <div className="p-5 bg-slate-950 rounded-2xl border border-slate-800 space-y-4">
-                <div className="flex items-center gap-2 text-yellow-400 font-black text-xs uppercase tracking-wider">
-                  <ShieldCheck className="w-4 h-4" />
+              <div className="p-5 sm:p-6 bg-slate-50/80 rounded-2xl border border-slate-200 space-y-4">
+                <div className="flex items-center gap-2 text-slate-800 font-black text-xs uppercase tracking-wider bg-white border border-slate-200 px-3 py-1.5 rounded-xl w-fit shadow-xs">
+                  <ShieldCheck className="w-4 h-4 text-red-600" />
                   <span>Data Official / Pelatih Pendamping</span>
                 </div>
 
                 {/* 8. Nama Official/Pelatih */}
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
-                    8. Nama Lengkap Official / Pelatih <span className="text-red-400">*</span>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+                    8. Nama Lengkap Official / Pelatih <span className="text-red-600 font-bold">*</span>
                   </label>
                   <input
                     type="text"
@@ -713,13 +940,13 @@ export default function RegistrationWizard({ isOpen, onClose }) {
                     placeholder="Nama lengkap official / guru pendamping"
                     value={formData.officialName}
                     onChange={e => setFormData({ ...formData, officialName: e.target.value })}
-                    className="w-full px-4 py-3 bg-slate-900 border border-slate-800 rounded-xl text-sm text-white placeholder-slate-600 focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400"
+                    className="w-full px-4 py-3 bg-white border border-slate-200 focus:border-red-600 focus:ring-2 focus:ring-red-600/10 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 transition-all outline-none"
                   />
                 </div>
 
                 {/* No WhatsApp Official */}
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
                     Nomor WhatsApp Official / Pelatih (Aktif)
                   </label>
                   <input
@@ -727,30 +954,45 @@ export default function RegistrationWizard({ isOpen, onClose }) {
                     placeholder="Contoh: 081234567890"
                     value={formData.waNumber}
                     onChange={e => setFormData({ ...formData, waNumber: e.target.value })}
-                    className="w-full px-4 py-3 bg-slate-900 border border-slate-800 rounded-xl text-sm text-white placeholder-slate-600 focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400"
+                    className="w-full px-4 py-3 bg-white border border-slate-200 focus:border-red-600 focus:ring-2 focus:ring-red-600/10 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 transition-all outline-none"
                   />
                 </div>
 
                 {/* 9. Upload KTP Official/Pelatih */}
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5 flex items-center gap-1.5">
-                    <FileUp className="w-3.5 h-3.5 text-yellow-400" />
-                    <span>9. Upload KTP Official / Pelatih (Foto / PDF) <span className="text-red-400">*</span></span>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5 flex items-center gap-1.5">
+                    <FileUp className="w-3.5 h-3.5 text-red-600" />
+                    <span>
+                      9. Upload KTP Official / Pelatih (Foto / PDF) <span className="text-red-600 font-bold">*</span>
+                    </span>
                   </label>
-                  <div className="p-3 bg-slate-900 border border-dashed border-slate-800 hover:border-yellow-400/60 rounded-xl transition-colors">
+                  <div className="p-3.5 bg-white border-2 border-dashed border-slate-200 hover:border-red-400 rounded-xl transition-all">
                     {files.officialKtp ? (
                       <div className="flex items-center justify-between p-2">
-                        <span className="text-xs font-bold text-white truncate max-w-sm">✓ {files.officialKtp.name} ({files.officialKtp.size})</span>
-                        <label className="cursor-pointer text-xs font-bold text-yellow-400 hover:underline px-3 py-1 bg-yellow-400/10 rounded-lg">
+                        <span className="text-xs font-bold text-slate-900 truncate max-w-sm flex items-center gap-1.5">
+                          <Check className="w-3.5 h-3.5 text-emerald-600 stroke-[3]" />
+                          <span>{files.officialKtp.name} ({files.officialKtp.size})</span>
+                        </span>
+                        <label className="cursor-pointer text-xs font-bold text-red-700 hover:text-red-800 px-3 py-1 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg transition-colors">
                           Ganti File
-                          <input type="file" accept="image/*,.pdf" onChange={e => handleFileChange('officialKtp', e)} className="hidden" />
+                          <input
+                            type="file"
+                            accept="image/*,.pdf"
+                            onChange={e => handleFileChange('officialKtp', e)}
+                            className="hidden"
+                          />
                         </label>
                       </div>
                     ) : (
-                      <label className="cursor-pointer flex items-center justify-center gap-2 py-3 text-xs font-bold text-slate-300">
-                        <UploadCloud className="w-4 h-4 text-yellow-400" />
+                      <label className="cursor-pointer flex items-center justify-center gap-2 py-3.5 text-xs font-bold text-slate-700 hover:text-red-700 transition-colors">
+                        <UploadCloud className="w-4 h-4 text-red-600" />
                         <span>Pilih Foto KTP Official / Pelatih</span>
-                        <input type="file" accept="image/*,.pdf" onChange={e => handleFileChange('officialKtp', e)} className="hidden" />
+                        <input
+                          type="file"
+                          accept="image/*,.pdf"
+                          onChange={e => handleFileChange('officialKtp', e)}
+                          className="hidden"
+                        />
                       </label>
                     )}
                   </div>
@@ -758,11 +1000,11 @@ export default function RegistrationWizard({ isOpen, onClose }) {
               </div>
             </div>
 
-            <div className="pt-4 flex justify-between items-center">
+            <div className="pt-4 flex justify-between items-center border-t border-slate-100">
               <button
                 type="button"
                 onClick={handleBack}
-                className="px-5 py-2.5 rounded-xl border border-slate-800 hover:bg-white/5 text-slate-300 font-bold text-xs uppercase tracking-wider flex items-center gap-1.5"
+                className="px-5 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-100 text-slate-700 font-bold text-xs uppercase tracking-wider flex items-center gap-2 transition-all"
               >
                 <ArrowLeft className="w-4 h-4" />
                 <span>Kembali</span>
@@ -771,7 +1013,7 @@ export default function RegistrationWizard({ isOpen, onClose }) {
               <button
                 type="button"
                 onClick={handleNext}
-                className="px-6 py-3 bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider flex items-center gap-2 hover:shadow-lg hover:shadow-yellow-500/20 active:scale-95 transition-all"
+                className="px-7 py-3 bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 hover:from-yellow-300 hover:to-amber-400 text-slate-950 font-black rounded-xl shadow-md text-xs sm:text-sm uppercase tracking-wider flex items-center gap-2 active:scale-95 transition-all"
               >
                 <span>Lanjut ke Berkas & Pakta Online</span>
                 <ArrowRight className="w-4 h-4" />
@@ -780,48 +1022,62 @@ export default function RegistrationWizard({ isOpen, onClose }) {
           </div>
         )}
 
-        {/* ================= STEP 3: BERKAS, WATCHFINDER & PAKTA ONLINE ================= */}
+        {/* ================= STEP 3: BERKAS, FOTO SELFIE & PAKTA ONLINE ================= */}
         {step === 3 && (
-          <form onSubmit={handleSubmit} className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 animate-fade">
-            <div className="border-b border-slate-800 pb-4">
-              <h2 className="text-lg font-black text-white uppercase tracking-wide flex items-center gap-2">
-                <CreditCard className="w-5 h-5 text-yellow-400" />
-                <span>3. Pembayaran, Selfie Watchfinder & Pakta Integritas Online</span>
-              </h2>
-              <p className="text-xs text-slate-400 mt-1">
-                Unggah bukti transfer pembayaran, foto selfie wajib aplikasi Watchfinder, dan tanda tangani Pakta Integritas secara online.
-              </p>
+          <form
+            onSubmit={handleSubmit}
+            className="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-9 shadow-sm hover:shadow-md transition-shadow space-y-6 animate-fade"
+          >
+            <div className="border-b border-slate-100 pb-4 flex items-start gap-3.5">
+              <div className="w-10 h-10 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center text-red-700 shrink-0">
+                <CreditCard className="w-5 h-5" />
+              </div>
+              <div>
+                <h2 className="text-lg sm:text-xl font-black text-slate-900 uppercase italic tracking-wide">
+                  3. Pembayaran, Foto Selfie & Pakta Integritas
+                </h2>
+                <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">
+                  Unggah bukti transfer pembayaran, foto selfie pemohon/official, dan tanda tangani Pakta Integritas secara online.
+                </p>
+              </div>
             </div>
 
-            {/* Kotak Rekening Resmi */}
-            <div className="p-4 bg-gradient-to-br from-slate-950 to-slate-900 rounded-2xl border border-yellow-400/30">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            {/* Kotak Rekening Resmi Bendahara - Clean Slate-900 Card */}
+            <div className="p-5 sm:p-6 bg-slate-900 text-white rounded-2xl shadow-md relative overflow-hidden">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                   <span className="text-[10px] font-black uppercase tracking-wider text-yellow-400 block">
                     Rekening Resmi Bendahara LBB Mu'allimin 2026
                   </span>
-                  <div className="flex items-center gap-2 mt-1">
+                  <div className="flex items-center gap-2.5 mt-1.5 flex-wrap">
                     <span className="text-sm font-bold text-white">{PAYMENT.BANK_NAME}:</span>
-                    <span className="text-base font-mono font-black text-yellow-400">{PAYMENT.ACCOUNT_NUMBER}</span>
+                    <span className="text-lg font-mono font-black text-yellow-400 tracking-wider">
+                      {PAYMENT.ACCOUNT_NUMBER}
+                    </span>
                     <button
                       type="button"
                       onClick={handleCopyAccount}
-                      className="px-2 py-0.5 bg-yellow-400/10 hover:bg-yellow-400/20 text-yellow-400 text-[10px] font-bold rounded flex items-center gap-1"
+                      className="px-3 py-1 bg-yellow-400 hover:bg-yellow-300 text-slate-950 text-xs font-black rounded-lg shadow-xs flex items-center gap-1.5 active:scale-95 transition-all"
                     >
-                      {copiedAccount ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
-                      <span>{copiedAccount ? 'Tersalin' : 'Salin'}</span>
+                      {copiedAccount ? <Check className="w-3.5 h-3.5 text-emerald-800 stroke-[3]" /> : <Copy className="w-3.5 h-3.5" />}
+                      <span>{copiedAccount ? 'Tersalin' : 'Salin Rekening'}</span>
                     </button>
                   </div>
-                  <span className="text-[11px] text-slate-300 block mt-1">
+                  <span className="text-xs text-slate-300 block mt-1.5">
                     a.n. <strong className="text-white font-bold">{PAYMENT.ACCOUNT_NAME || PAYMENT.ACCOUNT_HOLDER}</strong>
                   </span>
-                  <span className="text-[10px] text-amber-300/90 block mt-0.5">
-                    Format Berita: <code className="bg-slate-900 px-1.5 py-0.5 rounded text-yellow-400 font-mono font-bold">{PAYMENT.TRANSFER_NOTE_FORMAT}</code>
+                  <span className="text-[11px] text-amber-300 block mt-1">
+                    Format Berita Transfer:{' '}
+                    <code className="bg-black/40 border border-yellow-400/40 px-2 py-0.5 rounded text-yellow-300 font-mono font-bold">
+                      {PAYMENT.TRANSFER_NOTE_FORMAT}
+                    </code>
                   </span>
                 </div>
-                <div className="text-right sm:border-l sm:border-slate-800 sm:pl-4">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase block">Biaya Registrasi ({formData.jenjang})</span>
-                  <span className="text-xl font-mono font-black text-white">{feeDisplay}</span>
+                <div className="text-left sm:text-right sm:border-l sm:border-slate-800 sm:pl-5 pt-3 sm:pt-0 border-t sm:border-t-0 border-slate-800">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase block tracking-wider">
+                    Biaya Registrasi ({formData.jenjang})
+                  </span>
+                  <span className="text-2xl font-mono font-black text-white">{feeDisplay}</span>
                 </div>
               </div>
             </div>
@@ -829,130 +1085,150 @@ export default function RegistrationWizard({ isOpen, onClose }) {
             <div className="space-y-6">
               {/* 10. Bukti Pembayaran */}
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5 flex items-center gap-1.5">
-                  <CreditCard className="w-3.5 h-3.5 text-yellow-400" />
-                  <span>10. Upload Bukti Transfer Pembayaran <span className="text-red-400">*</span></span>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5 flex items-center gap-1.5">
+                  <CreditCard className="w-3.5 h-3.5 text-red-600" />
+                  <span>
+                    10. Upload Bukti Transfer Pembayaran <span className="text-red-600 font-bold">*</span>
+                  </span>
                 </label>
-                <div className="p-4 bg-slate-950 border border-dashed border-slate-800 hover:border-yellow-400/60 rounded-xl transition-colors">
+                <div className="p-4 bg-slate-50 border-2 border-dashed border-slate-200 hover:border-red-400 rounded-2xl transition-all">
                   {files.paymentProof ? (
-                    <div className="flex items-center justify-between p-2">
-                      <span className="text-xs font-bold text-white truncate max-w-sm">✓ {files.paymentProof.name} ({files.paymentProof.size})</span>
-                      <label className="cursor-pointer text-xs font-bold text-yellow-400 hover:underline px-3 py-1 bg-yellow-400/10 rounded-lg">
+                    <div className="flex items-center justify-between p-2 bg-white rounded-xl border border-slate-200">
+                      <span className="text-xs font-bold text-slate-900 truncate max-w-sm flex items-center gap-1.5">
+                        <Check className="w-3.5 h-3.5 text-emerald-600 stroke-[3]" />
+                        <span>{files.paymentProof.name} ({files.paymentProof.size})</span>
+                      </span>
+                      <label className="cursor-pointer text-xs font-bold text-red-700 hover:text-red-800 px-3.5 py-1.5 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg transition-colors">
                         Ganti Bukti
-                        <input type="file" accept="image/*,.pdf" onChange={e => handleFileChange('paymentProof', e)} className="hidden" />
+                        <input
+                          type="file"
+                          accept="image/*,.pdf"
+                          onChange={e => handleFileChange('paymentProof', e)}
+                          className="hidden"
+                        />
                       </label>
                     </div>
                   ) : (
-                    <label className="cursor-pointer flex items-center justify-center gap-2 py-3 text-xs font-bold text-slate-300">
-                      <UploadCloud className="w-4 h-4 text-yellow-400" />
+                    <label className="cursor-pointer flex flex-col items-center justify-center gap-2 py-4 text-xs font-bold text-slate-700 hover:text-red-700 transition-colors">
+                      <UploadCloud className="w-6 h-6 text-red-600" />
                       <span>Pilih Foto / Screenshot Struk Bukti Transfer</span>
-                      <input type="file" accept="image/*,.pdf" onChange={e => handleFileChange('paymentProof', e)} className="hidden" />
+                      <span className="text-[10px] text-slate-500 font-normal">Format JPG, PNG, PDF (Maks. 5 MB)</span>
+                      <input
+                        type="file"
+                        accept="image/*,.pdf"
+                        onChange={e => handleFileChange('paymentProof', e)}
+                        className="hidden"
+                      />
                     </label>
                   )}
                 </div>
               </div>
 
-              {/* 11. Foto Selfie WAJIB WATCHFINDER */}
-              <div className="p-4 bg-slate-950 rounded-2xl border border-yellow-400/30 space-y-3">
-                <div className="flex items-center justify-between">
-                  <label className="text-xs font-bold uppercase tracking-wider text-yellow-400 flex items-center gap-1.5">
-                    <Camera className="w-4 h-4 text-yellow-400" />
-                    <span>11. Foto Selfie Verifikasi Pemohon (Wajib Aplikasi Watchfinder) <span className="text-red-400">*</span></span>
-                  </label>
-                  <span className="text-[10px] font-black uppercase tracking-wider bg-yellow-400/10 text-yellow-300 border border-yellow-400/30 px-2 py-0.5 rounded-full flex items-center gap-1">
-                    <Clock className="w-3 h-3" />
-                    <span>Watchfinder Verified</span>
+              {/* 11. Foto Selfie / Swafoto Pemohon */}
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5 flex items-center gap-1.5">
+                  <Camera className="w-3.5 h-3.5 text-red-600" />
+                  <span>
+                    11. Upload Foto Selfie / Swafoto Pemohon <span className="text-red-600 font-bold">*</span>
                   </span>
-                </div>
-
-                <p className="text-[11px] text-slate-400 leading-relaxed">
-                  Foto selfie pemohon/official wajib menggunakan aplikasi <strong>Watchfinder</strong> (atau GPS Map / Timestamp Camera) yang memuat watermark waktu (tanggal & jam) serta lokasi secara otomatis tercetak pada foto.
-                </p>
-
-                <div className="p-4 bg-slate-900 border border-dashed border-slate-800 hover:border-yellow-400/60 rounded-xl transition-colors">
+                </label>
+                <div className="p-4 bg-slate-50 border-2 border-dashed border-slate-200 hover:border-red-400 rounded-2xl transition-all">
                   {files.selfie ? (
-                    <div className="flex items-center justify-between p-2">
+                    <div className="flex items-center justify-between p-2 bg-white rounded-xl border border-slate-200">
                       <div className="flex items-center gap-3">
-                        <div className="relative">
-                          <img src={files.selfie.url} alt="Selfie Watchfinder" className="w-16 h-16 object-cover rounded-lg border border-yellow-400/40" />
-                          <span className="absolute bottom-0 right-0 bg-black/80 text-[8px] font-mono text-yellow-400 px-1 rounded-br-lg">GPS</span>
-                        </div>
+                        <img
+                          src={files.selfie.url}
+                          alt="Foto Selfie"
+                          className="w-12 h-12 object-cover rounded-lg border border-slate-200"
+                        />
                         <div>
-                          <span className="text-xs font-bold text-white truncate max-w-xs block">✓ {files.selfie.name}</span>
-                          <span className="text-[10px] text-emerald-400 font-semibold flex items-center gap-1 mt-0.5">
-                            <MapPin className="w-3 h-3" />
-                            <span>Foto Watchfinder siap diverifikasi</span>
+                          <span className="text-xs font-bold text-slate-900 truncate max-w-sm block">
+                            {files.selfie.name}
+                          </span>
+                          <span className="text-[10px] text-emerald-600 font-semibold flex items-center gap-1 mt-0.5">
+                            <Check className="w-3 h-3 stroke-[3]" />
+                            <span>Foto selfie berhasil diunggah</span>
                           </span>
                         </div>
                       </div>
-                      <label className="cursor-pointer text-xs font-bold text-yellow-400 hover:underline px-3 py-1.5 bg-yellow-400/10 rounded-lg">
+                      <label className="cursor-pointer text-xs font-bold text-red-700 hover:text-red-800 px-3.5 py-1.5 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg transition-colors">
                         Ganti Foto
-                        <input type="file" accept="image/*" onChange={e => handleFileChange('selfie', e)} className="hidden" />
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={e => handleFileChange('selfie', e)}
+                          className="hidden"
+                        />
                       </label>
                     </div>
                   ) : (
-                    <label className="cursor-pointer flex flex-col items-center justify-center gap-2 py-3 text-xs font-bold text-slate-300">
-                      <Camera className="w-7 h-7 text-yellow-400" />
-                      <span>Upload Foto Selfie Hasil Aplikasi Watchfinder</span>
-                      <span className="text-[10px] text-slate-500 font-normal">Format JPG/PNG • Pastikan stempel tanggal & koordinat terbaca jelas</span>
-                      <input type="file" accept="image/*" onChange={e => handleFileChange('selfie', e)} className="hidden" />
+                    <label className="cursor-pointer flex flex-col items-center justify-center gap-2 py-4 text-xs font-bold text-slate-700 hover:text-red-700 transition-colors">
+                      <Camera className="w-6 h-6 text-red-600" />
+                      <span>Pilih Foto Selfie / Swafoto Pemohon</span>
+                      <span className="text-[10px] text-slate-500 font-normal">
+                        Format JPG atau PNG (Maks. 3 MB)
+                      </span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={e => handleFileChange('selfie', e)}
+                        className="hidden"
+                      />
                     </label>
                   )}
                 </div>
-
-                <label className="flex items-start gap-2.5 cursor-pointer pt-1">
-                  <input
-                    type="checkbox"
-                    checked={formData.confirmWatchfinder}
-                    onChange={e => setFormData({ ...formData, confirmWatchfinder: e.target.checked })}
-                    className="mt-0.5 rounded border-slate-700 text-yellow-500 focus:ring-yellow-400 w-4 h-4"
-                  />
-                  <span className="text-xs text-slate-300 leading-tight">
-                    Saya menyatakan dengan sesungguhnya bahwa foto selfie ini diambil secara langsung menggunakan aplikasi <strong>Watchfinder / Timestamp Camera</strong> asli tanpa suntingan buatan.
-                  </span>
-                </label>
               </div>
 
               {/* 12. PAKTA INTEGRITAS ONLINE (DIGITAL SIGNATURE) */}
-              <div className="p-4 bg-slate-950 rounded-2xl border border-slate-800 space-y-3">
-                <div className="flex items-center justify-between">
-                  <label className="text-xs font-bold uppercase tracking-wider text-slate-200 flex items-center gap-1.5">
-                    <PenTool className="w-4 h-4 text-yellow-400" />
-                    <span>12. Pakta Integritas Resmi (Tanda Tangan Online) <span className="text-red-400">*</span></span>
+              <div className="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-3.5">
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <label className="text-xs font-bold uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
+                    <PenTool className="w-4 h-4 text-red-700" />
+                    <span>
+                      12. Pakta Integritas Resmi (Tanda Tangan Online) <span className="text-red-600 font-bold">*</span>
+                    </span>
                   </label>
-                  <span className="text-[10px] font-black uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full">
+                  <span className="text-[10px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-800 border border-emerald-300 px-2.5 py-0.5 rounded-full">
                     Online E-Signature
                   </span>
                 </div>
 
-                <p className="text-[11px] text-slate-400 leading-relaxed">
-                  Tidak perlu mencetak dan memindai kertas. Anda dapat membaca 5 butir pernyataan integritas dan membubuhkan <strong>Tanda Tangan Digital Resmi</strong> secara langsung online di bawah ini.
+                <p className="text-[11px] text-slate-600 leading-relaxed">
+                  Tidak perlu mencetak dan memindai kertas. Anda dapat membaca 5 butir pernyataan integritas dan membubuhkan{' '}
+                  <strong className="text-slate-900">Tanda Tangan Digital Resmi</strong> secara langsung online di bawah ini.
                 </p>
 
                 {files.integrityPact ? (
-                  <div className="p-4 bg-emerald-950/30 border border-emerald-500/40 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                  <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 bg-white rounded-lg p-1 border border-slate-200 flex items-center justify-center shrink-0">
+                      <div className="w-12 h-12 bg-white rounded-lg p-1 border border-slate-200 flex items-center justify-center shrink-0 shadow-xs">
                         {files.integrityPact.signatureUrl ? (
-                          <img src={files.integrityPact.signatureUrl} alt="TTD Digital" className="max-h-full object-contain" />
+                          <img
+                            src={files.integrityPact.signatureUrl}
+                            alt="TTD Digital"
+                            className="max-h-full object-contain"
+                          />
                         ) : (
                           <FileCheck className="w-6 h-6 text-emerald-600" />
                         )}
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
-                          <span className="text-xs font-black text-white">Pakta Integritas Ditandatangani Online</span>
-                          <span className="text-[9px] bg-emerald-400 text-slate-950 font-black px-1.5 py-0.2 rounded">SAH</span>
+                          <span className="text-xs font-black text-slate-900">Pakta Integritas Ditandatangani Online</span>
+                          <span className="text-[9px] bg-emerald-600 text-white font-black px-1.5 py-0.5 rounded">
+                            SAH
+                          </span>
                         </div>
-                        <span className="text-[10px] text-slate-400 block mt-0.5">
-                          Oleh: <strong className="text-slate-200">{files.integrityPact.signedBy}</strong> • Kode: <span className="font-mono text-yellow-400">{files.integrityPact.signCode}</span>
+                        <span className="text-[10px] text-slate-600 block mt-0.5">
+                          Oleh: <strong className="text-slate-900">{files.integrityPact.signedBy}</strong> • Kode:{' '}
+                          <span className="font-mono text-red-700 font-bold">{files.integrityPact.signCode}</span>
                         </span>
                       </div>
                     </div>
                     <button
                       type="button"
                       onClick={() => setShowPaktaModal(true)}
-                      className="px-3 py-1.5 bg-white/10 hover:bg-white/20 text-xs font-bold text-white rounded-lg transition-colors shrink-0"
+                      className="px-3.5 py-1.5 bg-white hover:bg-slate-50 border border-slate-200 text-xs font-bold text-slate-700 rounded-lg transition-colors shrink-0"
                     >
                       Ubah Tanda Tangan
                     </button>
@@ -964,35 +1240,36 @@ export default function RegistrationWizard({ isOpen, onClose }) {
                       setShowPaktaModal(true);
                       setHasSignature(false);
                     }}
-                    className="w-full py-4 bg-gradient-to-r from-blue-600/20 via-sky-600/20 to-blue-600/20 hover:from-blue-600/30 hover:to-sky-600/30 border border-sky-400/40 text-sky-300 rounded-xl font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all group"
+                    className="w-full py-3.5 bg-red-700 hover:bg-red-800 text-white font-black rounded-xl text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2.5 transition-all shadow-sm active:scale-[0.99]"
                   >
-                    <PenTool className="w-4 h-4 text-sky-400 group-hover:rotate-12 transition-transform" />
+                    <PenTool className="w-4 h-4 text-white" />
                     <span>Buka & Tanda Tangani Pakta Integritas Online Sekarang</span>
                   </button>
                 )}
               </div>
 
               {/* Checklist Persetujuan Juknis */}
-              <div className="space-y-3 pt-2">
-                <label className="flex items-start gap-3 cursor-pointer p-3 bg-slate-950 rounded-xl border border-slate-800">
+              <div className="space-y-3 pt-1">
+                <label className="flex items-start gap-3 cursor-pointer p-4 bg-slate-50 rounded-2xl border border-slate-200 hover:bg-slate-100/60 transition-colors">
                   <input
                     type="checkbox"
                     checked={formData.agreeJuknis}
                     onChange={e => setFormData({ ...formData, agreeJuknis: e.target.checked })}
-                    className="mt-0.5 rounded border-slate-700 text-yellow-500 focus:ring-yellow-400 w-4 h-4"
+                    className="mt-0.5 rounded border-slate-300 text-red-600 focus:ring-red-600 w-4 h-4"
                   />
-                  <span className="text-xs text-slate-300 leading-relaxed">
-                    Saya menyetujui seluruh ketentuan dalam <strong>Petunjuk Teknis (Juknis) Resmi LBB Mu'allimin 2026</strong> dan bersedia mematuhi seluruh keputusan dewan juri yang bersifat mutlak serta tidak dapat diganggu gugat.
+                  <span className="text-xs text-slate-700 leading-relaxed">
+                    Saya menyetujui seluruh ketentuan dalam{' '}
+                    <strong className="text-slate-900">Petunjuk Teknis (Juknis) Resmi LBB Mu'allimin 2026</strong> dan bersedia mematuhi seluruh keputusan dewan juri yang bersifat mutlak serta tidak dapat diganggu gugat.
                   </span>
                 </label>
               </div>
             </div>
 
-            <div className="pt-4 flex justify-between items-center">
+            <div className="pt-4 flex justify-between items-center border-t border-slate-100">
               <button
                 type="button"
                 onClick={handleBack}
-                className="px-5 py-2.5 rounded-xl border border-slate-800 hover:bg-white/5 text-slate-300 font-bold text-xs uppercase tracking-wider flex items-center gap-1.5"
+                className="px-5 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-100 text-slate-700 font-bold text-xs uppercase tracking-wider flex items-center gap-2 transition-all"
               >
                 <ArrowLeft className="w-4 h-4" />
                 <span>Kembali</span>
@@ -1000,10 +1277,10 @@ export default function RegistrationWizard({ isOpen, onClose }) {
 
               <button
                 type="submit"
-                className="px-7 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider flex items-center gap-2 hover:shadow-lg hover:shadow-emerald-500/20 active:scale-95 transition-all"
+                className="px-8 py-3.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black rounded-xl text-xs sm:text-sm uppercase tracking-wider flex items-center gap-2 shadow-md active:scale-95 transition-all"
               >
                 <span>Kirim Pendaftaran Peleton</span>
-                <CheckCircle2 className="w-4 h-4 text-slate-950" />
+                <CheckCircle2 className="w-4 h-4 text-white stroke-[2.5]" />
               </button>
             </div>
           </form>
@@ -1011,53 +1288,66 @@ export default function RegistrationWizard({ isOpen, onClose }) {
 
         {/* ================= STEP 4: SUBMISSION CONFIRMATION (MENUNGGU ACC) ================= */}
         {step === 4 && createdTeam && (
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-10 text-center max-w-2xl mx-auto shadow-2xl space-y-6 animate-in zoom-in-95 duration-200">
-            <div className="w-16 h-16 bg-amber-400/20 border border-amber-400/40 text-amber-400 rounded-full flex items-center justify-center mx-auto shadow-lg shadow-amber-400/10 animate-bounce">
-              <Clock className="w-8 h-8" />
+          <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-10 text-center max-w-2xl mx-auto shadow-sm space-y-6 animate-in zoom-in-95 duration-200">
+            <div className="flex justify-center mb-1">
+              <img
+                src={logoImg}
+                alt="Logo Tonti Mu'allimin"
+                className="h-14 w-auto filter drop-shadow-xs"
+              />
+            </div>
+
+            <div className="w-14 h-14 bg-amber-50 border border-amber-200 text-amber-600 rounded-full flex items-center justify-center mx-auto shadow-xs">
+              <Clock className="w-7 h-7" />
             </div>
 
             <div>
-              <span className="text-xs font-black uppercase tracking-widest text-amber-400 bg-amber-400/10 border border-amber-400/30 px-3 py-1 rounded-full">
+              <span className="text-xs font-black uppercase tracking-widest text-amber-800 bg-amber-100 border border-amber-200 px-3.5 py-1 rounded-full">
                 Status: Menunggu ACC Admin
               </span>
-              <h2 className="text-2xl sm:text-3xl font-black text-white uppercase italic tracking-tight mt-3">
+              <h2 className="text-2xl sm:text-3xl font-black text-slate-900 uppercase italic tracking-tight mt-3">
                 Pendaftaran Berhasil Dikirim!
               </h2>
-              <p className="text-xs sm:text-sm text-slate-300 mt-2 leading-relaxed">
-                Data peleton <strong className="text-white">{createdTeam.schoolName}</strong> beserta selfie Watchfinder dan Pakta Integritas Online telah masuk ke antrean verifikasi Sekretariat LBB Mu'allimin 2026.
+              <p className="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed">
+                Data peleton <strong className="text-slate-900">{createdTeam.schoolName}</strong> beserta seluruh berkas dan Pakta Integritas Online telah masuk ke antrean verifikasi Sekretariat LBB Mu'allimin 2026.
               </p>
             </div>
 
             {/* Registration Code Badge */}
-            <div className="p-4 bg-slate-950 rounded-2xl border border-slate-800 inline-block text-left w-full">
-              <div className="flex justify-between items-center border-b border-slate-800/80 pb-2 mb-2 text-xs">
-                <span className="text-slate-400 font-medium">Kode Pendaftaran:</span>
-                <span className="font-mono font-black text-yellow-400 text-sm">{createdTeam.regCode}</span>
+            <div className="p-5 bg-slate-50 rounded-2xl border border-slate-200 inline-block text-left w-full shadow-inner">
+              <div className="flex justify-between items-center border-b border-slate-200 pb-2.5 mb-2.5 text-xs">
+                <span className="text-slate-500 font-medium">Kode Pendaftaran:</span>
+                <span className="font-mono font-black text-red-700 text-sm">{createdTeam.regCode}</span>
               </div>
-              <div className="flex justify-between items-center border-b border-slate-800/80 pb-2 mb-2 text-xs">
-                <span className="text-slate-400 font-medium">Email Akun Portal:</span>
-                <span className="font-mono font-bold text-white">{createdTeam.email}</span>
+              <div className="flex justify-between items-center border-b border-slate-200 pb-2.5 mb-2.5 text-xs">
+                <span className="text-slate-500 font-medium">Email Akun Portal:</span>
+                <span className="font-mono font-bold text-slate-900">{createdTeam.email}</span>
               </div>
-              <div className="flex justify-between items-center border-b border-slate-800/80 pb-2 mb-2 text-xs">
-                <span className="text-slate-400 font-medium">Pakta Integritas:</span>
-                <span className="text-emerald-400 font-bold">✓ Ditandatangani Digital Online</span>
+              <div className="flex justify-between items-center border-b border-slate-200 pb-2.5 mb-2.5 text-xs">
+                <span className="text-slate-500 font-medium">Pakta Integritas:</span>
+                <span className="text-emerald-700 font-bold flex items-center gap-1">
+                  <Check className="w-3.5 h-3.5 stroke-[3]" />
+                  <span>Ditandatangani Digital Online</span>
+                </span>
               </div>
               <div className="flex justify-between items-center text-xs">
-                <span className="text-slate-400 font-medium">Tipe Pasukan:</span>
-                <span className="font-bold text-slate-300">{createdTeam.teamType} ({createdTeam.jenjang})</span>
+                <span className="text-slate-500 font-medium">Tipe Pasukan:</span>
+                <span className="font-bold text-slate-800">
+                  {createdTeam.teamType} ({createdTeam.jenjang})
+                </span>
               </div>
             </div>
 
             {/* Next Step Info */}
-            <div className="p-4 bg-blue-950/40 border border-blue-800/50 rounded-2xl text-left text-xs text-blue-200 leading-relaxed space-y-2">
-              <p className="font-bold flex items-center gap-1.5 text-blue-300">
-                <Lock className="w-4 h-4 text-blue-400" />
-                <span>Petunjuk Akses Login Portal Calon Peserta:</span>
+            <div className="p-4 sm:p-5 bg-amber-50/80 border border-amber-200 rounded-2xl text-left text-xs text-slate-700 leading-relaxed space-y-2">
+              <p className="font-black flex items-center gap-1.5 text-amber-900 uppercase tracking-wider text-[11px]">
+                <Lock className="w-4 h-4 text-amber-700" />
+                <span>Petunjuk Akses Masuk Portal Calon Peserta:</span>
               </p>
-              <ul className="list-disc pl-5 space-y-1 text-slate-300 text-[11px]">
-                <li>Admin panitia akan memeriksa kelengkapan berkas, foto selfie Watchfinder, dan tanda tangan pakta integritas online Anda.</li>
-                <li>Setelah Admin memberikan <strong>persetujuan (ACC)</strong>, akun Anda resmi aktif sebagai calon peserta.</li>
-                <li>Gunakan email <strong className="text-white">{createdTeam.email}</strong> pada menu <strong>Masuk Portal</strong> untuk mengakses dashboard resmi.</li>
+              <ul className="list-disc pl-5 space-y-1 text-slate-600 text-[11px]">
+                <li>Admin panitia akan memeriksa kelengkapan berkas administrasi dan tanda tangan pakta integritas online Anda.</li>
+                <li>Setelah Admin memberikan <strong className="text-slate-900">persetujuan (ACC)</strong>, akun Anda resmi aktif sebagai calon peserta.</li>
+                <li>Masuk akun dilakukan <strong className="text-red-700">hanya lewat Google</strong> menggunakan email <strong className="text-slate-900">{createdTeam.email}</strong> pada menu <strong className="text-slate-900">Daftar/Masuk</strong>.</li>
               </ul>
             </div>
 
@@ -1066,14 +1356,14 @@ export default function RegistrationWizard({ isOpen, onClose }) {
               <button
                 type="button"
                 onClick={() => setActiveView('landing')}
-                className="flex-1 py-3 px-4 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-colors"
+                className="flex-1 py-3 px-4 bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 font-bold rounded-xl text-xs uppercase tracking-wider transition-colors"
               >
                 Kembali ke Beranda
               </button>
               <button
                 type="button"
                 onClick={() => openAuthModal('login')}
-                className="flex-1 py-3 px-4 bg-gradient-to-r from-yellow-400 to-amber-500 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider transition-all hover:shadow-lg hover:shadow-yellow-500/20 active:scale-95 flex items-center justify-center gap-2"
+                className="flex-1 py-3 px-4 bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 hover:from-yellow-300 hover:to-amber-400 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider transition-all shadow-md active:scale-95 flex items-center justify-center gap-2"
               >
                 <span>Coba Masuk Portal</span>
                 <ArrowRight className="w-4 h-4" />
@@ -1085,44 +1375,47 @@ export default function RegistrationWizard({ isOpen, onClose }) {
 
       {/* ================= MODAL PAKTA INTEGRITAS ONLINE ================= */}
       {showPaktaModal && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-slate-900 border border-slate-700 rounded-3xl max-w-xl w-full p-6 sm:p-8 space-y-5 text-slate-100 shadow-2xl max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-              <div>
-                <span className="text-[10px] font-black uppercase tracking-wider text-yellow-400 block">
-                  Dokumen Resmi Digital
-                </span>
-                <h3 className="text-lg font-black text-white uppercase italic">
-                  Pakta Integritas & Pernyataan Keabsahan
-                </h3>
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-white border border-slate-200 rounded-3xl max-w-xl w-full p-6 sm:p-8 space-y-5 text-slate-900 shadow-2xl max-h-[90vh] overflow-y-auto relative">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3.5">
+              <div className="flex items-center gap-3">
+                <img src={logoImg} alt="Logo Tonti" className="h-9 w-auto filter drop-shadow-xs" />
+                <div>
+                  <span className="text-[10px] font-black uppercase tracking-wider text-red-700 block">
+                    Dokumen Resmi Digital LBB 2026
+                  </span>
+                  <h3 className="text-base sm:text-lg font-black text-slate-900 uppercase italic">
+                    Pakta Integritas & Keabsahan
+                  </h3>
+                </div>
               </div>
               <button
                 type="button"
                 onClick={() => setShowPaktaModal(false)}
-                className="p-2 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors"
+                className="p-2 text-slate-400 hover:text-slate-700 rounded-xl hover:bg-slate-100 transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             {/* Konten Surat Pakta Integritas */}
-            <div className="space-y-3 text-xs text-slate-300 leading-relaxed bg-slate-950 p-4 rounded-2xl border border-slate-800">
-              <p className="font-semibold text-white">
+            <div className="space-y-3 text-xs text-slate-600 leading-relaxed bg-slate-50 p-4 sm:p-5 rounded-2xl border border-slate-200">
+              <p className="font-semibold text-slate-900">
                 Yang bertanda tangan di bawah ini secara sah dan sadar:
               </p>
-              <div className="grid grid-cols-3 gap-1 text-[11px] bg-slate-900/60 p-2.5 rounded-lg border border-slate-800">
-                <span className="text-slate-400">Nama Official:</span>
-                <span className="col-span-2 font-bold text-white">{formData.officialName || '(Nama Official di Step 2)'}</span>
-                <span className="text-slate-400">Pangkalan:</span>
-                <span className="col-span-2 font-bold text-white">{formData.schoolName || '(Nama Sekolah di Step 1)'}</span>
-                <span className="text-slate-400">Kategori:</span>
-                <span className="col-span-2 font-bold text-white">{formData.teamType} Tingkat {formData.jenjang}</span>
+              <div className="grid grid-cols-3 gap-1.5 text-[11px] bg-white p-3 rounded-xl border border-slate-200">
+                <span className="text-slate-500">Nama Official:</span>
+                <span className="col-span-2 font-bold text-slate-900">{formData.officialName || '(Nama Official di Step 2)'}</span>
+                <span className="text-slate-500">Pangkalan:</span>
+                <span className="col-span-2 font-bold text-slate-900">{getFullSchoolName() || '(Nama Sekolah di Step 1)'}</span>
+                <span className="text-slate-500">Kategori:</span>
+                <span className="col-span-2 font-bold text-slate-900">{formData.teamType === 'Homogen' ? `Homogen (${formData.homogenGender || 'Putra'})` : 'Heterogen'} Tingkat {formData.jenjang}</span>
               </div>
 
-              <p className="font-bold text-yellow-400 text-[11px] pt-1 uppercase tracking-wider">
+              <p className="font-bold text-red-700 text-[11px] pt-1 uppercase tracking-wider">
                 Menyatakan dengan sesungguhnya bahwa:
               </p>
-              <ol className="list-decimal pl-4 space-y-1.5 text-[11px] text-slate-300">
+              <ol className="list-decimal pl-4 space-y-1.5 text-[11px] text-slate-600 leading-relaxed">
                 <li>Seluruh anggota peleton yang didaftarkan adalah siswa/siswi aktif dari sekolah bersangkutan yang dibuktikan dengan Kartu Pelajar sah.</li>
                 <li>Tidak memanipulasi identitas, usia, jenjang sekolah, maupun data personel peleton.</li>
                 <li>Menjunjung tinggi kehormatan korps, sportivitas luhur, dan integritas perlombaan baris berbaris.</li>
@@ -1134,21 +1427,21 @@ export default function RegistrationWizard({ isOpen, onClose }) {
             {/* Canvas Tanda Tangan Digital */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <label className="text-xs font-bold text-white flex items-center gap-1.5">
-                  <PenTool className="w-3.5 h-3.5 text-yellow-400" />
+                <label className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                  <PenTool className="w-3.5 h-3.5 text-red-700" />
                   <span>Bubuhkan Tanda Tangan Digital di Bawah Ini:</span>
                 </label>
                 <button
                   type="button"
                   onClick={clearCanvasSignature}
-                  className="text-[11px] text-slate-400 hover:text-white flex items-center gap-1 font-semibold"
+                  className="text-[11px] text-slate-500 hover:text-slate-800 flex items-center gap-1 font-semibold"
                 >
                   <RotateCcw className="w-3 h-3" />
                   <span>Bersihkan / Ulangi</span>
                 </button>
               </div>
 
-              <div className="border-2 border-dashed border-slate-700 bg-white rounded-2xl overflow-hidden cursor-crosshair touch-none">
+              <div className="border-2 border-dashed border-slate-300 bg-white rounded-2xl overflow-hidden cursor-crosshair touch-none">
                 <canvas
                   ref={canvasRef}
                   width={500}
@@ -1168,29 +1461,29 @@ export default function RegistrationWizard({ isOpen, onClose }) {
               </p>
             </div>
 
-            <div className="pt-2 flex justify-end gap-2 border-t border-slate-800">
+            <div className="pt-2 flex justify-end gap-2.5 border-t border-slate-100">
               <button
                 type="button"
                 onClick={() => setShowPaktaModal(false)}
-                className="px-4 py-2 text-xs font-bold text-slate-400 hover:text-white"
+                className="px-4 py-2 text-xs font-bold text-slate-600 hover:text-slate-900 rounded-xl border border-slate-200 hover:bg-slate-100 transition-colors"
               >
                 Batal
               </button>
               <button
                 type="button"
                 onClick={saveOnlineSignature}
-                className="px-6 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-600 text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl shadow-md hover:shadow-emerald-500/20 transition-all flex items-center gap-1.5"
+                className="px-6 py-2.5 bg-red-700 hover:bg-red-800 text-white font-black text-xs uppercase tracking-wider rounded-xl shadow-xs transition-all flex items-center gap-1.5 active:scale-95"
               >
-                <Check className="w-4 h-4 text-slate-950" />
-                <span>Simpan & Sahkan Pakta Integritas Online</span>
+                <Check className="w-4 h-4 text-white stroke-[3]" />
+                <span>Simpan & Sahkan Pakta Integritas</span>
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Footer */}
-      <footer className="border-t border-slate-900 py-4 px-6 text-center text-[11px] text-slate-500">
+      {/* Official Mu'allimin Brand Footer */}
+      <footer className="border-t border-slate-200 py-6 px-6 text-center text-xs text-slate-500 bg-white">
         © 2026 Panitia Lomba Baris Berbaris (LBB) Madrasah Mu'allimin Muhammadiyah Yogyakarta
       </footer>
     </div>

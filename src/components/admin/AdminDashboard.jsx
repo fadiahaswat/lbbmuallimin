@@ -21,10 +21,12 @@ import {
   ChevronRight,
   DollarSign,
   Sparkles,
-  ArrowLeft
+  ArrowLeft,
+  ShieldCheck,
+  Award
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
-import { COMPETITION, EVENT } from '../../config.js';
+import { COMPETITION, EVENT, PAYMENT } from '../../config.js';
 
 export default function AdminDashboard() {
   const {
@@ -110,15 +112,29 @@ export default function AdminDashboard() {
 
           <div className="flex flex-wrap items-center gap-2">
             <button
+              onClick={() => setActiveView('staging')}
+              className="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition-all flex items-center gap-2 shadow-md cursor-pointer"
+            >
+              <ShieldCheck className="w-4 h-4" />
+              <span>Staging Lapangan</span>
+            </button>
+            <button
+              onClick={() => setActiveView('juri')}
+              className="px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-black transition-all flex items-center gap-2 shadow-md cursor-pointer"
+            >
+              <Award className="w-4 h-4" />
+              <span>Portal Juri</span>
+            </button>
+            <button
               onClick={exportTeamsCSV}
-              className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all flex items-center gap-2 shadow-md shadow-emerald-950/40"
+              className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all flex items-center gap-2 shadow-md shadow-emerald-950/40 cursor-pointer"
             >
               <FileSpreadsheet className="w-4 h-4" />
               <span>Ekspor Data Excel (CSV)</span>
             </button>
             <button
               onClick={() => setActiveView('landing')}
-              className="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold transition-all"
+              className="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold transition-all cursor-pointer"
             >
               Lihat Beranda
             </button>
@@ -556,19 +572,27 @@ export default function AdminDashboard() {
               </div>
 
               <div className="p-5 bg-slate-50 border border-slate-200 rounded-2xl">
-                <span className="text-xs font-bold text-slate-500 uppercase block mb-1">Gelombang 1 (Rp450.000)</span>
+                <span className="text-xs font-bold text-slate-500 uppercase block mb-1">
+                  {PAYMENT.FEE_TIERS?.[0]?.name || 'Gelombang 1'}
+                </span>
                 <span className="text-2xl font-black text-slate-900 font-mono">
                   {teams.filter(t => t.wave === 1).length} Peleton
                 </span>
-                <span className="text-[11px] text-slate-500 block mt-1">14 – 20 September 2026</span>
+                <span className="text-[11px] text-slate-500 block mt-1">
+                  {PAYMENT.FEE_TIERS?.[0]?.label || '21 – 27 September 2026'}
+                </span>
               </div>
 
               <div className="p-5 bg-slate-50 border border-slate-200 rounded-2xl">
-                <span className="text-xs font-bold text-slate-500 uppercase block mb-1">Gelombang 2 (Rp500.000)</span>
+                <span className="text-xs font-bold text-slate-500 uppercase block mb-1">
+                  {PAYMENT.FEE_TIERS?.[1]?.name || 'Gelombang 2'}
+                </span>
                 <span className="text-2xl font-black text-slate-900 font-mono">
                   {teams.filter(t => t.wave === 2).length} Peleton
                 </span>
-                <span className="text-[11px] text-slate-500 block mt-1">21 – 30 September 2026</span>
+                <span className="text-[11px] text-slate-500 block mt-1">
+                  {PAYMENT.FEE_TIERS?.[1]?.label || '28 September – 5 Oktober 2026'}
+                </span>
               </div>
             </div>
           </div>
@@ -696,20 +720,19 @@ export default function AdminDashboard() {
                     <span className="text-[10px] text-slate-600 block truncate">Biaya: Rp{inspectingTeam.feeAmount?.toLocaleString('id-ID')}</span>
                   </div>
 
-                  {/* 5. Foto Selfie Pemohon (Watchfinder) */}
+                  {/* 5. Foto Selfie Pemohon */}
                   <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 text-center">
                     <div className="flex items-center justify-center gap-1 mb-1">
-                      <span className="text-[10px] font-bold text-amber-700 uppercase">5. Selfie Pemohon</span>
-                      <span className="text-[8px] bg-amber-200 text-amber-900 font-black px-1 rounded">Watchfinder</span>
+                      <span className="text-[10px] font-bold text-slate-700 uppercase">5. Selfie Pemohon</span>
                     </div>
                     <div className="h-28 bg-white rounded-lg border border-slate-200 flex items-center justify-center overflow-hidden mb-2 p-1">
                       {inspectingTeam.files?.selfie?.url && inspectingTeam.files?.selfie?.url !== '#' ? (
-                        <img src={inspectingTeam.files.selfie.url} alt="Foto Selfie Watchfinder" className="h-full object-cover rounded" />
+                        <img src={inspectingTeam.files.selfie.url} alt="Foto Selfie Pemohon" className="h-full object-cover rounded" />
                       ) : (
                         <span className="text-xs text-slate-400 italic">{inspectingTeam.files?.selfie?.name || 'Foto Selfie'}</span>
                       )}
                     </div>
-                    <span className="text-[10px] text-slate-600 block truncate">{inspectingTeam.files?.selfie?.name || 'Selfie_Watchfinder'}</span>
+                    <span className="text-[10px] text-slate-600 block truncate">{inspectingTeam.files?.selfie?.name || 'Selfie_Pemohon'}</span>
                   </div>
 
                   {/* 6. Pakta Integritas (Online / Upload) */}

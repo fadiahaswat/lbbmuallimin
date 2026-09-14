@@ -69,19 +69,19 @@ export const HERO = {
 // ---------------------------------------------------------------------------
 export const EVENT = {
     /** Teks badge di hero (contoh: "Open Reg: 14 – 28 Juli 2026") */
-    REGISTRATION_BADGE: 'Open Reg: 14 \u2013 30 September 2026',
+    REGISTRATION_BADGE: 'Open Reg: 21 September \u2013 5 Oktober 2026',
 
     /** Rentang pendaftaran daring */
-    REGISTRATION_RANGE: '14 \u2013 30 September 2026',
+    REGISTRATION_RANGE: '21 September \u2013 5 Oktober 2026',
 
     /** Rentang verifikasi berkas oleh panitia */
-    VERIFICATION_RANGE: '1 \u2013 4 Oktober 2026',
+    VERIFICATION_RANGE: '6 \u2013 10 Oktober 2026',
 
     /** Tanggal pembukaan pendaftaran daring */
-    REGISTRATION_START: '2026-09-14T00:00:00+07:00',
+    REGISTRATION_START: '2026-09-21T00:00:00+07:00',
 
     /** Tanggal batas akhir pendaftaran – dipakai countdown timer */
-    REGISTRATION_DEADLINE: '2026-09-30T23:59:59+07:00',
+    REGISTRATION_DEADLINE: '2026-10-05T23:59:59+07:00',
 
     /** Tanggal Technical Meeting */
     TECHNICAL_MEETING_DATE: '23 Oktober 2026',
@@ -109,6 +109,8 @@ export const EVENT = {
     /** Jam mulai hari-H (untuk teks "Mulai 06.00 WIB") */
     COMPETITION_TIME_START_LABEL: 'Mulai 06.00 WIB',
 };
+
+export const TIMELINE = EVENT;
 
 // ---------------------------------------------------------------------------
 // VENUE – lokasi pelaksanaan
@@ -211,12 +213,12 @@ export const PAYMENT = {
 
     /** Daftar gelombang / tier biaya pendaftaran */
     FEE_TIERS: [
-        { name: 'Gelombang 1 (14 \u2013 20 Sep)', amount: '450.000', label: '14 \u2013 20 September 2026', endDate: '2026-09-20T23:59:59+07:00' },
-        { name: 'Gelombang 2 (21 \u2013 30 Sep)', amount: '500.000', label: '21 \u2013 30 September 2026', endDate: '2026-09-30T23:59:59+07:00' },
+        { name: 'Gelombang 1 (21 \u2013 27 Sep)', amount: '450.000', label: '21 \u2013 27 September 2026', endDate: '2026-09-27T23:59:59+07:00' },
+        { name: 'Gelombang 2 (28 Sep \u2013 5 Okt)', amount: '500.000', label: '28 September \u2013 5 Oktober 2026', endDate: '2026-10-05T23:59:59+07:00' },
     ],
 
     /** Teks biaya lengkap untuk FAQ */
-    FEE_FULL: 'Rp450.000,- (14–20 September 2026) dan Rp500.000,- (21–30 September 2026) per peleton.',
+    FEE_FULL: 'Rp450.000,- (21–27 September 2026) dan Rp500.000,- (28 September – 5 Oktober 2026) per peleton.',
 
     /** Keterangan format berita transfer */
     TRANSFER_NOTE_FORMAT: 'NAMA SEKOLAH_JUMLAH PELETON',
@@ -447,3 +449,102 @@ export const MATERIALS = {
         'Laporan Penutup \u2013 Penghormatan Dewan Juri(Aba-aba Pelaksanaan Waktu Berakhir)',
     ],
 };
+
+// ---------------------------------------------------------------------------
+// GOOGLE_AUTH – Konfigurasi Layanan Resmi Google Identity Services (GIS)
+// ---------------------------------------------------------------------------
+export const GOOGLE_AUTH = {
+    /**
+     * Google Cloud OAuth 2.0 Client ID resmi
+     * Buat di: https://console.cloud.google.com/apis/credentials
+     * Mendukung pembacaan dari environment variable VITE_GOOGLE_CLIENT_ID
+     */
+    CLIENT_ID: import.meta.env.VITE_GOOGLE_CLIENT_ID || '587440262077-ms6nf4jopejuqre6f1pan5as2umlv2nr.apps.googleusercontent.com',
+};
+
+// ---------------------------------------------------------------------------
+// JURY_POSTS – Konfigurasi Pos Dewan Juri (Fase 1: Multi-Jury E-Scoring)
+// ---------------------------------------------------------------------------
+export const JURY_POSTS = {
+    pos1: {
+        id: 'pos1',
+        title: 'Pos 1: Juri PBB Dasar & Gerakan',
+        shortTitle: 'Pos 1 (PBB)',
+        badge: 'TNI / Kodim',
+        defaultName: 'Mayor (Mar) Bambang S., S.E.',
+        aspects: [
+            { id: 'teknik', label: 'Teknik Gerakan PBB (Ketepatan & Patah-patah)', weight: 70 },
+            { id: 'kekompakan', label: 'Kekompakan & Keseragaman Pasukan', weight: 30 },
+        ],
+    },
+    pos2: {
+        id: 'pos2',
+        title: 'Pos 2: Juri Variasi, Formasi & Kerapian',
+        shortTitle: 'Pos 2 (Vafor)',
+        badge: 'Akademi Militer / Purna Paskibraka',
+        defaultName: 'Kapten Inf. Hendra Wijaya',
+        aspects: [
+            { id: 'kreativitas', label: 'Tingkat Kesulitan & Kreativitas Variasi', weight: 40 },
+            { id: 'keindahan', label: 'Keindahan & Estetika Formasi', weight: 35 },
+            { id: 'kostum', label: 'Kerapian Seragam & Atribut', weight: 25 },
+        ],
+    },
+    pos3: {
+        id: 'pos3',
+        title: 'Pos 3: Juri Komandan Peleton (Danton)',
+        shortTitle: 'Pos 3 (Danton)',
+        badge: 'Polresta / Korps Danton',
+        defaultName: 'AKP Tri Wibowo, S.H.',
+        aspects: [
+            { id: 'penguasaan', label: 'Penguasaan Materi & Urutan Aba-Aba', weight: 35 },
+            { id: 'vokal', label: 'Intonasi, Kejelasan & Volume Vokal', weight: 25 },
+            { id: 'sikap', label: 'Sikap Tampang & Postur Militer', weight: 20 },
+            { id: 'lapangan', label: 'Ketenangan & Penguasaan Medan Lomba', weight: 20 },
+        ],
+    },
+};
+
+// ---------------------------------------------------------------------------
+// STAGING_CONFIG – Konfigurasi Alur Lapangan & Timer (Fase 2: Staging Ops)
+// ---------------------------------------------------------------------------
+export const STAGING_CONFIG = {
+    STAGES: [
+        { id: 'waiting', label: 'Menunggu', shortLabel: 'Standby', color: 'slate', icon: 'Clock' },
+        { id: 'dp1', label: 'DP 1: Absensi & Berkas', shortLabel: 'DP 1', color: 'blue', icon: 'ClipboardCheck' },
+        { id: 'dp2', label: 'DP 2: Kerapian & Personel', shortLabel: 'DP 2', color: 'amber', icon: 'ShieldCheck' },
+        { id: 'dp3', label: 'DP 3: Pintu Masuk Lapangan', shortLabel: 'DP 3', color: 'indigo', icon: 'DoorOpen' },
+        { id: 'arena', label: 'Kotak Lomba (Tampil)', shortLabel: 'Tampil', color: 'emerald', icon: 'Play' },
+        { id: 'finished', label: 'Selesai Tampil', shortLabel: 'Selesai', color: 'purple', icon: 'CheckCircle2' },
+    ],
+    DP2_CHECKLIST: [
+        { id: 'personnelCount', label: 'Personel Lengkap (Min. 22: 1 Danton + 21 Pasukan)', required: true },
+        { id: 'chestNumber', label: 'Nomor Dada Terpasang Rapi', required: true },
+        { id: 'whiteGloves', label: 'Sarung Tangan Putih Bersih & Seragam', required: true },
+        { id: 'beretCap', label: 'Peci / Baret & Lencana Lengkap', required: true },
+        { id: 'footwear', label: 'Sepatu Lomba Sesuai Juknis (Hitam/Lars)', required: true },
+    ],
+    DURATIONS: {
+        SD: 10 * 60, // 10 menit dalam detik (600 detik)
+        SMP: 13 * 60, // 13 menit dalam detik (780 detik)
+    },
+    WARNING_TIMES: {
+        YELLOW_REMAINING: 180, // sisa 3 menit
+        RED_REMAINING: 60, // sisa 1 menit
+    },
+    PENALTY_OVERTIME_PER_30_SEC: 50,
+};
+
+// ---------------------------------------------------------------------------
+// VOTING_CONFIG – Konfigurasi E-Voting Suporter Online (Fase 3: E-Voting)
+// ---------------------------------------------------------------------------
+export const VOTING_CONFIG = {
+    TITLE: 'Voting Arena Suporter LBB Mu\'allimin 2026',
+    DESCRIPTION: 'Dukung peleton sekolah favoritmu untuk meraih Trofi Peleton Terfavorit & Danton Terfavorit!',
+    CATEGORIES: [
+        { id: 'peleton', label: 'Peleton Terfavorit', badge: 'Suporter Utama' },
+        { id: 'danton', label: 'Danton Terfavorit', badge: 'Komandan Favorit' },
+    ],
+    DAILY_LIMIT_PER_DEVICE: 1, // 1 vote per hari per pleton
+};
+
+

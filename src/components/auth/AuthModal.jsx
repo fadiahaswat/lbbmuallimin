@@ -2,21 +2,18 @@ import React, { useState } from 'react';
 import {
   Shield,
   Award,
-  Mail,
-  Lock,
   School,
   ArrowRight,
   ArrowLeft,
   AlertCircle,
-  LogIn,
-  Eye,
-  EyeOff,
   Clock,
-  ExternalLink
+  ExternalLink,
+  CheckCircle2,
+  Loader2
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
 import logoImg from '../../assets/logo-tonti.png';
-import { SITE, CONTACT } from '../../config.js';
+import { SITE, CONTACT, GOOGLE_AUTH } from '../../config.js';
 
 export default function AuthModal() {
   const {
@@ -25,15 +22,14 @@ export default function AuthModal() {
     loginUser,
     goBack,
     activeView,
-    setActiveView
+    setActiveView,
   } = useCompetition();
 
-  const [showPassword, setShowPassword] = useState(false);
-  const [loginEmail, setLoginEmail] = useState('');
-  const [loginPassword, setLoginPassword] = useState('');
+  const [isSigningIn, setIsSigningIn] = useState(false);
   const [loginError, setLoginError] = useState('');
   const [errorType, setErrorType] = useState('');
-  const [rememberMe, setRememberMe] = useState(true);
+
+  const clientId = GOOGLE_AUTH.CLIENT_ID;
 
   const handleClose = () => {
     if (closeAuthModal) {
@@ -43,171 +39,204 @@ export default function AuthModal() {
     }
   };
 
+  // Fungsi memicu Popup Asli Google OAuth 2.0
+  const handleGoogleSignIn = () => {
+    setLoginError('');
+    setErrorType('');
+
+    if (!window.google?.accounts?.oauth2) {
+      setLoginError('Sedang menghubungkan ke server Google, silakan coba beberapa detik lagi...');
+      return;
+    }
+
+    setIsSigningIn(true);
+
+    try {
+      const client = window.google.accounts.oauth2.initTokenClient({
+        client_id: clientId,
+        scope: 'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile openid',
+        callback: async (tokenResponse) => {
+          if (tokenResponse.error) {
+            setIsSigningIn(false);
+            if (tokenResponse.error !== 'popup_closed_by_user') {
+              setLoginError(`Google Sign-In gagal: ${tokenResponse.error_description || tokenResponse.error}`);
+            }
+            return;
+          }
+
+          try {
+            // Ambil profil asli pengguna dari server Google
+            const userInfoResponse = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+              headers: {
+                Authorization: `Bearer ${tokenResponse.access_token}`,
+              },
+            });
+
+            const googleProfile = await userInfoResponse.json();
+
+            if (!googleProfile.email) {
+              setIsSigningIn(false);
+              setLoginError('Tidak dapat membaca alamat email dari akun Google Anda.');
+              return;
+            }
+
+            const cleanEmail = googleProfile.email.toLowerCase();
+            const resLogin = loginUser(cleanEmail, googleProfile.name, googleProfile.picture);
+            setIsSigningIn(false);
+
+            if (!resLogin?.success) {
+              setLoginError(resLogin?.message || 'Email Google Anda belum terdaftar atau belum di-ACC oleh Admin.');
+              setErrorType(resLogin?.error || 'unknown');
+            }
+          } catch (apiErr) {
+            setIsSigningIn(false);
+            setLoginError('Gagal mengambil data profil dari server Google.');
+          }
+        },
+      });
+
+      // Buka popup asli Google
+      client.requestAccessToken({ prompt: 'select_account' });
+    } catch (err) {
+      setIsSigningIn(false);
+      setLoginError('Gagal membuka popup Google: ' + err.message);
+    }
+  };
+
   if (activeView !== 'auth' && !authModal?.isOpen) return null;
 
-  // Handle Login
-  function handleTraditionalLogin(e) {
-    e.preventDefault();
-    setLoginError('');
-    setErrorType('');
-
-    const cleanEmail = loginEmail.trim();
-    if (!cleanEmail) {
-      setLoginError('Silakan masukkan alamat email yang terdaftar.');
-      return;
-    }
-
-    if (!loginPassword) {
-      setLoginError('Silakan masukkan kata sandi akun Anda.');
-      return;
-    }
-
-    const res = loginUser(cleanEmail);
-    if (!res?.success) {
-      setLoginError(res?.message || 'Email tidak sesuai atau belum di-ACC oleh admin.');
-      setErrorType(res?.error || 'unknown');
-    }
-  }
-
-  // Handle Google Login
-  function handleGoogleLogin() {
-    setLoginError('');
-    setErrorType('');
-    const promptEmail = window.prompt(
-      'Masukkan alamat email Google Anda untuk masuk:',
-      loginEmail || 'official@sekolah.sch.id'
-    );
-    if (promptEmail && promptEmail.trim()) {
-      const email = promptEmail.trim();
-      const res = loginUser(email);
-      if (!res?.success) {
-        setLoginError(res?.message || 'Email tidak sesuai atau belum di-ACC oleh admin.');
-        setErrorType(res?.error || 'unknown');
-      }
-    }
-  }
-
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col selection:bg-red-500 selection:text-white font-sans">
+    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col selection:bg-red-700 selection:text-white font-sans relative">
+      {/* Background Subtle Grid Pattern */}
+      <div
+        className="absolute inset-0 opacity-[0.03] pointer-events-none z-0"
+        style={{
+          backgroundImage:
+            'linear-gradient(#8B0000 1px, transparent 1px), linear-gradient(to right, #8B0000 1px, transparent 1px)',
+          backgroundSize: '40px 40px',
+        }}
+      />
       
-      {/* Top Navbar */}
-      <header className="sticky top-0 z-30 bg-slate-900/95 backdrop-blur-md border-b border-slate-800 text-white py-3 px-4 sm:px-8">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
+      {/* Top Navbar - Clean White Frosted Navbar */}
+      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-xs">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button
               type="button"
               onClick={handleClose}
-              className="px-3.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-slate-200 hover:text-white transition-all text-xs font-bold flex items-center gap-2"
+              className="flex items-center gap-2 text-xs font-bold text-slate-600 hover:text-slate-950 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 transition-all group"
             >
-              <ArrowLeft className="w-4 h-4" />
-              <span>Kembali ke Beranda</span>
+              <ArrowLeft className="w-4 h-4 text-slate-500 group-hover:text-slate-950 group-hover:-translate-x-0.5 transition-transform" />
+              <span className="hidden sm:inline">Kembali ke Beranda</span>
+              <span className="sm:hidden">Beranda</span>
             </button>
-            <div className="h-5 w-px bg-slate-800 hidden sm:block"></div>
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] font-black uppercase tracking-widest text-amber-400 bg-amber-400/10 px-2.5 py-0.5 rounded border border-amber-400/20">
-                Portal Akun Resmi
-              </span>
-              <span className="text-xs text-slate-400 hidden md:inline">LBB Mu'allimin Muhammadiyah Yogyakarta 2026</span>
-            </div>
+            <div className="h-5 w-px bg-slate-200 hidden sm:block"></div>
+            <span className="text-xs text-slate-500 hidden sm:inline">
+              Portal Resmi LBB Mu'allimin Muhammadiyah Yogyakarta {SITE.YEAR}
+            </span>
           </div>
 
-          <a
-            href={`https://wa.me/${CONTACT.WHATSAPP}?text=Halo%20Panitia%20LBB%20Muallimin%202026,%20saya%20membutuhkan%20bantuan%20akses%20akun.`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-xs text-slate-300 hover:text-yellow-400 font-bold transition-colors hidden sm:flex items-center gap-1.5"
-          >
-            <span>Bantuan Panitia</span>
-            <ExternalLink className="w-3 h-3" />
-          </a>
+          <div className="flex items-center gap-2">
+            <a
+              href={`https://wa.me/${CONTACT.WHATSAPP || '6281230093737'}?text=Halo%20Panitia%20LBB%20Mu'allimin%202026,%20saya%20membutuhkan%20bantuan%20akses%20akun.`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-50 hover:bg-red-100 border border-red-200 text-[11px] font-bold text-red-700 transition-colors shadow-xs"
+              title="Bantuan Panitia via WhatsApp"
+            >
+              <span>Bantuan Panitia</span>
+              <ExternalLink className="w-3 h-3 text-red-600" />
+            </a>
+          </div>
         </div>
       </header>
 
       {/* Main Container */}
-      <main className="flex-1 max-w-6xl w-full mx-auto p-4 sm:p-8 flex items-center justify-center">
-        <div className="w-full grid lg:grid-cols-12 rounded-3xl overflow-hidden shadow-2xl border border-slate-800 bg-slate-900">
+      <main className="flex-1 max-w-5xl w-full mx-auto p-4 sm:p-8 flex items-center justify-center relative z-10">
+        <div className="w-full grid lg:grid-cols-12 rounded-3xl overflow-hidden shadow-sm border border-slate-200/90 bg-white">
           
           {/* Left Column: Official Branding & Information */}
-          <div className="lg:col-span-5 bg-gradient-to-br from-red-950 via-slate-950 to-slate-950 p-6 sm:p-10 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-slate-800 relative overflow-hidden">
-            <div className="absolute top-0 right-0 -translate-y-12 translate-x-12 w-64 h-64 bg-red-600/15 rounded-full blur-3xl pointer-events-none"></div>
-
-            <div className="relative z-10 space-y-6">
-              <div className="flex items-center gap-3.5">
+          <div className="lg:col-span-5 bg-gradient-to-b from-red-50/70 via-slate-50/90 to-white p-6 sm:p-9 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-slate-200/80">
+            <div className="space-y-6">
+              <div className="flex items-center gap-3">
                 <img
                   src={logoImg}
                   alt="Logo Tonti Mu'allimin"
-                  className="h-14 w-auto filter drop-shadow-md"
-                  width="56"
-                  height="56"
+                  className="h-12 w-auto filter drop-shadow-xs"
+                  width="48"
+                  height="48"
                   decoding="async"
                 />
                 <div>
-                  <span className="text-[11px] font-black uppercase tracking-widest text-yellow-400 block">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-red-700 block">
                     Website Resmi
                   </span>
-                  <h2 className="font-black text-xl text-white tracking-tight leading-none mt-0.5">
-                    LBB Mu'allimin <span className="text-yellow-400">2026</span>
+                  <h2 className="font-black text-lg text-slate-900 tracking-tight leading-none mt-0.5">
+                    LBB Mu'allimin <span className="text-amber-600">2026</span>
                   </h2>
                 </div>
               </div>
 
-              <div className="space-y-2 pt-2">
-                <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight uppercase italic leading-tight">
+              <div className="space-y-2 pt-1">
+                <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight uppercase italic leading-tight">
                   Portal Calon Peserta & Panitia
                 </h1>
-                <p className="text-xs text-slate-300 leading-relaxed">
-                  Akses portal resmi bagi kontingen sekolah yang pendaftarannya telah <strong>disetujui (di-ACC) oleh Admin</strong>, serta panitia sekretariat dan dewan juri.
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Akses portal peleton sekolah yang pendaftarannya telah <strong className="text-slate-900">disetujui (di-ACC) oleh Panitia</strong>.
                 </p>
               </div>
 
               {/* Event Key Facts */}
-              <div className="space-y-3 pt-4 border-t border-white/10 text-xs">
-                <div className="flex items-start gap-3 text-slate-300">
-                  <div className="w-6 h-6 rounded-lg bg-red-900/50 border border-red-500/30 flex items-center justify-center shrink-0 mt-0.5 text-yellow-400">
-                    <Award className="w-3.5 h-3.5" />
+              <div className="space-y-3 pt-1 text-xs">
+                <div className="flex items-start gap-3 text-slate-700">
+                  <div className="w-7 h-7 rounded-xl bg-red-100/70 border border-red-200 flex items-center justify-center shrink-0 mt-0.5 text-red-700">
+                    <Award className="w-4 h-4" />
                   </div>
                   <div>
-                    <strong className="text-white block font-bold">Tingkat SD/MI & SMP/MTs</strong>
-                    <span className="text-slate-400 text-[11px]">Se-Daerah Istimewa Yogyakarta (DIY)</span>
+                    <strong className="text-slate-900 block font-bold">Tingkat SD/MI & SMP/MTs</strong>
+                    <span className="text-slate-500 text-[11px]">Se-Daerah Istimewa Yogyakarta (DIY)</span>
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3 text-slate-300">
-                  <div className="w-6 h-6 rounded-lg bg-red-900/50 border border-red-500/30 flex items-center justify-center shrink-0 mt-0.5 text-yellow-400">
-                    <School className="w-3.5 h-3.5" />
+                <div className="flex items-start gap-3 text-slate-700">
+                  <div className="w-7 h-7 rounded-xl bg-red-100/70 border border-red-200 flex items-center justify-center shrink-0 mt-0.5 text-red-700">
+                    <School className="w-4 h-4" />
                   </div>
                   <div>
-                    <strong className="text-white block font-bold">Kampus Terpadu Mu'allimin</strong>
-                    <span className="text-slate-400 text-[11px]">Sedayu, Bantul, D.I. Yogyakarta</span>
+                    <strong className="text-slate-900 block font-bold">Kampus Terpadu Mu'allimin</strong>
+                    <span className="text-slate-500 text-[11px]">Sedayu, Bantul, D.I. Yogyakarta</span>
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3 text-slate-300">
-                  <div className="w-6 h-6 rounded-lg bg-red-900/50 border border-red-500/30 flex items-center justify-center shrink-0 mt-0.5 text-yellow-400">
-                    <Shield className="w-3.5 h-3.5" />
+                <div className="flex items-start gap-3 text-slate-700">
+                  <div className="w-7 h-7 rounded-xl bg-emerald-100/70 border border-emerald-200 flex items-center justify-center shrink-0 mt-0.5 text-emerald-700">
+                    <CheckCircle2 className="w-4 h-4" />
                   </div>
                   <div>
-                    <strong className="text-white block font-bold">Verifikasi Berkas Resmi</strong>
-                    <span className="text-slate-400 text-[11px]">Hanya pendaftar yang telah di-ACC dapat mengakses dasbor peserta</span>
+                    <strong className="text-slate-900 block font-bold">Hanya Akun yang Di-ACC</strong>
+                    <span className="text-slate-500 text-[11px]">Email Google yang Anda gunakan harus sesuai data pendaftaran resmi</span>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="relative z-10 pt-8 border-t border-white/10 mt-6 text-[11px] text-slate-500">
+            <div className="pt-6 border-t border-slate-200 mt-6 text-[11px] text-slate-400">
               <p>© {SITE.YEAR} Madrasah Mu'allimin Muhammadiyah Yogyakarta</p>
             </div>
           </div>
 
-          {/* Right Column: Authentication Form */}
+          {/* Right Column: Google Authentication */}
           <div className="lg:col-span-7 bg-white text-slate-900 p-6 sm:p-10 flex flex-col justify-center">
             
             <div className="mb-6">
-              <h2 className="text-2xl font-black text-slate-900 uppercase italic">
-                Masuk ke Portal Resmi
+              <h2 className="text-2xl sm:text-3xl font-black text-slate-900 uppercase italic tracking-tight">
+                Masuk ke{' '}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-700 to-red-600">
+                  Portal
+                </span>
               </h2>
-              <p className="text-xs text-slate-500 mt-1">
-                Gunakan email aktif yang Anda daftarkan pada formulir pendaftaran lomba.
+              <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                Gunakan Akun Google Anda yang terdaftar pada pendaftaran lomba untuk masuk.
               </p>
             </div>
 
@@ -246,125 +275,52 @@ export default function AuthModal() {
               </div>
             )}
 
-            {/* Google Sign-In */}
-            <div className="mb-6">
+            {/* SINGLE GOOGLE SIGN-IN BUTTON */}
+            <div className="my-2">
               <button
                 type="button"
-                onClick={handleGoogleLogin}
-                className="w-full py-3.5 px-4 bg-white hover:bg-slate-50 text-slate-700 font-bold text-sm rounded-2xl border-2 border-slate-200 hover:border-slate-300 shadow-xs transition-all flex items-center justify-center gap-3 active:scale-[0.99]"
+                onClick={handleGoogleSignIn}
+                disabled={isSigningIn}
+                className="w-full py-4 px-6 bg-white hover:bg-slate-50 text-slate-800 font-black text-sm sm:text-base rounded-2xl border-2 border-slate-200 hover:border-slate-300 shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-3 active:scale-[0.99] disabled:opacity-60 cursor-pointer group"
               >
-                <svg className="w-5 h-5" viewBox="0 0 24 24">
-                  <path
-                    fill="#4285F4"
-                    d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"
-                  />
-                  <path
-                    fill="#34A853"
-                    d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"
-                  />
-                  <path
-                    fill="#FBBC05"
-                    d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.98 0 12s.45 3.82 1.25 5.42l4.03-3.15z"
-                  />
-                  <path
-                    fill="#EA4335"
-                    d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"
-                  />
-                </svg>
-                <span>Lanjutkan dengan Akun Google</span>
+                {isSigningIn ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin text-red-700" />
+                    <span>Membuka Akun Google...</span>
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-5 h-5 shrink-0 transition-transform group-hover:scale-110" viewBox="0 0 24 24">
+                      <path
+                        fill="#4285F4"
+                        d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"
+                      />
+                      <path
+                        fill="#34A853"
+                        d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"
+                      />
+                      <path
+                        fill="#FBBC05"
+                        d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.98 0 12s.45 3.82 1.25 5.42l4.03-3.15z"
+                      />
+                      <path
+                        fill="#EA4335"
+                        d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"
+                      />
+                    </svg>
+                    <span>Lanjutkan dengan Akun Google</span>
+                  </>
+                )}
               </button>
-
-              <div className="relative flex py-5 items-center">
-                <div className="flex-grow border-t border-slate-200"></div>
-                <span className="flex-shrink mx-4 text-slate-400 text-xs font-semibold uppercase tracking-wider">
-                  atau email terdaftar
-                </span>
-                <div className="flex-grow border-t border-slate-200"></div>
-              </div>
             </div>
-
-            {/* FORM MASUK (LOGIN) */}
-            <form onSubmit={handleTraditionalLogin} className="space-y-4">
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
-                  Alamat Email Pendaftaran
-                </label>
-                <div className="relative">
-                  <Mail className="w-5 h-5 text-slate-400 absolute left-3.5 top-3.5" />
-                  <input
-                    type="email"
-                    required
-                    autoFocus
-                    value={loginEmail}
-                    onChange={e => setLoginEmail(e.target.value)}
-                    placeholder="email.pendaftar@gmail.com"
-                    className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-red-600 focus:bg-white transition-all"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <div className="flex items-center justify-between mb-1.5">
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
-                    Kata Sandi Akun
-                  </label>
-                  <button
-                    type="button"
-                    onClick={() => alert('Silakan hubungi Sekretariat Panitia via WhatsApp jika Anda mengalami kendala sandi akun.')}
-                    className="text-xs text-red-700 hover:text-red-800 font-bold hover:underline"
-                  >
-                    Bantuan Sandi?
-                  </button>
-                </div>
-                <div className="relative">
-                  <Lock className="w-5 h-5 text-slate-400 absolute left-3.5 top-3.5" />
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    required
-                    value={loginPassword}
-                    onChange={e => setLoginPassword(e.target.value)}
-                    placeholder="Masukkan kata sandi..."
-                    className="w-full pl-11 pr-11 py-3 bg-slate-50 border border-slate-300 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-red-600 focus:bg-white transition-all"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3.5 top-3.5 text-slate-400 hover:text-slate-600 transition-colors"
-                    title={showPassword ? 'Sembunyikan sandi' : 'Lihat sandi'}
-                  >
-                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                  </button>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between pt-1 text-xs">
-                <label className="flex items-center gap-2 cursor-pointer text-slate-600">
-                  <input
-                    type="checkbox"
-                    checked={rememberMe}
-                    onChange={e => setRememberMe(e.target.checked)}
-                    className="rounded border-slate-300 text-red-600 focus:ring-red-500"
-                  />
-                  <span>Ingat sesi saya</span>
-                </label>
-              </div>
-
-              <button
-                type="submit"
-                className="w-full py-3.5 bg-red-700 hover:bg-red-600 text-white font-black text-xs uppercase tracking-wider rounded-xl shadow-lg shadow-red-950/20 transition-all flex items-center justify-center gap-2 mt-2"
-              >
-                <LogIn className="w-4 h-4" />
-                <span>Masuk ke Portal Peserta</span>
-              </button>
-            </form>
 
             {/* Registration Banner for Unregistered Users */}
             <div className="mt-8 p-5 bg-slate-50 border border-slate-200 rounded-2xl text-center space-y-2">
               <h3 className="text-xs font-black uppercase tracking-wider text-slate-800">
-                Belum Mendaftarkan Peleton Sekolah Anda?
+                Peleton Sekolah Belum Terdaftar?
               </h3>
               <p className="text-[11px] text-slate-500 max-w-sm mx-auto leading-relaxed">
-                Akun calon peserta dibuat secara resmi melalui pengisian 12 data dan berkas formulir pendaftaran lomba.
+                Akun resmi dibuat melalui pengisian formulir pendaftaran lomba.
               </p>
               <button
                 type="button"
@@ -372,10 +328,10 @@ export default function AuthModal() {
                   handleClose();
                   setActiveView('register');
                 }}
-                className="mt-2 inline-flex items-center gap-1.5 px-5 py-2.5 bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl shadow-sm hover:shadow-md transition-all active:scale-95"
+                className="mt-1 inline-flex items-center gap-1.5 px-5 py-2.5 bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl shadow-xs hover:shadow-md transition-all active:scale-95 hover:scale-105"
               >
                 <span>Daftar Lomba Sekarang</span>
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>
 
@@ -385,7 +341,7 @@ export default function AuthModal() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-slate-900 bg-slate-950 py-4 px-6 text-center text-xs text-slate-500">
+      <footer className="border-t border-slate-200 bg-white py-4 px-6 text-center text-xs text-slate-500 relative z-10">
         <p>© {SITE.YEAR} Panitia LBB Mu'allimin • Sistem Portal Resmi Terpadu</p>
       </footer>
 

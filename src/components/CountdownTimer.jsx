@@ -23,7 +23,7 @@ export default function CountdownTimer() {
       const start = EVENT.REGISTRATION_START ? new Date(EVENT.REGISTRATION_START).getTime() : null;
       const deadline = new Date(EVENT.REGISTRATION_DEADLINE).getTime();
 
-      // Kasus 1: Belum buka (Sebelum 14 September)
+      // Kasus 1: Belum buka (Sebelum 21 September)
       if (start && now < start) {
         const distance = start - now;
         const days = Math.floor(distance / (1000 * 60 * 60 * 24));
@@ -42,7 +42,7 @@ export default function CountdownTimer() {
         return;
       }
 
-      // Kasus 2: Sudah lewat batas akhir (Setelah 30 September 23:59 WIB)
+      // Kasus 2: Sudah lewat batas akhir (Setelah 5 Oktober 23:59 WIB)
       const distance = deadline - now;
       if (distance <= 0) {
         setTimerState(prev => ({
@@ -58,7 +58,7 @@ export default function CountdownTimer() {
         return;
       }
 
-      // Kasus 3: Periode aktif pendaftaran (14 - 30 September)
+      // Kasus 3: Periode aktif pendaftaran (21 September - 5 Oktober)
       const days = Math.floor(distance / (1000 * 60 * 60 * 24));
       const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));

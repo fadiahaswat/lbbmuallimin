@@ -6,18 +6,25 @@ import {
   LogOut,
   ChevronDown,
   LayoutDashboard,
-  Award
+  Award,
+  Trophy,
+  Heart,
+  ShieldCheck
 } from 'lucide-react';
 import { NAVBAR } from '../config.js';
 import { useCompetition } from '../context/CompetitionContext.jsx';
 import logoImg from '../assets/logo-tonti.png';
 
 export default function Navbar({ onOpenMobileMenu }) {
-  const { openModal, currentUser, openAuthModal, logoutUser, setActiveView } = useCompetition();
+  const { openModal, currentUser, openAuthModal, logoutUser, setActiveView, getUserAvatar } = useCompetition();
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
+
+  const avatarMeta = currentUser && getUserAvatar ? getUserAvatar(currentUser) : null;
+  const avatarUrl = avatarMeta?.url || currentUser?.avatar;
+  const isSchoolLogo = avatarMeta?.isSchoolLogo;
 
   useEffect(() => {
     const sections = ['home', 'about', 'registration', 'rules', 'prizes', 'downloads', 'contact'];
@@ -154,9 +161,26 @@ export default function Navbar({ onOpenMobileMenu }) {
               onClick={() => openAuthModal('login')}
               className="group relative px-5 py-2 bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 text-slate-950 rounded-full font-black hover:shadow-[0_0_20px_rgba(255,215,0,0.4)] hover:-translate-y-0.5 active:scale-95 transition-all border border-yellow-400/60 overflow-hidden shadow-md flex items-center gap-2"
             >
-              <LogIn className="w-3.5 h-3.5 text-slate-950" />
+              <svg className="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24">
+                <path
+                  fill="#020617"
+                  d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"
+                />
+                <path
+                  fill="#020617"
+                  d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"
+                />
+                <path
+                  fill="#020617"
+                  d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.98 0 12s.45 3.82 1.25 5.42l4.03-3.15z"
+                />
+                <path
+                  fill="#020617"
+                  d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"
+                />
+              </svg>
               <span className="uppercase tracking-wider text-xs font-black">
-                Masuk / Daftar
+                Daftar/Masuk
               </span>
             </button>
           ) : (
@@ -171,13 +195,22 @@ export default function Navbar({ onOpenMobileMenu }) {
                 }`}
               >
                 <img
-                  src={currentUser.avatar}
+                  src={avatarUrl}
                   alt={currentUser.name}
-                  className="w-7 h-7 rounded-full border border-yellow-400 object-cover"
+                  className={`w-7 h-7 rounded-full ${
+                    isSchoolLogo ? 'object-contain bg-white p-0.5' : 'object-cover'
+                  }`}
                   width="28"
                   height="28"
                   loading="lazy"
                   decoding="async"
+                  onError={(e) => {
+                    if (currentUser.googleAvatar) {
+                      e.target.src = currentUser.googleAvatar;
+                    } else {
+                      e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.name)}&background=8B0000&color=fff`;
+                    }
+                  }}
                 />
                 <div className="text-left">
                   <div className="text-xs font-bold truncate max-w-[110px] leading-tight">
@@ -192,12 +225,24 @@ export default function Navbar({ onOpenMobileMenu }) {
 
               {isUserDropdownOpen && (
                 <div className="absolute right-0 mt-2 w-64 bg-slate-950/95 backdrop-blur-xl border border-slate-800 rounded-2xl p-2 shadow-2xl z-50 text-white text-xs animate-in fade-in zoom-in-95 duration-150 space-y-1">
-                  <div className="px-3 py-2 border-b border-slate-800">
-                    <p className="font-bold text-white truncate">{currentUser.name}</p>
-                    <p className="text-[11px] text-slate-400 truncate">{currentUser.email}</p>
-                    <span className="inline-block mt-1 text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-md bg-yellow-400/20 text-yellow-400 border border-yellow-400/30">
-                      {currentUser.roleLabel || currentUser.role}
-                    </span>
+                  <div className="px-3 py-2 border-b border-slate-800 flex items-center gap-2.5">
+                    <img
+                      src={avatarUrl}
+                      alt={currentUser.name}
+                      className={`w-9 h-9 rounded-full ${
+                        isSchoolLogo ? 'object-contain bg-white p-0.5' : 'object-cover'
+                      }`}
+                      onError={(e) => {
+                        e.target.src = currentUser.googleAvatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.name)}&background=8B0000&color=fff`;
+                      }}
+                    />
+                    <div className="min-w-0">
+                      <p className="font-bold text-white truncate">{currentUser.name}</p>
+                      <p className="text-[11px] text-slate-400 truncate">{currentUser.email}</p>
+                      <span className="inline-block mt-0.5 text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-md bg-yellow-400/20 text-yellow-400 border border-yellow-400/30">
+                        {currentUser.roleLabel || currentUser.role}
+                      </span>
+                    </div>
                   </div>
 
                   <button
@@ -213,12 +258,24 @@ export default function Navbar({ onOpenMobileMenu }) {
                     type="button"
                     onClick={() => {
                       setIsUserDropdownOpen(false);
-                      setActiveView('announcement');
+                      setActiveView('staging');
                     }}
-                    className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-white/10 text-left transition-colors text-slate-200"
+                    className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-white/10 text-left transition-colors text-slate-200 cursor-pointer"
+                  >
+                    <ShieldCheck className="w-4 h-4 text-indigo-400 shrink-0" />
+                    <span>Operator Lapangan & Staging</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsUserDropdownOpen(false);
+                      setActiveView('juri');
+                    }}
+                    className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-white/10 text-left transition-colors text-slate-200 cursor-pointer"
                   >
                     <Award className="w-4 h-4 text-emerald-400 shrink-0" />
-                    <span>Papan Pengumuman & Skor</span>
+                    <span>E-Scoring Juri LBB</span>
                   </button>
 
                   <div className="border-t border-slate-800 my-1"></div>

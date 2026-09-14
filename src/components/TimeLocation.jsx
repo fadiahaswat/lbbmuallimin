@@ -96,6 +96,16 @@ export default function TimeLocation() {
             <div className="bg-slate-900 border border-slate-800 rounded-3xl p-2 relative overflow-hidden h-full">
               <div className="absolute inset-0 bg-[linear-gradient(to_bottom,transparent_50%,rgba(0,0,0,0.5)_50%)] bg-[length:100%_4px] opacity-20 pointer-events-none z-0"></div>
 
+              {/* Watermark Cadet Illustration */}
+              <div className="absolute -right-8 -bottom-10 h-80 w-80 pointer-events-none opacity-15 hidden sm:block z-0">
+                <img
+                  src="/fotoslide/4.PNG"
+                  alt="Arena Paskibra"
+                  className="w-full h-full object-contain object-bottom [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_80%)]"
+                  loading="lazy"
+                />
+              </div>
+
               <div className="bg-slate-950/80 rounded-[1.3rem] p-6 md:p-8 h-full relative z-10">
                 <div className="flex flex-col md:flex-row gap-6 items-start border-b border-slate-800 pb-8 mb-8">
                   <div className="w-16 h-16 bg-red-900/20 text-red-500 border border-red-500/30 rounded-2xl flex items-center justify-center shrink-0 animate-pulse-slow">
