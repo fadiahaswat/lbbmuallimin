@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowRight, Menu } from 'lucide-react';
 import { NAVBAR } from '../config.js';
+import logoImg from '../assets/logo-tonti.png';
 
 export default function Navbar({ onOpenMobileMenu }) {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -54,7 +55,7 @@ export default function Navbar({ onOpenMobileMenu }) {
           aria-label="Kembali ke Beranda"
         >
           <img
-            src="/LOGO TONTI 400px.png"
+            src={logoImg}
             alt="Logo LBB Tonti"
             className="h-11 md:h-13 w-auto drop-shadow-md filter brightness-105"
           />

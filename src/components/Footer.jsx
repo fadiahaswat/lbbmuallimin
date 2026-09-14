@@ -9,6 +9,7 @@ import {
   Video
 } from 'lucide-react';
 import { SITE, SOCIAL, CONTACT, VENUE, REGISTRATION } from '../config.js';
+import logoImg from '../assets/logo-tonti.png';
 
 export default function Footer() {
   return (
@@ -23,7 +24,7 @@ export default function Footer() {
           <div className="md:col-span-2 space-y-6">
             <a href="#home" className="flex items-center gap-3 group w-fit">
               <img
-                src="/LOGO TONTI 400px.png"
+                src={logoImg}
                 alt="LBB Logo"
                 className="h-12 w-auto filter drop-shadow-lg opacity-90 group-hover:opacity-100 transition-opacity"
               />
