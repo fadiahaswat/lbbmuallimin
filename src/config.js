@@ -68,8 +68,8 @@ export const HERO = {
 // EVENT – semua tanggal & waktu kegiatan
 // ---------------------------------------------------------------------------
 export const EVENT = {
-    /** Teks badge di hero (contoh: "Open Reg: 14 – 28 Juli 2026") */
-    REGISTRATION_BADGE: 'Open Reg: 21 September \u2013 5 Oktober 2026',
+    /** Teks badge di hero (contoh: "Pendaftaran: 21 September – 5 Oktober 2026") */
+    REGISTRATION_BADGE: 'Pendaftaran: 21 September \u2013 5 Oktober 2026',
 
     /** Rentang pendaftaran daring */
     REGISTRATION_RANGE: '21 September \u2013 5 Oktober 2026',

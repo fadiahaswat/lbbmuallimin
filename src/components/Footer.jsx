@@ -37,19 +37,27 @@ export default function Footer() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Pre-Footer Action Banner / Callout Strip */}
-        <div className="mb-16 p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-red-950/80 via-slate-900 to-slate-900 border border-red-900/40 shadow-xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-red-600/10 rounded-full blur-2xl pointer-events-none"></div>
+        <div className="mb-16 p-6 sm:p-8 rounded-3xl bg-slate-900 border border-slate-800 shadow-xl relative overflow-hidden">
+          {/* Subtle Monochrome Cadet Watermark in the Right Background */}
+          <div className="absolute right-0 top-0 bottom-0 w-96 pointer-events-none opacity-15 hidden lg:block z-0">
+            <img
+              src="/fotoslide/1.PNG"
+              alt="Paskibra Pasukan"
+              className="w-full h-full object-cover object-center grayscale contrast-125 filter [mask-image:linear-gradient(to_left,black_20%,transparent_90%)]"
+              loading="lazy"
+            />
+          </div>
           
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
             <div className="space-y-2 max-w-xl">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-900/50 border border-red-700/40 text-yellow-400 text-[10px] sm:text-xs font-bold uppercase tracking-wider">
-                <Sparkles className="w-3.5 h-3.5 text-yellow-400" />
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800/80 border border-slate-700 text-amber-400 text-[10px] sm:text-xs font-bold uppercase tracking-wider">
+                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
                 <span>Pendaftaran Masih Dibuka • Kuota Terbatas</span>
               </div>
-              <h3 className="text-xl sm:text-2xl lg:text-3xl font-black text-white uppercase italic tracking-tight">
+              <h3 className="text-xl sm:text-2xl lg:text-3xl font-black text-white uppercase tracking-tight">
                 Siap Tampil di Panggung Kehormatan LBB {SITE.YEAR}?
               </h3>
-              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
                 Segera daftarkan peleton terbaik sekolah Anda. Perebutkan Piala Bergilir bergengsi dan total pembinaan puluhan juta rupiah.
               </p>
             </div>

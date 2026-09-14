@@ -156,8 +156,18 @@ export default function AuthModal() {
         <div className="w-full grid lg:grid-cols-12 rounded-3xl overflow-hidden shadow-sm border border-slate-200/90 bg-white">
           
           {/* Left Column: Official Branding & Information */}
-          <div className="lg:col-span-5 bg-gradient-to-b from-red-50/70 via-slate-50/90 to-white p-6 sm:p-9 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-slate-200/80">
-            <div className="space-y-6">
+          <div className="lg:col-span-5 bg-gradient-to-b from-red-50/80 via-slate-50 to-white p-6 sm:p-9 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-slate-200/80 relative overflow-hidden">
+            {/* Background Cadet Artwork Watermark */}
+            <div className="absolute right-0 bottom-0 w-52 h-72 pointer-events-none opacity-15 hidden sm:block z-0">
+              <img
+                src="/fotoslide/3.PNG"
+                alt="Paskibra Danton"
+                className="w-full h-full object-contain object-bottom [mask-image:radial-gradient(ellipse_at_bottom_right,black_30%,transparent_75%)]"
+                loading="lazy"
+              />
+            </div>
+
+            <div className="space-y-6 relative z-10">
               <div className="flex items-center gap-3">
                 <img
                   src={logoImg}
@@ -199,16 +209,6 @@ export default function AuthModal() {
                 </div>
 
                 <div className="flex items-start gap-3 text-slate-700">
-                  <div className="w-7 h-7 rounded-xl bg-red-100/70 border border-red-200 flex items-center justify-center shrink-0 mt-0.5 text-red-700">
-                    <School className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <strong className="text-slate-900 block font-bold">Kampus Terpadu Mu'allimin</strong>
-                    <span className="text-slate-500 text-[11px]">Sedayu, Bantul, D.I. Yogyakarta</span>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3 text-slate-700">
                   <div className="w-7 h-7 rounded-xl bg-emerald-100/70 border border-emerald-200 flex items-center justify-center shrink-0 mt-0.5 text-emerald-700">
                     <CheckCircle2 className="w-4 h-4" />
                   </div>
@@ -220,7 +220,7 @@ export default function AuthModal() {
               </div>
             </div>
 
-            <div className="pt-6 border-t border-slate-200 mt-6 text-[11px] text-slate-400">
+            <div className="pt-6 border-t border-slate-200 mt-8 text-[11px] text-slate-400">
               <p>© {SITE.YEAR} Madrasah Mu'allimin Muhammadiyah Yogyakarta</p>
             </div>
           </div>
