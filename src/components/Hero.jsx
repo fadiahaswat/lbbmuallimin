@@ -64,26 +64,13 @@ export default function Hero() {
       id="home"
       className="relative w-full min-h-screen supports-[height:100svh]:min-h-[100svh] flex flex-col items-center justify-center bg-gradient-to-b from-[#3a0505] via-[#6d0a0a] to-[#200202] text-white overflow-hidden isolate pt-24 pb-16"
     >
-      {/* Background Video & Lighting */}
-      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden select-none">
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          controls={false}
-          disablePictureInPicture
-          disableRemotePlayback
-          tabIndex={-1}
-          aria-hidden="true"
-          className="w-full h-full object-cover opacity-20 mix-blend-screen filter grayscale-[0.2] pointer-events-none"
-        >
-          <source src={HERO.VIDEO_URL} type="video/mp4" />
-        </video>
-        <div className="absolute inset-0 bg-gradient-to-b from-black/75 via-black/40 to-black/90"></div>
-        {/* Ambient radial spotlights */}
-        <div className="absolute top-1/3 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-red-600/15 blur-[160px] rounded-full pointer-events-none"></div>
-        <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-[600px] h-[600px] bg-amber-500/15 blur-[160px] rounded-full pointer-events-none"></div>
+      {/* Atmospheric Background & Lighting (Clean Pure CSS, No Video Play Icons) */}
+      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden select-none" aria-hidden="true">
+        <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/45 to-black/95"></div>
+        {/* Animated radial smoke & spotlights */}
+        <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-red-600/20 blur-[160px] rounded-full pointer-events-none animate-pulse-slow"></div>
+        <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-[650px] h-[650px] bg-amber-500/15 blur-[160px] rounded-full pointer-events-none"></div>
+        <div className="absolute -bottom-24 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-red-800/25 blur-[180px] rounded-full pointer-events-none"></div>
       </div>
 
       <div className="container mx-auto px-4 sm:px-6 relative z-10 flex flex-col justify-center h-full my-auto">
