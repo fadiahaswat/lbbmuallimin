@@ -59,9 +59,6 @@ export const HERO = {
         'Ajang pembuktian <span class="text-white font-bold">Disiplin</span>, '
         + '<span class="text-white font-bold">Karakter</span>, dan '
         + '<span class="text-white font-bold">Solidaritas</span> pelajar terbaik se-DIY.',
-
-    /** URL video background hero */
-    VIDEO_URL: 'https://assets.mixkit.co/videos/preview/mixkit-red-smoke-on-a-black-background-video-2953-large.mp4',
 };
 
 // ---------------------------------------------------------------------------
