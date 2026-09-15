@@ -65,14 +65,18 @@ export default function Hero() {
       className="relative w-full min-h-screen supports-[height:100svh]:min-h-[100svh] flex flex-col items-center justify-center bg-gradient-to-b from-[#3a0505] via-[#6d0a0a] to-[#200202] text-white overflow-hidden isolate pt-24 pb-16"
     >
       {/* Background Video & Lighting */}
-      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden select-none">
         <video
           autoPlay
           loop
           muted
           playsInline
-          preload="none"
-          className="w-full h-full object-cover opacity-20 mix-blend-screen filter grayscale-[0.2]"
+          controls={false}
+          disablePictureInPicture
+          disableRemotePlayback
+          tabIndex={-1}
+          aria-hidden="true"
+          className="w-full h-full object-cover opacity-20 mix-blend-screen filter grayscale-[0.2] pointer-events-none"
         >
           <source src={HERO.VIDEO_URL} type="video/mp4" />
         </video>

@@ -6,6 +6,17 @@ body {
   font-family: 'Inter', sans-serif;
 }
 
+/* Sembunyikan kontrol bawaan browser pada video background Hero */
+video::-webkit-media-controls {
+  display: none !important;
+}
+video::-webkit-media-controls-start-playback-button,
+video::-webkit-media-controls-play-button,
+video::-webkit-media-controls-panel {
+  display: none !important;
+  -webkit-appearance: none;
+}
+
 /* Custom Scrollbar */
 .custom-scrollbar::-webkit-scrollbar {
   width: 6px;
