@@ -23,6 +23,29 @@ export function getAppsScriptUrl() {
 }
 
 /**
+ * Mengubah URL Google Drive View (/file/d/.../view) menjadi Direct Image Thumbnail URL
+ * agar bisa ditampilkan langsung di tag <img> browser tanpa CORS/HTML preview issue.
+ */
+export function formatImageUrl(url) {
+  if (!url || typeof url !== 'string') return '';
+  if (url.startsWith('data:') || url.startsWith('blob:') || url.startsWith('/') || url.startsWith('http://') || url.includes('unsplash.com') || url.includes('ui-avatars.com')) {
+    return url;
+  }
+
+  // Jika URL adalah Google Drive link
+  if (url.includes('drive.google.com') || url.includes('googleusercontent.com')) {
+    const fileIdMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) || url.match(/id=([a-zA-Z0-9_-]+)/) || url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+    if (fileIdMatch && fileIdMatch[1]) {
+      const fileId = fileIdMatch[1];
+      // Google Drive Direct Thumbnail CDN (mendukung display di tag img tanpa login/CORS blocker)
+      return `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`;
+    }
+  }
+
+  return url;
+}
+
+/**
  * Mengirim single record ke Google Sheet (Upsert)
  * @param {string} table - Nama tab sheet (misal 'teams', 'scores', 'staging', 'votes', dll)
  * @param {object} data - Objek data yang ingin disimpan

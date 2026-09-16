@@ -22,40 +22,25 @@ export const INITIAL_PINS = {
   superadmin: 'super2026',
 };
 
-// Database pengguna awal: email dipetakan ke role (admin, juri, superadmin)
+// Database pengguna resmi:
+// Admin: andiaqillah@muallimin.sch.id
+// Superadmin: tontimuallimin2026@gmail.com
 export const INITIAL_USERS = [
   {
-    id: 'user-admin',
-    name: 'Kak Rusyda (Sekretariat)',
-    email: 'admin@lbbmuallimin.com',
+    id: 'user-admin-andi',
+    name: 'Andi Aqillah',
+    email: 'andiaqillah@muallimin.sch.id',
     role: 'admin',
-    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=faces',
-    roleLabel: 'Panitia Sekretariat',
+    avatar: 'https://ui-avatars.com/api/?name=Andi+Aqillah&background=0f172a&color=38bdf8&bold=true',
+    roleLabel: 'Panitia Sekretariat (Admin)',
   },
   {
-    id: 'user-juri',
-    name: 'Mayor (Mar) Bambang S., S.E.',
-    email: 'juri@lbbmuallimin.com',
-    role: 'juri',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=faces',
-    roleLabel: 'Dewan Juri Utama',
-  },
-  {
-    id: 'user-super',
-    name: 'Falhan Zuhdi Mubarok',
-    email: 'ketua@lbbmuallimin.com',
+    id: 'user-super-tonti',
+    name: 'Tonti Muallimin 2026',
+    email: 'tontimuallimin2026@gmail.com',
     role: 'superadmin',
-    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=faces',
-    roleLabel: 'Ketua Panitia',
-  },
-  {
-    id: 'user-fadia',
-    name: 'Andi Aqillah Fadia Haswat',
-    email: 'andiaqillahfadiahaswat@gmail.com',
-    role: 'superadmin',
-    avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop&crop=faces',
-    googleAvatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop&crop=faces',
-    roleLabel: 'Ketua Panitia / Administrator',
+    avatar: 'https://ui-avatars.com/api/?name=Tonti+Muallimin&background=881337&color=fbbf24&bold=true',
+    roleLabel: 'Ketua Panitia (Superadmin)',
   },
 ];
 

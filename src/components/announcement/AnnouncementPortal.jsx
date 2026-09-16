@@ -122,7 +122,7 @@ export default function AnnouncementPortal() {
                     {grandChampion.platoonName} • Jenjang {grandChampion.jenjang}
                   </p>
                   <p className="text-xs text-slate-400 mt-1">
-                    Danton: <strong className="text-white">{grandChampion.roster.danton.name}</strong> • Nilai Akhir: <strong className="text-yellow-400 font-mono text-sm">{grandChampion.finalScore} Poin</strong>
+                    Danton: <strong className="text-white">{grandChampion.roster?.danton?.name || grandChampion.dantonName || '-'}</strong> • Nilai Akhir: <strong className="text-yellow-400 font-mono text-sm">{grandChampion.finalScore} Poin</strong>
                   </p>
                 </div>
               </div>
@@ -237,7 +237,7 @@ export default function AnnouncementPortal() {
                 Danton Terbaik {activeJenjang}
               </span>
               <h5 className="font-black text-base text-slate-900 mt-1">
-                {bestDanton ? bestDanton.roster.danton.name : '-'}
+                {bestDanton ? (bestDanton.roster?.danton?.name || bestDanton.dantonName || '-') : '-'}
               </h5>
               <p className="text-xs text-slate-500">
                 {bestDanton ? `${bestDanton.schoolName} (${bestDanton.dantonScore} pt)` : '-'}
@@ -318,7 +318,7 @@ export default function AnnouncementPortal() {
                         <span className="font-bold text-slate-900 text-sm block">{team.schoolName}</span>
                         <span className="text-[10px] text-slate-500">{team.platoonName} • #{team.lotNumber || '-'}</span>
                       </td>
-                      <td className="p-3 font-semibold text-slate-700">{team.roster.danton.name}</td>
+                      <td className="p-3 font-semibold text-slate-700">{team.roster?.danton?.name || team.dantonName || '-'}</td>
                       <td className="p-3 text-center font-mono font-bold text-slate-800">{team.dantonScore}</td>
                       <td className="p-3 text-center font-mono font-bold text-slate-800">{team.pbbScore}</td>
                       <td className="p-3 text-center font-mono font-bold text-rose-700">-{team.scoreData.penalties.totalPenalty}</td>

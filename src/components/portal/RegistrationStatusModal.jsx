@@ -219,19 +219,29 @@ export default function RegistrationStatusModal({ isOpen, onClose }) {
                 </div>
 
                 <div className="flex flex-col sm:items-end gap-2 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100">
-                  {team.status === 'verified' && (
-                    <span className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-200">
-                      <ShieldCheck className="w-4 h-4 text-emerald-600" /> Berkas Terverifikasi
-                    </span>
-                  )}
                   {team.status === 'pending' && (
                     <span className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-800 bg-amber-50 px-3 py-1.5 rounded-xl border border-amber-200">
-                      <Clock className="w-4 h-4 text-amber-600" /> Menunggu Validasi Panitia
+                      <Clock className="w-4 h-4 text-amber-600" /> 1. Menunggu Validasi Panitia
+                    </span>
+                  )}
+                  {team.status === 'registered' && (
+                    <span className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-800 bg-blue-50 px-3 py-1.5 rounded-xl border border-blue-200">
+                      <ShieldCheck className="w-4 h-4 text-blue-600" /> 2. Terdaftar (Lengkapi Peleton)
                     </span>
                   )}
                   {team.status === 'revision' && (
                     <span className="inline-flex items-center gap-1.5 text-xs font-bold text-rose-800 bg-rose-50 px-3 py-1.5 rounded-xl border border-rose-200">
                       <AlertTriangle className="w-4 h-4 text-rose-600" /> Perlu Perbaikan Berkas
+                    </span>
+                  )}
+                  {team.status === 'verified' && (
+                    <span className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-200">
+                      <ShieldCheck className="w-4 h-4 text-emerald-600" /> 3. Terverifikasi Sah
+                    </span>
+                  )}
+                  {team.status === 'drawn' && (
+                    <span className="inline-flex items-center gap-1.5 text-xs font-bold text-purple-700 bg-purple-50 px-3 py-1.5 rounded-xl border border-purple-200">
+                      <Sparkles className="w-4 h-4 text-purple-600" /> 4. Terundi Sah (No. #{team.lotNumber})
                     </span>
                   )}
 

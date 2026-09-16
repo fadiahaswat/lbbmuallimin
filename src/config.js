@@ -301,7 +301,7 @@ export const CLIPBOARD = {
 };
 
 // ---------------------------------------------------------------------------
-// SCORING – bobot penilaian
+// SCORING – bobot penilaian & rubrik standar LKBB Baratasetra (K / C / B / BS)
 // ---------------------------------------------------------------------------
 export const SCORING = {
     PLATOON_TECHNIQUE_PCT: 70,
@@ -310,8 +310,117 @@ export const SCORING = {
     DANTON_VOICE_PCT: 25,
     DANTON_ATTITUDE_PCT: 20,
     DANTON_FIELD_PCT: 20,
-    SCORE_RANGE_LABEL: '50-90 (Interval 2 poin)',
+    SCORE_RANGE_LABEL: 'Rubrik Skala K / C / B / BS Berjenjang',
 };
+
+/** Kategori Predikat Mutu */
+export const RUBRIC_GRADES = [
+    { key: 'K', label: 'Kurang (K)', color: 'text-amber-700 bg-amber-50 border-amber-300' },
+    { key: 'C', label: 'Cukup (C)', color: 'text-blue-700 bg-blue-50 border-blue-300' },
+    { key: 'B', label: 'Baik (B)', color: 'text-emerald-700 bg-emerald-50 border-emerald-300' },
+    { key: 'BS', label: 'Baik Sekali (BS)', color: 'text-purple-700 bg-purple-50 border-purple-300' },
+];
+
+/**
+ * Rentang Skala Nilai Standar Baratasetra:
+ * - Ditempat Dasar (4-10): [4, 5, 6, 7, 8, 9, 10]
+ * - Berpindah Tempat (8-19): [8, 10, 12, 14, 16, 18, 19]
+ * - Berjalan Biasa (10-27): [10, 13, 16, 19, 22, 25, 27]
+ * - Berjalan Dinamis / Kompleks (12-29): [12, 15, 18, 21, 24, 27, 29]
+ * - Parade Kerapian Khusus (12-30): [12, 15, 18, 21, 24, 27, 30]
+ */
+export const RUBRIC_SCALE_TEMPLATES = {
+    DITEMPAT: [
+        { grade: 'K', val: 4 }, { grade: 'K', val: 5 },
+        { grade: 'C', val: 6 }, { grade: 'C', val: 7 },
+        { grade: 'B', val: 8 }, { grade: 'B', val: 9 },
+        { grade: 'BS', val: 10 }
+    ],
+    BERPINDAH: [
+        { grade: 'K', val: 8 }, { grade: 'K', val: 10 },
+        { grade: 'C', val: 12 }, { grade: 'C', val: 14 },
+        { grade: 'B', val: 16 }, { grade: 'B', val: 18 },
+        { grade: 'BS', val: 19 }
+    ],
+    BERJALAN: [
+        { grade: 'K', val: 10 }, { grade: 'K', val: 13 },
+        { grade: 'C', val: 16 }, { grade: 'C', val: 19 },
+        { grade: 'B', val: 22 }, { grade: 'B', val: 25 },
+        { grade: 'BS', val: 27 }
+    ],
+    BERJALAN_KOMPLEKS: [
+        { grade: 'K', val: 12 }, { grade: 'K', val: 15 },
+        { grade: 'C', val: 18 }, { grade: 'C', val: 21 },
+        { grade: 'B', val: 24 }, { grade: 'B', val: 27 },
+        { grade: 'BS', val: 29 }
+    ],
+    KERAPIAN_PARADE: [
+        { grade: 'K', val: 12 }, { grade: 'K', val: 15 },
+        { grade: 'C', val: 18 }, { grade: 'C', val: 21 },
+        { grade: 'B', val: 24 }, { grade: 'B', val: 27 },
+        { grade: 'BS', val: 30 }
+    ],
+    BUBAR_BERKUMPUL: [
+        { grade: 'K', val: 13 }, { grade: 'K', val: 15 },
+        { grade: 'C', val: 17 }, { grade: 'C', val: 19 },
+        { grade: 'B', val: 21 }, { grade: 'B', val: 23 },
+        { grade: 'BS', val: 24 }
+    ],
+    DANTON_UMUM: [
+        { grade: 'K', val: 8 }, { grade: 'K', val: 10 },
+        { grade: 'C', val: 12 }, { grade: 'C', val: 14 },
+        { grade: 'B', val: 16 }, { grade: 'B', val: 18 },
+        { grade: 'BS', val: 19 }
+    ],
+    DANTON_IKIT: [
+        { grade: 'K', val: 16 }, { grade: 'K', val: 18 },
+        { grade: 'C', val: 21 }, { grade: 'C', val: 23 },
+        { grade: 'B', val: 26 }, { grade: 'B', val: 27 },
+        { grade: 'BS', val: 28 }
+    ],
+};
+
+/** Kriteria Penilaian Komandan Pasukan (Danton) Gaya Baratasetra */
+export const DANTON_CRITERIA = [
+    { id: 'sikap', name: 'Sikap Tampang & Sikap Sempurna', template: 'DANTON_UMUM', defaultScore: 16 },
+    { id: 'penguasaanMateri', name: 'Penguasaan Materi Gerakan', template: 'DANTON_UMUM', defaultScore: 16 },
+    { id: 'penguasaanLapangan', name: 'Penguasaan & Penempatan Lapangan', template: 'DANTON_UMUM', defaultScore: 16 },
+    { id: 'ikit', name: 'IKIT (Intonasi, Ketepatan Irama & Tempo)', template: 'DANTON_IKIT', defaultScore: 26 },
+    { id: 'volumeSuara', name: 'Volume & Artikulasi Suara', template: 'DANTON_UMUM', defaultScore: 16 },
+];
+
+/** Helper untuk menentukan template skala gerakan berdasarkan teks materi */
+export function getScaleTemplateForMaterial(materiText) {
+    const lower = (materiText || '').toLowerCase();
+    if (lower.includes('periksa kerapian') || lower.includes('periksa kerapihan')) {
+        return 'KERAPIAN_PARADE';
+    }
+    if (lower.includes('bubar') || lower.includes('berkumpul') || lower.includes('berhimpun')) {
+        return 'BUBAR_BERKUMPUL';
+    }
+    if (lower.includes('langkah ke') || lower.includes('langkah ke kanan') || lower.includes('langkah ke kiri') || lower.includes('langkah ke depan') || lower.includes('langkah ke belakang')) {
+        return 'BERPINDAH';
+    }
+    if (
+        lower.includes('maju jalan') ||
+        lower.includes('langkah tegap') ||
+        lower.includes('hormat kanan') ||
+        lower.includes('belok kanan') ||
+        lower.includes('belok kiri') ||
+        lower.includes('melintang') ||
+        lower.includes('haluan') ||
+        lower.includes('lari') ||
+        lower.includes('ganti langkah') ||
+        lower.includes('langkah perlahan')
+    ) {
+        if (lower.includes('lari') || lower.includes('2x belok') || lower.includes('hormat kanan') || lower.includes('melintang') || lower.includes('haluan')) {
+            return 'BERJALAN_KOMPLEKS';
+        }
+        return 'BERJALAN';
+    }
+    return 'DITEMPAT';
+}
+
 
 // ---------------------------------------------------------------------------
 // PENALTIES – daftar sanksi & pengurangan nilai
@@ -406,7 +515,7 @@ export const GOOGLE_AUTH = {
      * Buat di: https://console.cloud.google.com/apis/credentials
      * Mendukung pembacaan dari environment variable VITE_GOOGLE_CLIENT_ID
      */
-    CLIENT_ID: import.meta.env.VITE_GOOGLE_CLIENT_ID || '587440262077-ms6nf4jopejuqre6f1pan5as2umlv2nr.apps.googleusercontent.com',
+    CLIENT_ID: (typeof import.meta !== 'undefined' && import.meta.env?.VITE_GOOGLE_CLIENT_ID) || '587440262077-ms6nf4jopejuqre6f1pan5as2umlv2nr.apps.googleusercontent.com',
 };
 
 // ---------------------------------------------------------------------------

@@ -28,8 +28,17 @@ import { useCompetition } from '../context/CompetitionContext.jsx';
 import CountdownTimer from './CountdownTimer.jsx';
 
 export default function Registration() {
-  const { openModal, setActiveView } = useCompetition();
+  const { openModal, setActiveView, teams } = useCompetition();
   const [copied, setCopied] = useState(false);
+
+  // Perhitungan kuota & slot tersisa realtime
+  const totalTargetSD = COMPETITION.SD.TARGET_PLATOONS || 18;
+  const totalTargetSMP = COMPETITION.SMP.TARGET_PLATOONS || 18;
+  const registeredSD = (teams || []).filter(t => t.jenjang === 'SD').length;
+  const registeredSMP = (teams || []).filter(t => t.jenjang === 'SMP').length;
+  const remainingSD = Math.max(0, totalTargetSD - registeredSD);
+  const remainingSMP = Math.max(0, totalTargetSMP - registeredSMP);
+  const totalRemaining = remainingSD + remainingSMP;
 
   function triggerCopied() {
     setCopied(true);
@@ -116,12 +125,59 @@ export default function Registration() {
           </p>
         </div>
 
-        {/* Countdown Timer Urgency Banner */}
+        {/* Countdown Timer Urgency Banner & Realtime Slot Info */}
         <div className="max-w-2xl mx-auto mb-12 p-6 sm:p-7 bg-slate-900 border border-slate-800 rounded-2xl shadow-xl shadow-slate-950/30 text-center relative overflow-hidden">
           <div className="absolute top-0 right-0 w-48 h-48 bg-red-700/10 rounded-full blur-3xl pointer-events-none"></div>
           <div className="absolute bottom-0 left-0 w-48 h-48 bg-yellow-500/10 rounded-full blur-3xl pointer-events-none"></div>
-          <div className="relative z-10">
+          <div className="relative z-10 space-y-5">
             <CountdownTimer />
+
+            {/* Micro Bar: Informasi Slot Kuota Tersisa */}
+            <div className="pt-4 border-t border-slate-800/80">
+              <div className="flex items-center justify-between gap-2 mb-2.5">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                  <Users className="w-3.5 h-3.5 text-yellow-400" />
+                  <span>Informasi Slot Kuota Peleton</span>
+                </span>
+                <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-emerald-950/80 border border-emerald-500/30 text-emerald-400">
+                  Total Tersisa: {totalRemaining} / {totalTargetSD + totalTargetSMP} Peleton
+                </span>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2.5 sm:gap-3 text-left">
+                {/* Slot SD */}
+                <div className="p-2.5 sm:p-3 rounded-xl bg-slate-950/60 border border-slate-800 flex items-center justify-between">
+                  <div>
+                    <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block">
+                      Tingkat SD / MI
+                    </span>
+                    <span className="text-xs sm:text-sm font-black text-white">
+                      Tersisa <span className="text-yellow-400 font-mono text-sm sm:text-base">{remainingSD}</span> Slot
+                    </span>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-[10px] text-slate-400 block">Kuota: {totalTargetSD}</span>
+                    <span className="text-[9px] font-bold text-slate-400">Terisi: {registeredSD}</span>
+                  </div>
+                </div>
+
+                {/* Slot SMP */}
+                <div className="p-2.5 sm:p-3 rounded-xl bg-slate-950/60 border border-slate-800 flex items-center justify-between">
+                  <div>
+                    <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block">
+                      Tingkat SMP / MTs
+                    </span>
+                    <span className="text-xs sm:text-sm font-black text-white">
+                      Tersisa <span className="text-yellow-400 font-mono text-sm sm:text-base">{remainingSMP}</span> Slot
+                    </span>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-[10px] text-slate-400 block">Kuota: {totalTargetSMP}</span>
+                    <span className="text-[9px] font-bold text-slate-400">Terisi: {registeredSMP}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 

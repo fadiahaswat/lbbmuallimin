@@ -63,16 +63,17 @@ export default function RegistrationWizard({ isOpen, onClose }) {
     agreeJuknis: false,
   });
 
-  // Helper untuk mendapatkan nama lengkap sekolah beserta pembeda peleton (Tim A / Tim B)
+  // Helper untuk mendapatkan nama lengkap sekolah beserta pembeda peleton (A / B)
   const getFullSchoolName = () => {
-    const raw = (formData.schoolName || '').trim();
+    const raw = (formData.schoolName || '').trim().toUpperCase();
     if (!raw) return '';
     if (formData.teamUnit && formData.teamUnit !== 'Tunggal') {
-      const tag = `(${formData.teamUnit})`;
-      if (raw.toLowerCase().endsWith(tag.toLowerCase())) {
+      const suffix = formData.teamUnit === 'Tim A' || formData.teamUnit === 'A' ? 'A' : 'B';
+      // Cek jika sudah diakhiri spasi A / spasi B atau (Tim A)
+      if (raw.endsWith(` ${suffix}`)) {
         return raw;
       }
-      return `${raw} ${tag}`;
+      return `${raw} ${suffix}`;
     }
     return raw;
   };
@@ -607,10 +608,10 @@ export default function RegistrationWizard({ isOpen, onClose }) {
                     <input
                       type="text"
                       required
-                      placeholder="Contoh: MTs Mu'allimin Yogyakarta"
+                      placeholder="CONTOH: MTS MU'ALLIMIN YOGYAKARTA"
                       value={formData.schoolName}
-                      onChange={e => setFormData({ ...formData, schoolName: e.target.value })}
-                      className="w-full px-4 py-3 bg-slate-50 hover:bg-white border border-slate-200 focus:border-red-600 focus:bg-white focus:ring-2 focus:ring-red-600/10 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 transition-all outline-none font-medium"
+                      onChange={e => setFormData({ ...formData, schoolName: e.target.value.toUpperCase() })}
+                      className="w-full px-4 py-3 bg-slate-50 hover:bg-white border border-slate-200 focus:border-red-600 focus:bg-white focus:ring-2 focus:ring-red-600/10 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 transition-all outline-none font-medium uppercase"
                     />
                   </div>
 
@@ -623,11 +624,11 @@ export default function RegistrationWizard({ isOpen, onClose }) {
                       <select
                         value={formData.teamUnit}
                         onChange={e => setFormData({ ...formData, teamUnit: e.target.value })}
-                        className="w-full px-3.5 py-3 bg-slate-50 hover:bg-white border border-slate-200 focus:border-red-600 focus:bg-white focus:ring-2 focus:ring-red-600/10 rounded-xl text-sm font-bold text-slate-900 transition-all outline-none cursor-pointer appearance-none"
+                        className="w-full px-3.5 py-3 bg-slate-50 hover:bg-white border border-slate-200 focus:border-red-600 focus:bg-white focus:ring-2 focus:ring-red-600/10 rounded-xl text-sm font-bold text-slate-900 transition-all outline-none cursor-pointer appearance-none uppercase"
                       >
-                        <option value="Tim A">Peleton A (Tim A)</option>
-                        <option value="Tim B">Peleton B (Tim B)</option>
-                        <option value="Tunggal">Peleton Tunggal (Tanpa Label)</option>
+                        <option value="Tim A">Peleton A</option>
+                        <option value="Tim B">Peleton B</option>
+                        <option value="Tunggal">Peleton Tunggal</option>
                       </select>
                       <ChevronDown className="w-4 h-4 text-slate-500 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                     </div>
@@ -892,10 +893,10 @@ export default function RegistrationWizard({ isOpen, onClose }) {
                   <input
                     type="text"
                     required
-                    placeholder="Nama lengkap komandan siswa"
+                    placeholder="NAMA LENGKAP KOMANDAN SISWA"
                     value={formData.dantonName}
-                    onChange={e => setFormData({ ...formData, dantonName: e.target.value })}
-                    className="w-full px-4 py-3 bg-white border border-slate-200 focus:border-red-600 focus:ring-2 focus:ring-red-600/10 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 transition-all outline-none"
+                    onChange={e => setFormData({ ...formData, dantonName: e.target.value.toUpperCase() })}
+                    className="w-full px-4 py-3 bg-white border border-slate-200 focus:border-red-600 focus:ring-2 focus:ring-red-600/10 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 transition-all outline-none uppercase font-medium"
                   />
                 </div>
 
@@ -955,10 +956,10 @@ export default function RegistrationWizard({ isOpen, onClose }) {
                   <input
                     type="text"
                     required
-                    placeholder="Nama lengkap official / guru pendamping"
+                    placeholder="NAMA LENGKAP OFFICIAL / GURU PENDAMPING"
                     value={formData.officialName}
-                    onChange={e => setFormData({ ...formData, officialName: e.target.value })}
-                    className="w-full px-4 py-3 bg-white border border-slate-200 focus:border-red-600 focus:ring-2 focus:ring-red-600/10 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 transition-all outline-none"
+                    onChange={e => setFormData({ ...formData, officialName: e.target.value.toUpperCase() })}
+                    className="w-full px-4 py-3 bg-white border border-slate-200 focus:border-red-600 focus:ring-2 focus:ring-red-600/10 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 transition-all outline-none uppercase font-medium"
                   />
                 </div>
 
