@@ -123,14 +123,19 @@ export function normalizeTeamData(team) {
     if (!t.roster.danton) {
       t.roster.danton = {
         name: t.dantonName || '-',
-        nisn: '-',
-        class: '-',
+        nisn: '',
+        class: '',
       };
+    } else if (t.dantonName && (!t.roster.danton.name || t.roster.danton.name === 'Anggota Pratama' || t.roster.danton.name === '-')) {
+      t.roster.danton.name = t.dantonName;
     }
     if (!Array.isArray(t.roster.pasukan)) t.roster.pasukan = [];
     if (!Array.isArray(t.roster.cadangan)) t.roster.cadangan = [];
     if (!Array.isArray(t.roster.officials)) t.roster.officials = [];
   }
+
+  // Pastikan waNumber selalu berupa string aman
+  t.waNumber = t.waNumber != null ? String(t.waNumber) : '';
 
   return t;
 }
@@ -438,9 +443,13 @@ function safeSetItem(key, value) {
     navigateTo('auth');
   }
 
-  function closeAuthModal() {
+  function closeAuthModal(targetView = null) {
     setAuthModal({ isOpen: false, tab: 'login' });
-    goBack();
+    if (targetView) {
+      setActiveView(targetView);
+    } else if (activeView === 'auth') {
+      goBack();
+    }
   }
 
   function loginUser(email, name = null, googleAvatar = null) {
@@ -449,6 +458,7 @@ function safeSetItem(key, value) {
     // 1. Cek kredensial admin / panitia / superadmin resmi
     const OFFICIAL_STAFF_EMAILS = {
       'andiaqillah@muallimin.sch.id': { role: 'admin', roleLabel: 'Panitia Sekretariat (Admin)' },
+      'andiaqillah.2018@student.uny.ac.id': { role: 'admin', roleLabel: 'Panitia & Dewan Juri (Admin)' },
       'tontimuallimin2026@gmail.com': { role: 'superadmin', roleLabel: 'Ketua Panitia (Superadmin)' },
     };
 
@@ -482,10 +492,8 @@ function safeSetItem(key, value) {
       if (user) {
         setCurrentUser(user);
         setRole(user.role);
-        if (user.role === 'admin') setActiveView('admin');
-        else if (user.role === 'juri') setActiveView('juri');
-        else if (user.role === 'superadmin') setActiveView('superadmin');
-        closeAuthModal();
+        const targetView = user.role === 'admin' ? 'admin' : user.role === 'juri' ? 'juri' : user.role === 'superadmin' ? 'superadmin' : 'landing';
+        closeAuthModal(targetView);
         return { success: true, user };
       }
     }
@@ -555,8 +563,7 @@ function safeSetItem(key, value) {
       setCurrentUser(user);
       setRole('peserta');
       setCurrentTeamId(team.id);
-      setActiveView('peserta_dashboard');
-      closeAuthModal();
+      closeAuthModal('peserta_dashboard');
       return { success: true, user };
     }
 
@@ -564,8 +571,8 @@ function safeSetItem(key, value) {
       setCurrentUser(existingUser);
       setRole(existingUser.role);
       if (existingUser.teamId) setCurrentTeamId(existingUser.teamId);
-      setActiveView(existingUser.role === 'peserta' ? 'peserta_dashboard' : 'landing');
-      closeAuthModal();
+      const targetView = existingUser.role === 'peserta' ? 'peserta_dashboard' : existingUser.role;
+      closeAuthModal(targetView);
       return { success: true, user: existingUser };
     }
 
@@ -605,17 +612,16 @@ function safeSetItem(key, value) {
     setCurrentUser(newUser);
     setRole(newUser.role);
 
-    if (newUser.role === 'admin') {
-      setActiveView('admin');
-    } else if (newUser.role === 'juri') {
-      setActiveView('juri');
-    } else if (newUser.role === 'superadmin') {
-      setActiveView('superadmin');
-    } else {
-      setActiveView('peserta_dashboard');
-    }
+    const targetView =
+      newUser.role === 'admin'
+        ? 'admin'
+        : newUser.role === 'juri'
+        ? 'juri'
+        : newUser.role === 'superadmin'
+        ? 'superadmin'
+        : 'peserta_dashboard';
 
-    closeAuthModal();
+    closeAuthModal(targetView);
     return { success: true, user: newUser };
   }
 
@@ -774,7 +780,7 @@ function safeSetItem(key, value) {
         integrityPact: newTeamData.files?.integrityPact || null,
       },
       revisionNote: '',
-      roster: generatePersonnels(newTeamData.schoolName, jenjang, 'Anggota'),
+      roster: generatePersonnels(newTeamData.schoolName, jenjang, 'Anggota', newTeamData.dantonName),
     };
 
     setTeams(prev => [createdTeam, ...prev]);
@@ -790,9 +796,14 @@ function safeSetItem(key, value) {
 
   function loginAsTeam(identifier) {
     // Bisa pakai regCode (e.g. LBB26-SMP-001) atau No WA
-    const cleanId = identifier.trim().toLowerCase();
+    const cleanId = String(identifier || '').trim().toLowerCase();
+    const cleanDigits = cleanId.replace(/\D/g, '');
     const found = teams.find(
-      t => t.regCode.toLowerCase() === cleanId || t.waNumber.replace(/\D/g, '') === cleanId.replace(/\D/g, '')
+      t => {
+        const teamReg = String(t.regCode || '').toLowerCase();
+        const teamWa = String(t.waNumber || '').replace(/\D/g, '');
+        return teamReg === cleanId || (cleanDigits && teamWa === cleanDigits);
+      }
     );
     if (found) {
       if (found.status === 'pending') {
@@ -824,6 +835,7 @@ function safeSetItem(key, value) {
         avatar: schoolLogo || `https://ui-avatars.com/api/?name=${encodeURIComponent(found.schoolName)}&background=8B0000&color=fff&bold=true`,
       };
       setCurrentUser(teamUser);
+      setAuthModal({ isOpen: false, tab: 'login' });
       setActiveView('peserta_dashboard');
       return { success: true, team: found };
     }
@@ -920,15 +932,17 @@ function safeSetItem(key, value) {
     );
   }
 
-  function assignLotNumber(teamId, lotNumber) {
+  function assignLotNumber(teamId, lotNumber, chestNumber = undefined) {
     setTeams(prev =>
       prev.map(team => {
         if (team.id === teamId) {
-          const num = lotNumber ? parseInt(lotNumber, 10) : null;
+          const num = (lotNumber !== undefined && lotNumber !== '' && lotNumber !== null) ? parseInt(lotNumber, 10) : null;
+          const chest = (chestNumber !== undefined) ? (chestNumber ? String(chestNumber).trim() : '') : (team.chestNumber || '');
           const nextStatus = num ? 'drawn' : (team.status === 'drawn' ? 'verified' : team.status);
           const updated = {
             ...team,
             lotNumber: num,
+            chestNumber: chest,
             status: nextStatus,
             drawTime: num ? new Date().toISOString() : null,
           };
@@ -940,6 +954,10 @@ function safeSetItem(key, value) {
         return team;
       })
     );
+  }
+
+  function updateTeamDraw(teamId, lotNumber, chestNumber) {
+    assignLotNumber(teamId, lotNumber, chestNumber);
   }
 
   function randomizeLotNumbers(jenjang) {
@@ -1000,24 +1018,44 @@ function safeSetItem(key, value) {
   }
 
   // --- Jury & Scoring Operations ---
+  // Sistem Penilaian LBB Mu'allimin 2026:
+  // Juri 1: PBB Gerakan Materi Pasukan
+  // Juri 2: PBB Gerakan Materi Pasukan
+  // Juri 3: Komandan Peleton (Danton)
+  // Rata-rata PBB = (Juri 1 + Juri 2) / 2
+  // Total Skor Akhir = Rata-rata PBB + Danton Juri 3 - Penalti
   function saveScore(teamId, scoreData) {
-    const pbbVal = Number(scoreData.pbb?.total || 0);
-    const dantonVal = Number(scoreData.danton?.total || 0);
-    const vaforVal = Number(scoreData.vafor?.total || 0);
+    const pbb1Val = Number(scoreData.juries?.pos1?.total ?? scoreData.pbb1?.total ?? scoreData.pbb?.total ?? 0);
+    const pbb2Val = Number(scoreData.juries?.pos2?.total ?? scoreData.pbb2?.total ?? 0);
+    
+    // Hitung rata-rata PBB jika keduanya ada, atau ambil yang terisi
+    let pbbAvg = 0;
+    if (pbb1Val > 0 && pbb2Val > 0) {
+      pbbAvg = (pbb1Val + pbb2Val) / 2;
+    } else {
+      pbbAvg = pbb1Val || pbb2Val || 0;
+    }
+
+    const dantonVal = Number(scoreData.danton?.total || scoreData.juries?.pos3?.total || 0);
     const penaltyVal = Number(scoreData.penalties?.totalPenalty || 0);
 
-    const finalScore = Math.max(0, (pbbVal + dantonVal + vaforVal) - penaltyVal);
+    const finalScore = Math.max(0, parseFloat((pbbAvg + dantonVal - penaltyVal).toFixed(2)));
 
     const record = {
       teamId,
       juryName: scoreData.juryName || 'Dewan Juri LBB Muallimin',
       juryRole: scoreData.juryRole || 'Juri Lapangan',
       scoredAt: new Date().toISOString(),
+      juries: scoreData.juries || {},
       danton: scoreData.danton,
-      pbb: scoreData.pbb,
-      vafor: scoreData.vafor,
+      pbb: {
+        total: parseFloat(pbbAvg.toFixed(2)),
+        j1: pbb1Val,
+        j2: pbb2Val,
+        rubricScores: scoreData.pbb?.rubricScores || {},
+      },
       penalties: scoreData.penalties,
-      finalScore: parseFloat(finalScore.toFixed(2)),
+      finalScore,
       notes: scoreData.notes || '',
     };
 
@@ -1026,7 +1064,7 @@ function safeSetItem(key, value) {
       [teamId]: record,
     }));
 
-    // Sinkronkan nilai juri ke Google Sheet (Tab 'scores' otomatis dibuat jika belum ada)
+    // Sinkronkan nilai juri ke Google Sheet
     saveRecordToSheet('scores', { id: teamId, ...record }).catch(err =>
       console.warn('[CompetitionContext] Sync saveScore to sheet failed:', err)
     );
@@ -1034,7 +1072,7 @@ function safeSetItem(key, value) {
     return record;
   }
 
-  // Multi-Juri Scoring Engine (Pos 1: PBB, Pos 2: Vafor & Kostum, Pos 3: Danton)
+  // Multi-Juri Scoring Engine (Juri 1: PBB, Juri 2: PBB, Juri 3: Danton)
   function saveJuryPostScore(teamId, postKey, postScoreData) {
     let updatedRecord = null;
     setScores(prev => {
@@ -1075,23 +1113,35 @@ function safeSetItem(key, value) {
         totalPenalty,
       };
 
-      // Extract Pos 1 (PBB)
-      const pbbTotal = updatedJuries.pos1?.total !== undefined
+      // Extract Juri 1 (PBB Pasukan)
+      const juri1Total = updatedJuries.pos1?.total !== undefined
         ? Number(updatedJuries.pos1.total)
-        : (currentTeamScore.pbb?.total !== undefined ? Number(currentTeamScore.pbb.total) : 85);
+        : (currentTeamScore.juries?.pos1?.total !== undefined ? Number(currentTeamScore.juries.pos1.total) : null);
 
-      // Extract Pos 2 (Vafor & Kerapian)
-      const vaforTotal = updatedJuries.pos2?.total !== undefined
+      // Extract Juri 2 (PBB Pasukan)
+      const juri2Total = updatedJuries.pos2?.total !== undefined
         ? Number(updatedJuries.pos2.total)
-        : (currentTeamScore.vafor?.total !== undefined ? Number(currentTeamScore.vafor.total) : 84);
+        : (currentTeamScore.juries?.pos2?.total !== undefined ? Number(currentTeamScore.juries.pos2.total) : null);
 
-      // Extract Pos 3 (Danton)
+      // Rata-rata PBB Juri 1 & Juri 2
+      let pbbAvg = 0;
+      if (juri1Total !== null && juri2Total !== null) {
+        pbbAvg = (juri1Total + juri2Total) / 2;
+      } else if (juri1Total !== null) {
+        pbbAvg = juri1Total;
+      } else if (juri2Total !== null) {
+        pbbAvg = juri2Total;
+      } else if (currentTeamScore.pbb?.total !== undefined) {
+        pbbAvg = Number(currentTeamScore.pbb.total);
+      }
+
+      // Extract Juri 3 (Danton)
       const dantonTotal = updatedJuries.pos3?.total !== undefined
         ? Number(updatedJuries.pos3.total)
-        : (currentTeamScore.danton?.total !== undefined ? Number(currentTeamScore.danton.total) : 85);
+        : (currentTeamScore.danton?.total !== undefined ? Number(currentTeamScore.danton.total) : 0);
 
-      // Grand Total: Pos 1 + Pos 2 + Pos 3 - Penalti
-      const finalScore = Math.max(0, parseFloat((pbbTotal + vaforTotal + dantonTotal - totalPenalty).toFixed(2)));
+      // Grand Total: Rata-rata PBB (Juri 1 & 2) + Danton (Juri 3) - Penalti
+      const finalScore = Math.max(0, parseFloat((pbbAvg + dantonTotal - totalPenalty).toFixed(2)));
 
       updatedRecord = {
         ...currentTeamScore,
@@ -1099,12 +1149,16 @@ function safeSetItem(key, value) {
         teamId,
         juries: updatedJuries,
         penalties: mergedPenalties,
-        pbb: updatedJuries.pos1 ? { ...updatedJuries.pos1, total: pbbTotal } : (currentTeamScore.pbb || { total: pbbTotal }),
-        vafor: updatedJuries.pos2 ? { ...updatedJuries.pos2, total: vaforTotal } : (currentTeamScore.vafor || { total: vaforTotal }),
+        pbb: {
+          total: parseFloat(pbbAvg.toFixed(2)),
+          j1: juri1Total,
+          j2: juri2Total,
+          rubricScores: updatedJuries.pos1?.rubricScores || updatedJuries.pos2?.rubricScores || currentTeamScore.pbb?.rubricScores || {},
+        },
         danton: updatedJuries.pos3 ? { ...updatedJuries.pos3, total: dantonTotal } : (currentTeamScore.danton || { total: dantonTotal }),
         finalScore,
         scoredAt: new Date().toISOString(),
-        lastUpdatedBy: postScoreData.juryName || 'Juri Pos',
+        lastUpdatedBy: postScoreData.juryName || 'Dewan Juri',
         isLocked: Boolean(updatedJuries.pos1 && updatedJuries.pos2 && updatedJuries.pos3),
         notes: postScoreData.notes || currentTeamScore.notes || '',
       };
@@ -1220,9 +1274,8 @@ function safeSetItem(key, value) {
       pen.totalPenalty = totalPenalty;
 
       const pbbTotal = existing.pbb?.total || 0;
-      const vaforTotal = existing.vafor?.total || 0;
       const dantonTotal = existing.danton?.total || 0;
-      const finalScore = Math.max(0, parseFloat((pbbTotal + vaforTotal + dantonTotal - totalPenalty).toFixed(2)));
+      const finalScore = Math.max(0, parseFloat((pbbTotal + dantonTotal - totalPenalty).toFixed(2)));
 
       return {
         ...prev,
@@ -1439,6 +1492,7 @@ function safeSetItem(key, value) {
       updateTeamRoster,
       verifyTeam,
       assignLotNumber,
+      updateTeamDraw,
       randomizeLotNumbers,
       deleteTeam,
 

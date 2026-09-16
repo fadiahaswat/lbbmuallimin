@@ -1,7 +1,7 @@
 /**
  * src/data/seedData.js
- * Master seed data untuk LBB Mu'allimin 2026
- * Berisi data realistis sekolah SD & SMP di DIY dengan berbagai status
+ * Master initial data untuk LBB Mu'allimin 2026
+ * Data tim, nilai, staging, dan voting murni bersih (kosong) siap menerima data registrasi riil
  */
 
 import logoImg from '../assets/logo-tonti.png';
@@ -35,6 +35,14 @@ export const INITIAL_USERS = [
     roleLabel: 'Panitia Sekretariat (Admin)',
   },
   {
+    id: 'user-staff-uny',
+    name: 'Andi Aqillah (UNY)',
+    email: 'andiaqillah.2018@student.uny.ac.id',
+    role: 'admin',
+    avatar: 'https://ui-avatars.com/api/?name=Andi+Aqillah&background=047857&color=ffffff&bold=true',
+    roleLabel: 'Panitia & Juri Penilai',
+  },
+  {
     id: 'user-super-tonti',
     name: 'Tonti Muallimin 2026',
     email: 'tontimuallimin2026@gmail.com',
@@ -45,15 +53,18 @@ export const INITIAL_USERS = [
 ];
 
 // Helper untuk membuat susunan 25 personel standar
-export function generatePersonnels(schoolName, jenjang, prefixName) {
+export function generatePersonnels(schoolName, jenjang, prefixName, dantonName = '') {
   const danton = {
     id: 'p-danton',
     role: 'danton',
-    name: `${prefixName} Pratama`,
-    nisn: jenjang === 'SD' ? '0129384711' : '0098765411',
-    class: jenjang === 'SD' ? 'VI A' : 'IX B',
+    name: dantonName ? dantonName.trim().toUpperCase() : '',
+    nisn: '',
+    class: '',
+    birthPlace: '',
+    birthDate: '',
     uniformSize: 'M',
     shoeSize: '39',
+    photo: null,
   };
 
   const pasukan = [];
@@ -65,22 +76,25 @@ export function generatePersonnels(schoolName, jenjang, prefixName) {
       role: 'pasukan',
       safNumber: saf,
       banjarNumber: banjar,
-      name: `${prefixName} Anggota ${i}`,
-      nisn: jenjang === 'SD' ? `01293847${10 + i}` : `00987654${10 + i}`,
-      class: jenjang === 'SD' ? (i % 2 === 0 ? 'V B' : 'VI A') : (i % 2 === 0 ? 'VIII A' : 'IX C'),
+      name: '',
+      nisn: '',
+      class: '',
+      birthPlace: '',
+      birthDate: '',
+      photo: null,
     });
   }
 
   const cadangan = [
-    { id: 'c-1', role: 'cadangan', name: `${prefixName} Cadangan 1`, nisn: jenjang === 'SD' ? '0129384791' : '0098765491', class: jenjang === 'SD' ? 'V A' : 'VIII C' },
-    { id: 'c-2', role: 'cadangan', name: `${prefixName} Cadangan 2`, nisn: jenjang === 'SD' ? '0129384792' : '0098765492', class: jenjang === 'SD' ? 'V B' : 'VIII B' },
-    { id: 'c-3', role: 'cadangan', name: `${prefixName} Cadangan 3`, nisn: jenjang === 'SD' ? '0129384793' : '0098765493', class: jenjang === 'SD' ? 'VI B' : 'VIII A' },
+    { id: 'c-1', role: 'cadangan', name: '', nisn: '', class: '', birthPlace: '', birthDate: '', photo: null },
+    { id: 'c-2', role: 'cadangan', name: '', nisn: '', class: '', birthPlace: '', birthDate: '', photo: null },
+    { id: 'c-3', role: 'cadangan', name: '', nisn: '', class: '', birthPlace: '', birthDate: '', photo: null },
   ];
 
+  // Tim Official: Maksimal 2, tidak terisi otomatis (kosong untuk diisi mandiri)
   const officials = [
-    { id: 'o-1', role: 'pelatih1', name: `Bripka (Purn) Herman Sujono`, phone: '081223344551' },
-    { id: 'o-2', role: 'pelatih2', name: `Kak Dian Permata, S.Pd.`, phone: '081223344552' },
-    { id: 'o-3', role: 'dokumentasi', name: `Rizky Fauzan`, phone: '081223344553' },
+    { id: 'o-1', role: 'Pembina / Pelatih 1', name: '', phone: '', photo: null },
+    { id: 'o-2', role: 'Pembina / Pelatih 2', name: '', phone: '', photo: null },
   ];
 
   return { danton, pasukan, cadangan, officials };

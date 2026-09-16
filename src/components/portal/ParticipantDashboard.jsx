@@ -24,7 +24,9 @@ import {
   Plus,
   Check,
   GripVertical,
-  ArrowUpDown
+  ArrowUpDown,
+  User,
+  ArrowRight
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
 import { EVENT, VENUE } from '../../config.js';
@@ -94,13 +96,13 @@ export default function ParticipantDashboard() {
 
   function initRosterDraft() {
     const existing = currentTeam.roster || {};
-    // ensure danton
+    // ensure danton (nama komandan terisi otomatis sesuai pendaftaran tadi)
     const danton = {
-      name: existing.danton?.name || currentTeam.dantonName || '',
+      name: (existing.danton?.name || currentTeam.dantonName || '').trim().toUpperCase(),
       nisn: existing.danton?.nisn || '',
       birthPlace: existing.danton?.birthPlace || '',
       birthDate: existing.danton?.birthDate || '',
-      class: existing.danton?.class || (currentTeam.jenjang === 'SD' ? '5' : '8'),
+      class: existing.danton?.class || '',
       photo: existing.danton?.photo || null,
     };
     // ensure 21 pasukan
@@ -119,16 +121,18 @@ export default function ParticipantDashboard() {
           nisn: '',
           birthPlace: '',
           birthDate: '',
-          class: currentTeam.jenjang === 'SD' ? '5' : '8',
+          class: '',
           photo: null,
         });
       }
     } else {
       pasukan = pasukan.map((p, idx) => ({
         ...p,
+        name: p.name || '',
+        nisn: p.nisn || '',
         birthPlace: p.birthPlace || '',
         birthDate: p.birthDate || '',
-        class: p.class || (currentTeam.jenjang === 'SD' ? '5' : '8'),
+        class: p.class || '',
         photo: p.photo || null,
       }));
     }
@@ -144,28 +148,30 @@ export default function ParticipantDashboard() {
           nisn: '',
           birthPlace: '',
           birthDate: '',
-          class: currentTeam.jenjang === 'SD' ? '5' : '8',
+          class: '',
           photo: null,
         });
       }
     } else {
       cadangan = cadangan.map((c, idx) => ({
         ...c,
+        name: c.name || '',
+        nisn: c.nisn || '',
         birthPlace: c.birthPlace || '',
         birthDate: c.birthDate || '',
-        class: c.class || (currentTeam.jenjang === 'SD' ? '5' : '8'),
+        class: c.class || '',
         photo: c.photo || null,
       }));
     }
-    // ensure officials
-    let officials = Array.isArray(existing.officials) ? [...existing.officials] : [];
+    // ensure officials (maks 2, jangan isi otomatis kontak/nama)
+    let officials = Array.isArray(existing.officials) ? existing.officials.slice(0, 2) : [];
     if (officials.length === 0) {
-      officials.push({
-        id: 'off-1',
-        name: currentTeam.coachName || '',
-        phone: currentTeam.waNumber || '',
-        role: 'Pembina Utama',
-      });
+      officials = [
+        { id: 'off-1', name: '', phone: '', role: 'Pembina / Pelatih 1' },
+        { id: 'off-2', name: '', phone: '', role: 'Pembina / Pelatih 2' },
+      ];
+    } else if (officials.length === 1) {
+      officials.push({ id: 'off-2', name: '', phone: '', role: 'Pembina / Pelatih 2' });
     }
 
     setRosterDraft({ danton, pasukan, cadangan, officials });
@@ -233,6 +239,11 @@ export default function ParticipantDashboard() {
             idx === rosterPhotoTarget.index ? { ...c, photo: photoUrl } : c
           );
           setRosterDraft({ ...rosterDraft, cadangan: updated });
+        } else if (rosterPhotoTarget.type === 'official') {
+          const updated = rosterDraft.officials.map((o, idx) =>
+            idx === rosterPhotoTarget.index ? { ...o, photo: photoUrl } : o
+          );
+          setRosterDraft({ ...rosterDraft, officials: updated });
         }
         setUploadToast(`Pasfoto berhasil dipasang! Klik Simpan untuk memperbarui.`);
         setTimeout(() => setUploadToast(''), 4000);
@@ -586,26 +597,34 @@ export default function ParticipantDashboard() {
                 )}
                 {currentTeam.status === 'drawn' && (
                   <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-500/20 text-purple-300 border border-purple-500/40 text-xs font-black uppercase tracking-wider">
-                    <Sparkles className="w-4 h-4 text-purple-400" /> 4. Terundi Sah (No. #{currentTeam.lotNumber})
+                    <Sparkles className="w-4 h-4 text-purple-400" /> 4. Peleton Siap Tampil
                   </span>
                 )}
               </div>
 
-              {/* Lot Number (Nomor Undian Tampil) */}
-              <div className="bg-white/10 border border-white/15 rounded-2xl p-3 text-right">
-                <span className="text-[10px] font-bold text-slate-300 uppercase block">Nomor Tampil (TM)</span>
-                {currentTeam.lotNumber ? (
-                  <div className="flex items-baseline justify-end gap-1 mt-0.5">
-                    <span className="text-2xl font-black text-yellow-400 font-mono">
+              {/* Box Undian: Nomor Tampil (TM) & Nomor Dada */}
+              <div className="flex items-center gap-2">
+                <div className="bg-white/10 border border-white/15 rounded-2xl p-2.5 px-3 text-center min-w-[90px]">
+                  <span className="text-[9px] font-bold text-slate-300 uppercase block tracking-wider">No. Tampil</span>
+                  {currentTeam.lotNumber ? (
+                    <span className="text-xl font-black text-yellow-400 font-mono block leading-tight mt-0.5">
                       #{String(currentTeam.lotNumber).padStart(2, '0')}
                     </span>
-                    <span className="text-[10px] text-slate-300">Resmi</span>
-                  </div>
-                ) : (
-                  <span className="text-xs font-semibold text-slate-400 italic block mt-0.5">
-                    Menunggu TM (23 Okt)
-                  </span>
-                )}
+                  ) : (
+                    <span className="text-[10px] text-slate-400 italic block mt-1">Belum TM</span>
+                  )}
+                </div>
+
+                <div className="bg-white/10 border border-white/15 rounded-2xl p-2.5 px-3 text-center min-w-[90px]">
+                  <span className="text-[9px] font-bold text-slate-300 uppercase block tracking-wider">No. Dada</span>
+                  {currentTeam.chestNumber ? (
+                    <span className="text-xl font-black text-emerald-400 font-mono block leading-tight mt-0.5">
+                      {currentTeam.chestNumber}
+                    </span>
+                  ) : (
+                    <span className="text-[10px] text-slate-400 italic block mt-1">-</span>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -641,55 +660,6 @@ export default function ParticipantDashboard() {
             {/* Left 2 Cols: Agenda & Quick Print */}
             <div className="md:col-span-2 space-y-6">
               
-              {/* Quick Print Documents Action Box */}
-              <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h4 className="font-black text-lg text-slate-900 uppercase italic">
-                      Dokumen Cetak Resmi Kontingen
-                    </h4>
-                    <p className="text-xs text-slate-500">
-                      Bawa cetakan fisik dokumen ini saat Technical Meeting untuk verifikasi akhir.
-                    </p>
-                  </div>
-                  <Printer className="w-5 h-5 text-slate-400" />
-                </div>
-
-                <div className="grid sm:grid-cols-3 gap-3">
-                  <button
-                    onClick={() => window.print()}
-                    className="p-4 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-2xl text-left transition-all group"
-                  >
-                    <div className="w-8 h-8 rounded-lg bg-yellow-400/20 text-yellow-700 flex items-center justify-center mb-2 group-hover:scale-105 transition-transform">
-                      <Printer className="w-4 h-4" />
-                    </div>
-                    <span className="font-black text-xs text-slate-900 block">Kartu Tanda Peleton</span>
-                    <span className="text-[10px] text-slate-500">Cetak ID Card & Barcode</span>
-                  </button>
-
-                  <button
-                    onClick={() => openModal('docViewer', { docId: 'form-b', team: currentTeam })}
-                    className="p-4 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-2xl text-left transition-all group"
-                  >
-                    <div className="w-8 h-8 rounded-lg bg-red-100 text-red-700 flex items-center justify-center mb-2 group-hover:scale-105 transition-transform">
-                      <FileText className="w-4 h-4" />
-                    </div>
-                    <span className="font-black text-xs text-slate-900 block">Formulir B (Biodata)</span>
-                    <span className="text-[10px] text-slate-500">25 Personel Terisi Otomatis</span>
-                  </button>
-
-                  <button
-                    onClick={() => openModal('docViewer', { docId: 'form-c', team: currentTeam })}
-                    className="p-4 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-2xl text-left transition-all group"
-                  >
-                    <div className="w-8 h-8 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center mb-2 group-hover:scale-105 transition-transform">
-                      <FileText className="w-4 h-4" />
-                    </div>
-                    <span className="font-black text-xs text-slate-900 block">Formulir C (Pernyataan)</span>
-                    <span className="text-[10px] text-slate-500">Integritas Siap Cap Basah</span>
-                  </button>
-                </div>
-              </div>
 
               {/* Agenda Pelaksanaan Timeline */}
               <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs space-y-4">
@@ -851,19 +821,36 @@ export default function ParticipantDashboard() {
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 flex-1">
                 {/* Danton Photo */}
                 <div className="relative group shrink-0">
-                  <div className="w-16 h-20 sm:w-20 sm:h-24 rounded-2xl bg-red-700 text-white font-black text-xs flex items-center justify-center shadow-md overflow-hidden border-2 border-red-300">
-                    {(isEditingRoster ? rosterDraft?.danton?.photo : currentTeam.roster?.danton?.photo) ? (
-                      <img
-                        src={isEditingRoster ? rosterDraft.danton.photo : currentTeam.roster.danton.photo}
-                        alt="Foto Danton"
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="text-center p-1">
-                        <Camera className="w-6 h-6 mx-auto mb-1 opacity-70" />
-                        <span className="text-[10px] font-black uppercase tracking-wider block">DANTON</span>
-                      </div>
-                    )}
+                  <div className="w-16 h-20 sm:w-20 sm:h-24 rounded-2xl bg-gradient-to-br from-red-700 to-red-800 text-white font-black text-xs flex items-center justify-center shadow-md overflow-hidden border-2 border-red-300 relative">
+                    {(() => {
+                      const photoUrl = isEditingRoster ? rosterDraft?.danton?.photo : currentTeam.roster?.danton?.photo;
+                      const hasValidPhoto = photoUrl && typeof photoUrl === 'string' && photoUrl !== '#' && !photoUrl.startsWith('#') && !photoUrl.includes('drive.google.com/open?id=');
+                      return hasValidPhoto ? (
+                        <img
+                          src={formatImageUrl(photoUrl)}
+                          alt={isEditingRoster ? rosterDraft?.danton?.name || 'Danton' : currentTeam.roster?.danton?.name || 'Danton'}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none';
+                            if (e.currentTarget.nextElementSibling) {
+                              e.currentTarget.nextElementSibling.style.display = 'flex';
+                            }
+                          }}
+                        />
+                      ) : null;
+                    })()}
+                    <div
+                      className="w-full h-full flex flex-col items-center justify-center text-center p-1"
+                      style={{
+                        display: (() => {
+                          const photoUrl = isEditingRoster ? rosterDraft?.danton?.photo : currentTeam.roster?.danton?.photo;
+                          return photoUrl && typeof photoUrl === 'string' && photoUrl !== '#' && !photoUrl.startsWith('#') && !photoUrl.includes('drive.google.com/open?id=') ? 'none' : 'flex';
+                        })()
+                      }}
+                    >
+                      <User className="w-7 h-7 mx-auto mb-0.5 opacity-80" />
+                      <span className="text-[9px] font-black uppercase tracking-wider block opacity-90">DANTON</span>
+                    </div>
                   </div>
                   {isEditingRoster && (
                     <button
@@ -966,6 +953,7 @@ export default function ParticipantDashboard() {
                             })}
                             className="w-full px-3 py-1.5 bg-white border border-red-300 rounded-lg text-xs font-bold text-slate-800"
                           >
+                            <option value="">Pilih Kelas</option>
                             {availableClassOptions.map(cls => (
                               <option key={cls} value={cls}>Kelas {cls}</option>
                             ))}
@@ -997,12 +985,28 @@ export default function ParticipantDashboard() {
                             .filter(p => p.safNumber === saf)
                             .map((person) => (
                               <div key={person.id} className="text-xs bg-white p-2.5 rounded-xl border border-slate-200/80 shadow-2xs flex items-center gap-2.5">
-                                <div className="w-10 h-12 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0 overflow-hidden">
-                                  {person.photo ? (
-                                    <img src={person.photo} alt={person.name} className="w-full h-full object-cover" />
-                                  ) : (
+                                <div className="w-10 h-12 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0 overflow-hidden relative">
+                                  {person.photo && typeof person.photo === 'string' && person.photo !== '#' && !person.photo.startsWith('#') && !person.photo.includes('drive.google.com/open?id=') ? (
+                                    <img
+                                      src={formatImageUrl(person.photo)}
+                                      alt={person.name}
+                                      className="w-full h-full object-cover"
+                                      onError={(e) => {
+                                        e.currentTarget.style.display = 'none';
+                                        if (e.currentTarget.nextElementSibling) {
+                                          e.currentTarget.nextElementSibling.style.display = 'flex';
+                                        }
+                                      }}
+                                    />
+                                  ) : null}
+                                  <div
+                                    className="w-full h-full flex items-center justify-center text-slate-400 bg-slate-50"
+                                    style={{
+                                      display: person.photo && typeof person.photo === 'string' && person.photo !== '#' && !person.photo.startsWith('#') && !person.photo.includes('drive.google.com/open?id=') ? 'none' : 'flex'
+                                    }}
+                                  >
                                     <Camera className="w-4 h-4 text-slate-400" />
-                                  )}
+                                  </div>
                                 </div>
                                 <div className="flex-1 min-w-0">
                                   <div className="flex items-center justify-between">
@@ -1106,14 +1110,30 @@ export default function ParticipantDashboard() {
                                   {/* Thumbnail */}
                                   <div
                                     onClick={() => triggerRosterPhotoUpload({ type: 'pasukan', id: person.id })}
-                                    className="w-12 h-14 rounded-xl bg-slate-100 border border-slate-300 flex items-center justify-center shrink-0 overflow-hidden cursor-pointer hover:border-blue-500"
+                                    className="w-12 h-14 rounded-xl bg-slate-100 border border-slate-300 flex items-center justify-center shrink-0 overflow-hidden cursor-pointer hover:border-blue-500 relative"
                                     title="Klik untuk unggah foto anggota"
                                   >
-                                    {person.photo ? (
-                                      <img src={person.photo} alt={person.name} className="w-full h-full object-cover" />
-                                    ) : (
+                                    {person.photo && typeof person.photo === 'string' && person.photo !== '#' && !person.photo.startsWith('#') && !person.photo.includes('drive.google.com/open?id=') ? (
+                                      <img
+                                        src={formatImageUrl(person.photo)}
+                                        alt={person.name}
+                                        className="w-full h-full object-cover"
+                                        onError={(e) => {
+                                          e.currentTarget.style.display = 'none';
+                                          if (e.currentTarget.nextElementSibling) {
+                                            e.currentTarget.nextElementSibling.style.display = 'flex';
+                                          }
+                                        }}
+                                      />
+                                    ) : null}
+                                    <div
+                                      className="w-full h-full flex items-center justify-center text-slate-400 bg-slate-50"
+                                      style={{
+                                        display: person.photo && typeof person.photo === 'string' && person.photo !== '#' && !person.photo.startsWith('#') && !person.photo.includes('drive.google.com/open?id=') ? 'none' : 'flex'
+                                      }}
+                                    >
                                       <Camera className="w-5 h-5 text-slate-400" />
-                                    )}
+                                    </div>
                                   </div>
 
                                   <div className="flex-1 space-y-1.5 min-w-0">
@@ -1144,7 +1164,7 @@ export default function ParticipantDashboard() {
                                         className="w-full px-2 py-1 bg-slate-50 border border-slate-200 rounded-lg text-[11px] font-mono focus:outline-none focus:ring-1 focus:ring-blue-500"
                                       />
                                       <select
-                                        value={person.class}
+                                        value={person.class || ''}
                                         onChange={e => {
                                           const updated = rosterDraft.pasukan.map(p =>
                                             p.id === person.id ? { ...p, class: e.target.value } : p
@@ -1153,6 +1173,7 @@ export default function ParticipantDashboard() {
                                         }}
                                         className="w-full px-2 py-1 bg-slate-50 border border-slate-200 rounded-lg text-[11px] font-bold focus:outline-none focus:ring-1 focus:ring-blue-500"
                                       >
+                                        <option value="">Pilih Kelas</option>
                                         {availableClassOptions.map(cls => (
                                           <option key={cls} value={cls}>Kelas {cls}</option>
                                         ))}
@@ -1209,12 +1230,28 @@ export default function ParticipantDashboard() {
                       currentTeam.roster.cadangan.map((c, i) => (
                         <div key={c.id || i} className="bg-white p-2.5 rounded-xl border border-slate-200 text-xs flex items-center justify-between gap-2.5 shadow-2xs">
                           <div className="flex items-center gap-2.5 min-w-0">
-                            <div className="w-9 h-11 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0 overflow-hidden">
-                              {c.photo ? (
-                                <img src={c.photo} alt={c.name} className="w-full h-full object-cover" />
-                              ) : (
+                            <div className="w-9 h-11 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0 overflow-hidden relative">
+                              {c.photo && typeof c.photo === 'string' && c.photo !== '#' && !c.photo.startsWith('#') && !c.photo.includes('drive.google.com/open?id=') ? (
+                                <img
+                                  src={formatImageUrl(c.photo)}
+                                  alt={c.name}
+                                  className="w-full h-full object-cover"
+                                  onError={(e) => {
+                                    e.currentTarget.style.display = 'none';
+                                    if (e.currentTarget.nextElementSibling) {
+                                      e.currentTarget.nextElementSibling.style.display = 'flex';
+                                    }
+                                  }}
+                                />
+                              ) : null}
+                              <div
+                                className="w-full h-full flex items-center justify-center text-slate-400 bg-slate-50"
+                                style={{
+                                  display: c.photo && typeof c.photo === 'string' && c.photo !== '#' && !c.photo.startsWith('#') && !c.photo.includes('drive.google.com/open?id=') ? 'none' : 'flex'
+                                }}
+                              >
                                 <Camera className="w-3.5 h-3.5 text-slate-400" />
-                              )}
+                              </div>
                             </div>
                             <div className="truncate">
                               <span className="font-bold text-slate-900 block truncate">#{i + 1}. {c.name || '-'}</span>
@@ -1292,14 +1329,30 @@ export default function ParticipantDashboard() {
                           <div className="flex gap-2.5 items-start">
                             <div
                               onClick={() => triggerRosterPhotoUpload({ type: 'cadangan', index: i })}
-                              className="w-12 h-14 rounded-xl bg-slate-100 border border-slate-300 flex items-center justify-center shrink-0 overflow-hidden cursor-pointer hover:border-amber-500"
+                              className="w-12 h-14 rounded-xl bg-slate-100 border border-slate-300 flex items-center justify-center shrink-0 overflow-hidden cursor-pointer hover:border-amber-500 relative"
                               title="Klik untuk unggah pasfoto cadangan"
                             >
-                              {c.photo ? (
-                                <img src={c.photo} alt={c.name} className="w-full h-full object-cover" />
-                              ) : (
+                              {c.photo && typeof c.photo === 'string' && c.photo !== '#' && !c.photo.startsWith('#') && !c.photo.includes('drive.google.com/open?id=') ? (
+                                <img
+                                  src={formatImageUrl(c.photo)}
+                                  alt={c.name}
+                                  className="w-full h-full object-cover"
+                                  onError={(e) => {
+                                    e.currentTarget.style.display = 'none';
+                                    if (e.currentTarget.nextElementSibling) {
+                                      e.currentTarget.nextElementSibling.style.display = 'flex';
+                                    }
+                                  }}
+                                />
+                              ) : null}
+                              <div
+                                className="w-full h-full flex items-center justify-center text-slate-400 bg-slate-50"
+                                style={{
+                                  display: c.photo && typeof c.photo === 'string' && c.photo !== '#' && !c.photo.startsWith('#') && !c.photo.includes('drive.google.com/open?id=') ? 'none' : 'flex'
+                                }}
+                              >
                                 <Camera className="w-5 h-5 text-slate-400" />
-                              )}
+                              </div>
                             </div>
 
                             <div className="flex-1 space-y-1.5 min-w-0">
@@ -1329,7 +1382,7 @@ export default function ParticipantDashboard() {
                                   className="w-full px-2 py-1 bg-slate-50 border border-slate-200 rounded-lg text-[11px] font-mono"
                                 />
                                 <select
-                                  value={c.class}
+                                  value={c.class || ''}
                                   onChange={e => {
                                     const updated = rosterDraft.cadangan.map((item, idx) =>
                                       idx === i ? { ...item, class: e.target.value } : item
@@ -1338,6 +1391,7 @@ export default function ParticipantDashboard() {
                                   }}
                                   className="w-full px-2 py-1 bg-slate-50 border border-slate-200 rounded-lg text-[11px] font-bold"
                                 >
+                                  <option value="">Pilih Kelas</option>
                                   {availableClassOptions.map(cls => (
                                     <option key={cls} value={cls}>Kelas {cls}</option>
                                   ))}
@@ -1378,19 +1432,33 @@ export default function ParticipantDashboard() {
               </div>
 
               <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4">
-                <h5 className="font-black text-xs uppercase tracking-wider text-slate-800 mb-2">
-                  Tim Official & Pendamping
-                </h5>
+                <div className="flex items-center justify-between mb-2">
+                  <h5 className="font-black text-xs uppercase tracking-wider text-slate-800">
+                    Tim Official & Pendamping (Maks 2)
+                  </h5>
+                  <span className="text-[10px] font-bold text-slate-500 bg-white border border-slate-200 px-2 py-0.5 rounded-full">
+                    Maks. 2 Orang
+                  </span>
+                </div>
                 <div className="space-y-2">
                   {!isEditingRoster ? (
                     Array.isArray(currentTeam.roster?.officials) && currentTeam.roster.officials.length > 0 ? (
                       currentTeam.roster.officials.map((off, i) => (
-                        <div key={off.id || i} className="bg-white p-2.5 rounded-xl border border-slate-200 text-xs flex justify-between items-center">
-                          <div>
-                            <span className="font-bold text-slate-900 block">{off.name}</span>
-                            <span className="text-[10px] text-slate-400">Kontak: {off.phone}</span>
+                        <div key={off.id || i} className="bg-white p-2.5 rounded-xl border border-slate-200 text-xs flex justify-between items-center gap-3">
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            <div className="w-9 h-11 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0 overflow-hidden">
+                              {off.photo ? (
+                                <img src={off.photo} alt={off.name} className="w-full h-full object-cover" />
+                              ) : (
+                                <User className="w-4 h-4 text-slate-400" />
+                              )}
+                            </div>
+                            <div className="truncate">
+                              <span className="font-bold text-slate-900 block truncate">{off.name || 'Belum diisi'}</span>
+                              <span className="text-[10px] text-slate-400">Kontak: {off.phone || '-'}</span>
+                            </div>
                           </div>
-                          <span className="text-[10px] font-bold bg-blue-100 text-blue-800 px-2 py-0.5 rounded capitalize">{off.role}</span>
+                          <span className="text-[10px] font-bold bg-blue-100 text-blue-800 px-2 py-0.5 rounded capitalize shrink-0">{off.role || 'Official'}</span>
                         </div>
                       ))
                     ) : (
@@ -1398,45 +1466,73 @@ export default function ParticipantDashboard() {
                     )
                   ) : (
                     rosterDraft?.officials?.map((off, i) => (
-                      <div key={off.id || i} className="bg-white p-2.5 rounded-xl border border-slate-200 space-y-1.5">
-                        <span className="text-[10px] font-bold text-blue-800">Official #{i + 1}</span>
-                        <input
-                          type="text"
-                          placeholder="Nama Official / Pembina"
-                          value={off.name}
-                          onChange={e => {
-                            const updated = rosterDraft.officials.map((item, idx) =>
-                              idx === i ? { ...item, name: e.target.value } : item
-                            );
-                            setRosterDraft({ ...rosterDraft, officials: updated });
-                          }}
-                          className="w-full px-2 py-1 bg-slate-50 border border-slate-200 rounded text-xs font-semibold"
-                        />
-                        <div className="grid grid-cols-2 gap-1">
-                          <input
-                            type="text"
-                            placeholder="Nomor WA/Kontak"
-                            value={off.phone}
-                            onChange={e => {
-                              const updated = rosterDraft.officials.map((item, idx) =>
-                                idx === i ? { ...item, phone: e.target.value } : item
-                              );
-                              setRosterDraft({ ...rosterDraft, officials: updated });
-                            }}
-                            className="w-full px-2 py-1 bg-slate-50 border border-slate-200 rounded text-[11px]"
-                          />
-                          <input
-                            type="text"
-                            placeholder="Peran (misal: Pembina/Pelatih)"
-                            value={off.role}
-                            onChange={e => {
-                              const updated = rosterDraft.officials.map((item, idx) =>
-                                idx === i ? { ...item, role: e.target.value } : item
-                              );
-                              setRosterDraft({ ...rosterDraft, officials: updated });
-                            }}
-                            className="w-full px-2 py-1 bg-slate-50 border border-slate-200 rounded text-[11px]"
-                          />
+                      <div key={off.id || i} className="bg-white p-3 rounded-xl border border-slate-200 space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[10px] font-bold text-blue-800">Official #{i + 1}</span>
+                          <button
+                            type="button"
+                            onClick={() => triggerRosterPhotoUpload({ type: 'official', index: i })}
+                            className="px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-bold rounded flex items-center gap-1 transition-colors"
+                          >
+                            <Camera className="w-3 h-3 text-slate-500" />
+                            <span>{off.photo ? 'Ganti Foto' : 'Unggah Foto'}</span>
+                          </button>
+                        </div>
+                        <div className="flex items-start gap-2.5">
+                          <div
+                            onClick={() => triggerRosterPhotoUpload({ type: 'official', index: i })}
+                            className="w-10 h-12 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0 cursor-pointer overflow-hidden group hover:border-blue-500 relative"
+                            title="Klik untuk unggah pasfoto official"
+                          >
+                            {off.photo ? (
+                              <img src={off.photo} alt={off.name} className="w-full h-full object-cover" />
+                            ) : (
+                              <User className="w-4 h-4 text-slate-400 group-hover:text-blue-500" />
+                            )}
+                            <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                              <Camera className="w-3.5 h-3.5 text-white" />
+                            </div>
+                          </div>
+                          <div className="flex-1 space-y-1.5 min-w-0">
+                            <input
+                              type="text"
+                              placeholder="Nama Official / Pembina"
+                              value={off.name}
+                              onChange={e => {
+                                const updated = rosterDraft.officials.map((item, idx) =>
+                                  idx === i ? { ...item, name: e.target.value } : item
+                                );
+                                setRosterDraft({ ...rosterDraft, officials: updated });
+                              }}
+                              className="w-full px-2 py-1 bg-slate-50 border border-slate-200 rounded text-xs font-semibold"
+                            />
+                            <div className="grid grid-cols-2 gap-1">
+                              <input
+                                type="text"
+                                placeholder="Nomor WA/Kontak"
+                                value={off.phone}
+                                onChange={e => {
+                                  const updated = rosterDraft.officials.map((item, idx) =>
+                                    idx === i ? { ...item, phone: e.target.value } : item
+                                  );
+                                  setRosterDraft({ ...rosterDraft, officials: updated });
+                                }}
+                                className="w-full px-2 py-1 bg-slate-50 border border-slate-200 rounded text-[11px]"
+                              />
+                              <input
+                                type="text"
+                                placeholder="Peran (misal: Pembina/Pelatih)"
+                                value={off.role}
+                                onChange={e => {
+                                  const updated = rosterDraft.officials.map((item, idx) =>
+                                    idx === i ? { ...item, role: e.target.value } : item
+                                  );
+                                  setRosterDraft({ ...rosterDraft, officials: updated });
+                                }}
+                                className="w-full px-2 py-1 bg-slate-50 border border-slate-200 rounded text-[11px]"
+                              />
+                            </div>
+                          </div>
                         </div>
                       </div>
                     ))
@@ -1489,33 +1585,34 @@ export default function ParticipantDashboard() {
                 <span className="text-[10px] text-slate-500 block truncate">{currentTeam.files?.schoolLogo?.name}</span>
               </div>
 
-              {/* 2. Pasfoto 25 Personel */}
-              <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-black uppercase text-slate-800">Pasfoto Personel (Merah/Biru)</span>
+              {/* 2. Informasi Pasfoto Personel & Official */}
+              <div className="bg-blue-50/70 border border-blue-200 rounded-2xl p-5 space-y-3 flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-black uppercase text-blue-950 flex items-center gap-1.5">
+                      <Users className="w-4 h-4 text-blue-700" />
+                      <span>Pasfoto Personel & Official (3x4)</span>
+                    </span>
+                    <span className="text-[10px] font-bold bg-blue-100 text-blue-800 border border-blue-200 px-2 py-0.5 rounded-full">
+                      Terintegrasi Roster
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-600 leading-relaxed">
+                    Pasfoto Komandan, 21 Pasukan Inti, 3 Cadangan, dan 2 Official diunggah langsung per individu di menu <strong>Susunan Personel</strong>.
+                  </p>
+                </div>
+                <div className="pt-3 border-t border-blue-100 flex items-center justify-between">
+                  <span className="text-[11px] text-blue-900 font-semibold">
+                    Merah (SD) / Biru (SMP)
+                  </span>
                   <button
-                    onClick={() => triggerFileUpload('personnelPhotos')}
-                    className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-lg transition-all flex items-center gap-1.5"
+                    onClick={() => setActiveTab('roster')}
+                    className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-lg transition-all flex items-center gap-1 shadow-xs"
                   >
-                    <Upload className="w-3.5 h-3.5" />
-                    <span>Unggah Pasfoto</span>
+                    <span>Buka Roster Personel</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
                   </button>
                 </div>
-                <div className="h-28 bg-white rounded-xl border border-slate-200 flex items-center justify-center overflow-hidden p-2">
-                  {currentTeam.files?.personnelPhotos?.url && (currentTeam.files.personnelPhotos.url.startsWith('data:image') || currentTeam.files.personnelPhotos.url.includes('drive.google.com')) ? (
-                    <a href={currentTeam.files.personnelPhotos.url} target="_blank" rel="noopener noreferrer">
-                      <img
-                        src={formatImageUrl(currentTeam.files.personnelPhotos.url)}
-                        alt="Pasfoto"
-                        referrerPolicy="no-referrer"
-                        className="h-full object-contain hover:scale-105 transition-transform"
-                      />
-                    </a>
-                  ) : (
-                    <span className="text-xs text-slate-500 font-bold">{currentTeam.files?.personnelPhotos?.name || 'File Pasfoto (ZIP/JPG)'}</span>
-                  )}
-                </div>
-                <span className="text-[10px] text-slate-500 block truncate">{currentTeam.files?.personnelPhotos?.name}</span>
               </div>
 
               {/* 3. Surat Rekomendasi */}
@@ -1574,6 +1671,64 @@ export default function ParticipantDashboard() {
                   )}
                 </div>
                 <span className="text-[10px] text-slate-500 block truncate">{currentTeam.files?.paymentProof?.name}</span>
+              </div>
+
+              {/* 5. Kartu Pelajar Komandan */}
+              <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-black uppercase text-slate-800">Kartu Pelajar Komandan</span>
+                  <button
+                    onClick={() => triggerFileUpload('dantonCard')}
+                    className="px-3 py-1.5 bg-red-700 hover:bg-red-800 text-white text-xs font-bold rounded-lg transition-all flex items-center gap-1.5"
+                  >
+                    <Upload className="w-3.5 h-3.5" />
+                    <span>Unggah Kartu</span>
+                  </button>
+                </div>
+                <div className="h-28 bg-white rounded-xl border border-slate-200 flex items-center justify-center overflow-hidden p-2">
+                  {currentTeam.files?.dantonCard?.url && (currentTeam.files.dantonCard.url.startsWith('data:image') || currentTeam.files.dantonCard.url.includes('drive.google.com')) ? (
+                    <a href={currentTeam.files.dantonCard.url} target="_blank" rel="noopener noreferrer">
+                      <img
+                        src={formatImageUrl(currentTeam.files.dantonCard.url)}
+                        alt="Kartu Pelajar Komandan"
+                        referrerPolicy="no-referrer"
+                        className="h-full object-contain hover:scale-105 transition-transform"
+                      />
+                    </a>
+                  ) : (
+                    <span className="text-xs text-red-700 font-bold">{currentTeam.files?.dantonCard?.name || 'Kartu_Pelajar_Danton.jpg'}</span>
+                  )}
+                </div>
+                <span className="text-[10px] text-slate-500 block truncate">{currentTeam.files?.dantonCard?.name}</span>
+              </div>
+
+              {/* 6. KTP Official / Pelatih */}
+              <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-black uppercase text-slate-800">KTP Official / Pelatih</span>
+                  <button
+                    onClick={() => triggerFileUpload('officialKtp')}
+                    className="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold rounded-lg transition-all flex items-center gap-1.5"
+                  >
+                    <Upload className="w-3.5 h-3.5" />
+                    <span>Unggah KTP</span>
+                  </button>
+                </div>
+                <div className="h-28 bg-white rounded-xl border border-slate-200 flex items-center justify-center overflow-hidden p-2">
+                  {currentTeam.files?.officialKtp?.url && (currentTeam.files.officialKtp.url.startsWith('data:image') || currentTeam.files.officialKtp.url.includes('drive.google.com')) ? (
+                    <a href={currentTeam.files.officialKtp.url} target="_blank" rel="noopener noreferrer">
+                      <img
+                        src={formatImageUrl(currentTeam.files.officialKtp.url)}
+                        alt="KTP Official"
+                        referrerPolicy="no-referrer"
+                        className="h-full object-contain hover:scale-105 transition-transform"
+                      />
+                    </a>
+                  ) : (
+                    <span className="text-xs text-amber-700 font-bold">{currentTeam.files?.officialKtp?.name || 'KTP_Official.jpg'}</span>
+                  )}
+                </div>
+                <span className="text-[10px] text-slate-500 block truncate">{currentTeam.files?.officialKtp?.name}</span>
               </div>
             </div>
           </div>

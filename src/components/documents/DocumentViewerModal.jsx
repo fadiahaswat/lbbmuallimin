@@ -195,35 +195,35 @@ export default function DocumentViewerModal({ isOpen, onClose, data }) {
                 <tbody>
                   <tr>
                     <td className="border border-slate-300 p-2 font-bold bg-slate-50 w-1/3">Nama Sekolah/Madrasah</td>
-                    <td className="border border-slate-300 p-2 font-bold text-slate-900">{team?.schoolName || 'MTs Mu\'allimin Yogyakarta'}</td>
+                    <td className="border border-slate-300 p-2 font-bold text-slate-900">{team?.schoolName || '-'}</td>
                   </tr>
                   <tr>
                     <td className="border border-slate-300 p-2 font-bold bg-slate-50">Jenjang Pendidikan</td>
-                    <td className="border border-slate-300 p-2">{team?.jenjang || 'SMP/MTs'}</td>
+                    <td className="border border-slate-300 p-2">{team?.jenjang || '-'}</td>
                   </tr>
                   <tr>
                     <td className="border border-slate-300 p-2 font-bold bg-slate-50">Nama Peleton</td>
-                    <td className="border border-slate-300 p-2">{team?.platoonName || 'Laskar Mentari'}</td>
+                    <td className="border border-slate-300 p-2">{team?.platoonName || '-'}</td>
                   </tr>
                   <tr>
                     <td className="border border-slate-300 p-2 font-bold bg-slate-50">Kategori Peleton</td>
-                    <td className="border border-slate-300 p-2">{team?.category || 'Putra'}</td>
+                    <td className="border border-slate-300 p-2">{team?.category || '-'}</td>
                   </tr>
                   <tr>
                     <td className="border border-slate-300 p-2 font-bold bg-slate-50">Nama Pembina / Official</td>
-                    <td className="border border-slate-300 p-2">{team?.coachName || 'Bpk. Ahmad Fauzi, S.Pd.'}</td>
+                    <td className="border border-slate-300 p-2">{team?.coachName || '-'}</td>
                   </tr>
                   <tr>
                     <td className="border border-slate-300 p-2 font-bold bg-slate-50">No. WhatsApp / HP</td>
-                    <td className="border border-slate-300 p-2 font-mono">{team?.waNumber || '081234567890'}</td>
+                    <td className="border border-slate-300 p-2 font-mono">{team?.waNumber || '-'}</td>
                   </tr>
                   <tr>
                     <td className="border border-slate-300 p-2 font-bold bg-slate-50">Email Resmi</td>
-                    <td className="border border-slate-300 p-2">{team?.email || 'official@smpmuh1.sch.id'}</td>
+                    <td className="border border-slate-300 p-2">{team?.email || '-'}</td>
                   </tr>
                   <tr>
                     <td className="border border-slate-300 p-2 font-bold bg-slate-50">Status Pendaftaran</td>
-                    <td className="border border-slate-300 p-2 uppercase font-bold text-emerald-700">{team?.status || 'TERVERIFIKASI'}</td>
+                    <td className="border border-slate-300 p-2 uppercase font-bold text-emerald-700">{team?.status || '-'}</td>
                   </tr>
                 </tbody>
               </table>
@@ -240,7 +240,7 @@ export default function DocumentViewerModal({ isOpen, onClose, data }) {
                   <p>Yogyakarta, {new Date().toLocaleDateString('id-ID')}</p>
                   <p className="font-bold mt-1">Pembina Peleton,</p>
                   <div className="h-16"></div>
-                  <p className="font-bold underline">( {team?.coachName || 'Bpk. Ahmad Fauzi, S.Pd.'} )</p>
+                  <p className="font-bold underline">( {team?.coachName || '....................................................'} )</p>
                 </div>
               </div>
             </div>
@@ -252,7 +252,7 @@ export default function DocumentViewerModal({ isOpen, onClose, data }) {
               <div className="text-center mb-4">
                 <h3 className="font-black text-base sm:text-lg uppercase underline">FORMULIR B: DAFTAR SUSUNAN 25 PERSONEL PELETON</h3>
                 <p className="font-bold text-xs text-slate-600">
-                  {team?.schoolName || 'MTs Mu\'allimin Yogyakarta'} ({team?.regCode || 'LBB26-SMP-001'})
+                  {team?.schoolName || '-'} {team?.regCode ? `(${team.regCode})` : ''}
                 </p>
               </div>
 
@@ -260,11 +260,11 @@ export default function DocumentViewerModal({ isOpen, onClose, data }) {
               <div className="border border-slate-300 rounded-xl p-3 bg-slate-50 flex items-center justify-between">
                 <div>
                   <span className="text-[10px] font-black uppercase text-red-700 block">Komandan Peleton (Danton):</span>
-                  <span className="font-bold text-sm text-slate-900">{team?.roster?.danton?.name || 'M. Rasyid Al-Fath'}</span>
+                  <span className="font-bold text-sm text-slate-900">{team?.roster?.danton?.name || '-'}</span>
                 </div>
                 <div className="text-right text-[11px] text-slate-500">
-                  <span>NISN: <strong>{team?.roster?.danton?.nisn || '0098237461'}</strong></span> • 
-                  <span> Kelas: <strong>{team?.roster?.danton?.class || 'IX-A'}</strong></span>
+                  <span>NISN: <strong>{team?.roster?.danton?.nisn || '-'}</strong></span> • 
+                  <span> Kelas: <strong>{team?.roster?.danton?.class || '-'}</strong></span>
                 </div>
               </div>
 

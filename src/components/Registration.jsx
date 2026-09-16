@@ -21,7 +21,9 @@ import {
   Phone,
   Instagram,
   Globe,
-  Video
+  Video,
+  CreditCard,
+  School
 } from 'lucide-react';
 import { EVENT, COMPETITION, PAYMENT, REGISTRATION, CONTACT, SOCIAL, CLIPBOARD } from '../config.js';
 import { useCompetition } from '../context/CompetitionContext.jsx';
@@ -125,34 +127,39 @@ export default function Registration() {
           </p>
         </div>
 
-        {/* Countdown Timer Urgency Banner & Realtime Slot Info */}
-        <div className="max-w-2xl mx-auto mb-12 p-6 sm:p-7 bg-slate-900 border border-slate-800 rounded-2xl shadow-xl shadow-slate-950/30 text-center relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-48 h-48 bg-red-700/10 rounded-full blur-3xl pointer-events-none"></div>
-          <div className="absolute bottom-0 left-0 w-48 h-48 bg-yellow-500/10 rounded-full blur-3xl pointer-events-none"></div>
-          <div className="relative z-10 space-y-5">
-            <CountdownTimer />
+        {/* Countdown Timer Urgency Banner & Realtime Slot Info (Terpisah Rapi) */}
+        <div className="max-w-2xl mx-auto mb-12 space-y-4">
+          {/* Card 1: Countdown Timer */}
+          <div className="p-6 sm:p-7 bg-slate-900 border border-slate-800 rounded-3xl shadow-xl shadow-slate-950/30 text-center relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-48 h-48 bg-red-700/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-yellow-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div className="relative z-10">
+              <CountdownTimer />
+            </div>
+          </div>
 
-            {/* Micro Bar: Informasi Slot Kuota Tersisa */}
-            <div className="pt-4 border-t border-slate-800/80">
-              <div className="flex items-center justify-between gap-2 mb-2.5">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-                  <Users className="w-3.5 h-3.5 text-yellow-400" />
+          {/* Card 2: Informasi Slot Kuota Peleton */}
+          <div className="p-5 sm:p-6 bg-slate-900 border border-slate-800 rounded-3xl shadow-xl shadow-slate-950/20 text-center relative overflow-hidden">
+            <div className="relative z-10 space-y-3.5">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-2 border-b border-slate-800 pb-3">
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
+                  <Users className="w-4 h-4 text-yellow-400" />
                   <span>Informasi Slot Kuota Peleton</span>
                 </span>
-                <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-emerald-950/80 border border-emerald-500/30 text-emerald-400">
+                <span className="text-[10px] font-black uppercase px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-500/30 text-emerald-400">
                   Total Tersisa: {totalRemaining} / {totalTargetSD + totalTargetSMP} Peleton
                 </span>
               </div>
 
-              <div className="grid grid-cols-2 gap-2.5 sm:gap-3 text-left">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-left">
                 {/* Slot SD */}
-                <div className="p-2.5 sm:p-3 rounded-xl bg-slate-950/60 border border-slate-800 flex items-center justify-between">
+                <div className="p-3.5 rounded-2xl bg-slate-950/60 border border-slate-800/80 flex items-center justify-between">
                   <div>
-                    <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block">
+                    <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block mb-0.5">
                       Tingkat SD / MI
                     </span>
-                    <span className="text-xs sm:text-sm font-black text-white">
-                      Tersisa <span className="text-yellow-400 font-mono text-sm sm:text-base">{remainingSD}</span> Slot
+                    <span className="text-sm sm:text-base font-black text-white">
+                      Tersisa <span className="text-yellow-400 font-mono text-base sm:text-lg">{remainingSD}</span> Slot
                     </span>
                   </div>
                   <div className="text-right">
@@ -162,13 +169,13 @@ export default function Registration() {
                 </div>
 
                 {/* Slot SMP */}
-                <div className="p-2.5 sm:p-3 rounded-xl bg-slate-950/60 border border-slate-800 flex items-center justify-between">
+                <div className="p-3.5 rounded-2xl bg-slate-950/60 border border-slate-800/80 flex items-center justify-between">
                   <div>
-                    <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block">
+                    <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block mb-0.5">
                       Tingkat SMP / MTs
                     </span>
-                    <span className="text-xs sm:text-sm font-black text-white">
-                      Tersisa <span className="text-yellow-400 font-mono text-sm sm:text-base">{remainingSMP}</span> Slot
+                    <span className="text-sm sm:text-base font-black text-white">
+                      Tersisa <span className="text-yellow-400 font-mono text-base sm:text-lg">{remainingSMP}</span> Slot
                     </span>
                   </div>
                   <div className="text-right">
@@ -735,25 +742,25 @@ export default function Registration() {
                 </div>
               </div>
 
-              {/* 2x2 Grid of Document Cards */}
-              <div className="grid sm:grid-cols-2 gap-4">
+              {/* Grid of Document Cards (6 Cards: Rekomendasi, Bukti Transfer, Kartu Pelajar, KTP Official, Pasfoto, Logo Sekolah) */}
+              <div className="grid sm:grid-cols-2 gap-3.5">
                 {/* Doc 1: Surat Rekomendasi */}
                 <div className="bg-slate-50/80 hover:bg-white p-4 rounded-2xl border border-slate-100 hover:border-slate-200 hover:shadow-md transition-all flex flex-col justify-between">
                   <div>
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="w-9 h-9 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center shadow-xs">
+                    <div className="flex items-center justify-between mb-2.5">
+                      <div className="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center shadow-xs">
                         <FileSignature className="w-4 h-4" />
                       </div>
                       <span className="text-[10px] font-black uppercase tracking-wider text-blue-700 bg-blue-50 border border-blue-100 px-2 py-0.5 rounded-lg">
                         PDF / JPG
                       </span>
                     </div>
-                    <h5 className="font-black text-slate-900 text-sm mb-1">Surat Rekomendasi</h5>
-                    <p className="text-xs text-slate-500 leading-relaxed">
+                    <h5 className="font-black text-slate-900 text-xs sm:text-sm mb-1">Surat Rekomendasi</h5>
+                    <p className="text-[11px] text-slate-500 leading-relaxed">
                       Dari Kepala Sekolah / Madrasah asli dengan tanda tangan & stempel basah.
                     </p>
                   </div>
-                  <div className="mt-3 pt-2 border-t border-slate-200/50 text-[10px] text-slate-400 font-medium">
+                  <div className="mt-2.5 pt-2 border-t border-slate-200/50 text-[10px] text-slate-400 font-medium">
                     Maks. 2 MB
                   </div>
                 </div>
@@ -761,62 +768,104 @@ export default function Registration() {
                 {/* Doc 2: Bukti Transfer */}
                 <div className="bg-slate-50/80 hover:bg-white p-4 rounded-2xl border border-slate-100 hover:border-slate-200 hover:shadow-md transition-all flex flex-col justify-between">
                   <div>
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shadow-xs">
+                    <div className="flex items-center justify-between mb-2.5">
+                      <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shadow-xs">
                         <ImageIcon className="w-4 h-4" />
                       </div>
                       <span className="text-[10px] font-black uppercase tracking-wider text-emerald-700 bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded-lg">
                         JPG / PNG
                       </span>
                     </div>
-                    <h5 className="font-black text-slate-900 text-sm mb-1">Bukti Transfer Biaya</h5>
-                    <p className="text-xs text-slate-500 leading-relaxed">
+                    <h5 className="font-black text-slate-900 text-xs sm:text-sm mb-1">Bukti Transfer Biaya</h5>
+                    <p className="text-[11px] text-slate-500 leading-relaxed">
                       Foto/Scan struk atau screenshot m-banking jelas dengan nominal sesuai gelombang.
                     </p>
                   </div>
-                  <div className="mt-3 pt-2 border-t border-slate-200/50 text-[10px] text-slate-400 font-medium">
+                  <div className="mt-2.5 pt-2 border-t border-slate-200/50 text-[10px] text-slate-400 font-medium">
                     Maks. 2 MB
                   </div>
                 </div>
 
-                {/* Doc 3: Foto Personel */}
+                {/* Doc 3: Kartu Pelajar Komandan */}
                 <div className="bg-slate-50/80 hover:bg-white p-4 rounded-2xl border border-slate-100 hover:border-slate-200 hover:shadow-md transition-all flex flex-col justify-between">
                   <div>
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="w-9 h-9 rounded-xl bg-red-100 text-red-700 flex items-center justify-center shadow-xs">
-                        <Users className="w-4 h-4" />
+                    <div className="flex items-center justify-between mb-2.5">
+                      <div className="w-8 h-8 rounded-xl bg-red-100 text-red-700 flex items-center justify-center shadow-xs">
+                        <CreditCard className="w-4 h-4" />
                       </div>
                       <span className="text-[10px] font-black uppercase tracking-wider text-red-700 bg-red-50 border border-red-100 px-2 py-0.5 rounded-lg">
-                        Foto 3×4
+                        Foto / PDF
                       </span>
                     </div>
-                    <h5 className="font-black text-slate-900 text-sm mb-1">Pasfoto Seluruh Personil</h5>
-                    <p className="text-xs text-slate-500 leading-relaxed">
-                      Latar <span className="text-red-700 font-bold">Merah (SD)</span> atau <span className="text-blue-700 font-bold">Biru (SMP)</span> dengan seragam resmi.
+                    <h5 className="font-black text-slate-900 text-xs sm:text-sm mb-1">Kartu Pelajar Komandan</h5>
+                    <p className="text-[11px] text-slate-500 leading-relaxed">
+                      Scan/Foto Kartu Pelajar sah Komandan Peleton (Danton) pangkalan sekolah bersangkutan.
                     </p>
                   </div>
-                  <div className="mt-3 pt-2 border-t border-slate-200/50 text-[10px] text-slate-400 font-medium">
-                    25 Personil Lengkap
+                  <div className="mt-2.5 pt-2 border-t border-slate-200/50 text-[10px] text-slate-400 font-medium">
+                    Maks. 3 MB
                   </div>
                 </div>
 
-                {/* Doc 4: Logo Sekolah & Tonti */}
+                {/* Doc 4: KTP Official / Pelatih */}
                 <div className="bg-slate-50/80 hover:bg-white p-4 rounded-2xl border border-slate-100 hover:border-slate-200 hover:shadow-md transition-all flex flex-col justify-between">
                   <div>
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="w-9 h-9 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center shadow-xs">
-                        <Shield className="w-4 h-4" />
+                    <div className="flex items-center justify-between mb-2.5">
+                      <div className="w-8 h-8 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center shadow-xs">
+                        <UserCheck className="w-4 h-4" />
+                      </div>
+                      <span className="text-[10px] font-black uppercase tracking-wider text-amber-700 bg-amber-50 border border-amber-100 px-2 py-0.5 rounded-lg">
+                        Foto / PDF
+                      </span>
+                    </div>
+                    <h5 className="font-black text-slate-900 text-xs sm:text-sm mb-1">KTP Official / Pelatih</h5>
+                    <p className="text-[11px] text-slate-500 leading-relaxed">
+                      Scan/Foto KTP asli Official atau Pelatih pendamping resmi peleton sekolah.
+                    </p>
+                  </div>
+                  <div className="mt-2.5 pt-2 border-t border-slate-200/50 text-[10px] text-slate-400 font-medium">
+                    Maks. 3 MB
+                  </div>
+                </div>
+
+                {/* Doc 5: Pasfoto Personel */}
+                <div className="bg-slate-50/80 hover:bg-white p-4 rounded-2xl border border-slate-100 hover:border-slate-200 hover:shadow-md transition-all flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between mb-2.5">
+                      <div className="w-8 h-8 rounded-xl bg-blue-100 text-blue-800 flex items-center justify-center shadow-xs">
+                        <Users className="w-4 h-4" />
+                      </div>
+                      <span className="text-[10px] font-black uppercase tracking-wider text-blue-800 bg-blue-50 border border-blue-100 px-2 py-0.5 rounded-lg">
+                        Foto 3×4
+                      </span>
+                    </div>
+                    <h5 className="font-black text-slate-900 text-xs sm:text-sm mb-1">Pasfoto Personel & Official</h5>
+                    <p className="text-[11px] text-slate-500 leading-relaxed">
+                      Latar <span className="text-red-700 font-bold">Merah (SD)</span> atau <span className="text-blue-700 font-bold">Biru (SMP)</span>. Diunggah langsung per nama di menu Susunan Personel portal.
+                    </p>
+                  </div>
+                  <div className="mt-2.5 pt-2 border-t border-slate-200/50 text-[10px] text-slate-400 font-medium">
+                    Diinput di Menu Personel
+                  </div>
+                </div>
+
+                {/* Doc 6: Logo Sekolah */}
+                <div className="bg-slate-50/80 hover:bg-white p-4 rounded-2xl border border-slate-100 hover:border-slate-200 hover:shadow-md transition-all flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between mb-2.5">
+                      <div className="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center shadow-xs">
+                        <School className="w-4 h-4" />
                       </div>
                       <span className="text-[10px] font-black uppercase tracking-wider text-purple-700 bg-purple-50 border border-purple-100 px-2 py-0.5 rounded-lg">
                         PNG Transparan
                       </span>
                     </div>
-                    <h5 className="font-black text-slate-900 text-sm mb-1">Logo Sekolah & Tonti</h5>
-                    <p className="text-xs text-slate-500 leading-relaxed">
+                    <h5 className="font-black text-slate-900 text-xs sm:text-sm mb-1">Logo Sekolah</h5>
+                    <p className="text-[11px] text-slate-500 leading-relaxed">
                       Format PNG transparan resolusi tinggi (tidak pecah) untuk keperluan piagam & backdrop.
                     </p>
                   </div>
-                  <div className="mt-3 pt-2 border-t border-slate-200/50 text-[10px] text-slate-400 font-medium">
+                  <div className="mt-2.5 pt-2 border-t border-slate-200/50 text-[10px] text-slate-400 font-medium">
                     HD Resolution
                   </div>
                 </div>

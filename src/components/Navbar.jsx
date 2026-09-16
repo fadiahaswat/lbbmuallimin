@@ -217,8 +217,10 @@ export default function Navbar({ onOpenMobileMenu }) {
                   }}
                 />
                 <div className="text-left">
-                  <div className="text-xs font-bold truncate max-w-[110px] leading-tight">
-                    {currentUser.name.split(' ')[0]}
+                  <div className="text-xs font-bold truncate max-w-[130px] leading-tight" title={currentUser.role === 'peserta' ? (currentUser.schoolName || currentUser.name) : currentUser.name}>
+                    {currentUser.role === 'peserta'
+                      ? (currentUser.schoolName || currentUser.name)
+                      : (currentUser.name ? currentUser.name.split(' ')[0] : 'Staff')}
                   </div>
                   <div className="text-[10px] uppercase font-extrabold text-yellow-400 leading-tight">
                     {currentUser.role}
@@ -237,11 +239,16 @@ export default function Navbar({ onOpenMobileMenu }) {
                         isSchoolLogo ? 'object-contain bg-white p-0.5' : 'object-cover'
                       }`}
                       onError={(e) => {
-                        e.target.src = currentUser.googleAvatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.name)}&background=8B0000&color=fff`;
+                        e.target.src = currentUser.googleAvatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.schoolName || currentUser.name)}&background=8B0000&color=fff`;
                       }}
                     />
                     <div className="min-w-0">
-                      <p className="font-bold text-white truncate">{currentUser.name}</p>
+                      <p className="font-bold text-white truncate">
+                        {currentUser.role === 'peserta' ? (currentUser.schoolName || currentUser.name) : currentUser.name}
+                      </p>
+                      {currentUser.role === 'peserta' && currentUser.name && currentUser.name !== currentUser.schoolName && (
+                        <p className="text-[10px] text-slate-400 truncate">Official: {currentUser.name}</p>
+                      )}
                       <p className="text-[11px] text-slate-400 truncate">{currentUser.email}</p>
                       <span className="inline-block mt-0.5 text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-md bg-yellow-400/20 text-yellow-400 border border-yellow-400/30">
                         {currentUser.roleLabel || currentUser.role}
@@ -258,29 +265,33 @@ export default function Navbar({ onOpenMobileMenu }) {
                     <span>Buka Portal Dashboard</span>
                   </button>
 
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsUserDropdownOpen(false);
-                      setActiveView('staging');
-                    }}
-                    className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-white/10 text-left transition-colors text-slate-200 cursor-pointer"
-                  >
-                    <ShieldCheck className="w-4 h-4 text-indigo-400 shrink-0" />
-                    <span>Operator Lapangan & Staging</span>
-                  </button>
+                  {currentUser.role !== 'peserta' && (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsUserDropdownOpen(false);
+                          setActiveView('staging');
+                        }}
+                        className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-white/10 text-left transition-colors text-slate-200 cursor-pointer"
+                      >
+                        <ShieldCheck className="w-4 h-4 text-indigo-400 shrink-0" />
+                        <span>Operator Lapangan & Staging</span>
+                      </button>
 
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsUserDropdownOpen(false);
-                      setActiveView('juri');
-                    }}
-                    className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-white/10 text-left transition-colors text-slate-200 cursor-pointer"
-                  >
-                    <Award className="w-4 h-4 text-emerald-400 shrink-0" />
-                    <span>E-Scoring Juri LBB</span>
-                  </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsUserDropdownOpen(false);
+                          setActiveView('juri');
+                        }}
+                        className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-white/10 text-left transition-colors text-slate-200 cursor-pointer"
+                      >
+                        <Award className="w-4 h-4 text-emerald-400 shrink-0" />
+                        <span>E-Scoring Juri LBB</span>
+                      </button>
+                    </>
+                  )}
 
                   <div className="border-t border-slate-800 my-1"></div>
 

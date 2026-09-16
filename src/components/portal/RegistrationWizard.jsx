@@ -28,7 +28,9 @@ import {
   Sparkles,
   Shield,
   FileCheck,
-  ChevronDown
+  ChevronDown,
+  MessageCircle,
+  Phone
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
 import { PAYMENT, CONTACT, SITE } from '../../config.js';
@@ -54,7 +56,9 @@ export default function RegistrationWizard({ isOpen, onClose }) {
     email: '', // 1. Email aktif untuk akun
     jenjang: '', // 2. Jenjang sekolah SD apa SMP (default: belum dipilih)
     schoolName: '', // 3. Nama Sekolah
-    teamUnit: 'Tim A', // Pembeda Peleton: 'Tim A' | 'Tim B' | 'Tunggal'
+    teamUnit: 'Tunggal', // Pembeda Peleton: 'Tunggal' | 'Tim A' | 'Tim B'
+    schoolRegion: 'Kota Yogyakarta', // Daerah di D.I. Yogyakarta
+    schoolAddress: '', // Alamat Lengkap Sekolah
     teamType: '', // 5. Homogen apa Heterogen (default: belum dipilih)
     homogenGender: '', // Pilihan jika homogen: Putra | Putri (default: belum dipilih)
     dantonName: '', // 6. Nama Komandan
@@ -96,6 +100,7 @@ export default function RegistrationWizard({ isOpen, onClose }) {
 
   // Submission result
   const [createdTeam, setCreatedTeam] = useState(null);
+  const [showWhatsAppModal, setShowWhatsAppModal] = useState(false);
 
   // Helper to validate and compress uploaded files (Security Checklist #19)
   const MAX_IMAGE_SIZE = 3 * 1024 * 1024; // 3 MB
@@ -130,13 +135,14 @@ export default function RegistrationWizard({ isOpen, onClose }) {
         return;
       }
 
-      // If it's an image, scale down to max 800px and compress to JPEG 0.75
-      if (file.type && file.type.startsWith('image/')) {
+      // If it's an image (either by MIME type or extension)
+      const isImgFile = (file.type && file.type.startsWith('image/')) || ALLOWED_IMAGE_EXTS.includes(ext);
+      if (isImgFile) {
         const reader = new FileReader();
         reader.onload = (e) => {
           const img = new Image();
           img.onload = () => {
-            const MAX_DIM = 800;
+            const MAX_DIM = 1200;
             let width = img.width;
             let height = img.height;
 
@@ -303,6 +309,10 @@ export default function RegistrationWizard({ isOpen, onClose }) {
       setValidationError('Nama lengkap sekolah wajib diisi.');
       return false;
     }
+    if (!formData.schoolAddress.trim()) {
+      setValidationError('Alamat lengkap sekolah wajib diisi.');
+      return false;
+    }
     if (!files.schoolLogo) {
       setValidationError('Logo sekolah wajib diunggah.');
       return false;
@@ -330,6 +340,15 @@ export default function RegistrationWizard({ isOpen, onClose }) {
     }
     if (!formData.officialName.trim()) {
       setValidationError('Nama Official / Pelatih wajib diisi.');
+      return false;
+    }
+    if (!formData.waNumber.trim()) {
+      setValidationError('Nomor WhatsApp Official / Pelatih (Aktif) wajib diisi.');
+      return false;
+    }
+    const cleanDigits = formData.waNumber.replace(/\D/g, '');
+    if (cleanDigits.length < 9) {
+      setValidationError('Nomor WhatsApp tidak valid. Masukkan nomor WhatsApp aktif minimal 9 digit.');
       return false;
     }
     if (!files.officialKtp) {
@@ -390,12 +409,17 @@ export default function RegistrationWizard({ isOpen, onClose }) {
 
     const finalSchoolName = getFullSchoolName();
 
+    const fullAddress = `${formData.schoolAddress.trim()}, ${formData.schoolRegion}`;
+
     const newTeam = registerTeam({
       email: formData.email,
       jenjang: formData.jenjang,
       schoolName: finalSchoolName,
       schoolBaseName: formData.schoolName.trim(),
       teamUnit: formData.teamUnit,
+      address: fullAddress,
+      schoolAddress: formData.schoolAddress.trim(),
+      schoolRegion: formData.schoolRegion,
       platoonName: `Pleton ${finalSchoolName}`,
       teamType: teamTypeLabel,
       category: categoryLabel,
@@ -409,6 +433,7 @@ export default function RegistrationWizard({ isOpen, onClose }) {
 
     setCreatedTeam(newTeam);
     setStep(4);
+    setShowWhatsAppModal(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
@@ -626,9 +651,9 @@ export default function RegistrationWizard({ isOpen, onClose }) {
                         onChange={e => setFormData({ ...formData, teamUnit: e.target.value })}
                         className="w-full px-3.5 py-3 bg-slate-50 hover:bg-white border border-slate-200 focus:border-red-600 focus:bg-white focus:ring-2 focus:ring-red-600/10 rounded-xl text-sm font-bold text-slate-900 transition-all outline-none cursor-pointer appearance-none uppercase"
                       >
+                        <option value="Tunggal">Peleton Tunggal</option>
                         <option value="Tim A">Peleton A</option>
                         <option value="Tim B">Peleton B</option>
-                        <option value="Tunggal">Peleton Tunggal</option>
                       </select>
                       <ChevronDown className="w-4 h-4 text-slate-500 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                     </div>
@@ -646,6 +671,45 @@ export default function RegistrationWizard({ isOpen, onClose }) {
                     </span>
                   </div>
                 )}
+
+                {/* Input Alamat Sekolah & Pilihan Wilayah D.I. Yogyakarta */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+                  <div className="sm:col-span-2">
+                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5 flex items-center gap-1.5">
+                      <MapPin className="w-3.5 h-3.5 text-red-600" />
+                      <span>Alamat Lengkap Sekolah <span className="text-red-600 font-bold">*</span></span>
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="Contoh: Jl. Letjen S. Parman No. 68, Patangpuluhan, Wirobrajan"
+                      value={formData.schoolAddress}
+                      onChange={e => setFormData({ ...formData, schoolAddress: e.target.value })}
+                      className="w-full px-4 py-3 bg-slate-50 hover:bg-white border border-slate-200 focus:border-red-600 focus:bg-white focus:ring-2 focus:ring-red-600/10 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 transition-all outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5 flex items-center justify-between">
+                      <span>Wilayah / Daerah <span className="text-red-600 font-bold">*</span></span>
+                    </label>
+                    <div className="relative">
+                      <select
+                        value={formData.schoolRegion}
+                        onChange={e => setFormData({ ...formData, schoolRegion: e.target.value })}
+                        className="w-full px-3.5 py-3 bg-slate-50 hover:bg-white border border-slate-200 focus:border-red-600 focus:bg-white focus:ring-2 focus:ring-red-600/10 rounded-xl text-sm font-bold text-slate-900 transition-all outline-none cursor-pointer appearance-none"
+                      >
+                        <option value="Kota Yogyakarta">Kota Yogyakarta</option>
+                        <option value="Kab. Bantul">Kab. Bantul</option>
+                        <option value="Kab. Sleman">Kab. Sleman</option>
+                        <option value="Kab. Kulon Progo">Kab. Kulon Progo</option>
+                        <option value="Kab. Gunungkidul">Kab. Gunungkidul</option>
+                        <option value="Luar D.I. Yogyakarta">Luar D.I. Yogyakarta</option>
+                      </select>
+                      <ChevronDown className="w-4 h-4 text-slate-500 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    </div>
+                  </div>
+                </div>
               </div>
 
               {/* 4. Upload Logo Sekolah */}
@@ -908,14 +972,32 @@ export default function RegistrationWizard({ isOpen, onClose }) {
                       7. Upload Kartu Pelajar Komandan (Foto / PDF) <span className="text-red-600 font-bold">*</span>
                     </span>
                   </label>
-                  <div className="p-3.5 bg-white border-2 border-dashed border-slate-200 hover:border-red-400 rounded-xl transition-all">
+                  <div className="p-3.5 bg-white border-2 border-dashed border-slate-200 hover:border-red-400 rounded-2xl transition-all">
                     {files.dantonCard ? (
-                      <div className="flex items-center justify-between p-2">
-                        <span className="text-xs font-bold text-slate-900 truncate max-w-sm flex items-center gap-1.5">
-                          <Check className="w-3.5 h-3.5 text-emerald-600 stroke-[3]" />
-                          <span>{files.dantonCard.name} ({files.dantonCard.size})</span>
-                        </span>
-                        <label className="cursor-pointer text-xs font-bold text-red-700 hover:text-red-800 px-3 py-1 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg transition-colors">
+                      <div className="flex items-center justify-between p-2.5 bg-slate-50/80 rounded-xl border border-slate-200">
+                        <div className="flex items-center gap-3 min-w-0">
+                          {files.dantonCard.url && files.dantonCard.url.startsWith('data:image') ? (
+                            <img
+                              src={files.dantonCard.url}
+                              alt="Preview Kartu Pelajar"
+                              className="w-12 h-12 sm:w-14 sm:h-14 object-cover rounded-lg border border-slate-200 shadow-xs shrink-0 bg-white"
+                            />
+                          ) : (
+                            <div className="w-12 h-12 rounded-lg bg-red-100 border border-red-200 flex items-center justify-center text-red-700 shrink-0">
+                              <FileText className="w-6 h-6" />
+                            </div>
+                          )}
+                          <div className="min-w-0 text-left">
+                            <span className="text-xs font-bold text-slate-900 truncate block">
+                              {files.dantonCard.name}
+                            </span>
+                            <span className="text-[11px] text-emerald-600 font-semibold flex items-center gap-1 mt-0.5">
+                              <Check className="w-3.5 h-3.5 stroke-[3]" />
+                              <span>Berhasil diunggah ({files.dantonCard.size})</span>
+                            </span>
+                          </div>
+                        </div>
+                        <label className="cursor-pointer text-xs font-bold text-red-700 hover:text-red-800 px-3.5 py-1.5 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg transition-colors shrink-0 ml-2">
                           Ganti File
                           <input
                             type="file"
@@ -928,7 +1010,7 @@ export default function RegistrationWizard({ isOpen, onClose }) {
                     ) : (
                       <label className="cursor-pointer flex items-center justify-center gap-2 py-3.5 text-xs font-bold text-slate-700 hover:text-red-700 transition-colors">
                         <UploadCloud className="w-4 h-4 text-red-600" />
-                        <span>Pilih Foto Kartu Pelajar Danton</span>
+                        <span>Pilih Foto / PDF Kartu Pelajar Danton</span>
                         <input
                           type="file"
                           accept="image/*,.pdf"
@@ -965,11 +1047,15 @@ export default function RegistrationWizard({ isOpen, onClose }) {
 
                 {/* No WhatsApp Official */}
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
-                    Nomor WhatsApp Official / Pelatih (Aktif)
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5 flex items-center justify-between">
+                    <span>
+                      Nomor WhatsApp Official / Pelatih (Aktif) <span className="text-red-600 font-bold">*</span>
+                    </span>
+                    <span className="text-[10px] text-slate-400 font-normal lowercase">wajib untuk koordinasi</span>
                   </label>
                   <input
                     type="tel"
+                    required
                     placeholder="Contoh: 081234567890"
                     value={formData.waNumber}
                     onChange={e => setFormData({ ...formData, waNumber: e.target.value })}
@@ -985,14 +1071,32 @@ export default function RegistrationWizard({ isOpen, onClose }) {
                       9. Upload KTP Official / Pelatih (Foto / PDF) <span className="text-red-600 font-bold">*</span>
                     </span>
                   </label>
-                  <div className="p-3.5 bg-white border-2 border-dashed border-slate-200 hover:border-red-400 rounded-xl transition-all">
+                  <div className="p-3.5 bg-white border-2 border-dashed border-slate-200 hover:border-red-400 rounded-2xl transition-all">
                     {files.officialKtp ? (
-                      <div className="flex items-center justify-between p-2">
-                        <span className="text-xs font-bold text-slate-900 truncate max-w-sm flex items-center gap-1.5">
-                          <Check className="w-3.5 h-3.5 text-emerald-600 stroke-[3]" />
-                          <span>{files.officialKtp.name} ({files.officialKtp.size})</span>
-                        </span>
-                        <label className="cursor-pointer text-xs font-bold text-red-700 hover:text-red-800 px-3 py-1 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg transition-colors">
+                      <div className="flex items-center justify-between p-2.5 bg-slate-50/80 rounded-xl border border-slate-200">
+                        <div className="flex items-center gap-3 min-w-0">
+                          {files.officialKtp.url && files.officialKtp.url.startsWith('data:image') ? (
+                            <img
+                              src={files.officialKtp.url}
+                              alt="Preview KTP Official"
+                              className="w-12 h-12 sm:w-14 sm:h-14 object-cover rounded-lg border border-slate-200 shadow-xs shrink-0 bg-white"
+                            />
+                          ) : (
+                            <div className="w-12 h-12 rounded-lg bg-red-100 border border-red-200 flex items-center justify-center text-red-700 shrink-0">
+                              <FileText className="w-6 h-6" />
+                            </div>
+                          )}
+                          <div className="min-w-0 text-left">
+                            <span className="text-xs font-bold text-slate-900 truncate block">
+                              {files.officialKtp.name}
+                            </span>
+                            <span className="text-[11px] text-emerald-600 font-semibold flex items-center gap-1 mt-0.5">
+                              <Check className="w-3.5 h-3.5 stroke-[3]" />
+                              <span>Berhasil diunggah ({files.officialKtp.size})</span>
+                            </span>
+                          </div>
+                        </div>
+                        <label className="cursor-pointer text-xs font-bold text-red-700 hover:text-red-800 px-3.5 py-1.5 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg transition-colors shrink-0 ml-2">
                           Ganti File
                           <input
                             type="file"
@@ -1005,7 +1109,7 @@ export default function RegistrationWizard({ isOpen, onClose }) {
                     ) : (
                       <label className="cursor-pointer flex items-center justify-center gap-2 py-3.5 text-xs font-bold text-slate-700 hover:text-red-700 transition-colors">
                         <UploadCloud className="w-4 h-4 text-red-600" />
-                        <span>Pilih Foto KTP Official / Pelatih</span>
+                        <span>Pilih Foto / PDF KTP Official / Pelatih</span>
                         <input
                           type="file"
                           accept="image/*,.pdf"
@@ -1112,12 +1216,30 @@ export default function RegistrationWizard({ isOpen, onClose }) {
                 </label>
                 <div className="p-4 bg-slate-50 border-2 border-dashed border-slate-200 hover:border-red-400 rounded-2xl transition-all">
                   {files.paymentProof ? (
-                    <div className="flex items-center justify-between p-2 bg-white rounded-xl border border-slate-200">
-                      <span className="text-xs font-bold text-slate-900 truncate max-w-sm flex items-center gap-1.5">
-                        <Check className="w-3.5 h-3.5 text-emerald-600 stroke-[3]" />
-                        <span>{files.paymentProof.name} ({files.paymentProof.size})</span>
-                      </span>
-                      <label className="cursor-pointer text-xs font-bold text-red-700 hover:text-red-800 px-3.5 py-1.5 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg transition-colors">
+                    <div className="flex items-center justify-between p-2.5 bg-white rounded-xl border border-slate-200 shadow-xs">
+                      <div className="flex items-center gap-3 min-w-0">
+                        {files.paymentProof.url && files.paymentProof.url.startsWith('data:image') ? (
+                          <img
+                            src={files.paymentProof.url}
+                            alt="Preview Bukti Transfer"
+                            className="w-14 h-14 sm:w-16 sm:h-16 object-cover rounded-lg border border-slate-200 shadow-xs shrink-0 bg-white"
+                          />
+                        ) : (
+                          <div className="w-14 h-14 rounded-lg bg-emerald-100 border border-emerald-200 flex items-center justify-center text-emerald-700 shrink-0">
+                            <FileText className="w-7 h-7" />
+                          </div>
+                        )}
+                        <div className="min-w-0 text-left">
+                          <span className="text-xs font-bold text-slate-900 truncate block">
+                            {files.paymentProof.name}
+                          </span>
+                          <span className="text-[11px] text-emerald-600 font-semibold flex items-center gap-1 mt-0.5">
+                            <Check className="w-3.5 h-3.5 stroke-[3]" />
+                            <span>Bukti transfer berhasil diunggah ({files.paymentProof.size})</span>
+                          </span>
+                        </div>
+                      </div>
+                      <label className="cursor-pointer text-xs font-bold text-red-700 hover:text-red-800 px-3.5 py-1.5 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg transition-colors shrink-0 ml-2">
                         Ganti Bukti
                         <input
                           type="file"
@@ -1370,6 +1492,34 @@ export default function RegistrationWizard({ isOpen, onClose }) {
               </ul>
             </div>
 
+            {/* WhatsApp Confirmation Banner */}
+            <div className="p-4 sm:p-5 bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-50 border-2 border-emerald-500/30 rounded-2xl text-left space-y-3 shadow-xs">
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center shrink-0 shadow-sm">
+                  <MessageCircle className="w-5 h-5 fill-white/20" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-emerald-700 block">
+                    Konfirmasi Cepat Panitia
+                  </span>
+                  <h4 className="text-sm font-black text-slate-900 leading-tight">
+                    Kirim Konfirmasi Pendaftaran ke Kak Rusyda
+                  </h4>
+                  <p className="text-xs text-slate-600 mt-1">
+                    Beri tahu panitia via WhatsApp agar berkas pendaftaran dan verifikasi peleton Anda dapat segera diproses lebih cepat.
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowWhatsAppModal(true)}
+                className="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-black rounded-xl text-xs uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2"
+              >
+                <MessageCircle className="w-4 h-4 fill-white/20" />
+                <span>Kirim WhatsApp ke Kak Rusyda (0812-3009-3737)</span>
+              </button>
+            </div>
+
             {/* Navigation Actions */}
             <div className="flex flex-col sm:flex-row gap-3 pt-2">
               <button
@@ -1391,6 +1541,79 @@ export default function RegistrationWizard({ isOpen, onClose }) {
           </div>
         )}
       </main>
+
+      {/* ================= MODAL KONFIRMASI WHATSAPP KAK RUSYDA ================= */}
+      {showWhatsAppModal && createdTeam && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto animate-in fade-in duration-200">
+          <div className="bg-white border border-slate-200 rounded-3xl max-w-lg w-full p-6 sm:p-7 space-y-5 text-slate-900 shadow-2xl relative">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-emerald-500 text-white flex items-center justify-center shadow-xs">
+                  <MessageCircle className="w-5 h-5 fill-white/20" />
+                </div>
+                <div>
+                  <span className="text-[10px] font-black uppercase tracking-wider text-emerald-700 block">
+                    Konfirmasi WhatsApp
+                  </span>
+                  <h3 className="text-base font-black text-slate-900">
+                    Hubungi Kak Rusyda (Panitia)
+                  </h3>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowWhatsAppModal(false)}
+                className="p-2 text-slate-400 hover:text-slate-700 rounded-xl hover:bg-slate-100 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="space-y-3 text-xs text-slate-600 leading-relaxed">
+              <p>
+                Silakan klik tombol di bawah untuk membuka WhatsApp resmi Kak Rusyda (<strong className="text-slate-900">0812-3009-3737</strong>) dengan pesan konfirmasi yang sudah tersusun otomatis:
+              </p>
+
+              {/* Message Preview Box */}
+              <div className="p-4 bg-emerald-50/70 border border-emerald-200 rounded-2xl text-[11px] font-mono text-emerald-950 whitespace-pre-line leading-relaxed shadow-inner">
+                {`Halo Kak Rusyda (Panitia LBB Mu'allimin 2026),
+Saya *${createdTeam.officialName || 'Official'}* dari *${createdTeam.schoolName}* ingin mengonfirmasi bahwa kami telah menyelesaikan pendaftaran online:
+
+• No. Registrasi: *${createdTeam.regCode}*
+• Asal Sekolah: *${createdTeam.schoolName}*
+• Jenjang / Kategori: *${createdTeam.jenjang} / ${createdTeam.teamType}*
+• Komandan: *${createdTeam.dantonName || '-'}*
+• No. WA Official: *${createdTeam.waNumber || '-'}*
+
+Berkas pendaftaran, bukti transfer, dan pakta integritas online sudah kami unggah di website. Mohon bantuan untuk verifikasi. Terima kasih!`}
+              </div>
+            </div>
+
+            <div className="pt-2 flex flex-col sm:flex-row gap-2.5 border-t border-slate-100">
+              <button
+                type="button"
+                onClick={() => setShowWhatsAppModal(false)}
+                className="py-2.5 px-4 text-xs font-bold text-slate-600 hover:text-slate-900 rounded-xl border border-slate-200 hover:bg-slate-100 transition-colors order-2 sm:order-1"
+              >
+                Tutup / Nanti Saja
+              </button>
+              <a
+                href={`https://wa.me/6281230093737?text=${encodeURIComponent(
+                  `Halo Kak Rusyda (Panitia LBB Mu'allimin 2026),\nSaya *${createdTeam.officialName || 'Official'}* dari *${createdTeam.schoolName}* ingin mengonfirmasi bahwa kami telah menyelesaikan pendaftaran online:\n\n• No. Registrasi: *${createdTeam.regCode}*\n• Asal Sekolah: *${createdTeam.schoolName}*\n• Jenjang / Kategori: *${createdTeam.jenjang} / ${createdTeam.teamType}*\n• Komandan: *${createdTeam.dantonName || '-'}*\n• No. WA Official: *${createdTeam.waNumber || '-'}*\n\nBerkas pendaftaran, bukti transfer, dan pakta integritas online sudah kami unggah di website. Mohon bantuan untuk verifikasi. Terima kasih!`
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setShowWhatsAppModal(false)}
+                className="flex-1 py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs uppercase tracking-wider rounded-xl shadow-md transition-all flex items-center justify-center gap-2 active:scale-95 order-1 sm:order-2"
+              >
+                <MessageCircle className="w-4 h-4 fill-white/20" />
+                <span>Buka WhatsApp Sekarang</span>
+                <ExternalLink className="w-3.5 h-3.5" />
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ================= MODAL PAKTA INTEGRITAS ONLINE ================= */}
       {showPaktaModal && (

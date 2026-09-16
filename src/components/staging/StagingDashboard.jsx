@@ -40,9 +40,9 @@ export default function StagingDashboard() {
   const [selectedJenjang, setSelectedJenjang] = useState('ALL'); // 'ALL' | 'SD' | 'SMP'
   const [activeChecklistTeamId, setActiveChecklistTeamId] = useState(null);
 
-  // Filter verified teams
+  // Filter verified & drawn teams
   const verifiedTeams = teams
-    .filter(t => t.status === 'verified')
+    .filter(t => t.status === 'verified' || t.status === 'drawn')
     .filter(t => selectedJenjang === 'ALL' || t.jenjang === selectedJenjang)
     .sort((a, b) => (a.lotNumber || 99) - (b.lotNumber || 99));
 

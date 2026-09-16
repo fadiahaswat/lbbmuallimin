@@ -519,43 +519,47 @@ export const GOOGLE_AUTH = {
 };
 
 // ---------------------------------------------------------------------------
-// JURY_POSTS – Konfigurasi Pos Dewan Juri (Fase 1: Multi-Jury E-Scoring)
+// JURY_POSTS – Konfigurasi Dewan Juri (1 Pos Lapangan, 3 Dewan Juri)
+// Juri 1: PBB Gerakan Materi Pasukan
+// Juri 2: PBB Gerakan Materi Pasukan
+// Juri 3: Khusus Komandan Peleton (Danton)
 // ---------------------------------------------------------------------------
 export const JURY_POSTS = {
     pos1: {
         id: 'pos1',
-        title: 'Pos 1: Juri PBB Dasar & Gerakan',
-        shortTitle: 'Pos 1 (PBB)',
-        badge: 'TNI / Kodim',
+        title: 'Juri 1: PBB Gerakan Materi Pasukan',
+        shortTitle: 'Juri 1 (PBB)',
+        badge: 'Dewan Juri PBB 1',
         defaultName: 'Mayor (Mar) Bambang S., S.E.',
+        type: 'pbb',
         aspects: [
-            { id: 'teknik', label: 'Teknik Gerakan PBB (Ketepatan & Patah-patah)', weight: 70 },
-            { id: 'kekompakan', label: 'Kekompakan & Keseragaman Pasukan', weight: 30 },
+            { id: 'materi', label: 'Rubrik Gerakan Materi PBB', weight: 100 },
         ],
     },
     pos2: {
         id: 'pos2',
-        title: 'Pos 2: Juri Variasi, Formasi & Kerapian',
-        shortTitle: 'Pos 2 (Vafor)',
-        badge: 'Akademi Militer / Purna Paskibraka',
+        title: 'Juri 2: PBB Gerakan Materi Pasukan',
+        shortTitle: 'Juri 2 (PBB)',
+        badge: 'Dewan Juri PBB 2',
         defaultName: 'Kapten Inf. Hendra Wijaya',
+        type: 'pbb',
         aspects: [
-            { id: 'kreativitas', label: 'Tingkat Kesulitan & Kreativitas Variasi', weight: 40 },
-            { id: 'keindahan', label: 'Keindahan & Estetika Formasi', weight: 35 },
-            { id: 'kostum', label: 'Kerapian Seragam & Atribut', weight: 25 },
+            { id: 'materi', label: 'Rubrik Gerakan Materi PBB', weight: 100 },
         ],
     },
     pos3: {
         id: 'pos3',
-        title: 'Pos 3: Juri Komandan Peleton (Danton)',
-        shortTitle: 'Pos 3 (Danton)',
-        badge: 'Polresta / Korps Danton',
+        title: 'Juri 3: Komandan Peleton (Danton)',
+        shortTitle: 'Juri 3 (Danton)',
+        badge: 'Dewan Juri Danton',
         defaultName: 'AKP Tri Wibowo, S.H.',
+        type: 'danton',
         aspects: [
-            { id: 'penguasaan', label: 'Penguasaan Materi & Urutan Aba-Aba', weight: 35 },
-            { id: 'vokal', label: 'Intonasi, Kejelasan & Volume Vokal', weight: 25 },
-            { id: 'sikap', label: 'Sikap Tampang & Postur Militer', weight: 20 },
-            { id: 'lapangan', label: 'Ketenangan & Penguasaan Medan Lomba', weight: 20 },
+            { id: 'sikap', label: 'Sikap & Penampilan Militer', weight: 20 },
+            { id: 'penguasaanMateri', label: 'Penguasaan Materi Aba-Aba', weight: 25 },
+            { id: 'penguasaanLapangan', label: 'Penguasaan Medan Lomba', weight: 20 },
+            { id: 'ikit', label: 'Irama / Kecepatan / Intonasi / Tempo', weight: 20 },
+            { id: 'volumeSuara', label: 'Kekuatan & Volume Suara', weight: 15 },
         ],
     },
 };

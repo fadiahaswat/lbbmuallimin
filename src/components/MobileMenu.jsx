@@ -105,23 +105,25 @@ export default function MobileMenu({ isOpen, onClose }) {
           })}
         </div>
 
-        {/* Staff & Operasional Lapangan Quick Link */}
-        <div className="mt-4 pt-4 border-t border-white/10 space-y-2">
-          <button
-            type="button"
-            onClick={() => {
-              onClose();
-              setActiveView('staging');
-            }}
-            className="w-full p-3 bg-slate-900 border border-slate-800 hover:border-slate-700 rounded-xl text-left transition-all flex items-center justify-between cursor-pointer"
-          >
-            <div className="flex items-center gap-2.5">
-              <ShieldCheck className="w-4 h-4 text-indigo-400" />
-              <span className="text-xs font-bold text-slate-300">Operator Lapangan & Staging DP</span>
-            </div>
-            <ChevronRight className="w-4 h-4 text-slate-500" />
-          </button>
-        </div>
+        {/* Staff & Operasional Lapangan Quick Link (Hanya untuk Staff/Panitia, bukan Peserta) */}
+        {(!currentUser || currentUser.role !== 'peserta') && (
+          <div className="mt-4 pt-4 border-t border-white/10 space-y-2">
+            <button
+              type="button"
+              onClick={() => {
+                onClose();
+                setActiveView('staging');
+              }}
+              className="w-full p-3 bg-slate-900 border border-slate-800 hover:border-slate-700 rounded-xl text-left transition-all flex items-center justify-between cursor-pointer"
+            >
+              <div className="flex items-center gap-2.5">
+                <ShieldCheck className="w-4 h-4 text-indigo-400" />
+                <span className="text-xs font-bold text-slate-300">Operator Lapangan & Staging DP</span>
+              </div>
+              <ChevronRight className="w-4 h-4 text-slate-500" />
+            </button>
+          </div>
+        )}
 
         <div className="mt-4 pt-4 border-t border-white/10 space-y-2.5">
           {currentUser ? (
@@ -143,8 +145,13 @@ export default function MobileMenu({ isOpen, onClose }) {
                     }}
                   />
                   <div>
-                    <p className="text-sm font-bold text-white leading-tight">{currentUser.name}</p>
-                    <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-md bg-yellow-400/20 text-yellow-300">
+                    <p className="text-sm font-bold text-white leading-tight">
+                      {currentUser.role === 'peserta' ? (currentUser.schoolName || currentUser.name) : currentUser.name}
+                    </p>
+                    {currentUser.role === 'peserta' && currentUser.name && currentUser.name !== currentUser.schoolName && (
+                      <p className="text-[10px] text-slate-400">Official: {currentUser.name}</p>
+                    )}
+                    <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-md bg-yellow-400/20 text-yellow-300 inline-block mt-0.5">
                       {currentUser.roleLabel || currentUser.role}
                     </span>
                   </div>

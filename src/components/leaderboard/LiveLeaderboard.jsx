@@ -25,8 +25,8 @@ export default function LiveLeaderboard() {
   const [isStageMode, setIsStageMode] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Verified teams
-  const verifiedTeams = teams.filter(t => t.status === 'verified');
+  // Verified & drawn teams
+  const verifiedTeams = teams.filter(t => t.status === 'verified' || t.status === 'drawn');
 
   // Filter by jenjang and search
   const filteredTeams = verifiedTeams.filter(t => {
@@ -280,11 +280,12 @@ export default function LiveLeaderboard() {
                   <th className="py-4 px-3 text-center w-16">No. Undi</th>
                   <th className="py-4 px-4">Peleton & Sekolah</th>
                   <th className="py-4 px-3 text-center w-20">Jenjang</th>
-                  <th className="py-4 px-3 text-center w-24">Pos 1 (PBB)</th>
-                  <th className="py-4 px-3 text-center w-24">Pos 2 (Vafor)</th>
-                  <th className="py-4 px-3 text-center w-24">Pos 3 (Danton)</th>
-                  <th className="py-4 px-3 text-center w-24 text-red-400">Penalti</th>
-                  <th className="py-4 px-4 text-right w-32 bg-amber-500/20 text-amber-400">Skor Akhir</th>
+                  <th className="py-4 px-3 text-center w-24">Juri 1 (PBB)</th>
+                  <th className="py-4 px-3 text-center w-24">Juri 2 (PBB)</th>
+                  <th className="py-4 px-3 text-center w-24 bg-blue-500/10 text-blue-400">Rerata PBB</th>
+                  <th className="py-4 px-3 text-center w-24">Juri 3 (Danton)</th>
+                  <th className="py-4 px-3 text-center w-20 text-red-400">Penalti</th>
+                  <th className="py-4 px-4 text-right w-28 bg-amber-500/20 text-amber-400">Skor Akhir</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200 dark:divide-slate-800 font-medium">
@@ -294,9 +295,16 @@ export default function LiveLeaderboard() {
                   const s = item.scoreData;
                   const juries = s?.juries || {};
 
-                  const pos1 = juries.pos1?.total || s?.pbb?.total || '-';
-                  const pos2 = juries.pos2?.total || s?.vafor?.total || '-';
-                  const pos3 = juries.pos3?.total || s?.danton?.total || '-';
+                  const juri1 = juries.pos1?.total !== undefined
+                    ? Number(juries.pos1.total)
+                    : (s?.pbb?.j1 !== undefined && s?.pbb?.j1 !== null ? Number(s.pbb.j1) : (s?.pbb?.total !== undefined ? Number(s.pbb.total) : '-'));
+
+                  const juri2 = juries.pos2?.total !== undefined
+                    ? Number(juries.pos2.total)
+                    : (s?.pbb?.j2 !== undefined && s?.pbb?.j2 !== null ? Number(s.pbb.j2) : '-');
+
+                  const pbbAvg = s?.pbb?.total !== undefined ? Number(s.pbb.total) : '-';
+                  const juri3 = juries.pos3?.total || s?.danton?.total || '-';
                   const penalty = s?.penalties?.totalPenalty || 0;
 
                   return (
@@ -326,9 +334,10 @@ export default function LiveLeaderboard() {
                           {item.team.jenjang}
                         </span>
                       </td>
-                      <td className="py-4 px-3 text-center font-mono text-slate-700 dark:text-slate-300">{pos1}</td>
-                      <td className="py-4 px-3 text-center font-mono text-slate-700 dark:text-slate-300">{pos2}</td>
-                      <td className="py-4 px-3 text-center font-mono text-slate-700 dark:text-slate-300">{pos3}</td>
+                      <td className="py-4 px-3 text-center font-mono text-slate-700 dark:text-slate-300">{juri1}</td>
+                      <td className="py-4 px-3 text-center font-mono text-slate-700 dark:text-slate-300">{juri2}</td>
+                      <td className="py-4 px-3 text-center font-mono font-bold text-blue-600 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-950/20">{pbbAvg}</td>
+                      <td className="py-4 px-3 text-center font-mono text-slate-700 dark:text-slate-300">{juri3}</td>
                       <td className="py-4 px-3 text-center font-mono text-rose-600 font-bold">
                         {penalty > 0 ? `-${penalty}` : '0'}
                       </td>

@@ -28,7 +28,8 @@ import {
   Phone,
   Mail,
   MapPin,
-  Calendar
+  Calendar,
+  Trophy
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
 import { COMPETITION, EVENT, PAYMENT } from '../../config.js';
@@ -37,8 +38,10 @@ import { formatImageUrl } from '../../services/sheetService.js';
 export default function AdminDashboard() {
   const {
     teams,
+    scores,
     verifyTeam,
     assignLotNumber,
+    updateTeamDraw,
     randomizeLotNumbers,
     deleteTeam,
     exportTeamsCSV,
@@ -46,13 +49,19 @@ export default function AdminDashboard() {
     setActiveView
   } = useCompetition();
 
-  const [activeTab, setActiveTab] = useState('verification'); // 'verification' | 'lottery' | 'finance'
+  // 4 Tahapan: 
+  // 1. 'registration' (Cek Berkas Pendaftaran & ACC Daftar)
+  // 2. 'verification' (Cek Biodata Peleton, Surat Rekomendasi & ACC Sah)
+  // 3. 'lottery' (Pengundian Nomor Tampil TM)
+  // 4. 'recap' (Rekapitulasi Nilai & Kejuaraan LBB)
+  const [activeTab, setActiveTab] = useState('registration');
   const [selectedJenjang, setSelectedJenjang] = useState('ALL'); // 'ALL' | 'SD' | 'SMP'
-  const [selectedStatus, setSelectedStatus] = useState('ALL'); // 'ALL' | 'pending' | 'verified' | 'revision'
+  const [selectedStatus, setSelectedStatus] = useState('ALL'); // 'ALL' | 'pending' | 'verified' | 'revision' | etc.
   const [searchQuery, setSearchQuery] = useState('');
 
   // Inspector Modal state
   const [inspectingTeam, setInspectingTeam] = useState(null);
+  const [inspectingStage, setInspectingStage] = useState('registration'); // 'registration' | 'verification'
   const [revisionNoteInput, setRevisionNoteInput] = useState('');
   const [showRevisionBox, setShowRevisionBox] = useState(false);
 
@@ -80,6 +89,14 @@ export default function AdminDashboard() {
     .filter(t => t.status === 'verified' || t.paymentStatus === 'paid')
     .reduce((sum, t) => sum + (t.feeAmount || 450000), 0);
 
+  // Detailed stats for 4 stages:
+  const stage1PendingCount = teams.filter(t => t.status === 'pending').length; // Butuh dicek pendaftarannya
+  const stage1AccCount = teams.filter(t => ['registered', 'revision', 'verified', 'drawn'].includes(t.status)).length;
+  const stage2PendingCount = teams.filter(t => t.status === 'registered' || t.status === 'revision').length; // Butuh dicek peleton & rekomendasi
+  const stage2VerifiedCount = teams.filter(t => ['verified', 'drawn'].includes(t.status)).length;
+  const drawnCount = teams.filter(t => t.status === 'drawn' || t.lotNumber).length;
+  const totalWithScores = Object.keys(scores || {}).length;
+
   function handleQuickVerify(teamId, status, note = '') {
     verifyTeam(teamId, status, note);
     if (inspectingTeam && inspectingTeam.id === teamId) {
@@ -97,6 +114,7 @@ export default function AdminDashboard() {
     return (
       <TeamInspectionPage
         team={inspectingTeam}
+        inspectionStage={inspectingStage}
         onBack={() => setInspectingTeam(null)}
         onVerify={handleQuickVerify}
         openModal={openModal}
@@ -123,7 +141,7 @@ export default function AdminDashboard() {
                 <span className="text-xs text-slate-400">Admin Manajemen LBB 2026</span>
               </div>
               <h1 className="text-2xl sm:text-3xl font-black uppercase italic tracking-tight text-white mt-0.5">
-                Dashboard Verifikasi & Undian
+                Dashboard Manajemen & Rekapitulasi
               </h1>
             </div>
           </div>
@@ -200,19 +218,21 @@ export default function AdminDashboard() {
           {/* Pending Verifications */}
           <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
             <div className="flex justify-between items-start mb-2">
-              <span className="text-xs font-bold text-slate-500 uppercase">Perlu Verifikasi</span>
-              {pendingCount > 0 && (
+              <span className="text-xs font-bold text-slate-500 uppercase">Perlu Tindakan</span>
+              {stage1PendingCount + stage2PendingCount > 0 && (
                 <span className="text-xs font-black text-amber-700 bg-amber-100 px-2 py-0.5 rounded animate-pulse">
-                  Baru Masuk
+                  {stage1PendingCount + stage2PendingCount} Antrean
                 </span>
               )}
             </div>
             <div className="flex items-baseline gap-2">
-              <span className="text-2xl sm:text-3xl font-black font-mono text-amber-600">{pendingCount}</span>
-              <span className="text-xs text-slate-400 font-medium">Tim Pending</span>
+              <span className="text-2xl sm:text-3xl font-black font-mono text-amber-600">
+                {stage1PendingCount + stage2PendingCount}
+              </span>
+              <span className="text-xs text-slate-400 font-medium">Berkas Masuk</span>
             </div>
             <p className="text-[11px] text-slate-400 mt-2">
-              {verifiedCount} telah disetujui • {revisionCount} revisi
+              {stage1PendingCount} pendaftaran baru • {stage2PendingCount} verifikasi peleton
             </p>
           </div>
 
@@ -231,36 +251,172 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* Tab Selection */}
-        <div className="flex border-b border-slate-200 bg-white rounded-2xl px-2 py-1.5 shadow-xs overflow-x-auto gap-1">
-          {[
-            { id: 'verification', label: '1. Verifikasi & Manajemen Peserta', badge: pendingCount > 0 ? pendingCount : null },
-            { id: 'lottery', label: '2. Pengundian Nomor Tampil (TM)', badge: 'TM 23 Okt' },
-            { id: 'finance', label: '3. Keuangan & Arsip Rekapitulasi' },
-          ].map(tab => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 whitespace-nowrap ${
-                activeTab === tab.id
-                  ? 'bg-blue-700 text-white shadow-sm'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-              }`}
-            >
-              <span>{tab.label}</span>
-              {tab.badge && (
-                <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${activeTab === tab.id ? 'bg-white/20 text-white' : 'bg-red-100 text-red-700'}`}>
-                  {tab.badge}
-                </span>
-              )}
-            </button>
-          ))}
+        {/* Tab Selection: Modern Interactive Workflow Stepper */}
+        <div className="bg-white rounded-3xl p-3 sm:p-4 border border-slate-200/90 shadow-md">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+            {[
+              {
+                id: 'registration',
+                step: '01',
+                title: 'Pendaftaran',
+                subtitle: 'Cek Berkas & Bayar',
+                icon: FileText,
+                badge: stage1PendingCount > 0 ? `${stage1PendingCount} Baru` : null,
+                activeGradient: 'from-blue-600 via-blue-700 to-indigo-800 text-white shadow-blue-500/25',
+                activeRing: 'ring-blue-500/30',
+                stepBadge: 'bg-blue-500/20 text-blue-200 border-blue-400/30',
+                idleBadge: 'bg-blue-50 text-blue-700 border-blue-200',
+              },
+              {
+                id: 'verification',
+                step: '02',
+                title: 'Verifikasi',
+                subtitle: 'Roster 23 & Rekom',
+                icon: ShieldCheck,
+                badge: stage2PendingCount > 0 ? `${stage2PendingCount} Perlu ACC` : null,
+                activeGradient: 'from-emerald-600 via-emerald-700 to-teal-800 text-white shadow-emerald-500/25',
+                activeRing: 'ring-emerald-500/30',
+                stepBadge: 'bg-emerald-500/20 text-emerald-200 border-emerald-400/30',
+                idleBadge: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+              },
+              {
+                id: 'lottery',
+                step: '03',
+                title: 'Undian',
+                subtitle: 'Nomor Urut Tampil',
+                icon: Shuffle,
+                badge: 'TM 23 Okt',
+                activeGradient: 'from-purple-600 via-purple-700 to-violet-800 text-white shadow-purple-500/25',
+                activeRing: 'ring-purple-500/30',
+                stepBadge: 'bg-purple-500/20 text-purple-200 border-purple-400/30',
+                idleBadge: 'bg-purple-50 text-purple-700 border-purple-200',
+              },
+              {
+                id: 'recap',
+                step: '04',
+                title: 'Rekap Nilai',
+                subtitle: 'Hasil E-Scoring Juara',
+                icon: Trophy,
+                badge: totalWithScores > 0 ? `${totalWithScores} Dinilai` : null,
+                activeGradient: 'from-amber-500 via-amber-600 to-orange-700 text-white shadow-amber-500/25',
+                activeRing: 'ring-amber-500/30',
+                stepBadge: 'bg-amber-500/20 text-amber-100 border-amber-300/30',
+                idleBadge: 'bg-amber-50 text-amber-700 border-amber-200',
+              },
+            ].map((tab, idx) => {
+              const isActive = activeTab === tab.id;
+              const TabIcon = tab.icon;
+
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => {
+                    setActiveTab(tab.id);
+                    setSelectedStatus('ALL');
+                  }}
+                  className={`group relative p-3 sm:p-3.5 rounded-2xl transition-all duration-200 text-left cursor-pointer border overflow-hidden ${
+                    isActive
+                      ? `bg-gradient-to-r ${tab.activeGradient} shadow-lg ring-2 ${tab.activeRing} border-transparent translate-y-[-1px]`
+                      : 'bg-slate-50/70 hover:bg-white border-slate-200/80 hover:border-slate-300 hover:shadow-xs'
+                  }`}
+                >
+                  <div className="flex items-center justify-between gap-2 mb-2">
+                    <div className="flex items-center gap-2">
+                      <span
+                        className={`text-[11px] font-mono font-black px-2 py-0.5 rounded-lg border uppercase tracking-wider ${
+                          isActive
+                            ? tab.stepBadge
+                            : 'bg-white text-slate-500 border-slate-200'
+                        }`}
+                      >
+                        Tahap {tab.step}
+                      </span>
+                    </div>
+
+                    {tab.badge && (
+                      <span
+                        className={`text-[10px] font-black px-2 py-0.5 rounded-full border uppercase tracking-tight shadow-xs ${
+                          isActive
+                            ? 'bg-white/20 text-white border-white/30 backdrop-blur-xs'
+                            : tab.idleBadge
+                        }`}
+                      >
+                        {tab.badge}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="flex items-center gap-2.5">
+                    <div
+                      className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-105 shadow-inner ${
+                        isActive
+                          ? 'bg-white/15 text-white backdrop-blur-xs'
+                          : 'bg-white text-slate-700 border border-slate-200/80'
+                      }`}
+                    >
+                      <TabIcon className="w-4 h-4" />
+                    </div>
+
+                    <div className="min-w-0 flex-1">
+                      <h4
+                        className={`font-black text-sm uppercase tracking-tight leading-tight truncate ${
+                          isActive ? 'text-white' : 'text-slate-900 group-hover:text-slate-950'
+                        }`}
+                      >
+                        {tab.title}
+                      </h4>
+                      <p
+                        className={`text-[11px] truncate leading-tight mt-0.5 ${
+                          isActive ? 'text-white/80' : 'text-slate-500'
+                        }`}
+                      >
+                        {tab.subtitle}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Active bottom subtle glow line */}
+                  {isActive && (
+                    <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/40 rounded-full mx-4" />
+                  )}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
-        {/* TAB 1: VERIFIKASI & PESERTA */}
-        {activeTab === 'verification' && (
+        {/* ========================================================================= */}
+        {/* TAB 1: PENDAFTARAN (CEK BERKAS PENDAFTARAN)                               */}
+        {/* ========================================================================= */}
+        {activeTab === 'registration' && (
           <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs space-y-5">
-            
+            {/* Header info */}
+            <div className="border-b border-slate-200 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-blue-700 bg-blue-50 px-2.5 py-0.5 rounded border border-blue-200">
+                    Tahap 1 Administrasi
+                  </span>
+                  <span className="text-xs text-slate-400">• Status Awal Pendaftaran</span>
+                </div>
+                <h3 className="font-black text-xl text-slate-900 uppercase italic mt-1">
+                  Pendaftaran (Cek Berkas Pendaftaran Awal)
+                </h3>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Verifikasi berkas persyaratan dasar (Bukti Transfer Bank BRI, Kartu Pelajar Danton, KTP Pembina, Selfie & Pakta Integritas). Setujui untuk membuka pengisian biodata peleton.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold text-slate-600 bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200">
+                  {stage1PendingCount} Perlu Dicek
+                </span>
+                <span className="text-xs font-bold text-blue-700 bg-blue-50 px-3 py-1.5 rounded-xl border border-blue-200">
+                  {stage1AccCount} Terdaftar
+                </span>
+              </div>
+            </div>
+
             {/* Filter Bar */}
             <div className="flex flex-col md:flex-row items-center justify-between gap-4">
               <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
@@ -279,15 +435,13 @@ export default function AdminDashboard() {
                   ))}
                 </div>
 
-                {/* Filter Status */}
+                {/* Filter Status Pendaftaran */}
                 <div className="inline-flex flex-wrap rounded-xl bg-slate-100 p-1 border border-slate-200 text-xs font-bold gap-1">
                   {[
                     { id: 'ALL', label: 'Semua Status' },
-                    { id: 'pending', label: '1. Pending' },
-                    { id: 'registered', label: '2. Terdaftar' },
-                    { id: 'revision', label: 'Revisi' },
-                    { id: 'verified', label: '3. Terverifikasi Sah' },
-                    { id: 'drawn', label: '4. Terundi' },
+                    { id: 'pending', label: '1. Perlu Dicek (Pending)' },
+                    { id: 'registered', label: '2. Terdaftar (ACC Daftar)' },
+                    { id: 'revision', label: 'Perlu Revisi' },
                   ].map(s => (
                     <button
                       key={s.id}
@@ -315,25 +469,24 @@ export default function AdminDashboard() {
               </div>
             </div>
 
-            {/* Teams Table */}
+            {/* Teams Table: Pendaftaran */}
             <div className="overflow-x-auto rounded-2xl border border-slate-200">
               <table className="w-full text-left text-xs">
                 <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase tracking-wider text-[10px]">
                   <tr>
                     <th className="p-3.5">Kode & Sekolah</th>
-                    <th className="p-3.5">Jenjang / Kategori</th>
-                    <th className="p-3.5">Danton & Personel</th>
-                    <th className="p-3.5">Kelengkapan Berkas</th>
-                    <th className="p-3.5">Nomor Undian</th>
-                    <th className="p-3.5">Status</th>
-                    <th className="p-3.5 text-right">Aksi</th>
+                    <th className="p-3.5">Jenjang / Gelombang</th>
+                    <th className="p-3.5">Danton & Pembina</th>
+                    <th className="p-3.5">Berkas Pendaftaran Awal</th>
+                    <th className="p-3.5">Status Pendaftaran</th>
+                    <th className="p-3.5 text-right">Aksi Verifikasi</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
                   {filteredTeams.length === 0 ? (
                     <tr>
-                      <td colSpan={7} className="text-center py-10 text-slate-400">
-                        Tidak ada peserta yang cocok dengan filter yang dipilih.
+                      <td colSpan={6} className="text-center py-10 text-slate-400">
+                        Tidak ada pendaftar yang cocok dengan filter yang dipilih.
                       </td>
                     </tr>
                   ) : (
@@ -352,11 +505,11 @@ export default function AdminDashboard() {
                                     e.currentTarget.nextElementSibling.style.display = 'flex';
                                   }
                                 }}
-                                className="w-14 h-14 rounded-xl object-contain bg-white border border-slate-200 p-1 shrink-0 shadow-xs hover:scale-105 transition-transform"
+                                className="w-12 h-12 rounded-xl object-contain bg-white border border-slate-200 p-1 shrink-0 shadow-xs hover:scale-105 transition-transform"
                               />
                             ) : null}
                             <div
-                              className="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-50 to-slate-100 text-blue-700 border border-slate-200 flex items-center justify-center font-black text-sm shrink-0 shadow-xs"
+                              className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-50 to-slate-100 text-blue-700 border border-slate-200 flex items-center justify-center font-black text-sm shrink-0 shadow-xs"
                               style={{ display: team.files?.schoolLogo?.url && team.files.schoolLogo.url !== '#' ? 'none' : 'flex' }}
                             >
                               {team.jenjang}
@@ -373,7 +526,7 @@ export default function AdminDashboard() {
 
                         <td className="p-3.5">
                           <span className="font-bold text-slate-800 block">{team.jenjang}</span>
-                          <span className="text-slate-500 text-[11px]">{team.category}</span>
+                          <span className="text-slate-500 text-[11px]">Gelombang {team.wave || 1} • Rp{(team.feeAmount || 450000).toLocaleString('id-ID')}</span>
                         </td>
 
                         <td className="p-3.5">
@@ -381,54 +534,50 @@ export default function AdminDashboard() {
                             {team.roster?.danton?.name || team.dantonName || '-'}
                           </span>
                           <span className="text-slate-500 text-[11px]">
-                            {team.roster?.pasukan ? `${team.roster.pasukan.length + 1} Personel` : '25 Personel'}
+                            Pembina: {team.officialName || team.coachName || '-'}
                           </span>
                         </td>
 
                         <td className="p-3.5">
-                          <div className="flex items-center gap-1.5">
-                            <span className={`w-2 h-2 rounded-full ${team.files?.recommendationLetter || team.files?.integrityPact ? 'bg-emerald-500' : 'bg-slate-300'}`} title="Surat Rekomendasi / Pakta Integritas"></span>
-                            <span className={`w-2 h-2 rounded-full ${team.files?.paymentProof ? 'bg-emerald-500' : 'bg-slate-300'}`} title="Bukti Bayar"></span>
-                            <span className={`w-2 h-2 rounded-full ${team.files?.personnelPhotos || team.files?.dantonCard ? 'bg-emerald-500' : 'bg-slate-300'}`} title="Pasfoto / Kartu Pelajar"></span>
-                            <span className={`w-2 h-2 rounded-full ${team.files?.schoolLogo ? 'bg-emerald-500' : 'bg-slate-300'}`} title="Logo Peleton"></span>
-                            <span className="text-[10px] text-slate-500 font-medium ml-1">Dokumen</span>
+                          <div className="space-y-1">
+                            <div className="flex items-center gap-1.5">
+                              <span className={`w-2 h-2 rounded-full ${team.files?.paymentProof ? 'bg-emerald-500' : 'bg-red-400'}`} title="Bukti Bayar"></span>
+                              <span className="text-[11px] text-slate-700">Bukti Transfer Bank BRI</span>
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                              <span className={`w-2 h-2 rounded-full ${team.files?.dantonCard ? 'bg-emerald-500' : 'bg-red-400'}`} title="Kartu Pelajar Danton"></span>
+                              <span className="text-[11px] text-slate-700">Kartu Pelajar Danton</span>
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                              <span className={`w-2 h-2 rounded-full ${team.files?.officialKtp ? 'bg-emerald-500' : 'bg-red-400'}`} title="KTP Pembina"></span>
+                              <span className="text-[11px] text-slate-700">KTP Pembina / Official</span>
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                              <span className={`w-2 h-2 rounded-full ${team.files?.integrityPact ? 'bg-emerald-500' : 'bg-red-400'}`} title="Pakta Integritas"></span>
+                              <span className="text-[11px] text-slate-700">Pakta Integritas (TTD)</span>
+                            </div>
                           </div>
-                        </td>
-
-                        <td className="p-3.5">
-                          {team.lotNumber ? (
-                            <span className="font-mono font-black text-xs text-yellow-700 bg-yellow-100 px-2 py-1 rounded-lg">
-                              #{String(team.lotNumber).padStart(2, '0')}
-                            </span>
-                          ) : (
-                            <span className="text-slate-400 text-[11px] italic">Belum diundi</span>
-                          )}
                         </td>
 
                         <td className="p-3.5">
                           {team.status === 'pending' && (
                             <span className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-700 bg-amber-50 px-2.5 py-1 rounded-lg border border-amber-200">
-                              <Clock className="w-3.5 h-3.5" /> Pending
+                              <Clock className="w-3.5 h-3.5" /> Menunggu Pengecekan
                             </span>
                           )}
                           {team.status === 'registered' && (
                             <span className="inline-flex items-center gap-1 text-[11px] font-bold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-200">
-                              <CheckCircle2 className="w-3.5 h-3.5" /> Terdaftar
+                              <CheckCircle2 className="w-3.5 h-3.5" /> ACC Terdaftar
                             </span>
                           )}
                           {team.status === 'revision' && (
                             <span className="inline-flex items-center gap-1 text-[11px] font-bold text-rose-700 bg-rose-50 px-2.5 py-1 rounded-lg border border-rose-200">
-                              <AlertTriangle className="w-3.5 h-3.5" /> Revisi
+                              <AlertTriangle className="w-3.5 h-3.5" /> Minta Revisi Berkas
                             </span>
                           )}
-                          {team.status === 'verified' && (
+                          {['verified', 'drawn'].includes(team.status) && (
                             <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200">
-                              <CheckCircle2 className="w-3.5 h-3.5" /> Sah
-                            </span>
-                          )}
-                          {team.status === 'drawn' && (
-                            <span className="inline-flex items-center gap-1 text-[11px] font-bold text-purple-700 bg-purple-50 px-2.5 py-1 rounded-lg border border-purple-200">
-                              <Sparkles className="w-3.5 h-3.5" /> Terundi
+                              <CheckCircle2 className="w-3.5 h-3.5" /> Terverifikasi Sah
                             </span>
                           )}
                         </td>
@@ -438,35 +587,25 @@ export default function AdminDashboard() {
                             <button
                               onClick={() => {
                                 setInspectingTeam(team);
+                                setInspectingStage('registration');
                                 setRevisionNoteInput(team.revisionNote || '');
                                 setShowRevisionBox(false);
                               }}
-                              className="px-3 py-1.5 bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-blue-700 font-bold rounded-lg border border-slate-200 transition-colors flex items-center gap-1"
-                              title="Periksa Berkas Lengkap"
+                              className="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold rounded-lg border border-blue-200 transition-colors flex items-center gap-1 cursor-pointer"
+                              title="Cek Berkas Pendaftaran Awal"
                             >
                               <Eye className="w-3.5 h-3.5" />
-                              <span>Periksa</span>
+                              <span>Cek Berkas</span>
                             </button>
 
                             {team.status === 'pending' && (
                               <button
                                 onClick={() => handleQuickVerify(team.id, 'registered')}
-                                className="px-2 py-1.5 bg-blue-100 hover:bg-blue-200 text-blue-800 font-bold rounded-lg transition-colors flex items-center gap-1"
-                                title="ACC Tahap 1: Daftarkan Tim"
+                                className="px-2.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition-colors flex items-center gap-1 cursor-pointer shadow-xs"
+                                title="ACC Pendaftaran (Status Terdaftar)"
                               >
                                 <Check className="w-3.5 h-3.5" />
                                 <span className="text-[10px]">ACC Daftar</span>
-                              </button>
-                            )}
-
-                            {(team.status === 'registered' || team.status === 'revision') && (
-                              <button
-                                onClick={() => handleQuickVerify(team.id, 'verified')}
-                                className="px-2 py-1.5 bg-emerald-100 hover:bg-emerald-200 text-emerald-800 font-bold rounded-lg transition-colors flex items-center gap-1"
-                                title="ACC Tahap 2: Verifikasi Sah Peleton"
-                              >
-                                <Check className="w-3.5 h-3.5" />
-                                <span className="text-[10px]">ACC Sah</span>
                               </button>
                             )}
 
@@ -476,7 +615,7 @@ export default function AdminDashboard() {
                                   deleteTeam(team.id);
                                 }
                               }}
-                              className="p-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-lg transition-colors"
+                              className="p-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-lg transition-colors cursor-pointer"
                               title="Hapus Peserta"
                             >
                               <Trash2 className="w-4 h-4" />
@@ -489,37 +628,325 @@ export default function AdminDashboard() {
                 </tbody>
               </table>
             </div>
-
           </div>
         )}
 
-        {/* TAB 2: PENGUNDIAN NOMOR TAMPIL (TM LOTTERY) */}
-        {activeTab === 'lottery' && (
-          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+        {/* ========================================================================= */}
+        {/* TAB 2: VERIFIKASI (CEK BIODATA PELETON & SURAT REKOMENDASI)               */}
+        {/* ========================================================================= */}
+        {activeTab === 'verification' && (
+          <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs space-y-5">
+            {/* Header info */}
+            <div className="border-b border-slate-200 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
-                <h3 className="font-black text-xl text-slate-900 uppercase italic">
-                  Modul Pengundian Nomor Urut Tampil (Technical Meeting)
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded border border-emerald-200">
+                    Tahap 2 Administrasi Peleton
+                  </span>
+                  <span className="text-xs text-slate-400">• Pengisian Roster & Rekomendasi</span>
+                </div>
+                <h3 className="font-black text-xl text-slate-900 uppercase italic mt-1">
+                  Verifikasi (Cek Biodata Peleton & Surat Rekomendasi)
                 </h3>
                 <p className="text-xs text-slate-500 mt-0.5">
-                  Sesi pengundian nomor urut tampil peleton terverifikasi untuk Technical Meeting tanggal 23 Oktober 2026.
+                  Periksa biodata 25 personel peleton (Danton, 21 Inti Saf 1-3, 3 Cadangan) serta Surat Rekomendasi resmi dari Kepala Sekolah. ACC Sah untuk mengizinkan pengambilan undian TM.
                 </p>
               </div>
 
               <div className="flex items-center gap-2">
+                <span className="text-xs font-bold text-amber-800 bg-amber-50 px-3 py-1.5 rounded-xl border border-amber-200">
+                  {stage2PendingCount} Perlu Diverifikasi
+                </span>
+                <span className="text-xs font-bold text-emerald-800 bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-200">
+                  {stage2VerifiedCount} Sah Terverifikasi
+                </span>
+              </div>
+            </div>
+
+            {/* Filter Bar */}
+            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+              <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
+                {/* Filter Jenjang */}
+                <div className="inline-flex rounded-xl bg-slate-100 p-1 border border-slate-200 text-xs font-bold">
+                  {['ALL', 'SD', 'SMP'].map(j => (
+                    <button
+                      key={j}
+                      onClick={() => setSelectedJenjang(j)}
+                      className={`px-3 py-1.5 rounded-lg transition-all ${
+                        selectedJenjang === j ? 'bg-white text-slate-950 shadow-xs font-extrabold' : 'text-slate-600 hover:text-slate-900'
+                      }`}
+                    >
+                      {j === 'ALL' ? 'Semua Jenjang' : j}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Filter Status Peleton */}
+                <div className="inline-flex flex-wrap rounded-xl bg-slate-100 p-1 border border-slate-200 text-xs font-bold gap-1">
+                  {[
+                    { id: 'ALL', label: 'Semua Peleton' },
+                    { id: 'registered', label: 'Perlu Verifikasi (Terdaftar)' },
+                    { id: 'revision', label: 'Revisi Roster / Surat' },
+                    { id: 'verified', label: 'Sah Terverifikasi' },
+                    { id: 'drawn', label: 'Sudah Diundi' },
+                  ].map(s => (
+                    <button
+                      key={s.id}
+                      onClick={() => setSelectedStatus(s.id)}
+                      className={`px-3 py-1.5 rounded-lg transition-all ${
+                        selectedStatus === s.id ? 'bg-white text-slate-950 shadow-xs font-extrabold' : 'text-slate-600 hover:text-slate-900'
+                      }`}
+                    >
+                      {s.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Search input */}
+              <div className="relative w-full md:w-72">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  placeholder="Cari sekolah / peleton / danton..."
+                  className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-emerald-600"
+                />
+                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+              </div>
+            </div>
+
+            {/* Teams Table: Verifikasi Peleton */}
+            <div className="overflow-x-auto rounded-2xl border border-slate-200">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase tracking-wider text-[10px]">
+                  <tr>
+                    <th className="p-3.5">Kode & Sekolah</th>
+                    <th className="p-3.5">Susunan Personel Peleton</th>
+                    <th className="p-3.5">Surat Rekomendasi Sekolah</th>
+                    <th className="p-3.5">Status Peleton</th>
+                    <th className="p-3.5 text-center">No. Tampil (TM)</th>
+                    <th className="p-3.5 text-center">No. Dada</th>
+                    <th className="p-3.5 text-right">Aksi Verifikasi Peleton</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {filteredTeams.length === 0 ? (
+                    <tr>
+                      <td colSpan={7} className="text-center py-10 text-slate-400">
+                        Tidak ada peleton yang cocok dengan filter yang dipilih.
+                      </td>
+                    </tr>
+                  ) : (
+                    filteredTeams.map(team => {
+                      const pasukanCount = Array.isArray(team.roster?.pasukan) ? team.roster.pasukan.length : 0;
+                      const cadanganCount = Array.isArray(team.roster?.cadangan) ? team.roster.cadangan.length : 0;
+                      const hasDanton = Boolean(team.roster?.danton?.name || team.dantonName);
+                      const hasRecLetter = Boolean(team.files?.recommendationLetter?.url && team.files?.recommendationLetter?.url !== '#');
+
+                      return (
+                        <tr key={team.id} className="hover:bg-slate-50/80 transition-colors">
+                          <td className="p-3.5">
+                            <div className="flex items-center gap-3.5">
+                              {team.files?.schoolLogo?.url && team.files.schoolLogo.url !== '#' ? (
+                                <img
+                                  src={formatImageUrl(team.files.schoolLogo.url)}
+                                  alt="Logo"
+                                  onError={(e) => {
+                                    e.currentTarget.onerror = null;
+                                    e.currentTarget.style.display = 'none';
+                                    if (e.currentTarget.nextElementSibling) {
+                                      e.currentTarget.nextElementSibling.style.display = 'flex';
+                                    }
+                                  }}
+                                  className="w-12 h-12 rounded-xl object-contain bg-white border border-slate-200 p-1 shrink-0 shadow-xs"
+                                />
+                              ) : null}
+                              <div
+                                className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-50 to-slate-100 text-emerald-700 border border-slate-200 flex items-center justify-center font-black text-sm shrink-0 shadow-xs"
+                                style={{ display: team.files?.schoolLogo?.url && team.files.schoolLogo.url !== '#' ? 'none' : 'flex' }}
+                              >
+                                {team.jenjang}
+                              </div>
+                              <div>
+                                <span className="font-mono font-bold text-[10px] text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                                  {team.regCode}
+                                </span>
+                                <div className="font-black text-slate-900 text-sm mt-0.5">{team.schoolName}</div>
+                                <div className="text-slate-500 text-[11px]">{team.platoonName} ({team.jenjang})</div>
+                              </div>
+                            </div>
+                          </td>
+
+                          <td className="p-3.5">
+                            <div className="space-y-1">
+                              <span className="font-bold text-slate-800 block">
+                                Danton: {team.roster?.danton?.name || team.dantonName || '-'}
+                              </span>
+                              <div className="flex items-center gap-1.5 text-[11px] text-slate-500">
+                                <span className={`px-1.5 py-0.2 rounded font-mono font-bold ${pasukanCount >= 21 ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}`}>
+                                  {pasukanCount}/21 Pasukan
+                                </span>
+                                <span>•</span>
+                                <span className={`px-1.5 py-0.2 rounded font-mono font-bold ${cadanganCount >= 3 ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-600'}`}>
+                                  {cadanganCount}/3 Cadangan
+                                </span>
+                              </div>
+                            </div>
+                          </td>
+
+                          <td className="p-3.5">
+                            {hasRecLetter ? (
+                              <div className="flex items-center gap-1.5">
+                                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0"></span>
+                                <span className="text-[11px] font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                                  Sudah Diunggah
+                                </span>
+                              </div>
+                            ) : (
+                              <div className="flex items-center gap-1.5">
+                                <span className="w-2.5 h-2.5 rounded-full bg-amber-400 shrink-0"></span>
+                                <span className="text-[11px] font-medium text-amber-800 bg-amber-50 px-2 py-0.5 rounded border border-amber-200 italic">
+                                  Belum Ada Surat
+                                </span>
+                              </div>
+                            )}
+                          </td>
+
+                          <td className="p-3.5">
+                            {team.status === 'pending' && (
+                              <span className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-700 bg-amber-50 px-2.5 py-1 rounded-lg border border-amber-200">
+                                <Clock className="w-3.5 h-3.5" /> Pendaftaran Pending
+                              </span>
+                            )}
+                            {team.status === 'registered' && (
+                              <span className="inline-flex items-center gap-1 text-[11px] font-bold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-200">
+                                <Clock className="w-3.5 h-3.5" /> Menunggu Verifikasi Peleton
+                              </span>
+                            )}
+                            {team.status === 'revision' && (
+                              <span className="inline-flex items-center gap-1 text-[11px] font-bold text-rose-700 bg-rose-50 px-2.5 py-1 rounded-lg border border-rose-200">
+                                <AlertTriangle className="w-3.5 h-3.5" /> Revisi Roster / Dokumen
+                              </span>
+                            )}
+                            {team.status === 'verified' && (
+                              <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200">
+                                <CheckCircle2 className="w-3.5 h-3.5" /> Sah Terverifikasi
+                              </span>
+                            )}
+                            {team.status === 'drawn' && (
+                              <span className="inline-flex items-center gap-1 text-[11px] font-bold text-purple-700 bg-purple-50 px-2.5 py-1 rounded-lg border border-purple-200">
+                                <Sparkles className="w-3.5 h-3.5" /> Siap Tampil (Terundi)
+                              </span>
+                            )}
+                          </td>
+
+                          <td className="p-3.5 text-center">
+                            {team.lotNumber ? (
+                              <span className="font-mono font-black text-xs text-yellow-800 bg-yellow-100 px-2.5 py-1 rounded-lg border border-yellow-200">
+                                #{String(team.lotNumber).padStart(2, '0')}
+                              </span>
+                            ) : (
+                              <span className="text-slate-400 text-[11px] italic">Belum diundi</span>
+                            )}
+                          </td>
+
+                          <td className="p-3.5 text-center">
+                            {team.chestNumber ? (
+                              <span className="font-mono font-black text-xs text-emerald-800 bg-emerald-100 px-2.5 py-1 rounded-lg border border-emerald-200">
+                                {team.chestNumber}
+                              </span>
+                            ) : (
+                              <span className="text-slate-400 text-[11px] italic">-</span>
+                            )}
+                          </td>
+
+                          <td className="p-3.5 text-right">
+                            <div className="flex items-center justify-end gap-1.5">
+                              <button
+                                onClick={() => {
+                                  setInspectingTeam(team);
+                                  setInspectingStage('verification');
+                                  setRevisionNoteInput(team.revisionNote || '');
+                                  setShowRevisionBox(false);
+                                }}
+                                className="px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold rounded-lg border border-emerald-200 transition-colors flex items-center gap-1 cursor-pointer"
+                                title="Periksa Biodata 25 Personel Peleton & Surat Rekomendasi"
+                              >
+                                <Eye className="w-3.5 h-3.5" />
+                                <span>Cek Peleton</span>
+                              </button>
+
+                              {(team.status === 'registered' || team.status === 'revision') && (
+                                <button
+                                  onClick={() => handleQuickVerify(team.id, 'verified')}
+                                  className="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg transition-colors flex items-center gap-1 cursor-pointer shadow-xs"
+                                  title="ACC Sah Peleton (Lolos ke Tahap Undian)"
+                                >
+                                  <Check className="w-3.5 h-3.5" />
+                                  <span className="text-[10px]">ACC Sah</span>
+                                </button>
+                              )}
+
+                              {['verified', 'drawn'].includes(team.status) && (
+                                <button
+                                  onClick={() => handleQuickVerify(team.id, 'registered')}
+                                  className="px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[10px] rounded-lg transition-colors cursor-pointer"
+                                  title="Batalkan Status Sah (Kembalikan ke status Terdaftar)"
+                                >
+                                  Batal Sah
+                                </button>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* ========================================================================= */}
+        {/* TAB 3: UNDIAN (PENGUNDIAN NOMOR TAMPIL TM)                                */}
+        {/* ========================================================================= */}
+        {activeTab === 'lottery' && (
+          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-purple-700 bg-purple-50 px-2.5 py-0.5 rounded border border-purple-200">
+                    Tahap 3 Undian Lapangan (TM)
+                  </span>
+                  <span className="text-xs text-slate-400">• Hanya Peleton Berstatus Sah</span>
+                </div>
+                <h3 className="font-black text-xl text-slate-900 uppercase italic mt-1">
+                  3. Undian (Nomor Urut Tampil & Nomor Dada Lapangan)
+                </h3>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Pengundian nomor urut tampil dilakukan manual di lapangan / Technical Meeting (23 Oktober 2026). Masukkan <strong>Nomor Urut Tampil</strong> dan <strong>Nomor Dada</strong> peleton yang diperoleh.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] text-slate-400 italic hidden sm:inline">Input Manual Lapangan</span>
                 <button
                   onClick={() => handleRandomize('SD')}
-                  className="px-4 py-2 bg-red-700 hover:bg-red-600 text-white font-black text-xs rounded-xl flex items-center gap-1.5 shadow-md shadow-red-950/20 transition-all"
+                  className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl flex items-center gap-1.5 border border-slate-200 transition-all cursor-pointer"
+                  title="Opsi otomatis jika pengundian memakai sistem acak komputer"
                 >
-                  <Shuffle className="w-3.5 h-3.5" />
-                  <span>Kocok Undian SD</span>
+                  <Shuffle className="w-3.5 h-3.5 text-slate-500" />
+                  <span>Kocok Cepat SD</span>
                 </button>
                 <button
                   onClick={() => handleRandomize('SMP')}
-                  className="px-4 py-2 bg-blue-700 hover:bg-blue-600 text-white font-black text-xs rounded-xl flex items-center gap-1.5 shadow-md shadow-blue-950/20 transition-all"
+                  className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl flex items-center gap-1.5 border border-slate-200 transition-all cursor-pointer"
+                  title="Opsi otomatis jika pengundian memakai sistem acak komputer"
                 >
-                  <Shuffle className="w-3.5 h-3.5" />
-                  <span>Kocok Undian SMP</span>
+                  <Shuffle className="w-3.5 h-3.5 text-slate-500" />
+                  <span>Kocok Cepat SMP</span>
                 </button>
               </div>
             </div>
@@ -543,50 +970,65 @@ export default function AdminDashboard() {
                     <div className="flex items-center justify-between">
                       <div>
                         <span className="text-[10px] font-black uppercase text-slate-500 tracking-wider">
-                          Urutan Tampil
+                          Daftar Peleton Terverifikasi
                         </span>
                         <h4 className="font-black text-lg text-slate-900 uppercase">
                           Jenjang {jenjang === 'SD' ? 'SD / MI' : 'SMP / MTs'}
                         </h4>
                       </div>
                       <span className="text-xs font-bold text-slate-600 bg-white px-3 py-1 rounded-lg border border-slate-200">
-                        {list.length} Tim Terverifikasi
+                        {list.length} Peleton Sah
                       </span>
                     </div>
 
-                    <div className="space-y-2 max-h-96 overflow-y-auto pr-1">
+                    <div className="space-y-2.5 max-h-[500px] overflow-y-auto pr-1">
                       {list.length === 0 ? (
                         <p className="text-xs text-slate-400 italic py-6 text-center">
-                          Belum ada tim {jenjang} dengan status terverifikasi.
+                          Belum ada peleton {jenjang} dengan status sah (terverifikasi). Lakukan verifikasi di Tab 2 terlebih dahulu.
                         </p>
                       ) : (
-                        list.map((t, idx) => (
+                        list.map((t) => (
                           <div
                             key={t.id}
-                            className="bg-white p-3 rounded-xl border border-slate-200 flex items-center justify-between gap-3 shadow-xs hover:border-slate-300 transition-all"
+                            className="bg-white p-3.5 rounded-xl border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs hover:border-slate-300 transition-all"
                           >
-                            <div className="flex items-center gap-3">
-                              <div className="w-9 h-9 rounded-xl bg-slate-900 text-yellow-400 font-mono font-black text-sm flex items-center justify-center shrink-0 shadow-xs">
-                                {t.lotNumber ? String(t.lotNumber).padStart(2, '0') : '-'}
+                            <div className="flex items-center gap-3 min-w-0">
+                              <div className="w-10 h-10 rounded-xl bg-slate-900 text-yellow-400 font-mono font-black text-sm flex flex-col items-center justify-center shrink-0 shadow-xs leading-none">
+                                <span>{t.lotNumber ? String(t.lotNumber).padStart(2, '0') : '-'}</span>
+                                <span className="text-[8px] text-slate-400 font-sans uppercase tracking-tight mt-0.5">Urut</span>
                               </div>
-                              <div>
-                                <span className="font-black text-slate-900 text-xs block">{t.schoolName}</span>
-                                <span className="text-[10px] text-slate-500">
-                                  {t.platoonName} • Danton: {t.roster?.danton?.name || t.dantonName || '-'}
+                              <div className="min-w-0">
+                                <span className="font-black text-slate-900 text-xs block truncate">{t.schoolName}</span>
+                                <span className="text-[10px] text-slate-500 block truncate">
+                                  {t.platoonName} • Danton: <strong className="text-slate-700">{t.dantonName || t.roster?.danton?.name || '-'}</strong>
                                 </span>
                               </div>
                             </div>
 
-                            <div className="flex items-center gap-1 shrink-0">
-                              <input
-                                type="number"
-                                min={1}
-                                max={50}
-                                value={t.lotNumber || ''}
-                                onChange={e => assignLotNumber(t.id, e.target.value)}
-                                placeholder="No"
-                                className="w-14 px-2 py-1 bg-slate-50 border border-slate-300 rounded-lg text-xs font-mono font-bold text-center focus:ring-1 focus:ring-blue-600"
-                              />
+                            <div className="flex items-center gap-2 shrink-0 bg-slate-50 p-1.5 rounded-xl border border-slate-200 self-end sm:self-center">
+                              <div className="flex flex-col">
+                                <span className="text-[9px] font-bold uppercase text-slate-400 tracking-wider">No. Urut</span>
+                                <input
+                                  type="number"
+                                  min={1}
+                                  max={100}
+                                  value={t.lotNumber || ''}
+                                  onChange={e => updateTeamDraw(t.id, e.target.value, t.chestNumber)}
+                                  placeholder="1"
+                                  className="w-16 px-2 py-1 bg-white border border-slate-300 rounded-lg text-xs font-mono font-bold text-center focus:ring-2 focus:ring-purple-500 outline-none"
+                                />
+                              </div>
+
+                              <div className="flex flex-col">
+                                <span className="text-[9px] font-bold uppercase text-slate-400 tracking-wider">No. Dada</span>
+                                <input
+                                  type="text"
+                                  value={t.chestNumber || ''}
+                                  onChange={e => updateTeamDraw(t.id, t.lotNumber, e.target.value)}
+                                  placeholder="Contoh: 07"
+                                  className="w-20 px-2 py-1 bg-white border border-slate-300 rounded-lg text-xs font-mono font-bold text-center focus:ring-2 focus:ring-purple-500 outline-none"
+                                />
+                              </div>
                             </div>
                           </div>
                         ))
@@ -599,60 +1041,166 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        {/* TAB 3: KEUANGAN */}
-        {activeTab === 'finance' && (
+        {/* ========================================================================= */}
+        {/* TAB 4: REKAP NILAI (HASIL DEWAN JURI & JUARA KATEGORI)                    */}
+        {/* ========================================================================= */}
+        {activeTab === 'recap' && (
           <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
-            <div className="flex items-center justify-between border-b border-slate-200 pb-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
               <div>
-                <h3 className="font-black text-xl text-slate-900 uppercase italic">
-                  Laporan Keuangan & Rekening Pendaftaran
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-amber-700 bg-amber-50 px-2.5 py-0.5 rounded border border-amber-200">
+                    Tahap 4 Hasil Perlombaan
+                  </span>
+                  <span className="text-xs text-slate-400">• Rekapitulasi Dewan Juri Resmi</span>
+                </div>
+                <h3 className="font-black text-xl text-slate-900 uppercase italic mt-1">
+                  4. Rekap Nilai & Pengumuman Juara LBB
                 </h3>
                 <p className="text-xs text-slate-500 mt-0.5">
-                  Rekapitulasi penerimaan biaya pendaftaran via Bank BRI Falhan Zuhdi Mubarok.
+                  Rekapitulasi nilai akumulasi Danton, PBB, Variasi & Formasi, serta Pengurangan Nilai (Penalti) dari sistem penjurian.
                 </p>
               </div>
 
-              <button
-                onClick={() => window.print()}
-                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold rounded-xl flex items-center gap-1.5 transition-all"
-              >
-                <Printer className="w-4 h-4" />
-                <span>Cetak Laporan</span>
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => openModal('docViewer', { docId: 'official-scores' })}
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold rounded-xl flex items-center gap-1.5 transition-all cursor-pointer"
+                >
+                  <Printer className="w-4 h-4" />
+                  <span>Cetak Berita Acara Nilai</span>
+                </button>
+                <button
+                  onClick={() => setActiveView('leaderboard')}
+                  className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs rounded-xl flex items-center gap-1.5 transition-all shadow-md cursor-pointer"
+                >
+                  <Trophy className="w-4 h-4" />
+                  <span>Leaderboard Live</span>
+                </button>
+              </div>
             </div>
 
-            <div className="grid sm:grid-cols-3 gap-4">
-              <div className="p-5 bg-emerald-50 border border-emerald-200 rounded-2xl">
-                <span className="text-xs font-bold text-emerald-800 uppercase block mb-1">Total Dana Masuk</span>
-                <span className="text-2xl sm:text-3xl font-black text-emerald-700 font-mono">
-                  Rp{totalRevenue.toLocaleString('id-ID')},-
-                </span>
-                <span className="text-[11px] text-emerald-600 block mt-1">{teams.length} total pendaftar</span>
+            {/* Filter Jenjang untuk Rekap Nilai */}
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div className="inline-flex rounded-xl bg-slate-100 p-1 border border-slate-200 text-xs font-bold">
+                {['ALL', 'SD', 'SMP'].map(j => (
+                  <button
+                    key={j}
+                    onClick={() => setSelectedJenjang(j)}
+                    className={`px-3 py-1.5 rounded-lg transition-all ${
+                      selectedJenjang === j ? 'bg-white text-slate-950 shadow-xs font-extrabold' : 'text-slate-600 hover:text-slate-900'
+                    }`}
+                  >
+                    {j === 'ALL' ? 'Semua Jenjang' : `Jenjang ${j}`}
+                  </button>
+                ))}
               </div>
 
-              <div className="p-5 bg-slate-50 border border-slate-200 rounded-2xl">
-                <span className="text-xs font-bold text-slate-500 uppercase block mb-1">
-                  {PAYMENT.FEE_TIERS?.[0]?.name || 'Gelombang 1'}
-                </span>
-                <span className="text-2xl font-black text-slate-900 font-mono">
-                  {teams.filter(t => t.wave === 1).length} Peleton
-                </span>
-                <span className="text-[11px] text-slate-500 block mt-1">
-                  {PAYMENT.FEE_TIERS?.[0]?.label || '21 – 27 September 2026'}
-                </span>
-              </div>
+              <span className="text-xs text-slate-500 font-medium">
+                Peringkat dihitung otomatis berdasarkan akumulasi poin akhir tertinggi.
+              </span>
+            </div>
 
-              <div className="p-5 bg-slate-50 border border-slate-200 rounded-2xl">
-                <span className="text-xs font-bold text-slate-500 uppercase block mb-1">
-                  {PAYMENT.FEE_TIERS?.[1]?.name || 'Gelombang 2'}
-                </span>
-                <span className="text-2xl font-black text-slate-900 font-mono">
-                  {teams.filter(t => t.wave === 2).length} Peleton
-                </span>
-                <span className="text-[11px] text-slate-500 block mt-1">
-                  {PAYMENT.FEE_TIERS?.[1]?.label || '28 September – 5 Oktober 2026'}
+            {/* Score Recapitulation Table */}
+            <div className="overflow-x-auto rounded-2xl border border-slate-200">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-slate-50 border-b border-slate-200 text-slate-600 font-bold uppercase tracking-wider text-[10px]">
+                  <tr>
+                    <th className="p-3 text-center">Rank</th>
+                    <th className="p-3">No. Undian</th>
+                    <th className="p-3">Pangkalan & Peleton</th>
+                    <th className="p-3 text-center">Jenjang</th>
+                    <th className="p-3 text-center">Nilai Danton</th>
+                    <th className="p-3 text-center">Nilai PBB</th>
+                    <th className="p-3 text-center">Variasi / Formasi</th>
+                    <th className="p-3 text-center text-rose-700">Penalti</th>
+                    <th className="p-3 text-right font-black text-slate-900">Total Nilai Akhir</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {teams
+                    .filter(t => selectedJenjang === 'ALL' || t.jenjang === selectedJenjang)
+                    .map(t => ({ ...t, scoreData: scores?.[t.id] || null }))
+                    .sort((a, b) => {
+                      const scoreA = a.scoreData?.finalScore ?? -1;
+                      const scoreB = b.scoreData?.finalScore ?? -1;
+                      return scoreB - scoreA;
+                    })
+                    .map((t, idx) => {
+                      const sc = t.scoreData;
+                      const hasScore = Boolean(sc && typeof sc.finalScore === 'number');
+
+                      return (
+                        <tr key={t.id} className="hover:bg-slate-50/80 transition-colors">
+                          <td className="p-3 text-center">
+                            {hasScore ? (
+                              <span className={`inline-flex items-center justify-center w-6 h-6 rounded-full font-black text-xs ${
+                                idx === 0 ? 'bg-amber-400 text-slate-950 shadow-xs' :
+                                idx === 1 ? 'bg-slate-300 text-slate-900' :
+                                idx === 2 ? 'bg-amber-700 text-white' :
+                                'bg-slate-100 text-slate-600'
+                              }`}>
+                                {idx + 1}
+                              </span>
+                            ) : (
+                              <span className="text-slate-300 font-mono">-</span>
+                            )}
+                          </td>
+                          <td className="p-3 font-mono font-bold text-slate-700">
+                            {t.lotNumber ? `#${String(t.lotNumber).padStart(2, '0')}` : '-'}
+                          </td>
+                          <td className="p-3">
+                            <div className="font-black text-slate-900">{t.schoolName}</div>
+                            <div className="text-[11px] text-slate-500">{t.platoonName} • Danton: {t.roster?.danton?.name || t.dantonName || '-'}</div>
+                          </td>
+                          <td className="p-3 text-center">
+                            <span className="font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded text-[11px]">
+                              {t.jenjang}
+                            </span>
+                          </td>
+                          <td className="p-3 text-center font-mono font-bold text-slate-800">
+                            {sc?.danton?.total ?? '-'}
+                          </td>
+                          <td className="p-3 text-center font-mono font-bold text-slate-800">
+                            {sc?.pbb?.total ?? '-'}
+                          </td>
+                          <td className="p-3 text-center font-mono font-bold text-slate-800">
+                            {sc?.custom?.total ?? sc?.kostum?.total ?? '-'}
+                          </td>
+                          <td className="p-3 text-center font-mono font-bold text-rose-700">
+                            {sc?.penalties?.totalPenalty ? `-${sc.penalties.totalPenalty}` : '0'}
+                          </td>
+                          <td className="p-3 text-right">
+                            {hasScore ? (
+                              <span className="font-mono font-black text-sm text-blue-700 bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-200">
+                                {sc.finalScore}
+                              </span>
+                            ) : (
+                              <span className="text-slate-400 italic text-[11px]">Belum dinilai juri</span>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Financial Summary card within recap */}
+            <div className="bg-slate-50 rounded-2xl p-5 border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
+              <div>
+                <span className="font-black text-slate-800 uppercase block">Rekapitulasi Biaya Pendaftaran LBB</span>
+                <span className="text-slate-500">
+                  Total Penerimaan Kas: <strong>Rp{totalRevenue.toLocaleString('id-ID')},-</strong> ({teams.length} peleton terdata)
                 </span>
               </div>
+              <button
+                onClick={() => window.print()}
+                className="px-4 py-2 bg-white hover:bg-slate-100 border border-slate-300 text-slate-800 font-bold rounded-xl flex items-center gap-1.5 transition-all cursor-pointer"
+              >
+                <Printer className="w-3.5 h-3.5" />
+                <span>Cetak Lembar Rekap Keuangan</span>
+              </button>
             </div>
           </div>
         )}
@@ -672,13 +1220,24 @@ function DocumentFileCard({ title, file, number, colorClass = 'text-blue-700', i
   const fileName = file?.name || title;
   const hasFile = Boolean(rawUrl && rawUrl !== '#');
 
+  // Reset imgFailed state if URL changes
+  useEffect(() => {
+    setImgFailed(false);
+  }, [rawUrl]);
+
+  const fileExt = typeof fileName === 'string' && fileName.includes('.') 
+    ? fileName.slice(fileName.lastIndexOf('.')).toLowerCase() 
+    : '';
+  const isImageExt = ['.jpg', '.jpeg', '.png', '.webp', '.gif'].includes(fileExt);
+
   // Cek apakah URL valid untuk di-render langsung sebagai <img>
   const isImageCandidate = hasFile && typeof rawUrl === 'string' && (
     rawUrl.startsWith('data:image') ||
     rawUrl.startsWith('blob:') ||
     rawUrl.startsWith('http://') ||
     rawUrl.startsWith('https://') ||
-    rawUrl.includes('drive.google.com')
+    rawUrl.includes('drive.google.com') ||
+    isImageExt
   );
 
   return (
@@ -756,7 +1315,8 @@ function DocumentFileCard({ title, file, number, colorClass = 'text-blue-700', i
 /**
  * HALAMAN PENUH (DEDICATED FULL PAGE VIEW): DETAIL & VERIFIKASI PELETON
  */
-function TeamInspectionPage({ team, onBack, onVerify, openModal, deleteTeam }) {
+function TeamInspectionPage({ team, inspectionStage = 'registration', onBack, onVerify, openModal, deleteTeam }) {
+  const [currentStageTab, setCurrentStageTab] = useState(inspectionStage); // 'registration' | 'verification'
   const [showRevisionBox, setShowRevisionBox] = useState(false);
   const [revisionNoteInput, setRevisionNoteInput] = useState(team.revisionNote || '');
 
@@ -775,23 +1335,45 @@ function TeamInspectionPage({ team, onBack, onVerify, openModal, deleteTeam }) {
           <div className="flex items-center gap-2 text-xs">
             <button
               onClick={onBack}
-              className="inline-flex items-center gap-1.5 font-bold text-slate-600 hover:text-blue-700 transition-colors"
+              className="inline-flex items-center gap-1.5 font-bold text-slate-600 hover:text-blue-700 transition-colors cursor-pointer"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>Daftar Peleton</span>
             </button>
             <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
-            <span className="text-slate-400">Verifikasi Berkas</span>
+            <span className="text-slate-400">
+              {currentStageTab === 'registration' ? '1. Cek Berkas Pendaftaran' : '2. Cek Biodata Peleton & Surat'}
+            </span>
             <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
             <span className="font-bold text-slate-900 truncate max-w-[200px] sm:max-w-none">
               {team.schoolName}
             </span>
           </div>
 
+          {/* Tab Switcher inside inspection */}
+          <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl border border-slate-200">
+            <button
+              onClick={() => setCurrentStageTab('registration')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                currentStageTab === 'registration' ? 'bg-blue-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              1. Berkas Pendaftaran
+            </button>
+            <button
+              onClick={() => setCurrentStageTab('verification')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                currentStageTab === 'verification' ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              2. Biodata Peleton (25) & Rekomendasi
+            </button>
+          </div>
+
           <div className="flex items-center gap-2">
             <button
               onClick={() => openModal('docViewer', { docId: 'form-b', team })}
-              className="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl flex items-center gap-1.5 transition-colors"
+              className="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl flex items-center gap-1.5 transition-colors cursor-pointer"
               title="Cetak Form B Susunan Personel"
             >
               <Printer className="w-3.5 h-3.5" />
@@ -800,7 +1382,7 @@ function TeamInspectionPage({ team, onBack, onVerify, openModal, deleteTeam }) {
 
             <button
               onClick={onBack}
-              className="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 transition-colors"
+              className="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 transition-colors cursor-pointer"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>Kembali</span>
@@ -878,7 +1460,7 @@ function TeamInspectionPage({ team, onBack, onVerify, openModal, deleteTeam }) {
                 )}
                 {team.status === 'drawn' && (
                   <span className="inline-flex items-center gap-1.5 text-xs font-black text-purple-400 bg-purple-950/80 px-3 py-1.5 rounded-xl border border-purple-500/40">
-                    <Sparkles className="w-4 h-4 text-purple-400" /> 4. TERUNDI (NOMOR #{team.lotNumber})
+                    <Sparkles className="w-4 h-4 text-purple-400" /> 4. SIAP TAMPIL (TERUNDI)
                   </span>
                 )}
               </div>
@@ -1061,12 +1643,12 @@ function TeamInspectionPage({ team, onBack, onVerify, openModal, deleteTeam }) {
               <span className="font-bold text-slate-900 block">
                 {team.waNumber ? (
                   <a
-                    href={`https://wa.me/${team.waNumber.replace(/[^0-9]/g, '')}`}
+                    href={`https://wa.me/${String(team.waNumber).replace(/[^0-9]/g, '')}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-emerald-700 hover:underline"
                   >
-                    {team.waNumber}
+                    {String(team.waNumber)}
                   </a>
                 ) : '-'}
               </span>
@@ -1105,6 +1687,24 @@ function TeamInspectionPage({ team, onBack, onVerify, openModal, deleteTeam }) {
               </span>
               <span className="font-bold text-slate-900 block">
                 Gelombang {team.wave || 1} • Rp{feeFormatted}
+              </span>
+            </div>
+
+            <div className="p-3.5 bg-yellow-50/70 rounded-2xl border border-yellow-200">
+              <span className="text-[10px] font-bold text-yellow-800 uppercase block mb-1">
+                No. Urut Tampil (TM)
+              </span>
+              <span className="font-mono font-black text-sm text-yellow-950 block">
+                {team.lotNumber ? `#${String(team.lotNumber).padStart(2, '0')}` : 'Belum diundi'}
+              </span>
+            </div>
+
+            <div className="p-3.5 bg-emerald-50/70 rounded-2xl border border-emerald-200">
+              <span className="text-[10px] font-bold text-emerald-800 uppercase block mb-1">
+                Nomor Dada Lapangan
+              </span>
+              <span className="font-mono font-black text-sm text-emerald-950 block">
+                {team.chestNumber || '-'}
               </span>
             </div>
 
@@ -1316,12 +1916,21 @@ function TeamInspectionPage({ team, onBack, onVerify, openModal, deleteTeam }) {
               </span>
               {officials.length > 0 ? (
                 officials.map((o, i) => (
-                  <div key={o.id || i} className="bg-white p-2.5 rounded-xl border border-slate-200 text-xs flex justify-between items-center">
-                    <div>
-                      <span className="font-bold text-slate-900 block">{o.name}</span>
-                      <span className="text-[10px] text-slate-400">Kontak: {o.phone || '-'}</span>
+                  <div key={o.id || i} className="bg-white p-2.5 rounded-xl border border-slate-200 text-xs flex justify-between items-center gap-2">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className="w-8 h-10 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0 overflow-hidden">
+                        {o.photo ? (
+                          <img src={o.photo} alt={o.name} className="w-full h-full object-cover" />
+                        ) : (
+                          <span className="text-[9px] font-bold text-slate-400">OFF</span>
+                        )}
+                      </div>
+                      <div className="truncate">
+                        <span className="font-bold text-slate-900 block truncate">{o.name || '-'}</span>
+                        <span className="text-[10px] text-slate-400">Kontak: {o.phone || '-'}</span>
+                      </div>
                     </div>
-                    <span className="text-[10px] font-bold bg-blue-100 text-blue-800 px-2 py-0.5 rounded capitalize">{o.role || 'Official'}</span>
+                    <span className="text-[10px] font-bold bg-blue-100 text-blue-800 px-2 py-0.5 rounded capitalize shrink-0">{o.role || 'Official'}</span>
                   </div>
                 ))
               ) : (

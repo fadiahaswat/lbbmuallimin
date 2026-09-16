@@ -139,6 +139,18 @@ export async function fetchTableFromSheet(table, queryOptions = {}) {
     });
     const url = `${APPS_SCRIPT_URL}?${params.toString()}`;
     const response = await fetch(url, { method: 'GET', mode: 'cors' });
+    if (!response.ok) {
+      return { success: false, error: `HTTP ${response.status}` };
+    }
+    const contentType = response.headers.get('content-type') || '';
+    if (!contentType.includes('application/json')) {
+      const text = await response.text();
+      try {
+        return JSON.parse(text);
+      } catch {
+        return { success: false, error: 'Non-JSON response from Apps Script' };
+      }
+    }
     const result = await response.json();
     return result;
   } catch (error) {
@@ -167,6 +179,18 @@ export async function fetchAllDataFromSheet() {
   try {
     const url = `${APPS_SCRIPT_URL}?action=getAll&t=${Date.now()}`;
     const response = await fetch(url, { method: 'GET', mode: 'cors' });
+    if (!response.ok) {
+      return { success: false, error: `HTTP ${response.status}` };
+    }
+    const contentType = response.headers.get('content-type') || '';
+    if (!contentType.includes('application/json')) {
+      const text = await response.text();
+      try {
+        return JSON.parse(text);
+      } catch {
+        return { success: false, error: 'Non-JSON response from Apps Script' };
+      }
+    }
     const result = await response.json();
     return result;
   } catch (error) {

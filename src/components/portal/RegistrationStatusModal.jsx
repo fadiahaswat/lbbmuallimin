@@ -35,9 +35,9 @@ export default function RegistrationStatusModal({ isOpen, onClose }) {
   const filteredTeams = query.trim()
     ? teams.filter(
         t =>
-          t.regCode.toLowerCase().includes(query.toLowerCase()) ||
-          t.schoolName.toLowerCase().includes(query.toLowerCase()) ||
-          t.waNumber.includes(query)
+          String(t.regCode || '').toLowerCase().includes(query.toLowerCase()) ||
+          String(t.schoolName || '').toLowerCase().includes(query.toLowerCase()) ||
+          String(t.waNumber || '').includes(query)
       )
     : [];
 
@@ -241,7 +241,7 @@ export default function RegistrationStatusModal({ isOpen, onClose }) {
                   )}
                   {team.status === 'drawn' && (
                     <span className="inline-flex items-center gap-1.5 text-xs font-bold text-purple-700 bg-purple-50 px-3 py-1.5 rounded-xl border border-purple-200">
-                      <Sparkles className="w-4 h-4 text-purple-600" /> 4. Terundi Sah (No. #{team.lotNumber})
+                      <Sparkles className="w-4 h-4 text-purple-600" /> 4. Siap Tampil (Terundi)
                     </span>
                   )}
 
