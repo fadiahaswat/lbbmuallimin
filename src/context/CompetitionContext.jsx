@@ -105,6 +105,23 @@ export function normalizeTeamData(team) {
     t.files = {};
   }
 
+  // Fallback jika file_* tersimpan di root record (dari Google Sheet)
+  if (!t.files.schoolLogo && t.file_logo_sekolah) {
+    t.files.schoolLogo = { url: t.file_logo_sekolah, name: 'Logo_Sekolah.png' };
+  }
+  if (!t.files.dantonCard && t.file_kartu_danton) {
+    t.files.dantonCard = { url: t.file_kartu_danton, name: 'Kartu_Pelajar_Danton.jpg' };
+  }
+  if (!t.files.officialKtp && t.file_ktp_official) {
+    t.files.officialKtp = { url: t.file_ktp_official, name: 'KTP_Official.jpg' };
+  }
+  if (!t.files.paymentProof && t.file_bukti_bayar) {
+    t.files.paymentProof = { url: t.file_bukti_bayar, name: 'Bukti_Bayar.jpg' };
+  }
+  if (!t.files.recommendationLetter && t.file_surat_rekomendasi) {
+    t.files.recommendationLetter = { url: t.file_surat_rekomendasi, name: 'Surat_Rekomendasi.pdf' };
+  }
+
   if (typeof t.roster === 'string') {
     try { t.roster = JSON.parse(t.roster); } catch (e) { t.roster = null; }
   }
@@ -286,7 +303,7 @@ function safeSetItem(key, value) {
     localStorage.setItem(key, value);
   } catch (e) {
     console.warn(`[CompetitionContext] Storage quota warning for key "${key}":`, e);
-    // If it's TEAMS, strip out oversized base64 data URLs to save critical metadata safely
+    // If it's TEAMS, only strip out truly gigantic base64 strings (> 200KB) to preserve logo & thumbnails
     if (key === STORAGE_KEYS.TEAMS) {
       try {
         const teamsData = JSON.parse(value);
@@ -295,8 +312,8 @@ function safeSetItem(key, value) {
           const slimFiles = {};
           for (const [fKey, fVal] of Object.entries(team.files)) {
             if (fVal && typeof fVal === 'object') {
-              const isLargeUrl = typeof fVal.url === 'string' && fVal.url.length > 50000;
-              const isLargeSig = typeof fVal.signatureUrl === 'string' && fVal.signatureUrl.length > 50000;
+              const isLargeUrl = typeof fVal.url === 'string' && fVal.url.length > 200000;
+              const isLargeSig = typeof fVal.signatureUrl === 'string' && fVal.signatureUrl.length > 200000;
               slimFiles[fKey] = {
                 ...fVal,
                 url: isLargeUrl ? '' : fVal.url,
@@ -789,7 +806,6 @@ function safeSetItem(key, value) {
         dantonCard: newTeamData.files?.dantonCard || null,
         officialKtp: newTeamData.files?.officialKtp || null,
         paymentProof: newTeamData.files?.paymentProof || null,
-        selfie: newTeamData.files?.selfie || null,
         integrityPact: newTeamData.files?.integrityPact || null,
       },
       revisionNote: '',

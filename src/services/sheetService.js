@@ -35,15 +35,37 @@ export function formatImageUrl(url) {
   }
 
   // Jika URL adalah Google Drive link
-  if (url.includes('drive.google.com') || url.includes('googleusercontent.com')) {
-    const fileIdMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) || url.match(/id=([a-zA-Z0-9_-]+)/) || url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+  if (url.includes('drive.google.com') || url.includes('googleusercontent.com') || url.includes('docs.google.com')) {
+    const fileIdMatch =
+      url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) ||
+      url.match(/[?&]id=([a-zA-Z0-9_-]+)/) ||
+      url.match(/\/d\/([a-zA-Z0-9_-]+)/) ||
+      url.match(/googleusercontent\.com\/d\/([a-zA-Z0-9_-]+)/);
     if (fileIdMatch && fileIdMatch[1]) {
       const fileId = fileIdMatch[1];
-      // Google Drive Direct Thumbnail CDN (mendukung display di tag img tanpa login/CORS blocker)
-      return `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`;
+      // Gunakan drive.usercontent.google.com direct download stream yang meloloskan rendering tag <img> di semua browser
+      return `https://drive.usercontent.google.com/download?id=${fileId}&export=view`;
     }
   }
 
+  return url;
+}
+
+/**
+ * Cadangan alternatif URL Google Drive jika primary link mengalami throttling
+ */
+export function getFallbackImageUrl(url) {
+  if (!url || typeof url !== 'string') return '';
+  if (url.includes('drive.google.com') || url.includes('googleusercontent.com')) {
+    const fileIdMatch =
+      url.match(/[?&]id=([a-zA-Z0-9_-]+)/) ||
+      url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) ||
+      url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+    if (fileIdMatch && fileIdMatch[1]) {
+      const fileId = fileIdMatch[1];
+      return `https://lh3.googleusercontent.com/d/${fileId}=w1000`;
+    }
+  }
   return url;
 }
 

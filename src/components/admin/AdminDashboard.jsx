@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Shield,
   CheckCircle2,
@@ -33,7 +33,7 @@ import {
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
 import { COMPETITION, EVENT, PAYMENT } from '../../config.js';
-import { formatImageUrl } from '../../services/sheetService.js';
+import { formatImageUrl, getFallbackImageUrl } from '../../services/sheetService.js';
 
 export default function AdminDashboard() {
   const {
@@ -403,7 +403,7 @@ export default function AdminDashboard() {
                   Pendaftaran (Cek Berkas Pendaftaran Awal)
                 </h3>
                 <p className="text-xs text-slate-500 mt-0.5">
-                  Verifikasi berkas persyaratan dasar (Bukti Transfer Bank BRI, Kartu Pelajar Danton, KTP Pembina, Selfie & Pakta Integritas). Setujui untuk membuka pengisian biodata peleton.
+                  Verifikasi berkas persyaratan dasar (Bukti Transfer Bank BRI, Kartu Pelajar Danton, KTP Pembina & Pakta Integritas). Setujui untuk membuka pengisian biodata peleton.
                 </p>
               </div>
 
@@ -498,11 +498,16 @@ export default function AdminDashboard() {
                               <img
                                 src={formatImageUrl(team.files.schoolLogo.url)}
                                 alt="Logo"
+                                referrerPolicy="no-referrer"
                                 onError={(e) => {
-                                  e.currentTarget.onerror = null;
-                                  e.currentTarget.style.display = 'none';
-                                  if (e.currentTarget.nextElementSibling) {
-                                    e.currentTarget.nextElementSibling.style.display = 'flex';
+                                  const fallback = getFallbackImageUrl(team.files.schoolLogo.url);
+                                  if (fallback && e.currentTarget.src !== fallback) {
+                                    e.currentTarget.src = fallback;
+                                  } else {
+                                    e.currentTarget.style.display = 'none';
+                                    if (e.currentTarget.nextElementSibling) {
+                                      e.currentTarget.nextElementSibling.style.display = 'flex';
+                                    }
                                   }
                                 }}
                                 className="w-12 h-12 rounded-xl object-contain bg-white border border-slate-200 p-1 shrink-0 shadow-xs hover:scale-105 transition-transform"
@@ -752,11 +757,16 @@ export default function AdminDashboard() {
                                 <img
                                   src={formatImageUrl(team.files.schoolLogo.url)}
                                   alt="Logo"
+                                  referrerPolicy="no-referrer"
                                   onError={(e) => {
-                                    e.currentTarget.onerror = null;
-                                    e.currentTarget.style.display = 'none';
-                                    if (e.currentTarget.nextElementSibling) {
-                                      e.currentTarget.nextElementSibling.style.display = 'flex';
+                                    const fallback = getFallbackImageUrl(team.files.schoolLogo.url);
+                                    if (fallback && e.currentTarget.src !== fallback) {
+                                      e.currentTarget.src = fallback;
+                                    } else {
+                                      e.currentTarget.style.display = 'none';
+                                      if (e.currentTarget.nextElementSibling) {
+                                        e.currentTarget.nextElementSibling.style.display = 'flex';
+                                      }
                                     }
                                   }}
                                   className="w-12 h-12 rounded-xl object-contain bg-white border border-slate-200 p-1 shrink-0 shadow-xs"
@@ -1267,7 +1277,15 @@ function DocumentFileCard({ title, file, number, colorClass = 'text-blue-700', i
                 <img
                   src={formatImageUrl(rawUrl)}
                   alt={title}
-                  onError={() => setImgFailed(true)}
+                  referrerPolicy="no-referrer"
+                  onError={(e) => {
+                    const fallback = getFallbackImageUrl(rawUrl);
+                    if (fallback && e.currentTarget.src !== fallback) {
+                      e.currentTarget.src = fallback;
+                    } else {
+                      setImgFailed(true);
+                    }
+                  }}
                   className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform"
                 />
               </a>
@@ -1399,8 +1417,25 @@ function TeamInspectionPage({ team, inspectionStage = 'registration', onBack, on
                   <img
                     src={formatImageUrl(team.files.schoolLogo.url)}
                     alt="Logo Sekolah"
+                    referrerPolicy="no-referrer"
+                    onError={(e) => {
+                      const fallback = getFallbackImageUrl(team.files.schoolLogo.url);
+                      if (fallback && e.currentTarget.src !== fallback) {
+                        e.currentTarget.src = fallback;
+                      } else {
+                        e.currentTarget.style.display = 'none';
+                        if (e.currentTarget.nextElementSibling) {
+                          e.currentTarget.nextElementSibling.style.display = 'flex';
+                        }
+                      }
+                    }}
                     className="w-full h-full object-contain"
                   />
+                  <div
+                    className="w-full h-full bg-blue-600 text-white items-center justify-center font-black text-xl rounded-xl hidden"
+                  >
+                    {team.jenjang}
+                  </div>
                 </div>
               ) : (
                 <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-blue-600 text-white flex items-center justify-center font-black text-xl sm:text-2xl shadow-inner shrink-0 border border-blue-400/30">
@@ -1725,14 +1760,14 @@ function TeamInspectionPage({ team, inspectionStage = 'registration', onBack, on
             <div>
               <h3 className="font-black text-base uppercase tracking-wider text-slate-900 flex items-center gap-2">
                 <FileText className="w-5 h-5 text-indigo-600" />
-                Kelengkapan 7 Berkas Unggahan Persyaratan
+                Kelengkapan 6 Berkas Unggahan Persyaratan
               </h3>
               <p className="text-xs text-slate-500 mt-0.5">
                 Periksa keabsahan dokumen persyaratan administrasi sebelum menyetujui pendaftaran dan berkas peleton.
               </p>
             </div>
             <span className="text-xs font-bold text-slate-600 bg-slate-100 px-3 py-1 rounded-xl self-start sm:self-auto">
-              Total 7 Berkas
+              Total 6 Berkas
             </span>
           </div>
 
@@ -1763,19 +1798,13 @@ function TeamInspectionPage({ team, inspectionStage = 'registration', onBack, on
             />
             <DocumentFileCard
               number="5"
-              title="Foto Selfie Pemohon"
-              file={team.files?.selfie}
-              colorClass="text-purple-700"
-            />
-            <DocumentFileCard
-              number="6"
               title="Pakta Integritas Resmi"
               file={team.files?.integrityPact}
               colorClass="text-red-700"
               isSignature={true}
             />
             <DocumentFileCard
-              number="7"
+              number="6"
               title="Surat Rekomendasi Kepala Sekolah"
               file={team.files?.recommendationLetter}
               colorClass="text-amber-700"

@@ -105,8 +105,8 @@ export default function MobileMenu({ isOpen, onClose }) {
           })}
         </div>
 
-        {/* Staff & Operasional Lapangan Quick Link (Hanya untuk Staff/Panitia, bukan Peserta) */}
-        {(!currentUser || currentUser.role !== 'peserta') && (
+        {/* Staff & Operasional Lapangan Quick Link (Hanya untuk Staff/Panitia/Juri yang sudah Login) */}
+        {currentUser && ['admin', 'superadmin', 'juri'].includes(currentUser.role) && (
           <div className="mt-4 pt-4 border-t border-white/10 space-y-2">
             <button
               type="button"

@@ -30,7 +30,7 @@ import {
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
 import { EVENT, VENUE } from '../../config.js';
-import { formatImageUrl } from '../../services/sheetService.js';
+import { formatImageUrl, getFallbackImageUrl } from '../../services/sheetService.js';
 
 export default function ParticipantDashboard() {
   const {
@@ -89,6 +89,15 @@ export default function ParticipantDashboard() {
   }
 
   const teamScore = scores[currentTeam.id] || null;
+
+  const [logoLoadFailed, setLogoLoadFailed] = useState(false);
+  const rawLogoUrl = currentTeam.files?.schoolLogo?.url || '';
+  const hasLogo = Boolean(rawLogoUrl && rawLogoUrl !== '#' && !rawLogoUrl.startsWith('#'));
+  const logoFormattedUrl = hasLogo ? formatImageUrl(rawLogoUrl) : '';
+
+  useEffect(() => {
+    setLogoLoadFailed(false);
+  }, [rawLogoUrl]);
 
   const availableClassOptions = currentTeam.jenjang === 'SD'
     ? ['1', '2', '3', '4', '5', '6']
@@ -194,19 +203,72 @@ export default function ParticipantDashboard() {
   function handleFileSelected(e) {
     const file = e.target.files?.[0];
     if (file && currentUploadKey) {
-      const reader = new FileReader();
-      reader.onload = uploadEvent => {
-        const fileData = {
-          name: file.name,
-          size: (file.size / 1024).toFixed(1) + ' KB',
-          uploadedAt: new Date().toISOString(),
-          url: uploadEvent.target?.result || '#',
+      const isImg = file.type?.startsWith('image/') || /\.(jpg|jpeg|png|webp)$/i.test(file.name);
+      if (isImg) {
+        const reader = new FileReader();
+        reader.onload = uploadEvent => {
+          const img = new Image();
+          img.onload = () => {
+            const MAX_DIM = 640;
+            let width = img.width;
+            let height = img.height;
+            if (width > MAX_DIM || height > MAX_DIM) {
+              if (width > height) {
+                height = Math.round((height * MAX_DIM) / width);
+                width = MAX_DIM;
+              } else {
+                width = Math.round((width * MAX_DIM) / height);
+                height = MAX_DIM;
+              }
+            }
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+            const compressedUrl = canvas.toDataURL('image/jpeg', 0.65);
+            const estKb = Math.round((compressedUrl.length * 0.75) / 1024);
+
+            const fileData = {
+              name: file.name,
+              size: `${estKb} KB (Compressed)`,
+              uploadedAt: new Date().toISOString(),
+              url: compressedUrl,
+            };
+            updateTeamFiles(currentTeam.id, currentUploadKey, fileData);
+            setUploadToast(`Berkas "${file.name}" berhasil diunggah!`);
+            setTimeout(() => setUploadToast(''), 4000);
+          };
+          img.onerror = () => {
+            const fileData = {
+              name: file.name,
+              size: (file.size / 1024).toFixed(1) + ' KB',
+              uploadedAt: new Date().toISOString(),
+              url: uploadEvent.target?.result || '#',
+            };
+            updateTeamFiles(currentTeam.id, currentUploadKey, fileData);
+            setUploadToast(`Berkas "${file.name}" berhasil diunggah!`);
+            setTimeout(() => setUploadToast(''), 4000);
+          };
+          img.src = uploadEvent.target?.result;
         };
-        updateTeamFiles(currentTeam.id, currentUploadKey, fileData);
-        setUploadToast(`Berkas "${file.name}" berhasil diunggah!`);
-        setTimeout(() => setUploadToast(''), 4000);
-      };
-      reader.readAsDataURL(file);
+        reader.readAsDataURL(file);
+      } else {
+        // PDF or other documents
+        const reader = new FileReader();
+        reader.onload = uploadEvent => {
+          const fileData = {
+            name: file.name,
+            size: (file.size / 1024).toFixed(1) + ' KB',
+            uploadedAt: new Date().toISOString(),
+            url: uploadEvent.target?.result || '#',
+          };
+          updateTeamFiles(currentTeam.id, currentUploadKey, fileData);
+          setUploadToast(`Berkas "${file.name}" berhasil diunggah!`);
+          setTimeout(() => setUploadToast(''), 4000);
+        };
+        reader.readAsDataURL(file);
+      }
     }
   }
 
@@ -223,30 +285,78 @@ export default function ParticipantDashboard() {
     if (file && rosterPhotoTarget && rosterDraft) {
       const reader = new FileReader();
       reader.onload = uploadEvent => {
-        const photoUrl = uploadEvent.target?.result;
-        if (rosterPhotoTarget.type === 'danton') {
-          setRosterDraft({
-            ...rosterDraft,
-            danton: { ...rosterDraft.danton, photo: photoUrl }
-          });
-        } else if (rosterPhotoTarget.type === 'pasukan') {
-          const updated = rosterDraft.pasukan.map(p =>
-            p.id === rosterPhotoTarget.id ? { ...p, photo: photoUrl } : p
-          );
-          setRosterDraft({ ...rosterDraft, pasukan: updated });
-        } else if (rosterPhotoTarget.type === 'cadangan') {
-          const updated = rosterDraft.cadangan.map((c, idx) =>
-            idx === rosterPhotoTarget.index ? { ...c, photo: photoUrl } : c
-          );
-          setRosterDraft({ ...rosterDraft, cadangan: updated });
-        } else if (rosterPhotoTarget.type === 'official') {
-          const updated = rosterDraft.officials.map((o, idx) =>
-            idx === rosterPhotoTarget.index ? { ...o, photo: photoUrl } : o
-          );
-          setRosterDraft({ ...rosterDraft, officials: updated });
-        }
-        setUploadToast(`Pasfoto berhasil dipasang! Klik Simpan untuk memperbarui.`);
-        setTimeout(() => setUploadToast(''), 4000);
+        const img = new Image();
+        img.onload = () => {
+          const MAX_DIM = 400; // Pasfoto 3x4 cukup compact
+          let width = img.width;
+          let height = img.height;
+          if (width > MAX_DIM || height > MAX_DIM) {
+            if (width > height) {
+              height = Math.round((height * MAX_DIM) / width);
+              width = MAX_DIM;
+            } else {
+              width = Math.round((width * MAX_DIM) / height);
+              height = MAX_DIM;
+            }
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          const photoUrl = canvas.toDataURL('image/jpeg', 0.65);
+
+          if (rosterPhotoTarget.type === 'danton') {
+            setRosterDraft({
+              ...rosterDraft,
+              danton: { ...rosterDraft.danton, photo: photoUrl }
+            });
+          } else if (rosterPhotoTarget.type === 'pasukan') {
+            const updated = rosterDraft.pasukan.map(p =>
+              p.id === rosterPhotoTarget.id ? { ...p, photo: photoUrl } : p
+            );
+            setRosterDraft({ ...rosterDraft, pasukan: updated });
+          } else if (rosterPhotoTarget.type === 'cadangan') {
+            const updated = rosterDraft.cadangan.map((c, idx) =>
+              idx === rosterPhotoTarget.index ? { ...c, photo: photoUrl } : c
+            );
+            setRosterDraft({ ...rosterDraft, cadangan: updated });
+          } else if (rosterPhotoTarget.type === 'official') {
+            const updated = rosterDraft.officials.map((o, idx) =>
+              idx === rosterPhotoTarget.index ? { ...o, photo: photoUrl } : o
+            );
+            setRosterDraft({ ...rosterDraft, officials: updated });
+          }
+          setUploadToast(`Pasfoto berhasil dipasang! Klik Simpan untuk memperbarui.`);
+          setTimeout(() => setUploadToast(''), 4000);
+        };
+        img.onerror = () => {
+          const photoUrl = uploadEvent.target?.result;
+          if (rosterPhotoTarget.type === 'danton') {
+            setRosterDraft({
+              ...rosterDraft,
+              danton: { ...rosterDraft.danton, photo: photoUrl }
+            });
+          } else if (rosterPhotoTarget.type === 'pasukan') {
+            const updated = rosterDraft.pasukan.map(p =>
+              p.id === rosterPhotoTarget.id ? { ...p, photo: photoUrl } : p
+            );
+            setRosterDraft({ ...rosterDraft, pasukan: updated });
+          } else if (rosterPhotoTarget.type === 'cadangan') {
+            const updated = rosterDraft.cadangan.map((c, idx) =>
+              idx === rosterPhotoTarget.index ? { ...c, photo: photoUrl } : c
+            );
+            setRosterDraft({ ...rosterDraft, cadangan: updated });
+          } else if (rosterPhotoTarget.type === 'official') {
+            const updated = rosterDraft.officials.map((o, idx) =>
+              idx === rosterPhotoTarget.index ? { ...o, photo: photoUrl } : o
+            );
+            setRosterDraft({ ...rosterDraft, officials: updated });
+          }
+          setUploadToast(`Pasfoto berhasil dipasang! Klik Simpan untuk memperbarui.`);
+          setTimeout(() => setUploadToast(''), 4000);
+        };
+        img.src = uploadEvent.target?.result;
       };
       reader.readAsDataURL(file);
     }
@@ -499,38 +609,35 @@ export default function ParticipantDashboard() {
             
             {/* School & Platoon Profile */}
             <div className="flex items-center gap-5">
-              {/* Logo / Emblem */}
-              <div className="relative group shrink-0">
-                <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-white/10 border-2 border-white/20 p-2 flex items-center justify-center overflow-hidden shadow-lg backdrop-blur-md">
-                  {currentTeam.files?.schoolLogo?.url && currentTeam.files.schoolLogo.url !== '#' ? (
-                    <img
-                      src={formatImageUrl(currentTeam.files.schoolLogo.url)}
-                      alt="Logo Sekolah"
-                      referrerPolicy="no-referrer"
-                      onError={(e) => {
-                        const originalUrl = currentTeam.files?.schoolLogo?.url || '';
-                        const match = originalUrl.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) || originalUrl.match(/id=([a-zA-Z0-9_-]+)/);
-                        if (match && match[1] && !e.currentTarget.dataset.retried) {
-                          e.currentTarget.dataset.retried = 'true';
-                          e.currentTarget.src = `https://lh3.googleusercontent.com/d/${match[1]}`;
-                          return;
-                        }
-                        e.currentTarget.onerror = null;
-                        e.currentTarget.style.display = 'none';
-                        if (e.currentTarget.nextElementSibling) {
-                          e.currentTarget.nextElementSibling.style.display = 'flex';
-                        }
-                      }}
-                      className="w-full h-full object-contain"
-                    />
-                  ) : null}
-                  <div
-                    className="w-full h-full flex items-center justify-center text-slate-300 font-black text-2xl"
-                    style={{ display: currentTeam.files?.schoolLogo?.url && currentTeam.files.schoolLogo.url !== '#' ? 'none' : 'flex' }}
-                  >
-                    {currentTeam.jenjang}
+                {/* Logo / Emblem */}
+                <div className="relative group shrink-0">
+                  <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-white/10 border-2 border-white/20 p-2 flex items-center justify-center overflow-hidden shadow-lg backdrop-blur-md">
+                    {hasLogo && !logoLoadFailed ? (
+                      <img
+                        src={logoFormattedUrl}
+                        alt="Logo Sekolah"
+                        referrerPolicy="no-referrer"
+                        onError={(e) => {
+                          const fallback = getFallbackImageUrl(rawLogoUrl);
+                          if (fallback && e.currentTarget.src !== fallback) {
+                            e.currentTarget.src = fallback;
+                          } else {
+                            setLogoLoadFailed(true);
+                          }
+                        }}
+                        className="w-full h-full object-contain drop-shadow-sm"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex flex-col items-center justify-center text-center p-1">
+                        <span className="font-black text-xl sm:text-2xl text-yellow-300 drop-shadow-xs">
+                          {currentTeam.jenjang || 'LBB'}
+                        </span>
+                        <span className="text-[9px] uppercase font-bold text-white/70 tracking-wider">
+                          {(currentTeam.schoolName || '').split(' ')[0] || 'Tonti'}
+                        </span>
+                      </div>
+                    )}
                   </div>
-                </div>
                 <button
                   onClick={() => triggerFileUpload('schoolLogo')}
                   className="absolute -bottom-1 -right-1 p-2 rounded-xl bg-yellow-400 text-slate-950 shadow-md hover:bg-yellow-300 transition-all"

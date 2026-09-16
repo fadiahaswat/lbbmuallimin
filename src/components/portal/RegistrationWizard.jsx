@@ -88,8 +88,7 @@ export default function RegistrationWizard({ isOpen, onClose }) {
     dantonCard: null, // 7. Upload Kartu Pelajar Komandan
     officialKtp: null, // 9. Upload KTP Official/Pelatih
     paymentProof: null, // 10. Bukti Pembayaran
-    selfie: null, // 11. Foto Selfie / Swafoto Pemohon
-    integrityPact: null, // 12. Pakta Integritas (Online / Digital Signed)
+    integrityPact: null, // 11. Pakta Integritas (Online / Digital Signed)
   });
 
   // Online Pakta Integritas Canvas Modal State
@@ -100,7 +99,6 @@ export default function RegistrationWizard({ isOpen, onClose }) {
 
   // Submission result
   const [createdTeam, setCreatedTeam] = useState(null);
-  const [showWhatsAppModal, setShowWhatsAppModal] = useState(false);
 
   // Helper to validate and compress uploaded files (Security Checklist #19)
   const MAX_IMAGE_SIZE = 3 * 1024 * 1024; // 3 MB
@@ -142,7 +140,7 @@ export default function RegistrationWizard({ isOpen, onClose }) {
         reader.onload = (e) => {
           const img = new Image();
           img.onload = () => {
-            const MAX_DIM = 1200;
+            const MAX_DIM = 640;
             let width = img.width;
             let height = img.height;
 
@@ -162,7 +160,7 @@ export default function RegistrationWizard({ isOpen, onClose }) {
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, width, height);
 
-            const compressedUrl = canvas.toDataURL('image/jpeg', 0.75);
+            const compressedUrl = canvas.toDataURL('image/jpeg', 0.65);
             const estKb = Math.round((compressedUrl.length * 0.75) / 1024);
             resolve({
               name: file.name,
@@ -364,10 +362,6 @@ export default function RegistrationWizard({ isOpen, onClose }) {
       setValidationError('Bukti transfer pembayaran pendaftaran wajib diunggah.');
       return false;
     }
-    if (!files.selfie) {
-      setValidationError('Foto selfie/swafoto pemohon wajib diunggah.');
-      return false;
-    }
     if (!files.integrityPact) {
       setValidationError('Pakta Integritas Online wajib ditandatangani secara digital.');
       return false;
@@ -433,7 +427,6 @@ export default function RegistrationWizard({ isOpen, onClose }) {
 
     setCreatedTeam(newTeam);
     setStep(4);
-    setShowWhatsAppModal(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
@@ -704,7 +697,6 @@ export default function RegistrationWizard({ isOpen, onClose }) {
                         <option value="Kab. Sleman">Kab. Sleman</option>
                         <option value="Kab. Kulon Progo">Kab. Kulon Progo</option>
                         <option value="Kab. Gunungkidul">Kab. Gunungkidul</option>
-                        <option value="Luar D.I. Yogyakarta">Luar D.I. Yogyakarta</option>
                       </select>
                       <ChevronDown className="w-4 h-4 text-slate-500 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                     </div>
@@ -1145,7 +1137,7 @@ export default function RegistrationWizard({ isOpen, onClose }) {
           </div>
         )}
 
-        {/* ================= STEP 3: BERKAS, FOTO SELFIE & PAKTA ONLINE ================= */}
+        {/* ================= STEP 3: BERKAS PEMBAYARAN & PAKTA ONLINE ================= */}
         {step === 3 && (
           <form
             onSubmit={handleSubmit}
@@ -1157,10 +1149,10 @@ export default function RegistrationWizard({ isOpen, onClose }) {
               </div>
               <div>
                 <h2 className="text-lg sm:text-xl font-black text-slate-900 uppercase italic tracking-wide">
-                  3. Pembayaran, Foto Selfie & Pakta Integritas
+                  3. Pembayaran & Pakta Integritas Online
                 </h2>
                 <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">
-                  Unggah bukti transfer pembayaran, foto selfie pemohon/official, dan tanda tangani Pakta Integritas secara online.
+                  Unggah bukti transfer pembayaran dan tanda tangani Pakta Integritas secara online.
                 </p>
               </div>
             </div>
@@ -1265,68 +1257,13 @@ export default function RegistrationWizard({ isOpen, onClose }) {
                 </div>
               </div>
 
-              {/* 11. Foto Selfie / Swafoto Pemohon */}
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5 flex items-center gap-1.5">
-                  <Camera className="w-3.5 h-3.5 text-red-600" />
-                  <span>
-                    11. Upload Foto Selfie / Swafoto Pemohon <span className="text-red-600 font-bold">*</span>
-                  </span>
-                </label>
-                <div className="p-4 bg-slate-50 border-2 border-dashed border-slate-200 hover:border-red-400 rounded-2xl transition-all">
-                  {files.selfie ? (
-                    <div className="flex items-center justify-between p-2 bg-white rounded-xl border border-slate-200">
-                      <div className="flex items-center gap-3">
-                        <img
-                          src={files.selfie.url}
-                          alt="Foto Selfie"
-                          className="w-12 h-12 object-cover rounded-lg border border-slate-200"
-                        />
-                        <div>
-                          <span className="text-xs font-bold text-slate-900 truncate max-w-sm block">
-                            {files.selfie.name}
-                          </span>
-                          <span className="text-[10px] text-emerald-600 font-semibold flex items-center gap-1 mt-0.5">
-                            <Check className="w-3 h-3 stroke-[3]" />
-                            <span>Foto selfie berhasil diunggah</span>
-                          </span>
-                        </div>
-                      </div>
-                      <label className="cursor-pointer text-xs font-bold text-red-700 hover:text-red-800 px-3.5 py-1.5 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg transition-colors">
-                        Ganti Foto
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={e => handleFileChange('selfie', e)}
-                          className="hidden"
-                        />
-                      </label>
-                    </div>
-                  ) : (
-                    <label className="cursor-pointer flex flex-col items-center justify-center gap-2 py-4 text-xs font-bold text-slate-700 hover:text-red-700 transition-colors">
-                      <Camera className="w-6 h-6 text-red-600" />
-                      <span>Pilih Foto Selfie / Swafoto Pemohon</span>
-                      <span className="text-[10px] text-slate-500 font-normal">
-                        Format JPG atau PNG (Maks. 3 MB)
-                      </span>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={e => handleFileChange('selfie', e)}
-                        className="hidden"
-                      />
-                    </label>
-                  )}
-                </div>
-              </div>
-
-              {/* 12. PAKTA INTEGRITAS ONLINE (DIGITAL SIGNATURE) */}
+              {/* 11. PAKTA INTEGRITAS ONLINE (DIGITAL SIGNATURE) */}
               <div className="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-3.5">
                 <div className="flex items-center justify-between flex-wrap gap-2">
                   <label className="text-xs font-bold uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
                     <PenTool className="w-4 h-4 text-red-700" />
                     <span>
-                      12. Pakta Integritas Resmi (Tanda Tangan Online) <span className="text-red-600 font-bold">*</span>
+                      11. Pakta Integritas Resmi (Tanda Tangan Online) <span className="text-red-600 font-bold">*</span>
                     </span>
                   </label>
                   <span className="text-[10px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-800 border border-emerald-300 px-2.5 py-0.5 rounded-full">
@@ -1492,7 +1429,7 @@ export default function RegistrationWizard({ isOpen, onClose }) {
               </ul>
             </div>
 
-            {/* WhatsApp Confirmation Banner */}
+            {/* WhatsApp Confirmation Banner (Direct Link tanpa modal popup) */}
             <div className="p-4 sm:p-5 bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-50 border-2 border-emerald-500/30 rounded-2xl text-left space-y-3 shadow-xs">
               <div className="flex items-start gap-3">
                 <div className="w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center shrink-0 shadow-sm">
@@ -1500,24 +1437,28 @@ export default function RegistrationWizard({ isOpen, onClose }) {
                 </div>
                 <div className="flex-1 min-w-0">
                   <span className="text-[10px] font-black uppercase tracking-wider text-emerald-700 block">
-                    Konfirmasi Cepat Panitia
+                    Konfirmasi Panitia (Opsional)
                   </span>
                   <h4 className="text-sm font-black text-slate-900 leading-tight">
                     Kirim Konfirmasi Pendaftaran ke Kak Rusyda
                   </h4>
                   <p className="text-xs text-slate-600 mt-1">
-                    Beri tahu panitia via WhatsApp agar berkas pendaftaran dan verifikasi peleton Anda dapat segera diproses lebih cepat.
+                    Beri tahu panitia via WhatsApp resmi jika ingin konfirmasi langsung agar berkas dan verifikasi dapat dicek lebih awal.
                   </p>
                 </div>
               </div>
-              <button
-                type="button"
-                onClick={() => setShowWhatsAppModal(true)}
+              <a
+                href={`https://wa.me/6281230093737?text=${encodeURIComponent(
+                  `Halo Kak Rusyda (Panitia LBB Mu'allimin 2026),\nSaya *${createdTeam.officialName || 'Official'}* dari *${createdTeam.schoolName}* ingin mengonfirmasi bahwa kami telah menyelesaikan pendaftaran online:\n\n• No. Registrasi: *${createdTeam.regCode}*\n• Asal Sekolah: *${createdTeam.schoolName}*\n• Jenjang / Kategori: *${createdTeam.jenjang} / ${createdTeam.teamType}*\n• Komandan: *${createdTeam.dantonName || '-'}*\n• No. WA Official: *${createdTeam.waNumber || '-'}*\n\nBerkas pendaftaran, bukti transfer, dan pakta integritas online sudah kami unggah di website. Mohon bantuan untuk verifikasi. Terima kasih!`
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-black rounded-xl text-xs uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2"
               >
                 <MessageCircle className="w-4 h-4 fill-white/20" />
                 <span>Kirim WhatsApp ke Kak Rusyda (0812-3009-3737)</span>
-              </button>
+                <ExternalLink className="w-3.5 h-3.5" />
+              </a>
             </div>
 
             {/* Navigation Actions */}
@@ -1541,79 +1482,6 @@ export default function RegistrationWizard({ isOpen, onClose }) {
           </div>
         )}
       </main>
-
-      {/* ================= MODAL KONFIRMASI WHATSAPP KAK RUSYDA ================= */}
-      {showWhatsAppModal && createdTeam && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto animate-in fade-in duration-200">
-          <div className="bg-white border border-slate-200 rounded-3xl max-w-lg w-full p-6 sm:p-7 space-y-5 text-slate-900 shadow-2xl relative">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-xl bg-emerald-500 text-white flex items-center justify-center shadow-xs">
-                  <MessageCircle className="w-5 h-5 fill-white/20" />
-                </div>
-                <div>
-                  <span className="text-[10px] font-black uppercase tracking-wider text-emerald-700 block">
-                    Konfirmasi WhatsApp
-                  </span>
-                  <h3 className="text-base font-black text-slate-900">
-                    Hubungi Kak Rusyda (Panitia)
-                  </h3>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={() => setShowWhatsAppModal(false)}
-                className="p-2 text-slate-400 hover:text-slate-700 rounded-xl hover:bg-slate-100 transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <div className="space-y-3 text-xs text-slate-600 leading-relaxed">
-              <p>
-                Silakan klik tombol di bawah untuk membuka WhatsApp resmi Kak Rusyda (<strong className="text-slate-900">0812-3009-3737</strong>) dengan pesan konfirmasi yang sudah tersusun otomatis:
-              </p>
-
-              {/* Message Preview Box */}
-              <div className="p-4 bg-emerald-50/70 border border-emerald-200 rounded-2xl text-[11px] font-mono text-emerald-950 whitespace-pre-line leading-relaxed shadow-inner">
-                {`Halo Kak Rusyda (Panitia LBB Mu'allimin 2026),
-Saya *${createdTeam.officialName || 'Official'}* dari *${createdTeam.schoolName}* ingin mengonfirmasi bahwa kami telah menyelesaikan pendaftaran online:
-
-• No. Registrasi: *${createdTeam.regCode}*
-• Asal Sekolah: *${createdTeam.schoolName}*
-• Jenjang / Kategori: *${createdTeam.jenjang} / ${createdTeam.teamType}*
-• Komandan: *${createdTeam.dantonName || '-'}*
-• No. WA Official: *${createdTeam.waNumber || '-'}*
-
-Berkas pendaftaran, bukti transfer, dan pakta integritas online sudah kami unggah di website. Mohon bantuan untuk verifikasi. Terima kasih!`}
-              </div>
-            </div>
-
-            <div className="pt-2 flex flex-col sm:flex-row gap-2.5 border-t border-slate-100">
-              <button
-                type="button"
-                onClick={() => setShowWhatsAppModal(false)}
-                className="py-2.5 px-4 text-xs font-bold text-slate-600 hover:text-slate-900 rounded-xl border border-slate-200 hover:bg-slate-100 transition-colors order-2 sm:order-1"
-              >
-                Tutup / Nanti Saja
-              </button>
-              <a
-                href={`https://wa.me/6281230093737?text=${encodeURIComponent(
-                  `Halo Kak Rusyda (Panitia LBB Mu'allimin 2026),\nSaya *${createdTeam.officialName || 'Official'}* dari *${createdTeam.schoolName}* ingin mengonfirmasi bahwa kami telah menyelesaikan pendaftaran online:\n\n• No. Registrasi: *${createdTeam.regCode}*\n• Asal Sekolah: *${createdTeam.schoolName}*\n• Jenjang / Kategori: *${createdTeam.jenjang} / ${createdTeam.teamType}*\n• Komandan: *${createdTeam.dantonName || '-'}*\n• No. WA Official: *${createdTeam.waNumber || '-'}*\n\nBerkas pendaftaran, bukti transfer, dan pakta integritas online sudah kami unggah di website. Mohon bantuan untuk verifikasi. Terima kasih!`
-                )}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => setShowWhatsAppModal(false)}
-                className="flex-1 py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs uppercase tracking-wider rounded-xl shadow-md transition-all flex items-center justify-center gap-2 active:scale-95 order-1 sm:order-2"
-              >
-                <MessageCircle className="w-4 h-4 fill-white/20" />
-                <span>Buka WhatsApp Sekarang</span>
-                <ExternalLink className="w-3.5 h-3.5" />
-              </a>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* ================= MODAL PAKTA INTEGRITAS ONLINE ================= */}
       {showPaktaModal && (

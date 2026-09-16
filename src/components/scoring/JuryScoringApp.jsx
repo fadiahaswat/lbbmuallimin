@@ -54,7 +54,48 @@ function getInitialDantonRubric() {
 }
 
 export default function JuryScoringApp() {
-  const { teams, scores, saveScore, saveJuryPostScore, setActiveView, openModal } = useCompetition();
+  const { currentUser, teams, scores, saveScore, saveJuryPostScore, setActiveView, openModal } = useCompetition();
+
+  // Akses Terbatas: Hanya untuk Admin, Superadmin, atau Dewan Juri
+  const hasAccess = currentUser && ['admin', 'superadmin', 'juri'].includes(currentUser.role);
+
+  if (!hasAccess) {
+    return (
+      <div className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center p-6 text-center">
+        <div className="max-w-md w-full bg-slate-900 border border-slate-800 rounded-3xl p-8 space-y-5 shadow-2xl">
+          <div className="w-16 h-16 rounded-2xl bg-amber-500/20 border border-amber-500/30 text-amber-400 flex items-center justify-center mx-auto">
+            <Award className="w-8 h-8" />
+          </div>
+          <div>
+            <span className="text-[10px] font-black uppercase tracking-widest text-amber-400 bg-amber-950/70 border border-amber-500/30 px-3 py-1 rounded-full">
+              Khusus Dewan Juri
+            </span>
+            <h2 className="text-xl font-black text-white uppercase tracking-tight mt-3">
+              Portal E-Scoring LBB
+            </h2>
+            <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+              Halaman input rubrik penilaian gerakan dan danton ini bersifat rahasia dan hanya dapat diakses oleh Dewan Juri atau Administrator resmi.
+            </p>
+          </div>
+
+          <div className="space-y-2.5 pt-2">
+            <button
+              onClick={() => openModal('auth')}
+              className="w-full py-3 bg-amber-500 hover:bg-amber-400 active:scale-95 text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl shadow-lg shadow-amber-950/50 transition-all cursor-pointer"
+            >
+              Masuk Akun Dewan Juri / Admin
+            </button>
+            <button
+              onClick={() => setActiveView('landing')}
+              className="w-full py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white font-bold text-xs uppercase tracking-wider rounded-xl border border-slate-700 transition-all cursor-pointer"
+            >
+              Kembali ke Beranda
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const [activeTab, setActiveTab] = useState('scoring'); // 'scoring' | 'leaderboard'
   const [activeJuryPost, setActiveJuryPost] = useState('all'); // 'all' | 'pos1' | 'pos2' | 'pos3'

@@ -25,6 +25,8 @@ import { STAGING_CONFIG, COMPETITION, TIMELINE, VENUE } from '../../config.js';
 
 export default function StagingDashboard() {
   const {
+    currentUser,
+    openModal,
     teams,
     staging,
     updateTeamStaging,
@@ -39,6 +41,47 @@ export default function StagingDashboard() {
 
   const [selectedJenjang, setSelectedJenjang] = useState('ALL'); // 'ALL' | 'SD' | 'SMP'
   const [activeChecklistTeamId, setActiveChecklistTeamId] = useState(null);
+
+  // Akses Terbatas: Hanya untuk Admin, Superadmin, atau Dewan Juri
+  const hasAccess = currentUser && ['admin', 'superadmin', 'juri'].includes(currentUser.role);
+
+  if (!hasAccess) {
+    return (
+      <div className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center p-6 text-center">
+        <div className="max-w-md w-full bg-slate-900 border border-slate-800 rounded-3xl p-8 space-y-5 shadow-2xl">
+          <div className="w-16 h-16 rounded-2xl bg-rose-500/20 border border-rose-500/30 text-rose-400 flex items-center justify-center mx-auto">
+            <ShieldCheck className="w-8 h-8" />
+          </div>
+          <div>
+            <span className="text-[10px] font-black uppercase tracking-widest text-rose-400 bg-rose-950/70 border border-rose-500/30 px-3 py-1 rounded-full">
+              Akses Dibatasi
+            </span>
+            <h2 className="text-xl font-black text-white uppercase tracking-tight mt-3">
+              Operasional Panitia & Juri
+            </h2>
+            <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+              Halaman Staging Area & DP Lapangan ini hanya dapat diakses oleh Panitia Lapangan, Operator, atau Dewan Juri yang berwenang.
+            </p>
+          </div>
+
+          <div className="space-y-2.5 pt-2">
+            <button
+              onClick={() => openModal('auth')}
+              className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white font-black text-xs uppercase tracking-wider rounded-xl shadow-lg shadow-indigo-950/50 transition-all cursor-pointer"
+            >
+              Masuk Akun Panitia / Juri
+            </button>
+            <button
+              onClick={() => setActiveView('landing')}
+              className="w-full py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white font-bold text-xs uppercase tracking-wider rounded-xl border border-slate-700 transition-all cursor-pointer"
+            >
+              Kembali ke Beranda
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // Filter verified & drawn teams
   const verifiedTeams = teams
