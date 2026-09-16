@@ -832,22 +832,6 @@ export default function Registration() {
                 </p>
 
                 <div className="space-y-2.5 text-xs">
-                  {/* Website */}
-                  <a
-                    href={REGISTRATION.PORTAL_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-between p-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 transition-all group"
-                  >
-                    <div className="flex items-center gap-2.5">
-                      <Globe className="w-4 h-4 text-amber-400 shrink-0" />
-                      <div>
-                        <span className="text-[10px] text-slate-400 block">Website Resmi</span>
-                        <span className="font-bold text-yellow-400 group-hover:underline">{REGISTRATION.PORTAL_NAME}</span>
-                      </div>
-                    </div>
-                    <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-yellow-400 group-hover:translate-x-0.5 transition-transform" />
-                  </a>
 
                   {/* WhatsApp Kak Rusyda */}
                   {CONTACT.PERSONS.map((person, idx) => (

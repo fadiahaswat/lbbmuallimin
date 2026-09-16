@@ -2,46 +2,15 @@ import React, { useState } from 'react';
 import {
   BookOpen,
   FileText,
-  FileEdit,
-  FileCheck,
-  Map,
-  ShieldAlert,
   ArrowDownToLine,
   Download as DownloadIcon,
-  Info
+  Info,
+  CheckCircle2,
+  Sparkles,
+  ShieldCheck
 } from 'lucide-react';
 import { DOWNLOADS } from '../config.js';
 import { useCompetition } from '../context/CompetitionContext.jsx';
-
-const ICON_MAP = {
-  BookOpen: BookOpen,
-  FileText: FileText,
-  FileEdit: FileEdit,
-  FileCheck: FileCheck,
-  Map: Map,
-  ShieldAlert: ShieldAlert,
-};
-
-const COLOR_MAP = {
-  blue: {
-    accent: 'bg-blue-600',
-    icon: 'bg-blue-50 text-blue-600',
-    hover: 'hover:border-blue-300',
-    btn: 'text-blue-600 hover:bg-blue-50',
-  },
-  red: {
-    accent: 'bg-red-700',
-    icon: 'bg-red-50 text-red-700',
-    hover: 'hover:border-red-300',
-    btn: 'text-red-700 hover:bg-red-50',
-  },
-  orange: {
-    accent: 'bg-amber-500',
-    icon: 'bg-amber-50 text-amber-700',
-    hover: 'hover:border-amber-300',
-    btn: 'text-amber-700 hover:bg-amber-50',
-  },
-};
 
 export default function Downloads() {
   const [toastMessage, setToastMessage] = useState('');
@@ -62,105 +31,85 @@ export default function Downloads() {
       <div className="absolute bottom-0 left-0 w-64 h-64 bg-red-100/50 rounded-full blur-3xl opacity-50 pointer-events-none"></div>
 
       <div className="container mx-auto px-6 relative z-10">
-        <div className="mb-16 text-center">
-          <h2 className="text-4xl md:text-5xl font-black text-slate-900 uppercase italic tracking-tighter mb-4 inline-block leading-tight py-1">
+        <div className="mb-12 text-center max-w-3xl mx-auto">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-red-100/70 border border-red-200 text-red-800 text-xs font-bold uppercase tracking-wider mb-4">
+            <ShieldCheck className="w-4 h-4" />
+            <span>Sistem Pendaftaran 100% Paperless & Online</span>
+          </div>
+
+          <h2 className="text-4xl md:text-5xl font-black text-slate-900 uppercase italic tracking-tighter mb-4 leading-tight py-1">
             Pusat{' '}
             <span className="inline-block pr-3 sm:pr-4 pb-1 text-transparent bg-clip-text bg-gradient-to-r from-red-700 via-red-600 to-amber-600">
-              Unduhan
+              Unduhan & Dokumen
             </span>
           </h2>
-          <p className="text-slate-600 max-w-2xl mx-auto text-lg font-medium">
-            Akses seluruh dokumen resmi dan kelengkapan administrasi lomba.
+          <p className="text-slate-600 text-base sm:text-lg font-medium leading-relaxed">
+            Seluruh administrasi pendaftaran, biodata peleton, dan pakta integritas kini dilakukan secara <strong className="text-slate-900">online digital</strong> di website. Dokumen yang perlu Anda unduh hanyalah <strong>Buku Petunjuk Teknis (Juknis) Resmi</strong>.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {DOWNLOADS.map(item => {
-            const Icon = ICON_MAP[item.icon] || FileText;
-            const c = COLOR_MAP[item.colorScheme] || COLOR_MAP.red;
+        {/* Hero Juknis Download Card */}
+        <div className="max-w-4xl mx-auto">
+          <div className="group bg-gradient-to-br from-slate-950 via-slate-900 to-slate-900 rounded-3xl p-8 sm:p-12 shadow-2xl border border-slate-800 relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-8 transition-all hover:border-slate-700">
+            {/* Background Glow */}
+            <div className="absolute -top-20 -right-20 w-64 h-64 bg-red-600/25 rounded-full blur-3xl group-hover:bg-red-500/35 transition-all duration-500 pointer-events-none"></div>
+            <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-amber-500/15 rounded-full blur-3xl pointer-events-none"></div>
 
-            if (item.featured) {
-              return (
-                <div
-                  key={item.id}
-                  className="group bg-slate-900 rounded-2xl p-8 shadow-2xl hover:shadow-slate-900/40 hover:-translate-y-2 transition-all duration-300 relative overflow-hidden flex flex-col border border-slate-700 md:col-span-2 lg:col-span-1 lg:row-span-2"
-                >
-                  <div className="absolute -top-12 -right-12 w-32 h-32 bg-red-600/30 rounded-full blur-3xl group-hover:bg-red-500/40 transition-all duration-500"></div>
-
-                  <div className="flex items-start justify-between mb-8">
-                    <div className="p-4 bg-white/10 text-white rounded-2xl border border-white/10 group-hover:bg-red-700 group-hover:border-red-600 transition-colors shadow-lg">
-                      <Icon className="w-10 h-10" />
-                    </div>
-                    {item.badge && (
-                      <span className="px-3 py-1 bg-red-700 text-white text-[10px] font-bold rounded-full uppercase tracking-wider shadow-lg shadow-red-950/50">
-                        {item.badge}
-                      </span>
-                    )}
-                  </div>
-
-                  <h3 className="font-black text-2xl text-white mb-3 leading-tight group-hover:text-amber-400 transition-colors">
-                    {item.title}
-                  </h3>
-                  <p className="text-sm text-slate-400 mb-8 flex-grow leading-relaxed">
-                    {item.description}
-                  </p>
-
-                  <div className="mt-auto pt-6 border-t border-white/10 flex items-center justify-between">
-                    <div className="flex flex-col">
-                      <span className="text-[10px] text-slate-500 uppercase font-bold">Ukuran File</span>
-                      <span className="text-sm font-bold text-white">{item.size}</span>
-                    </div>
-                    <a
-                      href={item.url}
-                      onClick={e => handleDownload(e, item)}
-                      download={item.url !== '#'}
-                      className="flex items-center gap-2 px-6 py-3 bg-red-700 text-white rounded-xl text-sm font-bold hover:bg-red-800 hover:shadow-lg hover:shadow-red-700/30 transition-all active:scale-95"
-                    >
-                      Download <ArrowDownToLine className="w-4 h-4" />
-                    </a>
-                  </div>
+            <div className="space-y-4 max-w-xl relative z-10">
+              <div className="flex items-center gap-3">
+                <div className="p-3.5 bg-red-600/20 text-red-400 border border-red-500/30 rounded-2xl shadow-inner">
+                  <BookOpen className="w-8 h-8" />
                 </div>
-              );
-            }
+                <span className="px-3 py-1 bg-red-700 text-white text-[11px] font-extrabold rounded-full uppercase tracking-wider shadow-md">
+                  Dokumen Wajib Unduh
+                </span>
+                <span className="px-2.5 py-0.5 bg-slate-800 text-slate-300 text-xs font-mono font-bold rounded-lg border border-slate-700">
+                  PDF • 2.5 MB
+                </span>
+              </div>
 
-            return (
-              <div
-                key={item.id}
-                className={`group bg-white rounded-2xl p-6 shadow-sm border border-slate-200 hover:shadow-xl ${c.hover} hover:-translate-y-1 transition-all duration-300 relative overflow-hidden flex flex-col`}
-              >
-                <div className={`absolute top-0 left-0 w-1.5 h-full ${c.accent}`}></div>
-
-                <div className="flex items-start justify-between mb-4 pl-4">
-                  <div className={`p-3 ${c.icon} rounded-xl group-hover:scale-110 transition-transform`}>
-                    <Icon className="w-7 h-7" />
-                  </div>
-                  <span className="px-2 py-1 bg-slate-100 text-slate-600 text-[10px] font-bold rounded uppercase tracking-wider border border-slate-200">
-                    {item.type}
-                  </span>
-                </div>
-
-                <h3 className="font-bold text-lg text-slate-800 mb-2 pl-4 transition-colors">
-                  {item.title}
+              <div>
+                <h3 className="text-2xl sm:text-3xl font-black text-white leading-tight">
+                  Buku Petunjuk Teknis (Juknis) Resmi LBB 2026
                 </h3>
-                <p className="text-sm text-slate-500 mb-6 flex-grow pl-4">
-                  {item.description}
+                <p className="text-sm sm:text-base text-slate-300 mt-2 leading-relaxed font-normal">
+                  Memuat regulasi perlombaan lengkap, tata tertib, susunan materi PBB baku, pedoman variasi & formasi, tata cara penilaian juri, serta denah kotak lomba di Lapangan Mu'allimin.
                 </p>
+              </div>
 
-                <div className="flex items-center justify-between mt-auto pt-4 border-t border-slate-100 pl-4">
-                  <span className="text-xs font-semibold text-slate-500">{item.size}</span>
-                  <a
-                    href={item.url}
-                    onClick={e => handleDownload(e, item)}
-                    download={item.url !== '#'}
-                    className={`${c.btn} p-2 rounded-lg transition-colors`}
-                    aria-label={`Unduh ${item.title}`}
-                  >
-                    <DownloadIcon className="w-5 h-5" />
-                  </a>
+              {/* Online Features Benefit Pill */}
+              <div className="pt-2 grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-400">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <span>Biodata personel diisi di portal online</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <span>Pakta integritas bertanda tangan digital</span>
                 </div>
               </div>
-            );
-          })}
+            </div>
+
+            <div className="flex flex-col sm:flex-row md:flex-col gap-3 shrink-0 relative z-10 w-full md:w-auto">
+              <button
+                type="button"
+                onClick={e => handleDownload(e, DOWNLOADS[0])}
+                className="px-8 py-4 bg-gradient-to-r from-red-700 via-red-600 to-amber-600 hover:from-red-600 hover:to-amber-500 text-white rounded-2xl text-sm font-black uppercase tracking-wider shadow-xl shadow-red-950/50 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2.5 cursor-pointer"
+              >
+                <ArrowDownToLine className="w-5 h-5" />
+                <span>Unduh Juknis (PDF)</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => openModal('regWizard')}
+                className="px-6 py-3 bg-white/10 hover:bg-white/20 text-slate-200 hover:text-white rounded-2xl text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer border border-white/10"
+              >
+                <Sparkles className="w-4 h-4 text-amber-400" />
+                <span>Buka Formulir Online</span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 

@@ -3,6 +3,7 @@ import { ArrowRight, Download, ChevronsDown } from 'lucide-react';
 import { HERO, EVENT, VENUE } from '../config.js';
 import { useCompetition } from '../context/CompetitionContext.jsx';
 import logoImg from '../assets/logo-tonti.png';
+import logoTonti from '../assets/logo-tonti-muallimin.png';
 import logoMuallimin from '../assets/logo-muallimin.png';
 
 const CADET_FIGURES = [

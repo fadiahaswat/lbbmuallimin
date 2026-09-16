@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { NAVBAR } from '../config.js';
 import { useCompetition } from '../context/CompetitionContext.jsx';
-import logoImg from '../assets/logo-tonti.png';
+import logoLbb from '../assets/logo-tonti.png';
 
 export default function Navbar({ onOpenMobileMenu }) {
   const { openModal, currentUser, openAuthModal, logoutUser, setActiveView, getUserAvatar } = useCompetition();
@@ -108,8 +108,8 @@ export default function Navbar({ onOpenMobileMenu }) {
           aria-label="Kembali ke Beranda"
         >
           <img
-            src={logoImg}
-            alt="Logo LBB Tonti"
+            src={logoLbb}
+            alt="Logo LBB Mu'allimin"
             className="h-11 md:h-13 w-auto drop-shadow-md filter brightness-105"
             width="52"
             height="52"

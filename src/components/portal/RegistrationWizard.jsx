@@ -52,11 +52,11 @@ export default function RegistrationWizard({ isOpen, onClose }) {
   // 12 Items Form State
   const [formData, setFormData] = useState({
     email: '', // 1. Email aktif untuk akun
-    jenjang: 'SMP', // 2. Jenjang sekolah SD apa SMP
+    jenjang: '', // 2. Jenjang sekolah SD apa SMP (default: belum dipilih)
     schoolName: '', // 3. Nama Sekolah
     teamUnit: 'Tim A', // Pembeda Peleton: 'Tim A' | 'Tim B' | 'Tunggal'
-    teamType: 'Homogen', // 5. Homogen apa Heterogen
-    homogenGender: 'Putra', // Pilihan jika homogen: Putra | Putri
+    teamType: '', // 5. Homogen apa Heterogen (default: belum dipilih)
+    homogenGender: '', // Pilihan jika homogen: Putra | Putri (default: belum dipilih)
     dantonName: '', // 6. Nama Komandan
     officialName: '', // 8. Nama Official/Pelatih
     waNumber: '',
@@ -294,12 +294,24 @@ export default function RegistrationWizard({ isOpen, onClose }) {
       setValidationError('Alamat email aktif untuk akun wajib diisi dengan benar.');
       return false;
     }
+    if (!formData.jenjang) {
+      setValidationError('Silakan pilih Jenjang Sekolah (SD/MI atau SMP/MTs).');
+      return false;
+    }
     if (!formData.schoolName.trim()) {
       setValidationError('Nama lengkap sekolah wajib diisi.');
       return false;
     }
     if (!files.schoolLogo) {
       setValidationError('Logo sekolah wajib diunggah.');
+      return false;
+    }
+    if (!formData.teamType) {
+      setValidationError('Silakan pilih Tipe Pasukan Peleton (Homogen atau Heterogen).');
+      return false;
+    }
+    if (formData.teamType === 'Homogen' && !formData.homogenGender) {
+      setValidationError('Silakan pilih komposisi Pasukan Homogen (Pasukan Putra atau Pasukan Putri).');
       return false;
     }
     setValidationError('');
@@ -736,13 +748,19 @@ export default function RegistrationWizard({ isOpen, onClose }) {
                           </span>
                         </div>
                       </div>
-                      <span className={`self-start sm:self-center text-[11px] font-black uppercase tracking-wider px-3 py-1 rounded-full border transition-all ${
-                        formData.homogenGender === 'Putri'
-                          ? 'bg-red-50 text-red-700 border-red-200'
-                          : 'bg-slate-100 text-slate-800 border-slate-200'
-                      }`}>
-                        {formData.homogenGender === 'Putri' ? '👧 Peleton Putri' : '👦 Peleton Putra'}
-                      </span>
+                      {formData.homogenGender ? (
+                        <span className={`self-start sm:self-center text-[11px] font-black uppercase tracking-wider px-3 py-1 rounded-full border transition-all ${
+                          formData.homogenGender === 'Putri'
+                            ? 'bg-red-50 text-red-700 border-red-200'
+                            : 'bg-slate-100 text-slate-800 border-slate-200'
+                        }`}>
+                          {formData.homogenGender === 'Putri' ? '👧 Peleton Putri' : '👦 Peleton Putra'}
+                        </span>
+                      ) : (
+                        <span className="self-start sm:self-center text-[10px] font-bold text-slate-400 bg-slate-100 px-2.5 py-1 rounded-full border border-slate-200">
+                          Belum dipilih
+                        </span>
+                      )}
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -762,7 +780,7 @@ export default function RegistrationWizard({ isOpen, onClose }) {
                           avatarBg: 'bg-red-700 text-white',
                         },
                       ].map(g => {
-                        const isGenderActive = (formData.homogenGender || 'Putra') === g.id;
+                        const isGenderActive = formData.homogenGender === g.id;
                         return (
                           <button
                             key={g.id}

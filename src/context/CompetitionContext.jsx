@@ -10,21 +10,41 @@ import {
   generatePersonnels
 } from '../data/seedData.js';
 import { JURY_POSTS, STAGING_CONFIG, VOTING_CONFIG } from '../config.js';
+import {
+  saveRecordToSheet,
+  bulkSyncToSheet,
+  deleteRecordFromSheet,
+  fetchAllDataFromSheet,
+  isGoogleSheetConfigured,
+  pingSheetDatabase
+} from '../services/sheetService.js';
 
 const CompetitionContext = createContext(null);
 
 const STORAGE_KEYS = {
-  TEAMS: 'lbb_muallimin_teams_v2',
-  SCORES: 'lbb_muallimin_scores_v2',
-  SETTINGS: 'lbb_muallimin_settings_v2',
-  ROLE: 'lbb_muallimin_active_role_v2',
-  CURRENT_TEAM_ID: 'lbb_muallimin_current_team_id_v2',
-  USERS: 'lbb_muallimin_users_v2',
-  CURRENT_USER: 'lbb_muallimin_current_user_v2',
-  STAGING: 'lbb_muallimin_staging_v2',
-  VOTES: 'lbb_muallimin_votes_v2',
-  USER_VOTES: 'lbb_muallimin_user_votes_v2',
+  TEAMS: 'lbb_muallimin_teams_v3',
+  SCORES: 'lbb_muallimin_scores_v3',
+  SETTINGS: 'lbb_muallimin_settings_v3',
+  ROLE: 'lbb_muallimin_active_role_v3',
+  CURRENT_TEAM_ID: 'lbb_muallimin_current_team_id_v3',
+  USERS: 'lbb_muallimin_users_v3',
+  CURRENT_USER: 'lbb_muallimin_current_user_v3',
+  STAGING: 'lbb_muallimin_staging_v3',
+  VOTES: 'lbb_muallimin_votes_v3',
+  USER_VOTES: 'lbb_muallimin_user_votes_v3',
 };
+
+// Bersihkan data sampah/dummy legacy versi sebelumnya dari browser
+try {
+  const legacyPrefixes = ['lbb_muallimin_teams_', 'lbb_muallimin_scores_', 'lbb_muallimin_staging_', 'lbb_muallimin_votes_'];
+  Object.keys(localStorage).forEach(k => {
+    if (legacyPrefixes.some(p => k.startsWith(p) && !k.endsWith('_v3'))) {
+      localStorage.removeItem(k);
+    }
+  });
+} catch {
+  // safe ignore if localStorage is restricted
+}
 
 // Resolusi foto profil:
 // - Untuk peserta: Prioritas 1: Logo sekolah, Prioritas 2: Profil Google, Fallback: Inisial sekolah
@@ -286,6 +306,56 @@ function safeSetItem(key, value) {
       }
     }
   }, [currentTeamId]);
+
+  // Initial Sync: Mengambil data terbaru dari Google Sheet jika sudah terkonfigurasi
+  useEffect(() => {
+    if (!isGoogleSheetConfigured()) return;
+
+    let isMounted = true;
+    fetchAllDataFromSheet().then(res => {
+      if (!isMounted || !res || !res.success || !res.data) return;
+
+      const { teams: sheetTeams, scores: sheetScores, settings: sheetSettings } = res.data;
+
+      // Update teams jika sheet memiliki data
+      if (Array.isArray(sheetTeams) && sheetTeams.length > 0) {
+        setTeams(prev => {
+          // Gabungkan data sheet dengan prioritas data sheet terbaru
+          const map = new Map();
+          prev.forEach(t => map.set(t.id, t));
+          sheetTeams.forEach(t => map.set(t.id, t));
+          return Array.from(map.values());
+        });
+      }
+
+      // Update scores jika sheet memiliki data
+      if (Array.isArray(sheetScores) && sheetScores.length > 0) {
+        setScores(prev => {
+          const nextScores = { ...prev };
+          sheetScores.forEach(sc => {
+            if (sc.teamId) {
+              nextScores[sc.teamId] = sc;
+            }
+          });
+          return nextScores;
+        });
+      }
+
+      // Update settings jika sheet memiliki data
+      if (Array.isArray(sheetSettings) && sheetSettings.length > 0) {
+        const remoteSettings = sheetSettings[0];
+        if (remoteSettings) {
+          setSettings(prev => ({ ...prev, ...remoteSettings }));
+        }
+      }
+    }).catch(err => {
+      console.warn('[CompetitionContext] Sync sheet on load failed:', err);
+    });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   function navigateTo(targetView, data = null) {
     setPreviousView(activeView);
@@ -656,6 +726,12 @@ function safeSetItem(key, value) {
     };
 
     setTeams(prev => [createdTeam, ...prev]);
+
+    // Kirim otomatis ke Google Sheets (Tab 'teams' otomatis terbuat jika belum ada)
+    saveRecordToSheet('teams', createdTeam).catch(err => {
+      console.warn('[CompetitionContext] Sync registerTeam to sheet failed:', err);
+    });
+
     // Status PENDING: Pengguna belum otomatis login sebelum di-ACC Admin
     return createdTeam;
   }
@@ -728,6 +804,16 @@ function safeSetItem(key, value) {
         prev.map(u => (u.teamId === teamId ? { ...u, avatar: fileData.url } : u))
       );
     }
+
+    // Sync team update to Sheet
+    const targetTeam = teams.find(t => t.id === teamId);
+    if (targetTeam) {
+      saveRecordToSheet('teams', {
+        ...targetTeam,
+        files: { ...targetTeam.files, [fileKey]: fileData },
+        status: targetTeam.status === 'revision' ? 'pending' : targetTeam.status,
+      }).catch(err => console.warn('[CompetitionContext] Sync file update failed:', err));
+    }
   }
 
   // --- Admin Operations ---
@@ -735,11 +821,15 @@ function safeSetItem(key, value) {
     setTeams(prev =>
       prev.map(team => {
         if (team.id === teamId) {
-          return {
+          const updated = {
             ...team,
             status: newStatus,
             revisionNote: note,
           };
+          saveRecordToSheet('teams', updated).catch(err =>
+            console.warn('[CompetitionContext] Sync verifyTeam failed:', err)
+          );
+          return updated;
         }
         return team;
       })
@@ -750,11 +840,15 @@ function safeSetItem(key, value) {
     setTeams(prev =>
       prev.map(team => {
         if (team.id === teamId) {
-          return {
+          const updated = {
             ...team,
             lotNumber: lotNumber ? parseInt(lotNumber, 10) : null,
             drawTime: lotNumber ? new Date().toISOString() : null,
           };
+          saveRecordToSheet('teams', updated).catch(err =>
+            console.warn('[CompetitionContext] Sync assignLot failed:', err)
+          );
+          return updated;
         }
         return team;
       })
@@ -783,11 +877,15 @@ function safeSetItem(key, value) {
     setTeams(prev =>
       prev.map(t => {
         if (idToNumber[t.id] !== undefined) {
-          return {
+          const updated = {
             ...t,
             lotNumber: idToNumber[t.id],
             drawTime: nowIso,
           };
+          saveRecordToSheet('teams', updated).catch(err =>
+            console.warn('[CompetitionContext] Sync randomizeLot failed:', err)
+          );
+          return updated;
         }
         return t;
       })
@@ -798,12 +896,18 @@ function safeSetItem(key, value) {
 
   function deleteTeam(teamId) {
     setTeams(prev => prev.filter(t => t.id !== teamId));
+    deleteRecordFromSheet('teams', teamId).catch(err =>
+      console.warn('[CompetitionContext] Sync deleteTeam failed:', err)
+    );
     if (scores[teamId]) {
       setScores(prev => {
         const next = { ...prev };
         delete next[teamId];
         return next;
       });
+      deleteRecordFromSheet('scores', teamId).catch(err =>
+        console.warn('[CompetitionContext] Sync deleteScore failed:', err)
+      );
     }
   }
 
@@ -827,6 +931,11 @@ function safeSetItem(key, value) {
       ...prev,
       [teamId]: record,
     }));
+
+    // Sinkronkan nilai juri ke Google Sheet (Tab 'scores' otomatis dibuat jika belum ada)
+    saveRecordToSheet('scores', { id: teamId, ...record }).catch(err =>
+      console.warn('[CompetitionContext] Sync saveScore to sheet failed:', err)
+    );
 
     return record;
   }
@@ -892,6 +1001,7 @@ function safeSetItem(key, value) {
 
       updatedRecord = {
         ...currentTeamScore,
+        id: teamId,
         teamId,
         juries: updatedJuries,
         penalties: mergedPenalties,
@@ -910,6 +1020,13 @@ function safeSetItem(key, value) {
         [teamId]: updatedRecord,
       };
     });
+
+    if (updatedRecord) {
+      saveRecordToSheet('scores', updatedRecord).catch(err =>
+        console.warn('[CompetitionContext] Sync saveJuryPostScore to sheet failed:', err)
+      );
+    }
+
     return updatedRecord;
   }
 
@@ -1254,6 +1371,42 @@ function safeSetItem(key, value) {
       updateSettings,
       resetToSeedData,
       exportTeamsCSV,
+
+      // Google Spreadsheet Database Sync Operations
+      isGoogleSheetConfigured: isGoogleSheetConfigured(),
+      pingSheetDatabase,
+      syncAllToGoogleSheet: async () => {
+        const results = {};
+        if (teams.length > 0) {
+          results.teams = await bulkSyncToSheet('teams', teams);
+        }
+        const scoreArray = Object.values(scores).map(s => ({ id: s.teamId, ...s }));
+        if (scoreArray.length > 0) {
+          results.scores = await bulkSyncToSheet('scores', scoreArray);
+        }
+        results.settings = await saveRecordToSheet('settings', { id: 'competition_settings', ...settings });
+        return results;
+      },
+      pullFromGoogleSheet: async () => {
+        const res = await fetchAllDataFromSheet();
+        if (res && res.success && res.data) {
+          const { teams: sheetTeams, scores: sheetScores, settings: sheetSettings } = res.data;
+          if (Array.isArray(sheetTeams) && sheetTeams.length > 0) {
+            setTeams(sheetTeams);
+          }
+          if (Array.isArray(sheetScores) && sheetScores.length > 0) {
+            const nextScores = {};
+            sheetScores.forEach(sc => {
+              if (sc.teamId) nextScores[sc.teamId] = sc;
+            });
+            setScores(nextScores);
+          }
+          if (Array.isArray(sheetSettings) && sheetSettings[0]) {
+            setSettings(prev => ({ ...prev, ...sheetSettings[0] }));
+          }
+        }
+        return res;
+      },
 
       // Modals / Pages Navigation
       openModal,

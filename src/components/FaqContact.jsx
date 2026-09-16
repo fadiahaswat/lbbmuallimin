@@ -222,21 +222,6 @@ export default function FaqContact() {
               </div>
             </div>
 
-            <a
-              href={CONTACT.PORTAL_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block bg-slate-800/50 p-6 rounded-2xl border border-slate-700 hover:border-yellow-500 transition-all group"
-            >
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-bold text-yellow-500 uppercase tracking-widest">Portal Resmi</span>
-                <ExternalLink className="w-4 h-4 text-slate-400 group-hover:text-white" />
-              </div>
-              <h4 className="text-lg font-black text-white group-hover:underline decoration-yellow-500 underline-offset-4">
-                {CONTACT.PORTAL_DISPLAY}
-              </h4>
-              <p className="text-xs text-slate-400 mt-2">Unduh Juknis, Formulir, & Info Terbaru.</p>
-            </a>
 
             <a
               href={VENUE.MAPS_URL}

@@ -27,7 +27,11 @@ export default function SuperadminPanel() {
     updateSettings,
     resetToSeedData,
     exportTeamsCSV,
-    setActiveView
+    setActiveView,
+    isGoogleSheetConfigured,
+    pingSheetDatabase,
+    syncAllToGoogleSheet,
+    pullFromGoogleSheet
   } = useCompetition();
 
   const [toastMsg, setToastMsg] = useState('');
@@ -171,6 +175,89 @@ export default function SuperadminPanel() {
                 <span>{settings.announcementPublished ? 'Status: Dipublikasi' : 'Status: Draf / Rahasia'}</span>
               </button>
             </div>
+          </div>
+        </div>
+
+        {/* Google Spreadsheet Cloud Database Control */}
+        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-black uppercase tracking-wider text-emerald-700 bg-emerald-100 px-2.5 py-0.5 rounded-full">
+                  Cloud Spreadsheet
+                </span>
+                <span className="text-xs text-slate-500 font-medium">Google Apps Script Auto-Schema</span>
+              </div>
+              <h3 className="font-black text-lg text-slate-900 uppercase italic mt-1">
+                Konektivitas Google Sheets
+              </h3>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className={`w-3 h-3 rounded-full ${isGoogleSheetConfigured ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`} />
+              <span className="text-xs font-bold text-slate-700">
+                {isGoogleSheetConfigured ? 'Terkoneksi ke Apps Script' : 'URL Belum Dikonfigurasi di .env'}
+              </span>
+            </div>
+          </div>
+
+          <p className="text-xs text-slate-600 leading-relaxed">
+            Database ini terhubung langsung ke Google Spreadsheet panitia melalui Google Apps Script universal.
+            Setiap data baru (tab baru / kolom baru) akan dibuat secara otomatis di Google Spreadsheet tanpa perlu mengubah file <code className="bg-slate-100 px-1 py-0.5 rounded text-rose-600 font-bold">Code.gs</code> lagi.
+          </p>
+
+          <div className="grid sm:grid-cols-3 gap-4">
+            <button
+              onClick={async () => {
+                showToast('Menguji koneksi ke Google Spreadsheet...');
+                const res = await pingSheetDatabase();
+                if (res.connected) {
+                  showToast(`Koneksi Sukses! Terhubung ke Spreadsheet: "${res.spreadsheetName}"`);
+                } else {
+                  showToast(`Gagal terhubung: ${res.message}`);
+                }
+              }}
+              className="p-4 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-2xl text-left transition-all group"
+            >
+              <Database className="w-5 h-5 text-emerald-600 mb-2 group-hover:scale-110 transition-transform" />
+              <span className="font-black text-xs uppercase text-slate-900 block">Uji Koneksi (Ping)</span>
+              <span className="text-[11px] text-slate-500 mt-0.5 block leading-relaxed">
+                Periksa apakah URL Web App Apps Script merespons dengan benar.
+              </span>
+            </button>
+
+            <button
+              onClick={async () => {
+                showToast('Menyinkronkan seluruh data ke Google Sheet...');
+                const res = await syncAllToGoogleSheet();
+                showToast('Sinkronisasi selesai! Seluruh tab & kolom diperbarui.');
+              }}
+              className="p-4 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-2xl text-left transition-all group"
+            >
+              <Upload className="w-5 h-5 text-blue-600 mb-2 group-hover:scale-110 transition-transform" />
+              <span className="font-black text-xs uppercase text-slate-900 block">Sinkronkan ke Sheet (Push)</span>
+              <span className="text-[11px] text-slate-500 mt-0.5 block leading-relaxed">
+                Kirim data tim, nilai juri, dan konfigurasi lokal ke spreadsheet.
+              </span>
+            </button>
+
+            <button
+              onClick={async () => {
+                showToast('Mengambil data terbaru dari Google Sheet...');
+                const res = await pullFromGoogleSheet();
+                if (res && res.success) {
+                  showToast('Berhasil memuat data terbaru dari Google Spreadsheet!');
+                } else {
+                  showToast(`Gagal menarik data: ${res?.error || 'Periksa koneksi internet/URL'}`);
+                }
+              }}
+              className="p-4 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-2xl text-left transition-all group"
+            >
+              <Download className="w-5 h-5 text-purple-600 mb-2 group-hover:scale-110 transition-transform" />
+              <span className="font-black text-xs uppercase text-slate-900 block">Tarik dari Sheet (Pull)</span>
+              <span className="text-[11px] text-slate-500 mt-0.5 block leading-relaxed">
+                Ambil pembaruan manual langsung dari Google Spreadsheet ke aplikasi.
+              </span>
+            </button>
           </div>
         </div>
 

@@ -16,7 +16,9 @@ import {
 } from 'lucide-react';
 import { SITE, SOCIAL, CONTACT, VENUE, REGISTRATION } from '../config.js';
 import { useCompetition } from '../context/CompetitionContext.jsx';
-import logoImg from '../assets/logo-tonti.png';
+import logoLbb from '../assets/logo-tonti.png';
+import logoTonti from '../assets/logo-tonti-muallimin.png';
+import logoMuallimin from '../assets/logo-muallimin.png';
 
 export default function Footer() {
   const { setActiveView, openAuthModal } = useCompetition();
@@ -87,30 +89,33 @@ export default function Footer() {
           
           {/* Col 1: Brand & Organization Info (lg:col-span-4) */}
           <div className="lg:col-span-4 space-y-5">
-            <a href="#home" className="flex items-center gap-3.5 group w-fit">
-              <img
-                src={logoImg}
-                alt="Logo Tonti Mu'allimin"
-                className="h-12 sm:h-14 w-auto filter drop-shadow-md group-hover:scale-105 transition-transform"
-                width="56"
-                height="56"
-                loading="lazy"
-                decoding="async"
-              />
-              <div className="flex flex-col">
-                <span className="font-black text-xl sm:text-2xl text-white leading-tight tracking-tight">
-                  LBB <span className="text-yellow-400">{SITE.YEAR}</span>
-                </span>
-                <span className="text-[10px] uppercase tracking-[0.18em] text-slate-400 font-bold group-hover:text-yellow-400 transition-colors">
-                  {SITE.TAGLINE}
-                </span>
+            <a href="#home" className="flex items-center gap-4 group w-fit" aria-label="Kembali ke Beranda">
+              {/* Trio Logo Tanpa Wadah: Logo LBB (Lebih Besar) - Logo Tonti Mu'allimin - Logo Mu'allimin */}
+              <div className="flex items-center gap-3.5 sm:gap-4.5">
+                <img
+                  src={logoLbb}
+                  alt="Logo LBB Mu'allimin"
+                  className="h-16 sm:h-20 w-auto object-contain filter drop-shadow-[0_8px_16px_rgba(0,0,0,0.6)] group-hover:scale-105 transition-transform"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <div className="h-10 sm:h-12 w-px bg-slate-800" />
+                <img
+                  src={logoTonti}
+                  alt="Logo Korps Tonti Mu'allimin"
+                  className="h-12 sm:h-14 w-auto object-contain filter drop-shadow-md group-hover:scale-105 transition-transform"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <img
+                  src={logoMuallimin}
+                  alt="Logo Madrasah Mu'allimin"
+                  className="h-10 sm:h-12 w-auto object-contain filter brightness-0 invert opacity-90 group-hover:opacity-100 transition-opacity"
+                  loading="lazy"
+                  decoding="async"
+                />
               </div>
             </a>
-
-            <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 text-[11px] font-semibold text-slate-300">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-              <span>Penyelenggara: Korps Tonti Mu'allimin</span>
-            </div>
 
             <p className="text-xs sm:text-sm leading-relaxed text-slate-400 max-w-sm">
               {SITE.FOOTER_DESCRIPTION}
@@ -211,7 +216,7 @@ export default function Footer() {
               <li>
                 <button
                   type="button"
-                  onClick={() => setActiveView('check_status')}
+                  onClick={() => setActiveView('status_check')}
                   className="text-left text-slate-400 hover:text-yellow-400 transition-colors flex items-center gap-1.5 group cursor-pointer"
                 >
                   <ChevronRight className="w-3.5 h-3.5 text-yellow-400 opacity-60 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
@@ -316,11 +321,6 @@ export default function Footer() {
           <p>© {SITE.YEAR} Madrasah Mu'allimin Muhammadiyah Yogyakarta • Panitia LBB 2026</p>
           
           <div className="flex items-center gap-4 sm:gap-6 flex-wrap justify-center">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-900 border border-slate-800 text-[11px] text-yellow-400 font-semibold">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span>Portal Resmi: {REGISTRATION.PORTAL_NAME}</span>
-            </span>
-
             <button
               type="button"
               onClick={scrollToTop}
