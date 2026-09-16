@@ -19,9 +19,11 @@ import { SITE, TIMELINE, VENUE } from '../../config.js';
 import logoImg from '../../assets/logo-tonti.png';
 
 export default function LiveLeaderboard() {
-  const { teams, scores, votes, setActiveView } = useCompetition();
+  const { teams, scores, votes, role, settings, setActiveView } = useCompetition();
   const [selectedJenjang, setSelectedJenjang] = useState('ALL'); // 'ALL' | 'SD' | 'SMP'
-  const [activeTab, setActiveTab] = useState('official'); // 'official' | 'voting'
+  const isStaffOrJury = ['admin', 'juri', 'superadmin'].includes(role);
+  const isOfficialScoreVisible = isStaffOrJury || Boolean(settings?.announcementPublished);
+  const [activeTab, setActiveTab] = useState(isOfficialScoreVisible ? 'official' : 'voting'); // 'official' | 'voting'
   const [isStageMode, setIsStageMode] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -147,17 +149,19 @@ export default function LiveLeaderboard() {
         }`}>
           {/* Main Category Tabs */}
           <div className="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 p-1.5 rounded-xl">
-            <button
-              onClick={() => setActiveTab('official')}
-              className={`px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer ${
-                activeTab === 'official'
-                  ? 'bg-amber-500 text-slate-950 shadow-xs'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
-              }`}
-            >
-              <Award className="w-4 h-4" />
-              <span>Nilai Resmi Lomba</span>
-            </button>
+            {isOfficialScoreVisible && (
+              <button
+                onClick={() => setActiveTab('official')}
+                className={`px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer ${
+                  activeTab === 'official'
+                    ? 'bg-amber-500 text-slate-950 shadow-xs'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
+                }`}
+              >
+                <Award className="w-4 h-4" />
+                <span>Nilai Resmi Lomba</span>
+              </button>
+            )}
             <button
               onClick={() => setActiveTab('voting')}
               className={`px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer ${

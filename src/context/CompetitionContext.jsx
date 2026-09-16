@@ -325,9 +325,18 @@ function safeSetItem(key, value) {
     safeSetItem(STORAGE_KEYS.TEAMS, JSON.stringify(teams));
   }, [teams]);
 
+  // Sync scores to localStorage HANYA JIKA sedang login sebagai staff/juri atau hasil resmi sudah dipublikasi
   useEffect(() => {
-    safeSetItem(STORAGE_KEYS.SCORES, JSON.stringify(scores));
-  }, [scores]);
+    const isStaffOrJury = ['admin', 'juri', 'superadmin'].includes(role);
+    if (isStaffOrJury || settings.announcementPublished) {
+      safeSetItem(STORAGE_KEYS.SCORES, JSON.stringify(scores));
+    } else {
+      // Jika peran adalah publik / peserta biasa dan pengumuman belum dibuka, jangan tinggalkan data nilai di localStorage browser
+      try {
+        localStorage.removeItem(STORAGE_KEYS.SCORES);
+      } catch (e) {}
+    }
+  }, [scores, role, settings.announcementPublished]);
 
   useEffect(() => {
     safeSetItem(STORAGE_KEYS.SETTINGS, JSON.stringify(settings));
@@ -361,12 +370,16 @@ function safeSetItem(key, value) {
     }
   }, [currentTeamId]);
 
-  // Initial Sync: Mengambil data terbaru dari Google Sheet jika sudah terkonfigurasi
+  // Initial & Role-Based Sync: Mengambil data terbaru dari Google Sheet jika sudah terkonfigurasi
+  // KUNCI KEAMANAN: Skor HANYA diambil jika user adalah panitia/juri atau hasil resmi telah dipublikasi
   useEffect(() => {
     if (!isGoogleSheetConfigured()) return;
 
+    const isStaffOrJury = ['admin', 'juri', 'superadmin'].includes(role);
+    const allowScoresSync = isStaffOrJury || Boolean(settings.announcementPublished);
+
     let isMounted = true;
-    fetchAllDataFromSheet().then(res => {
+    fetchAllDataFromSheet(allowScoresSync).then(res => {
       if (!isMounted || !res || !res.success || !res.data) return;
 
       const { teams: sheetTeams, scores: sheetScores, settings: sheetSettings } = res.data;
@@ -382,8 +395,8 @@ function safeSetItem(key, value) {
         });
       }
 
-      // Update scores jika sheet memiliki data
-      if (Array.isArray(sheetScores) && sheetScores.length > 0) {
+      // Update scores HANYA jika diizinkan (staff atau pengumuman dibuka)
+      if (allowScoresSync && Array.isArray(sheetScores) && sheetScores.length > 0) {
         setScores(prev => {
           const nextScores = { ...prev };
           sheetScores.forEach(sc => {
@@ -409,7 +422,7 @@ function safeSetItem(key, value) {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [role, settings.announcementPublished]);
 
   function navigateTo(targetView, data = null) {
     setPreviousView(activeView);

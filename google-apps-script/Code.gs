@@ -27,7 +27,8 @@ var CONFIG = {
   HEADER_ROW: 1,
   ID_COLUMN_NAME: 'id',
   DRIVE_FOLDER_NAME: 'LBB_Muallimin_Uploads_2026',
-  MAX_CELL_CHARS: 40000 // Batas aman di bawah 50.000 karakter Google Sheets
+  MAX_CELL_CHARS: 40000, // Batas aman di bawah 50.000 karakter Google Sheets
+  SCORE_SECRET_KEY: 'LBB_SECURE_JURY_SCORES_MUALLIMIN_2026' // Kunci rahasia agar peserta tidak bisa membaca skor
 };
 
 /**
@@ -48,11 +49,19 @@ function doGet(e) {
       });
     }
 
+    // Pengecekan otentikasi kunci rahasia untuk membaca data skor
+    var userAuthKey = params.authKey || params.token || '';
+    var isScoreAuthorized = (userAuthKey === CONFIG.SCORE_SECRET_KEY);
+
     if (action === 'getAll') {
       var sheets = ss.getSheets();
       var allData = {};
       sheets.forEach(function(sh) {
         var name = sh.getName();
+        // Sembunyikan data scores jika tidak memiliki authKey resmi dewan juri/admin
+        if (name === 'scores' && !isScoreAuthorized) {
+          return;
+        }
         if (name !== CONFIG.DEFAULT_SHEET) {
           allData[name] = readSheetData(sh);
         }
@@ -65,6 +74,17 @@ function doGet(e) {
     }
 
     var tableName = params.table || 'teams';
+
+    // BLOKIR AKSES ILEGAL KE TAB SKOR JIKA TANPA AUTH KEY
+    if (tableName === 'scores' && !isScoreAuthorized) {
+      return jsonResponse({
+        success: false,
+        table: 'scores',
+        data: [],
+        error: 'Akses ditolak: Lembar nilai skor dewan juri terkunci demi kerahasiaan penjurian.'
+      });
+    }
+
     var sheet = ss.getSheetByName(tableName);
     if (!sheet) {
       return jsonResponse({

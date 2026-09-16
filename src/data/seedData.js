@@ -9,7 +9,7 @@ import logoImg from '../assets/logo-tonti.png';
 export const INITIAL_SETTINGS = {
   registrationOpen: true,
   scoringOpen: true,
-  announcementPublished: true, // Publikasi pengumuman hasil kejuaraan
+  announcementPublished: false, // Skor bersifat RAHASIA sampai dibuka resmi oleh Superadmin
   activeAcademicYear: '2026',
   quotaSD: 18,
   quotaSMP: 18,

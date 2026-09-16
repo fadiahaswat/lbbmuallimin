@@ -128,7 +128,7 @@ export async function bulkSyncToSheet(table, items) {
  * @param {string} table - Nama tab sheet
  * @param {object} queryOptions - Opsi query, misal { q: 'Muallimin', jenjang: 'SMP', status: 'verified' }
  */
-export async function fetchTableFromSheet(table, queryOptions = {}) {
+export async function fetchTableFromSheet(table, queryOptions = {}, isAuthorized = false) {
   if (!isGoogleSheetConfigured()) {
     return { success: false, reason: 'unconfigured' };
   }
@@ -137,6 +137,7 @@ export async function fetchTableFromSheet(table, queryOptions = {}) {
     const params = new URLSearchParams({
       table,
       t: Date.now(),
+      ...(isAuthorized ? { authKey: BACKEND_CONFIG.SCORE_SECRET_KEY } : {}),
       ...queryOptions,
     });
     const url = `${APPS_SCRIPT_URL}?${params.toString()}`;
@@ -172,14 +173,16 @@ export async function searchRecordsFromSheet(table, keyword) {
 
 /**
  * Mengambil seluruh data dari semua tab sheet
+ * @param {boolean} includeSecretScores - Apakah menyertakan lembar skor rahasia (hanya untuk staff/juri)
  */
-export async function fetchAllDataFromSheet() {
+export async function fetchAllDataFromSheet(includeSecretScores = false) {
   if (!isGoogleSheetConfigured()) {
     return { success: false, reason: 'unconfigured' };
   }
 
   try {
-    const url = `${APPS_SCRIPT_URL}?action=getAll&t=${Date.now()}`;
+    const authParam = includeSecretScores ? `&authKey=${encodeURIComponent(BACKEND_CONFIG.SCORE_SECRET_KEY)}` : '';
+    const url = `${APPS_SCRIPT_URL}?action=getAll&t=${Date.now()}${authParam}`;
     const response = await fetch(url, { method: 'GET', mode: 'cors' });
     if (!response.ok) {
       return { success: false, error: `HTTP ${response.status}` };

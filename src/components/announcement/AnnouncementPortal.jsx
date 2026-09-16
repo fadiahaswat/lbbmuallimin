@@ -23,6 +23,36 @@ export default function AnnouncementPortal() {
 
   const [activeJenjang, setActiveJenjang] = useState('SMP'); // 'SD' | 'SMP'
 
+  // Jika pengumuman belum dibuka resmi oleh superadmin
+  if (!settings.announcementPublished) {
+    return (
+      <div className="min-h-screen bg-slate-950 py-16 px-4 sm:px-6 lg:px-8 font-sans text-white flex items-center justify-center">
+        <div className="max-w-md w-full text-center space-y-6 bg-slate-900 border border-slate-800 p-8 rounded-3xl shadow-2xl">
+          <div className="w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400 mx-auto flex items-center justify-center">
+            <Shield className="w-8 h-8" />
+          </div>
+          <div className="space-y-2">
+            <span className="text-[10px] font-black uppercase tracking-widest text-amber-400 bg-amber-400/10 px-2.5 py-1 rounded border border-amber-400/20">
+              Kerahasiaan Penjurian
+            </span>
+            <h2 className="text-xl font-black uppercase tracking-tight text-white">
+              Hasil Lomba Belum Diumumkan
+            </h2>
+            <p className="text-xs text-slate-400 leading-relaxed">
+              Dewan Juri sedang melakukan rekapitulasi dan verifikasi nilai. Pengumuman resmi juara dan perolehan trofi akan dipublikasikan sesuai jadwal acara LBB Mu'allimin 2026.
+            </p>
+          </div>
+          <button
+            onClick={() => setActiveView('landing')}
+            className="w-full py-3 bg-white/10 hover:bg-white/20 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all"
+          >
+            Kembali ke Beranda
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   // Calculate ranks
   const calculateRanking = jenjang => {
     return teams
