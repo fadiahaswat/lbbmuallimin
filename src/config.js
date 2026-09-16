@@ -607,4 +607,14 @@ export const VOTING_CONFIG = {
     DAILY_LIMIT_PER_DEVICE: 1, // 1 vote per hari per pleton
 };
 
+// ---------------------------------------------------------------------------
+// BACKEND_CONFIG – Konfigurasi URL Google Apps Script & Google Client ID
+// Menjamin aplikasi tetap tersambung ke Google Sheet baik di localhost maupun di GitHub Pages
+// ---------------------------------------------------------------------------
+export const BACKEND_CONFIG = {
+    DEFAULT_APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbxLkfu6DLYOfjwK3gQBOgtKMy6k6ELn_Ma1COMfx0SivJEYGEbb64KAtt2H76XAN8QK/exec',
+    DEFAULT_GOOGLE_CLIENT_ID: '587440262077-ms6nf4jopejuqre6f1pan5as2umlv2nr.apps.googleusercontent.com',
+};
+
+
 

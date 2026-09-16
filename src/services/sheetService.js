@@ -9,7 +9,9 @@
  * - Toleran terhadap jaringan (Offline-safe / fallback tanpa crash)
  */
 
-const APPS_SCRIPT_URL = import.meta.env.VITE_APPS_SCRIPT_URL || '';
+import { BACKEND_CONFIG } from '../config.js';
+
+const APPS_SCRIPT_URL = import.meta.env.VITE_APPS_SCRIPT_URL || BACKEND_CONFIG?.DEFAULT_APPS_SCRIPT_URL || '';
 
 /**
  * Cek apakah konfigurasi URL Google Apps Script sudah disetel
