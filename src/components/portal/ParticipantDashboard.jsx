@@ -773,11 +773,78 @@ export default function ParticipantDashboard() {
 
               {/* Agenda Pelaksanaan Timeline */}
               <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs space-y-4">
-                <h4 className="font-black text-lg text-slate-900 uppercase italic">
-                  Jadwal Wajib Kontingen
-                </h4>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+                  <div>
+                    <h4 className="font-black text-lg text-slate-900 uppercase italic">
+                      Jadwal Wajib Kontingen
+                    </h4>
+                    <p className="text-xs text-slate-500 mt-0.5">
+                      Informasi jadwal resmi, estimasi waktu tampil lapangan, dan fasilitas kontingen.
+                    </p>
+                  </div>
+                  <span className="text-[11px] font-bold text-slate-600 bg-slate-100 px-3 py-1 rounded-xl self-start sm:self-auto">
+                    {currentTeam.jenjang || 'SD/SMP'} • {currentTeam.teamType || 'Homogen'}
+                  </span>
+                </div>
 
-                <div className="space-y-3">
+                {/* 3 Info Box: No. Dada, Jam Estimasi Tampil, Nomor Basecamp */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+                  {/* Card 1: No. Dada */}
+                  <div className="p-4 rounded-2xl bg-emerald-50/80 border border-emerald-200/80 flex items-center gap-3.5">
+                    <div className="w-11 h-11 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-sm">
+                      <Tag className="w-5 h-5" />
+                    </div>
+                    <div className="min-w-0">
+                      <span className="text-[10px] font-black uppercase tracking-wider text-emerald-800 block">
+                        No. Dada
+                      </span>
+                      <span className="text-lg font-black text-slate-900 font-mono block truncate mt-0.5">
+                        {currentTeam.chestNumber || '-'}
+                      </span>
+                      <span className="text-[10px] text-slate-400 block truncate">
+                        {currentTeam.chestNumber ? 'Terverifikasi panitia' : 'Diambil saat TM'}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Card 2: Jam Estimasi Tampil */}
+                  <div className="p-4 rounded-2xl bg-blue-50/80 border border-blue-200/80 flex items-center gap-3.5">
+                    <div className="w-11 h-11 rounded-xl bg-blue-600 text-white flex items-center justify-center shrink-0 shadow-sm">
+                      <Timer className="w-5 h-5" />
+                    </div>
+                    <div className="min-w-0">
+                      <span className="text-[10px] font-black uppercase tracking-wider text-blue-800 block">
+                        Jam Estimasi Tampil
+                      </span>
+                      <span className="text-lg font-black text-slate-900 font-mono block truncate mt-0.5">
+                        {currentTeam.estimatedTime ? `${currentTeam.estimatedTime} WIB` : (currentTeam.lotNumber ? `Urutan #${String(currentTeam.lotNumber).padStart(2, '0')}` : '-')}
+                      </span>
+                      <span className="text-[10px] text-slate-400 block truncate">
+                        {currentTeam.estimatedTime ? 'Estimasi tampil lapangan' : (currentTeam.lotNumber ? 'Berdasarkan nomor undian' : 'Belum diundi')}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Card 3: Nomor Basecamp */}
+                  <div className="p-4 rounded-2xl bg-amber-50/80 border border-amber-200/80 flex items-center gap-3.5">
+                    <div className="w-11 h-11 rounded-xl bg-amber-600 text-white flex items-center justify-center shrink-0 shadow-sm">
+                      <Home className="w-5 h-5" />
+                    </div>
+                    <div className="min-w-0">
+                      <span className="text-[10px] font-black uppercase tracking-wider text-amber-800 block">
+                        Nomor Basecamp
+                      </span>
+                      <span className="text-lg font-black text-slate-900 font-mono block truncate mt-0.5">
+                        {currentTeam.basecampNumber ? `Ruang ${currentTeam.basecampNumber}` : '-'}
+                      </span>
+                      <span className="text-[10px] text-slate-400 block truncate">
+                        {currentTeam.basecampNumber ? 'Ruang tunggu kontingen' : 'Diumumkan saat TM'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-3 pt-2">
                   <div className="flex items-start gap-4 p-3.5 rounded-2xl bg-purple-50/60 border border-purple-100">
                     <div className="p-2 bg-purple-600 text-white rounded-xl shrink-0">
                       <Calendar className="w-5 h-5" />

@@ -1023,17 +1023,21 @@ function safeSetItem(key, value) {
     return { success: true };
   }
 
-  function assignLotNumber(teamId, lotNumber, chestNumber = undefined) {
+  function assignLotNumber(teamId, lotNumber, chestNumber = undefined, estimatedTime = undefined, basecampNumber = undefined) {
     setTeams(prev =>
       prev.map(team => {
         if (team.id === teamId) {
           const num = (lotNumber !== undefined && lotNumber !== '' && lotNumber !== null) ? parseInt(lotNumber, 10) : null;
           const chest = (chestNumber !== undefined) ? (chestNumber ? String(chestNumber).trim() : '') : (team.chestNumber || '');
+          const estTime = (estimatedTime !== undefined) ? (estimatedTime ? String(estimatedTime).trim() : '') : (team.estimatedTime || '');
+          const basecamp = (basecampNumber !== undefined) ? (basecampNumber ? String(basecampNumber).trim() : '') : (team.basecampNumber || '');
           const nextStatus = num ? 'drawn' : (team.status === 'drawn' ? 'verified' : team.status);
           const updated = {
             ...team,
             lotNumber: num,
             chestNumber: chest,
+            estimatedTime: estTime,
+            basecampNumber: basecamp,
             status: nextStatus,
             drawTime: num ? new Date().toISOString() : null,
           };
@@ -1047,8 +1051,8 @@ function safeSetItem(key, value) {
     );
   }
 
-  function updateTeamDraw(teamId, lotNumber, chestNumber) {
-    assignLotNumber(teamId, lotNumber, chestNumber);
+  function updateTeamDraw(teamId, lotNumber, chestNumber, estimatedTime, basecampNumber) {
+    assignLotNumber(teamId, lotNumber, chestNumber, estimatedTime, basecampNumber);
   }
 
   function randomizeLotNumbers(jenjang) {

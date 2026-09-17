@@ -1071,7 +1071,7 @@ export default function AdminDashboard() {
                               </div>
                             </div>
 
-                            <div className="flex items-center gap-2 shrink-0 bg-slate-50 p-1.5 rounded-xl border border-slate-200 self-end sm:self-center">
+                            <div className="flex flex-wrap items-center gap-2 shrink-0 bg-slate-50 p-1.5 rounded-xl border border-slate-200 self-end sm:self-center">
                               <div className="flex flex-col">
                                 <span className="text-[9px] font-bold uppercase text-slate-400 tracking-wider">No. Urut</span>
                                 <input
@@ -1079,7 +1079,7 @@ export default function AdminDashboard() {
                                   min={1}
                                   max={100}
                                   value={t.lotNumber || ''}
-                                  onChange={e => updateTeamDraw(t.id, e.target.value, t.chestNumber)}
+                                  onChange={e => updateTeamDraw(t.id, e.target.value, t.chestNumber, t.estimatedTime, t.basecampNumber)}
                                   placeholder="1"
                                   className="w-16 px-2 py-1 bg-white border border-slate-300 rounded-lg text-xs font-mono font-bold text-center focus:ring-2 focus:ring-purple-500 outline-none"
                                 />
@@ -1090,9 +1090,33 @@ export default function AdminDashboard() {
                                 <input
                                   type="text"
                                   value={t.chestNumber || ''}
-                                  onChange={e => updateTeamDraw(t.id, t.lotNumber, e.target.value)}
+                                  onChange={e => updateTeamDraw(t.id, t.lotNumber, e.target.value, t.estimatedTime, t.basecampNumber)}
                                   placeholder="Contoh: 07"
-                                  className="w-20 px-2 py-1 bg-white border border-slate-300 rounded-lg text-xs font-mono font-bold text-center focus:ring-2 focus:ring-purple-500 outline-none"
+                                  className="w-18 px-2 py-1 bg-white border border-slate-300 rounded-lg text-xs font-mono font-bold text-center focus:ring-2 focus:ring-purple-500 outline-none"
+                                />
+                              </div>
+
+                              <div className="flex flex-col">
+                                <span className="text-[9px] font-bold uppercase text-slate-400 tracking-wider">Est. Tampil</span>
+                                <input
+                                  type="text"
+                                  value={t.estimatedTime || ''}
+                                  onChange={e => updateTeamDraw(t.id, t.lotNumber, t.chestNumber, e.target.value, t.basecampNumber)}
+                                  placeholder="08.30"
+                                  className="w-18 px-2 py-1 bg-white border border-slate-300 rounded-lg text-xs font-mono font-bold text-center focus:ring-2 focus:ring-purple-500 outline-none"
+                                  title="Format: HH.MM (contoh: 08.30)"
+                                />
+                              </div>
+
+                              <div className="flex flex-col">
+                                <span className="text-[9px] font-bold uppercase text-slate-400 tracking-wider">Basecamp</span>
+                                <input
+                                  type="text"
+                                  value={t.basecampNumber || ''}
+                                  onChange={e => updateTeamDraw(t.id, t.lotNumber, t.chestNumber, t.estimatedTime, e.target.value)}
+                                  placeholder="R. 101"
+                                  className="w-18 px-2 py-1 bg-white border border-slate-300 rounded-lg text-xs font-mono font-bold text-center focus:ring-2 focus:ring-purple-500 outline-none"
+                                  title="Contoh: Ruang 101 atau BC-01"
                                 />
                               </div>
                             </div>
@@ -1834,6 +1858,24 @@ function TeamInspectionPage({ team, inspectionStage = 'registration', onBack, on
               </span>
               <span className="font-mono font-black text-sm text-emerald-950 block">
                 {team.chestNumber || '-'}
+              </span>
+            </div>
+
+            <div className="p-3.5 bg-blue-50/70 rounded-2xl border border-blue-200">
+              <span className="text-[10px] font-bold text-blue-800 uppercase block mb-1">
+                Jam Estimasi Tampil
+              </span>
+              <span className="font-mono font-black text-sm text-blue-950 block">
+                {team.estimatedTime ? `${team.estimatedTime} WIB` : '-'}
+              </span>
+            </div>
+
+            <div className="p-3.5 bg-amber-50/70 rounded-2xl border border-amber-200">
+              <span className="text-[10px] font-bold text-amber-800 uppercase block mb-1">
+                Nomor Basecamp
+              </span>
+              <span className="font-mono font-black text-sm text-amber-950 block">
+                {team.basecampNumber ? `Ruang ${team.basecampNumber}` : '-'}
               </span>
             </div>
 
