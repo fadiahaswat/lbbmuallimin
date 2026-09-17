@@ -15,9 +15,14 @@ import {
   FileSpreadsheet,
   Trash2,
   Database,
-  ArrowLeft
+  ArrowLeft,
+  Calendar,
+  Clock,
+  Save,
+  RefreshCw
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
+import { EVENT } from '../../config.js';
 
 export default function SuperadminPanel() {
   const {
@@ -36,9 +41,44 @@ export default function SuperadminPanel() {
 
   const [toastMsg, setToastMsg] = useState('');
 
-  function showToast(msg) {
-    setToastMsg(msg);
-    setTimeout(() => setToastMsg(''), 4000);
+  // Form state untuk jadwal dan tanggal pelaksanaan
+  const defaultDates = {
+    registrationStart: '2026-10-01T00:00:00+07:00',
+    registrationDeadline: '2026-10-31T23:59:59+07:00',
+    registrationRangeText: '1 – 31 Oktober 2026',
+    verificationRangeText: '2 – 8 November 2026',
+    technicalMeetingDate: '9 Januari 2026',
+    technicalMeetingTime: '13.00 WIB - Selesai',
+    technicalMeetingFullDate: 'Jumat, 9 Januari 2026',
+    technicalMeetingVenue: "Kampus Induk Madrasah Mu'allimin Muhammadiyah Yogyakarta, Jalan Letjen S. Parman NO. 68, Wirobrajan, Kota Yogyakarta, Daerah Istimewa Yogyakarta.",
+    fieldTrialDate: '17 Januari 2026',
+    fieldTrialTime: '07.00 – 14.00 WIB',
+    fieldTrialFullDate: 'Sabtu, 17 Januari 2026',
+    competitionDate: 'Sabtu, 24 Januari 2026',
+    competitionTimeRange: '06.00 WIB – 17.00 WIB',
+  };
+
+  const [dateForm, setDateForm] = useState(() => ({
+    ...defaultDates,
+    ...(settings?.eventDates || {}),
+  }));
+
+  function handleDateChange(field, value) {
+    setDateForm(prev => ({ ...prev, [field]: value }));
+  }
+
+  function handleSaveDates(e) {
+    e?.preventDefault();
+    updateSettings({ eventDates: dateForm });
+    showToast('Jadwal & tanggal pelaksanaan berhasil diperbarui!');
+  }
+
+  function handleResetDates() {
+    if (confirm('Kembalikan jadwal kegiatan ke tanggal standar resmi?')) {
+      setDateForm(defaultDates);
+      updateSettings({ eventDates: defaultDates });
+      showToast('Jadwal kegiatan dikembalikan ke default resmi!');
+    }
   }
 
   function handleExportJSON() {
@@ -176,6 +216,268 @@ export default function SuperadminPanel() {
               </button>
             </div>
           </div>
+        </div>
+
+        {/* Form Kelola Jadwal & Tanggal Pelaksanaan */}
+        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-black uppercase tracking-wider text-purple-700 bg-purple-100 px-2.5 py-0.5 rounded-full flex items-center gap-1.5">
+                  <Calendar className="w-3.5 h-3.5" />
+                  Jadwal & Lini Masa
+                </span>
+                <span className="text-xs text-slate-500 font-medium">Pengaturan Dinamis Waktu & Agenda</span>
+              </div>
+              <h3 className="font-black text-lg text-slate-900 uppercase italic mt-1">
+                Kelola Tanggal Pelaksanaan Kegiatan
+              </h3>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={handleResetDates}
+                className="px-3.5 py-2 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-600 font-bold text-xs flex items-center gap-1.5 transition-colors cursor-pointer"
+                title="Reset ke Jadwal Default"
+              >
+                <RefreshCw className="w-3.5 h-3.5" />
+                <span>Reset Default</span>
+              </button>
+              <button
+                type="button"
+                onClick={handleSaveDates}
+                className="px-4 py-2 rounded-xl bg-purple-700 hover:bg-purple-800 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm transition-all cursor-pointer"
+              >
+                <Save className="w-3.5 h-3.5" />
+                <span>Simpan Tanggal</span>
+              </button>
+            </div>
+          </div>
+
+          <p className="text-xs text-slate-600 leading-relaxed">
+            Pembaruan tanggal di bawah ini akan <strong>langsung disinkronkan secara real-time</strong> ke Countdown Timer, banner Hero, kartu Lini Masa pendaftaran, jadwal Waktu & Tempat di landing page, serta dashboard peserta.
+          </p>
+
+          <form onSubmit={handleSaveDates} className="space-y-6">
+            <div className="grid sm:grid-cols-2 gap-5">
+              
+              {/* 1. Pembukaan Pendaftaran */}
+              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-black uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                    1. Pembukaan Pendaftaran
+                  </span>
+                  <span className="text-[10px] font-bold text-slate-400">Tahap 1</span>
+                </div>
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-600 mb-1">
+                    ISO Waktu Mulai (untuk Countdown Timer):
+                  </label>
+                  <input
+                    type="text"
+                    value={dateForm.registrationStart}
+                    onChange={e => handleDateChange('registrationStart', e.target.value)}
+                    className="w-full px-3 py-2 text-xs font-mono bg-white border border-slate-200 rounded-lg focus:border-purple-600 outline-none"
+                    placeholder="2026-10-01T00:00:00+07:00"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-600 mb-1">
+                    Teks Tampilan Rentang Pendaftaran:
+                  </label>
+                  <input
+                    type="text"
+                    value={dateForm.registrationRangeText}
+                    onChange={e => handleDateChange('registrationRangeText', e.target.value)}
+                    className="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-lg focus:border-purple-600 outline-none"
+                    placeholder="1 – 31 Oktober 2026"
+                  />
+                </div>
+              </div>
+
+              {/* 2. Penutupan Pendaftaran */}
+              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-black uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-amber-500"></span>
+                    2. Penutupan Pendaftaran
+                  </span>
+                  <span className="text-[10px] font-bold text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded">
+                    Auto-Close Saat Kuota Penuh
+                  </span>
+                </div>
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-600 mb-1">
+                    ISO Deadline Akhir (Target Countdown):
+                  </label>
+                  <input
+                    type="text"
+                    value={dateForm.registrationDeadline}
+                    onChange={e => handleDateChange('registrationDeadline', e.target.value)}
+                    className="w-full px-3 py-2 text-xs font-mono bg-white border border-slate-200 rounded-lg focus:border-purple-600 outline-none"
+                    placeholder="2026-10-31T23:59:59+07:00"
+                  />
+                </div>
+                <p className="text-[11px] text-slate-500 italic">
+                  * Sistem otomatis menutup tombol pendaftaran bila kuota SD & SMP telah habis terisi.
+                </p>
+              </div>
+
+              {/* 3. Verifikasi Berkas */}
+              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-black uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-blue-500"></span>
+                    3. Verifikasi Berkas Panitia
+                  </span>
+                  <span className="text-[10px] font-bold text-slate-400">Tahap 2</span>
+                </div>
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-600 mb-1">
+                    Teks Rentang Tanggal Verifikasi:
+                  </label>
+                  <input
+                    type="text"
+                    value={dateForm.verificationRangeText}
+                    onChange={e => handleDateChange('verificationRangeText', e.target.value)}
+                    className="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-lg focus:border-purple-600 outline-none"
+                    placeholder="2 – 8 November 2026"
+                  />
+                </div>
+              </div>
+
+              {/* 4. Technical Meeting (TM) */}
+              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-black uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-purple-500"></span>
+                    4. Technical Meeting (TM)
+                  </span>
+                  <span className="text-[10px] font-bold text-slate-400">Tahap 3</span>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-600 mb-1">Tanggal TM:</label>
+                    <input
+                      type="text"
+                      value={dateForm.technicalMeetingDate}
+                      onChange={e => handleDateChange('technicalMeetingDate', e.target.value)}
+                      className="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-lg focus:border-purple-600 outline-none"
+                      placeholder="9 Januari 2026"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-600 mb-1">Waktu TM:</label>
+                    <input
+                      type="text"
+                      value={dateForm.technicalMeetingTime}
+                      onChange={e => handleDateChange('technicalMeetingTime', e.target.value)}
+                      className="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-lg focus:border-purple-600 outline-none"
+                      placeholder="13.00 WIB - Selesai"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-600 mb-1">Hari & Tanggal Lengkap TM:</label>
+                  <input
+                    type="text"
+                    value={dateForm.technicalMeetingFullDate}
+                    onChange={e => handleDateChange('technicalMeetingFullDate', e.target.value)}
+                    className="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-lg focus:border-purple-600 outline-none"
+                    placeholder="Jumat, 9 Januari 2026"
+                  />
+                </div>
+              </div>
+
+              {/* 5. Uji Coba Lapangan */}
+              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-black uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                    5. Uji Coba Lapangan
+                  </span>
+                  <span className="text-[10px] font-bold text-slate-400">Tahap 4</span>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-600 mb-1">Tanggal Uji Coba:</label>
+                    <input
+                      type="text"
+                      value={dateForm.fieldTrialDate}
+                      onChange={e => handleDateChange('fieldTrialDate', e.target.value)}
+                      className="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-lg focus:border-purple-600 outline-none"
+                      placeholder="17 Januari 2026"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-600 mb-1">Waktu Uji Coba:</label>
+                    <input
+                      type="text"
+                      value={dateForm.fieldTrialTime}
+                      onChange={e => handleDateChange('fieldTrialTime', e.target.value)}
+                      className="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-lg focus:border-purple-600 outline-none"
+                      placeholder="07.00 – 14.00 WIB"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-600 mb-1">Hari & Tanggal Lengkap:</label>
+                  <input
+                    type="text"
+                    value={dateForm.fieldTrialFullDate}
+                    onChange={e => handleDateChange('fieldTrialFullDate', e.target.value)}
+                    className="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-lg focus:border-purple-600 outline-none"
+                    placeholder="Sabtu, 17 Januari 2026"
+                  />
+                </div>
+              </div>
+
+              {/* 6. Hari Pelaksanaan Lomba */}
+              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-black uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-rose-600"></span>
+                    6. Hari Pelaksanaan Lomba (Hari-H)
+                  </span>
+                  <span className="text-[10px] font-black text-rose-700 bg-rose-100 px-1.5 py-0.5 rounded">
+                    Hari H
+                  </span>
+                </div>
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-600 mb-1">Hari & Tanggal Lomba:</label>
+                  <input
+                    type="text"
+                    value={dateForm.competitionDate}
+                    onChange={e => handleDateChange('competitionDate', e.target.value)}
+                    className="w-full px-3 py-2 text-xs font-bold text-slate-900 bg-white border border-slate-200 rounded-lg focus:border-purple-600 outline-none"
+                    placeholder="Sabtu, 24 Januari 2026"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-600 mb-1">Rentang Waktu Hari-H:</label>
+                  <input
+                    type="text"
+                    value={dateForm.competitionTimeRange}
+                    onChange={e => handleDateChange('competitionTimeRange', e.target.value)}
+                    className="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-lg focus:border-purple-600 outline-none"
+                    placeholder="06.00 WIB – 17.00 WIB"
+                  />
+                </div>
+              </div>
+
+            </div>
+
+            <div className="flex justify-end pt-2 border-t border-slate-100">
+              <button
+                type="submit"
+                className="px-6 py-2.5 rounded-xl bg-purple-700 hover:bg-purple-800 text-white font-black text-xs uppercase tracking-wider flex items-center gap-2 shadow-md transition-all cursor-pointer"
+              >
+                <Save className="w-4 h-4" />
+                <span>Simpan Perubahan Jadwal</span>
+              </button>
+            </div>
+          </form>
         </div>
 
         {/* Google Spreadsheet Cloud Database Control */}

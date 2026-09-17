@@ -30,17 +30,32 @@ import { useCompetition } from '../context/CompetitionContext.jsx';
 import CountdownTimer from './CountdownTimer.jsx';
 
 export default function Registration() {
-  const { openModal, setActiveView, teams } = useCompetition();
+  const { openModal, setActiveView, teams, settings } = useCompetition();
   const [copied, setCopied] = useState(false);
 
   // Perhitungan kuota & slot tersisa realtime
-  const totalTargetSD = COMPETITION.SD.TARGET_PLATOONS || 18;
-  const totalTargetSMP = COMPETITION.SMP.TARGET_PLATOONS || 18;
+  const totalTargetSD = settings?.quotaSD || COMPETITION.SD.TARGET_PLATOONS || 18;
+  const totalTargetSMP = settings?.quotaSMP || COMPETITION.SMP.TARGET_PLATOONS || 18;
   const registeredSD = (teams || []).filter(t => t.jenjang === 'SD').length;
   const registeredSMP = (teams || []).filter(t => t.jenjang === 'SMP').length;
   const remainingSD = Math.max(0, totalTargetSD - registeredSD);
   const remainingSMP = Math.max(0, totalTargetSMP - registeredSMP);
   const totalRemaining = remainingSD + remainingSMP;
+
+  const isQuotaFull = totalRemaining <= 0;
+  const isRegOpenMaster = settings?.registrationOpen !== false;
+
+  const eventDates = settings?.eventDates || {};
+  const regRange = eventDates.registrationRangeText || EVENT.REGISTRATION_RANGE;
+  const verifRange = eventDates.verificationRangeText || EVENT.VERIFICATION_RANGE;
+  const tmDate = eventDates.technicalMeetingDate || EVENT.TECHNICAL_MEETING_DATE;
+  const tmTime = eventDates.technicalMeetingTime || EVENT.TECHNICAL_MEETING_TIME;
+  const trialDate = eventDates.fieldTrialDate || EVENT.FIELD_TRIAL_DATE;
+  const trialTime = eventDates.fieldTrialTime || EVENT.FIELD_TRIAL_TIME_RANGE;
+  const compDate = eventDates.competitionDate || EVENT.COMPETITION_DATE;
+  const compTimeStart = EVENT.COMPETITION_TIME_START_LABEL;
+
+  const isRegistrationAvailable = isRegOpenMaster && !isQuotaFull;
 
   function triggerCopied() {
     setCopied(true);
@@ -224,7 +239,7 @@ export default function Registration() {
                   </div>
                 </div>
                 <span className="text-[10px] font-extrabold uppercase tracking-wider bg-slate-100 text-slate-700 px-2.5 py-1 rounded-lg border border-slate-200">
-                  4 Tahap
+                  5 Tahap
                 </span>
               </div>
 
@@ -236,14 +251,14 @@ export default function Registration() {
                   <div className="bg-slate-50/80 hover:bg-amber-50/50 p-2.5 rounded-xl border border-slate-100 transition-colors">
                     <div className="flex items-center justify-between gap-2 mb-0.5">
                       <span className="text-[10px] font-extrabold text-amber-700 uppercase tracking-wider">
-                        {EVENT.REGISTRATION_RANGE}
+                        {regRange}
                       </span>
                       <span className="text-[9px] font-bold bg-amber-100/80 text-amber-800 px-1.5 py-0.5 rounded">
                         Tahap 1
                       </span>
                     </div>
                     <p className="text-sm font-black text-slate-900 leading-tight">Pendaftaran Daring</p>
-                    <p className="text-xs text-slate-500 mt-0.5">Unggah berkas via portal resmi s.d. 23.59 WIB</p>
+                    <p className="text-xs text-slate-500 mt-0.5">Unggah berkas via portal resmi s.d. 23.59 WIB (atau tutup jika kuota penuh)</p>
                   </div>
                 </div>
 
@@ -253,7 +268,7 @@ export default function Registration() {
                   <div className="bg-slate-50/80 hover:bg-blue-50/50 p-2.5 rounded-xl border border-slate-100 transition-colors">
                     <div className="flex items-center justify-between gap-2 mb-0.5">
                       <span className="text-[10px] font-extrabold text-blue-700 uppercase tracking-wider">
-                        {EVENT.VERIFICATION_RANGE}
+                        {verifRange}
                       </span>
                       <span className="text-[9px] font-bold bg-blue-100/80 text-blue-800 px-1.5 py-0.5 rounded">
                         Tahap 2
@@ -270,31 +285,48 @@ export default function Registration() {
                   <div className="bg-slate-50/80 hover:bg-purple-50/50 p-2.5 rounded-xl border border-slate-100 transition-colors">
                     <div className="flex items-center justify-between gap-2 mb-0.5">
                       <span className="text-[10px] font-extrabold text-purple-700 uppercase tracking-wider">
-                        {EVENT.TECHNICAL_MEETING_DATE}
+                        {tmDate}
                       </span>
                       <span className="text-[9px] font-bold bg-purple-100/80 text-purple-800 px-1.5 py-0.5 rounded">
                         Tahap 3
                       </span>
                     </div>
                     <p className="text-sm font-black text-slate-900 leading-tight">Technical Meeting</p>
-                    <p className="text-xs text-slate-500 mt-0.5">Pengundian nomor urut & validasi fisik • {EVENT.TECHNICAL_MEETING_TIME}</p>
+                    <p className="text-xs text-slate-500 mt-0.5">Pengundian nomor urut & verifikasi fisik • {tmTime}</p>
                   </div>
                 </div>
 
-                {/* Step 4: Hari H */}
+                {/* Step 4: Uji Coba Lapangan */}
+                <div className="relative">
+                  <div className="absolute -left-[31px] top-1.5 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-white shadow-sm ring-2 ring-emerald-500/20"></div>
+                  <div className="bg-slate-50/80 hover:bg-emerald-50/50 p-2.5 rounded-xl border border-slate-100 transition-colors">
+                    <div className="flex items-center justify-between gap-2 mb-0.5">
+                      <span className="text-[10px] font-extrabold text-emerald-700 uppercase tracking-wider">
+                        {trialDate}
+                      </span>
+                      <span className="text-[9px] font-bold bg-emerald-100/80 text-emerald-800 px-1.5 py-0.5 rounded">
+                        Tahap 4
+                      </span>
+                    </div>
+                    <p className="text-sm font-black text-slate-900 leading-tight">Uji Coba Lapangan</p>
+                    <p className="text-xs text-slate-500 mt-0.5">Orientasi pos perlombaan peserta • {trialTime}</p>
+                  </div>
+                </div>
+
+                {/* Step 5: Hari H */}
                 <div className="relative">
                   <div className="absolute -left-[31px] top-1.5 w-3.5 h-3.5 rounded-full bg-red-600 border-2 border-white shadow-sm ring-2 ring-red-600/30 animate-pulse"></div>
                   <div className="bg-red-50/70 hover:bg-red-50 p-2.5 rounded-xl border border-red-200/70 transition-colors">
                     <div className="flex items-center justify-between gap-2 mb-0.5">
                       <span className="text-[10px] font-black text-red-700 uppercase tracking-wider">
-                        {EVENT.COMPETITION_DATE}
+                        {compDate}
                       </span>
                       <span className="text-[9px] font-black bg-red-600 text-white px-1.5 py-0.5 rounded animate-pulse">
                         Hari H
                       </span>
                     </div>
                     <p className="text-sm font-black text-slate-900 leading-tight">Daftar Ulang & Pelaksanaan Lomba</p>
-                    <p className="text-xs text-slate-600 mt-0.5">Pembukaan & kompetisi • {EVENT.COMPETITION_TIME_START_LABEL}</p>
+                    <p className="text-xs text-slate-600 mt-0.5">Pembukaan & kompetisi • {compTimeStart}</p>
                   </div>
                 </div>
               </div>
@@ -709,14 +741,20 @@ export default function Registration() {
               </p>
             </div>
             <div className="relative z-10 shrink-0 w-full sm:w-auto flex flex-col sm:flex-row items-center gap-3">
-              <button
-                type="button"
-                onClick={() => openModal('regWizard')}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-gradient-to-r from-red-700 via-red-600 to-red-700 text-white font-extrabold rounded-xl hover:from-red-600 hover:to-red-700 shadow-lg shadow-red-950/40 hover:shadow-red-700/30 transition-all transform hover:-translate-y-0.5 text-sm uppercase tracking-wide"
-              >
-                <span>Buka Formulir Pendaftaran</span>
-                <ExternalLink className="w-4 h-4" />
-              </button>
+              {isRegistrationAvailable ? (
+                <button
+                  type="button"
+                  onClick={() => openModal('regWizard')}
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-gradient-to-r from-red-700 via-red-600 to-red-700 text-white font-extrabold rounded-xl hover:from-red-600 hover:to-red-700 shadow-lg shadow-red-950/40 hover:shadow-red-700/30 transition-all transform hover:-translate-y-0.5 text-sm uppercase tracking-wide cursor-pointer"
+                >
+                  <span>Buka Formulir Pendaftaran</span>
+                  <ExternalLink className="w-4 h-4" />
+                </button>
+              ) : (
+                <div className="w-full sm:w-auto px-6 py-3.5 bg-slate-800 border border-slate-700 text-slate-300 font-bold rounded-xl text-center text-xs uppercase tracking-wide">
+                  {isQuotaFull ? 'Pendaftaran Ditutup (Kuota Penuh)' : 'Pendaftaran Sedang Ditutup'}
+                </div>
+              )}
             </div>
           </div>
         </div>

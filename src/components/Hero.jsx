@@ -35,8 +35,10 @@ const CADET_FIGURES = [
 ];
 
 export default function Hero() {
-  const { openModal, setActiveView } = useCompetition();
+  const { openModal, setActiveView, settings } = useCompetition();
   const [activeCadetIndex, setActiveCadetIndex] = useState(0);
+
+  const regRangeText = settings?.eventDates?.registrationRangeText || EVENT.REGISTRATION_RANGE;
 
   // Preload & Auto-rotate cadet illustration every 6 seconds
   useEffect(() => {
@@ -116,7 +118,7 @@ export default function Hero() {
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
               </span>
               <span className="text-[10px] sm:text-xs font-bold tracking-widest uppercase text-slate-200">
-                {EVENT.REGISTRATION_BADGE}
+                Pendaftaran: {regRangeText}
               </span>
             </div>
 

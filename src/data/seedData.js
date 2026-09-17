@@ -14,6 +14,21 @@ export const INITIAL_SETTINGS = {
   quotaSD: 18,
   quotaSMP: 18,
   currentWave: 1, // Gelombang 1
+  eventDates: {
+    registrationStart: '2026-10-01T00:00:00+07:00',
+    registrationDeadline: '2026-10-31T23:59:59+07:00',
+    registrationRangeText: '1 – 31 Oktober 2026',
+    verificationRangeText: '2 – 8 November 2026',
+    technicalMeetingDate: '9 Januari 2026',
+    technicalMeetingTime: '13.00 WIB - Selesai',
+    technicalMeetingFullDate: 'Jumat, 9 Januari 2026',
+    technicalMeetingVenue: "Kampus Induk Madrasah Mu'allimin Muhammadiyah Yogyakarta, Jalan Letjen S. Parman NO. 68, Wirobrajan, Kota Yogyakarta, Daerah Istimewa Yogyakarta.",
+    fieldTrialDate: '17 Januari 2026',
+    fieldTrialTime: '07.00 – 14.00 WIB',
+    fieldTrialFullDate: 'Sabtu, 17 Januari 2026',
+    competitionDate: 'Sabtu, 24 Januari 2026',
+    competitionTimeRange: '06.00 WIB – 17.00 WIB',
+  },
 };
 
 export const INITIAL_PINS = {

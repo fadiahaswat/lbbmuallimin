@@ -264,7 +264,16 @@ export function CompetitionProvider({ children }) {
   const [settings, setSettings] = useState(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.SETTINGS);
-      return saved ? JSON.parse(saved) : INITIAL_SETTINGS;
+      if (!saved) return INITIAL_SETTINGS;
+      const parsed = JSON.parse(saved);
+      return {
+        ...INITIAL_SETTINGS,
+        ...parsed,
+        eventDates: {
+          ...INITIAL_SETTINGS.eventDates,
+          ...(parsed.eventDates || {}),
+        }
+      };
     } catch {
       return INITIAL_SETTINGS;
     }
@@ -453,10 +462,135 @@ function safeSetItem(key, value) {
       // Update teams jika sheet memiliki data
       if (Array.isArray(sheetTeams) && sheetTeams.length > 0) {
         setTeams(prev => {
-          // Gabungkan data sheet dengan prioritas data sheet terbaru
+          // Gabungkan data sheet dengan menjaga integritas data roster dan foto lokal
           const map = new Map();
           prev.forEach(t => map.set(t.id, normalizeTeamData(t)));
-          sheetTeams.forEach(t => map.set(t.id, normalizeTeamData(t)));
+
+          sheetTeams.forEach(rawSheetTeam => {
+            const normalizedSheetTeam = normalizeTeamData(rawSheetTeam);
+            const existing = map.get(normalizedSheetTeam.id);
+
+            if (existing) {
+              // Pertahankan file lokal jika di remote sheet kosong/tidak terupdate
+              const mergedFiles = {
+                ...existing.files,
+                ...normalizedSheetTeam.files,
+              };
+              Object.keys(existing.files || {}).forEach(k => {
+                if (existing.files[k]?.url && (!mergedFiles[k]?.url || mergedFiles[k]?.url === '#')) {
+                  mergedFiles[k] = existing.files[k];
+                }
+              });
+
+              // Pertahankan roster & foto-foto personel jika di sheet terpotong/kosong
+              const existingRoster = existing.roster || {};
+              const sheetRoster = normalizedSheetTeam.roster || {};
+
+              const mergedDanton = {
+                ...existingRoster.danton,
+                ...sheetRoster.danton,
+                name: (sheetRoster.danton?.name && sheetRoster.danton.name !== '-' && sheetRoster.danton.name !== 'Anggota Pratama') 
+                  ? sheetRoster.danton.name 
+                  : (existingRoster.danton?.name || existing.dantonName || normalizedSheetTeam.dantonName || '-'),
+                photo: (sheetRoster.danton?.photo && sheetRoster.danton.photo !== '#' && !sheetRoster.danton.photo.startsWith('#'))
+                  ? sheetRoster.danton.photo
+                  : (existingRoster.danton?.photo || null),
+              };
+
+              // Merge 21 Pasukan
+              const sheetPasukan = Array.isArray(sheetRoster.pasukan) ? sheetRoster.pasukan : [];
+              const existingPasukan = Array.isArray(existingRoster.pasukan) ? existingRoster.pasukan : [];
+              const maxPasukanLen = Math.max(sheetPasukan.length, existingPasukan.length, 21);
+              const mergedPasukan = [];
+
+              for (let i = 0; i < maxPasukanLen; i++) {
+                const sP = sheetPasukan[i];
+                const eP = existingPasukan[i];
+                if (!sP && !eP) continue;
+
+                const baseP = sP || eP;
+                const pId = sP?.id || eP?.id || `p-${i + 1}`;
+                const safNumber = sP?.safNumber || eP?.safNumber || Math.ceil((i + 1) / 7);
+                const banjarNumber = sP?.banjarNumber || eP?.banjarNumber || (((i) % 7) + 1);
+
+                mergedPasukan.push({
+                  id: pId,
+                  role: 'pasukan',
+                  safNumber,
+                  banjarNumber,
+                  name: (sP?.name && sP.name !== '-') ? sP.name : (eP?.name || ''),
+                  nisn: (sP?.nisn && sP.nisn !== '-') ? sP.nisn : (eP?.nisn || ''),
+                  class: (sP?.class && sP.class !== '-') ? sP.class : (eP?.class || ''),
+                  birthPlace: sP?.birthPlace || eP?.birthPlace || '',
+                  birthDate: sP?.birthDate || eP?.birthDate || '',
+                  photo: (sP?.photo && sP.photo !== '#' && !sP.photo.startsWith('#'))
+                    ? sP.photo
+                    : (eP?.photo || null),
+                });
+              }
+
+              // Merge Cadangan
+              const sheetCadangan = Array.isArray(sheetRoster.cadangan) ? sheetRoster.cadangan : [];
+              const existingCadangan = Array.isArray(existingRoster.cadangan) ? existingRoster.cadangan : [];
+              const maxCadLen = Math.max(sheetCadangan.length, existingCadangan.length, 3);
+              const mergedCadangan = [];
+
+              for (let i = 0; i < maxCadLen; i++) {
+                const sC = sheetCadangan[i];
+                const eC = existingCadangan[i];
+                if (!sC && !eC) continue;
+                mergedCadangan.push({
+                  id: sC?.id || eC?.id || `c-${i + 1}`,
+                  role: 'cadangan',
+                  name: (sC?.name && sC.name !== '-') ? sC.name : (eC?.name || ''),
+                  nisn: (sC?.nisn && sC.nisn !== '-') ? sC.nisn : (eC?.nisn || ''),
+                  class: (sC?.class && sC.class !== '-') ? sC.class : (eC?.class || ''),
+                  birthPlace: sC?.birthPlace || eC?.birthPlace || '',
+                  birthDate: sC?.birthDate || eC?.birthDate || '',
+                  photo: (sC?.photo && sC.photo !== '#' && !sC.photo.startsWith('#'))
+                    ? sC.photo
+                    : (eC?.photo || null),
+                });
+              }
+
+              // Merge Officials
+              const sheetOfficials = Array.isArray(sheetRoster.officials) ? sheetRoster.officials : [];
+              const existingOfficials = Array.isArray(existingRoster.officials) ? existingRoster.officials : [];
+              const maxOffLen = Math.max(sheetOfficials.length, existingOfficials.length, 2);
+              const mergedOfficials = [];
+
+              for (let i = 0; i < maxOffLen; i++) {
+                const sO = sheetOfficials[i];
+                const eO = existingOfficials[i];
+                if (!sO && !eO) continue;
+                mergedOfficials.push({
+                  id: sO?.id || eO?.id || `off-${i + 1}`,
+                  role: sO?.role || eO?.role || `Pembina / Pelatih ${i + 1}`,
+                  name: (sO?.name && sO.name !== '-') ? sO.name : (eO?.name || ''),
+                  phone: sO?.phone || eO?.phone || '',
+                  photo: (sO?.photo && sO.photo !== '#' && !sO.photo.startsWith('#'))
+                    ? sO.photo
+                    : (eO?.photo || null),
+                });
+              }
+
+              map.set(normalizedSheetTeam.id, {
+                ...existing,
+                ...normalizedSheetTeam,
+                files: mergedFiles,
+                roster: {
+                  danton: mergedDanton,
+                  pasukan: mergedPasukan,
+                  cadangan: mergedCadangan,
+                  officials: mergedOfficials,
+                },
+                dantonName: mergedDanton.name || normalizedSheetTeam.dantonName || existing.dantonName,
+              });
+            } else {
+              map.set(normalizedSheetTeam.id, normalizedSheetTeam);
+            }
+          });
+
           return Array.from(map.values());
         });
       }
@@ -1437,7 +1571,16 @@ function safeSetItem(key, value) {
 
   // --- Superadmin / System Settings Operations ---
   function updateSettings(newSettings) {
-    setSettings(prev => ({ ...prev, ...newSettings }));
+    setSettings(prev => {
+      const merged = { ...prev, ...newSettings };
+      if (newSettings?.eventDates) {
+        merged.eventDates = {
+          ...(prev?.eventDates || {}),
+          ...newSettings.eventDates,
+        };
+      }
+      return merged;
+    });
   }
 
   function resetToSeedData() {

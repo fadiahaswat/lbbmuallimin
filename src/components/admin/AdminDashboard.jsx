@@ -30,7 +30,8 @@ import {
   MapPin,
   Calendar,
   Trophy,
-  RefreshCw
+  RefreshCw,
+  User
 } from 'lucide-react';
 import { useCompetition, checkTeamVerificationEligibility } from '../../context/CompetitionContext.jsx';
 import { COMPETITION, EVENT, PAYMENT } from '../../config.js';
@@ -1890,157 +1891,229 @@ function TeamInspectionPage({ team, inspectionStage = 'registration', onBack, on
           </div>
         </div>
 
-        {/* Section 2: Kelengkapan 6 Berkas Unggahan Persyaratan */}
-        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
-            <div>
-              <h3 className="font-black text-base uppercase tracking-wider text-slate-900 flex items-center gap-2">
-                <FileText className="w-5 h-5 text-indigo-600" />
-                Kelengkapan 6 Berkas Unggahan Persyaratan
-              </h3>
-              <p className="text-xs text-slate-500 mt-0.5">
-                Periksa keabsahan dokumen persyaratan administrasi sebelum menyetujui pendaftaran dan berkas peleton.
-              </p>
-            </div>
-            <span className="text-xs font-bold text-slate-600 bg-slate-100 px-3 py-1 rounded-xl self-start sm:self-auto">
-              Total 6 Berkas
-            </span>
-          </div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <DocumentFileCard
-              number="1"
-              title="Logo Pangkalan / Peleton"
-              file={team.files?.schoolLogo}
-              colorClass="text-slate-700"
-            />
-            <DocumentFileCard
-              number="2"
-              title="Kartu Pelajar Danton"
-              file={team.files?.dantonCard}
-              colorClass="text-blue-700"
-            />
-            <DocumentFileCard
-              number="3"
-              title="KTP Pembina / Official"
-              file={team.files?.officialKtp}
-              colorClass="text-indigo-700"
-            />
-            <DocumentFileCard
-              number="4"
-              title="Bukti Transfer Pendaftaran"
-              file={team.files?.paymentProof}
-              colorClass="text-emerald-700"
-            />
-            <DocumentFileCard
-              number="5"
-              title="Pakta Integritas Resmi"
-              file={team.files?.integrityPact}
-              colorClass="text-red-700"
-              isSignature={true}
-            />
-            <DocumentFileCard
-              number="6"
-              title="Surat Rekomendasi Kepala Sekolah"
-              file={team.files?.recommendationLetter}
-              colorClass="text-amber-700"
-            />
-          </div>
-        </div>
-
-        {/* Section 3: Susunan 25 Personel Peleton */}
-        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
-            <div>
-              <h3 className="font-black text-base uppercase tracking-wider text-slate-900 flex items-center gap-2">
-                <Award className="w-5 h-5 text-red-600" />
-                Komandan Peleton & Susunan 25 Personel
-              </h3>
-              <p className="text-xs text-slate-500 mt-0.5">
-                Formasi standar: 1 Danton + 21 Pasukan Inti (3 Saf x 7 Banjar) + 3 Cadangan + Official.
-              </p>
-            </div>
-            <button
-              onClick={() => openModal('docViewer', { docId: 'form-b', team })}
-              className="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl flex items-center gap-1.5 self-start sm:self-auto transition-colors"
-            >
-              <Printer className="w-3.5 h-3.5" />
-              <span>Cetak Form B</span>
-            </button>
-          </div>
-
-          {/* Danton Card */}
-          <div className="p-4 bg-red-50/70 rounded-2xl border border-red-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <div className="w-14 h-16 rounded-xl bg-red-700 text-white font-black text-xs flex items-center justify-center shrink-0 shadow-sm overflow-hidden border border-red-300 relative">
-                {danton?.photo ? (
-                  <img
-                    src={formatImageUrl(danton.photo)}
-                    alt="Danton"
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      const fallback = getFallbackImageUrl(danton.photo);
-                      if (fallback && e.currentTarget.src !== fallback) {
-                        e.currentTarget.src = fallback;
-                      } else {
-                        e.currentTarget.style.display = 'none';
-                        if (e.currentTarget.nextElementSibling) {
-                          e.currentTarget.nextElementSibling.style.display = 'flex';
-                        }
-                      }
-                    }}
-                  />
-                ) : null}
-                <div
-                  className="w-full h-full flex items-center justify-center font-black text-[10px]"
-                  style={{ display: danton?.photo ? 'none' : 'flex' }}
-                >
-                  DANTON
-                </div>
-              </div>
+        {/* Tab 1: Section 2: Kelengkapan 6 Berkas Unggahan Persyaratan */}
+        {(currentStageTab === 'registration' || currentStageTab === 'all') && (
+          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
               <div>
-                <span className="text-[10px] font-black uppercase text-red-700 tracking-wider block">
-                  Komandan Peleton (Danton)
-                </span>
-                <h4 className="font-black text-base text-slate-900">
-                  {danton?.name || team.dantonName || '-'}
-                </h4>
-                <p className="text-xs text-slate-500">
-                  NISN: <strong className="text-slate-700">{danton?.nisn || '-'}</strong> • Kelas:{' '}
-                  <strong className="text-slate-700">{danton?.class ? `Kelas ${danton.class}` : '-'}</strong>
-                  {danton?.birthPlace ? ` • TTL: ${danton.birthPlace}${danton.birthDate ? `, ${danton.birthDate}` : ''}` : ''}
+                <h3 className="font-black text-base uppercase tracking-wider text-slate-900 flex items-center gap-2">
+                  <FileText className="w-5 h-5 text-indigo-600" />
+                  Kelengkapan 6 Berkas Unggahan Persyaratan
+                </h3>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Periksa keabsahan dokumen persyaratan administrasi sebelum menyetujui pendaftaran dan berkas peleton.
                 </p>
               </div>
+              <span className="text-xs font-bold text-slate-600 bg-slate-100 px-3 py-1 rounded-xl self-start sm:self-auto">
+                Total 6 Berkas
+              </span>
             </div>
-            <span className="text-xs font-bold bg-red-100 text-red-800 px-3 py-1 rounded-xl self-start sm:self-center">
-              Komandan Utama
-            </span>
-          </div>
 
-          {/* 21 Pasukan Inti Grid */}
-          <div>
-            <h4 className="font-black text-xs uppercase tracking-wider text-slate-700 mb-2">
-              21 Anggota Pasukan Inti (Saf 1, 2, 3)
-            </h4>
-            {pasukan.length > 0 ? (
-              <div className="grid sm:grid-cols-3 gap-3 text-xs">
-                {[1, 2, 3].map(saf => (
-                  <div key={saf} className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-2">
-                    <span className="font-bold text-[11px] text-slate-500 uppercase block border-b border-slate-200 pb-1.5 flex items-center justify-between">
-                      <span>Saf {saf}</span>
-                      <span className="text-[10px] font-normal text-slate-400">7 Personel</span>
-                    </span>
-                    <div className="space-y-1.5">
-                      {pasukan.filter(p => p.safNumber === saf).map(p => (
-                        <div key={p.id} className="text-xs bg-white p-2 rounded-xl border border-slate-200/70 flex items-center gap-2">
-                          <div className="w-8 h-10 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0 overflow-hidden relative">
-                            {p.photo ? (
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <DocumentFileCard
+                number="1"
+                title="Logo Pangkalan / Peleton"
+                file={team.files?.schoolLogo}
+                colorClass="text-slate-700"
+              />
+              <DocumentFileCard
+                number="2"
+                title="Kartu Pelajar Danton"
+                file={team.files?.dantonCard}
+                colorClass="text-blue-700"
+              />
+              <DocumentFileCard
+                number="3"
+                title="KTP Pembina / Official"
+                file={team.files?.officialKtp}
+                colorClass="text-indigo-700"
+              />
+              <DocumentFileCard
+                number="4"
+                title="Bukti Transfer Pendaftaran"
+                file={team.files?.paymentProof}
+                colorClass="text-emerald-700"
+              />
+              <DocumentFileCard
+                number="5"
+                title="Pakta Integritas Resmi"
+                file={team.files?.integrityPact}
+                colorClass="text-red-700"
+                isSignature={true}
+              />
+              <DocumentFileCard
+                number="6"
+                title="Surat Rekomendasi Kepala Sekolah"
+                file={team.files?.recommendationLetter}
+                colorClass="text-amber-700"
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Tab 2: Section 3: Susunan 25 Personel Peleton */}
+        {(currentStageTab === 'verification' || currentStageTab === 'all') && (
+          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+              <div>
+                <h3 className="font-black text-base uppercase tracking-wider text-slate-900 flex items-center gap-2">
+                  <Award className="w-5 h-5 text-red-600" />
+                  Komandan Peleton & Susunan 25 Personel
+                </h3>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Formasi standar: 1 Danton + 21 Pasukan Inti (3 Saf x 7 Banjar) + 3 Cadangan + Official.
+                </p>
+              </div>
+              <button
+                onClick={() => openModal('docViewer', { docId: 'form-b', team })}
+                className="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl flex items-center gap-1.5 self-start sm:self-auto transition-colors"
+              >
+                <Printer className="w-3.5 h-3.5" />
+                <span>Cetak Form B</span>
+              </button>
+            </div>
+
+            {/* Danton Card */}
+            <div className="p-4 bg-red-50/70 rounded-2xl border border-red-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <div className="w-14 h-18 sm:w-16 sm:h-20 rounded-xl bg-red-700 text-white font-black text-xs flex items-center justify-center shrink-0 shadow-sm overflow-hidden border border-red-300 relative">
+                  {danton?.photo && typeof danton.photo === 'string' && danton.photo !== '#' && !danton.photo.startsWith('#') && !danton.photo.includes('drive.google.com/open?id=') ? (
+                    <img
+                      src={formatImageUrl(danton.photo)}
+                      alt="Danton"
+                      referrerPolicy="no-referrer"
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        const fallback = getFallbackImageUrl(danton.photo);
+                        if (fallback && e.currentTarget.src !== fallback) {
+                          e.currentTarget.src = fallback;
+                        } else {
+                          e.currentTarget.style.display = 'none';
+                          if (e.currentTarget.nextElementSibling) {
+                            e.currentTarget.nextElementSibling.style.display = 'flex';
+                          }
+                        }
+                      }}
+                    />
+                  ) : null}
+                  <div
+                    className="w-full h-full flex flex-col items-center justify-center font-black text-[10px] text-white/90 bg-red-800"
+                    style={{
+                      display: danton?.photo && typeof danton.photo === 'string' && danton.photo !== '#' && !danton.photo.startsWith('#') && !danton.photo.includes('drive.google.com/open?id=') ? 'none' : 'flex'
+                    }}
+                  >
+                    <User className="w-5 h-5 mb-0.5 opacity-80" />
+                    <span>DANTON</span>
+                  </div>
+                </div>
+                <div>
+                  <span className="text-[10px] font-black uppercase text-red-700 tracking-wider block">
+                    Komandan Peleton (Danton)
+                  </span>
+                  <h4 className="font-black text-base text-slate-900">
+                    {danton?.name || team.dantonName || '-'}
+                  </h4>
+                  <p className="text-xs text-slate-500">
+                    NISN: <strong className="text-slate-700">{danton?.nisn || '-'}</strong> • Kelas:{' '}
+                    <strong className="text-slate-700">{danton?.class ? `Kelas ${danton.class}` : '-'}</strong>
+                    {danton?.birthPlace ? ` • TTL: ${danton.birthPlace}${danton.birthDate ? `, ${danton.birthDate}` : ''}` : ''}
+                  </p>
+                </div>
+              </div>
+              <span className="text-xs font-bold bg-red-100 text-red-800 px-3 py-1 rounded-xl self-start sm:self-center">
+                Komandan Utama
+              </span>
+            </div>
+
+            {/* 21 Pasukan Inti Grid */}
+            <div>
+              <h4 className="font-black text-xs uppercase tracking-wider text-slate-700 mb-2">
+                21 Anggota Pasukan Inti (Saf 1, 2, 3)
+              </h4>
+              {pasukan.length > 0 ? (
+                <div className="grid sm:grid-cols-3 gap-3 text-xs">
+                  {[1, 2, 3].map(saf => (
+                    <div key={saf} className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-2">
+                      <span className="font-bold text-[11px] text-slate-500 uppercase block border-b border-slate-200 pb-1.5 flex items-center justify-between">
+                        <span>Saf {saf}</span>
+                        <span className="text-[10px] font-normal text-slate-400">7 Personel</span>
+                      </span>
+                      <div className="space-y-1.5">
+                        {pasukan.filter(p => p.safNumber === saf).map(p => {
+                          const hasPPhoto = p.photo && typeof p.photo === 'string' && p.photo !== '#' && !p.photo.startsWith('#') && !p.photo.includes('drive.google.com/open?id=');
+                          return (
+                            <div key={p.id} className="text-xs bg-white p-2 rounded-xl border border-slate-200/70 flex items-center gap-2">
+                              <div className="w-9 h-11 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0 overflow-hidden relative">
+                                {hasPPhoto ? (
+                                  <img
+                                    src={formatImageUrl(p.photo)}
+                                    alt={p.name}
+                                    referrerPolicy="no-referrer"
+                                    className="w-full h-full object-cover"
+                                    onError={(e) => {
+                                      const fallback = getFallbackImageUrl(p.photo);
+                                      if (fallback && e.currentTarget.src !== fallback) {
+                                        e.currentTarget.src = fallback;
+                                      } else {
+                                        e.currentTarget.style.display = 'none';
+                                        if (e.currentTarget.nextElementSibling) {
+                                          e.currentTarget.nextElementSibling.style.display = 'flex';
+                                        }
+                                      }
+                                    }}
+                                  />
+                                ) : null}
+                                <div
+                                  className="w-full h-full flex items-center justify-center text-[9px] font-bold text-slate-400 bg-slate-100"
+                                  style={{ display: hasPPhoto ? 'none' : 'flex' }}
+                                >
+                                  B{p.banjarNumber}
+                                </div>
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="font-bold text-slate-800 flex items-center justify-between">
+                                  <span className="truncate">{p.name || '-'}</span>
+                                  <span className="text-[10px] font-mono text-slate-400 shrink-0 ml-1">B{p.banjarNumber}</span>
+                                </div>
+                                <div className="text-[10px] text-slate-400 truncate">
+                                  NISN: {p.nisn || '-'} • Kls {p.class || '-'} {p.birthPlace ? `• ${p.birthPlace}` : ''}
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 text-xs text-slate-400 italic text-center">
+                  Daftar susunan anggota pasukan belum diisi secara detail.
+                </div>
+              )}
+            </div>
+
+            {/* Cadangan & Official Grid */}
+            <div className="grid sm:grid-cols-2 gap-4 pt-2">
+              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2">
+                <span className="font-bold text-xs text-slate-700 uppercase block border-b border-slate-200 pb-1">
+                  3 Personel Cadangan
+                </span>
+                {cadangan.length > 0 ? (
+                  cadangan.map((c, i) => {
+                    const hasCPhoto = c.photo && typeof c.photo === 'string' && c.photo !== '#' && !c.photo.startsWith('#') && !c.photo.includes('drive.google.com/open?id=');
+                    return (
+                      <div key={c.id || i} className="bg-white p-2 rounded-xl border border-slate-200 text-xs flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <div className="w-9 h-11 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0 overflow-hidden relative">
+                            {hasCPhoto ? (
                               <img
-                                src={formatImageUrl(p.photo)}
-                                alt={p.name}
+                                src={formatImageUrl(c.photo)}
+                                alt={c.name}
+                                referrerPolicy="no-referrer"
                                 className="w-full h-full object-cover"
                                 onError={(e) => {
-                                  const fallback = getFallbackImageUrl(p.photo);
+                                  const fallback = getFallbackImageUrl(c.photo);
                                   if (fallback && e.currentTarget.src !== fallback) {
                                     e.currentTarget.src = fallback;
                                   } else {
@@ -2054,132 +2127,80 @@ function TeamInspectionPage({ team, inspectionStage = 'registration', onBack, on
                             ) : null}
                             <div
                               className="w-full h-full flex items-center justify-center text-[9px] font-bold text-slate-400 bg-slate-100"
-                              style={{ display: p.photo ? 'none' : 'flex' }}
+                              style={{ display: hasCPhoto ? 'none' : 'flex' }}
                             >
-                              B{p.banjarNumber}
+                              C{i + 1}
                             </div>
                           </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="font-bold text-slate-800 flex items-center justify-between">
-                              <span className="truncate">{p.name || '-'}</span>
-                              <span className="text-[10px] font-mono text-slate-400 shrink-0 ml-1">B{p.banjarNumber}</span>
-                            </div>
-                            <div className="text-[10px] text-slate-400 truncate">
-                              NISN: {p.nisn || '-'} • Kls {p.class || '-'} {p.birthPlace ? `• ${p.birthPlace}` : ''}
-                            </div>
+                          <div className="truncate">
+                            <span className="font-bold text-slate-900 block truncate">#{i + 1}. {c.name || '-'}</span>
+                            <span className="text-[10px] text-slate-400 block truncate">
+                              NISN: {c.nisn || '-'} • Kls {c.class || '-'} {c.birthPlace ? `• ${c.birthPlace}` : ''}
+                            </span>
                           </div>
                         </div>
-                      ))}
-                    </div>
-                  </div>
-                ))}
+                        <span className="text-[10px] font-bold bg-amber-100 text-amber-800 px-2 py-0.5 rounded shrink-0">Cadangan</span>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <span className="text-xs text-slate-400 italic block">Belum ada personel cadangan</span>
+                )}
               </div>
-            ) : (
-              <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 text-xs text-slate-400 italic text-center">
-                Daftar susunan anggota pasukan belum diisi secara detail.
+
+              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2">
+                <span className="font-bold text-xs text-slate-700 uppercase block border-b border-slate-200 pb-1">
+                  Tim Official & Pelatih
+                </span>
+                {officials.length > 0 ? (
+                  officials.map((o, i) => {
+                    const hasOPhoto = o.photo && typeof o.photo === 'string' && o.photo !== '#' && !o.photo.startsWith('#') && !o.photo.includes('drive.google.com/open?id=');
+                    return (
+                      <div key={o.id || i} className="bg-white p-2.5 rounded-xl border border-slate-200 text-xs flex justify-between items-center gap-2">
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <div className="w-9 h-11 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0 overflow-hidden relative">
+                            {hasOPhoto ? (
+                              <img
+                                src={formatImageUrl(o.photo)}
+                                alt={o.name}
+                                referrerPolicy="no-referrer"
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                  const fallback = getFallbackImageUrl(o.photo);
+                                  if (fallback && e.currentTarget.src !== fallback) {
+                                    e.currentTarget.src = fallback;
+                                  } else {
+                                    e.currentTarget.style.display = 'none';
+                                    if (e.currentTarget.nextElementSibling) {
+                                      e.currentTarget.nextElementSibling.style.display = 'flex';
+                                    }
+                                  }
+                                }}
+                              />
+                            ) : null}
+                            <div
+                              className="w-full h-full flex items-center justify-center text-[9px] font-bold text-slate-400 bg-slate-100"
+                              style={{ display: hasOPhoto ? 'none' : 'flex' }}
+                            >
+                              OFF
+                            </div>
+                          </div>
+                          <div className="truncate">
+                            <span className="font-bold text-slate-900 block truncate">{o.name || '-'}</span>
+                            <span className="text-[10px] text-slate-400">Kontak: {o.phone || '-'}</span>
+                          </div>
+                        </div>
+                        <span className="text-[10px] font-bold bg-blue-100 text-blue-800 px-2 py-0.5 rounded capitalize shrink-0">{o.role || 'Official'}</span>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <span className="text-xs text-slate-400 italic block">Belum ada data official</span>
+                )}
               </div>
-            )}
-          </div>
-
-          {/* Cadangan & Official Grid */}
-          <div className="grid sm:grid-cols-2 gap-4 pt-2">
-            <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2">
-              <span className="font-bold text-xs text-slate-700 uppercase block border-b border-slate-200 pb-1">
-                3 Personel Cadangan
-              </span>
-              {cadangan.length > 0 ? (
-                cadangan.map((c, i) => (
-                  <div key={c.id || i} className="bg-white p-2 rounded-xl border border-slate-200 text-xs flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-2 min-w-0">
-                      <div className="w-8 h-10 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0 overflow-hidden relative">
-                        {c.photo ? (
-                          <img
-                            src={formatImageUrl(c.photo)}
-                            alt={c.name}
-                            className="w-full h-full object-cover"
-                            onError={(e) => {
-                              const fallback = getFallbackImageUrl(c.photo);
-                              if (fallback && e.currentTarget.src !== fallback) {
-                                e.currentTarget.src = fallback;
-                              } else {
-                                e.currentTarget.style.display = 'none';
-                                if (e.currentTarget.nextElementSibling) {
-                                  e.currentTarget.nextElementSibling.style.display = 'flex';
-                                }
-                              }
-                            }}
-                          />
-                        ) : null}
-                        <div
-                          className="w-full h-full flex items-center justify-center text-[9px] font-bold text-slate-400 bg-slate-100"
-                          style={{ display: c.photo ? 'none' : 'flex' }}
-                        >
-                          C{i + 1}
-                        </div>
-                      </div>
-                      <div className="truncate">
-                        <span className="font-bold text-slate-900 block truncate">#{i + 1}. {c.name || '-'}</span>
-                        <span className="text-[10px] text-slate-400 block truncate">
-                          NISN: {c.nisn || '-'} • Kls {c.class || '-'} {c.birthPlace ? `• ${c.birthPlace}` : ''}
-                        </span>
-                      </div>
-                    </div>
-                    <span className="text-[10px] font-bold bg-amber-100 text-amber-800 px-2 py-0.5 rounded shrink-0">Cadangan</span>
-                  </div>
-                ))
-              ) : (
-                <span className="text-xs text-slate-400 italic block">Belum ada personel cadangan</span>
-              )}
-            </div>
-
-            <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2">
-              <span className="font-bold text-xs text-slate-700 uppercase block border-b border-slate-200 pb-1">
-                Tim Official & Pelatih
-              </span>
-              {officials.length > 0 ? (
-                officials.map((o, i) => (
-                  <div key={o.id || i} className="bg-white p-2.5 rounded-xl border border-slate-200 text-xs flex justify-between items-center gap-2">
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="w-8 h-10 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0 overflow-hidden relative">
-                        {o.photo ? (
-                          <img
-                            src={formatImageUrl(o.photo)}
-                            alt={o.name}
-                            className="w-full h-full object-cover"
-                            onError={(e) => {
-                              const fallback = getFallbackImageUrl(o.photo);
-                              if (fallback && e.currentTarget.src !== fallback) {
-                                e.currentTarget.src = fallback;
-                              } else {
-                                e.currentTarget.style.display = 'none';
-                                if (e.currentTarget.nextElementSibling) {
-                                  e.currentTarget.nextElementSibling.style.display = 'flex';
-                                }
-                              }
-                            }}
-                          />
-                        ) : null}
-                        <div
-                          className="w-full h-full flex items-center justify-center text-[9px] font-bold text-slate-400 bg-slate-100"
-                          style={{ display: o.photo ? 'none' : 'flex' }}
-                        >
-                          OFF
-                        </div>
-                      </div>
-                      <div className="truncate">
-                        <span className="font-bold text-slate-900 block truncate">{o.name || '-'}</span>
-                        <span className="text-[10px] text-slate-400">Kontak: {o.phone || '-'}</span>
-                      </div>
-                    </div>
-                    <span className="text-[10px] font-bold bg-blue-100 text-blue-800 px-2 py-0.5 rounded capitalize shrink-0">{o.role || 'Official'}</span>
-                  </div>
-                ))
-              ) : (
-                <span className="text-xs text-slate-400 italic block">Belum ada data official</span>
-              )}
             </div>
           </div>
-        </div>
+        )}
 
         {/* Bottom Sticky Action Toolbar */}
         <div className="bg-white rounded-3xl p-5 border border-slate-200 shadow-md flex flex-wrap items-center justify-between gap-4">

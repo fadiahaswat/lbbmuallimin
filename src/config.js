@@ -65,40 +65,47 @@ export const HERO = {
 // EVENT – semua tanggal & waktu kegiatan
 // ---------------------------------------------------------------------------
 export const EVENT = {
-    /** Teks badge di hero (contoh: "Pendaftaran: 21 September – 5 Oktober 2026") */
-    REGISTRATION_BADGE: 'Pendaftaran: 21 September \u2013 5 Oktober 2026',
+    /** Teks badge di hero (contoh: "Pendaftaran: 1 – 31 Oktober 2026") */
+    REGISTRATION_BADGE: 'Pendaftaran: 1 \u2013 31 Oktober 2026',
 
     /** Rentang pendaftaran daring */
-    REGISTRATION_RANGE: '21 September \u2013 5 Oktober 2026',
+    REGISTRATION_RANGE: '1 \u2013 31 Oktober 2026',
 
     /** Rentang verifikasi berkas oleh panitia */
-    VERIFICATION_RANGE: '6 \u2013 10 Oktober 2026',
+    VERIFICATION_RANGE: '2 \u2013 8 November 2026',
 
     /** Tanggal pembukaan pendaftaran daring */
-    REGISTRATION_START: '2026-09-21T00:00:00+07:00',
+    REGISTRATION_START: '2026-10-01T00:00:00+07:00',
 
     /** Tanggal batas akhir pendaftaran – dipakai countdown timer */
-    REGISTRATION_DEADLINE: '2026-10-05T23:59:59+07:00',
+    REGISTRATION_DEADLINE: '2026-10-31T23:59:59+07:00',
 
     /** Tanggal Technical Meeting */
-    TECHNICAL_MEETING_DATE: '23 Oktober 2026',
+    TECHNICAL_MEETING_DATE: '9 Januari 2026',
 
     /** Waktu Technical Meeting (singkat, di timeline) */
     TECHNICAL_MEETING_TIME: '13.00 WIB - Selesai',
 
     /** Hari + tanggal lengkap Technical Meeting (untuk FAQ) */
-    TECHNICAL_MEETING_FULL_DATE: 'Jumat, 23 Oktober 2026',
+    TECHNICAL_MEETING_FULL_DATE: 'Jumat, 9 Januari 2026',
 
     /** Rentang jam Technical Meeting */
     TECHNICAL_MEETING_TIME_RANGE: '13.00 WIB \u2013 Selesai',
 
     /** Lokasi / venue Technical Meeting */
     TECHNICAL_MEETING_VENUE:
-        "Perpustakaan Ahmad Syafii Maarif Kampus Terpadu Madrasah Mu\u2019allimin Muhammadiyah Yogyakarta, "
-        + "Dusun Bandut Lor, Argorejo, Kec. Sedayu, Kabupaten Bantul, Daerah Istimewa Yogyakarta.",
+        "Kampus Induk Madrasah Mu\u2019allimin Muhammadiyah Yogyakarta, Jalan Letjen S. Parman NO. 68, Wirobrajan, Kota Yogyakarta, Daerah Istimewa Yogyakarta.",
+    TECHNICAL_MEETING_VENUE_NAME: "Kampus Induk Madrasah Mu\u2019allimin Muhammadiyah Yogyakarta",
+    TECHNICAL_MEETING_ADDRESS: "Jl. Letjen S. Parman No.68, Notoprajan, Ngampilan / Wirobrajan, Kota Yogyakarta, DIY",
+    TECHNICAL_MEETING_MAPS_URL: "https://www.google.com/maps/dir/?api=1&destination=Madrasah+Mu'allimin+Muhammadiyah+Yogyakarta+Jl.+Letjen+S.+Parman+No.+68+Wirobrajan",
+
+    /** Uji Coba Lapangan */
+    FIELD_TRIAL_DATE: '17 Januari 2026',
+    FIELD_TRIAL_FULL_DATE: 'Sabtu, 17 Januari 2026',
+    FIELD_TRIAL_TIME_RANGE: '07.00 \u2013 14.00 WIB',
 
     /** Hari & tanggal hari-H */
-    COMPETITION_DATE: 'Ahad, 8 November 2026',
+    COMPETITION_DATE: 'Sabtu, 24 Januari 2026',
 
     /** Rentang waktu hari-H */
     COMPETITION_TIME_RANGE: '06.00 WIB \u2013 17.00 WIB',

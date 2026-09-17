@@ -37,7 +37,7 @@ import { PAYMENT, CONTACT, SITE } from '../../config.js';
 import logoImg from '../../assets/logo-tonti.png';
 
 export default function RegistrationWizard({ isOpen, onClose }) {
-  const { registerTeam, setActiveView, goBack, openAuthModal } = useCompetition();
+  const { registerTeam, setActiveView, goBack, openAuthModal, teams, settings } = useCompetition();
 
   const handleClose = () => {
     if (onClose) {
@@ -46,6 +46,16 @@ export default function RegistrationWizard({ isOpen, onClose }) {
       goBack();
     }
   };
+
+  // Quota calculation per jenjang
+  const quotaSD = settings?.quotaSD || 18;
+  const quotaSMP = settings?.quotaSMP || 18;
+  const registeredSD = (teams || []).filter(t => t.jenjang === 'SD').length;
+  const registeredSMP = (teams || []).filter(t => t.jenjang === 'SMP').length;
+  const isSDFull = registeredSD >= quotaSD;
+  const isSMPFull = registeredSMP >= quotaSMP;
+  const isAllFull = isSDFull && isSMPFull;
+  const isRegOpenMaster = settings?.registrationOpen !== false;
 
   const [step, setStep] = useState(1);
   const [copiedAccount, setCopiedAccount] = useState(false);
@@ -295,12 +305,24 @@ export default function RegistrationWizard({ isOpen, onClose }) {
 
   // Step Validations
   function validateStep1() {
+    if (!isRegOpenMaster) {
+      setValidationError('Pendaftaran saat ini sedang ditutup oleh panitia.');
+      return false;
+    }
     if (!formData.email.trim() || !formData.email.includes('@')) {
       setValidationError('Alamat email aktif untuk akun wajib diisi dengan benar.');
       return false;
     }
     if (!formData.jenjang) {
       setValidationError('Silakan pilih Jenjang Sekolah (SD/MI atau SMP/MTs).');
+      return false;
+    }
+    if (formData.jenjang === 'SD' && isSDFull) {
+      setValidationError('Mohon maaf, kuota peleton untuk tingkat SD/MI telah penuh.');
+      return false;
+    }
+    if (formData.jenjang === 'SMP' && isSMPFull) {
+      setValidationError('Mohon maaf, kuota peleton untuk tingkat SMP/MTs telah penuh.');
       return false;
     }
     if (!formData.schoolName.trim()) {
@@ -569,19 +591,21 @@ export default function RegistrationWizard({ isOpen, onClose }) {
                     {
                       id: 'SD',
                       label: 'Tingkat SD / MI',
-                      badge: 'Kategori SD',
+                      badge: isSDFull ? 'KUOTA PENUH' : `Sisa ${Math.max(0, quotaSD - registeredSD)} Slot`,
+                      isFull: isSDFull,
                       activeClass: 'bg-red-50 border-2 border-red-700 text-red-900 shadow-xs ring-2 ring-red-600/10',
                       activeIcon: 'text-red-700',
-                      activeBadge: 'bg-red-100 text-red-800 border border-red-200',
+                      activeBadge: isSDFull ? 'bg-red-200 text-red-800' : 'bg-red-100 text-red-800 border border-red-200',
                       hoverBorder: 'hover:border-red-300',
                     },
                     {
                       id: 'SMP',
                       label: 'Tingkat SMP / MTs',
-                      badge: 'Kategori SMP',
+                      badge: isSMPFull ? 'KUOTA PENUH' : `Sisa ${Math.max(0, quotaSMP - registeredSMP)} Slot`,
+                      isFull: isSMPFull,
                       activeClass: 'bg-blue-50 border-2 border-blue-600 text-blue-950 shadow-xs ring-2 ring-blue-600/10',
                       activeIcon: 'text-blue-600',
-                      activeBadge: 'bg-blue-100 text-blue-800 border border-blue-200',
+                      activeBadge: isSMPFull ? 'bg-rose-200 text-rose-900' : 'bg-blue-100 text-blue-800 border border-blue-200',
                       hoverBorder: 'hover:border-blue-300',
                     },
                   ].map(item => {
@@ -590,11 +614,17 @@ export default function RegistrationWizard({ isOpen, onClose }) {
                       <button
                         key={item.id}
                         type="button"
-                        onClick={() => setFormData({ ...formData, jenjang: item.id })}
+                        disabled={item.isFull}
+                        onClick={() => {
+                          if (item.isFull) return;
+                          setFormData({ ...formData, jenjang: item.id });
+                        }}
                         className={`py-3.5 px-4 rounded-2xl border text-center transition-all duration-200 font-black text-xs sm:text-sm flex flex-col items-center justify-center gap-1.5 ${
-                          isSelected
+                          item.isFull
+                            ? 'bg-slate-100 border-slate-300 text-slate-400 cursor-not-allowed opacity-75'
+                            : isSelected
                             ? item.activeClass
-                            : `bg-white border border-slate-200 text-slate-600 ${item.hoverBorder} hover:text-slate-900`
+                            : `bg-white border border-slate-200 text-slate-600 ${item.hoverBorder} hover:text-slate-900 cursor-pointer`
                         }`}
                       >
                         <div className="flex items-center gap-2">
@@ -603,7 +633,9 @@ export default function RegistrationWizard({ isOpen, onClose }) {
                         </div>
                         <span
                           className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider ${
-                            isSelected
+                            item.isFull
+                              ? 'bg-red-100 text-red-700 font-black border border-red-200'
+                              : isSelected
                               ? item.activeBadge
                               : 'bg-slate-100 text-slate-500'
                           }`}

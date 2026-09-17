@@ -15,8 +15,19 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { EVENT, VENUE } from '../config.js';
+import { useCompetition } from '../context/CompetitionContext.jsx';
 
 export default function TimeLocation() {
+  const { settings } = useCompetition();
+  const eventDates = settings?.eventDates || {};
+
+  const compDate = eventDates.competitionDate || EVENT.COMPETITION_DATE;
+  const compTime = eventDates.competitionTimeRange || EVENT.COMPETITION_TIME_RANGE;
+  const tmDate = eventDates.technicalMeetingFullDate || eventDates.technicalMeetingDate || EVENT.TECHNICAL_MEETING_FULL_DATE;
+  const tmTime = eventDates.technicalMeetingTime || EVENT.TECHNICAL_MEETING_TIME;
+  const trialDate = eventDates.fieldTrialFullDate || eventDates.fieldTrialDate || EVENT.FIELD_TRIAL_FULL_DATE;
+  const trialTime = eventDates.fieldTrialTime || EVENT.FIELD_TRIAL_TIME_RANGE;
+
   return (
     <section id="time-location" className="py-24 lg:py-32 bg-slate-950 relative overflow-hidden border-t border-slate-900 font-sans">
       <div className="absolute inset-0 bg-carbon-pattern opacity-20 pointer-events-none"></div>
@@ -37,56 +48,94 @@ export default function TimeLocation() {
 
         <div className="grid lg:grid-cols-12 gap-12 lg:gap-16">
           {/* Left Column: Schedule & Times */}
-          <div className="lg:col-span-5 space-y-8 relative">
+          <div className="lg:col-span-5 space-y-6 relative">
             <div className="absolute left-6 top-8 bottom-8 w-0.5 bg-gradient-to-b from-yellow-500 via-slate-800 to-slate-900 lg:block hidden"></div>
 
+            {/* Card 1: Hari H Pelaksanaan */}
             <div className="relative pl-0 lg:pl-16 group">
               <div className="absolute left-0 top-0 w-12 h-12 bg-slate-900 border border-yellow-500/50 rounded-xl flex items-center justify-center text-yellow-500 shadow-[0_0_20px_rgba(234,179,8,0.1)] z-10 hidden lg:flex">
                 <CalendarDays className="w-6 h-6" />
               </div>
 
               <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 p-6 rounded-2xl hover:border-yellow-500/30 transition-colors">
-                <h3 className="text-xl font-black text-white mb-2 uppercase flex items-center gap-3">
-                  <CalendarDays className="lg:hidden text-yellow-500 w-5 h-5" />
-                  Hari, Tanggal
-                </h3>
-                <p className="text-2xl md:text-3xl font-black text-yellow-500 mb-6 tracking-tight">
-                  {EVENT.COMPETITION_DATE}
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-lg font-black text-white uppercase flex items-center gap-2.5">
+                    <CalendarDays className="lg:hidden text-yellow-500 w-5 h-5" />
+                    Hari-H Pelaksanaan
+                  </h3>
+                  <span className="text-[9px] font-black uppercase tracking-wider bg-yellow-500/10 text-yellow-400 border border-yellow-500/30 px-2 py-0.5 rounded">
+                    Utama
+                  </span>
+                </div>
+                <p className="text-xl sm:text-2xl font-black text-yellow-400 mb-1 tracking-tight">
+                  {compDate}
+                </p>
+                <p className="text-xs font-bold text-slate-300 mb-4 flex items-center gap-1.5">
+                  <Clock className="w-3.5 h-3.5 text-yellow-500" />
+                  <span>{compTime}</span>
                 </p>
 
-                <div className="bg-black/40 rounded-xl p-4 border-l-2 border-yellow-500/60">
-                  <span className="text-xs font-bold text-yellow-400 uppercase tracking-wider block mb-1">
-                    Agenda Utama:
-                  </span>
-                  <p className="text-sm text-slate-300 leading-relaxed">
-                    Pelaksanaan lomba untuk kategori SD/MI dan SMP/MTs, rangkaian apel pembukaan & penutupan, hingga pengumuman juara umum dalam 1 hari.
-                  </p>
+                <div className="bg-black/40 rounded-xl p-3 border-l-2 border-yellow-500/60 text-xs text-slate-300 leading-relaxed">
+                  Pelaksanaan lomba kategori SD/MI dan SMP/MTs, rangkaian apel pembukaan & penutupan, hingga penganugerahan piala juara umum.
                 </div>
               </div>
             </div>
 
+            {/* Card 2: Uji Coba Lapangan */}
             <div className="relative pl-0 lg:pl-16 group">
-              <div className="absolute left-0 top-0 w-12 h-12 bg-slate-900 border border-red-500/50 rounded-xl flex items-center justify-center text-red-500 shadow-[0_0_20px_rgba(239,68,68,0.1)] z-10 hidden lg:flex">
-                <Clock className="w-6 h-6" />
+              <div className="absolute left-0 top-0 w-12 h-12 bg-slate-900 border border-emerald-500/50 rounded-xl flex items-center justify-center text-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.1)] z-10 hidden lg:flex">
+                <Flag className="w-6 h-6" />
               </div>
 
-              <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 p-6 rounded-2xl hover:border-red-500/30 transition-colors">
-                <h3 className="text-xl font-black text-white mb-2 uppercase flex items-center gap-3">
-                  <Clock className="lg:hidden text-red-500 w-5 h-5" />
-                  Waktu Pelaksanaan
-                </h3>
-                <p className="text-2xl md:text-3xl font-black text-white mb-6 tracking-tight">
-                  {EVENT.COMPETITION_TIME_RANGE}
-                </p>
-
-                <div className="bg-black/40 rounded-xl p-4 border-l-2 border-red-500/60">
-                  <span className="text-xs font-bold text-red-400 uppercase tracking-wider block mb-1">
-                    Ketentuan Kehadiran:
+              <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 p-5 rounded-2xl hover:border-emerald-500/30 transition-colors">
+                <div className="flex items-center justify-between mb-1.5">
+                  <h3 className="text-base font-black text-white uppercase flex items-center gap-2">
+                    <Flag className="lg:hidden text-emerald-400 w-4 h-4" />
+                    Uji Coba Lapangan
+                  </h3>
+                  <span className="text-[9px] font-black uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded">
+                    Orientasi
                   </span>
-                  <p className="text-sm text-slate-300 leading-relaxed">
-                    Daftar ulang peserta & pengambilan nomor dada dibuka pukul 06.00 WIB. Seluruh kontingen wajib hadir tepat waktu sebelum Upacara Pembukaan.
-                  </p>
                 </div>
+                <p className="text-lg font-black text-emerald-400 mb-0.5 tracking-tight">
+                  {trialDate}
+                </p>
+                <p className="text-xs font-bold text-slate-300 mb-2 flex items-center gap-1.5">
+                  <Clock className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>{trialTime}</span>
+                </p>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Orientasi arena pos perlombaan di Kampus Terpadu Mu'allimin Sedayu agar tim peserta beradaptasi dengan kontur lapangan.
+                </p>
+              </div>
+            </div>
+
+            {/* Card 3: Technical Meeting */}
+            <div className="relative pl-0 lg:pl-16 group">
+              <div className="absolute left-0 top-0 w-12 h-12 bg-slate-900 border border-purple-500/50 rounded-xl flex items-center justify-center text-purple-400 shadow-[0_0_20px_rgba(168,85,247,0.1)] z-10 hidden lg:flex">
+                <ClipboardList className="w-6 h-6" />
+              </div>
+
+              <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 p-5 rounded-2xl hover:border-purple-500/30 transition-colors">
+                <div className="flex items-center justify-between mb-1.5">
+                  <h3 className="text-base font-black text-white uppercase flex items-center gap-2">
+                    <ClipboardList className="lg:hidden text-purple-400 w-4 h-4" />
+                    Technical Meeting (TM)
+                  </h3>
+                  <span className="text-[9px] font-black uppercase tracking-wider bg-purple-500/10 text-purple-400 border border-purple-500/30 px-2 py-0.5 rounded">
+                    Wajib
+                  </span>
+                </div>
+                <p className="text-lg font-black text-purple-400 mb-0.5 tracking-tight">
+                  {tmDate}
+                </p>
+                <p className="text-xs font-bold text-slate-300 mb-2 flex items-center gap-1.5">
+                  <Clock className="w-3.5 h-3.5 text-purple-400" />
+                  <span>{tmTime}</span>
+                </p>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Pengundian nomor urut tampil, verifikasi faktual berkas fisik asli, dan penegasan tata tertib lomba.
+                </p>
               </div>
             </div>
           </div>
