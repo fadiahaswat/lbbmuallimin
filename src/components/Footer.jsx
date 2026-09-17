@@ -43,7 +43,7 @@ export default function Footer() {
           {/* Subtle Monochrome Cadet Watermark in the Right Background */}
           <div className="absolute right-0 top-0 bottom-0 w-96 pointer-events-none opacity-15 hidden lg:block z-0">
             <img
-              src="/fotoslide/1.PNG"
+              src="/fotoslide/1.png"
               alt="Paskibra Pasukan"
               className="w-full h-full object-cover object-center grayscale contrast-125 filter [mask-image:linear-gradient(to_left,black_20%,transparent_90%)]"
               loading="lazy"

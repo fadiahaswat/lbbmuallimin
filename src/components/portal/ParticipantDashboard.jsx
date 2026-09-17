@@ -74,7 +74,7 @@ export default function ParticipantDashboard() {
       <div className="min-h-[70vh] flex flex-col items-center justify-center p-6 text-center">
         <div className="w-24 h-24 rounded-full bg-red-50 border border-red-200 flex items-center justify-center p-2 mb-4 shadow-sm overflow-hidden">
           <img
-            src="/fotoslide/5.PNG"
+            src="/fotoslide/5.png"
             alt="Paskibra Cadet"
             className="w-full h-full object-contain object-top"
             loading="lazy"

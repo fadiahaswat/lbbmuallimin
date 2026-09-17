@@ -66,7 +66,7 @@ export default function About() {
             {/* Integrated Cadet Silhouette Artwork from fotoslide */}
             <div className="absolute right-0 bottom-0 h-full w-1/2 max-w-[280px] pointer-events-none opacity-20 group-hover:opacity-30 transition-opacity duration-700 hidden sm:block">
               <img
-                src="/fotoslide/2.PNG"
+                src="/fotoslide/2.png"
                 alt="Paskibra Cadet"
                 className="w-full h-full object-contain object-bottom [mask-image:linear-gradient(to_left,black_40%,transparent_100%)]"
                 loading="lazy"

@@ -166,7 +166,7 @@ export default function RegistrationStatusModal({ isOpen, onClose }) {
             <div className="bg-white border border-slate-200 rounded-3xl p-8 sm:p-12 text-center text-slate-500 relative overflow-hidden">
               <div className="w-24 h-24 mx-auto mb-3 rounded-full bg-red-50 border border-red-100 flex items-center justify-center p-2 overflow-hidden shadow-inner">
                 <img
-                  src="/fotoslide/3.PNG"
+                  src="/fotoslide/3.png"
                   alt="Paskibra Danton"
                   className="w-full h-full object-contain object-top"
                   loading="lazy"

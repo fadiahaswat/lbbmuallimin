@@ -8,27 +8,27 @@ import logoMuallimin from '../assets/logo-muallimin.png';
 
 const CADET_FIGURES = [
   {
-    src: '/fotoslide/1.PNG',
+    src: '/fotoslide/1.png',
     title: 'Paskibra Mu\'allimin 1',
     isLandscape: true,
   },
   {
-    src: '/fotoslide/2.PNG',
+    src: '/fotoslide/2.png',
     title: 'Paskibra Mu\'allimin 2',
     isLandscape: false,
   },
   {
-    src: '/fotoslide/3.PNG',
+    src: '/fotoslide/3.png',
     title: 'Paskibra Mu\'allimin 3',
     isLandscape: false,
   },
   {
-    src: '/fotoslide/4.PNG',
+    src: '/fotoslide/4.png',
     title: 'Paskibra Mu\'allimin 4',
     isLandscape: true,
   },
   {
-    src: '/fotoslide/5.PNG',
+    src: '/fotoslide/5.png',
     title: 'Paskibra Mu\'allimin 5',
     isLandscape: false,
   },
@@ -40,12 +40,21 @@ export default function Hero() {
 
   const regRangeText = settings?.eventDates?.registrationRangeText || EVENT.REGISTRATION_RANGE;
 
-  // Preload & Auto-rotate cadet illustration every 6 seconds
+  // Preload remaining slides when browser is idle, and auto-rotate cadet illustration every 6 seconds
   useEffect(() => {
-    CADET_FIGURES.forEach(cadet => {
-      const img = new Image();
-      img.src = cadet.src;
-    });
+    const preloadRest = () => {
+      // Preload after initial paint
+      CADET_FIGURES.slice(1).forEach(cadet => {
+        const img = new Image();
+        img.src = cadet.src;
+      });
+    };
+
+    if ('requestIdleCallback' in window) {
+      window.requestIdleCallback(preloadRest, { timeout: 2500 });
+    } else {
+      setTimeout(preloadRest, 1200);
+    }
 
     const timer = setInterval(() => {
       setActiveCadetIndex(prev => (prev + 1) % CADET_FIGURES.length);
