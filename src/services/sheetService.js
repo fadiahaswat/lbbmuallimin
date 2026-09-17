@@ -43,8 +43,8 @@ export function formatImageUrl(url) {
       url.match(/googleusercontent\.com\/d\/([a-zA-Z0-9_-]+)/);
     if (fileIdMatch && fileIdMatch[1]) {
       const fileId = fileIdMatch[1];
-      // Gunakan drive.usercontent.google.com direct download stream yang meloloskan rendering tag <img> di semua browser
-      return `https://drive.usercontent.google.com/download?id=${fileId}&export=view`;
+      // Gunakan lh3.googleusercontent.com CDN direct preview yang aman dan cepat di-render di semua tag <img> browser
+      return `https://lh3.googleusercontent.com/d/${fileId}=w1000`;
     }
   }
 
@@ -52,7 +52,7 @@ export function formatImageUrl(url) {
 }
 
 /**
- * Cadangan alternatif URL Google Drive jika primary link mengalami throttling
+ * Cadangan alternatif URL Google Drive jika primary link mengalami kendala
  */
 export function getFallbackImageUrl(url) {
   if (!url || typeof url !== 'string') return '';
@@ -63,7 +63,7 @@ export function getFallbackImageUrl(url) {
       url.match(/\/d\/([a-zA-Z0-9_-]+)/);
     if (fileIdMatch && fileIdMatch[1]) {
       const fileId = fileIdMatch[1];
-      return `https://lh3.googleusercontent.com/d/${fileId}=w1000`;
+      return `https://drive.usercontent.google.com/download?id=${fileId}&export=view`;
     }
   }
   return url;

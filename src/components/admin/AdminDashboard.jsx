@@ -29,9 +29,10 @@ import {
   Mail,
   MapPin,
   Calendar,
-  Trophy
+  Trophy,
+  RefreshCw
 } from 'lucide-react';
-import { useCompetition } from '../../context/CompetitionContext.jsx';
+import { useCompetition, checkTeamVerificationEligibility } from '../../context/CompetitionContext.jsx';
 import { COMPETITION, EVENT, PAYMENT } from '../../config.js';
 import { formatImageUrl, getFallbackImageUrl } from '../../services/sheetService.js';
 
@@ -46,8 +47,25 @@ export default function AdminDashboard() {
     deleteTeam,
     exportTeamsCSV,
     openModal,
-    setActiveView
+    setActiveView,
+    pullFromGoogleSheet
   } = useCompetition();
+
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  async function handleRefreshData() {
+    if (isRefreshing) return;
+    setIsRefreshing(true);
+    try {
+      if (pullFromGoogleSheet) {
+        await pullFromGoogleSheet();
+      }
+    } catch (err) {
+      console.warn('Gagal memuat ulang data dari spreadsheet:', err);
+    } finally {
+      setTimeout(() => setIsRefreshing(false), 600);
+    }
+  }
 
   // 4 Tahapan: 
   // 1. 'registration' (Cek Berkas Pendaftaran & ACC Daftar)
@@ -111,9 +129,10 @@ export default function AdminDashboard() {
   }
 
   if (inspectingTeam) {
+    const liveTeam = teams.find(t => t.id === inspectingTeam.id) || inspectingTeam;
     return (
       <TeamInspectionPage
-        team={inspectingTeam}
+        team={liveTeam}
         inspectionStage={inspectingStage}
         onBack={() => setInspectingTeam(null)}
         onVerify={handleQuickVerify}
@@ -408,6 +427,16 @@ export default function AdminDashboard() {
               </div>
 
               <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleRefreshData}
+                  disabled={isRefreshing}
+                  className="px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition-all flex items-center gap-1.5 shadow-xs cursor-pointer active:scale-95 disabled:opacity-60"
+                  title="Segarkan data terbaru dari Google Sheets"
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 text-blue-600 ${isRefreshing ? 'animate-spin' : ''}`} />
+                  <span>{isRefreshing ? 'Memuat...' : 'Refresh'}</span>
+                </button>
                 <span className="text-xs font-bold text-slate-600 bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200">
                   {stage1PendingCount} Perlu Dicek
                 </span>
@@ -659,6 +688,16 @@ export default function AdminDashboard() {
               </div>
 
               <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleRefreshData}
+                  disabled={isRefreshing}
+                  className="px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold transition-all flex items-center gap-1.5 shadow-xs cursor-pointer active:scale-95 disabled:opacity-60"
+                  title="Segarkan data terbaru dari Google Sheets"
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 text-emerald-600 ${isRefreshing ? 'animate-spin' : ''}`} />
+                  <span>{isRefreshing ? 'Memuat...' : 'Refresh'}</span>
+                </button>
                 <span className="text-xs font-bold text-amber-800 bg-amber-50 px-3 py-1.5 rounded-xl border border-amber-200">
                   {stage2PendingCount} Perlu Diverifikasi
                 </span>
@@ -887,16 +926,33 @@ export default function AdminDashboard() {
                                 <span>Cek Peleton</span>
                               </button>
 
-                              {(team.status === 'registered' || team.status === 'revision') && (
-                                <button
-                                  onClick={() => handleQuickVerify(team.id, 'verified')}
-                                  className="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg transition-colors flex items-center gap-1 cursor-pointer shadow-xs"
-                                  title="ACC Sah Peleton (Lolos ke Tahap Undian)"
-                                >
-                                  <Check className="w-3.5 h-3.5" />
-                                  <span className="text-[10px]">ACC Sah</span>
-                                </button>
-                              )}
+                              {(team.status === 'registered' || team.status === 'revision') && (() => {
+                                const eligibility = checkTeamVerificationEligibility(team);
+                                return (
+                                  <button
+                                    onClick={() => {
+                                      if (!eligibility.isEligible) {
+                                        alert(`Peleton belum dapat diverifikasi sah karena:\n\n• ${eligibility.issues.join('\n• ')}`);
+                                        return;
+                                      }
+                                      handleQuickVerify(team.id, 'verified');
+                                    }}
+                                    className={`px-2.5 py-1.5 font-bold rounded-lg transition-colors flex items-center gap-1 shadow-xs ${
+                                      eligibility.isEligible
+                                        ? 'bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer'
+                                        : 'bg-slate-200 text-slate-400 hover:bg-slate-300 hover:text-slate-600 cursor-not-allowed'
+                                    }`}
+                                    title={
+                                      eligibility.isEligible
+                                        ? 'ACC Sah Peleton (Lolos ke Tahap Undian)'
+                                        : `Belum memenuhi syarat verifikasi:\n- ${eligibility.issues.join('\n- ')}`
+                                    }
+                                  >
+                                    <Check className="w-3.5 h-3.5" />
+                                    <span className="text-[10px]">ACC Sah</span>
+                                  </button>
+                                );
+                              })()}
 
                               {['verified', 'drawn'].includes(team.status) && (
                                 <button
@@ -1344,6 +1400,8 @@ function TeamInspectionPage({ team, inspectionStage = 'registration', onBack, on
   const cadangan = Array.isArray(team.roster?.cadangan) ? team.roster.cadangan : [];
   const officials = Array.isArray(team.roster?.officials) ? team.roster.officials : [];
 
+  const eligibility = checkTeamVerificationEligibility(team);
+
   return (
     <div className="min-h-screen bg-slate-100 py-8 px-4 sm:px-6 lg:px-8 font-sans text-slate-900 animate-in fade-in duration-200">
       <div className="max-w-7xl mx-auto space-y-6">
@@ -1517,8 +1575,23 @@ function TeamInspectionPage({ team, inspectionStage = 'registration', onBack, on
                 )}
                 {(team.status === 'registered' || team.status === 'revision') && (
                   <button
-                    onClick={() => onVerify(team.id, 'verified')}
-                    className="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black rounded-xl shadow-lg shadow-emerald-950/40 hover:scale-105 transition-all flex items-center gap-1.5"
+                    onClick={() => {
+                      if (!eligibility.isEligible) {
+                        alert(`Peleton belum dapat diverifikasi sah karena:\n\n• ${eligibility.issues.join('\n• ')}`);
+                        return;
+                      }
+                      onVerify(team.id, 'verified');
+                    }}
+                    className={`px-5 py-2 text-white text-xs font-black rounded-xl transition-all flex items-center gap-1.5 ${
+                      eligibility.isEligible
+                        ? 'bg-emerald-600 hover:bg-emerald-500 shadow-lg shadow-emerald-950/40 hover:scale-105 cursor-pointer'
+                        : 'bg-slate-700 text-slate-400 opacity-60 cursor-not-allowed'
+                    }`}
+                    title={
+                      eligibility.isEligible
+                        ? 'ACC Tahap 2: Peleton Sah'
+                        : `Belum memenuhi syarat verifikasi:\n- ${eligibility.issues.join('\n- ')}`
+                    }
                   >
                     <CheckCircle2 className="w-4 h-4" /> ACC Tahap 2: Verifikasi Sah
                   </button>
@@ -1578,6 +1651,27 @@ function TeamInspectionPage({ team, inspectionStage = 'registration', onBack, on
             </div>
           </div>
         </div>
+
+        {/* Banner Peringatan Kelayakan Verifikasi Sah (Tahap 2) */}
+        {(team.status === 'registered' || team.status === 'revision') && !eligibility.isEligible && (
+          <div className="bg-amber-50 border-2 border-amber-300 rounded-3xl p-5 shadow-xs space-y-2">
+            <div className="flex items-center gap-2.5 text-amber-900 font-black text-sm">
+              <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0" />
+              <span>Belum Memenuhi Syarat Verifikasi Sah (Tahap 2)</span>
+            </div>
+            <p className="text-xs text-amber-800 leading-relaxed">
+              Peleton belum dapat di-ACC Sah karena syarat wajib berikut belum dipenuhi:
+            </p>
+            <ul className="list-disc list-inside text-xs text-amber-900 font-semibold space-y-1 pl-1">
+              {eligibility.issues.map((issue, idx) => (
+                <li key={idx}>{issue}</li>
+              ))}
+            </ul>
+            <p className="text-[11px] text-amber-700 italic pt-1">
+              *Catatan: 3 Anggota cadangan bersifat opsional dan tidak menghalangi verifikasi.
+            </p>
+          </div>
+        )}
 
         {/* Box Form Revisi (jika terbuka atau status revision) */}
         {(showRevisionBox || team.status === 'revision') && (
@@ -1836,12 +1930,31 @@ function TeamInspectionPage({ team, inspectionStage = 'registration', onBack, on
           {/* Danton Card */}
           <div className="p-4 bg-red-50/70 rounded-2xl border border-red-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-center gap-3">
-              <div className="w-14 h-16 rounded-xl bg-red-700 text-white font-black text-xs flex items-center justify-center shrink-0 shadow-sm overflow-hidden border border-red-300">
+              <div className="w-14 h-16 rounded-xl bg-red-700 text-white font-black text-xs flex items-center justify-center shrink-0 shadow-sm overflow-hidden border border-red-300 relative">
                 {danton?.photo ? (
-                  <img src={danton.photo} alt="Danton" className="w-full h-full object-cover" />
-                ) : (
-                  <span>DANTON</span>
-                )}
+                  <img
+                    src={formatImageUrl(danton.photo)}
+                    alt="Danton"
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      const fallback = getFallbackImageUrl(danton.photo);
+                      if (fallback && e.currentTarget.src !== fallback) {
+                        e.currentTarget.src = fallback;
+                      } else {
+                        e.currentTarget.style.display = 'none';
+                        if (e.currentTarget.nextElementSibling) {
+                          e.currentTarget.nextElementSibling.style.display = 'flex';
+                        }
+                      }
+                    }}
+                  />
+                ) : null}
+                <div
+                  className="w-full h-full flex items-center justify-center font-black text-[10px]"
+                  style={{ display: danton?.photo ? 'none' : 'flex' }}
+                >
+                  DANTON
+                </div>
               </div>
               <div>
                 <span className="text-[10px] font-black uppercase text-red-700 tracking-wider block">
@@ -1878,12 +1991,31 @@ function TeamInspectionPage({ team, inspectionStage = 'registration', onBack, on
                     <div className="space-y-1.5">
                       {pasukan.filter(p => p.safNumber === saf).map(p => (
                         <div key={p.id} className="text-xs bg-white p-2 rounded-xl border border-slate-200/70 flex items-center gap-2">
-                          <div className="w-8 h-10 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0 overflow-hidden">
+                          <div className="w-8 h-10 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0 overflow-hidden relative">
                             {p.photo ? (
-                              <img src={p.photo} alt={p.name} className="w-full h-full object-cover" />
-                            ) : (
-                              <span className="text-[9px] font-bold text-slate-400">B{p.banjarNumber}</span>
-                            )}
+                              <img
+                                src={formatImageUrl(p.photo)}
+                                alt={p.name}
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                  const fallback = getFallbackImageUrl(p.photo);
+                                  if (fallback && e.currentTarget.src !== fallback) {
+                                    e.currentTarget.src = fallback;
+                                  } else {
+                                    e.currentTarget.style.display = 'none';
+                                    if (e.currentTarget.nextElementSibling) {
+                                      e.currentTarget.nextElementSibling.style.display = 'flex';
+                                    }
+                                  }
+                                }}
+                              />
+                            ) : null}
+                            <div
+                              className="w-full h-full flex items-center justify-center text-[9px] font-bold text-slate-400 bg-slate-100"
+                              style={{ display: p.photo ? 'none' : 'flex' }}
+                            >
+                              B{p.banjarNumber}
+                            </div>
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="font-bold text-slate-800 flex items-center justify-between">
@@ -1917,12 +2049,31 @@ function TeamInspectionPage({ team, inspectionStage = 'registration', onBack, on
                 cadangan.map((c, i) => (
                   <div key={c.id || i} className="bg-white p-2 rounded-xl border border-slate-200 text-xs flex items-center justify-between gap-2">
                     <div className="flex items-center gap-2 min-w-0">
-                      <div className="w-8 h-10 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0 overflow-hidden">
+                      <div className="w-8 h-10 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0 overflow-hidden relative">
                         {c.photo ? (
-                          <img src={c.photo} alt={c.name} className="w-full h-full object-cover" />
-                        ) : (
-                          <span className="text-[9px] font-bold text-slate-400">C{i + 1}</span>
-                        )}
+                          <img
+                            src={formatImageUrl(c.photo)}
+                            alt={c.name}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              const fallback = getFallbackImageUrl(c.photo);
+                              if (fallback && e.currentTarget.src !== fallback) {
+                                e.currentTarget.src = fallback;
+                              } else {
+                                e.currentTarget.style.display = 'none';
+                                if (e.currentTarget.nextElementSibling) {
+                                  e.currentTarget.nextElementSibling.style.display = 'flex';
+                                }
+                              }
+                            }}
+                          />
+                        ) : null}
+                        <div
+                          className="w-full h-full flex items-center justify-center text-[9px] font-bold text-slate-400 bg-slate-100"
+                          style={{ display: c.photo ? 'none' : 'flex' }}
+                        >
+                          C{i + 1}
+                        </div>
                       </div>
                       <div className="truncate">
                         <span className="font-bold text-slate-900 block truncate">#{i + 1}. {c.name || '-'}</span>
@@ -1947,12 +2098,31 @@ function TeamInspectionPage({ team, inspectionStage = 'registration', onBack, on
                 officials.map((o, i) => (
                   <div key={o.id || i} className="bg-white p-2.5 rounded-xl border border-slate-200 text-xs flex justify-between items-center gap-2">
                     <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="w-8 h-10 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0 overflow-hidden">
+                      <div className="w-8 h-10 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0 overflow-hidden relative">
                         {o.photo ? (
-                          <img src={o.photo} alt={o.name} className="w-full h-full object-cover" />
-                        ) : (
-                          <span className="text-[9px] font-bold text-slate-400">OFF</span>
-                        )}
+                          <img
+                            src={formatImageUrl(o.photo)}
+                            alt={o.name}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              const fallback = getFallbackImageUrl(o.photo);
+                              if (fallback && e.currentTarget.src !== fallback) {
+                                e.currentTarget.src = fallback;
+                              } else {
+                                e.currentTarget.style.display = 'none';
+                                if (e.currentTarget.nextElementSibling) {
+                                  e.currentTarget.nextElementSibling.style.display = 'flex';
+                                }
+                              }
+                            }}
+                          />
+                        ) : null}
+                        <div
+                          className="w-full h-full flex items-center justify-center text-[9px] font-bold text-slate-400 bg-slate-100"
+                          style={{ display: o.photo ? 'none' : 'flex' }}
+                        >
+                          OFF
+                        </div>
                       </div>
                       <div className="truncate">
                         <span className="font-bold text-slate-900 block truncate">{o.name || '-'}</span>
@@ -2012,10 +2182,23 @@ function TeamInspectionPage({ team, inspectionStage = 'registration', onBack, on
             {(team.status === 'registered' || team.status === 'revision') && (
               <button
                 onClick={() => {
+                  if (!eligibility.isEligible) {
+                    alert(`Peleton belum dapat diverifikasi sah karena:\n\n• ${eligibility.issues.join('\n• ')}`);
+                    return;
+                  }
                   onVerify(team.id, 'verified');
                   onBack();
                 }}
-                className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black uppercase tracking-wider rounded-xl shadow-lg shadow-emerald-950/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
+                className={`px-6 py-2.5 text-xs font-black uppercase tracking-wider rounded-xl transition-all flex items-center gap-2 ${
+                  eligibility.isEligible
+                    ? 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-950/20 hover:scale-105 active:scale-95 cursor-pointer'
+                    : 'bg-slate-300 text-slate-500 cursor-not-allowed'
+                }`}
+                title={
+                  eligibility.isEligible
+                    ? 'ACC Tahap 2: Verifikasi Sah Peleton'
+                    : `Belum memenuhi syarat verifikasi:\n- ${eligibility.issues.join('\n- ')}`
+                }
               >
                 <CheckCircle2 className="w-4 h-4" />
                 <span>ACC Tahap 2: Verifikasi Sah Peleton</span>

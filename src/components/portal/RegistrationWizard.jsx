@@ -1516,10 +1516,10 @@ export default function RegistrationWizard({ isOpen, onClose }) {
               <div className="grid grid-cols-3 gap-1.5 text-[11px] bg-white p-3 rounded-xl border border-slate-200">
                 <span className="text-slate-500">Nama Official:</span>
                 <span className="col-span-2 font-bold text-slate-900">{formData.officialName || '(Nama Official di Step 2)'}</span>
-                <span className="text-slate-500">Pangkalan:</span>
+                <span className="text-slate-500">Sekolah:</span>
                 <span className="col-span-2 font-bold text-slate-900">{getFullSchoolName() || '(Nama Sekolah di Step 1)'}</span>
-                <span className="text-slate-500">Kategori:</span>
-                <span className="col-span-2 font-bold text-slate-900">{formData.teamType === 'Homogen' ? `Homogen (${formData.homogenGender || 'Putra'})` : 'Heterogen'} Tingkat {formData.jenjang}</span>
+                <span className="text-slate-500">Nama Komandan:</span>
+                <span className="col-span-2 font-bold text-slate-900">{formData.dantonName || '(Nama Komandan di Step 2)'}</span>
               </div>
 
               <p className="font-bold text-red-700 text-[11px] pt-1 uppercase tracking-wider">

@@ -22,6 +22,55 @@ import {
 
 const CompetitionContext = createContext(null);
 
+export function checkTeamVerificationEligibility(team) {
+  if (!team) return { isEligible: false, issues: ['Data peleton tidak valid'] };
+  const issues = [];
+
+  // 1. Surat Rekomendasi Kepala Sekolah
+  const recUrl = team.files?.recommendationLetter?.url;
+  const hasRecLetter = Boolean(recUrl && recUrl !== '#' && !recUrl.startsWith('#'));
+  if (!hasRecLetter) {
+    issues.push('Surat Rekomendasi/Tugas Kepala Sekolah belum diunggah');
+  }
+
+  // 2. Biodata Komandan (Danton): Nama, NISN, Kelas
+  const danton = team.roster?.danton;
+  const hasDantonName = Boolean((danton?.name || team.dantonName) && (danton?.name || team.dantonName) !== '-' && (danton?.name || team.dantonName).trim() !== '');
+  const hasDantonNisn = Boolean(danton?.nisn && danton.nisn !== '-' && danton.nisn.trim() !== '');
+  const hasDantonClass = Boolean(danton?.class && danton.class !== '-' && danton.class.trim() !== '');
+
+  if (!hasDantonName || !hasDantonNisn || !hasDantonClass) {
+    const missingDanton = [];
+    if (!hasDantonName) missingDanton.push('Nama');
+    if (!hasDantonNisn) missingDanton.push('NISN');
+    if (!hasDantonClass) missingDanton.push('Kelas');
+    issues.push(`Biodata Komandan (Danton) belum lengkap (${missingDanton.join(', ')})`);
+  }
+
+  // 3. Biodata 21 Anggota Pasukan Inti: Harus 21 orang dan lengkap (Nama, NISN, Kelas)
+  const pasukan = Array.isArray(team.roster?.pasukan) ? team.roster.pasukan : [];
+  if (pasukan.length < 21) {
+    issues.push(`Jumlah personel pasukan inti belum genap 21 (saat ini ${pasukan.length}/21)`);
+  } else {
+    const incompletePasukan = pasukan.slice(0, 21).filter(p => {
+      const hasName = Boolean(p?.name && p.name !== '-' && p.name.trim() !== '');
+      const hasNisn = Boolean(p?.nisn && p.nisn !== '-' && p.nisn.trim() !== '');
+      const hasClass = Boolean(p?.class && p.class !== '-' && p.class.trim() !== '');
+      return !hasName || !hasNisn || !hasClass;
+    });
+    if (incompletePasukan.length > 0) {
+      issues.push(`${incompletePasukan.length} dari 21 personel pasukan inti belum lengkap biodatanya (Nama, NISN, Kelas)`);
+    }
+  }
+
+  // Catatan: 3 Cadangan bersifat OPSIONAL, tidak menghalangi kelulusan
+
+  return {
+    isEligible: issues.length === 0,
+    issues,
+  };
+}
+
 const STORAGE_KEYS = {
   TEAMS: 'lbb_muallimin_teams_v3',
   SCORES: 'lbb_muallimin_scores_v3',
@@ -943,6 +992,18 @@ function safeSetItem(key, value) {
 
   // --- Admin Operations ---
   function verifyTeam(teamId, newStatus, note = '') {
+    // Validasi keamanan: jika ingin ACC Sah ('verified'), pastikan syarat terpenuhi
+    if (newStatus === 'verified') {
+      const targetTeam = teams.find(t => t.id === teamId);
+      if (targetTeam) {
+        const check = checkTeamVerificationEligibility(targetTeam);
+        if (!check.isEligible) {
+          console.warn('[CompetitionContext] Peleton belum memenuhi syarat verifikasi:', check.issues);
+          return { success: false, issues: check.issues };
+        }
+      }
+    }
+
     setTeams(prev =>
       prev.map(team => {
         if (team.id === teamId) {
@@ -959,6 +1020,7 @@ function safeSetItem(key, value) {
         return team;
       })
     );
+    return { success: true };
   }
 
   function assignLotNumber(teamId, lotNumber, chestNumber = undefined) {

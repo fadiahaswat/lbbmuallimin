@@ -26,7 +26,10 @@ import {
   GripVertical,
   ArrowUpDown,
   User,
-  ArrowRight
+  ArrowRight,
+  Home,
+  Tag,
+  Timer
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
 import { EVENT, VENUE } from '../../config.js';
@@ -1555,10 +1558,26 @@ export default function ParticipantDashboard() {
                           <div className="flex items-center gap-2.5 min-w-0">
                             <div className="w-9 h-11 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0 overflow-hidden">
                               {off.photo ? (
-                                <img src={off.photo} alt={off.name} className="w-full h-full object-cover" />
-                              ) : (
-                                <User className="w-4 h-4 text-slate-400" />
-                              )}
+                                <img
+                                  src={formatImageUrl(off.photo)}
+                                  alt={off.name}
+                                  className="w-full h-full object-cover"
+                                  onError={(e) => {
+                                    const fallback = getFallbackImageUrl(off.photo);
+                                    if (fallback && e.currentTarget.src !== fallback) {
+                                      e.currentTarget.src = fallback;
+                                    } else {
+                                      e.currentTarget.style.display = 'none';
+                                      if (e.currentTarget.nextSibling) {
+                                        e.currentTarget.nextSibling.style.display = 'block';
+                                      }
+                                    }
+                                  }}
+                                />
+                              ) : null}
+                              <User
+                                className={`w-4 h-4 text-slate-400 ${off.photo ? 'hidden' : ''}`}
+                              />
                             </div>
                             <div className="truncate">
                               <span className="font-bold text-slate-900 block truncate">{off.name || 'Belum diisi'}</span>
@@ -1592,10 +1611,24 @@ export default function ParticipantDashboard() {
                             title="Klik untuk unggah pasfoto official"
                           >
                             {off.photo ? (
-                              <img src={off.photo} alt={off.name} className="w-full h-full object-cover" />
-                            ) : (
-                              <User className="w-4 h-4 text-slate-400 group-hover:text-blue-500" />
-                            )}
+                              <img
+                                src={formatImageUrl(off.photo)}
+                                alt={off.name}
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                  const fallback = getFallbackImageUrl(off.photo);
+                                  if (fallback && e.currentTarget.src !== fallback) {
+                                    e.currentTarget.src = fallback;
+                                  } else {
+                                    e.currentTarget.style.display = 'none';
+                                    if (e.currentTarget.nextSibling) {
+                                      e.currentTarget.nextSibling.style.display = 'block';
+                                    }
+                                  }
+                                }}
+                              />
+                            ) : null}
+                            <User className={`w-4 h-4 text-slate-400 group-hover:text-blue-500 ${off.photo ? 'hidden' : ''}`} />
                             <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                               <Camera className="w-3.5 h-3.5 text-white" />
                             </div>
@@ -1664,33 +1697,14 @@ export default function ParticipantDashboard() {
 
             <div className="grid sm:grid-cols-2 gap-4">
               {/* 1. Logo Sekolah */}
-              <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-black uppercase text-slate-800">Logo Sekolah / Lambang Peleton</span>
-                  <button
-                    onClick={() => triggerFileUpload('schoolLogo')}
-                    className="px-3 py-1.5 bg-yellow-400 hover:bg-yellow-500 text-slate-950 text-xs font-bold rounded-lg transition-all flex items-center gap-1.5"
-                  >
-                    <Upload className="w-3.5 h-3.5" />
-                    <span>Unggah Logo</span>
-                  </button>
-                </div>
-                <div className="h-28 bg-white rounded-xl border border-slate-200 flex items-center justify-center overflow-hidden p-2">
-                  {currentTeam.files?.schoolLogo?.url && currentTeam.files.schoolLogo.url !== '#' ? (
-                    <a href={currentTeam.files.schoolLogo.url} target="_blank" rel="noopener noreferrer">
-                      <img
-                        src={formatImageUrl(currentTeam.files.schoolLogo.url)}
-                        alt="Logo"
-                        referrerPolicy="no-referrer"
-                        className="h-full object-contain hover:scale-105 transition-transform"
-                      />
-                    </a>
-                  ) : (
-                    <span className="text-xs text-slate-400 italic">Belum ada logo terunggah</span>
-                  )}
-                </div>
-                <span className="text-[10px] text-slate-500 block truncate">{currentTeam.files?.schoolLogo?.name}</span>
-              </div>
+              <ParticipantDocCard
+                title="Logo Sekolah / Lambang Peleton"
+                file={currentTeam.files?.schoolLogo}
+                uploadKey="schoolLogo"
+                btnLabel="Unggah Logo"
+                btnColor="bg-yellow-400 hover:bg-yellow-500 text-slate-950"
+                onUpload={() => triggerFileUpload('schoolLogo')}
+              />
 
               {/* 2. Informasi Pasfoto Personel & Official */}
               <div className="bg-blue-50/70 border border-blue-200 rounded-2xl p-5 space-y-3 flex flex-col justify-between">
@@ -1723,120 +1737,44 @@ export default function ParticipantDashboard() {
               </div>
 
               {/* 3. Surat Rekomendasi */}
-              <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-black uppercase text-slate-800">Surat Rekomendasi Kepala Sekolah</span>
-                  <button
-                    onClick={() => triggerFileUpload('recommendationLetter')}
-                    className="px-3 py-1.5 bg-red-700 hover:bg-red-800 text-white text-xs font-bold rounded-lg transition-all flex items-center gap-1.5"
-                  >
-                    <Upload className="w-3.5 h-3.5" />
-                    <span>Unggah Surat</span>
-                  </button>
-                </div>
-                <div className="h-28 bg-white rounded-xl border border-slate-200 flex items-center justify-center overflow-hidden p-2">
-                  {currentTeam.files?.recommendationLetter?.url && (currentTeam.files.recommendationLetter.url.startsWith('data:image') || currentTeam.files.recommendationLetter.url.includes('drive.google.com')) ? (
-                    <a href={currentTeam.files.recommendationLetter.url} target="_blank" rel="noopener noreferrer">
-                      <img
-                        src={formatImageUrl(currentTeam.files.recommendationLetter.url)}
-                        alt="Surat Rekom"
-                        referrerPolicy="no-referrer"
-                        className="h-full object-contain hover:scale-105 transition-transform"
-                      />
-                    </a>
-                  ) : (
-                    <span className="text-xs text-slate-600 font-bold">{currentTeam.files?.recommendationLetter?.name || 'Surat_Rekomendasi.pdf'}</span>
-                  )}
-                </div>
-                <span className="text-[10px] text-slate-500 block truncate">{currentTeam.files?.recommendationLetter?.name}</span>
-              </div>
+              <ParticipantDocCard
+                title="Surat Rekomendasi Kepala Sekolah"
+                file={currentTeam.files?.recommendationLetter}
+                uploadKey="recommendationLetter"
+                btnLabel="Unggah Surat"
+                btnColor="bg-red-700 hover:bg-red-800 text-white"
+                onUpload={() => triggerFileUpload('recommendationLetter')}
+              />
 
               {/* 4. Bukti Transfer */}
-              <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-black uppercase text-slate-800">Bukti Transfer Pembayaran BRI</span>
-                  <button
-                    onClick={() => triggerFileUpload('paymentProof')}
-                    className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg transition-all flex items-center gap-1.5"
-                  >
-                    <Upload className="w-3.5 h-3.5" />
-                    <span>Unggah Bukti</span>
-                  </button>
-                </div>
-                <div className="h-28 bg-white rounded-xl border border-slate-200 flex items-center justify-center overflow-hidden p-2">
-                  {currentTeam.files?.paymentProof?.url && (currentTeam.files.paymentProof.url.startsWith('data:image') || currentTeam.files.paymentProof.url.includes('drive.google.com')) ? (
-                    <a href={currentTeam.files.paymentProof.url} target="_blank" rel="noopener noreferrer">
-                      <img
-                        src={formatImageUrl(currentTeam.files.paymentProof.url)}
-                        alt="Bukti Transfer"
-                        referrerPolicy="no-referrer"
-                        className="h-full object-contain hover:scale-105 transition-transform"
-                      />
-                    </a>
-                  ) : (
-                    <span className="text-xs text-emerald-700 font-bold">{currentTeam.files?.paymentProof?.name || 'Bukti_Transfer_BRI.jpg'}</span>
-                  )}
-                </div>
-                <span className="text-[10px] text-slate-500 block truncate">{currentTeam.files?.paymentProof?.name}</span>
-              </div>
+              <ParticipantDocCard
+                title="Bukti Transfer Pembayaran BRI"
+                file={currentTeam.files?.paymentProof}
+                uploadKey="paymentProof"
+                btnLabel="Unggah Bukti"
+                btnColor="bg-emerald-600 hover:bg-emerald-700 text-white"
+                onUpload={() => triggerFileUpload('paymentProof')}
+              />
 
               {/* 5. Kartu Pelajar Komandan */}
-              <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-black uppercase text-slate-800">Kartu Pelajar Komandan</span>
-                  <button
-                    onClick={() => triggerFileUpload('dantonCard')}
-                    className="px-3 py-1.5 bg-red-700 hover:bg-red-800 text-white text-xs font-bold rounded-lg transition-all flex items-center gap-1.5"
-                  >
-                    <Upload className="w-3.5 h-3.5" />
-                    <span>Unggah Kartu</span>
-                  </button>
-                </div>
-                <div className="h-28 bg-white rounded-xl border border-slate-200 flex items-center justify-center overflow-hidden p-2">
-                  {currentTeam.files?.dantonCard?.url && (currentTeam.files.dantonCard.url.startsWith('data:image') || currentTeam.files.dantonCard.url.includes('drive.google.com')) ? (
-                    <a href={currentTeam.files.dantonCard.url} target="_blank" rel="noopener noreferrer">
-                      <img
-                        src={formatImageUrl(currentTeam.files.dantonCard.url)}
-                        alt="Kartu Pelajar Komandan"
-                        referrerPolicy="no-referrer"
-                        className="h-full object-contain hover:scale-105 transition-transform"
-                      />
-                    </a>
-                  ) : (
-                    <span className="text-xs text-red-700 font-bold">{currentTeam.files?.dantonCard?.name || 'Kartu_Pelajar_Danton.jpg'}</span>
-                  )}
-                </div>
-                <span className="text-[10px] text-slate-500 block truncate">{currentTeam.files?.dantonCard?.name}</span>
-              </div>
+              <ParticipantDocCard
+                title="Kartu Pelajar Komandan"
+                file={currentTeam.files?.dantonCard}
+                uploadKey="dantonCard"
+                btnLabel="Unggah Kartu"
+                btnColor="bg-red-700 hover:bg-red-800 text-white"
+                onUpload={() => triggerFileUpload('dantonCard')}
+              />
 
               {/* 6. KTP Official / Pelatih */}
-              <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-black uppercase text-slate-800">KTP Official / Pelatih</span>
-                  <button
-                    onClick={() => triggerFileUpload('officialKtp')}
-                    className="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold rounded-lg transition-all flex items-center gap-1.5"
-                  >
-                    <Upload className="w-3.5 h-3.5" />
-                    <span>Unggah KTP</span>
-                  </button>
-                </div>
-                <div className="h-28 bg-white rounded-xl border border-slate-200 flex items-center justify-center overflow-hidden p-2">
-                  {currentTeam.files?.officialKtp?.url && (currentTeam.files.officialKtp.url.startsWith('data:image') || currentTeam.files.officialKtp.url.includes('drive.google.com')) ? (
-                    <a href={currentTeam.files.officialKtp.url} target="_blank" rel="noopener noreferrer">
-                      <img
-                        src={formatImageUrl(currentTeam.files.officialKtp.url)}
-                        alt="KTP Official"
-                        referrerPolicy="no-referrer"
-                        className="h-full object-contain hover:scale-105 transition-transform"
-                      />
-                    </a>
-                  ) : (
-                    <span className="text-xs text-amber-700 font-bold">{currentTeam.files?.officialKtp?.name || 'KTP_Official.jpg'}</span>
-                  )}
-                </div>
-                <span className="text-[10px] text-slate-500 block truncate">{currentTeam.files?.officialKtp?.name}</span>
-              </div>
+              <ParticipantDocCard
+                title="KTP Official / Pelatih"
+                file={currentTeam.files?.officialKtp}
+                uploadKey="officialKtp"
+                btnLabel="Unggah KTP"
+                btnColor="bg-amber-600 hover:bg-amber-700 text-white"
+                onUpload={() => triggerFileUpload('officialKtp')}
+              />
             </div>
           </div>
         )}
@@ -1942,6 +1880,132 @@ export default function ParticipantDashboard() {
         )}
 
       </div>
+    </div>
+  );
+}
+
+/**
+ * Komponen kartu dokumen berkas peserta dengan penanganan otomatis untuk Gambar & PDF
+ * serta graceful fallback bila thumbnail gagal/tertahan oleh CORS
+ */
+function ParticipantDocCard({ title, file, uploadKey, btnLabel, btnColor, onUpload }) {
+  const [imgFailed, setImgFailed] = useState(false);
+
+  const rawUrl = file?.url;
+  const fileName = file?.name || title;
+  const hasFile = Boolean(rawUrl && rawUrl !== '#');
+
+  useEffect(() => {
+    setImgFailed(false);
+  }, [rawUrl]);
+
+  const fileExt = typeof fileName === 'string' && fileName.includes('.')
+    ? fileName.slice(fileName.lastIndexOf('.')).toLowerCase()
+    : '';
+  const isPdf = fileExt === '.pdf' || (typeof rawUrl === 'string' && rawUrl.includes('.pdf'));
+  const isImageExt = ['.jpg', '.jpeg', '.png', '.webp', '.gif', '.svg'].includes(fileExt);
+
+  // Kandidat gambar: base64, blob, URL drive non-pdf, atau ekstensi gambar
+  const isImageCandidate = hasFile && !isPdf && typeof rawUrl === 'string' && (
+    rawUrl.startsWith('data:image') ||
+    rawUrl.startsWith('blob:') ||
+    rawUrl.startsWith('http://') ||
+    rawUrl.startsWith('https://') ||
+    rawUrl.includes('googleusercontent.com') ||
+    rawUrl.includes('drive.google.com') ||
+    isImageExt
+  );
+
+  return (
+    <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 space-y-3 flex flex-col justify-between hover:border-slate-300 transition-all shadow-xs">
+      <div>
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-xs font-black uppercase text-slate-800 line-clamp-1" title={title}>
+            {title}
+          </span>
+          <button
+            type="button"
+            onClick={onUpload}
+            className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all flex items-center gap-1.5 shrink-0 shadow-xs ${btnColor}`}
+          >
+            <Upload className="w-3.5 h-3.5" />
+            <span>{btnLabel}</span>
+          </button>
+        </div>
+
+        <div className="h-32 bg-white rounded-xl border border-slate-200 flex flex-col items-center justify-center overflow-hidden p-2 relative group">
+          {hasFile ? (
+            isImageCandidate && !imgFailed ? (
+              <a
+                href={rawUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                title="Buka file asli di tab baru"
+                className="w-full h-full flex items-center justify-center"
+              >
+                <img
+                  src={formatImageUrl(rawUrl)}
+                  alt={title}
+                  referrerPolicy="no-referrer"
+                  onError={(e) => {
+                    const fallback = getFallbackImageUrl(rawUrl);
+                    if (fallback && e.currentTarget.src !== fallback) {
+                      e.currentTarget.src = fallback;
+                    } else {
+                      setImgFailed(true);
+                    }
+                  }}
+                  className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform"
+                />
+              </a>
+            ) : isPdf ? (
+              <a
+                href={rawUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                title="Buka dokumen PDF di tab baru"
+                className="w-full h-full flex flex-col items-center justify-center text-center p-2 text-slate-600 hover:text-red-700 transition-colors"
+              >
+                <div className="w-10 h-10 rounded-xl bg-red-50 text-red-600 flex items-center justify-center mb-1 border border-red-100 group-hover:scale-110 transition-transform">
+                  <FileText className="w-5 h-5" />
+                </div>
+                <span className="text-xs font-bold truncate max-w-[190px]" title={fileName}>
+                  {fileName}
+                </span>
+                <span className="text-[10px] text-red-700 font-bold bg-red-50 px-2 py-0.5 rounded-full mt-1 border border-red-200">
+                  Dokumen PDF (Klik Buka)
+                </span>
+              </a>
+            ) : (
+              <a
+                href={rawUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                title="Buka file di tab baru"
+                className="w-full h-full flex flex-col items-center justify-center text-center p-2 text-slate-600 hover:text-blue-700 transition-colors"
+              >
+                <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mb-1 border border-blue-100 group-hover:scale-110 transition-transform">
+                  <FileText className="w-5 h-5" />
+                </div>
+                <span className="text-xs font-bold truncate max-w-[190px]" title={fileName}>
+                  {fileName}
+                </span>
+                <span className="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-full mt-1 border border-emerald-200">
+                  Berkas Terlampir (Klik Buka)
+                </span>
+              </a>
+            )
+          ) : (
+            <div className="flex flex-col items-center justify-center text-center p-2 text-slate-400">
+              <span className="text-xs italic">Belum ada berkas terunggah</span>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <span className="text-[10px] text-slate-500 block truncate" title={fileName}>
+        {fileName}
+      </span>
     </div>
   );
 }
