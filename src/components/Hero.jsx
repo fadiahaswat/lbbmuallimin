@@ -32,11 +32,6 @@ const CADET_FIGURES = [
     title: 'Paskibra Mu\'allimin 5',
     isLandscape: false,
   },
-  {
-    src: '/fotoslide/rusyda-pingsan.jpeg',
-    title: 'Rusyda Pingsan',
-    isLandscape: false,
-  },
 ];
 
 export default function Hero() {
