@@ -166,7 +166,7 @@ export default function CountdownTimer() {
         {items.map((item, idx) => (
           <React.Fragment key={idx}>
             <div className="flex flex-col items-center">
-              <div className="w-13 sm:w-16 h-13 sm:h-16 px-2 rounded-xl bg-black/50 border border-white/15 backdrop-blur-md shadow-lg shadow-black/40 flex items-center justify-center">
+              <div className="w-13 sm:w-16 h-13 sm:h-16 px-2 rounded-xl glass shadow-lg shadow-black/50 ring-1 ring-white/5 flex items-center justify-center">
                 <span className="font-mono text-xl sm:text-2xl md:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-b from-yellow-300 to-amber-500 tracking-tight">
                   {item.value}
                 </span>

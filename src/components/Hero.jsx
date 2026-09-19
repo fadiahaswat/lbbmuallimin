@@ -121,7 +121,7 @@ export default function Hero() {
             </div>
 
             {/* Event Registration Status Badge */}
-            <div className="inline-flex items-center gap-2.5 px-4 py-1.5 bg-black/50 border border-white/15 rounded-full backdrop-blur-md shadow-sm cursor-default">
+            <div className="relative inline-flex items-center gap-2.5 px-4 py-1.5 glass glass-shimmer rounded-full shadow-sm cursor-default overflow-hidden">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
@@ -130,6 +130,7 @@ export default function Hero() {
                 Pendaftaran: {regRangeText}
               </span>
             </div>
+
 
             {/* Main Title - Original LBB Mu'allimin Styling */}
             <div className="space-y-1">
@@ -163,11 +164,12 @@ export default function Hero() {
               <button
                 type="button"
                 onClick={() => openModal('docViewer', { docId: 'juknis' })}
-                className="group px-8 py-3.5 bg-black/40 hover:bg-black/60 text-white hover:text-yellow-400 border border-white/20 hover:border-yellow-400/50 rounded-xl backdrop-blur-md shadow-lg shadow-black/20 hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2 text-xs sm:text-sm font-bold tracking-widest uppercase cursor-pointer active:scale-95"
+                className="group px-8 py-3.5 glass hover:bg-white/10 text-white hover:text-yellow-400 hover:border-yellow-400/30 rounded-xl shadow-lg shadow-black/20 hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2 text-xs sm:text-sm font-bold tracking-widest uppercase cursor-pointer active:scale-95"
               >
                 <span>Unduh Juknis</span>
                 <Download className="w-4 h-4 transition-transform group-hover:translate-y-0.5 text-yellow-400" />
               </button>
+
             </div>
 
           </div>

@@ -153,14 +153,15 @@ export default function FaqContact() {
                   onClick={() => setSelectedFilter(category)}
                   className={`px-4 py-2 rounded-full text-xs font-bold transition-colors ${
                     selectedFilter === category
-                      ? 'bg-red-600 text-white'
-                      : 'bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white'
+                      ? 'bg-red-600 text-white border border-red-500'
+                      : 'glass text-slate-300 hover:bg-white/10 hover:text-white'
                   }`}
                 >
                   {category}
                 </button>
               ))}
             </div>
+
 
             {/* Accordion List */}
             <div className="space-y-3 max-h-[800px] overflow-y-auto custom-scrollbar pr-2">
@@ -192,7 +193,7 @@ export default function FaqContact() {
 
           {/* Right Column: Contact Cards */}
           <div className="lg:col-span-4 space-y-6">
-            <div className="bg-slate-900/80 backdrop-blur-md rounded-3xl p-8 border border-slate-800 shadow-2xl relative overflow-hidden">
+            <div className="glass-dark rounded-3xl p-8 border-white/8 shadow-2xl relative overflow-hidden">
               <div className="absolute top-0 right-0 w-32 h-32 bg-yellow-600/20 rounded-bl-full -mr-8 -mt-8 blur-xl"></div>
 
               <h3 className="text-xl font-black text-white mb-6 uppercase italic flex items-center gap-3">
@@ -206,7 +207,7 @@ export default function FaqContact() {
                     href={person.WA_URL}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group flex items-center gap-4 p-4 rounded-xl bg-black/40 border border-slate-800 hover:border-green-600 hover:bg-slate-800 transition-all duration-300"
+                    className="group flex items-center gap-4 p-4 rounded-xl glass hover:bg-white/10 hover:border-green-600/40 transition-all duration-300"
                   >
                     <div className="w-10 h-10 rounded-full bg-green-900/50 flex items-center justify-center text-green-500 border border-green-800">
                       <MessageCircle className="w-4 h-4" />

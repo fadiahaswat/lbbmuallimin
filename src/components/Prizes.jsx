@@ -35,7 +35,7 @@ export default function Prizes() {
             <p className="text-slate-400 text-sm mb-8 font-medium">Penghargaan Tertinggi LBB Mu'allimin 2026</p>
 
             <div className="grid md:grid-cols-2 gap-4 text-left">
-              <div className="bg-white/5 p-4 rounded-xl border border-white/5 hover:bg-white/10 transition-colors flex items-center gap-4">
+              <div className="glass p-4 rounded-xl hover:bg-white/10 transition-colors flex items-center gap-4">
                 <span className="w-8 h-8 rounded-lg bg-red-600 text-white font-bold flex items-center justify-center text-xs shadow-lg shadow-red-900/50">
                   SD
                 </span>
@@ -45,7 +45,7 @@ export default function Prizes() {
                 </div>
               </div>
 
-              <div className="bg-white/5 p-4 rounded-xl border border-white/5 hover:bg-white/10 transition-colors flex items-center gap-4">
+              <div className="glass p-4 rounded-xl hover:bg-white/10 transition-colors flex items-center gap-4">
                 <span className="w-8 h-8 rounded-lg bg-blue-600 text-white font-bold flex items-center justify-center text-xs shadow-lg shadow-blue-900/50">
                   SMP
                 </span>
@@ -55,6 +55,7 @@ export default function Prizes() {
                 </div>
               </div>
             </div>
+
           </div>
         </div>
 
@@ -178,15 +179,15 @@ export default function Prizes() {
                   <UserCheck className="w-4 h-4" /> Tingkat SD / MI
                 </h4>
                 <ul className="space-y-3">
-                  <li className="bg-white/5 p-3 rounded-lg border border-white/5 flex justify-between items-center">
+                  <li className="glass backdrop-blur-sm p-3 rounded-lg flex justify-between items-center">
                     <span className="text-slate-300 text-sm font-medium">Terbaik I</span>
                     <span className="text-xs font-bold text-yellow-500 bg-yellow-900/20 px-2 py-1 rounded">Piala + Uang Pembinaan</span>
                   </li>
-                  <li className="bg-white/5 p-3 rounded-lg border border-white/5 flex justify-between items-center">
+                  <li className="glass backdrop-blur-sm p-3 rounded-lg flex justify-between items-center">
                     <span className="text-slate-300 text-sm font-medium">Terbaik II</span>
                     <span className="text-xs font-bold text-slate-400 bg-slate-800 px-2 py-1 rounded">Piala Tetap</span>
                   </li>
-                  <li className="bg-white/5 p-3 rounded-lg border border-white/5 flex justify-between items-center">
+                  <li className="glass backdrop-blur-sm p-3 rounded-lg flex justify-between items-center">
                     <span className="text-slate-300 text-sm font-medium">Terbaik III</span>
                     <span className="text-xs font-bold text-slate-400 bg-slate-800 px-2 py-1 rounded">Piala Tetap</span>
                   </li>
@@ -198,15 +199,15 @@ export default function Prizes() {
                   <UserCheck className="w-4 h-4" /> Tingkat SMP / MTs
                 </h4>
                 <ul className="space-y-3">
-                  <li className="bg-white/5 p-3 rounded-lg border border-white/5 flex justify-between items-center">
+                  <li className="glass backdrop-blur-sm p-3 rounded-lg flex justify-between items-center">
                     <span className="text-slate-300 text-sm font-medium">Terbaik I</span>
                     <span className="text-xs font-bold text-yellow-500 bg-yellow-900/20 px-2 py-1 rounded">Piala + Uang Pembinaan</span>
                   </li>
-                  <li className="bg-white/5 p-3 rounded-lg border border-white/5 flex justify-between items-center">
+                  <li className="glass backdrop-blur-sm p-3 rounded-lg flex justify-between items-center">
                     <span className="text-slate-300 text-sm font-medium">Terbaik II</span>
                     <span className="text-xs font-bold text-slate-400 bg-slate-800 px-2 py-1 rounded">Piala Tetap</span>
                   </li>
-                  <li className="bg-white/5 p-3 rounded-lg border border-white/5 flex justify-between items-center">
+                  <li className="glass backdrop-blur-sm p-3 rounded-lg flex justify-between items-center">
                     <span className="text-slate-300 text-sm font-medium">Terbaik III</span>
                     <span className="text-xs font-bold text-slate-400 bg-slate-800 px-2 py-1 rounded">Piala Tetap</span>
                   </li>

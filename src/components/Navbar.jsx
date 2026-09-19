@@ -123,7 +123,7 @@ export default function Navbar({ onOpenMobileMenu }) {
             className={`flex items-center gap-0.5 px-2 py-1.5 rounded-full backdrop-blur-md shadow-xl transition-colors duration-300 ${
               isScrolled
                 ? 'bg-slate-100/90 border border-slate-200'
-                : 'bg-black/35 border border-white/15'
+                : 'glass'
             }`}
           >
             {[
@@ -195,7 +195,7 @@ export default function Navbar({ onOpenMobileMenu }) {
                 className={`flex items-center gap-2 pl-1.5 pr-3 py-1 rounded-full border transition-all ${
                   isScrolled
                     ? 'bg-slate-100 hover:bg-slate-200 border-slate-300 text-slate-900'
-                    : 'bg-black/50 hover:bg-black/70 border-white/25 text-white backdrop-blur-md'
+                    : 'glass hover:bg-white/12 text-white'
                 }`}
               >
                 <img
@@ -332,12 +332,13 @@ export default function Navbar({ onOpenMobileMenu }) {
           className={`lg:hidden p-2.5 rounded-xl backdrop-blur-md border transition-all active:scale-95 ${
             isScrolled
               ? 'bg-slate-100 border-slate-200 text-slate-900 hover:bg-slate-200 hover:text-lbb-red'
-              : 'bg-black/30 border-white/10 text-white hover:bg-black/50 hover:text-lbb-gold'
+              : 'glass text-white hover:bg-white/12 hover:text-lbb-gold'
           }`}
           aria-label="Buka Menu"
         >
           <Menu className="w-7 h-7" />
         </button>
+
       </div>
     </nav>
   );
