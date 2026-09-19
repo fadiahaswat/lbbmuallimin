@@ -10,7 +10,7 @@ import {
 
 async function generateEvaluationWorkbook() {
   const wb = new ExcelJS.Workbook();
-  wb.creator = "Panitia LBB Mu'allimin 2026";
+  wb.creator = "Panitia LBB Mu'allimin 2027";
   wb.lastModifiedBy = "Dewan Juri LBB Mu'allimin";
   wb.created = new Date();
   wb.modified = new Date();
@@ -26,7 +26,7 @@ async function generateEvaluationWorkbook() {
     ws.getCell('A1').alignment = { horizontal: 'center', vertical: 'middle' };
 
     ws.mergeCells('A2:L2');
-    ws.getCell('A2').value = "LOMBA BARIS - BERBARIS MU'ALLIMIN 2026";
+    ws.getCell('A2').value = "LOMBA BARIS - BERBARIS MU'ALLIMIN 2027";
     ws.getCell('A2').font = { bold: true, size: 16, color: { argb: 'FF1E293B' } };
     ws.getCell('A2').alignment = { horizontal: 'center', vertical: 'middle' };
 
@@ -316,7 +316,7 @@ async function generateEvaluationWorkbook() {
   wsRekap.getCell('A1').alignment = { horizontal: 'center', vertical: 'middle' };
 
   wsRekap.mergeCells('A2:I2');
-  wsRekap.getCell('A2').value = `LBB MU'ALLIMIN 2026 • ${TIMELINE.COMPETITION_DATE} • ${VENUE.NAME}`;
+  wsRekap.getCell('A2').value = `LBB MU'ALLIMIN 2027 • ${TIMELINE.COMPETITION_DATE} • ${VENUE.NAME}`;
   wsRekap.getCell('A2').font = { bold: true, size: 10, color: { argb: 'FF64748B' } };
   wsRekap.getCell('A2').alignment = { horizontal: 'center', vertical: 'middle' };
 
@@ -374,11 +374,11 @@ async function generateEvaluationWorkbook() {
   wsRekap.getColumn(8).width = 16;
   wsRekap.getColumn(9).width = 18;
 
-  const outputPath = 'd:/lbbmuallimin/FORMULIR_PENILAIAN_LBB_MUALLIMIN_2026.xlsx';
+  const outputPath = 'd:/lbbmuallimin/FORMULIR_PENILAIAN_LBB_MUALLIMIN_2027.xlsx';
   await wb.xlsx.writeFile(outputPath);
   console.log(`[SUCCESS] Excel workbook successfully created at: ${outputPath}`);
 
-  const publicPath = 'd:/lbbmuallimin/public/FORMULIR_PENILAIAN_LBB_MUALLIMIN_2026.xlsx';
+  const publicPath = 'd:/lbbmuallimin/public/FORMULIR_PENILAIAN_LBB_MUALLIMIN_2027.xlsx';
   await wb.xlsx.writeFile(publicPath);
   console.log(`[SUCCESS] Copy also placed in public folder: ${publicPath}`);
 }

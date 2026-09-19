@@ -76,7 +76,7 @@ export default function DocumentViewerModal({ isOpen, onClose, data }) {
                 <span className="text-[10px] font-black uppercase tracking-widest text-yellow-400 block leading-none">
                   Dokumen Resmi
                 </span>
-                <span className="text-xs font-bold text-white">LBB Mu'allimin 2026</span>
+                <span className="text-xs font-bold text-white">LBB Mu'allimin 2027</span>
               </div>
             </div>
           </div>
@@ -122,7 +122,7 @@ export default function DocumentViewerModal({ isOpen, onClose, data }) {
               PANITIA PELAKSANA LOMBA BARIS-BERBARIS (LBB)
             </h2>
             <h1 className="font-black text-xl sm:text-2xl uppercase tracking-tight font-sans text-red-700 mt-0.5">
-              MU'ALLIMIN YOGYAKARTA TAHUN 2026
+              MU'ALLIMIN YOGYAKARTA TAHUN 2027
             </h1>
             <p className="text-xs font-sans text-slate-600 mt-1">
               Kampus Terpadu Madrasah Mu'allimin Muhammadiyah Yogyakarta • Dusun Bandut Lor, Argorejo, Sedayu, Bantul, DIY
@@ -137,12 +137,12 @@ export default function DocumentViewerModal({ isOpen, onClose, data }) {
             <div className="space-y-4 font-sans text-xs sm:text-sm text-slate-800">
               <div className="text-center mb-6">
                 <h3 className="font-black text-lg uppercase underline">PETUNJUK TEKNIS PELAKSANAAN</h3>
-                <span className="font-bold text-xs text-slate-500">Nomor: 001/PAN-LBB/MUALLIMIN/IX/2026</span>
+                <span className="font-bold text-xs text-slate-500">Nomor: 001/PAN-LBB/MUALLIMIN/IX/2027</span>
               </div>
 
               <div className="space-y-2">
                 <h4 className="font-black text-sm uppercase text-red-700">BAB I: KETENTUAN UMUM</h4>
-                <p>1. Lomba Baris-Berbaris (LBB) Mu'allimin 2026 diselenggarakan untuk tingkat SD/MI dan SMP/MTs se-Daerah Istimewa Yogyakarta.</p>
+                <p>1. Lomba Baris-Berbaris (LBB) Mu'allimin 2027 diselenggarakan untuk tingkat SD/MI dan SMP/MTs se-Daerah Istimewa Yogyakarta.</p>
                 <p>2. Pelaksanaan lomba bertempat di {VENUE.NAME}, {VENUE.ADDRESS}.</p>
                 <p>3. Tanggal perlombaan: <strong>{EVENT.COMPETITION_DATE}</strong>.</p>
                 <p>4. Kuota peserta dibatasi maksimal {COMPETITION.MAX_TEAMS_TOTAL} peleton ({COMPETITION.MAX_TEAMS_SD} Peleton SD/MI dan {COMPETITION.MAX_TEAMS_SMP} Peleton SMP/MTs).</p>
@@ -177,7 +177,7 @@ export default function DocumentViewerModal({ isOpen, onClose, data }) {
                     (Tanda Tangan & Cap Panitia)
                   </div>
                   <p className="font-bold underline">Falhan Zuhdi Mubarok</p>
-                  <p className="text-[10px] text-slate-500">NIM/NBM. Panitia LBB 2026</p>
+                  <p className="text-[10px] text-slate-500">NIM/NBM. Panitia LBB 2027</p>
                 </div>
               </div>
             </div>
@@ -188,7 +188,7 @@ export default function DocumentViewerModal({ isOpen, onClose, data }) {
             <div className="space-y-4 font-sans text-xs sm:text-sm text-slate-800">
               <div className="text-center mb-6">
                 <h3 className="font-black text-lg uppercase underline">FORMULIR A: IDENTITAS SEKOLAH & KONTINGEN</h3>
-                <span className="font-bold text-xs text-slate-500">LBB MU'ALLIMIN YOGYAKARTA 2026</span>
+                <span className="font-bold text-xs text-slate-500">LBB MU'ALLIMIN YOGYAKARTA 2027</span>
               </div>
 
               <table className="w-full border-collapse border border-slate-300 text-xs">
@@ -328,7 +328,7 @@ export default function DocumentViewerModal({ isOpen, onClose, data }) {
             <div className="space-y-4 font-sans text-xs sm:text-sm text-slate-800 leading-relaxed">
               <div className="text-center mb-6">
                 <h3 className="font-black text-lg uppercase underline">FORMULIR C: SURAT PERNYATAAN DAN KESANGGUPAN</h3>
-                <span className="font-bold text-xs text-slate-500">LBB MU'ALLIMIN YOGYAKARTA 2026</span>
+                <span className="font-bold text-xs text-slate-500">LBB MU'ALLIMIN YOGYAKARTA 2027</span>
               </div>
 
               <p>Yang bertanda tangan di bawah ini:</p>
@@ -342,7 +342,7 @@ export default function DocumentViewerModal({ isOpen, onClose, data }) {
               <p className="pt-2">Dengan ini menyatakan dengan penuh kesadaran dan tanggung jawab bahwa:</p>
               <ol className="list-decimal pl-5 space-y-2">
                 <li>Seluruh personil yang kami daftarkan adalah benar siswa/siswi aktif dari sekolah kami yang sah.</li>
-                <li>Sanggup mematuhi dan tunduk pada seluruh Petunjuk Teknis, Tata Tertib, dan Regulasi LBB Mu'allimin 2026.</li>
+                <li>Sanggup mematuhi dan tunduk pada seluruh Petunjuk Teknis, Tata Tertib, dan Regulasi LBB Mu'allimin 2027.</li>
                 <li>Menerima segala keputusan Dewan Juri secara mutlak dan tidak dapat diganggu gugat oleh pihak manapun.</li>
                 <li>Bersedia menjaga sportivitas, etika, kesopanan, dan kebersihan lingkungan kampus selama perlombaan berlangsung.</li>
               </ol>
@@ -366,11 +366,11 @@ export default function DocumentViewerModal({ isOpen, onClose, data }) {
             <div className="space-y-4 font-sans text-xs text-slate-800">
               <div className="text-center mb-6">
                 <h3 className="font-black text-base sm:text-lg uppercase underline">BERITA ACARA REKAPITULASI HASIL PENILAIAN DEWAN JURI</h3>
-                <span className="font-bold text-xs text-slate-500">Nomor: 009/BA-JURI/LBB-MUALLIMIN/XI/2026</span>
+                <span className="font-bold text-xs text-slate-500">Nomor: 009/BA-JURI/LBB-MUALLIMIN/I/2027</span>
               </div>
 
               <p>
-                Pada hari ini, <strong>{EVENT.COMPETITION_DATE}</strong>, bertempat di {VENUE.NAME}, Dewan Juri Lomba Baris-Berbaris Mu'allimin 2026 telah melaksanakan penilaian teknis dan rekapitulasi nilai akhir dengan hasil sebagai berikut:
+                Pada hari ini, <strong>{EVENT.COMPETITION_DATE}</strong>, bertempat di {VENUE.NAME}, Dewan Juri Lomba Baris-Berbaris Mu'allimin 2027 telah melaksanakan penilaian teknis dan rekapitulasi nilai akhir dengan hasil sebagai berikut:
               </p>
 
               {/* Tabel Rekapitulasi */}
@@ -412,7 +412,7 @@ export default function DocumentViewerModal({ isOpen, onClose, data }) {
               <div className="pt-6 grid grid-cols-2 text-center text-xs">
                 <div>
                   <p>Mengetahui,</p>
-                  <p className="font-bold">Ketua Panitia LBB Mu'allimin 2026</p>
+                  <p className="font-bold">Ketua Panitia LBB Mu'allimin 2027</p>
                   <div className="h-16"></div>
                   <p className="font-bold underline">( Falhan Zuhdi Mubarok )</p>
                 </div>
@@ -431,7 +431,7 @@ export default function DocumentViewerModal({ isOpen, onClose, data }) {
 
       {/* Page Footer */}
       <footer className="border-t border-slate-300/80 bg-white py-6 text-center text-xs text-slate-500">
-        <p>© 2026 Madrasah Mu'allimin Muhammadiyah Yogyakarta • Panitia Pelaksana LBB 2026</p>
+        <p>© 2027 Madrasah Mu'allimin Muhammadiyah Yogyakarta • Panitia Pelaksana LBB 2027</p>
       </footer>
     </div>
   );

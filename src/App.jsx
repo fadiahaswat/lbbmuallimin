@@ -22,8 +22,6 @@ const RegistrationWizard = React.lazy(() => import('./components/portal/Registra
 const RegistrationStatusModal = React.lazy(() => import('./components/portal/RegistrationStatusModal.jsx'));
 const DocumentViewerModal = React.lazy(() => import('./components/documents/DocumentViewerModal.jsx'));
 const AuthModal = React.lazy(() => import('./components/auth/AuthModal.jsx'));
-const PinAuthModal = React.lazy(() => import('./components/auth/PinAuthModal.jsx'));
-
 // Portals & Backoffice Dashboards (Lazy loaded on demand)
 const ParticipantDashboard = React.lazy(() => import('./components/portal/ParticipantDashboard.jsx'));
 const AdminDashboard = React.lazy(() => import('./components/admin/AdminDashboard.jsx'));
@@ -31,10 +29,9 @@ const JuryScoringApp = React.lazy(() => import('./components/scoring/JuryScoring
 const AnnouncementPortal = React.lazy(() => import('./components/announcement/AnnouncementPortal.jsx'));
 const SuperadminPanel = React.lazy(() => import('./components/superadmin/SuperadminPanel.jsx'));
 
-// Adapted from Simpaskor (Fase 1 - 3): Lapangan, Klasemen & E-Voting
+// Adapted from Simpaskor (Fase 1 - 3): Lapangan & Klasemen
 const StagingDashboard = React.lazy(() => import('./components/staging/StagingDashboard.jsx'));
 const LiveLeaderboard = React.lazy(() => import('./components/leaderboard/LiveLeaderboard.jsx'));
-const VotingArena = React.lazy(() => import('./components/voting/VotingArena.jsx'));
 
 function ViewLoader() {
   return (
@@ -108,7 +105,6 @@ function MainApp() {
         {activeView === 'status_check' && <RegistrationStatusModal />}
         {activeView === 'document_viewer' && <DocumentViewerModal />}
         {activeView === 'auth' && <AuthModal />}
-        {activeView === 'pin_auth' && <PinAuthModal />}
         {activeView === 'peserta_dashboard' && <ParticipantDashboard />}
         {activeView === 'admin' && <AdminDashboard />}
         {activeView === 'juri' && <JuryScoringApp />}
@@ -116,7 +112,6 @@ function MainApp() {
         {activeView === 'announcement' && <AnnouncementPortal />}
         {activeView === 'staging' && <StagingDashboard />}
         {activeView === 'live_leaderboard' && <LiveLeaderboard />}
-        {activeView === 'voting_arena' && <VotingArena />}
       </React.Suspense>
     </div>
   );

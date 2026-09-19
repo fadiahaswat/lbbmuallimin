@@ -1,7 +1,7 @@
 {
   "name": "lbbmuallimin",
   "version": "2.0.0",
-  "description": "Website resmi Lomba Baris-Berbaris Mu'allimin 2026 (React + Vite)",
+  "description": "Website resmi Lomba Baris-Berbaris Mu'allimin 2027 (React + Vite)",
   "type": "module",
   "scripts": {
     "dev": "vite",

@@ -83,7 +83,7 @@ export default function Navbar({ onOpenMobileMenu }) {
     setIsUserDropdownOpen(false);
     if (!currentUser) return;
     if (currentUser.role === 'admin') setActiveView('admin');
-    else if (currentUser.role === 'juri') setActiveView('juri');
+    else if (['penginput', 'verifikator', 'finalisator', 'juri'].includes(currentUser.role)) setActiveView('juri');
     else if (currentUser.role === 'superadmin') setActiveView('superadmin');
     else setActiveView('peserta_dashboard');
   }
@@ -290,6 +290,20 @@ export default function Navbar({ onOpenMobileMenu }) {
                         <Award className="w-4 h-4 text-emerald-400 shrink-0" />
                         <span>E-Scoring Juri LBB</span>
                       </button>
+
+                      {currentUser.role === 'superadmin' && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsUserDropdownOpen(false);
+                            setActiveView('superadmin');
+                          }}
+                          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-rose-500/20 text-left transition-colors text-rose-300 cursor-pointer font-bold"
+                        >
+                          <Crown className="w-4 h-4 text-rose-400 shrink-0" />
+                          <span>Superadmin Master Panel</span>
+                        </button>
+                      )}
                     </>
                   )}
 

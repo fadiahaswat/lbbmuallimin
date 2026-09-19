@@ -33,29 +33,17 @@ export default function OfficialScoreRecapModal({ isOpen, onClose, initialJenjan
     const s = scores[team.id];
     const juries = s?.juries || {};
 
-    const juri1Score = juries.pos1?.total !== undefined
+    const juri1PbbScore = juries.pos1?.total !== undefined
       ? Number(juries.pos1.total)
-      : (s?.pbb?.j1 !== undefined && s?.pbb?.j1 !== null ? Number(s.pbb.j1) : (s?.pbb?.total !== undefined ? Number(s.pbb.total) : 0));
+      : (s?.pbb?.total !== undefined ? Number(s.pbb.total) : (s?.pbb?.j1 !== undefined ? Number(s.pbb.j1) : 0));
 
-    const juri2Score = juries.pos2?.total !== undefined
+    const juri2DantonScore = juries.pos2?.total !== undefined
       ? Number(juries.pos2.total)
-      : (s?.pbb?.j2 !== undefined && s?.pbb?.j2 !== null ? Number(s.pbb.j2) : 0);
-
-    // Rata-rata PBB (Juri 1 & Juri 2)
-    let pbbAvgScore = 0;
-    if (juri1Score > 0 && juri2Score > 0) {
-      pbbAvgScore = (juri1Score + juri2Score) / 2;
-    } else if (juri1Score > 0) {
-      pbbAvgScore = juri1Score;
-    } else if (juri2Score > 0) {
-      pbbAvgScore = juri2Score;
-    } else if (s?.pbb?.total !== undefined) {
-      pbbAvgScore = Number(s.pbb.total);
-    }
-
-    const juri3DantonScore = juries.pos3?.total !== undefined
-      ? Number(juries.pos3.total)
       : (s?.danton?.total !== undefined ? Number(s.danton.total) : 0);
+
+    const juri3VariasiScore = juries.pos3?.total !== undefined
+      ? Number(juries.pos3.total)
+      : (s?.variasi?.total !== undefined ? Number(s.variasi.total) : 0);
 
     const penaltiesTotal = s?.penalties?.totalPenalty !== undefined
       ? Number(s.penalties.totalPenalty)
@@ -63,24 +51,27 @@ export default function OfficialScoreRecapModal({ isOpen, onClose, initialJenjan
 
     const finalScore = s?.finalScore !== undefined
       ? Number(s.finalScore)
-      : Math.max(0, parseFloat((pbbAvgScore + juri3DantonScore - penaltiesTotal).toFixed(2)));
+      : Math.max(0, parseFloat((juri1PbbScore + juri2DantonScore + juri3VariasiScore - penaltiesTotal).toFixed(2)));
 
     return {
       team,
-      juri1Score,
-      juri2Score,
-      pbbAvgScore,
-      juri3DantonScore,
+      juri1PbbScore,
+      juri2DantonScore,
+      juri3VariasiScore,
       penaltiesTotal,
       finalScore: isNaN(finalScore) ? 0 : finalScore,
       scored: Boolean(s),
+      status: s?.status || 'draft',
+      verifiedBy: s?.verifiedBy || null,
+      paperEvidenceUrl: s?.paperEvidenceUrl || null,
     };
   });
 
   // Sort based on award category
   const rankedTeams = computedTeams.sort((a, b) => {
-    if (awardCategory === 'danton') return b.juri3DantonScore - a.juri3DantonScore;
-    if (awardCategory === 'pbb') return b.pbbAvgScore - a.pbbAvgScore;
+    if (awardCategory === 'danton') return b.juri2DantonScore - a.juri2DantonScore;
+    if (awardCategory === 'pbb') return b.juri1PbbScore - a.juri1PbbScore;
+    if (awardCategory === 'variasi') return b.juri3VariasiScore - a.juri3VariasiScore;
     return b.finalScore - a.finalScore;
   });
 
@@ -125,10 +116,18 @@ export default function OfficialScoreRecapModal({ isOpen, onClose, initialJenjan
               <button
                 onClick={() => setAwardCategory('danton')}
                 className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
-                  awardCategory === 'danton' ? 'bg-red-500 text-white font-black' : 'text-slate-400 hover:text-white'
+                  awardCategory === 'danton' ? 'bg-indigo-500 text-white font-black' : 'text-slate-400 hover:text-white'
                 }`}
               >
                 Danton Terbaik
+              </button>
+              <button
+                onClick={() => setAwardCategory('variasi')}
+                className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
+                  awardCategory === 'variasi' ? 'bg-purple-500 text-white font-black' : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                Variasi Terbaik
               </button>
             </div>
 
@@ -221,6 +220,7 @@ export default function OfficialScoreRecapModal({ isOpen, onClose, initialJenjan
               <span><strong>Rekapitulasi:</strong> {
                 awardCategory === 'danton' ? '🎖️ Komandan Peleton (Danton) Terbaik' :
                 awardCategory === 'pbb' ? '🎖️ PBB Murni Terbaik' :
+                awardCategory === 'variasi' ? '🎖️ Variasi & Formasi Terbaik' :
                 '🏆 Juara Umum & Akumulasi Nilai'
               }</span>
               <span>•</span>
@@ -239,17 +239,14 @@ export default function OfficialScoreRecapModal({ isOpen, onClose, initialJenjan
                   <th className="py-2.5 px-2 border-r border-slate-700 w-12">No. Undi</th>
                   <th className="py-2.5 px-3 border-r border-slate-700 text-left">Peleton & Asal Sekolah</th>
                   <th className="py-2.5 px-2 border-r border-slate-700 w-14">Jenjang</th>
-                  <th className="py-2.5 px-2 border-r border-slate-700 w-16 bg-slate-800">
+                  <th className={`py-2.5 px-2 border-r border-slate-700 w-18 ${awardCategory === 'pbb' ? 'bg-blue-600 text-white font-black ring-2 ring-blue-300' : 'bg-slate-800'}`}>
                     Juri 1<br /><span className="text-[9px] font-normal text-blue-300">(PBB)</span>
                   </th>
-                  <th className="py-2.5 px-2 border-r border-slate-700 w-16 bg-slate-800">
-                    Juri 2<br /><span className="text-[9px] font-normal text-indigo-300">(PBB)</span>
+                  <th className={`py-2.5 px-2 border-r border-slate-700 w-18 ${awardCategory === 'danton' ? 'bg-indigo-600 text-white font-black ring-2 ring-indigo-300' : 'bg-slate-800'}`}>
+                    Juri 2<br /><span className="text-[9px] font-normal text-indigo-300">(Danton)</span>
                   </th>
-                  <th className={`py-2.5 px-2 border-r border-slate-700 w-20 ${awardCategory === 'pbb' ? 'bg-blue-600 text-white font-black ring-2 ring-blue-300' : 'bg-slate-800'}`}>
-                    Rata-rata<br /><span className="text-[9px] font-normal text-slate-300">(PBB)</span>
-                  </th>
-                  <th className={`py-2.5 px-2 border-r border-slate-700 w-20 ${awardCategory === 'danton' ? 'bg-red-600 text-white font-black ring-2 ring-red-300' : 'bg-slate-800'}`}>
-                    Juri 3<br /><span className="text-[9px] font-normal text-slate-300">(Danton)</span>
+                  <th className={`py-2.5 px-2 border-r border-slate-700 w-18 ${awardCategory === 'variasi' ? 'bg-purple-600 text-white font-black ring-2 ring-purple-300' : 'bg-slate-800'}`}>
+                    Juri 3<br /><span className="text-[9px] font-normal text-purple-300">(Variasi)</span>
                   </th>
                   <th className="py-2.5 px-2 border-r border-slate-700 w-16 text-red-300">
                     Penalti<br /><span className="text-[9px] font-normal">(-)</span>
@@ -287,17 +284,14 @@ export default function OfficialScoreRecapModal({ isOpen, onClose, initialJenjan
                       <td className="py-2.5 px-2 border-r border-slate-200 font-bold text-slate-700">
                         {item.team.jenjang}
                       </td>
-                      <td className="py-2.5 px-2 border-r border-slate-200 font-mono text-slate-800">
-                        {item.juri1Score > 0 ? item.juri1Score.toFixed(1) : '-'}
+                      <td className={`py-2.5 px-2 border-r border-slate-200 font-mono ${awardCategory === 'pbb' ? 'font-black bg-blue-50 text-blue-900' : 'text-slate-800'}`}>
+                        {item.juri1PbbScore > 0 ? item.juri1PbbScore.toFixed(1) : '-'}
                       </td>
-                      <td className="py-2.5 px-2 border-r border-slate-200 font-mono text-slate-800">
-                        {item.juri2Score > 0 ? item.juri2Score.toFixed(1) : '-'}
+                      <td className={`py-2.5 px-2 border-r border-slate-200 font-mono ${awardCategory === 'danton' ? 'font-black bg-indigo-50 text-indigo-900' : 'text-slate-800'}`}>
+                        {item.juri2DantonScore > 0 ? item.juri2DantonScore.toFixed(1) : '-'}
                       </td>
-                      <td className="py-2.5 px-2 border-r border-slate-200 font-mono font-bold text-blue-900 bg-blue-50/40">
-                        {item.pbbAvgScore.toFixed(2)}
-                      </td>
-                      <td className="py-2.5 px-2 border-r border-slate-200 font-mono font-bold text-red-900 bg-red-50/40">
-                        {item.juri3DantonScore.toFixed(1)}
+                      <td className={`py-2.5 px-2 border-r border-slate-200 font-mono ${awardCategory === 'variasi' ? 'font-black bg-purple-50 text-purple-900' : 'text-slate-800'}`}>
+                        {item.juri3VariasiScore > 0 ? item.juri3VariasiScore.toFixed(1) : '-'}
                       </td>
                       <td className="py-2.5 px-2 border-r border-slate-200 font-mono text-red-600 font-bold">
                         {item.penaltiesTotal > 0 ? `-${item.penaltiesTotal}` : '0'}
@@ -333,8 +327,8 @@ export default function OfficialScoreRecapModal({ isOpen, onClose, initialJenjan
             {/* Juri 2 */}
             <div className="flex flex-col items-center justify-between h-36">
               <div>
-                <p className="font-bold text-slate-800">Juri 2 (PBB Pasukan)</p>
-                <p className="text-[11px] text-slate-500">Unsur TNI / Instruktur PBB</p>
+                <p className="font-bold text-slate-800">Juri 2 (Komandan Peleton)</p>
+                <p className="text-[11px] text-slate-500">Unsur Polresta / Korps Danton</p>
               </div>
               <div className="w-40 border-b border-slate-900 pb-1">
                 <span className="font-bold text-slate-900">{JURY_POSTS.pos2.defaultName}</span>
@@ -344,8 +338,8 @@ export default function OfficialScoreRecapModal({ isOpen, onClose, initialJenjan
             {/* Juri 3 */}
             <div className="flex flex-col items-center justify-between h-36">
               <div>
-                <p className="font-bold text-slate-800">Juri 3 (Komandan Peleton)</p>
-                <p className="text-[11px] text-slate-500">Unsur Polresta / Korps Danton</p>
+                <p className="font-bold text-slate-800">Juri 3 (Variasi & Formasi)</p>
+                <p className="text-[11px] text-slate-500">Unsur Pelatih & Koreografer PBB</p>
               </div>
               <div className="w-40 border-b border-slate-900 pb-1">
                 <span className="font-bold text-slate-900">{JURY_POSTS.pos3.defaultName}</span>

@@ -94,6 +94,8 @@ export default function TataTertib() {
                 <li>Setiap peleton akan mendapatkan satu lokasi basecamp yang telah ditentukan oleh panitia.</li>
                 <li>Area Lomba bersifat steril dan hanya dapat diakses oleh peleton yang akan tampil, official terkait, dan panitia (Clear Area).</li>
                 <li>Pendukung dan penonton diwajibkan untuk berada di Area Penonton yang telah disediakan.</li>
+                <li>Area stan tenant dan kuliner dipusatkan di Kompleks Math'am, 1918 Foodcourt, dan 1918 Mart.</li>
+                <li className="font-semibold text-red-700">Seluruh peserta, pendamping, official, dan suporter DILARANG KERAS memasuki area Asrama Santri.</li>
               </ol>
             </div>
 

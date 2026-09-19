@@ -23,13 +23,13 @@
 // ---------------------------------------------------------------------------
 export const SITE = {
     /** Judul tab browser */
-    TITLE: "Lomba Baris-Berbaris Mu\u2019allimin 2026",
+    TITLE: "Lomba Baris-Berbaris Mu\u2019allimin 2027",
 
     /** Konten meta description untuk SEO */
-    DESCRIPTION: "Website Resmi Lomba Baris-Berbaris Mu\u2019allimin 2026 Tingkat SD/MI & SMP/MTs Se-DIY.",
+    DESCRIPTION: "Website Resmi Lomba Baris-Berbaris Mu\u2019allimin 2027 Tingkat SD/MI & SMP/MTs Se-DIY.",
 
     /** Tahun kegiatan – dipakai di berbagai tempat */
-    YEAR: '2026',
+    YEAR: '2027',
 
     /** Sub-label di logo footer */
     TAGLINE: "Mu\u2019allimin Yogyakarta",
@@ -41,7 +41,7 @@ export const SITE = {
         + 'generasi pemimpin masa depan.',
 
     /** Teks hak cipta footer */
-    COPYRIGHT: '\u00A9 2026 LBB Mu\u2019allimin. All rights reserved.',
+    COPYRIGHT: '\u00A9 2027 LBB Mu\u2019allimin. All rights reserved.',
 };
 
 // ---------------------------------------------------------------------------
@@ -52,7 +52,7 @@ export const HERO = {
     TITLE_LINE1: 'LOMBA BARIS BERBARIS',
 
     /** Baris kedua judul hero */
-    TITLE_LINE2: "MU\u2019ALLIMIN 2026",
+    TITLE_LINE2: "MU\u2019ALLIMIN 2027",
 
     /** Teks deskripsi singkat di bawah judul (HTML) */
     SUBTITLE:
@@ -65,29 +65,29 @@ export const HERO = {
 // EVENT – semua tanggal & waktu kegiatan
 // ---------------------------------------------------------------------------
 export const EVENT = {
-    /** Teks badge di hero (contoh: "Pendaftaran: 1 – 31 Oktober 2026") */
-    REGISTRATION_BADGE: 'Pendaftaran: 1 \u2013 31 Oktober 2026',
+    /** Teks badge di hero (contoh: "Pendaftaran: 21 September – 5 Oktober 2026") */
+    REGISTRATION_BADGE: 'Pendaftaran: 21 September \u2013 5 Oktober 2026',
 
     /** Rentang pendaftaran daring */
-    REGISTRATION_RANGE: '1 \u2013 31 Oktober 2026',
+    REGISTRATION_RANGE: '21 September \u2013 5 Oktober 2026',
 
     /** Rentang verifikasi berkas oleh panitia */
-    VERIFICATION_RANGE: '2 \u2013 8 November 2026',
+    VERIFICATION_RANGE: '6 \u2013 12 Oktober 2026',
 
     /** Tanggal pembukaan pendaftaran daring */
-    REGISTRATION_START: '2026-10-01T00:00:00+07:00',
+    REGISTRATION_START: '2026-09-21T00:00:00+07:00',
 
     /** Tanggal batas akhir pendaftaran – dipakai countdown timer */
-    REGISTRATION_DEADLINE: '2026-10-31T23:59:59+07:00',
+    REGISTRATION_DEADLINE: '2026-10-05T23:59:59+07:00',
 
     /** Tanggal Technical Meeting */
-    TECHNICAL_MEETING_DATE: '9 Januari 2026',
+    TECHNICAL_MEETING_DATE: '9 Januari 2027',
 
     /** Waktu Technical Meeting (singkat, di timeline) */
     TECHNICAL_MEETING_TIME: '13.00 WIB - Selesai',
 
     /** Hari + tanggal lengkap Technical Meeting (untuk FAQ) */
-    TECHNICAL_MEETING_FULL_DATE: 'Jumat, 9 Januari 2026',
+    TECHNICAL_MEETING_FULL_DATE: 'Jumat, 9 Januari 2027',
 
     /** Rentang jam Technical Meeting */
     TECHNICAL_MEETING_TIME_RANGE: '13.00 WIB \u2013 Selesai',
@@ -100,12 +100,12 @@ export const EVENT = {
     TECHNICAL_MEETING_MAPS_URL: "https://www.google.com/maps/dir/?api=1&destination=Madrasah+Mu'allimin+Muhammadiyah+Yogyakarta+Jl.+Letjen+S.+Parman+No.+68+Wirobrajan",
 
     /** Uji Coba Lapangan */
-    FIELD_TRIAL_DATE: '17 Januari 2026',
-    FIELD_TRIAL_FULL_DATE: 'Sabtu, 17 Januari 2026',
+    FIELD_TRIAL_DATE: '17 Januari 2027',
+    FIELD_TRIAL_FULL_DATE: 'Sabtu, 17 Januari 2027',
     FIELD_TRIAL_TIME_RANGE: '07.00 \u2013 14.00 WIB',
 
     /** Hari & tanggal hari-H */
-    COMPETITION_DATE: 'Sabtu, 24 Januari 2026',
+    COMPETITION_DATE: 'Sabtu, 24 Januari 2027',
 
     /** Rentang waktu hari-H */
     COMPETITION_TIME_RANGE: '06.00 WIB \u2013 17.00 WIB',
@@ -131,9 +131,15 @@ export const VENUE = {
     /** URL Google Maps */
     MAPS_URL: 'https://maps.app.goo.gl/fVMgg5xZcwRQ4kN78',
 
+    /** URL Embed Google Maps untuk preview iframe */
+    MAPS_EMBED_URL: 'https://maps.google.com/maps?q=-7.806784,110.2683762&hl=id&z=15&output=embed',
+
     /** Label mini-map di bagian kontak/FAQ */
     MAPS_PREVIEW_NAME: "Kampus Terpadu Mu\u2019allimin",
     MAPS_PREVIEW_ADDRESS: 'Bandut Lor, Argorejo, Sedayu, Bantul, DIY',
+
+    /** Ukuran arena/lapangan lomba untuk Juknis */
+    FIELD_SIZE: '26m \u00D7 15m (SMP/MTs) & 25m \u00D7 14m (SD/MI)',
 };
 
 // ---------------------------------------------------------------------------
@@ -158,6 +164,27 @@ export const COMPETITION = {
 
     /** FAQ: minimal tampil */
     MIN_PERFORM_DETAIL: 'Minimal Tampil: 22 orang (1 Komandan + 21 Pasukan).',
+
+    /** Jumlah anggota per peleton (dipakai di Juknis) */
+    MEMBERS_PER_TEAM: 25,
+
+    /** Kuota total peleton yang bisa ikut */
+    MAX_TEAMS_TOTAL: 36,
+    MAX_TEAMS_SD: 18,
+    MAX_TEAMS_SMP: 18,
+
+    /** Batas waktu tampil (dalam menit, dipakai di Juknis – nilai umum/rata-rata) */
+    PERFORMANCE_TIME_LIMIT_MINUTES: '10 (SD/MI) / 13 (SMP/MTs)',
+
+    /** Deskripsi unsur dewan juri */
+    JURY_MEMBERS: 'TNI, POLRI, dan Militer Profesional',
+
+    /** Proporsi penilaian (%) untuk ditampilkan di Juknis */
+    SCORING_PROPORTIONS: {
+        PBB: 60,
+        DANTON: 25,
+        VARIASI: 15,
+    },
 
     SD: {
         TARGET_PLATOONS: 18,
@@ -237,7 +264,7 @@ export const DOWNLOADS = [
     {
         id: 'juknis',
         title: 'Petunjuk Teknis Lengkap (Juknis)',
-        description: 'Dokumen panduan resmi pelaksanaan LBB Mu\'allimin 2026 yang memuat ketentuan lomba, materi PBB & Vafor, kriteria penilaian, dan tata tertib.',
+        description: 'Dokumen panduan resmi pelaksanaan LBB Mu\'allimin 2027 yang memuat ketentuan lomba, materi PBB & Vafor, kriteria penilaian, dan tata tertib.',
         size: '2.5 MB',
         type: 'PDF',
         url: '#',
@@ -526,69 +553,81 @@ export const GOOGLE_AUTH = {
 };
 
 // ---------------------------------------------------------------------------
-// JURY_POSTS – Konfigurasi Dewan Juri (1 Pos Lapangan, 3 Dewan Juri)
-// Juri 1: PBB Gerakan Materi Pasukan
-// Juri 2: PBB Gerakan Materi Pasukan
-// Juri 3: Khusus Komandan Peleton (Danton)
+// JURY_POSTS – Konfigurasi Dewan Juri Resmi LBB Mu'allimin 2027:
+// 1. Juri PBB: Seluruh materi gerakan PBB Pasukan
+// 2. Juri Komandan: Khusus Komandan Peleton (Danton)
+// 3. Juri Variasi & Formasi: Kreativitas, Kerapian, Estetika & Kekompakan
+// Ditambah: Hakim Garis (Injak Garis) & Timer Lapangan (Waktu Tampil)
 // ---------------------------------------------------------------------------
+export const VARIASI_CRITERIA = [
+    { id: 'kreativitas', name: 'Kreativitas & Tingkat Kesulitan Gerakan', defaultScore: 25, maxScore: 30 },
+    { id: 'kerapian', name: 'Kerapian, Keseragaman & Kelurusan Saf/Banjar', defaultScore: 25, maxScore: 30 },
+    { id: 'kekompakan', name: 'Kekompakan, Irama & Tempo Pasukan', defaultScore: 20, maxScore: 25 },
+    { id: 'keindahan', name: 'Estetika, Visual Formasi & Kesan Umum', defaultScore: 15, maxScore: 15 },
+];
+
 export const JURY_POSTS = {
     pos1: {
         id: 'pos1',
         title: 'Juri 1: PBB Gerakan Materi Pasukan',
         shortTitle: 'Juri 1 (PBB)',
-        badge: 'Dewan Juri PBB 1',
+        badge: 'Dewan Juri PBB',
         defaultName: 'Mayor (Mar) Bambang S., S.E.',
         type: 'pbb',
         aspects: [
-            { id: 'materi', label: 'Rubrik Gerakan Materi PBB', weight: 100 },
+            { id: 'materi', label: 'Rubrik Gerakan Materi PBB Pasukan', weight: 100 },
         ],
     },
     pos2: {
         id: 'pos2',
-        title: 'Juri 2: PBB Gerakan Materi Pasukan',
-        shortTitle: 'Juri 2 (PBB)',
-        badge: 'Dewan Juri PBB 2',
-        defaultName: 'Kapten Inf. Hendra Wijaya',
-        type: 'pbb',
-        aspects: [
-            { id: 'materi', label: 'Rubrik Gerakan Materi PBB', weight: 100 },
-        ],
-    },
-    pos3: {
-        id: 'pos3',
-        title: 'Juri 3: Komandan Peleton (Danton)',
-        shortTitle: 'Juri 3 (Danton)',
+        title: 'Juri 2: Komandan Peleton (Danton)',
+        shortTitle: 'Juri 2 (Danton)',
         badge: 'Dewan Juri Danton',
         defaultName: 'AKP Tri Wibowo, S.H.',
         type: 'danton',
         aspects: [
-            { id: 'sikap', label: 'Sikap & Penampilan Militer', weight: 20 },
+            { id: 'sikap', label: 'Sikap Tampang & Sikap Sempurna', weight: 20 },
             { id: 'penguasaanMateri', label: 'Penguasaan Materi Aba-Aba', weight: 25 },
             { id: 'penguasaanLapangan', label: 'Penguasaan Medan Lomba', weight: 20 },
-            { id: 'ikit', label: 'Irama / Kecepatan / Intonasi / Tempo', weight: 20 },
+            { id: 'ikit', label: 'Irama / Kecepatan / Intonasi / Tempo (IKIT)', weight: 20 },
             { id: 'volumeSuara', label: 'Kekuatan & Volume Suara', weight: 15 },
+        ],
+    },
+    pos3: {
+        id: 'pos3',
+        title: 'Juri 3: Variasi & Formasi',
+        shortTitle: 'Juri 3 (Variasi & Formasi)',
+        badge: 'Dewan Juri Variasi',
+        defaultName: 'Kapten Inf. Hendra Wijaya',
+        type: 'variasi',
+        aspects: [
+            { id: 'kreativitas', label: 'Kreativitas & Tingkat Kesulitan', weight: 30 },
+            { id: 'kerapian', label: 'Kerapian & Kelurusan Pasukan', weight: 30 },
+            { id: 'kekompakan', label: 'Kekompakan & Irama Pasukan', weight: 25 },
+            { id: 'keindahan', label: 'Estetika Visual & Kesan Umum', weight: 15 },
         ],
     },
 };
 
 // ---------------------------------------------------------------------------
-// STAGING_CONFIG – Konfigurasi Alur Lapangan & Timer (Fase 2: Staging Ops)
+// STAGING_CONFIG – Konfigurasi Alur Registrasi Hari-H & Staging Lapangan
+// Basecamp: Checkin (Scan QR, Titip KTP/SIM, 1 Dus Air, No Dada, Cocard, Karung Sampah)
+//           Checkout (Cek Kebersihan Basecamp, Kumpul Sampah Pilah, Scan QR, Balikkan KTP/SIM)
+// DP 1: Cek Foto & Kelengkapan Personel Menggunakan Tab/iPad
+// DP 2: Ruang Tunggu Steril
+// DP 3: Pintu Masuk Lapangan
+// Arena: Kotak Lomba Didampingi Hakim Garis & Timer
 // ---------------------------------------------------------------------------
 export const STAGING_CONFIG = {
     STAGES: [
-        { id: 'waiting', label: 'Menunggu', shortLabel: 'Standby', color: 'slate', icon: 'Clock' },
-        { id: 'dp1', label: 'DP 1: Absensi & Berkas', shortLabel: 'DP 1', color: 'blue', icon: 'ClipboardCheck' },
-        { id: 'dp2', label: 'DP 2: Kerapian & Personel', shortLabel: 'DP 2', color: 'amber', icon: 'ShieldCheck' },
+        { id: 'waiting', label: 'Belum Check-in', shortLabel: 'Standby', color: 'slate', icon: 'Clock' },
+        { id: 'basecamp', label: 'Basecamp Kontingen', shortLabel: 'Basecamp', color: 'teal', icon: 'Home' },
+        { id: 'dp1', label: 'DP 1: Inspeksi Personel & Foto', shortLabel: 'DP 1 (Inspeksi)', color: 'blue', icon: 'ClipboardCheck' },
+        { id: 'dp2', label: 'DP 2: Ruang Tunggu Steril', shortLabel: 'DP 2 (Tunggu)', color: 'amber', icon: 'ShieldCheck' },
         { id: 'dp3', label: 'DP 3: Pintu Masuk Lapangan', shortLabel: 'DP 3', color: 'indigo', icon: 'DoorOpen' },
         { id: 'arena', label: 'Kotak Lomba (Tampil)', shortLabel: 'Tampil', color: 'emerald', icon: 'Play' },
         { id: 'finished', label: 'Selesai Tampil', shortLabel: 'Selesai', color: 'purple', icon: 'CheckCircle2' },
-    ],
-    DP2_CHECKLIST: [
-        { id: 'personnelCount', label: 'Personel Lengkap (Min. 22: 1 Danton + 21 Pasukan)', required: true },
-        { id: 'chestNumber', label: 'Nomor Dada Terpasang Rapi', required: true },
-        { id: 'whiteGloves', label: 'Sarung Tangan Putih Bersih & Seragam', required: true },
-        { id: 'beretCap', label: 'Peci / Baret & Lencana Lengkap', required: true },
-        { id: 'footwear', label: 'Sepatu Lomba Sesuai Juknis (Hitam/Lars)', required: true },
+        { id: 'checkout', label: 'Checkout Basecamp (Selesai Total)', shortLabel: 'Checkout', color: 'slate', icon: 'CheckCircle2' },
     ],
     DURATIONS: {
         SD: 10 * 60, // 10 menit dalam detik (600 detik)
@@ -599,19 +638,6 @@ export const STAGING_CONFIG = {
         RED_REMAINING: 60, // sisa 1 menit
     },
     PENALTY_OVERTIME_PER_30_SEC: 50,
-};
-
-// ---------------------------------------------------------------------------
-// VOTING_CONFIG – Konfigurasi E-Voting Suporter Online (Fase 3: E-Voting)
-// ---------------------------------------------------------------------------
-export const VOTING_CONFIG = {
-    TITLE: 'Voting Arena Suporter LBB Mu\'allimin 2026',
-    DESCRIPTION: 'Dukung peleton sekolah favoritmu untuk meraih Trofi Peleton Terfavorit & Danton Terfavorit!',
-    CATEGORIES: [
-        { id: 'peleton', label: 'Peleton Terfavorit', badge: 'Suporter Utama' },
-        { id: 'danton', label: 'Danton Terfavorit', badge: 'Komandan Favorit' },
-    ],
-    DAILY_LIMIT_PER_DEVICE: 1, // 1 vote per hari per pleton
 };
 
 // ---------------------------------------------------------------------------

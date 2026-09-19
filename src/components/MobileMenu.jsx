@@ -174,7 +174,7 @@ export default function MobileMenu({ isOpen, onClose }) {
                 onClick={() => {
                   onClose();
                   if (currentUser.role === 'admin') setActiveView('admin');
-                  else if (currentUser.role === 'juri') setActiveView('juri');
+                  else if (['penginput', 'verifikator', 'finalisator', 'juri'].includes(currentUser.role)) setActiveView('juri');
                   else if (currentUser.role === 'superadmin') setActiveView('superadmin');
                   else setActiveView('peserta_dashboard');
                 }}

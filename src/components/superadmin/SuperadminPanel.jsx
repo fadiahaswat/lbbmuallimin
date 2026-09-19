@@ -19,7 +19,13 @@ import {
   Calendar,
   Clock,
   Save,
-  RefreshCw
+  RefreshCw,
+  UserPlus,
+  Mail,
+  Edit2,
+  Check,
+  X,
+  Lock
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
 import { EVENT } from '../../config.js';
@@ -36,25 +42,29 @@ export default function SuperadminPanel() {
     isGoogleSheetConfigured,
     pingSheetDatabase,
     syncAllToGoogleSheet,
-    pullFromGoogleSheet
+    pullFromGoogleSheet,
+    users,
+    addStaffUser,
+    updateStaffUser,
+    deleteStaffUser
   } = useCompetition();
 
   const [toastMsg, setToastMsg] = useState('');
 
   // Form state untuk jadwal dan tanggal pelaksanaan
   const defaultDates = {
-    registrationStart: '2026-10-01T00:00:00+07:00',
-    registrationDeadline: '2026-10-31T23:59:59+07:00',
-    registrationRangeText: '1 – 31 Oktober 2026',
-    verificationRangeText: '2 – 8 November 2026',
-    technicalMeetingDate: '9 Januari 2026',
+    registrationStart: '2026-09-21T00:00:00+07:00',
+    registrationDeadline: '2026-10-05T23:59:59+07:00',
+    registrationRangeText: '21 September – 5 Oktober 2026',
+    verificationRangeText: '6 – 12 Oktober 2026',
+    technicalMeetingDate: '9 Januari 2027',
     technicalMeetingTime: '13.00 WIB - Selesai',
-    technicalMeetingFullDate: 'Jumat, 9 Januari 2026',
+    technicalMeetingFullDate: 'Jumat, 9 Januari 2027',
     technicalMeetingVenue: "Kampus Induk Madrasah Mu'allimin Muhammadiyah Yogyakarta, Jalan Letjen S. Parman NO. 68, Wirobrajan, Kota Yogyakarta, Daerah Istimewa Yogyakarta.",
-    fieldTrialDate: '17 Januari 2026',
+    fieldTrialDate: '17 Januari 2027',
     fieldTrialTime: '07.00 – 14.00 WIB',
-    fieldTrialFullDate: 'Sabtu, 17 Januari 2026',
-    competitionDate: 'Sabtu, 24 Januari 2026',
+    fieldTrialFullDate: 'Sabtu, 17 Januari 2027',
+    competitionDate: 'Sabtu, 24 Januari 2027',
     competitionTimeRange: '06.00 WIB – 17.00 WIB',
   };
 
@@ -96,6 +106,69 @@ export default function SuperadminPanel() {
     a.click();
     URL.revokeObjectURL(url);
     showToast('Database JSON berhasil diunduh!');
+  }
+
+  // State Manajemen Pengguna / Email Role oleh Superadmin
+  const [isAddStaffModalOpen, setIsAddStaffModalOpen] = useState(false);
+  const [newStaffForm, setNewStaffForm] = useState({
+    name: '',
+    email: '',
+    role: 'penginput',
+    roleLabel: 'Operator Input Nilai Kertas',
+  });
+  const [editingUserId, setEditingUserId] = useState(null);
+  const [editForm, setEditForm] = useState({ name: '', email: '', role: '', roleLabel: '' });
+
+  const staffUsers = (users || []).filter(u =>
+    ['superadmin', 'admin', 'penginput', 'verifikator', 'finalisator'].includes(u.role)
+  );
+
+  function handleAddStaffSubmit(e) {
+    e.preventDefault();
+    const res = addStaffUser(newStaffForm);
+    if (res.success) {
+      showToast(res.message);
+      setIsAddStaffModalOpen(false);
+      setNewStaffForm({
+        name: '',
+        email: '',
+        role: 'penginput',
+        roleLabel: 'Operator Input Nilai Kertas',
+      });
+    } else {
+      alert(res.message);
+    }
+  }
+
+  function handleStartEditStaff(user) {
+    setEditingUserId(user.id);
+    setEditForm({
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      roleLabel: user.roleLabel || '',
+    });
+  }
+
+  function handleSaveEditStaff(userId) {
+    const res = updateStaffUser(userId, editForm);
+    if (res.success) {
+      showToast(res.message);
+      setEditingUserId(null);
+    } else {
+      alert(res.message);
+    }
+  }
+
+  function handleDeleteStaff(userId, email) {
+    if (confirm(`Yakin ingin mencabut hak akses petugas untuk email "${email}"?`)) {
+      const res = deleteStaffUser(userId);
+      if (res.success) {
+        showToast(res.message);
+      } else {
+        alert(res.message);
+      }
+    }
   }
 
   return (
@@ -217,6 +290,292 @@ export default function SuperadminPanel() {
             </div>
           </div>
         </div>
+
+        {/* SEKSI SUPERADMIN: KELOLA AKUN & HAK AKSES EMAIL PETUGAS */}
+        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-black uppercase tracking-wider text-blue-700 bg-blue-100 px-2.5 py-0.5 rounded-full flex items-center gap-1.5">
+                  <Shield className="w-3.5 h-3.5" />
+                  Otoritas Pengguna
+                </span>
+                <span className="text-xs text-slate-500 font-medium">Anti Kebocoran Data</span>
+              </div>
+              <h3 className="font-black text-lg text-slate-900 uppercase italic mt-1">
+                Kelola Email & Role Petugas Resmi
+              </h3>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Superadmin mengatur sendiri daftar email Google yang diizinkan bertindak sebagai Admin, Penginput, Verifikator, dan Finalisator.
+              </p>
+            </div>
+            
+            <button
+              type="button"
+              onClick={() => setIsAddStaffModalOpen(true)}
+              className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm transition-all cursor-pointer"
+            >
+              <UserPlus className="w-4 h-4" />
+              <span>Tambah Email Petugas</span>
+            </button>
+          </div>
+
+          {/* Tabel Daftar Pengguna & Role Terdaftar */}
+          <div className="overflow-x-auto rounded-2xl border border-slate-200">
+            <table className="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr className="bg-slate-50 border-b border-slate-200 text-[11px] font-black uppercase text-slate-600">
+                  <th className="py-3 px-4">Nama Petugas</th>
+                  <th className="py-3 px-4">Alamat Email Google</th>
+                  <th className="py-3 px-4">Role / Wewenang</th>
+                  <th className="py-3 px-4">Label Tugas</th>
+                  <th className="py-3 px-4 text-center">Aksi</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {staffUsers.map(user => {
+                  const isPrimarySuperadmin = user.email === 'tontimuallimin2026@gmail.com';
+                  const isEditingThis = editingUserId === user.id;
+
+                  return (
+                    <tr key={user.id} className="hover:bg-slate-50/80 transition-colors">
+                      <td className="py-3 px-4">
+                        {isEditingThis ? (
+                          <input
+                            type="text"
+                            value={editForm.name}
+                            onChange={e => setEditForm(prev => ({ ...prev, name: e.target.value }))}
+                            className="px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-bold text-slate-900 w-full"
+                          />
+                        ) : (
+                          <div className="flex items-center gap-2.5">
+                            <img
+                              src={user.avatar}
+                              alt={user.name}
+                              className="w-8 h-8 rounded-full border border-slate-200 object-cover"
+                            />
+                            <div>
+                              <span className="font-bold text-slate-900 block">{user.name}</span>
+                              <span className="text-[10px] text-slate-400 font-mono">ID: {user.id}</span>
+                            </div>
+                          </div>
+                        )}
+                      </td>
+
+                      <td className="py-3 px-4">
+                        {isEditingThis ? (
+                          <input
+                            type="email"
+                            value={editForm.email}
+                            onChange={e => setEditForm(prev => ({ ...prev, email: e.target.value }))}
+                            className="px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-mono text-slate-900 w-full"
+                          />
+                        ) : (
+                          <div className="flex items-center gap-1.5">
+                            <Mail className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                            <span className="font-mono font-bold text-slate-700">{user.email}</span>
+                          </div>
+                        )}
+                      </td>
+
+                      <td className="py-3 px-4">
+                        {isEditingThis ? (
+                          <select
+                            value={editForm.role}
+                            onChange={e => setEditForm(prev => ({ ...prev, role: e.target.value }))}
+                            className="px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-bold text-slate-900"
+                          >
+                            <option value="penginput">Penginput Nilai</option>
+                            <option value="verifikator">Verifikator Nilai</option>
+                            <option value="finalisator">Finalisator (Ketua Juri)</option>
+                            <option value="admin">Admin Sekretariat</option>
+                            <option value="superadmin">Superadmin</option>
+                          </select>
+                        ) : (
+                          <span className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider inline-flex items-center gap-1 border ${
+                            user.role === 'superadmin' ? 'bg-rose-100 text-rose-800 border-rose-200' :
+                            user.role === 'admin' ? 'bg-blue-100 text-blue-800 border-blue-200' :
+                            user.role === 'penginput' ? 'bg-amber-100 text-amber-800 border-amber-200' :
+                            user.role === 'verifikator' ? 'bg-emerald-100 text-emerald-800 border-emerald-200' :
+                            user.role === 'finalisator' ? 'bg-purple-100 text-purple-800 border-purple-200' :
+                            'bg-slate-100 text-slate-800 border-slate-200'
+                          }`}>
+                            {user.role}
+                          </span>
+                        )}
+                      </td>
+
+                      <td className="py-3 px-4">
+                        {isEditingThis ? (
+                          <input
+                            type="text"
+                            value={editForm.roleLabel}
+                            onChange={e => setEditForm(prev => ({ ...prev, roleLabel: e.target.value }))}
+                            className="px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs text-slate-900 w-full"
+                          />
+                        ) : (
+                          <span className="text-slate-600 font-medium">{user.roleLabel || '-'}</span>
+                        )}
+                      </td>
+
+                      <td className="py-3 px-4 text-center">
+                        {isEditingThis ? (
+                          <div className="flex items-center justify-center gap-1.5">
+                            <button
+                              type="button"
+                              onClick={() => handleSaveEditStaff(user.id)}
+                              className="p-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white transition-colors cursor-pointer"
+                              title="Simpan Perubahan"
+                            >
+                              <Check className="w-4 h-4" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setEditingUserId(null)}
+                              className="p-1.5 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-700 transition-colors cursor-pointer"
+                              title="Batal"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="flex items-center justify-center gap-1.5">
+                            <button
+                              type="button"
+                              onClick={() => handleStartEditStaff(user)}
+                              className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-slate-900 transition-colors cursor-pointer"
+                              title="Edit Email / Role"
+                            >
+                              <Edit2 className="w-3.5 h-3.5" />
+                            </button>
+                            {!isPrimarySuperadmin && (
+                              <button
+                                type="button"
+                                onClick={() => handleDeleteStaff(user.id, user.email)}
+                                className="p-1.5 rounded-lg hover:bg-rose-50 text-slate-400 hover:text-rose-600 transition-colors cursor-pointer"
+                                title="Hapus Akses"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            )}
+                          </div>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Modal Tambah Email Petugas Baru */}
+        {isAddStaffModalOpen && (
+          <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4">
+            <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-slate-200 space-y-5 animate-in fade-in zoom-in-95 duration-200">
+              <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center">
+                    <UserPlus className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h4 className="font-black text-sm text-slate-900 uppercase">Tambah Email Petugas</h4>
+                    <p className="text-[11px] text-slate-500">Berikan wewenang login Google ke email tertentu</p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsAddStaffModalOpen(false)}
+                  className="p-1.5 rounded-xl hover:bg-slate-100 text-slate-400 hover:text-slate-700"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <form onSubmit={handleAddStaffSubmit} className="space-y-3.5 text-xs">
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Nama Petugas</label>
+                  <input
+                    type="text"
+                    required
+                    value={newStaffForm.name}
+                    onChange={e => setNewStaffForm(prev => ({ ...prev, name: e.target.value }))}
+                    placeholder="Contoh: Budi Santoso"
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:outline-hidden focus:border-blue-600"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Alamat Email Google (Akun Gmail)</label>
+                  <input
+                    type="email"
+                    required
+                    value={newStaffForm.email}
+                    onChange={e => setNewStaffForm(prev => ({ ...prev, email: e.target.value }))}
+                    placeholder="Contoh: budi.lbb@gmail.com"
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono text-slate-900 focus:outline-hidden focus:border-blue-600"
+                  />
+                  <span className="text-[10px] text-slate-400 mt-0.5 block">
+                    Petugas wajib login menggunakan email ini saat menekan tombol Google Sign-In.
+                  </span>
+                </div>
+
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Role / Peran Wewenang</label>
+                  <select
+                    value={newStaffForm.role}
+                    onChange={e => {
+                      const r = e.target.value;
+                      const labels = {
+                        penginput: 'Operator Input Nilai Kertas',
+                        verifikator: 'Verifikator & Checker Nilai',
+                        finalisator: 'Finalisator & Pengesah Rekap Nilai',
+                        admin: 'Panitia Sekretariat (Admin)',
+                        superadmin: 'Superadmin Pelaksana',
+                      };
+                      setNewStaffForm(prev => ({ ...prev, role: r, roleLabel: labels[r] || '' }));
+                    }}
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:outline-hidden focus:border-blue-600"
+                  >
+                    <option value="penginput">1. Penginput Nilai (Input skor kertas + bukti foto)</option>
+                    <option value="verifikator">2. Verifikator Nilai (Audit lembar fisik vs sistem)</option>
+                    <option value="finalisator">3. Finalisator (Kunci permanen & sahkan Berita Acara)</option>
+                    <option value="admin">Admin Sekretariat (Kelola peleton, undian, verifikasi)</option>
+                    <option value="superadmin">Superadmin Master</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Label Jabatan / Tugas</label>
+                  <input
+                    type="text"
+                    value={newStaffForm.roleLabel}
+                    onChange={e => setNewStaffForm(prev => ({ ...prev, roleLabel: e.target.value }))}
+                    placeholder="Contoh: Petugas Scrutineering Pos 1"
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-hidden focus:border-blue-600"
+                  />
+                </div>
+
+                <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-2.5">
+                  <button
+                    type="button"
+                    onClick={() => setIsAddStaffModalOpen(false)}
+                    className="px-4 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 font-bold text-slate-600 cursor-pointer"
+                  >
+                    Batal
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-bold rounded-xl shadow-sm transition-all cursor-pointer flex items-center gap-1.5"
+                  >
+                    <Save className="w-4 h-4" />
+                    <span>Simpan Petugas</span>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
 
         {/* Form Kelola Jadwal & Tanggal Pelaksanaan */}
         <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
@@ -364,7 +723,7 @@ export default function SuperadminPanel() {
                       value={dateForm.technicalMeetingDate}
                       onChange={e => handleDateChange('technicalMeetingDate', e.target.value)}
                       className="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-lg focus:border-purple-600 outline-none"
-                      placeholder="9 Januari 2026"
+                      placeholder="9 Januari 2027"
                     />
                   </div>
                   <div>
@@ -385,7 +744,7 @@ export default function SuperadminPanel() {
                     value={dateForm.technicalMeetingFullDate}
                     onChange={e => handleDateChange('technicalMeetingFullDate', e.target.value)}
                     className="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-lg focus:border-purple-600 outline-none"
-                    placeholder="Jumat, 9 Januari 2026"
+                    placeholder="Jumat, 9 Januari 2027"
                   />
                 </div>
               </div>
@@ -407,7 +766,7 @@ export default function SuperadminPanel() {
                       value={dateForm.fieldTrialDate}
                       onChange={e => handleDateChange('fieldTrialDate', e.target.value)}
                       className="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-lg focus:border-purple-600 outline-none"
-                      placeholder="17 Januari 2026"
+                      placeholder="17 Januari 2027"
                     />
                   </div>
                   <div>
@@ -428,7 +787,7 @@ export default function SuperadminPanel() {
                     value={dateForm.fieldTrialFullDate}
                     onChange={e => handleDateChange('fieldTrialFullDate', e.target.value)}
                     className="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-lg focus:border-purple-600 outline-none"
-                    placeholder="Sabtu, 17 Januari 2026"
+                    placeholder="Sabtu, 17 Januari 2027"
                   />
                 </div>
               </div>
@@ -451,7 +810,7 @@ export default function SuperadminPanel() {
                     value={dateForm.competitionDate}
                     onChange={e => handleDateChange('competitionDate', e.target.value)}
                     className="w-full px-3 py-2 text-xs font-bold text-slate-900 bg-white border border-slate-200 rounded-lg focus:border-purple-600 outline-none"
-                    placeholder="Sabtu, 24 Januari 2026"
+                    placeholder="Sabtu, 24 Januari 2027"
                   />
                 </div>
                 <div>

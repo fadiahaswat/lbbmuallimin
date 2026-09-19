@@ -49,99 +49,103 @@ export default function About() {
           </h2>
 
           <p className="text-lg text-slate-600 leading-relaxed font-medium">
-            <strong className="text-slate-900">LBB Mu'allimin 2026</strong> hadir sebagai manifestasi peran historis Madrasah Mu'allimin sejak 1918. Ini bukan sekadar kompetisi, melainkan kawah candradimuka untuk menanamkan nilai{' '}
+            <strong className="text-slate-900">LBB Mu'allimin 2027</strong> hadir sebagai manifestasi peran historis Madrasah Mu'allimin sejak 1918. Ini bukan sekadar kompetisi, melainkan kawah candradimuka untuk menanamkan nilai{' '}
             <span className="text-red-700 font-bold">Disiplin</span>,{' '}
             <span className="text-red-700 font-bold">Kepemimpinan</span>, dan{' '}
             <span className="text-red-700 font-bold">Solidaritas</span> demi mencetak Profil Pelajar Pancasila dan Kader Bangsa yang Berkemajuan.
           </p>
         </div>
 
-        {/* Theme Card */}
-        <div className="max-w-4xl mx-auto mb-24 relative group">
-          <div className="absolute inset-0 bg-gradient-to-r from-red-900 to-slate-900 rounded-3xl -rotate-1 scale-[1.02] opacity-80 blur-lg group-hover:rotate-0 transition-all duration-500"></div>
+        {/* Combined Theme & Goals Card */}
+        <div className="max-w-5xl mx-auto mb-24 relative group">
+          <div className="absolute inset-0 bg-gradient-to-r from-red-900 via-slate-900 to-slate-900 rounded-3xl -rotate-1 scale-[1.01] opacity-80 blur-lg group-hover:rotate-0 transition-all duration-500"></div>
 
-          <div className="relative bg-slate-900 text-white p-8 sm:p-12 lg:p-14 rounded-2xl shadow-2xl border border-slate-800 overflow-hidden">
+          <div className="relative bg-slate-900 text-white p-6 sm:p-10 lg:p-12 rounded-3xl shadow-2xl border border-slate-800 overflow-hidden">
             <div className="absolute inset-0 bg-carbon-pattern opacity-20 pointer-events-none"></div>
             
             {/* Integrated Cadet Silhouette Artwork from fotoslide */}
-            <div className="absolute right-0 bottom-0 h-full w-1/2 max-w-[280px] pointer-events-none opacity-20 group-hover:opacity-30 transition-opacity duration-700 hidden sm:block">
+            <div className="absolute right-0 top-0 h-80 w-1/2 max-w-[280px] pointer-events-none opacity-20 group-hover:opacity-30 transition-opacity duration-700 hidden sm:block">
               <img
                 src="/fotoslide/2.png"
                 alt="Paskibra Cadet"
-                className="w-full h-full object-contain object-bottom [mask-image:linear-gradient(to_left,black_40%,transparent_100%)]"
+                className="w-full h-full object-contain object-right-top [mask-image:linear-gradient(to_left,black_40%,transparent_100%)]"
                 loading="lazy"
               />
             </div>
             <Shield className="absolute -right-10 -bottom-10 text-white/5 w-64 h-64 pointer-events-none" />
 
-            <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
-              <div className="md:max-w-xs lg:max-w-sm">
-                <span className="text-yellow-500 font-bold tracking-[0.3em] text-xs uppercase mb-2 block">Tema Resmi 2026</span>
+            {/* Top Section: Tema Resmi */}
+            <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8 pb-10 border-b border-slate-800/80">
+              <div className="lg:max-w-sm">
+                <span className="text-yellow-500 font-bold tracking-[0.3em] text-xs uppercase mb-2 block">Tema Resmi 2027</span>
                 <h3 className="text-3xl sm:text-4xl md:text-5xl font-black uppercase italic leading-tight py-1">
                   <span className="block pb-1 text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-300">Jiwa Ksatria</span>
                   <span className="block text-yellow-500">Derap Gemilang</span>
                 </h3>
               </div>
 
-              <div className="space-y-5 max-w-md">
-                <div className="flex gap-4 items-start">
-                  <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0 border border-white/10 text-yellow-400 shadow-sm">
+              <div className="space-y-4 max-w-md w-full">
+                <div className="flex gap-4 items-start p-3.5 rounded-2xl bg-white/[0.04] border border-white/5 hover:border-white/10 transition-colors">
+                  <div className="w-10 h-10 rounded-xl bg-yellow-500/10 flex items-center justify-center shrink-0 border border-yellow-500/20 text-yellow-400 shadow-sm">
                     <HeartHandshake className="w-5 h-5" />
                   </div>
                   <div>
-                    <h4 className="font-bold text-base text-white">Jiwa Ksatria (Internal)</h4>
+                    <h4 className="font-bold text-base text-white">Jiwa Ksatria <span className="text-yellow-400/90 text-xs font-semibold">(Internal)</span></h4>
                     <p className="text-sm text-slate-400 mt-0.5 leading-relaxed">Integritas, Kehormatan, Tanggung Jawab, dan Mental Pantang Menyerah.</p>
                   </div>
                 </div>
-                <div className="flex gap-4 items-start">
-                  <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0 border border-white/10 text-yellow-400 shadow-sm">
+                <div className="flex gap-4 items-start p-3.5 rounded-2xl bg-white/[0.04] border border-white/5 hover:border-white/10 transition-colors">
+                  <div className="w-10 h-10 rounded-xl bg-yellow-500/10 flex items-center justify-center shrink-0 border border-yellow-500/20 text-yellow-400 shadow-sm">
                     <Activity className="w-5 h-5" />
                   </div>
                   <div>
-                    <h4 className="font-bold text-base text-white">Derap Gemilang (Eksternal)</h4>
+                    <h4 className="font-bold text-base text-white">Derap Gemilang <span className="text-yellow-400/90 text-xs font-semibold">(Eksternal)</span></h4>
                     <p className="text-sm text-slate-400 mt-0.5 leading-relaxed">Keunggulan Teknis, Presisi Gerak, Kekompakan, dan Prestasi Cemerlang.</p>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
 
-        {/* Tujuan & Manfaat */}
-        <div className="mb-20">
-          <h3 className="text-3xl font-black text-center text-slate-900 uppercase italic mb-10">
-            Tujuan & <span className="text-red-700">Manfaat</span>
-          </h3>
-
-          <div className="grid md:grid-cols-3 gap-6">
-            <div className="group p-6 bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-xl hover:border-red-500/30 transition-all duration-300">
-              <div className="w-12 h-12 bg-red-100 text-red-700 rounded-xl flex items-center justify-center mb-4 group-hover:bg-red-600 group-hover:text-white transition-colors">
-                <Trophy className="w-6 h-6" />
+            {/* Bottom Section: Tujuan & Manfaat */}
+            <div className="relative z-10 pt-8">
+              <div className="flex items-center gap-2.5 mb-6">
+                <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                <h4 className="text-xs sm:text-sm font-bold tracking-[0.2em] text-slate-300 uppercase">
+                  Tujuan & Manfaat Kegiatan
+                </h4>
               </div>
-              <h4 className="font-bold text-slate-900 mb-2">Kompetisi Berkualitas</h4>
-              <p className="text-xs text-slate-500 leading-relaxed">
-                Menyediakan wadah kompetisi yang sehat, sportif, dan transparan untuk mengukur kemampuan PBB pelajar se-DIY.
-              </p>
-            </div>
 
-            <div className="group p-6 bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-xl hover:border-blue-500/30 transition-all duration-300">
-              <div className="w-12 h-12 bg-blue-100 text-blue-700 rounded-xl flex items-center justify-center mb-4 group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                <BrainCircuit className="w-6 h-6" />
-              </div>
-              <h4 className="font-bold text-slate-900 mb-2">Asah Soft Skills</h4>
-              <p className="text-xs text-slate-500 leading-relaxed">
-                Mengembangkan komunikasi efektif, problem solving, manajemen waktu, dan ketahanan mental (AQ).
-              </p>
-            </div>
+              <div className="grid md:grid-cols-3 gap-4 sm:gap-5">
+                <div className="group/item p-5 bg-white/[0.03] hover:bg-white/[0.06] rounded-2xl border border-white/5 hover:border-red-500/30 transition-all duration-300">
+                  <div className="w-10 h-10 bg-red-500/15 text-red-400 border border-red-500/20 rounded-xl flex items-center justify-center mb-3.5 group-hover/item:bg-red-600 group-hover/item:text-white transition-colors">
+                    <Trophy className="w-5 h-5" />
+                  </div>
+                  <h5 className="font-bold text-white text-base mb-1.5">Kompetisi Berkualitas</h5>
+                  <p className="text-xs text-slate-400 leading-relaxed">
+                    Menyediakan wadah kompetisi yang sehat, sportif, dan transparan untuk mengukur kemampuan PBB pelajar se-DIY.
+                  </p>
+                </div>
 
-            <div className="group p-6 bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-xl hover:border-yellow-500/30 transition-all duration-300">
-              <div className="w-12 h-12 bg-yellow-100 text-yellow-700 rounded-xl flex items-center justify-center mb-4 group-hover:bg-yellow-500 group-hover:text-white transition-colors">
-                <Network className="w-6 h-6" />
+                <div className="group/item p-5 bg-white/[0.03] hover:bg-white/[0.06] rounded-2xl border border-white/5 hover:border-blue-500/30 transition-all duration-300">
+                  <div className="w-10 h-10 bg-blue-500/15 text-blue-400 border border-blue-500/20 rounded-xl flex items-center justify-center mb-3.5 group-hover/item:bg-blue-600 group-hover/item:text-white transition-colors">
+                    <BrainCircuit className="w-5 h-5" />
+                  </div>
+                  <h5 className="font-bold text-white text-base mb-1.5">Asah Soft Skills</h5>
+                  <p className="text-xs text-slate-400 leading-relaxed">
+                    Mengembangkan komunikasi efektif, problem solving, manajemen waktu, dan ketahanan mental (AQ).
+                  </p>
+                </div>
+
+                <div className="group/item p-5 bg-white/[0.03] hover:bg-white/[0.06] rounded-2xl border border-white/5 hover:border-yellow-500/30 transition-all duration-300">
+                  <div className="w-10 h-10 bg-yellow-500/15 text-yellow-400 border border-yellow-500/20 rounded-xl flex items-center justify-center mb-3.5 group-hover/item:bg-yellow-500 group-hover/item:text-slate-900 transition-colors">
+                    <Network className="w-5 h-5" />
+                  </div>
+                  <h5 className="font-bold text-white text-base mb-1.5">Jaringan & Pendidikan</h5>
+                  <p className="text-xs text-slate-400 leading-relaxed">
+                    Memperkenalkan nilai <strong className="text-slate-200">CADRE</strong> Mu'allimin dan mempererat silaturahmi antar institusi pendidikan se-DIY.
+                  </p>
+                </div>
               </div>
-              <h4 className="font-bold text-slate-900 mb-2">Jaringan & Pendidikan</h4>
-              <p className="text-xs text-slate-500 leading-relaxed">
-                Memperkenalkan nilai <strong>CADRE</strong> Mu'allimin dan mempererat silaturahmi antar institusi pendidikan se-DIY.
-              </p>
             </div>
           </div>
         </div>

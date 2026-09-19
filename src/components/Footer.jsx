@@ -318,7 +318,7 @@ export default function Footer() {
 
         {/* Bottom Bar: Copyright, Portal Badge, Scroll to Top */}
         <div className="border-t border-slate-800/80 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-500">
-          <p>© {SITE.YEAR} Madrasah Mu'allimin Muhammadiyah Yogyakarta • Panitia LBB 2026</p>
+          <p>© {SITE.YEAR} Madrasah Mu'allimin Muhammadiyah Yogyakarta • Panitia LBB {SITE.YEAR}</p>
           
           <div className="flex items-center gap-4 sm:gap-6 flex-wrap justify-center">
             <button

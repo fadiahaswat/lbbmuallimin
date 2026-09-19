@@ -113,7 +113,7 @@ export default function Registration() {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-red-600"></span>
             </span>
-            Juknis Resmi 2026
+            Juknis Resmi 2027
           </div>
 
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 uppercase italic tracking-tighter mb-6 leading-tight py-1">
@@ -133,7 +133,7 @@ export default function Registration() {
           </h2>
 
           <p className="text-slate-500 text-lg md:text-xl font-medium leading-relaxed max-w-2xl mx-auto">
-            Pedoman resmi tata cara pendaftaran LBB Mu’allimin 2026.
+            Pedoman resmi tata cara pendaftaran LBB Mu’allimin 2027.
             <br className="hidden sm:block" />
             <span className="inline-flex items-center gap-1.5 mt-3 text-red-700 font-bold bg-red-50 px-3 py-1 rounded-md border border-red-100/50 text-sm md:text-base">
               <AlertCircle className="w-4 h-4 stroke-[2.5]" />
@@ -451,31 +451,30 @@ export default function Registration() {
           </div>
 
           {/* Payment Card */}
-          <div className="group bg-white p-6 sm:p-8 rounded-3xl border-2 border-yellow-400 shadow-xl hover:shadow-2xl transition-all duration-300 flex flex-col justify-between relative overflow-hidden z-10 md:-mt-2 md:mb-2 text-left">
-            <div className="absolute top-0 right-0 bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-950 text-[10px] font-black px-4 py-1.5 rounded-bl-xl rounded-tr-2xl uppercase tracking-wider shadow-md">
-              Non-Refundable
+          <div className="group bg-white p-6 sm:p-8 rounded-[28px] border-2 border-yellow-400 shadow-xl hover:shadow-2xl transition-all duration-300 flex flex-col justify-between relative overflow-hidden z-10 md:-mt-2 md:mb-2 text-left">
+            {/* Top Right Pill Badge: NON-REFUNDABLE */}
+            <div className="absolute top-0 right-0 bg-[#f59e0b] text-slate-950 text-[11px] font-black px-5 py-1.5 rounded-bl-2xl uppercase tracking-wider shadow-sm select-none">
+              NON-REFUNDABLE
             </div>
 
             <div className="relative z-10">
               {/* Card Header */}
-              <div className="flex items-start justify-between gap-3 mb-6">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-700 border border-amber-200 flex items-center justify-center shadow-md shadow-amber-500/10 group-hover:scale-105 transition-transform">
-                    <Wallet className="w-6 h-6" />
-                  </div>
-                  <div>
-                    <span className="text-[11px] font-bold text-amber-700 uppercase tracking-wider block">
-                      Investasi Tim
-                    </span>
-                    <h3 className="font-black text-xl text-slate-900 uppercase italic tracking-tight">
-                      Biaya Pendaftaran
-                    </h3>
-                  </div>
+              <div className="flex items-center gap-3.5 mb-6">
+                <div className="w-13 h-13 rounded-2xl bg-amber-50 text-amber-700 border border-amber-200 flex items-center justify-center shadow-md shadow-amber-500/10 shrink-0">
+                  <Wallet className="w-6 h-6" />
+                </div>
+                <div>
+                  <span className="text-[11px] font-extrabold text-amber-700 uppercase tracking-widest block">
+                    INVESTASI TIM
+                  </span>
+                  <h3 className="font-black text-2xl text-slate-900 uppercase italic tracking-tight">
+                    BIAYA PENDAFTARAN
+                  </h3>
                 </div>
               </div>
 
               {PAYMENT.FEE_TIERS ? (
-                <div className="space-y-2 mb-4">
+                <div className="space-y-3 mb-5">
                   {PAYMENT.FEE_TIERS.map((tier, idx) => {
                     const now = Date.now();
                     const end = tier.endDate ? new Date(tier.endDate).getTime() : 0;
@@ -486,35 +485,43 @@ export default function Registration() {
                     return (
                       <div
                         key={idx}
-                        className={`p-2.5 rounded-xl border flex items-center justify-between transition-all ${
+                        className={`p-3.5 rounded-2xl border transition-all ${
                           isActive
-                            ? 'bg-red-50/90 border-red-300 ring-1 ring-red-300'
+                            ? 'bg-rose-50/70 border-rose-300 ring-1 ring-rose-300/80 shadow-xs'
                             : isPast
                             ? 'bg-slate-100/60 border-slate-200 opacity-60'
-                            : 'bg-slate-50 border-slate-200'
+                            : 'bg-slate-50/80 border-slate-200'
                         }`}
                       >
-                        <div>
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-xs font-bold text-slate-800 block">{tier.name}</span>
-                            {isActive && (
-                              <span className="text-[9px] font-black uppercase tracking-wider bg-red-600 text-white px-1.5 py-0.5 rounded">
-                                Aktif
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="text-sm font-black text-slate-900 block tracking-tight">
+                                {tier.name}
                               </span>
-                            )}
-                            {isPast && (
-                              <span className="text-[9px] font-bold uppercase tracking-wider bg-slate-200 text-slate-500 px-1.5 py-0.5 rounded">
-                                Berakhir
-                              </span>
-                            )}
+                              {isActive && (
+                                <span className="text-[10px] font-black uppercase tracking-wider bg-[#dc2626] text-white px-2 py-0.5 rounded-md">
+                                  AKTIF
+                                </span>
+                              )}
+                              {isPast && (
+                                <span className="text-[10px] font-bold uppercase tracking-wider bg-slate-200 text-slate-500 px-1.5 py-0.5 rounded">
+                                  Berakhir
+                                </span>
+                              )}
+                            </div>
+                            <span className="text-xs text-slate-500 block font-medium">
+                              {tier.label} • Non-refundable
+                            </span>
                           </div>
-                          <span className="text-[10px] text-slate-500">{tier.label} • Non-refundable</span>
-                        </div>
-                        <div className="text-right">
-                          <span className={`text-base font-black ${isActive ? 'text-red-700' : 'text-slate-700'}`}>
-                            Rp{tier.amount}
-                          </span>
-                          <span className="text-[9px] text-slate-500 font-semibold block">/ peleton</span>
+                          <div className="text-right shrink-0">
+                            <span className={`text-xl font-black block tracking-tight ${isActive ? 'text-[#dc2626]' : 'text-slate-800'}`}>
+                              Rp{tier.amount}
+                            </span>
+                            <span className="text-[10px] text-slate-500 font-semibold block italic">
+                              / peleton
+                            </span>
+                          </div>
                         </div>
                       </div>
                     );
@@ -531,21 +538,23 @@ export default function Registration() {
               )}
 
               {/* Bank Account Box */}
-              <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200 border-dashed relative">
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Rekening Tujuan</span>
-                  <span className="text-[10px] font-black text-white bg-blue-700 px-2 py-0.5 rounded">
+              <div className="bg-[#f8fafc] rounded-2xl p-4 border border-dashed border-slate-200 relative">
+                <div className="flex justify-between items-center mb-2.5">
+                  <span className="text-[11px] font-black text-slate-500 uppercase tracking-wider">
+                    REKENING TUJUAN
+                  </span>
+                  <span className="text-[10px] font-black text-white bg-[#1d4ed8] px-2.5 py-0.5 rounded-md">
                     {PAYMENT.BANK_NAME}
                   </span>
                 </div>
-                <div className="flex items-center justify-between gap-2 bg-white border border-slate-200 p-2.5 rounded-xl shadow-xs mb-2.5">
-                  <span id="rek-number" className="font-mono text-base sm:text-lg font-bold text-slate-800 tracking-wider truncate">
+                <div className="flex items-center justify-between gap-2 bg-white border border-slate-200 p-3 rounded-xl shadow-xs mb-3">
+                  <span id="rek-number" className="font-mono text-lg sm:text-xl font-black text-slate-900 tracking-wider truncate">
                     {PAYMENT.ACCOUNT_NUMBER}
                   </span>
                   <button
                     type="button"
                     onClick={handleCopyAccount}
-                    className={`p-1.5 rounded-lg transition-all ${
+                    className={`p-1.5 rounded-lg transition-all cursor-pointer ${
                       copied
                         ? 'bg-green-500 text-white'
                         : 'text-slate-400 hover:text-blue-600 hover:bg-blue-50'
@@ -555,12 +564,12 @@ export default function Registration() {
                     {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                   </button>
                 </div>
-                <div className="space-y-1 text-[11px]">
+                <div className="space-y-1 text-xs">
                   <p className="text-slate-500 font-medium">
-                    A.n: <strong className="text-slate-900 font-bold">{PAYMENT.ACCOUNT_NAME}</strong>
+                    A.n: <strong className="text-slate-900 font-black">{PAYMENT.ACCOUNT_NAME}</strong>
                   </p>
                   <p className="text-slate-500 font-medium">
-                    Berita: <span className="text-red-600 font-mono font-bold bg-red-50 px-1 py-0.5 rounded text-[10px]">{PAYMENT.TRANSFER_NOTE_FORMAT}</span>
+                    Berita: <span className="text-[#dc2626] font-mono font-bold bg-red-50 px-1.5 py-0.5 rounded text-[11px]">{PAYMENT.TRANSFER_NOTE_FORMAT}</span>
                   </p>
                 </div>
                 <div className="absolute -bottom-7 left-0 w-full flex justify-center">
@@ -612,14 +621,14 @@ export default function Registration() {
                     01
                   </span>
                   <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center">
-                    <Globe className="w-4 h-4" />
+                    <MonitorSmartphone className="w-4 h-4" />
                   </div>
                 </div>
                 <h4 className="font-black text-slate-900 uppercase tracking-tight text-sm mb-1.5 group-hover/step:text-red-700 transition-colors">
-                  Akses Portal
+                  Akses Formulir
                 </h4>
                 <p className="text-xs text-slate-500 leading-relaxed">
-                  Buka laman resmi <strong className="text-slate-800">{REGISTRATION.PORTAL_NAME}</strong> via browser HP atau PC.
+                  Buka portal resmi dan klik tombol <strong className="text-slate-800">"Daftar Peleton"</strong> untuk membuka formulir wizard digital.
                 </p>
               </div>
               <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[10px] font-bold text-slate-400 uppercase tracking-wider">
@@ -636,19 +645,19 @@ export default function Registration() {
                     02
                   </span>
                   <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center">
-                    <UserCheck className="w-4 h-4" />
+                    <School className="w-4 h-4" />
                   </div>
                 </div>
                 <h4 className="font-black text-slate-900 uppercase tracking-tight text-sm mb-1.5 group-hover/step:text-red-700 transition-colors">
-                  Registrasi Akun
+                  Sekolah & Akun
                 </h4>
                 <p className="text-xs text-slate-500 leading-relaxed">
-                  Official tim mendaftarkan akun baru dengan Nama Pembina, No. WA aktif, dan Email instansi.
+                  Pilih jenjang (SD/SMP), masukkan email akun Google aktif, data sekolah, upload logo, & pilih tipe peleton.
                 </p>
               </div>
               <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                <span>Akun Official</span>
-                <span className="text-slate-600">Autentikasi</span>
+                <span>Tahap 1 Wizard</span>
+                <span className="text-slate-600">Profil Tim</span>
               </div>
             </div>
 
@@ -660,19 +669,19 @@ export default function Registration() {
                     03
                   </span>
                   <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center">
-                    <FileSignature className="w-4 h-4" />
+                    <UserCheck className="w-4 h-4" />
                   </div>
                 </div>
                 <h4 className="font-black text-slate-900 uppercase tracking-tight text-sm mb-1.5 group-hover/step:text-red-700 transition-colors">
-                  Isi Formulir
+                  Danton & Official
                 </h4>
                 <p className="text-xs text-slate-500 leading-relaxed">
-                  Lengkapi data asal sekolah, jenjang (SD/SMP), susunan Danton, 21 Pasukan, & 3 Cadangan.
+                  Lengkapi identitas Danton & Kartu Pelajar, serta nama Official/Pelatih, No. WhatsApp aktif, & KTP.
                 </p>
               </div>
               <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                <span>Data Kontingen</span>
-                <span className="text-slate-600">Digital</span>
+                <span>Tahap 2 Wizard</span>
+                <span className="text-slate-600">Personel Inti</span>
               </div>
             </div>
 
@@ -684,19 +693,19 @@ export default function Registration() {
                     04
                   </span>
                   <div className="w-8 h-8 rounded-lg bg-purple-50 text-purple-700 flex items-center justify-center">
-                    <FileUp className="w-4 h-4" />
+                    <CreditCard className="w-4 h-4" />
                   </div>
                 </div>
                 <h4 className="font-black text-slate-900 uppercase tracking-tight text-sm mb-1.5 group-hover/step:text-red-700 transition-colors">
-                  Unggah Berkas
+                  Bayar & Pakta
                 </h4>
                 <p className="text-xs text-slate-500 leading-relaxed">
-                  Unggah scan Surat Rekomendasi Kepsek, pasfoto resmi personil, dan bukti pembayaran transfer.
+                  Unggah bukti transfer pembayaran dan bubuhkan tanda tangan digital Pakta Integritas Online di kanvas resmi.
                 </p>
               </div>
               <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                <span>Upload Dokumen</span>
-                <span className="text-slate-600">PDF & Foto</span>
+                <span>Tahap 3 Wizard</span>
+                <span className="text-slate-600">TTD Digital</span>
               </div>
             </div>
 
@@ -713,10 +722,10 @@ export default function Registration() {
                   </div>
                 </div>
                 <h4 className="font-black text-slate-900 uppercase tracking-tight text-sm mb-1.5">
-                  Validasi Panitia
+                  Validasi & Dashboard
                 </h4>
                 <p className="text-xs text-slate-600 leading-relaxed">
-                  Submit data pendaftaran, panitia memverifikasi dalam 1×24 jam hingga status berubah <strong>"TERVERIFIKASI"</strong>.
+                  Terima Kode Registrasi resmi, panitia memverifikasi dalam 1×24 jam, dan pantau status via <strong>Dashboard Tim</strong>.
                 </p>
               </div>
               <div className="mt-4 pt-3 border-t border-red-200 flex items-center justify-between text-[10px] font-black text-red-800 uppercase tracking-wider">
