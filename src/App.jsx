@@ -16,7 +16,6 @@ import FaqContact from './components/FaqContact.jsx';
 import Footer from './components/Footer.jsx';
 import FabWhatsApp from './components/FabWhatsApp.jsx';
 import StickyCta from './components/StickyCta.jsx';
-import MobileWarningOverlay from './components/MobileWarningOverlay.jsx';
 
 // Dedicated Full Pages & Views (Lazy loaded for optimal initial bundle performance)
 const RegistrationWizard = React.lazy(() => import('./components/portal/RegistrationWizard.jsx'));
@@ -75,9 +74,6 @@ function MainApp() {
 
   return (
     <div className="min-h-screen bg-white text-slate-900 selection:bg-red-200 font-sans">
-      {/* Mobile device warning overlay */}
-      <MobileWarningOverlay />
-
       {/* 1. Public Landing Page */}
       {activeView === 'landing' && (
         <>
