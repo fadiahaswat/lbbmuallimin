@@ -1,20 +1,24 @@
 import React, { useState, useEffect } from 'react';
 
+const DISMISS_KEY = 'lbb_mobile_warning_dismissed';
+
 function useIsMobilePhone() {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     function detect() {
+      // Gunakan User-Agent sebagai sumber kebenaran utama,
+      // bukan window.innerWidth — supaya tidak flip saat keyboard virtual muncul
       const uaPhone = /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
         navigator.userAgent
       );
-      const narrowScreen = window.innerWidth < 768;
+      // Fallback ke lebar screen (bukan innerWidth) untuk menghindari flip saat keyboard muncul
+      const narrowScreen = window.screen.width < 768;
       setIsMobile(uaPhone || narrowScreen);
     }
 
     detect();
-    window.addEventListener('resize', detect);
-    return () => window.removeEventListener('resize', detect);
+    // Tidak perlu listener resize — screen.width tidak berubah saat keyboard virtual muncul
   }, []);
 
   return isMobile;
@@ -22,11 +26,24 @@ function useIsMobilePhone() {
 
 export default function MobileWarningOverlay() {
   const isMobile = useIsMobilePhone();
-  const [dismissed, setDismissed] = useState(false);
 
-  useEffect(() => {
-    if (!isMobile) setDismissed(false);
-  }, [isMobile]);
+  // Inisialisasi langsung dari sessionStorage supaya tidak flash saat render ulang
+  const [dismissed, setDismissed] = useState(() => {
+    try {
+      return sessionStorage.getItem(DISMISS_KEY) === '1';
+    } catch {
+      return false;
+    }
+  });
+
+  function handleDismiss() {
+    try {
+      sessionStorage.setItem(DISMISS_KEY, '1');
+    } catch {
+      // sessionStorage tidak tersedia (mode incognito ketat, dll) — abaikan
+    }
+    setDismissed(true);
+  }
 
   if (!isMobile || dismissed) return null;
 
@@ -88,7 +105,7 @@ export default function MobileWarningOverlay() {
 
           {/* Button */}
           <button
-            onClick={() => setDismissed(true)}
+            onClick={handleDismiss}
             className="w-full py-2.5 rounded-xl bg-gradient-to-r from-yellow-400 to-amber-500 text-slate-950 font-bold text-xs uppercase tracking-widest shadow-lg shadow-amber-500/30 active:scale-95 transition-transform"
           >
             Lanjutkan di HP
@@ -105,3 +122,4 @@ export default function MobileWarningOverlay() {
     </div>
   );
 }
+
