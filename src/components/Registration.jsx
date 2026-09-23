@@ -933,14 +933,14 @@ export default function Registration() {
           </div>
 
           {/* Right Column (5 cols): Sanksi & Pusat Informasi */}
-          <div className="lg:col-span-5 flex flex-col gap-6 justify-between text-left">
+          <div className="lg:col-span-5 flex flex-col gap-5 text-left">
             {/* Sanksi & Pembatalan Card */}
-            <div className="bg-red-50/80 border border-red-200/80 p-6 rounded-3xl shadow-sm relative overflow-hidden">
-              <div className="flex items-center gap-2 mb-3 text-red-800">
-                <AlertOctagon className="w-5 h-5 text-red-600" />
+            <div className="bg-red-50/80 border border-red-200/80 p-5 rounded-3xl shadow-sm relative overflow-hidden">
+              <div className="flex items-center gap-2 mb-2.5 text-red-800">
+                <AlertOctagon className="w-5 h-5 text-red-600 shrink-0" />
                 <h4 className="font-black uppercase text-sm tracking-tight">Sanksi & Ketentuan Pembatalan</h4>
               </div>
-              <ul className="space-y-2.5 text-xs text-red-900/90 leading-relaxed">
+              <ul className="space-y-2 text-xs text-red-900/90 leading-relaxed">
                 <li className="flex items-start gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-red-600 shrink-0 mt-1.5"></span>
                   <span><strong>Diskualifikasi Mutlak:</strong> Jika terbukti pemalsuan berkas, identitas, atau status keaktifan siswa.</span>
@@ -951,19 +951,19 @@ export default function Registration() {
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-red-600 shrink-0 mt-1.5"></span>
-                  <span><strong>Perubahan Data Personil:</strong> Hanya dilayani saat forum Technical Meeting dengan membawa bukti resmi.</span>
+                  <span><strong>Perubahan Data Personil:</strong> Hanya dilayani saat forum Technical Meeting dengan bukti resmi.</span>
                 </li>
               </ul>
             </div>
 
             {/* Pusat Informasi Resmi Card */}
-            <div className="bg-slate-900 text-white p-6 sm:p-7 rounded-3xl shadow-xl border border-slate-800 relative overflow-hidden flex-1 flex flex-col justify-between">
+            <div className="bg-slate-900 text-white p-5 sm:p-6 rounded-3xl shadow-xl border border-slate-800 relative overflow-hidden">
               <div className="absolute top-0 right-0 w-40 h-40 bg-yellow-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
               <div className="relative z-10">
-                <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-9 h-9 rounded-xl bg-white/10 text-yellow-400 flex items-center justify-center border border-white/10">
+                    <div className="w-9 h-9 rounded-xl bg-white/10 text-yellow-400 flex items-center justify-center border border-white/10 shrink-0">
                       <Headset className="w-4 h-4" />
                     </div>
                     <div>
@@ -971,34 +971,35 @@ export default function Registration() {
                         Pusat Informasi Resmi
                       </h4>
                       <span className="text-[10px] font-bold text-yellow-400 uppercase tracking-wider block">
-                        4 Kanal Resmi
+                        4 Kanal Resmi Panitia
                       </span>
                     </div>
                   </div>
-                  <span className="text-[9px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full">
+                  <span className="text-[9px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2.5 py-0.5 rounded-full">
                     Terverifikasi
                   </span>
                 </div>
 
-                <p className="text-xs text-slate-400 mb-5 leading-relaxed">
+                <p className="text-xs text-slate-400 mb-3.5 leading-relaxed">
                   Seluruh pengumuman resmi dan koordinasi hanya dilayani melalui kanal berikut:
                 </p>
 
-                <div className="space-y-2.5 text-xs">
-
-                  {/* WhatsApp Kak Rusyda */}
+                <div className="space-y-2 text-xs">
+                  {/* WhatsApp Contact */}
                   {CONTACT.PERSONS.map((person, idx) => (
                     <a
                       key={idx}
                       href={person.WA_URL}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center justify-between p-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 transition-all group"
+                      className="flex items-center justify-between p-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 hover:border-emerald-500/30 transition-all group"
                     >
                       <div className="flex items-center gap-2.5">
-                        <Phone className="w-4 h-4 text-emerald-400 shrink-0" />
+                        <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center shrink-0">
+                          <Phone className="w-4 h-4 text-emerald-400" />
+                        </div>
                         <div>
-                          <span className="text-[10px] text-slate-400 block">WhatsApp ({person.SHORT_NAME})</span>
+                          <span className="text-[10px] text-slate-400 block">WhatsApp Resmi ({person.SHORT_NAME})</span>
                           <span className="font-bold text-white group-hover:text-emerald-400">{person.PHONE_DISPLAY}</span>
                         </div>
                       </div>
@@ -1006,18 +1007,39 @@ export default function Registration() {
                     </a>
                   ))}
 
-                  {/* Instagram & TikTok in 2-col mini grid */}
-                  <div className="grid grid-cols-2 gap-2.5 pt-1">
+                  {/* Email Panitia */}
+                  <a
+                    href={CONTACT.EMAIL_HREF}
+                    className="flex items-center justify-between p-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 hover:border-blue-500/30 transition-all group"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center shrink-0">
+                        <Globe className="w-4 h-4 text-blue-400" />
+                      </div>
+                      <div>
+                        <span className="text-[10px] text-slate-400 block">Email Panitia</span>
+                        <span className="font-bold text-white group-hover:text-blue-400">{CONTACT.EMAIL}</span>
+                      </div>
+                    </div>
+                    <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-400 group-hover:translate-x-0.5 transition-transform" />
+                  </a>
+
+                  {/* Instagram & TikTok Grid */}
+                  <div className="grid grid-cols-2 gap-2 pt-0.5">
                     <a
                       href={SOCIAL.INSTAGRAM_URL}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-2 p-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 transition-all group"
+                      className="flex items-center gap-2.5 p-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 hover:border-pink-500/30 transition-all group"
                     >
-                      <Instagram className="w-4 h-4 text-pink-400 shrink-0" />
+                      <div className="w-8 h-8 rounded-lg bg-pink-500/10 flex items-center justify-center shrink-0">
+                        <Instagram className="w-4 h-4 text-pink-400" />
+                      </div>
                       <div className="truncate">
                         <span className="text-[9px] text-slate-400 block">Instagram</span>
-                        <span className="font-bold text-slate-200 group-hover:text-pink-400 truncate block">{SOCIAL.INSTAGRAM_HANDLE}</span>
+                        <span className="font-bold text-slate-200 group-hover:text-pink-400 truncate block text-xs">
+                          {SOCIAL.INSTAGRAM_HANDLE}
+                        </span>
                       </div>
                     </a>
 
@@ -1025,12 +1047,16 @@ export default function Registration() {
                       href={SOCIAL.TIKTOK_URL}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-2 p-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 transition-all group"
+                      className="flex items-center gap-2.5 p-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 hover:border-cyan-500/30 transition-all group"
                     >
-                      <Video className="w-4 h-4 text-cyan-400 shrink-0" />
+                      <div className="w-8 h-8 rounded-lg bg-cyan-500/10 flex items-center justify-center shrink-0">
+                        <Video className="w-4 h-4 text-cyan-400" />
+                      </div>
                       <div className="truncate">
                         <span className="text-[9px] text-slate-400 block">TikTok</span>
-                        <span className="font-bold text-slate-200 group-hover:text-cyan-400 truncate block">{SOCIAL.TIKTOK_HANDLE}</span>
+                        <span className="font-bold text-slate-200 group-hover:text-cyan-400 truncate block text-xs">
+                          {SOCIAL.TIKTOK_HANDLE}
+                        </span>
                       </div>
                     </a>
                   </div>

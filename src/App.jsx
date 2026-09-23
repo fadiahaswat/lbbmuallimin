@@ -178,23 +178,23 @@ class ErrorBoundary extends React.Component {
 
             {/* Tombol Aksi */}
             <div className="space-y-2.5 pt-2">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <div className="flex flex-row items-center gap-2.5">
                 {/* Tombol Salin Error */}
                 <button
                   type="button"
                   onClick={this.handleCopyError}
-                  className="w-full py-3 px-4 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-bold text-xs uppercase tracking-wider rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95"
+                  className="flex-1 py-3 px-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-bold text-xs uppercase tracking-wider rounded-xl transition-all flex items-center justify-center text-center cursor-pointer active:scale-95"
                 >
-                  <span>{this.state.copied ? '✓ Berhasil Disalin' : '📋 Salin Pesan Error'}</span>
+                  <span>{this.state.copied ? 'Berhasil Disalin' : 'Salin Pesan Error'}</span>
                 </button>
 
                 {/* Tombol Kirim ke WhatsApp IT */}
                 <button
                   type="button"
                   onClick={this.handleSendWhatsApp}
-                  className="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-lg shadow-emerald-950 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95"
+                  className="flex-1 py-3 px-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-lg shadow-emerald-950 transition-all flex items-center justify-center text-center cursor-pointer active:scale-95"
                 >
-                  <span>💬 Lapor WA Tim IT</span>
+                  <span>Lapor WA Tim IT</span>
                 </button>
               </div>
 

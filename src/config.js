@@ -305,18 +305,18 @@ export const CONTACT = {
 // SOCIAL – link & handle media sosial
 // ---------------------------------------------------------------------------
 export const SOCIAL = {
-    INSTAGRAM_URL: 'https://www.instagram.com/lbbmuallimin/',
+    INSTAGRAM_URL: 'https://www.instagram.com/mualliminjogja/',
     YOUTUBE_URL: '#',
     TIKTOK_URL: 'https://www.tiktok.com/@tontimuallimin',
 
     /** Handle Instagram resmi event */
-    INSTAGRAM_HANDLE: '@lbbmuallimin',
+    INSTAGRAM_HANDLE: '@mualliminjogja',
 
     /** Handle TikTok resmi */
     TIKTOK_HANDLE: '@tontimuallimin',
 
     /** Teks gabungan handle yang ditampilkan di info section */
-    HANDLES_DISPLAY: '@lbbmuallimin • @tontimuallimin',
+    HANDLES_DISPLAY: '@mualliminjogja • @tontimuallimin',
 };
 
 // ---------------------------------------------------------------------------
