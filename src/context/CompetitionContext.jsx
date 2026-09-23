@@ -5,6 +5,7 @@ import {
   INITIAL_SETTINGS,
   INITIAL_USERS,
   INITIAL_STAGING,
+  INITIAL_VOTES,
   generatePersonnels
 } from '../data/seedData.js';
 import { JURY_POSTS, STAGING_CONFIG } from '../config.js';
