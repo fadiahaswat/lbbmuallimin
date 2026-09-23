@@ -94,7 +94,7 @@ export default function Registration() {
   }
 
   return (
-    <section id="registration" className="py-12 lg:py-20 bg-slate-50 relative overflow-hidden font-sans">
+    <section id="registration" className="pt-6 sm:pt-8 pb-16 lg:pb-24 bg-slate-50 relative overflow-hidden font-sans">
       <div
         className="absolute inset-0 opacity-[0.03]"
         style={{
@@ -107,8 +107,8 @@ export default function Registration() {
 
       <div className="container mx-auto px-6 relative z-10">
         {/* Section Header */}
-        <div className="mb-10 text-center relative z-10">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-red-50 border border-red-100 text-red-700 text-[10px] font-bold uppercase tracking-[0.15em] mb-4 shadow-sm cursor-default hover:bg-red-100 transition-colors">
+        <div className="mb-6 text-center relative z-10">
+          <div className="inline-flex items-center gap-2 px-3 py-0.5 rounded-full bg-red-50 border border-red-100 text-red-700 text-[10px] font-bold uppercase tracking-[0.15em] mb-2 shadow-sm cursor-default hover:bg-red-100 transition-colors">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-red-600"></span>
@@ -116,14 +116,14 @@ export default function Registration() {
             Juknis Resmi 2027
           </div>
 
-          <h2 className="text-3xl md:text-5xl lg:text-5xl font-black text-slate-900 uppercase italic tracking-tighter mb-4 leading-tight py-1">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 uppercase italic tracking-tighter mb-2 leading-tight py-0.5">
             Informasi{' '}
             <span className="relative inline-block pr-3 sm:pr-4 pb-1">
               <span className="relative z-10 inline-block pr-2 text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-800">
                 Pendaftaran
               </span>
               <svg
-                className="absolute w-[105%] h-3 -bottom-1 -left-[2%] text-yellow-500 z-0 opacity-90"
+                className="absolute w-[105%] h-2.5 -bottom-0.5 -left-[2%] text-yellow-500 z-0 opacity-90"
                 viewBox="0 0 100 10"
                 preserveAspectRatio="none"
               >
@@ -132,88 +132,88 @@ export default function Registration() {
             </span>
           </h2>
 
-          <p className="text-slate-500 text-base md:text-lg font-medium leading-relaxed max-w-2xl mx-auto">
+          <p className="text-slate-500 text-sm md:text-base font-medium leading-relaxed max-w-2xl mx-auto">
             Pedoman resmi tata cara pendaftaran LBB Mu’allimin 2027.
             <span className="mx-2 hidden sm:inline">•</span>
-            <span className="inline-flex items-center gap-1.5 mt-2 sm:mt-0 text-red-700 font-bold bg-red-50 px-2.5 py-0.5 rounded-md border border-red-100/50 text-xs md:text-sm">
+            <span className="inline-flex items-center gap-1.5 mt-1 sm:mt-0 text-red-700 font-bold bg-red-50 px-2.5 py-0.5 rounded-md border border-red-100/50 text-xs">
               <AlertCircle className="w-3.5 h-3.5 stroke-[2.5]" />
               Sistem First Come, First Served
             </span>
           </p>
         </div>
 
-        {/* Countdown Timer Urgency Banner & Realtime Slot Info (Side by Side / Compact Grid) */}
-        <div className="max-w-4xl mx-auto mb-10">
-          <div className="p-5 sm:p-6 bg-slate-900 border border-slate-800 rounded-3xl shadow-xl shadow-slate-950/25 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-red-700/10 rounded-full blur-3xl pointer-events-none"></div>
-            <div className="absolute bottom-0 left-0 w-64 h-64 bg-yellow-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        {/* Hero Urgency & Info Hub (Maximized Width & Space-Efficient) */}
+        <div className="max-w-6xl mx-auto mb-10">
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl shadow-slate-950/25 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-96 h-96 bg-red-700/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div className="absolute bottom-0 left-0 w-96 h-96 bg-yellow-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
-            <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-              {/* Left Column: Countdown Timer */}
-              <div className="lg:col-span-5 flex flex-col justify-center items-center lg:border-r lg:border-slate-800/80 lg:pr-6">
-                <CountdownTimer />
-              </div>
-
-              {/* Right Column: Slot Kuota Peleton */}
-              <div className="lg:col-span-7 flex flex-col justify-center space-y-3">
-                <div className="flex flex-wrap items-center justify-between gap-2 pb-1">
-                  <span className="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
-                    <Users className="w-4 h-4 text-yellow-400 shrink-0" />
-                    <span>Informasi Slot Kuota Peleton</span>
-                  </span>
-                  <span className="text-[10px] font-black uppercase px-2.5 py-1 rounded-full bg-emerald-950/80 border border-emerald-500/30 text-emerald-400">
-                    Total Tersisa: {totalRemaining} / {totalTargetSD + totalTargetSMP}
-                  </span>
+            <div className="relative z-10 p-5 sm:p-7">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
+                {/* Left Column: Countdown Timer */}
+                <div className="lg:col-span-5 flex flex-col justify-center items-center lg:border-r lg:border-slate-800/80 lg:pr-6">
+                  <CountdownTimer />
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-left">
-                  {/* Slot SD */}
-                  <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800/80 flex items-center justify-between">
-                    <div>
-                      <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block mb-0.5">
-                        Tingkat SD / MI
-                      </span>
-                      <span className="text-sm font-black text-white">
-                        Tersisa <span className="text-yellow-400 font-mono text-base">{remainingSD}</span> Slot
-                      </span>
-                    </div>
-                    <div className="text-right">
-                      <span className="text-[10px] text-slate-400 block">Kuota: {totalTargetSD}</span>
-                      <span className="text-[9px] font-bold text-slate-500">Terisi: {registeredSD}</span>
-                    </div>
+                {/* Right Column: Slot Kuota Peleton */}
+                <div className="lg:col-span-7 flex flex-col justify-center space-y-3.5">
+                  <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800/60 pb-2.5">
+                    <span className="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
+                      <Users className="w-4 h-4 text-yellow-400 shrink-0" />
+                      <span>Informasi Slot Kuota Peleton</span>
+                    </span>
+                    <span className="text-[11px] font-black uppercase px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-500/30 text-emerald-400">
+                      Total Tersisa: {totalRemaining} / {totalTargetSD + totalTargetSMP} Peleton
+                    </span>
                   </div>
 
-                  {/* Slot SMP */}
-                  <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800/80 flex items-center justify-between">
-                    <div>
-                      <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block mb-0.5">
-                        Tingkat SMP / MTs
-                      </span>
-                      <span className="text-sm font-black text-white">
-                        Tersisa <span className="text-yellow-400 font-mono text-base">{remainingSMP}</span> Slot
-                      </span>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-left">
+                    {/* Slot SD */}
+                    <div className="p-3.5 rounded-2xl bg-slate-950/70 border border-slate-800/80 flex items-center justify-between hover:border-slate-700 transition-colors">
+                      <div>
+                        <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block mb-0.5">
+                          Tingkat SD / MI
+                        </span>
+                        <span className="text-sm font-black text-white">
+                          Tersisa <span className="text-yellow-400 font-mono text-lg">{remainingSD}</span> Slot
+                        </span>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-[11px] text-slate-400 block font-medium">Kuota: {totalTargetSD}</span>
+                        <span className="text-[10px] font-bold text-slate-500">Terisi: {registeredSD}</span>
+                      </div>
                     </div>
-                    <div className="text-right">
-                      <span className="text-[10px] text-slate-400 block">Kuota: {totalTargetSMP}</span>
-                      <span className="text-[9px] font-bold text-slate-500">Terisi: {registeredSMP}</span>
+
+                    {/* Slot SMP */}
+                    <div className="p-3.5 rounded-2xl bg-slate-950/70 border border-slate-800/80 flex items-center justify-between hover:border-slate-700 transition-colors">
+                      <div>
+                        <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block mb-0.5">
+                          Tingkat SMP / MTs
+                        </span>
+                        <span className="text-sm font-black text-white">
+                          Tersisa <span className="text-yellow-400 font-mono text-lg">{remainingSMP}</span> Slot
+                        </span>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-[11px] text-slate-400 block font-medium">Kuota: {totalTargetSMP}</span>
+                        <span className="text-[10px] font-bold text-slate-500">Terisi: {registeredSMP}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
 
-        {/* Online Registration & Verification Notice */}
-        <div className="max-w-4xl mx-auto bg-amber-50 border-l-4 border-amber-500 p-3.5 sm:p-4 rounded-r-xl shadow-sm mb-12 flex items-start gap-3.5">
-          <div className="bg-white p-2 rounded-full text-amber-600 shrink-0 shadow-sm">
-            <MonitorSmartphone className="w-5 h-5" />
-          </div>
-          <div>
-            <h4 className="font-bold text-slate-900 uppercase text-xs sm:text-sm">Pendaftaran Awal Secara Daring (Online)</h4>
-            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mt-0.5">
-              Pendaftaran akun dan unggah berkas administrasi dilakukan 100% secara daring melalui portal resmi. Berkas fisik asli (Formulir A, B, C berstempel resmi sekolah) wajib dibawa saat <strong>Technical Meeting</strong> untuk verifikasi faktual akhir.
-            </p>
+            {/* Integrated Space-Efficient Notice Bar */}
+            <div className="bg-slate-950/80 border-t border-slate-800/80 px-5 sm:px-7 py-3 flex flex-col sm:flex-row items-center gap-3 text-left">
+              <div className="flex items-center gap-2 text-amber-400 shrink-0">
+                <MonitorSmartphone className="w-4 h-4" />
+                <span className="text-[11px] font-black uppercase tracking-wider">Pendaftaran 100% Online:</span>
+              </div>
+              <p className="text-xs text-slate-300 leading-relaxed">
+                Pendaftaran akun dan unggah berkas dilakukan daring melalui portal. Berkas fisik asli (Formulir A, B, C berstempel resmi) wajib diserahkan saat <strong>Technical Meeting</strong> untuk verifikasi faktual.
+              </p>
+            </div>
           </div>
         </div>
 

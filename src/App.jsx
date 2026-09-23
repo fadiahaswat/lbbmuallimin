@@ -120,7 +120,7 @@ function MainApp() {
 class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { hasError: false, error: null };
+    this.state = { hasError: false, error: null, errorInfo: null, copied: false };
   }
 
   static getDerivedStateFromError(error) {
@@ -129,26 +129,84 @@ class ErrorBoundary extends React.Component {
 
   componentDidCatch(error, errorInfo) {
     console.error('ErrorBoundary caught:', error, errorInfo);
+    this.setState({ errorInfo });
   }
+
+  handleCopyError = () => {
+    const errorDetails = `[LBB MU'ALLIMIN - LAPORAN ERROR]\nWaktu: ${new Date().toLocaleString('id-ID')}\nURL: ${window.location.href}\nError: ${this.state.error?.toString() || 'Unknown Error'}\nStack: ${this.state.error?.stack || '-'}\nComponent: ${this.state.errorInfo?.componentStack || '-'}`;
+    navigator.clipboard.writeText(errorDetails).then(() => {
+      this.setState({ copied: true });
+      setTimeout(() => this.setState({ copied: false }), 2500);
+    });
+  };
+
+  handleSendWhatsApp = () => {
+    const errorMsg = this.state.error?.message || this.state.error?.toString() || 'Unknown Error';
+    const componentTrace = (this.state.errorInfo?.componentStack || '').trim().split('\n')[0] || '-';
+    const text = `Halo Tim IT LBB Mu'allimin, aplikasi mengalami error:\n\n*Error:* ${errorMsg}\n*Halaman:* ${window.location.href}\n*Komponen:* ${componentTrace}\n*Waktu:* ${new Date().toLocaleString('id-ID')}\n\nMohon bantuannya, terima kasih.`;
+    const waUrl = `https://wa.me/6285339213109?text=${encodeURIComponent(text)}`;
+    window.open(waUrl, '_blank');
+  };
 
   render() {
     if (this.state.hasError) {
+      const errorMsg = this.state.error?.message || this.state.error?.toString() || 'Terjadi kesalahan sistem';
+
       return (
-        <div className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center p-6 text-center">
-          <div className="max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-6 space-y-4 shadow-2xl">
-            <div className="w-12 h-12 rounded-full bg-red-500/20 border border-red-500/30 text-red-400 flex items-center justify-center mx-auto font-black text-xl">
-              !
+        <div className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center p-4 sm:p-6 text-center">
+          <div className="w-full max-w-lg bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-5 shadow-2xl text-left">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-2xl bg-red-500/20 border border-red-500/30 text-red-400 flex items-center justify-center font-black text-xl shrink-0">
+                !
+              </div>
+              <div>
+                <h2 className="text-lg sm:text-xl font-black text-white uppercase tracking-tight">Terjadi Gangguan Sistem</h2>
+                <p className="text-xs text-slate-400">Aplikasi mendeteksi error tak terduga.</p>
+              </div>
             </div>
-            <h2 className="text-xl font-black text-white uppercase italic">Penyegaran Sistem</h2>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Sistem telah diperbarui. Silakan klik tombol di bawah untuk memuat ulang halaman secara bersih.
-            </p>
-            <button
-              onClick={() => window.location.reload()}
-              className="w-full py-3 bg-gradient-to-r from-yellow-400 to-amber-500 text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl shadow-md hover:shadow-lg transition-all active:scale-95"
-            >
-              Muat Ulang Halaman
-            </button>
+
+            {/* Kotak Detail Error */}
+            <div className="bg-slate-950/80 border border-red-900/40 rounded-2xl p-4 text-xs font-mono text-red-300 overflow-x-auto max-h-40 break-all select-all">
+              <div className="text-[10px] uppercase font-bold text-slate-400 mb-1">Pesan Error:</div>
+              <p className="font-semibold text-red-400">{errorMsg}</p>
+              {this.state.error?.stack && (
+                <p className="text-[11px] text-slate-500 mt-2 font-mono whitespace-pre-wrap line-clamp-3">
+                  {this.state.error.stack}
+                </p>
+              )}
+            </div>
+
+            {/* Tombol Aksi */}
+            <div className="space-y-2.5 pt-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                {/* Tombol Salin Error */}
+                <button
+                  type="button"
+                  onClick={this.handleCopyError}
+                  className="w-full py-3 px-4 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-bold text-xs uppercase tracking-wider rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95"
+                >
+                  <span>{this.state.copied ? '✓ Berhasil Disalin' : '📋 Salin Pesan Error'}</span>
+                </button>
+
+                {/* Tombol Kirim ke WhatsApp IT */}
+                <button
+                  type="button"
+                  onClick={this.handleSendWhatsApp}
+                  className="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-lg shadow-emerald-950 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95"
+                >
+                  <span>💬 Lapor WA Tim IT</span>
+                </button>
+              </div>
+
+              {/* Tombol Muat Ulang */}
+              <button
+                type="button"
+                onClick={() => window.location.reload()}
+                className="w-full py-3 bg-gradient-to-r from-yellow-400 to-amber-500 hover:from-yellow-300 hover:to-amber-400 text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl shadow-md transition-all cursor-pointer active:scale-95"
+              >
+                Muat Ulang Halaman
+              </button>
+            </div>
           </div>
         </div>
       );
