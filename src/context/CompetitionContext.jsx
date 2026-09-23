@@ -72,7 +72,7 @@ export function checkTeamVerificationEligibility(team) {
 const STORAGE_KEYS = {
   TEAMS: 'lbb_muallimin_teams_v3',
   SCORES: 'lbb_muallimin_scores_v3',
-  SETTINGS: 'lbb_muallimin_settings_v6',
+  SETTINGS: 'lbb_muallimin_settings_v7',
   ROLE: 'lbb_muallimin_active_role_v3',
   CURRENT_TEAM_ID: 'lbb_muallimin_current_team_id_v3',
   USERS: 'lbb_muallimin_users_v4',
@@ -92,11 +92,11 @@ try {
     if (k.startsWith('lbb_muallimin_current_user_') && k !== STORAGE_KEYS.CURRENT_USER) {
       localStorage.removeItem(k);
     }
-    if (legacyPrefixes.some(p => k.startsWith(p) && !k.endsWith('_v3') && !k.endsWith('_v4') && !k.endsWith('_v5') && !k.endsWith('_v6'))) {
+    if (legacyPrefixes.some(p => k.startsWith(p) && !k.endsWith('_v3') && !k.endsWith('_v4') && !k.endsWith('_v5') && !k.endsWith('_v6') && !k.endsWith('_v7'))) {
       localStorage.removeItem(k);
     }
-    // Hapus cache settings lama (v3, v4, v5) agar tahun 2027 langsung tersinkron
-    if (k === 'lbb_muallimin_settings_v3' || k === 'lbb_muallimin_settings_v4' || k === 'lbb_muallimin_settings_v5') {
+    // Hapus cache settings lama (v3, v4, v5, v6) agar tanggal & timeline baru langsung aktif seketika di browser user
+    if (k === 'lbb_muallimin_settings_v3' || k === 'lbb_muallimin_settings_v4' || k === 'lbb_muallimin_settings_v5' || k === 'lbb_muallimin_settings_v6') {
       localStorage.removeItem(k);
     }
   });

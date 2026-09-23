@@ -414,7 +414,7 @@ export default function RegistrationWizard({ isOpen, onClose }) {
     e.preventDefault();
     if (!validateStep3()) return;
 
-    const feeAmount = parseInt(PAYMENT.FEE_DISPLAY.replace(/\D/g, ''), 10) || 450000;
+    const feeAmount = parseInt(PAYMENT.FEE_DISPLAY.replace(/\D/g, ''), 10) || 350000;
 
     const teamTypeLabel = formData.teamType === 'Homogen'
       ? `Homogen (${formData.homogenGender || 'Putra'})`

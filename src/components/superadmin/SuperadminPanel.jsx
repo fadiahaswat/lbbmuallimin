@@ -53,17 +53,17 @@ export default function SuperadminPanel() {
 
   // Form state untuk jadwal dan tanggal pelaksanaan
   const defaultDates = {
-    registrationStart: '2026-09-21T00:00:00+07:00',
-    registrationDeadline: '2026-10-05T23:59:59+07:00',
-    registrationRangeText: '21 September – 5 Oktober 2026',
-    verificationRangeText: '6 – 12 Oktober 2026',
-    technicalMeetingDate: '9 Januari 2027',
-    technicalMeetingTime: '13.00 WIB - Selesai',
-    technicalMeetingFullDate: 'Jumat, 9 Januari 2027',
-    technicalMeetingVenue: "Kampus Induk Madrasah Mu'allimin Muhammadiyah Yogyakarta, Jalan Letjen S. Parman NO. 68, Wirobrajan, Kota Yogyakarta, Daerah Istimewa Yogyakarta.",
+    registrationStart: '2026-10-05T00:00:00+07:00',
+    registrationDeadline: '2026-11-01T23:59:59+07:00',
+    registrationRangeText: '5 Oktober – 1 November 2026',
+    verificationRangeText: '2 – 8 November 2026',
+    technicalMeetingDate: '10 Januari 2027',
+    technicalMeetingTime: '13.00 WIB – Selesai',
+    technicalMeetingFullDate: 'Sabtu, 10 Januari 2027',
+    technicalMeetingVenue: "Kampus Induk Madrasah Mu'allimin Muhammadiyah Yogyakarta, Jalan Letjen S. Parman No. 68, Wirobrajan, Kota Yogyakarta, Daerah Istimewa Yogyakarta.",
     fieldTrialDate: '17 Januari 2027',
-    fieldTrialTime: '07.00 – 14.00 WIB',
-    fieldTrialFullDate: 'Sabtu, 17 Januari 2027',
+    fieldTrialTime: '08.00 – 13.30 WIB',
+    fieldTrialFullDate: 'Minggu, 17 Januari 2027',
     competitionDate: 'Sabtu, 24 Januari 2027',
     competitionTimeRange: '06.00 WIB – 17.00 WIB',
   };

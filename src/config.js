@@ -65,44 +65,44 @@ export const HERO = {
 // EVENT – semua tanggal & waktu kegiatan
 // ---------------------------------------------------------------------------
 export const EVENT = {
-    /** Teks badge di hero (contoh: "Pendaftaran: 21 September – 5 Oktober 2026") */
-    REGISTRATION_BADGE: 'Pendaftaran: 21 September \u2013 5 Oktober 2026',
+    /** Teks badge di hero */
+    REGISTRATION_BADGE: 'Pendaftaran: 5 Oktober \u2013 1 November 2026',
 
     /** Rentang pendaftaran daring */
-    REGISTRATION_RANGE: '21 September \u2013 5 Oktober 2026',
+    REGISTRATION_RANGE: '5 Oktober \u2013 1 November 2026',
 
     /** Rentang verifikasi berkas oleh panitia */
-    VERIFICATION_RANGE: '6 \u2013 12 Oktober 2026',
+    VERIFICATION_RANGE: '2 \u2013 8 November 2026',
 
     /** Tanggal pembukaan pendaftaran daring */
-    REGISTRATION_START: '2026-09-21T00:00:00+07:00',
+    REGISTRATION_START: '2026-10-05T00:00:00+07:00',
 
     /** Tanggal batas akhir pendaftaran – dipakai countdown timer */
-    REGISTRATION_DEADLINE: '2026-10-05T23:59:59+07:00',
+    REGISTRATION_DEADLINE: '2026-11-01T23:59:59+07:00',
 
-    /** Tanggal Technical Meeting */
-    TECHNICAL_MEETING_DATE: '9 Januari 2027',
+    /** Tanggal Technical Meeting Peserta */
+    TECHNICAL_MEETING_DATE: '10 Januari 2027',
 
     /** Waktu Technical Meeting (singkat, di timeline) */
-    TECHNICAL_MEETING_TIME: '13.00 WIB - Selesai',
+    TECHNICAL_MEETING_TIME: '13.00 WIB \u2013 Selesai',
 
-    /** Hari + tanggal lengkap Technical Meeting (untuk FAQ) */
-    TECHNICAL_MEETING_FULL_DATE: 'Jumat, 9 Januari 2027',
+    /** Hari + tanggal lengkap Technical Meeting (untuk FAQ & kartu) */
+    TECHNICAL_MEETING_FULL_DATE: 'Sabtu, 10 Januari 2027',
 
     /** Rentang jam Technical Meeting */
     TECHNICAL_MEETING_TIME_RANGE: '13.00 WIB \u2013 Selesai',
 
     /** Lokasi / venue Technical Meeting */
     TECHNICAL_MEETING_VENUE:
-        "Kampus Induk Madrasah Mu\u2019allimin Muhammadiyah Yogyakarta, Jalan Letjen S. Parman NO. 68, Wirobrajan, Kota Yogyakarta, Daerah Istimewa Yogyakarta.",
+        "Kampus Induk Madrasah Mu\u2019allimin Muhammadiyah Yogyakarta, Jalan Letjen S. Parman No. 68, Wirobrajan, Kota Yogyakarta, Daerah Istimewa Yogyakarta.",
     TECHNICAL_MEETING_VENUE_NAME: "Kampus Induk Madrasah Mu\u2019allimin Muhammadiyah Yogyakarta",
     TECHNICAL_MEETING_ADDRESS: "Jl. Letjen S. Parman No.68, Notoprajan, Ngampilan / Wirobrajan, Kota Yogyakarta, DIY",
     TECHNICAL_MEETING_MAPS_URL: "https://www.google.com/maps/dir/?api=1&destination=Madrasah+Mu'allimin+Muhammadiyah+Yogyakarta+Jl.+Letjen+S.+Parman+No.+68+Wirobrajan",
 
     /** Uji Coba Lapangan */
     FIELD_TRIAL_DATE: '17 Januari 2027',
-    FIELD_TRIAL_FULL_DATE: 'Sabtu, 17 Januari 2027',
-    FIELD_TRIAL_TIME_RANGE: '07.00 \u2013 14.00 WIB',
+    FIELD_TRIAL_FULL_DATE: 'Minggu, 17 Januari 2027',
+    FIELD_TRIAL_TIME_RANGE: '08.00 \u2013 13.30 WIB',
 
     /** Hari & tanggal hari-H */
     COMPETITION_DATE: 'Sabtu, 24 Januari 2027',
@@ -240,16 +240,16 @@ export const PAYMENT = {
     BANK_NAME: 'BRI',
 
     /** Teks biaya yang tampil di UI (tanpa "Rp") */
-    FEE_DISPLAY: '450.000',
+    FEE_DISPLAY: '350.000',
 
     /** Daftar gelombang / tier biaya pendaftaran */
     FEE_TIERS: [
-        { name: 'Gelombang 1 (21 \u2013 27 Sep)', amount: '450.000', label: '21 \u2013 27 September 2026', endDate: '2026-09-27T23:59:59+07:00' },
-        { name: 'Gelombang 2 (28 Sep \u2013 5 Okt)', amount: '500.000', label: '28 September \u2013 5 Oktober 2026', endDate: '2026-10-05T23:59:59+07:00' },
+        { name: 'Gelombang 1 (5 \u2013 18 Okt)', amount: '350.000', label: '5 \u2013 18 Oktober 2026', endDate: '2026-10-18T23:59:59+07:00' },
+        { name: 'Gelombang 2 (19 Okt \u2013 1 Nov)', amount: '400.000', label: '19 Oktober \u2013 1 November 2026', endDate: '2026-11-01T23:59:59+07:00' },
     ],
 
     /** Teks biaya lengkap untuk FAQ */
-    FEE_FULL: 'Rp450.000,- (21–27 September 2026) dan Rp500.000,- (28 September – 5 Oktober 2026) per peleton.',
+    FEE_FULL: 'Rp350.000,- (5–18 Oktober 2026) dan Rp400.000,- (19 Oktober – 1 November 2026) per peleton.',
 
     /** Keterangan format berita transfer */
     TRANSFER_NOTE_FORMAT: 'NAMA SEKOLAH_JUMLAH PELETON',

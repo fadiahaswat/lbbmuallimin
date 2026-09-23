@@ -128,7 +128,7 @@ export default function AdminDashboard() {
   const revisionCount = teams.filter(t => t.status === 'revision').length;
   const totalRevenue = teams
     .filter(t => t.status === 'verified' || t.paymentStatus === 'paid')
-    .reduce((sum, t) => sum + (t.feeAmount || 450000), 0);
+    .reduce((sum, t) => sum + (t.feeAmount || 350000), 0);
 
   // Detailed stats for 4 stages:
   const stage1PendingCount = teams.filter(t => t.status === 'pending').length; // Butuh dicek pendaftarannya
@@ -1047,7 +1047,7 @@ export default function AdminDashboard() {
                   3. Undian (Nomor Urut Tampil & Nomor Dada Lapangan)
                 </h3>
                 <p className="text-xs text-slate-500 mt-0.5">
-                  Pengundian nomor urut tampil dilakukan manual di lapangan / Technical Meeting (23 Oktober 2026). Masukkan <strong>Nomor Urut Tampil</strong> dan <strong>Nomor Dada</strong> peleton yang diperoleh.
+                  Pengundian nomor urut tampil dilakukan resmi saat Technical Meeting (Sabtu, 10 Januari 2027). Masukkan <strong>Nomor Urut Tampil</strong> dan <strong>Nomor Dada</strong> peleton yang diperoleh.
                 </p>
               </div>
 

@@ -12,8 +12,8 @@ const FAQ_DATA = [
   {
     id: 1,
     category: 'Umum',
-    q: 'Apa itu LBB Mu’allimin Tahun 2026?',
-    a: 'LBB Mu’allimin Tahun 2026 adalah ajang perlombaan baris-berbaris antar pelajar tingkat SD/MI dan SMP/MTs atau sederajat di wilayah Daerah Istimewa Yogyakarta yang diselenggarakan oleh Madrasah Mu’allimin Muhammadiyah Yogyakarta.',
+    q: 'Apa itu LBB Mu’allimin Tahun 2027?',
+    a: 'LBB Mu’allimin Tahun 2027 adalah ajang perlombaan baris-berbaris antar pelajar tingkat SD/MI dan SMP/MTs atau sederajat di wilayah Daerah Istimewa Yogyakarta yang diselenggarakan oleh Madrasah Mu’allimin Muhammadiyah Yogyakarta.',
   },
   {
     id: 2,

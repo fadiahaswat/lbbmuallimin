@@ -189,7 +189,7 @@ export default function OfficialScoreRecapModal({ isOpen, onClose, initialJenjan
                   PANITIA PELAKSANA LOMBA BARIS-BERBARIS
                 </h3>
                 <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-slate-950">
-                  LBB MU'ALLIMIN 2026
+                  LBB MU'ALLIMIN 2027
                 </h1>
                 <p className="text-xs font-semibold text-slate-700 mt-1">
                   KORPS PELETON INTI (TONTI) MADRASAH MU'ALLIMIN MUHAMMADIYAH YOGYAKARTA
@@ -201,7 +201,7 @@ export default function OfficialScoreRecapModal({ isOpen, onClose, initialJenjan
               <div className="w-20 h-20 flex-shrink-0 flex flex-col items-center justify-center border-2 border-slate-900 rounded-xl p-1 text-center">
                 <span className="text-[9px] font-black uppercase text-slate-600">Dokumen</span>
                 <span className="text-xs font-black text-red-700 uppercase">RESMI</span>
-                <span className="text-[8px] font-mono text-slate-500">BA-LBB-26</span>
+                <span className="text-[8px] font-mono text-slate-500">BA-LBB-27</span>
               </div>
             </div>
           </div>
@@ -308,7 +308,7 @@ export default function OfficialScoreRecapModal({ isOpen, onClose, initialJenjan
 
           {/* Legal Statement */}
           <div className="text-xs text-slate-600 italic leading-relaxed mb-10 border-l-2 border-slate-400 pl-3">
-            Catatan Dewan Juri: Rekapitulasi nilai ini sah dan final setelah ditandatangani oleh Dewan Juri LBB Mu'allimin 2026. Nilai PBB Pasukan merupakan rata-rata skor dari Juri 1 dan Juri 2. Keputusan dewan juri bersifat mutlak serta tidak dapat diganggu gugat sesuai ketentuan Petunjuk Teknis LBB Mu'allimin 2026.
+            Catatan Dewan Juri: Rekapitulasi nilai ini sah dan final setelah ditandatangani oleh Dewan Juri LBB Mu'allimin 2027. Nilai PBB Pasukan merupakan rata-rata skor dari Juri 1 dan Juri 2. Keputusan dewan juri bersifat mutlak serta tidak dapat diganggu gugat sesuai ketentuan Petunjuk Teknis LBB Mu'allimin 2027.
           </div>
 
           {/* Official Signatures Grid */}
@@ -350,7 +350,7 @@ export default function OfficialScoreRecapModal({ isOpen, onClose, initialJenjan
           {/* Ketua Panitia & Koordinator Dewan Juri */}
           <div className="grid grid-cols-2 gap-12 text-center text-xs mt-8 pt-4">
             <div className="flex flex-col items-center justify-between h-32">
-              <p className="font-bold text-slate-800">Mengetahui,<br />Ketua Panitia LBB Mu'allimin 2026</p>
+              <p className="font-bold text-slate-800">Mengetahui,<br />Ketua Panitia LBB Mu'allimin 2027</p>
               <div className="w-48 border-b border-slate-900 pb-1">
                 <span className="font-bold text-slate-900">Falhan Zuhdi Mubarok</span>
               </div>
