@@ -42,7 +42,6 @@ const CADET_FIGURES = [
 export default function Hero() {
   const { openModal, setActiveView, settings } = useCompetition();
   const [activeCadetIndex, setActiveCadetIndex] = useState(0);
-  const [loadedImages, setLoadedImages] = useState({});
   const [scheduleIndex, setScheduleIndex] = useState(0);
 
   const regRangeText = settings?.eventDates?.registrationRangeText || EVENT.REGISTRATION_RANGE;
@@ -79,24 +78,12 @@ export default function Hero() {
     },
   ];
 
-  // Preload remaining slides when browser is idle, and auto-rotate cadet illustration every 6 seconds
+  // Preload remaining slides and auto-rotate cadet illustration every 6 seconds
   useEffect(() => {
-    const preloadRest = () => {
-      // Preload after initial paint
-      CADET_FIGURES.slice(1).forEach(cadet => {
-        const img = new Image();
-        img.src = cadet.src;
-        img.onload = () => {
-          setLoadedImages(prev => ({ ...prev, [cadet.src]: true }));
-        };
-      });
-    };
-
-    if ('requestIdleCallback' in window) {
-      window.requestIdleCallback(preloadRest, { timeout: 2500 });
-    } else {
-      setTimeout(preloadRest, 1200);
-    }
+    CADET_FIGURES.forEach(cadet => {
+      const img = new Image();
+      img.src = cadet.src;
+    });
 
     const timer = setInterval(() => {
       setActiveCadetIndex(prev => (prev + 1) % CADET_FIGURES.length);
@@ -236,19 +223,7 @@ export default function Hero() {
 
             {/* Stable Stage Container (Prevents Any Shifting of Neighboring Elements) */}
             <div className="relative w-full h-full flex items-end justify-center overflow-visible pointer-events-none">
-              {/* Skeleton Placeholder Loader */}
-              {!loadedImages[currentCadet.src] && (
-                <div className="absolute inset-x-8 bottom-0 top-12 flex flex-col items-center justify-end pb-8 z-10 pointer-events-none">
-                  <div className="w-full max-w-[280px] sm:max-w-[340px] h-[75%] rounded-3xl bg-gradient-to-t from-red-950/60 via-red-900/30 to-amber-500/10 border border-white/10 backdrop-blur-sm animate-pulse flex flex-col items-center justify-center p-6 shadow-2xl">
-                    <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white/10 border border-white/20 mb-4 flex items-center justify-center animate-spin">
-                      <div className="w-6 h-6 border-2 border-yellow-400 border-t-transparent rounded-full" />
-                    </div>
-                    <div className="h-3.5 w-32 bg-white/20 rounded-full mb-2 animate-pulse" />
-                    <div className="h-2.5 w-24 bg-white/10 rounded-full animate-pulse" />
-                  </div>
-                </div>
-              )}
-
+              {/* Stable Cadet Illustration */}
               <img
                 key={activeCadetIndex}
                 src={currentCadet.src}
@@ -260,10 +235,7 @@ export default function Hero() {
                 alt={currentCadet.title}
                 loading="eager"
                 decoding="async"
-                onLoad={() => setLoadedImages(prev => ({ ...prev, [currentCadet.src]: true }))}
-                className={`hero-foto hero-foto-glitch max-w-none drop-shadow-[0_20px_40px_rgba(0,0,0,0.9)] transition-all duration-500 pointer-events-auto ${
-                  loadedImages[currentCadet.src] ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
-                } ${
+                className={`hero-foto hero-foto-smooth max-w-none drop-shadow-[0_20px_40px_rgba(0,0,0,0.9)] pointer-events-auto ${
                   isLandscape
                     ? 'w-[125%] sm:w-[135%] lg:w-[150%] max-h-[85%] object-contain object-bottom'
                     : 'w-auto max-w-[85%] sm:max-w-[80%] h-auto max-h-[96%] object-contain object-bottom'

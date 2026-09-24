@@ -1652,19 +1652,19 @@ function safeSetItem(key, value) {
       paperEvidenceName: draftData.paperEvidenceName || 'Lembar_Kertas_Juri.jpg',
       juries: {
         pos1: {
-          title: 'Juri 1: PBB Pasukan',
+          title: 'Juri 1: Kebenaran Teknik PBB',
           total: pbbVal,
           rubricScores: draftData.pbb?.rubricScores || draftData.juries?.pos1?.rubricScores || {},
         },
         pos2: {
-          title: 'Juri 2: Komandan (Danton)',
-          total: dantonVal,
-          rubricScores: draftData.danton?.rubricScores || draftData.juries?.pos2?.rubricScores || {},
+          title: 'Juri 2: Kekompakan Peleton',
+          total: variasiVal,
+          rubricScores: draftData.variasi?.rubricScores || draftData.juries?.pos2?.rubricScores || {},
         },
         pos3: {
-          title: 'Juri 3: Variasi & Formasi',
-          total: variasiVal,
-          rubricScores: draftData.variasi?.rubricScores || draftData.juries?.pos3?.rubricScores || {},
+          title: 'Juri 3: Komandan Peleton (Danton)',
+          total: dantonVal,
+          rubricScores: draftData.danton?.rubricScores || draftData.juries?.pos3?.rubricScores || {},
         },
       },
       pbb: { total: pbbVal, rubricScores: draftData.pbb?.rubricScores || {} },

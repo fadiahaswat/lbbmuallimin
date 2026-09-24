@@ -17,7 +17,7 @@ import {
   Clock,
   Layers
 } from 'lucide-react';
-import { CONTACT, EVENT, COMPETITION, PAYMENT, VENUE } from '../config.js';
+import { CONTACT, EVENT, COMPETITION, PAYMENT, VENUE, VENUE_INDUK } from '../config.js';
 
 const FAQ_DATA = [
   // --- KATEGORI 1: PENDAFTARAN & SYARAT ---
@@ -417,30 +417,94 @@ export default function FaqContact() {
               </a>
             </div>
 
-            {/* Mini Maps Card */}
-            <a
-              href={VENUE.MAPS_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rounded-3xl overflow-hidden relative border border-slate-800 hover:border-red-500/50 transition-all h-36 group block bg-slate-900 shadow-xl"
-            >
-              <div className="absolute inset-0 bg-[radial-gradient(#334155_1px,transparent_1px)] [background-size:16px_16px] opacity-30 group-hover:opacity-50 transition-opacity"></div>
-              <div className="absolute top-3.5 right-3.5 z-10">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-950/90 border border-slate-700 text-[10px] font-bold text-yellow-400 group-hover:bg-red-950 group-hover:border-red-500/50 group-hover:text-red-300 transition-all shadow-md">
-                  <MapPin className="w-3.5 h-3.5 text-red-500" />
-                  Buka Maps
-                  <ExternalLink className="w-3 h-3" />
-                </span>
+            {/* Dual Campus Location & Maps Section (Direct display, without tab switcher) */}
+            <div className="space-y-4">
+              {/* KAMPUS 1: Kampus Terpadu Sedayu (Pelaksanaan Lomba & Uji Coba) */}
+              <div className="bg-slate-900/95 rounded-3xl p-5 border border-slate-800 shadow-xl space-y-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-xl bg-red-600/20 text-red-400 border border-red-500/30 flex items-center justify-center shrink-0">
+                      <MapPin className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <h4 className="text-xs font-black text-white uppercase tracking-wider">
+                        {VENUE.NAME}
+                      </h4>
+                      <span className="text-[9px] font-extrabold uppercase px-2 py-0.5 rounded bg-red-600/25 text-red-300 border border-red-500/30 inline-block mt-0.5">
+                        Hari H & Uji Coba Lapangan
+                      </span>
+                    </div>
+                  </div>
+                  <a
+                    href={VENUE.MAPS_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-slate-950 border border-slate-700 text-[10px] font-bold text-yellow-400 hover:text-white hover:bg-red-700 transition-all shrink-0 shadow-sm"
+                  >
+                    <span>Buka Maps</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                </div>
+
+                <div className="p-2.5 rounded-xl bg-slate-950/70 border border-slate-800 text-[11px] text-slate-300 leading-snug">
+                  <span className="font-bold text-red-400">Fungsi:</span> Lokasi perlombaan PBB SD & SMP, apel besar, transit kontingen, serta arena latihan uji coba lapangan.
+                  <p className="text-[10px] text-slate-400 mt-1 font-mono">{VENUE.ADDRESS}</p>
+                </div>
+
+                {/* Interactive Map Preview Terpadu */}
+                <div className="relative rounded-2xl overflow-hidden border border-slate-800 bg-slate-950 shadow-inner group">
+                  <iframe
+                    title="Peta Kampus Terpadu Mu'allimin Sedayu"
+                    src={VENUE.MAPS_EMBED_URL || "https://maps.google.com/maps?q=-7.806784,110.2683762&hl=id&z=15&output=embed"}
+                    className="w-full h-32 border-0 opacity-85 group-hover:opacity-100 transition-opacity"
+                    loading="lazy"
+                  ></iframe>
+                </div>
               </div>
-              <div className="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-slate-950 via-slate-950/90 to-transparent">
-                <p className="text-xs font-bold text-white group-hover:text-yellow-400 transition-colors">
-                  {VENUE.MAPS_PREVIEW_NAME}
-                </p>
-                <p className="text-[11px] text-slate-400 mt-0.5 truncate">
-                  {VENUE.MAPS_PREVIEW_ADDRESS}
-                </p>
+
+              {/* KAMPUS 2: Kampus Induk Wirobrajan (Technical Meeting) */}
+              <div className="bg-slate-900/95 rounded-3xl p-5 border border-slate-800 shadow-xl space-y-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-xl bg-blue-600/20 text-blue-400 border border-blue-500/30 flex items-center justify-center shrink-0">
+                      <MapPin className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <h4 className="text-xs font-black text-white uppercase tracking-wider">
+                        {VENUE_INDUK.NAME}
+                      </h4>
+                      <span className="text-[9px] font-extrabold uppercase px-2 py-0.5 rounded bg-blue-600/25 text-blue-300 border border-blue-500/30 inline-block mt-0.5">
+                        Technical Meeting (TM)
+                      </span>
+                    </div>
+                  </div>
+                  <a
+                    href={VENUE_INDUK.MAPS_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-slate-950 border border-slate-700 text-[10px] font-bold text-yellow-400 hover:text-white hover:bg-blue-700 transition-all shrink-0 shadow-sm"
+                  >
+                    <span>Buka Maps</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                </div>
+
+                <div className="p-2.5 rounded-xl bg-slate-950/70 border border-slate-800 text-[11px] text-slate-300 leading-snug">
+                  <span className="font-bold text-blue-400">Fungsi:</span> Pertemuan teknis official & pembina, pengundian nomor urut dada peleton, dan verifikasi akhir berkas fisik.
+                  <p className="text-[10px] text-slate-400 mt-1 font-mono">{VENUE_INDUK.ADDRESS}</p>
+                </div>
+
+                {/* Interactive Map Preview Induk */}
+                <div className="relative rounded-2xl overflow-hidden border border-slate-800 bg-slate-950 shadow-inner group">
+                  <iframe
+                    title="Peta Kampus Induk Mu'allimin Yogyakarta"
+                    src={VENUE_INDUK.MAPS_EMBED_URL}
+                    className="w-full h-32 border-0 opacity-85 group-hover:opacity-100 transition-opacity"
+                    loading="lazy"
+                  ></iframe>
+                </div>
               </div>
-            </a>
+            </div>
           </div>
         </div>
       </div>

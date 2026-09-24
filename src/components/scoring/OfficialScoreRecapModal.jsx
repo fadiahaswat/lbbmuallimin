@@ -33,17 +33,22 @@ export default function OfficialScoreRecapModal({ isOpen, onClose, initialJenjan
     const s = scores[team.id];
     const juries = s?.juries || {};
 
-    const juri1PbbScore = juries.pos1?.total !== undefined
+    const juri1Teknik = juries.pos1?.total !== undefined
       ? Number(juries.pos1.total)
       : (s?.pbb?.total !== undefined ? Number(s.pbb.total) : (s?.pbb?.j1 !== undefined ? Number(s.pbb.j1) : 0));
 
-    const juri2DantonScore = juries.pos2?.total !== undefined
+    const juri2Kekompakan = juries.pos2?.total !== undefined
       ? Number(juries.pos2.total)
-      : (s?.danton?.total !== undefined ? Number(s.danton.total) : 0);
+      : (s?.kekompakan?.total !== undefined ? Number(s.kekompakan.total) : (s?.pbb?.j2 !== undefined ? Number(s.pbb.j2) : 0));
 
-    const juri3VariasiScore = juries.pos3?.total !== undefined
+    // Peleton combined: (J1 Teknik * 70%) + (J2 Kekompakan * 30%)
+    const peletonCombined = (juri1Teknik > 0 && juri2Kekompakan > 0)
+      ? parseFloat((juri1Teknik * 0.7 + juri2Kekompakan * 0.3).toFixed(2))
+      : (juri1Teknik || juri2Kekompakan || 0);
+
+    const juri3Danton = juries.pos3?.total !== undefined
       ? Number(juries.pos3.total)
-      : (s?.variasi?.total !== undefined ? Number(s.variasi.total) : 0);
+      : (s?.danton?.total !== undefined ? Number(s.danton.total) : 0);
 
     const penaltiesTotal = s?.penalties?.totalPenalty !== undefined
       ? Number(s.penalties.totalPenalty)
@@ -51,13 +56,14 @@ export default function OfficialScoreRecapModal({ isOpen, onClose, initialJenjan
 
     const finalScore = s?.finalScore !== undefined
       ? Number(s.finalScore)
-      : Math.max(0, parseFloat((juri1PbbScore + juri2DantonScore + juri3VariasiScore - penaltiesTotal).toFixed(2)));
+      : Math.max(0, parseFloat((peletonCombined + juri3Danton - penaltiesTotal).toFixed(2)));
 
     return {
       team,
-      juri1PbbScore,
-      juri2DantonScore,
-      juri3VariasiScore,
+      juri1Teknik,
+      juri2Kekompakan,
+      peletonCombined,
+      juri3Danton,
       penaltiesTotal,
       finalScore: isNaN(finalScore) ? 0 : finalScore,
       scored: Boolean(s),
@@ -67,13 +73,61 @@ export default function OfficialScoreRecapModal({ isOpen, onClose, initialJenjan
     };
   });
 
-  // Sort based on award category
+  // Sort based on award category with official Multi-Tier Tie Breaker (Juknis LBB Mu'allimin)
   const rankedTeams = computedTeams.sort((a, b) => {
-    if (awardCategory === 'danton') return b.juri2DantonScore - a.juri2DantonScore;
-    if (awardCategory === 'pbb') return b.juri1PbbScore - a.juri1PbbScore;
-    if (awardCategory === 'variasi') return b.juri3VariasiScore - a.juri3VariasiScore;
-    return b.finalScore - a.finalScore;
+    if (awardCategory === 'danton') {
+      if (b.juri3Danton !== a.juri3Danton) return b.juri3Danton - a.juri3Danton;
+      return a.penaltiesTotal - b.penaltiesTotal;
+    }
+    if (awardCategory === 'pbb') {
+      if (b.peletonCombined !== a.peletonCombined) return b.peletonCombined - a.peletonCombined;
+      if (b.juri1Teknik !== a.juri1Teknik) return b.juri1Teknik - a.juri1Teknik;
+      return a.penaltiesTotal - b.penaltiesTotal;
+    }
+    if (awardCategory === 'kekompakan') {
+      if (b.juri2Kekompakan !== a.juri2Kekompakan) return b.juri2Kekompakan - a.juri2Kekompakan;
+      return a.penaltiesTotal - b.penaltiesTotal;
+    }
+    // Juara Umum / Akumulasi Utama:
+    // 1. Total Final Score
+    if (b.finalScore !== a.finalScore) return b.finalScore - a.finalScore;
+    // 2. Tie Breaker 1: Nilai Murni Peleton (70:30)
+    if (b.peletonCombined !== a.peletonCombined) return b.peletonCombined - a.peletonCombined;
+    // 3. Tie Breaker 2: Nilai Murni Juri 1 (Kebenaran Teknik PBB)
+    if (b.juri1Teknik !== a.juri1Teknik) return b.juri1Teknik - a.juri1Teknik;
+    // 4. Tie Breaker 3: Nilai Murni Juri 2 (Kekompakan Peleton)
+    if (b.juri2Kekompakan !== a.juri2Kekompakan) return b.juri2Kekompakan - a.juri2Kekompakan;
+    // 5. Tie Breaker 4: Nilai Murni Juri 3 (Danton)
+    if (b.juri3Danton !== a.juri3Danton) return b.juri3Danton - a.juri3Danton;
+    // 6. Tie Breaker 5: Poin Penalti Terkecil
+    return a.penaltiesTotal - b.penaltiesTotal;
   });
+
+  // Helper title gelar juara resmi berdasarkan proposal & juknis
+  function getAwardTitle(rank) {
+    if (awardCategory === 'danton') {
+      if (rank === 1) return 'Danton Terbaik I';
+      if (rank === 2) return 'Danton Terbaik II';
+      if (rank === 3) return 'Danton Terbaik III';
+      return null;
+    }
+    if (awardCategory === 'pbb') {
+      if (rank === 1) return 'Peleton PBB Terbaik';
+      return null;
+    }
+    if (awardCategory === 'kekompakan') {
+      if (rank === 1) return 'Kekompakan Terbaik';
+      return null;
+    }
+    // Juara Umum / Utama
+    if (rank === 1) return 'Juara Utama I (Piala Bergilir)';
+    if (rank === 2) return 'Juara Utama II';
+    if (rank === 3) return 'Juara Utama III';
+    if (rank === 4) return 'Juara Harapan I';
+    if (rank === 5) return 'Juara Harapan II';
+    if (rank === 6) return 'Juara Harapan III';
+    return null;
+  }
 
   function handlePrint() {
     window.print();
@@ -111,23 +165,23 @@ export default function OfficialScoreRecapModal({ isOpen, onClose, initialJenjan
                   awardCategory === 'pbb' ? 'bg-blue-500 text-white font-black' : 'text-slate-400 hover:text-white'
                 }`}
               >
-                PBB Terbaik
+                Peleton PBB
+              </button>
+              <button
+                onClick={() => setAwardCategory('kekompakan')}
+                className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
+                  awardCategory === 'kekompakan' ? 'bg-purple-500 text-white font-black' : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                Kekompakan
               </button>
               <button
                 onClick={() => setAwardCategory('danton')}
                 className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
-                  awardCategory === 'danton' ? 'bg-indigo-500 text-white font-black' : 'text-slate-400 hover:text-white'
+                  awardCategory === 'danton' ? 'bg-red-500 text-white font-black' : 'text-slate-400 hover:text-white'
                 }`}
               >
                 Danton Terbaik
-              </button>
-              <button
-                onClick={() => setAwardCategory('variasi')}
-                className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
-                  awardCategory === 'variasi' ? 'bg-purple-500 text-white font-black' : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                Variasi Terbaik
               </button>
             </div>
 
@@ -219,8 +273,8 @@ export default function OfficialScoreRecapModal({ isOpen, onClose, initialJenjan
               <span>•</span>
               <span><strong>Rekapitulasi:</strong> {
                 awardCategory === 'danton' ? '🎖️ Komandan Peleton (Danton) Terbaik' :
-                awardCategory === 'pbb' ? '🎖️ PBB Murni Terbaik' :
-                awardCategory === 'variasi' ? '🎖️ Variasi & Formasi Terbaik' :
+                awardCategory === 'pbb' ? '🎖️ Peleton PBB Terbaik (Akumulasi 70:30)' :
+                awardCategory === 'kekompakan' ? '🎖️ Kekompakan Peleton Terbaik' :
                 '🏆 Juara Umum & Akumulasi Nilai'
               }</span>
               <span>•</span>
@@ -239,14 +293,17 @@ export default function OfficialScoreRecapModal({ isOpen, onClose, initialJenjan
                   <th className="py-2.5 px-2 border-r border-slate-700 w-12">No. Undi</th>
                   <th className="py-2.5 px-3 border-r border-slate-700 text-left">Peleton & Asal Sekolah</th>
                   <th className="py-2.5 px-2 border-r border-slate-700 w-14">Jenjang</th>
-                  <th className={`py-2.5 px-2 border-r border-slate-700 w-18 ${awardCategory === 'pbb' ? 'bg-blue-600 text-white font-black ring-2 ring-blue-300' : 'bg-slate-800'}`}>
-                    Juri 1<br /><span className="text-[9px] font-normal text-blue-300">(PBB)</span>
+                  <th className="py-2.5 px-2 border-r border-slate-700 w-18 bg-blue-900/60">
+                    Juri 1<br /><span className="text-[9px] font-normal text-blue-300">Teknik (70%)</span>
                   </th>
-                  <th className={`py-2.5 px-2 border-r border-slate-700 w-18 ${awardCategory === 'danton' ? 'bg-indigo-600 text-white font-black ring-2 ring-indigo-300' : 'bg-slate-800'}`}>
-                    Juri 2<br /><span className="text-[9px] font-normal text-indigo-300">(Danton)</span>
+                  <th className={`py-2.5 px-2 border-r border-slate-700 w-18 ${awardCategory === 'kekompakan' ? 'bg-purple-600 text-white font-black' : 'bg-purple-950/60'}`}>
+                    Juri 2<br /><span className="text-[9px] font-normal text-purple-300">Kekompakan (30%)</span>
                   </th>
-                  <th className={`py-2.5 px-2 border-r border-slate-700 w-18 ${awardCategory === 'variasi' ? 'bg-purple-600 text-white font-black ring-2 ring-purple-300' : 'bg-slate-800'}`}>
-                    Juri 3<br /><span className="text-[9px] font-normal text-purple-300">(Variasi)</span>
+                  <th className={`py-2.5 px-2 border-r border-slate-700 w-20 ${awardCategory === 'pbb' ? 'bg-emerald-600 text-white font-black ring-2 ring-emerald-300' : 'bg-slate-800'}`}>
+                    Nilai Peleton<br /><span className="text-[9px] font-normal text-emerald-300">(70:30)</span>
+                  </th>
+                  <th className={`py-2.5 px-2 border-r border-slate-700 w-18 ${awardCategory === 'danton' ? 'bg-red-600 text-white font-black ring-2 ring-red-300' : 'bg-slate-800'}`}>
+                    Juri 3<br /><span className="text-[9px] font-normal text-red-300">(Danton)</span>
                   </th>
                   <th className="py-2.5 px-2 border-r border-slate-700 w-16 text-red-300">
                     Penalti<br /><span className="text-[9px] font-normal">(-)</span>
@@ -278,20 +335,30 @@ export default function OfficialScoreRecapModal({ isOpen, onClose, initialJenjan
                         {item.team.lotNumber ? String(item.team.lotNumber).padStart(2, '0') : '-'}
                       </td>
                       <td className="py-2.5 px-3 border-r border-slate-200 text-left">
-                        <div className="font-bold text-slate-900">{item.team.schoolName}</div>
-                        <div className="text-[10px] text-slate-500">{item.team.platoonName}</div>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="font-bold text-slate-900">{item.team.schoolName}</span>
+                          {getAwardTitle(rank) && (
+                            <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-md bg-amber-400 text-slate-950 border border-amber-500/50 shadow-2xs">
+                              🏆 {getAwardTitle(rank)}
+                            </span>
+                          )}
+                        </div>
+                        <div className="text-[10px] text-slate-500">{item.team.platoonName} • Danton: {item.team.roster?.danton?.name || item.team.dantonName || '-'}</div>
                       </td>
                       <td className="py-2.5 px-2 border-r border-slate-200 font-bold text-slate-700">
                         {item.team.jenjang}
                       </td>
-                      <td className={`py-2.5 px-2 border-r border-slate-200 font-mono ${awardCategory === 'pbb' ? 'font-black bg-blue-50 text-blue-900' : 'text-slate-800'}`}>
-                        {item.juri1PbbScore > 0 ? item.juri1PbbScore.toFixed(1) : '-'}
+                      <td className="py-2.5 px-2 border-r border-slate-200 font-mono text-slate-800">
+                        {item.juri1Teknik > 0 ? item.juri1Teknik.toFixed(1) : '-'}
                       </td>
-                      <td className={`py-2.5 px-2 border-r border-slate-200 font-mono ${awardCategory === 'danton' ? 'font-black bg-indigo-50 text-indigo-900' : 'text-slate-800'}`}>
-                        {item.juri2DantonScore > 0 ? item.juri2DantonScore.toFixed(1) : '-'}
+                      <td className={`py-2.5 px-2 border-r border-slate-200 font-mono ${awardCategory === 'kekompakan' ? 'font-black bg-purple-50 text-purple-900' : 'text-slate-800'}`}>
+                        {item.juri2Kekompakan > 0 ? item.juri2Kekompakan.toFixed(1) : '-'}
                       </td>
-                      <td className={`py-2.5 px-2 border-r border-slate-200 font-mono ${awardCategory === 'variasi' ? 'font-black bg-purple-50 text-purple-900' : 'text-slate-800'}`}>
-                        {item.juri3VariasiScore > 0 ? item.juri3VariasiScore.toFixed(1) : '-'}
+                      <td className={`py-2.5 px-2 border-r border-slate-200 font-mono ${awardCategory === 'pbb' ? 'font-black bg-emerald-50 text-emerald-900' : 'font-bold text-slate-900'}`}>
+                        {item.peletonCombined > 0 ? item.peletonCombined.toFixed(2) : '-'}
+                      </td>
+                      <td className={`py-2.5 px-2 border-r border-slate-200 font-mono ${awardCategory === 'danton' ? 'font-black bg-red-50 text-red-900' : 'text-slate-800'}`}>
+                        {item.juri3Danton > 0 ? item.juri3Danton.toFixed(1) : '-'}
                       </td>
                       <td className="py-2.5 px-2 border-r border-slate-200 font-mono text-red-600 font-bold">
                         {item.penaltiesTotal > 0 ? `-${item.penaltiesTotal}` : '0'}
@@ -308,7 +375,7 @@ export default function OfficialScoreRecapModal({ isOpen, onClose, initialJenjan
 
           {/* Legal Statement */}
           <div className="text-xs text-slate-600 italic leading-relaxed mb-10 border-l-2 border-slate-400 pl-3">
-            Catatan Dewan Juri: Rekapitulasi nilai ini sah dan final setelah ditandatangani oleh Dewan Juri LBB Mu'allimin 2027. Nilai PBB Pasukan merupakan rata-rata skor dari Juri 1 dan Juri 2. Keputusan dewan juri bersifat mutlak serta tidak dapat diganggu gugat sesuai ketentuan Petunjuk Teknis LBB Mu'allimin 2027.
+            Catatan Dewan Juri: Rekapitulasi nilai ini sah dan final setelah ditandatangani oleh Dewan Juri LBB Mu'allimin 2027. Sesuai Petunjuk Teknis LBB Mu'allimin 2027, Nilai Peleton dihitung dengan bobot 70% Kebenaran Teknik PBB (Juri 1) + 30% Kekompakan Peleton (Juri 2). Skor akhir merupakan penjumlahan Nilai Peleton + Nilai Komandan Peleton (Juri 3) dikurangi akumulasi penalti lapangan. Keputusan Dewan Juri bersifat mutlak dan tidak dapat diganggu gugat.
           </div>
 
           {/* Official Signatures Grid */}
@@ -316,8 +383,8 @@ export default function OfficialScoreRecapModal({ isOpen, onClose, initialJenjan
             {/* Juri 1 */}
             <div className="flex flex-col items-center justify-between h-36">
               <div>
-                <p className="font-bold text-slate-800">Juri 1 (PBB Pasukan)</p>
-                <p className="text-[11px] text-slate-500">Unsur TNI / Kodim</p>
+                <p className="font-bold text-slate-800">Juri 1 (Kebenaran Teknik PBB)</p>
+                <p className="text-[11px] text-slate-500">Unsur TNI / Kodim (Bobot 70%)</p>
               </div>
               <div className="w-40 border-b border-slate-900 pb-1">
                 <span className="font-bold text-slate-900">{JURY_POSTS.pos1.defaultName}</span>
@@ -327,8 +394,8 @@ export default function OfficialScoreRecapModal({ isOpen, onClose, initialJenjan
             {/* Juri 2 */}
             <div className="flex flex-col items-center justify-between h-36">
               <div>
-                <p className="font-bold text-slate-800">Juri 2 (Komandan Peleton)</p>
-                <p className="text-[11px] text-slate-500">Unsur Polresta / Korps Danton</p>
+                <p className="font-bold text-slate-800">Juri 2 (Kekompakan Peleton)</p>
+                <p className="text-[11px] text-slate-500">Unsur PPI / Paskibra (Bobot 30%)</p>
               </div>
               <div className="w-40 border-b border-slate-900 pb-1">
                 <span className="font-bold text-slate-900">{JURY_POSTS.pos2.defaultName}</span>
@@ -338,8 +405,8 @@ export default function OfficialScoreRecapModal({ isOpen, onClose, initialJenjan
             {/* Juri 3 */}
             <div className="flex flex-col items-center justify-between h-36">
               <div>
-                <p className="font-bold text-slate-800">Juri 3 (Variasi & Formasi)</p>
-                <p className="text-[11px] text-slate-500">Unsur Pelatih & Koreografer PBB</p>
+                <p className="font-bold text-slate-800">Juri 3 (Komandan Peleton)</p>
+                <p className="text-[11px] text-slate-500">Unsur Polresta / Korps Danton</p>
               </div>
               <div className="w-40 border-b border-slate-900 pb-1">
                 <span className="font-bold text-slate-900">{JURY_POSTS.pos3.defaultName}</span>

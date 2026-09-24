@@ -88,7 +88,7 @@ export default function DocumentViewerModal({ isOpen, onClose }) {
               Kampus Terpadu Madrasah Mu'allimin Muhammadiyah Yogyakarta • Dusun Bandut Lor, Argorejo, Sedayu, Bantul, DIY
             </p>
             <p className="text-[11px] font-sans text-slate-500">
-              Website: lbb.tontimuallimin.com • Email: panitia@lbbmuallimin.com • WhatsApp: 0812-3009-3737
+              Website: lbb.tontimuallimin.com • Email: lbb@tontimuallimin.com • WhatsApp: 0812-3009-3737
             </p>
           </div>
 

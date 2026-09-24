@@ -314,8 +314,8 @@ export const DOWNLOADS = [
 // CONTACT – kontak panitia
 // ---------------------------------------------------------------------------
 export const CONTACT = {
-    EMAIL: 'panitia@lbbmuallimin.com',
-    EMAIL_HREF: 'mailto:panitia@lbbmuallimin.com',
+    EMAIL: 'lbb@tontimuallimin.com',
+    EMAIL_HREF: 'mailto:lbb@tontimuallimin.com',
     PHONE_DISPLAY: '0812-3009-3737',
 
     /** URL tombol WA mengambang (FAB) */
@@ -382,12 +382,56 @@ export const SCORING = {
     SCORE_RANGE_LABEL: 'Rubrik Skala K / C / B / BS Berjenjang',
 };
 
-/** Kategori Predikat Mutu */
+/** Kategori Predikat Mutu Sesuai Tampilan Standar Simpaskor / LKBB */
 export const RUBRIC_GRADES = [
-    { key: 'K', label: 'Kurang (K)', color: 'text-amber-700 bg-amber-50 border-amber-300' },
-    { key: 'C', label: 'Cukup (C)', color: 'text-blue-700 bg-blue-50 border-blue-300' },
-    { key: 'B', label: 'Baik (B)', color: 'text-emerald-700 bg-emerald-50 border-emerald-300' },
-    { key: 'BS', label: 'Baik Sekali (BS)', color: 'text-purple-700 bg-purple-50 border-purple-300' },
+    {
+        key: 'K',
+        label: 'KURANG',
+        shortLabel: 'K',
+        headerBg: 'bg-red-600',
+        headerText: 'text-white',
+        colBg: 'bg-red-500/10 dark:bg-red-950/20',
+        border: 'border-red-500/30',
+        activeBtn: 'bg-red-600 text-white shadow-md shadow-red-600/40 ring-2 ring-red-400',
+        inactiveBtn: 'bg-red-950/40 text-red-300 hover:bg-red-600 hover:text-white border border-red-500/30',
+        color: 'text-red-400 bg-red-950/60 border-red-500/40'
+    },
+    {
+        key: 'C',
+        label: 'CUKUP',
+        shortLabel: 'C',
+        headerBg: 'bg-amber-500',
+        headerText: 'text-slate-950 font-black',
+        colBg: 'bg-amber-500/10 dark:bg-amber-950/20',
+        border: 'border-amber-500/30',
+        activeBtn: 'bg-amber-500 text-slate-950 font-black shadow-md shadow-amber-500/40 ring-2 ring-amber-300',
+        inactiveBtn: 'bg-amber-950/40 text-amber-300 hover:bg-amber-500 hover:text-slate-950 border border-amber-500/30',
+        color: 'text-amber-400 bg-amber-950/60 border-amber-500/40'
+    },
+    {
+        key: 'B',
+        label: 'BAIK',
+        shortLabel: 'B',
+        headerBg: 'bg-emerald-600',
+        headerText: 'text-white',
+        colBg: 'bg-emerald-500/10 dark:bg-emerald-950/20',
+        border: 'border-emerald-500/30',
+        activeBtn: 'bg-emerald-600 text-white shadow-md shadow-emerald-600/40 ring-2 ring-emerald-400',
+        inactiveBtn: 'bg-emerald-950/40 text-emerald-300 hover:bg-emerald-600 hover:text-white border border-emerald-500/30',
+        color: 'text-emerald-400 bg-emerald-950/60 border-emerald-500/40'
+    },
+    {
+        key: 'BS',
+        label: 'SANGAT BAIK',
+        shortLabel: 'BS',
+        headerBg: 'bg-blue-600',
+        headerText: 'text-white',
+        colBg: 'bg-blue-500/10 dark:bg-blue-950/20',
+        border: 'border-blue-500/30',
+        activeBtn: 'bg-blue-600 text-white shadow-md shadow-blue-600/40 ring-2 ring-blue-400',
+        inactiveBtn: 'bg-blue-950/40 text-blue-300 hover:bg-blue-600 hover:text-white border border-blue-500/30',
+        color: 'text-blue-400 bg-blue-950/60 border-blue-500/40'
+    },
 ];
 
 /**
@@ -601,45 +645,86 @@ export const VARIASI_CRITERIA = [
     { id: 'keindahan', name: 'Estetika, Visual Formasi & Kesan Umum', defaultScore: 15, maxScore: 15 },
 ];
 
+// ---------------------------------------------------------------------------
+// JURY_POSTS – Konfigurasi Dewan Juri Resmi LBB Mu'allimin 2027
+// 2 Pos Lapangan: Pos SD/MI dan Pos SMP/MTs
+// 3 Dewan Juri per Pos:
+// 1. Juri Kebenaran Teknik Gerakan PBB (Bobot 70% Peleton)
+// 2. Juri Kekompakan Gerakan Peleton (Bobot 30% Peleton)
+// 3. Juri Komandan Peleton / Danton (Bobot 100% Danton)
+// ---------------------------------------------------------------------------
+export const JURY_ROLES = {
+    teknik: {
+        id: 'teknik',
+        roleKey: 'juri_teknik',
+        title: 'Juri 1: Kebenaran Teknik PBB',
+        shortTitle: 'Juri 1 (Teknik PBB)',
+        badge: 'Kebenaran Teknik PBB',
+        weightPct: 70,
+        description: 'Menilai presisi, ketepatan urutan aba-aba & gerakan PBB berpedoman pada Perpang TNI No. 57 & 58 Th 2018 (Bobot 70% Peleton).',
+        defaultNameSD: 'Mayor (Mar) Bambang S., S.E.',
+        defaultNameSMP: 'Mayor Inf. Supriyadi, M.M.',
+    },
+    kekompakan: {
+        id: 'kekompakan',
+        roleKey: 'juri_kekompakan',
+        title: 'Juri 2: Kekompakan Peleton',
+        shortTitle: 'Juri 2 (Kekompakan)',
+        badge: 'Kekompakan Peleton',
+        weightPct: 30,
+        description: 'Menilai keseragaman langkah, kelurusan saf/banjar, irama, tempo, serta harmonisasi gerakan peleton (Bobot 30% Peleton).',
+        defaultNameSD: 'Kapten Kav. Hendra Wijaya',
+        defaultNameSMP: 'Kapten Arh. Agus Prasetyo',
+    },
+    komandan: {
+        id: 'komandan',
+        roleKey: 'juri_komandan',
+        title: 'Juri 3: Komandan Peleton (Danton)',
+        shortTitle: 'Juri 3 (Danton)',
+        badge: 'Komandan Peleton',
+        weightPct: 100,
+        description: 'Menilai penguasaan materi (35%), kualitas & intonasi vokal IKIT (25%), sikap & pelaporan (20%), serta penguasaan medan (20%).',
+        defaultNameSD: 'AKP Tri Wibowo, S.H.',
+        defaultNameSMP: 'AKP Danang Kusuma, S.I.K.',
+    }
+};
+
 export const JURY_POSTS = {
     pos1: {
         id: 'pos1',
-        title: 'Juri 1: PBB Gerakan Materi Pasukan',
-        shortTitle: 'Juri 1 (PBB)',
-        badge: 'Dewan Juri PBB',
+        title: 'Juri 1: Kebenaran Teknik Gerakan PBB',
+        shortTitle: 'Juri 1 (Teknik PBB)',
+        badge: 'Kebenaran Teknik',
         defaultName: 'Mayor (Mar) Bambang S., S.E.',
-        type: 'pbb',
+        type: 'teknik',
         aspects: [
-            { id: 'materi', label: 'Rubrik Gerakan Materi PBB Pasukan', weight: 100 },
+            { id: 'materi', label: 'Rubrik Kebenaran Teknik Gerakan PBB', weight: 70 },
         ],
     },
     pos2: {
         id: 'pos2',
-        title: 'Juri 2: Komandan Peleton (Danton)',
-        shortTitle: 'Juri 2 (Danton)',
-        badge: 'Dewan Juri Danton',
-        defaultName: 'AKP Tri Wibowo, S.H.',
-        type: 'danton',
+        title: 'Juri 2: Kekompakan Gerakan Peleton',
+        shortTitle: 'Juri 2 (Kekompakan)',
+        badge: 'Kekompakan Peleton',
+        defaultName: 'Kapten Kav. Hendra Wijaya',
+        type: 'kekompakan',
         aspects: [
-            { id: 'sikap', label: 'Sikap Tampang & Sikap Sempurna', weight: 20 },
-            { id: 'penguasaanMateri', label: 'Penguasaan Materi Aba-Aba', weight: 25 },
-            { id: 'penguasaanLapangan', label: 'Penguasaan Medan Lomba', weight: 20 },
-            { id: 'ikit', label: 'Irama / Kecepatan / Intonasi / Tempo (IKIT)', weight: 20 },
-            { id: 'volumeSuara', label: 'Kekuatan & Volume Suara', weight: 15 },
+            { id: 'keseragaman', label: 'Keseragaman Langkah & Kelurusan Saf/Banjar', weight: 15 },
+            { id: 'iramaTempo', label: 'Irama, Tempo, & Harmonisasi Pasukan', weight: 15 },
         ],
     },
     pos3: {
         id: 'pos3',
-        title: 'Juri 3: Variasi & Formasi',
-        shortTitle: 'Juri 3 (Variasi & Formasi)',
-        badge: 'Dewan Juri Variasi',
-        defaultName: 'Kapten Inf. Hendra Wijaya',
-        type: 'variasi',
+        title: 'Juri 3: Komandan Peleton (Danton)',
+        shortTitle: 'Juri 3 (Danton)',
+        badge: 'Dewan Juri Danton',
+        defaultName: 'AKP Tri Wibowo, S.H.',
+        type: 'danton',
         aspects: [
-            { id: 'kreativitas', label: 'Kreativitas & Tingkat Kesulitan', weight: 30 },
-            { id: 'kerapian', label: 'Kerapian & Kelurusan Pasukan', weight: 30 },
-            { id: 'kekompakan', label: 'Kekompakan & Irama Pasukan', weight: 25 },
-            { id: 'keindahan', label: 'Estetika Visual & Kesan Umum', weight: 15 },
+            { id: 'penguasaanMateri', label: 'Penguasaan Materi Aba-Aba (35%)', weight: 35 },
+            { id: 'kualitasSuara', label: 'Kualitas & Artikulasi Suara IKIT (25%)', weight: 25 },
+            { id: 'sikapPelaporan', label: 'Sikap Tampang & Pelaporan (20%)', weight: 20 },
+            { id: 'penguasaanMedan', label: 'Penguasaan Medan Lomba (20%)', weight: 20 },
         ],
     },
 };
