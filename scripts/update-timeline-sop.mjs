@@ -113,7 +113,7 @@ async function updateDetailTimelinePanitiaSOP() {
   addDataRow(
     '1.',
     '1 – 14 September 2026',
-    'PEMBENTUKAN PANITIA & PERUMUSAN KONSEP DASAR (PANDUAN PERDANA):\n• Pembentukan panitia lengkap (Ketua, Sekretaris, Bendahara, Acara, Lapangan, Juri, Perlengkapan, DDD, LO, Konsumsi, Medis, Keamanan).\n• Penetapan tema: "JIWA KSATRIA, DERAP GEMILANG" & tagline lomba.\n• Pembuatan draf awal Juklak/Juknis PBB mengacu Perpang TNI No. 57 & 58 Tahun 2018 (materi baku PBB dasar, gerakan berjalan, dan variasi-formasi).\n• Pembagian master folder Google Drive panitia untuk koordinasi terpadu seluruh divisi.',
+    'PEMBENTUKAN PANITIA & PERUMUSAN KONSEP DASAR (PANDUAN PERDANA):\n• Pembentukan panitia lengkap (Ketua, Sekretaris, Bendahara, Acara, Lapangan, Juri, Perlengkapan, DDD, LO, Konsumsi, Medis, Keamanan).\n• Penetapan tema: "SEMANGAT SEBAGAI KSATRIA, BERJUANG DENGAN GEMBIRA!" & tagline lomba.\n• Pembuatan draf awal Juklak/Juknis PBB mengacu Perpang TNI No. 57 & 58 Tahun 2018 (materi baku PBB dasar, gerakan berjalan, dan variasi-formasi).\n• Pembagian master folder Google Drive panitia untuk koordinasi terpadu seluruh divisi.',
     'Tim Formatur, Ketua Pelaksana, Divisi Acara, Sekretaris',
     false,
     70

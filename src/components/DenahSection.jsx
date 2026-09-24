@@ -127,39 +127,18 @@ export default function DenahSection() {
 
         {/* Main Denah Showcase Card */}
         <div className="max-w-6xl mx-auto bg-slate-950 border border-slate-800 rounded-3xl p-4 sm:p-8 shadow-2xl relative">
-          {/* Top Bar with actions */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-800">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-red-600/20 border border-red-500/30 text-red-400 flex items-center justify-center shrink-0">
-                <Map className="w-5 h-5" />
-              </div>
-              <div>
-                <h3 className="text-base sm:text-lg font-black text-white uppercase tracking-tight">
-                  Peta Tata Letak & Zona Lomba
-                </h3>
-                <p className="text-xs text-slate-400 font-mono">
-                  Kampus Terpadu Madrasah Mu'allimin Sedayu
-                </p>
-              </div>
+          {/* Top Bar */}
+          <div className="flex items-center gap-3 pb-6 border-b border-slate-800">
+            <div className="w-10 h-10 rounded-xl bg-red-600/20 border border-red-500/30 text-red-400 flex items-center justify-center shrink-0">
+              <Map className="w-5 h-5" />
             </div>
-
-            <div className="flex items-center gap-2.5">
-              <button
-                type="button"
-                onClick={() => setIsZoomOpen(true)}
-                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-xs font-bold transition-all flex items-center gap-2 border border-slate-700 hover:border-slate-600 cursor-pointer shadow-md"
-              >
-                <Maximize2 className="w-3.5 h-3.5 text-yellow-400" />
-                <span>Perbesar Layar Penuh</span>
-              </button>
-              <a
-                href="/denah-lbb-muallimin-2027.png"
-                download="DENAH-LBB-MUALLIMIN-2027.png"
-                className="px-4 py-2 bg-gradient-to-r from-red-600 to-amber-600 hover:from-red-500 hover:to-amber-500 text-white rounded-xl text-xs font-bold transition-all flex items-center gap-2 shadow-lg cursor-pointer"
-              >
-                <Download className="w-3.5 h-3.5" />
-                <span>Unduh Gambar HD</span>
-              </a>
+            <div>
+              <h3 className="text-base sm:text-lg font-black text-white uppercase tracking-tight">
+                Peta Tata Letak & Zona Lomba
+              </h3>
+              <p className="text-xs text-slate-400 font-mono">
+                Kampus Terpadu Madrasah Mu'allimin Sedayu
+              </p>
             </div>
           </div>
 

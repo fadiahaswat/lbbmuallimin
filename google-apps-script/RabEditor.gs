@@ -206,7 +206,7 @@ function handleRequest(e) {
       var rows = [
         ["RENCANA ANGGARAN BIAYA (RAB)", "", "", "", "", ""],
         ["LOMBA BARIS BERBARIS (LBB) MU'ALLIMIN TAHUN 2027", "", "", "", "", ""],
-        ["TEMA: \"JIWA KSATRIA, DERAP GEMILANG\"", "", "", "", "", ""],
+        ["TEMA: \"SEMANGAT SEBAGAI KSATRIA, BERJUANG DENGAN GEMBIRA!\"", "", "", "", "", ""],
         ["", "", "", "", "", ""],
         ["A. ESTIMASI PEMASUKAN", "", "", "", "", ""],
         ["No.", "Sumber Pemasukan", "Volume", "Satuan", "Harga Satuan (Rp)", "Jumlah (Rp)"],

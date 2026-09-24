@@ -113,7 +113,7 @@ async function updateDetailTimelinePanitia() {
   addDataRow(
     '1.',
     '1 – 14 September 2026',
-    'Pembentukan struktur panitia inti; Perumusan visi, misi, konsep dasar acara, penetapan tema ("JIWA KSATRIA, DERAP GEMILANG"), dan tagline lomba; Penyusunan draf awal Juklak & Juknis Lomba mengacu pada Perpang TNI No. 57 & 58.',
+    'Pembentukan struktur panitia inti; Perumusan visi, misi, konsep dasar acara, penetapan tema ("SEMANGAT SEBAGAI KSATRIA, BERJUANG DENGAN GEMBIRA!"), dan tagline lomba; Penyusunan draf awal Juklak & Juknis Lomba mengacu pada Perpang TNI No. 57 & 58.',
     'Tim Formatur, Ketua Pelaksana, Divisi Acara'
   );
   addDataRow(

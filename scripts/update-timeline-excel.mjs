@@ -95,7 +95,7 @@ async function updateTimelinePanitia() {
   addDataRow(
     '1.',
     '1 – 14 September 2026',
-    'Pembentukan struktur panitia inti; Perumusan visi, misi, konsep acara, tema ("JIWA KSATRIA, DERAP GEMILANG"), dan tagline; Penyusunan draf awal Juklak & Juknis Lomba mengacu Perpang TNI 57 & 58.',
+    'Pembentukan struktur panitia inti; Perumusan visi, misi, konsep acara, tema ("SEMANGAT SEBAGAI KSATRIA, BERJUANG DENGAN GEMBIRA!"), dan tagline; Penyusunan draf awal Juklak & Juknis Lomba mengacu Perpang TNI 57 & 58.',
     'Tim Formatur, Ketua Pelaksana, Divisi Acara'
   );
   addDataRow(
@@ -355,7 +355,7 @@ async function updateJadwalLBB() {
   });
 
   const rowsData = [
-    [1, '1 - 7 September 2026', 'Perencanaan', 'Pembentukan struktur inti panitia & penentuan tema "Jiwa Ksatria Derap Gemilang"', 'SK Panitia & Draf Konsep Acara', 'Tim Formatur & Ketua Pelaksana'],
+    [1, '1 - 7 September 2026', 'Perencanaan', 'Pembentukan struktur inti panitia & penentuan tema "Semangat Sebagai Ksatria, Berjuang Dengan Gembira!"', 'SK Panitia & Draf Konsep Acara', 'Tim Formatur & Ketua Pelaksana'],
     [2, '8 - 14 September 2026', 'Perencanaan', 'Perumusan materi lomba (Juklak/Juknis awal) mengacu Perpang TNI 57 & 58', 'Draf Juklak & Juknis PBB', 'Divisi Acara & Divisi Juri'],
     [3, '15 - 21 September 2026', 'Perencanaan', 'Penyusunan draf proposal & RAB terpadu (target Rp 64.622.250)', 'Draf Proposal & Master RAB', 'Sekretaris & Bendahara'],
     [4, '22 - 30 September 2026', 'Perencanaan', 'Audiensi Pimpinan Madrasah (dana subsidi Rp 15 jt) & izin fasilitas Kampus Terpadu Sedayu', 'Surat Izin & SK Subsidi', 'Ketua Pelaksana & Sekretaris'],
