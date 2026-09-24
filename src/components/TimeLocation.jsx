@@ -16,7 +16,7 @@ import {
   Ban,
   UserPlus
 } from 'lucide-react';
-import { EVENT, VENUE } from '../config.js';
+import { EVENT, VENUE, VENUE_INDUK } from '../config.js';
 import { useCompetition } from '../context/CompetitionContext.jsx';
 
 export default function TimeLocation() {
@@ -52,8 +52,14 @@ export default function TimeLocation() {
         <div className="grid lg:grid-cols-12 gap-12 lg:gap-16">
           {/* Left Column: Schedule & Times (Urutan Kronologis: Pendaftaran -> TM -> Uji Coba -> Hari H) */}
           <div className="lg:col-span-5 space-y-6 relative">
-            {/* Dynamic Multi-Color Stage Connector Line */}
-            <div className="absolute left-6 top-8 bottom-8 w-0.5 bg-gradient-to-b from-blue-500 via-purple-500 via-emerald-500 to-amber-500 lg:block hidden shadow-[0_0_15px_rgba(59,130,246,0.3)]"></div>
+            {/* Dynamic Multi-Color Stage Connector Line with explicit color stops matching each card */}
+            <div
+              className="absolute left-6 top-6 bottom-10 w-0.5 lg:block hidden"
+              style={{
+                background: 'linear-gradient(to bottom, #3b82f6 0%, #3b82f6 20%, #a855f7 35%, #a855f7 50%, #10b981 65%, #10b981 80%, #eab308 95%, #eab308 100%)',
+                boxShadow: '0 0 12px rgba(16, 185, 129, 0.4)'
+              }}
+            ></div>
 
             {/* Card 1: Pendaftaran Peleton (Biru / Blue) */}
             <div className="relative pl-0 lg:pl-16 group">
@@ -173,13 +179,14 @@ export default function TimeLocation() {
             </div>
           </div>
 
-          {/* Right Column: Venue & Live Zone Allocation */}
-          <div className="lg:col-span-7">
-            <div className="bg-slate-900 border border-slate-800 rounded-3xl p-2 relative overflow-hidden h-full">
+          {/* Right Column: Venue Cards (Kampus Terpadu & Kampus Induk) */}
+          <div className="lg:col-span-7 flex flex-col gap-6">
+            {/* CARD 1 (TOP): Kampus Terpadu Sedayu - Pelaksanaan & Uji Coba */}
+            <div className="bg-slate-900 border border-slate-800 rounded-3xl p-2 relative overflow-hidden">
               <div className="absolute inset-0 bg-[linear-gradient(to_bottom,transparent_50%,rgba(0,0,0,0.5)_50%)] bg-[length:100%_4px] opacity-20 pointer-events-none z-0"></div>
 
               {/* Watermark Cadet Illustration */}
-              <div className="absolute -right-8 -bottom-10 h-80 w-80 pointer-events-none opacity-15 hidden sm:block z-0">
+              <div className="absolute -right-8 -bottom-10 h-72 w-72 pointer-events-none opacity-15 hidden sm:block z-0">
                 <img
                   src="/fotoslide/4.png"
                   alt="Arena Paskibra"
@@ -188,162 +195,133 @@ export default function TimeLocation() {
                 />
               </div>
 
-              <div className="bg-slate-950/80 rounded-[1.3rem] p-6 md:p-8 h-full relative z-10">
-                <div className="border-b border-slate-800 pb-8 mb-8 space-y-6">
-                  <div className="flex flex-col sm:flex-row gap-5 items-start justify-between">
-                    <div className="flex gap-4 items-start">
-                      <div className="w-14 h-14 bg-red-900/20 text-red-500 border border-red-500/30 rounded-2xl flex items-center justify-center shrink-0 animate-pulse-slow">
-                        <MapPin className="w-7 h-7" />
-                      </div>
-                      <div>
-                        <h3 className="text-xl font-bold text-white uppercase mb-1.5">
+              <div className="bg-slate-950/80 rounded-[1.3rem] p-5 sm:p-6 relative z-10 space-y-5">
+                <div className="flex flex-col sm:flex-row gap-4 items-start justify-between">
+                  <div className="flex gap-3.5 items-start">
+                    <div className="w-12 h-12 bg-red-900/20 text-red-500 border border-red-500/30 rounded-2xl flex items-center justify-center shrink-0">
+                      <MapPin className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <div className="flex flex-wrap items-center gap-2 mb-1">
+                        <h3 className="text-lg font-bold text-white uppercase">
                           {VENUE.NAME}
                         </h3>
-                        <p className="text-slate-400 font-mono text-xs sm:text-sm leading-relaxed max-w-lg">
-                          <Navigation className="w-3.5 h-3.5 inline mr-1 text-slate-500" />
-                          <span>{VENUE.ADDRESS}</span>
-                        </p>
+                        <span className="text-[10px] font-black uppercase tracking-wider bg-red-500/15 text-red-400 border border-red-500/30 px-2 py-0.5 rounded">
+                          Pelaksanaan Lomba & Uji Coba
+                        </span>
                       </div>
+                      <p className="text-slate-400 font-mono text-xs leading-relaxed max-w-lg">
+                        <Navigation className="w-3.5 h-3.5 inline mr-1 text-slate-500" />
+                        <span>{VENUE.ADDRESS}</span>
+                      </p>
                     </div>
+                  </div>
 
+                  <a
+                    href={VENUE.MAPS_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-xs font-bold text-yellow-500 hover:text-white transition-colors border border-yellow-500/30 px-3.5 py-1.5 rounded-full hover:bg-yellow-500/10 shrink-0 self-start sm:self-auto"
+                  >
+                    Buka Google Maps <ExternalLink className="w-3 h-3" />
+                  </a>
+                </div>
+
+                {/* Interactive Google Maps Preview */}
+                <div className="relative rounded-2xl overflow-hidden border border-slate-800 bg-slate-900 shadow-inner group">
+                  <iframe
+                    title="Peta Lokasi Kampus Terpadu Madrasah Mu'allimin Sedayu"
+                    src={VENUE.MAPS_EMBED_URL || "https://maps.google.com/maps?q=-7.806784,110.2683762&hl=id&z=15&output=embed"}
+                    className="w-full h-44 sm:h-52 border-0 opacity-90 hover:opacity-100 transition-all duration-300"
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                  ></iframe>
+
+                  {/* Overlay info & direction button */}
+                  <div className="absolute bottom-2.5 left-2.5 right-2.5 flex items-center justify-between pointer-events-none gap-2">
+                    <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-xl bg-slate-950/90 backdrop-blur-md border border-slate-800 text-[10px] sm:text-[11px] font-semibold text-slate-300 shadow-lg truncate">
+                      <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
+                      <span className="truncate">Sedayu, Bantul &bull; GPS: -7.8067, 110.2683</span>
+                    </div>
                     <a
                       href={VENUE.MAPS_URL}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 text-xs font-bold text-yellow-500 hover:text-white transition-colors border border-yellow-500/30 px-4 py-2 rounded-full hover:bg-yellow-500/10 shrink-0 self-start sm:self-auto"
+                      className="pointer-events-auto inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-red-700/90 hover:bg-red-600 text-white text-[10px] sm:text-[11px] font-bold shadow-lg transition-colors shrink-0"
                     >
-                      Buka Google Maps <ExternalLink className="w-3 h-3" />
+                      <span>Petunjuk Arah</span>
+                      <ExternalLink className="w-3 h-3" />
                     </a>
-                  </div>
-
-                  {/* Interactive Google Maps Preview */}
-                  <div className="relative rounded-2xl overflow-hidden border border-slate-800 bg-slate-900 shadow-inner group">
-                    <iframe
-                      title="Peta Lokasi Kampus Terpadu Madrasah Mu'allimin Sedayu"
-                      src={VENUE.MAPS_EMBED_URL || "https://maps.google.com/maps?q=-7.806784,110.2683762&hl=id&z=15&output=embed"}
-                      className="w-full h-48 sm:h-56 border-0 filter grayscale contrast-125 opacity-80 group-hover:filter-none group-hover:opacity-100 transition-all duration-500"
-                      loading="lazy"
-                      referrerPolicy="no-referrer-when-downgrade"
-                    ></iframe>
-
-                    {/* Overlay info & direction button */}
-                    <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between pointer-events-none gap-2">
-                      <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-950/90 backdrop-blur-md border border-slate-800 text-[10px] sm:text-[11px] font-semibold text-slate-300 shadow-lg truncate">
-                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
-                        <span className="truncate">Sedayu, Bantul &bull; GPS: -7.8067, 110.2683</span>
-                      </div>
-                      <a
-                        href={VENUE.MAPS_URL}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="pointer-events-auto inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-700/90 hover:bg-red-600 text-white text-[10px] sm:text-[11px] font-bold shadow-lg transition-colors shrink-0"
-                      >
-                        <span>Petunjuk Arah</span>
-                        <ExternalLink className="w-3 h-3" />
-                      </a>
-                    </div>
-                  </div>
-                </div>
-
-                <h4 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-6 flex items-center gap-2">
-                  <span className="w-2 h-2 bg-green-500 rounded-full animate-ping"></span> Live Zone Allocation
-                </h4>
-
-                <div className="grid sm:grid-cols-2 gap-4">
-                  <div className="group p-4 bg-slate-900 border border-slate-800 rounded-xl hover:border-slate-600 transition-all">
-                    <div className="flex items-center gap-3 mb-2">
-                      <Flag className="w-4 h-4 text-blue-500" />
-                      <span className="font-bold text-white text-sm">Lapangan Mini Soccer</span>
-                    </div>
-                    <p className="text-xs text-slate-500 leading-relaxed group-hover:text-slate-400">
-                      Arena utama upacara pembukaan, penutupan, & pengumuman kejuaraan.
-                    </p>
-                  </div>
-
-                  <div className="group p-4 bg-slate-900 border border-slate-800 rounded-xl hover:border-slate-600 transition-all">
-                    <div className="flex items-center gap-3 mb-2">
-                      <Swords className="w-4 h-4 text-red-500" />
-                      <span className="font-bold text-white text-sm">Lap. Basket & Embung</span>
-                    </div>
-                    <p className="text-xs text-slate-500 leading-relaxed group-hover:text-slate-400">
-                      Daerah Persiapan (DP) & Arena Perlombaan Utama.
-                    </p>
-                  </div>
-
-                  <div className="group p-4 bg-slate-900 border border-slate-800 rounded-xl hover:border-slate-600 transition-all">
-                    <div className="flex items-center gap-3 mb-2">
-                      <ClipboardList className="w-4 h-4 text-yellow-500" />
-                      <span className="font-bold text-white text-sm">Perpustakaan</span>
-                    </div>
-                    <p className="text-xs text-slate-500 leading-relaxed group-hover:text-slate-400">
-                      Ruang Transit Juri, Rekapitulasi Nilai, & Pusat Kesekretariatan.
-                    </p>
-                  </div>
-
-                  <div className="group p-4 bg-slate-900 border border-slate-800 rounded-xl hover:border-slate-600 transition-all">
-                    <div className="flex items-center gap-3 mb-2">
-                      <Tent className="w-4 h-4 text-green-500" />
-                      <span className="font-bold text-white text-sm">Kelas & Area Pendukung</span>
-                    </div>
-                    <p className="text-xs text-slate-500 leading-relaxed group-hover:text-slate-400">
-                      Basecamp / Ruang Tunggu persiapan masing-masing peleton.
-                    </p>
-                  </div>
-
-                  <div className="group p-4 bg-slate-900 border border-slate-800 rounded-xl hover:border-slate-600 transition-all">
-                    <div className="flex items-center gap-3 mb-2">
-                      <Moon className="w-4 h-4 text-indigo-400" />
-                      <span className="font-bold text-white text-sm">Masjid Hj. Yuliana</span>
-                    </div>
-                    <p className="text-xs text-slate-500 leading-relaxed group-hover:text-slate-400">
-                      Fasilitas ibadah sholat (Dhuhur & Ashar) seluruh peserta & tamu.
-                    </p>
-                  </div>
-
-                  <div className="group p-4 bg-slate-900 border border-slate-800 rounded-xl hover:border-slate-600 transition-all">
-                    <div className="flex items-center gap-3 mb-2">
-                      <Car className="w-4 h-4 text-slate-400" />
-                      <span className="font-bold text-white text-sm">Area Parkir Kampus</span>
-                    </div>
-                    <p className="text-xs text-slate-500 leading-relaxed group-hover:text-slate-400">
-                      Parkir kendaraan peserta & tamu (terkoordinasi keamanan).
-                    </p>
-                  </div>
-
-                  <div className="group p-4 bg-slate-900 border border-slate-800 rounded-xl hover:border-orange-500/40 transition-all">
-                    <div className="flex items-center gap-3 mb-2">
-                      <Store className="w-4 h-4 text-orange-400" />
-                      <span className="font-bold text-white text-sm">Area Stan & Kuliner</span>
-                    </div>
-                    <p className="text-xs text-slate-400 leading-relaxed group-hover:text-slate-300">
-                      Terpusat di <strong className="text-slate-200">Kompleks Math'am</strong>, <strong className="text-slate-200">1918 Foodcourt</strong>, dan <strong className="text-slate-200">1918 Mart</strong> bagi tenant & stan kegiatan.
-                    </p>
-                  </div>
-
-                  <div className="group p-4 bg-red-950/25 border border-red-900/50 rounded-xl hover:border-red-500/60 transition-all">
-                    <div className="flex items-center gap-3 mb-2">
-                      <Ban className="w-4 h-4 text-red-500 shrink-0" />
-                      <span className="font-bold text-red-400 text-sm">Area Asrama (Steril)</span>
-                    </div>
-                    <p className="text-xs text-red-300/80 leading-relaxed group-hover:text-red-200">
-                      <strong className="text-red-300 font-bold">Dilarang masuk ke area Asrama.</strong> Zona khusus santri yang tertutup bagi peserta dan umum.
-                    </p>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
 
-        <div className="mt-12 flex items-start gap-4 p-4 rounded-xl bg-yellow-900/10 border border-yellow-700/30">
-          <div className="bg-yellow-600/20 p-2 rounded-lg text-yellow-500 shrink-0">
-            <AlertCircle className="w-5 h-5" />
-          </div>
-          <div>
-            <h5 className="text-white font-bold text-sm mb-1 uppercase tracking-wide">Ketertiban Zona & Catatan Tambahan</h5>
-            <p className="text-sm text-slate-400 leading-relaxed">
-              Area stan tenant dan kuliner dipusatkan di <strong>Kompleks Math'am, 1918 Foodcourt, dan 1918 Mart</strong>. Seluruh peserta, pembina, suporter, dan pengunjung <strong>DILARANG MASUK ke area Asrama Santri</strong> demi menjaga ketertiban, keamanan, dan privasi santri. Denah lokasi secara detail dan alur pergerakan peserta akan disosialisasikan saat pelaksanaan <strong>Technical Meeting</strong>.
-            </p>
+            {/* CARD 2 (BOTTOM): Kampus Induk (Letjend. S. Parman 68) - Technical Meeting */}
+            <div className="bg-slate-900 border border-slate-800 rounded-3xl p-2 relative overflow-hidden">
+              <div className="absolute inset-0 bg-[linear-gradient(to_bottom,transparent_50%,rgba(0,0,0,0.5)_50%)] bg-[length:100%_4px] opacity-20 pointer-events-none z-0"></div>
+
+              <div className="bg-slate-950/80 rounded-[1.3rem] p-5 sm:p-6 relative z-10 space-y-5">
+                <div className="flex flex-col sm:flex-row gap-4 items-start justify-between">
+                  <div className="flex gap-3.5 items-start">
+                    <div className="w-12 h-12 bg-blue-900/20 text-blue-400 border border-blue-500/30 rounded-2xl flex items-center justify-center shrink-0">
+                      <MapPin className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <div className="flex flex-wrap items-center gap-2 mb-1">
+                        <h3 className="text-lg font-bold text-white uppercase">
+                          {VENUE_INDUK.NAME}
+                        </h3>
+                        <span className="text-[10px] font-black uppercase tracking-wider bg-blue-500/15 text-blue-300 border border-blue-500/30 px-2 py-0.5 rounded">
+                          Technical Meeting (TM)
+                        </span>
+                      </div>
+                      <p className="text-slate-400 font-mono text-xs leading-relaxed max-w-lg">
+                        <Navigation className="w-3.5 h-3.5 inline mr-1 text-slate-500" />
+                        <span>{VENUE_INDUK.ADDRESS}</span>
+                      </p>
+                    </div>
+                  </div>
+
+                  <a
+                    href={VENUE_INDUK.MAPS_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-xs font-bold text-yellow-500 hover:text-white transition-colors border border-yellow-500/30 px-3.5 py-1.5 rounded-full hover:bg-yellow-500/10 shrink-0 self-start sm:self-auto"
+                  >
+                    Buka Google Maps <ExternalLink className="w-3 h-3" />
+                  </a>
+                </div>
+
+                {/* Interactive Google Maps Preview */}
+                <div className="relative rounded-2xl overflow-hidden border border-slate-800 bg-slate-900 shadow-inner group">
+                  <iframe
+                    title="Peta Lokasi Kampus Induk Madrasah Mu'allimin Yogyakarta"
+                    src={VENUE_INDUK.MAPS_EMBED_URL}
+                    className="w-full h-44 sm:h-52 border-0 opacity-90 hover:opacity-100 transition-all duration-300"
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                  ></iframe>
+
+                  {/* Overlay info & direction button */}
+                  <div className="absolute bottom-2.5 left-2.5 right-2.5 flex items-center justify-between pointer-events-none gap-2">
+                    <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-xl bg-slate-950/90 backdrop-blur-md border border-slate-800 text-[10px] sm:text-[11px] font-semibold text-slate-300 shadow-lg truncate">
+                      <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse shrink-0"></span>
+                      <span className="truncate">{VENUE_INDUK.DISTRICT} &bull; GPS: {VENUE_INDUK.GPS}</span>
+                    </div>
+                    <a
+                      href={VENUE_INDUK.MAPS_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="pointer-events-auto inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-blue-700/90 hover:bg-blue-600 text-white text-[10px] sm:text-[11px] font-bold shadow-lg transition-colors shrink-0"
+                    >
+                      <span>Petunjuk Arah</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

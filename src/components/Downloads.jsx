@@ -70,7 +70,7 @@ export default function Downloads() {
 
               <div>
                 <h3 className="text-2xl sm:text-3xl font-black text-white leading-tight">
-                  Buku Petunjuk Teknis (Juknis) Resmi LBB 2026
+                  Buku Petunjuk Teknis (Juknis) Resmi LBB 2027
                 </h3>
                 <p className="text-sm sm:text-base text-slate-300 mt-2 leading-relaxed font-normal">
                   Memuat regulasi perlombaan lengkap, tata tertib, susunan materi PBB baku, pedoman variasi & formasi, tata cara penilaian juri, serta denah kotak lomba di Lapangan Mu'allimin.
@@ -94,16 +94,26 @@ export default function Downloads() {
               <button
                 type="button"
                 onClick={e => handleDownload(e, DOWNLOADS[0])}
-                className="px-8 py-4 bg-gradient-to-r from-red-700 via-red-600 to-amber-600 hover:from-red-600 hover:to-amber-500 text-white rounded-2xl text-sm font-black uppercase tracking-wider shadow-xl shadow-red-950/50 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2.5 cursor-pointer"
+                className="px-8 py-3.5 bg-gradient-to-r from-red-700 via-red-600 to-amber-600 hover:from-red-600 hover:to-amber-500 text-white rounded-2xl text-xs sm:text-sm font-black uppercase tracking-wider shadow-xl shadow-red-950/50 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2.5 cursor-pointer"
               >
-                <ArrowDownToLine className="w-5 h-5" />
+                <ArrowDownToLine className="w-4 h-4 sm:w-5 sm:h-5" />
                 <span>Unduh Juknis (PDF)</span>
               </button>
+
+              <a
+                href={DOWNLOADS[1]?.url || 'https://docs.google.com/document/d/1rkVVB0XgycFRQgx8N4Zs7K6LB6T2J0cjYTtmALxpDzM/edit?usp=sharing'}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-6 py-2.5 bg-slate-800/90 hover:bg-slate-700 text-slate-200 hover:text-white rounded-2xl text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer border border-slate-700"
+              >
+                <FileText className="w-4 h-4 text-red-400" />
+                <span>Tata Tertib (Google Docs)</span>
+              </a>
 
               <button
                 type="button"
                 onClick={() => openModal('regWizard')}
-                className="px-6 py-3 bg-white/10 hover:bg-white/20 text-slate-200 hover:text-white rounded-2xl text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer border border-white/10"
+                className="px-6 py-2.5 bg-white/10 hover:bg-white/20 text-slate-200 hover:text-white rounded-2xl text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer border border-white/10"
               >
                 <Sparkles className="w-4 h-4 text-amber-400" />
                 <span>Buka Formulir Online</span>

@@ -27,7 +27,7 @@ export default function Navbar({ onOpenMobileMenu }) {
   const isSchoolLogo = avatarMeta?.isSchoolLogo;
 
   useEffect(() => {
-    const sections = ['home', 'about', 'registration', 'rules', 'prizes', 'downloads', 'contact'];
+    const sections = ['home', 'about', 'time-location', 'registration', 'rules', 'prizes', 'downloads', 'contact'];
     let ticking = false;
 
     function checkActiveSection() {
@@ -129,6 +129,7 @@ export default function Navbar({ onOpenMobileMenu }) {
             {[
               { href: '#home', label: 'Beranda' },
               { href: '#about', label: 'Tentang' },
+              { href: '#time-location', label: 'Waktu & Tempat' },
               { href: '#registration', label: 'Pendaftaran' },
               { href: '#rules', label: 'Juknis' },
               { href: '#prizes', label: 'Hadiah' },

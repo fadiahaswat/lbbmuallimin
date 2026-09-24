@@ -15,23 +15,10 @@ import {
 import { SITE, EVENT, VENUE, COMPETITION, PAYMENT, MATERIALS, PENALTIES } from '../../config.js';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
 
-export default function DocumentViewerModal({ isOpen, onClose, data }) {
-  const { teams, scores, docViewerData, goBack } = useCompetition();
-
-  const effectiveData = data || docViewerData || { docId: 'juknis' };
-  const [activeDocId, setActiveDocId] = useState(effectiveData.docId || 'juknis');
-
-  // If effectiveData changes, sync activeDocId
-  React.useEffect(() => {
-    if (effectiveData?.docId) {
-      setActiveDocId(effectiveData.docId);
-    }
-  }, [effectiveData?.docId]);
+export default function DocumentViewerModal({ isOpen, onClose }) {
+  const { goBack } = useCompetition();
 
   if (isOpen === false) return null;
-
-  const docId = activeDocId;
-  const team = effectiveData.team || (teams.length > 0 ? teams[0] : null);
 
   function handlePrint() {
     window.print();
@@ -44,14 +31,6 @@ export default function DocumentViewerModal({ isOpen, onClose, data }) {
       goBack();
     }
   };
-
-  const documentTabs = [
-    { id: 'juknis', label: 'Petunjuk Teknis (Juknis)' },
-    { id: 'form-a', label: 'Formulir A (Sekolah)' },
-    { id: 'form-b', label: 'Formulir B (25 Personel)' },
-    { id: 'form-c', label: 'Formulir C (Kesanggupan)' },
-    { id: 'berita-acara', label: 'Berita Acara Juri' },
-  ];
 
   return (
     <div className="min-h-screen bg-slate-200/70 text-slate-900 flex flex-col selection:bg-red-200">
@@ -76,7 +55,7 @@ export default function DocumentViewerModal({ isOpen, onClose, data }) {
                 <span className="text-[10px] font-black uppercase tracking-widest text-yellow-400 block leading-none">
                   Dokumen Resmi
                 </span>
-                <span className="text-xs font-bold text-white">LBB Mu'allimin 2027</span>
+                <span className="text-xs font-bold text-white">Petunjuk Teknis (Juknis) LBB Mu'allimin 2027</span>
               </div>
             </div>
           </div>
@@ -90,25 +69,6 @@ export default function DocumentViewerModal({ isOpen, onClose, data }) {
               <span>Cetak / Simpan PDF</span>
             </button>
           </div>
-        </div>
-
-        {/* Document Switcher Tab Bar */}
-        <div className="max-w-6xl mx-auto mt-3 pt-2 border-t border-slate-800/80 flex items-center gap-2 overflow-x-auto pb-1 text-xs">
-          <span className="text-[11px] font-bold text-slate-400 mr-1 shrink-0">Pilih Dokumen:</span>
-          {documentTabs.map(tab => (
-            <button
-              key={tab.id}
-              type="button"
-              onClick={() => setActiveDocId(tab.id)}
-              className={`px-3 py-1.5 rounded-xl font-bold transition-all shrink-0 ${
-                activeDocId === tab.id
-                  ? 'bg-red-700 text-white shadow-md'
-                  : 'bg-slate-900 text-slate-300 hover:bg-slate-800 hover:text-white border border-slate-800'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
         </div>
       </header>
 
@@ -133,9 +93,8 @@ export default function DocumentViewerModal({ isOpen, onClose, data }) {
           </div>
 
           {/* DOKUMEN: JUKNIS RESMI */}
-          {docId === 'juknis' && (
-            <div className="space-y-4 font-sans text-xs sm:text-sm text-slate-800">
-              <div className="text-center mb-6">
+          <div className="space-y-4 font-sans text-xs sm:text-sm text-slate-800">
+            <div className="text-center mb-6">
                 <h3 className="font-black text-lg uppercase underline">PETUNJUK TEKNIS PELAKSANAAN</h3>
                 <span className="font-bold text-xs text-slate-500">Nomor: 001/PAN-LBB/MUALLIMIN/IX/2027</span>
               </div>
@@ -157,16 +116,50 @@ export default function DocumentViewerModal({ isOpen, onClose, data }) {
 
               <div className="space-y-2 pt-2">
                 <h4 className="font-black text-sm uppercase text-red-700">BAB III: DURASI & ARENA LOMBA</h4>
-                <p>1. Waktu tampil tiap peleton adalah <strong>{COMPETITION.PERFORMANCE_TIME_LIMIT_MINUTES} menit</strong>.</p>
+                <p>1. Waktu tampil: <strong>10 menit</strong> untuk tingkat SD/MI (Arena 1: Lapangan Basket) dan <strong>13 menit</strong> untuk tingkat SMP/MTs (Arena 2: Pelataran Embung).</p>
                 <p>2. Perhitungan waktu dimulai saat Komandan Peleton menginjak garis arena lomba dan berakhir saat peleton melintasi garis keluar.</p>
-                <p>3. Ukuran arena perlombaan berukuran <strong>{VENUE.FIELD_SIZE}</strong> berpaving rata.</p>
+                <p>3. Ukuran arena perlombaan: <strong>25m × 14m</strong> (SD/MI) dan <strong>26m × 15m</strong> (SMP/MTs) berpaving rata di Kampus Terpadu Sedayu.</p>
+                <div className="mt-4 border border-slate-200 rounded-xl p-3 bg-white shadow-sm">
+                  <div className="text-xs font-bold text-slate-700 mb-2 flex items-center justify-between">
+                    <span>Lampiran: Denah Area Perlombaan 2027</span>
+                    <a
+                      href="/denah-lbb-muallimin-2027.png"
+                      download="DENAH-LBB-MUALLIMIN-2027.png"
+                      className="text-red-700 hover:text-red-800 text-[11px] font-bold inline-flex items-center gap-1"
+                    >
+                      <Download className="w-3.5 h-3.5" />
+                      Unduh Denah HD
+                    </a>
+                  </div>
+                  <div className="rounded-lg overflow-hidden bg-white border border-slate-100 flex items-center justify-center p-2">
+                    <img
+                      src="/denah-lbb-muallimin-2027.png"
+                      alt="Denah Area Perlombaan LBB Mu'allimin 2027"
+                      className="max-h-96 w-auto object-contain mx-auto"
+                      loading="lazy"
+                    />
+                  </div>
+                </div>
               </div>
 
               <div className="space-y-2 pt-2">
                 <h4 className="font-black text-sm uppercase text-red-700">BAB IV: PENILAIAN & DEWAN JURI</h4>
-                <p>1. Penilaian dilakukan oleh Dewan Juri independen dan berkompeten dari unsur <strong>{COMPETITION.JURY_MEMBERS}</strong>.</p>
+                <p>1. Penilaian dilakukan oleh 6 Dewan Juri independen dan berkompeten dari unsur <strong>TNI, POLRI, dan PPI DIY</strong> (3 Juri SD/MI & 3 Juri SMP/MTs).</p>
                 <p>2. Unsur penilaian meliputi: PBB Dasar & Variasi ({COMPETITION.SCORING_PROPORTIONS.PBB}%), Kepemimpinan Komandan Peleton ({COMPETITION.SCORING_PROPORTIONS.DANTON}%), serta Formasi & Kerapian.</p>
                 <p>3. Keputusan Dewan Juri bersifat <strong>mutlak dan tidak dapat diganggu gugat</strong>.</p>
+              </div>
+
+              <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-center justify-between text-xs">
+                <span className="text-red-900 font-semibold">Tersedia versi dokumen interaktif lengkap di Google Docs:</span>
+                <a
+                  href="https://docs.google.com/document/d/1BN1RuwDcEiuibVvoBG4-5R7Rq8neV5st3nAZoISVQi0/edit?usp=sharing"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-3 py-1 bg-red-700 hover:bg-red-800 text-white font-bold rounded shadow transition-colors inline-flex items-center gap-1.5"
+                >
+                  <BookOpen className="w-3.5 h-3.5" />
+                  Buka Google Docs
+                </a>
               </div>
 
               <div className="pt-8 flex justify-end text-center text-xs">
@@ -181,251 +174,6 @@ export default function DocumentViewerModal({ isOpen, onClose, data }) {
                 </div>
               </div>
             </div>
-          )}
-
-          {/* DOKUMEN: FORMULIR A (INSTANSI) */}
-          {docId === 'form-a' && (
-            <div className="space-y-4 font-sans text-xs sm:text-sm text-slate-800">
-              <div className="text-center mb-6">
-                <h3 className="font-black text-lg uppercase underline">FORMULIR A: IDENTITAS SEKOLAH & KONTINGEN</h3>
-                <span className="font-bold text-xs text-slate-500">LBB MU'ALLIMIN YOGYAKARTA 2027</span>
-              </div>
-
-              <table className="w-full border-collapse border border-slate-300 text-xs">
-                <tbody>
-                  <tr>
-                    <td className="border border-slate-300 p-2 font-bold bg-slate-50 w-1/3">Nama Sekolah/Madrasah</td>
-                    <td className="border border-slate-300 p-2 font-bold text-slate-900">{team?.schoolName || '-'}</td>
-                  </tr>
-                  <tr>
-                    <td className="border border-slate-300 p-2 font-bold bg-slate-50">Jenjang Pendidikan</td>
-                    <td className="border border-slate-300 p-2">{team?.jenjang || '-'}</td>
-                  </tr>
-                  <tr>
-                    <td className="border border-slate-300 p-2 font-bold bg-slate-50">Nama Peleton</td>
-                    <td className="border border-slate-300 p-2">{team?.platoonName || '-'}</td>
-                  </tr>
-                  <tr>
-                    <td className="border border-slate-300 p-2 font-bold bg-slate-50">Kategori Peleton</td>
-                    <td className="border border-slate-300 p-2">{team?.category || '-'}</td>
-                  </tr>
-                  <tr>
-                    <td className="border border-slate-300 p-2 font-bold bg-slate-50">Nama Pembina / Official</td>
-                    <td className="border border-slate-300 p-2">{team?.coachName || '-'}</td>
-                  </tr>
-                  <tr>
-                    <td className="border border-slate-300 p-2 font-bold bg-slate-50">No. WhatsApp / HP</td>
-                    <td className="border border-slate-300 p-2 font-mono">{team?.waNumber || '-'}</td>
-                  </tr>
-                  <tr>
-                    <td className="border border-slate-300 p-2 font-bold bg-slate-50">Email Resmi</td>
-                    <td className="border border-slate-300 p-2">{team?.email || '-'}</td>
-                  </tr>
-                  <tr>
-                    <td className="border border-slate-300 p-2 font-bold bg-slate-50">Status Pendaftaran</td>
-                    <td className="border border-slate-300 p-2 uppercase font-bold text-emerald-700">{team?.status || '-'}</td>
-                  </tr>
-                </tbody>
-              </table>
-
-              <div className="pt-8 flex justify-between text-center text-xs">
-                <div>
-                  <p>Mengetahui,</p>
-                  <p className="font-bold mt-1">Kepala Sekolah / Madrasah</p>
-                  <div className="h-16"></div>
-                  <p className="font-bold underline">( .................................................... )</p>
-                  <p className="text-[10px] text-slate-500">NIP/NBM.</p>
-                </div>
-                <div>
-                  <p>Yogyakarta, {new Date().toLocaleDateString('id-ID')}</p>
-                  <p className="font-bold mt-1">Pembina Peleton,</p>
-                  <div className="h-16"></div>
-                  <p className="font-bold underline">( {team?.coachName || '....................................................'} )</p>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* DOKUMEN: FORMULIR B (ROSTER 25 PERSONEL) */}
-          {docId === 'form-b' && (
-            <div className="space-y-4 font-sans text-xs text-slate-800">
-              <div className="text-center mb-4">
-                <h3 className="font-black text-base sm:text-lg uppercase underline">FORMULIR B: DAFTAR SUSUNAN 25 PERSONEL PELETON</h3>
-                <p className="font-bold text-xs text-slate-600">
-                  {team?.schoolName || '-'} {team?.regCode ? `(${team.regCode})` : ''}
-                </p>
-              </div>
-
-              {/* Danton Box */}
-              <div className="border border-slate-300 rounded-xl p-3 bg-slate-50 flex items-center justify-between">
-                <div>
-                  <span className="text-[10px] font-black uppercase text-red-700 block">Komandan Peleton (Danton):</span>
-                  <span className="font-bold text-sm text-slate-900">{team?.roster?.danton?.name || '-'}</span>
-                </div>
-                <div className="text-right text-[11px] text-slate-500">
-                  <span>NISN: <strong>{team?.roster?.danton?.nisn || '-'}</strong></span> • 
-                  <span> Kelas: <strong>{team?.roster?.danton?.class || '-'}</strong></span>
-                </div>
-              </div>
-
-              {/* Tabel Pasukan Inti */}
-              <table className="w-full border-collapse border border-slate-300 text-[10px]">
-                <thead>
-                  <tr className="bg-slate-100 font-bold">
-                    <th className="border border-slate-300 p-1 w-6">No</th>
-                    <th className="border border-slate-300 p-1 text-left">Nama Lengkap Siswa</th>
-                    <th className="border border-slate-300 p-1 w-12">Saf</th>
-                    <th className="border border-slate-300 p-1 w-14">Banjar</th>
-                    <th className="border border-slate-300 p-1 w-20">NISN</th>
-                    <th className="border border-slate-300 p-1 w-12">Kelas</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {team?.roster?.pasukan?.map((p, idx) => (
-                    <tr key={p.id}>
-                      <td className="border border-slate-300 p-1 text-center font-bold">{idx + 1}</td>
-                      <td className="border border-slate-300 p-1 font-semibold">{p.name}</td>
-                      <td className="border border-slate-300 p-1 text-center">{p.safNumber}</td>
-                      <td className="border border-slate-300 p-1 text-center">{p.banjarNumber}</td>
-                      <td className="border border-slate-300 p-1 font-mono text-center">{p.nisn}</td>
-                      <td className="border border-slate-300 p-1 text-center">{p.class}</td>
-                    </tr>
-                  )) || (
-                    Array.from({ length: 21 }).map((_, i) => (
-                      <tr key={i}>
-                        <td className="border border-slate-300 p-1 text-center">{i + 1}</td>
-                        <td className="border border-slate-300 p-1">...................................................</td>
-                        <td className="border border-slate-300 p-1 text-center">{Math.ceil((i + 1) / 7)}</td>
-                        <td className="border border-slate-300 p-1 text-center">{(i % 7) + 1}</td>
-                        <td className="border border-slate-300 p-1 text-center">-</td>
-                        <td className="border border-slate-300 p-1 text-center">-</td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-
-              {/* Cadangan & Official */}
-              <div className="grid grid-cols-2 gap-3 pt-2 text-[11px]">
-                <div className="border p-2 rounded-lg bg-slate-50">
-                  <span className="font-bold block text-slate-800 uppercase mb-1">3 Personel Cadangan:</span>
-                  {team?.roster?.cadangan?.map((c, i) => (
-                    <div key={c.id}>C{i + 1}. {c.name} ({c.nisn || '-'})</div>
-                  )) || <div>1. ................................. 2. ................................. 3. .................................</div>}
-                </div>
-                <div className="border p-2 rounded-lg bg-slate-50">
-                  <span className="font-bold block text-slate-800 uppercase mb-1">Tim Official (3 Orang):</span>
-                  {team?.roster?.officials?.map(o => (
-                    <div key={o.id}>• {o.role}: {o.name}</div>
-                  )) || <div>• Pelatih 1: ............................. • Pelatih 2: .............................</div>}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* DOKUMEN: FORMULIR C (PERNYATAAN) */}
-          {docId === 'form-c' && (
-            <div className="space-y-4 font-sans text-xs sm:text-sm text-slate-800 leading-relaxed">
-              <div className="text-center mb-6">
-                <h3 className="font-black text-lg uppercase underline">FORMULIR C: SURAT PERNYATAAN DAN KESANGGUPAN</h3>
-                <span className="font-bold text-xs text-slate-500">LBB MU'ALLIMIN YOGYAKARTA 2027</span>
-              </div>
-
-              <p>Yang bertanda tangan di bawah ini:</p>
-              <div className="pl-4 space-y-1">
-                <div>Nama Lengkap : <strong>{team?.coachName || '...................................................'}</strong></div>
-                <div>Jabatan / Peran : Pembina / Pelatih Peleton</div>
-                <div>Asal Instansi/Sekolah : <strong>{team?.schoolName || '...................................................'}</strong></div>
-                <div>No. Handphone/WA : {team?.waNumber || '...................................................'}</div>
-              </div>
-
-              <p className="pt-2">Dengan ini menyatakan dengan penuh kesadaran dan tanggung jawab bahwa:</p>
-              <ol className="list-decimal pl-5 space-y-2">
-                <li>Seluruh personil yang kami daftarkan adalah benar siswa/siswi aktif dari sekolah kami yang sah.</li>
-                <li>Sanggup mematuhi dan tunduk pada seluruh Petunjuk Teknis, Tata Tertib, dan Regulasi LBB Mu'allimin 2027.</li>
-                <li>Menerima segala keputusan Dewan Juri secara mutlak dan tidak dapat diganggu gugat oleh pihak manapun.</li>
-                <li>Bersedia menjaga sportivitas, etika, kesopanan, dan kebersihan lingkungan kampus selama perlombaan berlangsung.</li>
-              </ol>
-
-              <div className="pt-8 flex justify-end text-center text-xs">
-                <div>
-                  <p>Yogyakarta, {new Date().toLocaleDateString('id-ID')}</p>
-                  <p className="font-bold mt-1">Yang Membuat Pernyataan,</p>
-                  <div className="h-16 flex items-center justify-center text-slate-300 italic text-[10px]">
-                    (Materai Rp10.000)
-                  </div>
-                  <p className="font-bold underline">( {team?.coachName || '...................................................'} )</p>
-                  <p className="text-[10px] text-slate-500">Pembina Peleton</p>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* DOKUMEN: BERITA ACARA REKAPITULASI NILAI DEWAN JURI */}
-          {docId === 'berita-acara' && (
-            <div className="space-y-4 font-sans text-xs text-slate-800">
-              <div className="text-center mb-6">
-                <h3 className="font-black text-base sm:text-lg uppercase underline">BERITA ACARA REKAPITULASI HASIL PENILAIAN DEWAN JURI</h3>
-                <span className="font-bold text-xs text-slate-500">Nomor: 009/BA-JURI/LBB-MUALLIMIN/I/2027</span>
-              </div>
-
-              <p>
-                Pada hari ini, <strong>{EVENT.COMPETITION_DATE}</strong>, bertempat di {VENUE.NAME}, Dewan Juri Lomba Baris-Berbaris Mu'allimin 2027 telah melaksanakan penilaian teknis dan rekapitulasi nilai akhir dengan hasil sebagai berikut:
-              </p>
-
-              {/* Tabel Rekapitulasi */}
-              <table className="w-full border-collapse border border-slate-300 text-[11px] my-3">
-                <thead>
-                  <tr className="bg-slate-100">
-                    <th className="border border-slate-300 p-1.5">Rank</th>
-                    <th className="border border-slate-300 p-1.5 text-left">Nama Sekolah & Peleton</th>
-                    <th className="border border-slate-300 p-1.5">Jenjang</th>
-                    <th className="border border-slate-300 p-1.5 text-center">Nilai Danton</th>
-                    <th className="border border-slate-300 p-1.5 text-center">Nilai PBB</th>
-                    <th className="border border-slate-300 p-1.5 text-center">Penalti</th>
-                    <th className="border border-slate-300 p-1.5 text-right font-black">Total Poin</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {teams
-                    .filter(t => scores[t.id])
-                    .map(t => ({ ...t, score: scores[t.id] }))
-                    .sort((a, b) => b.score.finalScore - a.score.finalScore)
-                    .map((t, idx) => (
-                      <tr key={t.id}>
-                        <td className="border border-slate-300 p-1 text-center font-bold">{idx + 1}</td>
-                        <td className="border border-slate-300 p-1 font-bold">{t.schoolName} ({t.platoonName})</td>
-                        <td className="border border-slate-300 p-1 text-center">{t.jenjang}</td>
-                        <td className="border border-slate-300 p-1 text-center font-mono">{t.score.danton.total}</td>
-                        <td className="border border-slate-300 p-1 text-center font-mono">{t.score.pbb.total}</td>
-                        <td className="border border-slate-300 p-1 text-center font-mono text-rose-700">-{t.score.penalties.totalPenalty}</td>
-                        <td className="border border-slate-300 p-1 text-right font-mono font-black">{t.score.finalScore}</td>
-                      </tr>
-                    ))}
-                </tbody>
-              </table>
-
-              <p className="text-[11px]">
-                Demikian Berita Acara ini dibuat dengan sebenar-benarnya berdasarkan ketentuan teknis yang berlaku, bersifat mutlak dan tidak dapat diganggu gugat.
-              </p>
-
-              <div className="pt-6 grid grid-cols-2 text-center text-xs">
-                <div>
-                  <p>Mengetahui,</p>
-                  <p className="font-bold">Ketua Panitia LBB Mu'allimin 2027</p>
-                  <div className="h-16"></div>
-                  <p className="font-bold underline">( Falhan Zuhdi Mubarok )</p>
-                </div>
-                <div>
-                  <p>Ditetapkan di Bantul, DIY</p>
-                  <p className="font-bold">Ketua Dewan Juri (TNI/Polri)</p>
-                  <div className="h-16"></div>
-                  <p className="font-bold underline">( Mayor (Mar) Bambang S., S.E. )</p>
-                </div>
-              </div>
-            </div>
-          )}
-
         </div>
       </main>
 

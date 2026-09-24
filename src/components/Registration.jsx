@@ -134,11 +134,6 @@ export default function Registration() {
 
           <p className="text-slate-500 text-sm md:text-base font-medium leading-relaxed max-w-2xl mx-auto">
             Pedoman resmi tata cara pendaftaran LBB Mu’allimin 2027.
-            <span className="mx-2 hidden sm:inline">•</span>
-            <span className="inline-flex items-center gap-1.5 mt-1 sm:mt-0 text-red-700 font-bold bg-red-50 px-2.5 py-0.5 rounded-md border border-red-100/50 text-xs">
-              <AlertCircle className="w-3.5 h-3.5 stroke-[2.5]" />
-              Sistem First Come, First Served
-            </span>
           </p>
         </div>
 
@@ -332,17 +327,6 @@ export default function Registration() {
                 </div>
               </div>
             </div>
-
-            {/* Bottom Footer Info */}
-            <div className="relative z-10 mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-              <span className="inline-flex items-center gap-1.5 font-semibold text-slate-700">
-                <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-                Zona Waktu WIB
-              </span>
-              <span className="font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded text-[11px]">
-                Jadwal Resmi
-              </span>
-            </div>
           </div>
 
           {/* Quota & Personnel Card */}
@@ -437,17 +421,6 @@ export default function Registration() {
                   </div>
                 </div>
               </div>
-            </div>
-
-            {/* Bottom Footer Info */}
-            <div className="relative z-10 mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-              <span className="inline-flex items-center gap-1.5 font-semibold text-slate-700">
-                <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                Standar Juknis Resmi
-              </span>
-              <span className="font-bold text-red-700 bg-red-50 px-2 py-0.5 rounded text-[11px]">
-                Validasi Faktual
-              </span>
             </div>
           </div>
 
@@ -588,9 +561,6 @@ export default function Registration() {
             {/* Bottom Footer Info */}
             <div className="relative z-10 mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
               <span className="text-[11px] text-slate-600 font-medium">Unggah bukti di portal</span>
-              <span className="font-bold text-emerald-700 bg-emerald-50 border border-emerald-200/60 px-2 py-0.5 rounded text-[11px]">
-                Verifikasi 1×24 Jam
-              </span>
             </div>
           </div>
         </div>
@@ -632,10 +602,6 @@ export default function Registration() {
                   Buka portal resmi dan klik tombol <strong className="text-slate-800">"Daftar Peleton"</strong> untuk membuka formulir wizard digital.
                 </p>
               </div>
-              <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                <span>Langkah Awal</span>
-                <span className="text-slate-600">Online</span>
-              </div>
             </div>
 
             {/* Step 2 */}
@@ -655,10 +621,6 @@ export default function Registration() {
                 <p className="text-xs text-slate-500 leading-relaxed">
                   Pilih jenjang (SD/SMP), masukkan email akun Google aktif, data sekolah, upload logo, & pilih tipe peleton.
                 </p>
-              </div>
-              <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                <span>Tahap 1 Wizard</span>
-                <span className="text-slate-600">Profil Tim</span>
               </div>
             </div>
 
@@ -680,10 +642,6 @@ export default function Registration() {
                   Lengkapi identitas Danton & Kartu Pelajar, serta nama Official/Pelatih, No. WhatsApp aktif, & KTP.
                 </p>
               </div>
-              <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                <span>Tahap 2 Wizard</span>
-                <span className="text-slate-600">Personel Inti</span>
-              </div>
             </div>
 
             {/* Step 4 */}
@@ -703,10 +661,6 @@ export default function Registration() {
                 <p className="text-xs text-slate-500 leading-relaxed">
                   Unggah bukti transfer pembayaran dan bubuhkan tanda tangan digital Pakta Integritas Online di kanvas resmi.
                 </p>
-              </div>
-              <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                <span>Tahap 3 Wizard</span>
-                <span className="text-slate-600">TTD Digital</span>
               </div>
             </div>
 
@@ -729,10 +683,6 @@ export default function Registration() {
                   Terima Kode Registrasi resmi, panitia memverifikasi dalam 1×24 jam, dan pantau status via <strong>Dashboard Tim</strong>.
                 </p>
               </div>
-              <div className="mt-4 pt-3 border-t border-red-200 flex items-center justify-between text-[10px] font-black text-red-800 uppercase tracking-wider">
-                <span>Finalisasi</span>
-                <span className="bg-red-600 text-white px-1.5 py-0.5 rounded text-[9px]">Selesai</span>
-              </div>
             </div>
           </div>
 
@@ -741,7 +691,7 @@ export default function Registration() {
             <div className="absolute top-0 right-0 w-72 h-72 bg-red-600/10 rounded-full blur-3xl pointer-events-none"></div>
             <div className="relative z-10 text-left">
               <span className="text-yellow-400 font-extrabold uppercase text-[11px] tracking-wider block mb-1">
-                Portal Registrasi Resmi LBB 2026
+                Portal Registrasi Resmi LBB 2027
               </span>
               <h4 className="text-lg sm:text-xl font-black text-white tracking-tight">
                 Siap Mendaftarkan Peleton Terbaik Sekolah Anda?

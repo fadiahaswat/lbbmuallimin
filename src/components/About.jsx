@@ -90,7 +90,7 @@ export default function About() {
                     <HeartHandshake className="w-5 h-5" />
                   </div>
                   <div>
-                    <h4 className="font-bold text-base text-white">Jiwa Ksatria <span className="text-yellow-400/90 text-xs font-semibold">(Internal)</span></h4>
+                    <h4 className="font-bold text-base text-white">Jiwa Ksatria</h4>
                     <p className="text-sm text-slate-400 mt-0.5 leading-relaxed">Integritas, Kehormatan, Tanggung Jawab, dan Mental Pantang Menyerah.</p>
                   </div>
                 </div>
@@ -99,7 +99,7 @@ export default function About() {
                     <Activity className="w-5 h-5" />
                   </div>
                   <div>
-                    <h4 className="font-bold text-base text-white">Derap Gemilang <span className="text-yellow-400/90 text-xs font-semibold">(Eksternal)</span></h4>
+                    <h4 className="font-bold text-base text-white">Derap Gemilang</h4>
                     <p className="text-sm text-slate-400 mt-0.5 leading-relaxed">Keunggulan Teknis, Presisi Gerak, Kekompakan, dan Prestasi Cemerlang.</p>
                   </div>
                 </div>
@@ -252,10 +252,7 @@ export default function About() {
               </div>
 
               {/* Card Footer: Personnel Summary & Action Link */}
-              <div className="relative z-10 pt-4 border-t border-slate-100 flex items-center justify-between">
-                <span className="text-xs font-bold text-red-800 bg-red-100/90 px-3 py-1 rounded-lg">
-                  Minimal Tampil: 22 Personil
-                </span>
+              <div className="relative z-10 pt-4 border-t border-slate-100 flex items-center justify-end">
                 <span className="text-xs font-bold text-red-700 flex items-center gap-1.5 group-hover:text-red-800">
                   Lihat Juknis SD <ArrowRight className="w-4 h-4 text-red-600 group-hover:translate-x-1.5 transition-transform" />
                 </span>
@@ -349,10 +346,7 @@ export default function About() {
               </div>
 
               {/* Card Footer: Personnel Summary & Action Link */}
-              <div className="relative z-10 pt-4 border-t border-slate-100 flex items-center justify-between">
-                <span className="text-xs font-bold text-blue-800 bg-blue-100/90 px-3 py-1 rounded-lg">
-                  Minimal Tampil: 22 Personil
-                </span>
+              <div className="relative z-10 pt-4 border-t border-slate-100 flex items-center justify-end">
                 <span className="text-xs font-bold text-blue-700 flex items-center gap-1.5 group-hover:text-blue-800">
                   Lihat Juknis SMP <ArrowRight className="w-4 h-4 text-blue-600 group-hover:translate-x-1.5 transition-transform" />
                 </span>

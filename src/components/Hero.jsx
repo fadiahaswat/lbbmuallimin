@@ -38,8 +38,41 @@ export default function Hero() {
   const { openModal, setActiveView, settings } = useCompetition();
   const [activeCadetIndex, setActiveCadetIndex] = useState(0);
   const [loadedImages, setLoadedImages] = useState({});
+  const [scheduleIndex, setScheduleIndex] = useState(0);
 
   const regRangeText = settings?.eventDates?.registrationRangeText || EVENT.REGISTRATION_RANGE;
+
+  // Jadwal dinamis bergantian: Perlombaan -> Pendaftaran -> TM -> Uji Coba Lapangan
+  const schedules = [
+    {
+      label: 'Perlombaan',
+      date: EVENT.COMPETITION_DATE, // "Sabtu, 24 Januari 2027"
+      dotColor: 'bg-yellow-400',
+      pingColor: 'bg-yellow-400',
+      textColor: 'text-yellow-300',
+    },
+    {
+      label: 'Pendaftaran',
+      date: regRangeText, // "5 Oktober – 1 November 2026"
+      dotColor: 'bg-amber-500',
+      pingColor: 'bg-amber-400',
+      textColor: 'text-amber-300',
+    },
+    {
+      label: 'TM Peserta',
+      date: EVENT.TECHNICAL_MEETING_FULL_DATE || EVENT.TECHNICAL_MEETING_DATE, // "Sabtu, 10 Januari 2027"
+      dotColor: 'bg-blue-400',
+      pingColor: 'bg-blue-400',
+      textColor: 'text-blue-300',
+    },
+    {
+      label: 'Uji Coba Lapangan',
+      date: EVENT.FIELD_TRIAL_FULL_DATE || EVENT.FIELD_TRIAL_DATE, // "Minggu, 17 Januari 2027"
+      dotColor: 'bg-emerald-400',
+      pingColor: 'bg-emerald-400',
+      textColor: 'text-emerald-300',
+    },
+  ];
 
   // Preload remaining slides when browser is idle, and auto-rotate cadet illustration every 6 seconds
   useEffect(() => {
@@ -64,7 +97,15 @@ export default function Hero() {
       setActiveCadetIndex(prev => (prev + 1) % CADET_FIGURES.length);
     }, 6000);
 
-    return () => clearInterval(timer);
+    // Rotasi jadwal badge setiap 3 detik
+    const scheduleTimer = setInterval(() => {
+      setScheduleIndex(prev => (prev + 1) % 4);
+    }, 3200);
+
+    return () => {
+      clearInterval(timer);
+      clearInterval(scheduleTimer);
+    };
   }, []);
 
   function scrollToAbout() {
@@ -102,7 +143,7 @@ export default function Hero() {
                 <div className="absolute -inset-2 bg-gradient-to-r from-red-600/30 via-yellow-500/20 to-amber-500/30 rounded-2xl blur-xl opacity-60 group-hover:opacity-100 transition-opacity pointer-events-none" />
                 <img
                   src={logoImg}
-                  alt="Logo Resmi LBB Mu'allimin 2026"
+                  alt="Logo Resmi LBB Mu'allimin 2027"
                   className="relative h-20 sm:h-24 md:h-28 w-auto object-contain drop-shadow-[0_10px_20px_rgba(0,0,0,0.65)] filter brightness-110"
                   width="140"
                   height="140"
@@ -124,16 +165,25 @@ export default function Hero() {
               </div>
             </div>
 
-            {/* Event Registration Status Badge */}
-            <div className="relative inline-flex items-center gap-2.5 px-4 py-1.5 glass glass-shimmer rounded-full shadow-sm cursor-default overflow-hidden">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
-              </span>
-              <span className="text-[10px] sm:text-xs font-bold tracking-widest uppercase text-slate-200">
-                Pendaftaran: {regRangeText}
-              </span>
-            </div>
+            {/* Event Dynamic Rotating Schedule Badge */}
+            {(() => {
+              const currentSchedule = schedules[scheduleIndex];
+              return (
+                <div
+                  key={scheduleIndex}
+                  className="relative inline-flex items-center gap-2.5 px-4 py-1.5 glass glass-shimmer rounded-full shadow-sm cursor-default overflow-hidden animate-fade"
+                >
+                  <span className="relative flex h-2 w-2">
+                    <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${currentSchedule.pingColor} opacity-75`}></span>
+                    <span className={`relative inline-flex rounded-full h-2 w-2 ${currentSchedule.dotColor}`}></span>
+                  </span>
+                  <span className="text-[10px] sm:text-xs font-bold tracking-wider uppercase text-slate-200">
+                    <span className="text-white font-bold mr-1">{currentSchedule.label}:</span>
+                    <span>{currentSchedule.date}</span>
+                  </span>
+                </div>
+              );
+            })()}
 
 
             {/* Main Title - Original LBB Mu'allimin Styling */}

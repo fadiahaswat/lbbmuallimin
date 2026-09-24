@@ -97,7 +97,7 @@ export const EVENT = {
         "Kampus Induk Madrasah Mu\u2019allimin Muhammadiyah Yogyakarta, Jalan Letjen S. Parman No. 68, Wirobrajan, Kota Yogyakarta, Daerah Istimewa Yogyakarta.",
     TECHNICAL_MEETING_VENUE_NAME: "Kampus Induk Madrasah Mu\u2019allimin Muhammadiyah Yogyakarta",
     TECHNICAL_MEETING_ADDRESS: "Jl. Letjen S. Parman No.68, Notoprajan, Ngampilan / Wirobrajan, Kota Yogyakarta, DIY",
-    TECHNICAL_MEETING_MAPS_URL: "https://www.google.com/maps/dir/?api=1&destination=Madrasah+Mu'allimin+Muhammadiyah+Yogyakarta+Jl.+Letjen+S.+Parman+No.+68+Wirobrajan",
+    TECHNICAL_MEETING_MAPS_URL: "https://maps.app.goo.gl/8tSQHpribqPXTSA79",
 
     /** Uji Coba Lapangan */
     FIELD_TRIAL_DATE: '17 Januari 2027',
@@ -140,6 +140,17 @@ export const VENUE = {
 
     /** Ukuran arena/lapangan lomba untuk Juknis */
     FIELD_SIZE: '26m \u00D7 15m (SMP/MTs) & 25m \u00D7 14m (SD/MI)',
+};
+
+export const VENUE_INDUK = {
+    NAME: "Kampus Induk Madrasah Mu\u2019allimin",
+    SUBTITLE: "Lokasi Technical Meeting (TM)",
+    ADDRESS: "Jalan Letjen S. Parman No. 68, Notoprajan, Ngampilan / Wirobrajan, Kota Yogyakarta, D.I. Yogyakarta 55262.",
+    SHORT_ADDRESS: "Jl. Letjen S. Parman No. 68, Wirobrajan, Yogyakarta.",
+    MAPS_URL: "https://maps.app.goo.gl/8tSQHpribqPXTSA79",
+    MAPS_EMBED_URL: "https://maps.google.com/maps?q=-7.8075522,110.351427&hl=id&z=17&output=embed",
+    GPS: "-7.8076, 110.3514",
+    DISTRICT: "Wirobrajan, Kota Yogyakarta",
 };
 
 // ---------------------------------------------------------------------------
@@ -264,14 +275,38 @@ export const DOWNLOADS = [
     {
         id: 'juknis',
         title: 'Petunjuk Teknis Lengkap (Juknis)',
-        description: 'Dokumen panduan resmi pelaksanaan LBB Mu\'allimin 2027 yang memuat ketentuan lomba, materi PBB & Vafor, kriteria penilaian, dan tata tertib.',
-        size: '2.5 MB',
-        type: 'PDF',
-        url: '#',
+        description: 'Dokumen panduan teknis resmi pelaksanaan LBB Mu\'allimin 2027 yang memuat ketentuan lomba, materi urutan PBB baku & variasi formasi, serta sistem penilaian juri.',
+        size: 'Google Docs / PDF',
+        type: 'DOCS / PDF',
+        url: 'https://docs.google.com/document/d/1BN1RuwDcEiuibVvoBG4-5R7Rq8neV5st3nAZoISVQi0/edit?usp=sharing',
         badge: 'Wajib Unduh',
         featured: true,
         icon: 'BookOpen',
         colorScheme: 'blue',
+    },
+    {
+        id: 'tatib',
+        title: 'Tata Tertib Peserta & Official',
+        description: 'Peraturan tata tertib, hak & kewajiban peserta, pembina, serta official selama berada di lokasi perlombaan Kampus Terpadu Sedayu.',
+        size: 'Google Docs / PDF',
+        type: 'DOCS / PDF',
+        url: 'https://docs.google.com/document/d/1rkVVB0XgycFRQgx8N4Zs7K6LB6T2J0cjYTtmALxpDzM/edit?usp=sharing',
+        badge: 'Regulasi',
+        featured: false,
+        icon: 'Shield',
+        colorScheme: 'red',
+    },
+    {
+        id: 'denah',
+        title: 'Denah Area Perlombaan 2027',
+        description: 'Peta tata letak arena pos lomba SD & SMP, Daerah Persiapan (DP), basecamp peserta, panggung upacara, pos kesehatan, dan fasilitas kampus.',
+        size: 'Gambar HD PNG',
+        type: 'PNG / GAMBAR',
+        url: '/denah-lbb-muallimin-2027.png',
+        badge: 'Denah Lokasi',
+        featured: false,
+        icon: 'MapPin',
+        colorScheme: 'yellow',
     },
 ];
 

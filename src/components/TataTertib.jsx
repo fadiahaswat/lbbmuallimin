@@ -20,7 +20,7 @@ export default function TataTertib() {
             Tata Tertib <span className="text-red-700 decoration-4 decoration-slate-900 underline-offset-4">Peserta</span>
           </h2>
           <p className="text-slate-500 font-mono text-sm uppercase tracking-wide">
-            LOMBA BARIS – BERBARIS MUALLIMIN TAHUN 2026
+            LOMBA BARIS – BERBARIS MUALLIMIN TAHUN 2027
           </p>
         </div>
 
@@ -32,9 +32,9 @@ export default function TataTertib() {
               <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Ketentuan Umum</span>
             </div>
             <ol className="list-decimal list-outside pl-5 space-y-3 text-sm text-slate-600 leading-relaxed marker:font-bold marker:text-slate-900">
-              <li>Lomba Baris – Berbaris Mu’allimin Tahun 2026 (selanjutnya disingkat LBB MU’ALLIMIN 2026) merupakan lomba baris-berbaris tingkat Daerah Istimewa Yogyakarta yang diselenggarakan oleh Madrasah Mu’allimin Muhammadiyah Yogyakarta.</li>
-              <li>LBB MU’ALLIMIN 2026 dilaksanakan pada tanggal {EVENT.COMPETITION_DATE} di Kampus Terpadu Madrasah Muallimin Muhammadiyah Yogyakarta.</li>
-              <li>Peserta LBB MU’ALLIMIN 2026 merupakan siswa SD/MI sederajat dan SMP/MTs sederajat dalam lingkup Daerah Istimewa Yogyakarta, sesuai yang tertera pada formulir pendaftaran.</li>
+              <li>Lomba Baris – Berbaris Mu’allimin Tahun 2027 (selanjutnya disingkat LBB MU’ALLIMIN 2027) merupakan lomba baris-berbaris tingkat Daerah Istimewa Yogyakarta yang diselenggarakan oleh Madrasah Mu’allimin Muhammadiyah Yogyakarta.</li>
+              <li>LBB MU’ALLIMIN 2027 dilaksanakan pada tanggal {EVENT.COMPETITION_DATE} di Kampus Terpadu Madrasah Muallimin Muhammadiyah Yogyakarta.</li>
+              <li>Peserta LBB MU’ALLIMIN 2027 merupakan siswa SD/MI sederajat dan SMP/MTs sederajat dalam lingkup Daerah Istimewa Yogyakarta, sesuai yang tertera pada formulir pendaftaran.</li>
               <li>Tata tertib ini berlaku selama pelaksanaan lomba berlangsung.</li>
               <li>Seragam SD menggunakan seragam tonti sekolah atau seragam nasional merah putih lengkap beserta atributnya dan Seragam SMP menggunakan seragam tonti sekolah atau seragam OSIS lengkap beserta atributnya.</li>
             </ol>

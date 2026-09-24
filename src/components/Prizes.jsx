@@ -32,7 +32,7 @@ export default function Prizes() {
             <h3 className="text-3xl md:text-4xl font-black text-white uppercase italic tracking-tight mb-2">
               {PRIZES.ROLLING_TROPHY_TITLE}
             </h3>
-            <p className="text-slate-400 text-sm mb-8 font-medium">Penghargaan Tertinggi LBB Mu'allimin 2026</p>
+            <p className="text-slate-400 text-sm mb-8 font-medium">Penghargaan Tertinggi LBB Mu'allimin 2027</p>
 
             <div className="grid md:grid-cols-2 gap-4 text-left">
               <div className="glass p-4 rounded-xl hover:bg-white/10 transition-colors flex items-center gap-4">

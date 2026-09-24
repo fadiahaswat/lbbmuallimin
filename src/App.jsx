@@ -6,6 +6,7 @@ import MobileMenu from './components/MobileMenu.jsx';
 import Hero from './components/Hero.jsx';
 import About from './components/About.jsx';
 import TimeLocation from './components/TimeLocation.jsx';
+import DenahSection from './components/DenahSection.jsx';
 import Registration from './components/Registration.jsx';
 import Rules from './components/Rules.jsx';
 import MateriLomba from './components/MateriLomba.jsx';
@@ -84,6 +85,7 @@ function MainApp() {
             <Hero />
             <About />
             <TimeLocation />
+            <DenahSection />
             <Registration />
             <Rules />
             <MateriLomba />

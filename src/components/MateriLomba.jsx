@@ -14,7 +14,7 @@ export default function MateriLomba() {
 
     let text = `========================================================\n`;
     text += `${title}\n`;
-    text += `LOMBA BARIS - BERBARIS MU'ALLIMIN TAHUN 2026\n`;
+    text += `LOMBA BARIS - BERBARIS MU'ALLIMIN TAHUN 2027\n`;
     text += `${spec}\n`;
     text += `========================================================\n\n`;
     text += `URUTAN GERAKAN MATERI LOMBA:\n`;
@@ -53,7 +53,7 @@ export default function MateriLomba() {
       <html>
       <head>
         <meta charset="utf-8">
-        <title>${title} - LBB Mu'allimin 2026</title>
+        <title>${title} - LBB Mu'allimin 2027</title>
         <style>
           @page { size: A4 portrait; margin: 18mm 15mm; }
           body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11pt; line-height: 1.5; color: #0f172a; margin: 0; padding: 10px; }
@@ -72,7 +72,7 @@ export default function MateriLomba() {
       <body>
         <div class="kop">
           <div class="title">${title}</div>
-          <div class="sub">LOMBA BARIS – BERBARIS MU'ALLIMIN TAHUN 2026</div>
+          <div class="sub">LOMBA BARIS – BERBARIS MU'ALLIMIN TAHUN 2027</div>
           <div class="spec">${spec}</div>
         </div>
         <h4>Urutan Gerakan Materi Wajib:</h4>
@@ -110,10 +110,10 @@ export default function MateriLomba() {
             Regulasi Resmi PBB
           </span>
           <h2 className="text-4xl md:text-5xl font-black text-white uppercase italic tracking-tighter mb-4 leading-tight py-1">
-            Materi <span className="inline-block pr-3 sm:pr-4 pb-1 text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500">Lomba 2026</span>
+            Materi <span className="inline-block pr-3 sm:pr-4 pb-1 text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500">Lomba 2027</span>
           </h2>
           <p className="text-slate-400 max-w-2xl mx-auto text-sm font-medium">
-            Urutan Gerakan Wajib Sesuai Petunjuk Teknis Resmi LBB Mu’allimin 2026
+            Urutan Gerakan Wajib Sesuai Petunjuk Teknis Resmi LBB Mu’allimin 2027
           </p>
         </div>
 
@@ -132,7 +132,7 @@ export default function MateriLomba() {
                   MATERI LOMBA<br />
                   <span className="text-red-500">TINGKAT SD/MI SEDERAJAT</span>
                 </h3>
-                <p className="text-xs text-slate-400 font-mono mb-4">LOMBA BARIS – BERBARIS MU’ALLIMIN TAHUN 2026</p>
+                <p className="text-xs text-slate-400 font-mono mb-4">LOMBA BARIS – BERBARIS MU’ALLIMIN TAHUN 2027</p>
 
                 <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
                   <div className="inline-flex items-center gap-2.5 bg-red-900/25 border border-red-500/30 px-3.5 py-1.5 rounded-xl">
@@ -210,7 +210,7 @@ export default function MateriLomba() {
                   MATERI LOMBA<br />
                   <span className="text-blue-500">TINGKAT SMP/MTS SEDERAJAT</span>
                 </h3>
-                <p className="text-xs text-slate-400 font-mono mb-4">LOMBA BARIS – BERBARIS MU’ALLIMIN TAHUN 2026</p>
+                <p className="text-xs text-slate-400 font-mono mb-4">LOMBA BARIS – BERBARIS MU’ALLIMIN TAHUN 2027</p>
 
                 <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
                   <div className="inline-flex items-center gap-2.5 bg-blue-900/25 border border-blue-500/30 px-3.5 py-1.5 rounded-xl">

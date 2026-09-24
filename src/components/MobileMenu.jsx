@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import {
   Home,
   Info,
+  CalendarDays,
   ClipboardList,
   BookOpen,
   Trophy,
@@ -60,6 +61,7 @@ export default function MobileMenu({ isOpen, onClose }) {
   const links = [
     { href: '#home', label: 'Beranda', icon: Home },
     { href: '#about', label: 'Tentang', icon: Info },
+    { href: '#time-location', label: 'Waktu & Tempat', icon: CalendarDays },
     { href: '#registration', label: 'Pendaftaran', icon: ClipboardList },
     { href: '#rules', label: 'Juknis & Materi', icon: BookOpen },
     { href: '#prizes', label: 'Kategori & Hadiah', icon: Trophy },
