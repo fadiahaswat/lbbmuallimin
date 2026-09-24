@@ -116,8 +116,8 @@ export default function DenahSection() {
             <Compass className="w-4 h-4 text-yellow-400" />
             <span>Tata Ruang & Navigasi Arena</span>
           </div>
-          <h2 className="text-4xl md:text-5xl font-black uppercase italic tracking-tighter leading-tight py-1">
-            Denah Area <span className="inline-block pr-3 sm:pr-4 pb-1 text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-amber-400 to-red-500">Perlombaan</span>
+          <h2 className="text-4xl md:text-5xl font-black uppercase italic tracking-tighter leading-tight py-1 text-white">
+            Denah Area <span>Perlombaan</span>
           </h2>
           <div className="w-20 h-1.5 bg-red-600 mx-auto mt-4 rounded-full skew-x-12 shadow-[0_0_15px_rgba(220,38,38,0.5)]"></div>
           <p className="text-slate-400 text-sm sm:text-base mt-6 leading-relaxed">
@@ -158,12 +158,16 @@ export default function DenahSection() {
 
               {/* Pure White Background wrapper */}
               <div className="w-full flex items-center justify-center min-h-[500px] sm:min-h-[700px] lg:min-h-[850px] bg-white py-4">
-                <img
-                  src="/denah-lbb-muallimin-2027.png"
-                  alt="Denah Resmi Area Perlombaan LBB Mu'allimin 2027"
-                  className="w-full max-w-4xl max-h-[900px] object-contain mx-auto transition-transform duration-300 group-hover:scale-[1.01]"
-                  loading="lazy"
-                />
+                <picture>
+                  <source srcSet="/denah-lbb-muallimin-2027.webp" type="image/webp" />
+                  <img
+                    src="/denah-lbb-muallimin-2027.png"
+                    alt="Denah Resmi Area Perlombaan LBB Mu'allimin 2027"
+                    className="w-full max-w-4xl max-h-[900px] object-contain mx-auto transition-transform duration-300 group-hover:scale-[1.01]"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </picture>
               </div>
             </div>
 

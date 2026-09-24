@@ -187,12 +187,16 @@ export default function TimeLocation() {
 
               {/* Watermark Cadet Illustration */}
               <div className="absolute -right-8 -bottom-10 h-72 w-72 pointer-events-none opacity-15 hidden sm:block z-0">
-                <img
-                  src="/fotoslide/4.png"
-                  alt="Arena Paskibra"
-                  className="w-full h-full object-contain object-bottom [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_80%)]"
-                  loading="lazy"
-                />
+                <picture>
+                  <source srcSet="/fotoslide/4.webp" type="image/webp" />
+                  <img
+                    src="/fotoslide/4.png"
+                    alt="Arena Paskibra"
+                    className="w-full h-full object-contain object-bottom [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_80%)]"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </picture>
               </div>
 
               <div className="bg-slate-950/80 rounded-[1.3rem] p-5 sm:p-6 relative z-10 space-y-5">

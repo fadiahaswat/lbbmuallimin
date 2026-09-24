@@ -74,8 +74,6 @@ export default function MobileMenu({ isOpen, onClose }) {
       id="mobile-menu"
       className="fixed inset-0 z-50 bg-slate-950/98 backdrop-blur-2xl pt-24 px-6 flex flex-col transition-opacity duration-300 overflow-y-auto"
     >
-      <div className="absolute top-0 right-0 w-64 h-64 bg-red-900/20 rounded-full blur-3xl pointer-events-none -z-10"></div>
-
       <button
         onClick={onClose}
         className="absolute top-6 right-6 p-2 rounded-xl bg-white/10 text-white hover:bg-white/20 transition-all"

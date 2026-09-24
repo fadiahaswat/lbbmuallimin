@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowRight, Download, ChevronsDown } from 'lucide-react';
+import { ArrowRight, Download, ChevronsDown, ExternalLink } from 'lucide-react';
 import { HERO, EVENT, VENUE } from '../config.js';
 import { useCompetition } from '../context/CompetitionContext.jsx';
 import logoImg from '../assets/logo-tonti.png';
@@ -8,27 +8,32 @@ import logoMuallimin from '../assets/logo-muallimin.png';
 
 const CADET_FIGURES = [
   {
-    src: '/fotoslide/1.png',
+    src: '/fotoslide/1.webp',
+    fallback: '/fotoslide/1.png',
     title: 'Paskibra Mu\'allimin 1',
     isLandscape: true,
   },
   {
-    src: '/fotoslide/2.png',
+    src: '/fotoslide/2.webp',
+    fallback: '/fotoslide/2.png',
     title: 'Paskibra Mu\'allimin 2',
     isLandscape: false,
   },
   {
-    src: '/fotoslide/3.png',
+    src: '/fotoslide/3.webp',
+    fallback: '/fotoslide/3.png',
     title: 'Paskibra Mu\'allimin 3',
     isLandscape: false,
   },
   {
-    src: '/fotoslide/4.png',
+    src: '/fotoslide/4.webp',
+    fallback: '/fotoslide/4.png',
     title: 'Paskibra Mu\'allimin 4',
     isLandscape: true,
   },
   {
-    src: '/fotoslide/5.png',
+    src: '/fotoslide/5.webp',
+    fallback: '/fotoslide/5.png',
     title: 'Paskibra Mu\'allimin 5',
     isLandscape: false,
   },
@@ -124,10 +129,6 @@ export default function Hero() {
       {/* Atmospheric Background & Lighting (Clean Pure CSS, No Video Play Icons) */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden select-none" aria-hidden="true">
         <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/45 to-black/95"></div>
-        {/* Animated radial smoke & spotlights */}
-        <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-red-600/20 blur-[160px] rounded-full pointer-events-none animate-pulse-slow"></div>
-        <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-[650px] h-[650px] bg-amber-500/15 blur-[160px] rounded-full pointer-events-none"></div>
-        <div className="absolute -bottom-24 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-red-800/25 blur-[180px] rounded-full pointer-events-none"></div>
       </div>
 
       <div className="container mx-auto px-4 sm:px-6 relative z-10 flex flex-col justify-center h-full my-auto">
@@ -140,7 +141,6 @@ export default function Hero() {
             <div className="flex items-center gap-4 sm:gap-6">
               {/* Logo Utama LBB Mu'allimin 2026 */}
               <div className="relative group transition-transform duration-300 hover:scale-105">
-                <div className="absolute -inset-2 bg-gradient-to-r from-red-600/30 via-yellow-500/20 to-amber-500/30 rounded-2xl blur-xl opacity-60 group-hover:opacity-100 transition-opacity pointer-events-none" />
                 <img
                   src={logoImg}
                   alt="Logo Resmi LBB Mu'allimin 2027"
@@ -215,15 +215,15 @@ export default function Hero() {
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
               </button>
 
-              <button
-                type="button"
-                onClick={() => openModal('docViewer', { docId: 'juknis' })}
+              <a
+                href="https://docs.google.com/document/d/1BN1RuwDcEiuibVvoBG4-5R7Rq8neV5st3nAZoISVQi0/edit?usp=sharing"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="group px-8 py-3.5 glass hover:bg-white/10 text-white hover:text-yellow-400 hover:border-yellow-400/30 rounded-xl shadow-lg shadow-black/20 hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2 text-xs sm:text-sm font-bold tracking-widest uppercase cursor-pointer active:scale-95"
               >
-                <span>Unduh Juknis</span>
-                <Download className="w-4 h-4 transition-transform group-hover:translate-y-0.5 text-yellow-400" />
-              </button>
-
+                <span>Juknis Lapangan</span>
+                <ExternalLink className="w-4 h-4 transition-transform group-hover:translate-x-0.5 text-yellow-400" />
+              </a>
             </div>
 
           </div>
@@ -252,6 +252,11 @@ export default function Hero() {
               <img
                 key={activeCadetIndex}
                 src={currentCadet.src}
+                onError={(e) => {
+                  if (currentCadet.fallback && e.currentTarget.src !== currentCadet.fallback) {
+                    e.currentTarget.src = currentCadet.fallback;
+                  }
+                }}
                 alt={currentCadet.title}
                 loading="eager"
                 decoding="async"

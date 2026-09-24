@@ -102,8 +102,8 @@ export default function Registration() {
           backgroundSize: '40px 40px',
         }}
       ></div>
-      <div className="absolute left-0 top-1/4 w-96 h-96 bg-yellow-500/5 rounded-full blur-3xl pointer-events-none"></div>
-      <div className="absolute right-0 bottom-1/4 w-96 h-96 bg-red-900/5 rounded-full blur-3xl pointer-events-none"></div>
+      <div className="hidden sm:block absolute left-0 top-1/4 w-96 h-96 bg-yellow-500/5 rounded-full blur-3xl pointer-events-none transform-gpu"></div>
+      <div className="hidden sm:block absolute right-0 bottom-1/4 w-96 h-96 bg-red-900/5 rounded-full blur-3xl pointer-events-none transform-gpu"></div>
 
       <div className="container mx-auto px-6 relative z-10">
         {/* Section Header */}

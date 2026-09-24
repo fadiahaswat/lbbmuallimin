@@ -52,7 +52,7 @@ export default function RegistrationStatusModal({ isOpen, onClose }) {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col selection:bg-red-500 selection:text-white relative font-sans">
+    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col selection:bg-red-500 selection:text-white relative font-sans overflow-x-hidden">
       {/* Background Subtle Grid Pattern */}
       <div
         className="absolute inset-0 opacity-[0.03] pointer-events-none z-0"
@@ -62,8 +62,8 @@ export default function RegistrationStatusModal({ isOpen, onClose }) {
           backgroundSize: '40px 40px',
         }}
       />
-      <div className="absolute left-0 top-1/4 w-96 h-96 bg-yellow-500/5 rounded-full blur-3xl pointer-events-none z-0" />
-      <div className="absolute right-0 bottom-1/4 w-96 h-96 bg-red-900/5 rounded-full blur-3xl pointer-events-none z-0" />
+      <div className="hidden sm:block absolute left-0 top-1/4 w-96 h-96 bg-yellow-500/5 rounded-full blur-3xl pointer-events-none z-0 transform-gpu" />
+      <div className="hidden sm:block absolute right-0 bottom-1/4 w-96 h-96 bg-red-900/5 rounded-full blur-3xl pointer-events-none z-0 transform-gpu" />
 
       {/* Top Navbar Header */}
       <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 text-slate-900 py-3.5 px-4 sm:px-8 shadow-xs">
@@ -165,12 +165,16 @@ export default function RegistrationStatusModal({ isOpen, onClose }) {
           {query.trim() === '' ? (
             <div className="bg-white border border-slate-200 rounded-3xl p-8 sm:p-12 text-center text-slate-500 relative overflow-hidden">
               <div className="w-24 h-24 mx-auto mb-3 rounded-full bg-red-50 border border-red-100 flex items-center justify-center p-2 overflow-hidden shadow-inner">
-                <img
-                  src="/fotoslide/3.png"
-                  alt="Paskibra Danton"
-                  className="w-full h-full object-contain object-top"
-                  loading="lazy"
-                />
+                <picture>
+                  <source srcSet="/fotoslide/3.webp" type="image/webp" />
+                  <img
+                    src="/fotoslide/3.png"
+                    alt="Paskibra Danton"
+                    className="w-full h-full object-contain object-top"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </picture>
               </div>
               <h4 className="text-sm font-bold text-slate-900">Pencarian Data Peleton</h4>
               <p className="text-xs text-slate-500 mt-1 max-w-md mx-auto">

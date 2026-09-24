@@ -1,5 +1,5 @@
 import React from 'react';
-import { Download, ArrowRight } from 'lucide-react';
+import { FileText, ArrowRight } from 'lucide-react';
 import { useCompetition } from '../context/CompetitionContext.jsx';
 
 export default function StickyCta({ isVisible }) {
@@ -12,13 +12,14 @@ export default function StickyCta({ isVisible }) {
         isVisible ? 'translate-y-0' : 'translate-y-full'
       }`}
     >
-      <button
-        type="button"
-        onClick={() => openModal('docViewer', { docId: 'juknis' })}
-        className="flex-1 flex items-center justify-center gap-2 py-3 text-sm font-bold text-slate-700 bg-slate-100 border border-slate-200 rounded-lg active:scale-95 transition-transform"
+      <a
+        href="https://docs.google.com/document/d/1BN1RuwDcEiuibVvoBG4-5R7Rq8neV5st3nAZoISVQi0/edit?usp=sharing"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex-1 flex items-center justify-center gap-1.5 py-3 text-xs sm:text-sm font-bold text-slate-700 bg-slate-100 border border-slate-200 rounded-lg active:scale-95 transition-transform"
       >
-        <Download className="w-4 h-4" /> Juknis
-      </button>
+        <FileText className="w-4 h-4 text-red-600" /> Juknis Lapangan
+      </a>
       <button
         type="button"
         onClick={() => openModal('regWizard')}

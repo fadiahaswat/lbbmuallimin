@@ -455,7 +455,7 @@ export default function RegistrationWizard({ isOpen, onClose }) {
   const feeDisplay = `Rp${PAYMENT.FEE_DISPLAY}`;
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col justify-between relative font-sans">
+    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col justify-between relative font-sans overflow-x-hidden">
       {/* Background Subtle Grid Pattern (Consistent with Home Page Registration Section) */}
       <div
         className="absolute inset-0 opacity-[0.03] pointer-events-none z-0"
@@ -465,8 +465,8 @@ export default function RegistrationWizard({ isOpen, onClose }) {
           backgroundSize: '40px 40px',
         }}
       />
-      <div className="absolute left-0 top-1/4 w-96 h-96 bg-yellow-500/5 rounded-full blur-3xl pointer-events-none z-0" />
-      <div className="absolute right-0 bottom-1/4 w-96 h-96 bg-red-900/5 rounded-full blur-3xl pointer-events-none z-0" />
+      <div className="hidden sm:block absolute left-0 top-1/4 w-96 h-96 bg-yellow-500/5 rounded-full blur-3xl pointer-events-none z-0 transform-gpu" />
+      <div className="hidden sm:block absolute right-0 bottom-1/4 w-96 h-96 bg-red-900/5 rounded-full blur-3xl pointer-events-none z-0 transform-gpu" />
 
       {/* Top Header - Clean White Frosted Navbar matching Homepage */}
       <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-xs">

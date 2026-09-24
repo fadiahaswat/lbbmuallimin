@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Shield, ShieldCheck, Ruler, Copy, Check, FileDown, Sparkles } from 'lucide-react';
+import { Shield, ShieldCheck, Ruler, Copy, Check, FileDown, Sparkles, Map, Timer, Info, Download } from 'lucide-react';
 import { COMPETITION, MATERIALS } from '../config.js';
 
 export default function MateriLomba() {
@@ -269,6 +269,135 @@ export default function MateriLomba() {
                     <li>Materi gerakan berantai bertanda strip ( – ) wajib dilaksanakan satu rangkaian tanpa gerakan tambahan;</li>
                     <li>Materi gerakan lomba sudah dibuat runtut namun tetap diperbolehkan melakukan gerakan penyesuaian maksimal 3 aba-aba.</li>
                   </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Dedicated Separate Containers for Denah Arena & Spesifikasi Pos */}
+        <div className="mt-10 grid lg:grid-cols-2 gap-10">
+          {/* Wadah Denah SD/MI */}
+          <div className="relative group">
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-red-900/50 to-slate-900 rounded-2xl blur opacity-30 group-hover:opacity-60 transition duration-500"></div>
+            <div className="relative bg-slate-900 rounded-2xl border border-slate-800 p-6 sm:p-8 h-full flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between gap-3 mb-6 pb-4 border-b border-slate-800">
+                  <div className="flex items-center gap-2.5">
+                    <span className="p-2 rounded-lg bg-red-900/30 text-red-400 border border-red-500/20">
+                      <Map className="w-5 h-5" />
+                    </span>
+                    <div>
+                      <h4 className="text-base sm:text-lg font-black text-white uppercase tracking-wider">
+                        Denah Arena & Spesifikasi Pos
+                      </h4>
+                      <p className="text-xs font-bold text-red-400 uppercase tracking-widest mt-0.5">Tingkat SD/MI Sederajat</p>
+                    </div>
+                  </div>
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-900/30 border border-red-500/30 text-red-400 text-xs font-bold font-mono">
+                    <Timer className="w-3.5 h-3.5" />
+                    <span>{COMPETITION.SD.DURATION_LABEL}</span>
+                  </div>
+                </div>
+
+                <div className="bg-slate-950/80 rounded-xl p-5 text-center border border-slate-800 relative overflow-hidden group/arena mb-5">
+                  <div
+                    className="absolute inset-0 opacity-10"
+                    style={{
+                      backgroundImage: 'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)',
+                      backgroundSize: '20px 20px',
+                    }}
+                  ></div>
+
+                  <div className="flex justify-between text-[10px] font-mono text-slate-500 mb-2 relative z-10">
+                    <span>START</span>
+                    <span className="text-red-500 font-bold">{COMPETITION.SD.ARENA_WIDTH_LABEL}</span>
+                    <span>FINISH</span>
+                  </div>
+
+                  <div className="w-full h-32 border-2 border-slate-700 bg-slate-900/60 flex flex-col items-center justify-center font-mono relative z-10 backdrop-blur-sm group-hover/arena:border-red-500/50 transition-colors">
+                    <span className="text-2xl sm:text-3xl font-black text-white tracking-wide">{COMPETITION.SD.ARENA_SIZE}</span>
+                    <span className="text-[10px] text-slate-400 mt-1 uppercase tracking-widest">Ukuran Lapangan</span>
+
+                    <div className="absolute -right-4 h-full flex items-center">
+                      <div className="h-full w-px bg-slate-600 relative">
+                        <span className="absolute top-1/2 -right-3 -translate-y-1/2 text-[10px] rotate-90 text-slate-500 font-bold whitespace-nowrap">
+                          {COMPETITION.SD.ARENA_HEIGHT_LABEL}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3 p-3.5 rounded-xl bg-yellow-900/15 border border-yellow-700/30">
+                <Info className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
+                <div className="text-xs text-slate-300">
+                  <span className="font-bold text-amber-400 mr-1.5">Pergantian Pemain:</span>
+                  <span>Dilakukan di dalam pos di antara <strong className="text-white font-semibold">{COMPETITION.SD.SUBSTITUTION_LABEL}</strong>.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Wadah Denah SMP/MTs */}
+          <div className="relative group">
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-900/50 to-slate-900 rounded-2xl blur opacity-30 group-hover:opacity-60 transition duration-500"></div>
+            <div className="relative bg-slate-900 rounded-2xl border border-slate-800 p-6 sm:p-8 h-full flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between gap-3 mb-6 pb-4 border-b border-slate-800">
+                  <div className="flex items-center gap-2.5">
+                    <span className="p-2 rounded-lg bg-blue-900/30 text-blue-400 border border-blue-500/20">
+                      <Map className="w-5 h-5" />
+                    </span>
+                    <div>
+                      <h4 className="text-base sm:text-lg font-black text-white uppercase tracking-wider">
+                        Denah Arena & Spesifikasi Pos
+                      </h4>
+                      <p className="text-xs font-bold text-blue-400 uppercase tracking-widest mt-0.5">Tingkat SMP/MTs Sederajat</p>
+                    </div>
+                  </div>
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-900/30 border border-blue-500/30 text-blue-400 text-xs font-bold font-mono">
+                    <Timer className="w-3.5 h-3.5" />
+                    <span>{COMPETITION.SMP.DURATION_LABEL}</span>
+                  </div>
+                </div>
+
+                <div className="bg-slate-950/80 rounded-xl p-5 text-center border border-slate-800 relative overflow-hidden group/arena mb-5">
+                  <div
+                    className="absolute inset-0 opacity-10"
+                    style={{
+                      backgroundImage: 'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)',
+                      backgroundSize: '20px 20px',
+                    }}
+                  ></div>
+
+                  <div className="flex justify-between text-[10px] font-mono text-slate-500 mb-2 relative z-10">
+                    <span>START</span>
+                    <span className="text-blue-500 font-bold">{COMPETITION.SMP.ARENA_WIDTH_LABEL}</span>
+                    <span>FINISH</span>
+                  </div>
+
+                  <div className="w-full h-32 border-2 border-slate-700 bg-slate-900/60 flex flex-col items-center justify-center font-mono relative z-10 backdrop-blur-sm group-hover/arena:border-blue-500/50 transition-colors">
+                    <span className="text-2xl sm:text-3xl font-black text-white tracking-wide">{COMPETITION.SMP.ARENA_SIZE}</span>
+                    <span className="text-[10px] text-slate-400 mt-1 uppercase tracking-widest">Ukuran Lapangan</span>
+
+                    <div className="absolute -right-4 h-full flex items-center">
+                      <div className="h-full w-px bg-slate-600 relative">
+                        <span className="absolute top-1/2 -right-3 -translate-y-1/2 text-[10px] rotate-90 text-slate-500 font-bold whitespace-nowrap">
+                          {COMPETITION.SMP.ARENA_HEIGHT_LABEL}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3 p-3.5 rounded-xl bg-yellow-900/15 border border-yellow-700/30">
+                <Info className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
+                <div className="text-xs text-slate-300">
+                  <span className="font-bold text-amber-400 mr-1.5">Pergantian Pemain:</span>
+                  <span>Dilakukan di dalam pos di antara <strong className="text-white font-semibold">{COMPETITION.SMP.SUBSTITUTION_LABEL}</strong>.</span>
                 </div>
               </div>
             </div>

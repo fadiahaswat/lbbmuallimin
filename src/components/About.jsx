@@ -23,19 +23,19 @@ import { COMPETITION } from '../config.js';
 import logoLbb from '../assets/logo-tonti.png';
 
 const TONTI_GALLERY_IMAGES = [
-  { src: '/galeri-tonti/IMG_3353.jpg', title: 'Kedisiplinan & Kekompakan', caption: 'Pleton Inti Muallimin Yogyakarta' },
-  { src: '/galeri-tonti/IMG_3354.jpg', title: 'Presisi Langkah Ksatria', caption: 'Konsentrasi dan keseragaman barisan' },
-  { src: '/galeri-tonti/IMG_3355.jpg', title: 'Derap Tangguh Lapangan', caption: 'Formasi kokoh penuh wibawa' },
-  { src: '/galeri-tonti/IMG_3356.jpg', title: 'Formasi & Manuver', caption: 'Kombinasi formasi variasi memukau' },
-  { src: '/galeri-tonti/IMG_3357.jpg', title: 'Fokus & Dedikasi', caption: 'Semangat juang para kader Muallimin' },
-  { src: '/galeri-tonti/IMG_3358.jpg', title: 'Harmoni & Ketegasan', caption: 'Akurasi tempo gerak baris-berbaris' },
-  { src: '/galeri-tonti/IMG_3359.jpg', title: 'Sinergi Pasukan', caption: 'Kekuatan solidaritas satu irama' },
-  { src: '/galeri-tonti/IMG_3360.jpg', title: 'Wibawa & Karakter', caption: 'Menjunjung kehormatan sang ksatria' },
-  { src: '/galeri-tonti/IMG_3361.jpg', title: 'Jiwa Kepemimpinan', caption: 'Komando tegas mengarahkan langkah' },
-  { src: '/galeri-tonti/IMG_3362.jpg', title: 'Kebanggaan Korps', caption: 'Tradisi luhur kepanduan dan paskibra' },
-  { src: '/galeri-tonti/IMG_3363.jpg', title: 'Ketahanan & Mental', caption: 'Ujian ketangguhan kawah candradimuka' },
-  { src: '/galeri-tonti/IMG_3364.jpg', title: 'Puncak Semangat Juang', caption: 'Menampilkan performa terbaik' },
-  { src: '/galeri-tonti/IMG_3365.jpg', title: 'Sang Juara Masa Depan', caption: 'Kader bangsa berkarakter ksatria' }
+  { src: '/galeri-tonti/IMG_3353.webp', fallback: '/galeri-tonti/IMG_3353.jpg', title: 'Kedisiplinan & Kekompakan', caption: 'Pleton Inti Muallimin Yogyakarta' },
+  { src: '/galeri-tonti/IMG_3354.webp', fallback: '/galeri-tonti/IMG_3354.jpg', title: 'Presisi Langkah Ksatria', caption: 'Konsentrasi dan keseragaman barisan' },
+  { src: '/galeri-tonti/IMG_3355.webp', fallback: '/galeri-tonti/IMG_3355.jpg', title: 'Derap Tangguh Lapangan', caption: 'Formasi kokoh penuh wibawa' },
+  { src: '/galeri-tonti/IMG_3356.webp', fallback: '/galeri-tonti/IMG_3356.jpg', title: 'Formasi & Manuver', caption: 'Kombinasi formasi variasi memukau' },
+  { src: '/galeri-tonti/IMG_3357.webp', fallback: '/galeri-tonti/IMG_3357.jpg', title: 'Fokus & Dedikasi', caption: 'Semangat juang para kader Muallimin' },
+  { src: '/galeri-tonti/IMG_3358.webp', fallback: '/galeri-tonti/IMG_3358.jpg', title: 'Harmoni & Ketegasan', caption: 'Akurasi tempo gerak baris-berbaris' },
+  { src: '/galeri-tonti/IMG_3359.webp', fallback: '/galeri-tonti/IMG_3359.jpg', title: 'Sinergi Pasukan', caption: 'Kekuatan solidaritas satu irama' },
+  { src: '/galeri-tonti/IMG_3360.webp', fallback: '/galeri-tonti/IMG_3360.jpg', title: 'Wibawa & Karakter', caption: 'Menjunjung kehormatan sang ksatria' },
+  { src: '/galeri-tonti/IMG_3361.webp', fallback: '/galeri-tonti/IMG_3361.jpg', title: 'Jiwa Kepemimpinan', caption: 'Komando tegas mengarahkan langkah' },
+  { src: '/galeri-tonti/IMG_3362.webp', fallback: '/galeri-tonti/IMG_3362.jpg', title: 'Kebanggaan Korps', caption: 'Tradisi luhur kepanduan dan paskibra' },
+  { src: '/galeri-tonti/IMG_3363.webp', fallback: '/galeri-tonti/IMG_3363.jpg', title: 'Ketahanan & Mental', caption: 'Ujian ketangguhan kawah candradimuka' },
+  { src: '/galeri-tonti/IMG_3364.webp', fallback: '/galeri-tonti/IMG_3364.jpg', title: 'Puncak Semangat Juang', caption: 'Menampilkan performa terbaik' },
+  { src: '/galeri-tonti/IMG_3365.webp', fallback: '/galeri-tonti/IMG_3365.jpg', title: 'Sang Juara Masa Depan', caption: 'Kader bangsa berkarakter ksatria' }
 ];
 
 export default function About() {
@@ -124,13 +124,11 @@ export default function About() {
                     </h3>
                   </div>
 
-                  <div className="shrink-0 p-2 rounded-2xl bg-white/[0.04] border border-white/5 shadow-inner">
-                    <img
-                      src={logoLbb}
-                      alt="Logo LBB Mu'allimin"
-                      className="w-16 h-16 sm:w-20 sm:h-20 object-contain drop-shadow-md hover:scale-105 transition-transform"
-                    />
-                  </div>
+                  <img
+                    src={logoLbb}
+                    alt="Logo LBB Mu'allimin"
+                    className="shrink-0 w-16 h-16 sm:w-20 sm:h-20 object-contain drop-shadow-md hover:scale-105 transition-transform"
+                  />
                 </div>
 
                 {/* Nilai-Nilai Tema */}
@@ -227,9 +225,15 @@ export default function About() {
                   >
                     <img
                       src={img.src}
+                      onError={(e) => {
+                        if (img.fallback && e.currentTarget.src !== img.fallback) {
+                          e.currentTarget.src = img.fallback;
+                        }
+                      }}
                       alt="Galeri Tonti Mu'allimin"
                       className="w-full h-full object-cover object-center"
                       loading={idx === 0 ? 'eager' : 'lazy'}
+                      decoding="async"
                     />
                   </div>
                 ))}

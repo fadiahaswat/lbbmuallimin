@@ -33,8 +33,8 @@ export default function Footer() {
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-800 via-amber-400 to-red-800"></div>
 
       {/* Subtle Ambient Red Glow */}
-      <div className="absolute top-0 left-1/4 -translate-y-1/2 w-96 h-96 bg-red-900/15 rounded-full blur-3xl pointer-events-none"></div>
-      <div className="absolute bottom-0 right-10 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl pointer-events-none"></div>
+      <div className="hidden sm:block absolute top-0 left-1/4 -translate-y-1/2 w-96 h-96 bg-red-900/15 rounded-full blur-3xl pointer-events-none transform-gpu"></div>
+      <div className="hidden sm:block absolute bottom-0 right-10 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl pointer-events-none transform-gpu"></div>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
@@ -42,12 +42,16 @@ export default function Footer() {
         <div className="mb-16 p-6 sm:p-8 rounded-3xl bg-slate-900 border border-slate-800 shadow-xl relative overflow-hidden">
           {/* Subtle Monochrome Cadet Watermark in the Right Background */}
           <div className="absolute right-0 top-0 bottom-0 w-96 pointer-events-none opacity-15 hidden lg:block z-0">
-            <img
-              src="/fotoslide/1.png"
-              alt="Paskibra Pasukan"
-              className="w-full h-full object-cover object-center grayscale contrast-125 filter [mask-image:linear-gradient(to_left,black_20%,transparent_90%)]"
-              loading="lazy"
-            />
+            <picture>
+              <source srcSet="/fotoslide/1.webp" type="image/webp" />
+              <img
+                src="/fotoslide/1.png"
+                alt="Paskibra Pasukan"
+                className="w-full h-full object-cover object-center grayscale contrast-125 filter [mask-image:linear-gradient(to_left,black_20%,transparent_90%)]"
+                loading="lazy"
+                decoding="async"
+              />
+            </picture>
           </div>
           
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
