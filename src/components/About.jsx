@@ -26,7 +26,7 @@ const TONTI_GALLERY_IMAGES = [
   { src: '/galeri-tonti/IMG_3353.webp', fallback: '/galeri-tonti/IMG_3353.jpg', title: 'Kedisiplinan & Kekompakan', caption: 'Pleton Inti Muallimin Yogyakarta' },
   { src: '/galeri-tonti/IMG_3354.webp', fallback: '/galeri-tonti/IMG_3354.jpg', title: 'Presisi Langkah Ksatria', caption: 'Konsentrasi dan keseragaman barisan' },
   { src: '/galeri-tonti/IMG_3355.webp', fallback: '/galeri-tonti/IMG_3355.jpg', title: 'Derap Tangguh Lapangan', caption: 'Formasi kokoh penuh wibawa' },
-  { src: '/galeri-tonti/IMG_3356.webp', fallback: '/galeri-tonti/IMG_3356.jpg', title: 'Formasi & Manuver', caption: 'Kombinasi formasi variasi memukau' },
+  { src: '/galeri-tonti/IMG_3356.webp', fallback: '/galeri-tonti/IMG_3356.jpg', title: 'Ketegasan & Manuver', caption: 'Kekompakan manuver barisan PBB ksatria' },
   { src: '/galeri-tonti/IMG_3357.webp', fallback: '/galeri-tonti/IMG_3357.jpg', title: 'Fokus & Dedikasi', caption: 'Semangat juang para kader Muallimin' },
   { src: '/galeri-tonti/IMG_3358.webp', fallback: '/galeri-tonti/IMG_3358.jpg', title: 'Harmoni & Ketegasan', caption: 'Akurasi tempo gerak baris-berbaris' },
   { src: '/galeri-tonti/IMG_3359.webp', fallback: '/galeri-tonti/IMG_3359.jpg', title: 'Sinergi Pasukan', caption: 'Kekuatan solidaritas satu irama' },

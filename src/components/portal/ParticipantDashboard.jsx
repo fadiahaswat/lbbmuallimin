@@ -36,6 +36,7 @@ import {
 import { useCompetition } from '../../context/CompetitionContext.jsx';
 import { EVENT, VENUE } from '../../config.js';
 import { formatImageUrl, getFallbackImageUrl } from '../../services/sheetService.js';
+import SimpaskorSidebarLayout from '../navigation/SimpaskorSidebarLayout.jsx';
 
 export default function ParticipantDashboard() {
   const {
@@ -191,16 +192,29 @@ export default function ParticipantDashboard() {
         photo: c.photo || null,
       }));
     }
-    // ensure officials (maks 2, jangan isi otomatis kontak/nama)
-    let officials = Array.isArray(existing.officials) ? existing.officials.slice(0, 2) : [];
-    if (officials.length === 0) {
-      officials = [
-        { id: 'off-1', name: '', phone: '', role: 'Pembina / Pelatih 1' },
-        { id: 'off-2', name: '', phone: '', role: 'Pembina / Pelatih 2' },
-      ];
-    } else if (officials.length === 1) {
-      officials.push({ id: 'off-2', name: '', phone: '', role: 'Pembina / Pelatih 2' });
+    // ensure officials (3 orang: 1 Official Utama + 2 Tim Pendukung)
+    let officials = Array.isArray(existing.officials) ? [...existing.officials] : [];
+    const defaultTemplates = [
+      { id: 'off-1', name: '', phone: '', role: 'Official (Pelatih / Pembina)', category: 'official' },
+      { id: 'off-2', name: '', phone: '', role: 'Pendukung 1 (Medis / Dokum)', category: 'pendukung' },
+      { id: 'off-3', name: '', phone: '', role: 'Pendukung 2 (Medis / Dokum)', category: 'pendukung' },
+    ];
+
+    // Lengkapi jika kurang dari 3
+    for (let i = 0; i < 3; i++) {
+      if (!officials[i]) {
+        officials[i] = { ...defaultTemplates[i] };
+      } else {
+        officials[i] = {
+          ...defaultTemplates[i],
+          ...officials[i],
+          role: officials[i].role || defaultTemplates[i].role,
+          category: i === 0 ? 'official' : 'pendukung',
+        };
+      }
     }
+    // Batasi tepat 3 orang pendamping
+    officials = officials.slice(0, 3);
 
     setRosterDraft({ danton, pasukan, cadangan, officials });
     setIsEditingRoster(true);
@@ -508,7 +522,21 @@ export default function ParticipantDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-100 py-8 px-4 sm:px-6 lg:px-8 font-sans">
+    <SimpaskorSidebarLayout
+      activeMenu={activeTab}
+      title={currentTeam.schoolName}
+      subtitle={`Portal Resmi Peleton • Tingkat ${currentTeam.jenjang} • No. Undi: ${currentTeam.lotNumber ? `#${String(currentTeam.lotNumber).padStart(2, '0')}` : 'Belum TM'}`}
+      rightActions={
+        <div className="flex items-center gap-2">
+          <button
+            onClick={logoutTeam}
+            className="text-xs font-bold text-red-700 hover:text-red-800 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg border border-red-200 transition-colors cursor-pointer"
+          >
+            Ganti Akun Tim
+          </button>
+        </div>
+      }
+    >
       <input
         type="file"
         ref={fileInputRef}
@@ -525,27 +553,6 @@ export default function ParticipantDashboard() {
       />
 
       <div className="max-w-6xl mx-auto space-y-6">
-        
-        {/* Navigation & Header */}
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <button
-            onClick={() => setActiveView('landing')}
-            className="inline-flex items-center gap-2 text-xs font-bold text-slate-600 hover:text-slate-900 bg-white px-3.5 py-2 rounded-xl border border-slate-200 shadow-xs hover:border-slate-300 transition-all"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span>Beranda LBB</span>
-          </button>
-
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-slate-500 font-medium">Portal Resmi Peserta</span>
-            <button
-              onClick={logoutTeam}
-              className="text-xs font-bold text-red-700 hover:text-red-800 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg border border-red-200 transition-colors"
-            >
-              Ganti Akun Tim
-            </button>
-          </div>
-        </div>
 
         {/* Toast Notifikasi */}
         {uploadToast && (
@@ -1387,79 +1394,80 @@ export default function ParticipantDashboard() {
               </div>
             )}
 
-            {/* Danton Spotlight */}
-            <div className="bg-gradient-to-r from-red-50 to-amber-50 border border-red-200 rounded-2xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-5">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 flex-1">
-                {/* Danton Photo */}
-                <div className="relative group shrink-0">
-                  <div className="w-16 h-20 sm:w-20 sm:h-24 rounded-2xl bg-gradient-to-br from-red-700 to-red-800 text-white font-black text-xs flex items-center justify-center shadow-md overflow-hidden border-2 border-red-300 relative">
-                    {(() => {
-                      const photoUrl = isEditingRoster ? rosterDraft?.danton?.photo : currentTeam.roster?.danton?.photo;
-                      const hasValidPhoto = photoUrl && typeof photoUrl === 'string' && photoUrl !== '#' && !photoUrl.startsWith('#') && !photoUrl.includes('drive.google.com/open?id=');
-                      return hasValidPhoto ? (
-                        <img
-                          src={formatImageUrl(photoUrl)}
-                          alt={isEditingRoster ? rosterDraft?.danton?.name || 'Danton' : currentTeam.roster?.danton?.name || 'Danton'}
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            e.currentTarget.style.display = 'none';
-                            if (e.currentTarget.nextElementSibling) {
-                              e.currentTarget.nextElementSibling.style.display = 'flex';
-                            }
-                          }}
-                        />
-                      ) : null;
-                    })()}
-                    <div
-                      className="w-full h-full flex flex-col items-center justify-center text-center p-1"
-                      style={{
-                        display: (() => {
-                          const photoUrl = isEditingRoster ? rosterDraft?.danton?.photo : currentTeam.roster?.danton?.photo;
-                          return photoUrl && typeof photoUrl === 'string' && photoUrl !== '#' && !photoUrl.startsWith('#') && !photoUrl.includes('drive.google.com/open?id=') ? 'none' : 'flex';
-                        })()
-                      }}
-                    >
-                      <User className="w-7 h-7 mx-auto mb-0.5 opacity-80" />
-                      <span className="text-[9px] font-black uppercase tracking-wider block opacity-90">DANTON</span>
-                    </div>
-                  </div>
-                  {isEditingRoster && (
-                    <button
-                      type="button"
-                      onClick={() => triggerRosterPhotoUpload({ type: 'danton' })}
-                      className="absolute -bottom-1.5 -right-1.5 p-1.5 rounded-lg bg-yellow-400 text-slate-950 shadow-md hover:bg-yellow-300 transition-all cursor-pointer"
-                      title="Unggah Pasfoto Danton"
-                    >
-                      <Upload className="w-3.5 h-3.5" />
-                    </button>
-                  )}
-                </div>
-
-                {/* Danton Info / Form */}
-                <div className="flex-1 w-full">
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-black uppercase text-red-700 tracking-wider">
-                      Komandan Peleton (Danton)
-                    </span>
-                    <span className="text-[10px] font-bold bg-red-100 text-red-800 px-2 py-0.5 rounded">
-                      Pemimpin Barisan
-                    </span>
-                  </div>
-
-                  {!isEditingRoster ? (
-                    <div className="mt-1">
-                      <h5 className="font-black text-lg text-slate-900">
-                        {currentTeam.roster?.danton?.name || currentTeam.dantonName || '-'}
-                      </h5>
-                      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-600 mt-1">
-                        <span>NISN: <strong className="text-slate-800">{currentTeam.roster?.danton?.nisn || '-'}</strong></span>
-                        <span>TTL: <strong className="text-slate-800">{currentTeam.roster?.danton?.birthPlace || '-'}{currentTeam.roster?.danton?.birthDate ? `, ${currentTeam.roster.danton.birthDate}` : ''}</strong></span>
-                        <span>Kelas: <strong className="text-slate-800">Kelas {currentTeam.roster?.danton?.class || '-'}</strong></span>
+            {/* Top Grid: Danton (Kiri) & Pendamping Peleton (Kanan) */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+              {/* Danton Spotlight (lg:col-span-5) */}
+              <div className="lg:col-span-5 bg-gradient-to-r from-red-50 to-amber-50 border border-red-200 rounded-2xl p-5 flex flex-col justify-between">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                  {/* Danton Photo */}
+                  <div className="relative group shrink-0">
+                    <div className="aspect-[3/4] w-24 sm:w-28 rounded-2xl bg-gradient-to-br from-red-700 to-red-800 text-white font-black text-xs flex items-center justify-center shadow-md overflow-hidden border-2 border-red-300 relative">
+                      {(() => {
+                        const photoUrl = isEditingRoster ? rosterDraft?.danton?.photo : currentTeam.roster?.danton?.photo;
+                        const hasValidPhoto = photoUrl && typeof photoUrl === 'string' && photoUrl !== '#' && !photoUrl.startsWith('#') && !photoUrl.includes('drive.google.com/open?id=');
+                        return hasValidPhoto ? (
+                          <img
+                            src={formatImageUrl(photoUrl)}
+                            alt={isEditingRoster ? rosterDraft?.danton?.name || 'Danton' : currentTeam.roster?.danton?.name || 'Danton'}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              e.currentTarget.style.display = 'none';
+                              if (e.currentTarget.nextElementSibling) {
+                                e.currentTarget.nextElementSibling.style.display = 'flex';
+                              }
+                            }}
+                          />
+                        ) : null;
+                      })()}
+                      <div
+                        className="w-full h-full flex flex-col items-center justify-center text-center p-1"
+                        style={{
+                          display: (() => {
+                            const photoUrl = isEditingRoster ? rosterDraft?.danton?.photo : currentTeam.roster?.danton?.photo;
+                            return photoUrl && typeof photoUrl === 'string' && photoUrl !== '#' && !photoUrl.startsWith('#') && !photoUrl.includes('drive.google.com/open?id=') ? 'none' : 'flex';
+                          })()
+                        }}
+                      >
+                        <User className="w-7 h-7 mx-auto mb-0.5 opacity-80" />
+                        <span className="text-[9px] font-black uppercase tracking-wider block opacity-90">DANTON</span>
                       </div>
                     </div>
-                  ) : (
-                    <div className="space-y-2 mt-2 w-full">
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {isEditingRoster && (
+                      <button
+                        type="button"
+                        onClick={() => triggerRosterPhotoUpload({ type: 'danton' })}
+                        className="absolute -bottom-1.5 -right-1.5 p-1.5 rounded-lg bg-yellow-400 text-slate-950 shadow-md hover:bg-yellow-300 transition-all cursor-pointer"
+                        title="Unggah Pasfoto Danton"
+                      >
+                        <Upload className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Danton Info / Form */}
+                  <div className="flex-1 w-full min-w-0">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[10px] font-black uppercase text-red-700 tracking-wider">
+                        Komandan Peleton
+                      </span>
+                      <span className="text-[9px] font-bold bg-red-100 text-red-800 px-1.5 py-0.5 rounded">
+                        Danton
+                      </span>
+                    </div>
+
+                    {!isEditingRoster ? (
+                      <div className="mt-1 space-y-1">
+                        <h5 className="font-black text-base text-slate-900 break-words" title={currentTeam.roster?.danton?.name || currentTeam.dantonName}>
+                          {currentTeam.roster?.danton?.name || currentTeam.dantonName || '-'}
+                        </h5>
+                        <div className="space-y-0.5 text-xs text-slate-600">
+                          <div>TTL: <strong className="text-slate-800">{currentTeam.roster?.danton?.birthPlace || '-'}{currentTeam.roster?.danton?.birthDate ? `, ${currentTeam.roster.danton.birthDate}` : ''}</strong></div>
+                          <div>Kelas: <strong className="text-slate-800">{currentTeam.roster?.danton?.class ? `Kelas ${currentTeam.roster.danton.class}` : '-'}</strong></div>
+                          <div>NISN: <strong className="text-slate-800 font-mono">{currentTeam.roster?.danton?.nisn || '-'}</strong></div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="space-y-2 mt-2 w-full">
                         <div>
                           <label className="text-[10px] font-bold text-slate-500 uppercase block mb-0.5">Nama Lengkap Danton</label>
                           <input
@@ -1470,68 +1478,262 @@ export default function ParticipantDashboard() {
                               ...rosterDraft,
                               danton: { ...rosterDraft.danton, name: e.target.value }
                             })}
-                            className="w-full px-3 py-1.5 bg-white border border-red-300 rounded-lg text-xs font-bold focus:ring-1 focus:ring-red-500"
+                            className="w-full px-2.5 py-1.5 bg-white border border-red-300 rounded-lg text-xs font-bold focus:ring-1 focus:ring-red-500"
                           />
                         </div>
-                        <div>
-                          <label className="text-[10px] font-bold text-slate-500 uppercase block mb-0.5">NISN Siswa</label>
-                          <input
-                            type="text"
-                            placeholder="10 Digit NISN"
-                            value={rosterDraft?.danton?.nisn || ''}
-                            onChange={e => setRosterDraft({
-                              ...rosterDraft,
-                              danton: { ...rosterDraft.danton, nisn: e.target.value }
-                            })}
-                            className="w-full px-3 py-1.5 bg-white border border-red-300 rounded-lg text-xs font-mono focus:ring-1 focus:ring-red-500"
-                          />
+                        <div className="grid grid-cols-2 gap-1.5">
+                          <div>
+                            <label className="text-[10px] font-bold text-slate-500 uppercase block mb-0.5">NISN</label>
+                            <input
+                              type="text"
+                              placeholder="NISN"
+                              value={rosterDraft?.danton?.nisn || ''}
+                              onChange={e => setRosterDraft({
+                                ...rosterDraft,
+                                danton: { ...rosterDraft.danton, nisn: e.target.value }
+                              })}
+                              className="w-full px-2 py-1 bg-white border border-red-300 rounded-lg text-xs font-mono focus:ring-1 focus:ring-red-500"
+                            />
+                          </div>
+                          <div>
+                            <label className="text-[10px] font-bold text-slate-500 uppercase block mb-0.5">Kelas</label>
+                            <select
+                              value={rosterDraft?.danton?.class || ''}
+                              onChange={e => setRosterDraft({
+                                ...rosterDraft,
+                                danton: { ...rosterDraft.danton, class: e.target.value }
+                              })}
+                              className="w-full px-2 py-1 bg-white border border-red-300 rounded-lg text-xs font-bold text-slate-800"
+                            >
+                              <option value="">Kelas</option>
+                              {availableClassOptions.map(cls => (
+                                <option key={cls} value={cls}>Kelas {cls}</option>
+                              ))}
+                            </select>
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-2 gap-1.5">
+                          <div>
+                            <label className="text-[10px] font-bold text-slate-500 uppercase block mb-0.5">Tempat Lahir</label>
+                            <input
+                              type="text"
+                              placeholder="Kota Kelahiran"
+                              value={rosterDraft?.danton?.birthPlace || ''}
+                              onChange={e => setRosterDraft({
+                                ...rosterDraft,
+                                danton: { ...rosterDraft.danton, birthPlace: e.target.value }
+                              })}
+                              className="w-full px-2 py-1 bg-white border border-red-300 rounded-lg text-xs"
+                            />
+                          </div>
+                          <div>
+                            <label className="text-[10px] font-bold text-slate-500 uppercase block mb-0.5">Tgl Lahir</label>
+                            <input
+                              type="date"
+                              value={rosterDraft?.danton?.birthDate || ''}
+                              onChange={e => setRosterDraft({
+                                ...rosterDraft,
+                                danton: { ...rosterDraft.danton, birthDate: e.target.value }
+                              })}
+                              className="w-full px-2 py-1 bg-white border border-red-300 rounded-lg text-xs"
+                            />
+                          </div>
                         </div>
                       </div>
+                    )}
+                  </div>
+                </div>
+              </div>
 
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                        <div>
-                          <label className="text-[10px] font-bold text-slate-500 uppercase block mb-0.5">Tempat Lahir</label>
-                          <input
-                            type="text"
-                            placeholder="Kota Kelahiran"
-                            value={rosterDraft?.danton?.birthPlace || ''}
-                            onChange={e => setRosterDraft({
-                              ...rosterDraft,
-                              danton: { ...rosterDraft.danton, birthPlace: e.target.value }
-                            })}
-                            className="w-full px-3 py-1.5 bg-white border border-red-300 rounded-lg text-xs"
-                          />
-                        </div>
-                        <div>
-                          <label className="text-[10px] font-bold text-slate-500 uppercase block mb-0.5">Tanggal Lahir</label>
-                          <input
-                            type="date"
-                            value={rosterDraft?.danton?.birthDate || ''}
-                            onChange={e => setRosterDraft({
-                              ...rosterDraft,
-                              danton: { ...rosterDraft.danton, birthDate: e.target.value }
-                            })}
-                            className="w-full px-3 py-1.5 bg-white border border-red-300 rounded-lg text-xs"
-                          />
-                        </div>
-                        <div>
-                          <label className="text-[10px] font-bold text-slate-500 uppercase block mb-0.5">Kelas ({currentTeam.jenjang})</label>
-                          <select
-                            value={rosterDraft?.danton?.class || ''}
-                            onChange={e => setRosterDraft({
-                              ...rosterDraft,
-                              danton: { ...rosterDraft.danton, class: e.target.value }
-                            })}
-                            className="w-full px-3 py-1.5 bg-white border border-red-300 rounded-lg text-xs font-bold text-slate-800"
+                {/* 3 Pendamping Peleton (lg:col-span-7: diletakkan di sebelah kanan danton) */}
+              <div className="lg:col-span-7 bg-slate-50 border border-slate-200 rounded-2xl p-4 flex flex-col justify-between space-y-3">
+                <div className="flex items-center justify-between border-b border-slate-200 pb-2">
+                  <div className="flex items-center gap-2">
+                    <h5 className="font-black text-xs uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
+                      <span>Pendamping Peleton (3 Orang)</span>
+                    </h5>
+                    <span className="text-[10px] font-bold text-blue-700 bg-blue-100 px-2 py-0.5 rounded-full">
+                      1 Official + 2 Pendukung
+                    </span>
+                  </div>
+                  <span className="text-[10px] font-bold text-slate-500 bg-white border border-slate-200 px-2 py-0.5 rounded-full">
+                    3 Cocard
+                  </span>
+                </div>
+
+                {!isEditingRoster ? (
+                  Array.isArray(currentTeam.roster?.officials) && currentTeam.roster.officials.length > 0 ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      {currentTeam.roster.officials.map((off, i) => {
+                        const isMainOfficial = i === 0 || off.category === 'official';
+                        const defaultRoleTitle = isMainOfficial
+                          ? 'Official (Pelatih / Pembina)'
+                          : `Pendukung ${i} (Medis / Dokum)`;
+                        const displayRole = off.role && off.role !== '-' ? off.role : defaultRoleTitle;
+                        const hasOPhoto = off.photo && typeof off.photo === 'string' && off.photo !== '#' && !off.photo.startsWith('#') && !off.photo.includes('drive.google.com/open?id=');
+
+                        return (
+                          <div
+                            key={off.id || i}
+                            className={`group/off bg-white rounded-2xl border shadow-2xs overflow-hidden flex flex-col justify-between ${
+                              isMainOfficial ? 'border-blue-300 ring-1 ring-blue-200' : 'border-slate-200'
+                            }`}
                           >
-                            <option value="">Pilih Kelas</option>
-                            {availableClassOptions.map(cls => (
-                              <option key={cls} value={cls}>Kelas {cls}</option>
-                            ))}
-                          </select>
-                        </div>
-                      </div>
+                            {/* Photo on Top - Exactly matches pasukan cards aspect ratio */}
+                            <div className="aspect-[3/4] w-full bg-slate-100 relative overflow-hidden flex items-center justify-center border-b border-slate-100">
+                              {hasOPhoto ? (
+                                <img
+                                  src={formatImageUrl(off.photo)}
+                                  alt={off.name}
+                                  referrerPolicy="no-referrer"
+                                  className="w-full h-full object-cover object-top transition-transform duration-300 group-hover/off:scale-105"
+                                  onError={(e) => {
+                                    const fallback = getFallbackImageUrl(off.photo);
+                                    if (fallback && e.currentTarget.src !== fallback) {
+                                      e.currentTarget.src = fallback;
+                                    } else {
+                                      e.currentTarget.style.display = 'none';
+                                      if (e.currentTarget.nextElementSibling) {
+                                        e.currentTarget.nextElementSibling.style.display = 'flex';
+                                      }
+                                    }
+                                  }}
+                                />
+                              ) : null}
+                              <div
+                                className="w-full h-full flex flex-col items-center justify-center text-[9px] font-bold text-slate-400 bg-slate-100"
+                                style={{ display: hasOPhoto ? 'none' : 'flex' }}
+                              >
+                                <User className="w-6 h-6 opacity-40 mb-1" />
+                                <span>{isMainOfficial ? 'OFFICIAL' : `CREW ${i}`}</span>
+                              </div>
+                              <span className={`absolute top-1.5 right-1.5 px-2 py-0.5 rounded-md text-[9px] font-bold shadow-xs truncate max-w-[90%] ${
+                                isMainOfficial ? 'bg-blue-600 text-white' : 'bg-slate-700 text-white'
+                              }`} title={displayRole}>
+                                {displayRole}
+                              </span>
+                            </div>
+
+                            {/* Identity on Bottom */}
+                            <div className="p-2 text-left space-y-0.5">
+                              <span className="font-bold text-xs text-slate-900 block truncate" title={off.name}>
+                                {off.name || '-'}
+                              </span>
+                              <span className="text-[10px] text-slate-500 font-mono block truncate">
+                                WA: {off.phone || '-'}
+                              </span>
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
+                  ) : (
+                    <div className="text-xs text-slate-400 italic">Belum ada data pendamping</div>
+                  )
+                ) : (
+                    rosterDraft?.officials?.map((off, i) => {
+                      const isMainOfficial = i === 0 || off.category === 'official';
+                      const defaultRoleTitle = isMainOfficial
+                        ? 'Official (Pelatih / Pembina)'
+                        : `Pendukung ${i} (Medis / Dokum)`;
+
+                      return (
+                        <div
+                          key={off.id || i}
+                          className={`p-2.5 rounded-xl border space-y-1.5 ${
+                            isMainOfficial
+                              ? 'bg-blue-50/40 border-blue-200'
+                              : 'bg-white border-slate-200'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className={`text-[9px] font-black uppercase px-1.5 py-0.5 rounded ${
+                              isMainOfficial ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-700'
+                            }`}>
+                              {isMainOfficial ? '1. Official Utama' : `${i + 1}. Pendukung (${i === 1 ? 'Medis' : 'Dokum/Lainnya'})`}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => triggerRosterPhotoUpload({ type: 'official', index: i })}
+                              className="px-2 py-0.5 bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 text-[9px] font-bold rounded flex items-center gap-1 transition-colors shadow-2xs cursor-pointer"
+                            >
+                              <Camera className="w-3 h-3 text-slate-500" />
+                              <span>{off.photo ? 'Ganti Foto' : 'Unggah Foto'}</span>
+                            </button>
+                          </div>
+                          <div className="flex items-start gap-2">
+                            <div
+                              onClick={() => triggerRosterPhotoUpload({ type: 'official', index: i })}
+                              className="w-8 h-10 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0 cursor-pointer overflow-hidden group hover:border-blue-500 relative"
+                              title="Klik untuk unggah pasfoto pendamping"
+                            >
+                              {off.photo ? (
+                                <img
+                                  src={formatImageUrl(off.photo)}
+                                  alt={off.name}
+                                  className="w-full h-full object-cover"
+                                  onError={(e) => {
+                                    const fallback = getFallbackImageUrl(off.photo);
+                                    if (fallback && e.currentTarget.src !== fallback) {
+                                      e.currentTarget.src = fallback;
+                                    } else {
+                                      e.currentTarget.style.display = 'none';
+                                      if (e.currentTarget.nextSibling) {
+                                        e.currentTarget.nextSibling.style.display = 'block';
+                                      }
+                                    }
+                                  }}
+                                />
+                              ) : null}
+                              <User className={`w-3.5 h-3.5 text-slate-400 group-hover:text-blue-500 ${off.photo ? 'hidden' : ''}`} />
+                              <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                <Camera className="w-3 h-3 text-white" />
+                              </div>
+                            </div>
+                            <div className="flex-1 space-y-1 min-w-0">
+                              <input
+                                type="text"
+                                placeholder={isMainOfficial ? "Nama Official Utama / Pelatih" : "Nama Pendukung (Medis/Dokumentasi)"}
+                                value={off.name}
+                                onChange={e => {
+                                  const updated = rosterDraft.officials.map((item, idx) =>
+                                    idx === i ? { ...item, name: e.target.value } : item
+                                  );
+                                  setRosterDraft({ ...rosterDraft, officials: updated });
+                                }}
+                                className="w-full px-2 py-1 bg-white border border-slate-200 rounded text-xs font-semibold focus:border-blue-500"
+                              />
+                              <div className="grid grid-cols-2 gap-1">
+                                <input
+                                  type="text"
+                                  placeholder="Nomor WA/Kontak"
+                                  value={off.phone}
+                                  onChange={e => {
+                                    const updated = rosterDraft.officials.map((item, idx) =>
+                                      idx === i ? { ...item, phone: e.target.value } : item
+                                    );
+                                    setRosterDraft({ ...rosterDraft, officials: updated });
+                                  }}
+                                  className="w-full px-2 py-0.5 bg-white border border-slate-200 rounded text-[10px] focus:border-blue-500"
+                                />
+                                <input
+                                  type="text"
+                                  placeholder={isMainOfficial ? "Official (Pelatih/Pembina)" : "Pendukung (Medis/Dokum)"}
+                                  value={off.role}
+                                  onChange={e => {
+                                    const updated = rosterDraft.officials.map((item, idx) =>
+                                      idx === i ? { ...item, role: e.target.value } : item
+                                    );
+                                    setRosterDraft({ ...rosterDraft, officials: updated });
+                                  }}
+                                  className="w-full px-2 py-0.5 bg-white border border-slate-200 rounded text-[10px] focus:border-blue-500"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })
                   )}
                 </div>
               </div>
@@ -1587,26 +1789,24 @@ export default function ParticipantDashboard() {
                                       <span className="text-[10px] font-bold text-slate-400">B{person.banjarNumber}</span>
                                     </div>
 
-                                    {/* Floating Badges */}
+                                    {/* Floating Banjar Badge */}
                                     <span className="absolute top-1.5 right-1.5 px-2 py-0.5 rounded-md bg-slate-900/80 backdrop-blur-xs text-white text-[10px] font-mono font-black shadow-xs">
                                       B{person.banjarNumber}
-                                    </span>
-                                    <span className="absolute bottom-1.5 left-1.5 px-1.5 py-0.5 rounded bg-red-700/90 text-white text-[9px] font-black uppercase">
-                                      Saf {saf}
                                     </span>
                                   </div>
 
                                   {/* Identity on Bottom */}
-                                  <div className="p-2.5 text-left space-y-0.5">
-                                    <span className="font-black text-xs text-slate-900 truncate block group-hover/pcard:text-red-700 transition-colors" title={person.name}>
+                                  <div className="p-2.5 text-left space-y-1">
+                                    <span className="font-black text-xs text-slate-900 block leading-tight break-words group-hover/pcard:text-red-700 transition-colors">
                                       {person.name || '-'}
                                     </span>
-                                    <span className="text-[10px] text-slate-500 font-mono block truncate">
-                                      NISN: {person.nisn || '-'}
-                                    </span>
-                                    <span className="text-[10px] text-slate-400 font-medium block truncate">
-                                      {person.class ? `Kls ${person.class}` : '-'} {person.birthPlace ? `• ${person.birthPlace}` : ''}
-                                    </span>
+                                    <div className="text-[10px] text-slate-600 leading-tight">
+                                      {person.birthPlace ? `${person.birthPlace}${person.birthDate ? `, ${person.birthDate}` : ''}` : '-'}
+                                    </div>
+                                    <div className="text-[10px] text-slate-500 font-mono flex items-center justify-between border-t border-slate-100 pt-1">
+                                      <span>{person.class ? `Kls ${person.class}` : '-'}</span>
+                                      <span>NISN: {person.nisn || '-'}</span>
+                                    </div>
                                   </div>
                                 </div>
                               );
@@ -1809,24 +2009,27 @@ export default function ParticipantDashboard() {
               )}
             </div>
 
-            {/* Cadangan & Official */}
-            <div className="grid sm:grid-cols-2 gap-4 pt-2">
+            {/* Cadangan Section */}
+            <div className="pt-2">
               <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4">
                 <h5 className="font-black text-xs uppercase tracking-wider text-slate-800 mb-3">
                   3 Personel Cadangan
                 </h5>
-                <div className="space-y-2.5">
-                  {!isEditingRoster ? (
-                    Array.isArray(currentTeam.roster?.cadangan) && currentTeam.roster.cadangan.length > 0 ? (
-                      currentTeam.roster.cadangan.map((c, i) => (
-                        <div key={c.id || i} className="bg-white p-2.5 rounded-xl border border-slate-200 text-xs flex items-center justify-between gap-2.5 shadow-2xs">
-                          <div className="flex items-center gap-2.5 min-w-0">
-                            <div className="w-9 h-11 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0 overflow-hidden relative">
-                              {c.photo && typeof c.photo === 'string' && c.photo !== '#' && !c.photo.startsWith('#') && !c.photo.includes('drive.google.com/open?id=') ? (
+                {!isEditingRoster ? (
+                  Array.isArray(currentTeam.roster?.cadangan) && currentTeam.roster.cadangan.length > 0 ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      {currentTeam.roster.cadangan.map((c, i) => {
+                        const hasCPhoto = c.photo && typeof c.photo === 'string' && c.photo !== '#' && !c.photo.startsWith('#') && !c.photo.includes('drive.google.com/open?id=');
+                        return (
+                          <div key={c.id || i} className="group/cadangan bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden flex flex-col justify-between">
+                            {/* Photo on Top - Exactly matches pasukan cards aspect ratio */}
+                            <div className="aspect-[3/4] w-full bg-slate-100 relative overflow-hidden flex items-center justify-center border-b border-slate-100">
+                              {hasCPhoto ? (
                                 <img
                                   src={formatImageUrl(c.photo)}
                                   alt={c.name}
-                                  className="w-full h-full object-cover"
+                                  referrerPolicy="no-referrer"
+                                  className="w-full h-full object-cover object-top transition-transform duration-300 group-hover/cadangan:scale-105"
                                   onError={(e) => {
                                     e.currentTarget.style.display = 'none';
                                     if (e.currentTarget.nextElementSibling) {
@@ -1836,28 +2039,38 @@ export default function ParticipantDashboard() {
                                 />
                               ) : null}
                               <div
-                                className="w-full h-full flex items-center justify-center text-slate-400 bg-slate-50"
-                                style={{
-                                  display: c.photo && typeof c.photo === 'string' && c.photo !== '#' && !c.photo.startsWith('#') && !c.photo.includes('drive.google.com/open?id=') ? 'none' : 'flex'
-                                }}
+                                className="w-full h-full flex flex-col items-center justify-center text-[9px] font-bold text-slate-400 bg-slate-100"
+                                style={{ display: hasCPhoto ? 'none' : 'flex' }}
                               >
-                                <Camera className="w-3.5 h-3.5 text-slate-400" />
+                                <User className="w-6 h-6 opacity-40 mb-1" />
+                                <span>C{i + 1}</span>
                               </div>
-                            </div>
-                            <div className="truncate">
-                              <span className="font-bold text-slate-900 block truncate">#{i + 1}. {c.name || '-'}</span>
-                              <span className="text-[10px] text-slate-400 block truncate">
-                                NISN: {c.nisn || '-'} • Kls: {c.class || '-'} {c.birthPlace ? `• ${c.birthPlace}` : ''}
+                              <span className="absolute top-1.5 right-1.5 px-2 py-0.5 rounded-md bg-amber-500 text-slate-950 text-[10px] font-bold shadow-xs">
+                                C{i + 1}
                               </span>
                             </div>
+
+                            {/* Identity on Bottom */}
+                            <div className="p-2.5 text-left space-y-1">
+                              <span className="font-black text-xs text-slate-900 block leading-tight break-words">
+                                {c.name || '-'}
+                              </span>
+                              <div className="text-[10px] text-slate-600 leading-tight">
+                                {c.birthPlace ? `${c.birthPlace}${c.birthDate ? `, ${c.birthDate}` : ''}` : '-'}
+                              </div>
+                              <div className="text-[10px] text-slate-500 font-mono flex items-center justify-between border-t border-slate-100 pt-1">
+                                <span>{c.class ? `Kls ${c.class}` : '-'}</span>
+                                <span>NISN: {c.nisn || '-'}</span>
+                              </div>
+                            </div>
                           </div>
-                          <span className="text-[10px] font-bold bg-amber-100 text-amber-800 px-2 py-0.5 rounded shrink-0">Cadangan</span>
-                        </div>
-                      ))
-                    ) : (
-                      <div className="text-xs text-slate-400 italic">Belum ada personel cadangan</div>
-                    )
+                        );
+                      })}
+                    </div>
                   ) : (
+                    <div className="text-xs text-slate-400 italic">Belum ada personel cadangan</div>
+                  )
+                ) : (
                     rosterDraft?.cadangan?.map((c, i) => {
                       const isBeingDragged = draggedMember?.type === 'cadangan' && draggedMember?.index === i;
                       const isTargeted = dragOverTarget?.type === 'cadangan' && dragOverTarget?.index === i;
@@ -2018,145 +2231,6 @@ export default function ParticipantDashboard() {
                         </div>
                       );
                     })
-                  )}
-                </div>
-              </div>
-
-              <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <h5 className="font-black text-xs uppercase tracking-wider text-slate-800">
-                    Tim Official & Pendamping (Maks 2)
-                  </h5>
-                  <span className="text-[10px] font-bold text-slate-500 bg-white border border-slate-200 px-2 py-0.5 rounded-full">
-                    Maks. 2 Orang
-                  </span>
-                </div>
-                <div className="space-y-2">
-                  {!isEditingRoster ? (
-                    Array.isArray(currentTeam.roster?.officials) && currentTeam.roster.officials.length > 0 ? (
-                      currentTeam.roster.officials.map((off, i) => (
-                        <div key={off.id || i} className="bg-white p-2.5 rounded-xl border border-slate-200 text-xs flex justify-between items-center gap-3">
-                          <div className="flex items-center gap-2.5 min-w-0">
-                            <div className="w-9 h-11 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0 overflow-hidden">
-                              {off.photo ? (
-                                <img
-                                  src={formatImageUrl(off.photo)}
-                                  alt={off.name}
-                                  className="w-full h-full object-cover"
-                                  onError={(e) => {
-                                    const fallback = getFallbackImageUrl(off.photo);
-                                    if (fallback && e.currentTarget.src !== fallback) {
-                                      e.currentTarget.src = fallback;
-                                    } else {
-                                      e.currentTarget.style.display = 'none';
-                                      if (e.currentTarget.nextSibling) {
-                                        e.currentTarget.nextSibling.style.display = 'block';
-                                      }
-                                    }
-                                  }}
-                                />
-                              ) : null}
-                              <User
-                                className={`w-4 h-4 text-slate-400 ${off.photo ? 'hidden' : ''}`}
-                              />
-                            </div>
-                            <div className="truncate">
-                              <span className="font-bold text-slate-900 block truncate">{off.name || 'Belum diisi'}</span>
-                              <span className="text-[10px] text-slate-400">Kontak: {off.phone || '-'}</span>
-                            </div>
-                          </div>
-                          <span className="text-[10px] font-bold bg-blue-100 text-blue-800 px-2 py-0.5 rounded capitalize shrink-0">{off.role || 'Official'}</span>
-                        </div>
-                      ))
-                    ) : (
-                      <div className="text-xs text-slate-400 italic">Belum ada data official</div>
-                    )
-                  ) : (
-                    rosterDraft?.officials?.map((off, i) => (
-                      <div key={off.id || i} className="bg-white p-3 rounded-xl border border-slate-200 space-y-2">
-                        <div className="flex items-center justify-between">
-                          <span className="text-[10px] font-bold text-blue-800">Official #{i + 1}</span>
-                          <button
-                            type="button"
-                            onClick={() => triggerRosterPhotoUpload({ type: 'official', index: i })}
-                            className="px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-bold rounded flex items-center gap-1 transition-colors"
-                          >
-                            <Camera className="w-3 h-3 text-slate-500" />
-                            <span>{off.photo ? 'Ganti Foto' : 'Unggah Foto'}</span>
-                          </button>
-                        </div>
-                        <div className="flex items-start gap-2.5">
-                          <div
-                            onClick={() => triggerRosterPhotoUpload({ type: 'official', index: i })}
-                            className="w-10 h-12 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0 cursor-pointer overflow-hidden group hover:border-blue-500 relative"
-                            title="Klik untuk unggah pasfoto official"
-                          >
-                            {off.photo ? (
-                              <img
-                                src={formatImageUrl(off.photo)}
-                                alt={off.name}
-                                className="w-full h-full object-cover"
-                                onError={(e) => {
-                                  const fallback = getFallbackImageUrl(off.photo);
-                                  if (fallback && e.currentTarget.src !== fallback) {
-                                    e.currentTarget.src = fallback;
-                                  } else {
-                                    e.currentTarget.style.display = 'none';
-                                    if (e.currentTarget.nextSibling) {
-                                      e.currentTarget.nextSibling.style.display = 'block';
-                                    }
-                                  }
-                                }}
-                              />
-                            ) : null}
-                            <User className={`w-4 h-4 text-slate-400 group-hover:text-blue-500 ${off.photo ? 'hidden' : ''}`} />
-                            <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                              <Camera className="w-3.5 h-3.5 text-white" />
-                            </div>
-                          </div>
-                          <div className="flex-1 space-y-1.5 min-w-0">
-                            <input
-                              type="text"
-                              placeholder="Nama Official / Pembina"
-                              value={off.name}
-                              onChange={e => {
-                                const updated = rosterDraft.officials.map((item, idx) =>
-                                  idx === i ? { ...item, name: e.target.value } : item
-                                );
-                                setRosterDraft({ ...rosterDraft, officials: updated });
-                              }}
-                              className="w-full px-2 py-1 bg-slate-50 border border-slate-200 rounded text-xs font-semibold"
-                            />
-                            <div className="grid grid-cols-2 gap-1">
-                              <input
-                                type="text"
-                                placeholder="Nomor WA/Kontak"
-                                value={off.phone}
-                                onChange={e => {
-                                  const updated = rosterDraft.officials.map((item, idx) =>
-                                    idx === i ? { ...item, phone: e.target.value } : item
-                                  );
-                                  setRosterDraft({ ...rosterDraft, officials: updated });
-                                }}
-                                className="w-full px-2 py-1 bg-slate-50 border border-slate-200 rounded text-[11px]"
-                              />
-                              <input
-                                type="text"
-                                placeholder="Peran (misal: Pembina/Pelatih)"
-                                value={off.role}
-                                onChange={e => {
-                                  const updated = rosterDraft.officials.map((item, idx) =>
-                                    idx === i ? { ...item, role: e.target.value } : item
-                                  );
-                                  setRosterDraft({ ...rosterDraft, officials: updated });
-                                }}
-                                className="w-full px-2 py-1 bg-slate-50 border border-slate-200 rounded text-[11px]"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ))
                   )}
                 </div>
               </div>
@@ -2363,7 +2437,7 @@ export default function ParticipantDashboard() {
         )}
 
       </div>
-    </div>
+    </SimpaskorSidebarLayout>
   );
 }
 

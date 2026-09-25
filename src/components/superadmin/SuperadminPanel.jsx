@@ -29,6 +29,7 @@ import {
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
 import { EVENT } from '../../config.js';
+import SimpaskorSidebarLayout from '../navigation/SimpaskorSidebarLayout.jsx';
 
 export default function SuperadminPanel() {
   const {
@@ -172,22 +173,12 @@ export default function SuperadminPanel() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-100 py-8 px-4 sm:px-6 lg:px-8 font-sans text-slate-900">
-      <div className="max-w-5xl mx-auto space-y-6">
-        
-        {/* Navigation */}
-        <div className="flex items-center justify-between">
-          <button
-            onClick={() => setActiveView('landing')}
-            className="inline-flex items-center gap-2 text-xs font-bold text-slate-600 hover:text-slate-900 bg-white px-4 py-2 rounded-xl border border-slate-200 shadow-xs hover:border-slate-300 transition-all"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span>Kembali ke Beranda</span>
-          </button>
-          <span className="text-xs font-black uppercase tracking-wider text-rose-700 bg-rose-100 px-3 py-1 rounded-full">
-            Superadmin Master Control
-          </span>
-        </div>
+    <SimpaskorSidebarLayout
+      activeMenu="superadmin"
+      title="Master Authority Superadmin"
+      subtitle="Kontrol Sistem, Pengaturan Lomba, Sinkronisasi Spreadsheet & Hak Akses Panitia"
+    >
+      <div className="space-y-6">
 
         {toastMsg && (
           <div className="bg-emerald-600 text-white p-3.5 rounded-2xl text-xs font-bold flex items-center gap-2 shadow-lg animate-in fade-in duration-300">
@@ -1001,6 +992,6 @@ export default function SuperadminPanel() {
         </div>
 
       </div>
-    </div>
+    </SimpaskorSidebarLayout>
   );
 }

@@ -33,6 +33,21 @@ const SuperadminPanel = React.lazy(() => import('./components/superadmin/Superad
 // Adapted from Simpaskor (Fase 1 - 3): Lapangan & Klasemen
 const StagingDashboard = React.lazy(() => import('./components/staging/StagingDashboard.jsx'));
 const LiveLeaderboard = React.lazy(() => import('./components/leaderboard/LiveLeaderboard.jsx'));
+const FieldTrialView = React.lazy(() => import('./components/trial/FieldTrialView.jsx'));
+
+// Dedicated 1-Feature 1-Menu Views (LBB Mu'allimin 2027)
+const TechnicalMeetingView = React.lazy(() => import('./components/tm/TechnicalMeetingView.jsx'));
+const BasecampCheckInView = React.lazy(() => import('./components/staging/BasecampCheckInView.jsx'));
+const DaerahPersiapanView = React.lazy(() => import('./components/staging/DaerahPersiapanView.jsx'));
+const RekapNilaiView = React.lazy(() => import('./components/recap/RekapNilaiView.jsx'));
+const BasecampCheckOutView = React.lazy(() => import('./components/staging/BasecampCheckOutView.jsx'));
+
+// Full SaaS Modules: RAB, Proposal, Juknis, Tata Tertib, Timeline Panitia
+const RabFinanceView = React.lazy(() => import('./components/finance/RabFinanceView.jsx'));
+const ProposalView = React.lazy(() => import('./components/docs/ProposalView.jsx'));
+const JuknisView = React.lazy(() => import('./components/docs/JuknisView.jsx'));
+const TataTertibView = React.lazy(() => import('./components/docs/TataTertibView.jsx'));
+const TimelinePanitiaView = React.lazy(() => import('./components/docs/TimelinePanitiaView.jsx'));
 
 function ViewLoader() {
   return (
@@ -114,6 +129,17 @@ function MainApp() {
         {activeView === 'announcement' && <AnnouncementPortal />}
         {activeView === 'staging' && <StagingDashboard />}
         {activeView === 'live_leaderboard' && <LiveLeaderboard />}
+        {activeView === 'field_trial' && <FieldTrialView />}
+        {activeView === 'tm' && <TechnicalMeetingView />}
+        {activeView === 'checkin' && <BasecampCheckInView />}
+        {activeView === 'dp' && <DaerahPersiapanView />}
+        {activeView === 'rekap_nilai' && <RekapNilaiView />}
+        {activeView === 'checkout' && <BasecampCheckOutView />}
+        {activeView === 'rab' && <RabFinanceView />}
+        {activeView === 'proposal' && <ProposalView />}
+        {activeView === 'juknis' && <JuknisView />}
+        {activeView === 'tatib' && <TataTertibView />}
+        {activeView === 'timeline' && <TimelinePanitiaView />}
       </React.Suspense>
     </div>
   );

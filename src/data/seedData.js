@@ -63,6 +63,30 @@ export const INITIAL_USERS = [
     roleLabel: 'Panitia Sekretariat & Staging',
   },
   {
+    id: 'user-checkin-1',
+    name: 'Petugas Basecamp (Check-In & Check-Out)',
+    email: 'checkin@lbbmuallimin.com',
+    role: 'checkin',
+    avatar: 'https://ui-avatars.com/api/?name=Petugas+Basecamp&background=0284c7&color=ffffff&bold=true',
+    roleLabel: 'Petugas Basecamp (Check-In & Check-Out)',
+  },
+  {
+    id: 'user-dp-1',
+    name: 'Petugas Daerah Persiapan (DP 1-3)',
+    email: 'dp@lbbmuallimin.com',
+    role: 'dp',
+    avatar: 'https://ui-avatars.com/api/?name=Petugas+DP&background=ea580c&color=ffffff&bold=true',
+    roleLabel: 'Petugas Daerah Persiapan (DP 1-3)',
+  },
+  {
+    id: 'user-juri-lapangan',
+    name: 'Dewan Juri Lapangan',
+    email: 'juri@lbbmuallimin.com',
+    role: 'juri',
+    avatar: 'https://ui-avatars.com/api/?name=Dewan+Juri&background=4f46e5&color=ffffff&bold=true',
+    roleLabel: 'Dewan Juri PBB & Formasi Lapangan',
+  },
+  {
     id: 'user-penginput-1',
     name: 'Petugas Penginput Nilai',
     email: 'penginput@lbbmuallimin.com',
@@ -127,10 +151,11 @@ export function generatePersonnels(schoolName, jenjang, prefixName, dantonName =
     { id: 'c-3', role: 'cadangan', name: '', nisn: '', class: '', birthPlace: '', birthDate: '', photo: null },
   ];
 
-  // Tim Official: Maksimal 2, tidak terisi otomatis (kosong untuk diisi mandiri)
+  // Tim Pendamping Peleton (Total 3 Orang): 1 Official Utama + 2 Tim Pendukung (Medis/Dokumentasi/Logistik)
   const officials = [
-    { id: 'o-1', role: 'Pembina / Pelatih 1', name: '', phone: '', photo: null },
-    { id: 'o-2', role: 'Pembina / Pelatih 2', name: '', phone: '', photo: null },
+    { id: 'o-1', role: 'Official (Pelatih / Pembina)', name: '', phone: '', photo: null, category: 'official' },
+    { id: 'o-2', role: 'Pendukung 1 (Medis / Dokum)', name: '', phone: '', photo: null, category: 'pendukung' },
+    { id: 'o-3', role: 'Pendukung 2 (Medis / Dokum)', name: '', phone: '', photo: null, category: 'pendukung' },
   ];
 
   return { danton, pasukan, cadangan, officials };
@@ -144,7 +169,4 @@ export const INITIAL_SCORES = {};
 
 // INITIAL_STAGING: Data alur lapangan & antrean pleton (kosong)
 export const INITIAL_STAGING = {};
-
-// INITIAL_VOTES: Data perolehan suara suporter online (kosong)
-export const INITIAL_VOTES = {};
 

@@ -192,9 +192,8 @@ export const COMPETITION = {
 
     /** Proporsi penilaian (%) untuk ditampilkan di Juknis */
     SCORING_PROPORTIONS: {
-        PBB: 60,
-        DANTON: 25,
-        VARIASI: 15,
+        PBB: 70,
+        DANTON: 30,
     },
 
     SD: {
@@ -275,7 +274,7 @@ export const DOWNLOADS = [
     {
         id: 'juknis',
         title: 'Petunjuk Teknis Lengkap (Juknis)',
-        description: 'Dokumen panduan teknis resmi pelaksanaan LBB Mu\'allimin 2027 yang memuat ketentuan lomba, materi urutan PBB baku & variasi formasi, serta sistem penilaian juri.',
+        description: 'Dokumen panduan teknis resmi pelaksanaan LBB Mu\'allimin 2027 yang memuat ketentuan lomba, materi urutan PBB baku murni sesuai Perpang TNI No. 57 & 58 Tahun 2018, kriteria Danton, serta sistem penilaian juri.',
         size: 'Google Docs / PDF',
         type: 'DOCS / PDF',
         url: 'https://docs.google.com/document/d/1BN1RuwDcEiuibVvoBG4-5R7Rq8neV5st3nAZoISVQi0/edit?usp=sharing',
@@ -630,20 +629,6 @@ export const GOOGLE_AUTH = {
      */
     CLIENT_ID: (typeof import.meta !== 'undefined' && import.meta.env?.VITE_GOOGLE_CLIENT_ID) || '587440262077-ms6nf4jopejuqre6f1pan5as2umlv2nr.apps.googleusercontent.com',
 };
-
-// ---------------------------------------------------------------------------
-// JURY_POSTS – Konfigurasi Dewan Juri Resmi LBB Mu'allimin 2027:
-// 1. Juri PBB: Seluruh materi gerakan PBB Pasukan
-// 2. Juri Komandan: Khusus Komandan Peleton (Danton)
-// 3. Juri Variasi & Formasi: Kreativitas, Kerapian, Estetika & Kekompakan
-// Ditambah: Hakim Garis (Injak Garis) & Timer Lapangan (Waktu Tampil)
-// ---------------------------------------------------------------------------
-export const VARIASI_CRITERIA = [
-    { id: 'kreativitas', name: 'Kreativitas & Tingkat Kesulitan Gerakan', defaultScore: 25, maxScore: 30 },
-    { id: 'kerapian', name: 'Kerapian, Keseragaman & Kelurusan Saf/Banjar', defaultScore: 25, maxScore: 30 },
-    { id: 'kekompakan', name: 'Kekompakan, Irama & Tempo Pasukan', defaultScore: 20, maxScore: 25 },
-    { id: 'keindahan', name: 'Estetika, Visual Formasi & Kesan Umum', defaultScore: 15, maxScore: 15 },
-];
 
 // ---------------------------------------------------------------------------
 // JURY_POSTS – Konfigurasi Dewan Juri Resmi LBB Mu'allimin 2027

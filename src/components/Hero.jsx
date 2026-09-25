@@ -253,8 +253,10 @@ export default function Hero() {
         className="absolute bottom-5 left-1/2 -translate-x-1/2 z-20 cursor-pointer"
         onClick={scrollToAbout}
       >
-        <div className="flex flex-col items-center gap-1.5 opacity-70 hover:opacity-100 transition-opacity animate-bounce">
-          <span className="text-[9px] uppercase tracking-[0.3em] text-white pl-[0.3em] font-semibold">Scroll Down</span>
+        <div className="flex flex-col items-center justify-center gap-1.5 opacity-70 hover:opacity-100 transition-opacity animate-bounce select-none">
+          <span className="text-[9px] uppercase tracking-[0.3em] indent-[0.3em] text-white font-semibold text-center block">
+            Scroll Down
+          </span>
           <ChevronsDown className="w-4 h-4 text-yellow-400" />
         </div>
       </div>

@@ -107,7 +107,7 @@ const FAQ_DATA = [
     category: 'Teknis',
     icon: 'Calendar',
     q: 'Apa acuan baku peraturan baris-berbaris yang digunakan dewan juri?',
-    a: 'Unsur penilaian materi baku mengacu pada Peraturan Panglima Tentara Nasional Indonesia (Perpang TNI) No. 57 & 58 Tahun 2018 tentang Peraturan Baris-Berbaris TNI, dipadukan dengan kriteria kepemimpinan Danton, kerapian seragam, serta kreativitas variasi & formasi.',
+    a: 'Unsur penilaian materi lomba 100% murni mengacu pada Peraturan Panglima Tentara Nasional Indonesia (Perpang TNI) No. 57 & 58 Tahun 2018 tentang Peraturan Baris-Berbaris TNI (Kebenaran Teknik PBB & Kekompakan Peleton) dipadukan dengan kriteria kepemimpinan dan vokal Komandan Peleton (Danton). Tidak ada kategori variasi & formasi.',
   },
   {
     id: 13,

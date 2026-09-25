@@ -35,6 +35,7 @@ import {
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
 import { STAGING_CONFIG, COMPETITION, TIMELINE, VENUE } from '../../config.js';
+import SimpaskorSidebarLayout from '../navigation/SimpaskorSidebarLayout.jsx';
 
 export default function StagingDashboard() {
   const {
@@ -53,19 +54,25 @@ export default function StagingDashboard() {
     resumeFieldTimer,
     resetFieldTimer,
     stopAndSaveFieldTimer,
-    setActiveView
+    setActiveView,
+    stagingActiveMode,
+    setStagingActiveMode,
+    stagingBasecampAction,
+    setStagingBasecampAction
   } = useCompetition();
 
   // Navigation tab pada Staging Dashboard:
   // 'pipeline' (Alur Keseluruhan), 'basecamp' (Registrasi & Logistik QR), 'dp1' (Inspeksi Tab/iPad)
-  const [activeViewMode, setActiveViewMode] = useState('pipeline');
+  const activeViewMode = stagingActiveMode || 'pipeline';
+  const setActiveViewMode = setStagingActiveMode || (() => {});
   const [selectedJenjang, setSelectedJenjang] = useState('ALL'); // 'ALL' | 'SD' | 'SMP'
   const [searchQuery, setSearchQuery] = useState('');
 
   // State untuk Tab Basecamp QR
   const [qrInput, setQrInput] = useState('');
   const [selectedBasecampTeamId, setSelectedBasecampTeamId] = useState(null);
-  const [basecampActionType, setBasecampActionType] = useState('checkin'); // 'checkin' | 'checkout'
+  const basecampActionType = stagingBasecampAction || 'checkin';
+  const setBasecampActionType = setStagingBasecampAction || (() => {});
   const [ktpOfficialName, setKtpOfficialName] = useState('');
   const [ktpType, setKtpType] = useState('KTP Fisik');
   const [logisticsChecklist, setLogisticsChecklist] = useState({
@@ -89,19 +96,19 @@ export default function StagingDashboard() {
 
   if (!hasAccess) {
     return (
-      <div className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center p-6 text-center">
-        <div className="max-w-md w-full bg-slate-900 border border-slate-800 rounded-3xl p-8 space-y-5 shadow-2xl">
-          <div className="w-16 h-16 rounded-2xl bg-rose-500/20 border border-rose-500/30 text-rose-400 flex items-center justify-center mx-auto">
+      <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col items-center justify-center p-6 text-center">
+        <div className="max-w-md w-full bg-white border border-slate-200 rounded-3xl p-8 space-y-5 shadow-xl">
+          <div className="w-16 h-16 rounded-2xl bg-rose-50 border border-rose-200 text-rose-600 flex items-center justify-center mx-auto">
             <ShieldCheck className="w-8 h-8" />
           </div>
           <div>
-            <span className="text-[10px] font-black uppercase tracking-widest text-rose-400 bg-rose-950/70 border border-rose-500/30 px-3 py-1 rounded-full">
+            <span className="text-[10px] font-black uppercase tracking-widest text-rose-700 bg-rose-100 border border-rose-200 px-3 py-1 rounded-full">
               Akses Dibatasi
             </span>
-            <h2 className="text-xl font-black text-white uppercase tracking-tight mt-3">
+            <h2 className="text-xl font-black text-slate-900 uppercase tracking-tight mt-3">
               Operasional Panitia Lapangan
             </h2>
-            <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+            <p className="text-xs text-slate-500 mt-2 leading-relaxed">
               Halaman Staging Area, Basecamp QR, dan Inspeksi DP 1 ini hanya dapat diakses oleh Panitia Lapangan, Operator, atau Administrator resmi.
             </p>
           </div>
@@ -109,13 +116,13 @@ export default function StagingDashboard() {
           <div className="space-y-2.5 pt-2">
             <button
               onClick={() => openModal('auth')}
-              className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white font-black text-xs uppercase tracking-wider rounded-xl shadow-lg shadow-indigo-950/50 transition-all cursor-pointer"
+              className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-black text-xs uppercase tracking-wider rounded-xl shadow-md transition-all cursor-pointer"
             >
               Masuk Akun Panitia
             </button>
             <button
               onClick={() => setActiveView('landing')}
-              className="w-full py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white font-bold text-xs uppercase tracking-wider rounded-xl border border-slate-700 transition-all cursor-pointer"
+              className="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-900 font-bold text-xs uppercase tracking-wider rounded-xl border border-slate-300 transition-all cursor-pointer"
             >
               Kembali ke Beranda
             </button>
@@ -177,16 +184,16 @@ export default function StagingDashboard() {
   const progressPct = Math.min(100, Math.round((elapsed / maxDuration) * 100));
 
   // Timer status theme
-  let timerTheme = 'border-emerald-500/40 bg-emerald-950/40 text-emerald-400';
+  let timerTheme = 'border-emerald-200 bg-emerald-50/90 text-emerald-950 shadow-sm';
   let progressColor = 'bg-emerald-500';
   if (isOvertime) {
-    timerTheme = 'border-rose-500 bg-rose-950/60 text-rose-400 animate-pulse';
+    timerTheme = 'border-rose-300 bg-rose-50 text-rose-950 shadow-sm animate-pulse';
     progressColor = 'bg-rose-500';
   } else if (remaining <= STAGING_CONFIG.WARNING_TIMES.RED_REMAINING) {
-    timerTheme = 'border-rose-500/60 bg-rose-950/40 text-rose-400';
+    timerTheme = 'border-rose-200 bg-rose-50 text-rose-950 shadow-sm';
     progressColor = 'bg-rose-500';
   } else if (remaining <= STAGING_CONFIG.WARNING_TIMES.YELLOW_REMAINING) {
-    timerTheme = 'border-amber-500/60 bg-amber-950/40 text-amber-400';
+    timerTheme = 'border-amber-200 bg-amber-50 text-amber-950 shadow-sm';
     progressColor = 'bg-amber-500';
   }
 
@@ -326,27 +333,36 @@ export default function StagingDashboard() {
   const dp1VerifiedCount = dp1Personnels.filter(p => dp1TeamInspections[p.id]?.verified).length;
   const isDP1AllVerified = dp1Personnels.length > 0 && dp1VerifiedCount >= 22; // Minimal Danton + 21 Pasukan
 
-  return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans p-3 sm:p-6 lg:p-8">
-      <div className="max-w-7xl mx-auto space-y-6">
+  const currentActiveMenu =
+    activeViewMode === 'basecamp'
+      ? (basecampActionType === 'checkout' ? 'checkout' : 'checkin')
+      : 'dp';
 
-        {/* Top Header */}
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-6">
+  return (
+    <SimpaskorSidebarLayout
+      activeMenu={currentActiveMenu}
+      title="Staging Area & Lapangan"
+      subtitle="Manajemen Basecamp QR, Antrean DP 1-3 & Kotak Lomba"
+    >
+      <div className="space-y-6">
+
+        {/* Sub Header & Staging Controls Bar */}
+        <div className="bg-white border border-slate-200 rounded-3xl p-5 sm:p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-5">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-indigo-500/20 border border-indigo-500/40 text-indigo-400 flex items-center justify-center shadow-inner">
-              <ShieldCheck className="w-8 h-8" />
+            <div className="w-12 h-12 rounded-2xl bg-indigo-50 border border-indigo-200 text-indigo-600 flex items-center justify-center shadow-xs">
+              <ShieldCheck className="w-6 h-6" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-[10px] font-black uppercase tracking-widest text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded border border-indigo-500/20">
+                <span className="text-[10px] font-black uppercase tracking-widest text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200">
                   SOP HARI-H PERLOMBAAN
                 </span>
-                <span className="text-xs text-slate-400">{TIMELINE.COMPETITION_DATE}</span>
+                <span className="text-xs text-slate-500 font-medium">{TIMELINE.COMPETITION_DATE}</span>
               </div>
-              <h1 className="text-2xl sm:text-3xl font-black uppercase italic tracking-tight text-white mt-0.5">
+              <h1 className="text-xl sm:text-2xl font-black uppercase italic tracking-tight text-slate-900 mt-0.5">
                 Staging Area & Operasional Lapangan
               </h1>
-              <p className="text-xs text-slate-400 mt-1">
+              <p className="text-xs text-slate-500 mt-0.5">
                 Basecamp (QR & Logistik), DP 1 (Inspeksi Tab/iPad), DP 2 (Tunggu Steril), DP 3, dan Kotak Lomba.
               </p>
             </div>
@@ -354,11 +370,11 @@ export default function StagingDashboard() {
 
           <div className="flex flex-wrap items-center gap-3">
             {/* View Switcher Tabs */}
-            <div className="flex items-center bg-slate-950 p-1 rounded-2xl border border-slate-800">
+            <div className="flex items-center bg-slate-100 p-1 rounded-2xl border border-slate-200">
               <button
                 onClick={() => setActiveViewMode('pipeline')}
                 className={`px-3 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center gap-1.5 cursor-pointer ${
-                  activeViewMode === 'pipeline' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-400 hover:text-white'
+                  activeViewMode === 'pipeline' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 <ClipboardCheck className="w-4 h-4" />
@@ -368,7 +384,7 @@ export default function StagingDashboard() {
               <button
                 onClick={() => setActiveViewMode('basecamp')}
                 className={`px-3 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center gap-1.5 cursor-pointer ${
-                  activeViewMode === 'basecamp' ? 'bg-teal-600 text-white shadow-md' : 'text-slate-400 hover:text-white'
+                  activeViewMode === 'basecamp' ? 'bg-teal-600 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 <QrCode className="w-4 h-4" />
@@ -378,7 +394,7 @@ export default function StagingDashboard() {
               <button
                 onClick={() => setActiveViewMode('dp1')}
                 className={`px-3 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center gap-1.5 cursor-pointer ${
-                  activeViewMode === 'dp1' ? 'bg-blue-600 text-white shadow-md' : 'text-slate-400 hover:text-white'
+                  activeViewMode === 'dp1' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 <Tablet className="w-4 h-4" />
@@ -387,11 +403,11 @@ export default function StagingDashboard() {
             </div>
 
             {/* Filter Jenjang */}
-            <div className="flex items-center bg-slate-800 rounded-xl p-1 border border-slate-700">
+            <div className="flex items-center bg-slate-100 rounded-xl p-1 border border-slate-200">
               <button
                 onClick={() => setSelectedJenjang('ALL')}
                 className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                  selectedJenjang === 'ALL' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'
+                  selectedJenjang === 'ALL' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 Semua
@@ -399,7 +415,7 @@ export default function StagingDashboard() {
               <button
                 onClick={() => setSelectedJenjang('SMP')}
                 className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                  selectedJenjang === 'SMP' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'
+                  selectedJenjang === 'SMP' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 SMP
@@ -407,33 +423,26 @@ export default function StagingDashboard() {
               <button
                 onClick={() => setSelectedJenjang('SD')}
                 className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                  selectedJenjang === 'SD' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'
+                  selectedJenjang === 'SD' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 SD
               </button>
             </div>
-
-            <button
-              onClick={() => setActiveView('landing')}
-              className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl border border-slate-700 transition-all cursor-pointer"
-            >
-              Kembali
-            </button>
           </div>
         </div>
 
         {/* Live Arena Stopwatch Bar */}
-        <div className={`rounded-3xl p-6 border shadow-2xl transition-all ${timerTheme}`}>
+        <div className={`rounded-3xl p-6 border shadow-sm transition-all ${timerTheme}`}>
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
             {/* Left: Active Team Info */}
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <span className="inline-flex items-center gap-1 text-[11px] font-black uppercase tracking-wider bg-red-600 text-white px-2.5 py-0.5 rounded-full animate-pulse">
+                <span className="inline-flex items-center gap-1 text-[11px] font-black uppercase tracking-wider bg-red-600 text-white px-2.5 py-0.5 rounded-full animate-pulse shadow-xs">
                   <span className="w-2 h-2 rounded-full bg-white" />
                   KOTAK LOMBA SEDANG AKTIF
                 </span>
-                <span className="text-xs text-slate-300 font-mono">
+                <span className="text-xs text-slate-600 font-mono font-bold">
                   Maksimal: {Math.floor(maxDuration / 60)} Menit ({activeArenaTeam?.jenjang || 'SMP'})
                 </span>
               </div>
@@ -441,20 +450,20 @@ export default function StagingDashboard() {
               {activeArenaTeam ? (
                 <div>
                   <div className="flex items-center gap-3">
-                    <span className="px-2.5 py-1 bg-yellow-400 text-slate-950 font-mono font-black text-sm rounded-lg">
+                    <span className="px-2.5 py-1 bg-amber-400 text-slate-950 font-mono font-black text-sm rounded-lg shadow-xs">
                       No. {activeArenaTeam.lotNumber ? String(activeArenaTeam.lotNumber).padStart(2, '0') : '--'}
                     </span>
-                    <h2 className="text-xl sm:text-2xl font-black text-white uppercase tracking-tight">
+                    <h2 className="text-xl sm:text-2xl font-black text-slate-900 uppercase tracking-tight">
                       {activeArenaTeam.schoolName}
                     </h2>
                   </div>
-                  <p className="text-xs text-slate-300 mt-1">
-                    Peleton: <strong>{activeArenaTeam.platoonName}</strong> • Danton: <strong>{activeArenaTeam.roster?.danton?.name || activeArenaTeam.dantonName || '-'}</strong>
+                  <p className="text-xs text-slate-600 mt-1">
+                    Peleton: <strong className="text-slate-900">{activeArenaTeam.platoonName}</strong> • Danton: <strong className="text-slate-900">{activeArenaTeam.roster?.danton?.name || activeArenaTeam.dantonName || '-'}</strong>
                   </p>
                 </div>
               ) : (
                 <div>
-                  <h2 className="text-xl font-bold text-slate-400 italic">
+                  <h2 className="text-xl font-bold text-slate-500 italic">
                     Belum ada peleton yang sedang tampil di arena.
                   </h2>
                   <p className="text-xs text-slate-500">
@@ -466,15 +475,15 @@ export default function StagingDashboard() {
 
             {/* Center: Big Digital Clock */}
             <div className="flex flex-col items-center justify-center text-center">
-              <div className="font-mono font-black text-5xl sm:text-6xl tracking-tight drop-shadow-md text-white">
+              <div className="font-mono font-black text-5xl sm:text-6xl tracking-tight text-slate-900 drop-shadow-xs">
                 {formatTime(elapsed)}
               </div>
               <div className="flex items-center gap-4 text-xs mt-2 font-mono">
-                <span className="text-slate-300">
-                  Sisa: <strong className="text-white">{formatTime(remaining)}</strong>
+                <span className="text-slate-600">
+                  Sisa: <strong className="text-slate-900 font-bold">{formatTime(remaining)}</strong>
                 </span>
                 {isOvertime && (
-                  <span className="text-rose-400 font-bold bg-rose-950 px-2 py-0.5 rounded border border-rose-600 animate-bounce">
+                  <span className="text-rose-700 font-bold bg-rose-100 px-2 py-0.5 rounded border border-rose-300 animate-bounce">
                     OVERTIME +{formatTime(overtimeSeconds)} (-{overtimePenalty} Poin)
                   </span>
                 )}
@@ -492,7 +501,7 @@ export default function StagingDashboard() {
                       else startFieldTimer(activeArenaTeam.id);
                     }
                   }}
-                  className="px-5 py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-400 disabled:opacity-40 text-slate-950 font-black text-xs uppercase tracking-wider flex items-center gap-2 shadow-lg transition-all active:scale-95 cursor-pointer"
+                  className="px-5 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 text-white font-black text-xs uppercase tracking-wider flex items-center gap-2 shadow-sm transition-all active:scale-95 cursor-pointer"
                 >
                   <Play className="w-4 h-4 fill-current" />
                   <span>{fieldTimer.elapsedSeconds > 0 ? 'Lanjutkan Timer' : 'Mulai Tampil'}</span>
@@ -500,7 +509,7 @@ export default function StagingDashboard() {
               ) : (
                 <button
                   onClick={pauseFieldTimer}
-                  className="px-5 py-3 rounded-2xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs uppercase tracking-wider flex items-center gap-2 shadow-lg transition-all active:scale-95 cursor-pointer"
+                  className="px-5 py-3 rounded-2xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs uppercase tracking-wider flex items-center gap-2 shadow-sm transition-all active:scale-95 cursor-pointer"
                 >
                   <Pause className="w-4 h-4 fill-current" />
                   <span>Jeda Sementara</span>
@@ -514,7 +523,7 @@ export default function StagingDashboard() {
                     stopAndSaveFieldTimer(activeArenaTeam.id, activeArenaTeam.jenjang);
                   }
                 }}
-                className="px-5 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 text-white font-black text-xs uppercase tracking-wider flex items-center gap-2 shadow-lg transition-all active:scale-95 cursor-pointer"
+                className="px-5 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 text-white font-black text-xs uppercase tracking-wider flex items-center gap-2 shadow-sm transition-all active:scale-95 cursor-pointer"
               >
                 <CheckCircle2 className="w-4 h-4" />
                 <span>Selesai & Kunci Waktu</span>
@@ -523,7 +532,7 @@ export default function StagingDashboard() {
               <button
                 onClick={resetFieldTimer}
                 title="Reset Timer"
-                className="p-3 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors cursor-pointer"
+                className="p-3 rounded-2xl bg-white hover:bg-slate-100 text-slate-600 hover:text-slate-900 border border-slate-200 shadow-xs transition-colors cursor-pointer"
               >
                 <RotateCcw className="w-4 h-4" />
               </button>
@@ -531,7 +540,7 @@ export default function StagingDashboard() {
           </div>
 
           {/* Progress Bar */}
-          <div className="mt-5 w-full bg-slate-800/80 rounded-full h-2.5 overflow-hidden">
+          <div className="mt-5 w-full bg-slate-200/80 rounded-full h-2.5 overflow-hidden">
             <div
               className={`h-full transition-all duration-300 ${progressColor}`}
               style={{ width: `${progressPct}%` }}
@@ -546,13 +555,13 @@ export default function StagingDashboard() {
             return (
               <div
                 key={st.id}
-                className="bg-slate-900 border border-slate-800 p-3 rounded-2xl shadow-sm text-center space-y-1"
+                className="bg-white border border-slate-200 p-3 rounded-2xl shadow-xs text-center space-y-1"
               >
-                <span className="text-[9px] uppercase font-bold text-slate-400 block truncate">
+                <span className="text-[9px] uppercase font-bold text-slate-500 block truncate">
                   {st.shortLabel}
                 </span>
-                <div className="text-xl font-black font-mono text-white">
-                  {count} <span className="text-[10px] text-slate-500 font-normal">Tim</span>
+                <div className="text-xl font-black font-mono text-slate-900">
+                  {count} <span className="text-[10px] text-slate-400 font-normal">Tim</span>
                 </div>
               </div>
             );
@@ -564,34 +573,34 @@ export default function StagingDashboard() {
         {/* ========================================================================= */}
         {activeViewMode === 'basecamp' && (
           <div className="space-y-6">
-            <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-6">
-              <div className="border-b border-slate-800 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm space-y-6">
+              <div className="border-b border-slate-200 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                  <span className="text-[10px] font-black uppercase tracking-wider text-teal-400 bg-teal-500/10 px-2.5 py-0.5 rounded border border-teal-500/20">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-teal-700 bg-teal-50 px-2.5 py-0.5 rounded border border-teal-200">
                     Pos Meja Registrasi Basecamp
                   </span>
-                  <h2 className="text-xl font-black uppercase text-white mt-1">
+                  <h2 className="text-xl font-black uppercase text-slate-900 mt-1">
                     Check-in & Check-out Basecamp Kontingen
                   </h2>
-                  <p className="text-xs text-slate-400 mt-0.5">
+                  <p className="text-xs text-slate-500 mt-0.5">
                     Scan kode QR dari ID Card / Tiket peleton atau ketik kode pendaftaran untuk proses serah terima logistik.
                   </p>
                 </div>
 
                 {/* Mode Checkin vs Checkout Switcher */}
-                <div className="flex items-center bg-slate-950 p-1 rounded-xl border border-slate-800">
+                <div className="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200">
                   <button
                     onClick={() => setBasecampActionType('checkin')}
-                    className={`px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider transition-all ${
-                      basecampActionType === 'checkin' ? 'bg-teal-600 text-white' : 'text-slate-400 hover:text-white'
+                    className={`px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
+                      basecampActionType === 'checkin' ? 'bg-teal-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
                     }`}
                   >
                     1. Check-in (Tiba)
                   </button>
                   <button
                     onClick={() => setBasecampActionType('checkout')}
-                    className={`px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider transition-all ${
-                      basecampActionType === 'checkout' ? 'bg-amber-600 text-white' : 'text-slate-400 hover:text-white'
+                    className={`px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
+                      basecampActionType === 'checkout' ? 'bg-amber-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
                     }`}
                   >
                     2. Check-out (Pulang)
@@ -608,12 +617,12 @@ export default function StagingDashboard() {
                     value={qrInput}
                     onChange={(e) => setQrInput(e.target.value)}
                     placeholder="Scan QR ID Card Peleton atau ketik Kode Registrasi (cth: LBB26-SMP-001)..."
-                    className="w-full pl-11 pr-4 py-3 bg-slate-950 border border-slate-700 rounded-2xl text-white text-sm font-mono focus:border-teal-400 focus:outline-none placeholder:text-slate-600"
+                    className="w-full pl-11 pr-4 py-3 bg-white border border-slate-300 rounded-2xl text-slate-900 text-sm font-mono focus:border-teal-500 focus:outline-none placeholder:text-slate-400"
                   />
                 </div>
                 <button
                   type="submit"
-                  className="px-6 py-3 bg-teal-600 hover:bg-teal-500 text-white font-black text-xs uppercase tracking-wider rounded-2xl transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
+                  className="px-6 py-3 bg-teal-600 hover:bg-teal-500 text-white font-black text-xs uppercase tracking-wider rounded-2xl transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <Search className="w-4 h-4" />
                   <span>Cari / Scan</span>
@@ -621,38 +630,38 @@ export default function StagingDashboard() {
               </form>
 
               {basecampToast && (
-                <div className="p-3 bg-teal-950 border border-teal-500 text-teal-300 rounded-2xl text-xs font-bold flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4" />
+                <div className="p-3 bg-teal-50 border border-teal-200 text-teal-800 rounded-2xl text-xs font-bold flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-teal-600" />
                   <span>{basecampToast}</span>
                 </div>
               )}
 
               {/* Form Interaksi Basecamp jika Peleton Terpilih */}
               {selectedBasecampTeam ? (
-                <div className="bg-slate-950 border border-slate-800 rounded-3xl p-6 space-y-6">
+                <div className="bg-slate-50 border border-slate-200 rounded-3xl p-6 space-y-6">
                   {/* Info Peleton */}
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="font-mono text-xs font-black text-yellow-400 bg-yellow-400/10 px-2 py-0.5 rounded border border-yellow-400/20">
+                        <span className="font-mono text-xs font-black text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
                           {selectedBasecampTeam.regCode}
                         </span>
-                        <span className="text-xs text-slate-400">
-                          No. Undi: <strong className="text-white">#{selectedBasecampTeam.lotNumber || '-'}</strong>
+                        <span className="text-xs text-slate-500 font-medium">
+                          No. Undi: <strong className="text-slate-900">#{selectedBasecampTeam.lotNumber || '-'}</strong>
                         </span>
-                        <span className="text-xs text-slate-400">
-                          Tingkat: <strong className="text-white">{selectedBasecampTeam.jenjang}</strong>
+                        <span className="text-xs text-slate-500 font-medium">
+                          Tingkat: <strong className="text-slate-900">{selectedBasecampTeam.jenjang}</strong>
                         </span>
                       </div>
-                      <h3 className="text-2xl font-black uppercase text-white mt-1">
+                      <h3 className="text-2xl font-black uppercase text-slate-900 mt-1">
                         {selectedBasecampTeam.schoolName}
                       </h3>
-                      <p className="text-xs text-slate-300">{selectedBasecampTeam.platoonName}</p>
+                      <p className="text-xs text-slate-600">{selectedBasecampTeam.platoonName}</p>
                     </div>
 
-                    <div className="bg-slate-900 border border-slate-800 p-3 rounded-2xl text-right">
+                    <div className="bg-white border border-slate-200 p-3 rounded-2xl text-right shadow-xs">
                       <span className="text-[10px] uppercase font-bold text-slate-400 block">Ruang Basecamp</span>
-                      <span className="text-lg font-black text-amber-400 font-mono">
+                      <span className="text-lg font-black text-amber-600 font-mono">
                         {selectedBasecampTeam.basecampNumber ? `Ruang ${selectedBasecampTeam.basecampNumber}` : 'Belum Ditentukan'}
                       </span>
                     </div>
@@ -661,40 +670,40 @@ export default function StagingDashboard() {
                   {/* FORM CHECKIN */}
                   {basecampActionType === 'checkin' && (
                     <div className="space-y-6">
-                      <div className="bg-teal-950/40 border border-teal-500/30 p-4 rounded-2xl space-y-1">
-                        <h4 className="font-black text-sm uppercase text-teal-300 flex items-center gap-2">
-                          <PackageCheck className="w-4 h-4 text-teal-400" />
+                      <div className="bg-teal-50 border border-teal-200 p-4 rounded-2xl space-y-1">
+                        <h4 className="font-black text-sm uppercase text-teal-800 flex items-center gap-2">
+                          <PackageCheck className="w-4 h-4 text-teal-600" />
                           <span>SOP Check-in Kedatangan Peleton</span>
                         </h4>
-                        <p className="text-xs text-slate-300">
+                        <p className="text-xs text-teal-700">
                           Pastikan official menyerahkan jaminan identitas (KTP/SIM fisik) dan menerima seluruh paket logistik resmi panitia.
                         </p>
                       </div>
 
                       <div className="grid sm:grid-cols-2 gap-6">
                         {/* Identitas KTP/SIM Fisik */}
-                        <div className="space-y-3 bg-slate-900 p-4 rounded-2xl border border-slate-800">
-                          <label className="text-xs font-black uppercase text-slate-300 flex items-center gap-1.5">
-                            <CreditCard className="w-4 h-4 text-amber-400" />
+                        <div className="space-y-3 bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
+                          <label className="text-xs font-black uppercase text-slate-800 flex items-center gap-1.5">
+                            <CreditCard className="w-4 h-4 text-amber-500" />
                             <span>Jaminan Identitas Fisik (Titip 1 KTP / SIM)</span>
                           </label>
                           <div className="space-y-2">
                             <div>
-                              <span className="text-[10px] text-slate-400 block mb-1">Nama Pemilik Identitas:</span>
+                              <span className="text-[10px] text-slate-500 block mb-1">Nama Pemilik Identitas:</span>
                               <input
                                 type="text"
                                 value={ktpOfficialName}
                                 onChange={(e) => setKtpOfficialName(e.target.value)}
                                 placeholder="Nama Official / Pembina..."
-                                className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-xs text-white"
+                                className="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-teal-500"
                               />
                             </div>
                             <div>
-                              <span className="text-[10px] text-slate-400 block mb-1">Jenis Kartu:</span>
+                              <span className="text-[10px] text-slate-500 block mb-1">Jenis Kartu:</span>
                               <select
                                 value={ktpType}
                                 onChange={(e) => setKtpType(e.target.value)}
-                                className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-xs text-white"
+                                className="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-teal-500 cursor-pointer"
                               >
                                 <option value="KTP Fisik">KTP Fisik Asli</option>
                                 <option value="SIM Fisik">SIM Fisik Asli</option>
@@ -705,48 +714,48 @@ export default function StagingDashboard() {
                         </div>
 
                         {/* Serah Terima Paket Logistik */}
-                        <div className="space-y-3 bg-slate-900 p-4 rounded-2xl border border-slate-800">
-                          <label className="text-xs font-black uppercase text-slate-300 flex items-center gap-1.5">
-                            <Droplets className="w-4 h-4 text-cyan-400" />
+                        <div className="space-y-3 bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
+                          <label className="text-xs font-black uppercase text-slate-800 flex items-center gap-1.5">
+                            <Droplets className="w-4 h-4 text-cyan-600" />
                             <span>Serah Terima Logistik Resmi Panitia</span>
                           </label>
                           <div className="space-y-2 text-xs">
-                            <label className="flex items-center gap-2 cursor-pointer text-slate-200">
+                            <label className="flex items-center gap-2 cursor-pointer text-slate-700 hover:text-slate-900">
                               <input
                                 type="checkbox"
                                 checked={logisticsChecklist.waterBox}
                                 onChange={(e) => setLogisticsChecklist({ ...logisticsChecklist, waterBox: e.target.checked })}
-                                className="w-4 h-4 rounded accent-teal-500"
+                                className="w-4 h-4 rounded accent-teal-600 cursor-pointer"
                               />
                               <span>1 Dus Air Minum Mineral (24 botol / cup)</span>
                             </label>
 
-                            <label className="flex items-center gap-2 cursor-pointer text-slate-200">
+                            <label className="flex items-center gap-2 cursor-pointer text-slate-700 hover:text-slate-900">
                               <input
                                 type="checkbox"
                                 checked={logisticsChecklist.chestNumber}
                                 onChange={(e) => setLogisticsChecklist({ ...logisticsChecklist, chestNumber: e.target.checked })}
-                                className="w-4 h-4 rounded accent-teal-500"
+                                className="w-4 h-4 rounded accent-teal-600 cursor-pointer"
                               />
                               <span>Nomor Dada Peleton (Sesuai Undian)</span>
                             </label>
 
-                            <label className="flex items-center gap-2 cursor-pointer text-slate-200">
+                            <label className="flex items-center gap-2 cursor-pointer text-slate-700 hover:text-slate-900">
                               <input
                                 type="checkbox"
                                 checked={logisticsChecklist.cocardOfficial}
                                 onChange={(e) => setLogisticsChecklist({ ...logisticsChecklist, cocardOfficial: e.target.checked })}
-                                className="w-4 h-4 rounded accent-teal-500"
+                                className="w-4 h-4 rounded accent-teal-600 cursor-pointer"
                               />
-                              <span>Cocard ID Card Official / Pembina Lapangan</span>
+                              <span>Cocard ID Pendamping (3 Pcs: 1 Official + 2 Pendukung)</span>
                             </label>
 
-                            <label className="flex items-center gap-2 cursor-pointer text-slate-200">
+                            <label className="flex items-center gap-2 cursor-pointer text-slate-700 hover:text-slate-900">
                               <input
                                 type="checkbox"
                                 checked={logisticsChecklist.trashBag}
                                 onChange={(e) => setLogisticsChecklist({ ...logisticsChecklist, trashBag: e.target.checked })}
-                                className="w-4 h-4 rounded accent-teal-500"
+                                className="w-4 h-4 rounded accent-teal-600 cursor-pointer"
                               />
                               <span>Karung Sampah untuk Pemilahan Sampah Basecamp</span>
                             </label>
@@ -754,11 +763,11 @@ export default function StagingDashboard() {
                         </div>
                       </div>
 
-                      <div className="flex justify-end pt-3 border-t border-slate-800">
+                      <div className="flex justify-end pt-3 border-t border-slate-200">
                         <button
                           type="button"
                           onClick={handleSubmitCheckin}
-                          className="px-6 py-3 bg-teal-600 hover:bg-teal-500 text-white font-black text-xs uppercase tracking-wider rounded-xl transition-all shadow-lg flex items-center gap-2 cursor-pointer"
+                          className="px-6 py-3 bg-teal-600 hover:bg-teal-500 text-white font-black text-xs uppercase tracking-wider rounded-xl transition-all shadow-sm flex items-center gap-2 cursor-pointer"
                         >
                           <CheckCircle2 className="w-4 h-4" />
                           <span>Selesaikan Check-in & Masuk Basecamp</span>
@@ -770,55 +779,55 @@ export default function StagingDashboard() {
                   {/* FORM CHECKOUT */}
                   {basecampActionType === 'checkout' && (
                     <div className="space-y-6">
-                      <div className="bg-amber-950/40 border border-amber-500/30 p-4 rounded-2xl space-y-1">
-                        <h4 className="font-black text-sm uppercase text-amber-300 flex items-center gap-2">
-                          <Trash2 className="w-4 h-4 text-amber-400" />
+                      <div className="bg-amber-50 border border-amber-200 p-4 rounded-2xl space-y-1">
+                        <h4 className="font-black text-sm uppercase text-amber-800 flex items-center gap-2">
+                          <Trash2 className="w-4 h-4 text-amber-600" />
                           <span>SOP Check-out Kepulangan Peleton</span>
                         </h4>
-                        <p className="text-xs text-slate-300">
+                        <p className="text-xs text-amber-700">
                           Sebelum mengembalikan KTP/SIM, panitia wajib memeriksa kebersihan ruangan basecamp dan memastikan sampah telah dipilah ke karung sampah.
                         </p>
                       </div>
 
-                      <div className="bg-slate-900 p-5 rounded-2xl border border-slate-800 space-y-4">
+                      <div className="bg-white p-5 rounded-2xl border border-slate-200 space-y-4 shadow-xs">
                         <div className="space-y-2.5 text-xs">
-                          <label className="flex items-center gap-2.5 cursor-pointer text-slate-200">
+                          <label className="flex items-center gap-2.5 cursor-pointer text-slate-700 hover:text-slate-900">
                             <input
                               type="checkbox"
                               checked={checkoutChecklist.roomCleanChecked}
                               onChange={(e) => setCheckoutChecklist({ ...checkoutChecklist, roomCleanChecked: e.target.checked })}
-                              className="w-4 h-4 rounded accent-amber-500"
+                              className="w-4 h-4 rounded accent-amber-600 cursor-pointer"
                             />
                             <span className="font-bold">1. Kebersihan Basecamp Telah Diperiksa & Bersih</span>
                           </label>
 
-                          <label className="flex items-center gap-2.5 cursor-pointer text-slate-200">
+                          <label className="flex items-center gap-2.5 cursor-pointer text-slate-700 hover:text-slate-900">
                             <input
                               type="checkbox"
                               checked={checkoutChecklist.sortedTrashReturned}
                               onChange={(e) => setCheckoutChecklist({ ...checkoutChecklist, sortedTrashReturned: e.target.checked })}
-                              className="w-4 h-4 rounded accent-amber-500"
+                              className="w-4 h-4 rounded accent-amber-600 cursor-pointer"
                             />
                             <span className="font-bold">2. Karung Sampah Terpilah Telah Dikembalikan ke Panitia</span>
                           </label>
 
-                          <label className="flex items-center gap-2.5 cursor-pointer text-slate-200">
+                          <label className="flex items-center gap-2.5 cursor-pointer text-slate-700 hover:text-slate-900">
                             <input
                               type="checkbox"
                               checked={checkoutChecklist.ktpReturned}
                               onChange={(e) => setCheckoutChecklist({ ...checkoutChecklist, ktpReturned: e.target.checked })}
-                              className="w-4 h-4 rounded accent-amber-500"
+                              className="w-4 h-4 rounded accent-amber-600 cursor-pointer"
                             />
                             <span className="font-bold">3. KTP/SIM Fisik Official Siap Diserahkan Kembali</span>
                           </label>
                         </div>
                       </div>
 
-                      <div className="flex justify-end pt-3 border-t border-slate-800">
+                      <div className="flex justify-end pt-3 border-t border-slate-200">
                         <button
                           type="button"
                           onClick={handleSubmitCheckout}
-                          className="px-6 py-3 bg-amber-600 hover:bg-amber-500 text-white font-black text-xs uppercase tracking-wider rounded-xl transition-all shadow-lg flex items-center gap-2 cursor-pointer"
+                          className="px-6 py-3 bg-amber-600 hover:bg-amber-500 text-white font-black text-xs uppercase tracking-wider rounded-xl transition-all shadow-sm flex items-center gap-2 cursor-pointer"
                         >
                           <CheckCircle2 className="w-4 h-4" />
                           <span>Konfirmasi Check-out & Kembalikan KTP</span>
@@ -828,9 +837,9 @@ export default function StagingDashboard() {
                   )}
                 </div>
               ) : (
-                <div className="text-center py-12 bg-slate-950/60 rounded-3xl border border-slate-800 text-slate-400">
-                  <QrCode className="w-12 h-12 text-slate-600 mx-auto mb-2" />
-                  <p className="text-sm font-bold">Belum Ada Peleton yang Dipilih</p>
+                <div className="text-center py-12 bg-slate-50 rounded-3xl border border-slate-200 text-slate-600">
+                  <QrCode className="w-12 h-12 text-slate-400 mx-auto mb-2" />
+                  <p className="text-sm font-bold text-slate-700">Belum Ada Peleton yang Dipilih</p>
                   <p className="text-xs text-slate-500 mt-1">
                     Gunakan kolom pencarian atau klik salah satu peleton di bawah untuk memproses logistik basecamp.
                   </p>
@@ -845,19 +854,19 @@ export default function StagingDashboard() {
         {/* ========================================================================= */}
         {activeViewMode === 'dp1' && (
           <div className="space-y-6">
-            <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-6">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+            <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-black uppercase tracking-wider text-blue-400 bg-blue-500/10 px-2.5 py-0.5 rounded border border-blue-500/20">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-blue-700 bg-blue-50 px-2.5 py-0.5 rounded border border-blue-200">
                       DP 1: INSPEKSI FOTO TAB / IPAD
                     </span>
-                    <span className="text-xs text-slate-400">Verifikasi 25 Personel Peleton</span>
+                    <span className="text-xs text-slate-500 font-medium">Verifikasi 25 Personel Peleton</span>
                   </div>
-                  <h2 className="text-xl font-black uppercase text-white mt-1">
+                  <h2 className="text-xl font-black uppercase text-slate-900 mt-1">
                     Pemeriksaan Wajah & Personel Lapangan
                   </h2>
-                  <p className="text-xs text-slate-400 mt-0.5">
+                  <p className="text-xs text-slate-500 mt-0.5">
                     Cocokkan pasfoto pendaftaran dengan fisik siswa di lapangan sebelum meloloskan ke DP 2 (Ruang Tunggu Steril).
                   </p>
                 </div>
@@ -867,7 +876,7 @@ export default function StagingDashboard() {
                   <select
                     value={selectedDP1Team?.id || ''}
                     onChange={(e) => setSelectedDP1TeamId(e.target.value)}
-                    className="px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-xs font-bold text-white max-w-xs"
+                    className="px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs font-bold text-slate-900 max-w-xs focus:outline-none focus:border-indigo-500 cursor-pointer shadow-xs"
                   >
                     {eligibleTeams.map(t => (
                       <option key={t.id} value={t.id}>
@@ -881,19 +890,19 @@ export default function StagingDashboard() {
               {selectedDP1Team && (
                 <div className="space-y-6">
                   {/* Team Bar & Pass to DP 2 Button */}
-                  <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
-                      <span className="text-[10px] font-mono font-bold text-yellow-400">
+                      <span className="text-[10px] font-mono font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
                         {selectedDP1Team.regCode} • No. Undi #{selectedDP1Team.lotNumber || '-'}
                       </span>
-                      <h3 className="text-lg font-black text-white uppercase">{selectedDP1Team.schoolName}</h3>
-                      <p className="text-xs text-slate-400">{selectedDP1Team.platoonName}</p>
+                      <h3 className="text-lg font-black text-slate-900 uppercase mt-1">{selectedDP1Team.schoolName}</h3>
+                      <p className="text-xs text-slate-500">{selectedDP1Team.platoonName}</p>
                     </div>
 
                     <div className="flex items-center gap-3">
                       <div className="text-right">
                         <span className="text-[10px] uppercase font-bold text-slate-400 block">Terverifikasi</span>
-                        <span className="text-sm font-mono font-black text-emerald-400">
+                        <span className="text-sm font-mono font-black text-emerald-600">
                           {dp1VerifiedCount} / {dp1Personnels.length} Personel
                         </span>
                       </div>
@@ -905,8 +914,8 @@ export default function StagingDashboard() {
                         }}
                         className={`px-5 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider flex items-center gap-2 transition-all cursor-pointer ${
                           isDP1AllVerified
-                            ? 'bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-lg'
-                            : 'bg-slate-800 text-slate-400 hover:text-white'
+                            ? 'bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-sm'
+                            : 'bg-slate-200 text-slate-500 hover:text-slate-800'
                         }`}
                       >
                         <span>Loloskan ke DP 2</span>
@@ -926,13 +935,13 @@ export default function StagingDashboard() {
                           key={person.id}
                           className={`p-3.5 rounded-2xl border transition-all ${
                             verified
-                              ? 'bg-emerald-950/20 border-emerald-500/40'
-                              : 'bg-slate-950 border-slate-800'
+                              ? 'bg-emerald-50/70 border-emerald-300 shadow-xs'
+                              : 'bg-white border-slate-200 shadow-xs'
                           }`}
                         >
                           <div className="flex items-start gap-3">
                             {/* Pasfoto */}
-                            <div className="w-16 h-20 bg-slate-900 rounded-xl overflow-hidden border border-slate-700 shrink-0 flex items-center justify-center">
+                            <div className="w-16 h-20 bg-slate-100 rounded-xl overflow-hidden border border-slate-200 shrink-0 flex items-center justify-center">
                               {person.photo ? (
                                 <img
                                   src={person.photo}
@@ -940,22 +949,22 @@ export default function StagingDashboard() {
                                   className="w-full h-full object-cover"
                                 />
                               ) : (
-                                <Users className="w-6 h-6 text-slate-600" />
+                                <Users className="w-6 h-6 text-slate-400" />
                               )}
                             </div>
 
                             {/* Biodata */}
                             <div className="flex-1 min-w-0">
                               <span className={`text-[9px] font-black uppercase px-1.5 py-0.5 rounded block w-fit mb-1 ${
-                                person.isDanton ? 'bg-yellow-400/20 text-yellow-400 border border-yellow-400/30' : 'bg-slate-800 text-slate-400'
+                                person.isDanton ? 'bg-amber-100 text-amber-800 border border-amber-300' : 'bg-slate-100 text-slate-600'
                               }`}>
                                 {person.role}
                               </span>
-                              <h4 className="font-bold text-xs text-white truncate" title={person.name}>
+                              <h4 className="font-bold text-xs text-slate-900 truncate" title={person.name}>
                                 {person.name}
                               </h4>
-                              <p className="text-[10px] text-slate-400">NISN: {person.nisn}</p>
-                              <p className="text-[10px] text-slate-400">Kelas: {person.class}</p>
+                              <p className="text-[10px] text-slate-500">NISN: {person.nisn}</p>
+                              <p className="text-[10px] text-slate-500">Kelas: {person.class}</p>
 
                               {/* Toggle Hadir / Sesuai Wajah */}
                               <div className="mt-2 flex items-center gap-1.5">
@@ -964,8 +973,8 @@ export default function StagingDashboard() {
                                   onClick={() => updateDP1PersonnelInspection(selectedDP1Team.id, person.id, !verified)}
                                   className={`flex-1 py-1.5 px-2 rounded-lg text-[10px] font-bold uppercase transition-all flex items-center justify-center gap-1 cursor-pointer ${
                                     verified
-                                      ? 'bg-emerald-500 text-slate-950 font-black'
-                                      : 'bg-slate-800 hover:bg-slate-700 text-slate-300'
+                                      ? 'bg-emerald-600 text-white font-black shadow-xs'
+                                      : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
                                   }`}
                                 >
                                   {verified ? (
@@ -1000,18 +1009,18 @@ export default function StagingDashboard() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
             {/* COLUMN 1: DP 1 (Inspeksi Personel & Absensi) */}
-            <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 space-y-4 shadow-lg">
-              <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div className="bg-slate-100 border border-slate-200 rounded-3xl p-5 space-y-4 shadow-xs">
+              <div className="flex items-center justify-between border-b border-slate-200 pb-3">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold">
+                  <div className="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold">
                     <ClipboardCheck className="w-4 h-4" />
                   </div>
                   <div>
-                    <h3 className="font-black text-sm uppercase text-white">DP 1: Inspeksi Foto</h3>
-                    <span className="text-[10px] text-slate-400">Verifikasi 25 personel via Tab</span>
+                    <h3 className="font-black text-sm uppercase text-slate-900">DP 1: Inspeksi Foto</h3>
+                    <span className="text-[10px] text-slate-500">Verifikasi 25 personel via Tab</span>
                   </div>
                 </div>
-                <span className="text-xs font-mono font-bold px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400">
+                <span className="text-xs font-mono font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 border border-blue-200">
                   {stageCounts['dp1'] || 0}
                 </span>
               </div>
@@ -1022,28 +1031,28 @@ export default function StagingDashboard() {
                   return (
                     <div
                       key={team.id}
-                      className="bg-slate-950 border border-slate-800 hover:border-slate-700 p-4 rounded-2xl space-y-3 transition-all"
+                      className="bg-white border border-slate-200 hover:border-slate-300 p-4 rounded-2xl space-y-3 shadow-xs transition-all"
                     >
                       <div className="flex items-start justify-between gap-2">
                         <div>
-                          <span className="text-[10px] font-mono font-bold text-yellow-400 bg-yellow-400/10 px-2 py-0.5 rounded">
+                          <span className="text-[10px] font-mono font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
                             No. {team.lotNumber ? String(team.lotNumber).padStart(2, '0') : '--'} • {team.jenjang}
                           </span>
-                          <h4 className="font-black text-sm text-white mt-1.5">{team.schoolName}</h4>
-                          <p className="text-xs text-slate-400">{team.platoonName}</p>
+                          <h4 className="font-black text-sm text-slate-900 mt-1.5">{team.schoolName}</h4>
+                          <p className="text-xs text-slate-500">{team.platoonName}</p>
                         </div>
                         <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded ${
-                          currentStage === 'dp1' ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30' : 'bg-slate-800 text-slate-400'
+                          currentStage === 'dp1' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'bg-slate-100 text-slate-600'
                         }`}>
                           {currentStage === 'dp1' ? 'Di DP 1' : (currentStage === 'basecamp' ? 'Basecamp' : 'Standby')}
                         </span>
                       </div>
 
-                      <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-900">
+                      <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
                         {currentStage !== 'dp1' ? (
                           <button
                             onClick={() => handleMoveStage(team, 'dp1')}
-                            className="px-3 py-1.5 bg-blue-600/30 hover:bg-blue-600 text-blue-300 hover:text-white text-xs font-bold rounded-xl transition-all flex items-center gap-1 cursor-pointer"
+                            className="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-bold rounded-xl border border-blue-200 transition-all flex items-center gap-1 cursor-pointer"
                           >
                             <span>Panggil ke DP 1</span>
                             <ArrowRight className="w-3 h-3" />
@@ -1054,7 +1063,7 @@ export default function StagingDashboard() {
                               setSelectedDP1TeamId(team.id);
                               setActiveViewMode('dp1');
                             }}
-                            className="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-black rounded-xl transition-all flex items-center gap-1 cursor-pointer"
+                            className="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-black rounded-xl transition-all flex items-center gap-1 shadow-xs cursor-pointer"
                           >
                             <Tablet className="w-3.5 h-3.5" />
                             <span>Buka Inspeksi Tab</span>
@@ -1068,18 +1077,18 @@ export default function StagingDashboard() {
             </div>
 
             {/* COLUMN 2: DP 2 (Ruang Tunggu Steril) */}
-            <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 space-y-4 shadow-lg">
-              <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div className="bg-slate-100 border border-slate-200 rounded-3xl p-5 space-y-4 shadow-xs">
+              <div className="flex items-center justify-between border-b border-slate-200 pb-3">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold">
+                  <div className="w-8 h-8 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold">
                     <Clock className="w-4 h-4" />
                   </div>
                   <div>
-                    <h3 className="font-black text-sm uppercase text-white">DP 2: Ruang Tunggu Steril</h3>
-                    <span className="text-[10px] text-slate-400">Peleton steril menunggu giliran tampil</span>
+                    <h3 className="font-black text-sm uppercase text-slate-900">DP 2: Ruang Tunggu Steril</h3>
+                    <span className="text-[10px] text-slate-500">Peleton steril menunggu giliran tampil</span>
                   </div>
                 </div>
-                <span className="text-xs font-mono font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400">
+                <span className="text-xs font-mono font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 border border-amber-200">
                   {stageCounts['dp2'] || 0}
                 </span>
               </div>
@@ -1089,29 +1098,29 @@ export default function StagingDashboard() {
                   return (
                     <div
                       key={team.id}
-                      className="bg-slate-950 border border-amber-500/30 p-4 rounded-2xl space-y-3 transition-all"
+                      className="bg-white border border-amber-200 p-4 rounded-2xl space-y-3 shadow-xs transition-all"
                     >
                       <div className="flex items-start justify-between gap-2">
                         <div>
-                          <span className="text-[10px] font-mono font-bold text-yellow-400 bg-yellow-400/10 px-2 py-0.5 rounded">
+                          <span className="text-[10px] font-mono font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
                             No. {team.lotNumber ? String(team.lotNumber).padStart(2, '0') : '--'} • {team.jenjang}
                           </span>
-                          <h4 className="font-black text-sm text-white mt-1.5">{team.schoolName}</h4>
-                          <p className="text-xs text-slate-400">{team.platoonName}</p>
+                          <h4 className="font-black text-sm text-slate-900 mt-1.5">{team.schoolName}</h4>
+                          <p className="text-xs text-slate-500">{team.platoonName}</p>
                         </div>
-                        <span className="text-[10px] font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
+                        <span className="text-[10px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
                           Tunggu Steril
                         </span>
                       </div>
 
-                      <div className="p-2.5 bg-amber-950/20 rounded-xl border border-amber-500/20 text-[11px] text-amber-300">
+                      <div className="p-2.5 bg-amber-50 rounded-xl border border-amber-200 text-[11px] text-amber-800">
                         Personel lengkap & terverifikasi di DP 1. Menunggu dipanggil ke DP 3.
                       </div>
 
-                      <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-900">
+                      <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
                         <button
                           onClick={() => handleMoveStage(team, 'dp3')}
-                          className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-1 transition-all cursor-pointer shadow-md"
+                          className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-1 transition-all cursor-pointer shadow-xs"
                         >
                           <span>Kirim ke DP 3</span>
                           <ArrowRight className="w-3 h-3" />
@@ -1124,18 +1133,18 @@ export default function StagingDashboard() {
             </div>
 
             {/* COLUMN 3: DP 3 (Pintu Masuk Lapangan) */}
-            <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 space-y-4 shadow-lg">
-              <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div className="bg-slate-100 border border-slate-200 rounded-3xl p-5 space-y-4 shadow-xs">
+              <div className="flex items-center justify-between border-b border-slate-200 pb-3">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold">
+                  <div className="w-8 h-8 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold">
                     <DoorOpen className="w-4 h-4" />
                   </div>
                   <div>
-                    <h3 className="font-black text-sm uppercase text-white">DP 3: Pintu Masuk</h3>
-                    <span className="text-[10px] text-slate-400">Siap melangkah ke kotak arena</span>
+                    <h3 className="font-black text-sm uppercase text-slate-900">DP 3: Pintu Masuk</h3>
+                    <span className="text-[10px] text-slate-500">Siap melangkah ke kotak arena</span>
                   </div>
                 </div>
-                <span className="text-xs font-mono font-bold px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-400">
+                <span className="text-xs font-mono font-bold px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700 border border-indigo-200">
                   {stageCounts['dp3'] || 0}
                 </span>
               </div>
@@ -1145,25 +1154,25 @@ export default function StagingDashboard() {
                   return (
                     <div
                       key={team.id}
-                      className="bg-slate-950 border border-indigo-500/40 p-4 rounded-2xl space-y-3 shadow-md"
+                      className="bg-white border border-indigo-200 p-4 rounded-2xl space-y-3 shadow-xs"
                     >
                       <div className="flex items-start justify-between gap-2">
                         <div>
-                          <span className="text-[10px] font-mono font-bold text-yellow-400 bg-yellow-400/10 px-2 py-0.5 rounded">
+                          <span className="text-[10px] font-mono font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
                             No. {team.lotNumber ? String(team.lotNumber).padStart(2, '0') : '--'} • {team.jenjang}
                           </span>
-                          <h4 className="font-black text-sm text-white mt-1.5">{team.schoolName}</h4>
-                          <p className="text-xs text-slate-400">{team.platoonName}</p>
+                          <h4 className="font-black text-sm text-slate-900 mt-1.5">{team.schoolName}</h4>
+                          <p className="text-xs text-slate-500">{team.platoonName}</p>
                         </div>
-                        <span className="text-[10px] font-bold text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded border border-indigo-500/20">
+                        <span className="text-[10px] font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200">
                           Siap Tampil
                         </span>
                       </div>
 
-                      <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-900">
+                      <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
                         <button
                           onClick={() => handleMoveStage(team, 'arena')}
-                          className="w-full py-2.5 bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl shadow-lg flex items-center justify-center gap-2 transition-all active:scale-95 cursor-pointer"
+                          className="w-full py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-xs uppercase tracking-wider rounded-xl shadow-xs flex items-center justify-center gap-2 transition-all active:scale-95 cursor-pointer"
                         >
                           <Play className="w-4 h-4 fill-current" />
                           <span>Mulai Tampil (Masuk Arena)</span>
@@ -1179,13 +1188,13 @@ export default function StagingDashboard() {
         )}
 
         {/* Finished Teams Table Summary */}
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 space-y-4">
-          <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div className="bg-white border border-slate-200 rounded-3xl p-6 space-y-4 shadow-sm">
+          <div className="flex items-center justify-between border-b border-slate-200 pb-3">
             <div>
-              <h3 className="font-black text-base uppercase text-white">Riwayat Peleton yang Selesai Tampil</h3>
-              <p className="text-xs text-slate-400">Data durasi tampil dan penalti kelebihan waktu lapangan</p>
+              <h3 className="font-black text-base uppercase text-slate-900">Riwayat Peleton yang Selesai Tampil</h3>
+              <p className="text-xs text-slate-500">Data durasi tampil dan penalti kelebihan waktu lapangan</p>
             </div>
-            <span className="text-xs font-mono font-bold text-purple-400 bg-purple-500/10 px-3 py-1 rounded-xl border border-purple-500/20">
+            <span className="text-xs font-mono font-bold text-purple-700 bg-purple-50 px-3 py-1 rounded-xl border border-purple-200">
               {stageCounts['finished'] || 0} Peleton Selesai
             </span>
           </div>
@@ -1193,17 +1202,17 @@ export default function StagingDashboard() {
           <div className="overflow-x-auto">
             <table className="w-full text-xs text-left">
               <thead>
-                <tr className="border-b border-slate-800 text-slate-400 font-bold uppercase text-[10px]">
-                  <th className="py-2 px-3">No. Undi</th>
-                  <th className="py-2 px-3">Peleton & Sekolah</th>
-                  <th className="py-2 px-3">Jenjang</th>
-                  <th className="py-2 px-3">Durasi Tampil</th>
-                  <th className="py-2 px-3">Status Waktu</th>
-                  <th className="py-2 px-3">Penalti Overtime</th>
-                  <th className="py-2 px-3 text-right">Aksi</th>
+                <tr className="border-b border-slate-200 text-slate-500 font-bold uppercase text-[10px] bg-slate-50">
+                  <th className="py-2.5 px-3">No. Undi</th>
+                  <th className="py-2.5 px-3">Peleton & Sekolah</th>
+                  <th className="py-2.5 px-3">Jenjang</th>
+                  <th className="py-2.5 px-3">Durasi Tampil</th>
+                  <th className="py-2.5 px-3">Status Waktu</th>
+                  <th className="py-2.5 px-3">Penalti Overtime</th>
+                  <th className="py-2.5 px-3 text-right">Aksi</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800 font-medium">
+              <tbody className="divide-y divide-slate-100 font-medium">
                 {eligibleTeams.filter(t => (staging[t.id]?.stage || 'waiting') === 'finished' || (staging[t.id]?.stage || 'waiting') === 'checkout').map(team => {
                   const s = staging[team.id] || {};
                   const duration = s.durationSeconds || 0;
@@ -1211,36 +1220,36 @@ export default function StagingDashboard() {
                   const penaltyPoints = otBlocks * STAGING_CONFIG.PENALTY_OVERTIME_PER_30_SEC;
 
                   return (
-                    <tr key={team.id} className="hover:bg-slate-800/40">
-                      <td className="py-3 px-3 font-mono font-bold text-yellow-400">
+                    <tr key={team.id} className="hover:bg-slate-50">
+                      <td className="py-3 px-3 font-mono font-bold text-amber-700">
                         {team.lotNumber ? String(team.lotNumber).padStart(2, '0') : '--'}
                       </td>
                       <td className="py-3 px-3">
-                        <div className="font-bold text-white">{team.schoolName}</div>
+                        <div className="font-bold text-slate-900">{team.schoolName}</div>
                         <div className="text-[10px] text-slate-500">{team.platoonName}</div>
                       </td>
-                      <td className="py-3 px-3 text-slate-300 font-bold">{team.jenjang}</td>
-                      <td className="py-3 px-3 font-mono font-bold text-slate-200">
+                      <td className="py-3 px-3 text-slate-700 font-bold">{team.jenjang}</td>
+                      <td className="py-3 px-3 font-mono font-bold text-slate-900">
                         {formatTime(duration)}
                       </td>
                       <td className="py-3 px-3">
                         {otBlocks > 0 ? (
-                          <span className="text-rose-400 font-bold bg-rose-950/60 px-2 py-0.5 rounded border border-rose-800">
+                          <span className="text-rose-700 font-bold bg-rose-50 px-2 py-0.5 rounded border border-rose-200">
                             Overtime (+{otBlocks * 30}s)
                           </span>
                         ) : (
-                          <span className="text-emerald-400 font-bold bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-800">
+                          <span className="text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
                             Tepat Waktu
                           </span>
                         )}
                       </td>
-                      <td className="py-3 px-3 font-mono font-bold text-rose-400">
+                      <td className="py-3 px-3 font-mono font-bold text-rose-600">
                         {penaltyPoints > 0 ? `-${penaltyPoints} Poin` : '0 Poin'}
                       </td>
                       <td className="py-3 px-3 text-right">
                         <button
                           onClick={() => handleMoveStage(team, 'dp3')}
-                          className="text-[10px] text-slate-400 hover:text-white underline cursor-pointer"
+                          className="text-[10px] text-slate-500 hover:text-indigo-600 font-medium underline cursor-pointer"
                         >
                           Kembalikan ke DP3
                         </button>
@@ -1254,7 +1263,7 @@ export default function StagingDashboard() {
         </div>
 
       </div>
-    </div>
+    </SimpaskorSidebarLayout>
   );
 }
 

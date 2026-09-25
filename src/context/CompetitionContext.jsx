@@ -5,7 +5,6 @@ import {
   INITIAL_SETTINGS,
   INITIAL_USERS,
   INITIAL_STAGING,
-  INITIAL_VOTES,
   generatePersonnels
 } from '../data/seedData.js';
 import { JURY_POSTS, STAGING_CONFIG } from '../config.js';
@@ -79,8 +78,6 @@ const STORAGE_KEYS = {
   USERS: 'lbb_muallimin_users_v4',
   CURRENT_USER: 'lbb_muallimin_current_user_v4',
   STAGING: 'lbb_muallimin_staging_v3',
-  VOTES: 'lbb_muallimin_votes_v3',
-  USER_VOTES: 'lbb_muallimin_user_votes_v3',
 };
 
 // Bersihkan data sampah/dummy legacy versi sebelumnya dari browser
@@ -200,7 +197,37 @@ export function normalizeTeamData(team) {
     }
     if (!Array.isArray(t.roster.pasukan)) t.roster.pasukan = [];
     if (!Array.isArray(t.roster.cadangan)) t.roster.cadangan = [];
-    if (!Array.isArray(t.roster.officials)) t.roster.officials = [];
+    if (!Array.isArray(t.roster.officials)) {
+      t.roster.officials = [];
+    }
+    // Normalisasi struktur 3 Pendamping: 1 Official Utama + 2 Tim Pendukung
+    const defaultTemplates = [
+      { id: 'off-1', name: '', phone: '', role: 'Official (Pelatih / Pembina)', category: 'official' },
+      { id: 'off-2', name: '', phone: '', role: 'Pendukung 1 (Medis / Dokum)', category: 'pendukung' },
+      { id: 'off-3', name: '', phone: '', role: 'Pendukung 2 (Medis / Dokum)', category: 'pendukung' },
+    ];
+    const normalizedOfficials = [];
+    for (let i = 0; i < 3; i++) {
+      const existingOff = t.roster.officials[i];
+      if (existingOff) {
+        let cleanRole = existingOff.role || defaultTemplates[i].role;
+        // Jika data lama bertuliskan "Pembina / Pelatih 1" atau "Pembina / Pelatih 2", konversi ke label baru
+        if (cleanRole === 'Pembina / Pelatih 1') {
+          cleanRole = 'Official (Pelatih / Pembina)';
+        } else if (cleanRole === 'Pembina / Pelatih 2') {
+          cleanRole = 'Pendukung 1 (Medis / Dokum)';
+        }
+        normalizedOfficials.push({
+          ...defaultTemplates[i],
+          ...existingOff,
+          role: cleanRole,
+          category: i === 0 ? 'official' : 'pendukung',
+        });
+      } else {
+        normalizedOfficials.push({ ...defaultTemplates[i] });
+      }
+    }
+    t.roster.officials = normalizedOfficials;
   }
 
   // Pastikan waNumber selalu berupa string aman
@@ -301,33 +328,105 @@ export function CompetitionProvider({ children }) {
     }
   });
 
-  // 9. E-Voting Suporter (Fase 3)
-  const [votes, setVotes] = useState(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEYS.VOTES);
-      return saved ? JSON.parse(saved) : INITIAL_VOTES;
-    } catch {
-      return INITIAL_VOTES;
-    }
-  });
-
-  // 10. User Device Vote History (Anti-Spam Daily Limit Check)
-  const [userVotes, setUserVotes] = useState(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEYS.USER_VOTES);
-      return saved ? JSON.parse(saved) : {};
-    } catch {
-      return {};
-    }
-  });
-
-  // 11. Stopwatch / Field Timer (Fase 2)
+  // 9. Stopwatch / Field Timer (Fase 2)
   const [fieldTimer, setFieldTimer] = useState({
     isRunning: false,
     elapsedSeconds: 0,
     activeTeamId: null,
   });
   const timerIntervalRef = useRef(null);
+
+  // 12. Stage Routing State (9 Tahap Menu Terpadu)
+  const [adminActiveTab, setAdminActiveTab] = useState('registration');
+  const [stagingActiveMode, setStagingActiveMode] = useState('pipeline');
+  const [stagingBasecampAction, setStagingBasecampAction] = useState('checkin');
+
+  function navigateToStage(stageId) {
+    if (stageId === 'pendaftaran') {
+      setAdminActiveTab('registration');
+      setActiveView('admin');
+    } else if (stageId === 'tm') {
+      setActiveView('tm');
+    } else if (stageId === 'uji_coba') {
+      setActiveView('field_trial');
+    } else if (stageId === 'checkin') {
+      setActiveView('checkin');
+    } else if (stageId === 'dp') {
+      setActiveView('dp');
+    } else if (stageId === 'penjurian') {
+      setActiveView('juri');
+    } else if (stageId === 'rekap_nilai') {
+      setActiveView('rekap_nilai');
+    } else if (stageId === 'klasemen') {
+      setActiveView('live_leaderboard');
+    } else if (stageId === 'checkout') {
+      setActiveView('checkout');
+    } else if (stageId === 'superadmin') {
+      setActiveView('superadmin');
+    } else {
+      setActiveView(stageId);
+    }
+    try {
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    } catch {
+      window.scrollTo(0, 0);
+    }
+  }
+
+  // 13. Multi-Role Authorization Matrix Helper
+  const canAccessStage = (stageId, targetRole = role) => {
+    const userR = currentUser?.role || targetRole || 'publik';
+
+    // 1. Superadmin: Master authority penuh
+    if (userR === 'superadmin') return true;
+
+    // 2. Public / Publik: Hanya lihat klasemen terbuka & info publik
+    if (userR === 'publik') {
+      return ['klasemen', 'uji_coba'].includes(stageId);
+    }
+
+    // 3. Peserta: Dashboard tim, info jadwal TM, jadwal uji coba & klasemen
+    if (userR === 'peserta') {
+      return ['tm', 'uji_coba', 'klasemen'].includes(stageId);
+    }
+
+    // 4. Petugas Check-In / Basecamp: HANYA Check-In & Check-Out barak transit peleton
+    if (userR === 'checkin') {
+      return ['checkin', 'checkout'].includes(stageId);
+    }
+
+    // 5. Petugas Daerah Persiapan (DP 1-3): HANYA DP 1-3 & Gladi Lapangan
+    if (userR === 'dp' || userR === 'staging') {
+      return ['dp', 'uji_coba'].includes(stageId);
+    }
+
+    // 6. Dewan Juri Lapangan: HANYA Penjurian materi PBB
+    if (userR === 'juri') {
+      return ['penjurian'].includes(stageId);
+    }
+
+    // 7. Penginput Nilai: HANYA Input angka blangko kertas di Penjurian & Rekap Nilai
+    if (userR === 'penginput') {
+      return ['penjurian', 'rekap_nilai'].includes(stageId);
+    }
+
+    // 8. Verifikator: HANYA Rekap Nilai (Cek silang blangko vs angka) & Klasemen
+    if (userR === 'verifikator') {
+      return ['rekap_nilai', 'klasemen'].includes(stageId);
+    }
+
+    // 9. Finalisator: HANYA Rekap Nilai (Pengesahan & Kunci Skor) & Klasemen
+    if (userR === 'finalisator') {
+      return ['rekap_nilai', 'klasemen'].includes(stageId);
+    }
+
+    // 10. Admin (Sekretariat): Pendaftaran, TM, Uji Coba, Klasemen
+    if (userR === 'admin') {
+      return ['pendaftaran', 'tm', 'uji_coba', 'klasemen'].includes(stageId);
+    }
+
+    return false;
+  };
 
   useEffect(() => {
     if (fieldTimer.isRunning) {
@@ -345,18 +444,10 @@ export function CompetitionProvider({ children }) {
     };
   }, [fieldTimer.isRunning]);
 
-  // Sync staging, votes, userVotes to localStorage
+  // Sync staging to localStorage
   useEffect(() => {
     safeSetItem(STORAGE_KEYS.STAGING, JSON.stringify(staging));
   }, [staging]);
-
-  useEffect(() => {
-    safeSetItem(STORAGE_KEYS.VOTES, JSON.stringify(votes));
-  }, [votes]);
-
-  useEffect(() => {
-    safeSetItem(STORAGE_KEYS.USER_VOTES, JSON.stringify(userVotes));
-  }, [userVotes]);
 
 // Helper for resilient localStorage access without crashing on QuotaExceededError
 function safeSetItem(key, value) {
@@ -556,19 +647,26 @@ function safeSetItem(key, value) {
                 });
               }
 
-              // Merge Officials
+              // Merge Officials (Total 3: 1 Official + 2 Pendukung)
               const sheetOfficials = Array.isArray(sheetRoster.officials) ? sheetRoster.officials : [];
               const existingOfficials = Array.isArray(existingRoster.officials) ? existingRoster.officials : [];
-              const maxOffLen = Math.max(sheetOfficials.length, existingOfficials.length, 2);
+              const maxOffLen = Math.max(sheetOfficials.length, existingOfficials.length, 3);
               const mergedOfficials = [];
+
+              const defaultRoles = [
+                'Official (Pelatih / Pembina)',
+                'Pendukung 1 (Medis / Dokum)',
+                'Pendukung 2 (Medis / Dokum)'
+              ];
 
               for (let i = 0; i < maxOffLen; i++) {
                 const sO = sheetOfficials[i];
                 const eO = existingOfficials[i];
-                if (!sO && !eO) continue;
+                if (!sO && !eO && i >= 3) continue;
                 mergedOfficials.push({
                   id: sO?.id || eO?.id || `off-${i + 1}`,
-                  role: sO?.role || eO?.role || `Pembina / Pelatih ${i + 1}`,
+                  role: sO?.role || eO?.role || defaultRoles[i] || `Pendukung ${i + 1}`,
+                  category: i === 0 ? 'official' : 'pendukung',
                   name: (sO?.name && sO.name !== '-') ? sO.name : (eO?.name || ''),
                   phone: sO?.phone || eO?.phone || '',
                   photo: (sO?.photo && sO.photo !== '#' && !sO.photo.startsWith('#'))
@@ -717,7 +815,10 @@ function safeSetItem(key, value) {
       let targetView = 'landing';
       if (user.role === 'admin') targetView = 'admin';
       else if (user.role === 'superadmin') targetView = 'superadmin';
-      else if (['penginput', 'verifikator', 'finalisator'].includes(user.role)) targetView = 'juri';
+      else if (user.role === 'checkin') targetView = 'checkin';
+      else if (user.role === 'dp') targetView = 'dp';
+      else if (['juri', 'penginput'].includes(user.role)) targetView = 'juri';
+      else if (['verifikator', 'finalisator'].includes(user.role)) targetView = 'rekap_nilai';
       closeAuthModal(targetView);
       return { success: true, user };
     }
@@ -940,12 +1041,15 @@ function safeSetItem(key, value) {
     }
 
     if (targetRole === 'peserta') {
-      setRole('peserta');
-      setActiveView(currentTeamId ? 'peserta_dashboard' : 'landing');
-      return true;
+      if (currentUser?.role === 'peserta') {
+        setRole('peserta');
+        setActiveView(currentTeamId ? 'peserta_dashboard' : 'landing');
+        return true;
+      }
+      return false;
     }
 
-    // Role Staff resmi (superadmin, admin, penginput, verifikator, finalisator)
+    // Role Staff resmi (hanya role yang terdaftar pada email currentUser)
     if (currentUser && (currentUser.role === targetRole || currentUser.role === 'superadmin')) {
       setRole(targetRole);
       if (targetRole === 'admin') setActiveView('admin');
@@ -1633,15 +1737,23 @@ function safeSetItem(key, value) {
   }
 
   // --- Multi-Juri 3 Stage Scrutineering (Penginput -> Verifikator -> Finalisator) ---
-  // Juri 1: PBB Pasukan, Juri 2: Komandan (Danton), Juri 3: Variasi & Formasi
+  // Juri 1: Kebenaran Teknik PBB, Juri 2: Kekompakan Peleton, Juri 3: Komandan Peleton (Danton)
   // Ditambah: Hakim Garis (Injak Garis) & Timer (Waktu Tampil)
   function saveDraftScore(teamId, draftData) {
-    const pbbVal = Number(draftData.pbb?.total ?? draftData.juries?.pos1?.total ?? 0);
-    const dantonVal = Number(draftData.danton?.total ?? draftData.juries?.pos2?.total ?? 0);
-    const variasiVal = Number(draftData.variasi?.total ?? draftData.juries?.pos3?.total ?? 0);
+    const pbb1Val = Number(draftData.pbb1?.total ?? draftData.juries?.pos1?.total ?? draftData.pbb?.total ?? 0);
+    const pbb2Val = Number(draftData.pbb2?.total ?? draftData.juries?.pos2?.total ?? draftData.kekompakan?.total ?? 0);
+    
+    let pbbVal = 0;
+    if (pbb1Val > 0 && pbb2Val > 0) {
+      pbbVal = parseFloat(((pbb1Val + pbb2Val) / 2).toFixed(2));
+    } else {
+      pbbVal = pbb1Val || pbb2Val || Number(draftData.pbb?.total ?? 0);
+    }
+
+    const dantonVal = Number(draftData.danton?.total ?? draftData.juries?.pos3?.total ?? 0);
     const penaltyVal = Number(draftData.penalties?.totalPenalty ?? 0);
 
-    const calculatedFinal = Math.max(0, parseFloat((pbbVal + dantonVal + variasiVal - penaltyVal).toFixed(2)));
+    const calculatedFinal = Math.max(0, parseFloat((pbbVal + dantonVal - penaltyVal).toFixed(2)));
 
     const record = {
       teamId,
@@ -1653,13 +1765,13 @@ function safeSetItem(key, value) {
       juries: {
         pos1: {
           title: 'Juri 1: Kebenaran Teknik PBB',
-          total: pbbVal,
-          rubricScores: draftData.pbb?.rubricScores || draftData.juries?.pos1?.rubricScores || {},
+          total: pbb1Val,
+          rubricScores: draftData.pbb1?.rubricScores || draftData.juries?.pos1?.rubricScores || draftData.pbb?.rubricScores || {},
         },
         pos2: {
           title: 'Juri 2: Kekompakan Peleton',
-          total: variasiVal,
-          rubricScores: draftData.variasi?.rubricScores || draftData.juries?.pos2?.rubricScores || {},
+          total: pbb2Val,
+          rubricScores: draftData.pbb2?.rubricScores || draftData.juries?.pos2?.rubricScores || draftData.kekompakan?.rubricScores || {},
         },
         pos3: {
           title: 'Juri 3: Komandan Peleton (Danton)',
@@ -1667,9 +1779,13 @@ function safeSetItem(key, value) {
           rubricScores: draftData.danton?.rubricScores || draftData.juries?.pos3?.rubricScores || {},
         },
       },
-      pbb: { total: pbbVal, rubricScores: draftData.pbb?.rubricScores || {} },
+      pbb: {
+        total: pbbVal,
+        j1: pbb1Val,
+        j2: pbb2Val,
+        rubricScores: draftData.pbb?.rubricScores || draftData.pbb1?.rubricScores || {},
+      },
       danton: { total: dantonVal, rubricScores: draftData.danton?.rubricScores || {} },
-      variasi: { total: variasiVal, rubricScores: draftData.variasi?.rubricScores || {} },
       penalties: draftData.penalties || { totalPenalty: 0 },
       fieldTimerData: draftData.fieldTimerData || {},
       finalScore: calculatedFinal,
@@ -1758,8 +1874,6 @@ function safeSetItem(key, value) {
     setScores(INITIAL_SCORES);
     setSettings(INITIAL_SETTINGS);
     setStaging(INITIAL_STAGING);
-    setVotes(INITIAL_VOTES);
-    setUserVotes({});
     setFieldTimer({ isRunning: false, elapsedSeconds: 0, activeTeamId: null });
     setRole('publik');
     setActiveView('landing');
@@ -1768,8 +1882,6 @@ function safeSetItem(key, value) {
     localStorage.removeItem(STORAGE_KEYS.SCORES);
     localStorage.removeItem(STORAGE_KEYS.SETTINGS);
     localStorage.removeItem(STORAGE_KEYS.STAGING);
-    localStorage.removeItem(STORAGE_KEYS.VOTES);
-    localStorage.removeItem(STORAGE_KEYS.USER_VOTES);
     localStorage.removeItem(STORAGE_KEYS.ROLE);
     localStorage.removeItem(STORAGE_KEYS.CURRENT_TEAM_ID);
   }
@@ -1971,6 +2083,16 @@ function safeSetItem(key, value) {
       // Modals / Pages Navigation
       openModal,
       closeModal,
+
+      // 9-Stage Competition Workflow Navigation
+      adminActiveTab,
+      setAdminActiveTab,
+      stagingActiveMode,
+      setStagingActiveMode,
+      stagingBasecampAction,
+      setStagingBasecampAction,
+      navigateToStage,
+      canAccessStage,
     }),
     [
       role,
@@ -1990,6 +2112,9 @@ function safeSetItem(key, value) {
       authTab,
       staging,
       fieldTimer,
+      adminActiveTab,
+      stagingActiveMode,
+      stagingBasecampAction,
     ]
   );
 

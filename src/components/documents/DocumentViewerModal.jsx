@@ -144,8 +144,8 @@ export default function DocumentViewerModal({ isOpen, onClose }) {
 
               <div className="space-y-2 pt-2">
                 <h4 className="font-black text-sm uppercase text-red-700">BAB IV: PENILAIAN & DEWAN JURI</h4>
-                <p>1. Penilaian dilakukan oleh 6 Dewan Juri independen dan berkompeten dari unsur <strong>TNI, POLRI, dan PPI DIY</strong> (3 Juri SD/MI & 3 Juri SMP/MTs).</p>
-                <p>2. Unsur penilaian meliputi: PBB Dasar & Variasi ({COMPETITION.SCORING_PROPORTIONS.PBB}%), Kepemimpinan Komandan Peleton ({COMPETITION.SCORING_PROPORTIONS.DANTON}%), serta Formasi & Kerapian.</p>
+                <p>1. Penilaian dilakukan oleh 6 Dewan Juri independen dan berkompeten dari unsur <strong>TNI, POLRI, dan PPI DIY</strong> (3 Juri Pos SD/MI & 3 Juri Pos SMP/MTs).</p>
+                <p>2. Unsur penilaian murni berpedoman pada Perpang TNI No. 57 & 58 Tahun 2018 meliputi: PBB Peleton (Kebenaran Teknik Gerakan & Kekompakan Peleton) serta Kepemimpinan Komandan Peleton (Danton).</p>
                 <p>3. Keputusan Dewan Juri bersifat <strong>mutlak dan tidak dapat diganggu gugat</strong>.</p>
               </div>
 

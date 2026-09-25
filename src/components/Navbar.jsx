@@ -8,8 +8,16 @@ import {
   LayoutDashboard,
   Award,
   Trophy,
-  Heart,
-  ShieldCheck
+  ShieldCheck,
+  Crown,
+  ClipboardList,
+  CalendarCheck,
+  Clock,
+  FileSpreadsheet,
+  Compass,
+  CheckCircle2,
+  ExternalLink,
+  User
 } from 'lucide-react';
 import { NAVBAR } from '../config.js';
 import { useCompetition } from '../context/CompetitionContext.jsx';
@@ -193,133 +201,362 @@ export default function Navbar({ onOpenMobileMenu }) {
               <button
                 type="button"
                 onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
-                className={`flex items-center gap-2 pl-1.5 pr-3 py-1 rounded-full border transition-all ${
+                className={`group flex items-center gap-2.5 pl-1.5 pr-3.5 py-1.5 rounded-full border transition-all duration-200 select-none cursor-pointer ${
                   isScrolled
-                    ? 'bg-slate-100 hover:bg-slate-200 border-slate-300 text-slate-900'
-                    : 'glass hover:bg-white/12 text-white'
+                    ? 'bg-white/90 hover:bg-slate-50 border-slate-200/90 shadow-xs hover:border-slate-300 text-slate-800'
+                    : 'bg-slate-950/60 hover:bg-slate-900/80 backdrop-blur-md border-white/15 hover:border-white/25 text-white shadow-md'
                 }`}
               >
-                <img
-                  src={avatarUrl}
-                  alt={currentUser.name}
-                  className={`w-7 h-7 rounded-full ${
-                    isSchoolLogo ? 'object-contain bg-white p-0.5' : 'object-cover'
-                  }`}
-                  width="28"
-                  height="28"
-                  loading="lazy"
-                  decoding="async"
-                  onError={(e) => {
-                    if (currentUser.googleAvatar) {
-                      e.target.src = currentUser.googleAvatar;
-                    } else {
-                      e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.name)}&background=8B0000&color=fff`;
-                    }
-                  }}
-                />
-                <div className="text-left">
-                  <div className="text-xs font-bold truncate max-w-[130px] leading-tight" title={currentUser.role === 'peserta' ? (currentUser.schoolName || currentUser.name) : currentUser.name}>
+                {/* Avatar with subtle online status indicator */}
+                <div className="relative shrink-0">
+                  <img
+                    src={avatarUrl}
+                    alt={currentUser.name}
+                    className={`w-8 h-8 rounded-full ${
+                      isSchoolLogo 
+                        ? 'object-contain bg-white p-0.5 border border-slate-200/80' 
+                        : 'object-cover ring-1.5 ring-amber-400/40'
+                    }`}
+                    width="32"
+                    height="32"
+                    loading="lazy"
+                    decoding="async"
+                    onError={(e) => {
+                      if (currentUser.googleAvatar) {
+                        e.target.src = currentUser.googleAvatar;
+                      } else {
+                        e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.name)}&background=8B0000&color=fff`;
+                      }
+                    }}
+                  />
+                  <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-slate-900" title="Online" />
+                </div>
+
+                {/* Name & Role Badge */}
+                <div className="text-left flex flex-col justify-center min-w-0">
+                  <div 
+                    className="text-xs font-bold truncate max-w-[130px] leading-snug group-hover:text-amber-400 transition-colors" 
+                    title={currentUser.role === 'peserta' ? (currentUser.schoolName || currentUser.name) : currentUser.name}
+                  >
                     {currentUser.role === 'peserta'
                       ? (currentUser.schoolName || currentUser.name)
                       : (currentUser.name ? currentUser.name.split(' ')[0] : 'Staff')}
                   </div>
-                  <div className="text-[10px] uppercase font-extrabold text-yellow-400 leading-tight">
-                    {currentUser.role}
+                  <div className="flex items-center gap-1">
+                    <span className={`text-[9px] font-black uppercase tracking-wider leading-none ${
+                      isScrolled ? 'text-amber-600' : 'text-amber-400'
+                    }`}>
+                      {currentUser.role}
+                    </span>
                   </div>
                 </div>
-                <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${isUserDropdownOpen ? 'rotate-180' : ''}`} />
+
+                <ChevronDown className={`w-3.5 h-3.5 text-slate-400 group-hover:text-white transition-transform duration-200 ml-0.5 shrink-0 ${isUserDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
 
               {isUserDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-64 bg-slate-950/95 backdrop-blur-xl border border-slate-800 rounded-2xl p-2 shadow-2xl z-50 text-white text-xs animate-in fade-in zoom-in-95 duration-150 space-y-1">
-                  <div className="px-3 py-2 border-b border-slate-800 flex items-center gap-2.5">
-                    <img
-                      src={avatarUrl}
-                      alt={currentUser.name}
-                      className={`w-9 h-9 rounded-full ${
-                        isSchoolLogo ? 'object-contain bg-white p-0.5' : 'object-cover'
-                      }`}
-                      onError={(e) => {
-                        e.target.src = currentUser.googleAvatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.schoolName || currentUser.name)}&background=8B0000&color=fff`;
-                      }}
-                    />
-                    <div className="min-w-0">
-                      <p className="font-bold text-white truncate">
+                <div className="absolute right-0 mt-2.5 w-72 bg-slate-950/95 backdrop-blur-2xl border border-slate-800/80 rounded-2xl p-2.5 shadow-2xl z-50 text-white text-xs animate-in fade-in zoom-in-95 duration-150 space-y-1.5 ring-1 ring-white/10">
+                  {/* User Profile Header Card */}
+                  <div className="px-3 py-2.5 bg-slate-900/80 border border-slate-800 rounded-xl flex items-center gap-3">
+                    <div className="relative shrink-0">
+                      <img
+                        src={avatarUrl}
+                        alt={currentUser.name}
+                        className={`w-11 h-11 rounded-xl shadow-md ${
+                          isSchoolLogo ? 'object-contain bg-white p-1' : 'object-cover ring-2 ring-yellow-400/40'
+                        }`}
+                        onError={(e) => {
+                          e.target.src = currentUser.googleAvatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.schoolName || currentUser.name)}&background=8B0000&color=fff`;
+                        }}
+                      />
+                      <span className="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-emerald-500 rounded-full border-2 border-slate-950" title="Online" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="font-black text-sm text-white truncate leading-tight">
                         {currentUser.role === 'peserta' ? (currentUser.schoolName || currentUser.name) : currentUser.name}
                       </p>
                       {currentUser.role === 'peserta' && currentUser.name && currentUser.name !== currentUser.schoolName && (
                         <p className="text-[10px] text-slate-400 truncate">Official: {currentUser.name}</p>
                       )}
-                      <p className="text-[11px] text-slate-400 truncate">{currentUser.email}</p>
-                      <span className="inline-block mt-0.5 text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-md bg-yellow-400/20 text-yellow-400 border border-yellow-400/30">
-                        {currentUser.roleLabel || currentUser.role}
-                      </span>
+                      <p className="text-[11px] text-slate-400 truncate mt-0.5">{currentUser.email}</p>
                     </div>
                   </div>
 
-                  <button
-                    type="button"
-                    onClick={handleOpenUserPortal}
-                    className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-white/10 text-left transition-colors font-bold text-white"
-                  >
-                    <LayoutDashboard className="w-4 h-4 text-yellow-400 shrink-0" />
-                    <span>Buka Portal Dashboard</span>
-                  </button>
-
-                  {currentUser.role !== 'peserta' && (
-                    <>
+                  {/* Navigation Actions strictly partitioned by Role Authorization */}
+                  <div className="space-y-0.5 pt-1">
+                    {/* 1. PESERTA */}
+                    {currentUser.role === 'peserta' && (
                       <button
                         type="button"
                         onClick={() => {
                           setIsUserDropdownOpen(false);
-                          setActiveView('staging');
+                          setActiveView('peserta_dashboard');
                         }}
-                        className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-white/10 text-left transition-colors text-slate-200 cursor-pointer"
+                        className="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-white/10 text-left transition-colors font-bold text-white cursor-pointer group"
                       >
-                        <ShieldCheck className="w-4 h-4 text-indigo-400 shrink-0" />
-                        <span>Operator Lapangan & Staging</span>
+                        <div className="flex items-center gap-2.5">
+                          <LayoutDashboard className="w-4 h-4 text-yellow-400 shrink-0" />
+                          <span>Portal Kontingen Peleton</span>
+                        </div>
+                        <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-yellow-400 transition-colors" />
                       </button>
+                    )}
 
+                    {/* 2. ADMIN (SEKRETARIAT & PENDAFTARAN) */}
+                    {currentUser.role === 'admin' && (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsUserDropdownOpen(false);
+                            setActiveView('admin');
+                          }}
+                          className="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-blue-500/15 text-left transition-colors font-bold text-white cursor-pointer group"
+                        >
+                          <div className="flex items-center gap-2.5">
+                            <ClipboardList className="w-4 h-4 text-blue-400 shrink-0" />
+                            <span>Verifikasi Berkas & Pendaftaran</span>
+                          </div>
+                          <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-blue-400 transition-colors" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsUserDropdownOpen(false);
+                            setActiveView('tm');
+                          }}
+                          className="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-amber-500/15 text-left transition-colors font-bold text-slate-200 hover:text-white cursor-pointer group"
+                        >
+                          <div className="flex items-center gap-2.5">
+                            <CalendarCheck className="w-4 h-4 text-amber-400 shrink-0" />
+                            <span>Kocok Undian TM & No. Dada</span>
+                          </div>
+                          <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-amber-400 transition-colors" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsUserDropdownOpen(false);
+                            setActiveView('field_trial');
+                          }}
+                          className="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-emerald-500/15 text-left transition-colors font-bold text-slate-200 hover:text-white cursor-pointer group"
+                        >
+                          <div className="flex items-center gap-2.5">
+                            <Compass className="w-4 h-4 text-emerald-400 shrink-0" />
+                            <span>Jadwal Uji Coba Lapangan</span>
+                          </div>
+                          <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-emerald-400 transition-colors" />
+                        </button>
+                      </>
+                    )}
+
+                    {/* 3. CHECK-IN / BASECAMP OFFICER */}
+                    {currentUser.role === 'checkin' && (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsUserDropdownOpen(false);
+                            setActiveView('checkin');
+                          }}
+                          className="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-cyan-500/15 text-left transition-colors font-bold text-white cursor-pointer group"
+                        >
+                          <div className="flex items-center gap-2.5">
+                            <LogIn className="w-4 h-4 text-cyan-400 shrink-0" />
+                            <span>Meja Registrasi Check-In Hari-H</span>
+                          </div>
+                          <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-cyan-400 transition-colors" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsUserDropdownOpen(false);
+                            setActiveView('checkout');
+                          }}
+                          className="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-teal-500/15 text-left transition-colors font-bold text-slate-200 hover:text-white cursor-pointer group"
+                        >
+                          <div className="flex items-center gap-2.5">
+                            <LogOut className="w-4 h-4 text-teal-400 shrink-0" />
+                            <span>Inspeksi Barak & Check-Out</span>
+                          </div>
+                          <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-teal-400 transition-colors" />
+                        </button>
+                      </>
+                    )}
+
+                    {/* 4. DAERAH PERSIAPAN (DP 1-3) OFFICER */}
+                    {(currentUser.role === 'dp' || currentUser.role === 'staging') && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsUserDropdownOpen(false);
+                          setActiveView('dp');
+                        }}
+                        className="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-orange-500/15 text-left transition-colors font-bold text-white cursor-pointer group"
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <Clock className="w-4 h-4 text-orange-400 shrink-0" />
+                          <span>Panel Daerah Persiapan (DP 1-3)</span>
+                        </div>
+                        <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-orange-400 transition-colors" />
+                      </button>
+                    )}
+
+                    {/* 5. DEWAN JURI LAPANGAN */}
+                    {currentUser.role === 'juri' && (
                       <button
                         type="button"
                         onClick={() => {
                           setIsUserDropdownOpen(false);
                           setActiveView('juri');
                         }}
-                        className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-white/10 text-left transition-colors text-slate-200 cursor-pointer"
+                        className="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-emerald-500/15 text-left transition-colors font-bold text-white cursor-pointer group"
                       >
-                        <Award className="w-4 h-4 text-emerald-400 shrink-0" />
-                        <span>E-Scoring Juri LBB</span>
+                        <div className="flex items-center gap-2.5">
+                          <Award className="w-4 h-4 text-emerald-400 shrink-0" />
+                          <span>Lembar E-Scoring Juri LBB</span>
+                        </div>
+                        <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-emerald-400 transition-colors" />
                       </button>
+                    )}
 
-                      {currentUser.role === 'superadmin' && (
+                    {/* 6. OPERATOR PENGINPUT NILAI */}
+                    {currentUser.role === 'penginput' && (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsUserDropdownOpen(false);
+                            setActiveView('juri');
+                          }}
+                          className="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-indigo-500/15 text-left transition-colors font-bold text-white cursor-pointer group"
+                        >
+                          <div className="flex items-center gap-2.5">
+                            <Award className="w-4 h-4 text-indigo-400 shrink-0" />
+                            <span>Input Nilai Fisik & Foto Blangko</span>
+                          </div>
+                          <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-indigo-400 transition-colors" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsUserDropdownOpen(false);
+                            setActiveView('rekap_nilai');
+                          }}
+                          className="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-indigo-500/15 text-left transition-colors font-bold text-slate-200 hover:text-white cursor-pointer group"
+                        >
+                          <div className="flex items-center gap-2.5">
+                            <FileSpreadsheet className="w-4 h-4 text-indigo-400 shrink-0" />
+                            <span>Monitoring Status Draft Nilai</span>
+                          </div>
+                          <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-indigo-400 transition-colors" />
+                        </button>
+                      </>
+                    )}
+
+                    {/* 7. VERIFIKATOR NILAI */}
+                    {currentUser.role === 'verifikator' && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsUserDropdownOpen(false);
+                          setActiveView('rekap_nilai');
+                        }}
+                        className="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-teal-500/15 text-left transition-colors font-bold text-white cursor-pointer group"
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <CheckCircle2 className="w-4 h-4 text-teal-400 shrink-0" />
+                          <span>Panel Verifikasi & Validasi Blangko</span>
+                        </div>
+                        <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-teal-400 transition-colors" />
+                      </button>
+                    )}
+
+                    {/* 8. FINALISATOR (KETUA DEWAN JURI) */}
+                    {currentUser.role === 'finalisator' && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsUserDropdownOpen(false);
+                          setActiveView('rekap_nilai');
+                        }}
+                        className="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-amber-500/15 text-left transition-colors font-bold text-white cursor-pointer group"
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <Trophy className="w-4 h-4 text-amber-400 shrink-0" />
+                          <span>Penguncian Skor & Berita Acara</span>
+                        </div>
+                        <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-amber-400 transition-colors" />
+                      </button>
+                    )}
+
+                    {/* 9. SUPERADMIN (KETUA PELAKSANA / IT MASTER) */}
+                    {currentUser.role === 'superadmin' && (
+                      <>
                         <button
                           type="button"
                           onClick={() => {
                             setIsUserDropdownOpen(false);
                             setActiveView('superadmin');
                           }}
-                          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-rose-500/20 text-left transition-colors text-rose-300 cursor-pointer font-bold"
+                          className="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-rose-500/20 text-left transition-colors text-rose-300 hover:text-rose-200 cursor-pointer font-black group"
                         >
-                          <Crown className="w-4 h-4 text-rose-400 shrink-0" />
-                          <span>Superadmin Master Panel</span>
+                          <div className="flex items-center gap-2.5">
+                            <Crown className="w-4 h-4 text-rose-400 shrink-0" />
+                            <span>Superadmin Master Authority</span>
+                          </div>
+                          <ArrowRight className="w-3.5 h-3.5 text-rose-400 group-hover:translate-x-0.5 transition-transform" />
                         </button>
-                      )}
-                    </>
-                  )}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsUserDropdownOpen(false);
+                            setActiveView('admin');
+                          }}
+                          className="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-white/10 text-left transition-colors font-bold text-slate-200 hover:text-white cursor-pointer group"
+                        >
+                          <div className="flex items-center gap-2.5">
+                            <LayoutDashboard className="w-4 h-4 text-yellow-400 shrink-0" />
+                            <span>Dashboard Administrasi</span>
+                          </div>
+                          <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-yellow-400 transition-colors" />
+                        </button>
+                      </>
+                    )}
 
-                  <div className="border-t border-slate-800 my-1"></div>
+                    {/* Shared Link: Live Leaderboard (terbuka untuk staf atau saat pengumuman dipublikasikan) */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsUserDropdownOpen(false);
+                        setActiveView('live_leaderboard');
+                      }}
+                      className="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-white/10 text-left transition-colors text-slate-300 hover:text-white cursor-pointer group"
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <Trophy className="w-4 h-4 text-amber-400 shrink-0" />
+                        <span>Lihat Papan Klasemen</span>
+                      </div>
+                      <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-amber-400 transition-colors" />
+                    </button>
+                  </div>
 
+                  <div className="border-t border-slate-800/80 my-1"></div>
+
+                  {/* Logout Button */}
                   <button
                     type="button"
                     onClick={() => {
                       setIsUserDropdownOpen(false);
                       logoutUser();
                     }}
-                    className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-red-500/20 text-left transition-colors text-red-400 hover:text-red-300 font-semibold"
+                    className="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-red-500/20 text-left transition-colors text-red-400 hover:text-red-300 font-bold cursor-pointer group"
                   >
-                    <LogOut className="w-4 h-4 shrink-0" />
-                    <span>Keluar (Logout)</span>
+                    <div className="flex items-center gap-2.5">
+                      <LogOut className="w-4 h-4 shrink-0" />
+                      <span>Keluar (Logout)</span>
+                    </div>
+                    <span className="text-[10px] text-red-400/60 group-hover:text-red-300">Akun Google</span>
                   </button>
                 </div>
               )}
