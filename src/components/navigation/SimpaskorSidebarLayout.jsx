@@ -38,6 +38,7 @@ export default function SimpaskorSidebarLayout({
   title = 'Dashboard',
   subtitle = 'Ringkasan data dan informasi operasional lomba',
   rightActions = null,
+  onSelectMenu = null,
   children
 }) {
   const {
@@ -126,6 +127,10 @@ export default function SimpaskorSidebarLayout({
 
   const handleNavClick = (item) => {
     setIsMobileMenuOpen(false);
+    if (onSelectMenu && userRole === 'peserta' && item.view === 'peserta_dashboard') {
+      onSelectMenu(item.id);
+      return;
+    }
     if (item.stage && navigateToStage) {
       navigateToStage(item.stage);
     } else if (item.view) {

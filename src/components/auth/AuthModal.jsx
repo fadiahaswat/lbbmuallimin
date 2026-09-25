@@ -78,7 +78,7 @@ export default function AuthModal() {
             }
 
             const cleanEmail = googleProfile.email.toLowerCase();
-            const resLogin = loginUser(cleanEmail, googleProfile.name, googleProfile.picture);
+            const resLogin = await loginUser(cleanEmail, googleProfile.name, googleProfile.picture);
             setIsSigningIn(false);
 
             if (!resLogin?.success) {
@@ -96,32 +96,6 @@ export default function AuthModal() {
     } catch (err) {
       setIsSigningIn(false);
       setLoginError('Gagal membuka popup Google: ' + err.message);
-    }
-  };
-
-  // 2. Alternative Quick Login Flow: Kode Registrasi atau No WhatsApp
-  const handleCodeSignIn = (e) => {
-    e.preventDefault();
-    setLoginError('');
-    setErrorType('');
-
-    const cleanInput = identifierInput.trim();
-    if (!cleanInput) {
-      setLoginError('Silakan masukkan Kode Pendaftaran (contoh: LBB26-SMP-001) atau Nomor WhatsApp yang didaftarkan.');
-      return;
-    }
-
-    setIsSubmittingCode(true);
-    const res = loginAsTeam(cleanInput);
-    setIsSubmittingCode(false);
-
-    if (!res.success) {
-      setLoginError(res.message || 'Data pendaftaran tidak ditemukan atau belum disetujui.');
-      if (res.message?.includes('antrean verifikasi')) {
-        setErrorType('pending_approval');
-      } else {
-        setErrorType('not_registered');
-      }
     }
   };
 
@@ -146,7 +120,7 @@ export default function AuthModal() {
             <button
               type="button"
               onClick={handleClose}
-              className="flex items-center gap-2 text-xs font-bold text-slate-600 hover:text-slate-950 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 transition-all group"
+              className="flex items-center gap-2 text-xs font-bold text-slate-600 hover:text-slate-950 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 transition-all group cursor-pointer"
             >
               <ArrowLeft className="w-4 h-4 text-slate-500 group-hover:text-slate-950 group-hover:-translate-x-0.5 transition-transform" />
               <span className="hidden sm:inline">Kembali ke Beranda</span>
@@ -220,8 +194,8 @@ export default function AuthModal() {
                       1
                     </span>
                     <div>
-                      <span className="font-bold text-slate-900 block leading-snug">Upload Biodata 23 Personel</span>
-                      <span className="text-[11px] text-slate-500">Foto & NISN Danton, 21 Pasukan Inti & Cadangan</span>
+                      <span className="font-bold text-slate-900 block leading-snug">Upload Biodata 25 Personel</span>
+                      <span className="text-[11px] text-slate-500">Foto & NISN Danton, 21 Pasukan & 3 Cadangan</span>
                     </div>
                   </div>
 
@@ -262,13 +236,13 @@ export default function AuthModal() {
                 Masuk ke <span className="text-red-700">Dashboard Tim</span>
               </h2>
               <p className="text-xs text-slate-500 mt-1 leading-relaxed">
-                Masuk portal wajib menggunakan Akun Google dengan alamat email yang telah terdaftar saat registrasi lomba.
+                Masuk portal wajib menggunakan Akun Google dengan alamat email yang didaftarkan saat registrasi lomba.
               </p>
             </div>
 
             {/* Error Message Banners */}
             {loginError && (
-              <div className={`p-4 rounded-2xl border mb-5 text-xs leading-relaxed animate-shake ${
+              <div className={`p-4 rounded-2xl border mb-5 text-xs leading-relaxed ${
                 errorType === 'pending_approval'
                   ? 'bg-amber-50 border-amber-300 text-amber-900'
                   : 'bg-red-50 border-red-200 text-red-700'
@@ -291,7 +265,7 @@ export default function AuthModal() {
                           handleClose();
                           setActiveView('register');
                         }}
-                        className="mt-2 text-xs font-black text-red-800 underline block"
+                        className="mt-2 text-xs font-black text-red-800 underline block cursor-pointer"
                       >
                         Buka Formulir Pendaftaran Lomba Sekarang →
                       </button>
@@ -301,15 +275,15 @@ export default function AuthModal() {
               </div>
             )}
 
-            {/* KONTEN UTAMA: GOOGLE SIGN-IN */}
+            {/* GOOGLE SIGN-IN UTAMA */}
             <div className="space-y-4">
               <div className="p-4 bg-slate-50 border border-slate-200/80 rounded-2xl text-xs text-slate-600 space-y-1.5">
                 <div className="flex items-center gap-2 font-bold text-slate-800">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                  <span>Login Otomatis Satu Klik</span>
+                  <span>Login Aman dengan Google</span>
                 </div>
                 <p className="text-[11px] text-slate-500 leading-relaxed">
-                  Pastikan Anda memilih akun Google dengan <strong>email yang sama</strong> saat mengisi formulir pendaftaran lomba. Hanya email yang telah terdaftar dan disetujui yang dapat mengakses portal.
+                  Pilih akun Google Anda yang email-nya terdaftar di formulir pendaftaran. Sistem akan langsung memverifikasi status ACC tim peleton sekolah Anda.
                 </p>
               </div>
 
@@ -317,7 +291,7 @@ export default function AuthModal() {
                 type="button"
                 onClick={handleGoogleSignIn}
                 disabled={isSigningIn}
-                className="w-full py-3.5 px-5 bg-white hover:bg-slate-50 text-slate-800 font-bold text-sm rounded-2xl border-2 border-slate-300 hover:border-slate-400 shadow-sm hover:shadow transition-all flex items-center justify-center gap-3 active:scale-[0.99] disabled:opacity-60 cursor-pointer group"
+                className="w-full py-4 px-6 bg-white hover:bg-slate-50 text-slate-800 font-bold text-sm sm:text-base rounded-2xl border-2 border-slate-300 hover:border-red-600 shadow-sm hover:shadow transition-all flex items-center justify-center gap-3 active:scale-[0.99] disabled:opacity-60 cursor-pointer group"
               >
                 {isSigningIn ? (
                   <>
@@ -348,13 +322,26 @@ export default function AuthModal() {
                   </>
                 )}
               </button>
+
+              <div className="text-center pt-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    handleClose();
+                    setActiveView('status_check');
+                  }}
+                  className="text-xs font-bold text-red-700 hover:text-red-800 hover:underline cursor-pointer"
+                >
+                  Ingin cek status verifikasi pendaftaran tim Anda? Cek Status Pendaftaran →
+                </button>
+              </div>
             </div>
 
-            {/* SEKSI PENDAFTARAN BARU: Bersih & Terpisah */}
+            {/* SEKSI PENDAFTARAN BARU */}
             <div className="mt-8 pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
               <div>
                 <span className="font-bold text-slate-800 block">Peleton Sekolah Belum Mendaftar?</span>
-                <span className="text-slate-500 text-[11px]">Daftarkan sekolah Anda sebelum kuota penuh.</span>
+                <span className="text-slate-500 text-[11px]">Daftarkan sekolah Anda sebelum kuota peleton penuh.</span>
               </div>
               <button
                 type="button"
@@ -362,7 +349,7 @@ export default function AuthModal() {
                   handleClose();
                   setActiveView('register');
                 }}
-                className="px-4 py-2 rounded-xl bg-amber-400 hover:bg-amber-500 text-slate-950 font-black text-xs uppercase tracking-wider transition-colors shrink-0 shadow-xs flex items-center gap-1.5"
+                className="px-4 py-2 rounded-xl bg-amber-400 hover:bg-amber-500 text-slate-950 font-black text-xs uppercase tracking-wider transition-colors shrink-0 shadow-xs flex items-center gap-1.5 cursor-pointer"
               >
                 <span>Daftar Sekarang</span>
                 <ChevronRight className="w-3.5 h-3.5" />

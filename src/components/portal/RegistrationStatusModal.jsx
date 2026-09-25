@@ -17,7 +17,7 @@ import { useCompetition } from '../../context/CompetitionContext.jsx';
 import logoImg from '../../assets/logo-tonti.png';
 
 export default function RegistrationStatusModal({ isOpen, onClose }) {
-  const { teams, loginAsTeam, openModal, navigateTo, goBack } = useCompetition();
+  const { teams, currentUser, openAuthModal, navigateTo, goBack } = useCompetition();
 
   const [query, setQuery] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -32,23 +32,48 @@ export default function RegistrationStatusModal({ isOpen, onClose }) {
     }
   };
 
-  const filteredTeams = query.trim()
-    ? teams.filter(
-        t =>
-          String(t.regCode || '').toLowerCase().includes(query.toLowerCase()) ||
-          String(t.schoolName || '').toLowerCase().includes(query.toLowerCase()) ||
-          String(t.waNumber || '').includes(query)
-      )
+  const cleanQ = query.trim().toLowerCase();
+  const queryDigits = cleanQ.replace(/\D/g, '');
+  const normQueryDigits = queryDigits.replace(/^(0|62)/, '');
+
+  const filteredTeams = cleanQ
+    ? teams.filter(t => {
+        const reg = String(t.regCode || '').toLowerCase();
+        const school = String(t.schoolName || '').toLowerCase();
+        const email = String(t.email || '').toLowerCase();
+        const wa = String(t.waNumber || '').replace(/\D/g, '');
+        const waNorm = wa.replace(/^(0|62)/, '');
+
+        if (reg.includes(cleanQ)) return true;
+        if (school.includes(cleanQ)) return true;
+        if (email.includes(cleanQ)) return true;
+        if (normQueryDigits && (waNorm.includes(normQueryDigits) || wa.includes(normQueryDigits))) return true;
+        if (queryDigits && wa.includes(queryDigits)) return true;
+        return false;
+      })
     : [];
 
   function handleSelectTeam(team) {
-    const res = loginAsTeam(team.regCode);
-    if (res.success) {
+    setErrorMessage('');
+    if (team.status === 'pending') {
+      setErrorMessage(`Status tim ${team.schoolName} masih MENUNGGU ACC/VERIFIKASI dari panitia sekretariat.`);
+      return;
+    }
+    if (team.status === 'rejected') {
+      setErrorMessage(`Pendaftaran peleton ${team.schoolName} ditolak. Silakan hubungi narahubung panitia.`);
+      return;
+    }
+
+    // Jika user sudah login dengan akun Google yang sesuai
+    if (currentUser?.email && team.email && currentUser.email.toLowerCase() === team.email.toLowerCase()) {
       if (onClose) onClose();
       navigateTo('peserta_dashboard');
-    } else {
-      setErrorMessage(res.message);
+      return;
     }
+
+    // Wajib otentikasi lewat akun Google
+    if (onClose) onClose();
+    openAuthModal('login');
   }
 
   return (

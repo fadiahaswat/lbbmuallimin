@@ -1,240 +1,40 @@
-import React, { createContext, useContext, useState, useEffect, useMemo, useRef } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import {
   INITIAL_TEAMS,
   INITIAL_SCORES,
   INITIAL_SETTINGS,
   INITIAL_USERS,
-  INITIAL_STAGING,
-  generatePersonnels
+  INITIAL_STAGING
 } from '../data/seedData.js';
-import { JURY_POSTS, STAGING_CONFIG } from '../config.js';
 import {
   saveRecordToSheet,
   bulkSyncToSheet,
-  deleteRecordFromSheet,
   fetchAllDataFromSheet,
   isGoogleSheetConfigured,
-  pingSheetDatabase,
-  formatImageUrl
+  pingSheetDatabase
 } from '../services/sheetService.js';
 
+// Modular helpers & actions
+import {
+  STORAGE_KEYS,
+  cleanLegacyStorage,
+  safeSetItem,
+  checkTeamVerificationEligibility,
+  resolveUserAvatar,
+  normalizeTeamData
+} from './competitionHelpers.js';
+import { useFieldTimer } from './useFieldTimer.js';
+import { createScoringActions } from './scoringActions.js';
+import { createStagingActions } from './stagingActions.js';
+import { createTeamActions } from './teamActions.js';
+
+// Re-export helpers for backward compatibility
+export { checkTeamVerificationEligibility, resolveUserAvatar, normalizeTeamData };
+
+// Clean legacy storage on module init
+cleanLegacyStorage();
+
 const CompetitionContext = createContext(null);
-
-export function checkTeamVerificationEligibility(team) {
-  if (!team) return { isEligible: false, issues: ['Data peleton tidak valid'] };
-  const issues = [];
-
-  // 1. Surat Rekomendasi Kepala Sekolah
-  const recUrl = team.files?.recommendationLetter?.url;
-  const hasRecLetter = Boolean(recUrl && recUrl !== '#' && !recUrl.startsWith('#'));
-  if (!hasRecLetter) {
-    issues.push('Surat Rekomendasi/Tugas Kepala Sekolah belum diunggah');
-  }
-
-  // 2. Biodata Komandan (Danton): Nama, NISN, Kelas
-  const danton = team.roster?.danton;
-  const hasDantonName = Boolean((danton?.name || team.dantonName) && (danton?.name || team.dantonName) !== '-' && (danton?.name || team.dantonName).trim() !== '');
-  const hasDantonNisn = Boolean(danton?.nisn && danton.nisn !== '-' && danton.nisn.trim() !== '');
-  const hasDantonClass = Boolean(danton?.class && danton.class !== '-' && danton.class.trim() !== '');
-
-  if (!hasDantonName || !hasDantonNisn || !hasDantonClass) {
-    const missingDanton = [];
-    if (!hasDantonName) missingDanton.push('Nama');
-    if (!hasDantonNisn) missingDanton.push('NISN');
-    if (!hasDantonClass) missingDanton.push('Kelas');
-    issues.push(`Biodata Komandan (Danton) belum lengkap (${missingDanton.join(', ')})`);
-  }
-
-  // 3. Biodata 21 Anggota Pasukan Inti: Harus 21 orang dan lengkap (Nama, NISN, Kelas)
-  const pasukan = Array.isArray(team.roster?.pasukan) ? team.roster.pasukan : [];
-  if (pasukan.length < 21) {
-    issues.push(`Jumlah personel pasukan inti belum genap 21 (saat ini ${pasukan.length}/21)`);
-  } else {
-    const incompletePasukan = pasukan.slice(0, 21).filter(p => {
-      const hasName = Boolean(p?.name && p.name !== '-' && p.name.trim() !== '');
-      const hasNisn = Boolean(p?.nisn && p.nisn !== '-' && p.nisn.trim() !== '');
-      const hasClass = Boolean(p?.class && p.class !== '-' && p.class.trim() !== '');
-      return !hasName || !hasNisn || !hasClass;
-    });
-    if (incompletePasukan.length > 0) {
-      issues.push(`${incompletePasukan.length} dari 21 personel pasukan inti belum lengkap biodatanya (Nama, NISN, Kelas)`);
-    }
-  }
-
-  // Catatan: 3 Cadangan bersifat OPSIONAL, tidak menghalangi kelulusan
-
-  return {
-    isEligible: issues.length === 0,
-    issues,
-  };
-}
-
-const STORAGE_KEYS = {
-  TEAMS: 'lbb_muallimin_teams_v3',
-  SCORES: 'lbb_muallimin_scores_v3',
-  SETTINGS: 'lbb_muallimin_settings_v7',
-  ROLE: 'lbb_muallimin_active_role_v3',
-  CURRENT_TEAM_ID: 'lbb_muallimin_current_team_id_v3',
-  USERS: 'lbb_muallimin_users_v4',
-  CURRENT_USER: 'lbb_muallimin_current_user_v4',
-  STAGING: 'lbb_muallimin_staging_v3',
-};
-
-// Bersihkan data sampah/dummy legacy versi sebelumnya dari browser
-try {
-  const legacyPrefixes = ['lbb_muallimin_teams_', 'lbb_muallimin_scores_', 'lbb_muallimin_staging_', 'lbb_muallimin_votes_', 'lbb_muallimin_users_', 'lbb_muallimin_current_user_'];
-  Object.keys(localStorage).forEach(k => {
-    if (k.startsWith('lbb_muallimin_users_') && k !== STORAGE_KEYS.USERS) {
-      localStorage.removeItem(k);
-    }
-    if (k.startsWith('lbb_muallimin_current_user_') && k !== STORAGE_KEYS.CURRENT_USER) {
-      localStorage.removeItem(k);
-    }
-    if (legacyPrefixes.some(p => k.startsWith(p) && !k.endsWith('_v3') && !k.endsWith('_v4') && !k.endsWith('_v5') && !k.endsWith('_v6') && !k.endsWith('_v7'))) {
-      localStorage.removeItem(k);
-    }
-    // Hapus cache settings lama (v3, v4, v5, v6) agar tanggal & timeline baru langsung aktif seketika di browser user
-    if (k === 'lbb_muallimin_settings_v3' || k === 'lbb_muallimin_settings_v4' || k === 'lbb_muallimin_settings_v5' || k === 'lbb_muallimin_settings_v6') {
-      localStorage.removeItem(k);
-    }
-  });
-} catch {
-  // safe ignore if localStorage is restricted
-}
-
-// Resolusi foto profil:
-// - Untuk peserta: Prioritas 1: Logo sekolah, Prioritas 2: Profil Google, Fallback: Inisial sekolah
-// - Untuk non-peserta: Profil Google, Fallback: Inisial staff
-export function resolveUserAvatar(user, teamsList = []) {
-  if (!user) return null;
-
-  if (user.role === 'peserta') {
-    const matchedTeam = teamsList.find(
-      t => t.id === user.teamId || (user.schoolName && t.schoolName === user.schoolName)
-    );
-    const schoolLogoUrl = matchedTeam?.files?.schoolLogo?.url;
-    if (schoolLogoUrl && schoolLogoUrl !== '#' && !schoolLogoUrl.startsWith('#')) {
-      return { url: formatImageUrl(schoolLogoUrl), isSchoolLogo: true };
-    }
-    if (user.googleAvatar) {
-      return { url: user.googleAvatar, isSchoolLogo: false };
-    }
-    if (user.avatar && !user.avatar.includes('dicebear.com/7.x/bottts')) {
-      return { url: user.avatar, isSchoolLogo: false };
-    }
-    const label = user.schoolName || user.name || 'Peserta';
-    return {
-      url: `https://ui-avatars.com/api/?name=${encodeURIComponent(label)}&background=8B0000&color=fff&bold=true`,
-      isSchoolLogo: false,
-    };
-  }
-
-  // Non-peserta (admin, superadmin, juri)
-  if (user.googleAvatar) {
-    return { url: user.googleAvatar, isSchoolLogo: false };
-  }
-  if (user.avatar && !user.avatar.includes('dicebear.com/7.x/bottts')) {
-    return { url: user.avatar, isSchoolLogo: false };
-  }
-  const staffName = user.name || user.email || 'Admin';
-  return {
-    url: `https://ui-avatars.com/api/?name=${encodeURIComponent(staffName)}&background=020617&color=fbbf24&bold=true`,
-    isSchoolLogo: false,
-  };
-}
-
-export function normalizeTeamData(team) {
-  if (!team || typeof team !== 'object') return team;
-  const t = { ...team };
-
-  if (typeof t.files === 'string') {
-    try { t.files = JSON.parse(t.files); } catch (e) { t.files = {}; }
-  }
-  if (!t.files || typeof t.files !== 'object') {
-    t.files = {};
-  }
-
-  // Fallback jika file_* tersimpan di root record (dari Google Sheet)
-  if (!t.files.schoolLogo && t.file_logo_sekolah) {
-    t.files.schoolLogo = { url: t.file_logo_sekolah, name: 'Logo_Sekolah.png' };
-  }
-  if (!t.files.dantonCard && t.file_kartu_danton) {
-    t.files.dantonCard = { url: t.file_kartu_danton, name: 'Kartu_Pelajar_Danton.jpg' };
-  }
-  if (!t.files.officialKtp && t.file_ktp_official) {
-    t.files.officialKtp = { url: t.file_ktp_official, name: 'KTP_Official.jpg' };
-  }
-  if (!t.files.paymentProof && t.file_bukti_bayar) {
-    t.files.paymentProof = { url: t.file_bukti_bayar, name: 'Bukti_Bayar.jpg' };
-  }
-  if (!t.files.recommendationLetter && t.file_surat_rekomendasi) {
-    t.files.recommendationLetter = { url: t.file_surat_rekomendasi, name: 'Surat_Rekomendasi.pdf' };
-  }
-
-  if (typeof t.roster === 'string') {
-    try { t.roster = JSON.parse(t.roster); } catch (e) { t.roster = null; }
-  }
-  if (!t.roster || typeof t.roster !== 'object') {
-    t.roster = {
-      danton: {
-        name: t.dantonName || '-',
-        nisn: '-',
-        class: '-',
-      },
-      pasukan: [],
-      cadangan: [],
-      officials: []
-    };
-  } else {
-    if (!t.roster.danton) {
-      t.roster.danton = {
-        name: t.dantonName || '-',
-        nisn: '',
-        class: '',
-      };
-    } else if (t.dantonName && (!t.roster.danton.name || t.roster.danton.name === 'Anggota Pratama' || t.roster.danton.name === '-')) {
-      t.roster.danton.name = t.dantonName;
-    }
-    if (!Array.isArray(t.roster.pasukan)) t.roster.pasukan = [];
-    if (!Array.isArray(t.roster.cadangan)) t.roster.cadangan = [];
-    if (!Array.isArray(t.roster.officials)) {
-      t.roster.officials = [];
-    }
-    // Normalisasi struktur 3 Pendamping: 1 Official Utama + 2 Tim Pendukung
-    const defaultTemplates = [
-      { id: 'off-1', name: '', phone: '', role: 'Official (Pelatih / Pembina)', category: 'official' },
-      { id: 'off-2', name: '', phone: '', role: 'Pendukung 1 (Medis / Dokum)', category: 'pendukung' },
-      { id: 'off-3', name: '', phone: '', role: 'Pendukung 2 (Medis / Dokum)', category: 'pendukung' },
-    ];
-    const normalizedOfficials = [];
-    for (let i = 0; i < 3; i++) {
-      const existingOff = t.roster.officials[i];
-      if (existingOff) {
-        let cleanRole = existingOff.role || defaultTemplates[i].role;
-        // Jika data lama bertuliskan "Pembina / Pelatih 1" atau "Pembina / Pelatih 2", konversi ke label baru
-        if (cleanRole === 'Pembina / Pelatih 1') {
-          cleanRole = 'Official (Pelatih / Pembina)';
-        } else if (cleanRole === 'Pembina / Pelatih 2') {
-          cleanRole = 'Pendukung 1 (Medis / Dokum)';
-        }
-        normalizedOfficials.push({
-          ...defaultTemplates[i],
-          ...existingOff,
-          role: cleanRole,
-          category: i === 0 ? 'official' : 'pendukung',
-        });
-      } else {
-        normalizedOfficials.push({ ...defaultTemplates[i] });
-      }
-    }
-    t.roster.officials = normalizedOfficials;
-  }
-
-  // Pastikan waNumber selalu berupa string aman
-  t.waNumber = t.waNumber != null ? String(t.waNumber) : '';
-
-  return t;
-}
 
 export function CompetitionProvider({ children }) {
   // 0. User Auth State
@@ -264,7 +64,7 @@ export function CompetitionProvider({ children }) {
     return localStorage.getItem(STORAGE_KEYS.ROLE) || 'publik';
   });
 
-  // 2. Active View: 'landing' | 'register' | 'status_check' | 'document_viewer' | 'auth' | 'pin_auth' | 'admin' | 'juri' | 'superadmin' | 'announcement' | 'peserta_dashboard'
+  // 2. Active View
   const [activeView, setActiveView] = useState('landing');
   const [previousView, setPreviousView] = useState('landing');
   const [docViewerData, setDocViewerData] = useState(null);
@@ -315,7 +115,7 @@ export function CompetitionProvider({ children }) {
   });
 
   // 7. Modals
-  const [activeModal, setActiveModal] = useState(null); // 'regWizard' | 'statusCheck' | 'docViewer' | 'teamDetail' | 'pinModal'
+  const [activeModal, setActiveModal] = useState(null);
   const [modalData, setModalData] = useState(null);
 
   // 8. Staging & Field Operations (Fase 2)
@@ -328,15 +128,7 @@ export function CompetitionProvider({ children }) {
     }
   });
 
-  // 9. Stopwatch / Field Timer (Fase 2)
-  const [fieldTimer, setFieldTimer] = useState({
-    isRunning: false,
-    elapsedSeconds: 0,
-    activeTeamId: null,
-  });
-  const timerIntervalRef = useRef(null);
-
-  // 12. Stage Routing State (9 Tahap Menu Terpadu)
+  // 9. Stage Routing State
   const [adminActiveTab, setAdminActiveTab] = useState('registration');
   const [stagingActiveMode, setStagingActiveMode] = useState('pipeline');
   const [stagingBasecampAction, setStagingBasecampAction] = useState('checkin');
@@ -373,119 +165,74 @@ export function CompetitionProvider({ children }) {
     }
   }
 
-  // 13. Multi-Role Authorization Matrix Helper
+  // Multi-Role Authorization Matrix Helper
   const canAccessStage = (stageId, targetRole = role) => {
     const userR = currentUser?.role || targetRole || 'publik';
-
-    // 1. Superadmin: Master authority penuh
     if (userR === 'superadmin') return true;
-
-    // 2. Public / Publik: Hanya lihat klasemen terbuka & info publik
-    if (userR === 'publik') {
-      return ['klasemen', 'uji_coba'].includes(stageId);
-    }
-
-    // 3. Peserta: Dashboard tim, info jadwal TM, jadwal uji coba & klasemen
-    if (userR === 'peserta') {
-      return ['tm', 'uji_coba', 'klasemen'].includes(stageId);
-    }
-
-    // 4. Petugas Check-In / Basecamp: HANYA Check-In & Check-Out barak transit peleton
-    if (userR === 'checkin') {
-      return ['checkin', 'checkout'].includes(stageId);
-    }
-
-    // 5. Petugas Daerah Persiapan (DP 1-3): HANYA DP 1-3 & Gladi Lapangan
-    if (userR === 'dp' || userR === 'staging') {
-      return ['dp', 'uji_coba'].includes(stageId);
-    }
-
-    // 6. Dewan Juri Lapangan: HANYA Penjurian materi PBB
-    if (userR === 'juri') {
-      return ['penjurian'].includes(stageId);
-    }
-
-    // 7. Penginput Nilai: HANYA Input angka blangko kertas di Penjurian & Rekap Nilai
-    if (userR === 'penginput') {
-      return ['penjurian', 'rekap_nilai'].includes(stageId);
-    }
-
-    // 8. Verifikator: HANYA Rekap Nilai (Cek silang blangko vs angka) & Klasemen
-    if (userR === 'verifikator') {
-      return ['rekap_nilai', 'klasemen'].includes(stageId);
-    }
-
-    // 9. Finalisator: HANYA Rekap Nilai (Pengesahan & Kunci Skor) & Klasemen
-    if (userR === 'finalisator') {
-      return ['rekap_nilai', 'klasemen'].includes(stageId);
-    }
-
-    // 10. Admin (Sekretariat): Pendaftaran, TM, Uji Coba, Klasemen
-    if (userR === 'admin') {
-      return ['pendaftaran', 'tm', 'uji_coba', 'klasemen'].includes(stageId);
-    }
-
+    if (userR === 'publik') return ['klasemen', 'uji_coba'].includes(stageId);
+    if (userR === 'peserta') return ['tm', 'uji_coba', 'klasemen'].includes(stageId);
+    if (userR === 'checkin') return ['checkin', 'checkout'].includes(stageId);
+    if (userR === 'dp' || userR === 'staging') return ['dp', 'uji_coba'].includes(stageId);
+    if (userR === 'juri') return ['penjurian'].includes(stageId);
+    if (userR === 'penginput') return ['penjurian', 'rekap_nilai'].includes(stageId);
+    if (userR === 'verifikator') return ['rekap_nilai', 'klasemen'].includes(stageId);
+    if (userR === 'finalisator') return ['rekap_nilai', 'klasemen'].includes(stageId);
+    if (userR === 'admin') return ['pendaftaran', 'tm', 'uji_coba', 'klasemen'].includes(stageId);
     return false;
   };
 
-  useEffect(() => {
-    if (fieldTimer.isRunning) {
-      timerIntervalRef.current = setInterval(() => {
-        setFieldTimer(prev => ({
-          ...prev,
-          elapsedSeconds: prev.elapsedSeconds + 1,
-        }));
-      }, 1000);
-    } else if (timerIntervalRef.current) {
-      clearInterval(timerIntervalRef.current);
-    }
-    return () => {
-      if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
-    };
-  }, [fieldTimer.isRunning]);
+  // Modular Staging Actions
+  const {
+    updateTeamStaging,
+    checkInBasecamp,
+    checkOutBasecamp,
+    updateDP1PersonnelInspection,
+    passToDP2
+  } = useMemo(() => createStagingActions({ staging, setStaging, currentUser }), [staging, currentUser]);
 
-  // Sync staging to localStorage
+  // Modular Field Timer
+  const {
+    fieldTimer,
+    startFieldTimer,
+    pauseFieldTimer,
+    resumeFieldTimer,
+    resetFieldTimer,
+    stopAndSaveFieldTimer
+  } = useFieldTimer({ updateTeamStaging, setScores });
+
+  // Modular Team Actions
+  const {
+    registerTeam,
+    updateTeamFiles,
+    updateTeamRoster,
+    verifyTeam,
+    assignLotNumber,
+    updateTeamDraw,
+    randomizeLotNumbers,
+    deleteTeam
+  } = useMemo(
+    () => createTeamActions({ teams, setTeams, scores, setScores, setCurrentUser, setUsers }),
+    [teams, scores]
+  );
+
+  // Modular Scoring Actions
+  const {
+    saveScore,
+    saveJuryPostScore,
+    saveDraftScore,
+    verifyScore,
+    finalizeScore
+  } = useMemo(() => createScoringActions({ setScores, currentUser }), [currentUser]);
+
+  function getAggregatedScore(teamId) {
+    return scores[teamId] || null;
+  }
+
+  // Local Storage Synchronizations
   useEffect(() => {
     safeSetItem(STORAGE_KEYS.STAGING, JSON.stringify(staging));
   }, [staging]);
 
-// Helper for resilient localStorage access without crashing on QuotaExceededError
-function safeSetItem(key, value) {
-  try {
-    localStorage.setItem(key, value);
-  } catch (e) {
-    console.warn(`[CompetitionContext] Storage quota warning for key "${key}":`, e);
-    // If it's TEAMS, only strip out truly gigantic base64 strings (> 200KB) to preserve logo & thumbnails
-    if (key === STORAGE_KEYS.TEAMS) {
-      try {
-        const teamsData = JSON.parse(value);
-        const slimTeams = teamsData.map(team => {
-          if (!team.files) return team;
-          const slimFiles = {};
-          for (const [fKey, fVal] of Object.entries(team.files)) {
-            if (fVal && typeof fVal === 'object') {
-              const isLargeUrl = typeof fVal.url === 'string' && fVal.url.length > 200000;
-              const isLargeSig = typeof fVal.signatureUrl === 'string' && fVal.signatureUrl.length > 200000;
-              slimFiles[fKey] = {
-                ...fVal,
-                url: isLargeUrl ? '' : fVal.url,
-                signatureUrl: isLargeSig ? '' : fVal.signatureUrl,
-              };
-            } else {
-              slimFiles[fKey] = fVal;
-            }
-          }
-          return { ...team, files: slimFiles };
-        });
-        localStorage.setItem(key, JSON.stringify(slimTeams));
-      } catch (innerErr) {
-        console.error(`[CompetitionContext] Fallback storage save failed:`, innerErr);
-      }
-    }
-  }
-}
-
-  // Sync to localStorage
   useEffect(() => {
     safeSetItem(STORAGE_KEYS.ROLE, role);
   }, [role]);
@@ -494,13 +241,11 @@ function safeSetItem(key, value) {
     safeSetItem(STORAGE_KEYS.TEAMS, JSON.stringify(teams));
   }, [teams]);
 
-  // Sync scores to localStorage HANYA JIKA sedang login sebagai staff/juri atau hasil resmi sudah dipublikasi
   useEffect(() => {
     const isStaffOrJury = ['admin', 'juri', 'superadmin'].includes(role);
     if (isStaffOrJury || settings.announcementPublished) {
       safeSetItem(STORAGE_KEYS.SCORES, JSON.stringify(scores));
     } else {
-      // Jika peran adalah publik / peserta biasa dan pengumuman belum dibuka, jangan tinggalkan data nilai di localStorage browser
       try {
         localStorage.removeItem(STORAGE_KEYS.SCORES);
       } catch (e) {}
@@ -521,9 +266,7 @@ function safeSetItem(key, value) {
     } else {
       try {
         localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
-      } catch (e) {
-        // ignore
-      }
+      } catch (e) {}
     }
   }, [currentUser]);
 
@@ -533,14 +276,11 @@ function safeSetItem(key, value) {
     } else {
       try {
         localStorage.removeItem(STORAGE_KEYS.CURRENT_TEAM_ID);
-      } catch (e) {
-        // ignore
-      }
+      } catch (e) {}
     }
   }, [currentTeamId]);
 
   // Initial & Role-Based Sync: Mengambil data terbaru dari Google Sheet jika sudah terkonfigurasi
-  // KUNCI KEAMANAN: Skor HANYA diambil jika user adalah panitia/juri atau hasil resmi telah dipublikasi
   useEffect(() => {
     if (!isGoogleSheetConfigured()) return;
 
@@ -553,10 +293,8 @@ function safeSetItem(key, value) {
 
       const { teams: sheetTeams, scores: sheetScores, settings: sheetSettings } = res.data;
 
-      // Update teams jika sheet memiliki data
       if (Array.isArray(sheetTeams) && sheetTeams.length > 0) {
         setTeams(prev => {
-          // Gabungkan data sheet dengan menjaga integritas data roster dan foto lokal
           const map = new Map();
           prev.forEach(t => map.set(t.id, normalizeTeamData(t)));
 
@@ -565,7 +303,6 @@ function safeSetItem(key, value) {
             const existing = map.get(normalizedSheetTeam.id);
 
             if (existing) {
-              // Pertahankan file lokal jika di remote sheet kosong/tidak terupdate
               const mergedFiles = {
                 ...existing.files,
                 ...normalizedSheetTeam.files,
@@ -576,7 +313,6 @@ function safeSetItem(key, value) {
                 }
               });
 
-              // Pertahankan roster & foto-foto personel jika di sheet terpotong/kosong
               const existingRoster = existing.roster || {};
               const sheetRoster = normalizedSheetTeam.roster || {};
 
@@ -591,7 +327,6 @@ function safeSetItem(key, value) {
                   : (existingRoster.danton?.photo || null),
               };
 
-              // Merge 21 Pasukan
               const sheetPasukan = Array.isArray(sheetRoster.pasukan) ? sheetRoster.pasukan : [];
               const existingPasukan = Array.isArray(existingRoster.pasukan) ? existingRoster.pasukan : [];
               const maxPasukanLen = Math.max(sheetPasukan.length, existingPasukan.length, 21);
@@ -602,7 +337,6 @@ function safeSetItem(key, value) {
                 const eP = existingPasukan[i];
                 if (!sP && !eP) continue;
 
-                const baseP = sP || eP;
                 const pId = sP?.id || eP?.id || `p-${i + 1}`;
                 const safNumber = sP?.safNumber || eP?.safNumber || Math.ceil((i + 1) / 7);
                 const banjarNumber = sP?.banjarNumber || eP?.banjarNumber || (((i) % 7) + 1);
@@ -623,7 +357,6 @@ function safeSetItem(key, value) {
                 });
               }
 
-              // Merge Cadangan
               const sheetCadangan = Array.isArray(sheetRoster.cadangan) ? sheetRoster.cadangan : [];
               const existingCadangan = Array.isArray(existingRoster.cadangan) ? existingRoster.cadangan : [];
               const maxCadLen = Math.max(sheetCadangan.length, existingCadangan.length, 3);
@@ -647,7 +380,6 @@ function safeSetItem(key, value) {
                 });
               }
 
-              // Merge Officials (Total 3: 1 Official + 2 Pendukung)
               const sheetOfficials = Array.isArray(sheetRoster.officials) ? sheetRoster.officials : [];
               const existingOfficials = Array.isArray(existingRoster.officials) ? existingRoster.officials : [];
               const maxOffLen = Math.max(sheetOfficials.length, existingOfficials.length, 3);
@@ -696,20 +428,16 @@ function safeSetItem(key, value) {
         });
       }
 
-      // Update scores HANYA jika diizinkan (staff atau pengumuman dibuka)
       if (allowScoresSync && Array.isArray(sheetScores) && sheetScores.length > 0) {
         setScores(prev => {
           const nextScores = { ...prev };
           sheetScores.forEach(sc => {
-            if (sc.teamId) {
-              nextScores[sc.teamId] = sc;
-            }
+            if (sc.teamId) nextScores[sc.teamId] = sc;
           });
           return nextScores;
         });
       }
 
-      // Update settings jika sheet memiliki data
       if (Array.isArray(sheetSettings) && sheetSettings.length > 0) {
         const remoteSettings = sheetSettings[0];
         if (remoteSettings) {
@@ -766,15 +494,25 @@ function safeSetItem(key, value) {
     }
   }
 
-  function loginUser(email, name = null, googleAvatar = null) {
-    const cleanEmail = email.trim().toLowerCase();
+  async function loginUser(email, name = null, googleAvatar = null) {
+    const rawEmail = String(email || '').trim().toLowerCase();
+    const normalizeGmail = (e) => {
+      const parts = String(e || '').trim().toLowerCase().split('@');
+      if (parts.length !== 2) return e;
+      if (parts[1] === 'gmail.com' || parts[1] === 'googlemail.com') {
+        const username = parts[0].replace(/\./g, '').split('+')[0];
+        return `${username}@gmail.com`;
+      }
+      return `${parts[0]}@${parts[1]}`;
+    };
 
-    // 1. Cek kredensial staff resmi dari daftar `users` yang dikelola oleh Superadmin
+    const cleanEmail = rawEmail;
+    const normEmail = normalizeGmail(cleanEmail);
+
     let user = users.find(
-      u => u.email && u.email.toLowerCase() === cleanEmail && ['admin', 'superadmin', 'penginput', 'verifikator', 'finalisator'].includes(u.role)
+      u => u.email && (u.email.toLowerCase() === cleanEmail || normalizeGmail(u.email) === normEmail) && ['admin', 'superadmin', 'penginput', 'verifikator', 'finalisator'].includes(u.role)
     );
 
-    // Fallback akun default bawaan sistem jika belum ada di users
     const DEFAULT_STAFF_SEEDS = {
       'tontimuallimin2026@gmail.com': { role: 'superadmin', roleLabel: 'Ketua Panitia (Superadmin)' },
       'andiaqillah@muallimin.sch.id': { role: 'admin', roleLabel: 'Panitia Sekretariat (Admin)' },
@@ -823,19 +561,38 @@ function safeSetItem(key, value) {
       return { success: true, user };
     }
 
-    // 2. Cek pendaftaran tim peserta berdasarkan email
-    const matchedTeam = teams.find(t => t.email && t.email.toLowerCase() === cleanEmail);
-    const existingUser = users.find(u => u.email.toLowerCase() === cleanEmail);
+    let currentTeamsList = teams;
+    let matchedTeam = currentTeamsList.find(t => t.email && (t.email.toLowerCase() === cleanEmail || normalizeGmail(t.email) === normEmail));
+    let existingUser = users.find(u => u.email && (u.email.toLowerCase() === cleanEmail || normalizeGmail(u.email) === normEmail));
+
+    if ((!matchedTeam || matchedTeam.status === 'pending') && isGoogleSheetConfigured()) {
+      try {
+        const sheetRes = await fetchAllDataFromSheet(false);
+        if (sheetRes && sheetRes.success && sheetRes.data?.teams && Array.isArray(sheetRes.data.teams)) {
+          const freshTeams = sheetRes.data.teams.map(normalizeTeamData);
+          setTeams(prev => {
+            const map = new Map();
+            prev.forEach(t => map.set(t.id, t));
+            freshTeams.forEach(ft => map.set(ft.id, ft));
+            return Array.from(map.values());
+          });
+          currentTeamsList = freshTeams;
+          matchedTeam = freshTeams.find(t => t.email && (t.email.toLowerCase() === cleanEmail || normalizeGmail(t.email) === normEmail)) || matchedTeam;
+        }
+      } catch (err) {
+        console.warn('[CompetitionContext] Auto-refresh teams from sheet on login failed:', err);
+      }
+    }
 
     if (!matchedTeam && !existingUser) {
       return {
         success: false,
         error: 'not_registered',
-        message: `Email "${cleanEmail}" belum terdaftar di pendaftaran lomba. Silakan daftarkan peleton sekolah Anda terlebih dahulu melalui menu Daftar Lomba.`
+        message: `Email "${cleanEmail}" belum terdaftar di pendaftaran lomba. Silakan daftarkan peleton sekolah Anda terlebih dahulu melalui menu Formulir Pendaftaran.`
       };
     }
 
-    const team = matchedTeam || (existingUser?.teamId ? teams.find(t => t.id === existingUser.teamId) : null);
+    const team = matchedTeam || (existingUser?.teamId ? currentTeamsList.find(t => t.id === existingUser.teamId) : null);
 
     if (team) {
       if (team.status === 'pending') {
@@ -853,11 +610,6 @@ function safeSetItem(key, value) {
         };
       }
 
-      // Status 'registered', 'revision', 'verified', 'drawn' diizinkan masuk ke portal!
-      // Foto profil untuk peserta:
-      // Prioritas 1: Logo sekolah yang diunggah
-      // Prioritas 2: Profil Google
-      // Prioritas 3: Inisial sekolah
       const schoolLogoUrl = team.files?.schoolLogo?.url && team.files?.schoolLogo?.url !== '#' && !team.files?.schoolLogo?.url.startsWith('#')
         ? team.files.schoolLogo.url
         : null;
@@ -957,7 +709,6 @@ function safeSetItem(key, value) {
     setCurrentTeamId(null);
   }
 
-  // Superadmin: Kelola Pengguna & Email Role Staf Resmi (CRUD Staf)
   function addStaffUser({ name, email, role, roleLabel }) {
     const cleanEmail = email.trim().toLowerCase();
     if (!cleanEmail) return { success: false, message: 'Email tidak boleh kosong.' };
@@ -1004,7 +755,6 @@ function safeSetItem(key, value) {
 
     setUsers(prev => prev.map(u => (u.id === userId ? { ...u, ...updates } : u)));
 
-    // Jika user yang diupdate sedang aktif login, sinkronkan juga currentUser
     if (currentUser?.id === userId) {
       setCurrentUser(prev => ({ ...prev, ...updates }));
       if (updates.role) setRole(updates.role);
@@ -1030,8 +780,32 @@ function safeSetItem(key, value) {
     return { success: true, message: `Akun ${targetUser.email} berhasil dihapus dari daftar otoritas.` };
   }
 
-  // 8. Role Switching & Access via Google Auth
-  const currentTeam = teams.find(t => t.id === currentTeamId) || null;
+  const currentTeam = useMemo(() => {
+    if (currentTeamId) {
+      const found = teams.find(t => t.id === currentTeamId);
+      if (found) return found;
+    }
+    if (currentUser?.teamId) {
+      const found = teams.find(t => t.id === currentUser.teamId);
+      if (found) return found;
+    }
+    if (currentUser?.email && currentUser.role === 'peserta') {
+      const cleanEmail = currentUser.email.toLowerCase();
+      const found = teams.find(t => t.email && t.email.toLowerCase() === cleanEmail);
+      if (found) return found;
+    }
+    if (currentUser?.schoolName && currentUser.role === 'peserta') {
+      const found = teams.find(t => t.schoolName === currentUser.schoolName);
+      if (found) return found;
+    }
+    return null;
+  }, [teams, currentTeamId, currentUser]);
+
+  useEffect(() => {
+    if (currentTeam && currentTeam.id !== currentTeamId) {
+      setCurrentTeamId(currentTeam.id);
+    }
+  }, [currentTeam, currentTeamId]);
 
   function switchRole(targetRole) {
     if (targetRole === 'publik') {
@@ -1041,15 +815,21 @@ function safeSetItem(key, value) {
     }
 
     if (targetRole === 'peserta') {
-      if (currentUser?.role === 'peserta') {
-        setRole('peserta');
-        setActiveView(currentTeamId ? 'peserta_dashboard' : 'landing');
+      setRole('peserta');
+      if (currentTeamId || currentUser?.teamId) {
+        setActiveView('peserta_dashboard');
         return true;
       }
-      return false;
+      const matched = currentUser?.email ? teams.find(t => t.email?.toLowerCase() === currentUser.email?.toLowerCase()) : null;
+      if (matched) {
+        setCurrentTeamId(matched.id);
+        setActiveView('peserta_dashboard');
+        return true;
+      }
+      setActiveView('peserta_dashboard');
+      return true;
     }
 
-    // Role Staff resmi (hanya role yang terdaftar pada email currentUser)
     if (currentUser && (currentUser.role === targetRole || currentUser.role === 'superadmin')) {
       setRole(targetRole);
       if (targetRole === 'admin') setActiveView('admin');
@@ -1068,10 +848,10 @@ function safeSetItem(key, value) {
     }
 
     if (targetRole === 'peserta') {
-      if (currentTeamId) {
+      if (currentTeam || currentTeamId || currentUser?.role === 'peserta') {
         switchRole('peserta');
       } else {
-        navigateTo('peserta_dashboard');
+        openAuthModal('login');
       }
       return;
     }
@@ -1081,91 +861,58 @@ function safeSetItem(key, value) {
       return;
     }
 
-    // Jika user sudah login dan berhak
     if (currentUser && (currentUser.role === targetRole || currentUser.role === 'superadmin')) {
       switchRole(targetRole);
       return;
     }
 
-    // Arahkan ke Google Login resmi
     openAuthModal('login');
   }
 
-  // --- Participant Operations ---
-  function registerTeam(newTeamData) {
-    const jenjang = newTeamData.jenjang || 'SMP';
-    const existingSameJenjang = teams.filter(t => t.jenjang === jenjang);
-    const nextNumber = String(existingSameJenjang.length + 1).padStart(3, '0');
-    const regCode = `LBB26-${jenjang}-${nextNumber}`;
-    const id = `TEAM-${jenjang}-${Date.now()}`;
+  function loginAsTeam(identifier) {
+    const rawInput = String(identifier || '').trim();
+    if (!rawInput) {
+      return { success: false, message: 'Harap masukkan Kode Pendaftaran, Nomor WhatsApp, atau Email.' };
+    }
 
-    const createdTeam = {
-      id,
-      regCode,
-      schoolName: newTeamData.schoolName,
-      schoolBaseName: newTeamData.schoolBaseName || newTeamData.schoolName,
-      teamUnit: newTeamData.teamUnit || 'Tim A',
-      jenjang: newTeamData.jenjang,
-      teamType: newTeamData.teamType || 'Homogen', // 'Homogen' | 'Heterogen'
-      category: newTeamData.category || newTeamData.teamType || 'Homogen',
-      platoonName: newTeamData.platoonName || `Pleton ${newTeamData.schoolName}`,
-      dantonName: newTeamData.dantonName || '',
-      officialName: newTeamData.officialName || '',
-      coachName: newTeamData.officialName || '',
-      waNumber: newTeamData.waNumber || '',
-      email: (newTeamData.email || '').trim().toLowerCase(),
-      address: newTeamData.address || '',
-      status: 'pending', // Awal pendaftaran selalu 'pending' sampai di-ACC oleh Admin
-      lotNumber: null,
-      drawTime: null,
-      registeredAt: new Date().toISOString(),
-      wave: newTeamData.wave || 1,
-      feeAmount: newTeamData.feeAmount || 450000,
-      paymentStatus: 'paid',
-      files: {
-        schoolLogo: newTeamData.files?.schoolLogo || null,
-        dantonCard: newTeamData.files?.dantonCard || null,
-        officialKtp: newTeamData.files?.officialKtp || null,
-        paymentProof: newTeamData.files?.paymentProof || null,
-        integrityPact: newTeamData.files?.integrityPact || null,
-      },
-      revisionNote: '',
-      roster: generatePersonnels(newTeamData.schoolName, jenjang, 'Anggota', newTeamData.dantonName),
-    };
+    const cleanId = rawInput.toLowerCase();
+    const cleanDigits = cleanId.replace(/\D/g, '');
+    const cleanDigitsNormalized = cleanDigits.replace(/^(0|62)/, '');
 
-    setTeams(prev => [createdTeam, ...prev]);
-
-    // Kirim otomatis ke Google Sheets (Tab 'teams' otomatis terbuat jika belum ada)
-    saveRecordToSheet('teams', createdTeam).catch(err => {
-      console.warn('[CompetitionContext] Sync registerTeam to sheet failed:', err);
+    const found = teams.find(t => {
+      if (t.id && t.id.toLowerCase() === cleanId) return true;
+      const teamReg = String(t.regCode || '').trim().toLowerCase();
+      if (teamReg && teamReg === cleanId) return true;
+      const teamEmail = String(t.email || '').trim().toLowerCase();
+      if (teamEmail && teamEmail === cleanId) return true;
+      const teamWa = String(t.waNumber || '').replace(/\D/g, '');
+      const teamWaNormalized = teamWa.replace(/^(0|62)/, '');
+      if (cleanDigitsNormalized && teamWaNormalized && cleanDigitsNormalized === teamWaNormalized) {
+        return true;
+      }
+      if (cleanDigits && teamWa && cleanDigits === teamWa) {
+        return true;
+      }
+      const teamSchool = String(t.schoolName || '').trim().toLowerCase();
+      if (cleanId.length >= 4 && (teamSchool === cleanId || teamSchool.includes(cleanId))) {
+        return true;
+      }
+      return false;
     });
 
-    // Status PENDING: Pengguna belum otomatis login sebelum di-ACC Admin
-    return createdTeam;
-  }
-
-  function loginAsTeam(identifier) {
-    // Bisa pakai regCode (e.g. LBB26-SMP-001) atau No WA
-    const cleanId = String(identifier || '').trim().toLowerCase();
-    const cleanDigits = cleanId.replace(/\D/g, '');
-    const found = teams.find(
-      t => {
-        const teamReg = String(t.regCode || '').toLowerCase();
-        const teamWa = String(t.waNumber || '').replace(/\D/g, '');
-        return teamReg === cleanId || (cleanDigits && teamWa === cleanDigits);
-      }
-    );
     if (found) {
       if (found.status === 'pending') {
         return {
           success: false,
+          error: 'pending_approval',
           message: `Pendaftaran peleton ${found.schoolName} (${found.regCode}) masih dalam antrean verifikasi pendaftaran awal dan BELUM DI-ACC oleh Admin. Silakan tunggu persetujuan oleh panitia sekretariat.`
         };
       }
       if (found.status === 'rejected') {
         return {
           success: false,
-          message: `Pendaftaran peleton ${found.schoolName} ditolak oleh panitia.`
+          error: 'rejected',
+          message: `Pendaftaran peleton ${found.schoolName} ditolak oleh panitia. Silakan hubungi Sekretariat Panitia.`
         };
       }
 
@@ -1184,12 +931,18 @@ function safeSetItem(key, value) {
         schoolName: found.schoolName,
         avatar: schoolLogo || `https://ui-avatars.com/api/?name=${encodeURIComponent(found.schoolName)}&background=8B0000&color=fff&bold=true`,
       };
+      setUsers(prev => {
+        const exists = prev.some(u => u.id === teamUser.id || (teamUser.email && u.email?.toLowerCase() === teamUser.email.toLowerCase()));
+        return exists
+          ? prev.map(u => (u.id === teamUser.id || (teamUser.email && u.email?.toLowerCase() === teamUser.email.toLowerCase()) ? teamUser : u))
+          : [teamUser, ...prev];
+      });
       setCurrentUser(teamUser);
       setAuthModal({ isOpen: false, tab: 'login' });
       setActiveView('peserta_dashboard');
-      return { success: true, team: found };
+      return { success: true, team: found, user: teamUser };
     }
-    return { success: false, message: 'Kode Pendaftaran atau Nomor WhatsApp tidak ditemukan.' };
+    return { success: false, message: 'Kode Pendaftaran, Nomor WhatsApp, atau Email tidak ditemukan.' };
   }
 
   function logoutTeam() {
@@ -1198,664 +951,6 @@ function safeSetItem(key, value) {
     setActiveView('landing');
   }
 
-  function updateTeamFiles(teamId, fileKey, fileData) {
-    setTeams(prev =>
-      prev.map(team => {
-        if (team.id === teamId) {
-          const updatedFiles = {
-            ...team.files,
-            [fileKey]: fileData,
-          };
-          // Jika tim berstatus 'revision', kembalikan ke 'registered' setelah re-upload
-          const nextStatus = team.status === 'revision' ? 'registered' : team.status;
-          return {
-            ...team,
-            files: updatedFiles,
-            status: nextStatus,
-          };
-        }
-        return team;
-      })
-    );
-
-    // Jika yang di-upload adalah logo sekolah, sinkronkan ke avatar profil pengguna peserta
-    if (fileKey === 'schoolLogo' && fileData?.url && fileData.url !== '#' && !fileData.url.startsWith('#')) {
-      setCurrentUser(prev => {
-        if (!prev) return prev;
-        return {
-          ...prev,
-          avatar: fileData.url,
-        };
-      });
-      setUsers(prev =>
-        prev.map(u => (u.teamId === teamId ? { ...u, avatar: fileData.url } : u))
-      );
-    }
-
-    // Sync team update to Sheet
-    const targetTeam = teams.find(t => t.id === teamId);
-    if (targetTeam) {
-      saveRecordToSheet('teams', {
-        ...targetTeam,
-        files: { ...targetTeam.files, [fileKey]: fileData },
-        status: targetTeam.status === 'revision' ? 'registered' : targetTeam.status,
-      }).catch(err => console.warn('[CompetitionContext] Sync file update failed:', err));
-    }
-  }
-
-  function updateTeamRoster(teamId, newRoster) {
-    setTeams(prev =>
-      prev.map(team => {
-        if (team.id === teamId) {
-          const updated = {
-            ...team,
-            roster: newRoster,
-            dantonName: newRoster?.danton?.name || team.dantonName,
-          };
-          saveRecordToSheet('teams', updated).catch(err =>
-            console.warn('[CompetitionContext] Sync updateTeamRoster failed:', err)
-          );
-          return updated;
-        }
-        return team;
-      })
-    );
-  }
-
-  // --- Admin Operations ---
-  function verifyTeam(teamId, newStatus, note = '') {
-    // Validasi keamanan: jika ingin ACC Sah ('verified'), pastikan syarat terpenuhi
-    if (newStatus === 'verified') {
-      const targetTeam = teams.find(t => t.id === teamId);
-      if (targetTeam) {
-        const check = checkTeamVerificationEligibility(targetTeam);
-        if (!check.isEligible) {
-          console.warn('[CompetitionContext] Peleton belum memenuhi syarat verifikasi:', check.issues);
-          return { success: false, issues: check.issues };
-        }
-      }
-    }
-
-    setTeams(prev =>
-      prev.map(team => {
-        if (team.id === teamId) {
-          const updated = {
-            ...team,
-            status: newStatus,
-            revisionNote: note,
-          };
-          saveRecordToSheet('teams', updated).catch(err =>
-            console.warn('[CompetitionContext] Sync verifyTeam failed:', err)
-          );
-          return updated;
-        }
-        return team;
-      })
-    );
-    return { success: true };
-  }
-
-  function assignLotNumber(teamId, lotNumber, chestNumber = undefined, estimatedTime = undefined, basecampNumber = undefined) {
-    setTeams(prev =>
-      prev.map(team => {
-        if (team.id === teamId) {
-          const num = (lotNumber !== undefined && lotNumber !== '' && lotNumber !== null) ? parseInt(lotNumber, 10) : null;
-          const chest = (chestNumber !== undefined) ? (chestNumber ? String(chestNumber).trim() : '') : (team.chestNumber || '');
-          const estTime = (estimatedTime !== undefined) ? (estimatedTime ? String(estimatedTime).trim() : '') : (team.estimatedTime || '');
-          const basecamp = (basecampNumber !== undefined) ? (basecampNumber ? String(basecampNumber).trim() : '') : (team.basecampNumber || '');
-          const nextStatus = num ? 'drawn' : (team.status === 'drawn' ? 'verified' : team.status);
-          const updated = {
-            ...team,
-            lotNumber: num,
-            chestNumber: chest,
-            estimatedTime: estTime,
-            basecampNumber: basecamp,
-            status: nextStatus,
-            drawTime: num ? new Date().toISOString() : null,
-          };
-          saveRecordToSheet('teams', updated).catch(err =>
-            console.warn('[CompetitionContext] Sync assignLot failed:', err)
-          );
-          return updated;
-        }
-        return team;
-      })
-    );
-  }
-
-  function updateTeamDraw(teamId, lotNumber, chestNumber, estimatedTime, basecampNumber) {
-    assignLotNumber(teamId, lotNumber, chestNumber, estimatedTime, basecampNumber);
-  }
-
-  function randomizeLotNumbers(jenjang) {
-    // Ambil semua tim jenjang ini yang terverifikasi (status 'verified' atau 'drawn')
-    const eligibleTeams = teams.filter(t => t.jenjang === jenjang && (t.status === 'verified' || t.status === 'drawn'));
-    if (eligibleTeams.length === 0) return 0;
-
-    // Buat array nomor 1 s.d. jumlah tim
-    const numbers = Array.from({ length: eligibleTeams.length }, (_, i) => i + 1);
-    // Shuffle array (Fisher-Yates)
-    for (let i = numbers.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [numbers[i], numbers[j]] = [numbers[j], numbers[i]];
-    }
-
-    const idToNumber = {};
-    eligibleTeams.forEach((t, idx) => {
-      idToNumber[t.id] = numbers[idx];
-    });
-
-    const nowIso = new Date().toISOString();
-    setTeams(prev =>
-      prev.map(t => {
-        if (idToNumber[t.id] !== undefined) {
-          const updated = {
-            ...t,
-            lotNumber: idToNumber[t.id],
-            status: 'drawn',
-            drawTime: nowIso,
-          };
-          saveRecordToSheet('teams', updated).catch(err =>
-            console.warn('[CompetitionContext] Sync randomizeLot failed:', err)
-          );
-          return updated;
-        }
-        return t;
-      })
-    );
-
-    return eligibleTeams.length;
-  }
-
-  function deleteTeam(teamId) {
-    setTeams(prev => prev.filter(t => t.id !== teamId));
-    deleteRecordFromSheet('teams', teamId).catch(err =>
-      console.warn('[CompetitionContext] Sync deleteTeam failed:', err)
-    );
-    if (scores[teamId]) {
-      setScores(prev => {
-        const next = { ...prev };
-        delete next[teamId];
-        return next;
-      });
-      deleteRecordFromSheet('scores', teamId).catch(err =>
-        console.warn('[CompetitionContext] Sync deleteScore failed:', err)
-      );
-    }
-  }
-
-  // --- Jury & Scoring Operations ---
-  // Sistem Penilaian LBB Mu'allimin 2027:
-  // Juri 1: PBB Gerakan Materi Pasukan
-  // Juri 2: PBB Gerakan Materi Pasukan
-  // Juri 3: Komandan Peleton (Danton)
-  // Rata-rata PBB = (Juri 1 + Juri 2) / 2
-  // Total Skor Akhir = Rata-rata PBB + Danton Juri 3 - Penalti
-  function saveScore(teamId, scoreData) {
-    const pbb1Val = Number(scoreData.juries?.pos1?.total ?? scoreData.pbb1?.total ?? scoreData.pbb?.total ?? 0);
-    const pbb2Val = Number(scoreData.juries?.pos2?.total ?? scoreData.pbb2?.total ?? 0);
-    
-    // Hitung rata-rata PBB jika keduanya ada, atau ambil yang terisi
-    let pbbAvg = 0;
-    if (pbb1Val > 0 && pbb2Val > 0) {
-      pbbAvg = (pbb1Val + pbb2Val) / 2;
-    } else {
-      pbbAvg = pbb1Val || pbb2Val || 0;
-    }
-
-    const dantonVal = Number(scoreData.danton?.total || scoreData.juries?.pos3?.total || 0);
-    const penaltyVal = Number(scoreData.penalties?.totalPenalty || 0);
-
-    const finalScore = Math.max(0, parseFloat((pbbAvg + dantonVal - penaltyVal).toFixed(2)));
-
-    const record = {
-      teamId,
-      juryName: scoreData.juryName || 'Dewan Juri LBB Muallimin',
-      juryRole: scoreData.juryRole || 'Juri Lapangan',
-      scoredAt: new Date().toISOString(),
-      juries: scoreData.juries || {},
-      danton: scoreData.danton,
-      pbb: {
-        total: parseFloat(pbbAvg.toFixed(2)),
-        j1: pbb1Val,
-        j2: pbb2Val,
-        rubricScores: scoreData.pbb?.rubricScores || {},
-      },
-      penalties: scoreData.penalties,
-      finalScore,
-      notes: scoreData.notes || '',
-    };
-
-    setScores(prev => ({
-      ...prev,
-      [teamId]: record,
-    }));
-
-    // Sinkronkan nilai juri ke Google Sheet
-    saveRecordToSheet('scores', { id: teamId, ...record }).catch(err =>
-      console.warn('[CompetitionContext] Sync saveScore to sheet failed:', err)
-    );
-
-    return record;
-  }
-
-  // Multi-Juri Scoring Engine (Juri 1: PBB, Juri 2: PBB, Juri 3: Danton)
-  function saveJuryPostScore(teamId, postKey, postScoreData) {
-    let updatedRecord = null;
-    setScores(prev => {
-      const currentTeamScore = prev[teamId] || {
-        teamId,
-        juries: {},
-        penalties: {
-          upacara: false,
-          dp1: false,
-          personelKurang: false,
-          overTimeBlocks: 0,
-          injakGarisCount: 0,
-          penyesuaianCount: 0,
-          totalPenalty: 0,
-        },
-        notes: '',
-      };
-
-      const updatedJuries = {
-        ...(currentTeamScore.juries || {}),
-        [postKey]: {
-          ...postScoreData,
-          savedAt: new Date().toISOString(),
-        },
-      };
-
-      // Recalculate combined penalties
-      const incomingPen = postScoreData.penalties || currentTeamScore.penalties || {};
-      let totalPenalty = 0;
-      if (incomingPen.upacara) totalPenalty += 150;
-      if (incomingPen.dp1) totalPenalty += 100;
-      if (incomingPen.personelKurang) totalPenalty += 75;
-      totalPenalty += (incomingPen.overTimeBlocks || 0) * 50;
-      totalPenalty += (incomingPen.injakGarisCount || 0) * 50;
-      if ((incomingPen.penyesuaianCount || 0) > 3) totalPenalty += 25;
-      const mergedPenalties = {
-        ...incomingPen,
-        totalPenalty,
-      };
-
-      // Extract Juri 1 (PBB Pasukan)
-      const juri1Total = updatedJuries.pos1?.total !== undefined
-        ? Number(updatedJuries.pos1.total)
-        : (currentTeamScore.juries?.pos1?.total !== undefined ? Number(currentTeamScore.juries.pos1.total) : null);
-
-      // Extract Juri 2 (PBB Pasukan)
-      const juri2Total = updatedJuries.pos2?.total !== undefined
-        ? Number(updatedJuries.pos2.total)
-        : (currentTeamScore.juries?.pos2?.total !== undefined ? Number(currentTeamScore.juries.pos2.total) : null);
-
-      // Rata-rata PBB Juri 1 & Juri 2
-      let pbbAvg = 0;
-      if (juri1Total !== null && juri2Total !== null) {
-        pbbAvg = (juri1Total + juri2Total) / 2;
-      } else if (juri1Total !== null) {
-        pbbAvg = juri1Total;
-      } else if (juri2Total !== null) {
-        pbbAvg = juri2Total;
-      } else if (currentTeamScore.pbb?.total !== undefined) {
-        pbbAvg = Number(currentTeamScore.pbb.total);
-      }
-
-      // Extract Juri 3 (Danton)
-      const dantonTotal = updatedJuries.pos3?.total !== undefined
-        ? Number(updatedJuries.pos3.total)
-        : (currentTeamScore.danton?.total !== undefined ? Number(currentTeamScore.danton.total) : 0);
-
-      // Grand Total: Rata-rata PBB (Juri 1 & 2) + Danton (Juri 3) - Penalti
-      const finalScore = Math.max(0, parseFloat((pbbAvg + dantonTotal - totalPenalty).toFixed(2)));
-
-      updatedRecord = {
-        ...currentTeamScore,
-        id: teamId,
-        teamId,
-        juries: updatedJuries,
-        penalties: mergedPenalties,
-        pbb: {
-          total: parseFloat(pbbAvg.toFixed(2)),
-          j1: juri1Total,
-          j2: juri2Total,
-          rubricScores: updatedJuries.pos1?.rubricScores || updatedJuries.pos2?.rubricScores || currentTeamScore.pbb?.rubricScores || {},
-        },
-        danton: updatedJuries.pos3 ? { ...updatedJuries.pos3, total: dantonTotal } : (currentTeamScore.danton || { total: dantonTotal }),
-        finalScore,
-        scoredAt: new Date().toISOString(),
-        lastUpdatedBy: postScoreData.juryName || 'Dewan Juri',
-        isLocked: Boolean(updatedJuries.pos1 && updatedJuries.pos2 && updatedJuries.pos3),
-        notes: postScoreData.notes || currentTeamScore.notes || '',
-      };
-
-      return {
-        ...prev,
-        [teamId]: updatedRecord,
-      };
-    });
-
-    if (updatedRecord) {
-      saveRecordToSheet('scores', updatedRecord).catch(err =>
-        console.warn('[CompetitionContext] Sync saveJuryPostScore to sheet failed:', err)
-      );
-    }
-
-    return updatedRecord;
-  }
-
-  function getAggregatedScore(teamId) {
-    return scores[teamId] || null;
-  }
-
-  // --- Staging & Field Operations (Fase 2) ---
-  function updateTeamStaging(teamId, newStage, updates = {}) {
-    setStaging(prev => {
-      const current = prev[teamId] || {
-        teamId,
-        stage: 'waiting',
-        checklist: {},
-        durationSeconds: 0,
-        overtimePenaltyBlocks: 0,
-        notes: '',
-      };
-
-      const next = {
-        ...current,
-        stage: newStage,
-        ...updates,
-        checklist: {
-          ...(current.checklist || {}),
-          ...(updates.checklist || {}),
-        },
-        updatedAt: new Date().toISOString(),
-      };
-
-      if (newStage === 'arena' && !next.enteredArenaAt) {
-        next.enteredArenaAt = new Date().toISOString();
-      }
-      if (newStage === 'finished' && !next.finishedAt) {
-        next.finishedAt = new Date().toISOString();
-      }
-
-      return {
-        ...prev,
-        [teamId]: next,
-      };
-    });
-  }
-
-  // Stopwatch / Timer Controls
-  function startFieldTimer(teamId) {
-    setFieldTimer({
-      isRunning: true,
-      elapsedSeconds: 0,
-      activeTeamId: teamId,
-    });
-    updateTeamStaging(teamId, 'arena');
-  }
-
-  function pauseFieldTimer() {
-    setFieldTimer(prev => ({ ...prev, isRunning: false }));
-  }
-
-  function resumeFieldTimer() {
-    setFieldTimer(prev => ({ ...prev, isRunning: true }));
-  }
-
-  function resetFieldTimer() {
-    setFieldTimer({
-      isRunning: false,
-      elapsedSeconds: 0,
-      activeTeamId: null,
-    });
-  }
-
-  function stopAndSaveFieldTimer(teamId, jenjang = 'SMP') {
-    const maxSeconds = jenjang === 'SD' ? STAGING_CONFIG.DURATIONS.SD : STAGING_CONFIG.DURATIONS.SMP;
-    const elapsed = fieldTimer.elapsedSeconds;
-    const overtimeSeconds = Math.max(0, elapsed - maxSeconds);
-    const overtimeBlocks = Math.ceil(overtimeSeconds / 30);
-
-    updateTeamStaging(teamId, 'finished', {
-      durationSeconds: elapsed,
-      overtimePenaltyBlocks: overtimeBlocks,
-    });
-
-    // Otomatis sinkronkan penalti overtime ke data skor tim
-    setScores(prev => {
-      const existing = prev[teamId];
-      if (!existing) return prev;
-      const pen = {
-        ...(existing.penalties || {}),
-        overTimeBlocks: overtimeBlocks,
-      };
-      let totalPenalty = 0;
-      if (pen.upacara) totalPenalty += 150;
-      if (pen.dp1) totalPenalty += 100;
-      if (pen.personelKurang) totalPenalty += 75;
-      totalPenalty += (pen.overTimeBlocks || 0) * 50;
-      totalPenalty += (pen.injakGarisCount || 0) * 50;
-      if ((pen.penyesuaianCount || 0) > 3) totalPenalty += 25;
-      pen.totalPenalty = totalPenalty;
-
-      const pbbTotal = existing.pbb?.total || 0;
-      const dantonTotal = existing.danton?.total || 0;
-      const finalScore = Math.max(0, parseFloat((pbbTotal + dantonTotal - totalPenalty).toFixed(2)));
-
-      return {
-        ...prev,
-        [teamId]: {
-          ...existing,
-          penalties: pen,
-          finalScore,
-        },
-      };
-    });
-
-    resetFieldTimer();
-  }
-
-  // --- Basecamp Operations (Hari-H Registrasi & Logistik) ---
-  // SOP Check-in: Scan QR tiket/ID Card peleton, serah terima 1 KTP/SIM fisik, beri 1 dus air mineral, no dada, cocard official, karung sampah.
-  function checkInBasecamp(teamId, logistikData = {}) {
-    const defaultData = {
-      ktpDeposited: true,
-      ktpHolderName: logistikData.ktpHolderName || '',
-      ktpNumber: logistikData.ktpNumber || '',
-      waterBoxGiven: true, // 1 dus air minum
-      chestNumberGiven: true, // nomor dada
-      cocardGiven: true, // cocard official
-      trashBagGiven: true, // karung sampah untuk pemilahan
-      checkInTime: new Date().toISOString(),
-      checkedInBy: currentUser?.name || 'Panitia Basecamp',
-    };
-
-    updateTeamStaging(teamId, 'basecamp', {
-      basecampLogistics: {
-        ...(staging[teamId]?.basecampLogistics || {}),
-        ...defaultData,
-        ...logistikData,
-      },
-    });
-
-    return { success: true, message: 'Check-in Basecamp berhasil! Logistik telah diserahterimakan dan KTP/SIM tercatat.' };
-  }
-
-  // SOP Check-out: Cek kebersihan basecamp, cek sampah sudah dipilah, scan QR checkout, kembalikan KTP/SIM fisik.
-  function checkOutBasecamp(teamId, checkoutData = {}) {
-    const currentLogistics = staging[teamId]?.basecampLogistics || {};
-    const updated = {
-      ...currentLogistics,
-      roomCleanChecked: checkoutData.roomCleanChecked ?? true,
-      sortedTrashReturned: checkoutData.sortedTrashReturned ?? true,
-      ktpReturned: checkoutData.ktpReturned ?? true,
-      checkOutTime: new Date().toISOString(),
-      checkedOutBy: currentUser?.name || 'Panitia Basecamp',
-    };
-
-    updateTeamStaging(teamId, 'checkout', {
-      basecampLogistics: updated,
-    });
-
-    return { success: true, message: 'Check-out Basecamp sukses! Ruangan bersih, sampah terpilah terkumpul, dan KTP/SIM dikembalikan.' };
-  }
-
-  // --- DP 1: Pemeriksaan Personel & Foto Berdasarkan Hasil Pendaftaran Menggunakan Tab/iPad ---
-  function updateDP1PersonnelInspection(teamId, personId, isVerified, note = '') {
-    setStaging(prev => {
-      const cur = prev[teamId] || { teamId, stage: 'dp1', dp1Inspections: {} };
-      const inspections = cur.dp1Inspections || {};
-      const updatedInspections = {
-        ...inspections,
-        [personId]: {
-          verified: isVerified,
-          inspectedAt: new Date().toISOString(),
-          inspectedBy: currentUser?.name || 'Panitia DP 1',
-          note: note || '',
-        },
-      };
-
-      return {
-        ...prev,
-        [teamId]: {
-          ...cur,
-          dp1Inspections: updatedInspections,
-          updatedAt: new Date().toISOString(),
-        },
-      };
-    });
-  }
-
-  // Loloskan dari DP 1 ke DP 2 (Ruang Tunggu Steril)
-  function passToDP2(teamId) {
-    updateTeamStaging(teamId, 'dp2', {
-      dp1PassedAt: new Date().toISOString(),
-      dp1PassedBy: currentUser?.name || 'Panitia DP 1',
-    });
-  }
-
-  // --- Multi-Juri 3 Stage Scrutineering (Penginput -> Verifikator -> Finalisator) ---
-  // Juri 1: Kebenaran Teknik PBB, Juri 2: Kekompakan Peleton, Juri 3: Komandan Peleton (Danton)
-  // Ditambah: Hakim Garis (Injak Garis) & Timer (Waktu Tampil)
-  function saveDraftScore(teamId, draftData) {
-    const pbb1Val = Number(draftData.pbb1?.total ?? draftData.juries?.pos1?.total ?? draftData.pbb?.total ?? 0);
-    const pbb2Val = Number(draftData.pbb2?.total ?? draftData.juries?.pos2?.total ?? draftData.kekompakan?.total ?? 0);
-    
-    let pbbVal = 0;
-    if (pbb1Val > 0 && pbb2Val > 0) {
-      pbbVal = parseFloat(((pbb1Val + pbb2Val) / 2).toFixed(2));
-    } else {
-      pbbVal = pbb1Val || pbb2Val || Number(draftData.pbb?.total ?? 0);
-    }
-
-    const dantonVal = Number(draftData.danton?.total ?? draftData.juries?.pos3?.total ?? 0);
-    const penaltyVal = Number(draftData.penalties?.totalPenalty ?? 0);
-
-    const calculatedFinal = Math.max(0, parseFloat((pbbVal + dantonVal - penaltyVal).toFixed(2)));
-
-    const record = {
-      teamId,
-      status: 'draft', // DRAFT -> VERIFIED -> FINALIZED
-      inputBy: currentUser?.name || 'Operator Penginput',
-      inputAt: new Date().toISOString(),
-      paperEvidenceUrl: draftData.paperEvidenceUrl || '', // Foto scan blangko kertas fisik juri
-      paperEvidenceName: draftData.paperEvidenceName || 'Lembar_Kertas_Juri.jpg',
-      juries: {
-        pos1: {
-          title: 'Juri 1: Kebenaran Teknik PBB',
-          total: pbb1Val,
-          rubricScores: draftData.pbb1?.rubricScores || draftData.juries?.pos1?.rubricScores || draftData.pbb?.rubricScores || {},
-        },
-        pos2: {
-          title: 'Juri 2: Kekompakan Peleton',
-          total: pbb2Val,
-          rubricScores: draftData.pbb2?.rubricScores || draftData.juries?.pos2?.rubricScores || draftData.kekompakan?.rubricScores || {},
-        },
-        pos3: {
-          title: 'Juri 3: Komandan Peleton (Danton)',
-          total: dantonVal,
-          rubricScores: draftData.danton?.rubricScores || draftData.juries?.pos3?.rubricScores || {},
-        },
-      },
-      pbb: {
-        total: pbbVal,
-        j1: pbb1Val,
-        j2: pbb2Val,
-        rubricScores: draftData.pbb?.rubricScores || draftData.pbb1?.rubricScores || {},
-      },
-      danton: { total: dantonVal, rubricScores: draftData.danton?.rubricScores || {} },
-      penalties: draftData.penalties || { totalPenalty: 0 },
-      fieldTimerData: draftData.fieldTimerData || {},
-      finalScore: calculatedFinal,
-      notes: draftData.notes || '',
-      verificationNotes: '',
-    };
-
-    setScores(prev => ({
-      ...prev,
-      [teamId]: record,
-    }));
-
-    saveRecordToSheet('scores', { id: teamId, ...record }).catch(err =>
-      console.warn('[CompetitionContext] Sync draftScore to sheet failed:', err)
-    );
-
-    return record;
-  }
-
-  // Verifikator Action: Approve atau Reject (kembalikan ke Penginput)
-  function verifyScore(teamId, isApproved, note = '') {
-    setScores(prev => {
-      const existing = prev[teamId];
-      if (!existing) return prev;
-
-      const updated = {
-        ...existing,
-        status: isApproved ? 'verified' : 'rejected_to_draft',
-        verifiedBy: currentUser?.name || 'Verifikator Nilai',
-        verifiedAt: new Date().toISOString(),
-        verificationNotes: note,
-      };
-
-      saveRecordToSheet('scores', { id: teamId, ...updated }).catch(err =>
-        console.warn('[CompetitionContext] Sync verifyScore to sheet failed:', err)
-      );
-
-      return {
-        ...prev,
-        [teamId]: updated,
-      };
-    });
-  }
-
-  // Finalisator Action: Lock & Sign Berita Acara Rekap Nilai Sah
-  function finalizeScore(teamId, signatureName = null) {
-    setScores(prev => {
-      const existing = prev[teamId];
-      if (!existing) return prev;
-
-      const updated = {
-        ...existing,
-        status: 'finalized', // Kunci permanen
-        isLocked: true,
-        finalizedBy: signatureName || currentUser?.name || 'Ketua Dewan Juri',
-        finalizedAt: new Date().toISOString(),
-      };
-
-      saveRecordToSheet('scores', { id: teamId, ...updated }).catch(err =>
-        console.warn('[CompetitionContext] Sync finalizeScore to sheet failed:', err)
-      );
-
-      return {
-        ...prev,
-        [teamId]: updated,
-      };
-    });
-  }
-
-  // --- Superadmin / System Settings Operations ---
   function updateSettings(newSettings) {
     setSettings(prev => {
       const merged = { ...prev, ...newSettings };
@@ -1874,7 +969,7 @@ function safeSetItem(key, value) {
     setScores(INITIAL_SCORES);
     setSettings(INITIAL_SETTINGS);
     setStaging(INITIAL_STAGING);
-    setFieldTimer({ isRunning: false, elapsedSeconds: 0, activeTeamId: null });
+    resetFieldTimer();
     setRole('publik');
     setActiveView('landing');
     setCurrentTeamId(null);
@@ -1886,7 +981,6 @@ function safeSetItem(key, value) {
     localStorage.removeItem(STORAGE_KEYS.CURRENT_TEAM_ID);
   }
 
-  // --- Page / Modal Navigation Helpers ---
   function openModal(modalName, data = null) {
     setModalData(data);
     if (modalName === 'regWizard') {
@@ -1909,7 +1003,6 @@ function safeSetItem(key, value) {
     goBack();
   }
 
-  // --- Export Data ---
   function exportTeamsCSV() {
     const headers = [
       'Kode Registrasi',
@@ -1927,11 +1020,9 @@ function safeSetItem(key, value) {
       'Tanggal Daftar'
     ];
 
-    // Helper sanitasi CSV Formula Injection (CWE-1236)
     const sanitizeCsvCell = (val) => {
       if (val === null || val === undefined) return '""';
       let str = String(val).replace(/"/g, '""');
-      // Bila diawali simbol kalkulasi excel/csv, prefix dengan tanda petik tunggal (')
       if (/^[=+\-@\t\r]/.test(str)) {
         str = `'${str}`;
       }
@@ -1966,7 +1057,6 @@ function safeSetItem(key, value) {
 
   const contextValue = useMemo(
     () => ({
-      // State & Navigation
       role,
       activeView,
       setActiveView,
@@ -1983,7 +1073,6 @@ function safeSetItem(key, value) {
       docViewerData,
       setDocViewerData,
 
-      // User Auth
       currentUser,
       users,
       authModal,
@@ -1996,18 +1085,15 @@ function safeSetItem(key, value) {
       logoutUser,
       getUserAvatar: (u = currentUser) => resolveUserAvatar(u, teams),
 
-      // Superadmin: Staff Email & Role Management
       addStaffUser,
       updateStaffUser,
       deleteStaffUser,
 
-      // Auth & Role
       switchRole,
       loginAsTeam,
       logoutTeam,
       requestRoleAccess,
 
-      // Teams
       registerTeam,
       updateTeamFiles,
       updateTeamRoster,
@@ -2017,7 +1103,6 @@ function safeSetItem(key, value) {
       randomizeLotNumbers,
       deleteTeam,
 
-      // Scoring (3-Stage Scrutineering: Penginput, Verifikator, Finalisator)
       saveScore,
       saveJuryPostScore,
       saveDraftScore,
@@ -2025,7 +1110,6 @@ function safeSetItem(key, value) {
       finalizeScore,
       getAggregatedScore,
 
-      // Staging & Field Operations (Hari H: Basecamp & DP 1-3)
       staging,
       updateTeamStaging,
       checkInBasecamp,
@@ -2039,12 +1123,10 @@ function safeSetItem(key, value) {
       resetFieldTimer,
       stopAndSaveFieldTimer,
 
-      // Settings & System
       updateSettings,
       resetToSeedData,
       exportTeamsCSV,
 
-      // Google Spreadsheet Database Sync Operations
       isGoogleSheetConfigured: isGoogleSheetConfigured(),
       pingSheetDatabase,
       syncAllToGoogleSheet: async () => {
@@ -2080,11 +1162,9 @@ function safeSetItem(key, value) {
         return res;
       },
 
-      // Modals / Pages Navigation
       openModal,
       closeModal,
 
-      // 9-Stage Competition Workflow Navigation
       adminActiveTab,
       setAdminActiveTab,
       stagingActiveMode,
