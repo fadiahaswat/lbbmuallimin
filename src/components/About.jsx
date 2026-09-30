@@ -83,25 +83,12 @@ export default function About() {
           </p>
         </div>
 
-        {/* 2-Column Section Layout: Ketinggian Seimbang & Sejajar */}
+        {/* 2-Column Section Layout: Ketinggian Seimbang & Kompak agar Foto di Bawah Terlihat Jelas */}
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch">
           
-          {/* KOLOM KIRI: Tema Resmi & Nilai Filosofis */}
-          <div className="lg:col-span-5 flex flex-col justify-between">
-            {/* Header Level Sejajar dengan Kanan */}
-            <div className="flex items-center justify-between gap-3 mb-4 h-6">
-              <div className="flex items-center gap-2">
-                <div className="w-2.5 h-2.5 rounded-full bg-amber-400"></div>
-                <h4 className="text-xs sm:text-sm font-bold uppercase tracking-widest text-slate-200">
-                  Landasan & Filosofi
-                </h4>
-              </div>
-              <span className="text-[11px] font-semibold text-amber-300 bg-amber-500/15 border border-amber-500/30 px-3 py-1 rounded-full">
-                Edisi 2027
-              </span>
-            </div>
-
-            <div className="relative bg-slate-900/90 backdrop-blur-md text-white p-5 sm:p-6 rounded-3xl shadow-2xl border border-white/10 overflow-hidden flex flex-col justify-between flex-1">
+          {/* KOLOM KIRI: Tema Resmi & Nilai Filosofis (Kompak, Tidak Menutup Foto) */}
+          <div className="lg:col-span-5 flex flex-col">
+            <div className="relative bg-slate-900/90 backdrop-blur-md text-white p-5 sm:p-6 rounded-3xl shadow-2xl border border-white/10 overflow-hidden flex flex-col justify-between h-full">
               <div className="absolute inset-0 bg-carbon-pattern opacity-20 pointer-events-none"></div>
               <Shield className="absolute -right-8 -bottom-8 text-white/5 w-48 h-48 pointer-events-none" />
 
@@ -110,7 +97,7 @@ export default function About() {
                 <div className="pb-4 border-b border-white/10 flex items-center justify-between gap-4">
                   <div>
                     <span className="text-yellow-400 font-bold tracking-[0.3em] text-[10px] sm:text-[11px] uppercase mb-1 block">Tema Resmi 2027</span>
-                    <h3 className="text-base sm:text-lg font-black uppercase italic leading-snug py-0.5">
+                    <h3 className="text-lg sm:text-xl font-black uppercase italic leading-tight py-0.5">
                       <span className="block pb-0.5 text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-200">SEMANGAT SEBAGAI KSATRIA,</span>
                       <span className="block text-yellow-400">BERJUANG DENGAN GEMBIRA</span>
                     </h3>
@@ -119,7 +106,7 @@ export default function About() {
                   <img
                     src={logoLbb}
                     alt="Logo LBB Mu'allimin"
-                    className="shrink-0 w-12 h-12 sm:w-14 sm:h-14 object-contain drop-shadow-md hover:scale-105 transition-transform"
+                    className="shrink-0 w-14 h-14 sm:w-16 sm:h-16 object-contain drop-shadow-md hover:scale-105 transition-transform"
                   />
                 </div>
 
@@ -172,10 +159,10 @@ export default function About() {
           </div>
 
           {/* KOLOM KANAN: Target Peserta SD & SMP (Tinggi Seimbang) */}
-          <div className="lg:col-span-7 flex flex-col justify-between">
+          <div className="lg:col-span-7 flex flex-col justify-between space-y-4">
             
             {/* Header Label Target */}
-            <div className="flex items-center justify-between gap-3 mb-4 h-6">
+            <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-2">
                 <div className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse"></div>
                 <h4 className="text-xs sm:text-sm font-bold uppercase tracking-widest text-slate-200">
