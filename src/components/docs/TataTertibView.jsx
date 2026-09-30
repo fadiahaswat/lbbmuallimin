@@ -11,65 +11,105 @@ import {
   ExternalLink,
   Users,
   Search,
-  Scale
+  Scale,
+  Sparkles
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
-import { DOWNLOADS } from '../../config.js';
+import { DOWNLOADS, EVENT, VENUE } from '../../config.js';
 import SimpaskorSidebarLayout from '../navigation/SimpaskorSidebarLayout.jsx';
 
 export default function TataTertibView() {
   const [searchPenalty, setSearchPenalty] = useState('');
 
-  // Sanksi & Penalti Resmi LBB Mu'allimin 2027
+  // Sanksi & Penalti Resmi LBB Mu'allimin 2027 (Bab G Juknis Lapangan & Pasal 6, 7, 8, 9, 14 Tata Tertib)
   const penaltiesList = [
     {
-      violation: 'Tidak Mengikuti Apel Besar / Upacara Pembukaan',
+      violation: 'Tidak Mengikuti Apel Besar / Upacara Pembukaan (Peleton No. 1–5)',
       points: 150,
-      rule: 'Pasal 4 Ayat 1',
-      desc: 'Peleton tidak hadir lengkap saat apel pembukaan resmi di Lapangan Mini Soccer.',
-      type: 'Disiplin Umum',
+      pointsDisplay: '-150 Poin',
+      rule: 'Pasal 6 Ayat 3 / Bab G.1.a',
+      desc: 'Peleton nomor urut 1 sampai 5 yang tidak hadir lengkap (1 komandan + 15 anggota) saat upacara pembukaan resmi di Minisoccer.',
+      type: 'Disiplin Upacara',
     },
     {
-      violation: 'Keterlambatan Memasuki Pos DP 1 (> 5 Menit)',
+      violation: 'Keterlambatan Upacara Pembukaan',
+      points: 50,
+      pointsDisplay: '-50 Poin / kelipatan 5 mnt',
+      rule: 'Bab G.1.b Juknis',
+      desc: 'Keterlambatan hadir berbaris pada upacara pembukaan dihitung per kelipatan 5 menit.',
+      type: 'Disiplin Upacara',
+    },
+    {
+      violation: 'Keterlambatan Memasuki Pos DP 1 (3x Pemanggilan Resmi)',
       points: 100,
-      rule: 'Pasal 6 Ayat 3',
-      desc: 'Peleton belum tiba di DP 1 saat nomor urut tampilnya dipanggil 3 kali oleh panitia.',
+      pointsDisplay: '-100 Poin & Urutan Akhir',
+      rule: 'Pasal 7 Ayat 3 / Bab G.1.c',
+      desc: 'Peleton belum hadir di DP 1 setelah 3 kali pemanggilan resmi lewat pengeras suara (jeda 2 menit antar panggilan). Urutan tampil digeser paling akhir. Jika tanpa konfirmasi = DISKUALIFIKASI.',
       type: 'Ketepatan Waktu',
     },
     {
-      violation: 'Kekurangan Personel Pasukan Inti (< 21 Pasukan)',
+      violation: 'Kekurangan Personel Pasukan di Arena (< 22 Personel)',
       points: 75,
-      rule: 'Pasal 5 Ayat 2',
-      desc: 'Tampil dengan jumlah pasukan inti kurang dari 21 orang di dalam arena perlombaan.',
+      pointsDisplay: '-75 Poin',
+      rule: 'Bab G.1.d Juknis',
+      desc: 'Tampil dengan jumlah pasukan di arena kurang dari 22 orang (1 Danton + 21 Pasukan Inti).',
       type: 'Komposisi Personel',
     },
     {
       violation: 'Kelebihan Durasi Waktu Tampil di Arena',
       points: 50,
-      rule: 'Pasal 7 Ayat 4',
-      desc: 'Dikenakan per 10 detik kelipatan setelah peluit panjang tanda batas waktu dibunyikan.',
+      pointsDisplay: '-50 Poin / rentang 1–30 dtk',
+      rule: 'Bab G.1.e Juknis',
+      desc: 'Kelebihan waktu tampil dihitung -50 poin per rentang kelipatan 1 s.d. 30 detik setelah peluit panjang akhir dibunyikan.',
       type: 'Waktu Tampil',
     },
     {
-      violation: 'Menginjak atau Melewati Garis Batas Arena (Dinding Imajiner)',
+      violation: 'Menginjak atau Melewati Garis Batas Arena / Kotak Danton',
       points: 50,
-      rule: 'Pasal 8 Ayat 1',
-      desc: 'Setiap anggota peleton yang menginjak/melewati garis batas lapangan putih (25x14m atau 26x15m).',
+      pointsDisplay: '-50 Poin / kejadian',
+      rule: 'Bab G.1.f Juknis',
+      desc: 'Setiap kali anggota peleton atau komandan menginjak/melewati garis batas lapangan putih (25x14m SD / 26x15m SMP) atau komandan keluar dari kotak Danton saat materi berjalan. Ditandai kibaran Semaphore Merah petugas garis.',
       type: 'Arena & Garis',
     },
     {
-      violation: 'Gerakan Penyesuaian Ilegal di Luar Ketentuan',
+      violation: 'Kelebihan Gerakan Penyesuaian (> 3 Kali)',
       points: 25,
-      rule: 'Pasal 8 Ayat 5',
-      desc: 'Melakukan gerakan penyesuaian posisi yang tidak diatur dalam urutan materi juknis.',
+      pointsDisplay: '-25 Poin / gerakan',
+      rule: 'Bab G.1.g Juknis',
+      desc: 'Toleransi gerakan penyesuaian posisi peleton maksimal 3 kali selama tampil. Setiap gerakan penyesuaian ke-4 dan seterusnya dikenakan penalti.',
       type: 'Teknik Gerakan',
     },
     {
-      violation: 'Atribut / Aksesoris Terjatuh di Arena',
-      points: 15,
-      rule: 'Pasal 9 Ayat 2',
-      desc: 'Topi, lencana, tanda pangkat, tali kur, atau atribut peleton yang terlepas/jatuh di lapangan.',
+      violation: 'Ruang Basecamp Ditinggalkan Kotor / Berantakan',
+      points: 50,
+      pointsDisplay: '-50 Poin',
+      rule: 'Pasal 14 Ayat 4 Tatib',
+      desc: 'Ruang kelas transit basecamp ditinggalkan dalam kondisi kotor, berantakan, atau sampah tidak dipilah ke kantong organik & anorganik.',
+      type: 'Kebersihan & Lingkungan',
+    },
+    {
+      violation: 'Atribut / Aksesoris Terlepas atau Terjatuh di Arena',
+      points: 0,
+      pointsDisplay: '0 Poin (TIDAK PENALTI)',
+      rule: 'Bab E.3.i Juknis',
+      desc: 'Atribut topi, lencana, tanda pangkat, tali kur, dll. yang terlepas/jatuh TIDAK DIKENAKAN PENALTI (0 poin). Pasukan dilarang memungut atribut hingga seluruh materi selesai dan keluar arena.',
       type: 'Kerapian Atribut',
+    },
+    {
+      violation: 'Kerusakan Fisik atau Kehilangan Sarana-Prasarana Basecamp',
+      points: 0,
+      pointsDisplay: 'Ganti Rugi + Rp 500.000',
+      rule: 'Pasal 14 Ayat 4 Tatib',
+      desc: 'Kerusakan meja, kursi, kaca, stopkontak, LCD proyektor: KTP jaminan DITAHAN, wajib ganti rugi fisik penuh + denda administratif perbaikan aset Rp 500.000.',
+      type: 'Sanksi Aset & Fasilitas',
+    },
+    {
+      violation: 'Peleton Hafalan (Gerakan Tidak Sesuai Aba-Aba Danton)',
+      points: 0,
+      pointsDisplay: 'Nilai 0 pada Gerakan',
+      rule: 'Bab G.2 Juknis',
+      desc: 'Danton salah memberi aba-aba tetapi peleton tetap menjalankan gerakan materi yang benar (peleton bergerak berdasarkan hafalan, bukan aba-aba). Nilai gerakan peleton = 0 dan nilai penguasaan materi Danton dipotong.',
+      type: 'Teknis Aba-Aba',
     },
   ];
 
@@ -87,7 +127,7 @@ export default function TataTertibView() {
     <SimpaskorSidebarLayout
       activeMenu="tatib"
       title="Tata Tertib & Sanksi Penalti"
-      subtitle="Regulasi kepatuhan kontingen, kewajiban suporter, tabel sanksi penalti Perpang TNI, & mekanisme sanggah"
+      subtitle="Regulasi kepatuhan kontingen 15 Pasal, kewajiban suporter, matriks sanksi penalti Perpang TNI, & mekanisme sanggah 60 menit"
       rightActions={
         <div className="flex items-center gap-2">
           <a
@@ -120,20 +160,20 @@ export default function TataTertibView() {
             <div className="space-y-2">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/20 border border-red-400/30 text-red-300 text-xs font-black uppercase tracking-wider">
                 <ShieldAlert className="w-3.5 h-3.5" />
-                <span>Kode Etik & Regulasi Kedisiplinan Lomba</span>
+                <span>15 Pasal Resmi & Matriks Penalti Bab G Juknis</span>
               </div>
               <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-white">
                 Tata Tertib & Matriks Sanksi Penalti
               </h1>
               <p className="text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed">
-                Aturan baku pelaksanaan perlombaan, larangan keras bagi official & suporter, pedoman pemotongan nilai dewan juri, serta prosedur legal pengajuan nota protes resmi 60 menit.
+                Pedoman kepatuhan kontingen, zonasi privasi Asrama Santri, kebersihan basecamp dengan jaminan KTP, sanksi pelanggaran arena dewan juri, serta transparansi live quick count & batas sanggah 60 menit.
               </p>
             </div>
 
             <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-4 text-center min-w-[140px] shrink-0">
               <span className="text-[10px] uppercase font-bold text-red-300 block">Sanggah Resmi</span>
               <span className="text-2xl font-black text-white font-mono">60 Menit</span>
-              <span className="text-[10px] text-slate-300 block mt-0.5">Pasca Skor Sementara</span>
+              <span className="text-[10px] text-slate-300 block mt-0.5">Setelah Pengumuman</span>
             </div>
           </div>
         </div>
@@ -143,24 +183,28 @@ export default function TataTertibView() {
           <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-3">
             <div className="flex items-center gap-2.5 pb-2 border-b border-slate-100">
               <CheckCircle2 className="w-5 h-5 text-emerald-600" />
-              <h3 className="text-sm font-black text-slate-900 uppercase">Kewajiban Peserta & Official</h3>
+              <h3 className="text-sm font-black text-slate-900 uppercase">Kewajiban Peserta & Official (Pasal 5, 8, 14)</h3>
             </div>
             <ul className="text-xs text-slate-600 space-y-2.5">
               <li className="flex items-start gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 shrink-0 mt-1.5"></span>
-                <span>Hadir di lokasi perlombaan Kampus Terpadu Sedayu paling lambat pukul 06.00 WIB.</span>
+                <span>Hadir di lokasi lomba Kampus Terpadu Sedayu untuk daftar ulang pukul 06.00 – 09.00 WIB.</span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 shrink-0 mt-1.5"></span>
-                <span>Mengikuti Apel Pembukaan Lengkap berseragam peleton resmi.</span>
+                <span>Menyerahkan 1 KTP/SIM perwakilan sekolah di meja registrasi sebagai jaminan kebersihan basecamp.</span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 shrink-0 mt-1.5"></span>
-                <span>Menyerahkan identitas KTP Pembina di Pos Check-In Basecamp dan menjaga kebersihan ruang transit.</span>
+                <span>Menyematkan nomor dada resmi di dada sebelah kiri personel penjuru depan tengah (S2B1).</span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 shrink-0 mt-1.5"></span>
-                <span>Mematuhi seluruh keputusan dewan juri yang bersifat mutlak dan tidak dapat diganggu gugat.</span>
+                <span>Mengikuti Apel Pembukaan bagi Peleton No. 1–5 (1 Danton + 15 Anggota Lengkap).</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 shrink-0 mt-1.5"></span>
+                <span>Membersihkan basecamp, memilah sampah organik & anorganik, dan checkout maksimal pukul 18.00 WIB.</span>
               </li>
             </ul>
           </div>
@@ -168,24 +212,28 @@ export default function TataTertibView() {
           <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-3">
             <div className="flex items-center gap-2.5 pb-2 border-b border-slate-100">
               <XCircle className="w-5 h-5 text-rose-600" />
-              <h3 className="text-sm font-black text-slate-900 uppercase">Larangan Keras di Lokasi Lomba</h3>
+              <h3 className="text-sm font-black text-slate-900 uppercase">Larangan Keras & Diskualifikasi (Pasal 8, 9)</h3>
             </div>
             <ul className="text-xs text-slate-600 space-y-2.5">
               <li className="flex items-start gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-rose-600 shrink-0 mt-1.5"></span>
-                <span>Dilarang membawa senjata tajam, kembang api, flare, smoke bomb, dan laser pointer.</span>
+                <span><strong>DILARANG KERAS</strong> memasuki kawasan privat <strong>Asrama Santri</strong> Kampus Terpadu Mu'allimin.</span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-rose-600 shrink-0 mt-1.5"></span>
-                <span>Official / Pelatih dilarang memberikan aba-aba atau instruksi fisik saat peleton berada di arena.</span>
+                <span><strong>DILARANG KERAS</strong> menggunakan sepatu modifikasi berpines, paku payung, atau spikes (diperiksa di DP 1).</span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-rose-600 shrink-0 mt-1.5"></span>
-                <span>Suporter dilarang memicu keributan, menyanyikan ujaran kebencian, atau merusak sarana kampus.</span>
+                <span>Wali murid, suporter, dan penonton <strong>DILARANG MASUK</strong> ke area basecamp/ruang kelas peserta.</span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-rose-600 shrink-0 mt-1.5"></span>
-                <span>Pelanggaran berat dapat berakibat <strong>Diskualifikasi Langsung</strong> bagi peleton bersangkutan.</span>
+                <span>Suporter dilarang membunyikan instrumen/toa saat peleton tampil dan dilarang bersorak sinis saat peleton lain salah.</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-rose-600 shrink-0 mt-1.5"></span>
+                <span>Membawa senjata tajam, miras, melakukan kekerasan, atau hoaks bernuansa SARA = <strong>DISKUALIFIKASI</strong>.</span>
               </li>
             </ul>
           </div>
@@ -197,9 +245,9 @@ export default function TataTertibView() {
             <div>
               <h3 className="text-base font-black text-slate-900 uppercase flex items-center gap-2">
                 <Scale className="w-4 h-4 text-red-600" />
-                <span>Matriks Pengurangan Nilai Penalti Resmi</span>
+                <span>Matriks Pengurangan Nilai Penalti Resmi (Bab G Juknis & Tatib)</span>
               </h3>
-              <p className="text-xs text-slate-500">Kalkulasi potongan poin otomatis yang diterapkan langsung pada lembar rekapitulasi nilai</p>
+              <p className="text-xs text-slate-500">Pengurangan poin resmi dewan juri dan panitera yang dihitung langsung pada rekapitulasi nilai akhir</p>
             </div>
 
             <div className="relative">
@@ -218,32 +266,34 @@ export default function TataTertibView() {
             <table className="w-full text-left text-xs">
               <thead>
                 <tr className="border-b border-slate-200 text-slate-400 font-bold uppercase text-[10px] tracking-wider">
-                  <th className="py-3 px-3">Pasal</th>
+                  <th className="py-3 px-3">Landasan Aturan</th>
                   <th className="py-3 px-3">Bentuk Pelanggaran</th>
                   <th className="py-3 px-3">Kategori</th>
                   <th className="py-3 px-3">Keterangan Regulasi</th>
-                  <th className="py-3 px-3 text-right">Potongan Poin</th>
+                  <th className="py-3 px-3 text-right">Ketentuan Sanksi</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {filteredPenalties.map((pen, idx) => (
                   <tr key={idx} className="hover:bg-red-50/30 transition-colors">
-                    <td className="py-3.5 px-3 font-mono font-bold text-slate-500">
+                    <td className="py-3.5 px-3 font-mono font-bold text-slate-500 text-[11px] whitespace-nowrap">
                       {pen.rule}
                     </td>
                     <td className="py-3.5 px-3 font-bold text-slate-900">
                       {pen.violation}
                     </td>
-                    <td className="py-3.5 px-3">
+                    <td className="py-3.5 px-3 whitespace-nowrap">
                       <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-700">
                         {pen.type}
                       </span>
                     </td>
-                    <td className="py-3.5 px-3 text-slate-600 max-w-sm">
+                    <td className="py-3.5 px-3 text-slate-600 max-w-sm leading-relaxed">
                       {pen.desc}
                     </td>
-                    <td className="py-3.5 px-3 text-right font-mono font-black text-rose-600 text-sm">
-                      -{pen.points} Poin
+                    <td className="py-3.5 px-3 text-right font-mono font-black text-sm whitespace-nowrap">
+                      <span className={pen.points > 0 ? 'text-rose-600' : pen.points === 0 && pen.pointsDisplay.includes('0 Poin') ? 'text-emerald-600' : 'text-amber-600'}>
+                        {pen.pointsDisplay}
+                      </span>
                     </td>
                   </tr>
                 ))}
@@ -259,34 +309,34 @@ export default function TataTertibView() {
               <Clock className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-base font-black text-slate-900 uppercase">Mekanisme Pengajuan Sanggah / Nota Protes</h3>
-              <p className="text-xs text-slate-500">Prosedur resmi jika kontingen menemukan indikasi kesalahan input hitung data</p>
+              <h3 className="text-base font-black text-slate-900 uppercase">Mekanisme Pengajuan Sanggah & Live Score (Pasal 13)</h3>
+              <p className="text-xs text-slate-500">Transparansi live score quick count via akun Gmail terdaftar & prosedur legal nota sanggahan</p>
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 pt-2 text-xs">
             <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
-              <span className="font-mono font-black text-amber-700 text-sm block">1. Batas 60 Menit</span>
-              <p className="text-slate-600 text-[11px]">
-                Pengajuan protes hanya dilayani maksimal 60 menit setelah skor sementara ditayangkan di portal.
+              <span className="font-mono font-black text-amber-700 text-sm block">1. Transparansi Live Score</span>
+              <p className="text-slate-600 text-[11px] leading-relaxed">
+                Skor ditayangkan transparan via aplikasi web lbb.tontimuallimin.com setelah diverifikasi tim rekap & dewan juri.
               </p>
             </div>
             <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
-              <span className="font-mono font-black text-amber-700 text-sm block">2. Surat Resmi Tertulis</span>
-              <p className="text-slate-600 text-[11px]">
-                Wajib diajukan secara tertulis oleh Pembina / Pelatih resmi bertandatangan di Meja Sekretariat.
+              <span className="font-mono font-black text-amber-700 text-sm block">2. Batas Waktu 60 Menit</span>
+              <p className="text-slate-600 text-[11px] leading-relaxed">
+                Pengajuan protes hanya dilayani maksimal 60 menit sejak pengumuman kejuaraan secara resmi dibacakan pada apel penutupan.
               </p>
             </div>
             <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
-              <span className="font-mono font-black text-amber-700 text-sm block">3. Uang Jaminan Sanggah</span>
-              <p className="text-slate-600 text-[11px]">
-                Menyertakan uang jaminan protes Rp500.000,- yang dikembalikan utuh jika terbukti terjadi kekeliruan panitia.
+              <span className="font-mono font-black text-amber-700 text-sm block">3. Formulir & Bukti Valid</span>
+              <p className="text-slate-600 text-[11px] leading-relaxed">
+                Diajukan tertulis menggunakan Formulir Sanggahan Resmi oleh 1 Official resmi disertai bukti valid di Meja Informasi Panitia.
               </p>
             </div>
             <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
-              <span className="font-mono font-black text-amber-700 text-sm block">4. Sidang Dewan Juri</span>
-              <p className="text-slate-600 text-[11px]">
-                Ketua Dewan Juri memeriksa ulang rekaman video resmi & blangko fisik asli, keputusan sidang bersifat final.
+              <span className="font-mono font-black text-amber-700 text-sm block">4. Objek Sanggahan</span>
+              <p className="text-slate-600 text-[11px] leading-relaxed">
+                Hanya diterima untuk dugaan kesalahan administratif non-penilaian (salah jumlah, input data, penalti). Mutu gerakan juri bersifat mutlak.
               </p>
             </div>
           </div>

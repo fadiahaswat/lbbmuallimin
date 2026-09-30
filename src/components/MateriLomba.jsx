@@ -25,7 +25,8 @@ export default function MateriLomba() {
     text += `a. Gerakan materi dilaksanakan dalam formasi 3 saf, 7 banjar (7 trio);\n`;
     text += `b. Gerakan materi dilaksanakan secara berurutan sesuai nomor;\n`;
     text += `c. Materi gerakan berantai bertanda strip ( - ) wajib dilaksanakan satu rangkaian tanpa gerakan tambahan;\n`;
-    text += `d. Materi gerakan lomba sudah dibuat runtut namun tetap diperbolehkan melakukan gerakan penyesuaian maksimal 3 aba-aba.\n`;
+    text += `d. Materi gerakan lomba sudah dibuat runtut namun tetap diperbolehkan melakukan gerakan penyesuaian maksimal 3 aba-aba;\n`;
+    text += `e. Kebenaran teknik gerakan berpedoman pada Perpang TNI No. 58 dan 57 Tahun 2018, khusus pelaksanaan Hormat Kanan berpedoman pada Perpang TNI No. 45 Tahun 2014.\n`;
     text += `========================================================\n`;
     return text;
   }
@@ -85,7 +86,8 @@ export default function MateriLomba() {
             <li>Gerakan materi dilaksanakan dalam formasi 3 saf, 7 banjar (7 trio);</li>
             <li>Gerakan materi dilaksanakan secara berurutan sesuai nomor;</li>
             <li>Materi gerakan berantai bertanda strip ( – ) wajib dilaksanakan satu rangkaian tanpa gerakan tambahan;</li>
-            <li>Materi gerakan lomba sudah dibuat runtut namun tetap diperbolehkan melakukan gerakan penyesuaian maksimal 3 aba-aba.</li>
+            <li>Materi gerakan lomba sudah dibuat runtut namun tetap diperbolehkan melakukan gerakan penyesuaian maksimal 3 aba-aba;</li>
+            <li>Kebenaran teknik gerakan berpedoman pada Perpang TNI No. 58 dan 57 Tahun 2018, khusus pelaksanaan Hormat Kanan berpedoman pada Perpang TNI No. 45 Tahun 2014.</li>
           </ol>
         </div>
         <script>

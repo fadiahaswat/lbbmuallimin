@@ -1,0 +1,302 @@
+﻿
+
+
+w14:paraId="510221B9" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">TATA TERTIB PESERTA
+
+w14:paraId="4A0E94E3" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">LOMBA BARIS - BERBARIS MU'ALLIMIN TAHUN 2027
+
+w14:paraId="42F4D117" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">
+
+w14:paraId="17EA4613" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">PASAL 1
+
+w14:paraId="3894E577" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">KETENTUAN UMUM DAN ASAS PELAKSANAAN
+
+w14:paraId="39727557" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">
+
+w14:paraId="12563AE8" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">1.Lomba Baris - Berbaris Mu'allimin Tahun 2027 (selanjutnya disingkat LBB MU'ALLIMIN 2027) merupakan lomba baris-berbaris tingkat Daerah Istimewa Yogyakarta yang diselenggarakan oleh Madrasah Mu'allimin Muhammadiyah Yogyakarta.
+
+w14:paraId="05AE1B3F" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">2.LBB MU'ALLIMIN 2027 dilaksanakan pada hari Sabtu, 24 Januari 2027 di Kampus Terpadu Madrasah Mu'allimin Muhammadiyah Yogyakarta (Sedayu, Bantul).
+
+w14:paraId="2A710415" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">3.Peserta LBB MU'ALLIMIN 2027 merupakan siswa SD/MI sederajat dan SMP/MTs sederajat dalam lingkup Daerah Istimewa Yogyakarta, sesuai yang tertera pada formulir pendaftaran.
+
+w14:paraId="7A875492" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">4.Tata Tertib ini merupakan pedoman resmi yang mengatur seluruh ketentuan non-lomba, etika lingkungan madrasah/pesantren, pemanfaatan basecamp, prosedur Check-In & Checkout, kebersihan, suporter, serta penegakan sportivitas dan integritas. Adapun petunjuk teknis gerakan PBB (berpedoman pada Peraturan Panglima TNI Nomor 58 dan 57 Tahun 2018, serta khusus pelaksanaan Hormat Kanan/Kiri berpedoman pada Peraturan Panglima TNI Nomor 45 Tahun 2014), arena lomba, dan sistem penjurian diatur secara tersendiri dalam Petunjuk Teknis (Juknis) Lapangan.
+
+w14:paraId="21EF4EBB" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">5.Ketentuan seragam resmi peserta lomba:
+
+w14:paraId="0B4D58FD" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">a.Seragam SD/MI menggunakan seragam tonti sekolah atau seragam nasional merah putih lengkap beserta seluruh atributnya.
+
+w14:paraId="20F4CED9" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">b.Seragam SMP/MTs menggunakan seragam tonti sekolah atau seragam OSIS lengkap beserta seluruh atributnya.
+
+w14:paraId="2CEBB7D0" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">6.Setiap peleton didampingi oleh maksimal 1 (satu) orang Official (Pelatih/Pembina) dan 2 (dua) orang Pendukung (Medis/Dokumentasi/dll.), serta seluruh anggota cadangan resmi yang telah terdaftar.
+
+w14:paraId="53B2E75F" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">
+
+w14:paraId="1CFB7998" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">PASAL 2
+
+w14:paraId="708E1C0D" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">TAHAP I: PRA-LOMBA - PENDAFTARAN RESMI DAN REGISTRASI ADMINISTRASI
+
+w14:paraId="54434D6F" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">
+
+w14:paraId="5D5FCF34" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">1.Pendaftaran resmi dilakukan secara online melalui website resmi: lbb.tontimuallimin.com sesuai dengan batas periode waktu yang telah ditentukan oleh panitia.
+
+w14:paraId="2261BC76" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">2.Seluruh proses pendaftaran bersifat paperless (unggah digital), kecuali berkas fisik asli yang wajib dibawa dan diserahkan langsung saat forum Technical Meeting (TM) Peserta.
+
+w14:paraId="08F8ECFC" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">3.Berkas fisik asli yang wajib diserahkan dan diverifikasi saat TM Peserta mencakup:
+
+w14:paraId="4BEA61DA" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">a.Surat Tugas / Rekomendasi Resmi Kepala Sekolah asli berstempel basah yang memuat daftar nama lengkap seluruh personel kontingen: 1 Komandan Peleton (Danton), 21 Anggota Inti, 3 Anggota Cadangan, 1 Official (Pelatih/Pembina), dan 2 Pendukung (Medis/Dokumentasi/dll.).
+
+w14:paraId="3FA268D2" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">b.Pakta Integritas yang telah ditandatangani bermaterai Rp 10.000 oleh Official resmi sekolah.
+
+w14:paraId="04D9A7B2" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">c.Dokumen keabsahan data peserta (Buku Rapor / NISN / Akta Kelahiran) guna verifikasi siswa aktif bersangkutan.
+
+w14:paraId="6B085C24" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">
+
+w14:paraId="03A29B88" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">PASAL 3
+
+w14:paraId="6931DEB2" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">TAHAP I: PRA-LOMBA - TEKNIS TECHNICAL MEETING (TM) PESERTA
+
+w14:paraId="6660C980" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">
+
+w14:paraId="0CD0262D" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">1.Waktu dan Tempat: Technical Meeting (TM) Peserta dilaksanakan pada hari Sabtu, 10 Januari 2027 pukul 13.00 - 16.30 WIB bertempat di Kampus Induk Madrasah Mu'allimin Muhammadiyah Yogyakarta (Jl. Letjen S. Parman No. 68, Wirobrajan, Kota Yogyakarta).
+
+w14:paraId="5A63E552" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">2.Kehadiran Delegasi: Setiap kontingen wajib diwakili oleh maksimal 2 (dua) orang perwakilan resmi (Official/Pembina atau Komandan Peleton). Perwakilan wajib mengenakan pakaian rapi, sopan, dan bersepatu.
+
+w14:paraId="283F94DE" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">3.Verifikasi Berkas Fisik Asli (12.30 - 13.00 WIB): Sebelum forum dimulai, perwakilan kontingen melakukan presensi kehadiran dan menyerahkan berkas fisik asli di meja registrasi TM panitia.
+
+w14:paraId="5EBCA4E9" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">4.Agenda Technical Meeting: Agenda TM meliputi pemaparan regulasi teknis oleh Panitia dan Dewan Juri, sesi tanya jawab/klarifikasi keraguan gerakan, pengundian resmi terbuka (lotting) nomor urut tampil peleton (SD-01 s.d. SD-18 dan SMP-01 s.d. SMP-18), penandatanganan Berita Acara TM, serta pembagian jadwal resmi slot uji coba lapangan.
+
+w14:paraId="5D593B6F" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">8.Kekuatan Hasil TM: Hasil technical meeting wajib dipatuhi dan dilaksanakan selama perlombaan berlangsung. Pada hari pelaksanaan perlombaan, panitia tidak menerima protes tentang ketentuan-ketentuan yang sudah disepakati pada saat technical meeting, baik yang berupa ketentuan tertulis maupun yang tidak tertulis.
+
+w14:paraId="06BE1133" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">
+
+w14:paraId="43B3A440" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">PASAL 4
+
+w14:paraId="6B31341F" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">TAHAP I: PRA-LOMBA - TEKNIS UJI COBA LAPANGAN (FAMILIARISASI MEDAN)
+
+w14:paraId="53A77E78" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">
+
+w14:paraId="71F56BC0" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">1.Waktu dan Tempat: Uji Coba Lapangan (Familiarisasi Medan Perlombaan) dilaksanakan pada hari Minggu, 17 Januari 2027 pukul 08.00 - 13.30 WIB di Kampus Terpadu Madrasah Mu'allimin Muhammadiyah Yogyakarta (Sedayu, Bantul).
+
+w14:paraId="4CC267DC" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">2.Pelaksanaan Paralel di Dua Arena: Uji coba dilaksanakan secara bersamaan di 2 arena resmi:
+
+w14:paraId="6C408DF9" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">a.Arena 1 (Lapangan Basket Kampus Terpadu Sedayu): Khusus untuk 18 Peleton Tingkat SD/MI (ukuran 25 m x 14 m).
+
+w14:paraId="4D7F70DE" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">b.Arena 2 (Pelataran Embung Kampus Terpadu Sedayu): Khusus untuk 18 Peleton Tingkat SMP/MTs (ukuran 26 m x 15 m).
+
+w14:paraId="51C3C2B2" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">3.Alokasi Waktu Resmi Kontingen: Setiap kontingen memperoleh alokasi waktu 15 (lima belas) menit, dengan pembagian: 10 menit waktu efektif uji coba lapangan dan 5 menit waktu transisi peleton, dipandu petugas timekeeper dan LO pendamping.
+
+w14:paraId="1F38BBAE" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">4.Fokus dan Sasaran Uji Coba: Uji coba lapangan difokuskan murni untuk familiarisasi medan perlombaan bagi peserta (penyesuaian hentakan langkah terhadap tekstur lantai arena serta simulasi alur masuk/keluar arena). Uji coba dilaksanakan tanpa ada penilaian dewan juri.
+
+w14:paraId="0F54323C" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">5.Ketentuan Perlengkapan Uji Coba: Peserta diperbolehkan mengenakan seragam olahraga/latihan sekolah yang seragam, rapi, dan bersepatu (DILARANG KERAS menggunakan sepatu berpines/paku). Kegiatan ini murni orientasi medan tanpa penilaian juri.
+
+w14:paraId="2BEA6B18" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">
+
+w14:paraId="3D7741C6" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">PASAL 5
+
+w14:paraId="16C5C80F" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">TAHAP II: HARI PERLOMBAAN - DAFTAR ULANG, CHECK-IN, DAN JAMINAN IDENTITAS
+
+w14:paraId="47900FD8" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">
+
+w14:paraId="559BC886" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">1.Daftar ulang peserta pada hari-H perlombaan dilayani pukul 06.00 - 09.00 WIB di Meja Registrasi Resmi Kampus Terpadu Sedayu.
+
+w14:paraId="05AAB6B8" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">2.Daftar ulang lebih dari pukul 09.00 WIB tidak akan dilayani. Bagi peleton yang tidak melakukan daftar ulang dikenakan sanksi tidak dapat mengikuti perlombaan.
+
+w14:paraId="1198223F" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">3.Prosedur Check-In Kontingen:
+
+w14:paraId="3A836D89" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">a.Official menyerahkan 1 (satu) kartu identitas resmi (KTP/SIM perwakilan sekolah) sebagai jaminan ketertiban serta kebersihan basecamp.
+
+w14:paraId="368AA1E3" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">b.Official menerima Nomor Dada Peleton resmi (wajib disematkan pada dada sebelah kiri personel penjuru depan tengah atau S2B1 [Saf 2 Banjar 1]).
+
+w14:paraId="3A7AF480" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">c.Official menerima tanda pengenal resmi (ID Card 1 Official & 2 Pendukung) serta 2 (dua) kantong sampah terpilah (Organik & Anorganik).
+
+w14:paraId="72F95E84" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">d.Peleton diarahkan dan dikawal oleh LO pendamping menuju ruang kelas basecamp resmi yang telah ditentukan.
+
+w14:paraId="5B0DC5EE" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">4.Pengembalian nomor dada dilakukan di pos/arena terakhir kepada petugas pos setelah peleton menyelesaikan seluruh rangkaian materi lomba.
+
+w14:paraId="5611D44B" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">
+
+w14:paraId="72758D5D" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">PASAL 6
+
+w14:paraId="4DCEC42C" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">TAHAP II: HARI PERLOMBAAN - UPACARA PEMBUKAAN DAN STERILISASI ARENA
+
+w14:paraId="5180D99F" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">
+
+w14:paraId="051DDB3F" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">1.Seluruh area perlombaan ditutup dan disterilkan dari aktivitas umum pada pukul 07.30 WIB. Peserta diperbolehkan masuk kembali setelah upacara pembukaan selesai.
+
+w14:paraId="2FEB17E4" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">2.Upacara pembukaan resmi wajib diikuti oleh peserta dengan nomor urut lomba 1 sampai dengan 5 (SD-01 s.d. SD-05 dan SMP-01 s.d. SMP-05) dengan formasi 1 komandan dan 15 anggota (5 trio lengkap) mengenakan seragam tonti resmi lengkap.
+
+w14:paraId="5D7EDA14" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">3.Pengecekan barisan upacara dilakukan oleh panitia 15 menit sebelum upacara dimulai. Peleton yang tidak hadir atau terlambat dikenakan sanksi penalti pengurangan nilai sesuai ketentuan Juknis Lapangan.
+
+w14:paraId="7F3220E0" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">
+
+w14:paraId="227DE44F" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">PASAL 7
+
+w14:paraId="3F069813" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">TAHAP III: HARI PERLOMBAAN - PROSEDUR DAERAH PERSIAPAN (DP 1 & DP 2)
+
+w14:paraId="03FF4B9C" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">
+
+w14:paraId="144A6836" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">1.Kesiapan di Basecamp: Peleton bersama official sebaiknya sudah bersiap-siap di ruang basecamp sekurang-kurangnya 15 (lima belas) menit sebelum estimasi waktu nomor urutnya akan dipanggil oleh LO pendamping.
+
+w14:paraId="7F3810A2" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">2.Prosedur Pemanggilan Masuk DP 1: Peleton HANYA diperkenankan atau boleh masuk ke Daerah Persiapan 1 (DP 1) setelah dipanggil secara resmi oleh panitia melalui pengeras suara (mic). Peleton DILARANG KERAS masuk ke DP 1 sebelum dipanggil.
+
+w14:paraId="785D9079" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">3.Sanksi Keterlambatan Hadir di DP 1: Peleton yang tidak hadir di DP 1 setelah 3 (tiga) kali pemanggilan resmi melalui pengeras suara (dengan jeda waktu/jarak antar panggilan selama 2 menit) dikenakan sanksi penalti pengurangan nilai sebesar 100 poin (-100 poin) dan urutan tampilnya digeser ke urutan tampil paling akhir. Apabila peleton tetap tidak hadir tanpa konfirmasi resmi, maka dikenakan sanksi DISKUALIFIKASI.
+
+w14:paraId="2688DEC1" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">4.Pemeriksaan di DP 1: Di DP 1 dilakukan verifikasi jumlah personel (1 Danton, 21 Inti, cadangan, 1 Official, 2 Pendukung), kartu ID card, nomor dada S2B1, dan pemeriksaan fisik sol sepatu (DILARANG KERAS sol berpines, paku payung, spikes, atau pul logam).
+
+w14:paraId="217F54B6" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">5.Ruang Tunggu DP 2: Setelah lolos DP 1, peleton memasuki DP 2 yang difungsikan murni sebagai Holding Area yang tenang sebelum dipersilakan masuk ke arena perlombaan.
+
+w14:paraId="66B5072D" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">
+
+w14:paraId="5E51ABA0" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">PASAL 8
+
+w14:paraId="5D03823F" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">TAHAP III: HARI PERLOMBAAN - AREA LOMBA, PENGGUNAAN BASECAMP, DAN ZONASI PESANTREN
+
+w14:paraId="5FFE0DF6" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">
+
+w14:paraId="0EA6EEF9" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">1.Lokasi kegiatan dibagi menjadi beberapa area: Area Lomba (Arena 1 & 2), Area Basecamp (ruang kelas transit peleton), Daerah Persiapan (DP 1 Pengecekan Personel & DP 2 Ruang Tunggu), Area Penonton/Suporter, dan Area Steril/Privat Pesantren.
+
+w14:paraId="0C30851F" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">2.Setiap peleton mendapatkan 1 (satu) ruang kelas basecamp resmi yang telah ditentukan oleh panitia. Basecamp HANYA boleh dimasuki oleh anggota peleton berseragam, 1 Official, dan 2 Pendukung ber-ID Card resmi.
+
+w14:paraId="592B2483" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">3.Wali murid, penonton, pendukung, maupun penggembira DILARANG KERAS memasuki area basecamp / ruang kelas peserta demi menjaga ketertiban, keamanan barang bawaan, dan kenyamanan istirahat siswa.
+
+w14:paraId="0DE7A160" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">4.Peserta dan pendamping DILARANG menggunakan aset/fasilitas ruang kelas (seperti LCD proyektor, papan tulis, perangkat guru, sound kelas) dan DILARANG memindahkan meja maupun kursi keluar dari dalam ruang kelas.
+
+w14:paraId="1813896B" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">5.Seluruh unsur kontingen DILARANG KERAS memasuki area privat Kampus Terpadu Madrasah Mu'allimin Muhammadiyah Yogyakarta, khususnya kawasan ASRAMA SANTRI. Pelanggaran terhadap batas privasi ini akan dikenakan sanksi tegas oleh Panitia dan Keamanan.
+
+w14:paraId="38882364" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">6.Area Lomba bersifat steril (Clear Area) dan hanya dapat diakses oleh peleton yang sedang tampil didampingi 1 Official dan 2 Pendukung ber-ID Card di pinggir arena. Penonton dan suporter diwajibkan berada di Area Penonton yang telah disediakan.
+
+w14:paraId="17414136" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">
+
+w14:paraId="7660ADBB" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">PASAL 9
+
+w14:paraId="75304B71" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">TAHAP III: HARI PERLOMBAAN - ETIKA SUPORTER, KETERTIBAN IBADAH, DAN INTEGRITAS
+
+w14:paraId="02EBA5B2" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">
+
+w14:paraId="0ED17C3D" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">1.Prinsip Sportivitas: Seluruh peserta, official, pendukung, dan keluarga besar kontingen wajib menjunjung tinggi nilai-nilai sportivitas, kejujuran, saling menghormati, dan kebersamaan pelajar berkarakter.
+
+w14:paraId="39AEF5A4" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">2.Ketertiban Suporter saat Tampil: Penonton dan suporter DILARANG membunyikan instrumen musik/alat tabuh, terompet, peluit, megafon/toa, maupun meneriakkan yel-yel saat ada peleton yang sedang tampil di arena perlombaan agar tidak mengganggu konsentrasi komandan, pasukan, dan dewan juri.
+
+w14:paraId="16F4FFBE" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">3.Larangan Tepukan dan Sorakan Sinis: Tepukan tangan dan yel-yel suporter hanya diizinkan saat jeda pergantian peleton atau sebelum/setelah peleton tampil di arena lomba. DILARANG KERAS melakukan tepukan, teriakan, atau sorakan sinis (mencemooh, mengejek, atau menertawakan) saat melihat peleton lain melakukan kesalahan aba-aba atau gerakan di arena lomba. Pelanggaran terhadap adab suporter ini akan diberi peringatan tegas oleh Divisi Keamanan, dan jika diabaikan dapat berakibat pada sanksi penalti pengurangan nilai bagi peleton yang didukung.
+
+w14:paraId="66D726BC" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">4.Ketertiban Ibadah Salat: Mengingat Kampus Terpadu Madrasah Mu'allimin merupakan lingkungan Pondok Pesantren, seluruh peserta, official, pendukung, dan penonton diwajibkan menjaga ketenangan, menghentikan aktivitas kegaduhan/yel-yel saat adzan berkumandang dan masuk waktu salat, serta bagi yang beragama Islam dipersilakan menunaikan salat berjamaah di Masjid Kampus Terpadu.
+
+w14:paraId="51B9F8BC" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">5.Larangan Ujaran Kebencian, Hoaks, dan Fitnah: Peserta, official, maupun suporter DILARANG KERAS menyebarkan berita bohong (hoaks), fitnah, ujaran kebencian (hate speech), kata-kata kotor/saru, penghinaan bernuansa SARA, baik secara lisan di lokasi lomba maupun melalui media sosial. Pelanggaran berat dikenakan sanksi DISKUALIFIKASI dan dilaporkan kepada pihak madrasah/sekolah bersangkutan.
+
+w14:paraId="22B0E15D" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">6.Larangan Modifikasi Sol Sepatu: DILARANG KERAS menempelkan atau memasang pines, paku payung, paku besi, spikes, pul logam, atau benda tajam/keras lainnya pada alas kaki/sol sepatu yang berpotensi merusak permukaan lantai arena dan membahayakan peserta. Pemeriksaan sepatu dilakukan secara ketat di DP 1.
+
+w14:paraId="729B9AF8" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">7.Larangan Senjata & Tindakan Kekerasan: Peserta dan seluruh unsur pendukungnya DILARANG membawa senjata tajam, senjata api, bahan peledak, rokok, miras, maupun obat-obatan terlarang, serta DILARANG terlibat dalam segala bentuk kekerasan fisik atau perkelahian. Pelanggaran dikenakan sanksi DISKUALIFIKASI dan diserahkan kepada pihak berwajib.
+
+w14:paraId="321AB965" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">
+
+w14:paraId="31054574" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">PASAL 10
+
+w14:paraId="4E34E8A8" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">KESEHATAN DAN PENANGANAN MEDIS LAPANGAN
+
+w14:paraId="2CA327F3" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">
+
+w14:paraId="62043F62" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">1.Seluruh peserta yang mengikuti lomba diasumsikan berada dalam kondisi sehat jasmani dan rohani.
+
+w14:paraId="47C88751" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">2.Panitia menyediakan pos pertolongan pertama pada kecelakaan (P3K) atau tim medis untuk penanganan insiden darurat di lokasi lomba.
+
+w14:paraId="072D2CE4" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">3.Panitia hanya memberikan pertolongan pertama dasar. Penanganan lebih lanjut yang memerlukan rujukan ke fasilitas kesehatan menjadi tanggung jawab sekolah atau official masing-masing.
+
+w14:paraId="62468DB4" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">4.Panitia tidak bertanggung jawab atas kondisi kesehatan peserta yang disebabkan oleh penyakit bawaan atau riwayat medis sebelumnya.
+
+w14:paraId="05B9EA90" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">5.Setiap insiden keamanan atau hal-hal yang mencurigakan harap segera dilaporkan kepada panitia terdekat.
+
+w14:paraId="62FDA666" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">
+
+w14:paraId="7B816C52" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">PASAL 11
+
+w14:paraId="4D6FB492" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">KATEGORI DAN PENGHARGAAN JUARA
+
+w14:paraId="31A3F105" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">
+
+w14:paraId="4BBEBF2E" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">1.Sebagai bentuk apresiasi dan motivasi bagi peserta, panitia LBB Mu'allimin Tahun 2027 menyediakan hadiah dan penghargaan berikut:
+
+w14:paraId="29FBAA68" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">a.Piala Bergilir Juara Umum:
+
+w14:paraId="461EB1A8" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">i.Piala Bergilir Juara Umum Tingkat SD/MI Sederajat
+
+w14:paraId="64A24CEC" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">ii.Piala Bergilir Juara Umum Tingkat SMP/MTs Sederajat
+
+w14:paraId="2DD33AA5" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">b.Kategori Peleton Tingkat SD/MI Sederajat: Juara I, II, III (Piala Tetap + Uang Pembinaan) dan Juara Harapan I, II, III (Piala Tetap).
+
+w14:paraId="3B4B5DFD" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">c.Kategori Peleton Tingkat SMP/MTs Sederajat: Juara I, II, III (Piala Tetap + Uang Pembinaan) dan Juara Harapan I, II, III (Piala Tetap).
+
+w14:paraId="1919C22B" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">d.Kategori Komandan Peleton Terbaik Tingkat SD/MI: Juara I (Piala Tetap + Uang Pembinaan) serta Juara II dan III (Piala Tetap).
+
+w14:paraId="414F443C" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">e.Kategori Komandan Peleton Terbaik Tingkat SMP/MTs: Juara I (Piala Tetap + Uang Pembinaan) serta Juara II dan III (Piala Tetap).
+
+w14:paraId="15383564" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">2.Seluruh Pemenang (mencakup Juara I, II, III Peleton; Juara Harapan I, II, III Peleton; dan Juara I, II, III Komandan Peleton Terbaik untuk setiap tingkatan) akan mendapatkan E-Sertifikat Piagam Penghargaan sesuai dengan prestasi yang telah diraih.
+
+w14:paraId="4487F439" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">
+
+w14:paraId="5762A2E3" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">PASAL 12
+
+w14:paraId="3B9CFFD4" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">PENENTUAN JUARA DAN SISTEM PEROLEHAN POIN
+
+w14:paraId="105B8BDF" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">
+
+w14:paraId="3150B89A" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">1.Asas Penentuan Kejuaraan: Penentuan Juara Peleton, Juara Harapan, dan Komandan Peleton Terbaik (tingkat SD/MI maupun SMP/MTs) ditetapkan secara sah berdasarkan hasil rekapitulasi nilai Dewan Juri independen dari unsur TNI, POLRI, dan PPI.
+
+w14:paraId="07A25EE5" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">2.Regulasi Teknis Penjurian & Poin Juara Umum: Rincian formula bobot penilaian (Kebenaran Gerak dan Kekompakan 1:1, serta 4 aspek penilaian Komandan Peleton), tabel perolehan poin Juara Umum (skala 6 s.d. 1 poin), kriteria pemecah seri (tie-breaker), serta matriks penalti pengurangan nilai teknis diatur secara lengkap dan mengikat dalam dokumen Petunjuk Teknis (Juknis) Lapangan Bab F dan Bab G.
+
+w14:paraId="05E9A0D1" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">3.Keputusan Dewan Juri: Keputusan Dewan Juri mengenai aspek kualitatif penilaian mutu gerakan bersifat mutlak dan tidak dapat diganggu gugat. Segala bentuk sanggahan hanya dilayani untuk kekeliruan administratif sesuai prosedur pada Pasal 13 Tata Tertib ini dan Juknis Lapangan.
+
+w14:paraId="6FB10BBC" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">
+
+w14:paraId="5C8995EE" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">
+
+w14:paraId="6D984C84" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">
+
+w14:paraId="049D4162" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">PASAL 13
+
+w14:paraId="3B7A78D4" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">TAHAP IV: PASCA-LOMBA - APEL PENUTUPAN, PENGUMUMAN JUARA, DAN MEKANISME SANGGAH
+
+w14:paraId="3CF3BF9F" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">
+
+w14:paraId="10C7069C" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">1.Apel Penutupan: Apel Penutupan wajib diikuti oleh seluruh peserta dengan ketentuan 1 komandan dan 4 anggota peleton. Peserta Apel Penutupan berpakaian rapi, sopan, dan bersepatu.
+
+w14:paraId="6EA7B4DE" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">2.Pengumuman Kejuaraan: Pengumuman lomba dilaksanakan setelah Apel Penutupan selesai dengan ketentuan, yang diperbolehkan masuk ke area pengumuman (lapangan mini soccer) yakni peserta apel penutupan sesuai dengan pasal 13 ayat 1.
+
+w14:paraId="4CC75288" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">3.Mekanisme Transparansi Nilai (Live Score Quick Count): Skor penampilan setiap peleton akan langsung ditayangkan secara transparan pada aplikasi quick count resmi melalui situs web lbb.tontimuallimin.com setelah diverifikasi oleh tim rekapitulasi nilai dan dewan juri. Official/perwakilan peleton dapat login mengakses rekap nilai rinci menggunakan akun Gmail masing-masing kontingen/peleton yang telah didaftarkan.
+
+w14:paraId="538E35AC" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">4.Mekanisme Pengajuan Protes Resmi (Sanggah): Keputusan Dewan Juri mengenai penilaian yang bersifat kualitatif bersifat mutlak dan tidak dapat diganggu gugat. Protes hanya diterima untuk dugaan kesalahan administratif non-penilaian (kesalahan penjumlahan skor, kesalahan input data, atau kesalahan penerapan poin penalti).
+
+w14:paraId="12618C8A" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">5.Prosedur dan Batas Waktu Sanggah: Protes hanya sah jika diajukan secara TERTULIS menggunakan Formulir Sanggahan Resmi oleh 1 (satu) orang Official resmi terdaftar dengan menyertakan bukti valid di Meja Informasi Panitia dalam periode waktu 60 (enam puluh) menit sejak pengumuman kejuaraan pada acara penutupan secara resmi dibacakan.
+
+w14:paraId="52C84DE5" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">
+
+w14:paraId="4DA1E4BC" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">PASAL 14
+
+w14:paraId="25CBBCB3" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">TAHAP IV: PASCA-LOMBA - KEBERSIHAN BASECAMP, CHECKOUT, DAN PEMULANGAN
+
+w14:paraId="32A39F35" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">
+
+w14:paraId="3734CC76" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">1.Seluruh partisipan DIWAJIBKAN menjaga kebersihan dan kerapian lingkungan di area Kampus Terpadu Madrasah Mu'allimin Muhammadiyah Yogyakarta (Sedayu, Bantul).
+
+w14:paraId="7DFA2855" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">2.Sebelum meninggalkan basecamp, peserta diwajibkan membersihkan ruangan serta merapikan kembali susunan meja dan kursi seperti kondisi semula. Sampah wajib dipilah menjadi dua kategori menggunakan kantong yang telah disediakan: Sampah Plastik / Anorganik dan Sampah Non-Plastik / Organik.
+
+w14:paraId="3C897676" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">3.Pengembalian kartu identitas (KTP/SIM) dilayani di Meja Announcer/Informasi setelah panitia melakukan verifikasi kebersihan dan kerapian ruang basecamp serta memastikan sampah terpilah telah diserahkan langsung ke Area Checkout.
+
+w14:paraId="2BA5703E" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">4.Sanksi Kebersihan dan Fasilitas Basecamp: Apabila ruangan basecamp ditinggalkan dalam keadaan kotor atau berantakan, peleton dikenai sanksi pengurangan nilai sebesar 50 poin pada rekapitulasi nilai akhir. Apabila terbukti terjadi kerusakan fisik atau kehilangan aset sarana-prasarana ruang kelas (meja, kursi, kaca jendela, stopkontak, LCD/proyektor, dll.), kartu identitas jaminan (KTP/SIM) DITAHAN panitia dan pihak sekolah yang bersangkutan dikenakan sanksi ganti rugi finansial penuh serta denda administratif perbaikan aset sebesar Rp 500.000 (lima ratus ribu rupiah).
+
+w14:paraId="09637FA6" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">5.Batas Waktu Maksimal Pengosongan Basecamp: Seluruh kontingen diwajibkan telah menyelesaikan proses checkout, membersihkan ruangan, membuang sampah ke Area Checkout, dan mengosongkan ruang kelas basecamp selambat-lambatnya pukul 18.00 WIB (atau maksimal 60 menit setelah upacara penutupan dan pengumuman kejuaraan selesai).
+
+w14:paraId="23A40461" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">
+
+w14:paraId="0E6825E1" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">PASAL 15
+
+w14:paraId="2D90B427" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">PENUTUP
+
+w14:paraId="1D60AC70" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">
+
+w14:paraId="46B4C293" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">1.Demikian Tata Tertib ini dibuat untuk menjadi pedoman resmi bagi seluruh pihak yang terlibat dalam Lomba Baris-Berbaris Mu'allimin Tahun 2027.
+
+w14:paraId="22B0D71B" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">2.Hal-hal yang belum tercantum dalam dokumen ini akan diatur kemudian oleh panitia dan akan disampaikan pada saat Rapat Teknis (Technical Meeting).
+
+w14:paraId="489D1B0C" w14:textId="77777777" w:rsidR="00685C97" w:rsidRDefault="00685C97" w:rsidP="00685C97">3.Dengan keikutsertaannya, seluruh peserta dianggap telah memahami dan bersedia mematuhi seluruh isi Tata Tertib ini tanpa terkecuali.
+
+w14:paraId="5C949E98" w14:textId="264538B4" w:rsidR="00BB0682" w:rsidRPr="00685C97" w:rsidRDefault="00BB0682" w:rsidP="00685C97">

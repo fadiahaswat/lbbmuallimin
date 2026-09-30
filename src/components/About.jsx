@@ -97,10 +97,10 @@ export default function About() {
           </h2>
 
           <p className="text-lg text-slate-600 leading-relaxed font-medium">
-            <strong className="text-slate-900">LBB Mu'allimin 2027</strong> hadir sebagai manifestasi peran historis Madrasah Mu'allimin sejak 1918. Mengusung tema resmi <em className="text-slate-800 font-bold">"Semangat Sebagai Ksatria, Berjuang Dengan Gembira!"</em>, ini adalah kawah candradimuka untuk menanamkan nilai{' '}
+            <strong className="text-slate-900">LBB Mu'allimin 2027</strong> hadir sebagai manifestasi peran historis Madrasah Mu'allimin sejak 1918. Mengusung tema resmi <em className="text-slate-800 font-bold">"JIWA KSATRIA, DERAP GEMILANG"</em>, ini adalah kawah candradimuka untuk menanamkan nilai{' '}
             <span className="text-red-700 font-bold">Disiplin</span>,{' '}
             <span className="text-red-700 font-bold">Kepemimpinan</span>, dan{' '}
-            <span className="text-red-700 font-bold">Solidaritas</span> demi mencetak Profil Pelajar Pancasila dan Kader Bangsa yang Berkemajuan.
+            <span className="text-red-700 font-bold">Solidaritas</span> demi mencetak Profil Pelajar Pancasila dan Kader Bangsa yang Berkemajuan berlandaskan nilai CADRE (Creative, Active, Discipline, Religious, Entrepreneur).
           </p>
         </div>
 
@@ -119,8 +119,8 @@ export default function About() {
                   <div>
                     <span className="text-yellow-500 font-bold tracking-[0.3em] text-xs uppercase mb-2 block">Tema Resmi 2027</span>
                     <h3 className="text-xl sm:text-2xl font-black uppercase italic leading-tight py-1">
-                      <span className="block pb-1 text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-300">Semangat Sebagai Ksatria,</span>
-                      <span className="block text-yellow-500">Berjuang Dengan Gembira!</span>
+                      <span className="block pb-1 text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-300">JIWA KSATRIA,</span>
+                      <span className="block text-yellow-500">DERAP GEMILANG</span>
                     </h3>
                   </div>
 
@@ -138,8 +138,8 @@ export default function About() {
                       <HeartHandshake className="w-5 h-5" />
                     </div>
                     <div>
-                      <h4 className="font-bold text-sm text-white">Jiwa & Karakter Ksatria</h4>
-                      <p className="text-xs text-slate-400 mt-0.5 leading-relaxed">Integritas, Kehormatan, Tanggung Jawab, dan Mental Pantang Menyerah.</p>
+                      <h4 className="font-bold text-sm text-white">Jiwa Ksatria (Karakter Internal)</h4>
+                      <p className="text-xs text-slate-400 mt-0.5 leading-relaxed">Menempa integritas, kehormatan, kedisiplinan, tanggung jawab, kepemimpinan melayani, dan mentalitas pantang menyerah.</p>
                     </div>
                   </div>
                   <div className="flex gap-3.5 items-start p-3.5 rounded-2xl bg-white/[0.04] border border-white/5 hover:border-white/10 transition-colors">
@@ -147,8 +147,8 @@ export default function About() {
                       <Activity className="w-5 h-5" />
                     </div>
                     <div>
-                      <h4 className="font-bold text-sm text-white">Kegembiraan Berprestasi</h4>
-                      <p className="text-xs text-slate-400 mt-0.5 leading-relaxed">Sportivitas, Antusiasme, Kekompakan, dan Kebahagiaan dalam Berjuang.</p>
+                      <h4 className="font-bold text-sm text-white">Derap Gemilang (Prestasi Nyata)</h4>
+                      <p className="text-xs text-slate-400 mt-0.5 leading-relaxed">Hentakan langkah serempak penuh presisi teknis, kekompakan barisan, semangat bersinar, dan capaian prestasi membanggakan.</p>
                     </div>
                   </div>
                 </div>

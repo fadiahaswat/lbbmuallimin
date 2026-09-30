@@ -1,0 +1,86 @@
+﻿
+
+
+w14:paraId="6BCC2B52" w14:textId="77777777" w:rsidR="00216EB4" w:rsidRDefault="00000000">MATERI LOMBATINGKAT SD/MI SEDERAJATLOMBA BARIS – BERBARIS MU’ALLIMIN TAHUN 2027
+
+w14:paraId="12A6E46D" w14:textId="77777777" w:rsidR="00216EB4" w:rsidRDefault="00216EB4">
+
+w14:paraId="39A586B7" w14:textId="77777777" w:rsidR="00216EB4" w:rsidRDefault="00000000">Ukuran Pos 25 X 14 Meter – Waktu 10 Menit 
+
+w14:paraId="1E2DEFFA" w14:textId="77777777" w:rsidR="00216EB4" w:rsidRDefault="00000000">   
+
+w14:paraId="635C06F6" w14:textId="77777777" w:rsidR="00216EB4" w:rsidRDefault="00000000">Penghormatan Dewan Juri(Aba-aba Pelaksanaan Waktu Dimulai) – Laporan Pembuka
+
+w14:paraId="5C83ED99" w14:textId="77777777" w:rsidR="00216EB4" w:rsidRDefault="00000000">Istirahat Di Tempat(Parade) 
+
+w14:paraId="4C3EE571" w14:textId="77777777" w:rsidR="00216EB4" w:rsidRDefault="00000000">Periksa Kerapian(Parade) – Sikap Sempurna 
+
+w14:paraId="23F4F83E" w14:textId="77777777" w:rsidR="00216EB4" w:rsidRDefault="00000000">Setengah Lengan Lencang Kanan – Tegak
+
+w14:paraId="07E43459" w14:textId="77777777" w:rsidR="00216EB4" w:rsidRDefault="00000000">Lencang Kanan – Tegak
+
+w14:paraId="58B8FB4B" w14:textId="77777777" w:rsidR="00216EB4" w:rsidRDefault="00000000">Hitung(Bersaf)
+
+w14:paraId="4B8D5898" w14:textId="77777777" w:rsidR="00216EB4" w:rsidRDefault="00000000">Hadap Kanan
+
+w14:paraId="088C8BB9" w14:textId="77777777" w:rsidR="00216EB4" w:rsidRDefault="00000000">Lencang Depan – Tegak 
+
+w14:paraId="12D8FD25" w14:textId="77777777" w:rsidR="00216EB4" w:rsidRDefault="00000000">Hitung(Berbanjar)
+
+w14:paraId="29742C1D" w14:textId="77777777" w:rsidR="00216EB4" w:rsidRDefault="00000000">Buka Barisan – Tutup Barisan
+
+w14:paraId="68CD2CCC" w14:textId="77777777" w:rsidR="00216EB4" w:rsidRDefault="00000000">Hadap Kiri
+
+w14:paraId="223C8D44" w14:textId="77777777" w:rsidR="00216EB4" w:rsidRDefault="00000000">Hadap Serong Kanan
+
+w14:paraId="0804268C" w14:textId="77777777" w:rsidR="00216EB4" w:rsidRDefault="00000000">Balik Kanan
+
+w14:paraId="22478F38" w14:textId="77777777" w:rsidR="00216EB4" w:rsidRDefault="00000000">Hadap Serong Kiri
+
+w14:paraId="2E4E2053" w14:textId="77777777" w:rsidR="00216EB4" w:rsidRDefault="00000000">Jalan Di Tempat – Henti
+
+w14:paraId="063AE6D9" w14:textId="77777777" w:rsidR="00216EB4" w:rsidRDefault="00000000">3 Langkah Ke Kiri – Balik Kanan
+
+w14:paraId="1CB6CC61" w14:textId="77777777" w:rsidR="00216EB4" w:rsidRDefault="00000000">4 Langkah Ke Kanan
+
+w14:paraId="2BCB6BE6" w14:textId="77777777" w:rsidR="00216EB4" w:rsidRDefault="00000000">Hadap Kiri
+
+w14:paraId="35F7150C" w14:textId="77777777" w:rsidR="00216EB4" w:rsidRDefault="00000000">3 Langkah Ke Depan – Balik Kanan
+
+w14:paraId="62EF3391" w14:textId="77777777" w:rsidR="00216EB4" w:rsidRDefault="00000000">4 Langkah Ke Belakang
+
+w14:paraId="0D9A2316" w14:textId="77777777" w:rsidR="00216EB4" w:rsidRDefault="00000000">Maju Jalan – Tiap-tiap Banjar 2X Belok Kiri
+
+w14:paraId="6D40BB90" w14:textId="77777777" w:rsidR="00216EB4" w:rsidRDefault="00000000">Langkah Tegap(Dari Posisi Langkah Biasa)
+
+w14:paraId="67686278" w14:textId="77777777" w:rsidR="00216EB4" w:rsidRDefault="00000000">Hormat Kanan – Tegak – Jalan Di Tempat – Henti
+
+w14:paraId="2A9689CF" w14:textId="77777777" w:rsidR="00216EB4" w:rsidRDefault="00000000">Tiap-tiap Banjar 2X Belok Kanan Maju(Dari Posisi Berhenti) – Henti
+
+w14:paraId="6C319979" w14:textId="77777777" w:rsidR="00216EB4" w:rsidRDefault="00000000">Melintang Kanan(Berhenti ke Berhenti) – Henti – Balik Kanan
+
+w14:paraId="45D9978A" w14:textId="77777777" w:rsidR="00216EB4" w:rsidRDefault="00000000">Maju Jalan – Haluan Kanan(Berjalan ke Berhenti) – Henti
+
+w14:paraId="3A12BC44" w14:textId="77777777" w:rsidR="00216EB4" w:rsidRDefault="00000000">Istirahat Di Tempat(Untuk Perhatian – Motivasi & Evaluasi Tema LBB) – Sikap Sempurna
+
+w14:paraId="47976837" w14:textId="77777777" w:rsidR="00216EB4" w:rsidRDefault="00000000">Laporan Penutup – Penghormatan Dewan Juri(Aba-aba Pelaksanaan Waktu Berakhir)
+
+w14:paraId="1685F314" w14:textId="77777777" w:rsidR="00216EB4" w:rsidRDefault="00216EB4">
+
+w14:paraId="2BCB0BBA" w14:textId="77777777" w:rsidR="00216EB4" w:rsidRDefault="00000000">Keterangan:
+
+w14:paraId="278DA0A9" w14:textId="77777777" w:rsidR="00216EB4" w:rsidRPr="00640526" w:rsidRDefault="00000000">Gerakan materi dilaksanakan dalam formasi 3 saf, 7 banjar (7 trio);
+
+w14:paraId="7F592ECF" w14:textId="77777777" w:rsidR="00216EB4" w:rsidRPr="00640526" w:rsidRDefault="00000000">Gerakan materi dilaksanakan secara berurutan sesuai nomor;
+
+w14:paraId="1B65BCFA" w14:textId="77777777" w:rsidR="00216EB4" w:rsidRPr="00640526" w:rsidRDefault="00000000">Materi gerakan berantai bertanda strip ( – ) wajib dilaksanakan satu rangkaian tanpa gerakan tambahan;
+
+w14:paraId="290F8D60" w14:textId="77777777" w:rsidR="00216EB4" w:rsidRPr="00640526" w:rsidRDefault="00000000">Materi gerakan lomba sudah dibuat runtut namun tetap diperbolehkan melakukan gerakan penyesuaian maksimal 3 aba-aba;
+
+w14:paraId="54AF6B73" w14:textId="77777777" w:rsidR="00216EB4" w:rsidRPr="00640526" w:rsidRDefault="00000000">Kebenaran teknik gerakan berpedoman pada Perpang TNI No. 58 dan 57 Tahun 2018, khusus pelaksanaan Hormat Kanan berpedoman pada Perpang TNI No. 45 Tahun 2014.
+
+w14:paraId="68B9F0DE" w14:textId="77777777" w:rsidR="00216EB4" w:rsidRDefault="00216EB4">
+
+w14:paraId="405A6989" w14:textId="77777777" w:rsidR="00216EB4" w:rsidRDefault="00000000">
+
+w14:paraId="0A3CC88D" w14:textId="77777777" w:rsidR="00216EB4" w:rsidRDefault="00216EB4" w:rsidP="00640526">

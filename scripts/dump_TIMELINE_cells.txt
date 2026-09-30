@@ -1,0 +1,1159 @@
+﻿=== Sheet: xl/worksheets/sheet1.xml ===
+A1: No. | B1: Waktu / Periode | C1: Kegiatan Utama, Detail SOP & Panduan Operasional | D1: Penanggung Jawab (PIC)
+A2: A. Tahap Perencanaan, Legalitas & Persiapan Awal (September – Awal Oktober 2026) | B2:  | C2:  | D2: 
+A3: 1. | B3: 1 – 14 September 2026 | C3: PEMBENTUKAN PANITIA & PERUMUSAN KONSEP DASAR (PANDUAN PERDANA):
+• Pembentukan panitia lengkap (Ketua, Sekretaris, Bendahara, Acara, Lapangan, Juri, Perlengkapan, DDD, LO, Konsumsi, Medis, Keamanan).
+• Penetapan tema: "JIWA KSATRIA, DERAP GEMILANG" & tagline lomba.
+• Pembuatan draf awal Juklak/Juknis PBB mengacu Perpang TNI No. 57 & 58 Tahun 2018 (materi baku PBB dasar, gerakan berjalan, dan variasi-formasi).
+• Pembagian master folder Google Drive panitia untuk koordinasi terpadu seluruh divisi. | D3: Tim Formatur, Ketua Pelaksana, Divisi Acara, Sekretaris
+A4: 2. | B4: 15 – 21 September 2026 | C4: PENYUSUNAN PROPOSAL & MASTER ANGGARAN (RAB):
+• Penyusunan draf proposal kegiatan resmi (latar belakang, maksud & tujuan, susunan panitia, estimasi peserta).
+• Perumusan Rencana Anggaran Biaya (RAB) realistis dengan target pemasukan dari: Subsidi Madrasah (Rp 15.000.000), Pendaftaran Peserta 36 Peleton @Rp 350.000/400.000, Biaya Sewa 20 Tenant @Rp 500.000 (Rp 10.000.000), dan Sponsorship Kemitraan.
+• Pengadaan perlengkapan administrasi kantor (kertas HVS A4/F4 10 rim, tinta printer, map folio, cap panitia). | D4: Ketua Pelaksana, Sekretaris, Bendahara, Divisi Dana & Kemitraan
+A5: 3. | B5: 22 – 30 September 2026 | C5: LEGALITAS & PERIZINAN KAMPUS TERPADU SEDAYU & KAMPUS INDUK WIROBRAJAN:
+• Audiensi kepada Direktur/Pimpinan Madrasah Mu’allimin Yogyakarta guna memperoleh persetujuan resmi dan pencairan dana subsidi.
+• Pengajuan izin resmi pemakaian Aula Kampus Induk Mu’allimin (Jl. Letjen S. Parman No. 68, Wirobrajan) untuk Technical Meeting Peserta.
+• Pengajuan izin pemakaian fasilitas Kampus Terpadu Sedayu (Lapangan Basket, Pelataran Embung, Lapangan Minisoccer, Perpustakaan ASM, Ruang Kelas Basecamp, dan Halaman Parkir untuk Bazar Tenant).
+• Pembuatan formulir pendaftaran 20 stand bazar tenant (@Rp 500.000 per stand). | D5: Ketua Pelaksana, Sekretaris, Divisi Keamanan & Perizinan, Divisi Dana
+A6: 4. | B6: 1 – 4 Oktober 2026 | C6: SURVEI VENUE, MAPPING 2 ARENA & MATERI PROMOSI:
+• Survei lapangan detail: Dimensi Arena 1 (Lap. Basket untuk SD/MI: 25x14 meter, durasi 10 menit) dan Arena 2 (Pelataran Embung untuk SMP/MTs: 26x15 meter, durasi 13 menit).
+• Pemetaan alur jalan: Pos Parkir, Pos Registrasi Ulang, Holding Area, Daerah Persiapan (DP 1, DP 2, DP 3), Ruang Medis, dan Toilet.
+• Desain materi publikasi visual (Flyer Pendaftaran Peserta & Tenant, Twibbon, Buku Petunjuk Singkat, serta rilis teaser publikasi perdana). | D6: Divisi Teknis Lapangan, Divisi Acara, Divisi DDD, Divisi LO & Humas
+A7: B. Tahap Pendaftaran Peserta & Penjualan Stand Tenant (5 Oktober – 1 November 2026) | B7:  | C7:  | D7: 
+A8: 5. | B8: 5 – 18 Oktober 2026 | C8: PENDAFTARAN GELOMBANG PERTAMA (GELOMBANG 1):
+• Pembukaan pendaftaran online via website resmi untuk SD/MI & SMP/MTs dengan biaya pendaftaran Rp 350.000 per peleton.
+• Verifikasi berkas masuk kontingen (surat tugas kepala sekolah, NISN siswa, pas foto resmi, surat pernyataan sehat).
+• Penjualan stand bazar UMKM / tenant kuliner & merchandise Gelombang 1 (biaya sewa Rp 500.000 per tenant - fasilitas tenda 2x2m, 1 meja, 2 kursi, titik listrik).
+• Distribusi proposal sponsor ke instansi perbankan, BUMN/BUMD, dan mitra usaha. | D8: Divisi Acara (Pendaftaran), Divisi LO & Humas, Divisi Dana & Kemitraan
+A9: 6. | B9: 19 Oktober – 1 November 2026 | C9: PENDAFTARAN GELOMBANG KEDUA (GELOMBANG 2) & FINALISASI KUOTA:
+• Pembukaan pendaftaran gelombang kedua dengan biaya pendaftaran Rp 400.000 per peleton hingga kuota pasti terpenuhi: 36 Peleton (18 SD/MI dan 18 SMP/MTs).
+• Pelunasan biaya sewa 20 tenant UMKM (@Rp 500.000 = total Rp 10.000.000) dan penandatanganan tata tertib tenant.
+• Penutupan pendaftaran, verifikasi berkas administrasi peleton, dan pembentukan Grup WhatsApp Resmi Ofisial Peserta dipandu LO. | D9: Divisi Acara (Pendaftaran), Divisi LO & Humas, Divisi Dana & Kemitraan, Bendahara
+A10: C. Rangkaian Agenda Technical Meeting Dewan Juri / TM Juri (November 2026) | B10:  | C10:  | D10: 
+A11: 7. | B11: 2 – 5 November 2026 | C11: PERSIAPAN ADMINISTRASI & LOGISTIK TM JURI:
+• Penerbitan dan pengiriman surat resmi permohonan Dewan Juri ke KODIM/Koramil (unsur TNI), Polresta/Polsek (unsur POLRI), dan Pengurus PPI Kota Yogyakarta (masing-masing instansi mengutus 2 personil: 1 untuk Kategori SD & 1 untuk Kategori SMP, total 6 Dewan Juri).
+• Konfirmasi tertulis kesediaan hadir 6 orang juri pada jadwal Sabtu, 7 November 2026 pukul 13.00 WIB.
+• Penggandaan berkas kerja juri (cetak 10 bundel): Draf Juklak/Juknis PBB, rubrik blangko penilaian PBB peleton dan danton, serta tabel kriteria penalti/diskualifikasi.
+• Penyiapan amplop tanda terima uang kehormatan/transportasi TM untuk 6 Dewan Juri (@Rp 50.000). | D11: Sekretaris, Divisi Juri & Penilaian, Bendahara
+A12: 8. | B12: 46332.0 | C12: SETTING RUANG & BRIEFING INTERNAL PANITIA PRA-TM JURI:
+• Penataan ruang transit rapat ber-AC di Ruang Rapat Gedung Perpustakaan ASM Kampus Terpadu Sedayu (meja U-shape, LCD proyektor & pointer presentasi).
+• Rapat internal Divisi Juri, Divisi Acara, dan Panitia Inti: Membedah butir-butir krusial yang harus disepakati juri (durasi SD 10 menit, durasi SMP 13 menit, toleransi langkah, peluit waktu, batas arena, dan kriteria vokal danton).
+• Pemesanan konsumsi: Snack box coffee break siang dan makan siang/sore untuk 6 dewan juri dan panitia pendamping. | D12: Divisi Juri & Penilaian, Divisi Acara, Divisi Perlengkapan, Divisi Konsumsi
+A13: 9. | B13: Sabtu, 7 November 2026
+(Pukul 13.00 – 16.00 WIB) | C13: PELAKSANAAN TECHNICAL MEETING DEWAN JURI (TM JURI):
+• 12.30 – 13.00: Penyambutan 6 Dewan Juri di Ruang VIP Perpustakaan ASM, registrasi kehadiran, dan coffee break siang.
+• 13.00 – 13.30: Pembukaan oleh Ketua Pelaksana, pemaparan profil LBB Mu'allimin 2027, dan tinjauan umum denah 2 arena lomba.
+• 13.30 – 15.15: SIDANG PLENO PENYELARASAN PERSEPSI DEWAN JURI:
+  - Standarisasi acuan materi teknis (Perpang TNI No. 57 & 58 Tahun 2018).
+  - Pembagian resmi tugas penilai: 3 Juri SD menilai 18 Peleton SD di Arena 1 (Lap. Basket) & 3 Juri SMP menilai 18 Peleton SMP di Arena 2 (Pelataran Embung).
+  - Penentuan batas durasi waktu tampil resmi:
+    * Kategori SD/MI: Maksimal 10 menit bersih (menit 8: peluit kuning, menit 10: peluit merah).
+    * Kategori SMP/MTs: Maksimal 13 menit bersih (menit 11: peluit kuning, menit 13: peluit merah).
+    * Kelebihan waktu dikenakan sanksi penalti per 30 detik (-50 Poin).
+  - Penyepakatan rubrik nilai: Peleton (Kebenaran Teknik dan Kekompakan 1:1) & Danton (Penguasaan materi, vokal, dan penguasaan arena).
+• 15.15 – 15.45: Peninjauan fisik langsung ke Lapangan Basket dan Pelataran Embung bersama juri.
+• 15.45 – 16.00: Penandatanganan Berita Acara Kesepakatan Dewan Juri, penyerahan uang transport TM Juri, foto bersama, dan ramah tamah. | D13: Panitia Inti, Divisi Acara, Divisi Juri & Penilaian, Bendahara, Divisi DDD
+A14: 10. | B14: 8 – 14 November 2026 | C14: PASCA-TM JURI (DOKUMENTASI & SISTEMISASI HASIL):
+• Perumusan Berita Acara TM Juri ke dalam Buku Juknis Final (sudah memiliki legitimasi hukum dewan juri).
+• Pembuatan master template blangko penilaian cetak (warna berbeda untuk SD dan SMP guna mencegah tertukar).
+• Perancangan formula spreadsheet komputasi rekapitulasi nilai real-time dengan proteksi rumus ganda. | D14: Divisi Juri & Penilaian, Sekretaris, Divisi Acara
+A15: D. Tahap Pengadaan Logistik, Produksi & Pemantapan Sistem (Nov – Des 2026) | B15:  | C15:  | D15: 
+A16: 11. | B16: 15 – 30 November 2026 | C16: PRODUKSI SERAGAM & FOLLOW-UP SPONSOR:
+• Pendataan ukuran baju panitia dan pemesanan seragam resmi: 100 pcs Kaos Panitia (@Rp 85.000), 100 pcs Lanyard (@Rp 15.000), dan 100 pcs Topi Lapangan (@Rp 35.000).
+• Rekapitulasi uang muka (DP) dari 20 tenant UMKM (@Rp 500.000) dan pencairan termin 1 dana sponsor.
+• Pembuatan buku petunjuk teknis saku (Juklak/Juknis) untuk persiapan TM Peserta. | D16: Divisi DDD, Divisi Perlengkapan, Bendahara, Divisi Dana & Kemitraan
+A17: 12. | B17: 1 – 20 Desember 2026 | C17: PENGADAAN TROFI JUARA, DANA PEMBINAAN & DUKUNGAN MEDIS:
+• Pemesanan paket piala/trofi bergengsi:
+  - 2 Paket Piala Bergilir (SD & SMP)
+  - 12 Paket Piala Juara Tetap 1, 2, 3 dan Harapan 1, 2, 3 (SD & SMP)
+  - 2 Paket Piala Danton Terbaik (SD & SMP)
+• Pembuatan 18 papan simbolis juara ukuran 40x60 cm & alokasi uang pembinaan tunai total Rp 9.600.000.
+• Pengiriman surat permohonan tim medis resmi & ambulans siaga ke Dinas Kesehatan Bantul / PMI, serta surat permohonan tenda pleton ke DENBEKANG. | D17: Divisi Penghargaan & Medis, Divisi Perlengkapan, Sekretaris, Bendahara
+A18: 13. | B18: 21 – 31 Desember 2026 | C18: FINALISASI VENDOR SEWA & SIMULASI SOFTWARE PENILAIAN:
+• Penandatanganan kontrak vendor sewa: 70 unit Handy Talky (HT) frekuensi jernih, 3 tenda juri, 16 tenda tenant, kabel roll, dan 3 set sound system panggung & arena.
+• Simulasi komputasi penilaian real-time: Uji coba input ganda nilai 3 Juri SD dan 3 Juri SMP di komputer rekap untuk memastikan tidak ada formula error atau nilai yang tertukar. | D18: Divisi Perlengkapan, Divisi Juri & Penilaian, Divisi Teknis Lapangan
+A19: E. Rangkaian Agenda Technical Meeting Peserta / TM Peserta (Januari 2027) | B19:  | C19:  | D19: 
+A20: 14. | B20: 2 – 8 Januari 2027 | C20: PERSIAPAN ADMINISTRASI & MATERI TM PESERTA:
+• Pencetakan Buku Panduan Juknis Final hasil kesepakatan juri (cetak 50 eksemplar).
+• Pembuatan perangkat lotting pengundian nomor urut tampil:
+  - Tabung Undian & Gulungan Nomor SD: SD-01 s.d. SD-18
+  - Tabung Undian & Gulungan Nomor SMP: SMP-01 s.d. SMP-18
+• Penyiapan lembar presensi, formulir biodata peleton final, dan draft Berita Acara TM Peserta.
+• Pembuatan slide presentasi visual (animasi alur arena di Sedayu, denah basecamp kelas, titik parkir, dan aturan seragam/make up peleton).
+• Pemesanan snack box coffee break siang untuk 80 orang (perwakilan kontingen & panitia pelaksana). | D20: Divisi Acara, Divisi LO & Humas, Divisi Perlengkapan, Divisi Konsumsi
+A21: 15. | B21: 46396.0 | C21: SETTING AULA KAMPUS INDUK WIROBRAJAN & GLADI RUANG TM PESERTA:
+• Penataan kursi peserta di Aula Kampus Induk Madrasah Mu'allimin Muhammadiyah Yogyakarta (Jl. Letjen S. Parman No. 68, Wirobrajan, Kota Yogyakarta).
+• Uji coba audio/mic, LCD proyektor besar, dan display digital visual pengundian nomor peleton.
+• Briefing 36 orang Liaison Officer (LO) pendamping: Memahami tugas mendampingi masing-masing kontingen sejak TM hingga selesai hari-H. | D21: Divisi Acara, Divisi Perlengkapan, Divisi LO & Humas
+A22: 16. | B22: Sabtu, 10 Januari 2027
+(Pukul 13.00 – 16.30 WIB) | C22: PELAKSANAAN TECHNICAL MEETING PESERTA (TM PESERTA):
+• Lokasi: Aula Kampus Induk Madrasah Mu'allimin (Jl. Letjen S. Parman No. 68, Wirobrajan, Kota Yogyakarta).
+• 12.30 – 13.00: Registrasi ulang kehadiran perwakilan 36 kontingen (Pembina/Pelatih/Danton), penyerahan berkas fisik asli, dan pembagian snack siang.
+• 13.00 – 13.20: Pembukaan oleh MC, menyanyikan lagu Indonesia Raya & Mars Mu'allimin, serta sambutan Ketua Panitia Pelaksana.
+• 13.20 – 14.30: PEMAPARAN TEKNIS LOMBA SECARA MENDALAM OLEH DIVISI ACARA & JURI:
+  - Sosialisasi Juknis resmi berdasar Perpang TNI 57 & 58.
+  - Dimensi arena perlombaan di Kampus Terpadu Sedayu: Arena 1 (Lap. Basket 25x14m, Durasi 10 Menit) untuk 18 SD dan Arena 2 (Pelataran Embung 26x15m, Durasi 13 Menit) untuk 18 SMP.
+  - Sistem pemanggilan di Daerah Persiapan (DP 1, DP 2, DP 3).
+  - Tata tertib suporter, basecamp ruang kelas, larangan membawa senjata tajam/rokok, dan mekanisme parkir kontingen.
+• 14.30 – 15.15: SESI TANYA JAWAB TEKNIS (Penyelesaian keraguan peserta terhadap aturan gerak & aba-aba).
+• 15.15 – 16.00: PROSESI PENGUNDIAN NOMOR URUT TAMPIL (LOTTING UNDIAN RESMI):
+  - Pengundian Nomor Tingkat SD (SD-01 s.d. SD-18)
+  - Pengundian Nomor Tingkat SMP (SMP-01 s.d. SMP-18)
+• 16.00 – 16.30: Pembagian lembar jadwal slot waktu Uji Coba Lapangan (Minggu, 17 Januari 2027 pukul 08.00 WIB di Sedayu), penandatanganan Berita Acara TM Peserta oleh perwakilan kontingen, dan perkenalan LO resmi masing-masing peleton. | D22: Panitia Inti, Divisi Acara, Divisi LO & Humas, Divisi Teknis Lapangan, Divisi Juri
+A23: 17. | B23: 11 – 12 Januari 2027 | C23: PASCA-TM PESERTA (DISTRIBUSI DATA RESMI):
+• Rilis matriks resmi nomor undian, urutan tampil, dan pembagian ruang basecamp kelas ke Grup WhatsApp Peserta.
+• Penempelan nomor peleton resmi pada seluruh database kepanitiaan dan label map form juri. | D23: Divisi LO & Humas, Divisi Acara, Sekretaris
+A24: F. Rangkaian Agenda Uji Coba Lapangan / Familiarisasi Medan (Januari 2027) | B24:  | C24:  | D24: 
+A25: 18. | B25: 13 – 15 Januari 2027 | C25: PERSIAPAN TEKNIS ARENA & SCHEDULING UJI COBA:
+• Pembersihan total permukaan Lapangan Basket dan Pelataran Embung dari debu, pasir, dan batu kerikil guna mencegah peserta terpeleset.
+• Pengecatan/penandaan garis batas arena sementara (temporary line marking) berukuran 25x14 meter (SD) dan 26x15 meter (SMP).
+• Penyusunan rundown blok waktu uji coba (masing-masing kontingen dijatah 15 menit: 10 menit coba lapangan, 5 menit transisi peleton):
+  - Arena 1 (Lap. Basket): Pukul 08.00 – 13.00 WIB untuk 18 Peleton SD (bergiliran SD-01 s.d. SD-18).
+  - Arena 2 (Pelataran Embung): Pukul 08.00 – 13.00 WIB untuk 18 Peleton SMP (bergiliran SMP-01 s.d. SMP-18).
+• Distribusi jadwal waktu kedatangan kepada sekolah melalui LO masing-masing kontingen agar tidak terjadi penumpukan. | D25: Divisi Teknis Lapangan, Divisi Acara, Divisi LO & Humas
+A26: 19. | B26: 46403.0 | C26: SETTING POS TRANSIT & STERILISASI JALUR UJI COBA:
+• Pemasangan tenda transit holding peserta sebelum giliran uji coba.
+• Penyiapan Posko Medis P3K lapangan lengkap dengan tandu dan tabung oksigen portabel.
+• Pengadaan galon air minum isi ulang di pinggir arena untuk kontingen yang melakukan uji coba.
+• Briefing keamanan arus lalu lintas bus/kendaraan kontingen di area parkir Kampus Sedayu. | D26: Divisi Teknis Lapangan, Divisi Keamanan, Divisi Medis, Divisi Perlengkapan
+A27: 20. | B27: Minggu, 17 Januari 2027
+(Pukul 08.00 – 13.30 WIB) | C27: PELAKSANAAN UJI COBA LAPANGAN (FAMILIARISASI MEDAN 36 PELETON):
+• 07.30 – 08.00: Standby seluruh personil lapangan, posko medis, dan LO di gerbang masuk.
+• 08.00 TEPAT: Pembukaan sesi uji coba arena secara paralel:
+  - Arena 1 (Lap. Basket): Uji coba berurutan peleton SD-01 s.d. SD-18 didampingi petugas timekeeper.
+  - Arena 2 (Pelataran Embung): Uji coba berurutan peleton SMP-01 s.d. SMP-18 didampingi petugas timekeeper.
+• TUJUAN KHUSUS UJI COBA:
+  - Memberi kesempatan danton menguji daya pantul gema vokal aba-aba di area terbuka embung dan lapangan basket.
+  - Peleton merasakan tekstur lantai lapangan untuk menyesuaikan sepatu dan hentakan langkah PBB.
+  - Uji akurasi penempatan posisi start, manuver formasi, dan titik keluar arena lomba.
+• 13.00 – 13.30: Penutupan sesi uji coba dan pembersihan kembali arena oleh panitia. | D27: Divisi Teknis Lapangan, Divisi Acara, Divisi LO & Humas, Divisi Medis, Divisi Keamanan
+A28: 21. | B28: 18 – 19 Januari 2027 | C28: EVALUASI PASCA-UJI COBA & PERBAIKAN ARENA:
+• Rapat evaluasi teknis Divisi Lapangan dan Acara mengidentifikasi kendala aktual: Menandai titik licin/berbahaya, perbaikan posisi meja juri agar tidak silau matahari, dan penyesuaian jarak batas penonton agar suara juri dan danton tidak terganggu suporter. | D28: Divisi Teknis Lapangan, Divisi Acara, Divisi Perlengkapan
+A29: G. Tahap Pemantapan Logistik, Gladi & H-1 (20 – 23 Januari 2027) | B29:  | C29:  | D29: 
+A30: 22. | B30: 20 – 22 Januari 2027 | C30: PENGAMBILAN LOGISTIK & DISTRIBUSI SERAGAM PANITIA:
+• Pengambilan seluruh alat sewa: 70 unit HT, 3 tenda juri, 16 tenda tenant UMKM, tali pembatas/police line, traffic cone, dan paket sound system lapangan.
+• Pencetakan massal berkas hari-H: Formulir penilaian juri (300 lembar berhologram/stempel), kartu kendali waktu, ID Card Panitia (100 pcs), ID Card Official & Pendukung (108 pcs: 36 Official & 72 Pendukung), dan ID Card Peserta.
+• Distribusi seragam resmi (Kaos, Topi, Lanyard, ID Card) kepada 100 personil panitia pelaksana.
+• Koordinasi final katering konsumsi: Sarapan juri (6 kotak VIP), makan siang juri, makan siang 100 panitia, serta snack sore. | D30: Divisi Perlengkapan, Divisi DDD, Divisi Konsumsi, Divisi Juri & Penilaian
+A31: 23. | B31: Jumat, 23 Januari 2027
+(Pukul 08.00 – 21.00 WIB) | C31: GLADI KOTOR, GLADI BERSIH & PERSIAPAN VENUE FINAL (H-1):
+• 08.00 – 14.00 (Loading & Setup Lapangan):
+  - Pembuatan garis marking paten cat lapangan (putih/kuning) pada Arena 1 (Basket) & Arena 2 (Embung).
+  - Pemasangan tenda juri, tenda medis, panggung upacara di Minisoccer, dan penataan 20 stand bazar tenant di area parkir.
+  - Instalasi kelistrikan genset, setting sound system 3 titik, dan pengecekan sinyal radio 70 HT antar divisi.
+• 14.00 – 16.30 (Gladi Kotor & Simulasi Alur Peleton):
+  - Simulasi alur pergerakan: Basecamp Kelas -> Pos DP 1 (Pemeriksaan Administrasi) -> Pos DP 2 (Holding Siap Tampil) -> Arena Lomba (10/13 menit) -> Pos DP 3 (Foto Kontingen & Istirahat) -> Kembali ke Basecamp.
+  - Uji coba petugas runner pembawa form nilai dari meja juri ke Tim Rekapitulasi di Gedung Perpustakaan ASM.
+• 16.30 – 17.30 (Gladi Bersih Protokoler):
+  - Gladi bersih upacara pembukaan & penutupan bersama MC, pembawa acara, dan komandan upacara.
+• 19.30 – 21.00 (Briefing Akbar H-1 Seluruh Panitia):
+  - Pengarahan langsung oleh Ketua Pelaksana kepada seluruh 100 personil panitia.
+  - Penyimpanan piala, piagam, dan uang pembinaan tunai (Rp 9.600.000) di brankas/ruang steril terkunci. | D31: Seluruh Panitia Pelaksana, Divisi Teknis Lapangan, Divisi Perlengkapan, Divisi Acara, Divisi DDD
+A32: H. Tahap Pelaksanaan Perlombaan (Hari-H: Sabtu, 24 Januari 2027) | B32:  | C32:  | D32: 
+A33: 24. | B33: 06.00 – 07.00 WIB | C33: REGISTRASI ULANG 36 KONTINGEN & PENEMPATAN BASECAMP:
+• Verifikasi kehadiran peleton di Gerbang Registrasi, pembagian ID card peserta/official, karcis parkir resmi, dan snack roti pagi peserta.
+• Pengawalan langsung masing-masing kontingen oleh LO pendamping menuju ruang kelas basecamp yang telah ditentukan. | D33: Divisi Acara (Registrasi), Divisi LO & Humas, Divisi Keamanan
+A34: 25. | B34: 07.00 – 07.30 WIB | C34: PENGKONDISIAN UPACARA & PENYAMBUTAN DEWAN JURI:
+• Mobilisasi seluruh kontingen berbaris rapi di Lapangan Minisoccer.
+• Penyambutan 6 Dewan Juri (3 Juri SD + 3 Juri SMP) di Ruang Transit VIP Perpustakaan ASM & distribusi sarapan pagi VIP. | D34: Divisi Acara, Divisi LO & Humas, Divisi Juri & Penilaian, Divisi Konsumsi
+A35: 26. | B35: 07.30 – 08.15 WIB | C35: UPACARA PEMBUKAAN LBB MU'ALLIMIN 2027:
+• Pembukaan resmi oleh Direktur/Pimpinan Madrasah Mu'allimin Yogyakarta di Lapangan Minisoccer.
+• Prosesi simbolis pembukaan lomba dan doa bersama. | D35: Divisi Acara, Protokoler
+A36: 27. | B36: 08.15 – 08.30 WIB | C36: MOBILISASI SERENTAK MENUJU 2 ARENA LOMBA:
+• 18 Peleton SD/MI & 3 Juri SD bergerak menuju Arena 1 (Lap. Basket).
+• 18 Peleton SMP/MTs & 3 Juri SMP bergerak menuju Arena 2 (Pelataran Embung).
+• Distribusi air mineral gelas peserta (36 dus ke basecamp). | D36: Divisi Acara, Divisi Teknis Lapangan, Divisi LO & Humas, Divisi Konsumsi
+A37: 28. | B37: 08.30 – 11.30 WIB | C37: PELAKSANAAN LOMBA SESI I (2 ARENA PARALEL):
+• Arena 1 (Lap. Basket): Penampilan nomor undian SD-01 s.d. SD-12 (dinilai 3 Juri SD: TNI, Polri, PPI).
+• Arena 2 (Pelataran Embung): Penampilan nomor undian SMP-01 s.d. SMP-12 (dinilai 3 Juri SMP: TNI, Polri, PPI).
+• Setiap peleton tampil maksimal sesuai durasi (SD: 10 menit, SMP: 13 menit bersih).
+• Petugas runner mengambil blangko juri per peleton untuk langsung diinput ke sistem software rekapitulasi nilai real-time di Ruang Perpustakaan ASM.
+• Tim Medis siaga di posko mengantisipasi peserta dehidrasi/kelelahan. | D37: Divisi Acara, Teknis Lapangan, Divisi Juri, LO & Humas, Keamanan, Medis, DDD
+A38: 29. | B38: 11.30 – 12.30 WIB | C38: ISHOMA (ISTIRAHAT, SHOLAT DHUHUR & MAKAN SIANG):
+• Pelaksanaan Sholat Dhuhur berjamaah di Masjid Hajah Yuliana Kampus Terpadu Sedayu.
+• Distribusi makan siang kotak VIP untuk 6 Dewan Juri, 100 panitia pelaksana, dan tamu undangan.
+• Pengisian ulang air galon di area basecamp peleton. | D38: Divisi Konsumsi, Seluruh Panitia
+A39: 30. | B39: 12.30 – 14.00 WIB | C39: PELAKSANAAN LOMBA SESI II (2 ARENA PARALEL):
+• Arena 1 (Lap. Basket): Penampilan nomor undian SD-13 s.d. SD-18 (6 peleton terakhir SD).
+• Arena 2 (Pelataran Embung): Penampilan nomor undian SMP-13 s.d. SMP-18 (6 peleton terakhir SMP).
+• Input nilai real-time sesi II dan rekapitulasi data pengurangan poin/penalti oleh panitera. | D39: Divisi Acara, Teknis Lapangan, Divisi Juri, LO & Humas, Keamanan, Medis, DDD
+A40: 31. | B40: 14.00 – 15.00 WIB | C40: SIDANG PLENO DEWAN JURI & REKAPITULASI NILAI AKHIR:
+• Rekapitulasi final nilai 3 Juri SD dan 3 Juri SMP di Ruang Steril Perpustakaan ASM.
+• Sidang pleno tertutup dewan juri menetapkan Juara 1, 2, 3, Harapan 1, 2, 3, dan Danton Terbaik Kategori SD & SMP.
+• Penandatanganan Surat Keputusan (SK) Dewan Juri berkekuatan mutlak.
+• Pembagian snack sore panitia dan peserta di area bazar tenant. | D40: Divisi Juri & Penilaian, Divisi Acara, Divisi Konsumsi
+A41: 32. | B41: 15.00 – 15.30 WIB | C41: UPACARA PENUTUPAN LBB MU'ALLIMIN 2027:
+• Pengkondisian seluruh 36 kontingen kembali ke Lapangan Minisoccer.
+• Upacara penutupan resmi oleh panitia & perwakilan madrasah. | D41: Divisi Acara, Protokoler, Divisi Keamanan
+A42: 33. | B42: 15.30 – 16.15 WIB | C42: PENGUMUMAN JUARA & PENGANUGERAHAN HADIAH:
+• Pembacaan SK Dewan Juri oleh Koordinator Juri.
+• Penyerahan Piala Bergilir, Piala Tetap Juara 1-3 & Harapan 1-3, Piala Danton Terbaik, dan Piagam.
+• Penyerahan simbolis uang pembinaan tunai total Rp 9.600.000.
+• Penyerahan piagam penghargaan & amplop honorarium transportasi kepada 6 Dewan Juri. | D42: Divisi Acara, Divisi Penghargaan & Medis, Bendahara
+A43: 34. | B43: 16.15 – selesai | C43: PEMBUBARAN KONTINGEN, OPERASI KEBERSIHAN & BONGKAR VENUE:
+• Pemulangan seluruh kontingen secara tertib diatur Divisi Keamanan.
+• Operasi semut kebersihan lapangan dan ruang kelas basecamp bersama tim kebersihan.
+• Penarikan dan inventarisasi 70 unit HT serta logistik sewa. | D43: Seluruh Panitia Pelaksana, Divisi Perlengkapan, Divisi Keamanan, Divisi Konsumsi
+A44: I. Tahap Pasca-Pelaksanaan & Pelaporan / LPJ (Januari – Februari 2027) | B44:  | C44:  | D44: 
+A45: 35. | B45: 25 – 31 Januari 2027 | C45: PENGEMBALIAN ALAT SEWA, EVALUASI AKBAR & AFTER MOVIE:
+• Pengembalian seluruh peralatan sewa (HT, tenda, sound system) kepada vendor mitra.
+• Rapat Evaluasi Akbar seluruh panitia pelaksana: Membahas catatan kinerja tiap divisi sebagai database pembelajaran event perdana.
+• Rilis resmi video After Movie dan dokumentasi foto LBB Mu'allimin 2027 di media sosial resmi. | D45: Ketua Pelaksana, Panitia Inti, Divisi Perlengkapan, Divisi DDD
+A46: 36. | B46: 1 – 20 Februari 2027 | C46: PENYUSUNAN LAPORAN PERTANGGUNGJAWABAN (LPJ):
+• Penyusunan draf buku LPJ Kegiatan dan LPJ Keuangan lengkap dengan bukti kuitansi pengeluaran, realisasi pendaftaran 36 peleton, pemasukan 20 tenant @Rp 500.000 (Rp 10.000.000), dana sponsor, dan biaya operasional. | D46: Sekretaris, Bendahara, Divisi Dana & Kemitraan, Ketua Pelaksana
+A47: 37. | B47: 22 – 28 Februari 2027 | C47: PENYERAHAN LPJ FINAL KE MADRASAH & PEMBUBARAN PANITIA:
+• Penyerahan resmi dokumen LPJ Final (cetak 5 bundel hardcover) kepada Direksi Madrasah Mu'allimin Yogyakarta.
+• Syukuran dan pembubaran panitia pelaksana secara resmi. | D47: Ketua Pelaksana, Sekretaris, Bendahara
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

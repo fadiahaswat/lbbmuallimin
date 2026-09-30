@@ -1,0 +1,370 @@
+﻿
+
+
+w14:paraId="7BDB19B4" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">PETUNJUK TEKNIS LAPANGAN
+
+w14:paraId="1F760CCC" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">LOMBA BARIS - BERBARIS MU'ALLIMIN TAHUN 2027
+
+w14:paraId="0ED5B213" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">
+
+w14:paraId="371D2CB7" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">PENDAHULUAN
+
+w14:paraId="75492997" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">
+
+w14:paraId="12CD8024" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">Petunjuk Teknis (Juknis) Lapangan ini merupakan regulasi teknis resmi yang khusus mengatur seluruh mekanisme operasional dan teknis perlombaan, disajikan secara runtut dan sistematis sesuai alur kronologis (chronological order) dari tahapan pra-lomba hingga pasca-lomba. Juknis ini memuat ketentuan materi gerakan PBB (berpedoman pada Peraturan Panglima TNI Nomor 58 Tahun 2018 tentang PBB TNI, Nomor 57 Tahun 2018 tentang PPM TNI, serta khusus gerakan Hormat Kanan/Kiri mengacu pada Peraturan Panglima TNI Nomor 45 Tahun 2014), spesifikasi dimensi arena perlombaan, alur transisi peleton di lapangan, sistem penjurian dan penalti, hingga mekanisme sanggah resmi. Seluruh ketentuan non-lomba, etika madrasah/pesantren, basecamp, suporter, dan kebersihan diatur secara terpisah dalam dokumen Tata Tertib Peserta LBB Mu'allimin 2027.
+
+w14:paraId="70B9A956" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">
+
+w14:paraId="1DA2344B" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">A. DEFINISI ISTILAH DAN KETENTUAN DASAR LAPANGAN
+
+w14:paraId="72BCD206" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">
+
+w14:paraId="50D21389" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">1.   Clear Area: Area steril di sekeliling arena perlombaan yang hanya dapat dimasuki oleh peleton yang sedang berkompetisi, maksimal 1 (satu) orang Official resmi (Pelatih/Pembina), 2 (dua) orang Pendukung (Medis/Dokumentasi) yang mengenakan ID Card resmi, serta panitia pelaksana dan Dewan Juri yang bertugas.
+
+w14:paraId="26444337" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">2.   Daerah Persiapan (DP): Area transisi berjenjang sebelum peleton memasuki arena perlombaan, terdiri dari Daerah Persiapan 1 (DP 1) sebagai Pos Pengecekan Personel dan Verifikasi Fisik, serta Daerah Persiapan 2 (DP 2) yang difungsikan murni sebagai Ruang Tunggu Siap Tampil (Holding Area). Peleton dilarang keras memasuki DP 1 sebelum dipanggil resmi oleh panitia melalui pengeras suara (mic).
+
+w14:paraId="23D363A8" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">3.   Prinsip Garis Batas dan Kotak Danton: Garis batas arena perlombaan maupun garis Kotak Danton diperlakukan sebagai batas mutlak (dinding imajiner). Kotak Danton berukuran 1,5 x 1,5 meter terletak di batas depan arena menghadap langsung meja Dewan Juri. Komandan peleton memimpin peleton dari posisi tengah arena (menghadap dewan juri untuk penghormatan dan pelaporan awal), kemudian berpindah memasuki Kotak Danton untuk memimpin materi lomba. Selama memimpin materi perlombaan di Kotak Danton, Komandan Peleton wajib berada di dalam kotak dan dilarang menginjak maupun melangkah keluar dari garis batas kotak, kecuali pada materi yang mengharuskan keluar kotak seperti bubar peleton, berhimpun, atau untuk perhatian istirahat di tempat. Posisi komandan di dalam kotak menghadap pasukan (posisi komando) dan DILARANG KERAS membelakangi tepat di depan meja Dewan Juri. Pelanggaran garis batas arena maupun Kotak Danton dinyatakan sah terjadi apabila terdapat bagian tubuh atau alas kaki/sepatu peserta/danton yang secara nyata menginjak garis atau menapak di luar garis batas (ditandai dengan kibasan bendera semaphore merah oleh Hakim Garis).
+
+w14:paraId="7FA2F33A" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">4.   Sinyal dan Alat Komunikasi Petugas Lapangan: Untuk menjamin keteraturan dan kepastian teknis di lapangan, panitia menetapkan penggunaan sinyal resmi: peluit digunakan khusus sebagai penanda perhitungan waktu lomba oleh Timekeeper, sedangkan bendera semaphore digunakan khusus oleh Hakim Garis untuk menandai terjadinya pelanggaran garis batas arena dan batas Kotak Danton.
+
+w14:paraId="2959F80D" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">5.   Gerakan Penyesuaian: Gerakan tambahan di tempat yang bertujuan untuk memperbaiki posisi atau formasi peleton di dalam arena lomba. Gerakan penyesuaian HANYA meliputi: Hadap (Kanan/Kiri/Serong), Balik (Kanan), dan Langkah Terbatas (langkah ke Kiri/Kanan/Depan/Belakang). Gerakan penyesuaian dibatasi maksimal 3 (tiga) kali selama peleton tampil di arena. Ditegaskan bahwa dilarang keras menggunakan gerakan tambahan yang menyerupai materi sebelum dan sesudah gerakan tambahan tersebut dilakukan.
+
+w14:paraId="7B8DC77C" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">6.   Spesifikasi Dimensi Arena Perlombaan: Perlombaan dilaksanakan secara terpisah dan simultan di Kampus Terpadu Sedayu pada dua arena resmi:
+
+w14:paraId="092AEC2B" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">a.   Tingkat SD/MI: Arena 1 bertempat di Lapangan Basket dengan ukuran 25 meter x 14 meter. Durasi tampil maksimal 10 menit.
+
+w14:paraId="4EB2D482" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">b.   Tingkat SMP/MTs: Arena 2 bertempat di Pelataran Embung dengan ukuran 26 meter x 15 meter. Durasi tampil maksimal 13 menit.
+
+w14:paraId="3D8F637B" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">7.   Ketentuan Pendamping dan Dokumentasi Peleton: Setiap peleton didampingi oleh maksimal 1 (satu) orang Official (Pelatih/Pembina), 2 (dua) orang Pendukung (Medis/Dokumentasi/dll.), dan seluruh anggota cadangan resmi. Petugas dokumentasi dari peleton hanya diizinkan mengambil dokumentasi dari batas area yang ditentukan panitia tanpa mengganggu jalannya perlombaan dan penilaian Dewan Juri.
+
+w14:paraId="40E840DF" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">
+
+w14:paraId="290D8706" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">B. TAHAP I: PRA-LOMBA - TEKNIS TECHNICAL MEETING (TM) PESERTA
+
+w14:paraId="0701CD1F" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">
+
+w14:paraId="6B26CCDD" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">Technical Meeting (TM) Peserta merupakan forum resmi penyamaan persepsi teknis gerakan, tata tertib, serta penentuan nomor urut tampil lomba yang diselenggarakan dengan rincian teknis operasional sebagai berikut:
+
+w14:paraId="4A8E39BD" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">1.   Waktu dan Tempat Pelaksanaan: Dilaksanakan pada hari Sabtu, 10 Januari 2027 pukul 13.00 - 16.30 WIB bertempat di Aula Kampus Induk Madrasah Mu'allimin Muhammadiyah Yogyakarta (Jl. Letjen S. Parman No. 68, Patangpuluhan, Wirobrajan, Kota Yogyakarta).
+
+w14:paraId="4D49E073" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">2.   Ketentuan Kehadiran Delegasi: Setiap kontingen wajib mendelegasikan maksimal 2 (dua) orang perwakilan resmi (Official/Pelatih/Pembina atau Komandan Peleton). Seluruh perwakilan wajib mengenakan pakaian rapi, sopan, dan bersepatu.
+
+w14:paraId="26347EFC" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">3.   Agenda Registrasi dan Verifikasi Berkas Fisik Asli (12.30 - 13.00 WIB): Sebelum memasuki ruang rapat pleno, perwakilan kontingen melakukan presensi dan menyerahkan berkas fisik asli di meja registrasi TM, meliputi:
+
+w14:paraId="46F84FE8" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">a.   Surat Tugas / Rekomendasi Resmi Kepala Sekolah asli berstempel basah yang memuat daftar nama lengkap kontingen (1 Danton, 21 Anggota Inti, 3 Cadangan, 1 Official, dan 2 Pendukung).
+
+w14:paraId="3F1E4043" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">b.   Pakta Integritas bermaterai Rp 10.000 yang telah ditandatangani oleh Official resmi sekolah.
+
+w14:paraId="06942109" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">c.   Verifikasi kesesuaian data siswa dengan NISN / Buku Rapor / Akta Kelahiran asli/legalisir.
+
+w14:paraId="7BC40FD0" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">4.   Pemaparan Materi Teknis & Juknis Lomba (13.00 - 14.30 WIB): Divisi Acara dan Perwakilan Dewan Juri (terdiri dari 6 Dewan Juri unsur TNI, POLRI, dan PPI) memaparkan secara mendalam:
+
+w14:paraId="2B9F8B96" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">a.   Bedah teknis materi gerakan PBB berdasar Perpang TNI No. 58 & 57 Tahun 2018 (serta Perpang TNI No. 45 Tahun 2014 untuk Hormat Kanan/Kiri).
+
+w14:paraId="22BAB80F" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">b.   Standar pengucapan aba-aba, tempo hentakan langkah, tata cara komandan memposisikan pasukan center menghadap juri, dan perbandingan penilaian peleton (Kebenaran Gerak dan Kekompakan 1:1, serta 4 aspek komandan peleton).
+
+w14:paraId="7033E49F" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">c.   Demonstrasi batasan gerakan penyesuaian, prinsip dinding imajiner garis arena, bendera semaphore hakim garis, dan kotak danton 1,5 x 1,5 meter.
+
+w14:paraId="11D6AB6A" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">d.   Mekanisme perhitungan waktu resmi (stopwatch) serta sosialisasi sistem live score quick count website lbb.tontimuallimin.com menggunakan akun Gmail masing-masing peleton.
+
+w14:paraId="737ABA87" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">5.   Sesi Tanya Jawab Teknis dan Klarifikasi Multitafsir (14.30 - 15.15 WIB): Peserta diberikan kesempatan berdiskusi langsung dengan Dewan Juri mengenai potensi keraguan aba-aba, toleransi dinamika langkah, posisi komandan, dan skenario penalti. Seluruh kesepakatan dicatat dalam notulensi resmi TM.
+
+w14:paraId="4652AFA6" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">6.   Pengundian Resmi (Lotting) Nomor Urut Tampil (15.15 - 16.00 WIB): Panitia memimpin undian terbuka nomor urut tampil resmi:
+
+w14:paraId="6D294EA4" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">a.   Tingkat SD/MI: Nomor undian SD-01 sampai dengan SD-18.
+
+w14:paraId="64BAD386" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">b.   Tingkat SMP/MTs: Nomor undian SMP-01 sampai dengan SMP-18.
+
+w14:paraId="6E51B5E3" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">c.   Penukaran nomor urut tampil hanya diperkenankan dilakukan di hadapan panitia dan disaksikan oleh peserta lain selama forum TM masih berlangsung.
+
+w14:paraId="4FBBA91E" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">7.   Penandatanganan Berita Acara & Pembagian Jadwal Uji Coba (16.00 - 16.30 WIB): Official kontingen menandatangani Berita Acara Hasil Technical Meeting dan menerima lembar jadwal resmi pembagian slot waktu uji coba lapangan.
+
+w14:paraId="6D53D437" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">
+
+w14:paraId="44012689" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">C. TAHAP I: PRA-LOMBA - TEKNIS UJI COBA LAPANGAN (FAMILIARISASI MEDAN)
+
+w14:paraId="7B30269D" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">
+
+w14:paraId="014654DE" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">Uji Coba Lapangan (Familiarisasi Medan Perlombaan) diselenggarakan untuk memberikan kesempatan adaptasi langsung bagi peleton terhadap arena sebelum hari pelaksanaan lomba, dengan rincian teknis sebagai berikut:
+
+w14:paraId="023277A2" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">1.   Waktu dan Tempat Pelaksanaan: Dilaksanakan pada hari Minggu, 17 Januari 2027 pukul 08.00 - 13.30 WIB bertempat di Kampus Terpadu Madrasah Mu'allimin Muhammadiyah Yogyakarta (Sedayu, Bantul).
+
+w14:paraId="6524310E" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">2.   Sistem Pelaksanaan Paralel di Dua Arena: Uji coba dilaksanakan secara simultan dan terpisah:
+
+w14:paraId="387ADC0F" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">a.   Arena 1 (Lapangan Basket Kampus Terpadu Sedayu): Khusus untuk 18 Peleton Tingkat SD/MI (ukuran 25 m x 14 m).
+
+w14:paraId="5C59013E" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">b.   Arena 2 (Pelataran Embung Kampus Terpadu Sedayu): Khusus untuk 18 Peleton Tingkat SMP/MTs (ukuran 26 m x 15 m).
+
+w14:paraId="5D918089" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">3.   Alokasi Waktu Resmi per Kontingen: Setiap peleton memperoleh alokasi waktu tepat 15 (lima belas) menit, dengan rincian operasional:
+
+w14:paraId="31FCFFE1" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">a.   10 (sepuluh) menit: Waktu efektif orientasi arena, adaptasi formasi, dan latihan pergerakan peleton di dalam arena.
+
+w14:paraId="51F13B18" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">b.   5 (lima) menit: Waktu transisi keluar-masuk peleton antar kontingen.
+
+w14:paraId="2E74F830" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">c.   Manajemen waktu dikendalikan secara ketat oleh Petugas Timekeeper Panitia didampingi LO masing-masing kontingen.
+
+w14:paraId="58621590" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">4.   Fokus Teknis dan Sasaran Uji Coba Lapangan: Peleton diarahkan untuk memfokuskan uji coba pada hal-hal teknis berikut:
+
+w14:paraId="45E22422" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">a.   Adaptasi Akustik Vokal Aba-Aba Danton: Menguji jangkauan vokal komandan dari dalam Kotak Danton (1,5 x 1,5 meter) terhadap pantulan suara dan hembusan angin lapangan terbuka agar aba-aba terdengar jernih oleh seluruh penjuru pasukan.
+
+w14:paraId="0F90F8A2" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">b.   Orientasi Tekstur Lapangan & Cengkeraman Sepatu: Menyesuaikan hentakan langkah kaki dengan karakteristik lantai lapangan guna menghindari terpeleset saat langkah tegap dan gerakan tempo cepat.
+
+w14:paraId="479F0EE1" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">c.   Kalibrasi Dimensi Formasi Pasukan: Menyesuaikan panjang langkah saat manuver berbanjar/bershaf agar tidak melanggar dinding imajiner garis batas arena.
+
+w14:paraId="3C0AB823" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">d.   Simulasi Alur Masuk, Posisi Center Juri, dan Keluar: Mengenali secara cermat alur pergerakan dari DP 2 memasuki arena untuk mengambil posisi center menghadap juri, transisi menuju Kotak Danton, serta alur evakuasi keluar arena setelah materi penutup selesai.
+
+w14:paraId="0246EDDC" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">5.   Ketentuan Perlengkapan Uji Coba: Peserta diperbolehkan mengenakan seragam olahraga atau seragam latihan sekolah yang seragam, rapi, dan bersepatu (DILARANG KERAS mengenakan sol sepatu berpines/paku pada saat uji coba). Uji coba ini murni kegiatan orientasi medan dan TIDAK ADA penilaian juri.
+
+w14:paraId="761FCDE9" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">
+
+w14:paraId="3D2B5E4E" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">D. TAHAP II: HARI PERLOMBAAN - REGISTRASI S.D. UPACARA PEMBUKAAN
+
+w14:paraId="43CDAE14" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">
+
+w14:paraId="449C03A4" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">1.   Kedatangan dan Check-In Kontingen (Pukul 06.00 - 09.00 WIB): Prosedur kedatangan dan daftar ulang kontingen di Meja Registrasi Resmi Kampus Terpadu Sedayu:
+
+w14:paraId="30448445" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">a.   Official menyerahkan 1 (satu) kartu identitas asli (KTP/SIM perwakilan kontingen) sebagai jaminan ketertiban serta kebersihan ruang basecamp.
+
+w14:paraId="4F930ECD" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">b.   Official menerima: (1) Nomor Dada Peleton resmi; (2) Tanda Pengenal ID Card Resmi (1 Official & 2 Pendukung); serta (3) 2 (dua) kantong sampah terpilah (Organik & Anorganik).
+
+w14:paraId="57ABB01A" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">c.   Nomor dada peleton wajib disematkan pada dada sebelah kiri personel Penjuru Depan Tengah / Saf 2 Banjar 1 (S2B1).
+
+w14:paraId="708FC948" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">d.   Peleton diarahkan dan dikawal oleh LO pendamping menuju ruang kelas basecamp resmi yang telah ditentukan panitia.
+
+w14:paraId="5729C850" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">e.   Registrasi ditutup tepat pukul 09.00 WIB. Peleton yang tidak melakukan daftar ulang tidak diperkenankan mengikuti perlombaan.
+
+w14:paraId="78F69A52" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">2.   Sterilisasi Arena Perlombaan (Pukul 07.30 WIB): Seluruh arena perlombaan (Arena 1 & Arena 2) ditutup dan disterilkan dari aktivitas umum pada pukul 07.30 WIB untuk persiapan upacara pembukaan.
+
+w14:paraId="278B4642" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">3.   Pelaksanaan Upacara Pembukaan Resmi (Pukul 07.45 - 08.15 WIB): Ketentuan upacara pembukaan:
+
+w14:paraId="25131F3B" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">a.   Peleton dengan nomor urut tampil 1 sampai dengan 5 (SD-01 s.d. SD-05 dan SMP-01 s.d. SMP-05) WAJIB mengikuti upacara pembukaan.
+
+w14:paraId="69A1D852" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">b.   Komposisi barisan upacara pembukaan terdiri dari 1 Komandan Peleton dan 15 Anggota (5 trio lengkap) mengenakan seragam tonti resmi lengkap.
+
+w14:paraId="00F4C358" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">c.   Pengecekan kehadiran barisan upacara dilakukan oleh panitia 15 menit sebelum upacara dimulai.
+
+w14:paraId="48F6BC9E" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">d.   Peleton yang tidak hadir atau terlambat dikenakan sanksi penalti pengurangan nilai sesuai ketentuan Bab G.
+
+w14:paraId="3CAED556" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">
+
+w14:paraId="1A3B24AD" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">E. TAHAP III: HARI PERLOMBAAN - ALUR PERSIAPAN & PELAKSANAAN TAMPIL DI ARENA
+
+w14:paraId="69FAD1EB" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">
+
+w14:paraId="565412BD" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">
+
+w14:paraId="725FCBDA" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">1.   Tahap Kesiapan dan Pengecekan di Daerah Persiapan 1 (DP 1):
+
+w14:paraId="601C5950" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">a.   Kesiapan di Basecamp: Peleton bersama official sebaiknya sudah bersiap-siap di ruang basecamp sekurang-kurangnya 15 (lima belas) menit sebelum estimasi waktu nomor urutnya akan dipanggil oleh LO pendamping.
+
+w14:paraId="3A9B3A4A" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">b.   Prosedur Masuk DP 1: Peleton HANYA diperkenankan atau boleh masuk ke Daerah Persiapan 1 (DP 1) setelah dipanggil secara resmi oleh panitia melalui pengeras suara (mic). Ditegaskan bahwa peleton DILARANG KERAS masuk ke DP 1 sebelum dipanggil.
+
+w14:paraId="7017F5C2" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">c.   Pemeriksaan di DP 1: Petugas DP 1 melakukan verifikasi fisik dan administrasi menyeluruh meliputi:
+
+w14:paraId="623BFB40" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">i.   Pemeriksaan kelengkapan jumlah personel: 1 Danton, 21 Anggota Inti, anggota cadangan, 1 Official, dan 2 Pendukung ber-ID Card.
+
+w14:paraId="3222B61E" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">ii.   Pemeriksaan pemasangan nomor dada peleton di sebelah kiri personel Penjuru Depan Tengah / Saf 2 Banjar 1 (S2B1).
+
+w14:paraId="78B17E01" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">iii.   Pemeriksaan fisik sol sepatu: DILARANG KERAS menggunakan pines, paku payung, spikes, pul logam, atau material sejenis yang dapat merusak permukaan lapangan/lantai.
+
+w14:paraId="4C3BD5C9" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">d.   Pergantian Terencana: Apabila terdapat pergantian pemain cadangan yang telah direncanakan, Official wajib melaporkannya kepada Petugas DP 1.
+
+w14:paraId="2E856FBD" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">
+
+w14:paraId="501C78D4" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">2.   Tahap Ruang Tunggu di Daerah Persiapan 2 (DP 2):
+
+w14:paraId="6F544EAE" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">a.   Setelah dinyatakan lengkap dan lolos verifikasi di DP 1, peleton bergerak menuju DP 2.
+
+w14:paraId="105B581C" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">b.   DP 2 difungsikan murni sebagai Holding Area (Ruang Tunggu Siap Tampil). Di area ini peleton menjaga fokus mental dan ketenangan, serta dilarang membuat kegaduhan.
+
+w14:paraId="1B4FD70E" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">c.   Peleton berbaris rapi di pintu masuk arena lomba menunggu aba-aba dari panitia pengatur lapangan.
+
+w14:paraId="60FA065B" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">
+
+w14:paraId="72D2BBD4" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">3.   Tahap Pelaksanaan Tampil di Arena Perlombaan:
+
+w14:paraId="197CAE00" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">a.   Memasuki Arena dan Posisi Center Juri: Komandan Peleton memimpin pasukan memasuki arena perlombaan menuju posisi tengah arena sehingga posisi peleton berada tepat di tengah (centre) menghadap meja Dewan Juri.
+
+w14:paraId="5F2C04C0" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">b.   Pengondisian Peleton: Sebelum melapor, Komandan Peleton mengondisikan pasukannya terlebih dahulu di posisi tengah tersebut (diberi aba-aba siap atau diluruskan).
+
+w14:paraId="36BF0FEB" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">c.   Penghormatan Awal: Setelah peleton terkondisi rapi dan siap sempurna, Komandan Peleton memberikan aba-aba penghormatan kepada Dewan Juri: 'Kepada dewan juri, Hormat = GERAK'. Stopwatch waktu resmi lomba DIMULAI tepat saat aba-aba pelaksanaan penghormatan pembuka ini dihentakkan.
+
+w14:paraId="5AD27FDD" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">d.   Laporan Pembuka: Setelah penghormatan selesai (Tegak = GERAK), Komandan Peleton menyampaikan laporan resmi: "Lapor, peleton dengan nomor dada (sebutkan nomor urut dalam ejaan kata, contoh: nol nol tujuh) siap melaksanakan materi gerakan lomba."
+
+w14:paraId="588024CA" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">e.   Berpindah ke Kotak Danton: Setelah selesai melapor, Komandan Peleton melangkah menuju Kotak Danton (1,5 x 1,5 meter) yang terletak di batas depan arena menghadap meja Dewan Juri. Danton wajib berada di dalam kotak selama memimpin gerakan lomba (kecuali pada materi tertentu yang mengharuskan komandan berada di luar kotak seperti materi bubar peleton, berhimpun, atau untuk perhatian istirahat di tempat). Komandan Peleton kemudian memulai materi gerakan pertama.
+
+w14:paraId="47103B9D" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">f.   Durasi Waktu dan Sinyal Peluit Timekeeper:
+
+w14:paraId="54CBD4E5" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">i.   Durasi maksimal tampil resmi: 10 menit untuk tingkat SD/MI dan 13 menit untuk tingkat SMP/MTs.
+
+w14:paraId="2AB32D62" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">ii.   Sinyal Peluit 1 Kali Panjang: Peringatan bahwa waktu tampil tersisa 2 menit (menit ke-8 untuk SD/MI dan menit ke-11 untuk SMP/MTs).
+
+w14:paraId="36E0DA6D" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">iii.   Sinyal Peluit 2 Kali Panjang: Penanda resmi bahwa durasi waktu tampil telah habis (menit ke-10 untuk SD/MI dan menit ke-13 untuk SMP/MTs). Peleton wajib segera menyelesaikan materi dan meninggalkan arena.
+
+w14:paraId="6B28488F" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">iv.   Waktu stopwatch resmi berakhir saat Komandan Peleton menghentakkan aba-aba pelaksanaan penghormatan penutup ('Kepada dewan juri, Hormat = GERAK').
+
+w14:paraId="0374824D" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">g.   Sinyal Pelanggaran Garis (Bendera Semaphore): Hakim Garis menggunakan bendera semaphore merah untuk menandai terjadinya pelanggaran garis batas arena oleh pasukan atau keluarnya komandan dari Kotak Danton saat memimpin materi.
+
+w14:paraId="27B76A43" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">h.   Pelaksanaan Materi Gerakan: Dilaksanakan secara berurutan sesuai lembar materi PBB resmi tanpa jeda atau pengulangan di luar ketentuan.
+
+w14:paraId="42745F36" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">i.   Ketentuan Atribut Terjatuh: Apabila atribut peserta (topi/peci, dasi, pin/lencana, sabuk, sarung tangan, dll.) terlepas atau terjatuh di arena, TIDAK DIKENAKAN PENALTI PENGURANGAN NILAI. Pasukan dilarang memungut atribut tersebut hingga peleton keluar arena.
+
+w14:paraId="0575706A" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">j.   Laporan Penutup: Setelah materi terakhir selesai, Komandan Peleton menyampaikan: "Peleton dengan nomor dada (sebutkan nomor urut) telah melaksanakan materi gerakan lomba, laporan selesai." Dilanjutkan penghormatan penutup kepada Dewan Juri, lalu memimpin peleton keluar arena.
+
+w14:paraId="0566452A" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">
+
+w14:paraId="3F7807A4" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">4.   Ketentuan Khusus Pergantian Pemain dan Penanganan Insiden di Lapangan:
+
+w14:paraId="7AC9FEEF" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">a.   Pemain inti hanya dapat digantikan oleh pemain cadangan resmi yang terdaftar pada peleton bersangkutan.
+
+w14:paraId="3246074B" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">b.   Jeda Pergantian Resmi di Arena: Tingkat SD/MI dilakukan di antara Materi No. 20 dan 21; Tingkat SMP/MTs dilakukan di antara Materi No. 17 dan 18. Selama pergantian, waktu stopwatch tetap berjalan normal.
+
+w14:paraId="43929473" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">c.   Pergantian Tidak Terencana (Darurat): Official memberi isyarat (mengangkat tangan) kepada Panitia Lapangan terdekat untuk izin pergantian pemain cedera.
+
+w14:paraId="6955CF33" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">d.   Pergantian Komandan Peleton: Danton hanya boleh diganti bila sakit parah/pingsan. Jika darurat terjadi di dalam arena, danton digantikan oleh personel yang ada di dalam arena. Hak perebutan kategori Danton Terbaik otomatis gugur.
+
+w14:paraId="1BFAC60D" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">e.   Penanganan Insiden Fisik: Personel pingsan/jatuh ditangani oleh Official, cadangan, atau tim medis tanpa menghentikan waktu lomba. Apabila insiden membahayakan jiwa, Panitia berhak menghentikan penampilan sementara.
+
+w14:paraId="7E8C911F" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">
+
+w14:paraId="71A85F80" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">5.   Alur Keluar Arena dan Pengembalian Nomor Dada:
+
+w14:paraId="63649A79" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">Setelah peleton melangkah keluar arena melalui jalur evakuasi resmi, Komandan/Penjuru menyerahkan nomor dada peleton kepada Petugas Pos Arena Terakhir sebelum seluruh kontingen kembali menuju basecamp.
+
+w14:paraId="2587003B" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">
+
+w14:paraId="47209CF8" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">F. TAHAP IV: PASCA-LOMBA - SISTEM PENILAIAN, LIVE SCORE, SANGGAH & PENENTUAN JUARA
+
+w14:paraId="49329F26" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">
+
+w14:paraId="36105277" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">
+
+w14:paraId="2B387B05" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">1.   Mekanisme dan Aspek Penilaian Dewan Juri:
+
+w14:paraId="30D435DA" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">Penilaian dilakukan secara objektif oleh 6 Dewan Juri (unsur TNI, POLRI, dan PPI: 3 Juri Arena 1 SD & 3 Juri Arena 2 SMP). Keputusan Dewan Juri mengenai mutu gerak bersifat mutlak dan tidak dapat diganggu gugat. Kriteria penilaian meliputi:
+
+w14:paraId="5822A72A" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">a.   Penilaian Peleton: Perbandingan penilaian peleton adalah 1:1, yaitu Kebenaran Gerak (1) dan Kekompakan (1). Rentang nilai untuk peleton adalah 50 s.d. 90 poin (bilangan genap).
+
+w14:paraId="4473CE39" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">b.   Penilaian Komandan Peleton (Total Bobot 100%): Penguasaan Materi Lomba (35%), Kualitas Suara/Vokal (25%), Sikap dan Pelaporan (20%), serta Penguasaan Lapangan (20%).
+
+w14:paraId="29BB43FD" w14:textId="77777777" w:rsidR="00622614" w:rsidRDefault="00000000">c.   Kriteria Penentuan Juara Peleton: Ditentukan berdasarkan akumulasi total skor tertinggi yang diperoleh setiap peleton. Perbandingan penilaian peleton adalah 1:1, yaitu Kebenaran Gerak (1) dan Kekompakan (1). Apabila terjadi kesamaan nilai total (tie), maka urutan prioritas peringkat adalah: (1) Nilai tertinggi aspek Kebenaran Teknik Gerakan PBB; (2) Nilai tertinggi aspek Kekompakan; (3) Poin penalti paling sedikit.
+
+w14:paraId="102C0E3D" w14:textId="77777777" w:rsidR="00622614" w:rsidRDefault="00000000">d.   Kriteria Penentuan Komandan Terbaik: Ditentukan berdasarkan akumulasi total skor tertinggi aspek komandan peleton (Penguasaan Materi 35%, Kualitas Suara 25%, Sikap & Pelaporan 20%, dan Penguasaan Lapangan 20%). Apabila terjadi kesamaan nilai total (tie), maka urutan prioritas adalah: (1) Nilai tertinggi aspek Penguasaan Materi; (2) Nilai tertinggi aspek Kualitas Suara/Vokal.
+
+w14:paraId="052AFF06" w14:textId="77777777" w:rsidR="00622614" w:rsidRDefault="00000000">e.   Sistem Perolehan Poin Juara Umum: Juara Umum ditentukan berdasarkan akumulasi poin tertinggi yang dikumpulkan oleh kontingen sekolah dari seluruh kejuaraan peleton dan komandan terbaik pada masing-masing tingkatan (SD/MI dan SMP/MTs berdiri sendiri). Sistem bobot perolehan poin kejuaraan diatur sebagai berikut:
+
+w14:paraId="5D8639E2" w14:textId="77777777" w:rsidR="00000000" w:rsidRPr="00685C97" w:rsidRDefault="00000000" w:rsidP="00685C97">Prestasi yang Diraih
+
+w14:paraId="01676F7E" w14:textId="77777777" w:rsidR="00000000" w:rsidRPr="00685C97" w:rsidRDefault="00000000" w:rsidP="00685C97">Poin yang Diperoleh
+
+w14:paraId="6DA01361" w14:textId="77777777" w:rsidR="00000000" w:rsidRPr="00685C97" w:rsidRDefault="00000000" w:rsidP="00685C97">Juara 1 Peleton
+
+w14:paraId="311456D1" w14:textId="77777777" w:rsidR="00000000" w:rsidRPr="00685C97" w:rsidRDefault="00000000" w:rsidP="00685C97">6 Poin
+
+w14:paraId="3D24ABDC" w14:textId="77777777" w:rsidR="00000000" w:rsidRPr="00685C97" w:rsidRDefault="00000000" w:rsidP="00685C97">Juara 2 Peleton
+
+w14:paraId="42E1FA5A" w14:textId="77777777" w:rsidR="00000000" w:rsidRPr="00685C97" w:rsidRDefault="00000000" w:rsidP="00685C97">5 Poin
+
+w14:paraId="3BAC7EFC" w14:textId="77777777" w:rsidR="00000000" w:rsidRPr="00685C97" w:rsidRDefault="00000000" w:rsidP="00685C97">Juara 3 Peleton
+
+w14:paraId="63906170" w14:textId="77777777" w:rsidR="00000000" w:rsidRPr="00685C97" w:rsidRDefault="00000000" w:rsidP="00685C97">4 Poin
+
+w14:paraId="7E48EB72" w14:textId="77777777" w:rsidR="00000000" w:rsidRPr="00685C97" w:rsidRDefault="00000000" w:rsidP="00685C97">Juara Harapan 1 Peleton
+
+w14:paraId="4E7D5F43" w14:textId="77777777" w:rsidR="00000000" w:rsidRPr="00685C97" w:rsidRDefault="00000000" w:rsidP="00685C97">3 Poin
+
+w14:paraId="68F19FD4" w14:textId="77777777" w:rsidR="00000000" w:rsidRPr="00685C97" w:rsidRDefault="00000000" w:rsidP="00685C97">Juara Harapan 2 Peleton
+
+w14:paraId="188D7CAF" w14:textId="77777777" w:rsidR="00000000" w:rsidRPr="00685C97" w:rsidRDefault="00000000" w:rsidP="00685C97">2 Poin
+
+w14:paraId="7DF225AD" w14:textId="77777777" w:rsidR="00000000" w:rsidRPr="00685C97" w:rsidRDefault="00000000" w:rsidP="00685C97">Juara Harapan 3 Peleton
+
+w14:paraId="4D9C6578" w14:textId="77777777" w:rsidR="00000000" w:rsidRPr="00685C97" w:rsidRDefault="00000000" w:rsidP="00685C97">1 Poin
+
+w14:paraId="48FDB0FF" w14:textId="77777777" w:rsidR="00000000" w:rsidRPr="00685C97" w:rsidRDefault="00000000" w:rsidP="00685C97">Juara 1 Komandan Terbaik
+
+w14:paraId="477C11B6" w14:textId="77777777" w:rsidR="00000000" w:rsidRPr="00685C97" w:rsidRDefault="00000000" w:rsidP="00685C97">3 Poin
+
+w14:paraId="52D42184" w14:textId="77777777" w:rsidR="00000000" w:rsidRPr="00685C97" w:rsidRDefault="00000000" w:rsidP="00685C97">Juara 2 Komandan Terbaik
+
+w14:paraId="2F169CB2" w14:textId="77777777" w:rsidR="00000000" w:rsidRPr="00685C97" w:rsidRDefault="00000000" w:rsidP="00685C97">2 Poin
+
+w14:paraId="62948452" w14:textId="77777777" w:rsidR="00000000" w:rsidRPr="00685C97" w:rsidRDefault="00000000" w:rsidP="00685C97">Juara 3 Komandan Terbaik
+
+w14:paraId="76A527E2" w14:textId="77777777" w:rsidR="00000000" w:rsidRPr="00685C97" w:rsidRDefault="00000000" w:rsidP="00685C97">1 Poin
+
+w14:paraId="1FB4B9A3" w14:textId="77777777" w:rsidR="00622614" w:rsidRDefault="00000000">f.   Tie-Breaker Juara Umum: Apabila terjadi kesamaan akumulasi total poin Juara Umum antar sekolah, maka penentuan Juara Umum didasarkan pada urutan prioritas: (1) Sekolah yang memiliki peleton dengan peringkat kejuaraan tertinggi; (2) Apabila peringkat tertinggi sama, didasarkan pada sekolah yang memiliki peleton dengan total skor murni Peleton tertinggi.
+
+w14:paraId="7342559D" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">
+
+w14:paraId="52DB591A" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">2.   Transparansi Nilai (Live Score Quick Count Berbasis Akun Gmail Peleton):
+
+w14:paraId="43F61808" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">Sebagai wujud integritas dan transparansi penuh, nilai penampilan setiap peleton akan langsung ditayangkan secara terbuka melalui aplikasi Live Score Quick Count di situs resmi lbb.tontimuallimin.com setelah berkas nilai disahkan oleh tim rekapitulasi dan dewan juri. Official/perwakilan peleton dapat mengakses rincian perolehan nilai tersebut dengan login menggunakan akun Gmail masing-masing kontingen/peleton yang telah didaftarkan.
+
+w14:paraId="5304BFB9" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">
+
+w14:paraId="783C0DB8" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">3.   Mekanisme Pengajuan Sanggah (Protes Resmi):
+
+w14:paraId="32E7532A" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">a.   Batasan Sanggah: Protes HANYA diterima untuk dugaan kekeliruan administratif non-penilaian (kesalahan penjumlahan skor, keliru input sistem dari lembar juri, atau ketidaksesuaian catatan penalti). Penilaian kualitatif juri mengenai keindahan atau mutu gerakan tidak dapat disanggah.
+
+w14:paraId="6F6E4DE4" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">b.   Batas Waktu Pengajuan: Diberikan waktu masa sanggah resmi selama 60 (enam puluh) menit sejak pengumuman kejuaraan pada acara penutupan secara resmi dibacakan.
+
+w14:paraId="75AF29A6" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">c.   Prosedur Sanggah: Diajukan secara TERTULIS menggunakan Formulir Sanggahan Resmi oleh 1 (satu) orang Official resmi terdaftar di Meja Informasi Panitia (Divisi Juri & Penilaian) dengan melampirkan bukti valid (video/foto/catatan). Panitia TIDAK melayani protes secara lisan.
+
+w14:paraId="5BDDAF07" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">d.   Keputusan Sanggah: Jika protes diterima dan sah, Panitia menerbitkan 'Pemberitahuan Koreksi Hasil Resmi' yang menjadi dasar ketetapan kejuaraan.
+
+w14:paraId="629084C5" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">
+
+w14:paraId="5D42629D" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">4.   Ketentuan Pasca-Lomba dan Checkout Basecamp:
+
+w14:paraId="56CE1433" w14:textId="77777777" w:rsidR="00622614" w:rsidRDefault="00000000">Seluruh ketentuan non-teknis pasca-perlombaan—meliputi apel penutupan, pengumuman kejuaraan, pemeliharaan kebersihan basecamp, pemilahan sampah organik/anorganik, verifikasi ruangan kelas, dan prosedur pengambilan kembali kartu identitas jaminan (KTP/SIM)—diatur secara mengikat dalam dokumen Tata Tertib Peserta LBB Mu'allimin 2027.
+
+w14:paraId="3AE9C956" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">
+
+w14:paraId="35DDB5CB" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">G. KETENTUAN SANKSI DAN PENALTI PENGURANGAN NILAI
+
+w14:paraId="15940683" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">
+
+w14:paraId="6ACA9A4B" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">Pelanggaran teknis lapangan dikenai sanksi penalti pengurangan nilai secara kumulatif pada rekapitulasi nilai akhir:
+
+w14:paraId="798E0CC1" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">1.   Upacara Pembukaan: Peleton wajib upacara (SD/SMP no 1-5) tidak hadir dikenai penalti -150 poin. Terlambat dikenai penalti -50 poin per 5 menit kelipatan.
+
+w14:paraId="598C3C53" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">2.   Keterlambatan Hadir di DP 1: Peleton tidak hadir di DP 1 setelah 3 (tiga) kali pemanggilan resmi melalui pengeras suara (dengan interval/jarak antar pemanggilan 2 menit) dikenai sanksi pengurangan nilai sebesar 100 poin (-100 poin) dan urutan tampilnya digeser ke posisi paling akhir. Apabila peleton tetap tidak hadir tanpa konfirmasi resmi, maka dikenai sanksi DISKUALIFIKASI.
+
+w14:paraId="73F331DD" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">3.   Jumlah Personel Kurang: Peleton memasuki arena dengan jumlah personel kurang dari 22 orang (1 danton + 21 anggota) dikenai penalti tetap -75 poin.
+
+w14:paraId="53CCD2D6" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">4.   Kelebihan Durasi Waktu: Melebihi durasi maksimal (10 menit SD, 13 menit SMP) dikenai penalti -50 poin untuk setiap rentang 1-30 detik kelebihan waktu dan kelipatannya (contoh: lebih 35 detik dikenai -100 poin).
+
+w14:paraId="73C136C7" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">5.   Pelanggaran Garis: Anggota menginjak/keluar garis arena, atau Komandan menginjak/keluar Kotak Danton (1,5 x 1,5 meter) selama memimpin materi dikenai penalti -50 poin per kejadian pada masing-masing kategori penilaian (ditandai dengan bendera semaphore merah oleh Hakim Garis).
+
+w14:paraId="565F64BB" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">6.   Kelebihan Gerakan Penyesuaian: Melebihi kuota maksimal 3 kali dikenai penalti -25 poin untuk setiap gerakan tambahan.
+
+w14:paraId="24A83E44" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">7.   Gerakan Terlewat / Tidak Urut: Gerakan terlewat namun dilaksanakan di luar urutan diberi NILAI MINIMAL. Gerakan terlewat dan tidak dilaksanakan sama sekali diberi NILAI NOL (0).
+
+w14:paraId="6569727E" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">8.   Peleton Hafalan: Komandan salah memberi aba-aba namun pasukan tetap bergerak benar berdasarkan hafalan diberi NILAI NOL (0) pada gerakan tersebut dan memotong nilai penguasaan materi danton.
+
+w14:paraId="195A4A08" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">9.   Gerakan Berangkai Terputus: Rangkaian bertanda '-' yang diselingi jeda/gerakan tambahan diberi NILAI MINIMAL.
+
+w14:paraId="37D6CADB" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">
+
+w14:paraId="46310501" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">H. KEADAAN KAHAR (FORCE MAJEURE)
+
+w14:paraId="6199E236" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">
+
+w14:paraId="67880C34" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">1.   Ruang Lingkup Kahar: Keadaan kahar mencakup kejadian darurat di luar kendali panitia maupun peserta (contoh: hujan deras ekstrem, badai angin kencang, bencana alam, gangguan keamanan, pemadaman listrik total).
+
+w14:paraId="694917E1" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">2.   Kondisi Hujan Ringan (Gerimis): Perlombaan tetap berlangsung secara normal.
+
+w14:paraId="34260FA5" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">3.   Kondisi Hujan Deras / Badai Ekstrem: Panitia bersama Dewan Juri berhak menghentikan perlombaan sementara demi keselamatan peserta. Setelah cuaca kondusif kembali, penampilan peleton yang terhenti akan diulang dari awal masuk arena (stopwatch di-reset ke 00:00).
+
+w14:paraId="3332FEEA" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">4.   Wewenang Keputusan: Keputusan penghentian dan kelanjutan perlombaan merupakan wewenang mutlak Panitia Pelaksana dan Dewan Juri.
+
+w14:paraId="466A25E8" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">
+
+w14:paraId="713D1962" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">I. PENUTUP
+
+w14:paraId="5003B837" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">
+
+w14:paraId="39BEFA4F" w14:textId="77777777" w:rsidR="001E0D81" w:rsidRDefault="001E0D81" w:rsidP="001E0D81">Petunjuk Teknis Lapangan ini menjadi pedoman operasional resmi bagi seluruh panitia, dewan juri, dan peserta LBB Mu'allimin Tahun 2027. Seluruh hal teknis tambahan yang disepakati bersama dalam forum Technical Meeting mengikat secara sah dan menjadi bagian tak terpisahkan dari juknis ini.
+
+w14:paraId="6E958ADA" w14:textId="77777777" w:rsidR="00BB0682" w:rsidRPr="001E0D81" w:rsidRDefault="00BB0682" w:rsidP="001E0D81">

@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import {
   CalendarDays,
   Clock,
@@ -16,150 +16,65 @@ import {
   Timer,
   CalendarCheck2,
   ExternalLink,
-  ShieldCheck
+  ShieldCheck,
+  Search
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
-import { EVENT, VENUE, VENUE_INDUK } from '../../config.js';
+import { EVENT, VENUE, VENUE_INDUK, OFFICIAL_TIMELINE } from '../../config.js';
 import SimpaskorSidebarLayout from '../navigation/SimpaskorSidebarLayout.jsx';
 
 export default function TimelinePanitiaView() {
   const { settings, currentUser } = useCompetition();
-  const [filterDivisi, setFilterDivisi] = useState('all');
+  const [filterPhase, setFilterPhase] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
 
-  const eventDates = settings?.eventDates || {};
+  // 37 Tahapan Kronologis Resmi dari TIMELINE LBB MU'ALLIMIN 2027.xlsx
+  const timelineSchedule = OFFICIAL_TIMELINE.map((item, idx) => {
+    let status = 'upcoming';
+    let statusLabel = 'Mendatang';
 
-  const timelineSchedule = [
-    {
-      id: 'sch-1',
-      phase: 'Fase Pra-Lomba',
-      title: 'Rapat Kerja Perdana & Pembentukan Panitia Pelaksana',
-      date: '15 September 2026',
-      time: '14.00 – 17.00 WIB',
-      venue: VENUE_INDUK.NAME,
-      divisi: 'Inti',
-      divisiBadge: 'bg-purple-100 text-purple-700 border-purple-200',
-      status: 'completed',
-      statusLabel: 'Selesai',
-      desc: 'Penetapan struktur kepanitiaan, pengesahan RAB, dan finalisasi dokumen juknis & regulasi.',
-      pic: 'Ketua Panitia & Sekretaris'
-    },
-    {
-      id: 'sch-2',
-      phase: 'Fase Pendaftaran',
-      title: 'Pembukaan Pendaftaran Gelombang 1 (Early Bird)',
-      date: '5 Oktober 2026',
-      time: '00.00 WIB',
-      venue: 'Portal Resmi SaaS LBB',
-      divisi: 'Sekretariat',
-      divisiBadge: 'bg-blue-100 text-blue-700 border-blue-200',
-      status: 'completed',
-      statusLabel: 'Selesai',
-      desc: 'Pembukaan registrasi kontingen SD/MI dan SMP/MTs se-DIY & Jateng dengan kuota 36 peleton.',
-      pic: 'Sie Kesekretariatan'
-    },
-    {
-      id: 'sch-3',
-      phase: 'Fase Pendaftaran',
-      title: 'Batas Akhir Pendaftaran & Penutupan Kuota Peleton',
-      date: '1 November 2026',
-      time: '23.59 WIB',
-      venue: 'Sistem Cloud LBB',
-      divisi: 'Sekretariat',
-      divisiBadge: 'bg-blue-100 text-blue-700 border-blue-200',
-      status: 'completed',
-      statusLabel: 'Selesai',
-      desc: 'Penguncian registrasi peserta baru, rekapitulasi data pendaftar dan konfirmasi bukti bayar.',
-      pic: 'Sie Pendaftaran & IT'
-    },
-    {
-      id: 'sch-4',
-      phase: 'Fase Verifikasi',
-      title: 'Verifikasi Berkas Dokumen & Kelayakan Personel',
-      date: '2 – 8 November 2026',
-      time: '08.00 – 16.00 WIB',
-      venue: 'Sekretariat Panitia Kampus Induk',
-      divisi: 'Verifikasi',
-      divisiBadge: 'bg-teal-100 text-teal-700 border-teal-200',
-      status: 'completed',
-      statusLabel: 'Selesai',
-      desc: 'Pengecekan keabsahan NISN, Surat Tugas Kepala Sekolah, Pas Foto, dan Pakta Integritas 25 Personel.',
-      pic: 'Tim Verifikator Administrasi'
-    },
-    {
-      id: 'sch-5',
-      phase: 'Fase Koordinasi',
-      title: 'Technical Meeting (TM) & Pengundian Nomor Dada',
-      date: eventDates.technicalMeetingFullDate || EVENT.TECHNICAL_MEETING_FULL_DATE,
-      time: eventDates.technicalMeetingTime || EVENT.TECHNICAL_MEETING_TIME,
-      venue: VENUE_INDUK.NAME,
-      divisi: 'Acara',
-      divisiBadge: 'bg-amber-100 text-amber-700 border-amber-200',
-      status: 'upcoming',
-      statusLabel: 'Mendatang',
-      desc: 'Penjelasan detail juknis, tata tertib, denah arena, dan pengocokan nomor undian tampil resmi.',
-      pic: 'Sie Acara & Ketua Dewan Juri'
-    },
-    {
-      id: 'sch-6',
-      phase: 'Fase Gladi & Uji Coba',
-      title: 'Uji Coba Lapangan & Adaptasi Medan Perlombaan',
-      date: eventDates.fieldTrialFullDate || EVENT.FIELD_TRIAL_FULL_DATE,
-      time: eventDates.fieldTrialTime || EVENT.FIELD_TRIAL_TIME_RANGE,
-      venue: VENUE.NAME,
-      divisi: 'Lapangan',
-      divisiBadge: 'bg-emerald-100 text-emerald-700 border-emerald-200',
-      status: 'upcoming',
-      statusLabel: 'Mendatang',
-      desc: 'Uji coba medan lapangan mini soccer, penyesuaian akustik aba-aba danton, dan durasi transisi.',
-      pic: 'Sie Operasional & Koordinator Lapangan'
-    },
-    {
-      id: 'sch-7',
-      phase: 'Fase Gladi Bersih',
-      title: 'Sterilisasi Venue, Pemasangan Rigging & Briefing Panitia',
-      date: 'Jumat, 23 Januari 2027',
-      time: '13.00 – 21.00 WIB',
-      venue: VENUE.NAME,
-      divisi: 'Operasional',
-      divisiBadge: 'bg-slate-100 text-slate-700 border-slate-200',
-      status: 'upcoming',
-      statusLabel: 'Mendatang',
-      desc: 'Pemasangan tenda transit DP 1-3, batas arena juri, penyiapan barak basecamp, dan gladi pembukaan.',
-      pic: 'Seluruh Divisi Panitia Pelaksana'
-    },
-    {
-      id: 'sch-8',
-      phase: 'Hari Pelaksanaan (Hari-H)',
-      title: 'Hari-H Lomba Baris Berbaris (LBB) Mu’allimin 2027',
-      date: eventDates.competitionDate || EVENT.COMPETITION_DATE,
-      time: eventDates.competitionTimeRange || EVENT.COMPETITION_TIME_RANGE,
-      venue: `${VENUE.NAME} (${VENUE.SHORT_ADDRESS})`,
-      divisi: 'Seluruh Panitia',
-      divisiBadge: 'bg-red-100 text-red-700 border-red-200',
-      status: 'critical',
-      statusLabel: 'Hari-H Utama',
-      desc: 'Check-in regu, apel pembukaan militer, kompetisi 36 peleton, penilaian 3 juri, rekap skor, hingga awarding.',
-      pic: 'Ketua Panitia & Dewan Juri'
-    },
-    {
-      id: 'sch-9',
-      phase: 'Fase Pasca-Lomba',
-      title: 'Penerbitan E-Sertifikat, Berita Acara & Evaluasi Akhir',
-      date: '25 – 31 Januari 2027',
-      time: 'Fleksibel',
-      venue: 'Sistem Digital & Kampus Induk',
-      divisi: 'Evaluasi',
-      divisiBadge: 'bg-indigo-100 text-indigo-700 border-indigo-200',
-      status: 'upcoming',
-      statusLabel: 'Pasca Lomba',
-      desc: 'Distribusi e-sertifikat peserta & official, pengarsipan berita acara nilai juri, dan laporan pertanggungjawaban (LPJ).',
-      pic: 'Ketua, Sekretaris, & Bendahara'
+    if (item.phase.startsWith('A.') || item.phase.startsWith('B.') || item.phase.startsWith('C.')) {
+      status = 'completed';
+      statusLabel = 'Selesai';
+    } else if (item.phase.startsWith('H.')) {
+      status = 'critical';
+      statusLabel = 'Hari-H Utama';
+    } else if (item.phase.startsWith('I.')) {
+      status = 'upcoming';
+      statusLabel = 'Pasca Lomba';
     }
-  ];
 
-  const filteredTimeline = filterDivisi === 'all' 
-    ? timelineSchedule 
-    : timelineSchedule.filter(item => item.divisi.toLowerCase().includes(filterDivisi.toLowerCase()));
+    let badgeColor = 'bg-slate-100 text-slate-700 border-slate-200';
+    if (item.phase.startsWith('A.')) badgeColor = 'bg-purple-100 text-purple-700 border-purple-200';
+    else if (item.phase.startsWith('B.')) badgeColor = 'bg-blue-100 text-blue-700 border-blue-200';
+    else if (item.phase.startsWith('C.')) badgeColor = 'bg-amber-100 text-amber-700 border-amber-200';
+    else if (item.phase.startsWith('D.')) badgeColor = 'bg-teal-100 text-teal-700 border-teal-200';
+    else if (item.phase.startsWith('E.')) badgeColor = 'bg-indigo-100 text-indigo-700 border-indigo-200';
+    else if (item.phase.startsWith('F.')) badgeColor = 'bg-cyan-100 text-cyan-700 border-cyan-200';
+    else if (item.phase.startsWith('G.')) badgeColor = 'bg-emerald-100 text-emerald-700 border-emerald-200';
+    else if (item.phase.startsWith('H.')) badgeColor = 'bg-red-100 text-red-700 border-red-200';
+    else if (item.phase.startsWith('I.')) badgeColor = 'bg-rose-100 text-rose-700 border-rose-200';
+
+    return {
+      ...item,
+      status,
+      statusLabel,
+      badgeColor,
+      venue: item.phase.startsWith('H.') || item.phase.startsWith('G.') 
+        ? `${VENUE.NAME} (Sedayu)` 
+        : item.phase.startsWith('E.') 
+        ? `${VENUE_INDUK.NAME} (Wirobrajan)` 
+        : 'Sekretariat Panitia & Media Online'
+    };
+  });
+
+  const filteredTimeline = timelineSchedule.filter(item => {
+    const matchPhase = filterPhase === 'all' || item.phase.toLowerCase().includes(filterPhase.toLowerCase());
+    const matchSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.desc.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.pic.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchPhase && matchSearch;
+  });
 
   const handlePrint = () => {
     window.print();
@@ -169,68 +84,71 @@ export default function TimelinePanitiaView() {
     <SimpaskorSidebarLayout
       activeMenu="timeline"
       title="Timeline & Agenda Kerja Panitia"
-      subtitle="Roadmap kronologis persiapan, operasional lapangan, dan pasca-perlombaan LBB Mu'allimin 2027"
+      subtitle="Roadmap kronologis 37 tahapan operasional dari Fase A s.d. I (September 2026 – Februari 2027)"
       rightActions={
         <div className="flex items-center gap-2">
           <button
             onClick={handlePrint}
-            className="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
-            title="Cetak Jadwal Panitia"
+            className="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm cursor-pointer"
+            title="Cetak Agenda Kerja Panitia"
           >
-            <Printer className="w-3.5 h-3.5" />
+            <Printer className="w-4 h-4" />
             <span className="hidden sm:inline">Cetak Agenda</span>
           </button>
         </div>
       }
     >
       <div className="space-y-6">
+
         {/* Banner Ringkasan Agenda Panitia */}
-        <div className="bg-gradient-to-r from-slate-900 via-slate-850 to-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 text-white relative overflow-hidden shadow-xl">
+        <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-indigo-950 border border-slate-800 rounded-3xl p-6 sm:p-8 text-white relative overflow-hidden shadow-xl">
           <div className="absolute right-0 top-0 bottom-0 w-80 bg-red-600/10 blur-3xl pointer-events-none" />
           <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="space-y-2 max-w-2xl">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/20 border border-red-500/30 text-red-300 text-xs font-bold uppercase tracking-wider">
                 <CalendarCheck2 className="w-3.5 h-3.5" />
-                <span>Roadmap Resmi Kepanitiaan</span>
+                <span>Dokumen Resmi: TIMELINE LBB MU'ALLIMIN 2027</span>
               </div>
-              <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
-                Master Timeline & Jadwal Panitia
+              <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-white uppercase">
+                Master Roadmap 37 Tahapan Panitia
               </h2>
-              <p className="text-sm text-slate-300 leading-relaxed">
-                Jadwal baku kepanitiaan terpadu mencakup 9 tahapan penting sejak pembentukan panitia hingga pelaporan pasca-kegiatan, mengacu pada SK Kepanitiaan Madrasah Mu'allimin Muhammadiyah Yogyakarta.
+              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                Jadwal operasional menyeluruh dari Fase A (Perencanaan Awal Sept 2026), TM & Uji Coba Lapangan (Jan 2027), Hari-H Perlombaan di 2 Arena Paralel Sedayu (24 Jan 2027), hingga Penyusunan LPJ Final (Feb 2027).
               </p>
             </div>
 
             <div className="grid grid-cols-2 gap-3 shrink-0">
               <div className="bg-white/5 border border-white/10 rounded-2xl p-4 text-center">
-                <div className="text-2xl font-black text-yellow-400">9</div>
-                <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Tahap Utama</div>
+                <div className="text-2xl font-black text-amber-400 font-mono">37</div>
+                <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Milestone</div>
               </div>
               <div className="bg-white/5 border border-white/10 rounded-2xl p-4 text-center">
-                <div className="text-2xl font-black text-emerald-400">100%</div>
-                <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Terstruktur</div>
+                <div className="text-2xl font-black text-emerald-400 font-mono">9 Fase</div>
+                <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Fase A s.d. I</div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Filter Divisi & Tab Navigasi */}
-        <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-3 rounded-2xl border border-slate-200/80 shadow-xs">
+        {/* Filter & Search Bar */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs">
           <div className="flex flex-wrap items-center gap-1.5">
-            <span className="text-xs font-bold text-slate-400 mr-2 px-1">Filter Divisi:</span>
+            <span className="text-xs font-bold text-slate-400 mr-2">Filter Fase:</span>
             {[
-              { id: 'all', label: 'Semua Agenda' },
-              { id: 'inti', label: 'Panitia Inti' },
-              { id: 'sekretariat', label: 'Kesekretariatan' },
-              { id: 'verifikasi', label: 'Verifikasi' },
-              { id: 'acara', label: 'Acara & TM' },
-              { id: 'lapangan', label: 'Operasional Lapangan' },
+              { id: 'all', label: 'Semua (37)' },
+              { id: 'fase a', label: 'A. Perencanaan' },
+              { id: 'fase b', label: 'B. Publikasi' },
+              { id: 'fase c', label: 'C. Pendaftaran' },
+              { id: 'fase e', label: 'E. TM Wirobrajan' },
+              { id: 'fase g', label: 'G. Uji Coba Sedayu' },
+              { id: 'fase h', label: 'H. Hari-H Lomba' },
+              { id: 'fase i', label: 'I. LPJ & Pasca' },
             ].map(tab => (
               <button
                 key={tab.id}
-                onClick={() => setFilterDivisi(tab.id)}
+                onClick={() => setFilterPhase(tab.id)}
                 className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                  filterDivisi === tab.id
+                  filterPhase === tab.id
                     ? 'bg-slate-900 text-white shadow-xs'
                     : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
                 }`}
@@ -240,8 +158,15 @@ export default function TimelinePanitiaView() {
             ))}
           </div>
 
-          <div className="text-xs font-medium text-slate-400 px-2">
-            Menampilkan <span className="font-bold text-slate-800">{filteredTimeline.length}</span> agenda
+          <div className="relative">
+            <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              placeholder="Cari tahapan / PIC..."
+              className="pl-9 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:bg-white w-full sm:w-60"
+            />
           </div>
         </div>
 
@@ -280,11 +205,8 @@ export default function TimelinePanitiaView() {
                   <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 mb-3">
                     <div>
                       <div className="flex flex-wrap items-center gap-2 mb-1.5">
-                        <span className="text-[10px] font-black uppercase tracking-wider text-slate-400">
+                        <span className="text-[10px] font-black uppercase tracking-wider text-slate-500">
                           {item.phase}
-                        </span>
-                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md border ${item.divisiBadge}`}>
-                          {item.divisi}
                         </span>
                         {isCompleted && (
                           <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1">
@@ -295,7 +217,7 @@ export default function TimelinePanitiaView() {
                         {isCritical && (
                           <span className="text-[10px] font-black px-2 py-0.5 rounded-md bg-red-600 text-white shadow-xs uppercase tracking-wider flex items-center gap-1">
                             <Sparkles className="w-3 h-3" />
-                            <span>Agenda Utama</span>
+                            <span>Hari-H Lomba</span>
                           </span>
                         )}
                       </div>
@@ -305,11 +227,7 @@ export default function TimelinePanitiaView() {
                     </div>
 
                     <div className="text-left sm:text-right shrink-0 bg-slate-50 sm:bg-transparent p-2.5 sm:p-0 rounded-xl border sm:border-0 border-slate-100">
-                      <div className="text-sm font-black text-slate-900">{item.date}</div>
-                      <div className="text-xs font-semibold text-slate-500 flex items-center sm:justify-end gap-1 mt-0.5">
-                        <Clock className="w-3 h-3 text-slate-400" />
-                        <span>{item.time}</span>
-                      </div>
+                      <div className="text-xs sm:text-sm font-black text-slate-900 font-mono">{item.period}</div>
                     </div>
                   </div>
 
