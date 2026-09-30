@@ -43,6 +43,12 @@ async function updateProposalDocs() {
     { find: '32 peleton @Rp 325\\.000', replace: '36 peleton (Gel. 1: Rp 350.000 & Gel. 2: Rp 400.000)' },
     { find: 'target 20 tenant @Rp 300\\.000 = Rp 6\\.000\\.000', replace: 'target 20 tenant @Rp 500.000 = Rp 10.000.000' },
     { find: 'target 20 tenant @Rp 300\\.000', replace: 'target 20 tenant @Rp 500.000' },
+
+    // 6. Tema Resmi Kegiatan
+    { find: 'JIWA KSATRIA, DERAP GEMILANG', replace: 'SEMANGAT SEBAGAI KSATRIA, BERJUANG DENGAN GEMBIRA' },
+    { find: 'Jiwa Ksatria, Derap Gemilang', replace: 'Semangat Sebagai Ksatria, Berjuang Dengan Gembira' },
+    { find: 'JIWA KSATRIA', replace: 'SEMANGAT SEBAGAI KSATRIA' },
+    { find: 'DERAP GEMILANG', replace: 'BERJUANG DENGAN GEMBIRA' },
   ];
 
   console.log(`Mengirim ${replacements.length} perintah pembaruan ke Google Docs Webhook...`);

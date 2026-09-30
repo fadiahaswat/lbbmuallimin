@@ -32,15 +32,15 @@ export const SITE = {
     YEAR: '2027',
 
     /** Tema resmi kegiatan */
-    THEME: "JIWA KSATRIA, DERAP GEMILANG",
+    THEME: "SEMANGAT SEBAGAI KSATRIA, BERJUANG DENGAN GEMBIRA",
 
     /** Sub-label di logo footer */
-    TAGLINE: "Jiwa Ksatria, Derap Gemilang",
+    TAGLINE: "Semangat Sebagai Ksatria, Berjuang Dengan Gembira",
 
     /** Paragraf deskripsi singkat di footer */
     FOOTER_DESCRIPTION:
         'Ajang kompetisi baris-berbaris tingkat pelajar terbesar se-DIY. '
-        + 'Mengusung tema "Jiwa Ksatria, Derap Gemilang", menjunjung tinggi sportivitas, '
+        + 'Mengusung tema "Semangat Sebagai Ksatria, Berjuang Dengan Gembira", menjunjung tinggi sportivitas, '
         + 'karakter, dan disiplin untuk mencetak generasi pemimpin masa depan.',
 
     /** Teks hak cipta footer */
@@ -58,12 +58,11 @@ export const HERO = {
     TITLE_LINE2: "MU\u2019ALLIMIN 2027",
 
     /** Tema resmi hero */
-    THEME: "JIWA KSATRIA, DERAP GEMILANG",
+    THEME: "SEMANGAT SEBAGAI KSATRIA, BERJUANG DENGAN GEMBIRA",
 
     /** Teks deskripsi singkat di bawah judul (HTML) */
     SUBTITLE:
-        'Tema Resmi: <span class="text-amber-400 font-black italic">"JIWA KSATRIA, DERAP GEMILANG"</span> — Ajang pembuktian '
-        + '<span class="text-white font-bold">Disiplin</span>, '
+        'Ajang pembuktian <span class="text-white font-bold">Disiplin</span>, '
         + '<span class="text-white font-bold">Karakter</span>, dan '
         + '<span class="text-white font-bold">Solidaritas</span> pelajar SD/MI & SMP/MTs se-Daerah Istimewa Yogyakarta.',
 };
@@ -961,7 +960,7 @@ export const OFFICIAL_TIMELINE = [
         phase: 'A. Perencanaan, Legalitas & Persiapan Awal',
         period: '1 – 14 September 2026',
         title: 'Pembentukan Panitia & Perumusan Konsep Dasar',
-        desc: 'Pembentukan panitia lengkap (100 personel), penetapan tema resmi "JIWA KSATRIA, DERAP GEMILANG", draf awal juklak/juknis berdasar Perpang TNI 57 & 58 Tahun 2018.',
+        desc: 'Pembentukan panitia lengkap (100 personel), penetapan tema resmi "SEMANGAT SEBAGAI KSATRIA, BERJUANG DENGAN GEMBIRA", draf awal juklak/juknis berdasar Perpang TNI 57 & 58 Tahun 2018.',
         pic: 'Tim Formatur, Ketua Pelaksana, Divisi Acara, Sekretaris',
     },
     {

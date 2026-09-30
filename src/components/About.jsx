@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import {
   Scroll,
   Shield,
@@ -14,77 +14,59 @@ import {
   PlusCircle,
   Timer,
   Maximize2,
-  ArrowRight,
-  ChevronLeft,
-  ChevronRight,
-  Camera
+  ArrowRight
 } from 'lucide-react';
 import { COMPETITION } from '../config.js';
 import logoLbb from '../assets/logo-tonti.png';
 
-const TONTI_GALLERY_IMAGES = [
-  { src: '/galeri-tonti/IMG_3353.webp', fallback: '/galeri-tonti/IMG_3353.jpg', title: 'Kedisiplinan & Kekompakan', caption: 'Pleton Inti Muallimin Yogyakarta' },
-  { src: '/galeri-tonti/IMG_3354.webp', fallback: '/galeri-tonti/IMG_3354.jpg', title: 'Presisi Langkah Ksatria', caption: 'Konsentrasi dan keseragaman barisan' },
-  { src: '/galeri-tonti/IMG_3355.webp', fallback: '/galeri-tonti/IMG_3355.jpg', title: 'Derap Tangguh Lapangan', caption: 'Formasi kokoh penuh wibawa' },
-  { src: '/galeri-tonti/IMG_3356.webp', fallback: '/galeri-tonti/IMG_3356.jpg', title: 'Ketegasan & Manuver', caption: 'Kekompakan manuver barisan PBB ksatria' },
-  { src: '/galeri-tonti/IMG_3357.webp', fallback: '/galeri-tonti/IMG_3357.jpg', title: 'Fokus & Dedikasi', caption: 'Semangat juang para kader Muallimin' },
-  { src: '/galeri-tonti/IMG_3358.webp', fallback: '/galeri-tonti/IMG_3358.jpg', title: 'Harmoni & Ketegasan', caption: 'Akurasi tempo gerak baris-berbaris' },
-  { src: '/galeri-tonti/IMG_3359.webp', fallback: '/galeri-tonti/IMG_3359.jpg', title: 'Sinergi Pasukan', caption: 'Kekuatan solidaritas satu irama' },
-  { src: '/galeri-tonti/IMG_3360.webp', fallback: '/galeri-tonti/IMG_3360.jpg', title: 'Wibawa & Karakter', caption: 'Menjunjung kehormatan sang ksatria' },
-  { src: '/galeri-tonti/IMG_3361.webp', fallback: '/galeri-tonti/IMG_3361.jpg', title: 'Jiwa Kepemimpinan', caption: 'Komando tegas mengarahkan langkah' },
-  { src: '/galeri-tonti/IMG_3362.webp', fallback: '/galeri-tonti/IMG_3362.jpg', title: 'Kebanggaan Korps', caption: 'Tradisi luhur kepanduan dan paskibra' },
-  { src: '/galeri-tonti/IMG_3363.webp', fallback: '/galeri-tonti/IMG_3363.jpg', title: 'Ketahanan & Mental', caption: 'Ujian ketangguhan kawah candradimuka' },
-  { src: '/galeri-tonti/IMG_3364.webp', fallback: '/galeri-tonti/IMG_3364.jpg', title: 'Puncak Semangat Juang', caption: 'Menampilkan performa terbaik' },
-  { src: '/galeri-tonti/IMG_3365.webp', fallback: '/galeri-tonti/IMG_3365.jpg', title: 'Sang Juara Masa Depan', caption: 'Kader bangsa berkarakter ksatria' }
-];
+const ABOUT_BG_PHOTO = {
+  webp: '/section-tentang.webp',
+  fallback: '/section-tentang.jpg'
+};
 
 export default function About() {
-  const [activeSlide, setActiveSlide] = useState(0);
-  const [isAutoPlay, setIsAutoPlay] = useState(true);
-
-  // Auto slide timer for background
-  useEffect(() => {
-    if (!isAutoPlay) return;
-    const interval = setInterval(() => {
-      setActiveSlide((prev) => (prev + 1) % TONTI_GALLERY_IMAGES.length);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, [isAutoPlay]);
-
-  const handlePrev = (e) => {
-    e?.stopPropagation?.();
-    setActiveSlide((prev) => (prev === 0 ? TONTI_GALLERY_IMAGES.length - 1 : prev - 1));
-  };
-
-  const handleNext = (e) => {
-    e?.stopPropagation?.();
-    setActiveSlide((prev) => (prev + 1) % TONTI_GALLERY_IMAGES.length);
-  };
   return (
-    <section id="about" className="py-24 lg:py-32 bg-slate-50 relative overflow-hidden font-sans">
-      <div className="absolute inset-0 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:20px_20px] opacity-40"></div>
-      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-red-900/5 rounded-full blur-[100px] pointer-events-none"></div>
-      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-yellow-500/5 rounded-full blur-[100px] pointer-events-none"></div>
+    <section 
+      id="about" 
+      className="pt-24 sm:pt-32 pb-[420px] sm:pb-[560px] md:pb-[660px] lg:pb-[780px] bg-slate-950 relative overflow-hidden font-sans isolate text-white"
+    >
+      {/* 1. Background: 1 Foto Utuh Proporsional (Tanpa Zoom/Crop, Bawah Jelas) */}
+      <div className="absolute inset-x-0 bottom-0 z-0 pointer-events-none overflow-hidden select-none">
+        <picture>
+          <source srcSet={ABOUT_BG_PHOTO.webp} type="image/webp" />
+          <img
+            src={ABOUT_BG_PHOTO.fallback}
+            alt="Dokumentasi Peleton Inti Tonti Mu'allimin"
+            className="w-full h-auto max-w-none block filter brightness-100 contrast-105"
+            loading="lazy"
+          />
+        </picture>
+
+        {/* Gradient Overlay: Bawah terbuka transparan, semakin ke atas memudar halus ke latar gelap section */}
+        <div className="absolute inset-0 bg-gradient-to-t from-transparent from-20% via-slate-950/60 via-55% to-slate-950 to-85%" />
+        <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-slate-950 to-transparent" />
+      </div>
 
       <div className="container mx-auto px-6 relative z-10">
-        {/* Header */}
-        <div className="max-w-4xl mx-auto text-center mb-20">
-          <div className="inline-flex items-center justify-center gap-2 px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full bg-red-100/60 border border-red-200 text-red-800 text-[10px] sm:text-xs font-bold uppercase tracking-wider sm:tracking-widest mb-6 max-w-full text-center leading-normal">
-            <Scroll className="w-3.5 h-3.5 shrink-0" />
+        
+        {/* Section Header */}
+        <div className="max-w-4xl mx-auto text-center mb-12 sm:mb-16">
+          <div className="inline-flex items-center justify-center gap-2 px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full bg-red-900/50 border border-red-500/30 text-red-200 text-[10px] sm:text-xs font-bold uppercase tracking-wider sm:tracking-widest mb-5 max-w-full text-center leading-normal">
+            <Scroll className="w-3.5 h-3.5 shrink-0 text-amber-400" />
             <span className="truncate sm:whitespace-normal">Dasar Pelaksanaan: QS. As-Saff Ayat 4</span>
           </div>
 
-          <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-5xl font-black text-slate-900 uppercase italic tracking-tighter mb-6 leading-tight py-1">
+          <h2 className="text-2xl sm:text-4xl md:text-5xl font-black text-white uppercase italic tracking-tighter mb-4 leading-tight py-1">
             <span className="block whitespace-nowrap">
               Membangun{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-700 to-red-600">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-amber-400 to-yellow-400">
                 Generasi Unggul
               </span>
             </span>
             <span className="block whitespace-nowrap mt-1">
               Berkarakter{' '}
               <span className="relative inline-block pr-2 pb-1">
-                <span className="relative z-10 text-amber-700 font-extrabold">Ksatria</span>
+                <span className="relative z-10 text-amber-400 font-extrabold">Ksatria</span>
                 <svg
                   className="absolute w-full h-3 -bottom-1 left-0 text-amber-400 -z-0"
                   viewBox="0 0 100 10"
@@ -96,337 +78,268 @@ export default function About() {
             </span>
           </h2>
 
-          <p className="text-lg text-slate-600 leading-relaxed font-medium">
-            <strong className="text-slate-900">LBB Mu'allimin 2027</strong> hadir sebagai manifestasi peran historis Madrasah Mu'allimin sejak 1918. Mengusung tema resmi <em className="text-slate-800 font-bold">"JIWA KSATRIA, DERAP GEMILANG"</em>, ini adalah kawah candradimuka untuk menanamkan nilai{' '}
-            <span className="text-red-700 font-bold">Disiplin</span>,{' '}
-            <span className="text-red-700 font-bold">Kepemimpinan</span>, dan{' '}
-            <span className="text-red-700 font-bold">Solidaritas</span> demi mencetak Profil Pelajar Pancasila dan Kader Bangsa yang Berkemajuan berlandaskan nilai CADRE (Creative, Active, Discipline, Religious, Entrepreneur).
+          <p className="text-sm sm:text-base text-slate-300 leading-relaxed font-medium max-w-3xl mx-auto">
+            <strong className="text-white">LBB Mu'allimin 2027</strong> hadir sebagai manifestasi peran historis Madrasah Mu'allimin sejak 1918. Mengusung tema resmi <em className="text-amber-300 font-bold">"SEMANGAT SEBAGAI KSATRIA, BERJUANG DENGAN GEMBIRA"</em>, kawah candradimuka penempa Profil Pelajar Pancasila dan Kader Bangsa berlandaskan nilai CADRE (Creative, Active, Discipline, Religious, Entrepreneur).
           </p>
         </div>
 
-        {/* Unified 2-Column Section Layout: Kiri (Tema), Kanan Atas (Galeri), Kanan Bawah (Target) */}
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        {/* 2-Column Section Layout: Ketinggian Seimbang & Sejajar */}
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch">
           
           {/* KOLOM KIRI: Tema Resmi & Nilai Filosofis */}
-          <div className="lg:col-span-5 lg:sticky lg:top-24">
-            <div className="relative">
-              <div className="relative bg-slate-900 text-white p-6 sm:p-8 rounded-3xl shadow-xl border border-slate-800/80 overflow-hidden">
-                <div className="absolute inset-0 bg-carbon-pattern opacity-20 pointer-events-none"></div>
-                <Shield className="absolute -right-8 -bottom-8 text-white/5 w-52 h-52 pointer-events-none" />
+          <div className="lg:col-span-5 flex flex-col justify-between">
+            {/* Header Level Sejajar dengan Kanan */}
+            <div className="flex items-center justify-between gap-3 mb-4 h-6">
+              <div className="flex items-center gap-2">
+                <div className="w-2.5 h-2.5 rounded-full bg-amber-400"></div>
+                <h4 className="text-xs sm:text-sm font-bold uppercase tracking-widest text-slate-200">
+                  Landasan & Filosofi
+                </h4>
+              </div>
+              <span className="text-[11px] font-semibold text-amber-300 bg-amber-500/15 border border-amber-500/30 px-3 py-1 rounded-full">
+                Edisi 2027
+              </span>
+            </div>
 
+            <div className="relative bg-slate-900/90 backdrop-blur-md text-white p-5 sm:p-6 rounded-3xl shadow-2xl border border-white/10 overflow-hidden flex flex-col justify-between flex-1">
+              <div className="absolute inset-0 bg-carbon-pattern opacity-20 pointer-events-none"></div>
+              <Shield className="absolute -right-8 -bottom-8 text-white/5 w-48 h-48 pointer-events-none" />
+
+              <div className="relative z-10">
                 {/* Header Tema dengan Logo LBB di kanan */}
-                <div className="relative z-10 pb-6 border-b border-slate-800 flex items-center justify-between gap-4">
+                <div className="pb-4 border-b border-white/10 flex items-center justify-between gap-4">
                   <div>
-                    <span className="text-yellow-500 font-bold tracking-[0.3em] text-xs uppercase mb-2 block">Tema Resmi 2027</span>
-                    <h3 className="text-xl sm:text-2xl font-black uppercase italic leading-tight py-1">
-                      <span className="block pb-1 text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-300">JIWA KSATRIA,</span>
-                      <span className="block text-yellow-500">DERAP GEMILANG</span>
+                    <span className="text-yellow-400 font-bold tracking-[0.3em] text-[10px] sm:text-[11px] uppercase mb-1 block">Tema Resmi 2027</span>
+                    <h3 className="text-base sm:text-lg font-black uppercase italic leading-snug py-0.5">
+                      <span className="block pb-0.5 text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-200">SEMANGAT SEBAGAI KSATRIA,</span>
+                      <span className="block text-yellow-400">BERJUANG DENGAN GEMBIRA</span>
                     </h3>
                   </div>
 
                   <img
                     src={logoLbb}
                     alt="Logo LBB Mu'allimin"
-                    className="shrink-0 w-16 h-16 sm:w-20 sm:h-20 object-contain drop-shadow-md hover:scale-105 transition-transform"
+                    className="shrink-0 w-12 h-12 sm:w-14 sm:h-14 object-contain drop-shadow-md hover:scale-105 transition-transform"
                   />
                 </div>
 
                 {/* Nilai-Nilai Tema */}
-                <div className="relative z-10 py-6 space-y-3.5 border-b border-slate-800">
-                  <div className="flex gap-3.5 items-start p-3.5 rounded-2xl bg-white/[0.04] border border-white/5 hover:border-white/10 transition-colors">
-                    <div className="w-10 h-10 rounded-xl bg-yellow-500/10 flex items-center justify-center shrink-0 border border-yellow-500/20 text-yellow-400 shadow-sm">
-                      <HeartHandshake className="w-5 h-5" />
+                <div className="py-3.5 space-y-2.5">
+                  <div className="flex gap-3 items-start p-3 rounded-2xl bg-white/[0.04] border border-white/5 hover:border-white/10 transition-colors">
+                    <div className="w-8 h-8 rounded-xl bg-yellow-500/10 flex items-center justify-center shrink-0 border border-yellow-500/20 text-yellow-400 shadow-sm mt-0.5">
+                      <HeartHandshake className="w-4 h-4" />
                     </div>
                     <div>
-                      <h4 className="font-bold text-sm text-white">Jiwa Ksatria (Karakter Internal)</h4>
-                      <p className="text-xs text-slate-400 mt-0.5 leading-relaxed">Menempa integritas, kehormatan, kedisiplinan, tanggung jawab, kepemimpinan melayani, dan mentalitas pantang menyerah.</p>
+                      <h4 className="font-bold text-xs sm:text-sm text-white">Semangat Sebagai Ksatria (Internal)</h4>
+                      <p className="text-[11px] text-slate-300 mt-0.5 leading-relaxed">Menempa integritas, kehormatan, disiplin, kepemimpinan melayani, dan pantang menyerah.</p>
                     </div>
                   </div>
-                  <div className="flex gap-3.5 items-start p-3.5 rounded-2xl bg-white/[0.04] border border-white/5 hover:border-white/10 transition-colors">
-                    <div className="w-10 h-10 rounded-xl bg-yellow-500/10 flex items-center justify-center shrink-0 border border-yellow-500/20 text-yellow-400 shadow-sm">
-                      <Activity className="w-5 h-5" />
+
+                  <div className="flex gap-3 items-start p-3 rounded-2xl bg-white/[0.04] border border-white/5 hover:border-white/10 transition-colors">
+                    <div className="w-8 h-8 rounded-xl bg-yellow-500/10 flex items-center justify-center shrink-0 border border-yellow-500/20 text-yellow-400 shadow-sm mt-0.5">
+                      <Activity className="w-4 h-4" />
                     </div>
                     <div>
-                      <h4 className="font-bold text-sm text-white">Derap Gemilang (Prestasi Nyata)</h4>
-                      <p className="text-xs text-slate-400 mt-0.5 leading-relaxed">Hentakan langkah serempak penuh presisi teknis, kekompakan barisan, semangat bersinar, dan capaian prestasi membanggakan.</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Tujuan & Manfaat (3 item disusun vertikal/kompak) */}
-                <div className="relative z-10 pt-6">
-                  <div className="flex items-center gap-2 mb-4">
-                    <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
-                    <h4 className="text-xs font-bold tracking-[0.2em] text-slate-300 uppercase">
-                      Tujuan & Manfaat Kegiatan
-                    </h4>
-                  </div>
-
-                  <div className="space-y-3">
-                    <div className="p-3.5 bg-white/[0.03] hover:bg-white/[0.06] rounded-2xl border border-white/5 hover:border-red-500/30 transition-all duration-300 flex items-start gap-3">
-                      <div className="w-8 h-8 bg-red-500/15 text-red-400 border border-red-500/20 rounded-lg flex items-center justify-center shrink-0 mt-0.5">
-                        <Trophy className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <h5 className="font-bold text-white text-xs sm:text-sm">Kompetisi Berkualitas</h5>
-                        <p className="text-[11px] text-slate-400 leading-relaxed mt-0.5">
-                          Wadah kompetisi sehat, sportif, dan transparan untuk PBB pelajar se-DIY.
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="p-3.5 bg-white/[0.03] hover:bg-white/[0.06] rounded-2xl border border-white/5 hover:border-blue-500/30 transition-all duration-300 flex items-start gap-3">
-                      <div className="w-8 h-8 bg-blue-500/15 text-blue-400 border border-blue-500/20 rounded-lg flex items-center justify-center shrink-0 mt-0.5">
-                        <BrainCircuit className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <h5 className="font-bold text-white text-xs sm:text-sm">Asah Soft Skills</h5>
-                        <p className="text-[11px] text-slate-400 leading-relaxed mt-0.5">
-                          Komunikasi efektif, problem solving, manajemen waktu, dan ketahanan mental.
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="p-3.5 bg-white/[0.03] hover:bg-white/[0.06] rounded-2xl border border-white/5 hover:border-yellow-500/30 transition-all duration-300 flex items-start gap-3">
-                      <div className="w-8 h-8 bg-yellow-500/15 text-yellow-400 border border-yellow-500/20 rounded-lg flex items-center justify-center shrink-0 mt-0.5">
-                        <Network className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <h5 className="font-bold text-white text-xs sm:text-sm">Jaringan & Pendidikan</h5>
-                        <p className="text-[11px] text-slate-400 leading-relaxed mt-0.5">
-                          Menanamkan nilai <strong className="text-slate-200">CADRE</strong> Mu'allimin dan silaturahmi pendidikan.
-                        </p>
-                      </div>
+                      <h4 className="font-bold text-xs sm:text-sm text-white">Berjuang Dengan Gembira (Sikap & Energi)</h4>
+                      <p className="text-[11px] text-slate-300 mt-0.5 leading-relaxed">Daya juang barisan PBB yang dijalani dengan sukacita, sportivitas, dan energi positif.</p>
                     </div>
                   </div>
                 </div>
               </div>
+
+              {/* Tujuan & Manfaat (3 Badges Horizontal Kompak) */}
+              <div className="relative z-10 pt-3 border-t border-white/10">
+                <div className="grid grid-cols-3 gap-2 text-center">
+                  <div className="p-2 rounded-xl bg-white/[0.03] border border-white/5">
+                    <Trophy className="w-3.5 h-3.5 text-red-400 mx-auto mb-1" />
+                    <span className="text-[10px] font-bold text-slate-200 block truncate">Sportivitas</span>
+                    <span className="text-[8px] text-slate-400 hidden sm:block">Kompetisi Sehat</span>
+                  </div>
+                  <div className="p-2 rounded-xl bg-white/[0.03] border border-white/5">
+                    <BrainCircuit className="w-3.5 h-3.5 text-blue-400 mx-auto mb-1" />
+                    <span className="text-[10px] font-bold text-slate-200 block truncate">Soft Skills</span>
+                    <span className="text-[8px] text-slate-400 hidden sm:block">Mental Juang</span>
+                  </div>
+                  <div className="p-2 rounded-xl bg-white/[0.03] border border-white/5">
+                    <Network className="w-3.5 h-3.5 text-yellow-400 mx-auto mb-1" />
+                    <span className="text-[10px] font-bold text-slate-200 block truncate">Kader 1918</span>
+                    <span className="text-[8px] text-slate-400 hidden sm:block">Nilai CADRE</span>
+                  </div>
+                </div>
+              </div>
+
             </div>
           </div>
 
-          {/* KOLOM KANAN: Atas (Galeri 16:9), Bawah (Target Peserta SD & SMP) */}
-          <div className="lg:col-span-7 space-y-8">
+          {/* KOLOM KANAN: Target Peserta SD & SMP (Tinggi Seimbang) */}
+          <div className="lg:col-span-7 flex flex-col justify-between">
             
-            {/* KANAN ATAS: Galeri Tonti Mu'allimin 16:9 Imersif (Tanpa Outline) */}
-            <div className="relative group">
-              <div 
-                className="relative w-full aspect-video rounded-3xl overflow-hidden bg-slate-950 shadow-xl border-0 ring-0 outline-none select-none"
-                onMouseEnter={() => setIsAutoPlay(false)}
-                onMouseLeave={() => setIsAutoPlay(true)}
-              >
-                {/* Images */}
-                {TONTI_GALLERY_IMAGES.map((img, idx) => (
-                  <div
-                    key={img.src}
-                    className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${
-                      idx === activeSlide ? 'opacity-100 scale-100' : 'opacity-0 scale-105 pointer-events-none'
-                    }`}
-                    style={{ transitionProperty: 'opacity, transform' }}
-                  >
-                    <img
-                      src={img.src}
-                      onError={(e) => {
-                        if (img.fallback && e.currentTarget.src !== img.fallback) {
-                          e.currentTarget.src = img.fallback;
-                        }
-                      }}
-                      alt="Galeri Tonti Mu'allimin"
-                      className="w-full h-full object-cover object-center"
-                      loading={idx === 0 ? 'eager' : 'lazy'}
-                      decoding="async"
-                    />
-                  </div>
-                ))}
-
-                {/* Prev / Next Arrows */}
-                <button
-                  type="button"
-                  onClick={handlePrev}
-                  className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-slate-900/60 hover:bg-red-700 text-white backdrop-blur-md border border-white/10 flex items-center justify-center transition-all duration-200 opacity-0 group-hover:opacity-100 hover:scale-110 shadow-xl"
-                  aria-label="Previous Slide"
-                >
-                  <ChevronLeft className="w-5 h-5" />
-                </button>
-                <button
-                  type="button"
-                  onClick={handleNext}
-                  className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-slate-900/60 hover:bg-red-700 text-white backdrop-blur-md border border-white/10 flex items-center justify-center transition-all duration-200 opacity-0 group-hover:opacity-100 hover:scale-110 shadow-xl"
-                  aria-label="Next Slide"
-                >
-                  <ChevronRight className="w-5 h-5" />
-                </button>
+            {/* Header Label Target */}
+            <div className="flex items-center justify-between gap-3 mb-4 h-6">
+              <div className="flex items-center gap-2">
+                <div className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse"></div>
+                <h4 className="text-xs sm:text-sm font-bold uppercase tracking-widest text-slate-200">
+                  Target Peserta Se-DIY
+                </h4>
               </div>
+              <span className="text-[11px] font-semibold text-amber-300 bg-amber-500/15 border border-amber-500/30 px-3 py-1 rounded-full">
+                Kuota Terbatas: 36 Peleton
+              </span>
             </div>
 
-            {/* KANAN BAWAH: Target Peserta Se-DIY (SD & SMP) */}
-            <div>
-              {/* Header Label Target */}
-              <div className="flex items-center justify-between gap-3 mb-4">
-                <div className="flex items-center gap-2">
-                  <div className="w-2.5 h-2.5 rounded-full bg-red-600 animate-pulse"></div>
-                  <h4 className="text-xs sm:text-sm font-bold uppercase tracking-widest text-slate-800">
-                    Target Peserta Se-DIY
-                  </h4>
+            {/* 2 Kolom Card Target SD & SMP */}
+            <div className="grid sm:grid-cols-2 gap-4 sm:gap-5 flex-1">
+              {/* SD Card */}
+              <a
+                href="#rules"
+                className="group relative bg-slate-900/85 backdrop-blur-md rounded-3xl p-5 sm:p-6 border border-white/10 shadow-xl hover:border-red-500/50 hover:bg-slate-900/95 transition-all duration-300 flex flex-col justify-between overflow-hidden text-left cursor-pointer"
+              >
+                <div className="absolute top-0 right-0 w-36 h-36 bg-gradient-to-bl from-red-600/15 via-red-900/10 to-transparent rounded-full blur-xl pointer-events-none group-hover:scale-125 transition-transform duration-500"></div>
+                <div className="absolute -right-1 bottom-2 text-6xl font-black text-white/[0.04] select-none pointer-events-none tracking-tighter">
+                  SD
                 </div>
-                <span className="text-[11px] font-semibold text-slate-500 bg-slate-200/70 px-2.5 py-1 rounded-full">
-                  Kuota Terbatas
-                </span>
-              </div>
 
-              {/* 2 Kolom Card Target SD & SMP */}
-              <div className="grid sm:grid-cols-2 gap-4 sm:gap-5">
-                {/* SD Card */}
-                <a
-                  href="#rules"
-                  className="group relative bg-white rounded-3xl p-5 sm:p-6 border border-slate-200/90 shadow-md hover:shadow-xl hover:border-red-500/40 transition-all duration-300 flex flex-col justify-between overflow-hidden text-left cursor-pointer"
-                >
-                  <div className="absolute top-0 right-0 w-36 h-36 bg-gradient-to-bl from-red-100/60 via-red-50/20 to-transparent rounded-full blur-xl pointer-events-none group-hover:scale-125 transition-transform duration-500"></div>
-                  <div className="absolute -right-1 bottom-2 text-6xl font-black text-red-950/[0.04] select-none pointer-events-none tracking-tighter">
-                    SD
-                  </div>
-
-                  <div className="relative z-10">
-                    <div className="flex items-start justify-between gap-3 mb-4">
-                      <div className="flex items-center gap-2.5">
-                        <div className="w-10 h-10 rounded-xl bg-red-700 text-white flex items-center justify-center shadow-sm shadow-red-700/25 group-hover:scale-105 transition-transform">
-                          <School className="w-5 h-5" />
-                        </div>
-                        <div>
-                          <span className="inline-block text-[10px] font-bold text-red-700 uppercase tracking-wider">
-                            Tingkat Dasar
-                          </span>
-                          <h4 className="text-lg font-black text-slate-900 tracking-tight leading-tight">
-                            SD / MI
-                          </h4>
-                        </div>
+                <div className="relative z-10">
+                  <div className="flex items-start justify-between gap-3 mb-4">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-red-600 to-red-800 text-white flex items-center justify-center shadow-md shadow-red-700/30 group-hover:scale-105 transition-transform">
+                        <School className="w-5 h-5" />
                       </div>
-
-                      <div className="text-right bg-red-50 border border-red-100 px-2.5 py-1 rounded-xl">
-                        <span className="text-[9px] font-black uppercase tracking-wider text-red-600 block">
-                          Target
+                      <div>
+                        <span className="inline-block text-[10px] font-bold text-red-400 uppercase tracking-wider">
+                          Tingkat Dasar
                         </span>
-                        <p className="text-base font-black text-slate-900 leading-none mt-0.5">
-                          {COMPETITION.SD.TARGET_PLATOONS}{' '}
-                          <span className="text-[10px] font-semibold text-slate-500">Peleton</span>
-                        </p>
+                        <h4 className="text-lg font-black text-white tracking-tight leading-tight">
+                          SD / MI
+                        </h4>
                       </div>
                     </div>
 
-                    {/* Squad Composition */}
-                    <div className="grid grid-cols-3 gap-1.5 mb-4 text-center">
-                      <div className="bg-slate-50 group-hover:bg-red-50/40 p-2 rounded-xl border border-slate-100 transition-colors">
-                        <UserCheck className="w-3.5 h-3.5 text-red-700 mx-auto mb-1" />
-                        <span className="text-xs font-black text-slate-900 block">1 Danton</span>
-                        <span className="text-[9px] text-slate-500">Komandan</span>
-                      </div>
-                      <div className="bg-slate-50 group-hover:bg-red-50/40 p-2 rounded-xl border border-slate-100 transition-colors">
-                        <Users className="w-3.5 h-3.5 text-red-700 mx-auto mb-1" />
-                        <span className="text-xs font-black text-slate-900 block">21 Pasukan</span>
-                        <span className="text-[9px] text-slate-500">Inti</span>
-                      </div>
-                      <div className="bg-slate-50 group-hover:bg-red-50/40 p-2 rounded-xl border border-slate-100 transition-colors">
-                        <PlusCircle className="w-3.5 h-3.5 text-red-700 mx-auto mb-1" />
-                        <span className="text-xs font-black text-slate-900 block">3 Cadangan</span>
-                        <span className="text-[9px] text-slate-500">Pengganti</span>
-                      </div>
-                    </div>
-
-                    {/* Specs */}
-                    <div className="grid grid-cols-2 gap-1.5 pt-2 pb-3 border-t border-slate-100 text-[11px] text-slate-600">
-                      <div className="flex items-center gap-1 bg-slate-50/80 px-2 py-1.5 rounded-lg border border-slate-100">
-                        <Maximize2 className="w-3 h-3 text-red-600 shrink-0" />
-                        <span className="truncate">Arena: <strong>{COMPETITION.SD.ARENA_SIZE}</strong></span>
-                      </div>
-                      <div className="flex items-center gap-1 bg-slate-50/80 px-2 py-1.5 rounded-lg border border-slate-100">
-                        <Timer className="w-3 h-3 text-red-600 shrink-0" />
-                        <span className="truncate">Durasi: <strong>{COMPETITION.SD.DURATION_LABEL.replace('Durasi Max: ', '')}</strong></span>
-                      </div>
+                    <div className="text-right bg-red-950/60 border border-red-500/30 px-2.5 py-1 rounded-xl">
+                      <span className="text-[9px] font-black uppercase tracking-wider text-red-400 block">
+                        Target
+                      </span>
+                      <p className="text-base font-black text-white leading-none mt-0.5">
+                        {COMPETITION.SD.TARGET_PLATOONS}{' '}
+                        <span className="text-[10px] font-semibold text-slate-400">Peleton</span>
+                      </p>
                     </div>
                   </div>
 
-                  <div className="relative z-10 pt-2.5 border-t border-slate-100 flex items-center justify-end">
-                    <span className="text-[11px] font-bold text-red-700 flex items-center gap-1 group-hover:text-red-800">
-                      Lihat Juknis SD <ArrowRight className="w-3.5 h-3.5 text-red-600 group-hover:translate-x-1 transition-transform" />
-                    </span>
+                  {/* Squad Composition */}
+                  <div className="grid grid-cols-3 gap-1.5 mb-3.5 text-center">
+                    <div className="bg-white/[0.04] group-hover:bg-red-950/40 p-2 rounded-xl border border-white/5 transition-colors">
+                      <UserCheck className="w-3.5 h-3.5 text-red-400 mx-auto mb-1" />
+                      <span className="text-xs font-black text-white block">1 Danton</span>
+                      <span className="text-[9px] text-slate-400">Komandan</span>
+                    </div>
+                    <div className="bg-white/[0.04] group-hover:bg-red-950/40 p-2 rounded-xl border border-white/5 transition-colors">
+                      <Users className="w-3.5 h-3.5 text-red-400 mx-auto mb-1" />
+                      <span className="text-xs font-black text-white block">21 Pasukan</span>
+                      <span className="text-[9px] text-slate-400">Inti</span>
+                    </div>
+                    <div className="bg-white/[0.04] group-hover:bg-red-950/40 p-2 rounded-xl border border-white/5 transition-colors">
+                      <PlusCircle className="w-3.5 h-3.5 text-red-400 mx-auto mb-1" />
+                      <span className="text-xs font-black text-white block">3 Cadangan</span>
+                      <span className="text-[9px] text-slate-400">Pengganti</span>
+                    </div>
                   </div>
-                </a>
 
-                {/* SMP Card */}
-                <a
-                  href="#rules"
-                  className="group relative bg-white rounded-3xl p-5 sm:p-6 border border-slate-200/90 shadow-md hover:shadow-xl hover:border-blue-500/40 transition-all duration-300 flex flex-col justify-between overflow-hidden text-left cursor-pointer"
-                >
-                  <div className="absolute top-0 right-0 w-36 h-36 bg-gradient-to-bl from-blue-100/60 via-blue-50/20 to-transparent rounded-full blur-xl pointer-events-none group-hover:scale-125 transition-transform duration-500"></div>
-                  <div className="absolute -right-1 bottom-2 text-6xl font-black text-blue-950/[0.04] select-none pointer-events-none tracking-tighter">
-                    SMP
+                  {/* Specs */}
+                  <div className="grid grid-cols-2 gap-1.5 pt-2 pb-2.5 border-t border-white/10 text-[11px] text-slate-300">
+                    <div className="flex items-center gap-1 bg-white/[0.03] px-2 py-1.5 rounded-lg border border-white/5">
+                      <Maximize2 className="w-3 h-3 text-red-400 shrink-0" />
+                      <span className="truncate">Arena: <strong className="text-white">{COMPETITION.SD.ARENA_SIZE}</strong></span>
+                    </div>
+                    <div className="flex items-center gap-1 bg-white/[0.03] px-2 py-1.5 rounded-lg border border-white/5">
+                      <Timer className="w-3 h-3 text-red-400 shrink-0" />
+                      <span className="truncate">Durasi: <strong className="text-white">{COMPETITION.SD.DURATION_LABEL.replace('Durasi Max: ', '')}</strong></span>
+                    </div>
                   </div>
+                </div>
 
-                  <div className="relative z-10">
-                    <div className="flex items-start justify-between gap-3 mb-4">
-                      <div className="flex items-center gap-2.5">
-                        <div className="w-10 h-10 rounded-xl bg-blue-700 text-white flex items-center justify-center shadow-sm shadow-blue-700/25 group-hover:scale-105 transition-transform">
-                          <GraduationCap className="w-5 h-5" />
-                        </div>
-                        <div>
-                          <span className="inline-block text-[10px] font-bold text-blue-700 uppercase tracking-wider">
-                            Tingkat Menengah
-                          </span>
-                          <h4 className="text-lg font-black text-slate-900 tracking-tight leading-tight">
-                            SMP / MTs
-                          </h4>
-                        </div>
+                <div className="relative z-10 pt-2.5 border-t border-white/10 flex items-center justify-end">
+                  <span className="text-[11px] font-bold text-red-400 flex items-center gap-1 group-hover:text-red-300">
+                    Lihat Juknis SD <ArrowRight className="w-3.5 h-3.5 text-red-400 group-hover:translate-x-1 transition-transform" />
+                  </span>
+                </div>
+              </a>
+
+              {/* SMP Card */}
+              <a
+                href="#rules"
+                className="group relative bg-slate-900/85 backdrop-blur-md rounded-3xl p-5 sm:p-6 border border-white/10 shadow-xl hover:border-blue-500/50 hover:bg-slate-900/95 transition-all duration-300 flex flex-col justify-between overflow-hidden text-left cursor-pointer"
+              >
+                <div className="absolute top-0 right-0 w-36 h-36 bg-gradient-to-bl from-blue-600/15 via-blue-900/10 to-transparent rounded-full blur-xl pointer-events-none group-hover:scale-125 transition-transform duration-500"></div>
+                <div className="absolute -right-1 bottom-2 text-6xl font-black text-white/[0.04] select-none pointer-events-none tracking-tighter">
+                  SMP
+                </div>
+
+                <div className="relative z-10">
+                  <div className="flex items-start justify-between gap-3 mb-4">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-blue-800 text-white flex items-center justify-center shadow-md shadow-blue-700/30 group-hover:scale-105 transition-transform">
+                        <GraduationCap className="w-5 h-5" />
                       </div>
-
-                      <div className="text-right bg-blue-50 border border-blue-100 px-2.5 py-1 rounded-xl">
-                        <span className="text-[9px] font-black uppercase tracking-wider text-blue-600 block">
-                          Target
+                      <div>
+                        <span className="inline-block text-[10px] font-bold text-blue-400 uppercase tracking-wider">
+                          Tingkat Menengah
                         </span>
-                        <p className="text-base font-black text-slate-900 leading-none mt-0.5">
-                          {COMPETITION.SMP.TARGET_PLATOONS}{' '}
-                          <span className="text-[10px] font-semibold text-slate-500">Peleton</span>
-                        </p>
+                        <h4 className="text-lg font-black text-white tracking-tight leading-tight">
+                          SMP / MTs
+                        </h4>
                       </div>
                     </div>
 
-                    {/* Squad Composition */}
-                    <div className="grid grid-cols-3 gap-1.5 mb-4 text-center">
-                      <div className="bg-slate-50 group-hover:bg-blue-50/40 p-2 rounded-xl border border-slate-100 transition-colors">
-                        <UserCheck className="w-3.5 h-3.5 text-blue-700 mx-auto mb-1" />
-                        <span className="text-xs font-black text-slate-900 block">1 Danton</span>
-                        <span className="text-[9px] text-slate-500">Komandan</span>
-                      </div>
-                      <div className="bg-slate-50 group-hover:bg-blue-50/40 p-2 rounded-xl border border-slate-100 transition-colors">
-                        <Users className="w-3.5 h-3.5 text-blue-700 mx-auto mb-1" />
-                        <span className="text-xs font-black text-slate-900 block">21 Pasukan</span>
-                        <span className="text-[9px] text-slate-500">Inti</span>
-                      </div>
-                      <div className="bg-slate-50 group-hover:bg-blue-50/40 p-2 rounded-xl border border-slate-100 transition-colors">
-                        <PlusCircle className="w-3.5 h-3.5 text-blue-700 mx-auto mb-1" />
-                        <span className="text-xs font-black text-slate-900 block">3 Cadangan</span>
-                        <span className="text-[9px] text-slate-500">Pengganti</span>
-                      </div>
-                    </div>
-
-                    {/* Specs */}
-                    <div className="grid grid-cols-2 gap-1.5 pt-2 pb-3 border-t border-slate-100 text-[11px] text-slate-600">
-                      <div className="flex items-center gap-1 bg-slate-50/80 px-2 py-1.5 rounded-lg border border-slate-100">
-                        <Maximize2 className="w-3 h-3 text-blue-600 shrink-0" />
-                        <span className="truncate">Arena: <strong>{COMPETITION.SMP.ARENA_SIZE}</strong></span>
-                      </div>
-                      <div className="flex items-center gap-1 bg-slate-50/80 px-2 py-1.5 rounded-lg border border-slate-100">
-                        <Timer className="w-3 h-3 text-blue-600 shrink-0" />
-                        <span className="truncate">Durasi: <strong>{COMPETITION.SMP.DURATION_LABEL.replace('Durasi Max: ', '')}</strong></span>
-                      </div>
+                    <div className="text-right bg-blue-950/60 border border-blue-500/30 px-2.5 py-1 rounded-xl">
+                      <span className="text-[9px] font-black uppercase tracking-wider text-blue-400 block">
+                        Target
+                      </span>
+                      <p className="text-base font-black text-white leading-none mt-0.5">
+                        {COMPETITION.SMP.TARGET_PLATOONS}{' '}
+                        <span className="text-[10px] font-semibold text-slate-400">Peleton</span>
+                      </p>
                     </div>
                   </div>
 
-                  <div className="relative z-10 pt-2.5 border-t border-slate-100 flex items-center justify-end">
-                    <span className="text-[11px] font-bold text-blue-700 flex items-center gap-1 group-hover:text-blue-800">
-                      Lihat Juknis SMP <ArrowRight className="w-3.5 h-3.5 text-blue-600 group-hover:translate-x-1 transition-transform" />
-                    </span>
+                  {/* Squad Composition */}
+                  <div className="grid grid-cols-3 gap-1.5 mb-3.5 text-center">
+                    <div className="bg-white/[0.04] group-hover:bg-blue-950/40 p-2 rounded-xl border border-white/5 transition-colors">
+                      <UserCheck className="w-3.5 h-3.5 text-blue-400 mx-auto mb-1" />
+                      <span className="text-xs font-black text-white block">1 Danton</span>
+                      <span className="text-[9px] text-slate-400">Komandan</span>
+                    </div>
+                    <div className="bg-white/[0.04] group-hover:bg-blue-950/40 p-2 rounded-xl border border-white/5 transition-colors">
+                      <Users className="w-3.5 h-3.5 text-blue-400 mx-auto mb-1" />
+                      <span className="text-xs font-black text-white block">21 Pasukan</span>
+                      <span className="text-[9px] text-slate-400">Inti</span>
+                    </div>
+                    <div className="bg-white/[0.04] group-hover:bg-blue-950/40 p-2 rounded-xl border border-white/5 transition-colors">
+                      <PlusCircle className="w-3.5 h-3.5 text-blue-400 mx-auto mb-1" />
+                      <span className="text-xs font-black text-white block">3 Cadangan</span>
+                      <span className="text-[9px] text-slate-400">Pengganti</span>
+                    </div>
                   </div>
-                </a>
-              </div>
+
+                  {/* Specs */}
+                  <div className="grid grid-cols-2 gap-1.5 pt-2 pb-2.5 border-t border-white/10 text-[11px] text-slate-300">
+                    <div className="flex items-center gap-1 bg-white/[0.03] px-2 py-1.5 rounded-lg border border-white/5">
+                      <Maximize2 className="w-3 h-3 text-blue-400 shrink-0" />
+                      <span className="truncate">Arena: <strong className="text-white">{COMPETITION.SMP.ARENA_SIZE}</strong></span>
+                    </div>
+                    <div className="flex items-center gap-1 bg-white/[0.03] px-2 py-1.5 rounded-lg border border-white/5">
+                      <Timer className="w-3 h-3 text-blue-400 shrink-0" />
+                      <span className="truncate">Durasi: <strong className="text-white">{COMPETITION.SMP.DURATION_LABEL.replace('Durasi Max: ', '')}</strong></span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="relative z-10 pt-2.5 border-t border-white/10 flex items-center justify-end">
+                  <span className="text-[11px] font-bold text-blue-400 flex items-center gap-1 group-hover:text-blue-300">
+                    Lihat Juknis SMP <ArrowRight className="w-3.5 h-3.5 text-blue-400 group-hover:translate-x-1 transition-transform" />
+                  </span>
+                </div>
+              </a>
             </div>
 
           </div>

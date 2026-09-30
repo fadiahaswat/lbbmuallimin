@@ -33,7 +33,7 @@ export default function ProposalView() {
     <SimpaskorSidebarLayout
       activeMenu="proposal"
       title="Proposal Resmi Kegiatan LBB 2027"
-      subtitle="Dokumen legalitas, tema Jiwa Ksatria Derap Gemilang, landasan Perpang TNI, & skema kejuaraan"
+      subtitle="Dokumen legalitas, tema Semangat Sebagai Ksatria Berjuang Dengan Gembira, landasan Perpang TNI, & skema kejuaraan"
       rightActions={
         <div className="flex items-center gap-2">
           <button
@@ -78,7 +78,7 @@ export default function ProposalView() {
               LOMBA BARIS BERBARIS (LBB) MU'ALLIMIN TAHUN 2027
             </h1>
             <p className="text-base font-bold text-red-700 tracking-wide font-mono">
-              "JIWA KSATRIA, DERAP GEMILANG"
+              "SEMANGAT SEBAGAI KSATRIA, BERJUANG DENGAN GEMBIRA"
             </p>
             <p className="text-xs font-semibold text-slate-600">
               Tingkat SD/MI & SMP/MTs Sederajat Se-Daerah Istimewa Yogyakarta
@@ -105,19 +105,19 @@ export default function ProposalView() {
           {/* Makna Tema Resmi */}
           <div className="p-4 sm:p-5 rounded-2xl bg-slate-900 text-white space-y-3">
             <h4 className="text-xs font-black uppercase text-red-400 tracking-wider">
-              Filosofi Tema: "Jiwa Ksatria, Derap Gemilang"
+              Filosofi Tema: "Semangat Sebagai Ksatria, Berjuang Dengan Gembira"
             </h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
               <div className="space-y-1.5 border-l-2 border-red-500 pl-3">
-                <span className="font-bold text-white block">JIWA KSATRIA (Karakter Internal)</span>
+                <span className="font-bold text-white block">SEMANGAT SEBAGAI KSATRIA (Karakter Internal)</span>
                 <p className="text-slate-300 leading-relaxed text-[11px]">
                   Menempa kehormatan, integritas, kedisiplinan, ketangguhan mental, kepemimpinan yang melayani, serta sportivitas ksatria yang menerima hasil dengan lapang dada.
                 </p>
               </div>
               <div className="space-y-1.5 border-l-2 border-amber-400 pl-3">
-                <span className="font-bold text-white block">DERAP GEMILANG (Manifestasi Eksternal)</span>
+                <span className="font-bold text-white block">BERJUANG DENGAN GEMBIRA (Sikap Mental & Energi Positif)</span>
                 <p className="text-slate-300 leading-relaxed text-[11px]">
-                  Langkah yang serempak, presisi, keunggulan teknis, keselarasan gerak, pancaran semangat juang, dan prestasi gemilang yang menginspirasi generasi muda.
+                  Ketangguhan daya juang dalam hentakan barisan PBB yang dijalani dengan sukacita, antusiasme, kebersamaan yang hangat, serta optimisme meraih prestasi terbaik.
                 </p>
               </div>
             </div>

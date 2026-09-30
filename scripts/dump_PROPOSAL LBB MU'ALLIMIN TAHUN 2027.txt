@@ -6,7 +6,7 @@ w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000
 
 w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000000" w:rsidRPr="00000000" w14:paraId="00000003">PROPOSAL KEGIATAN
 
-w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000000" w:rsidRPr="00000000" w14:paraId="00000004">LOMBA BARIS BERBARIS (LBB) MU’ALLIMIN TAHUN 2027“JIWA KSATRIA, DERAP GEMILANG”
+w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000000" w:rsidRPr="00000000" w14:paraId="00000004">LOMBA BARIS BERBARIS (LBB) MU’ALLIMIN TAHUN 2027“SEMANGAT SEBAGAI KSATRIA, BERJUANG DENGAN GEMBIRA”
 
 w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000000" w:rsidRPr="00000000" w14:paraId="00000005">
 
@@ -74,17 +74,17 @@ w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000
 
 w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000000" w:rsidRPr="00000000" w14:paraId="00000025">
 
-w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000000" w:rsidRPr="00000000" w14:paraId="00000026">Tema yang diusung dan menjadi jiwa penyelenggaraan Lomba Baris Berbaris (LBB) Madrasah Mu’allimin Muhammadiyah Yogyakarta Tahun 2027 ini adalah: "JIWA KSATRIA, DERAP GEMILANG."
+w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000000" w:rsidRPr="00000000" w14:paraId="00000026">Tema yang diusung dan menjadi jiwa penyelenggaraan Lomba Baris Berbaris (LBB) Madrasah Mu’allimin Muhammadiyah Yogyakarta Tahun 2027 ini adalah: "SEMANGAT SEBAGAI KSATRIA, BERJUANG DENGAN GEMBIRA."
 
 w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000000" w:rsidRPr="00000000" w14:paraId="00000027">
 
-w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000000" w:rsidRPr="00000000" w14:paraId="00000028">Tema "JIWA KSATRIA, DERAP GEMILANG." dipilih secara seksama untuk merefleksikan esensi terdalam serta aspirasi luhur dari Lomba Baris Berbaris (LBB) Mu'allimin 2027. Tema ini bukan sekadar slogan, melainkan sebuah komitmen untuk menjadikan ajang ini wahana pembentukan karakter yang utuh dan pencapaian prestasi yang cemerlang. Setiap elemen dalam tema ini mengandung makna yang kaya dan saling melengkapi.
+w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000000" w:rsidRPr="00000000" w14:paraId="00000028">Tema "SEMANGAT SEBAGAI KSATRIA, BERJUANG DENGAN GEMBIRA." dipilih secara seksama untuk merefleksikan esensi terdalam serta aspirasi luhur dari Lomba Baris Berbaris (LBB) Mu'allimin 2027. Tema ini bukan sekadar slogan, melainkan sebuah komitmen untuk menjadikan ajang ini wahana pembentukan karakter yang utuh dan pencapaian prestasi yang cemerlang. Setiap elemen dalam tema ini mengandung makna yang kaya dan saling melengkapi.
 
 w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000000" w:rsidRPr="00000000" w14:paraId="00000029">
 
-w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000000" w:rsidRPr="00000000" w14:paraId="0000002A">"JIWA KSATRIA": Menempa Karakter Unggul dan Berintegritas
+w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000000" w:rsidRPr="00000000" w14:paraId="0000002A">"SEMANGAT SEBAGAI KSATRIA": Menempa Karakter Unggul dan Berintegritas
 
-w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000000" w:rsidRPr="00000000" w14:paraId="0000002B">Frasa "Jiwa Ksatria" merujuk pada pembentukan kualitas internal yang fundamental bagi seorang calon pemimpin dan individu yang bermanfaat. Lebih dari sekadar keberanian fisik, "Jiwa Ksatria" dalam konteks ini mencakup serangkaian nilai luhur berikut:
+w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000000" w:rsidRPr="00000000" w14:paraId="0000002B">Frasa "Semangat Sebagai Ksatria" merujuk pada pembentukan kualitas internal yang fundamental bagi seorang calon pemimpin dan individu yang bermanfaat. Lebih dari sekadar keberanian fisik, "Semangat Sebagai Ksatria" dalam konteks ini mencakup serangkaian nilai luhur berikut:
 
 w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000000" w:rsidRPr="00000000" w14:paraId="0000002C">
 
@@ -104,13 +104,13 @@ w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000
 
 w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000000" w:rsidRPr="00000000" w14:paraId="00000034">
 
-w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000000" w:rsidRPr="00000000" w14:paraId="00000035">Melalui LBB Mu'allimin ini, setiap peserta didorong dan difasilitasi untuk menggali, menumbuhkan, serta memanifestasikan "Jiwa Ksatria" ini. Proses latihan yang panjang, dinamika tim, dan atmosfer kompetisi menjadi kawah candradimuka yang menempa mereka menjadi pribadi-pribadi berkarakter ksatria, selaras dengan nilai-nilai Islam dan visi pendidikan kader Madrasah Mu'allimin Muhammadiyah Yogyakarta.
+w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000000" w:rsidRPr="00000000" w14:paraId="00000035">Melalui LBB Mu'allimin ini, setiap peserta didorong dan difasilitasi untuk menggali, menumbuhkan, serta memanifestasikan "Semangat Sebagai Ksatria" ini. Proses latihan yang panjang, dinamika tim, dan atmosfer kompetisi menjadi kawah candradimuka yang menempa mereka menjadi pribadi-pribadi berkarakter ksatria, selaras dengan nilai-nilai Islam dan visi pendidikan kader Madrasah Mu'allimin Muhammadiyah Yogyakarta.
 
 w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000000" w:rsidRPr="00000000" w14:paraId="00000036">
 
-w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000000" w:rsidRPr="00000000" w14:paraId="00000037">"DERAP GEMILANG": Manifestasi Keunggulan dalam Langkah dan Prestasi
+w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000000" w:rsidRPr="00000000" w14:paraId="00000037">"BERJUANG DENGAN GEMBIRA": Manifestasi Semangat Juang dan Kegembiraan Berprestasi
 
-w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000000" w:rsidRPr="00000000" w14:paraId="00000038">Sementara "Jiwa Ksatria" berfokus pada aspek internal, "Derap Gemilang" adalah manifestasi eksternal dari kualitas tersebut, yang tercermin dalam setiap langkah dan pencapaian. "Derap" menggambarkan hentakan langkah yang serempak, tegas, dan penuh semangat dalam barisan, yang merupakan inti dari PBB. Kata "Gemilang" menyiratkan beberapa aspek penting:
+w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000000" w:rsidRPr="00000000" w14:paraId="00000038">Sementara "Semangat Sebagai Ksatria" berfokus pada aspek internal karakter dan kedisiplinan, "Berjuang Dengan Gembira" adalah manifestasi sikap mental dan ekspresi lahiriah dalam mengarungi dinamika kompetisi dengan penuh antusiasme, kegigihan pantang menyerah, dan keceriaan positif. Frasa ini menyiratkan beberapa aspek penting:
 
 w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000000" w:rsidRPr="00000000" w14:paraId="00000039">
 
@@ -120,15 +120,15 @@ w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000
 
 w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000000" w:rsidRPr="00000000" w14:paraId="0000003C">Prestasi yang Cemerlang: "Gemilang" juga berarti pencapaian yang luar biasa, prestasi yang membanggakan, serta pengakuan atas kerja keras dan kualitas yang ditampilkan.
 
-w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000000" w:rsidRPr="00000000" w14:paraId="0000003D">Inspirasi yang Memancar: Sebuah "Derap Gemilang" diharapkan mampu menginspirasi tidak hanya anggota tim itu sendiri, tetapi juga penonton dan generasi muda lainnya untuk berprestasi dan berbuat yang terbaik.
+w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000000" w:rsidRPr="00000000" w14:paraId="0000003D">Inspirasi yang Memancar: Sebuah perjuangan yang dijalani dengan gembira diharapkan mampu menginspirasi tidak hanya anggota tim itu sendiri, tetapi juga penonton dan generasi muda lainnya untuk berprestasi dan berbuat yang terbaik.
 
 w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000000" w:rsidRPr="00000000" w14:paraId="0000003E">
 
-w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000000" w:rsidRPr="00000000" w14:paraId="0000003F">LBB Mu'allimin 2027 bertujuan menjadi panggung tempat setiap tim dapat menampilkan "Derap Gemilang" mereka, sebagai buah dari latihan keras, disiplin tinggi, dan "Jiwa Ksatria" yang telah tertanam. Penilaian yang objektif dan apresiasi yang tinggi akan diberikan kepada mereka yang mampu menunjukkan keunggulan dalam setiap aspek.
+w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000000" w:rsidRPr="00000000" w14:paraId="0000003F">LBB Mu'allimin 2027 bertujuan menjadi panggung tempat setiap tim dapat menampilkan perjuangan terbaik mereka dengan penuh gembira, sebagai buah dari latihan keras, disiplin tinggi, dan "Semangat Sebagai Ksatria" yang telah tertanam. Penilaian yang objektif dan apresiasi yang tinggi akan diberikan kepada mereka yang mampu menunjukkan keunggulan dalam setiap aspek.
 
 w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000000" w:rsidRPr="00000000" w14:paraId="00000040">
 
-w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000000" w:rsidRPr="00000000" w14:paraId="00000041">Tema "JIWA KSATRIA, DERAP GEMILANG." secara inheren selaras dengan visi Madrasah Mu’allimin Muhammadiyah Yogyakarta untuk mencetak kader ulama, pemimpin, dan pendidik yang unggul dan berkarakter. "Jiwa Ksatria" adalah perwujudan karakter pemimpin yang diharapkan, sementara "Derap Gemilang" adalah cerminan keunggulan dan kompetensi yang terus diasah. Tema ini juga secara langsung mendukung tujuan-tujuan spesifik LBB Mu'allimin 2027, yakni meningkatkan kedisiplinan, menumbuhkan jiwa kepemimpinan, memperkuat karakter, mengembangkan potensi peserta secara holistik, serta memperkenalkan nilai-nilai dan kualitas pendidikan Mu'allimin kepada masyarakat luas.
+w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000000" w:rsidRPr="00000000" w14:paraId="00000041">Tema "SEMANGAT SEBAGAI KSATRIA, BERJUANG DENGAN GEMBIRA." secara inheren selaras dengan visi Madrasah Mu’allimin Muhammadiyah Yogyakarta untuk mencetak kader ulama, pemimpin, dan pendidik yang unggul dan berkarakter. "Semangat Sebagai Ksatria" adalah perwujudan karakter pemimpin yang diharapkan, sementara "Berjuang Dengan Gembira" adalah cerminan ketangguhan, sportivitas, dan energi positif yang terus terpancar dalam meraih prestasi. Tema ini juga secara langsung mendukung tujuan-tujuan spesifik LBB Mu'allimin 2027, yakni meningkatkan kedisiplinan, menumbuhkan jiwa kepemimpinan, memperkuat karakter, mengembangkan potensi peserta secara holistik, serta memperkenalkan nilai-nilai dan kualitas pendidikan Mu'allimin kepada masyarakat luas.
 
 w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000000" w:rsidRPr="00000000" w14:paraId="00000042">
 
@@ -136,7 +136,7 @@ w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000
 
 w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000000" w:rsidRPr="00000000" w14:paraId="00000044">
 
-w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000000" w:rsidRPr="00000000" w14:paraId="00000045">Dengan mengusung tema ini, diharapkan seluruh elemen yang terlibat dalam LBB Mu'allimin 2027—peserta, pelatih, panitia, juri, dan pendukung—dapat merasakan dan menghayati semangatnya. Semoga "Jiwa Ksatria" senantiasa tumbuh dalam diri setiap individu, dan "Derap Gemilang" tidak  hanya terbatas pada arena perlombaan, tetapi terus berlanjut dalam setiap langkah kehidupan mereka, membawa kemajuan serta kemanfaatan bagi diri sendiri, lingkungan, agama, bangsa, dan negara.
+w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000000" w:rsidRPr="00000000" w14:paraId="00000045">Dengan mengusung tema ini, diharapkan seluruh elemen yang terlibat dalam LBB Mu'allimin 2027—peserta, pelatih, panitia, juri, dan pendukung—dapat merasakan dan menghayati semangatnya. Semoga "Semangat Sebagai Ksatria" senantiasa tumbuh dalam diri setiap individu, dan semangat "Berjuang Dengan Gembira" tidak hanya terbatas pada arena perlombaan, tetapi terus berlanjut dalam setiap langkah kehidupan mereka, membawa kemajuan serta kemanfaatan bagi diri sendiri, lingkungan, agama, bangsa, dan negara.
 
 w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000000" w:rsidRPr="00000000" w14:paraId="00000046">
 
@@ -616,7 +616,7 @@ w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000
 
 w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000000" w:rsidRPr="00000000" w14:paraId="00000133">
 
-w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000000" w:rsidRPr="00000000" w14:paraId="00000134">Demikian proposal kegiatan Lomba Baris Berbaris (LBB) Mu'allimin Tahun 2027 dengan tema "JIWA KSATRIA, DERAP GEMILANG." ini kami susun dengan seksama dan penuh harapan. Proposal ini kami ajukan sebagai landasan konseptual dan operasional untuk menyelenggarakan sebuah ajang yang tidak hanya bertujuan sebagai kompetisi ketangkasan baris-berbaris, tetapi lebih dari itu, sebagai wahana strategis untuk menempa karakter, menumbuhkan jiwa kepemimpinan, meningkatkan kedisiplinan, serta mempererat tali silaturahmi antar pelajar tingkat SD/MI dan SMP/MTs se-Daerah Istimewa Yogyakarta.
+w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000000" w:rsidRPr="00000000" w14:paraId="00000134">Demikian proposal kegiatan Lomba Baris Berbaris (LBB) Mu'allimin Tahun 2027 dengan tema "SEMANGAT SEBAGAI KSATRIA, BERJUANG DENGAN GEMBIRA." ini kami susun dengan seksama dan penuh harapan. Proposal ini kami ajukan sebagai landasan konseptual dan operasional untuk menyelenggarakan sebuah ajang yang tidak hanya bertujuan sebagai kompetisi ketangkasan baris-berbaris, tetapi lebih dari itu, sebagai wahana strategis untuk menempa karakter, menumbuhkan jiwa kepemimpinan, meningkatkan kedisiplinan, serta mempererat tali silaturahmi antar pelajar tingkat SD/MI dan SMP/MTs se-Daerah Istimewa Yogyakarta.
 
 w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000000" w:rsidRPr="00000000" w14:paraId="00000135">
 
@@ -646,7 +646,7 @@ w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000
 
 w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000000" w:rsidRPr="00000000" w14:paraId="00000142">JADWAL KEGIATAN (TENTATIF)
 
-w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000000" w:rsidRPr="00000000" w14:paraId="00000143">LOMBA BARIS BERBARIS (LBB) MU’ALLIMIN TAHUN 2027“JIWA KSATRIA, DERAP GEMILANG”
+w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000000" w:rsidRPr="00000000" w14:paraId="00000143">LOMBA BARIS BERBARIS (LBB) MU’ALLIMIN TAHUN 2027“SEMANGAT SEBAGAI KSATRIA, BERJUANG DENGAN GEMBIRA”
 
 w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000000" w:rsidRPr="00000000" w14:paraId="00000144">
 
@@ -668,7 +668,7 @@ w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000
 
 w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000000" w:rsidRPr="00000000" w14:paraId="00000150">• Pembentukan panitia lengkap (Ketua, Sekretaris, Bendahara, Acara, Lapangan, Juri, Perlengkapan, DDD, LO, Konsumsi, Medis, Keamanan).
 
-w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000000" w:rsidRPr="00000000" w14:paraId="00000151">• Penetapan tema: "JIWA KSATRIA, DERAP GEMILANG" & tagline lomba.
+w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000000" w:rsidRPr="00000000" w14:paraId="00000151">• Penetapan tema: "SEMANGAT SEBAGAI KSATRIA, BERJUANG DENGAN GEMBIRA" & tagline lomba.
 
 w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000000" w:rsidRPr="00000000" w14:paraId="00000152">• Pembuatan draf awal Juklak/Juknis PBB mengacu Perpang TNI No. 58 & 57 Tahun 2018 serta Perpang TNI No. 45 Tahun 2014 (materi baku PBB dasar, gerakan berjalan, dan variasi-formasi).
 
@@ -1298,7 +1298,7 @@ w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000
 
 w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000000" w:rsidRPr="00000000" w14:paraId="000002A3">RENCANA ANGGARAN BIAYA (RAB)
 
-w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000000" w:rsidRPr="00000000" w14:paraId="000002A4">LOMBA BARIS BERBARIS (LBB) MU’ALLIMIN TAHUN 2027“JIWA KSATRIA, DERAP GEMILANG”
+w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000000" w:rsidRPr="00000000" w14:paraId="000002A4">LOMBA BARIS BERBARIS (LBB) MU’ALLIMIN TAHUN 2027“SEMANGAT SEBAGAI KSATRIA, BERJUANG DENGAN GEMBIRA”
 
 w:rsidR="00000000" w:rsidDel="00000000" w:rsidP="00000000" w:rsidRDefault="00000000" w:rsidRPr="00000000" w14:paraId="000002A5">
 
