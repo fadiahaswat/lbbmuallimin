@@ -92,16 +92,16 @@ export default function TechnicalMeetingView() {
     <SimpaskorSidebarLayout
       activeMenu="tm"
       title="Technical Meeting & Undian Tampil"
-      subtitle="Manajemen pengundian nomor urut tampil peleton & berita acara TM resmi"
+      subtitle="Manajemen pengundian nomor urut tampil peleton & slot waktu uji coba lapangan"
       rightActions={
         <div className="flex items-center gap-2">
           <button
             onClick={handlePrintBeritaAcaraTM}
             className="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm cursor-pointer"
-            title="Cetak Berita Acara Hasil Pengundian TM"
+            title="Cetak Rekap Hasil Pengundian TM"
           >
             <Printer className="w-4 h-4" />
-            <span className="hidden sm:inline">Cetak Berita Acara</span>
+            <span className="hidden sm:inline">Cetak Rekap Undian</span>
           </button>
         </div>
       }

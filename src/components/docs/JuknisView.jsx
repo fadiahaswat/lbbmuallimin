@@ -48,7 +48,7 @@ export default function JuknisView() {
     };
   });
 
-  // 24 Gerakan Resmi SMP/MTs LBB Mu'allimin 2027 (MATERI SMP LBB MUALLIMIN 2027.docx)
+  // 26 Gerakan Resmi SMP/MTs LBB Mu'allimin 2027 (MATERI SMP LBB MUALLIMIN 2027.docx)
   const pbbMateriSMP = MATERIALS.SMP.map((name, idx) => {
     let category = 'Di Tempat';
     const lower = name.toLowerCase();
@@ -68,7 +68,7 @@ export default function JuknisView() {
       no: idx + 1,
       name,
       category,
-      isSubstitutionPoint: idx === 16 // antara no 17 & 18
+      isSubstitutionPoint: idx === 16 // antara no 17 (Berhimpun) & 18 (Berkumpul Bersaf)
     };
   });
 
@@ -145,7 +145,7 @@ export default function JuknisView() {
               {selectedJenjang === 'SD' ? 'Maksimal 10 Menit' : 'Maksimal 13 Menit'}
             </span>
             <p className="text-[11px] text-slate-500">
-              {selectedJenjang === 'SD' ? 'Peluit Kuning menit ke-8, Merah menit ke-10.' : 'Peluit Kuning menit ke-11, Merah menit ke-13.'}
+              {selectedJenjang === 'SD' ? 'Peluit 1x panjang menit ke-8, 2x panjang menit ke-10.' : 'Peluit 1x panjang menit ke-11, 2x panjang menit ke-13.'}
             </p>
           </div>
 
@@ -184,7 +184,7 @@ export default function JuknisView() {
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                Tingkat SMP / MTs (24 Gerakan Resmi)
+                Tingkat SMP / MTs (26 Gerakan Resmi)
               </button>
             </div>
 

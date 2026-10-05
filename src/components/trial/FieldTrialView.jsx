@@ -95,7 +95,7 @@ export default function FieldTrialView() {
             <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-4 sm:p-5 shrink-0 space-y-2.5">
               <div className="flex items-center gap-2 text-xs font-bold text-emerald-300">
                 <Calendar className="w-4 h-4" />
-                <span>{EVENT.FIELD_TRIAL_FULL_DATE || 'Minggu, 17 Januari 2027'}</span>
+                <span>{EVENT.FIELD_TRIAL_FULL_DATE || 'Sabtu, 16 Januari 2027'}</span>
               </div>
               <div className="flex items-center gap-2 text-xs text-slate-200">
                 <Clock className="w-4 h-4 text-emerald-400" />

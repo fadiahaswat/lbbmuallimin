@@ -106,9 +106,9 @@ export const EVENT = {
     TECHNICAL_MEETING_MAPS_URL: "https://maps.app.goo.gl/8tSQHpribqPXTSA79",
 
     /** Uji Coba Lapangan */
-    FIELD_TRIAL_DATE: '17 Januari 2027',
-    FIELD_TRIAL_FULL_DATE: 'Minggu, 17 Januari 2027',
-    FIELD_TRIAL_TIME_RANGE: '08.00 \u2013 13.30 WIB',
+    FIELD_TRIAL_DATE: '16 Januari 2027',
+    FIELD_TRIAL_FULL_DATE: 'Sabtu, 16 Januari 2027',
+    FIELD_TRIAL_TIME_RANGE: '07.00 WIB \u2013 Selesai',
 
     /** Hari & tanggal hari-H */
     COMPETITION_DATE: 'Sabtu, 24 Januari 2027',
@@ -535,7 +535,7 @@ export function getScaleTemplateForMaterial(materiText) {
         return 'BERPINDAH';
     }
     if (
-        lower.includes('maju jalan') ||
+        lower.includes('maju') ||
         lower.includes('langkah tegap') ||
         lower.includes('hormat kanan') ||
         lower.includes('belok kanan') ||
@@ -564,13 +564,14 @@ export const PENALTIES = [
     { label: 'Tidak Hadir di DP 1 (3x Pemanggilan @ 2 mnt)',   value: 'Urutan Paling Akhir & -100 Poin' },
     { label: 'Jumlah Personel Kurang (< 22 orang di arena)',   value: '-75 Poin' },
     { label: 'Kelebihan Durasi Waktu Tampil (per 1–30 detik)', value: '-50 Poin' },
-    { label: 'Injak / Keluar Garis Arena atau Kotak Danton',   value: '-50 Poin / kejadian (Semaphore Merah)' },
+    { label: 'Pelanggaran Garis Arena / Kotak Danton',         value: '-50 Poin / kejadian (Asas Garis sebagai Garis)' },
     { label: 'Kelebihan Gerakan Penyesuaian (> 3 kali)',       value: '-25 Poin / gerakan tambahan' },
+    { label: 'Gerakan Terlewat / Tidak Urut',                  value: 'Nilai Minimal / Nilai 0' },
+    { label: 'Peleton Hafalan (Danton Salah Aba-Aba)',         value: 'Nilai 0 pada Gerakan & Potong Nilai Danton' },
+    { label: 'Gerakan Berangkai Terputus',                     value: 'Nilai Minimal' },
     { label: 'Atribut Terlepas / Terjatuh di Arena',           value: '0 Poin (TIDAK DIKENAKAN PENALTI)' },
     { label: 'Ruang Basecamp Ditinggalkan Kotor / Berantakan', value: '-50 Poin' },
     { label: 'Kerusakan / Kehilangan Aset Ruang Basecamp',     value: 'Ganti Rugi + Denda Rp 500.000 (KTP Ditahan)' },
-    { label: 'Gerakan Terlewat / Tidak Urut',                  value: 'Nilai Minimal / Nilai 0' },
-    { label: 'Peleton Hafalan (Danton Salah Aba-Aba)',         value: 'Nilai 0 pada Gerakan & Potong Nilai Danton' },
 ];
 
 // ---------------------------------------------------------------------------
@@ -631,9 +632,9 @@ export const MATERIALS = {
     ],
     SMP: [
         'Penghormatan Dewan Juri(Aba-aba Pelaksanaan Waktu Dimulai) \u2013 Laporan Pembuka',
-        'Hadap Kanan \u2013 Langkah Biasa(Dari Posisi Berhenti)',
-        'Melintang Kanan(Berjalan ke Berjalan) \u2013 Langkah Biasa \u2013 Balik Kanan Henti',
-        'Jalan Di Tempat \u2013 Langkah Tegap \u2013 Haluan Kanan(Berjalan ke Berjalan) \u2013 Langkah Biasa \u2013 Henti)',
+        'Hadap Kanan Maju(Dari Posisi Berhenti)',
+        'Melintang Kanan(Berjalan ke Berhenti) \u2013 Balik Kanan Henti',
+        'Langkah Tegap \u2013 Haluan Kanan(Berjalan ke Berjalan) \u2013 Langkah Biasa \u2013 Henti',
         'Hadap Kiri Maju(Dari Posisi Berhenti) \u2013 Tiap-tiap Banjar 2X Belok Kanan \u2013 Balik Kanan Maju',
         'Ganti Langkah \u2013 2X Belok Kiri',
         'Lari(Dari Langkah Biasa) \u2013 2X Belok Kanan',
@@ -645,7 +646,9 @@ export const MATERIALS = {
         'Langkah Perlahan(Dari Langkah Biasa) \u2013 Henti',
         'Tiap-tiap Banjar 2X Belok Kanan Maju \u2013 Henti \u2013 3 Langkah Ke Kanan',
         'Balik Kanan Maju \u2013 Hadap Kiri Henti',
-        'Bubar \u2013 Berhimpun(Motivasi & Evaluasi Tema LBB) \u2013 Selesai \u2013 Berkumpul Bersaf',
+        'Bubar',
+        'Berhimpun(Motivasi & Evaluasi Tema LBB) \u2013 Selesai \u2013',
+        'Berkumpul Bersaf',
         'Jalan Di Tempat \u2013 Henti \u2013 Hadap Serong Kiri \u2013 3 Langkah Ke Depan',
         'Hadap Kanan \u2013 2 Langkah Ke Kanan \u2013 Balik Kanan',
         'Hadap Serong Kanan \u2013 Balik Kanan',
@@ -766,9 +769,8 @@ export const STAGING_CONFIG = {
     STAGES: [
         { id: 'waiting', label: 'Belum Check-in', shortLabel: 'Standby', color: 'slate', icon: 'Clock' },
         { id: 'basecamp', label: 'Basecamp Kontingen', shortLabel: 'Basecamp', color: 'teal', icon: 'Home' },
-        { id: 'dp1', label: 'DP 1: Inspeksi Personel & Foto', shortLabel: 'DP 1 (Inspeksi)', color: 'blue', icon: 'ClipboardCheck' },
-        { id: 'dp2', label: 'DP 2: Ruang Tunggu Steril', shortLabel: 'DP 2 (Tunggu)', color: 'amber', icon: 'ShieldCheck' },
-        { id: 'dp3', label: 'DP 3: Pintu Masuk Lapangan', shortLabel: 'DP 3', color: 'indigo', icon: 'DoorOpen' },
+        { id: 'dp1', label: 'DP 1: Pengecekan Personel & Verifikasi Fisik', shortLabel: 'DP 1 (Verifikasi)', color: 'blue', icon: 'ClipboardCheck' },
+        { id: 'dp2', label: 'DP 2: Ruang Tunggu Siap Tampil (Holding Area)', shortLabel: 'DP 2 (Siap Tampil)', color: 'amber', icon: 'ShieldCheck' },
         { id: 'arena', label: 'Kotak Lomba (Tampil)', shortLabel: 'Tampil', color: 'emerald', icon: 'Play' },
         { id: 'finished', label: 'Selesai Tampil', shortLabel: 'Selesai', color: 'purple', icon: 'CheckCircle2' },
         { id: 'checkout', label: 'Checkout Basecamp (Selesai Total)', shortLabel: 'Checkout', color: 'slate', icon: 'CheckCircle2' },
@@ -1080,7 +1082,7 @@ export const OFFICIAL_TIMELINE = [
         phase: 'E. Agenda Technical Meeting Peserta',
         period: 'Sabtu, 10 Januari 2027 (13.00 – 16.30 WIB)',
         title: 'Pelaksanaan Technical Meeting Peserta (TM Peserta)',
-        desc: 'Verifikasi berkas fisik asli 36 kontingen, pemaparan juknis oleh panitia & dewan juri, sesi tanya jawab teknis gerakan, pengundian resmi (lotting) nomor tampil, Berita Acara.',
+        desc: 'Verifikasi berkas fisik asli 36 kontingen, pemaparan juknis oleh panitia & dewan juri, sesi tanya jawab teknis gerakan, pengundian resmi (lotting) nomor tampil, konfirmasi slot uji coba lapangan.',
         pic: 'Panitia Inti, Divisi Acara, Divisi LO & Humas, Divisi Teknis Lapangan, Divisi Juri',
     },
     {
@@ -1102,7 +1104,7 @@ export const OFFICIAL_TIMELINE = [
     {
         id: 'tl-19',
         phase: 'F. Uji Coba Lapangan / Familiarisasi Medan',
-        period: '16 Januari 2027',
+        period: '15 Januari 2027',
         title: 'Setting Pos Transit & Sterilisasi Jalur Uji Coba',
         desc: 'Pemasangan tenda transit holding, penyiapan Posko Medis P3K lengkap dengan tandu & oksigen, galon air minum pinggir arena, rekayasa lalu lintas bus kontingen.',
         pic: 'Divisi Teknis Lapangan, Divisi Keamanan, Divisi Medis, Divisi Perlengkapan',
@@ -1110,7 +1112,7 @@ export const OFFICIAL_TIMELINE = [
     {
         id: 'tl-20',
         phase: 'F. Uji Coba Lapangan / Familiarisasi Medan',
-        period: 'Minggu, 17 Januari 2027 (08.00 – 13.30 WIB)',
+        period: 'Sabtu, 16 Januari 2027 (08.00 – 13.30 WIB)',
         title: 'Pelaksanaan Uji Coba Lapangan (Familiarisasi Medan)',
         desc: 'Uji coba serentak di 2 arena di Kampus Terpadu Sedayu: Arena 1 Basket (SD-01 s.d. SD-18) & Arena 2 Embung (SMP-01 s.d. SMP-18), adaptasi akustik vokal danton, cengkeraman sepatu, tanpa juri.',
         pic: 'Divisi Teknis Lapangan, Divisi Acara, Divisi LO & Humas, Divisi Medis, Divisi Keamanan',

@@ -72,10 +72,10 @@ export default function FinishedTeamsTable({
                   </td>
                   <td className="py-3 px-3 text-right">
                     <button
-                      onClick={() => handleMoveStage(team, 'dp3')}
+                      onClick={() => handleMoveStage(team, 'dp2')}
                       className="text-[10px] text-slate-500 hover:text-indigo-600 font-medium underline cursor-pointer"
                     >
-                      Kembalikan ke DP3
+                      Kembalikan ke DP2
                     </button>
                   </td>
                 </tr>

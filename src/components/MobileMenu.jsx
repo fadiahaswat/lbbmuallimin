@@ -261,7 +261,7 @@ export default function MobileMenu({ isOpen, onClose }) {
                   </>
                 )}
 
-                {/* 4. DAERAH PERSIAPAN (DP 1-3) OFFICER */}
+                {/* 4. DAERAH PERSIAPAN (DP 1-2) OFFICER */}
                 {(currentUser.role === 'dp' || currentUser.role === 'staging') && (
                   <button
                     type="button"
@@ -273,7 +273,7 @@ export default function MobileMenu({ isOpen, onClose }) {
                   >
                     <div className="flex items-center gap-2.5">
                       <Clock className="w-4 h-4 text-orange-400 shrink-0" />
-                      <span className="text-xs">Panel Daerah Persiapan (DP 1-3)</span>
+                      <span className="text-xs">Panel Daerah Persiapan (DP 1-2)</span>
                     </div>
                     <ArrowRight className="w-4 h-4 text-slate-500 group-hover:text-orange-400 transition-colors" />
                   </button>

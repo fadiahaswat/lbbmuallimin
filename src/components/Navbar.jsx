@@ -384,7 +384,7 @@ export default function Navbar({ onOpenMobileMenu }) {
                       </>
                     )}
 
-                    {/* 4. DAERAH PERSIAPAN (DP 1-3) OFFICER */}
+                    {/* 4. DAERAH PERSIAPAN (DP 1-2) OFFICER */}
                     {(currentUser.role === 'dp' || currentUser.role === 'staging') && (
                       <button
                         type="button"
@@ -396,7 +396,7 @@ export default function Navbar({ onOpenMobileMenu }) {
                       >
                         <div className="flex items-center gap-2.5">
                           <Clock className="w-4 h-4 text-orange-400 shrink-0" />
-                          <span>Panel Daerah Persiapan (DP 1-3)</span>
+                          <span>Panel Daerah Persiapan (DP 1-2)</span>
                         </div>
                         <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-orange-400 transition-colors" />
                       </button>

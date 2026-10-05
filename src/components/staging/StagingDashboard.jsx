@@ -165,7 +165,7 @@ export default function StagingDashboard() {
     <SimpaskorSidebarLayout
       activeMenu={currentActiveMenu}
       title="Staging Area & Lapangan"
-      subtitle="Manajemen Basecamp QR, Antrean DP 1-3 & Kotak Lomba"
+      subtitle="Manajemen Basecamp QR, Antrean DP 1 & DP 2, & Kotak Lomba"
     >
       <div className="space-y-6">
 

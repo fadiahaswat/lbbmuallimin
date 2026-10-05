@@ -44,7 +44,7 @@ export default function DaerahPersiapanView() {
   // Hanya Petugas Khusus Daerah Persiapan (dp@lbbmuallimin.com) dan Superadmin
   const canOperateDP = ['dp', 'staging', 'superadmin'].includes(userRole);
 
-  const [activeSubTab, setActiveSubTab] = useState('dp1'); // 'dp1' | 'dp2' | 'dp3'
+  const [activeSubTab, setActiveSubTab] = useState('dp1'); // 'dp1' | 'dp2'
   const [selectedTeamId, setSelectedTeamId] = useState(null);
 
   // Teams that have checked-in and are ready for DP
@@ -81,7 +81,7 @@ export default function DaerahPersiapanView() {
   const handlePassDP1 = () => {
     if (!canOperateDP || !activeTeam) return;
     passToDP2(activeTeam.id);
-    alert(`Peleton ${activeTeam.schoolName} resmi lolos DP 1 dan diteruskan ke Pos DP 2 (Warming Up)!`);
+    alert(`Peleton ${activeTeam.schoolName} resmi lolos DP 1 dan diteruskan ke Pos DP 2 (Ruang Tunggu Siap Tampil)!`);
     setActiveSubTab('dp2');
   };
 
@@ -98,8 +98,8 @@ export default function DaerahPersiapanView() {
   return (
     <SimpaskorSidebarLayout
       activeMenu="dp"
-      title="Daerah Persiapan (DP 1, 2, 3)"
-      subtitle="Inspeksi fisik 25 personel (Tablet), area pemanasan DP 2, & gate masuk arena DP 3"
+      title="Daerah Persiapan (DP 1 & DP 2)"
+      subtitle="Inspeksi fisik 25 personel (Tablet), ruang tunggu siap tampil, & stopwatch arena"
     >
       <div className="space-y-6">
 
@@ -117,7 +117,7 @@ export default function DaerahPersiapanView() {
                 Daerah Persiapan & Verifikasi Lapangan
               </h1>
               <p className="text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed">
-                Pemeriksaan ketat kesesuaian fisik 25 personel peleton sebelum tampil, pemanasan warming up di DP 2, dan sinkronisasi timer digital lapangan di DP 3.
+                Pemeriksaan ketat kesesuaian fisik 25 personel peleton di DP 1, ruang tunggu siap tampil di DP 2, dan sinkronisasi timer digital saat masuk kotak arena.
               </p>
             </div>
 
@@ -126,29 +126,20 @@ export default function DaerahPersiapanView() {
               <button
                 type="button"
                 onClick={() => setActiveSubTab('dp1')}
-                className={`px-3.5 py-2 rounded-xl text-xs font-black transition-all cursor-pointer ${
+                className={`px-4 py-2 rounded-xl text-xs font-black transition-all cursor-pointer ${
                   activeSubTab === 'dp1' ? 'bg-blue-600 text-white shadow-md' : 'text-slate-300 hover:text-white'
                 }`}
               >
-                1. DP 1 (Inspeksi)
+                1. DP 1 (Inspeksi & Verifikasi)
               </button>
               <button
                 type="button"
                 onClick={() => setActiveSubTab('dp2')}
-                className={`px-3.5 py-2 rounded-xl text-xs font-black transition-all cursor-pointer ${
-                  activeSubTab === 'dp2' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-300 hover:text-white'
+                className={`px-4 py-2 rounded-xl text-xs font-black transition-all cursor-pointer ${
+                  activeSubTab === 'dp2' ? 'bg-emerald-600 text-white shadow-md' : 'text-slate-300 hover:text-white'
                 }`}
               >
-                2. DP 2 (Warming Up)
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveSubTab('dp3')}
-                className={`px-3.5 py-2 rounded-xl text-xs font-black transition-all cursor-pointer ${
-                  activeSubTab === 'dp3' ? 'bg-emerald-600 text-white shadow-md' : 'text-slate-300 hover:text-white'
-                }`}
-              >
-                3. DP 3 (Gate & Timer)
+                2. DP 2 (Siap Tampil & Gate Arena)
               </button>
             </div>
           </div>
@@ -282,24 +273,24 @@ export default function DaerahPersiapanView() {
           </div>
         )}
 
-        {/* SUB-VIEW 2: DP 2 (WARMING UP / PEMANASAN) */}
+        {/* SUB-VIEW 2: DP 2 (RUANG TUNGGU SIAP TAMPIL & GATE ARENA) */}
         {activeSubTab === 'dp2' && (
           <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-6 animate-in fade-in">
             <div className="flex items-center gap-3 pb-4 border-b border-slate-100">
-              <div className="w-10 h-10 rounded-2xl bg-indigo-50 border border-indigo-200 text-indigo-700 flex items-center justify-center font-bold">
-                <Timer className="w-5 h-5" />
+              <div className="w-10 h-10 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-700 flex items-center justify-center font-bold">
+                <DoorOpen className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="text-base font-black text-slate-900 uppercase">Pos DP 2: Area Pemanasan & Warming Up</h3>
-                <p className="text-xs text-slate-500">Alokasi waktu pemanasan maksimal 10 menit sebelum masuk pintu DP 3</p>
+                <h3 className="text-base font-black text-slate-900 uppercase">Pos DP 2: Ruang Tunggu Siap Tampil & Gate Arena</h3>
+                <p className="text-xs text-slate-500">Holding area steril, pemanasan singkat, & sinkronisasi pintu masuk stopwatch arena</p>
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
-                <span className="text-[10px] font-black uppercase text-indigo-700 tracking-wider block">Peleton Saat Ini di DP 2:</span>
+                <span className="text-[10px] font-black uppercase text-emerald-700 tracking-wider block">Peleton Saat Ini di DP 2:</span>
                 <div className="flex items-center gap-3">
-                  <span className="w-10 h-10 rounded-xl bg-indigo-600 text-white font-mono font-black text-base flex items-center justify-center">
+                  <span className="w-10 h-10 rounded-xl bg-emerald-600 text-white font-mono font-black text-base flex items-center justify-center">
                     {activeTeam?.lotNumber ? String(activeTeam.lotNumber).padStart(2, '0') : '#'}
                   </span>
                   <div>
@@ -308,47 +299,40 @@ export default function DaerahPersiapanView() {
                   </div>
                 </div>
                 <div className="p-3 bg-white rounded-xl border border-slate-200 text-xs text-slate-600">
-                  ⚠️ Peleton diimbau tidak bersorak keras agar tidak mengganggu dewan juri di arena utama.
+                  ⚠️ Personel telah lolos verifikasi DP 1. Jaga ketertiban agar tidak mengganggu penilaian dewan juri di arena utama.
                 </div>
               </div>
 
-              <div className="p-5 rounded-2xl bg-indigo-50/60 border border-indigo-200 flex flex-col justify-between space-y-4">
+              <div className="p-5 rounded-2xl bg-emerald-50/60 border border-emerald-200 flex flex-col justify-between space-y-4">
                 <div>
-                  <span className="text-xs font-black uppercase text-indigo-900 block">Kesiapan Masuk Arena</span>
+                  <span className="text-xs font-black uppercase text-emerald-900 block">Mobilisasi Masuk Arena</span>
                   <p className="text-xs text-slate-600 mt-1">
-                    Setelah pemanasan selesai, arahkan pasukan bergerak menuju Pos DP 3 (Gate Pintu Masuk Lapangan).
+                    Saat arena steril dan juri siap, instruksikan pasukan langkah tegap masuk kotak arena lomba dan mulai timer.
                   </p>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => setActiveSubTab('dp3')}
-                  className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-black text-xs uppercase tracking-wider rounded-xl shadow-md transition-all cursor-pointer flex items-center justify-center gap-2"
-                >
-                  <span>Lanjutkan ke Gate DP 3</span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* SUB-VIEW 3: DP 3 (GATE PINTU ARENA & TIMER LAPANGAN) */}
-        {activeSubTab === 'dp3' && (
-          <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-6 animate-in fade-in">
-            <div className="flex items-center gap-3 pb-4 border-b border-slate-100">
-              <div className="w-10 h-10 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-700 flex items-center justify-center font-bold">
-                <DoorOpen className="w-5 h-5" />
-              </div>
-              <div>
-                <h3 className="text-base font-black text-slate-900 uppercase">Pos DP 3: Gate Pintu Masuk & Stopwatch Arena</h3>
-                <p className="text-xs text-slate-500">Peleton bersiap langkah tegap masuk saat aba-aba pos dimulai</p>
+                {canOperateDP && activeTeam && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (updateTeamStaging) {
+                        updateTeamStaging(activeTeam.id, 'arena');
+                      }
+                      startFieldTimer(activeTeam.id);
+                      alert(`Peleton ${activeTeam.schoolName} resmi masuk ke Arena Lomba! Stopwatch pertandingan dimulai.`);
+                    }}
+                    className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs uppercase tracking-wider rounded-xl shadow-md transition-all cursor-pointer flex items-center justify-center gap-2"
+                  >
+                    <Play className="w-4 h-4 fill-current" />
+                    <span>Mulai Tampil (Masuk Arena)</span>
+                  </button>
+                )}
               </div>
             </div>
 
             {/* Stopwatch Arena Card */}
             <div className="bg-slate-950 text-white rounded-3xl p-6 sm:p-8 text-center space-y-4 shadow-xl border border-slate-800">
               <span className="text-[10px] font-black uppercase tracking-widest text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
-                Stopwatch Pertandingan Terpadu
+                Stopwatch Pertandingan Terpadu (Timekeeper)
               </span>
 
               <div className={`text-5xl sm:text-7xl font-mono font-black tracking-tight ${
@@ -358,13 +342,13 @@ export default function DaerahPersiapanView() {
               </div>
 
               <p className="text-xs text-slate-400">
-                Batas Waktu: {activeTeam?.jenjang === 'SD' ? '10 Menit (SD/MI)' : '13 Menit (SMP/MTs)'}
-                {isOvertime && <span className="text-red-400 font-bold block mt-1">⚠️ Melewati batas waktu resmi! Sanksi penalti berlaku.</span>}
+                Batas Waktu: {activeTeam?.jenjang === 'SD' ? '10 Menit (SD/MI) • Peluit 1x pjg m-8, 2x pjg m-10' : '13 Menit (SMP/MTs) • Peluit 1x pjg m-11, 2x pjg m-13'}
+                {isOvertime && <span className="text-red-400 font-bold block mt-1">⚠️ Melewati batas waktu resmi! Sanksi penalti berlaku (-50 poin / 1-30 detik).</span>}
               </p>
 
               {/* Stopwatch Controls */}
               {canOperateDP && (
-                <div className="flex items-center justify-center gap-3 pt-2">
+                <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
                   {!fieldTimer.isRunning ? (
                     <button
                       type="button"
@@ -398,6 +382,9 @@ export default function DaerahPersiapanView() {
                     type="button"
                     onClick={() => {
                       stopAndSaveFieldTimer(activeTeam?.id);
+                      if (updateTeamStaging && activeTeam) {
+                        updateTeamStaging(activeTeam.id, 'finished');
+                      }
                       alert(`Waktu tampil ${activeTeam?.schoolName} (${formatTimer(fieldTimer.elapsedSeconds)}) berhasil disimpan ke rekap nilai!`);
                     }}
                     className="px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white font-black text-xs uppercase tracking-wider rounded-xl transition-all shadow-lg shadow-blue-950 flex items-center gap-2 cursor-pointer active:scale-95"

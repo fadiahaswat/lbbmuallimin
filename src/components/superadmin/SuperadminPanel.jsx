@@ -62,9 +62,9 @@ export default function SuperadminPanel() {
     technicalMeetingTime: '13.00 WIB – Selesai',
     technicalMeetingFullDate: 'Sabtu, 10 Januari 2027',
     technicalMeetingVenue: "Kampus Induk Madrasah Mu'allimin Muhammadiyah Yogyakarta, Jalan Letjen S. Parman No. 68, Wirobrajan, Kota Yogyakarta, Daerah Istimewa Yogyakarta.",
-    fieldTrialDate: '17 Januari 2027',
+    fieldTrialDate: '16 Januari 2027',
     fieldTrialTime: '08.00 – 13.30 WIB',
-    fieldTrialFullDate: 'Minggu, 17 Januari 2027',
+    fieldTrialFullDate: 'Sabtu, 16 Januari 2027',
     competitionDate: 'Sabtu, 24 Januari 2027',
     competitionTimeRange: '06.00 WIB – 17.00 WIB',
   };
@@ -757,7 +757,7 @@ export default function SuperadminPanel() {
                       value={dateForm.fieldTrialDate}
                       onChange={e => handleDateChange('fieldTrialDate', e.target.value)}
                       className="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-lg focus:border-purple-600 outline-none"
-                      placeholder="17 Januari 2027"
+                      placeholder="16 Januari 2027"
                     />
                   </div>
                   <div>
@@ -767,7 +767,7 @@ export default function SuperadminPanel() {
                       value={dateForm.fieldTrialTime}
                       onChange={e => handleDateChange('fieldTrialTime', e.target.value)}
                       className="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-lg focus:border-purple-600 outline-none"
-                      placeholder="07.00 – 14.00 WIB"
+                      placeholder="08.00 – 13.30 WIB"
                     />
                   </div>
                 </div>
@@ -778,7 +778,7 @@ export default function SuperadminPanel() {
                     value={dateForm.fieldTrialFullDate}
                     onChange={e => handleDateChange('fieldTrialFullDate', e.target.value)}
                     className="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-lg focus:border-purple-600 outline-none"
-                    placeholder="Sabtu, 17 Januari 2027"
+                    placeholder="Sabtu, 16 Januari 2027"
                   />
                 </div>
               </div>

@@ -71,7 +71,7 @@ export default function Hero() {
     },
     {
       label: 'Uji Coba Lapangan',
-      date: EVENT.FIELD_TRIAL_FULL_DATE || EVENT.FIELD_TRIAL_DATE, // "Minggu, 17 Januari 2027"
+      date: EVENT.FIELD_TRIAL_FULL_DATE || EVENT.FIELD_TRIAL_DATE, // "Sabtu, 16 Januari 2027"
       dotColor: 'bg-emerald-400',
       pingColor: 'bg-emerald-400',
       textColor: 'text-emerald-300',

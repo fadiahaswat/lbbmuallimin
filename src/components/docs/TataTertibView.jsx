@@ -24,18 +24,18 @@ export default function TataTertibView() {
   // Sanksi & Penalti Resmi LBB Mu'allimin 2027 (Bab G Juknis Lapangan & Pasal 6, 7, 8, 9, 14 Tata Tertib)
   const penaltiesList = [
     {
-      violation: 'Tidak Mengikuti Apel Besar / Upacara Pembukaan (Peleton No. 1–5)',
+      violation: 'Tidak Mengikuti Upacara Pembukaan (Peleton No. 1–5)',
       points: 150,
       pointsDisplay: '-150 Poin',
-      rule: 'Pasal 6 Ayat 3 / Bab G.1.a',
-      desc: 'Peleton nomor urut 1 sampai 5 yang tidak hadir lengkap (1 komandan + 15 anggota) saat upacara pembukaan resmi di Minisoccer.',
+      rule: 'Bab G.1 Juknis / Pasal 6.3 Tatib',
+      desc: 'Peleton nomor urut 1 sampai 5 (SD-01 s.d. SD-05 dan SMP-01 s.d. SMP-05) yang tidak hadir lengkap (1 komandan + 15 anggota) saat upacara pembukaan resmi.',
       type: 'Disiplin Upacara',
     },
     {
-      violation: 'Keterlambatan Upacara Pembukaan',
+      violation: 'Keterlambatan Hadir Upacara Pembukaan',
       points: 50,
       pointsDisplay: '-50 Poin / kelipatan 5 mnt',
-      rule: 'Bab G.1.b Juknis',
+      rule: 'Bab G.1 Juknis / Pasal 6.3 Tatib',
       desc: 'Keterlambatan hadir berbaris pada upacara pembukaan dihitung per kelipatan 5 menit.',
       type: 'Disiplin Upacara',
     },
@@ -43,47 +43,71 @@ export default function TataTertibView() {
       violation: 'Keterlambatan Memasuki Pos DP 1 (3x Pemanggilan Resmi)',
       points: 100,
       pointsDisplay: '-100 Poin & Urutan Akhir',
-      rule: 'Pasal 7 Ayat 3 / Bab G.1.c',
-      desc: 'Peleton belum hadir di DP 1 setelah 3 kali pemanggilan resmi lewat pengeras suara (jeda 2 menit antar panggilan). Urutan tampil digeser paling akhir. Jika tanpa konfirmasi = DISKUALIFIKASI.',
+      rule: 'Bab G.2 Juknis / Pasal 7.3 Tatib',
+      desc: 'Peleton tidak hadir di DP 1 setelah 3 kali pemanggilan resmi lewat pengeras suara (interval 2 menit). Urutan tampil digeser paling akhir. Jika tanpa konfirmasi = DISKUALIFIKASI.',
       type: 'Ketepatan Waktu',
     },
     {
-      violation: 'Kekurangan Personel Pasukan di Arena (< 22 Personel)',
+      violation: 'Kekurangan Personel Pasukan di Arena (< 22 Orang)',
       points: 75,
-      pointsDisplay: '-75 Poin',
-      rule: 'Bab G.1.d Juknis',
-      desc: 'Tampil dengan jumlah pasukan di arena kurang dari 22 orang (1 Danton + 21 Pasukan Inti).',
+      pointsDisplay: '-75 Poin Tetap',
+      rule: 'Bab G.3 Juknis',
+      desc: 'Peleton memasuki arena dengan jumlah personel kurang dari 22 orang (1 Danton + 21 Pasukan Inti).',
       type: 'Komposisi Personel',
     },
     {
       violation: 'Kelebihan Durasi Waktu Tampil di Arena',
       points: 50,
       pointsDisplay: '-50 Poin / rentang 1–30 dtk',
-      rule: 'Bab G.1.e Juknis',
-      desc: 'Kelebihan waktu tampil dihitung -50 poin per rentang kelipatan 1 s.d. 30 detik setelah peluit panjang akhir dibunyikan.',
+      rule: 'Bab G.4 Juknis',
+      desc: 'Melebihi durasi maksimal (10 menit SD, 13 menit SMP) dikenai penalti -50 poin untuk setiap rentang 1-30 detik kelebihan waktu dan kelipatannya.',
       type: 'Waktu Tampil',
     },
     {
-      violation: 'Menginjak atau Melewati Garis Batas Arena / Kotak Danton',
+      violation: 'Pelanggaran Garis Arena / Kotak Danton (Asas "Garis sebagai Garis")',
       points: 50,
       pointsDisplay: '-50 Poin / kejadian',
-      rule: 'Bab G.1.f Juknis',
-      desc: 'Setiap kali anggota peleton atau komandan menginjak/melewati garis batas lapangan putih (25x14m SD / 26x15m SMP) atau komandan keluar dari kotak Danton saat materi berjalan. Ditandai kibaran Semaphore Merah petugas garis.',
+      rule: 'Bab G.5 & Bab A.5 Juknis',
+      desc: 'Anggota peleton menginjak/keluar garis arena, atau Komandan menginjak/keluar Kotak Danton (1,5x1,5m) selama memimpin materi (dihitung kontak fisik/pijakan, ditandai kibasan bendera Hakim Garis).',
       type: 'Arena & Garis',
     },
     {
       violation: 'Kelebihan Gerakan Penyesuaian (> 3 Kali)',
       points: 25,
       pointsDisplay: '-25 Poin / gerakan',
-      rule: 'Bab G.1.g Juknis',
-      desc: 'Toleransi gerakan penyesuaian posisi peleton maksimal 3 kali selama tampil. Setiap gerakan penyesuaian ke-4 dan seterusnya dikenakan penalti.',
+      rule: 'Bab G.6 Juknis',
+      desc: 'Gerakan penyesuaian (hanya hadap, balik, atau langkah terbatas) melebihi kuota toleransi maksimal 3 kali selama tampil di arena.',
+      type: 'Teknik Gerakan',
+    },
+    {
+      violation: 'Gerakan Terlewat / Tidak Urut',
+      points: 0,
+      pointsDisplay: 'Nilai Minimal / Nilai 0',
+      rule: 'Bab G.7 Juknis',
+      desc: 'Gerakan terlewat namun dilaksanakan di luar urutan diberi NILAI MINIMAL. Gerakan terlewat dan tidak dilaksanakan sama sekali diberi NILAI NOL (0).',
+      type: 'Teknis Materi',
+    },
+    {
+      violation: 'Peleton Hafalan (Gerakan Tidak Sesuai Aba-Aba Danton)',
+      points: 0,
+      pointsDisplay: 'Nilai 0 & Potong Nilai Danton',
+      rule: 'Bab G.8 Juknis',
+      desc: 'Komandan salah memberi aba-aba namun pasukan tetap bergerak benar berdasarkan hafalan. Diberi NILAI NOL (0) pada gerakan tersebut dan memotong nilai penguasaan materi danton.',
+      type: 'Teknis Aba-Aba',
+    },
+    {
+      violation: 'Gerakan Berangkai Terputus',
+      points: 0,
+      pointsDisplay: 'Nilai Minimal',
+      rule: 'Bab G.9 Juknis',
+      desc: 'Rangkaian materi bertanda hubung (-) yang diselingi jeda berhenti atau gerakan tambahan di luar ketentuan materi.',
       type: 'Teknik Gerakan',
     },
     {
       violation: 'Ruang Basecamp Ditinggalkan Kotor / Berantakan',
       points: 50,
       pointsDisplay: '-50 Poin',
-      rule: 'Pasal 14 Ayat 4 Tatib',
+      rule: 'Bab G.10 Juknis / Pasal 14.4 Tatib',
       desc: 'Ruang kelas transit basecamp ditinggalkan dalam kondisi kotor, berantakan, atau sampah tidak dipilah ke kantong organik & anorganik.',
       type: 'Kebersihan & Lingkungan',
     },
@@ -92,24 +116,16 @@ export default function TataTertibView() {
       points: 0,
       pointsDisplay: '0 Poin (TIDAK PENALTI)',
       rule: 'Bab E.3.i Juknis',
-      desc: 'Atribut topi, lencana, tanda pangkat, tali kur, dll. yang terlepas/jatuh TIDAK DIKENAKAN PENALTI (0 poin). Pasukan dilarang memungut atribut hingga seluruh materi selesai dan keluar arena.',
+      desc: 'Atribut topi/peci, dasi, pin, lencana, sabuk, sarung tangan, dll. yang terlepas/jatuh TIDAK DIKENAKAN PENALTI (0 poin). Pasukan dilarang memungut atribut hingga seluruh materi selesai dan keluar arena.',
       type: 'Kerapian Atribut',
     },
     {
       violation: 'Kerusakan Fisik atau Kehilangan Sarana-Prasarana Basecamp',
       points: 0,
-      pointsDisplay: 'Ganti Rugi + Rp 500.000',
+      pointsDisplay: 'Ganti Rugi + Denda Rp 500.000',
       rule: 'Pasal 14 Ayat 4 Tatib',
-      desc: 'Kerusakan meja, kursi, kaca, stopkontak, LCD proyektor: KTP jaminan DITAHAN, wajib ganti rugi fisik penuh + denda administratif perbaikan aset Rp 500.000.',
+      desc: 'Kerusakan meja, kursi, kaca jendela, stopkontak, LCD proyektor: KTP/SIM jaminan DITAHAN panitia, wajib ganti rugi fisik penuh + denda administratif perbaikan aset Rp 500.000.',
       type: 'Sanksi Aset & Fasilitas',
-    },
-    {
-      violation: 'Peleton Hafalan (Gerakan Tidak Sesuai Aba-Aba Danton)',
-      points: 0,
-      pointsDisplay: 'Nilai 0 pada Gerakan',
-      rule: 'Bab G.2 Juknis',
-      desc: 'Danton salah memberi aba-aba tetapi peleton tetap menjalankan gerakan materi yang benar (peleton bergerak berdasarkan hafalan, bukan aba-aba). Nilai gerakan peleton = 0 dan nilai penguasaan materi Danton dipotong.',
-      type: 'Teknis Aba-Aba',
     },
   ];
 
@@ -200,11 +216,11 @@ export default function TataTertibView() {
               </li>
               <li className="flex items-start gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 shrink-0 mt-1.5"></span>
-                <span>Mengikuti Apel Pembukaan bagi Peleton No. 1–5 (1 Danton + 15 Anggota Lengkap).</span>
+                <span>Mengikuti Upacara Pembukaan bagi Peleton No. 1–5 SD & SMP (1 Danton + 15 Anggota Lengkap berseragam tonti).</span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 shrink-0 mt-1.5"></span>
-                <span>Membersihkan basecamp, memilah sampah organik & anorganik, dan checkout maksimal pukul 18.00 WIB.</span>
+                <span>Membersihkan basecamp, memilah sampah organik & anorganik, dan checkout selambat-lambatnya 1 jam sebelum Upacara Penutupan (Pasal 14.5).</span>
               </li>
             </ul>
           </div>
