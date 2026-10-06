@@ -117,7 +117,7 @@ export const EVENT = {
     FIELD_TRIAL_TIME_RANGE: '07.00 WIB \u2013 Selesai',
 
     /** Hari & tanggal hari-H */
-    COMPETITION_DATE: 'Sabtu, 24 Januari 2027',
+    COMPETITION_DATE: 'Ahad, 24 Januari 2027',
 
     /** Rentang waktu hari-H */
     COMPETITION_TIME_RANGE: '06.00 WIB \u2013 17.00 WIB',
@@ -340,10 +340,17 @@ export const DOWNLOADS = [
 export const CONTACT = {
     EMAIL: 'lbb@tontimuallimin.com',
     EMAIL_HREF: 'mailto:lbb@tontimuallimin.com',
-    PHONE_DISPLAY: '0812-3009-3737',
+    PHONE_DISPLAY: '0819-4749-1505',
+
+    /** WhatsApp Helpdesk Resmi */
+    HELPDESK: {
+        NAME: "Admin Tonti Mu'allimin",
+        PHONE_DISPLAY: '0819-4749-1505',
+        WA_URL: 'https://wa.me/6281947491505',
+    },
 
     /** URL tombol WA mengambang (FAB) */
-    WA_FAB_URL: 'https://wa.me/6281230093737',
+    WA_FAB_URL: 'https://wa.me/6281947491505',
 
     /** Portal resmi informasi & pendaftaran */
     PORTAL_URL: 'https://lbb.tontimuallimin.com/',
@@ -352,10 +359,10 @@ export const CONTACT = {
     /** Daftar contact person panitia */
     PERSONS: [
         {
-            NAME: 'Kak Rusyda',
-            SHORT_NAME: 'Kak Rusyda',
-            PHONE_DISPLAY: '0812-3009-3737',
-            WA_URL: 'https://wa.me/6281230093737',
+            NAME: "Admin Tonti Mu'allimin",
+            SHORT_NAME: 'Helpdesk Resmi',
+            PHONE_DISPLAY: '0819-4749-1505',
+            WA_URL: 'https://wa.me/6281947491505',
         },
     ],
 };
@@ -364,18 +371,19 @@ export const CONTACT = {
 // SOCIAL – link & handle media sosial
 // ---------------------------------------------------------------------------
 export const SOCIAL = {
-    INSTAGRAM_URL: 'https://www.instagram.com/mualliminjogja/',
+    INSTAGRAM_URL: 'https://www.instagram.com/lbbmuin/',
+    INSTAGRAM_MUALLIMIN_URL: 'https://www.instagram.com/mualliminjogja/',
     YOUTUBE_URL: '#',
     TIKTOK_URL: 'https://www.tiktok.com/@tontimuallimin',
 
     /** Handle Instagram resmi event */
-    INSTAGRAM_HANDLE: '@mualliminjogja',
+    INSTAGRAM_HANDLE: '@lbbmuin',
 
     /** Handle TikTok resmi */
     TIKTOK_HANDLE: '@tontimuallimin',
 
     /** Teks gabungan handle yang ditampilkan di info section */
-    HANDLES_DISPLAY: '@mualliminjogja • @tontimuallimin',
+    HANDLES_DISPLAY: '@lbbmuin • @mualliminjogja • @tontimuallimin',
 };
 
 // ---------------------------------------------------------------------------
@@ -836,7 +844,7 @@ export const OFFICIAL_RAB = {
             items: [
                 { item: 'Honorarium 6 Dewan Juri (3 SD & 3 SMP)', volume: 6, unit: 'Orang', price: 350000, total: 2100000 },
                 { item: 'Uang Transportasi TM Juri (Sabtu, 7 November 2026)', volume: 6, unit: 'Orang', price: 50000, total: 300000 },
-                { item: 'Uang Transportasi Hari-H (Sabtu, 24 Januari 2027)', volume: 6, unit: 'Orang', price: 50000, total: 300000 },
+                { item: 'Uang Transportasi Hari-H (Ahad, 24 Januari 2027)', volume: 6, unit: 'Orang', price: 50000, total: 300000 },
                 { item: 'Cetak Formulir Rubrik Penilaian Resmi Juri (300 Lembar)', volume: 300, unit: 'Lembar', price: 300, total: 90000 },
                 { item: 'Cetak Piagam Penghargaan Dewan Juri', volume: 6, unit: 'Lembar', price: 5000, total: 30000 },
                 { item: 'Perlengkapan Juri (Papan Dada, Stopwatch, Peluit, ATK)', volume: 1, unit: 'Paket', price: 200000, total: 200000 },
@@ -1149,8 +1157,8 @@ export const OFFICIAL_TIMELINE = [
     },
     {
         id: "tl-24",
-        phase: "H. Tahap Pelaksanaan Perlombaan (Hari-H: Sabtu, 24 Januari 2027)",
-        period: "Sabtu, 24 Januari 2027 (Pukul 06.00 - 17.00 WIB)",
+        phase: "H. Tahap Pelaksanaan Perlombaan (Hari-H: Ahad, 24 Januari 2027)",
+        period: "Ahad, 24 Januari 2027 (Pukul 06.00 - 17.00 WIB)",
         title: "PELAKSANAAN RESMI HARI-H LBB MU'ALLIMIN 2027",
         desc: "06.00 - 06.45: Check-in registrasi kontingen & penempatan basecamp kelas. 06.45 - 07.00: Pengkondisian upacara di Mini Soccer & sarapan VIP 6 Dewan Juri di Perpustakaan ASM. 07.00 - 07.45: Upacara Pembukaan Resmi LBB Mu'allimin 2027. 07.45 - 08.15: Jeda kesiapan peleton awal & panggilan resmi DP 1 pukul 08.00 WIB. 08.15 - 11.30: Pelaksanaan Lomba Sesi I (No. 001 s.d. 013 di Arena 1 Basket & Arena 2 Embung). 11.30 - 12.30: ISHOMA Sholat Dhuhur di Masjid Hajah Yuliana & makan siang. 12.30 - 13.45: Pelaksanaan Lomba Sesi II (No. 014 s.d. 018 penutup). 13.45 - 14.45: Sidang Pleno Dewan Juri & Checkout Basecamp Peserta. 14.45 - 15.15: Upacara Penutupan Resmi. 15.15 - 16.00: Pengumuman Juara, Trophy & Uang Pembinaan Rp 9.600.000. 16.00 - 17.00: Masa Sanggah 60 menit, rilis nilai website & kontingen pulang.",
         pic: "Seluruh Panitia Pelaksana, Dewan Juri, Seluruh Kontingen",

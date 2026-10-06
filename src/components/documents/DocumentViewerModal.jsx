@@ -88,7 +88,7 @@ export default function DocumentViewerModal({ isOpen, onClose }) {
               Kampus Terpadu Madrasah Mu'allimin Muhammadiyah Yogyakarta • Dusun Bandut Lor, Argorejo, Sedayu, Bantul, DIY
             </p>
             <p className="text-[11px] font-sans text-slate-500">
-              Website: lbb.tontimuallimin.com • Email: lbb@tontimuallimin.com • WhatsApp: 0812-3009-3737
+              Website: lbb.tontimuallimin.com • Email: lbb@tontimuallimin.com • WhatsApp: 0819-4749-1505 (Admin Tonti Mu'allimin)
             </p>
           </div>
 
@@ -147,6 +147,18 @@ export default function DocumentViewerModal({ isOpen, onClose }) {
                 <p>1. Penilaian dilakukan oleh 6 Dewan Juri independen dan berkompeten dari unsur <strong>TNI, POLRI, dan PPI DIY</strong> (3 Juri Pos SD/MI & 3 Juri Pos SMP/MTs).</p>
                 <p>2. Unsur penilaian murni berpedoman pada Perpang TNI No. 57 & 58 Tahun 2018 meliputi: PBB Peleton (Kebenaran Teknik Gerakan & Kekompakan Peleton) serta Kepemimpinan Komandan Peleton (Danton).</p>
                 <p>3. Keputusan Dewan Juri bersifat <strong>mutlak dan tidak dapat diganggu gugat</strong>.</p>
+              </div>
+
+              <div className="space-y-2 pt-2">
+                <h4 className="font-black text-sm uppercase text-red-700">BAB V: PENUTUP (PUSAT LAYANAN DAN NARAHUBUNG RESMI)</h4>
+                <p>1. Petunjuk Teknis ini menjadi pedoman operasional resmi bagi seluruh panitia, dewan juri, dan peserta LBB Mu'allimin Tahun 2027.</p>
+                <p>2. Seluruh komunikasi, koordinasi, dan konfirmasi resmi pendaftaran maupun teknis lomba dilayani melalui:</p>
+                <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1.5 text-xs">
+                  <p>• <strong>WhatsApp Helpdesk Resmi:</strong> 0819-4749-1505 (Admin Tonti Mu'allimin)</p>
+                  <p>• <strong>Website Portal Pendaftaran:</strong> https://lbb.tontimuallimin.com</p>
+                  <p>• <strong>Email Resmi Panitia:</strong> lbb@tontimuallimin.com</p>
+                  <p>• <strong>Media Sosial Resmi:</strong> Instagram @lbbmuin | @mualliminjogja • TikTok @tontimuallimin</p>
+                </div>
               </div>
 
               <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-center justify-between text-xs">

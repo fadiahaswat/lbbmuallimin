@@ -26,7 +26,7 @@ export const INITIAL_SETTINGS = {
     fieldTrialDate: '16 Januari 2027',
     fieldTrialTime: '08.00 – 13.30 WIB',
     fieldTrialFullDate: 'Sabtu, 16 Januari 2027',
-    competitionDate: 'Sabtu, 24 Januari 2027',
+    competitionDate: 'Ahad, 24 Januari 2027',
     competitionTimeRange: '06.00 WIB – 17.00 WIB',
   },
 };

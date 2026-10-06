@@ -141,12 +141,12 @@ export default function Hero() {
               {/* Garis Pemisah Halus */}
               <div className="h-12 sm:h-16 w-px bg-gradient-to-b from-transparent via-white/30 to-transparent" />
 
-              {/* Logo Korps Tonti Mu'allimin */}
-              <div className="relative group transition-transform duration-300 hover:scale-105">
+              {/* Logo Korps Tonti Mu'allimin (sembunyi di mobile, tampil di tablet/desktop) */}
+              <div className="hidden sm:block relative group transition-transform duration-300 hover:scale-105">
                 <img
                   src={logoTonti}
                   alt="Logo Korps Tonti Mu'allimin"
-                  className="h-13 sm:h-16 md:h-18 w-auto object-contain drop-shadow-[0_6px_16px_rgba(0,0,0,0.5)]"
+                  className="h-12 md:h-14 w-auto object-contain drop-shadow-[0_6px_16px_rgba(0,0,0,0.5)]"
                   loading="eager"
                 />
               </div>

@@ -333,6 +333,39 @@ export default function JuknisView() {
           </div>
         </div>
 
+        {/* Bab V: Penutup, Pusat Layanan & Narahubung Resmi */}
+        <div className="bg-gradient-to-r from-red-900 to-slate-900 text-white rounded-3xl p-6 sm:p-7 border border-red-800/50 shadow-xl space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/10 pb-3">
+            <h3 className="text-sm sm:text-base font-black text-white uppercase tracking-wider flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse"></span>
+              BAB V: Penutup (Pusat Layanan dan Narahubung Resmi)
+            </h3>
+            <span className="text-[10px] font-bold text-red-300 uppercase tracking-widest bg-red-950/60 border border-red-500/30 px-3 py-1 rounded-full w-fit">
+              Official Helpdesk
+            </span>
+          </div>
+          <p className="text-xs text-slate-300 leading-relaxed">
+            Petunjuk Teknis ini merupakan pedoman operasional resmi yang mengikat bagi seluruh panitia, dewan juri, dan kontingen peserta LBB Mu'allimin Tahun 2027. Seluruh komunikasi dan koordinasi resmi dilayani melalui saluran helpdesk:
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 text-xs">
+            <div className="p-3 bg-white/5 border border-white/10 rounded-2xl">
+              <span className="text-[10px] text-slate-400 block font-bold uppercase tracking-wider mb-0.5">WhatsApp Helpdesk Resmi</span>
+              <span className="font-black text-emerald-400 text-sm">0819-4749-1505</span>
+              <span className="text-[10px] text-slate-400 block mt-0.5">(Admin Tonti Mu'allimin)</span>
+            </div>
+            <div className="p-3 bg-white/5 border border-white/10 rounded-2xl">
+              <span className="text-[10px] text-slate-400 block font-bold uppercase tracking-wider mb-0.5">Website Portal Pendaftaran</span>
+              <span className="font-bold text-white text-xs block truncate">https://lbb.tontimuallimin.com</span>
+              <span className="text-[10px] text-slate-400 block mt-0.5">Sistem Pendaftaran & Live Score</span>
+            </div>
+            <div className="p-3 bg-white/5 border border-white/10 rounded-2xl">
+              <span className="text-[10px] text-slate-400 block font-bold uppercase tracking-wider mb-0.5">Email & Media Sosial</span>
+              <span className="font-bold text-white text-xs block">lbb@tontimuallimin.com</span>
+              <span className="text-[10px] text-slate-400 block mt-0.5">Instagram: @lbbmuin | @mualliminjogja</span>
+            </div>
+          </div>
+        </div>
+
       </div>
     </SimpaskorSidebarLayout>
   );

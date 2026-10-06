@@ -36,7 +36,7 @@ export default function IdCardTab({ currentTeam }) {
         {/* Header Badge */}
         <div className="relative text-center border-b border-white/15 pb-4">
           <span className="text-[10px] font-black tracking-widest uppercase text-yellow-400 block">
-            LOMBA BARIS BERBARIS MU'ALLIMIN 2026
+            LOMBA BARIS BERBARIS MU'ALLIMIN 2027
           </span>
           <h3 className="text-xl sm:text-2xl font-black uppercase italic tracking-tight text-white mt-1">
             TIKET IDENTITAS PELETON

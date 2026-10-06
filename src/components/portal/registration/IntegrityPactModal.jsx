@@ -24,7 +24,7 @@ export default function IntegrityPactModal({
             <img src={logoImg} alt="Logo Tonti" className="h-9 w-auto filter drop-shadow-xs" />
             <div>
               <span className="text-[10px] font-black uppercase tracking-wider text-red-700 block">
-                Dokumen Resmi Digital LBB 2026
+                Dokumen Resmi Digital LBB 2027
               </span>
               <h3 className="text-base sm:text-lg font-black text-slate-900 uppercase italic">
                 Pakta Integritas & Keabsahan
@@ -61,7 +61,7 @@ export default function IntegrityPactModal({
             <li>Seluruh anggota peleton yang didaftarkan adalah siswa/siswi aktif dari sekolah bersangkutan yang dibuktikan dengan Kartu Pelajar sah.</li>
             <li>Tidak memanipulasi identitas, usia, jenjang sekolah, maupun data personel peleton.</li>
             <li>Menjunjung tinggi kehormatan korps, sportivitas luhur, dan integritas perlombaan baris berbaris.</li>
-            <li>Mentaati seluruh Petunjuk Teknis LBB Mu'allimin 2026 dan menerima keputusan Dewan Juri secara mutlak.</li>
+            <li>Mentaati seluruh Petunjuk Teknis LBB Mu'allimin 2027 dan menerima keputusan Dewan Juri secara mutlak.</li>
             <li>Bersedia menerima sanksi diskualifikasi apabila ditemukan pelanggaran terhadap butir-butir pakta ini.</li>
           </ol>
         </div>

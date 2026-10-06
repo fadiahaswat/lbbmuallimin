@@ -84,7 +84,7 @@ export default function DenahSection() {
     },
     {
       label: 'Lapak Kuliner & 1918 Mart',
-      desc: "Kompleks Math'am & Foodcourt",
+      desc: '1918 Foodcourt & Mart (Pusat Kuliner & Tenant)',
       icon: ShoppingBag,
       borderClass: 'border-orange-200 hover:border-orange-400',
       bgClass: 'bg-orange-50/50 hover:bg-orange-50',

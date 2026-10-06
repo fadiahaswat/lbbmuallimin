@@ -323,7 +323,7 @@ export default function TimelinePanitiaView() {
                 </button>
               </div>
               <div className="text-xs text-slate-500 font-semibold">
-                Sabtu, 24 Januari 2027 • 18 Peleton {matrixJenjang}
+                Ahad, 24 Januari 2027 • 18 Peleton {matrixJenjang}
               </div>
             </div>
 

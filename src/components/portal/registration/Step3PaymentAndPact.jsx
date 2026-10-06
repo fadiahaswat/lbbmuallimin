@@ -49,7 +49,7 @@ export default function Step3PaymentAndPact({
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <span className="text-[10px] font-black uppercase tracking-wider text-yellow-400 block">
-              Rekening Resmi Bendahara LBB Mu'allimin 2026
+              Rekening Resmi Bendahara LBB Mu'allimin 2027
             </span>
             <div className="flex items-center gap-2.5 mt-1.5 flex-wrap">
               <span className="text-sm font-bold text-white">{PAYMENT.BANK_NAME}:</span>
@@ -224,7 +224,7 @@ export default function Step3PaymentAndPact({
             />
             <span className="text-xs text-slate-700 leading-relaxed">
               Saya menyetujui seluruh ketentuan dalam{' '}
-              <strong className="text-slate-900">Petunjuk Teknis (Juknis) Resmi LBB Mu'allimin 2026</strong> dan bersedia mematuhi seluruh keputusan dewan juri yang bersifat mutlak serta tidak dapat diganggu gugat.
+              <strong className="text-slate-900">Petunjuk Teknis (Juknis) Resmi LBB Mu'allimin 2027</strong> dan bersedia mematuhi seluruh keputusan dewan juri yang bersifat mutlak serta tidak dapat diganggu gugat.
             </span>
           </label>
         </div>

@@ -45,13 +45,13 @@ export default function Rules() {
 
     return {
       intro: 'pendahuluan petunjuk teknis resmi lbb muallimin perpang tni 58 57 45 hormat kanan pbb ppm alur kronologis'.includes(query),
-      def: 'definisi istilah clear area dp 1 dp 2 holding area kotak danton 1.5 semaphore hakim garis gerakan penyesuaian dimensi basket embung 25x14 26x15 official pendukung'.includes(query),
+      def: 'definisi istilah clear area dp 1 dp 2 holding area kotak danton 1.5 bendera hakim garis gerakan penyesuaian dimensi basket embung 25x14 26x15 official pendukung'.includes(query),
       tm: 'technical meeting tm peserta aula wirobrajan 10 januari 2027 berkas fisik surat tugas kepala sekolah pakta integritas undian lotting sd 01 smp 01'.includes(query),
-      trial: 'uji coba lapangan familiarisasi medan sedayu 17 januari 2027 15 menit 10 menit efektif 5 menit transisi akustik vokal danton tekstur cengkeraman sepatu'.includes(query),
+      trial: 'uji coba lapangan familiarisasi medan sedayu 16 januari 2027 15 menit 10 menit efektif 5 menit transisi akustik vokal danton tekstur cengkeraman sepatu'.includes(query),
       reg: 'hari perlombaan daftar ulang check in 06.00 09.00 ktp jaminan nomor dada s2b1 kantong sampah terpilah sterilisasi upacara pembukaan nomor 1 5 15 anggota'.includes(query),
-      arena: 'alur tampil arena posisi center juri laporan pembuka penghormatan peluit 1 kali panjang 2 menit habis semaphore merah atribut terjatuh pergantian pemain cadangan'.includes(query),
+      arena: 'alur tampil arena posisi center juri laporan pembuka penghormatan peluit 1 kali panjang 2 menit habis bendera hakim garis atribut terjatuh pergantian pemain cadangan'.includes(query),
       score: 'sistem penilaian dewan juri tni polri ppi rasio 1 1 kebenaran gerak kekompakan 50 90 genap danton materi 35 suara 25 sikap 20 lapangan 20 juara umum poin 6 sanggah 60 menit'.includes(query),
-      penalty: 'sanksi pengurangan nilai penalti upacara 150 50 keterlambatan dp 1 100 diskualifikasi personel 75 waktu 50 garis semaphore 50 penyesuaian 25 atribut 0 kotor 50'.includes(query),
+      penalty: 'sanksi pengurangan nilai penalti upacara 150 50 keterlambatan dp 1 100 diskualifikasi personel 75 waktu 50 garis bendera 50 penyesuaian 25 atribut 0 kotor 50'.includes(query),
       force: 'keadaan kahar force majeure darurat bencana alam hujan lebat badai petir henti reset stopwatch'.includes(query),
       closing: 'penutup juknis kesepakatan mengikat sah panitia dewan juri'.includes(query),
     };
@@ -101,7 +101,7 @@ export default function Rules() {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Cari kata kunci juknis (contoh: penalti, kotak danton, semaphore, peluit, juri, sanggah)..."
+                placeholder="Cari kata kunci juknis (contoh: penalti, kotak danton, bendera, peluit, juri, sanggah)..."
                 className="w-full py-4 pr-12 text-slate-800 placeholder-slate-400 font-medium text-sm sm:text-base bg-transparent focus:outline-none"
               />
               {searchQuery && (
@@ -295,7 +295,16 @@ export default function Rules() {
                 {isAccordionOpen('reg') && (
                   <div className="bg-white border-t border-slate-100 p-6 text-slate-700 text-sm leading-relaxed space-y-4 animate-fade">
                     <ol className="list-decimal pl-5 space-y-2.5">
-                      <li><strong className="text-slate-900">Kedatangan dan Check-In Kontingen (06.00 – 09.00 WIB):</strong> Official menyerahkan 1 (satu) kartu identitas asli (KTP/SIM perwakilan kontingen) sebagai jaminan ketertiban serta kebersihan ruang basecamp; menerima Nomor Dada Peleton resmi (wajib disematkan pada dada sebelah kiri personel Penjuru Depan Tengah / Saf 2 Banjar 1 [S2B1]); menerima 3 ID Card resmi (1 Official & 2 Pendukung); serta menerima 2 (dua) kantong sampah terpilah (Organik & Anorganik). Peleton diarahkan LO menuju basecamp resmi. Registrasi ditutup tepat pukul 09.00 WIB.</li>
+                      <li><strong className="text-slate-900">Kedatangan dan Check-In Kontingen (06.00 – 09.00 WIB):</strong> Prosedur kedatangan dan daftar ulang kontingen di Meja Registrasi Resmi Kampus Terpadu Sedayu:
+                        <ul className="list-[lower-alpha] pl-5 mt-1.5 space-y-1">
+                          <li>Official menyerahkan 1 (satu) kartu identitas asli (KTP/SIM perwakilan kontingen) sebagai jaminan ketertiban serta kebersihan ruang basecamp.</li>
+                          <li>Official menerima fasilitas resmi kontingen: (1) Nomor Dada Peleton resmi; (2) Tanda Pengenal ID Card Resmi (1 Official & 2 Pendukung); (3) 1 (satu) dus Air Minum Kemasan (botol) per peleton; serta (4) 2 (dua) kantong sampah terpilah (Organik & Anorganik).</li>
+                          <li>Nomor dada peleton wajib disematkan pada dada sebelah kiri personel Penjuru Depan Tengah / Saf 2 Banjar 1 (S2B1).</li>
+                          <li>Peleton diarahkan dan dikawal oleh LO pendamping menuju ruang kelas basecamp resmi yang telah ditentukan panitia.</li>
+                          <li>Registrasi ditutup tepat pukul 09.00 WIB. Peleton yang tidak melakukan daftar ulang tidak diperkenankan mengikuti perlombaan.</li>
+                          <li>Regulasi Parkir Kendaraan Kontingen: (1) Bus / Kendaraan Besar Kontingen: Dilarang parkir di dalam area Kampus Terpadu Mu'allimin; bus hanya diperkenankan masuk untuk proses drop-off peserta serta perlengkapan di Drop Zone resmi, kemudian wajib segera menuju dan parkir di kantong parkir Lapangan Hibrida Argomulyo; (2) Kendaraan Roda 4 (Mobil) dan Roda 2 (Motor): Diparkirkan di kantong parkir internal Kampus Terpadu Sedayu sesuai arahan petugas, dan apabila kapasitas parkir internal telah penuh, arus kendaraan dialihkan menuju kantong parkir Lapangan Hibrida Argomulyo.</li>
+                        </ul>
+                      </li>
                       <li><strong className="text-slate-900">Sterilisasi Arena Perlombaan (06.45 WIB):</strong> Mulai pukul 06.45 WIB, seluruh arena perlombaan (Arena 1 & Arena 2 serta Lapangan Mini Soccer) ditutup dan disterilkan dari aktivitas umum, dan seluruh peserta upacara wajib telah berada di lokasi barisan upacara. Upacara pembukaan dimulai tepat pukul 07.00 WIB.</li>
                       <li><strong className="text-slate-900">Pelaksanaan Upacara Pembukaan Resmi (07.00 – 07.45 WIB):</strong> Peleton dengan nomor urut tampil 1 sampai dengan 5 (SD-01 s.d. SD-05 dan SMP-01 s.d. SMP-05) WAJIB mengikuti upacara pembukaan dengan komposisi 1 Komandan Peleton dan 15 Anggota (5 trio lengkap) mengenakan seragam tonti resmi lengkap. Pengecekan kehadiran dilakukan panitia 15 menit sebelum upacara. Peleton tidak hadir penalti -150 poin; terlambat penalti -50 poin per kelipatan 5 menit.</li>
                     </ol>
@@ -492,10 +501,20 @@ export default function Rules() {
                   <ChevronDown className={`text-slate-400 transition-transform duration-300 w-5 h-5 ${isAccordionOpen('closing') ? 'rotate-180' : ''}`} />
                 </button>
                 {isAccordionOpen('closing') && (
-                  <div className="bg-white border-t border-slate-100 p-6 text-slate-700 text-sm leading-relaxed space-y-3 animate-fade">
+                  <div className="bg-white border-t border-slate-100 p-6 text-slate-700 text-sm leading-relaxed space-y-4 animate-fade">
                     <p>
                       Petunjuk Teknis Lapangan ini menjadi pedoman operasional resmi bagi seluruh panitia, dewan juri, dan peserta LBB Mu'allimin Tahun 2027. Seluruh hal teknis tambahan yang disepakati bersama dalam forum Technical Meeting mengikat secara sah dan menjadi bagian tak terpisahkan dari juknis ini.
                     </p>
+                    <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+                      <span className="font-bold text-slate-900 block text-xs uppercase tracking-wider">
+                        Pusat Layanan dan Narahubung Resmi:
+                      </span>
+                      <ul className="text-xs space-y-1 text-slate-600">
+                        <li>• <strong className="text-slate-800">WhatsApp Helpdesk Resmi:</strong> 0819-4749-1505 (Admin Tonti Mu'allimin)</li>
+                        <li>• <strong className="text-slate-800">Website Portal:</strong> https://lbb.tontimuallimin.com</li>
+                        <li>• <strong className="text-slate-800">Email Resmi:</strong> lbb@tontimuallimin.com</li>
+                      </ul>
+                    </div>
                   </div>
                 )}
               </div>

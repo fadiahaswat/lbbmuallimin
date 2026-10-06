@@ -65,7 +65,7 @@ export default function SuperadminPanel() {
     fieldTrialDate: '16 Januari 2027',
     fieldTrialTime: '08.00 – 13.30 WIB',
     fieldTrialFullDate: 'Sabtu, 16 Januari 2027',
-    competitionDate: 'Sabtu, 24 Januari 2027',
+    competitionDate: 'Ahad, 24 Januari 2027',
     competitionTimeRange: '06.00 WIB – 17.00 WIB',
   };
 
@@ -801,7 +801,7 @@ export default function SuperadminPanel() {
                     value={dateForm.competitionDate}
                     onChange={e => handleDateChange('competitionDate', e.target.value)}
                     className="w-full px-3 py-2 text-xs font-bold text-slate-900 bg-white border border-slate-200 rounded-lg focus:border-purple-600 outline-none"
-                    placeholder="Sabtu, 24 Januari 2027"
+                    placeholder="Ahad, 24 Januari 2027"
                   />
                 </div>
                 <div>

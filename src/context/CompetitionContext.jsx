@@ -99,9 +99,20 @@ export function CompetitionProvider({ children }) {
       return {
         ...INITIAL_SETTINGS,
         ...parsed,
+        // Selalu pastikan jadwal master resmi mengacu ke INITIAL_SETTINGS / EVENT resmi
         eventDates: {
           ...INITIAL_SETTINGS.eventDates,
           ...(parsed.eventDates || {}),
+          // Override tanggal registrasi jika masih memuat teks lama
+          registrationStart: INITIAL_SETTINGS.eventDates.registrationStart,
+          registrationDeadline: INITIAL_SETTINGS.eventDates.registrationDeadline,
+          registrationRangeText: INITIAL_SETTINGS.eventDates.registrationRangeText,
+          verificationRangeText: INITIAL_SETTINGS.eventDates.verificationRangeText,
+          technicalMeetingDate: INITIAL_SETTINGS.eventDates.technicalMeetingDate,
+          technicalMeetingFullDate: INITIAL_SETTINGS.eventDates.technicalMeetingFullDate,
+          fieldTrialDate: INITIAL_SETTINGS.eventDates.fieldTrialDate,
+          fieldTrialFullDate: INITIAL_SETTINGS.eventDates.fieldTrialFullDate,
+          competitionDate: INITIAL_SETTINGS.eventDates.competitionDate,
         }
       };
     } catch {

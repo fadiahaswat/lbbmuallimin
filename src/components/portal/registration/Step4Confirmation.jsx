@@ -36,7 +36,7 @@ export default function Step4Confirmation({
           Pendaftaran Berhasil Dikirim!
         </h2>
         <p className="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed">
-          Data peleton <strong className="text-slate-900">{createdTeam.schoolName}</strong> beserta seluruh berkas dan Pakta Integritas Online telah masuk ke antrean verifikasi Sekretariat LBB Mu'allimin 2026.
+          Data peleton <strong className="text-slate-900">{createdTeam.schoolName}</strong> beserta seluruh berkas dan Pakta Integritas Online telah masuk ke antrean verifikasi Sekretariat LBB Mu'allimin 2027.
         </p>
       </div>
 
@@ -97,15 +97,15 @@ export default function Step4Confirmation({
           </div>
         </div>
         <a
-          href={`https://wa.me/6281230093737?text=${encodeURIComponent(
-            `Halo Kak Rusyda (Panitia LBB Mu'allimin 2026),\nSaya *${createdTeam.officialName || 'Official'}* dari *${createdTeam.schoolName}* ingin mengonfirmasi bahwa kami telah menyelesaikan pendaftaran online:\n\n• No. Registrasi: *${createdTeam.regCode}*\n• Asal Sekolah: *${createdTeam.schoolName}*\n• Jenjang / Kategori: *${createdTeam.jenjang} / ${createdTeam.teamType}*\n• Komandan: *${createdTeam.dantonName || '-'}*\n• No. WA Official: *${createdTeam.waNumber || '-'}*\n\nBerkas pendaftaran, bukti transfer, dan pakta integritas online sudah kami unggah di website. Mohon bantuan untuk verifikasi. Terima kasih!`
+          href={`https://wa.me/6281947491505?text=${encodeURIComponent(
+            `Halo Admin Tonti Mu'allimin (Panitia LBB Mu'allimin 2027),\nSaya *${createdTeam.officialName || 'Official'}* dari *${createdTeam.schoolName}* ingin mengonfirmasi bahwa kami telah menyelesaikan pendaftaran online:\n\n• No. Registrasi: *${createdTeam.regCode}*\n• Asal Sekolah: *${createdTeam.schoolName}*\n• Jenjang / Kategori: *${createdTeam.jenjang} / ${createdTeam.teamType}*\n• Komandan: *${createdTeam.dantonName || '-'}*\n• No. WA Official: *${createdTeam.waNumber || '-'}*\n\nBerkas pendaftaran, bukti transfer, dan pakta integritas online sudah kami unggah di website. Mohon bantuan untuk verifikasi. Terima kasih!`
           )}`}
           target="_blank"
           rel="noopener noreferrer"
           className="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-black rounded-xl text-xs uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2"
         >
           <MessageCircle className="w-4 h-4 fill-white/20" />
-          <span>Kirim WhatsApp ke Kak Rusyda (0812-3009-3737)</span>
+          <span>Kirim WhatsApp Konfirmasi Panitia (0819-4749-1505)</span>
           <ExternalLink className="w-3.5 h-3.5" />
         </a>
       </div>

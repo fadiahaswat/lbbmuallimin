@@ -86,7 +86,7 @@ const FAQ_DATA = [
     category: 'Teknis',
     icon: 'Layers',
     q: 'Berapa komposisi anggota pasukan di setiap peleton?',
-    a: 'Maksimal 25 orang per peleton: terdiri dari 1 Komandan Peleton (Danton), 21 Pasukan Utama (formasi 3 banjar × 7 bersyaf), dan 3 Pasukan Cadangan. Minimal pasukan yang tampil di lapangan adalah 22 orang (1 Danton + 21 Pasukan). Tim Official dibatasi maksimal 2 Pelatih/Pembina dan 1 Dokumentasi.',
+    a: 'Maksimal 25 orang per peleton: terdiri dari 1 Komandan Peleton (Danton), 21 Pasukan Utama (formasi 3 saf × 7 banjar), dan 3 Pasukan Cadangan. Minimal pasukan yang tampil di lapangan adalah 22 orang (1 Danton + 21 Pasukan). Tim pendamping dibatasi maksimal 1 Official (Pelatih/Pembina) dan 2 Pendukung (Medis/Dokumentasi) ber-ID Card resmi.',
   },
   {
     id: 10,

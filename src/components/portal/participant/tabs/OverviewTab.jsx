@@ -246,7 +246,7 @@ export default function OverviewTab({
                     {compDate} • {compTime}
                   </span>
                   <h5 className="font-black text-base text-slate-900">
-                    Hari-H Pelaksanaan LBB Mu'allimin 2026
+                    Hari-H Pelaksanaan LBB Mu'allimin 2027
                   </h5>
                   <p className="text-xs text-slate-600">
                     Daftar ulang mulai 06.00 WIB, dilanjutkan upacara pembukaan, dan perlombaan di lapangan utama.
@@ -385,13 +385,13 @@ export default function OverviewTab({
               Jika terdapat kendala pengunggahan berkas atau revisi nama personel, silakan hubungi narahubung resmi sekretariat:
             </p>
             <a
-              href="https://wa.me/6281230093737"
+              href="https://wa.me/6281947491505"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black rounded-xl transition-all w-full justify-center uppercase tracking-wider shadow-md hover:scale-[1.02] active:scale-98"
             >
               <Phone className="w-4 h-4" />
-              <span>WhatsApp Kak Rusyda</span>
+              <span>WhatsApp Admin (0819-4749-1505)</span>
             </a>
           </div>
         </div>

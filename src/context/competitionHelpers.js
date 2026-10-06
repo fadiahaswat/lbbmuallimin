@@ -3,7 +3,7 @@ import { formatImageUrl } from '../services/sheetService.js';
 export const STORAGE_KEYS = {
   TEAMS: 'lbb_muallimin_teams_v3',
   SCORES: 'lbb_muallimin_scores_v3',
-  SETTINGS: 'lbb_muallimin_settings_v8',
+  SETTINGS: 'lbb_muallimin_settings_v9',
   ROLE: 'lbb_muallimin_active_role_v3',
   CURRENT_TEAM_ID: 'lbb_muallimin_current_team_id_v3',
   USERS: 'lbb_muallimin_users_v4',
@@ -29,10 +29,10 @@ export function cleanLegacyStorage() {
       if (k.startsWith('lbb_muallimin_current_user_') && k !== STORAGE_KEYS.CURRENT_USER) {
         localStorage.removeItem(k);
       }
-      if (legacyPrefixes.some(p => k.startsWith(p) && !k.endsWith('_v3') && !k.endsWith('_v4') && !k.endsWith('_v5') && !k.endsWith('_v6') && !k.endsWith('_v7') && !k.endsWith('_v8'))) {
+      if (legacyPrefixes.some(p => k.startsWith(p) && !k.endsWith('_v3') && !k.endsWith('_v4') && !k.endsWith('_v5') && !k.endsWith('_v6') && !k.endsWith('_v7') && !k.endsWith('_v8') && !k.endsWith('_v9'))) {
         localStorage.removeItem(k);
       }
-      if (k === 'lbb_muallimin_settings_v3' || k === 'lbb_muallimin_settings_v4' || k === 'lbb_muallimin_settings_v5' || k === 'lbb_muallimin_settings_v6' || k === 'lbb_muallimin_settings_v7') {
+      if (k === 'lbb_muallimin_settings_v3' || k === 'lbb_muallimin_settings_v4' || k === 'lbb_muallimin_settings_v5' || k === 'lbb_muallimin_settings_v6' || k === 'lbb_muallimin_settings_v7' || k === 'lbb_muallimin_settings_v8') {
         localStorage.removeItem(k);
       }
     });

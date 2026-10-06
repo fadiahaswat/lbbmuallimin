@@ -9,7 +9,7 @@ export default function ScoresTab({ teamScore }) {
           Lembar Rekapitulasi Nilai Dewan Juri
         </h4>
         <p className="text-xs text-slate-500 mt-0.5">
-          Nilai resmi hasil penampilan peleton di arena LBB Mu'allimin 2026.
+          Nilai resmi hasil penampilan peleton di arena LBB Mu'allimin 2027.
         </p>
       </div>
 
@@ -94,7 +94,7 @@ export default function ScoresTab({ teamScore }) {
           <Clock className="w-10 h-10 text-slate-400 mx-auto mb-2 animate-pulse" />
           <h5 className="font-bold text-slate-800 text-sm">Penilaian Belum Berlangsung</h5>
           <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
-            Dewan Juri akan melakukan input dan rekapitulasi penilaian pada saat hari pelaksanaan lomba (Ahad, 8 November 2026).
+            Dewan Juri akan melakukan input dan rekapitulasi penilaian pada saat hari pelaksanaan lomba (Ahad, 24 Januari 2027).
           </p>
         </div>
       )}
