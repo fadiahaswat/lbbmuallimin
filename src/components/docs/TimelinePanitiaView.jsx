@@ -21,10 +21,13 @@ import {
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
 import { EVENT, VENUE, VENUE_INDUK, OFFICIAL_TIMELINE } from '../../config.js';
+import { UJI_COBA_SCHEDULE, HARI_H_SCHEDULE } from '../../data/scheduleMatrices.js';
 import SimpaskorSidebarLayout from '../navigation/SimpaskorSidebarLayout.jsx';
 
 export default function TimelinePanitiaView() {
   const { settings, currentUser } = useCompetition();
+  const [activeTab, setActiveTab] = useState('roadmap'); // 'roadmap' | 'hari-h' | 'uji-coba'
+  const [matrixJenjang, setMatrixJenjang] = useState('SD');
   const [filterPhase, setFilterPhase] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -130,127 +133,324 @@ export default function TimelinePanitiaView() {
           </div>
         </div>
 
-        {/* Filter & Search Bar */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs">
-          <div className="flex flex-wrap items-center gap-1.5">
-            <span className="text-xs font-bold text-slate-400 mr-2">Filter Fase:</span>
-            {[
-              { id: 'all', label: 'Semua (37)' },
-              { id: 'fase a', label: 'A. Perencanaan' },
-              { id: 'fase b', label: 'B. Publikasi' },
-              { id: 'fase c', label: 'C. Pendaftaran' },
-              { id: 'fase e', label: 'E. TM Wirobrajan' },
-              { id: 'fase g', label: 'G. Uji Coba Sedayu' },
-              { id: 'fase h', label: 'H. Hari-H Lomba' },
-              { id: 'fase i', label: 'I. LPJ & Pasca' },
-            ].map(tab => (
-              <button
-                key={tab.id}
-                onClick={() => setFilterPhase(tab.id)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                  filterPhase === tab.id
-                    ? 'bg-slate-900 text-white shadow-xs'
-                    : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
-
-          <div className="relative">
-            <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              placeholder="Cari tahapan / PIC..."
-              className="pl-9 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:bg-white w-full sm:w-60"
-            />
-          </div>
+        {/* Tab Navigasi Dokumen Utama: Roadmap Panitia vs Matriks Hari-H vs Matriks Uji Coba */}
+        <div className="flex border-b border-slate-200 gap-2 sm:gap-4">
+          <button
+            onClick={() => setActiveTab('roadmap')}
+            className={`pb-3 px-3 sm:px-4 text-xs sm:text-sm font-black transition-all border-b-2 flex items-center gap-2 cursor-pointer ${
+              activeTab === 'roadmap'
+                ? 'border-red-600 text-red-600'
+                : 'border-transparent text-slate-500 hover:text-slate-900'
+            }`}
+          >
+            <CalendarCheck2 className="w-4 h-4" />
+            <span>Master Roadmap (37 Tahapan)</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('hari-h')}
+            className={`pb-3 px-3 sm:px-4 text-xs sm:text-sm font-black transition-all border-b-2 flex items-center gap-2 cursor-pointer ${
+              activeTab === 'hari-h'
+                ? 'border-red-600 text-red-600'
+                : 'border-transparent text-slate-500 hover:text-slate-900'
+            }`}
+          >
+            <Clock className="w-4 h-4" />
+            <span>Matriks Hari-H (Sheet 4)</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('uji-coba')}
+            className={`pb-3 px-3 sm:px-4 text-xs sm:text-sm font-black transition-all border-b-2 flex items-center gap-2 cursor-pointer ${
+              activeTab === 'uji-coba'
+                ? 'border-red-600 text-red-600'
+                : 'border-transparent text-slate-500 hover:text-slate-900'
+            }`}
+          >
+            <Timer className="w-4 h-4" />
+            <span>Matriks Uji Coba (Sheet 3)</span>
+          </button>
         </div>
 
-        {/* List Timeline Kronologis */}
-        <div className="space-y-4 relative">
-          <div className="absolute left-6 top-8 bottom-8 w-0.5 bg-slate-200 hidden sm:block" />
+        {activeTab === 'roadmap' && (
+          <>
+            {/* Filter & Search Bar */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs">
+              <div className="flex flex-wrap items-center gap-1.5">
+                <span className="text-xs font-bold text-slate-400 mr-2">Filter Fase:</span>
+                {[
+                  { id: 'all', label: 'Semua (37)' },
+                  { id: 'fase a', label: 'A. Perencanaan' },
+                  { id: 'fase b', label: 'B. Publikasi' },
+                  { id: 'fase c', label: 'C. Pendaftaran' },
+                  { id: 'fase e', label: 'E. TM Wirobrajan' },
+                  { id: 'fase g', label: 'G. Uji Coba Sedayu' },
+                  { id: 'fase h', label: 'H. Hari-H Lomba' },
+                  { id: 'fase i', label: 'I. LPJ & Pasca' },
+                ].map(tab => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setFilterPhase(tab.id)}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                      filterPhase === tab.id
+                        ? 'bg-slate-900 text-white shadow-xs'
+                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
 
-          {filteredTimeline.map((item, index) => {
-            const isCompleted = item.status === 'completed';
-            const isCritical = item.status === 'critical';
+              <div className="relative">
+                <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  placeholder="Cari tahapan / PIC..."
+                  className="pl-9 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:bg-white w-full sm:w-60"
+                />
+              </div>
+            </div>
 
-            return (
-              <div
-                key={item.id}
-                className="relative pl-0 sm:pl-16 group transition-all"
-              >
-                <div className="absolute left-3.5 top-5 -translate-x-1/2 w-6 h-6 rounded-full bg-white border-2 border-slate-300 hidden sm:flex items-center justify-center z-10 group-hover:scale-110 transition-transform shadow-xs">
-                  {isCompleted ? (
-                    <div className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
-                  ) : isCritical ? (
-                    <div className="w-2.5 h-2.5 rounded-full bg-red-600 animate-pulse" />
-                  ) : (
-                    <div className="w-2.5 h-2.5 rounded-full bg-amber-500" />
-                  )}
-                </div>
+            {/* List Timeline Kronologis */}
+            <div className="space-y-4 relative">
+              <div className="absolute left-6 top-8 bottom-8 w-0.5 bg-slate-200 hidden sm:block" />
 
-                <div
-                  className={`bg-white rounded-2xl border p-5 sm:p-6 transition-all hover:shadow-md ${
-                    isCritical
-                      ? 'border-red-300/80 shadow-xs ring-1 ring-red-500/10'
-                      : isCompleted
-                      ? 'border-slate-200/80'
-                      : 'border-slate-200 hover:border-slate-300'
+              {filteredTimeline.map((item, index) => {
+                const isCompleted = item.status === 'completed';
+                const isCritical = item.status === 'critical';
+
+                return (
+                  <div
+                    key={item.id}
+                    className="relative pl-0 sm:pl-16 group transition-all"
+                  >
+                    <div className="absolute left-3.5 top-5 -translate-x-1/2 w-6 h-6 rounded-full bg-white border-2 border-slate-300 hidden sm:flex items-center justify-center z-10 group-hover:scale-110 transition-transform shadow-xs">
+                      {isCompleted ? (
+                        <div className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+                      ) : isCritical ? (
+                        <div className="w-2.5 h-2.5 rounded-full bg-red-600 animate-pulse" />
+                      ) : (
+                        <div className="w-2.5 h-2.5 rounded-full bg-amber-500" />
+                      )}
+                    </div>
+
+                    <div
+                      className={`bg-white rounded-2xl border p-5 sm:p-6 transition-all hover:shadow-md ${
+                        isCritical
+                          ? 'border-red-300/80 shadow-xs ring-1 ring-red-500/10'
+                          : isCompleted
+                          ? 'border-slate-200/80'
+                          : 'border-slate-200 hover:border-slate-300'
+                      }`}
+                    >
+                      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 mb-3">
+                        <div>
+                          <div className="flex flex-wrap items-center gap-2 mb-1.5">
+                            <span className="text-[10px] font-black uppercase tracking-wider text-slate-500">
+                              {item.phase}
+                            </span>
+                            {isCompleted && (
+                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1">
+                                <CheckCircle2 className="w-3 h-3" />
+                                <span>Terlaksana</span>
+                              </span>
+                            )}
+                            {isCritical && (
+                              <span className="text-[10px] font-black px-2 py-0.5 rounded-md bg-red-600 text-white shadow-xs uppercase tracking-wider flex items-center gap-1">
+                                <Sparkles className="w-3 h-3" />
+                                <span>Hari-H Lomba</span>
+                              </span>
+                            )}
+                          </div>
+                          <h3 className="text-base sm:text-lg font-black text-slate-900 tracking-tight leading-snug">
+                            {item.title}
+                          </h3>
+                        </div>
+
+                        <div className="text-left sm:text-right shrink-0 bg-slate-50 sm:bg-transparent p-2.5 sm:p-0 rounded-xl border sm:border-0 border-slate-100">
+                          <div className="text-xs sm:text-sm font-black text-slate-900 font-mono">{item.period}</div>
+                        </div>
+                      </div>
+
+                      <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mb-4">
+                        {item.desc}
+                      </p>
+
+                      <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-100 text-xs text-slate-500">
+                        <div className="flex items-center gap-1.5">
+                          <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                          <span className="font-medium truncate max-w-xs">{item.venue}</span>
+                        </div>
+
+                        <div className="flex items-center gap-1.5">
+                          <Users className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                          <span className="font-bold text-slate-700">PIC: {item.pic}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </>
+        )}
+
+        {/* Tab Matriks Hari-H (Sheet 4) */}
+        {activeTab === 'hari-h' && (
+          <div className="space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-slate-200">
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setMatrixJenjang('SD')}
+                  className={`px-4 py-2 rounded-xl text-xs font-black transition-all cursor-pointer ${
+                    matrixJenjang === 'SD'
+                      ? 'bg-red-600 text-white shadow-xs'
+                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                   }`}
                 >
-                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 mb-3">
-                    <div>
-                      <div className="flex flex-wrap items-center gap-2 mb-1.5">
-                        <span className="text-[10px] font-black uppercase tracking-wider text-slate-500">
-                          {item.phase}
-                        </span>
-                        {isCompleted && (
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1">
-                            <CheckCircle2 className="w-3 h-3" />
-                            <span>Terlaksana</span>
-                          </span>
-                        )}
-                        {isCritical && (
-                          <span className="text-[10px] font-black px-2 py-0.5 rounded-md bg-red-600 text-white shadow-xs uppercase tracking-wider flex items-center gap-1">
-                            <Sparkles className="w-3 h-3" />
-                            <span>Hari-H Lomba</span>
-                          </span>
-                        )}
-                      </div>
-                      <h3 className="text-base sm:text-lg font-black text-slate-900 tracking-tight leading-snug">
-                        {item.title}
-                      </h3>
-                    </div>
-
-                    <div className="text-left sm:text-right shrink-0 bg-slate-50 sm:bg-transparent p-2.5 sm:p-0 rounded-xl border sm:border-0 border-slate-100">
-                      <div className="text-xs sm:text-sm font-black text-slate-900 font-mono">{item.period}</div>
-                    </div>
-                  </div>
-
-                  <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mb-4">
-                    {item.desc}
-                  </p>
-
-                  <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-100 text-xs text-slate-500">
-                    <div className="flex items-center gap-1.5">
-                      <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                      <span className="font-medium truncate max-w-xs">{item.venue}</span>
-                    </div>
-
-                    <div className="flex items-center gap-1.5">
-                      <Users className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                      <span className="font-bold text-slate-700">PIC: {item.pic}</span>
-                    </div>
-                  </div>
-                </div>
+                  Tingkat SD/MI (Arena 1 Basket)
+                </button>
+                <button
+                  onClick={() => setMatrixJenjang('SMP')}
+                  className={`px-4 py-2 rounded-xl text-xs font-black transition-all cursor-pointer ${
+                    matrixJenjang === 'SMP'
+                      ? 'bg-blue-600 text-white shadow-xs'
+                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                  }`}
+                >
+                  Tingkat SMP/MTs (Arena 2 Embung)
+                </button>
               </div>
-            );
-          })}
-        </div>
+              <div className="text-xs text-slate-500 font-semibold">
+                Sabtu, 24 Januari 2027 • 18 Peleton {matrixJenjang}
+              </div>
+            </div>
+
+            <div className="bg-white rounded-2xl border border-slate-200 overflow-x-auto shadow-xs">
+              <table className="w-full text-left text-xs whitespace-nowrap">
+                <thead className="bg-slate-50 text-slate-700 font-bold border-b border-slate-200 uppercase text-[10px]">
+                  <tr>
+                    <th className="py-3 px-3">No Urut</th>
+                    <th className="py-3 px-3">Arena</th>
+                    <th className="py-3 px-3">Kesiapan Basecamp</th>
+                    <th className="py-3 px-3">Panggilan DP 1</th>
+                    <th className="py-3 px-3">Cek Fisik DP 1</th>
+                    <th className="py-3 px-3">Masuk DP 2</th>
+                    <th className="py-3 px-3 text-red-600">Start Lomba</th>
+                    <th className="py-3 px-3">Peluit 1x (Warning)</th>
+                    <th className="py-3 px-3 text-rose-700">Peluit 2x (Stop)</th>
+                    <th className="py-3 px-3">Keluar Arena</th>
+                    <th className="py-3 px-3 text-emerald-700">Kembalikan No Dada</th>
+                    <th className="py-3 px-3">Sesi</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 font-mono text-[11px]">
+                  {HARI_H_SCHEDULE[matrixJenjang].map((row, idx) => (
+                    <tr key={idx} className="hover:bg-slate-50/80 transition-colors">
+                      <td className="py-3 px-3 font-bold text-slate-900 font-sans">{row.no}</td>
+                      <td className="py-3 px-3 font-sans text-slate-600">{row.arena}</td>
+                      <td className="py-3 px-3 text-slate-600">{row.readyBasecamp}</td>
+                      <td className="py-3 px-3 text-amber-700 font-bold">{row.callDP1}</td>
+                      <td className="py-3 px-3 text-slate-500">{row.checkDP1}</td>
+                      <td className="py-3 px-3 text-blue-700 font-bold">{row.enterDP2}</td>
+                      <td className="py-3 px-3 bg-red-50 text-red-700 font-black">{row.startTampil}</td>
+                      <td className="py-3 px-3 text-amber-600 font-semibold">{row.warningPeluit}</td>
+                      <td className="py-3 px-3 bg-rose-50 text-rose-700 font-black">{row.stopPeluit}</td>
+                      <td className="py-3 px-3 text-slate-600">{row.exitArena}</td>
+                      <td className="py-3 px-3 text-emerald-700 font-bold">{row.returnBadge}</td>
+                      <td className="py-3 px-3 font-sans">
+                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                          row.session.includes('Sesi I') ? 'bg-emerald-50 text-emerald-700' : 'bg-indigo-50 text-indigo-700'
+                        }`}>
+                          {row.session}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* Tab Matriks Uji Coba (Sheet 3) */}
+        {activeTab === 'uji-coba' && (
+          <div className="space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-slate-200">
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setMatrixJenjang('SD')}
+                  className={`px-4 py-2 rounded-xl text-xs font-black transition-all cursor-pointer ${
+                    matrixJenjang === 'SD'
+                      ? 'bg-red-600 text-white shadow-xs'
+                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                  }`}
+                >
+                  Tingkat SD/MI (Arena 1 Basket)
+                </button>
+                <button
+                  onClick={() => setMatrixJenjang('SMP')}
+                  className={`px-4 py-2 rounded-xl text-xs font-black transition-all cursor-pointer ${
+                    matrixJenjang === 'SMP'
+                      ? 'bg-blue-600 text-white shadow-xs'
+                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                  }`}
+                >
+                  Tingkat SMP/MTs (Arena 2 Embung)
+                </button>
+              </div>
+              <div className="text-xs text-slate-500 font-semibold">
+                Sabtu, 16 Januari 2027 • 18 Peleton {matrixJenjang}
+              </div>
+            </div>
+
+            <div className="bg-white rounded-2xl border border-slate-200 overflow-x-auto shadow-xs">
+              <table className="w-full text-left text-xs whitespace-nowrap">
+                <thead className="bg-slate-50 text-slate-700 font-bold border-b border-slate-200 uppercase text-[10px]">
+                  <tr>
+                    <th className="py-3 px-3">No Urut</th>
+                    <th className="py-3 px-3">Arena</th>
+                    <th className="py-3 px-3">Tiba & Masuk Kampus</th>
+                    <th className="py-3 px-3">Pos Transit Pemanasan</th>
+                    <th className="py-3 px-3 text-amber-700">Panggilan DP 1</th>
+                    <th className="py-3 px-3 text-slate-500">Cek Fisik DP 1</th>
+                    <th className="py-3 px-3 text-blue-700">Masuk DP 2</th>
+                    <th className="py-3 px-3 text-emerald-700 font-black">Masuk Arena (Start)</th>
+                    <th className="py-3 px-3 text-slate-700">Selesai Arena</th>
+                    <th className="py-3 px-3 text-slate-600">Keluar Arena</th>
+                    <th className="py-3 px-3 text-rose-700 font-bold">Maks. Meninggalkan Kampus</th>
+                    <th className="py-3 px-3">Sesi Uji Coba</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 font-mono text-[11px]">
+                  {UJI_COBA_SCHEDULE[matrixJenjang].map((row, idx) => (
+                    <tr key={idx} className="hover:bg-slate-50/80 transition-colors">
+                      <td className="py-3 px-3 font-bold text-slate-900 font-sans">{row.no}</td>
+                      <td className="py-3 px-3 font-sans text-slate-600">{row.arena}</td>
+                      <td className="py-3 px-3 text-slate-600">{row.arrival}</td>
+                      <td className="py-3 px-3 text-slate-500">{row.transit}</td>
+                      <td className="py-3 px-3 text-amber-700 font-bold">{row.callDP}</td>
+                      <td className="py-3 px-3 text-slate-500">{row.checkDP1}</td>
+                      <td className="py-3 px-3 text-blue-700 font-bold">{row.enterDP2}</td>
+                      <td className="py-3 px-3 bg-emerald-50 text-emerald-800 font-black">{row.enterArena}</td>
+                      <td className="py-3 px-3 text-slate-700 font-semibold">{row.finishArena}</td>
+                      <td className="py-3 px-3 text-slate-600">{row.exitArena}</td>
+                      <td className="py-3 px-3 bg-rose-50 text-rose-700 font-black">{row.leaveCampus}</td>
+                      <td className="py-3 px-3 font-sans">
+                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                          row.session.includes('Sesi I') ? 'bg-emerald-50 text-emerald-700' : 'bg-indigo-50 text-indigo-700'
+                        }`}>
+                          {row.session}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
       </div>
     </SimpaskorSidebarLayout>
   );

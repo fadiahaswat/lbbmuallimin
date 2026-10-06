@@ -57,7 +57,7 @@ export default function Hero() {
     },
     {
       label: 'Pendaftaran',
-      date: regRangeText, // "5 Oktober – 1 November 2026"
+      date: regRangeText, // "11 Oktober – 7 November 2026"
       dotColor: 'bg-amber-500',
       pingColor: 'bg-amber-400',
       textColor: 'text-amber-300',
@@ -124,9 +124,9 @@ export default function Hero() {
           {/* Left Columns: Text Content & Actions */}
           <div className="lg:col-span-7 flex flex-col items-center lg:items-start text-center lg:text-left space-y-5 sm:space-y-6">
             
-            {/* Logo Group in Hero Section: Big LBB Logo + Smaller White Mu'allimin Logo */}
-            <div className="flex items-center gap-4 sm:gap-6">
-              {/* Logo Utama LBB Mu'allimin 2026 */}
+            {/* Logo Group in Hero Section: Logo LBB - Garis - Logo Tonti Mu'allimin - Logo Mu'allimin */}
+            <div className="flex items-center gap-3.5 sm:gap-6">
+              {/* Logo Utama LBB Mu'allimin 2027 */}
               <div className="relative group transition-transform duration-300 hover:scale-105">
                 <img
                   src={logoImg}
@@ -141,7 +141,17 @@ export default function Hero() {
               {/* Garis Pemisah Halus */}
               <div className="h-12 sm:h-16 w-px bg-gradient-to-b from-transparent via-white/30 to-transparent" />
 
-              {/* Logo Madrasah Mu'allimin (Lebih Kecil & Warna Putih) */}
+              {/* Logo Korps Tonti Mu'allimin */}
+              <div className="relative group transition-transform duration-300 hover:scale-105">
+                <img
+                  src={logoTonti}
+                  alt="Logo Korps Tonti Mu'allimin"
+                  className="h-13 sm:h-16 md:h-18 w-auto object-contain drop-shadow-[0_6px_16px_rgba(0,0,0,0.5)]"
+                  loading="eager"
+                />
+              </div>
+
+              {/* Logo Madrasah Mu'allimin */}
               <div className="relative group transition-transform duration-300 hover:scale-105 opacity-90 hover:opacity-100">
                 <img
                   src={logoMuallimin}
@@ -235,7 +245,7 @@ export default function Hero() {
                 alt={currentCadet.title}
                 loading="eager"
                 decoding="async"
-                className={`hero-foto hero-foto-smooth max-w-none drop-shadow-[0_20px_40px_rgba(0,0,0,0.9)] pointer-events-auto ${
+                className={`hero-foto hero-foto-smooth max-w-none pointer-events-auto ${
                   isLandscape
                     ? 'w-[125%] sm:w-[135%] lg:w-[150%] max-h-[85%] object-contain object-bottom'
                     : 'w-auto max-w-[85%] sm:max-w-[80%] h-auto max-h-[96%] object-contain object-bottom'

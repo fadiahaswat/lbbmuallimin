@@ -260,7 +260,7 @@ export default function JuknisView() {
               </li>
               <li className="flex items-start gap-2">
                 <CheckCircle2 className="w-3.5 h-3.5 text-amber-600 shrink-0 mt-0.5" />
-                <span><strong>Penguasaan Lapangan (20%):</strong> Penempatan posisi relatif terhadap pasukan dan dewan juri serta efektivitas kotak Danton.</span>
+                <span><strong>Penguasaan Lapangan (20%):</strong> Penempatan posisi relatif terhadap pasukan dan dewan juri serta efektivitas kotak Danton (1,5 × 1,5 m).</span>
               </li>
             </ul>
           </div>
@@ -286,6 +286,48 @@ export default function JuknisView() {
               <li className="flex items-start gap-2">
                 <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 shrink-0 mt-0.5" />
                 <span><strong>Atribut Terjatuh:</strong> Diberlakukan penalti 0 poin (tidak ada pengurangan nilai) agar konsentrasi peleton terjaga.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Bab H & Prosedur Khusus: Force Majeure, Sanggah & Checkout */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-amber-50/60 border border-amber-200/80 rounded-3xl p-6 space-y-3">
+            <h3 className="text-sm font-black text-amber-950 uppercase flex items-center gap-2">
+              <Shield className="w-4 h-4 text-amber-700" />
+              <span>Bab H: Protokol Keadaan Kahar (Force Majeure)</span>
+            </h3>
+            <ul className="text-xs text-amber-900/80 space-y-2 leading-relaxed">
+              <li>
+                <strong>Hujan Ringan (Gerimis):</strong> Perlombaan tetap berlangsung secara normal dan waktu lomba tetap berjalan.
+              </li>
+              <li>
+                <strong>Hujan Deras / Badai Ekstrem:</strong> Panitia bersama Dewan Juri berhak menghentikan lomba sementara demi keselamatan.
+              </li>
+              <li>
+                <strong>Mekanisme Reset Waktu:</strong> Peleton yang penampilannya terhenti di tengah materi akibat badai akan diulang dari awal masuk arena dengan stopwatch di-reset ke 00:00 setelah cuaca kondusif.
+              </li>
+              <li>
+                <strong>Wewenang Mutlak:</strong> Keputusan penghentian dan kelanjutan perlombaan merupakan wewenang mutlak Panitia Pelaksana dan Dewan Juri.
+              </li>
+            </ul>
+          </div>
+
+          <div className="bg-slate-900 text-white rounded-3xl p-6 space-y-3 border border-slate-800">
+            <h3 className="text-sm font-black text-white uppercase flex items-center gap-2">
+              <Clock className="w-4 h-4 text-red-400" />
+              <span>Pasca Lomba: Transparansi, Sanggah & Checkout</span>
+            </h3>
+            <ul className="text-xs text-slate-300 space-y-2 leading-relaxed">
+              <li>
+                <strong>Transparansi Live Score:</strong> Official dapat mengakses lembar rekap nilai mandiri di portal <span className="text-red-400 font-mono">lbb.tontimuallimin.com</span> via login Gmail resmi terdaftar.
+              </li>
+              <li>
+                <strong>Masa Sanggah 60 Menit:</strong> Protes hanya diterima untuk kekeliruan administratif non-penilaian, diajukan tertulis via Formulir Sanggahan Resmi oleh Official di Meja Informasi Panitia.
+              </li>
+              <li>
+                <strong>Batas Checkout Pukul 14.00 WIB:</strong> Pengosongan basecamp wajib tuntas 1 jam sebelum Apel Penutupan melalui 4 langkah verifikasi kebersihan untuk pengembalian KTP/SIM jaminan.
               </li>
             </ul>
           </div>

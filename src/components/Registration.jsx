@@ -23,7 +23,8 @@ import {
   Globe,
   Video,
   CreditCard,
-  School
+  School,
+  Clock
 } from 'lucide-react';
 import { EVENT, COMPETITION, PAYMENT, REGISTRATION, CONTACT, SOCIAL, CLIPBOARD } from '../config.js';
 import { useCompetition } from '../context/CompetitionContext.jsx';
@@ -94,113 +95,129 @@ export default function Registration() {
   }
 
   return (
-    <section id="registration" className="pt-6 sm:pt-8 pb-16 lg:pb-24 bg-slate-50 relative overflow-hidden font-sans">
-      <div
-        className="absolute inset-0 opacity-[0.03]"
-        style={{
-          backgroundImage: 'linear-gradient(#8B0000 1px, transparent 1px), linear-gradient(to right, #8B0000 1px, transparent 1px)',
-          backgroundSize: '40px 40px',
-        }}
-      ></div>
-      <div className="hidden sm:block absolute left-0 top-1/4 w-96 h-96 bg-yellow-500/5 rounded-full blur-3xl pointer-events-none transform-gpu"></div>
-      <div className="hidden sm:block absolute right-0 bottom-1/4 w-96 h-96 bg-red-900/5 rounded-full blur-3xl pointer-events-none transform-gpu"></div>
+    <section id="registration" className="py-24 lg:py-32 bg-slate-950 relative overflow-hidden font-sans border-t border-slate-900 text-white">
+      {/* Background Ambience */}
+      <div className="absolute inset-0 bg-carbon-pattern opacity-15 pointer-events-none"></div>
+      <div className="absolute top-1/4 -left-20 w-96 h-96 bg-red-600/10 rounded-full blur-[128px] pointer-events-none"></div>
+      <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-yellow-500/10 rounded-full blur-[128px] pointer-events-none"></div>
 
       <div className="container mx-auto px-6 relative z-10">
-        {/* Section Header */}
-        <div className="mb-6 text-center relative z-10">
-          <div className="inline-flex items-center gap-2 px-3 py-0.5 rounded-full bg-red-50 border border-red-100 text-red-700 text-[10px] font-bold uppercase tracking-[0.15em] mb-2 shadow-sm cursor-default hover:bg-red-100 transition-colors">
+        
+        {/* ========================================================
+            SECTION HEADER
+            ======================================================== */}
+        <div className="mb-14 md:mb-16 text-center max-w-3xl mx-auto">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-red-950/60 border border-red-500/30 text-red-300 text-xs font-bold uppercase tracking-widest mb-4 shadow-sm">
             <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-red-600"></span>
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
             </span>
-            Juknis Resmi 2027
+            <span>Juknis Resmi 2027</span>
           </div>
 
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 uppercase italic tracking-tighter mb-2 leading-tight py-0.5">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black uppercase italic tracking-tighter leading-tight py-1 text-white">
             Informasi{' '}
-            <span className="relative inline-block pr-3 sm:pr-4 pb-1">
-              <span className="relative z-10 inline-block pr-2 text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-800">
-                Pendaftaran
-              </span>
-              <svg
-                className="absolute w-[105%] h-2.5 -bottom-0.5 -left-[2%] text-yellow-500 z-0 opacity-90"
-                viewBox="0 0 100 10"
-                preserveAspectRatio="none"
-              >
-                <path d="M0 5 Q 50 12 100 5" stroke="currentColor" strokeWidth="3" fill="none" strokeLinecap="round" />
-              </svg>
+            <span className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-amber-400 to-yellow-400">
+              Pendaftaran
             </span>
           </h2>
+          <div className="w-20 h-1.5 bg-red-600 mx-auto mt-4 rounded-full skew-x-12 shadow-[0_0_15px_rgba(220,38,38,0.5)]"></div>
 
-          <p className="text-slate-500 text-sm md:text-base font-medium leading-relaxed max-w-2xl mx-auto">
-            Pedoman resmi tata cara pendaftaran LBB Mu’allimin 2027.
+          <p className="text-slate-400 text-sm sm:text-base mt-5 leading-relaxed font-medium max-w-2xl mx-auto">
+            Pedoman resmi tata cara pendaftaran, batas kuota peserta, dan ketentuan administrasi LBB Mu’allimin 2027.
           </p>
         </div>
 
-        {/* Hero Urgency & Info Hub (Maximized Width & Space-Efficient) */}
-        <div className="max-w-6xl mx-auto mb-10">
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl shadow-slate-950/25 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-96 h-96 bg-red-700/10 rounded-full blur-3xl pointer-events-none"></div>
-            <div className="absolute bottom-0 left-0 w-96 h-96 bg-yellow-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        {/* ========================================================
+            HERO URGENCY & QUOTA HUB (COUNTDOWN + LIVE SLOTS)
+            ======================================================== */}
+        <div className="max-w-6xl mx-auto mb-12 sm:mb-16">
+          <div className="bg-gradient-to-b from-slate-900/95 via-slate-900/80 to-slate-950/95 border border-white/10 rounded-3xl shadow-2xl backdrop-blur-xl relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-96 h-96 bg-red-600/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div className="absolute bottom-0 left-0 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
-            <div className="relative z-10 p-5 sm:p-7">
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
+            <div className="relative z-10 p-6 sm:p-8">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                
                 {/* Left Column: Countdown Timer */}
-                <div className="lg:col-span-5 flex flex-col justify-center items-center lg:border-r lg:border-slate-800/80 lg:pr-6">
+                <div className="lg:col-span-5 flex flex-col justify-center items-center lg:border-r lg:border-white/10 lg:pr-8">
                   <CountdownTimer />
                 </div>
 
                 {/* Right Column: Slot Kuota Peleton */}
-                <div className="lg:col-span-7 flex flex-col justify-center space-y-3.5">
-                  <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800/60 pb-2.5">
+                <div className="lg:col-span-7 flex flex-col justify-center space-y-4">
+                  <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-white/10">
                     <span className="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
-                      <Users className="w-4 h-4 text-yellow-400 shrink-0" />
+                      <Users className="w-4 h-4 text-amber-400 shrink-0" />
                       <span>Informasi Slot Kuota Peleton</span>
                     </span>
-                    <span className="text-[11px] font-black uppercase px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-500/30 text-emerald-400">
+                    <span className="text-xs font-black uppercase px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300">
                       Total Tersisa: {totalRemaining} / {totalTargetSD + totalTargetSMP} Peleton
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-left">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left">
                     {/* Slot SD */}
-                    <div className="p-3.5 rounded-2xl bg-slate-950/70 border border-slate-800/80 flex items-center justify-between hover:border-slate-700 transition-colors">
-                      <div>
-                        <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block mb-0.5">
+                    <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-red-500/30 transition-all">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-[11px] font-extrabold uppercase tracking-wider text-red-400 block">
                           Tingkat SD / MI
                         </span>
-                        <span className="text-sm font-black text-white">
-                          Tersisa <span className="text-yellow-400 font-mono text-lg">{remainingSD}</span> Slot
+                        <span className="text-[10px] font-semibold text-slate-400">
+                          Kuota {totalTargetSD}
                         </span>
                       </div>
-                      <div className="text-right">
-                        <span className="text-[11px] text-slate-400 block font-medium">Kuota: {totalTargetSD}</span>
-                        <span className="text-[10px] font-bold text-slate-500">Terisi: {registeredSD}</span>
+                      <div className="flex items-baseline justify-between">
+                        <span className="text-sm font-bold text-slate-300">
+                          Tersisa <strong className="text-xl font-black text-white ml-1">{remainingSD}</strong> Slot
+                        </span>
+                        <span className="text-[11px] font-medium text-slate-400">
+                          Terisi: <span className="text-slate-200 font-bold">{registeredSD}</span>
+                        </span>
+                      </div>
+                      {/* Mini Progress Bar */}
+                      <div className="w-full bg-white/10 rounded-full h-1.5 mt-2.5 overflow-hidden">
+                        <div
+                          className="bg-red-500 h-1.5 rounded-full transition-all duration-500"
+                          style={{ width: `${Math.min(100, (registeredSD / totalTargetSD) * 100)}%` }}
+                        />
                       </div>
                     </div>
 
                     {/* Slot SMP */}
-                    <div className="p-3.5 rounded-2xl bg-slate-950/70 border border-slate-800/80 flex items-center justify-between hover:border-slate-700 transition-colors">
-                      <div>
-                        <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block mb-0.5">
+                    <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-blue-500/30 transition-all">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-[11px] font-extrabold uppercase tracking-wider text-blue-400 block">
                           Tingkat SMP / MTs
                         </span>
-                        <span className="text-sm font-black text-white">
-                          Tersisa <span className="text-yellow-400 font-mono text-lg">{remainingSMP}</span> Slot
+                        <span className="text-[10px] font-semibold text-slate-400">
+                          Kuota {totalTargetSMP}
                         </span>
                       </div>
-                      <div className="text-right">
-                        <span className="text-[11px] text-slate-400 block font-medium">Kuota: {totalTargetSMP}</span>
-                        <span className="text-[10px] font-bold text-slate-500">Terisi: {registeredSMP}</span>
+                      <div className="flex items-baseline justify-between">
+                        <span className="text-sm font-bold text-slate-300">
+                          Tersisa <strong className="text-xl font-black text-white ml-1">{remainingSMP}</strong> Slot
+                        </span>
+                        <span className="text-[11px] font-medium text-slate-400">
+                          Terisi: <span className="text-slate-200 font-bold">{registeredSMP}</span>
+                        </span>
+                      </div>
+                      {/* Mini Progress Bar */}
+                      <div className="w-full bg-white/10 rounded-full h-1.5 mt-2.5 overflow-hidden">
+                        <div
+                          className="bg-blue-500 h-1.5 rounded-full transition-all duration-500"
+                          style={{ width: `${Math.min(100, (registeredSMP / totalTargetSMP) * 100)}%` }}
+                        />
                       </div>
                     </div>
                   </div>
                 </div>
+
               </div>
             </div>
 
-            {/* Integrated Space-Efficient Notice Bar */}
-            <div className="bg-slate-950/80 border-t border-slate-800/80 px-5 sm:px-7 py-3 flex flex-col sm:flex-row items-center gap-3 text-left">
+            {/* Space-Efficient Notice Bar */}
+            <div className="bg-slate-950/80 border-t border-white/10 px-6 py-3.5 flex flex-col sm:flex-row items-center gap-3 text-left">
               <div className="flex items-center gap-2 text-amber-400 shrink-0">
                 <MonitorSmartphone className="w-4 h-4" />
                 <span className="text-[11px] font-black uppercase tracking-wider">Pendaftaran 100% Online:</span>
@@ -212,243 +229,222 @@ export default function Registration() {
           </div>
         </div>
 
-        {/* 3 Overview Cards */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20 items-stretch">
-          {/* Timeline Card */}
-          <div className="group bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/90 shadow-lg hover:shadow-2xl hover:border-slate-300 transition-all duration-300 flex flex-col justify-between relative overflow-hidden text-left">
-            <div className="absolute top-0 right-0 w-36 h-36 bg-amber-100/40 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none group-hover:scale-125 transition-transform duration-500"></div>
-
-            <div className="relative z-10">
-              {/* Card Header */}
-              <div className="flex items-start justify-between gap-3 mb-6">
+        {/* ========================================================
+            3 OVERVIEW CARDS (TIMELINE, KUOTA & PERSONEL, BIAYA)
+            ======================================================== */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-16 lg:mb-20 items-stretch">
+          
+          {/* Card 1: Timeline Lini Masa */}
+          <div className="group rounded-3xl bg-gradient-to-b from-slate-900/90 via-slate-900/80 to-slate-950/95 border border-white/10 hover:border-white/20 p-6 sm:p-7 shadow-xl backdrop-blur-xl flex flex-col justify-between transition-all duration-300 text-left">
+            <div>
+              {/* Header */}
+              <div className="flex items-start justify-between gap-3 mb-6 pb-4 border-b border-white/10">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-2xl bg-slate-900 text-yellow-400 flex items-center justify-center shadow-md shadow-slate-900/15 group-hover:scale-105 transition-transform">
-                    <CalendarClock className="w-6 h-6" />
+                  <div className="w-11 h-11 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center shrink-0 shadow-md group-hover:scale-105 transition-transform">
+                    <CalendarClock className="w-5 h-5" />
                   </div>
                   <div>
-                    <span className="text-[11px] font-bold text-amber-700 uppercase tracking-wider block">
+                    <span className="text-[10px] font-bold text-amber-400 uppercase tracking-widest block">
                       Agenda Pelaksanaan
                     </span>
-                    <h3 className="font-black text-xl text-slate-900 uppercase italic tracking-tight">
+                    <h3 className="font-black text-lg text-white uppercase italic tracking-tight">
                       Lini Masa (Timeline)
                     </h3>
                   </div>
                 </div>
-                <span className="text-[10px] font-extrabold uppercase tracking-wider bg-slate-100 text-slate-700 px-2.5 py-1 rounded-lg border border-slate-200">
+                <span className="text-[10px] font-black uppercase tracking-wider bg-white/[0.04] text-slate-300 px-2.5 py-1 rounded-lg border border-white/10">
                   5 Tahap
                 </span>
               </div>
 
-              {/* Timeline Steps */}
-              <div className="relative pl-6 border-l-2 border-slate-200 space-y-3.5 my-2">
-                {/* Step 1: Pendaftaran Daring */}
-                <div className="relative">
-                  <div className="absolute -left-[31px] top-1.5 w-3.5 h-3.5 rounded-full bg-amber-500 border-2 border-white shadow-sm ring-2 ring-amber-500/20"></div>
-                  <div className="bg-slate-50/80 hover:bg-amber-50/50 p-2.5 rounded-xl border border-slate-100 transition-colors">
-                    <div className="flex items-center justify-between gap-2 mb-0.5">
-                      <span className="text-[10px] font-extrabold text-amber-700 uppercase tracking-wider">
-                        {regRange}
-                      </span>
-                      <span className="text-[9px] font-bold bg-amber-100/80 text-amber-800 px-1.5 py-0.5 rounded">
-                        Tahap 1
-                      </span>
-                    </div>
-                    <p className="text-sm font-black text-slate-900 leading-tight">Pendaftaran Daring</p>
-                    <p className="text-xs text-slate-500 mt-0.5">Unggah berkas via portal resmi s.d. 23.59 WIB (atau tutup jika kuota penuh)</p>
+              {/* Steps */}
+              <div className="space-y-3">
+                {/* Step 1 */}
+                <div className="p-3 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-amber-500/30 transition-colors">
+                  <div className="flex items-center justify-between gap-2 mb-1">
+                    <span className="text-[10px] font-bold text-amber-400 uppercase tracking-wider">
+                      {regRange}
+                    </span>
+                    <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300">
+                      Tahap 1
+                    </span>
                   </div>
+                  <h4 className="text-xs sm:text-sm font-black text-white">Pendaftaran Daring</h4>
+                  <p className="text-[11px] text-slate-400 mt-0.5 leading-relaxed">Unggah berkas via portal resmi s.d. 23.59 WIB.</p>
                 </div>
 
-                {/* Step 2: Verifikasi Berkas */}
-                <div className="relative">
-                  <div className="absolute -left-[31px] top-1.5 w-3.5 h-3.5 rounded-full bg-blue-500 border-2 border-white shadow-sm ring-2 ring-blue-500/20"></div>
-                  <div className="bg-slate-50/80 hover:bg-blue-50/50 p-2.5 rounded-xl border border-slate-100 transition-colors">
-                    <div className="flex items-center justify-between gap-2 mb-0.5">
-                      <span className="text-[10px] font-extrabold text-blue-700 uppercase tracking-wider">
-                        {verifRange}
-                      </span>
-                      <span className="text-[9px] font-bold bg-blue-100/80 text-blue-800 px-1.5 py-0.5 rounded">
-                        Tahap 2
-                      </span>
-                    </div>
-                    <p className="text-sm font-black text-slate-900 leading-tight">Verifikasi Berkas</p>
-                    <p className="text-xs text-slate-500 mt-0.5">Pemeriksaan & kurasi kelengkapan oleh panitia</p>
+                {/* Step 2 */}
+                <div className="p-3 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-blue-500/30 transition-colors">
+                  <div className="flex items-center justify-between gap-2 mb-1">
+                    <span className="text-[10px] font-bold text-blue-400 uppercase tracking-wider">
+                      {verifRange}
+                    </span>
+                    <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-blue-500/15 text-blue-300">
+                      Tahap 2
+                    </span>
                   </div>
+                  <h4 className="text-xs sm:text-sm font-black text-white">Verifikasi Berkas</h4>
+                  <p className="text-[11px] text-slate-400 mt-0.5 leading-relaxed">Pemeriksaan & kurasi kelengkapan oleh panitia.</p>
                 </div>
 
-                {/* Step 3: Technical Meeting */}
-                <div className="relative">
-                  <div className="absolute -left-[31px] top-1.5 w-3.5 h-3.5 rounded-full bg-purple-500 border-2 border-white shadow-sm ring-2 ring-purple-500/20"></div>
-                  <div className="bg-slate-50/80 hover:bg-purple-50/50 p-2.5 rounded-xl border border-slate-100 transition-colors">
-                    <div className="flex items-center justify-between gap-2 mb-0.5">
-                      <span className="text-[10px] font-extrabold text-purple-700 uppercase tracking-wider">
-                        {tmDate}
-                      </span>
-                      <span className="text-[9px] font-bold bg-purple-100/80 text-purple-800 px-1.5 py-0.5 rounded">
-                        Tahap 3
-                      </span>
-                    </div>
-                    <p className="text-sm font-black text-slate-900 leading-tight">Technical Meeting</p>
-                    <p className="text-xs text-slate-500 mt-0.5">Pengundian nomor urut & verifikasi fisik • {tmTime}</p>
+                {/* Step 3 */}
+                <div className="p-3 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-purple-500/30 transition-colors">
+                  <div className="flex items-center justify-between gap-2 mb-1">
+                    <span className="text-[10px] font-bold text-purple-400 uppercase tracking-wider">
+                      {tmDate}
+                    </span>
+                    <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-purple-500/15 text-purple-300">
+                      Tahap 3
+                    </span>
                   </div>
+                  <h4 className="text-xs sm:text-sm font-black text-white">Technical Meeting</h4>
+                  <p className="text-[11px] text-slate-400 mt-0.5 leading-relaxed">Pengundian nomor urut & verifikasi fisik • {tmTime}</p>
                 </div>
 
-                {/* Step 4: Uji Coba Lapangan */}
-                <div className="relative">
-                  <div className="absolute -left-[31px] top-1.5 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-white shadow-sm ring-2 ring-emerald-500/20"></div>
-                  <div className="bg-slate-50/80 hover:bg-emerald-50/50 p-2.5 rounded-xl border border-slate-100 transition-colors">
-                    <div className="flex items-center justify-between gap-2 mb-0.5">
-                      <span className="text-[10px] font-extrabold text-emerald-700 uppercase tracking-wider">
-                        {trialDate}
-                      </span>
-                      <span className="text-[9px] font-bold bg-emerald-100/80 text-emerald-800 px-1.5 py-0.5 rounded">
-                        Tahap 4
-                      </span>
-                    </div>
-                    <p className="text-sm font-black text-slate-900 leading-tight">Uji Coba Lapangan</p>
-                    <p className="text-xs text-slate-500 mt-0.5">Orientasi pos perlombaan peserta • {trialTime}</p>
+                {/* Step 4 */}
+                <div className="p-3 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-emerald-500/30 transition-colors">
+                  <div className="flex items-center justify-between gap-2 mb-1">
+                    <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider">
+                      {trialDate}
+                    </span>
+                    <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300">
+                      Tahap 4
+                    </span>
                   </div>
+                  <h4 className="text-xs sm:text-sm font-black text-white">Uji Coba Lapangan</h4>
+                  <p className="text-[11px] text-slate-400 mt-0.5 leading-relaxed">Orientasi pos perlombaan peserta • {trialTime}</p>
                 </div>
 
-                {/* Step 5: Hari H */}
-                <div className="relative">
-                  <div className="absolute -left-[31px] top-1.5 w-3.5 h-3.5 rounded-full bg-red-600 border-2 border-white shadow-sm ring-2 ring-red-600/30 animate-pulse"></div>
-                  <div className="bg-red-50/70 hover:bg-red-50 p-2.5 rounded-xl border border-red-200/70 transition-colors">
-                    <div className="flex items-center justify-between gap-2 mb-0.5">
-                      <span className="text-[10px] font-black text-red-700 uppercase tracking-wider">
-                        {compDate}
-                      </span>
-                      <span className="text-[9px] font-black bg-red-600 text-white px-1.5 py-0.5 rounded animate-pulse">
-                        Hari H
-                      </span>
-                    </div>
-                    <p className="text-sm font-black text-slate-900 leading-tight">Daftar Ulang & Pelaksanaan Lomba</p>
-                    <p className="text-xs text-slate-600 mt-0.5">Pembukaan & kompetisi • {compTimeStart}</p>
+                {/* Step 5 */}
+                <div className="p-3 rounded-2xl bg-red-950/40 border border-red-500/30 transition-colors">
+                  <div className="flex items-center justify-between gap-2 mb-1">
+                    <span className="text-[10px] font-bold text-red-400 uppercase tracking-wider">
+                      {compDate}
+                    </span>
+                    <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-red-600 text-white animate-pulse">
+                      Hari H
+                    </span>
                   </div>
+                  <h4 className="text-xs sm:text-sm font-black text-white">Daftar Ulang & Pelaksanaan Lomba</h4>
+                  <p className="text-[11px] text-slate-300 mt-0.5 leading-relaxed">Pembukaan & kompetisi • {compTimeStart}</p>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Quota & Personnel Card */}
-          <div className="group bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/90 shadow-lg hover:shadow-2xl hover:border-red-500/30 transition-all duration-300 flex flex-col justify-between relative overflow-hidden text-left">
-            <div className="absolute top-0 right-0 w-36 h-36 bg-red-100/40 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none group-hover:scale-125 transition-transform duration-500"></div>
-
-            <div className="relative z-10">
-              {/* Card Header */}
-              <div className="flex items-start justify-between gap-3 mb-6">
+          {/* Card 2: Kuota & Personel */}
+          <div className="group rounded-3xl bg-gradient-to-b from-slate-900/90 via-slate-900/80 to-slate-950/95 border border-white/10 hover:border-white/20 p-6 sm:p-7 shadow-xl backdrop-blur-xl flex flex-col justify-between transition-all duration-300 text-left">
+            <div>
+              {/* Header */}
+              <div className="flex items-start justify-between gap-3 mb-6 pb-4 border-b border-white/10">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-2xl bg-red-700 text-white flex items-center justify-center shadow-md shadow-red-700/25 group-hover:scale-105 transition-transform">
-                    <Users className="w-6 h-6" />
+                  <div className="w-11 h-11 rounded-2xl bg-red-600/15 border border-red-500/30 text-red-400 flex items-center justify-center shrink-0 shadow-md group-hover:scale-105 transition-transform">
+                    <Users className="w-5 h-5" />
                   </div>
                   <div>
-                    <span className="text-[11px] font-bold text-red-700 uppercase tracking-wider block">
+                    <span className="text-[10px] font-bold text-red-400 uppercase tracking-widest block">
                       Regulasi Kontingen
                     </span>
-                    <h3 className="font-black text-xl text-slate-900 uppercase italic tracking-tight">
+                    <h3 className="font-black text-lg text-white uppercase italic tracking-tight">
                       Kuota & Personel
                     </h3>
                   </div>
                 </div>
-                <span className="text-[10px] font-extrabold uppercase tracking-wider bg-red-50 text-red-700 px-2.5 py-1 rounded-lg border border-red-100">
+                <span className="text-[10px] font-black uppercase tracking-wider bg-red-950/60 text-red-300 px-2.5 py-1 rounded-lg border border-red-500/30">
                   Maks. 25
                 </span>
               </div>
 
-              <div className="space-y-3.5 my-2">
+              <div className="space-y-4">
                 {/* 1. Kuota Sekolah */}
-                <div className="bg-slate-50/80 p-3 rounded-2xl border border-slate-100">
+                <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/5">
                   <div className="flex items-center gap-2 mb-1">
-                    <CheckCircle2 className="w-4 h-4 text-red-600 shrink-0" />
-                    <span className="text-xs font-bold text-slate-900 uppercase tracking-wider">Kuota per Sekolah</span>
+                    <CheckCircle2 className="w-4 h-4 text-red-400 shrink-0" />
+                    <span className="text-xs font-bold text-white uppercase tracking-wider">Kuota per Sekolah</span>
                   </div>
-                  <p className="text-sm font-black text-slate-800 ml-6">
+                  <p className="text-sm font-black text-white ml-6">
                     {COMPETITION.MAX_PLATOONS_PER_SCHOOL_LABEL}
                   </p>
-                  <p className="text-xs text-slate-500 ml-6 mt-0.5">
+                  <p className="text-[11px] text-slate-400 ml-6 mt-0.5 leading-relaxed">
                     Tiap sekolah dapat mengirimkan tim putra, putri, atau campuran.
                   </p>
                 </div>
 
-                {/* 2. Komposisi Personil (Micro-cards grid) */}
-                <div className="bg-slate-50/80 p-3 rounded-2xl border border-slate-100">
-                  <div className="flex items-center justify-between mb-2">
+                {/* 2. Komposisi Personil */}
+                <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/5">
+                  <div className="flex items-center justify-between mb-2.5">
                     <div className="flex items-center gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-red-600 shrink-0" />
-                      <span className="text-xs font-bold text-slate-900 uppercase tracking-wider">Komposisi Peleton</span>
+                      <CheckCircle2 className="w-4 h-4 text-red-400 shrink-0" />
+                      <span className="text-xs font-bold text-white uppercase tracking-wider">Komposisi Peleton</span>
                     </div>
-                    <span className="text-[10px] font-bold text-slate-500">Max 25 Orang</span>
+                    <span className="text-[10px] font-bold text-slate-400">Maks 25 Orang</span>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-2 ml-1 text-center">
-                    <div className="bg-white p-2 rounded-xl border border-slate-200/80 shadow-xs">
-                      <div className="w-7 h-7 rounded-lg bg-red-100 text-red-700 flex items-center justify-center mx-auto mb-1">
-                        <UserCheck className="w-3.5 h-3.5" />
-                      </div>
-                      <span className="text-xs font-black text-slate-900 block">1 Danton</span>
-                      <span className="text-[10px] text-slate-500">Komandan</span>
+                  <div className="grid grid-cols-3 gap-2 text-center">
+                    <div className="bg-white/[0.04] p-2.5 rounded-xl border border-white/5">
+                      <UserCheck className="w-4 h-4 text-red-400 mx-auto mb-1" />
+                      <span className="text-xs font-black text-white block">1 Danton</span>
+                      <span className="text-[10px] text-slate-400">Komandan</span>
                     </div>
 
-                    <div className="bg-white p-2 rounded-xl border border-slate-200/80 shadow-xs">
-                      <div className="w-7 h-7 rounded-lg bg-red-100 text-red-700 flex items-center justify-center mx-auto mb-1">
-                        <Users className="w-3.5 h-3.5" />
-                      </div>
-                      <span className="text-xs font-black text-slate-900 block">21 Pasukan</span>
-                      <span className="text-[10px] text-slate-500">Pasukan Inti</span>
+                    <div className="bg-white/[0.04] p-2.5 rounded-xl border border-white/5">
+                      <Users className="w-4 h-4 text-red-400 mx-auto mb-1" />
+                      <span className="text-xs font-black text-white block">21 Pasukan</span>
+                      <span className="text-[10px] text-slate-400">Pasukan Inti</span>
                     </div>
 
-                    <div className="bg-white p-2 rounded-xl border border-slate-200/80 shadow-xs">
-                      <div className="w-7 h-7 rounded-lg bg-red-100 text-red-700 flex items-center justify-center mx-auto mb-1">
-                        <PlusCircle className="w-3.5 h-3.5" />
-                      </div>
-                      <span className="text-xs font-black text-slate-900 block">3 Cadangan</span>
-                      <span className="text-[10px] text-slate-500">Pengganti</span>
+                    <div className="bg-white/[0.04] p-2.5 rounded-xl border border-white/5">
+                      <PlusCircle className="w-4 h-4 text-red-400 mx-auto mb-1" />
+                      <span className="text-xs font-black text-white block">3 Cadangan</span>
+                      <span className="text-[10px] text-slate-400">Pengganti</span>
                     </div>
                   </div>
-                  <p className="text-[11px] text-slate-500 ml-1 mt-2">
+                  <p className="text-[11px] text-slate-400 mt-2.5 leading-relaxed">
                     * Minimal tampil di lapangan: 22 personil (1 Danton + 21 Pasukan).
                   </p>
                 </div>
 
                 {/* 3. Sifat Pasukan & Official */}
                 <div className="grid grid-cols-2 gap-2">
-                  <div className="bg-slate-50/80 p-2.5 rounded-xl border border-slate-100">
-                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Sifat Pasukan</span>
-                    <span className="text-xs font-bold text-slate-800 mt-0.5 block">Homogen / Campuran</span>
+                  <div className="p-3 rounded-xl bg-white/[0.03] border border-white/5">
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Sifat Pasukan</span>
+                    <span className="text-xs font-bold text-white mt-0.5 block">Homogen / Campuran</span>
                   </div>
-                  <div className="bg-slate-50/80 p-2.5 rounded-xl border border-slate-100">
-                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Official Tim</span>
-                    <span className="text-xs font-bold text-slate-800 mt-0.5 block">2 Pelatih + 1 Dok.</span>
+                  <div className="p-3 rounded-xl bg-white/[0.03] border border-white/5">
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Official Tim</span>
+                    <span className="text-xs font-bold text-white mt-0.5 block">2 Pelatih + 1 Dok.</span>
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Payment Card */}
-          <div className="group bg-white p-6 sm:p-8 rounded-[28px] border-2 border-yellow-400 shadow-xl hover:shadow-2xl transition-all duration-300 flex flex-col justify-between relative overflow-hidden z-10 md:-mt-2 md:mb-2 text-left">
-            {/* Top Right Pill Badge: NON-REFUNDABLE */}
-            <div className="absolute top-0 right-0 bg-[#f59e0b] text-slate-950 text-[11px] font-black px-5 py-1.5 rounded-bl-2xl uppercase tracking-wider shadow-sm select-none">
-              NON-REFUNDABLE
-            </div>
-
-            <div className="relative z-10">
-              {/* Card Header */}
-              <div className="flex items-center gap-3.5 mb-6">
-                <div className="w-13 h-13 rounded-2xl bg-amber-50 text-amber-700 border border-amber-200 flex items-center justify-center shadow-md shadow-amber-500/10 shrink-0">
-                  <Wallet className="w-6 h-6" />
+          {/* Card 3: Biaya Pendaftaran & Rekening */}
+          <div className="group rounded-3xl bg-gradient-to-b from-slate-900/90 via-slate-900/80 to-slate-950/95 border-2 border-amber-500/40 hover:border-amber-500/70 p-6 sm:p-7 shadow-2xl backdrop-blur-xl flex flex-col justify-between transition-all duration-300 relative text-left">
+            <div>
+              {/* Header */}
+              <div className="flex items-start justify-between gap-3 mb-6 pb-4 border-b border-white/10">
+                <div className="flex items-center gap-3">
+                  <div className="w-11 h-11 rounded-2xl bg-amber-500/15 border border-amber-500/30 text-amber-400 flex items-center justify-center shrink-0 shadow-md group-hover:scale-105 transition-transform">
+                    <Wallet className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-bold text-amber-400 uppercase tracking-widest block">
+                      Investasi Tim
+                    </span>
+                    <h3 className="font-black text-lg text-white uppercase italic tracking-tight">
+                      Biaya Pendaftaran
+                    </h3>
+                  </div>
                 </div>
-                <div>
-                  <span className="text-[11px] font-extrabold text-amber-700 uppercase tracking-widest block">
-                    INVESTASI TIM
-                  </span>
-                  <h3 className="font-black text-2xl text-slate-900 uppercase italic tracking-tight">
-                    BIAYA PENDAFTARAN
-                  </h3>
-                </div>
+                <span className="text-[10px] font-black uppercase tracking-wider bg-amber-500/20 text-amber-300 px-2.5 py-1 rounded-lg border border-amber-500/40">
+                  Non-Refundable
+                </span>
               </div>
 
-              {PAYMENT.FEE_TIERS ? (
-                <div className="space-y-3 mb-5">
+              {/* Fee Tiers */}
+              {PAYMENT.FEE_TIERS && (
+                <div className="space-y-2.5 mb-5">
                   {PAYMENT.FEE_TIERS.map((tier, idx) => {
                     const now = Date.now();
                     const end = tier.endDate ? new Date(tier.endDate).getTime() : 0;
@@ -461,38 +457,38 @@ export default function Registration() {
                         key={idx}
                         className={`p-3.5 rounded-2xl border transition-all ${
                           isActive
-                            ? 'bg-rose-50/70 border-rose-300 ring-1 ring-rose-300/80 shadow-xs'
+                            ? 'bg-amber-500/10 border-amber-500/40 shadow-sm'
                             : isPast
-                            ? 'bg-slate-100/60 border-slate-200 opacity-60'
-                            : 'bg-slate-50/80 border-slate-200'
+                            ? 'bg-white/[0.02] border-white/5 opacity-60'
+                            : 'bg-white/[0.03] border-white/5'
                         }`}
                       >
                         <div className="flex items-center justify-between gap-2">
                           <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-1">
-                              <span className="text-sm font-black text-slate-900 block tracking-tight">
+                            <div className="flex items-center gap-2 mb-0.5">
+                              <span className="text-xs sm:text-sm font-black text-white block">
                                 {tier.name}
                               </span>
                               {isActive && (
-                                <span className="text-[10px] font-black uppercase tracking-wider bg-[#dc2626] text-white px-2 py-0.5 rounded-md">
-                                  AKTIF
+                                <span className="text-[9px] font-black uppercase tracking-wider bg-red-600 text-white px-2 py-0.5 rounded-full">
+                                  Aktif
                                 </span>
                               )}
                               {isPast && (
-                                <span className="text-[10px] font-bold uppercase tracking-wider bg-slate-200 text-slate-500 px-1.5 py-0.5 rounded">
+                                <span className="text-[9px] font-bold uppercase tracking-wider bg-white/10 text-slate-400 px-1.5 py-0.5 rounded">
                                   Berakhir
                                 </span>
                               )}
                             </div>
-                            <span className="text-xs text-slate-500 block font-medium">
+                            <span className="text-[11px] text-slate-400 block">
                               {tier.label} • Non-refundable
                             </span>
                           </div>
                           <div className="text-right shrink-0">
-                            <span className={`text-xl font-black block tracking-tight ${isActive ? 'text-[#dc2626]' : 'text-slate-800'}`}>
+                            <span className={`text-base sm:text-lg font-black block ${isActive ? 'text-amber-400' : 'text-white'}`}>
                               Rp{tier.amount}
                             </span>
-                            <span className="text-[10px] text-slate-500 font-semibold block italic">
+                            <span className="text-[10px] text-slate-400 block">
                               / peleton
                             </span>
                           </div>
@@ -501,519 +497,477 @@ export default function Registration() {
                     );
                   })}
                 </div>
-              ) : (
-                <>
-                  <div className="flex items-baseline gap-1 mb-2">
-                    <span className="text-sm text-slate-500 font-bold">Rp</span>
-                    <span className="text-5xl font-black text-red-700 tracking-tighter">{PAYMENT.FEE_DISPLAY}</span>
-                  </div>
-                  <p className="text-xs text-slate-500 font-medium mb-6">/ Peleton (Termasuk Atribut & Sertifikat)</p>
-                </>
               )}
 
               {/* Bank Account Box */}
-              <div className="bg-[#f8fafc] rounded-2xl p-4 border border-dashed border-slate-200 relative">
-                <div className="flex justify-between items-center mb-2.5">
-                  <span className="text-[11px] font-black text-slate-500 uppercase tracking-wider">
-                    REKENING TUJUAN
+              <div className="bg-white/[0.03] rounded-2xl p-4 border border-white/10 relative">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider">
+                    Rekening Tujuan Transfer
                   </span>
-                  <span className="text-[10px] font-black text-white bg-[#1d4ed8] px-2.5 py-0.5 rounded-md">
+                  <span className="text-[10px] font-black text-white bg-blue-600 px-2 py-0.5 rounded">
                     {PAYMENT.BANK_NAME}
                   </span>
                 </div>
-                <div className="flex items-center justify-between gap-2 bg-white border border-slate-200 p-3 rounded-xl shadow-xs mb-3">
-                  <span id="rek-number" className="font-mono text-lg sm:text-xl font-black text-slate-900 tracking-wider truncate">
+
+                <div className="flex items-center justify-between gap-2 bg-slate-950 border border-white/10 p-3 rounded-xl mb-2.5">
+                  <span className="font-mono text-base sm:text-lg font-black text-white tracking-wider truncate">
                     {PAYMENT.ACCOUNT_NUMBER}
                   </span>
                   <button
                     type="button"
                     onClick={handleCopyAccount}
-                    className={`p-1.5 rounded-lg transition-all cursor-pointer ${
+                    className={`p-2 rounded-lg transition-all cursor-pointer ${
                       copied
-                        ? 'bg-green-500 text-white'
-                        : 'text-slate-400 hover:text-blue-600 hover:bg-blue-50'
+                        ? 'bg-emerald-500 text-white'
+                        : 'text-slate-400 hover:text-white hover:bg-white/10'
                     }`}
                     aria-label="Salin nomor rekening"
                   >
                     {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                   </button>
                 </div>
-                <div className="space-y-1 text-xs">
-                  <p className="text-slate-500 font-medium">
-                    A.n: <strong className="text-slate-900 font-black">{PAYMENT.ACCOUNT_NAME}</strong>
-                  </p>
-                  <p className="text-slate-500 font-medium">
-                    Berita: <span className="text-[#dc2626] font-mono font-bold bg-red-50 px-1.5 py-0.5 rounded text-[11px]">{PAYMENT.TRANSFER_NOTE_FORMAT}</span>
-                  </p>
+
+                <div className="space-y-1 text-xs text-slate-300">
+                  <p>A.n: <strong className="text-white">{PAYMENT.ACCOUNT_NAME}</strong></p>
+                  <p>Berita: <span className="text-amber-400 font-mono font-bold">{PAYMENT.TRANSFER_NOTE_FORMAT}</span></p>
                 </div>
-                <div className="absolute -bottom-7 left-0 w-full flex justify-center">
-                  <span
-                    className={`text-[10px] font-bold text-green-700 bg-green-100 border border-green-200 px-3 py-1 rounded-full transition-opacity duration-300 flex items-center gap-1 shadow-sm ${
-                      copied ? 'opacity-100' : 'opacity-0 pointer-events-none'
-                    }`}
-                  >
-                    <Check className="w-3 h-3" /> Rekening Tersalin!
-                  </span>
-                </div>
+
+                {copied && (
+                  <div className="mt-2 text-center">
+                    <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/20 border border-emerald-500/30 px-3 py-1 rounded-full inline-flex items-center gap-1">
+                      <Check className="w-3 h-3" /> Nomor Rekening Berhasil Disalin!
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
 
-            {/* Bottom Footer Info */}
-            <div className="relative z-10 mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-              <span className="text-[11px] text-slate-600 font-medium">Unggah bukti di portal</span>
+            <div className="mt-4 pt-3 border-t border-white/10 text-[11px] text-slate-400">
+              Unggah bukti transfer resmi saat mengisi formulir digital di portal.
             </div>
           </div>
+
         </div>
 
-        {/* 5 Steps Registration Procedure */}
-        <div className="bg-white rounded-3xl shadow-xl border border-slate-200/90 p-6 sm:p-10 lg:p-12 relative overflow-hidden mb-16">
-          <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-red-700 via-amber-500 to-red-700"></div>
-          <div className="absolute -right-20 -top-20 w-64 h-64 bg-red-50/60 rounded-full blur-3xl pointer-events-none"></div>
+        {/* ========================================================
+            PROSEDUR PENDAFTARAN (5 TAHAPAN PRAKTIS)
+            ======================================================== */}
+        <div className="rounded-3xl bg-gradient-to-b from-slate-900/90 via-slate-900/80 to-slate-950/95 border border-white/10 p-6 sm:p-10 shadow-2xl backdrop-blur-xl relative overflow-hidden mb-16 lg:mb-20">
+          <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-red-600 via-amber-400 to-red-600"></div>
 
-          <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-12 relative z-10">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-red-100/60 border border-red-200 text-red-800 text-xs font-bold uppercase tracking-widest mb-3">
+          <div className="text-center max-w-2xl mx-auto mb-10">
+            <span className="text-amber-400 font-bold uppercase tracking-widest text-[11px] block mb-2">
               Alur Pendaftaran Peleton
-            </div>
-            <h3 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 uppercase italic tracking-tight">
-              Prosedur <span className="text-red-700">Pendaftaran</span>
+            </span>
+            <h3 className="text-2xl sm:text-3xl font-black uppercase italic tracking-tight text-white">
+              Prosedur <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-amber-400">Pendaftaran</span>
             </h3>
-            <p className="text-sm sm:text-base text-slate-600 mt-2 font-medium">
+            <p className="text-xs sm:text-sm text-slate-400 mt-2 leading-relaxed">
               Ikuti 5 tahapan praktis berikut untuk mendaftarkan peleton sekolah Anda hingga status terverifikasi resmi.
             </p>
           </div>
 
-          {/* 5 Process Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 relative z-10 mb-10">
+          {/* 5 Step Process Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+            
             {/* Step 1 */}
-            <div className="group/step bg-slate-50 hover:bg-white p-5 rounded-2xl border border-slate-200/80 hover:border-red-500/40 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between text-left">
+            <div className="p-4 sm:p-5 rounded-2xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/5 hover:border-amber-500/30 transition-all text-left flex flex-col justify-between">
               <div>
-                <div className="flex items-center justify-between mb-4">
-                  <span className="w-9 h-9 rounded-xl bg-white border border-slate-200 text-slate-700 group-hover/step:bg-red-700 group-hover/step:text-white group-hover/step:border-red-700 flex items-center justify-center font-black text-sm shadow-xs transition-colors">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/25 flex items-center justify-center font-black text-xs">
                     01
                   </span>
-                  <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center">
-                    <MonitorSmartphone className="w-4 h-4" />
-                  </div>
+                  <MonitorSmartphone className="w-4 h-4 text-slate-400" />
                 </div>
-                <h4 className="font-black text-slate-900 uppercase tracking-tight text-sm mb-1.5 group-hover/step:text-red-700 transition-colors">
+                <h4 className="font-black text-white text-xs sm:text-sm mb-1 uppercase tracking-tight">
                   Akses Formulir
                 </h4>
-                <p className="text-xs text-slate-500 leading-relaxed">
-                  Buka portal resmi dan klik tombol <strong className="text-slate-800">"Daftar Peleton"</strong> untuk membuka formulir wizard digital.
+                <p className="text-[11px] text-slate-400 leading-relaxed">
+                  Buka portal resmi dan klik tombol <strong className="text-white">"Daftar Peleton"</strong> untuk membuka formulir wizard digital.
                 </p>
               </div>
             </div>
 
             {/* Step 2 */}
-            <div className="group/step bg-slate-50 hover:bg-white p-5 rounded-2xl border border-slate-200/80 hover:border-red-500/40 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between text-left">
+            <div className="p-4 sm:p-5 rounded-2xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/5 hover:border-blue-500/30 transition-all text-left flex flex-col justify-between">
               <div>
-                <div className="flex items-center justify-between mb-4">
-                  <span className="w-9 h-9 rounded-xl bg-white border border-slate-200 text-slate-700 group-hover/step:bg-red-700 group-hover/step:text-white group-hover/step:border-red-700 flex items-center justify-center font-black text-sm shadow-xs transition-colors">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="w-8 h-8 rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/25 flex items-center justify-center font-black text-xs">
                     02
                   </span>
-                  <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center">
-                    <School className="w-4 h-4" />
-                  </div>
+                  <School className="w-4 h-4 text-slate-400" />
                 </div>
-                <h4 className="font-black text-slate-900 uppercase tracking-tight text-sm mb-1.5 group-hover/step:text-red-700 transition-colors">
+                <h4 className="font-black text-white text-xs sm:text-sm mb-1 uppercase tracking-tight">
                   Sekolah & Akun
                 </h4>
-                <p className="text-xs text-slate-500 leading-relaxed">
-                  Pilih jenjang (SD/SMP), masukkan email akun Google aktif, data sekolah, upload logo, & pilih tipe peleton.
+                <p className="text-[11px] text-slate-400 leading-relaxed">
+                  Pilih jenjang (SD/SMP), masukkan email Google aktif, data sekolah, unggah logo, dan pilih tipe peleton.
                 </p>
               </div>
             </div>
 
             {/* Step 3 */}
-            <div className="group/step bg-slate-50 hover:bg-white p-5 rounded-2xl border border-slate-200/80 hover:border-red-500/40 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between text-left">
+            <div className="p-4 sm:p-5 rounded-2xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/5 hover:border-emerald-500/30 transition-all text-left flex flex-col justify-between">
               <div>
-                <div className="flex items-center justify-between mb-4">
-                  <span className="w-9 h-9 rounded-xl bg-white border border-slate-200 text-slate-700 group-hover/step:bg-red-700 group-hover/step:text-white group-hover/step:border-red-700 flex items-center justify-center font-black text-sm shadow-xs transition-colors">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/25 flex items-center justify-center font-black text-xs">
                     03
                   </span>
-                  <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center">
-                    <UserCheck className="w-4 h-4" />
-                  </div>
+                  <UserCheck className="w-4 h-4 text-slate-400" />
                 </div>
-                <h4 className="font-black text-slate-900 uppercase tracking-tight text-sm mb-1.5 group-hover/step:text-red-700 transition-colors">
+                <h4 className="font-black text-white text-xs sm:text-sm mb-1 uppercase tracking-tight">
                   Danton & Official
                 </h4>
-                <p className="text-xs text-slate-500 leading-relaxed">
-                  Lengkapi identitas Danton & Kartu Pelajar, serta nama Official/Pelatih, No. WhatsApp aktif, & KTP.
+                <p className="text-[11px] text-slate-400 leading-relaxed">
+                  Lengkapi identitas Danton & Kartu Pelajar, nama Official/Pelatih, No. WhatsApp aktif, dan KTP resmi.
                 </p>
               </div>
             </div>
 
             {/* Step 4 */}
-            <div className="group/step bg-slate-50 hover:bg-white p-5 rounded-2xl border border-slate-200/80 hover:border-red-500/40 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between text-left">
+            <div className="p-4 sm:p-5 rounded-2xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/5 hover:border-purple-500/30 transition-all text-left flex flex-col justify-between">
               <div>
-                <div className="flex items-center justify-between mb-4">
-                  <span className="w-9 h-9 rounded-xl bg-white border border-slate-200 text-slate-700 group-hover/step:bg-red-700 group-hover/step:text-white group-hover/step:border-red-700 flex items-center justify-center font-black text-sm shadow-xs transition-colors">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="w-8 h-8 rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/25 flex items-center justify-center font-black text-xs">
                     04
                   </span>
-                  <div className="w-8 h-8 rounded-lg bg-purple-50 text-purple-700 flex items-center justify-center">
-                    <CreditCard className="w-4 h-4" />
-                  </div>
+                  <CreditCard className="w-4 h-4 text-slate-400" />
                 </div>
-                <h4 className="font-black text-slate-900 uppercase tracking-tight text-sm mb-1.5 group-hover/step:text-red-700 transition-colors">
+                <h4 className="font-black text-white text-xs sm:text-sm mb-1 uppercase tracking-tight">
                   Bayar & Pakta
                 </h4>
-                <p className="text-xs text-slate-500 leading-relaxed">
+                <p className="text-[11px] text-slate-400 leading-relaxed">
                   Unggah bukti transfer pembayaran dan bubuhkan tanda tangan digital Pakta Integritas Online di kanvas resmi.
                 </p>
               </div>
             </div>
 
             {/* Step 5 */}
-            <div className="group/step bg-gradient-to-b from-red-50/80 to-red-100/50 hover:from-red-100 hover:to-red-200/60 p-5 rounded-2xl border border-red-200 hover:border-red-400 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between text-left relative overflow-hidden">
-              <div className="absolute -right-3 -top-3 w-16 h-16 bg-red-600/10 rounded-full blur-xl pointer-events-none"></div>
+            <div className="p-4 sm:p-5 rounded-2xl bg-red-950/40 hover:bg-red-950/60 border border-red-500/30 transition-all text-left flex flex-col justify-between">
               <div>
-                <div className="flex items-center justify-between mb-4">
-                  <span className="w-9 h-9 rounded-xl bg-red-700 text-white flex items-center justify-center font-black text-sm shadow-sm shadow-red-700/30">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="w-8 h-8 rounded-xl bg-red-600 text-white flex items-center justify-center font-black text-xs shadow-sm">
                     05
                   </span>
-                  <div className="w-8 h-8 rounded-lg bg-red-600 text-white flex items-center justify-center shadow-xs">
-                    <ShieldCheck className="w-4 h-4" />
-                  </div>
+                  <ShieldCheck className="w-4 h-4 text-red-400" />
                 </div>
-                <h4 className="font-black text-slate-900 uppercase tracking-tight text-sm mb-1.5">
+                <h4 className="font-black text-white text-xs sm:text-sm mb-1 uppercase tracking-tight">
                   Validasi & Dashboard
                 </h4>
-                <p className="text-xs text-slate-600 leading-relaxed">
+                <p className="text-[11px] text-slate-300 leading-relaxed">
                   Terima Kode Registrasi resmi, panitia memverifikasi dalam 1×24 jam, dan pantau status via <strong>Dashboard Tim</strong>.
                 </p>
               </div>
             </div>
+
           </div>
 
-          {/* CTA Banner with Portal Link */}
-          <div className="bg-slate-900 text-white rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-6 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-72 h-72 bg-red-600/10 rounded-full blur-3xl pointer-events-none"></div>
-            <div className="relative z-10 text-left">
-              <span className="text-yellow-400 font-extrabold uppercase text-[11px] tracking-wider block mb-1">
+          {/* CTA Banner */}
+          <div className="rounded-2xl bg-white/[0.03] border border-white/10 p-5 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-5 text-left">
+            <div>
+              <span className="text-[10px] font-bold text-amber-400 uppercase tracking-widest block mb-1">
                 Portal Registrasi Resmi LBB 2027
               </span>
-              <h4 className="text-lg sm:text-xl font-black text-white tracking-tight">
+              <h4 className="text-base sm:text-lg font-black text-white">
                 Siap Mendaftarkan Peleton Terbaik Sekolah Anda?
               </h4>
-              <p className="text-xs sm:text-sm text-slate-300 mt-1 max-w-xl leading-relaxed">
-                Akses formulir digital, pastikan kelengkapan berkas, dan amankan kuota sebelum pendaftaran ditutup.
+              <p className="text-xs text-slate-300 mt-0.5 leading-relaxed">
+                Akses formulir digital sekarang dan amankan kuota sebelum pendaftaran ditutup.
               </p>
             </div>
-            <div className="relative z-10 shrink-0 w-full sm:w-auto flex flex-col sm:flex-row items-center gap-3">
-              {isRegistrationAvailable ? (
-                <button
-                  type="button"
-                  onClick={() => openModal('regWizard')}
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-gradient-to-r from-red-700 via-red-600 to-red-700 text-white font-extrabold rounded-xl hover:from-red-600 hover:to-red-700 shadow-lg shadow-red-950/40 hover:shadow-red-700/30 transition-all transform hover:-translate-y-0.5 text-sm uppercase tracking-wide cursor-pointer"
-                >
-                  <span>Buka Formulir Pendaftaran</span>
-                  <ExternalLink className="w-4 h-4" />
-                </button>
-              ) : (
-                <div className="w-full sm:w-auto px-6 py-3.5 bg-slate-800 border border-slate-700 text-slate-300 font-bold rounded-xl text-center text-xs uppercase tracking-wide">
-                  {isQuotaFull ? 'Pendaftaran Ditutup (Kuota Penuh)' : 'Pendaftaran Sedang Ditutup'}
-                </div>
-              )}
-            </div>
+
+            {isRegistrationAvailable ? (
+              <button
+                type="button"
+                onClick={() => openModal('regWizard')}
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-black text-xs uppercase tracking-wider transition-all shadow-lg shadow-red-700/30 hover:shadow-red-600/50 shrink-0 cursor-pointer"
+              >
+                <span>Buka Formulir Pendaftaran</span>
+                <ExternalLink className="w-4 h-4" />
+              </button>
+            ) : (
+              <div className="w-full sm:w-auto px-5 py-3 rounded-xl bg-white/5 border border-white/10 text-slate-400 font-bold text-xs uppercase tracking-wider text-center shrink-0">
+                {isQuotaFull ? 'Pendaftaran Ditutup (Kuota Penuh)' : 'Pendaftaran Sedang Ditutup'}
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Required Documents & Center Info */}
-        <div className="grid lg:grid-cols-12 gap-8 mb-16 items-stretch">
-          {/* Left Column (7 cols): Dokumen Unggahan */}
-          <div className="lg:col-span-7 bg-white rounded-3xl border border-slate-200/90 p-6 sm:p-8 shadow-lg flex flex-col justify-between relative overflow-hidden text-left">
-            <div className="absolute top-0 right-0 w-40 h-40 bg-blue-50/60 rounded-full blur-3xl pointer-events-none"></div>
-
-            <div className="relative z-10">
-              <div className="flex items-center gap-3 mb-6 border-b border-slate-100 pb-4">
-                <div className="w-11 h-11 bg-blue-50 text-blue-700 rounded-2xl flex items-center justify-center border border-blue-100 shadow-xs">
+        {/* ========================================================
+            DOKUMEN UNGGAHAN & PUSAT INFORMASI
+            ======================================================== */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+          
+          {/* Kolom Kiri: Dokumen Unggahan (7 Kolom) */}
+          <div className="lg:col-span-7 rounded-3xl bg-gradient-to-b from-slate-900/90 via-slate-900/80 to-slate-950/95 border border-white/10 p-6 sm:p-7 shadow-xl backdrop-blur-xl flex flex-col justify-between text-left">
+            <div>
+              <div className="flex items-center gap-3 mb-6 pb-4 border-b border-white/10">
+                <div className="w-10 h-10 rounded-2xl bg-blue-500/10 border border-blue-500/30 text-blue-400 flex items-center justify-center shrink-0">
                   <FileUp className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="font-black text-slate-900 uppercase tracking-tight text-lg">
+                  <h4 className="font-black text-white uppercase tracking-tight text-base sm:text-lg">
                     Dokumen Unggahan (Wajib)
                   </h4>
-                  <p className="text-xs text-slate-500 mt-0.5">
-                    Berkas digital yang wajib diunggah saat pendaftaran online di portal.
+                  <p className="text-xs text-slate-400 mt-0.5">
+                    Berkas digital yang wajib diunggah saat pendaftaran daring di portal.
                   </p>
                 </div>
               </div>
 
-              {/* Grid of Document Cards (6 Cards: Rekomendasi, Bukti Transfer, Kartu Pelajar, KTP Official, Pasfoto, Logo Sekolah) */}
-              <div className="grid sm:grid-cols-2 gap-3.5">
-                {/* Doc 1: Surat Rekomendasi */}
-                <div className="bg-slate-50/80 hover:bg-white p-4 rounded-2xl border border-slate-100 hover:border-slate-200 hover:shadow-md transition-all flex flex-col justify-between">
+              {/* Grid 6 Document Cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                
+                {/* Doc 1 */}
+                <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-blue-500/30 transition-all flex flex-col justify-between">
                   <div>
-                    <div className="flex items-center justify-between mb-2.5">
-                      <div className="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center shadow-xs">
-                        <FileSignature className="w-4 h-4" />
-                      </div>
-                      <span className="text-[10px] font-black uppercase tracking-wider text-blue-700 bg-blue-50 border border-blue-100 px-2 py-0.5 rounded-lg">
+                    <div className="flex items-center justify-between mb-2">
+                      <FileSignature className="w-4 h-4 text-blue-400" />
+                      <span className="text-[9px] font-black uppercase tracking-wider text-blue-300 bg-blue-500/15 border border-blue-500/30 px-2 py-0.5 rounded">
                         PDF / JPG
                       </span>
                     </div>
-                    <h5 className="font-black text-slate-900 text-xs sm:text-sm mb-1">Surat Rekomendasi</h5>
-                    <p className="text-[11px] text-slate-500 leading-relaxed">
+                    <h5 className="font-black text-white text-xs mb-1">Surat Rekomendasi</h5>
+                    <p className="text-[11px] text-slate-400 leading-relaxed">
                       Dari Kepala Sekolah / Madrasah asli dengan tanda tangan & stempel basah.
                     </p>
                   </div>
-                  <div className="mt-2.5 pt-2 border-t border-slate-200/50 text-[10px] text-slate-400 font-medium">
-                    Maks. 2 MB
-                  </div>
+                  <span className="text-[10px] text-slate-500 mt-2 block">Maks. 2 MB</span>
                 </div>
 
-                {/* Doc 2: Bukti Transfer */}
-                <div className="bg-slate-50/80 hover:bg-white p-4 rounded-2xl border border-slate-100 hover:border-slate-200 hover:shadow-md transition-all flex flex-col justify-between">
+                {/* Doc 2 */}
+                <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-emerald-500/30 transition-all flex flex-col justify-between">
                   <div>
-                    <div className="flex items-center justify-between mb-2.5">
-                      <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shadow-xs">
-                        <ImageIcon className="w-4 h-4" />
-                      </div>
-                      <span className="text-[10px] font-black uppercase tracking-wider text-emerald-700 bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded-lg">
+                    <div className="flex items-center justify-between mb-2">
+                      <ImageIcon className="w-4 h-4 text-emerald-400" />
+                      <span className="text-[9px] font-black uppercase tracking-wider text-emerald-300 bg-emerald-500/15 border border-emerald-500/30 px-2 py-0.5 rounded">
                         JPG / PNG
                       </span>
                     </div>
-                    <h5 className="font-black text-slate-900 text-xs sm:text-sm mb-1">Bukti Transfer Biaya</h5>
-                    <p className="text-[11px] text-slate-500 leading-relaxed">
+                    <h5 className="font-black text-white text-xs mb-1">Bukti Transfer Biaya</h5>
+                    <p className="text-[11px] text-slate-400 leading-relaxed">
                       Foto/Scan struk atau screenshot m-banking jelas dengan nominal sesuai gelombang.
                     </p>
                   </div>
-                  <div className="mt-2.5 pt-2 border-t border-slate-200/50 text-[10px] text-slate-400 font-medium">
-                    Maks. 2 MB
-                  </div>
+                  <span className="text-[10px] text-slate-500 mt-2 block">Maks. 2 MB</span>
                 </div>
 
-                {/* Doc 3: Kartu Pelajar Komandan */}
-                <div className="bg-slate-50/80 hover:bg-white p-4 rounded-2xl border border-slate-100 hover:border-slate-200 hover:shadow-md transition-all flex flex-col justify-between">
+                {/* Doc 3 */}
+                <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-red-500/30 transition-all flex flex-col justify-between">
                   <div>
-                    <div className="flex items-center justify-between mb-2.5">
-                      <div className="w-8 h-8 rounded-xl bg-red-100 text-red-700 flex items-center justify-center shadow-xs">
-                        <CreditCard className="w-4 h-4" />
-                      </div>
-                      <span className="text-[10px] font-black uppercase tracking-wider text-red-700 bg-red-50 border border-red-100 px-2 py-0.5 rounded-lg">
+                    <div className="flex items-center justify-between mb-2">
+                      <CreditCard className="w-4 h-4 text-red-400" />
+                      <span className="text-[9px] font-black uppercase tracking-wider text-red-300 bg-red-500/15 border border-red-500/30 px-2 py-0.5 rounded">
                         Foto / PDF
                       </span>
                     </div>
-                    <h5 className="font-black text-slate-900 text-xs sm:text-sm mb-1">Kartu Pelajar Komandan</h5>
-                    <p className="text-[11px] text-slate-500 leading-relaxed">
-                      Scan/Foto Kartu Pelajar sah Komandan Peleton (Danton) pangkalan sekolah bersangkutan.
+                    <h5 className="font-black text-white text-xs mb-1">Kartu Pelajar Komandan</h5>
+                    <p className="text-[11px] text-slate-400 leading-relaxed">
+                      Scan/Foto Kartu Pelajar sah Komandan Peleton (Danton) pangkalan bersangkutan.
                     </p>
                   </div>
-                  <div className="mt-2.5 pt-2 border-t border-slate-200/50 text-[10px] text-slate-400 font-medium">
-                    Maks. 3 MB
-                  </div>
+                  <span className="text-[10px] text-slate-500 mt-2 block">Maks. 3 MB</span>
                 </div>
 
-                {/* Doc 4: KTP Official / Pelatih */}
-                <div className="bg-slate-50/80 hover:bg-white p-4 rounded-2xl border border-slate-100 hover:border-slate-200 hover:shadow-md transition-all flex flex-col justify-between">
+                {/* Doc 4 */}
+                <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-amber-500/30 transition-all flex flex-col justify-between">
                   <div>
-                    <div className="flex items-center justify-between mb-2.5">
-                      <div className="w-8 h-8 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center shadow-xs">
-                        <UserCheck className="w-4 h-4" />
-                      </div>
-                      <span className="text-[10px] font-black uppercase tracking-wider text-amber-700 bg-amber-50 border border-amber-100 px-2 py-0.5 rounded-lg">
+                    <div className="flex items-center justify-between mb-2">
+                      <UserCheck className="w-4 h-4 text-amber-400" />
+                      <span className="text-[9px] font-black uppercase tracking-wider text-amber-300 bg-amber-500/15 border border-amber-500/30 px-2 py-0.5 rounded">
                         Foto / PDF
                       </span>
                     </div>
-                    <h5 className="font-black text-slate-900 text-xs sm:text-sm mb-1">KTP Official / Pelatih</h5>
-                    <p className="text-[11px] text-slate-500 leading-relaxed">
+                    <h5 className="font-black text-white text-xs mb-1">KTP Official / Pelatih</h5>
+                    <p className="text-[11px] text-slate-400 leading-relaxed">
                       Scan/Foto KTP asli Official atau Pelatih pendamping resmi peleton sekolah.
                     </p>
                   </div>
-                  <div className="mt-2.5 pt-2 border-t border-slate-200/50 text-[10px] text-slate-400 font-medium">
-                    Maks. 3 MB
-                  </div>
+                  <span className="text-[10px] text-slate-500 mt-2 block">Maks. 3 MB</span>
                 </div>
 
-                {/* Doc 5: Pasfoto Personel */}
-                <div className="bg-slate-50/80 hover:bg-white p-4 rounded-2xl border border-slate-100 hover:border-slate-200 hover:shadow-md transition-all flex flex-col justify-between">
+                {/* Doc 5 */}
+                <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-blue-500/30 transition-all flex flex-col justify-between">
                   <div>
-                    <div className="flex items-center justify-between mb-2.5">
-                      <div className="w-8 h-8 rounded-xl bg-blue-100 text-blue-800 flex items-center justify-center shadow-xs">
-                        <Users className="w-4 h-4" />
-                      </div>
-                      <span className="text-[10px] font-black uppercase tracking-wider text-blue-800 bg-blue-50 border border-blue-100 px-2 py-0.5 rounded-lg">
+                    <div className="flex items-center justify-between mb-2">
+                      <Users className="w-4 h-4 text-blue-400" />
+                      <span className="text-[9px] font-black uppercase tracking-wider text-blue-300 bg-blue-500/15 border border-blue-500/30 px-2 py-0.5 rounded">
                         Foto 3×4
                       </span>
                     </div>
-                    <h5 className="font-black text-slate-900 text-xs sm:text-sm mb-1">Pasfoto Personel & Official</h5>
-                    <p className="text-[11px] text-slate-500 leading-relaxed">
-                      Latar <span className="text-red-700 font-bold">Merah (SD)</span> atau <span className="text-blue-700 font-bold">Biru (SMP)</span>. Diunggah langsung per nama di menu Susunan Personel portal.
+                    <h5 className="font-black text-white text-xs mb-1">Pasfoto Personel</h5>
+                    <p className="text-[11px] text-slate-400 leading-relaxed">
+                      Latar <span className="text-red-400 font-bold">Merah (SD)</span> atau <span className="text-blue-400 font-bold">Biru (SMP)</span>. Diunggah per nama di menu portal.
                     </p>
                   </div>
-                  <div className="mt-2.5 pt-2 border-t border-slate-200/50 text-[10px] text-slate-400 font-medium">
-                    Diinput di Menu Personel
-                  </div>
+                  <span className="text-[10px] text-slate-500 mt-2 block">Diinput di Menu Personel</span>
                 </div>
 
-                {/* Doc 6: Logo Sekolah */}
-                <div className="bg-slate-50/80 hover:bg-white p-4 rounded-2xl border border-slate-100 hover:border-slate-200 hover:shadow-md transition-all flex flex-col justify-between">
+                {/* Doc 6 */}
+                <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-purple-500/30 transition-all flex flex-col justify-between">
                   <div>
-                    <div className="flex items-center justify-between mb-2.5">
-                      <div className="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center shadow-xs">
-                        <School className="w-4 h-4" />
-                      </div>
-                      <span className="text-[10px] font-black uppercase tracking-wider text-purple-700 bg-purple-50 border border-purple-100 px-2 py-0.5 rounded-lg">
+                    <div className="flex items-center justify-between mb-2">
+                      <School className="w-4 h-4 text-purple-400" />
+                      <span className="text-[9px] font-black uppercase tracking-wider text-purple-300 bg-purple-500/15 border border-purple-500/30 px-2 py-0.5 rounded">
                         PNG Transparan
                       </span>
                     </div>
-                    <h5 className="font-black text-slate-900 text-xs sm:text-sm mb-1">Logo Sekolah</h5>
-                    <p className="text-[11px] text-slate-500 leading-relaxed">
-                      Format PNG transparan resolusi tinggi (tidak pecah) untuk keperluan piagam & backdrop.
+                    <h5 className="font-black text-white text-xs mb-1">Logo Sekolah</h5>
+                    <p className="text-[11px] text-slate-400 leading-relaxed">
+                      Format PNG transparan resolusi tinggi (tidak pecah) untuk piagam & backdrop.
                     </p>
                   </div>
-                  <div className="mt-2.5 pt-2 border-t border-slate-200/50 text-[10px] text-slate-400 font-medium">
-                    HD Resolution
-                  </div>
+                  <span className="text-[10px] text-slate-500 mt-2 block">HD Resolution</span>
                 </div>
+
               </div>
             </div>
 
-            {/* Bottom Reminder Strip */}
-            <div className="relative z-10 mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+            <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between text-xs text-slate-400">
               <span className="inline-flex items-center gap-1.5 font-medium">
-                <CheckCircle2 className="w-4 h-4 text-blue-600" />
+                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
                 Format digital diunggah ke formulir portal
               </span>
-              <span className="font-bold text-slate-700 text-[11px]">
+              <span className="font-bold text-slate-300">
                 Validasi TM Fisik
               </span>
             </div>
           </div>
 
-          {/* Right Column (5 cols): Sanksi & Pusat Informasi */}
+          {/* Kolom Kanan: Sanksi & Pusat Informasi (5 Kolom) */}
           <div className="lg:col-span-5 flex flex-col gap-5 text-left">
+            
             {/* Sanksi & Pembatalan Card */}
-            <div className="bg-red-50/80 border border-red-200/80 p-5 rounded-3xl shadow-sm relative overflow-hidden">
-              <div className="flex items-center gap-2 mb-2.5 text-red-800">
-                <AlertOctagon className="w-5 h-5 text-red-600 shrink-0" />
-                <h4 className="font-black uppercase text-sm tracking-tight">Sanksi & Ketentuan Pembatalan</h4>
+            <div className="rounded-3xl bg-red-950/40 border border-red-500/30 p-5 sm:p-6 shadow-xl backdrop-blur-xl">
+              <div className="flex items-center gap-2 mb-3 text-red-400">
+                <AlertOctagon className="w-5 h-5 shrink-0" />
+                <h4 className="font-black uppercase text-xs sm:text-sm tracking-tight text-white">
+                  Sanksi & Ketentuan Pembatalan
+                </h4>
               </div>
-              <ul className="space-y-2 text-xs text-red-900/90 leading-relaxed">
+              <ul className="space-y-2.5 text-xs text-slate-300 leading-relaxed">
                 <li className="flex items-start gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-red-600 shrink-0 mt-1.5"></span>
-                  <span><strong>Diskualifikasi Mutlak:</strong> Jika terbukti pemalsuan berkas, identitas, atau status keaktifan siswa.</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0 mt-1.5"></span>
+                  <span><strong className="text-white">Diskualifikasi Mutlak:</strong> Jika terbukti pemalsuan berkas, identitas, atau status keaktifan siswa.</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-red-600 shrink-0 mt-1.5"></span>
-                  <span><strong>Non-Refundable:</strong> Biaya registrasi yang telah disetor tidak dapat ditarik kembali bila tim mundur.</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0 mt-1.5"></span>
+                  <span><strong className="text-white">Non-Refundable:</strong> Biaya registrasi yang telah disetor tidak dapat ditarik kembali bila tim mundur.</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-red-600 shrink-0 mt-1.5"></span>
-                  <span><strong>Perubahan Data Personil:</strong> Hanya dilayani saat forum Technical Meeting dengan bukti resmi.</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0 mt-1.5"></span>
+                  <span><strong className="text-white">Perubahan Data Personil:</strong> Hanya dilayani saat forum Technical Meeting dengan bukti resmi.</span>
                 </li>
               </ul>
             </div>
 
             {/* Pusat Informasi Resmi Card */}
-            <div className="bg-slate-900 text-white p-5 sm:p-6 rounded-3xl shadow-xl border border-slate-800 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-40 h-40 bg-yellow-500/10 rounded-full blur-3xl pointer-events-none"></div>
-
-              <div className="relative z-10">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-9 h-9 rounded-xl bg-white/10 text-yellow-400 flex items-center justify-center border border-white/10 shrink-0">
-                      <Headset className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <h4 className="font-black uppercase text-sm tracking-tight text-white">
-                        Pusat Informasi Resmi
-                      </h4>
-                      <span className="text-[10px] font-bold text-yellow-400 uppercase tracking-wider block">
-                        4 Kanal Resmi Panitia
-                      </span>
-                    </div>
+            <div className="rounded-3xl bg-gradient-to-b from-slate-900/90 via-slate-900/80 to-slate-950/95 border border-white/10 p-5 sm:p-6 shadow-xl backdrop-blur-xl">
+              <div className="flex items-center justify-between mb-3 pb-3 border-b border-white/10">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/25 text-amber-400 flex items-center justify-center shrink-0">
+                    <Headset className="w-4 h-4" />
                   </div>
-                  <span className="text-[9px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2.5 py-0.5 rounded-full">
-                    Terverifikasi
-                  </span>
+                  <div>
+                    <h4 className="font-black uppercase text-xs sm:text-sm tracking-tight text-white">
+                      Pusat Informasi Resmi
+                    </h4>
+                    <span className="text-[10px] font-bold text-amber-400 uppercase tracking-wider block">
+                      4 Kanal Resmi Panitia
+                    </span>
+                  </div>
                 </div>
+                <span className="text-[9px] font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 px-2.5 py-0.5 rounded-full">
+                  Terverifikasi
+                </span>
+              </div>
 
-                <p className="text-xs text-slate-400 mb-3.5 leading-relaxed">
-                  Seluruh pengumuman resmi dan koordinasi hanya dilayani melalui kanal berikut:
-                </p>
+              <p className="text-xs text-slate-400 mb-3 leading-relaxed">
+                Seluruh pengumuman resmi dan koordinasi hanya dilayani melalui kanal berikut:
+              </p>
 
-                <div className="space-y-2 text-xs">
-                  {/* WhatsApp Contact */}
-                  {CONTACT.PERSONS.map((person, idx) => (
-                    <a
-                      key={idx}
-                      href={person.WA_URL}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center justify-between p-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 hover:border-emerald-500/30 transition-all group"
-                    >
-                      <div className="flex items-center gap-2.5">
-                        <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center shrink-0">
-                          <Phone className="w-4 h-4 text-emerald-400" />
-                        </div>
-                        <div>
-                          <span className="text-[10px] text-slate-400 block">WhatsApp Resmi ({person.SHORT_NAME})</span>
-                          <span className="font-bold text-white group-hover:text-emerald-400">{person.PHONE_DISPLAY}</span>
-                        </div>
-                      </div>
-                      <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-emerald-400 group-hover:translate-x-0.5 transition-transform" />
-                    </a>
-                  ))}
-
-                  {/* Email Panitia */}
+              <div className="space-y-2 text-xs">
+                {/* WhatsApp */}
+                {CONTACT.PERSONS.map((person, idx) => (
                   <a
-                    href={CONTACT.EMAIL_HREF}
-                    className="flex items-center justify-between p-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 hover:border-blue-500/30 transition-all group"
+                    key={idx}
+                    href={person.WA_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-between p-2.5 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 hover:border-emerald-500/30 transition-all group"
                   >
                     <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center shrink-0">
-                        <Globe className="w-4 h-4 text-blue-400" />
+                      <div className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0">
+                        <Phone className="w-4 h-4" />
                       </div>
                       <div>
-                        <span className="text-[10px] text-slate-400 block">Email Panitia</span>
-                        <span className="font-bold text-white group-hover:text-blue-400">{CONTACT.EMAIL}</span>
+                        <span className="text-[10px] text-slate-400 block">WhatsApp Resmi ({person.SHORT_NAME})</span>
+                        <span className="font-bold text-white group-hover:text-emerald-400">{person.PHONE_DISPLAY}</span>
                       </div>
                     </div>
-                    <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-400 group-hover:translate-x-0.5 transition-transform" />
+                    <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-emerald-400 transition-transform" />
+                  </a>
+                ))}
+
+                {/* Email */}
+                <a
+                  href={CONTACT.EMAIL_HREF}
+                  className="flex items-center justify-between p-2.5 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 hover:border-blue-500/30 transition-all group"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-400 flex items-center justify-center shrink-0">
+                      <Globe className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-slate-400 block">Email Panitia</span>
+                      <span className="font-bold text-white group-hover:text-blue-400">{CONTACT.EMAIL}</span>
+                    </div>
+                  </div>
+                  <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-400 transition-transform" />
+                </a>
+
+                {/* Socials */}
+                <div className="grid grid-cols-2 gap-2 pt-1">
+                  <a
+                    href={SOCIAL.INSTAGRAM_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 p-2 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 hover:border-pink-500/30 transition-all group"
+                  >
+                    <div className="w-7 h-7 rounded-lg bg-pink-500/10 text-pink-400 flex items-center justify-center shrink-0">
+                      <Instagram className="w-3.5 h-3.5" />
+                    </div>
+                    <div className="truncate">
+                      <span className="text-[9px] text-slate-400 block">Instagram</span>
+                      <span className="font-bold text-slate-200 group-hover:text-pink-400 truncate block text-[11px]">
+                        {SOCIAL.INSTAGRAM_HANDLE}
+                      </span>
+                    </div>
                   </a>
 
-                  {/* Instagram & TikTok Grid */}
-                  <div className="grid grid-cols-2 gap-2 pt-0.5">
-                    <a
-                      href={SOCIAL.INSTAGRAM_URL}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-2.5 p-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 hover:border-pink-500/30 transition-all group"
-                    >
-                      <div className="w-8 h-8 rounded-lg bg-pink-500/10 flex items-center justify-center shrink-0">
-                        <Instagram className="w-4 h-4 text-pink-400" />
-                      </div>
-                      <div className="truncate">
-                        <span className="text-[9px] text-slate-400 block">Instagram</span>
-                        <span className="font-bold text-slate-200 group-hover:text-pink-400 truncate block text-xs">
-                          {SOCIAL.INSTAGRAM_HANDLE}
-                        </span>
-                      </div>
-                    </a>
-
-                    <a
-                      href={SOCIAL.TIKTOK_URL}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-2.5 p-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 hover:border-cyan-500/30 transition-all group"
-                    >
-                      <div className="w-8 h-8 rounded-lg bg-cyan-500/10 flex items-center justify-center shrink-0">
-                        <Video className="w-4 h-4 text-cyan-400" />
-                      </div>
-                      <div className="truncate">
-                        <span className="text-[9px] text-slate-400 block">TikTok</span>
-                        <span className="font-bold text-slate-200 group-hover:text-cyan-400 truncate block text-xs">
-                          {SOCIAL.TIKTOK_HANDLE}
-                        </span>
-                      </div>
-                    </a>
-                  </div>
+                  <a
+                    href={SOCIAL.TIKTOK_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 p-2 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 hover:border-cyan-500/30 transition-all group"
+                  >
+                    <div className="w-7 h-7 rounded-lg bg-cyan-500/10 text-cyan-400 flex items-center justify-center shrink-0">
+                      <Video className="w-3.5 h-3.5" />
+                    </div>
+                    <div className="truncate">
+                      <span className="text-[9px] text-slate-400 block">TikTok</span>
+                      <span className="font-bold text-slate-200 group-hover:text-cyan-400 truncate block text-[11px]">
+                        {SOCIAL.TIKTOK_HANDLE}
+                      </span>
+                    </div>
+                  </a>
                 </div>
               </div>
             </div>
+
           </div>
+
         </div>
 
       </div>

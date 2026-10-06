@@ -32,192 +32,212 @@ export default function TimeLocation() {
   const trialTime = eventDates.fieldTrialTime || EVENT.FIELD_TRIAL_TIME_RANGE;
 
   return (
-    <section id="time-location" className="py-24 lg:py-32 bg-slate-950 relative overflow-hidden border-t border-slate-900 font-sans">
-      <div className="absolute inset-0 bg-carbon-pattern opacity-20 pointer-events-none"></div>
-      <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-red-900 to-transparent"></div>
-      <div className="absolute -left-20 top-1/2 w-96 h-96 bg-red-900/10 rounded-full blur-[128px] pointer-events-none"></div>
-      <div className="absolute -right-20 bottom-0 w-96 h-96 bg-yellow-600/10 rounded-full blur-[128px] pointer-events-none"></div>
+    <section id="time-location" className="py-24 lg:py-32 bg-slate-50 relative overflow-hidden border-t border-slate-200 font-sans text-slate-800">
+      <div className="absolute inset-0 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:16px_16px] opacity-60 pointer-events-none"></div>
+      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-red-600 to-transparent"></div>
+      <div className="absolute -left-20 top-1/2 w-96 h-96 bg-red-100/60 rounded-full blur-[100px] pointer-events-none"></div>
+      <div className="absolute -right-20 bottom-0 w-96 h-96 bg-amber-100/60 rounded-full blur-[100px] pointer-events-none"></div>
 
       <div className="container mx-auto px-6 relative z-10">
         <div className="mb-16 md:mb-24 text-center">
-          <span className="text-yellow-500 font-bold tracking-[0.25em] text-xs uppercase mb-3 block">
-            Informasi Pelaksanaan
+          <span className="text-red-700 font-bold tracking-[0.25em] text-xs uppercase mb-3 block">
+            Informasi Pelaksanaan Resmi
           </span>
-          <h2 className="text-4xl md:text-5xl font-black text-white uppercase italic tracking-tighter leading-tight py-1">
-            Waktu & <span className="inline-block pr-3 sm:pr-4 pb-1 text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-red-600">Tempat</span>
+          <h2 className="text-4xl md:text-5xl font-black text-slate-900 uppercase italic tracking-tighter leading-tight py-1">
+            Waktu & <span className="inline-block pr-3 sm:pr-4 pb-1 text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-800">Tempat</span>
           </h2>
-          <div className="w-20 h-1.5 bg-red-700 mx-auto mt-6 rounded-full skew-x-12 shadow-[0_0_15px_rgba(185,28,28,0.5)]"></div>
+          <div className="w-20 h-1.5 bg-red-600 mx-auto mt-4 rounded-full skew-x-12 shadow-sm"></div>
+          <p className="text-slate-600 text-sm sm:text-base mt-4 max-w-2xl mx-auto leading-relaxed">
+            Jadwal kronologis 4 tahapan kompetisi dan panduan navigasi ke 2 kampus resmi Madrasah Mu'allimin Muhammadiyah Yogyakarta.
+          </p>
         </div>
 
-        <div className="grid lg:grid-cols-12 gap-12 lg:gap-16">
-          {/* Left Column: Schedule & Times (Urutan Kronologis: Pendaftaran -> TM -> Uji Coba -> Hari H) */}
-          <div className="lg:col-span-5 space-y-6 relative">
-            {/* Dynamic Multi-Color Stage Connector Line with explicit color stops matching each card */}
-            <div
-              className="absolute left-6 top-6 bottom-10 w-0.5 lg:block hidden"
-              style={{
-                background: 'linear-gradient(to bottom, #3b82f6 0%, #3b82f6 20%, #a855f7 35%, #a855f7 50%, #10b981 65%, #10b981 80%, #eab308 95%, #eab308 100%)',
-                boxShadow: '0 0 12px rgba(16, 185, 129, 0.4)'
-              }}
-            ></div>
+        <div className="grid lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+          {/* ========================================================
+              LEFT COLUMN: TIMELINE (4 TAHAPAN KRONOLOGIS LOMBA)
+              ======================================================== */}
+          <div className="lg:col-span-5 space-y-4 relative">
+            
+            {/* Header timeline */}
+            <div className="flex items-center justify-between pb-2 px-1">
+              <h3 className="text-xs sm:text-sm font-black uppercase tracking-wider text-slate-800 flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-red-600 animate-pulse"></span>
+                Tahapan & Jadwal Kegiatan
+              </h3>
+              <span className="text-[11px] font-bold text-slate-600 bg-white border border-slate-200 px-3 py-1 rounded-full shadow-sm">
+                4 Tahap Utama
+              </span>
+            </div>
 
-            {/* Card 1: Pendaftaran Peleton (Biru / Blue) */}
-            <div className="relative pl-0 lg:pl-16 group">
-              <div className="absolute left-0 top-0 w-12 h-12 bg-slate-900 border-2 border-blue-500/60 rounded-xl flex items-center justify-center text-blue-400 shadow-[0_0_20px_rgba(59,130,246,0.25)] z-10 hidden lg:flex group-hover:border-blue-400 transition-colors">
-                <UserPlus className="w-6 h-6" />
+            {/* Tahap 1: Pendaftaran Peleton (Biru) */}
+            <div className="relative group rounded-2xl bg-white border border-blue-200 hover:border-blue-400 p-5 sm:p-6 shadow-md hover:shadow-lg transition-all duration-300">
+              <div className="flex items-start justify-between gap-3 mb-2.5">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-200 text-blue-700 font-black text-xs flex items-center justify-center shrink-0 shadow-sm group-hover:scale-105 transition-transform">
+                    01
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-bold text-blue-700 uppercase tracking-wider block">
+                      Tahap Registrasi
+                    </span>
+                    <h4 className="text-base font-black text-slate-900 leading-tight">
+                      Pendaftaran Peleton
+                    </h4>
+                  </div>
+                </div>
+                <span className="text-[10px] font-bold uppercase tracking-wider bg-blue-100 text-blue-800 border border-blue-200 px-2.5 py-0.5 rounded-full">
+                  Daring
+                </span>
               </div>
 
-              <div className="bg-slate-900/70 backdrop-blur-sm border border-slate-800 p-5 rounded-2xl hover:border-blue-500/50 hover:shadow-[0_0_25px_rgba(59,130,246,0.1)] transition-all">
-                <div className="flex items-center justify-between mb-1.5">
-                  <h3 className="text-base font-black text-white uppercase flex items-center gap-2">
-                    <UserPlus className="lg:hidden text-blue-400 w-4 h-4" />
-                    Pendaftaran Peleton
-                  </h3>
-                  <span className="text-[9px] font-black uppercase tracking-wider bg-blue-500/15 text-blue-400 border border-blue-500/40 px-2 py-0.5 rounded">
-                    Registrasi
-                  </span>
-                </div>
-                <p className="text-lg font-black text-blue-400 mb-0.5 tracking-tight">
+              <div className="space-y-1 mb-2.5">
+                <p className="text-base sm:text-lg font-black text-blue-700 tracking-tight">
                   {regRange}
                 </p>
-                <p className="text-xs font-bold text-slate-300 mb-2 flex items-center gap-1.5">
-                  <Clock className="w-3.5 h-3.5 text-blue-400" />
-                  <span>Portal Online Resmi 24 Jam</span>
-                </p>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  Pengisian formulir digital, upload berkas persyaratan, dan pembayaran transfer (sistem kuota terbatas).
+                <p className="text-xs font-semibold text-slate-600 flex items-center gap-1.5">
+                  <Clock className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                  <span>Portal Online Resmi 24 Jam Non-Stop</span>
                 </p>
               </div>
+
+              <p className="text-xs text-slate-500 leading-relaxed pt-2.5 border-t border-slate-100">
+                Pengisian formulir digital, upload berkas persyaratan, dan pembayaran transfer (sistem kuota terbatas 36 peleton).
+              </p>
             </div>
 
-            {/* Card 2: Technical Meeting (Ungu / Purple) */}
-            <div className="relative pl-0 lg:pl-16 group">
-              <div className="absolute left-0 top-0 w-12 h-12 bg-slate-900 border-2 border-purple-500/60 rounded-xl flex items-center justify-center text-purple-400 shadow-[0_0_20px_rgba(168,85,247,0.25)] z-10 hidden lg:flex group-hover:border-purple-400 transition-colors">
-                <ClipboardList className="w-6 h-6" />
+            {/* Tahap 2: Technical Meeting (Ungu) */}
+            <div className="relative group rounded-2xl bg-white border border-purple-200 hover:border-purple-400 p-5 sm:p-6 shadow-md hover:shadow-lg transition-all duration-300">
+              <div className="flex items-start justify-between gap-3 mb-2.5">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-purple-50 border border-purple-200 text-purple-700 font-black text-xs flex items-center justify-center shrink-0 shadow-sm group-hover:scale-105 transition-transform">
+                    02
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-bold text-purple-700 uppercase tracking-wider block">
+                      Temu Teknis
+                    </span>
+                    <h4 className="text-base font-black text-slate-900 leading-tight">
+                      Technical Meeting (TM)
+                    </h4>
+                  </div>
+                </div>
+                <span className="text-[10px] font-bold uppercase tracking-wider bg-purple-100 text-purple-800 border border-purple-200 px-2.5 py-0.5 rounded-full">
+                  Wajib
+                </span>
               </div>
 
-              <div className="bg-slate-900/70 backdrop-blur-sm border border-slate-800 p-5 rounded-2xl hover:border-purple-500/50 hover:shadow-[0_0_25px_rgba(168,85,247,0.1)] transition-all">
-                <div className="flex items-center justify-between mb-1.5">
-                  <h3 className="text-base font-black text-white uppercase flex items-center gap-2">
-                    <ClipboardList className="lg:hidden text-purple-400 w-4 h-4" />
-                    Technical Meeting (TM)
-                  </h3>
-                  <span className="text-[9px] font-black uppercase tracking-wider bg-purple-500/15 text-purple-300 border border-purple-500/40 px-2 py-0.5 rounded">
-                    Wajib
-                  </span>
-                </div>
-                <p className="text-lg font-black text-purple-400 mb-0.5 tracking-tight">
+              <div className="space-y-1 mb-2.5">
+                <p className="text-base sm:text-lg font-black text-purple-700 tracking-tight">
                   {tmDate}
                 </p>
-                <p className="text-xs font-bold text-slate-300 mb-2 flex items-center gap-1.5">
-                  <Clock className="w-3.5 h-3.5 text-purple-400" />
+                <p className="text-xs font-semibold text-slate-600 flex items-center gap-1.5">
+                  <Clock className="w-3.5 h-3.5 text-purple-600 shrink-0" />
                   <span>{tmTime}</span>
                 </p>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  Pengundian nomor urut tampil, verifikasi faktual berkas fisik asli, dan penegasan tata tertib lomba.
-                </p>
               </div>
+
+              <p className="text-xs text-slate-500 leading-relaxed pt-2.5 border-t border-slate-100">
+                Pengundian nomor urut tampil, verifikasi faktual berkas fisik asli, dan penegasan tata tertib lomba.
+              </p>
             </div>
 
-            {/* Card 3: Uji Coba Lapangan (Hijau Zamrud / Emerald) */}
-            <div className="relative pl-0 lg:pl-16 group">
-              <div className="absolute left-0 top-0 w-12 h-12 bg-slate-900 border-2 border-emerald-500/60 rounded-xl flex items-center justify-center text-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.25)] z-10 hidden lg:flex group-hover:border-emerald-400 transition-colors">
-                <Flag className="w-6 h-6" />
+            {/* Tahap 3: Uji Coba Lapangan (Hijau Zamrud) */}
+            <div className="relative group rounded-2xl bg-white border border-emerald-200 hover:border-emerald-400 p-5 sm:p-6 shadow-md hover:shadow-lg transition-all duration-300">
+              <div className="flex items-start justify-between gap-3 mb-2.5">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 font-black text-xs flex items-center justify-center shrink-0 shadow-sm group-hover:scale-105 transition-transform">
+                    03
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-bold text-emerald-700 uppercase tracking-wider block">
+                      Orientasi Pos
+                    </span>
+                    <h4 className="text-base font-black text-slate-900 leading-tight">
+                      Uji Coba Lapangan
+                    </h4>
+                  </div>
+                </div>
+                <span className="text-[10px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-800 border border-emerald-200 px-2.5 py-0.5 rounded-full">
+                  Orientasi
+                </span>
               </div>
 
-              <div className="bg-slate-900/70 backdrop-blur-sm border border-slate-800 p-5 rounded-2xl hover:border-emerald-500/50 hover:shadow-[0_0_25px_rgba(16,185,129,0.1)] transition-all">
-                <div className="flex items-center justify-between mb-1.5">
-                  <h3 className="text-base font-black text-white uppercase flex items-center gap-2">
-                    <Flag className="lg:hidden text-emerald-400 w-4 h-4" />
-                    Uji Coba Lapangan
-                  </h3>
-                  <span className="text-[9px] font-black uppercase tracking-wider bg-emerald-500/15 text-emerald-300 border border-emerald-500/40 px-2 py-0.5 rounded">
-                    Orientasi
-                  </span>
-                </div>
-                <p className="text-lg font-black text-emerald-400 mb-0.5 tracking-tight">
+              <div className="space-y-1 mb-2.5">
+                <p className="text-base sm:text-lg font-black text-emerald-700 tracking-tight">
                   {trialDate}
                 </p>
-                <p className="text-xs font-bold text-slate-300 mb-2 flex items-center gap-1.5">
-                  <Clock className="w-3.5 h-3.5 text-emerald-400" />
+                <p className="text-xs font-semibold text-slate-600 flex items-center gap-1.5">
+                  <Clock className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                   <span>{trialTime}</span>
                 </p>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  Orientasi arena pos perlombaan di Kampus Terpadu Mu'allimin Sedayu agar tim peserta beradaptasi dengan kontur lapangan.
-                </p>
               </div>
+
+              <p className="text-xs text-slate-500 leading-relaxed pt-2.5 border-t border-slate-100">
+                Orientasi arena pos perlombaan di Kampus Terpadu Sedayu agar danton dan pasukan beradaptasi dengan kontur medan.
+              </p>
             </div>
 
-            {/* Card 4: Hari H Pelaksanaan (Emas Juara / Gold & Crimson) */}
-            <div className="relative pl-0 lg:pl-16 group">
-              <div className="absolute left-0 top-0 w-12 h-12 bg-slate-900 border-2 border-yellow-500/70 rounded-xl flex items-center justify-center text-yellow-400 shadow-[0_0_25px_rgba(234,179,8,0.3)] z-10 hidden lg:flex group-hover:border-yellow-400 transition-colors">
-                <CalendarDays className="w-6 h-6" />
+            {/* Tahap 4: Hari-H Pelaksanaan Lomba (Merah & Amber Mewah) */}
+            <div className="relative group rounded-2xl bg-gradient-to-br from-amber-50 to-red-50 border-2 border-amber-300 hover:border-amber-400 p-5 sm:p-6 shadow-lg hover:shadow-xl transition-all duration-300">
+              <div className="flex items-start justify-between gap-3 mb-2.5">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-amber-500 text-white font-black text-xs flex items-center justify-center shrink-0 shadow-md group-hover:scale-105 transition-transform">
+                    04
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-bold text-amber-800 uppercase tracking-wider block">
+                      Hari Penentuan
+                    </span>
+                    <h4 className="text-base font-black text-slate-950 leading-tight">
+                      Hari-H Pelaksanaan Lomba
+                    </h4>
+                  </div>
+                </div>
+                <span className="text-[10px] font-bold uppercase tracking-wider bg-amber-200 text-amber-900 border border-amber-300 px-2.5 py-0.5 rounded-full shadow-sm">
+                  Puncak Acara
+                </span>
               </div>
 
-              <div className="bg-slate-900/70 backdrop-blur-sm border border-slate-800 p-6 rounded-2xl hover:border-yellow-500/50 hover:shadow-[0_0_30px_rgba(234,179,8,0.15)] transition-all">
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-lg font-black text-white uppercase flex items-center gap-2.5">
-                    <CalendarDays className="lg:hidden text-yellow-400 w-5 h-5" />
-                    Hari-H Pelaksanaan
-                  </h3>
-                  <span className="text-[9px] font-black uppercase tracking-wider bg-yellow-500/15 text-yellow-300 border border-yellow-500/40 px-2.5 py-0.5 rounded font-bold">
-                    Puncak Acara
-                  </span>
-                </div>
-                <p className="text-xl sm:text-2xl font-black text-yellow-400 mb-1 tracking-tight">
+              <div className="space-y-1 mb-2.5">
+                <p className="text-lg sm:text-xl font-black text-red-700 tracking-tight">
                   {compDate}
                 </p>
-                <p className="text-xs font-bold text-slate-300 mb-4 flex items-center gap-1.5">
-                  <Clock className="w-3.5 h-3.5 text-yellow-400" />
+                <p className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                  <Clock className="w-3.5 h-3.5 text-red-600 shrink-0" />
                   <span>{compTime}</span>
                 </p>
+              </div>
 
-                <div className="bg-black/50 rounded-xl p-3 border-l-2 border-yellow-500 text-xs text-slate-300 leading-relaxed">
-                  Pelaksanaan lomba kategori SD/MI dan SMP/MTs, rangkaian apel pembukaan & penutupan, hingga penganugerahan piala juara umum.
-                </div>
+              <div className="bg-white/90 rounded-xl p-3 border-l-4 border-amber-500 text-xs text-slate-700 leading-relaxed mt-2.5 shadow-sm">
+                Pelaksanaan lomba kategori SD/MI dan SMP/MTs, apel akbar pembukaan & penutupan, serta penganugerahan piala juara umum bergilir.
               </div>
             </div>
+
           </div>
 
-          {/* Right Column: Venue Cards (Kampus Terpadu & Kampus Induk) */}
-          <div className="lg:col-span-7 flex flex-col gap-6">
-            {/* CARD 1 (TOP): Kampus Terpadu Sedayu - Pelaksanaan & Uji Coba */}
-            <div className="bg-slate-900 border border-slate-800 rounded-3xl p-2 relative overflow-hidden">
-              <div className="absolute inset-0 bg-[linear-gradient(to_bottom,transparent_50%,rgba(0,0,0,0.5)_50%)] bg-[length:100%_4px] opacity-20 pointer-events-none z-0"></div>
-
-              {/* Watermark Cadet Illustration */}
-              <div className="absolute -right-8 -bottom-10 h-72 w-72 pointer-events-none opacity-15 hidden sm:block z-0">
-                <picture>
-                  <source srcSet="/fotoslide/4.webp" type="image/webp" />
-                  <img
-                    src="/fotoslide/4.png"
-                    alt="Arena Paskibra"
-                    className="w-full h-full object-contain object-bottom [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_80%)]"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </picture>
-              </div>
-
-              <div className="bg-slate-950/80 rounded-[1.3rem] p-5 sm:p-6 relative z-10 space-y-5">
-                <div className="flex flex-col sm:flex-row gap-4 items-start justify-between">
-                  <div className="flex gap-3.5 items-start">
-                    <div className="w-12 h-12 bg-red-900/20 text-red-500 border border-red-500/30 rounded-2xl flex items-center justify-center shrink-0">
+          {/* ========================================================
+              RIGHT COLUMN: VENUE CARDS (KAMPUS TERPADU & KAMPUS INDUK)
+              ======================================================== */}
+          <div className="lg:col-span-7 space-y-6">
+            
+            {/* CARD 1: Kampus Terpadu Sedayu - Pelaksanaan & Uji Coba */}
+            <div className="group relative rounded-3xl bg-white border border-slate-200 hover:border-red-300 shadow-xl p-5 sm:p-7 transition-all duration-300 overflow-hidden">
+              <div className="relative z-10 space-y-4">
+                {/* Header Card */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-red-600 to-red-700 text-white flex items-center justify-center shadow-md shadow-red-200 shrink-0 group-hover:scale-105 transition-transform">
                       <MapPin className="w-6 h-6" />
                     </div>
                     <div>
-                      <div className="flex flex-wrap items-center gap-2 mb-1">
-                        <h3 className="text-lg font-bold text-white uppercase">
-                          {VENUE.NAME}
-                        </h3>
-                        <span className="text-[10px] font-black uppercase tracking-wider bg-red-500/15 text-red-400 border border-red-500/30 px-2 py-0.5 rounded">
-                          Pelaksanaan Lomba & Uji Coba
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-red-100 text-red-800 border border-red-200">
+                          Pusat Lomba & Uji Coba
                         </span>
                       </div>
-                      <p className="text-slate-400 font-mono text-xs leading-relaxed max-w-lg">
-                        <Navigation className="w-3.5 h-3.5 inline mr-1 text-slate-500" />
-                        <span>{VENUE.ADDRESS}</span>
-                      </p>
+                      <h4 className="text-base sm:text-lg font-black text-slate-900 leading-tight">
+                        {VENUE.NAME}
+                      </h4>
                     </div>
                   </div>
 
@@ -225,33 +245,41 @@ export default function TimeLocation() {
                     href={VENUE.MAPS_URL}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 text-xs font-bold text-yellow-500 hover:text-white transition-colors border border-yellow-500/30 px-3.5 py-1.5 rounded-full hover:bg-yellow-500/10 shrink-0 self-start sm:self-auto"
+                    className="inline-flex items-center gap-1.5 text-xs font-bold text-red-700 hover:text-red-800 transition-colors bg-red-50 hover:bg-red-100 border border-red-200 px-3.5 py-2 rounded-xl shrink-0 self-start sm:self-auto shadow-sm"
                   >
-                    Buka Google Maps <ExternalLink className="w-3 h-3" />
+                    <span>Buka Google Maps</span>
+                    <ExternalLink className="w-3.5 h-3.5" />
                   </a>
                 </div>
 
+                {/* Alamat */}
+                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed flex items-start gap-2">
+                  <Navigation className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
+                  <span>{VENUE.ADDRESS}</span>
+                </p>
+
                 {/* Interactive Google Maps Preview */}
-                <div className="relative rounded-2xl overflow-hidden border border-slate-800 bg-slate-900 shadow-inner group">
+                <div className="relative rounded-2xl overflow-hidden border border-slate-200 bg-slate-100 shadow-inner group/map">
                   <iframe
                     title="Peta Lokasi Kampus Terpadu Madrasah Mu'allimin Sedayu"
                     src={VENUE.MAPS_EMBED_URL || "https://maps.google.com/maps?q=-7.806784,110.2683762&hl=id&z=15&output=embed"}
-                    className="w-full h-44 sm:h-52 border-0 opacity-90 hover:opacity-100 transition-all duration-300"
+                    className="w-full h-44 sm:h-56 border-0 transition-opacity duration-300"
                     loading="lazy"
                     referrerPolicy="no-referrer-when-downgrade"
                   ></iframe>
 
-                  {/* Overlay info & direction button */}
-                  <div className="absolute bottom-2.5 left-2.5 right-2.5 flex items-center justify-between pointer-events-none gap-2">
-                    <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-xl bg-slate-950/90 backdrop-blur-md border border-slate-800 text-[10px] sm:text-[11px] font-semibold text-slate-300 shadow-lg truncate">
+                  {/* Overlay Action Bar */}
+                  <div className="absolute bottom-2.5 left-2.5 right-2.5 flex items-center justify-between gap-2 pointer-events-none">
+                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/95 backdrop-blur-md border border-slate-200 text-[10px] sm:text-[11px] font-semibold text-slate-800 shadow-md truncate">
                       <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
                       <span className="truncate">Sedayu, Bantul &bull; GPS: -7.8067, 110.2683</span>
                     </div>
+
                     <a
                       href={VENUE.MAPS_URL}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="pointer-events-auto inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-red-700/90 hover:bg-red-600 text-white text-[10px] sm:text-[11px] font-bold shadow-lg transition-colors shrink-0"
+                      className="pointer-events-auto inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-[10px] sm:text-[11px] font-bold shadow-md transition-colors shrink-0"
                     >
                       <span>Petunjuk Arah</span>
                       <ExternalLink className="w-3 h-3" />
@@ -261,29 +289,24 @@ export default function TimeLocation() {
               </div>
             </div>
 
-            {/* CARD 2 (BOTTOM): Kampus Induk (Letjend. S. Parman 68) - Technical Meeting */}
-            <div className="bg-slate-900 border border-slate-800 rounded-3xl p-2 relative overflow-hidden">
-              <div className="absolute inset-0 bg-[linear-gradient(to_bottom,transparent_50%,rgba(0,0,0,0.5)_50%)] bg-[length:100%_4px] opacity-20 pointer-events-none z-0"></div>
-
-              <div className="bg-slate-950/80 rounded-[1.3rem] p-5 sm:p-6 relative z-10 space-y-5">
-                <div className="flex flex-col sm:flex-row gap-4 items-start justify-between">
-                  <div className="flex gap-3.5 items-start">
-                    <div className="w-12 h-12 bg-blue-900/20 text-blue-400 border border-blue-500/30 rounded-2xl flex items-center justify-center shrink-0">
+            {/* CARD 2: Kampus Induk Wirobrajan - Technical Meeting */}
+            <div className="group relative rounded-3xl bg-white border border-slate-200 hover:border-blue-300 shadow-xl p-5 sm:p-7 transition-all duration-300 overflow-hidden">
+              <div className="relative z-10 space-y-4">
+                {/* Header Card */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-600 to-blue-700 text-white flex items-center justify-center shadow-md shadow-blue-200 shrink-0 group-hover:scale-105 transition-transform">
                       <MapPin className="w-6 h-6" />
                     </div>
                     <div>
-                      <div className="flex flex-wrap items-center gap-2 mb-1">
-                        <h3 className="text-lg font-bold text-white uppercase">
-                          {VENUE_INDUK.NAME}
-                        </h3>
-                        <span className="text-[10px] font-black uppercase tracking-wider bg-blue-500/15 text-blue-300 border border-blue-500/30 px-2 py-0.5 rounded">
-                          Technical Meeting (TM)
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 border border-blue-200">
+                          Pusat Technical Meeting (TM)
                         </span>
                       </div>
-                      <p className="text-slate-400 font-mono text-xs leading-relaxed max-w-lg">
-                        <Navigation className="w-3.5 h-3.5 inline mr-1 text-slate-500" />
-                        <span>{VENUE_INDUK.ADDRESS}</span>
-                      </p>
+                      <h4 className="text-base sm:text-lg font-black text-slate-900 leading-tight">
+                        {VENUE_INDUK.NAME}
+                      </h4>
                     </div>
                   </div>
 
@@ -291,33 +314,41 @@ export default function TimeLocation() {
                     href={VENUE_INDUK.MAPS_URL}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 text-xs font-bold text-yellow-500 hover:text-white transition-colors border border-yellow-500/30 px-3.5 py-1.5 rounded-full hover:bg-yellow-500/10 shrink-0 self-start sm:self-auto"
+                    className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-700 hover:text-blue-800 transition-colors bg-blue-50 hover:bg-blue-100 border border-blue-200 px-3.5 py-2 rounded-xl shrink-0 self-start sm:self-auto shadow-sm"
                   >
-                    Buka Google Maps <ExternalLink className="w-3 h-3" />
+                    <span>Buka Google Maps</span>
+                    <ExternalLink className="w-3.5 h-3.5" />
                   </a>
                 </div>
 
+                {/* Alamat */}
+                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed flex items-start gap-2">
+                  <Navigation className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
+                  <span>{VENUE_INDUK.ADDRESS}</span>
+                </p>
+
                 {/* Interactive Google Maps Preview */}
-                <div className="relative rounded-2xl overflow-hidden border border-slate-800 bg-slate-900 shadow-inner group">
+                <div className="relative rounded-2xl overflow-hidden border border-slate-200 bg-slate-100 shadow-inner group/map">
                   <iframe
                     title="Peta Lokasi Kampus Induk Madrasah Mu'allimin Yogyakarta"
                     src={VENUE_INDUK.MAPS_EMBED_URL}
-                    className="w-full h-44 sm:h-52 border-0 opacity-90 hover:opacity-100 transition-all duration-300"
+                    className="w-full h-44 sm:h-56 border-0 transition-opacity duration-300"
                     loading="lazy"
                     referrerPolicy="no-referrer-when-downgrade"
                   ></iframe>
 
-                  {/* Overlay info & direction button */}
-                  <div className="absolute bottom-2.5 left-2.5 right-2.5 flex items-center justify-between pointer-events-none gap-2">
-                    <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-xl bg-slate-950/90 backdrop-blur-md border border-slate-800 text-[10px] sm:text-[11px] font-semibold text-slate-300 shadow-lg truncate">
-                      <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse shrink-0"></span>
+                  {/* Overlay Action Bar */}
+                  <div className="absolute bottom-2.5 left-2.5 right-2.5 flex items-center justify-between gap-2 pointer-events-none">
+                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/95 backdrop-blur-md border border-slate-200 text-[10px] sm:text-[11px] font-semibold text-slate-800 shadow-md truncate">
+                      <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse shrink-0"></span>
                       <span className="truncate">{VENUE_INDUK.DISTRICT} &bull; GPS: {VENUE_INDUK.GPS}</span>
                     </div>
+
                     <a
                       href={VENUE_INDUK.MAPS_URL}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="pointer-events-auto inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-blue-700/90 hover:bg-blue-600 text-white text-[10px] sm:text-[11px] font-bold shadow-lg transition-colors shrink-0"
+                      className="pointer-events-auto inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-[10px] sm:text-[11px] font-bold shadow-md transition-colors shrink-0"
                     >
                       <span>Petunjuk Arah</span>
                       <ExternalLink className="w-3 h-3" />
@@ -326,6 +357,7 @@ export default function TimeLocation() {
                 </div>
               </div>
             </div>
+
           </div>
         </div>
       </div>
