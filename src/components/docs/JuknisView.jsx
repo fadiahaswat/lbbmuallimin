@@ -24,19 +24,19 @@ export default function JuknisView() {
   const [selectedJenjang, setSelectedJenjang] = useState('SD');
   const [searchQuery, setSearchQuery] = useState('');
 
-  // 28 Gerakan Resmi SD/MI LBB Mu'allimin 2027 (MATERI SD LBB MUALLIMIN 2027.docx)
+  // 26 Gerakan Resmi SD/MI LBB Mu'allimin 2027
   const pbbMateriSD = MATERIALS.SD.map((name, idx) => {
     let category = 'Di Tempat';
     const lower = name.toLowerCase();
     if (lower.includes('penghormatan') || lower.includes('laporan')) {
       category = 'Protokoler Lapangan';
-    } else if (lower.includes('langkah ke') || lower.includes('buka barisan')) {
+    } else if (lower.includes('langkah ke') || lower.includes('buka barisan') || lower.includes('tutup barisan')) {
       category = 'Berpindah Tempat';
     } else if (lower.includes('hadap') || lower.includes('balik')) {
       category = 'Perubahan Arah';
     } else if (lower.includes('maju jalan') || lower.includes('langkah tegap') || lower.includes('hormat kanan') || lower.includes('belok') || lower.includes('melintang') || lower.includes('haluan')) {
       category = 'Berjalan & Manuver';
-    } else if (lower.includes('istirahat') || lower.includes('periksa') || lower.includes('lencang') || lower.includes('hitung') || lower.includes('jalan di tempat')) {
+    } else if (lower.includes('istirahat') || lower.includes('periksa') || lower.includes('lencang') || lower.includes('hitung') || lower.includes('jalan di tempat') || lower.includes('bubar') || lower.includes('berbanjar kumpul')) {
       category = 'Di Tempat';
     }
 
@@ -44,11 +44,11 @@ export default function JuknisView() {
       no: idx + 1,
       name,
       category,
-      isSubstitutionPoint: idx === 19 // antara no 20 & 21
+      isSubstitutionPoint: idx === 15 // Di antara Materi No. 16 (Bubar) dan 17 (Berbanjar Kumpul)
     };
   });
 
-  // 26 Gerakan Resmi SMP/MTs LBB Mu'allimin 2027 (MATERI SMP LBB MUALLIMIN 2027.docx)
+  // 28 Gerakan Resmi SMP/MTs LBB Mu'allimin 2027
   const pbbMateriSMP = MATERIALS.SMP.map((name, idx) => {
     let category = 'Di Tempat';
     const lower = name.toLowerCase();
@@ -68,7 +68,7 @@ export default function JuknisView() {
       no: idx + 1,
       name,
       category,
-      isSubstitutionPoint: idx === 16 // antara no 17 (Berhimpun) & 18 (Berkumpul Bersaf)
+      isSubstitutionPoint: idx === 21 // Di antara Materi No. 22 (Setengah Lengan Lencang Kanan - Balik Kanan) dan 23 (Lencang Kiri - Hitung)
     };
   });
 
@@ -145,17 +145,17 @@ export default function JuknisView() {
               {selectedJenjang === 'SD' ? 'Maksimal 10 Menit' : 'Maksimal 13 Menit'}
             </span>
             <p className="text-[11px] text-slate-500">
-              {selectedJenjang === 'SD' ? 'Peluit 1x panjang menit ke-8, 2x panjang menit ke-10.' : 'Peluit 1x panjang menit ke-11, 2x panjang menit ke-13.'}
+              {selectedJenjang === 'SD' ? 'Peluit 1x panjang menit ke-9 (sisa 1 menit), 2x panjang menit ke-10 (habis).' : 'Peluit 1x panjang menit ke-12 (sisa 1 menit), 2x panjang menit ke-13 (habis).'}
             </p>
           </div>
 
           <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-1">
             <span className="text-[10px] font-bold uppercase text-slate-400 block">Slot Pergantian Pemain</span>
             <span className="text-lg font-black text-emerald-700 block font-mono">
-              {selectedJenjang === 'SD' ? 'Antara Gerakan No. 20 & 21' : 'Antara Gerakan No. 17 & 18'}
+              {selectedJenjang === 'SD' ? 'Antara Gerakan No. 16 & 17' : 'Antara Gerakan No. 22 & 23'}
             </span>
             <p className="text-[11px] text-slate-500">
-              Maksimal 3 anggota cadangan dengan lapor dan konfirmasi juri.
+              {selectedJenjang === 'SD' ? 'Dilakukan saat materi "Bubar" (antara No. 16 & 17).' : 'Dilakukan saat materi "Bubar" (antara No. 22 & 23).'}
             </p>
           </div>
         </div>
@@ -173,7 +173,7 @@ export default function JuknisView() {
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                Tingkat SD / MI (28 Gerakan Resmi)
+                Tingkat SD / MI (26 Gerakan Resmi)
               </button>
               <button
                 type="button"
@@ -184,7 +184,7 @@ export default function JuknisView() {
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                Tingkat SMP / MTs (26 Gerakan Resmi)
+                Tingkat SMP / MTs (28 Gerakan Resmi)
               </button>
             </div>
 
@@ -321,13 +321,13 @@ export default function JuknisView() {
             </h3>
             <ul className="text-xs text-slate-300 space-y-2 leading-relaxed">
               <li>
-                <strong>Transparansi Live Score:</strong> Official dapat mengakses lembar rekap nilai mandiri di portal <span className="text-red-400 font-mono">lbb.tontimuallimin.com</span> via login Gmail resmi terdaftar.
+                <strong>Transparansi Nilai (Rolling Release):</strong> Official dapat mengakses lembar rekap nilai mandiri di portal <span className="text-red-400 font-mono">lbb.tontimuallimin.com</span> via login Gmail resmi terdaftar ±1 jam setelah tampil.
               </li>
               <li>
-                <strong>Masa Sanggah 60 Menit:</strong> Protes hanya diterima untuk kekeliruan administratif non-penilaian, diajukan tertulis via Formulir Sanggahan Resmi oleh Official di Meja Informasi Panitia.
+                <strong>Masa Sanggah Ditutup Pukul 15.00 WIB:</strong> Protes hanya diterima untuk kekeliruan administratif non-penilaian, diajukan tertulis via Formulir Sanggahan Resmi oleh Official di Ruang Informasi Panitia.
               </li>
               <li>
-                <strong>Batas Checkout Pukul 14.00 WIB:</strong> Pengosongan basecamp wajib tuntas 1 jam sebelum Apel Penutupan melalui 4 langkah verifikasi kebersihan untuk pengembalian KTP/SIM jaminan.
+                <strong>Batas Checkout Pukul 15.00 WIB:</strong> Pengosongan basecamp wajib tuntas pukul 15.00 WIB (1 jam sebelum Upacara Penutupan) melalui 4 langkah verifikasi kebersihan untuk pengembalian KTP/SIM jaminan.
               </li>
             </ul>
           </div>

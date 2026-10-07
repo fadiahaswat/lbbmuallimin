@@ -93,22 +93,22 @@ export const EVENT = {
     JURY_TM_VENUE: 'Ruang VIP Gedung Perpustakaan ASM Kampus Terpadu Sedayu',
 
     /** Tanggal Technical Meeting Peserta */
-    TECHNICAL_MEETING_DATE: '10 Januari 2027',
+    TECHNICAL_MEETING_DATE: '9 Januari 2027',
 
     /** Waktu Technical Meeting (singkat, di timeline) */
-    TECHNICAL_MEETING_TIME: '13.00 WIB \u2013 Selesai',
+    TECHNICAL_MEETING_TIME: '13.00 - 16.30 WIB',
 
     /** Hari + tanggal lengkap Technical Meeting (untuk FAQ & kartu) */
-    TECHNICAL_MEETING_FULL_DATE: 'Sabtu, 10 Januari 2027',
+    TECHNICAL_MEETING_FULL_DATE: 'Sabtu, 9 Januari 2027',
 
     /** Rentang jam Technical Meeting */
-    TECHNICAL_MEETING_TIME_RANGE: '13.00 WIB \u2013 Selesai',
+    TECHNICAL_MEETING_TIME_RANGE: '13.00 - 16.30 WIB',
 
     /** Lokasi / venue Technical Meeting */
     TECHNICAL_MEETING_VENUE:
-        "Kampus Induk Madrasah Mu\u2019allimin Muhammadiyah Yogyakarta, Jalan Letjen S. Parman No. 68, Wirobrajan, Kota Yogyakarta, Daerah Istimewa Yogyakarta.",
-    TECHNICAL_MEETING_VENUE_NAME: "Kampus Induk Madrasah Mu\u2019allimin Muhammadiyah Yogyakarta",
-    TECHNICAL_MEETING_ADDRESS: "Jl. Letjen S. Parman No.68, Notoprajan, Ngampilan / Wirobrajan, Kota Yogyakarta, DIY",
+        "Aula Kampus Induk Madrasah Mu\u2019allimin Muhammadiyah Yogyakarta, Jalan Letjen S. Parman No. 68, Wirobrajan, Kota Yogyakarta, Daerah Istimewa Yogyakarta.",
+    TECHNICAL_MEETING_VENUE_NAME: "Aula Kampus Induk Madrasah Mu\u2019allimin Muhammadiyah Yogyakarta",
+    TECHNICAL_MEETING_ADDRESS: "Jl. Letjen S. Parman No. 68, Patangpuluhan, Wirobrajan, Kota Yogyakarta, DIY",
     TECHNICAL_MEETING_MAPS_URL: "https://maps.app.goo.gl/8tSQHpribqPXTSA79",
 
     /** Uji Coba Lapangan */
@@ -226,7 +226,7 @@ export const COMPETITION = {
         ARENA_WIDTH_LABEL: '25 METER',
         ARENA_HEIGHT_LABEL: '14m',
         DURATION_LABEL: 'Durasi Max: 10 Menit',
-        SUBSTITUTION_LABEL: 'Di antara Gerakan No. 20 & 21',
+        SUBSTITUTION_LABEL: 'Di antara Gerakan No. 16 & 17 (Saat Materi Bubar)',
         ARENA_SPEC_LABEL: 'Ukuran Pos 25 \u00D7 14 Meter \u2013 Waktu 10 Menit',
     },
     SMP: {
@@ -237,7 +237,7 @@ export const COMPETITION = {
         ARENA_WIDTH_LABEL: '26 METER',
         ARENA_HEIGHT_LABEL: '15m',
         DURATION_LABEL: 'Durasi Max: 13 Menit',
-        SUBSTITUTION_LABEL: 'Di antara Gerakan No. 17 & 18',
+        SUBSTITUTION_LABEL: 'Di antara Gerakan No. 22 & 23 (Saat Materi Bubar / Pasca Gerakan No. 19)',
         ARENA_SPEC_LABEL: 'Ukuran Pos 26 \u00D7 15 Meter \u2013 Waktu 13 Menit',
     },
 };
@@ -268,23 +268,26 @@ export const REGISTRATION = {
 // ---------------------------------------------------------------------------
 export const PAYMENT = {
     /** Nomor rekening – dipakai copy to clipboard & FAQ */
-    ACCOUNT_NUMBER: '300701003561505',
+    ACCOUNT_NUMBER: '2600051817',
 
-    ACCOUNT_NAME: 'FALHAN ZUHDI MUBAROK',
-    ACCOUNT_HOLDER: 'FALHAN ZUHDI MUBAROK',
-    BANK_NAME: 'BRI',
+    ACCOUNT_NAME: 'Kepala Urusan Admisi, Humas, dan Kerja Sama',
+    ACCOUNT_HOLDER: 'Kepala Urusan Admisi, Humas, dan Kerja Sama',
+    BANK_NAME: 'BSI (Bank Syariah Indonesia)',
 
     /** Teks biaya yang tampil di UI (tanpa "Rp") */
-    FEE_DISPLAY: '350.000',
+    FEE_DISPLAY: '350.108',
+
+    /** Kode unik transfer */
+    UNIQUE_CODE: '108',
 
     /** Daftar gelombang / tier biaya pendaftaran */
     FEE_TIERS: [
-        { name: 'Gelombang 1 (11 \u2013 24 Okt)', amount: '350.000', label: '11 \u2013 24 Oktober 2026', endDate: '2026-10-24T23:59:59+07:00' },
-        { name: 'Gelombang 2 (25 Okt \u2013 7 Nov)', amount: '400.000', label: '25 Oktober \u2013 7 November 2026', endDate: '2026-11-07T23:59:59+07:00' },
+        { name: 'Gelombang 1 (11 \u2013 24 Okt)', amount: '350.000', amountWithCode: '350.108', label: '11 \u2013 24 Oktober 2026', endDate: '2026-10-24T23:59:59+07:00' },
+        { name: 'Gelombang 2 (25 Okt \u2013 7 Nov)', amount: '400.000', amountWithCode: '400.108', label: '25 Oktober \u2013 7 November 2026', endDate: '2026-11-07T23:59:59+07:00' },
     ],
 
     /** Teks biaya lengkap untuk FAQ */
-    FEE_FULL: 'Rp350.000,- (11–24 Oktober 2026) dan Rp400.000,- (25 Oktober – 7 November 2026) per peleton.',
+    FEE_FULL: 'Rp 350.000,- / peleton (Gelombang 1: 11–24 Oktober 2026) dan Rp 400.000,- / peleton (Gelombang 2: 25 Oktober – 7 November 2026). Setiap pembayaran wajib menggunakan kode unik 108.',
 
     /** Keterangan format berita transfer */
     TRANSFER_NOTE_FORMAT: 'NAMA SEKOLAH_JUMLAH PELETON',
@@ -585,6 +588,7 @@ export const PENALTIES = [
     { label: 'Gerakan Berangkai Terputus',                     value: 'Nilai Minimal' },
     { label: 'Atribut Terlepas / Terjatuh di Arena',           value: '0 Poin (TIDAK DIKENAKAN PENALTI)' },
     { label: 'Ruang Basecamp Ditinggalkan Kotor / Berantakan', value: '-50 Poin' },
+    { label: 'Yel-Yel Mengganggu Selama Penampilan',           value: '-50 Poin (Peringatan 1, 2, lalu Penalti)' },
     { label: 'Kerusakan / Kehilangan Aset Ruang Basecamp',     value: 'Ganti Rugi + Denda Rp 500.000 (KTP Ditahan)' },
 ];
 
@@ -616,59 +620,59 @@ export const PRIZES = {
 export const MATERIALS = {
     SD: [
         'Penghormatan Dewan Juri(Aba-aba Pelaksanaan Waktu Dimulai) \u2013 Laporan Pembuka',
-        'Istirahat Di Tempat(Parade)',
+        'Istirahat Di Tempat',
         'Periksa Kerapian(Parade) \u2013 Sikap Sempurna',
         'Setengah Lengan Lencang Kanan \u2013 Tegak',
-        'Lencang Kanan \u2013 Tegak',
-        'Hitung(Bersaf)',
-        'Hadap Kanan',
+        'Balik Kanan',
+        'Lencang Kiri \u2013 Tegak',
+        'Hitung(Bersaf) \u2013 Hadap Kiri',
+        'Buka Barisan',
+        'Hadap Serong Kiri \u2013 Balik Kanan',
+        '3 Langkah Ke Depan \u2013 Hadap Kanan',
+        '4 Langkah Ke Belakang \u2013 Hadap Serong Kiri',
+        'Tutup Barisan',
         'Lencang Depan \u2013 Tegak',
         'Hitung(Berbanjar)',
-        'Buka Barisan \u2013 Tutup Barisan',
-        'Hadap Kiri',
-        'Hadap Serong Kanan',
-        'Balik Kanan',
-        'Hadap Serong Kiri',
-        'Jalan Di Tempat \u2013 Henti',
-        '3 Langkah Ke Kiri \u2013 Balik Kanan',
-        '4 Langkah Ke Kanan',
-        'Hadap Kiri',
-        '3 Langkah Ke Depan \u2013 Balik Kanan',
-        '4 Langkah Ke Belakang',
-        'Maju Jalan \u2013 Tiap-tiap Banjar 2X Belok Kiri',
+        'Hadap Kanan',
+        'Bubar',
+        'Berbanjar Kumpul \u2013 Sikap Sempurna',
+        'Maju Jalan',
+        'Tiap-tiap Banjar 2X Belok Kiri',
         'Langkah Tegap(Dari Posisi Langkah Biasa)',
         'Hormat Kanan \u2013 Tegak \u2013 Jalan Di Tempat \u2013 Henti',
-        'Tiap-tiap Banjar 2X Belok Kanan Maju(Dari Posisi Berhenti) \u2013 Henti',
-        'Melintang Kanan(Berhenti ke Berhenti) \u2013 Henti \u2013 Balik Kanan',
-        'Maju Jalan \u2013 Haluan Kanan(Berjalan ke Berhenti) \u2013 Henti',
-        'Istirahat Di Tempat(Untuk Perhatian \u2013 Motivasi & Evaluasi Tema LBB) \u2013 Sikap Sempurna',
+        'Tiap-tiap Banjar 2X Belok Kanan Maju(Dari Posisi Berhenti)',
+        'Melintang Kanan(Berjalan ke Berjalan) \u2013 Maju Jalan \u2013 Henti',
+        'Balik Kanan Maju Jalan \u2013 Haluan Kanan(Berjalan ke Berhenti) \u2013 Henti',
+        'Untuk Perhatian, Istirahat Di Tempat(Arahan: Motivasi & Evaluasi Tema LBB) \u2013 Sikap Sempurna',
         'Laporan Penutup \u2013 Penghormatan Dewan Juri(Aba-aba Pelaksanaan Waktu Berakhir)',
     ],
     SMP: [
         'Penghormatan Dewan Juri(Aba-aba Pelaksanaan Waktu Dimulai) \u2013 Laporan Pembuka',
         'Hadap Kanan Maju(Dari Posisi Berhenti)',
-        'Melintang Kanan(Berjalan ke Berhenti) \u2013 Balik Kanan Henti',
-        'Langkah Tegap \u2013 Haluan Kanan(Berjalan ke Berjalan) \u2013 Langkah Biasa \u2013 Henti',
-        'Hadap Kiri Maju(Dari Posisi Berhenti) \u2013 Tiap-tiap Banjar 2X Belok Kanan \u2013 Balik Kanan Maju',
-        'Ganti Langkah \u2013 2X Belok Kiri',
-        'Lari(Dari Langkah Biasa) \u2013 2X Belok Kanan',
-        'Langkah Biasa \u2013 Tiap-tiap Banjar 2X Belok Kanan \u2013 Hadap Serong Kiri Henti',
-        'Lari(Dari Posisi Berhenti) \u2013 Balik Kanan Lari Maju \u2013 Hadap Kiri Henti',
+        'Melintang Kanan(Berjalan ke Berhenti) \u2013 Henti \u2013 Balik Kanan',
+        'Langkah Tegap \u2013 Haluan Kanan(Berjalan ke Berhenti) \u2013 Henti',
+        'Hadap Kiri Maju(Dari Posisi Berhenti) \u2013 Tiap-tiap Banjar 2X Belok Kanan',
+        'Balik Kanan Maju \u2013 Ganti Langkah',
+        '2X Belok Kiri',
+        'Lari(Dari Langkah Biasa)',
+        'Tiap-tiap 2X Belok Kanan(Berlari ke Berlari)',
+        'Langkah Biasa',
+        'Tiap-tiap Banjar 2X Belok Kiri \u2013 Hadap Serong Kiri Henti',
+        'Lari(Dari Posisi Berhenti)',
+        'Balik Kanan Lari Maju \u2013 Hadap Kiri Henti',
         'Hadap Serong Kiri Maju \u2013 2X Belok Kiri',
-        'Langkah Tegap \u2013 Hormat Kanan \u2013 Tegak',
-        'Tiap-tiap Banjar 2X Belok Kiri(Dari Langkah Tegap) \u2013 Langkah Biasa',
+        'Langkah Tegap',
+        'Hormat Kanan \u2013 Tegak \u2013 Jalan di Tempat',
+        'Tiap-tiap Banjar 2X Belok Kiri(Dari Jalan di Tempat)',
         'Langkah Perlahan(Dari Langkah Biasa) \u2013 Henti',
-        'Tiap-tiap Banjar 2X Belok Kanan Maju \u2013 Henti \u2013 3 Langkah Ke Kanan',
-        'Balik Kanan Maju \u2013 Hadap Kiri Henti',
-        'Bubar',
-        'Berhimpun(Motivasi & Evaluasi Tema LBB) \u2013 Selesai \u2013',
-        'Berkumpul Bersaf',
-        'Jalan Di Tempat \u2013 Henti \u2013 Hadap Serong Kiri \u2013 3 Langkah Ke Depan',
-        'Hadap Kanan \u2013 2 Langkah Ke Kanan \u2013 Balik Kanan',
-        'Hadap Serong Kanan \u2013 Balik Kanan',
-        'Buka Barisan \u2013 Tutup Barisan',
-        'Lencang Depan \u2013 Hitung(Berbanjar) \u2013 Hadap Kanan',
-        'Setengah Lengan Lencang Kiri \u2013 Lencang Kiri \u2013 Hitung(Bersaf) \u2013 Balik Kanan',
+        'Hadap Kiri \u2013 Bubar',
+        'Berhimpun(Arahan: Motivasi & Evaluasi Tema LBB) \u2013 Selesai',
+        'Berkumpul Bersaf \u2013 Sikap Sempurna',
+        'Setengah Lengan Lencang Kanan \u2013 Balik Kanan',
+        'Lencang Kiri \u2013 Hitung',
+        'Hadap Serong Kiri \u2013 3 Langkah Ke Depan',
+        'Hadap Kanan \u2013 4 Langkah Ke Belakang',
+        'Balik Kanan \u2013 Hadap Serong Kanan \u2013 Hadap Kiri',
         'Istirahat Di Tempat(Parade) \u2013 Periksa Kerapian(Parade) \u2013 Sikap Sempurna',
         'Laporan Penutup \u2013 Penghormatan Dewan Juri(Aba-aba Pelaksanaan Waktu Berakhir)',
     ],
@@ -1094,9 +1098,9 @@ export const OFFICIAL_TIMELINE = [
     {
         id: "tl-16",
         phase: "E. Rangkaian Agenda Technical Meeting Peserta / TM Peserta (Januari 2027)",
-        period: "Sabtu, 10 Januari 2027 (Pukul 12.30 - 16.30 WIB)",
+        period: "Sabtu, 9 Januari 2027 (Pukul 12.30 - 16.30 WIB)",
         title: "PELAKSANAAN TECHNICAL MEETING PESERTA (TM PESERTA)",
-        desc: "12.30 - 13.00: Registrasi ulang 36 kontingen, verifikasi berkas fisik asli (Surat Tugas berstempel & Pakta Integritas bermaterai Rp 10.000), pembagian snack box siang. 13.00 - 13.20: Pembukaan resmi, lagu Indonesia Raya & Mars Mu'allimin, sambutan Ketua Panitia. 13.20 - 14.30: Pemaparan mendalam Juknis Lapangan, dimensi 2 arena, alur DP 1 & DP 2, gerakan penyesuaian (maks 3x), kotak danton, larangan sol paku/pines, sistem live score website, tata tertib basecamp kelas & parkir. 14.30 - 15.15: Sesi tanya jawab teknis & klarifikasi multitafsir. 15.15 - 16.00: Lotting undian nomor urut tampil resmi (SD-01 s.d. SD-18 & SMP-01 s.d. SMP-18). 16.00 - 16.30: Pembagian slot Uji Coba Lapangan (16 Jan 2027), penandatanganan Berita Acara TM Peserta, dan temu LO pendamping.",
+        desc: "12.30 - 13.00: Registrasi ulang 36 kontingen, verifikasi berkas fisik asli (Surat Tugas berstempel & Pakta Integritas bermaterai Rp 10.000), pembagian snack box siang. 13.00 - 13.20: Pembukaan resmi, lagu Indonesia Raya & Mars Mu'allimin, sambutan Ketua Panitia. 13.20 - 14.30: Pemaparan mendalam Juknis Lapangan, dimensi 2 arena, alur DP 1 & DP 2, gerakan penyesuaian (maks 3x), kotak danton, larangan sol paku/pines, sistem live score website, tata tertib basecamp kelas & parkir. 14.30 - 15.15: Sesi tanya jawab teknis & klarifikasi multitafsir. 15.15 - 16.00: Lotting undian nomor urut tampil resmi (SD-111 s.d. SD-175 & SMP-222 s.d. SMP-286). 16.00 - 16.30: Pembagian slot Uji Coba Lapangan (16 Jan 2027), penandatanganan Berita Acara TM Peserta, dan temu LO pendamping.",
         pic: "Panitia Inti, Divisi Acara, Divisi LO & Humas, Divisi Teknis Lapangan, Divisi Juri",
     },
     {
