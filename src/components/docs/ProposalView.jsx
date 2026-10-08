@@ -190,7 +190,7 @@ export default function ProposalView() {
             <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 space-y-2">
               <div className="flex items-center gap-2 text-amber-900 font-bold text-xs uppercase">
                 <Trophy className="w-4 h-4 text-amber-600" />
-                <span>2 Piala Bergilir Juara Umum & Total Uang Pembinaan Rp 9.600.000</span>
+                <span>2 Piala Bergilir Juara Umum & Uang Pembinaan</span>
               </div>
               <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-700">
                 <li>• <strong>Piala Bergilir Juara Umum SD/MI</strong> & <strong>SMP/MTs</strong></li>

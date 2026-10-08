@@ -32,6 +32,7 @@ import { useCompetition } from '../../context/CompetitionContext.jsx';
 import logoLbb from '../../assets/logo-tonti.png';
 import logoTonti from '../../assets/logo-tonti-muallimin.png';
 import logoMuallimin from '../../assets/logo-muallimin.png';
+import titleLogoImg from '../../assets/title-logo.png';
 
 export default function SimpaskorSidebarLayout({
   activeMenu = 'dashboard',
@@ -152,23 +153,22 @@ export default function SimpaskorSidebarLayout({
       {/* 1. DESKTOP SIDEBAR (Fixed Left, Full 100vh, Sleek & Professional) */}
       <aside className="hidden lg:flex flex-col w-72 bg-white border-r border-slate-200/90 px-4 py-5 fixed top-0 bottom-0 left-0 h-screen select-none shrink-0 z-30 justify-between shadow-[1px_0_12px_rgba(0,0,0,0.03)]">
         <div className="flex flex-col min-h-0 flex-1 overflow-hidden">
-          {/* Brand Header: Logo LBB & Logo Mu'allimin */}
+          {/* Brand Header: Logo LBB & title-logo */}
           <div 
             onClick={() => setActiveView('landing')}
             className="flex items-center justify-center py-2.5 px-3 rounded-2xl hover:bg-slate-50 border border-transparent hover:border-slate-100 cursor-pointer group transition-all duration-200 shrink-0 mb-4"
             title="Ke Beranda Utama LBB Mu'allimin"
           >
-            <div className="flex items-center gap-3.5">
+            <div className="flex items-center gap-2.5">
               <img
                 src={logoLbb}
                 alt="Logo LBB Mu'allimin"
-                className="h-10 w-auto object-contain filter drop-shadow-sm group-hover:scale-105 transition-transform"
+                className="h-10 w-auto object-contain filter drop-shadow-sm group-hover:scale-105 transition-transform shrink-0"
               />
-              <div className="h-7 w-px bg-slate-200/90" />
               <img
-                src={logoMuallimin}
-                alt="Logo Madrasah Mu'allimin"
-                className="h-8 w-auto object-contain opacity-95 group-hover:opacity-100 transition-opacity"
+                src={titleLogoImg}
+                alt="LBB Mu'allimin"
+                className="h-8 w-auto object-contain max-w-[150px]"
               />
             </div>
           </div>
@@ -329,13 +329,13 @@ export default function SimpaskorSidebarLayout({
           <div className="relative w-72 max-w-[85vw] bg-white h-full shadow-2xl flex flex-col p-5 z-10 justify-between">
             <div>
               <div className="flex items-center justify-between pb-4 border-b border-slate-100 mb-4">
-                <div className="flex items-center gap-3">
-                  <img src={logoLbb} alt="Logo" className="h-8 w-auto object-contain" />
-                  <span className="text-xs font-black uppercase text-slate-800 tracking-wider">Menu LBB</span>
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <img src={logoLbb} alt="Logo" className="h-8 w-auto object-contain shrink-0" />
+                  <img src={titleLogoImg} alt="LBB Mu'allimin" className="h-6 w-auto object-contain max-w-[120px]" />
                 </div>
                 <button
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="p-1.5 rounded-xl text-slate-400 hover:bg-slate-100"
+                  className="p-1.5 rounded-xl text-slate-400 hover:bg-slate-100 shrink-0"
                 >
                   <X className="w-5 h-5" />
                 </button>

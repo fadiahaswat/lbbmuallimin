@@ -64,7 +64,7 @@ export default function Hero() {
     },
     {
       label: 'TM Peserta',
-      date: EVENT.TECHNICAL_MEETING_FULL_DATE || EVENT.TECHNICAL_MEETING_DATE, // "Sabtu, 10 Januari 2027"
+      date: EVENT.TECHNICAL_MEETING_FULL_DATE || EVENT.TECHNICAL_MEETING_DATE, // "Sabtu, 9 Januari 2027"
       dotColor: 'bg-blue-400',
       pingColor: 'bg-blue-400',
       textColor: 'text-blue-300',

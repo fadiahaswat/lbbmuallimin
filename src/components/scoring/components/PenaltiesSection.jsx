@@ -52,7 +52,7 @@ export default function PenaltiesSection({
             <span className="font-bold text-slate-900 text-sm">Timer: Kelebihan Waktu</span>
             <span className="text-[10px] font-bold text-rose-700 bg-rose-50 px-2 py-0.5 rounded-md border border-rose-200">-50 / 30 dtk</span>
           </div>
-          <p className="text-[11px] text-slate-500 mt-1 mb-3">Tiap 30 detik melebihi kuota {selectedTeam?.jenjang === 'SD' ? '10' : '13'} menit</p>
+          <p className="text-[11px] text-slate-500 mt-1 mb-3">Tiap 30 detik melebihi kuota {selectedTeam?.jenjang === 'SD' ? '8' : '12'} menit</p>
           <div className="flex items-center gap-2">
             <button
               type="button"
@@ -115,7 +115,7 @@ export default function PenaltiesSection({
               <span className="font-bold text-slate-900 text-sm">Tidak Ikut Upacara Pembukaan</span>
               <span className="text-[10px] font-bold text-rose-700 bg-rose-50 px-2 py-0.5 rounded-md border border-rose-200">-150 Poin</span>
             </div>
-            <p className="text-[11px] text-slate-500 mt-1">Perwakilan peleton tidak mengikuti apel / upacara pembukaan resmi</p>
+            <p className="text-[11px] text-slate-500 mt-1">Peleton urutan 6 s.d. 10 tidak hadir lengkap (1 Danton + 15 Anggota) pada upacara pembukaan</p>
           </div>
           <label className="flex items-center gap-2.5 mt-3 cursor-pointer bg-white p-2 rounded-xl border border-slate-200 hover:border-slate-300">
             <input

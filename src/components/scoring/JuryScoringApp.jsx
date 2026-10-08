@@ -233,7 +233,7 @@ export default function JuryScoringApp() {
   if (penalties.personelKurang) penaltyDeduction += 75;
   penaltyDeduction += (penalties.overTimeBlocks || 0) * 50;
   penaltyDeduction += (penalties.injakGarisCount || 0) * 50;
-  if ((penalties.penyesuaianCount || 0) > 3) penaltyDeduction += 25;
+  // Gerakan penyesuaian tidak dikenakan penalti poin (0 poin) sesuai Juknis Bab H.6 & Bab A.6
 
   const peletonCombinedScore = useMemo(() => {
     if (pbb1Total > 0 && pbb2Total > 0) {

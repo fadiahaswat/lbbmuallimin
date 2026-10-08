@@ -57,13 +57,13 @@ export default function About() {
           </div>
 
           <h2 className="text-2xl sm:text-4xl md:text-5xl font-black text-white uppercase italic tracking-tighter mb-4 leading-tight py-1">
-            <span className="block whitespace-nowrap">
+            <span className="block sm:whitespace-nowrap">
               Membangun{' '}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-amber-400 to-yellow-400">
                 Generasi Unggul
               </span>
             </span>
-            <span className="block whitespace-nowrap mt-1">
+            <span className="block sm:whitespace-nowrap mt-1">
               Berkarakter{' '}
               <span className="relative inline-block pr-2 pb-1">
                 <span className="relative z-10 text-amber-400 font-extrabold">Ksatria</span>
@@ -160,38 +160,7 @@ export default function About() {
                 </div>
               </div>
 
-              {/* 3 Core Values Strip */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-6 mt-6 border-t border-white/10">
-                <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/5">
-                  <div className="w-9 h-9 rounded-lg bg-red-500/10 text-red-400 border border-red-500/20 flex items-center justify-center shrink-0">
-                    <Trophy className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <span className="text-xs font-bold text-white block">Sportivitas Luhur</span>
-                    <span className="text-[11px] text-slate-400 block">Kompetisi Sehat & Terbuka</span>
-                  </div>
-                </div>
 
-                <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/5">
-                  <div className="w-9 h-9 rounded-lg bg-blue-500/10 text-blue-400 border border-blue-500/20 flex items-center justify-center shrink-0">
-                    <BrainCircuit className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <span className="text-xs font-bold text-white block">Soft Skills & Karakter</span>
-                    <span className="text-[11px] text-slate-400 block">Mental Juang & Resiliensi</span>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/5">
-                  <div className="w-9 h-9 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center justify-center shrink-0">
-                    <Network className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <span className="text-xs font-bold text-white block">Kader 1918 (CADRE)</span>
-                    <span className="text-[11px] text-slate-400 block">Nilai Luhur Kepanduan</span>
-                  </div>
-                </div>
-              </div>
 
             </div>
           </div>

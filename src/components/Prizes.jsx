@@ -25,13 +25,13 @@ export default function Prizes() {
             SECTION HEADER
             ======================================================== */}
         <div className="mb-14 md:mb-16 text-center max-w-3xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs font-bold uppercase tracking-widest mb-4 shadow-sm">
-            <Crown className="w-3.5 h-3.5 text-amber-400" />
-            <span>{PRIZES.TOTAL_LABEL}</span>
+          <div className="inline-flex items-center justify-center gap-2 px-3.5 sm:px-4 py-1.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 text-[10px] sm:text-xs font-bold uppercase tracking-wider sm:tracking-widest mb-4 shadow-sm max-w-full text-center leading-normal">
+            <Crown className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+            <span className="truncate sm:whitespace-normal">{PRIZES.TOTAL_LABEL}</span>
           </div>
 
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black uppercase italic tracking-tighter leading-tight py-1 text-white">
-            Kategori &{' '}
+          <h2 className="text-2xl sm:text-4xl md:text-5xl font-black uppercase italic tracking-tighter leading-tight py-1 text-white">
+            <span className="block sm:inline">Kategori &{' '}</span>
             <span className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500">
               Penghargaan
             </span>
@@ -135,21 +135,21 @@ export default function Prizes() {
                   </h3>
                 </div>
               </div>
-              <span className="text-[11px] font-semibold text-slate-400 bg-white/[0.04] border border-white/10 px-3 py-1 rounded-full">
+              <span className="text-[10px] sm:text-[11px] font-semibold text-slate-400 bg-white/[0.04] border border-white/10 px-2.5 sm:px-3 py-1 rounded-full shrink-0 whitespace-nowrap">
                 6 Gelar Juara
               </span>
             </div>
 
             {/* Juara Utama Card */}
             <div className="rounded-3xl bg-gradient-to-b from-slate-900/90 via-slate-900/80 to-slate-950/95 border border-red-500/25 hover:border-red-500/40 p-5 sm:p-6 shadow-xl backdrop-blur-xl transition-all">
-              <div className="flex items-center justify-between pb-3 mb-4 border-b border-white/10">
-                <div className="flex items-center gap-2">
-                  <Medal className="w-4 h-4 text-amber-400" />
-                  <h4 className="text-sm sm:text-base font-black text-white uppercase tracking-wider">
+              <div className="flex items-center justify-between gap-2 pb-3 mb-4 border-b border-white/10">
+                <div className="flex items-center gap-2 min-w-0">
+                  <Medal className="w-4 h-4 text-amber-400 shrink-0" />
+                  <h4 className="text-sm sm:text-base font-black text-white uppercase tracking-wider truncate">
                     Juara Utama
                   </h4>
                 </div>
-                <span className="text-[10px] font-bold uppercase text-slate-400">
+                <span className="text-[10px] font-bold uppercase text-slate-400 shrink-0 whitespace-nowrap">
                   Peringkat 1, 2, dan 3
                 </span>
               </div>
@@ -207,14 +207,14 @@ export default function Prizes() {
 
             {/* Juara Harapan Card */}
             <div className="rounded-3xl bg-gradient-to-b from-slate-900/80 to-slate-950/90 border border-white/10 p-5 sm:p-6 shadow-lg backdrop-blur-xl">
-              <div className="flex items-center justify-between pb-3 mb-3 border-b border-white/10">
-                <div className="flex items-center gap-2">
-                  <Award className="w-4 h-4 text-slate-400" />
-                  <h4 className="text-sm sm:text-base font-black text-white uppercase tracking-wider">
+              <div className="flex items-center justify-between gap-2 pb-3 mb-3 border-b border-white/10">
+                <div className="flex items-center gap-2 min-w-0">
+                  <Award className="w-4 h-4 text-slate-400 shrink-0" />
+                  <h4 className="text-sm sm:text-base font-black text-white uppercase tracking-wider truncate">
                     Juara Harapan
                   </h4>
                 </div>
-                <span className="text-[10px] font-bold uppercase text-slate-400">
+                <span className="text-[10px] font-bold uppercase text-slate-400 shrink-0 whitespace-nowrap">
                   Peringkat Harapan 1, 2, 3
                 </span>
               </div>
@@ -256,21 +256,21 @@ export default function Prizes() {
                   </h3>
                 </div>
               </div>
-              <span className="text-[11px] font-semibold text-slate-400 bg-white/[0.04] border border-white/10 px-3 py-1 rounded-full">
+              <span className="text-[10px] sm:text-[11px] font-semibold text-slate-400 bg-white/[0.04] border border-white/10 px-2.5 sm:px-3 py-1 rounded-full shrink-0 whitespace-nowrap">
                 6 Gelar Juara
               </span>
             </div>
 
             {/* Juara Utama Card */}
             <div className="rounded-3xl bg-gradient-to-b from-slate-900/90 via-slate-900/80 to-slate-950/95 border border-blue-500/25 hover:border-blue-500/40 p-5 sm:p-6 shadow-xl backdrop-blur-xl transition-all">
-              <div className="flex items-center justify-between pb-3 mb-4 border-b border-white/10">
-                <div className="flex items-center gap-2">
-                  <Medal className="w-4 h-4 text-amber-400" />
-                  <h4 className="text-sm sm:text-base font-black text-white uppercase tracking-wider">
+              <div className="flex items-center justify-between gap-2 pb-3 mb-4 border-b border-white/10">
+                <div className="flex items-center gap-2 min-w-0">
+                  <Medal className="w-4 h-4 text-amber-400 shrink-0" />
+                  <h4 className="text-sm sm:text-base font-black text-white uppercase tracking-wider truncate">
                     Juara Utama
                   </h4>
                 </div>
-                <span className="text-[10px] font-bold uppercase text-slate-400">
+                <span className="text-[10px] font-bold uppercase text-slate-400 shrink-0 whitespace-nowrap">
                   Peringkat 1, 2, dan 3
                 </span>
               </div>
@@ -328,14 +328,14 @@ export default function Prizes() {
 
             {/* Juara Harapan Card */}
             <div className="rounded-3xl bg-gradient-to-b from-slate-900/80 to-slate-950/90 border border-white/10 p-5 sm:p-6 shadow-lg backdrop-blur-xl">
-              <div className="flex items-center justify-between pb-3 mb-3 border-b border-white/10">
-                <div className="flex items-center gap-2">
-                  <Award className="w-4 h-4 text-slate-400" />
-                  <h4 className="text-sm sm:text-base font-black text-white uppercase tracking-wider">
+              <div className="flex items-center justify-between gap-2 pb-3 mb-3 border-b border-white/10">
+                <div className="flex items-center gap-2 min-w-0">
+                  <Award className="w-4 h-4 text-slate-400 shrink-0" />
+                  <h4 className="text-sm sm:text-base font-black text-white uppercase tracking-wider truncate">
                     Juara Harapan
                   </h4>
                 </div>
-                <span className="text-[10px] font-bold uppercase text-slate-400">
+                <span className="text-[10px] font-bold uppercase text-slate-400 shrink-0 whitespace-nowrap">
                   Peringkat Harapan 1, 2, 3
                 </span>
               </div>
@@ -380,9 +380,6 @@ export default function Prizes() {
                   Komandan Peleton (Danton) Terbaik
                 </h3>
               </div>
-              <p className="text-slate-400 text-xs sm:text-sm max-w-md md:text-right leading-relaxed font-medium">
-                Penghargaan khusus bagi danton dengan ketegasan vokal, keakuratan materi aba-aba, dan kepemimpinan medan terbaik.
-              </p>
             </div>
 
             {/* 2 Columns: SD & SMP */}

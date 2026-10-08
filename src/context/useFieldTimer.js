@@ -74,7 +74,7 @@ export function useFieldTimer({ updateTeamStaging, setScores }) {
       if (pen.personelKurang) totalPenalty += 75;
       totalPenalty += (pen.overTimeBlocks || 0) * 50;
       totalPenalty += (pen.injakGarisCount || 0) * 50;
-      if ((pen.penyesuaianCount || 0) > 3) totalPenalty += 25;
+      // Gerakan penyesuaian: 0 poin penalti (Bab H.6 & Bab A.6)
       pen.totalPenalty = totalPenalty;
 
       const pbbTotal = existing.pbb?.total || 0;

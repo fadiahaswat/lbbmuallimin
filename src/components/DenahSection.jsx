@@ -112,21 +112,21 @@ export default function DenahSection() {
   ];
 
   return (
-    <section id="denah" className="py-24 lg:py-32 bg-white relative overflow-hidden text-slate-800 font-sans border-t border-slate-200">
+    <section id="denah" className="py-16 sm:py-24 lg:py-32 bg-white relative overflow-hidden text-slate-800 font-sans border-t border-slate-200">
       {/* Background accents */}
       <div className="absolute inset-0 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:16px_16px] opacity-60 pointer-events-none"></div>
       <div className="absolute top-0 right-0 w-96 h-96 bg-red-100/50 rounded-full blur-[100px] pointer-events-none"></div>
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-amber-100/50 rounded-full blur-[100px] pointer-events-none"></div>
 
-      <div className="container mx-auto px-6 relative z-10">
+      <div className="container mx-auto px-4 sm:px-6 relative z-10">
         {/* Section Header */}
-        <div className="mb-14 md:mb-20 text-center max-w-3xl mx-auto">
+        <div className="mb-10 sm:mb-14 md:mb-20 text-center max-w-3xl mx-auto">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-red-100 border border-red-200 text-red-800 text-xs font-bold uppercase tracking-wider mb-4 shadow-sm">
             <Compass className="w-4 h-4 text-red-700" />
             <span>Tata Ruang & Navigasi Arena</span>
           </div>
-          <h2 className="text-4xl md:text-5xl font-black uppercase italic tracking-tighter leading-tight py-1 text-slate-900">
-            Denah Area <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-800">Perlombaan</span>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black uppercase italic tracking-tight leading-tight py-1 text-slate-900 overflow-visible">
+            Denah Area <span className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-800 pr-2.5">Perlombaan</span>
           </h2>
           <div className="w-20 h-1.5 bg-red-600 mx-auto mt-4 rounded-full skew-x-12 shadow-sm"></div>
           <p className="text-slate-600 text-sm sm:text-base mt-4 leading-relaxed">
@@ -135,9 +135,9 @@ export default function DenahSection() {
         </div>
 
         {/* Main Denah Showcase Card */}
-        <div className="max-w-6xl mx-auto bg-slate-50 border border-slate-200 rounded-3xl p-4 sm:p-8 shadow-xl relative">
+        <div className="max-w-6xl mx-auto bg-slate-50 border border-slate-200 rounded-3xl p-3 sm:p-8 shadow-xl relative">
           {/* Top Bar */}
-          <div className="flex items-center justify-between pb-6 border-b border-slate-200">
+          <div className="flex items-center justify-between pb-4 sm:pb-6 border-b border-slate-200">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-red-100 border border-red-200 text-red-700 flex items-center justify-center shrink-0 shadow-sm">
                 <Map className="w-5 h-5" />
@@ -151,11 +151,6 @@ export default function DenahSection() {
                 </p>
               </div>
             </div>
-
-            <div className="hidden sm:flex items-center gap-2 text-xs font-bold text-slate-600 bg-white border border-slate-200 px-3 py-1.5 rounded-xl shadow-sm">
-              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-              <span>Resolusi HD Resmi</span>
-            </div>
           </div>
 
           {/* Image Display Area with pure white background - Grand Display */}
@@ -163,27 +158,24 @@ export default function DenahSection() {
             {/* Grand Clean White Image Canvas */}
             <div
               onClick={() => setIsZoomOpen(true)}
-              className="relative rounded-2xl bg-white p-4 sm:p-8 shadow-lg border border-slate-200 cursor-pointer group overflow-hidden transition-all hover:border-red-400 hover:shadow-xl"
+              className="relative rounded-2xl bg-white p-2.5 sm:p-6 lg:p-8 shadow-lg border border-slate-200 cursor-pointer group overflow-hidden transition-all hover:border-red-400 hover:shadow-xl"
               title="Klik untuk memperbesar denah layar penuh"
             >
               {/* Visual badge top right */}
-              <div className="absolute top-4 right-4 z-10 bg-slate-900/90 text-white text-xs font-bold px-3 py-1.5 rounded-xl backdrop-blur-sm border border-slate-700 flex items-center gap-2 shadow-lg">
-                <Maximize2 className="w-3.5 h-3.5 text-amber-400" />
+              <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-10 bg-slate-900/90 text-white text-[11px] sm:text-xs font-bold px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl backdrop-blur-sm border border-slate-700 flex items-center gap-1.5 sm:gap-2 shadow-lg">
+                <Maximize2 className="w-3.5 h-3.5 text-amber-400 shrink-0" />
                 <span>Klik untuk Zoom Layar Penuh</span>
               </div>
 
               {/* Pure White Background wrapper */}
-              <div className="w-full flex items-center justify-center min-h-[500px] sm:min-h-[700px] lg:min-h-[850px] bg-white py-4">
-                <picture>
-                  <source srcSet="/denah-lbb-muallimin-2027.webp" type="image/webp" />
-                  <img
-                    src="/denah-lbb-muallimin-2027.png"
-                    alt="Denah Resmi Area Perlombaan LBB Mu'allimin 2027"
-                    className="w-full max-w-4xl max-h-[900px] object-contain mx-auto transition-transform duration-300 group-hover:scale-[1.01]"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </picture>
+              <div className="w-full flex items-center justify-center min-h-[260px] sm:min-h-[500px] lg:min-h-[750px] bg-white pt-10 sm:pt-4 pb-2">
+                <img
+                  src="/denah-perlombaan.png"
+                  alt="Denah Resmi Area Perlombaan LBB Mu'allimin 2027"
+                  className="w-full max-w-4xl max-h-[850px] object-contain mx-auto transition-transform duration-300 group-hover:scale-[1.01]"
+                  loading="lazy"
+                  decoding="async"
+                />
               </div>
             </div>
 
@@ -199,9 +191,6 @@ export default function DenahSection() {
                     Keterangan & Legenda Area Lomba
                   </h4>
                 </div>
-                <span className="text-[11px] font-semibold text-slate-500 bg-slate-50 border border-slate-200 px-2.5 py-0.5 rounded-full">
-                  9 Titik Vital
-                </span>
               </div>
 
               {/* Compact 3-Column Grid */}
@@ -278,8 +267,8 @@ export default function DenahSection() {
 
             <div className="flex items-center gap-2" onClick={e => e.stopPropagation()}>
               <a
-                href="/denah-lbb-muallimin-2027.png"
-                download="DENAH-LBB-MUALLIMIN-2027.png"
+                href="/denah-perlombaan.png"
+                download="DENAH-PERLOMBAAN-LBB-MUALLIMIN-2027.png"
                 className="px-3.5 py-1.5 rounded-xl bg-yellow-500 hover:bg-yellow-400 text-slate-950 font-bold text-xs flex items-center gap-1.5 transition-all shadow-md"
               >
                 <Download className="w-4 h-4" />
@@ -302,7 +291,7 @@ export default function DenahSection() {
           >
             <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-2xl w-full max-w-6xl max-h-[88vh] overflow-auto flex items-center justify-center border border-slate-700">
               <img
-                src="/denah-lbb-muallimin-2027.png"
+                src="/denah-perlombaan.png"
                 alt="Denah Lengkap Area Perlombaan LBB Mu'allimin 2027"
                 className="max-h-[82vh] w-auto object-contain select-none pointer-events-auto"
               />

@@ -24,11 +24,11 @@ export default function TataTertibView() {
   // Sanksi & Penalti Resmi LBB Mu'allimin 2027 (Bab G Juknis Lapangan & Pasal 6, 7, 8, 9, 14 Tata Tertib)
   const penaltiesList = [
     {
-      violation: 'Tidak Mengikuti Upacara Pembukaan (Peleton No. 1–5)',
+      violation: 'Tidak Mengikuti Upacara Pembukaan (Peleton Urutan 6 s.d. 10)',
       points: 150,
       pointsDisplay: '-150 Poin',
       rule: 'Bab H.1 Juknis / Pasal 6.2 Tatib',
-      desc: 'Peleton nomor urut 1 sampai 5 (SD-111 s.d. SD-119 dan SMP-222 s.d. SMP-240) yang tidak hadir lengkap (1 komandan + 15 anggota) saat upacara pembukaan resmi. Penalti berlaku terhadap nilai Peleton.',
+      desc: 'Peleton urutan tampil lomba 6 sampai dengan 10 pada masing-masing tingkatan (SD-131, SD-133, SD-135, SD-137, SD-139 dan SMP-242, SMP-244, SMP-246, SMP-248, SMP-260) yang tidak hadir lengkap (1 komandan + 15 anggota / 5 trio) saat upacara pembukaan resmi. Penalti berlaku terhadap nilai Peleton.',
       type: 'Disiplin Upacara',
     },
     {
@@ -60,7 +60,7 @@ export default function TataTertibView() {
       points: 50,
       pointsDisplay: '-50 Poin / rentang 1–30 dtk',
       rule: 'Bab H.4 Juknis',
-      desc: 'Kelebihan durasi maksimal (10 menit SD, 13 menit SMP) dikenai penalti -50 poin untuk setiap rentang 1 s.d. 30 detik dan kelipatannya. Penalti diberlakukan terhadap nilai Peleton dan nilai Komandan Peleton.',
+      desc: 'Kelebihan durasi maksimal (8 menit SD, 12 menit SMP) dikenai penalti -50 poin untuk setiap rentang 1 s.d. 30 detik dan kelipatannya. Penalti diberlakukan terhadap nilai Peleton dan nilai Komandan Peleton.',
       type: 'Waktu Tampil',
     },
     {
@@ -72,11 +72,11 @@ export default function TataTertibView() {
       type: 'Arena & Garis',
     },
     {
-      violation: 'Kelebihan Gerakan Penyesuaian (> 3 Kali)',
-      points: 25,
-      pointsDisplay: '-25 Poin / gerakan',
-      rule: 'Bab H.6 Juknis',
-      desc: 'Gerakan penyesuaian (hanya hadap, balik, atau langkah terbatas) melebihi kuota 3 kali dikenai penalti -25 poin per gerakan tambahan terhadap nilai Komandan Peleton.',
+      violation: 'Gerakan Penyesuaian (Tidak Dibatasi / Tanpa Penalti Poin)',
+      points: 0,
+      pointsDisplay: '0 Poin (Bebas Kuota)',
+      rule: 'Bab H.6 & Bab A.6 Juknis',
+      desc: 'Gerakan penyesuaian TIDAK DIBATASI jumlahnya (tidak dikenakan penalti potongan angka kuota). Namun, frekuensi serta efektivitas gerakan penyesuaian diperhitungkan oleh Dewan Juri dalam penilaian kualitatif Penguasaan Lapangan Komandan Peleton (bobot 20%).',
       type: 'Teknik Gerakan',
     },
     {
@@ -198,6 +198,49 @@ export default function TataTertibView() {
               <span className="text-[10px] uppercase font-bold text-red-300 block">Sanggah Resmi</span>
               <span className="text-2xl font-black text-white font-mono">60 Menit</span>
               <span className="text-[10px] text-slate-300 block mt-0.5">Setelah Pengumuman</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Visual Infografis Regulasi: Garis Sebagai Garis */}
+        <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
+            <div className="flex items-center gap-2.5">
+              <span className="p-1.5 rounded-lg bg-red-100 text-red-700 border border-red-200">
+                <ShieldAlert className="w-4 h-4" />
+              </span>
+              <div>
+                <h3 className="text-sm font-black text-slate-900 uppercase tracking-wide">
+                  Prinsip Baku: "Garis Sebagai Garis" (Penalti Arena & Kotak Danton)
+                </h3>
+                <p className="text-[11px] text-slate-500">
+                  Pedoman resmi dewan juri terkait batas pijakan kaki dan penempatan tangan/badan
+                </p>
+              </div>
+            </div>
+            <span className="text-[10px] font-black uppercase tracking-wider bg-rose-100 text-rose-800 border border-rose-200 px-3 py-1 rounded-full self-start sm:self-auto">
+              Penalti -50 Poin / Pelanggaran
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+            <div className="md:col-span-1 bg-slate-50 p-4 rounded-2xl flex items-center justify-center border border-slate-200 shadow-inner">
+              <img
+                src="/garis-sebagai-garis.png"
+                alt="Infografis Prinsip Garis Sebagai Garis"
+                className="max-h-[160px] w-auto object-contain rounded-lg drop-shadow-xs"
+                loading="lazy"
+              />
+            </div>
+            <div className="md:col-span-2 space-y-2 text-xs text-slate-600 leading-relaxed">
+              <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
+                <span className="font-bold text-slate-900 block mb-0.5">1. Definisi Pijakan Kaki:</span>
+                Sepatu atau bagian sol yang <strong>menginjak garis batas atau keluar dari arena</strong> dinyatakan sebagai pelanggaran (tanda silang merah).
+              </div>
+              <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
+                <span className="font-bold text-slate-900 block mb-0.5">2. Anggota Badan Melayang / Menggantung:</span>
+                Ayunan tangan atau condong badan yang melintas di atas garis batas tanpa menyentuh lantai di luar garis dinyatakan <strong>SAH / TIDAK DIKENAKAN PENALTI</strong> (tanda centang hijau).
+              </div>
             </div>
           </div>
         </div>

@@ -48,9 +48,16 @@ export default function Step3PaymentAndPact({
       <div className="p-5 sm:p-6 bg-slate-900 text-white rounded-2xl shadow-md relative overflow-hidden">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <span className="text-[10px] font-black uppercase tracking-wider text-yellow-400 block">
-              Rekening Resmi Bendahara LBB Mu'allimin 2027
-            </span>
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-5 mb-3">
+              <img 
+                src="/Bank_Syariah_Indonesia_white.svg" 
+                alt="Bank Syariah Indonesia" 
+                className="h-9 sm:h-11 w-auto object-contain filter drop-shadow-[0_2px_12px_rgba(255,255,255,0.25)]"
+              />
+              <span className="text-[11px] font-black uppercase tracking-wider text-yellow-400">
+                Rekening Resmi Bendahara LBB Mu'allimin 2027
+              </span>
+            </div>
             <div className="flex items-center gap-2.5 mt-1.5 flex-wrap">
               <span className="text-sm font-bold text-white">{PAYMENT.BANK_NAME}:</span>
               <span className="text-lg font-mono font-black text-yellow-400 tracking-wider">

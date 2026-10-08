@@ -68,7 +68,7 @@ export default function DocumentsTab({ currentTeam, triggerFileUpload, setActive
 
         {/* 4. Bukti Transfer */}
         <ParticipantDocCard
-          title="Bukti Transfer Pembayaran BRI"
+          title="Bukti Transfer Pembayaran BSI"
           file={currentTeam.files?.paymentProof}
           uploadKey="paymentProof"
           btnLabel="Unggah Bukti"

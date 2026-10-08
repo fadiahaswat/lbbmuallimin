@@ -375,11 +375,23 @@ export default function OverviewTab({
             </div>
           </div>
 
-          {/* Bantuan Panitia */}
-          <div className="bg-slate-900 text-white rounded-3xl p-6 border border-slate-800 space-y-3">
-            <div className="flex items-center gap-2 text-yellow-400">
-              <HelpCircle className="w-5 h-5" />
-              <h4 className="font-black text-sm uppercase tracking-wider">Bantuan Panitia</h4>
+          {/* Bantuan Panitia dengan Maskot Danton */}
+          <div className="bg-slate-900 text-white rounded-3xl p-6 border border-slate-800 space-y-4 relative overflow-hidden">
+            <div className="flex items-center gap-3">
+              <img
+                src="/manganperpunk.png"
+                alt="Maskot Komandan Peleton"
+                className="w-14 h-14 object-contain filter drop-shadow-md shrink-0"
+              />
+              <div>
+                <div className="flex items-center gap-1.5 text-yellow-400">
+                  <HelpCircle className="w-4 h-4" />
+                  <h4 className="font-black text-xs uppercase tracking-wider">Bantuan Panitia</h4>
+                </div>
+                <p className="text-[11px] text-slate-300 mt-0.5">
+                  Siap pandu pengunggahan berkas & teknis tim!
+                </p>
+              </div>
             </div>
             <p className="text-xs text-slate-300 leading-relaxed">
               Jika terdapat kendala pengunggahan berkas atau revisi nama personel, silakan hubungi narahubung resmi sekretariat:

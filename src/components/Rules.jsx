@@ -197,18 +197,37 @@ export default function Rules() {
                       </li>
                       <li>
                         <strong className="text-slate-900">Prinsip Garis Batas dan Penilaian Pelanggaran:</strong> Seluruh garis batas arena perlombaan maupun batas Kotak Danton menganut asas <span className="font-bold text-red-700 bg-red-50 px-1 rounded">"Garis sebagai Garis"</span> (pelanggaran dihitung berdasarkan kontak fisik/pijakan, bukan dinding imajiner di udara). Pelanggaran dinyatakan sah terjadi apabila terdapat alas kaki atau bagian tubuh peserta maupun Komandan Peleton yang secara nyata menyentuh/menginjak garis atau menapak di luar area batas yang telah ditentukan. Setiap bentuk pelanggaran akan ditandai secara langsung melalui kibasan bendera oleh Hakim Garis dan dikenakan sanksi pemotongan nilai pada rekapitulasi penilaian.
+                        
+                        {/* Infografis Garis Sebagai Garis (Light Mode) */}
+                        <div className="mt-3 p-4 bg-slate-50 rounded-2xl border border-slate-200 flex flex-col sm:flex-row items-center gap-4 shadow-xs">
+                          <img
+                            src="/garis-sebagai-garis.png"
+                            alt="Infografis Garis Sebagai Garis"
+                            className="max-h-24 w-auto object-contain rounded-lg drop-shadow-xs shrink-0"
+                            loading="lazy"
+                          />
+                          <div className="text-xs text-slate-700 leading-relaxed">
+                            <strong className="text-slate-900 block mb-1 font-black">Aturan Pijakan Kaki:</strong>
+                            <p>
+                              Menginjak / keluar garis = <span className="text-red-700 font-bold bg-red-100 px-1.5 py-0.5 rounded">Pelanggaran (Silang Merah)</span>.
+                            </p>
+                            <p className="mt-1">
+                              Ayunan tangan / badan melayang di atas garis tanpa menyentuh tanah = <span className="text-emerald-800 font-bold bg-emerald-100 px-1.5 py-0.5 rounded">Sah / Bebas Penalti (Centang Hijau)</span>.
+                            </p>
+                          </div>
+                        </div>
                       </li>
                       <li>
                         <strong className="text-slate-900">Sinyal dan Alat Komunikasi Petugas Lapangan:</strong> Untuk menjamin keteraturan dan kepastian teknis di lapangan, panitia menetapkan penggunaan sinyal resmi: peluit digunakan khusus sebagai penanda perhitungan waktu lomba oleh Timekeeper, sedangkan bendera digunakan khusus oleh Hakim Garis untuk menandai terjadinya pelanggaran garis batas arena dan batas Kotak Danton.
                       </li>
                       <li>
-                        <strong className="text-slate-900">Gerakan Penyesuaian:</strong> Gerakan tambahan di tempat yang bertujuan untuk memperbaiki posisi atau formasi peleton di dalam arena lomba. Gerakan penyesuaian HANYA meliputi: Hadap (Kanan/Kiri/Serong), Balik (Kanan), dan Langkah Terbatas (langkah ke Kiri/Kanan/Depan/Belakang). Gerakan penyesuaian dibatasi maksimal 3 (tiga) kali selama peleton tampil di arena. Ditegaskan bahwa dilarang keras menggunakan gerakan tambahan yang menyerupai materi sebelum dan sesudah gerakan tambahan tersebut dilakukan.
+                        <strong className="text-slate-900">Gerakan Penyesuaian:</strong> Gerakan tambahan di tempat yang bertujuan untuk memperbaiki posisi atau formasi peleton di dalam arena lomba. Gerakan penyesuaian HANYA meliputi: Hadap (Kanan/Kiri/Serong), Balik (Kanan), dan Langkah Terbatas (langkah ke Kiri/Kanan/Depan/Belakang). Penggunaan Gerakan Penyesuaian TIDAK DIBATASI jumlahnya (tidak dikenakan penalti potongan angka kuota), namun frekuensi dan efektivitas penggunaannya berpengaruh langsung terhadap penilaian aspek Penguasaan Lapangan Komandan Peleton. Ditegaskan bahwa dilarang keras menggunakan gerakan tambahan yang menyerupai materi sebelum dan sesudah gerakan tambahan tersebut dilakukan.
                       </li>
                       <li>
                         <strong className="text-slate-900">Spesifikasi Dimensi Arena Perlombaan:</strong> Perlombaan dilaksanakan secara terpisah dan simultan di Kampus Terpadu Sedayu pada dua arena resmi:
                         <ul className="list-[lower-alpha] pl-5 mt-1.5 space-y-1">
-                          <li><strong className="text-slate-800">Tingkat SD/MI:</strong> Arena 1 bertempat di Lapangan Basket dengan ukuran 25 meter x 14 meter. Durasi tampil maksimal 10 menit.</li>
-                          <li><strong className="text-slate-800">Tingkat SMP/MTs:</strong> Arena 2 bertempat di Pelataran Embung dengan ukuran 26 meter x 15 meter. Durasi tampil maksimal 13 menit.</li>
+                          <li><strong className="text-slate-800">Tingkat SD/MI:</strong> Arena 1 bertempat di Lapangan Basket dengan ukuran 25 meter x 14 meter. Durasi tampil maksimal 8 menit.</li>
+                          <li><strong className="text-slate-800">Tingkat SMP/MTs:</strong> Arena 2 bertempat di Pelataran Embung dengan ukuran 26 meter x 15 meter. Durasi tampil maksimal 12 menit.</li>
                         </ul>
                       </li>
                       <li>
@@ -241,7 +260,14 @@ export default function Rules() {
                       <li><strong className="text-slate-900">Waktu dan Tempat Pelaksanaan:</strong> Dilaksanakan pada hari Sabtu, 9 Januari 2027 pukul 13.00 - 16.30 WIB bertempat di Aula Kampus Induk Madrasah Mu'allimin Muhammadiyah Yogyakarta (Jl. Letjen S. Parman No. 68, Patangpuluhan, Wirobrajan, Kota Yogyakarta).</li>
                       <li><strong className="text-slate-900">Ketentuan Kehadiran Delegasi:</strong> Setiap peleton wajib mendelegasikan maksimal 2 (dua) orang perwakilan resmi (Official/Pelatih/Pembina atau Komandan Peleton). Seluruh perwakilan wajib mengenakan pakaian rapi, sopan, dan bersepatu. Perwakilan putri wajib mengenakan pakaian berlengan panjang.</li>
                       <li><strong className="text-slate-900">Agenda Registrasi dan Verifikasi Berkas Fisik Asli (12.30 - 13.00 WIB):</strong> Sebelum memasuki ruang rapat pleno, perwakilan peleton melakukan presensi dan menyerahkan berkas fisik asli di meja registrasi TM, meliputi: (a) Surat Tugas / Rekomendasi Resmi Kepala Sekolah asli berstempel basah yang memuat daftar nama lengkap peleton (1 Danton, 21 Anggota Inti, 3 Cadangan, 1 Official, dan 2 Pendukung Resmi); (b) Pakta Integritas bermaterai Rp 10.000 yang telah ditandatangani oleh Official resmi sekolah.</li>
-                      <li><strong className="text-slate-900">Pemaparan Materi Teknis & Juknis Lomba (13.00 - 14.30 WIB):</strong> Divisi Acara dan Perwakilan Dewan Juri memaparkan secara mendalam: penyamaan persepsi teknik materi gerakan PBB berdasar Perpang TNI No. 58 & 57 Tahun 2018 (serta Perpang TNI No. 45 Tahun 2014 untuk Hormat Kanan/Kiri); standar pengucapan aba-aba, tempo gerakan, tata cara komandan memposisikan peleton, dan perbandingan penilaian peleton (Kebenaran Gerak dan Kekompakan 1:1, serta 4 aspek komandan peleton); penjelasan batasan gerakan penyesuaian, prinsip garis, bendera hakim garis, dan kotak danton; serta mekanisme perhitungan waktu resmi menggunakan stopwatch serta publikasi hasil penilaian melalui portal peserta di website lbb.tontimuallimin.com menggunakan akun Gmail masing-masing peleton. Seluruh nilai peserta akan ditampilkan secara langsung pada akun masing-masing peleton setelah pelaksanaan upacara dan pengumuman kejuaraan.</li>
+                      <li><strong className="text-slate-900">Pemaparan Materi Teknis & Juknis Lomba (13.00 - 14.30 WIB):</strong> Divisi Acara dan Perwakilan Dewan Juri memaparkan secara mendalam:
+                        <ul className="list-[lower-alpha] pl-5 mt-1 space-y-1">
+                          <li>Penyamaan persepsi teknik materi gerakan PBB berdasar Perpang TNI No. 58 & 57 Tahun 2018 (serta Perpang TNI No. 45 Tahun 2014 untuk Hormat Kanan/Kiri).</li>
+                          <li>Standar pengucapan aba-aba, tempo gerakan, tata cara komandan memposisikan peleton, dan perbandingan penilaian peleton (Kebenaran Gerak dan Kekompakan 1:1, serta 4 aspek komandan peleton).</li>
+                          <li>Penjelasan ketentuan gerakan penyesuaian (tanpa batas kuota namun mempengaruhi penilaian Penguasaan Lapangan Komandan), prinsip garis batas arena, bendera hakim garis, dan ketentuan Kotak Danton.</li>
+                          <li>Mekanisme perhitungan waktu resmi menggunakan stopwatch serta publikasi hasil penilaian melalui portal peserta di website lbb.tontimuallimin.com menggunakan akun Gmail masing-masing peleton. Seluruh nilai peserta akan ditampilkan secara langsung pada akun masing-masing peleton setelah pelaksanaan upacara dan pengumuman kejuaraan.</li>
+                        </ul>
+                      </li>
                       <li><strong className="text-slate-900">Sesi Tanya Jawab Teknis (14.30 - 15.15 WIB):</strong> Peserta diberikan ruang diskusi langsung bersama Dewan Juri ataupun Panitia guna menyamakan persepsi serta mengklarifikasi hal-hal teknis yang belum jelas. Setiap keputusan dan kesepakatan akhir akan dicatat ke dalam Notulensi Resmi TM sebagai rujukan sah perlombaan.</li>
                       <li><strong className="text-slate-900">Pengundian Resmi (Lotting) Nomor Urut Tampil (15.15 - 16.00 WIB):</strong> Panitia memimpin undian terbuka nomor urut tampil resmi: Tingkat SD/MI: Nomor undian SD-111 sampai dengan SD-175; Tingkat SMP/MTs: Nomor undian SMP-222 sampai dengan SMP-286. Penukaran nomor urut tampil hanya diperkenankan dilakukan di hadapan panitia dan disaksikan oleh peserta lain selama forum TM masih berlangsung.</li>
                       <li><strong className="text-slate-900">Konfirmasi Uji Coba Lapangan & Penutupan (16.00 – 16.30 WIB):</strong> Official peleton diarahkan untuk mengisi survei kesediaan uji coba lapangan secara mandiri melalui web-app lbb.tontimuallimin.com. Panitia selanjutnya akan menyusun dan merilis jadwal resmi pembagian slot waktu uji coba lapangan berdasarkan data survei tersebut.</li>
@@ -276,11 +302,11 @@ export default function Rules() {
                           <li><strong className="text-slate-800">Arena 2 (Pelataran Embung Kampus Terpadu Sedayu):</strong> Khusus untuk 18 Peleton Tingkat SMP/MTs (ukuran 26 meter x 15 meter).</li>
                         </ul>
                       </li>
-                      <li><strong className="text-slate-900">Alokasi Waktu Resmi per Kontingen:</strong> Setiap peleton memperoleh alokasi waktu tepat 15 (lima belas) menit, dengan rincian operasional:
+                      <li><strong className="text-slate-900">Alokasi Waktu Resmi per Peleton:</strong> Setiap peleton memperoleh alokasi waktu tepat 15 – 18 menit, dengan rincian operasional:
                         <ul className="list-[lower-alpha] pl-5 mt-1 space-y-1">
-                          <li>10 (sepuluh) menit waktu efektif uji coba arena untuk tingkat SD/MI dan 13 (tiga belas) menit untuk tingkat SMP/MTs difungsikan untuk adaptasi lapangan, penyesuaian langkah, orientasi batas arena, serta pengujian akustik vokal danton.</li>
-                          <li>Sisa durasi waktu dialokasikan untuk proses transisi keluar-masuk peleton antar kontingen.</li>
-                          <li>Manajemen waktu dikendalikan secara ketat oleh Timekeeper panitia didampingi oleh Liaison Officer (LO) masing-masing peleton.</li>
+                          <li>Waktu Efektif Uji Coba Arena (8 menit untuk SD/MI dan 12 menit untuk SMP/MTs): Digunakan sepenuhnya untuk orientasi medan, adaptasi, serta latihan pergerakan peleton di dalam arena perlombaan.</li>
+                          <li>5 (lima) menit: Waktu transisi keluar-masuk peleton antar peleton.</li>
+                          <li>Manajemen waktu dikendalikan secara ketat oleh Petugas Timekeeper Panitia didampingi LO masing-masing peleton.</li>
                         </ul>
                       </li>
                       <li><strong className="text-slate-900">Ketentuan Pakaian dan Perlengkapan Uji Coba:</strong> Peserta diperbolehkan mengenakan seragam olahraga sekolah atau seragam latihan masing-masing yang rapi, sopan, dan bersepatu. Ditegaskan bahwa <span className="text-red-600 font-bold">DILARANG KERAS menggunakan sol sepatu berpines/paku atau modifikasi logam tajam</span> yang berpotensi merusak permukaan arena.</li>
@@ -332,13 +358,17 @@ export default function Rules() {
                         </ul>
                       </li>
                       <li><strong className="text-slate-900">Sterilisasi Arena Perlombaan (06.45 WIB):</strong> Tepat pukul 06.45 WIB, seluruh arena perlombaan (Arena 1 & Arena 2 serta Lapangan Mini Soccer) dinyatakan steril dari segala aktivitas umum. Seluruh peserta upacara pembukaan wajib telah siap berbaris tertib di Lapangan Upacara.</li>
-                      <li><strong className="text-slate-900">Pelaksanaan Upacara Pembukaan Resmi (07.00 – 07.45 WIB):</strong>
+                      <li><strong className="text-slate-900">Pelaksanaan Upacara Pembukaan Resmi (Pukul 07.00 - 07.45 WIB):</strong>
                         <ul className="list-[lower-alpha] pl-5 mt-1.5 space-y-1">
-                          <li>Peleton dengan nomor urut undian tampil: SD-111, SD-113, SD-115, SD-117, SD-119 (Tingkat SD/MI) serta SMP-222, SMP-224, SMP-226, SMP-228, SMP-240 (Tingkat SMP/MTs) <span className="font-bold text-red-700">WAJIB MENGIKUTI UPACARA PEMBUKAAN</span> dengan formasi lengkap: 1 Komandan Peleton dan 15 Anggota Peleton (5 trio lengkap) mengenakan seragam tonti resmi lengkap.</li>
-                          <li>Pemeriksaan kehadiran barisan upacara dilaksanakan oleh panitia 15 menit sebelum upacara dimulai (pukul 06.45 WIB).</li>
-                          <li>Peleton yang diwajibkan hadir namun tidak mengikuti upacara pembukaan dikenakan <span className="font-bold text-red-700">sanksi pemotongan nilai sebesar -150 poin</span>.</li>
-                          <li>Peleton yang terlambat memasuki barisan upacara dikenakan <span className="font-bold text-red-700">sanksi pemotongan nilai sebesar -50 poin per kelipatan 5 (lima) menit keterlambatan</span>.</li>
-                          <li>Peleton dengan nomor urut tampil lainnya dipersilakan mengkondisikan diri secara tertib di ruang basecamp masing-masing sembari menunggu jadwal pemanggilan tampil.</li>
+                          <li>Peleton dengan 5 (lima) peleton urutan tampil 6 sampai dengan 10 pada masing-masing tingkatan WAJIB mengikuti Upacara Pembukaan resmi. Yakni:
+                            <ul className="list-[circle] pl-5 mt-1 space-y-0.5">
+                              <li><strong className="text-slate-800">SD/MI:</strong> Nomor urut SD-131, SD-133, SD-135, SD-137, dan SD-139</li>
+                              <li><strong className="text-slate-800">SMP/MTs:</strong> Nomor urut SMP-242, SMP-244, SMP-246, SMP-248, dan SMP-260</li>
+                            </ul>
+                          </li>
+                          <li>Komposisi barisan upacara pembukaan terdiri dari 1 Komandan Peleton dan 15 Anggota (5 trio lengkap) mengenakan seragam perlombaan.</li>
+                          <li>Pengecekan kehadiran barisan upacara dilakukan oleh panitia 15 menit sebelum upacara dimulai.</li>
+                          <li>Peleton yang tidak hadir atau terlambat dikenakan sanksi penalti pengurangan nilai sesuai ketentuan Bab H.</li>
                         </ul>
                       </li>
                     </ol>
@@ -396,18 +426,24 @@ export default function Rules() {
                       </li>
                       <li><strong className="text-slate-900">Durasi Waktu dan Sinyal Peluit Timekeeper:</strong>
                         <ul className="list-[lower-alpha] pl-5 mt-1 space-y-1">
-                          <li>Durasi waktu tampil maksimal adalah <strong className="text-slate-900">10 (sepuluh) menit untuk Tingkat SD/MI</strong> dan <strong className="text-slate-900">13 (tiga belas) menit untuk Tingkat SMP/MTs</strong>.</li>
-                          <li><strong className="text-slate-800">Sinyal Peluit 1 Kali Panjang:</strong> Ditiupkan sebagai peringatan resmi bahwa waktu tampil tersisa 1 (satu) menit (pada menit ke-9 untuk SD/MI dan menit ke-12 untuk SMP/MTs).</li>
-                          <li><strong className="text-slate-800">Sinyal Peluit 2 Kali Panjang:</strong> Ditiupkan sebagai penanda resmi bahwa batas waktu tampil telah habis tepat pada menit ke-10 untuk SD/MI dan menit ke-13 untuk SMP/MTs. Peleton wajib segera menyelesaikan materi dan meninggalkan arena perlombaan.</li>
+                          <li>Durasi maksimal tampil resmi: <strong className="text-slate-900">8 menit untuk tingkat SD/MI</strong> dan <strong className="text-slate-900">12 menit untuk tingkat SMP/MTs</strong>.</li>
+                          <li><strong className="text-slate-800">Sinyal Peluit 1 Kali Panjang:</strong> Peringatan bahwa waktu tampil tersisa 1 menit (menit ke-7 untuk SD/MI dan menit ke-11 untuk SMP/MTs).</li>
+                          <li><strong className="text-slate-800">Sinyal Peluit 2 Kali Panjang:</strong> Penanda resmi bahwa durasi waktu tampil telah habis (menit ke-8 untuk SD/MI dan menit ke-12 untuk SMP/MTs). Peleton wajib segera menyelesaikan materi dan meninggalkan arena.</li>
+                          <li>Waktu stopwatch resmi berakhir tepat saat Komandan Peleton menghentakkan aba-aba pelaksanaan 'GERAK' pada penghormatan penutup ('Tegak = GERAK').</li>
                         </ul>
                       </li>
                       <li><strong className="text-slate-900">Sinyal Pelanggaran Garis:</strong> Hakim Garis mengibaskan bendera khusus sebagai penanda resmi setiap kali terjadi pelanggaran garis batas arena oleh anggota pasukan maupun batas Kotak Danton oleh Komandan Peleton berdasarkan asas "Garis sebagai Garis".</li>
                       <li><strong className="text-slate-900">Ketentuan Khusus Atribut Terjatuh di Arena:</strong> Apabila terdapat atribut pakaian atau seragam peserta (seperti topi/peci, dasi, pin, lencana, tanda pangkat, sabuk, selempang, sarung tangan, atau tali sepatu) yang terlepas atau terjatuh di dalam arena lomba, <span className="font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">TIDAK DIKENAKAN SANKSI PENALTI PENGURANGAN NILAI (0 POIN)</span>. Personel peleton dilarang memungut atribut yang terjatuh sampai seluruh rangkaian penampilan selesai dan peleton telah keluar dari arena lomba.</li>
-                      <li><strong className="text-slate-900">Titik Pergantian Pemain di Arena (Materi Bubar):</strong>
+                      <li><strong className="text-slate-900">Ketentuan Khusus Pergantian Pemain dan Penanganan Insiden di Lapangan:</strong>
                         <ul className="list-[lower-alpha] pl-5 mt-1 space-y-1">
-                          <li>Pergantian pemain cadangan di dalam arena hanya diperbolehkan pada titik pergantian resmi, yaitu saat materi <strong className="text-slate-900">Bubar Peleton</strong> (di antara Materi Gerakan Nomor 16 dan 17 untuk Tingkat SD/MI; serta di antara Materi Gerakan Nomor 22 dan 23 untuk Tingkat SMP/MTs).</li>
-                          <li>Proses pergantian pemain tidak menghentikan perhitungan waktu (stopwatch tetap berjalan normal).</li>
-                          <li>Pergantian Komandan Peleton di dalam arena hanya diperkenankan dalam keadaan darurat medis (sakit parah/pingsan) dan digantikan oleh salah satu personel pasukan yang berada di arena, dengan konsekuensi hak peleton untuk memperebutkan kategori Komandan Peleton Terbaik dinyatakan gugur.</li>
+                          <li>Pemain inti hanya dapat digantikan oleh pemain cadangan resmi yang terdaftar pada peleton bersangkutan.</li>
+                          <li><strong className="text-slate-800">Jeda Pergantian Resmi di Arena:</strong> Pergantian pemain dilaksanakan pada saat materi “Bubar”, yaitu: (1) Tingkat SD/MI dilakukan di antara Materi No. 16 dan 17; (2) Tingkat SMP/MTs dilakukan di antara Materi No. 22 dan 23.</li>
+                          <li><strong className="text-slate-800">Tata Cara Pergantian:</strong> Setelah Komandan Peleton memberikan aba-aba “Bubar”, anggota yang akan digantikan diperbolehkan meninggalkan arena dan anggota pengganti diperbolehkan memasuki arena untuk menempati posisi yang telah ditentukan. Pergerakan anggota yang digantikan dan anggota pengganti pada saat proses pergantian tersebut tidak dianggap sebagai pelanggaran garis dan tidak dikenai penalti. Setelah pergantian selesai, seluruh anggota wajib berada pada posisi yang ditentukan sebelum materi berikutnya dimulai.</li>
+                          <li><strong className="text-slate-800">Waktu Pergantian:</strong> Waktu stopwatch tetap berjalan selama proses pergantian pemain. Tidak terdapat penghentian atau penambahan waktu khusus untuk proses pergantian.</li>
+                          <li><strong className="text-slate-800">Pergantian Tidak Terencana (Darurat):</strong> Apabila terjadi cedera atau kondisi lain yang menyebabkan seorang anggota tidak dapat melanjutkan perlombaan, Official dapat memberikan isyarat kepada Panitia Lapangan untuk meminta izin pergantian pemain. Pergantian darurat dilakukan dengan menggunakan pemain cadangan resmi dan mengikuti arahan Panitia Lapangan. (1) Apabila cedera/kondisi tidak membahayakan keselamatan atau jiwa peserta, waktu perlombaan tetap berjalan dan penampilan dilanjutkan setelah pergantian selesai; (2) Apabila cedera/kondisi membahayakan keselamatan atau jiwa peserta, Panitia Lapangan berwenang menghentikan sementara penampilan. Setelah kondisi aman, penampilan dapat diulang dari awal berdasarkan keputusan Panitia Lapangan dan Dewan Juri.</li>
+                          <li><strong className="text-slate-800">Pergantian Komandan Peleton:</strong> Komandan Peleton hanya dapat digantikan apabila mengalami kondisi darurat, seperti sakit berat, pingsan, atau kondisi lain yang menyebabkan tidak dapat melanjutkan perlombaan. Apabila kondisi tersebut terjadi di dalam arena, Komandan Peleton dapat digantikan oleh personel yang berada di dalam arena sesuai arahan Panitia Lapangan. Komandan pengganti tidak berhak mengikuti penilaian atau perebutan kategori Juara Komandan Peleton.</li>
+                          <li><strong className="text-slate-800">Penanganan Insiden Fisik:</strong> Personel yang mengalami cedera, pingsan, atau insiden fisik lainnya dapat ditangani oleh Official, pemain cadangan, atau tim medis tanpa menghentikan waktu perlombaan. Apabila insiden dinilai membahayakan keselamatan atau jiwa peserta, Panitia Lapangan berwenang menghentikan sementara penampilan untuk penanganan keadaan darurat.</li>
+                          <li><strong className="text-slate-800">Ketentuan Garis Selama Pergantian:</strong> Pergerakan pemain yang digantikan untuk keluar dari arena dan pemain pengganti untuk memasuki arena hanya dibebaskan dari ketentuan pelanggaran garis selama proses pergantian resmi sebagaimana dimaksud pada huruf b dan c. Di luar proses pergantian resmi tersebut, setiap anggota tetap wajib mematuhi ketentuan garis arena dan dapat dikenai penalti sesuai ketentuan yang berlaku.</li>
                         </ul>
                       </li>
                       <li><strong className="text-slate-900">Laporan Penutup, Penghormatan Penutup, dan Penghentian Waktu:</strong>
@@ -442,25 +478,33 @@ export default function Rules() {
                 {isAccordionOpen('score') && (
                   <div className="bg-white border-t border-slate-100 p-6 text-slate-700 text-sm leading-relaxed space-y-4 animate-fade">
                     <ol className="list-decimal pl-5 space-y-2.5">
-                      <li><strong className="text-slate-900">Dewan Juri Independen:</strong> Penilaian dilakukan oleh 6 (enam) orang Dewan Juri independen dan profesional dari unsur TNI, POLRI, dan Purna Paskibraka Indonesia (PPI) DIY (3 Juri bertugas di Arena 1 SD/MI dan 3 Juri bertugas di Arena 2 SMP/MTs). Keputusan Dewan Juri mengenai mutu dan kebenaran teknis gerakan bersifat mutlak dan tidak dapat diganggu gugat.</li>
-                      <li><strong className="text-slate-900">Kriteria Penentuan Juara Peleton (Rasio 1:1):</strong> Penilaian peleton menggunakan rasio perbandingan 1:1, yaitu Kebenaran Teknik Gerakan PBB (1) dan Kekompakan Peleton (1) dengan rentang nilai masing-masing 50 sampai dengan 90 poin. Rumus nilai akhir peleton:
-                        <div className="p-3 my-1.5 bg-slate-50 border border-slate-200 rounded-xl font-mono text-xs text-slate-800">
-                          Nilai Akhir Peleton = (Rata-rata Nilai Kebenaran Gerak 3 Juri + Rata-rata Nilai Kekompakan 3 Juri) – Akumulasi Sanksi Penalti
-                        </div>
-                        <p className="text-xs text-slate-600">
-                          Apabila terjadi nilai akhir yang sama (seri/draw) antar peleton, penentuan peringkat kejuaraan dilakukan berdasarkan indikator prioritas (tie-breaker): (1) Nilai murni tertinggi pada aspek Kebenaran Teknik Gerakan PBB; (2) Nilai murni tertinggi pada aspek Kekompakan Peleton; (3) Akumulasi poin penalti pengurangan nilai yang paling sedikit; (4) Keputusan musyawarah Sidang Pleno Dewan Juri.
-                        </p>
-                      </li>
-                      <li><strong className="text-slate-900">Kriteria Penentuan Komandan Peleton Terbaik (Total Bobot 100%):</strong>
+                      <li><strong className="text-slate-900">Mekanisme dan Aspek Penilaian Dewan Juri:</strong> Penilaian dilakukan secara objektif oleh 6 Dewan Juri (unsur TNI, POLRI, dan PPI: 3 Juri Arena 1 SD & 3 Juri Arena 2 SMP). Keputusan Dewan Juri mengenai mutu gerak bersifat mutlak dan tidak dapat diganggu gugat.</li>
+                      <li><strong className="text-slate-900">Kriteria Penilaian:</strong>
                         <ul className="list-[lower-alpha] pl-5 mt-1 space-y-1">
-                          <li>Penguasaan Materi Gerakan & Urutan Aba-Aba (Bobot 35%).</li>
-                          <li>Kualitas Suara, Artikulasi, Frekuensi, dan Volume Vokal (Bobot 25%).</li>
-                          <li>Sikap Tampang, Ketegasan, dan Kerapian Pelaporan (Bobot 20%).</li>
-                          <li>Penguasaan Arena dan Penempatan Posisi Pasukan (Bobot 20%).</li>
-                          <li>Kriteria tie-breaker untuk nilai Komandan Peleton yang sama: (1) Nilai tertinggi Penguasaan Materi; (2) Nilai tertinggi Kualitas Suara; (3) Nilai tertinggi Sikap Tampang; (4) Keputusan Sidang Pleno Dewan Juri.</li>
+                          <li><strong>Penilaian Peleton:</strong> Perbandingan penilaian peleton adalah 1:1, yaitu Kebenaran Teknik (1) dan Kekompakan (1). Masing-masing aspek memiliki rentang nilai 50 s.d. 90 poin.</li>
+                          <li><strong>Nilai Murni Peleton:</strong> Total Nilai Kebenaran Teknik + Total Nilai Kekompakan.</li>
+                          <li><strong>Nilai Akhir Peleton:</strong> (Nilai Murni Peleton) – (Total Akumulasi Poin Penalti Peleton).</li>
+                          <li><strong>Nilai Murni Komandan:</strong> (Penguasaan Materi × 35%) + (Kualitas Suara/Vokal × 25%) + (Sikap dan Pelaporan × 20%) + (Penguasaan Lapangan × 20%).</li>
+                          <li><strong>Nilai Akhir Komandan:</strong> (Nilai Murni Komandan) – (Total Akumulasi Poin Penalti Komandan).</li>
                         </ul>
                       </li>
-                      <li><strong className="text-slate-900">Sistem Perolehan Poin Juara Umum (Tingkat SD/MI dan SMP/MTs berdiri sendiri):</strong>
+                      <li><strong className="text-slate-900">Kriteria Penentuan Juara Peleton:</strong> Penentuan Juara Peleton didasarkan pada Nilai Akhir Peleton dengan perolehan skor tertinggi. Apabila terdapat kesamaan Nilai Akhir Peleton, penentuan peringkat kejuaraan dilakukan berdasarkan urutan prioritas sebagai berikut:
+                        <ul className="list-[circle] pl-5 mt-1 space-y-0.5 text-xs">
+                          <li>(a) Nilai tertinggi pada aspek Kebenaran Teknik;</li>
+                          <li>(b) Nilai tertinggi pada aspek Kekompakan;</li>
+                          <li>(c) Akumulasi poin penalti paling sedikit; dan</li>
+                          <li>(d) Hasil musyawarah serta pertimbangan Dewan Juri dalam Sidang Pleno Juri yang keputusannya bersifat final dan mengikat.</li>
+                        </ul>
+                      </li>
+                      <li><strong className="text-slate-900">Kriteria Penentuan Juara Komandan:</strong> Penentuan Juara Komandan Peleton didasarkan pada Nilai Akhir Komandan dengan perolehan skor tertinggi dari seluruh aspek penilaian. Apabila terdapat kesamaan Nilai Akhir Komandan, penentuan peringkat kejuaraan dilakukan berdasarkan urutan prioritas sebagai berikut:
+                        <ul className="list-[circle] pl-5 mt-1 space-y-0.5 text-xs">
+                          <li>(a) Nilai tertinggi pada aspek Penguasaan Materi Lomba;</li>
+                          <li>(b) Nilai tertinggi pada aspek Kualitas Suara/Vokal;</li>
+                          <li>(c) Nilai tertinggi pada aspek Sikap & Pelaporan; dan</li>
+                          <li>(d) Hasil musyawarah dan pertimbangan Dewan Juri dalam Sidang Pleno Juri yang keputusannya bersifat final serta mengikat.</li>
+                        </ul>
+                      </li>
+                      <li><strong className="text-slate-900">Sistem Perolehan Poin Juara Umum:</strong> Juara Umum ditetapkan secara terpisah untuk masing-masing tingkatan, yaitu SD/MI dan SMP/MTs. Penetapan Juara Umum didasarkan pada akumulasi prestasi seluruh perwakilan yang berasal dari sekolah yang sama, meliputi capaian Juara Peleton dan Juara Komandan. Poin kejuaraan diberikan dengan ketentuan:
                         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 my-2 text-xs font-mono">
                           <span className="bg-slate-100 p-2 rounded">Juara 1 Peleton: 6 Poin</span>
                           <span className="bg-slate-100 p-2 rounded">Juara 2 Peleton: 5 Poin</span>
@@ -468,33 +512,42 @@ export default function Rules() {
                           <span className="bg-slate-100 p-2 rounded">Juara Harapan 1: 3 Poin</span>
                           <span className="bg-slate-100 p-2 rounded">Juara Harapan 2: 2 Poin</span>
                           <span className="bg-slate-100 p-2 rounded">Juara Harapan 3: 1 Poin</span>
-                          <span className="bg-yellow-50 text-yellow-900 p-2 rounded border border-yellow-200">Danton Terbaik 1: 3 Poin</span>
-                          <span className="bg-yellow-50 text-yellow-900 p-2 rounded border border-yellow-200">Danton Terbaik 2: 2 Poin</span>
-                          <span className="bg-yellow-50 text-yellow-900 p-2 rounded border border-yellow-200">Danton Terbaik 3: 1 Poin</span>
+                          <span className="bg-yellow-50 text-yellow-900 p-2 rounded border border-yellow-200">Juara 1 Komandan Terbaik: 3 Poin</span>
+                          <span className="bg-yellow-50 text-yellow-900 p-2 rounded border border-yellow-200">Juara 2 Komandan Terbaik: 2 Poin</span>
+                          <span className="bg-yellow-50 text-yellow-900 p-2 rounded border border-yellow-200">Juara 3 Komandan Terbaik: 1 Poin</span>
                         </div>
                         <p className="text-xs text-slate-600">
-                          Piala Bergilir Juara Umum dianugerahkan kepada pangkalan sekolah yang mengumpulkan akumulasi poin kejuaraan terbanyak. Kriteria tie-breaker Juara Umum: (1) Pangkalan sekolah yang meraih predikat Juara Peleton tertinggi; (2) Akumulasi total nilai murni Peleton terbaik; (3) Nilai murni Kebenaran Teknik PBB; (4) Keputusan musyawarah Sidang Pleno Dewan Juri.
+                          Seluruh poin yang diperoleh oleh peleton dan komandan dari sekolah yang sama dijumlahkan sebagai akumulasi poin sekolah. Sekolah dengan total poin tertinggi ditetapkan sebagai Juara Umum pada tingkatannya.
                         </p>
                       </li>
-                      <li><strong className="text-slate-900">Transparansi Penilaian (Rolling Release Berbasis Akun Gmail Peleton):</strong>
-                        <ul className="list-[lower-alpha] pl-5 mt-1 space-y-1">
-                          <li>Sistem penilaian menerapkan transparansi penuh dengan mekanisme rolling release berkala.</li>
-                          <li>Rekapitulasi lembar penilaian Dewan Juri yang telah divalidasi oleh panitia input data akan dirilis secara bertahap pada portal website lbb.tontimuallimin.com, dengan estimasi waktu publikasi kurang lebih 1 (satu) jam setelah peleton yang bersangkutan selesai tampil di arena.</li>
-                          <li>Official peleton dapat mengakses dan memantau rincian lembar penilaian tersebut secara mandiri dengan melakukan login menggunakan akun Gmail masing-masing yang telah terdaftar resmi saat proses registrasi awal.</li>
+                      <li><strong className="text-slate-900">Definisi Nilai Murni Peleton/Komandan:</strong> Nilai yang diperoleh Peleton/Komandan berdasarkan hasil penilaian Dewan Juri sebelum dikurangi seluruh penalti atau pengurangan nilai yang dikenakan berdasarkan ketentuan Juknis Lapangan.</li>
+                      <li><strong className="text-slate-900">Tie-Breaker Juara Umum:</strong> Apabila terdapat dua atau lebih sekolah yang memperoleh total poin Juara Umum yang sama, penentuan peringkat dilakukan berdasarkan urutan prioritas sebagai berikut:
+                        <ul className="list-[lower-alpha] pl-5 mt-1 space-y-1 text-xs">
+                          <li><strong>Peringkat Tertinggi Peleton:</strong> Dibandingkan berdasarkan peringkat tertinggi yang berhasil diraih oleh peleton masing-masing sekolah. Peringkat yang lebih tinggi memiliki prioritas lebih besar (Juara 1 Peleton lebih diprioritaskan daripada Juara 2 Peleton).</li>
+                          <li><strong>Nilai Murni Peleton:</strong> Apabila peringkat tertinggi Peleton yang diraih masih sama, penentuan dilanjutkan berdasarkan nilai murni tertinggi dari peleton yang memiliki peringkat tertinggi tersebut.</li>
+                          <li><strong>Nilai Kebenaran Teknik Gerakan PBB:</strong> Apabila nilai murni Peleton masih sama, penentuan dilanjutkan berdasarkan nilai murni tertinggi pada aspek Kebenaran Teknik Gerakan PBB dari peleton yang dibandingkan.</li>
+                          <li><strong>Capaian Peleton Berikutnya:</strong> Apabila seluruh kriteria pada peleton dengan peringkat tertinggi masih sama, perbandingan dilanjutkan pada capaian peleton berikutnya secara berurutan berdasarkan peringkat yang diraih.</li>
+                          <li><strong>Capaian Komandan Terbaik:</strong> Apabila seluruh capaian Peleton masih menghasilkan nilai yang sama, penentuan dilanjutkan berdasarkan peringkat Komandan Terbaik yang diraih oleh masing-masing sekolah.</li>
+                          <li><strong>Sidang Pleno Juri:</strong> Apabila seluruh kriteria tersebut masih menghasilkan kedudukan yang sama, penentuan akhir dilakukan melalui musyawarah Dewan Juri dalam Sidang Pleno Juri.</li>
+                          <li><strong>Keputusan Akhir:</strong> Keputusan Dewan Juri dalam Sidang Pleno Juri bersifat mutlak dan tidak dapat diganggu gugat.</li>
                         </ul>
                       </li>
-                      <li><strong className="text-slate-900">Mekanisme Pengajuan Sanggah Resmi:</strong>
+                      <li><strong className="text-slate-900">Transparansi Nilai (Akses e-Rekapitulasi Berbasis Akun Gmail Peleton):</strong>
+                        <p className="mt-1">Sebagai wujud integritas dan transparansi modern, publikasi rekapitulasi nilai peleton menerapkan sistem rilis bertahap (rolling release) tanpa harus menunggu seluruh peserta selesai tampil. Rincian perolehan nilai masing-masing peleton akan dirilis dan dapat diakses pada portal resmi https://lbb.tontimuallimin.com dengan estimasi waktu ±1 (satu) jam setelah peleton yang bersangkutan menyelesaikan penampilan di arena perlombaan. Official peleton dapat melihat lembar rekapitulasi nilai lengkap secara privat dan mandiri dengan login menggunakan akun Gmail masing-masing yang telah didaftarkan saat registrasi.</p>
+                      </li>
+                      <li><strong className="text-slate-900">Mekanisme Pengajuan Sanggah (Protes Resmi):</strong>
                         <ul className="list-[lower-alpha] pl-5 mt-1 space-y-1">
-                          <li>Sanggahan atau protes resmi HANYA DITERIMA terhadap dugaan kekeliruan administratif non-penilaian, seperti: kesalahan penjumlahan skor (tabulasi), kekeliruan input sistem digital, atau ketidaksesuaian catatan sanksi penalti lapangan. Materi kualitas gerak dan mutu penilaian Dewan Juri mutlak tidak dapat disanggah.</li>
-                          <li>Masa pengajuan sanggahan resmi dibuka secara bergulir sejak rekapitulasi nilai peleton dirilis pada portal dan <span className="font-bold text-red-700">DITUTUP SECARA SERENTAK TEPAT PUKUL 15.00 WIB</span> pada hari perlombaan.</li>
-                          <li>Sanggahan wajib diajukan secara TERTULIS menggunakan Formulir Sanggahan Resmi oleh 1 (satu) orang Official resmi peleton di Ruang Informasi Panitia, dengan melampirkan bukti-bukti faktual yang sah serta membayar biaya deposit sanggah sesuai ketentuan. Panitia TIDAK MELAYANI sanggahan lisan.</li>
-                          <li>Sidang sanggah dipimpin langsung oleh Ketua Panitia Pelaksana bersama Koordinator Dewan Juri. Putusan sidang sanggah bersifat final, mengikat, dan berkekuatan hukum tetap.</li>
+                          <li><strong className="text-slate-800">Batasan Sanggah:</strong> Protes HANYA diterima untuk dugaan kekeliruan administratif non-penilaian (kesalahan penjumlahan skor, keliru input sistem dari lembar juri, atau ketidaksesuaian catatan penalti). Penilaian kualitatif juri mengenai mutu gerakan tidak dapat disanggah.</li>
+                          <li><strong className="text-slate-800">Batas Waktu Pengajuan:</strong> Pengajuan sanggah dapat dilakukan sejak nilai peleton dirilis di portal, dan seluruh masa sanggah resmi DITUTUP SERENTAK pukul 15.00 WIB. Penetapan hasil pasca-sanggah bersifat final dan mengikat sebelum Upacara Penutupan pukul 16.00 WIB.</li>
+                          <li><strong className="text-slate-800">Prosedur Sanggah:</strong> Diajukan secara TERTULIS menggunakan Formulir Sanggahan Resmi oleh 1 (satu) orang Official resmi terdaftar di Ruang Informasi Resmi Panitia (Ruang Registrasi Gedung Madrasah Lantai 1) dengan melampirkan bukti valid (video/foto/catatan). Panitia TIDAK melayani protes secara lisan.</li>
+                          <li><strong className="text-slate-800">Keputusan Sanggah:</strong> Jika protes diterima dan sah, Panitia menerbitkan 'Pemberitahuan Koreksi Hasil Resmi' yang menjadi dasar ketetapan kejuaraan.</li>
                         </ul>
                       </li>
-                      <li><strong className="text-slate-900">Ketentuan Checkout Basecamp & Apel Penutupan:</strong>
+                      <li><strong className="text-slate-900">Ketentuan Pasca-Lomba dan Prosedur Checkout Basecamp:</strong>
                         <ul className="list-[lower-alpha] pl-5 mt-1 space-y-1">
-                          <li>Seluruh kontingen diwajibkan menyelesaikan proses pemeriksaan kebersihan ruang kelas dan checkout basecamp secara tuntas paling lambat pukul 15.00 WIB.</li>
-                          <li>Setelah proses checkout tuntas, seluruh kontingen diarahkan mengikuti Upacara/Apel Penutupan Resmi dan Pengumuman Kejuaraan yang dimulai tepat pukul 15.30 WIB di Lapangan Upacara Utama.</li>
+                          <li><strong className="text-slate-800">Batas Waktu Maksimal Pengosongan:</strong> Seluruh peleton wajib menyelesaikan proses checkout dan mengosongkan ruang kelas basecamp selambat-lambatnya pukul 15.00 WIB (1 jam sebelum Upacara Penutupan dimulai).</li>
+                          <li><strong className="text-slate-800">Alur 4 Langkah Checkout Resmi:</strong> (1) Merapikan kembali susunan meja-kursi dan memastikan tidak ada barang peleton tertinggal; (2) Membawa dan menyerahkan 2 (dua) kantong sampah terpilah (Organik & Non-Organik) ke Pos/Area Checkout Panitia; (3) Pemeriksaan langsung kebersihan dan keutuhan fasilitas ruangan kelas oleh LO/Panitia Kebersihan guna memperoleh Tanda Bukti Lolos Verifikasi Checkout; (4) Pengambilan kembali kartu identitas jaminan (KTP/SIM) di Ruang Informasi Panitia dengan menunjukkan Tanda Bukti Lolos Verifikasi.</li>
+                          <li><strong className="text-slate-800">Ketentuan Sanksi & Denda:</strong> Peleton yang meninggalkan basecamp dalam keadaan kotor/berantakan dikenai sanksi penalti -50 poin pada rekapitulasi nilai akhir. Apabila terjadi kerusakan fisik atau kehilangan fasilitas kelas, kartu jaminan KTP/SIM ditahan serta dikenakan sanksi ganti rugi penuh dan denda administratif Rp 500.000 sesuai Pasal 14 Tata Tertib Peserta.</li>
                         </ul>
                       </li>
                     </ol>
@@ -514,17 +567,19 @@ export default function Rules() {
                     <span className="w-8 h-8 rounded-lg bg-blue-100 text-blue-800 font-black flex items-center justify-center text-sm">
                       G
                     </span>
-                    <span className="font-bold text-base md:text-lg text-slate-900">G. Gangguan Sistem Digital dan Prosedur Backup (Contingency Plan)</span>
+                    <span className="font-bold text-base md:text-lg text-slate-900">G. Gangguan Sistem Digital dan Prosedur Backup</span>
                   </div>
                   <ChevronDown className={`text-slate-400 transition-transform duration-300 w-5 h-5 ${isAccordionOpen('digital') ? 'rotate-180' : ''}`} />
                 </button>
                 {isAccordionOpen('digital') && (
                   <div className="bg-white border-t border-slate-100 p-6 text-slate-700 text-sm leading-relaxed space-y-3 animate-fade">
                     <ol className="list-decimal pl-5 space-y-2">
-                      <li>Sistem e-scoring digital didukung infrastruktur server lokal mandiri <em>(Local Area Network / offline server backup)</em> untuk mengantisipasi gangguan jaringan internet.</li>
-                      <li>Apabila terjadi gangguan perangkat elektronik atau sistem penilaian digital, penilaian seketika dialihkan menggunakan Lembar Penilaian Manual Fisik (kertas) yang telah distempel resmi oleh Panitia. Nilai manual memiliki kekuatan hukum yang setara dengan input digital.</li>
-                      <li>Jika terjadi pemadaman listrik total, panitia pelaksana menyiagakan genset cadangan darurat dengan waktu jeda aktivasi maksimal 5 menit. Penampilan peleton yang terhenti akibat pemadaman listrik diatur sesuai ketentuan Keadaan Kahar.</li>
-                      <li>Seluruh riwayat input data penilaian <em>(audit trail)</em> tersimpan otomatis dan diawasi oleh tim IT independen untuk menjamin integritas dan transparansi angka penilaian.</li>
+                      <li><strong className="text-slate-900">Gangguan Sistem:</strong> Apabila terjadi gangguan pada website, jaringan internet, akun, upload dokumen, penyimpanan nilai, atau sistem digital lainnya, Panitia dapat menerapkan prosedur manual sementara.</li>
+                      <li><strong className="text-slate-900">Backup Manual:</strong> Panitia wajib menyediakan formulir atau dokumen manual untuk pencatatan data peserta, administrasi, hasil penilaian, dan data penting lainnya sebagai cadangan.</li>
+                      <li><strong className="text-slate-900">Gangguan Login dan Upload:</strong> Apabila peserta mengalami kendala login atau gagal mengunggah dokumen karena gangguan sistem, Panitia memberikan alternatif verifikasi atau pengumpulan dokumen secara manual.</li>
+                      <li><strong className="text-slate-900">Gangguan Penyimpanan Nilai:</strong> Apabila nilai tidak tersimpan atau sistem penilaian mengalami gangguan, nilai dicatat secara manual oleh Juri atau Asisten Juri dan dikonfirmasi setelah sistem kembali normal.</li>
+                      <li><strong className="text-slate-900">Pemulihan Data:</strong> Setelah sistem kembali normal, data manual diverifikasi dan dimasukkan kembali ke sistem berdasarkan catatan resmi Panitia dan Juri.</li>
+                      <li><strong className="text-slate-900">Keputusan Panitia:</strong> Gangguan teknis sistem tidak dapat dijadikan dasar untuk menghilangkan atau mengubah nilai peserta. Setiap keputusan terkait penggunaan data backup ditetapkan oleh Panitia berdasarkan catatan resmi yang tersedia.</li>
                     </ol>
                   </div>
                 )}
@@ -572,13 +627,13 @@ export default function Rules() {
                                 </span>
                               </td>
                               <td className="py-2 px-3 text-slate-600 text-[11px]">
-                                {idx === 0 && 'Nomor undian SD-111, 113, 115, 117, 119 & SMP-222, 224, 226, 228, 240 wajib hadir 1 danton + 15 anggota.'}
+                                {idx === 0 && 'Urutan tampil 6 s.d. 10 (SD-131, 133, 135, 137, 139 & SMP-242, 244, 246, 248, 260) wajib hadir 1 danton + 15 anggota (5 trio).'}
                                 {idx === 1 && 'Dikenakan per kelipatan 5 menit keterlambatan memasuki barisan upacara.'}
                                 {idx === 2 && 'Setelah 3x panggilan interval 2 menit; jika tetap absen: Diskualifikasi.'}
                                 {idx === 3 && 'Personel masuk arena kurang dari 22 orang (1 Danton + 21 Pasukan).'}
-                                {idx === 4 && 'Melebihi durasi resmi (SD > 10 menit, SMP > 13 menit) per rentang 1-30 detik.'}
+                                {idx === 4 && 'Melebihi durasi resmi (SD > 8 menit, SMP > 12 menit) per rentang 1-30 detik.'}
                                 {idx === 5 && 'Alas kaki/anggota tubuh menginjak garis arena atau keluar Kotak Danton 1,5x1,5m.'}
-                                {idx === 6 && 'Gerakan penyesuaian (hadap/balik/langkah terbatas) melebihi batas 3 kali.'}
+                                {idx === 6 && 'Gerakan penyesuaian tidak dibatasi kuota (0 poin penalti), diperhitungkan dalam aspek Penguasaan Lapangan Danton.'}
                                 {idx === 7 && 'Gerakan terlewat namun dilakukan kemudian = Nilai Minimal; tidak dilakukan = Nilai 0.'}
                                 {idx === 8 && 'Danton salah aba-aba tetapi pasukan bergerak hafalan = Nilai 0 & potong nilai danton.'}
                                 {idx === 9 && 'Rangkaian bertanda (-) yang diselingi jeda/gerakan tambahan diberi Nilai Minimal.'}

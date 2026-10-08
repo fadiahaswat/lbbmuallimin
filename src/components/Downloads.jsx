@@ -31,9 +31,9 @@ export default function Downloads() {
 
       <div className="container mx-auto px-6 relative z-10">
         <div className="mb-12 text-center max-w-3xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-red-100/70 border border-red-200 text-red-800 text-xs font-bold uppercase tracking-wider mb-4">
-            <ShieldCheck className="w-4 h-4" />
-            <span>Sistem Pendaftaran 100% Paperless & Online</span>
+          <div className="inline-flex items-center justify-center gap-2 px-3.5 sm:px-4 py-1.5 rounded-full bg-red-100/70 border border-red-200 text-red-800 text-[10px] sm:text-xs font-bold uppercase tracking-wider mb-4 max-w-full text-center leading-normal">
+            <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0 text-red-700" />
+            <span className="truncate sm:whitespace-normal">Sistem Pendaftaran 100% Paperless & Online</span>
           </div>
 
           <h2 className="text-4xl md:text-5xl font-black text-slate-900 uppercase italic tracking-tighter mb-4 leading-tight py-1">

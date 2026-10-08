@@ -115,9 +115,9 @@ export default function Registration() {
             <span>Juknis Resmi 2027</span>
           </div>
 
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black uppercase italic tracking-tighter leading-tight py-1 text-white">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black uppercase italic tracking-tight leading-tight py-1 text-white overflow-visible">
             Informasi{' '}
-            <span className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-amber-400 to-yellow-400">
+            <span className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-amber-400 to-yellow-400 pr-2.5">
               Pendaftaran
             </span>
           </h2>
@@ -252,7 +252,7 @@ export default function Registration() {
                     </h3>
                   </div>
                 </div>
-                <span className="text-[10px] font-black uppercase tracking-wider bg-white/[0.04] text-slate-300 px-2.5 py-1 rounded-lg border border-white/10">
+                <span className="text-[10px] font-black uppercase tracking-wider bg-white/[0.04] text-slate-300 px-2.5 py-1 rounded-lg border border-white/10 shrink-0 whitespace-nowrap">
                   5 Tahap
                 </span>
               </div>
@@ -336,13 +336,13 @@ export default function Registration() {
           <div className="group rounded-3xl bg-gradient-to-b from-slate-900/90 via-slate-900/80 to-slate-950/95 border border-white/10 hover:border-white/20 p-6 sm:p-7 shadow-xl backdrop-blur-xl flex flex-col justify-between transition-all duration-300 text-left">
             <div>
               {/* Header */}
-              <div className="flex items-start justify-between gap-3 mb-6 pb-4 border-b border-white/10">
-                <div className="flex items-center gap-3">
+              <div className="flex items-start justify-between gap-2.5 mb-6 pb-4 border-b border-white/10">
+                <div className="flex items-center gap-3 min-w-0">
                   <div className="w-11 h-11 rounded-2xl bg-red-600/15 border border-red-500/30 text-red-400 flex items-center justify-center shrink-0 shadow-md group-hover:scale-105 transition-transform">
                     <Users className="w-5 h-5" />
                   </div>
-                  <div>
-                    <span className="text-[10px] font-bold text-red-400 uppercase tracking-widest block">
+                  <div className="min-w-0">
+                    <span className="text-[10px] font-bold text-red-400 uppercase tracking-widest block truncate">
                       Regulasi Kontingen
                     </span>
                     <h3 className="font-black text-lg text-white uppercase italic tracking-tight">
@@ -350,7 +350,7 @@ export default function Registration() {
                     </h3>
                   </div>
                 </div>
-                <span className="text-[10px] font-black uppercase tracking-wider bg-red-950/60 text-red-300 px-2.5 py-1 rounded-lg border border-red-500/30">
+                <span className="text-[10px] font-black uppercase tracking-wider bg-red-950/60 text-red-300 px-2.5 py-1 rounded-lg border border-red-500/30 shrink-0 whitespace-nowrap">
                   Maks. 25
                 </span>
               </div>
@@ -423,13 +423,13 @@ export default function Registration() {
           <div className="group rounded-3xl bg-gradient-to-b from-slate-900/90 via-slate-900/80 to-slate-950/95 border-2 border-amber-500/40 hover:border-amber-500/70 p-6 sm:p-7 shadow-2xl backdrop-blur-xl flex flex-col justify-between transition-all duration-300 relative text-left">
             <div>
               {/* Header */}
-              <div className="flex items-start justify-between gap-3 mb-6 pb-4 border-b border-white/10">
-                <div className="flex items-center gap-3">
+              <div className="flex items-start justify-between gap-2.5 mb-6 pb-4 border-b border-white/10">
+                <div className="flex items-center gap-3 min-w-0">
                   <div className="w-11 h-11 rounded-2xl bg-amber-500/15 border border-amber-500/30 text-amber-400 flex items-center justify-center shrink-0 shadow-md group-hover:scale-105 transition-transform">
                     <Wallet className="w-5 h-5" />
                   </div>
-                  <div>
-                    <span className="text-[10px] font-bold text-amber-400 uppercase tracking-widest block">
+                  <div className="min-w-0">
+                    <span className="text-[10px] font-bold text-amber-400 uppercase tracking-widest block truncate">
                       Investasi Tim
                     </span>
                     <h3 className="font-black text-lg text-white uppercase italic tracking-tight">
@@ -437,7 +437,7 @@ export default function Registration() {
                     </h3>
                   </div>
                 </div>
-                <span className="text-[10px] font-black uppercase tracking-wider bg-amber-500/20 text-amber-300 px-2.5 py-1 rounded-lg border border-amber-500/40">
+                <span className="text-[10px] font-black uppercase tracking-wider bg-amber-500/20 text-amber-300 px-2.5 py-1 rounded-lg border border-amber-500/40 shrink-0 whitespace-nowrap">
                   Non-Refundable
                 </span>
               </div>
@@ -485,11 +485,11 @@ export default function Registration() {
                             </span>
                           </div>
                           <div className="text-right shrink-0">
-                            <span className={`text-base sm:text-lg font-black block ${isActive ? 'text-amber-400' : 'text-white'}`}>
-                              Rp{tier.amount}
+                            <span className={`text-base sm:text-lg font-black block font-mono ${isActive ? 'text-amber-400' : 'text-white'}`}>
+                              Rp{tier.amountWithCode || tier.amount}
                             </span>
                             <span className="text-[10px] text-slate-400 block">
-                              / peleton
+                              / peleton (Kode: 108)
                             </span>
                           </div>
                         </div>
@@ -499,15 +499,35 @@ export default function Registration() {
                 </div>
               )}
 
+              {/* Peringatan Wajib Kode Unik 108 */}
+              <div className="mb-4 p-3.5 rounded-2xl bg-amber-500/15 border-2 border-amber-400/50 flex items-start gap-3">
+                <AlertCircle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+                <div className="text-xs text-slate-200 leading-relaxed">
+                  <span className="text-amber-300 font-black uppercase tracking-wide block mb-0.5">
+                    Wajib Menambahkan Kode Unik 108 di Akhir Nominal:
+                  </span>
+                  <p>
+                    Sebelum transfer, pastikan nominal berakhiran <strong>108</strong> (contoh: <strong className="text-amber-300 font-mono font-bold">Rp350.108,-</strong> untuk Gelombang 1 atau <strong className="text-amber-300 font-mono font-bold">Rp400.108,-</strong> untuk Gelombang 2) agar pembayaran terverifikasi otomatis oleh sistem panitia.
+                  </p>
+                </div>
+              </div>
+
               {/* Bank Account Box */}
               <div className="bg-white/[0.03] rounded-2xl p-4 border border-white/10 relative">
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider">
-                    Rekening Tujuan Transfer
-                  </span>
-                  <span className="text-[10px] font-black text-white bg-blue-600 px-2 py-0.5 rounded">
-                    {PAYMENT.BANK_NAME}
-                  </span>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 pb-3 border-b border-white/10">
+                  <div>
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">
+                      Rekening Tujuan Transfer
+                    </span>
+                    <span className="text-xs font-semibold text-emerald-400">
+                      Bank Syariah Indonesia (BSI)
+                    </span>
+                  </div>
+                  <img 
+                    src="/Bank_Syariah_Indonesia_white.svg" 
+                    alt="Bank Syariah Indonesia" 
+                    className="h-9 sm:h-10 w-auto object-contain filter drop-shadow-[0_2px_12px_rgba(255,255,255,0.25)] self-start sm:self-auto"
+                  />
                 </div>
 
                 <div className="flex items-center justify-between gap-2 bg-slate-950 border border-white/10 p-3 rounded-xl mb-2.5">
@@ -528,9 +548,10 @@ export default function Registration() {
                   </button>
                 </div>
 
-                <div className="space-y-1 text-xs text-slate-300">
+                <div className="space-y-1.5 text-xs text-slate-300">
                   <p>A.n: <strong className="text-white">{PAYMENT.ACCOUNT_NAME}</strong></p>
                   <p>Berita: <span className="text-amber-400 font-mono font-bold">{PAYMENT.TRANSFER_NOTE_FORMAT}</span></p>
+                  <p className="text-[11px] text-amber-300/90 pt-0.5">Nominal Transfer: <strong className="text-white font-mono font-bold">Wajib +108</strong> (Rp350.108 / Rp400.108)</p>
                 </div>
 
                 {copied && (
@@ -560,8 +581,8 @@ export default function Registration() {
             <span className="text-amber-400 font-bold uppercase tracking-widest text-[11px] block mb-2">
               Alur Pendaftaran Peleton
             </span>
-            <h3 className="text-2xl sm:text-3xl font-black uppercase italic tracking-tight text-white">
-              Prosedur <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-amber-400">Pendaftaran</span>
+            <h3 className="text-2xl sm:text-3xl font-black uppercase italic tracking-tight text-white overflow-visible">
+              Prosedur <span className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-amber-400 pr-2.5">Pendaftaran</span>
             </h3>
             <p className="text-xs sm:text-sm text-slate-400 mt-2 leading-relaxed">
               Ikuti 5 tahapan praktis berikut untuk mendaftarkan peleton sekolah Anda hingga status terverifikasi resmi.
@@ -838,9 +859,6 @@ export default function Registration() {
               <span className="inline-flex items-center gap-1.5 font-medium">
                 <CheckCircle2 className="w-4 h-4 text-emerald-400" />
                 Format digital diunggah ke formulir portal
-              </span>
-              <span className="font-bold text-slate-300">
-                Validasi TM Fisik
               </span>
             </div>
           </div>

@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
 import logoImg from '../../assets/logo-tonti.png';
+import titleLogoImg from '../../assets/title-logo.png';
 import { SITE, CONTACT, GOOGLE_AUTH } from '../../config.js';
 
 export default function AuthModal() {
@@ -158,19 +159,17 @@ export default function AuthModal() {
                 <img
                   src={logoImg}
                   alt="Logo Tonti Mu'allimin"
-                  className="h-12 w-auto filter drop-shadow-xs"
+                  className="h-12 w-auto filter drop-shadow-xs shrink-0"
                   width="48"
                   height="48"
                   decoding="async"
                 />
-                <div>
-                  <span className="text-[10px] font-black uppercase tracking-widest text-red-700 block">
-                    Portal Peserta Kontingen
-                  </span>
-                  <h2 className="font-black text-lg text-slate-900 tracking-tight leading-none mt-0.5">
-                    LBB Mu'allimin <span className="text-amber-600">2026</span>
-                  </h2>
-                </div>
+                <img
+                  src={titleLogoImg}
+                  alt="Portal Peserta Kontingen LBB Mu'allimin"
+                  className="h-10 sm:h-11 w-auto object-contain max-w-[200px] sm:max-w-[240px]"
+                  decoding="async"
+                />
               </div>
 
               <div className="space-y-2 pt-1">

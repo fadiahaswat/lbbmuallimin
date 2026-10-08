@@ -342,7 +342,7 @@ export default function DaerahPersiapanView() {
               </div>
 
               <p className="text-xs text-slate-400">
-                Batas Waktu: {activeTeam?.jenjang === 'SD' ? '10 Menit (SD/MI) • Peluit 1x pjg m-8, 2x pjg m-10' : '13 Menit (SMP/MTs) • Peluit 1x pjg m-11, 2x pjg m-13'}
+                Batas Waktu: {activeTeam?.jenjang === 'SD' ? '8 Menit (SD/MI) • Peluit 1x pjg m-7/m-9, 2x pjg m-8/m-10' : '12 Menit (SMP/MTs) • Peluit 1x pjg m-11/m-12, 2x pjg m-12/m-13'}
                 {isOvertime && <span className="text-red-400 font-bold block mt-1">⚠️ Melewati batas waktu resmi! Sanksi penalti berlaku (-50 poin / 1-30 detik).</span>}
               </p>
 

@@ -7,6 +7,7 @@ import {
 import { useCompetition } from '../../context/CompetitionContext.jsx';
 import { PAYMENT, CONTACT } from '../../config.js';
 import logoImg from '../../assets/logo-tonti.png';
+import titleLogoImg from '../../assets/title-logo.png';
 
 // Subcomponents
 import Step1SchoolAndAccount from './registration/Step1SchoolAndAccount.jsx';
@@ -453,18 +454,23 @@ export default function RegistrationWizard({ isOpen, onClose }) {
           </button>
 
           {/* Official Brand Logo */}
-          <div className="flex items-center">
+          <div className="flex items-center gap-2.5">
             <img
               src={logoImg}
               alt="Logo Tonti Mu'allimin"
-              className="h-9 sm:h-10 w-auto filter drop-shadow-xs"
+              className="h-8 sm:h-9 w-auto filter drop-shadow-xs shrink-0"
+            />
+            <img
+              src={titleLogoImg}
+              alt="LBB Mu'allimin"
+              className="h-7 sm:h-8 w-auto object-contain hidden xs:block"
             />
           </div>
 
           {/* Right Action: WhatsApp Panitia Help */}
           <div className="flex items-center gap-2">
             <a
-              href={`https://wa.me/${CONTACT?.WHATSAPP || '6281230093737'}?text=Halo%20Panitia%20LBB%20Mu'allimin%202026,%20saya%20membutuhkan%20bantuan%20pengisian%20formulir%20pendaftaran.`}
+              href={`https://wa.me/${CONTACT?.WHATSAPP || '6281947491505'}?text=Halo%20Panitia%20LBB%20Mu'allimin%202027,%20saya%20membutuhkan%20bantuan%20pengisian%20formulir%20pendaftaran.`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-50 hover:bg-red-100 border border-red-200 text-[11px] font-bold text-red-700 transition-colors shadow-xs"
@@ -486,7 +492,7 @@ export default function RegistrationWizard({ isOpen, onClose }) {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-red-600"></span>
               </span>
-              Juknis Resmi & Registrasi 2026
+              Juknis Resmi & Registrasi 2027
             </div>
 
             <h1 className="text-2xl sm:text-4xl font-black uppercase italic tracking-tight text-slate-900 select-none leading-tight py-0.5">
@@ -496,7 +502,7 @@ export default function RegistrationWizard({ isOpen, onClose }) {
               </span>
             </h1>
             <p className="text-xs sm:text-sm text-slate-600 mt-1.5 leading-relaxed">
-              Lengkapi data dan berkas persyaratan peleton secara lengkap dan sah melalui formulir pendaftaran resmi LBB Mu'allimin 2026.
+              Lengkapi data dan berkas persyaratan peleton secara lengkap dan sah melalui formulir pendaftaran resmi LBB Mu'allimin 2027.
             </p>
           </div>
         )}
@@ -582,7 +588,7 @@ export default function RegistrationWizard({ isOpen, onClose }) {
 
       {/* Official Mu'allimin Brand Footer */}
       <footer className="border-t border-slate-200 py-6 px-6 text-center text-xs text-slate-500 bg-white">
-        © 2026 Panitia Lomba Baris Berbaris (LBB) Madrasah Mu'allimin Muhammadiyah Yogyakarta
+        © 2027 Panitia Lomba Baris Berbaris (LBB) Madrasah Mu'allimin Muhammadiyah Yogyakarta
       </footer>
     </div>
   );

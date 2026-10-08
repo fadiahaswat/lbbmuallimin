@@ -59,33 +59,33 @@ export default function TimeLocation() {
           <div className="lg:col-span-5 space-y-4 relative">
             
             {/* Header timeline */}
-            <div className="flex items-center justify-between pb-2 px-1">
-              <h3 className="text-xs sm:text-sm font-black uppercase tracking-wider text-slate-800 flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-red-600 animate-pulse"></span>
-                Tahapan & Jadwal Kegiatan
+            <div className="flex items-center justify-between pb-2 px-1 gap-2">
+              <h3 className="text-xs sm:text-sm font-black uppercase tracking-wider text-slate-800 flex items-center gap-2 min-w-0">
+                <span className="w-2.5 h-2.5 rounded-full bg-red-600 animate-pulse shrink-0"></span>
+                <span className="truncate">Tahapan & Jadwal Kegiatan</span>
               </h3>
-              <span className="text-[11px] font-bold text-slate-600 bg-white border border-slate-200 px-3 py-1 rounded-full shadow-sm">
+              <span className="text-[10px] sm:text-[11px] font-bold text-slate-600 bg-white border border-slate-200 px-2.5 sm:px-3 py-1 rounded-full shadow-sm shrink-0 whitespace-nowrap">
                 4 Tahap Utama
               </span>
             </div>
 
             {/* Tahap 1: Pendaftaran Peleton (Biru) */}
             <div className="relative group rounded-2xl bg-white border border-blue-200 hover:border-blue-400 p-5 sm:p-6 shadow-md hover:shadow-lg transition-all duration-300">
-              <div className="flex items-start justify-between gap-3 mb-2.5">
-                <div className="flex items-center gap-3">
+              <div className="flex items-start justify-between gap-2.5 mb-2.5">
+                <div className="flex items-center gap-3 min-w-0">
                   <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-200 text-blue-700 font-black text-xs flex items-center justify-center shrink-0 shadow-sm group-hover:scale-105 transition-transform">
                     01
                   </div>
-                  <div>
-                    <span className="text-[10px] font-bold text-blue-700 uppercase tracking-wider block">
+                  <div className="min-w-0">
+                    <span className="text-[10px] font-bold text-blue-700 uppercase tracking-wider block truncate">
                       Tahap Registrasi
                     </span>
-                    <h4 className="text-base font-black text-slate-900 leading-tight">
+                    <h4 className="text-sm sm:text-base font-black text-slate-900 leading-tight">
                       Pendaftaran Peleton
                     </h4>
                   </div>
                 </div>
-                <span className="text-[10px] font-bold uppercase tracking-wider bg-blue-100 text-blue-800 border border-blue-200 px-2.5 py-0.5 rounded-full">
+                <span className="text-[10px] font-bold uppercase tracking-wider bg-blue-100 text-blue-800 border border-blue-200 px-2.5 py-0.5 rounded-full shrink-0 whitespace-nowrap">
                   Daring
                 </span>
               </div>
@@ -107,21 +107,21 @@ export default function TimeLocation() {
 
             {/* Tahap 2: Technical Meeting (Ungu) */}
             <div className="relative group rounded-2xl bg-white border border-purple-200 hover:border-purple-400 p-5 sm:p-6 shadow-md hover:shadow-lg transition-all duration-300">
-              <div className="flex items-start justify-between gap-3 mb-2.5">
-                <div className="flex items-center gap-3">
+              <div className="flex items-start justify-between gap-2.5 mb-2.5">
+                <div className="flex items-center gap-3 min-w-0">
                   <div className="w-10 h-10 rounded-xl bg-purple-50 border border-purple-200 text-purple-700 font-black text-xs flex items-center justify-center shrink-0 shadow-sm group-hover:scale-105 transition-transform">
                     02
                   </div>
-                  <div>
-                    <span className="text-[10px] font-bold text-purple-700 uppercase tracking-wider block">
+                  <div className="min-w-0">
+                    <span className="text-[10px] font-bold text-purple-700 uppercase tracking-wider block truncate">
                       Temu Teknis
                     </span>
-                    <h4 className="text-base font-black text-slate-900 leading-tight">
+                    <h4 className="text-sm sm:text-base font-black text-slate-900 leading-tight">
                       Technical Meeting (TM)
                     </h4>
                   </div>
                 </div>
-                <span className="text-[10px] font-bold uppercase tracking-wider bg-purple-100 text-purple-800 border border-purple-200 px-2.5 py-0.5 rounded-full">
+                <span className="text-[10px] font-bold uppercase tracking-wider bg-purple-100 text-purple-800 border border-purple-200 px-2.5 py-0.5 rounded-full shrink-0 whitespace-nowrap">
                   Wajib
                 </span>
               </div>
@@ -143,21 +143,21 @@ export default function TimeLocation() {
 
             {/* Tahap 3: Uji Coba Lapangan (Hijau Zamrud) */}
             <div className="relative group rounded-2xl bg-white border border-emerald-200 hover:border-emerald-400 p-5 sm:p-6 shadow-md hover:shadow-lg transition-all duration-300">
-              <div className="flex items-start justify-between gap-3 mb-2.5">
-                <div className="flex items-center gap-3">
+              <div className="flex items-start justify-between gap-2.5 mb-2.5">
+                <div className="flex items-center gap-3 min-w-0">
                   <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 font-black text-xs flex items-center justify-center shrink-0 shadow-sm group-hover:scale-105 transition-transform">
                     03
                   </div>
-                  <div>
-                    <span className="text-[10px] font-bold text-emerald-700 uppercase tracking-wider block">
+                  <div className="min-w-0">
+                    <span className="text-[10px] font-bold text-emerald-700 uppercase tracking-wider block truncate">
                       Orientasi Pos
                     </span>
-                    <h4 className="text-base font-black text-slate-900 leading-tight">
+                    <h4 className="text-sm sm:text-base font-black text-slate-900 leading-tight">
                       Uji Coba Lapangan
                     </h4>
                   </div>
                 </div>
-                <span className="text-[10px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-800 border border-emerald-200 px-2.5 py-0.5 rounded-full">
+                <span className="text-[10px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-800 border border-emerald-200 px-2.5 py-0.5 rounded-full shrink-0 whitespace-nowrap">
                   Orientasi
                 </span>
               </div>
@@ -179,21 +179,21 @@ export default function TimeLocation() {
 
             {/* Tahap 4: Hari-H Pelaksanaan Lomba (Merah & Amber Mewah) */}
             <div className="relative group rounded-2xl bg-gradient-to-br from-amber-50 to-red-50 border-2 border-amber-300 hover:border-amber-400 p-5 sm:p-6 shadow-lg hover:shadow-xl transition-all duration-300">
-              <div className="flex items-start justify-between gap-3 mb-2.5">
-                <div className="flex items-center gap-3">
+              <div className="flex items-start justify-between gap-2.5 mb-2.5">
+                <div className="flex items-center gap-3 min-w-0">
                   <div className="w-10 h-10 rounded-xl bg-amber-500 text-white font-black text-xs flex items-center justify-center shrink-0 shadow-md group-hover:scale-105 transition-transform">
                     04
                   </div>
-                  <div>
-                    <span className="text-[10px] font-bold text-amber-800 uppercase tracking-wider block">
+                  <div className="min-w-0">
+                    <span className="text-[10px] font-bold text-amber-800 uppercase tracking-wider block truncate">
                       Hari Penentuan
                     </span>
-                    <h4 className="text-base font-black text-slate-950 leading-tight">
+                    <h4 className="text-sm sm:text-base font-black text-slate-950 leading-tight">
                       Hari-H Pelaksanaan Lomba
                     </h4>
                   </div>
                 </div>
-                <span className="text-[10px] font-bold uppercase tracking-wider bg-amber-200 text-amber-900 border border-amber-300 px-2.5 py-0.5 rounded-full shadow-sm">
+                <span className="text-[10px] font-bold uppercase tracking-wider bg-amber-200 text-amber-900 border border-amber-300 px-2.5 py-0.5 rounded-full shadow-sm shrink-0 whitespace-nowrap">
                   Puncak Acara
                 </span>
               </div>

@@ -142,10 +142,10 @@ export default function JuknisView() {
           <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-1">
             <span className="text-[10px] font-bold uppercase text-slate-400 block">Batas Durasi Tampil</span>
             <span className="text-lg font-black text-slate-900 block font-mono">
-              {selectedJenjang === 'SD' ? 'Maksimal 10 Menit' : 'Maksimal 13 Menit'}
+              {selectedJenjang === 'SD' ? 'Maksimal 8 Menit' : 'Maksimal 12 Menit'}
             </span>
             <p className="text-[11px] text-slate-500">
-              {selectedJenjang === 'SD' ? 'Peluit 1x panjang menit ke-9 (sisa 1 menit), 2x panjang menit ke-10 (habis).' : 'Peluit 1x panjang menit ke-12 (sisa 1 menit), 2x panjang menit ke-13 (habis).'}
+              {selectedJenjang === 'SD' ? 'Peluit 1x panjang menit ke-7 (sisa 1 menit), 2x panjang menit ke-8 (habis).' : 'Peluit 1x panjang menit ke-11 (sisa 1 menit), 2x panjang menit ke-12 (habis).'}
             </p>
           </div>
 
@@ -157,6 +157,29 @@ export default function JuknisView() {
             <p className="text-[11px] text-slate-500">
               {selectedJenjang === 'SD' ? 'Dilakukan saat materi "Bubar" (antara No. 16 & 17).' : 'Dilakukan saat materi "Bubar" (antara No. 22 & 23).'}
             </p>
+          </div>
+        </div>
+
+        {/* Visual Denah Pos Arena Pertandingan */}
+        <div className="bg-white rounded-3xl p-5 sm:p-6 border border-slate-200 shadow-xs space-y-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-red-600"></span>
+              <h3 className="text-xs sm:text-sm font-black text-slate-900 uppercase tracking-wide">
+                Layout Lapangan & Pos Arena {selectedJenjang === 'SD' ? 'SD / MI (Arena 1)' : 'SMP / MTs (Arena 2)'}
+              </h3>
+            </div>
+            <span className="text-[11px] font-semibold text-slate-500 bg-slate-50 border border-slate-200 px-2.5 py-0.5 rounded-full self-start sm:self-auto">
+              Skema Resmi Juri, Start, Finish & Kotak Danton
+            </span>
+          </div>
+          <div className="bg-slate-50 rounded-2xl p-3 sm:p-6 border border-slate-200 flex items-center justify-center">
+            <img
+              src={selectedJenjang === 'SD' ? '/pos-sd.png' : '/pos-smp.png'}
+              alt={selectedJenjang === 'SD' ? 'Layout Pos SD/MI 25x14M' : 'Layout Pos SMP/MTs 26x15M'}
+              className="max-h-[320px] w-auto object-contain mx-auto drop-shadow-sm rounded-lg"
+              loading="lazy"
+            />
           </div>
         </div>
 
@@ -296,7 +319,7 @@ export default function JuknisView() {
           <div className="bg-amber-50/60 border border-amber-200/80 rounded-3xl p-6 space-y-3">
             <h3 className="text-sm font-black text-amber-950 uppercase flex items-center gap-2">
               <Shield className="w-4 h-4 text-amber-700" />
-              <span>Bab H: Protokol Keadaan Kahar (Force Majeure)</span>
+              <span>Bab I: Protokol Keadaan Kahar (Force Majeure)</span>
             </h3>
             <ul className="text-xs text-amber-900/80 space-y-2 leading-relaxed">
               <li>

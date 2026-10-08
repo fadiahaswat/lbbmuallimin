@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
 import logoImg from '../../assets/logo-tonti.png';
+import titleLogoImg from '../../assets/title-logo.png';
 
 export default function RegistrationStatusModal({ isOpen, onClose }) {
   const { teams, currentUser, openAuthModal, navigateTo, goBack } = useCompetition();
@@ -105,15 +106,8 @@ export default function RegistrationStatusModal({ isOpen, onClose }) {
             </button>
             <div className="h-5 w-px bg-slate-200 hidden sm:block"></div>
             <div className="flex items-center gap-2.5">
-              <img src={logoImg} alt="Logo Tonti" className="h-8 w-auto filter drop-shadow-xs hidden sm:block" />
-              <div>
-                <span className="text-[10px] font-extrabold uppercase tracking-widest text-red-700 block leading-none">
-                  Pelacakan Tim
-                </span>
-                <span className="text-xs font-bold text-slate-800 hidden md:inline">
-                  LBB Mu'allimin 2026
-                </span>
-              </div>
+              <img src={logoImg} alt="Logo Tonti" className="h-8 w-auto filter drop-shadow-xs hidden sm:block shrink-0" />
+              <img src={titleLogoImg} alt="LBB Mu'allimin" className="h-7 sm:h-8 w-auto object-contain hidden sm:block" />
             </div>
           </div>
 
@@ -134,7 +128,7 @@ export default function RegistrationStatusModal({ isOpen, onClose }) {
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-red-50 border border-red-100 text-red-700 text-xs font-bold mb-3.5 shadow-xs">
             <Search className="w-3.5 h-3.5 text-red-600" />
             <span className="text-[10px] sm:text-xs font-bold tracking-widest uppercase">
-              VALIDASI & STATUS PENDAFTARAN 2026
+              VALIDASI & STATUS PENDAFTARAN 2027
             </span>
           </div>
           <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-slate-900 uppercase italic py-0.5">
@@ -308,7 +302,7 @@ export default function RegistrationStatusModal({ isOpen, onClose }) {
 
       {/* Page Footer */}
       <footer className="border-t border-slate-200 bg-white py-5 text-center text-xs text-slate-500 relative z-10">
-        <p>© 2026 Panitia Lomba Baris Berbaris (LBB) Madrasah Mu'allimin Muhammadiyah Yogyakarta</p>
+        <p>© 2027 Panitia Lomba Baris Berbaris (LBB) Madrasah Mu'allimin Muhammadiyah Yogyakarta</p>
       </footer>
     </div>
   );

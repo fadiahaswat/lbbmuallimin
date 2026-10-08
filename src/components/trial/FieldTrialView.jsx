@@ -116,9 +116,9 @@ export default function FieldTrialView() {
               <Timer className="w-6 h-6" />
             </div>
             <div>
-              <span className="text-[11px] font-bold text-slate-500 uppercase block">Durasi per Peleton</span>
-              <span className="text-2xl font-black text-slate-900 font-mono">10 Menit</span>
-              <p className="text-[10px] text-slate-400 mt-0.5">Simulasi manuver & akustik suara</p>
+              <span className="text-[11px] font-bold text-slate-500 uppercase block">Durasi Efektif Arena</span>
+              <span className="text-xl font-black text-slate-900 font-mono">8 / 12 Menit</span>
+              <p className="text-[10px] text-slate-400 mt-0.5">8 mnt SD, 12 mnt SMP (+ 5 mnt transisi)</p>
             </div>
           </div>
 
@@ -187,7 +187,7 @@ export default function FieldTrialView() {
               <div>
                 <strong className="text-xs font-bold text-slate-900 block">Simulasi Masuk & Keluar Arena</strong>
                 <p className="text-[11px] text-slate-600 mt-0.5">
-                  Manfaatkan 10 menit untuk mengenali titik DP (Daerah Persiapan), jalur lintas langkah tegap masuk arena, dan arah hadap peleton terhadap meja dewan juri.
+                  Manfaatkan waktu efektif uji coba (8 menit SD / 12 menit SMP) untuk mengenali titik DP (Daerah Persiapan), jalur lintas langkah tegap masuk arena, dan arah hadap peleton terhadap meja dewan juri.
                 </p>
               </div>
             </div>

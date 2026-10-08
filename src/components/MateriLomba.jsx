@@ -21,12 +21,11 @@ export default function MateriLomba() {
     list.forEach((item, idx) => {
       text += `${idx + 1}. ${item}\n`;
     });
-    text += `\nKETERANGAN / KETENTUAN:\n`;
-    text += `a. Gerakan materi dilaksanakan dalam formasi 3 saf, 7 banjar (7 trio);\n`;
-    text += `b. Gerakan materi dilaksanakan secara berurutan sesuai nomor;\n`;
-    text += `c. Materi gerakan berantai bertanda strip ( - ) wajib dilaksanakan satu rangkaian tanpa gerakan tambahan;\n`;
-    text += `d. Materi gerakan lomba sudah dibuat runtut namun tetap diperbolehkan melakukan gerakan penyesuaian maksimal 3 aba-aba;\n`;
-    text += `e. Kebenaran teknik gerakan berpedoman pada Perpang TNI No. 58 dan 57 Tahun 2018, khusus pelaksanaan Hormat Kanan berpedoman pada Perpang TNI No. 45 Tahun 2014.\n`;
+    text += `\nKETERANGAN:\n`;
+    text += `a. Gerakan materi dilaksanakan secara berurutan sesuai nomor;\n`;
+    text += `b. Materi gerakan berantai bertanda strip ( – ) wajib dilaksanakan satu rangkaian tanpa gerakan tambahan;\n`;
+    text += `c. Materi gerakan lomba sudah dibuat runtut. Komandan Peleton diperbolehkan melakukan gerakan penyesuaian tanpa pembatasan jumlah kuota, namun penggunaannya berpengaruh langsung terhadap penilaian aspek Penguasaan Lapangan Komandan Peleton;\n`;
+    text += `d. Kebenaran teknik gerakan berpedoman pada Perpang TNI No. 58 dan 57 Tahun 2018, khusus pelaksanaan Hormat Kanan berpedoman pada Perpang TNI No. 45 Tahun 2014.\n`;
     text += `========================================================\n`;
     return text;
   }
@@ -81,12 +80,11 @@ export default function MateriLomba() {
           ${list.map(item => `<li>${item}</li>`).join('')}
         </ol>
         <div class="rules">
-          <strong>Keterangan & Ketentuan Pelaksanaan:</strong>
+          <strong>Keterangan:</strong>
           <ol type="a" class="ket">
-            <li>Gerakan materi dilaksanakan dalam formasi 3 saf, 7 banjar (7 trio);</li>
             <li>Gerakan materi dilaksanakan secara berurutan sesuai nomor;</li>
             <li>Materi gerakan berantai bertanda strip ( – ) wajib dilaksanakan satu rangkaian tanpa gerakan tambahan;</li>
-            <li>Materi gerakan lomba sudah dibuat runtut namun tetap diperbolehkan melakukan gerakan penyesuaian maksimal 3 aba-aba;</li>
+            <li>Materi gerakan lomba sudah dibuat runtut. Komandan Peleton diperbolehkan melakukan gerakan penyesuaian tanpa pembatasan jumlah kuota, namun penggunaannya berpengaruh langsung terhadap penilaian aspek Penguasaan Lapangan Komandan Peleton;</li>
             <li>Kebenaran teknik gerakan berpedoman pada Perpang TNI No. 58 dan 57 Tahun 2018, khusus pelaksanaan Hormat Kanan berpedoman pada Perpang TNI No. 45 Tahun 2014.</li>
           </ol>
         </div>
@@ -190,10 +188,10 @@ export default function MateriLomba() {
                 <div className="mt-8 pt-6 border-t border-slate-200">
                   <h4 className="text-xs font-bold text-red-700 uppercase mb-3">Keterangan:</h4>
                   <ul className="space-y-2 list-[lower-alpha] list-outside pl-8 text-xs text-slate-600">
-                    <li>Gerakan materi dilaksanakan dalam formasi 3 saf, 7 banjar (7 trio);</li>
                     <li>Gerakan materi dilaksanakan secara berurutan sesuai nomor;</li>
                     <li>Materi gerakan berantai bertanda strip ( – ) wajib dilaksanakan satu rangkaian tanpa gerakan tambahan;</li>
-                    <li>Materi gerakan lomba sudah dibuat runtut namun tetap diperbolehkan melakukan gerakan penyesuaian maksimal 3 aba-aba.</li>
+                    <li>Materi gerakan lomba sudah dibuat runtut. Komandan Peleton diperbolehkan melakukan gerakan penyesuaian tanpa pembatasan jumlah kuota, namun penggunaannya berpengaruh langsung terhadap penilaian aspek Penguasaan Lapangan Komandan Peleton;</li>
+                    <li>Kebenaran teknik gerakan berpedoman pada Perpang TNI No. 58 dan 57 Tahun 2018, khusus pelaksanaan Hormat Kanan berpedoman pada Perpang TNI No. 45 Tahun 2014.</li>
                   </ul>
                 </div>
               </div>
@@ -268,10 +266,10 @@ export default function MateriLomba() {
                 <div className="mt-8 pt-6 border-t border-slate-200">
                   <h4 className="text-xs font-bold text-blue-700 uppercase mb-3">Keterangan:</h4>
                   <ul className="space-y-2 list-[lower-alpha] list-outside pl-8 text-xs text-slate-600">
-                    <li>Gerakan materi dilaksanakan dalam formasi 3 saf, 7 banjar (7 trio);</li>
                     <li>Gerakan materi dilaksanakan secara berurutan sesuai nomor;</li>
                     <li>Materi gerakan berantai bertanda strip ( – ) wajib dilaksanakan satu rangkaian tanpa gerakan tambahan;</li>
-                    <li>Materi gerakan lomba sudah dibuat runtut namun tetap diperbolehkan melakukan gerakan penyesuaian maksimal 3 aba-aba.</li>
+                    <li>Materi gerakan lomba sudah dibuat runtut. Komandan Peleton diperbolehkan melakukan gerakan penyesuaian tanpa pembatasan jumlah kuota, namun penggunaannya berpengaruh langsung terhadap penilaian aspek Penguasaan Lapangan Komandan Peleton;</li>
+                    <li>Kebenaran teknik gerakan berpedoman pada Perpang TNI No. 58 dan 57 Tahun 2018, khusus pelaksanaan Hormat Kanan berpedoman pada Perpang TNI No. 45 Tahun 2014.</li>
                   </ul>
                 </div>
               </div>
@@ -285,43 +283,31 @@ export default function MateriLomba() {
           <div className="relative group">
             <div className="relative bg-white rounded-3xl border border-red-200 p-6 sm:p-8 h-full flex flex-col justify-between shadow-lg">
               <div>
-                <div className="flex items-center justify-between gap-3 mb-6 pb-4 border-b border-slate-100">
-                  <div className="flex items-center gap-2.5">
-                    <span className="p-2 rounded-xl bg-red-100 text-red-700 border border-red-200">
+                <div className="flex flex-wrap sm:flex-nowrap items-start sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-slate-100">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <span className="p-2 rounded-xl bg-red-100 text-red-700 border border-red-200 shrink-0">
                       <Map className="w-5 h-5" />
                     </span>
-                    <div>
-                      <h4 className="text-base sm:text-lg font-black text-slate-900 uppercase tracking-wider">
+                    <div className="min-w-0">
+                      <h4 className="text-sm sm:text-lg font-black text-slate-900 uppercase tracking-wider">
                         Denah Arena & Spesifikasi Pos
                       </h4>
                       <p className="text-xs font-bold text-red-700 uppercase tracking-widest mt-0.5">Tingkat SD/MI Sederajat</p>
                     </div>
                   </div>
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-100 border border-red-200 text-red-800 text-xs font-bold font-mono">
-                    <Timer className="w-3.5 h-3.5" />
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-100 border border-red-200 text-red-800 text-xs font-bold font-mono shrink-0 whitespace-nowrap self-start sm:self-auto">
+                    <Timer className="w-3.5 h-3.5 shrink-0" />
                     <span>{COMPETITION.SD.DURATION_LABEL}</span>
                   </div>
                 </div>
 
-                <div className="bg-slate-50 rounded-2xl p-5 text-center border border-slate-200 relative overflow-hidden group/arena mb-5 shadow-inner">
-                  <div className="flex justify-between text-[10px] font-mono text-slate-500 mb-2 relative z-10">
-                    <span>START</span>
-                    <span className="text-red-600 font-bold">{COMPETITION.SD.ARENA_WIDTH_LABEL}</span>
-                    <span>FINISH</span>
-                  </div>
-
-                  <div className="w-full h-32 border-2 border-slate-300 bg-white rounded-xl flex flex-col items-center justify-center font-mono relative z-10 shadow-sm group-hover/arena:border-red-400 transition-colors">
-                    <span className="text-2xl sm:text-3xl font-black text-slate-900 tracking-wide">{COMPETITION.SD.ARENA_SIZE}</span>
-                    <span className="text-[10px] text-slate-500 mt-1 uppercase tracking-widest">Ukuran Lapangan</span>
-
-                    <div className="absolute -right-4 h-full flex items-center">
-                      <div className="h-full w-px bg-slate-300 relative">
-                        <span className="absolute top-1/2 -right-3 -translate-y-1/2 text-[10px] rotate-90 text-slate-500 font-bold whitespace-nowrap">
-                          {COMPETITION.SD.ARENA_HEIGHT_LABEL}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
+                <div className="bg-slate-50 rounded-2xl p-2 sm:p-4 text-center border border-slate-200 relative overflow-hidden group/arena mb-5 shadow-inner flex items-center justify-center min-h-[300px] sm:min-h-[360px]">
+                  <img
+                    src="/pos-sd.png"
+                    alt="Denah Pos Arena SD/MI 25x14M"
+                    className="w-full max-h-[340px] sm:max-h-[400px] object-contain mx-auto transition-transform duration-300 group-hover/arena:scale-[1.02]"
+                    loading="lazy"
+                  />
                 </div>
               </div>
 
@@ -339,43 +325,31 @@ export default function MateriLomba() {
           <div className="relative group">
             <div className="relative bg-white rounded-3xl border border-blue-200 p-6 sm:p-8 h-full flex flex-col justify-between shadow-lg">
               <div>
-                <div className="flex items-center justify-between gap-3 mb-6 pb-4 border-b border-slate-100">
-                  <div className="flex items-center gap-2.5">
-                    <span className="p-2 rounded-xl bg-blue-100 text-blue-700 border border-blue-200">
+                <div className="flex flex-wrap sm:flex-nowrap items-start sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-slate-100">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <span className="p-2 rounded-xl bg-blue-100 text-blue-700 border border-blue-200 shrink-0">
                       <Map className="w-5 h-5" />
                     </span>
-                    <div>
-                      <h4 className="text-base sm:text-lg font-black text-slate-900 uppercase tracking-wider">
+                    <div className="min-w-0">
+                      <h4 className="text-sm sm:text-lg font-black text-slate-900 uppercase tracking-wider">
                         Denah Arena & Spesifikasi Pos
                       </h4>
                       <p className="text-xs font-bold text-blue-700 uppercase tracking-widest mt-0.5">Tingkat SMP/MTs Sederajat</p>
                     </div>
                   </div>
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-100 border border-blue-200 text-blue-800 text-xs font-bold font-mono">
-                    <Timer className="w-3.5 h-3.5" />
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-100 border border-blue-200 text-blue-800 text-xs font-bold font-mono shrink-0 whitespace-nowrap self-start sm:self-auto">
+                    <Timer className="w-3.5 h-3.5 shrink-0" />
                     <span>{COMPETITION.SMP.DURATION_LABEL}</span>
                   </div>
                 </div>
 
-                <div className="bg-slate-50 rounded-2xl p-5 text-center border border-slate-200 relative overflow-hidden group/arena mb-5 shadow-inner">
-                  <div className="flex justify-between text-[10px] font-mono text-slate-500 mb-2 relative z-10">
-                    <span>START</span>
-                    <span className="text-blue-600 font-bold">{COMPETITION.SMP.ARENA_WIDTH_LABEL}</span>
-                    <span>FINISH</span>
-                  </div>
-
-                  <div className="w-full h-32 border-2 border-slate-300 bg-white rounded-xl flex flex-col items-center justify-center font-mono relative z-10 shadow-sm group-hover/arena:border-blue-400 transition-colors">
-                    <span className="text-2xl sm:text-3xl font-black text-slate-900 tracking-wide">{COMPETITION.SMP.ARENA_SIZE}</span>
-                    <span className="text-[10px] text-slate-500 mt-1 uppercase tracking-widest">Ukuran Lapangan</span>
-
-                    <div className="absolute -right-4 h-full flex items-center">
-                      <div className="h-full w-px bg-slate-300 relative">
-                        <span className="absolute top-1/2 -right-3 -translate-y-1/2 text-[10px] rotate-90 text-slate-500 font-bold whitespace-nowrap">
-                          {COMPETITION.SMP.ARENA_HEIGHT_LABEL}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
+                <div className="bg-slate-50 rounded-2xl p-2 sm:p-4 text-center border border-slate-200 relative overflow-hidden group/arena mb-5 shadow-inner flex items-center justify-center min-h-[300px] sm:min-h-[360px]">
+                  <img
+                    src="/pos-smp.png"
+                    alt="Denah Pos Arena SMP/MTs 26x15M"
+                    className="w-full max-h-[340px] sm:max-h-[400px] object-contain mx-auto transition-transform duration-300 group-hover/arena:scale-[1.02]"
+                    loading="lazy"
+                  />
                 </div>
               </div>
 

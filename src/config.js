@@ -199,7 +199,7 @@ export const COMPETITION = {
     MAX_TEAMS_SMP: 18,
 
     /** Batas waktu tampil (dalam menit, dipakai di Juknis) */
-    PERFORMANCE_TIME_LIMIT_MINUTES: '10 (SD/MI) / 13 (SMP/MTs)',
+    PERFORMANCE_TIME_LIMIT_MINUTES: '8 (SD/MI) / 12 (SMP/MTs)',
 
     /** Deskripsi unsur dewan juri */
     JURY_MEMBERS: '6 Dewan Juri Independen (unsur TNI, POLRI, dan PPI: 3 Juri SD & 3 Juri SMP)',
@@ -225,9 +225,9 @@ export const COMPETITION = {
         ARENA_SIZE: '25m \u00D7 14m',
         ARENA_WIDTH_LABEL: '25 METER',
         ARENA_HEIGHT_LABEL: '14m',
-        DURATION_LABEL: 'Durasi Max: 10 Menit',
+        DURATION_LABEL: 'Durasi Max: 8 Menit',
         SUBSTITUTION_LABEL: 'Di antara Gerakan No. 16 & 17 (Saat Materi Bubar)',
-        ARENA_SPEC_LABEL: 'Ukuran Pos 25 \u00D7 14 Meter \u2013 Waktu 10 Menit',
+        ARENA_SPEC_LABEL: 'Ukuran Pos 25 \u00D7 14 Meter \u2013 Waktu 8 Menit',
     },
     SMP: {
         TARGET_PLATOONS: 18,
@@ -236,9 +236,9 @@ export const COMPETITION = {
         ARENA_SIZE: '26m \u00D7 15m',
         ARENA_WIDTH_LABEL: '26 METER',
         ARENA_HEIGHT_LABEL: '15m',
-        DURATION_LABEL: 'Durasi Max: 13 Menit',
+        DURATION_LABEL: 'Durasi Max: 12 Menit',
         SUBSTITUTION_LABEL: 'Di antara Gerakan No. 22 & 23 (Saat Materi Bubar / Pasca Gerakan No. 19)',
-        ARENA_SPEC_LABEL: 'Ukuran Pos 26 \u00D7 15 Meter \u2013 Waktu 13 Menit',
+        ARENA_SPEC_LABEL: 'Ukuran Pos 26 \u00D7 15 Meter \u2013 Waktu 12 Menit',
     },
 };
 
@@ -573,30 +573,31 @@ export function getScaleTemplateForMaterial(materiText) {
 
 
 // ---------------------------------------------------------------------------
-// PENALTIES – daftar sanksi & pengurangan nilai resmi (Bab G Juknis Lapangan & Tatib)
+// PENALTIES – daftar sanksi & pengurangan nilai resmi (Bab H Juknis Lapangan & Tatib)
 // ---------------------------------------------------------------------------
 export const PENALTIES = [
-    { label: 'Tidak ikut Upacara Pembukaan (Peleton No. 1–5)', value: '-150 Poin' },
-    { label: 'Keterlambatan Upacara Pembukaan',               value: '-50 Poin / kelipatan 5 menit' },
-    { label: 'Tidak Hadir di DP 1 (3x Pemanggilan @ 2 mnt)',   value: 'Urutan Paling Akhir & -100 Poin' },
-    { label: 'Jumlah Personel Kurang (< 22 orang di arena)',   value: '-75 Poin' },
-    { label: 'Kelebihan Durasi Waktu Tampil (per 1–30 detik)', value: '-50 Poin' },
-    { label: 'Pelanggaran Garis Arena / Kotak Danton',         value: '-50 Poin / kejadian (Asas Garis sebagai Garis)' },
-    { label: 'Kelebihan Gerakan Penyesuaian (> 3 kali)',       value: '-25 Poin / gerakan tambahan' },
-    { label: 'Gerakan Terlewat / Tidak Urut',                  value: 'Nilai Minimal / Nilai 0' },
-    { label: 'Peleton Hafalan (Danton Salah Aba-Aba)',         value: 'Nilai 0 pada Gerakan & Potong Nilai Danton' },
-    { label: 'Gerakan Berangkai Terputus',                     value: 'Nilai Minimal' },
-    { label: 'Atribut Terlepas / Terjatuh di Arena',           value: '0 Poin (TIDAK DIKENAKAN PENALTI)' },
-    { label: 'Ruang Basecamp Ditinggalkan Kotor / Berantakan', value: '-50 Poin' },
-    { label: 'Yel-Yel Mengganggu Selama Penampilan',           value: '-50 Poin (Peringatan 1, 2, lalu Penalti)' },
-    { label: 'Kerusakan / Kehilangan Aset Ruang Basecamp',     value: 'Ganti Rugi + Denda Rp 500.000 (KTP Ditahan)' },
+    { label: 'Tidak ikut Upacara Pembukaan (Peleton Urutan 6 s.d. 10)', value: '-150 Poin (Nilai Peleton)' },
+    { label: 'Keterlambatan Upacara Pembukaan',                        value: '-50 Poin / kelipatan 5 menit (Nilai Peleton)' },
+    { label: 'Keterlambatan Hadir di DP 1 (3x Panggilan @ 2 menit)',   value: '-100 Poin & Urutan Paling Akhir' },
+    { label: 'Jumlah Personel Kurang (< 22 orang di arena)',            value: '-75 Poin (Nilai Peleton)' },
+    { label: 'Kelebihan Durasi Waktu Tampil (per rentang 1–30 detik)', value: '-50 Poin (Nilai Peleton & Danton)' },
+    { label: 'Pelanggaran Garis Arena (Anggota Peleton)',              value: '-50 Poin / kejadian (Nilai Peleton & Danton)' },
+    { label: 'Pelanggaran Garis Kotak Danton 1,5×1,5 m (Komandan)',    value: '-50 Poin / kejadian (Nilai Danton Saja)' },
+    { label: 'Ketentuan Gerakan Penyesuaian',                           value: '0 Poin (Tidak Dibatasi, Nilai Kualitatif Penguasaan Lapangan)' },
+    { label: 'Gerakan Terlewat / Tidak Urut',                           value: 'Nilai Minimal (50) / Nilai 0 (Penguasaan Materi Danton)' },
+    { label: 'Peleton Hafalan (Danton Salah Aba-Aba)',                  value: 'Nilai 0 Kebenaran Teknik & Potong Penguasaan Materi Danton' },
+    { label: 'Gerakan Berangkai Terputus (Tanda -)',                   value: 'Nilai Minimal (50) & Potong Penguasaan Materi Danton' },
+    { label: 'Atribut Terlepas / Terjatuh di Arena',                    value: '0 Poin (TIDAK DIKENAKAN PENALTI)' },
+    { label: 'Pelanggaran Kebersihan Basecamp',                         value: '-50 Poin (Nilai Peleton)' },
+    { label: 'Yel-Yel Mengganggu Selama Penampilan',                    value: '-50 Poin (Peringatan 1, 2, lalu -50 Poin/kejadian)' },
+    { label: 'Kerusakan / Kehilangan Fasilitas Basecamp',              value: 'KTP/SIM Ditahan, Ganti Rugi Penuh + Denda Rp 500.000' },
 ];
 
 // ---------------------------------------------------------------------------
 // PRIZES – penghargaan & piala bergilir (Pasal 11 Tata Tertib & Juknis)
 // ---------------------------------------------------------------------------
 export const PRIZES = {
-    TOTAL_LABEL:           'Total Uang Pembinaan Rp 9.600.000 + Trofi & Piagam',
+    TOTAL_LABEL:           'Trofi Juara, Uang Pembinaan & Piagam Penghargaan',
     ROLLING_TROPHY_TITLE:  'Piala Bergilir Juara Umum',
     ROLLING_TROPHY_SD:     'Piala Bergilir Juara Umum Tingkat SD/MI Sederajat',
     ROLLING_TROPHY_SMP:    'Piala Bergilir Juara Umum Tingkat SMP/MTs Sederajat',
@@ -794,12 +795,12 @@ export const STAGING_CONFIG = {
         { id: 'checkout', label: 'Checkout Basecamp (Selesai Total)', shortLabel: 'Checkout', color: 'slate', icon: 'CheckCircle2' },
     ],
     DURATIONS: {
-        SD: 10 * 60, // 10 menit dalam detik (600 detik)
-        SMP: 13 * 60, // 13 menit dalam detik (780 detik)
+        SD: 8 * 60, // 8 menit dalam detik (480 detik)
+        SMP: 12 * 60, // 12 menit dalam detik (720 detik)
     },
     WARNING_TIMES: {
-        YELLOW_REMAINING: 120, // sisa 2 menit (sinyal peluit 1 kali panjang)
-        RED_REMAINING: 0, // waktu habis (sinyal peluit 2 kali panjang)
+        YELLOW_REMAINING: 60, // sisa 1 menit (sinyal peluit 1 kali panjang di menit ke-7/ke-11)
+        RED_REMAINING: 0, // waktu habis (sinyal peluit 2 kali panjang di menit ke-8/ke-12)
     },
     PENALTY_OVERTIME_PER_30_SEC: 50,
 };
@@ -1004,7 +1005,7 @@ export const OFFICIAL_TIMELINE = [
         phase: "A. Tahap Perencanaan, Legalitas & Persiapan Awal (September - Awal Oktober 2026)",
         period: "1 - 10 Oktober 2026",
         title: "SURVEI VENUE, MAPPING 2 ARENA & MATERI PROMOSI",
-        desc: "Survei lapangan detail: Arena 1 Basket (SD: 25x14m, durasi 10 menit) dan Arena 2 Embung (SMP: 26x15m, durasi 13 menit). Pemetaan alur: Pos Parkir, Pos Registrasi Ulang, Holding Area DP 1 & DP 2, Ruang Medis, dan Toilet. Desain materi publikasi visual (Flyer Pendaftaran Peserta & Tenant, Twibbon, Teaser Medsos).",
+        desc: "Survei lapangan detail: Arena 1 Basket (SD: 25x14m, durasi 8 menit) dan Arena 2 Embung (SMP: 26x15m, durasi 12 menit). Pemetaan alur: Pos Parkir, Pos Registrasi Ulang, Holding Area DP 1 & DP 2, Ruang Medis, dan Toilet. Desain materi publikasi visual (Flyer Pendaftaran Peserta & Tenant, Twibbon, Teaser Medsos).",
         pic: "Divisi Teknis Lapangan, Divisi Acara, Divisi DDD, Divisi LO & Humas",
     },
     {
@@ -1044,7 +1045,7 @@ export const OFFICIAL_TIMELINE = [
         phase: "C. Rangkaian Agenda Technical Meeting Dewan Juri / TM Juri (November 2026)",
         period: "Sabtu, 7 November 2026 (Pukul 12.30 - 16.00 WIB)",
         title: "PELAKSANAAN TECHNICAL MEETING DEWAN JURI (TM JURI)",
-        desc: "12.30 - 13.00: Kedatangan 6 Dewan Juri di Ruang VIP Perpustakaan ASM, registrasi, & coffee break siang. 13.00 - 13.30: Pembukaan oleh Ketua Pelaksana & pemaparan profil LBB. 13.30 - 15.15: Sidang Pleno penyelarasan acuan materi (Perpang TNI 58 & 57 Th 2018 dan No 45 Th 2014), rubrik nilai peleton (1:1 Kebenaran:Kekompakan) & danton, penentuan durasi resmi (SD maks 10 mnt, SMP maks 13 mnt), serta sistem denda penalti. 15.15 - 15.45: Peninjauan fisik langsung ke Arena 1 (Basket) & Arena 2 (Embung). 15.45 - 16.00: Penandatanganan Berita Acara TM Juri, penyerahan uang transport TM Juri, dan foto bersama.",
+        desc: "12.30 - 13.00: Kedatangan 6 Dewan Juri di Ruang VIP Perpustakaan ASM, registrasi, & coffee break siang. 13.00 - 13.30: Pembukaan oleh Ketua Pelaksana & pemaparan profil LBB. 13.30 - 15.15: Sidang Pleno penyelarasan acuan materi (Perpang TNI 58 & 57 Th 2018 dan No 45 Th 2014), rubrik nilai peleton (1:1 Kebenaran:Kekompakan) & danton, penentuan durasi resmi (SD maks 8 mnt, SMP maks 12 mnt), serta sistem denda penalti. 15.15 - 15.45: Peninjauan fisik langsung ke Arena 1 (Basket) & Arena 2 (Embung). 15.45 - 16.00: Penandatanganan Berita Acara TM Juri, penyerahan uang transport TM Juri, dan foto bersama.",
         pic: "Panitia Inti, Divisi Acara, Divisi Juri & Penilaian, Bendahara, Divisi DDD",
     },
     {
@@ -1084,13 +1085,13 @@ export const OFFICIAL_TIMELINE = [
         phase: "E. Rangkaian Agenda Technical Meeting Peserta / TM Peserta (Januari 2027)",
         period: "2 - 8 Januari 2027",
         title: "PERSIAPAN ADMINISTRASI & MATERI TM PESERTA",
-        desc: "Cetak 50 buku Juknis Final, penyiapan tabung & gulungan nomor undian lotting (SD-01 s.d. SD-18 & SMP-01 s.d. SMP-18), lembar presensi, formulir biodata, dan konsumsi coffee break siang 80 orang.",
+        desc: "Cetak 50 buku Juknis Final, penyiapan tabung & gulungan nomor undian lotting (SD-111 s.d. SD-175 & SMP-222 s.d. SMP-286), lembar presensi, formulir biodata, dan konsumsi coffee break siang 80 orang.",
         pic: "Divisi Acara, Divisi LO & Humas, Divisi Perlengkapan, Divisi Konsumsi",
     },
     {
         id: "tl-15",
         phase: "E. Rangkaian Agenda Technical Meeting Peserta / TM Peserta (Januari 2027)",
-        period: "Jumat, 9 Januari 2027",
+        period: "Jumat, 8 Januari 2027",
         title: "SETTING AULA KAMPUS INDUK WIROBRAJAN & GLADI RUANG TM PESERTA",
         desc: "Penataan kursi di Aula Kampus Induk Mu'allimin Wirobrajan, cek sound/LCD display lotting digital, dan briefing 36 LO pendamping kontingen.",
         pic: "Divisi Acara, Divisi Perlengkapan, Divisi LO & Humas",
@@ -1100,7 +1101,7 @@ export const OFFICIAL_TIMELINE = [
         phase: "E. Rangkaian Agenda Technical Meeting Peserta / TM Peserta (Januari 2027)",
         period: "Sabtu, 9 Januari 2027 (Pukul 12.30 - 16.30 WIB)",
         title: "PELAKSANAAN TECHNICAL MEETING PESERTA (TM PESERTA)",
-        desc: "12.30 - 13.00: Registrasi ulang 36 kontingen, verifikasi berkas fisik asli (Surat Tugas berstempel & Pakta Integritas bermaterai Rp 10.000), pembagian snack box siang. 13.00 - 13.20: Pembukaan resmi, lagu Indonesia Raya & Mars Mu'allimin, sambutan Ketua Panitia. 13.20 - 14.30: Pemaparan mendalam Juknis Lapangan, dimensi 2 arena, alur DP 1 & DP 2, gerakan penyesuaian (maks 3x), kotak danton, larangan sol paku/pines, sistem live score website, tata tertib basecamp kelas & parkir. 14.30 - 15.15: Sesi tanya jawab teknis & klarifikasi multitafsir. 15.15 - 16.00: Lotting undian nomor urut tampil resmi (SD-111 s.d. SD-175 & SMP-222 s.d. SMP-286). 16.00 - 16.30: Pembagian slot Uji Coba Lapangan (16 Jan 2027), penandatanganan Berita Acara TM Peserta, dan temu LO pendamping.",
+        desc: "12.30 - 13.00: Registrasi ulang 36 kontingen, verifikasi berkas fisik asli (Surat Tugas berstempel & Pakta Integritas bermaterai Rp 10.000), pembagian snack box siang. 13.00 - 13.20: Pembukaan resmi, lagu Indonesia Raya & Mars Mu'allimin, sambutan Ketua Panitia. 13.20 - 14.30: Pemaparan mendalam Juknis Lapangan, dimensi 2 arena, alur DP 1 & DP 2, gerakan penyesuaian (tidak dibatasi kuota, mempengaruhi penilaian Penguasaan Lapangan), kotak danton, larangan sol paku/pines, sistem live score website, tata tertib basecamp kelas & parkir. 14.30 - 15.15: Sesi tanya jawab teknis & klarifikasi multitafsir. 15.15 - 16.00: Lotting undian nomor urut tampil resmi (SD-111 s.d. SD-175 & SMP-222 s.d. SMP-286). 16.00 - 16.30: Pembagian slot Uji Coba Lapangan (16 Jan 2027), penandatanganan Berita Acara TM Peserta, dan temu LO pendamping.",
         pic: "Panitia Inti, Divisi Acara, Divisi LO & Humas, Divisi Teknis Lapangan, Divisi Juri",
     },
     {

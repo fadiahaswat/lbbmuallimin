@@ -89,7 +89,7 @@ export default function Step4Confirmation({
               Konfirmasi Panitia (Opsional)
             </span>
             <h4 className="text-sm font-black text-slate-900 leading-tight">
-              Kirim Konfirmasi Pendaftaran ke Kak Rusyda
+              Kirim Konfirmasi Pendaftaran ke Panitia
             </h4>
             <p className="text-xs text-slate-600 mt-1">
               Beri tahu panitia via WhatsApp resmi jika ingin konfirmasi langsung agar berkas dan verifikasi dapat dicek lebih awal.

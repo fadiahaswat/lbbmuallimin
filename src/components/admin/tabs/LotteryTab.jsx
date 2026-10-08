@@ -21,7 +21,7 @@ export default function LotteryTab({
             3. Undian (Nomor Urut Tampil & Nomor Dada Lapangan)
           </h3>
           <p className="text-xs text-slate-500 mt-0.5">
-            Pengundian nomor urut tampil dilakukan resmi saat Technical Meeting (Sabtu, 10 Januari 2027). Masukkan <strong>Nomor Urut Tampil</strong> dan <strong>Nomor Dada</strong> peleton yang diperoleh.
+            Pengundian nomor urut tampil dilakukan resmi saat Technical Meeting (Sabtu, 9 Januari 2027). Masukkan <strong>Nomor Urut Tampil</strong> dan <strong>Nomor Dada</strong> peleton yang diperoleh.
           </p>
         </div>
 

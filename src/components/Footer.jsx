@@ -311,7 +311,7 @@ export default function Footer() {
                   </div>
                   <div>
                     <span className="block font-bold text-slate-200">{CONTACT.PHONE_DISPLAY}</span>
-                    <span className="text-[10px] text-slate-500">Layanan WhatsApp (Kak Rusyda)</span>
+                    <span className="text-[10px] text-slate-500">Layanan WhatsApp Panitia</span>
                   </div>
                 </a>
               </div>

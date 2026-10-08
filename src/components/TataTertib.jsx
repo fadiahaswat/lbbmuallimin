@@ -46,7 +46,7 @@ export default function TataTertib() {
       points: [
         "Waktu dan Tempat: Uji Coba Lapangan (Familiarisasi Medan Perlombaan) dilaksanakan pada hari Sabtu, 16 Januari 2027 pukul 07.00 – 13.00 WIB di Kampus Terpadu Madrasah Mu'allimin Muhammadiyah Yogyakarta (Sedayu, Bantul).",
         "Pelaksanaan Paralel di Dua Arena: Uji coba dilaksanakan secara bersamaan di 2 arena resmi:\na. Arena 1 (Lapangan Basket Kampus Terpadu Sedayu): Khusus untuk 18 Peleton Tingkat SD/MI (ukuran 25 m x 14 m).\nb. Arena 2 (Pelataran Embung Kampus Terpadu Sedayu): Khusus untuk 18 Peleton Tingkat SMP/MTs (ukuran 26 m x 15 m).",
-        "Alokasi Waktu Resmi Peleton: Setiap peleton memperoleh durasi latihan sesuai waktu lomba, yaitu 10 menit untuk SD dan 13 menit untuk SMP, ditambah 5 menit waktu transisi yang dipandu oleh petugas timekeeper dan LO pendamping. Mohon perhatikan rundown resmi dari panitia, dan setiap peleton wajib bersiap di lokasi 15 menit sebelum gilirannya tiba.",
+        "Alokasi Waktu Resmi Peleton: Setiap peleton memperoleh durasi latihan sesuai waktu lomba, yaitu 8 menit untuk SD dan 12 menit untuk SMP, ditambah 5 menit waktu transisi yang dipandu oleh petugas timekeeper dan LO pendamping. Mohon perhatikan rundown resmi dari panitia, dan setiap peleton wajib bersiap di lokasi 15 menit sebelum gilirannya tiba.",
         "Fokus dan Sasaran Uji Coba: Uji coba lapangan difokuskan murni untuk familiarisasi medan perlombaan bagi peserta (penyesuaian hentakan langkah terhadap tekstur lantai arena serta simulasi alur masuk/keluar arena). Uji coba dilaksanakan tanpa ada penilaian dewan juri.",
         "Ketentuan Perlengkapan Uji Coba: Peserta diperbolehkan mengenakan seragam olahraga/latihan sekolah yang seragam, rapi, dan bersepatu (DILARANG KERAS menggunakan sepatu berpines/paku)."
       ]
@@ -68,7 +68,7 @@ export default function TataTertib() {
       title: 'Tahap II: Hari Perlombaan – Upacara Pembukaan dan Sterilisasi Arena',
       points: [
         "Mulai pukul 06.45 WIB, Lapangan Mini Soccer resmi ditutup dan disterilkan dari seluruh aktivitas umum, penonton, maupun latihan mandiri, serta seluruh peserta upacara pembukaan wajib telah berada di lokasi barisan upacara. Upacara pembukaan dimulai tepat pukul 07.00 WIB. Lapangan hanya diperuntukkan bagi peserta dan petugas upacara pembukaan. Aktivitas peleton di luar rangkaian upacara baru diperbolehkan kembali setelah seluruh rangkaian upacara selesai. Perlombaan dimulai pukul 08.00 WIB.",
-        "Upacara pembukaan resmi wajib diikuti oleh peserta dengan nomor urut lomba 1 sampai dengan 5 (SD-111, SD-113, SD-115, SD-117, SD-119 dan SMP-222, SMP-224, SMP-226, SMP-228, SMP-240) dengan formasi 1 komandan dan 15 anggota (5 trio lengkap) mengenakan seragam perlombaan.",
+        "Upacara pembukaan resmi wajib diikuti oleh peserta dengan urutan tampil lomba 6 sampai dengan 10 pada masing-masing tingkatan (SD-131, SD-133, SD-135, SD-137, SD-139 dan SMP-242, SMP-244, SMP-246, SMP-248, SMP-260) dengan formasi 1 komandan dan 15 anggota (5 trio lengkap) mengenakan seragam perlombaan.",
         "Pengecekan barisan upacara dilakukan oleh panitia 15 menit sebelum upacara dimulai. Peleton yang tidak hadir atau terlambat dikenakan sanksi penalti pengurangan nilai sesuai ketentuan Juknis Lapangan."
       ]
     },
@@ -219,16 +219,16 @@ export default function TataTertib() {
                   : 'bg-white border-slate-200 hover:shadow-md'
               }`}
             >
-              <div className="flex items-center justify-between mb-4 border-b border-slate-200/60 pb-3">
-                <div className="flex items-center gap-2.5">
-                  <span className={`px-2.5 py-1 rounded-md text-xs font-black uppercase ${
+              <div className="flex items-start justify-between gap-2.5 mb-4 border-b border-slate-200/60 pb-3">
+                <div className="flex items-start sm:items-center gap-2.5 min-w-0">
+                  <span className={`px-2.5 py-1 rounded-md text-xs font-black uppercase shrink-0 whitespace-nowrap ${
                     item.pasal === 11 || item.pasal === 12
                       ? 'bg-red-600 text-white'
                       : 'bg-slate-900 text-white'
                   }`}>
                     PASAL {item.pasal}
                   </span>
-                  <h3 className={`font-black text-sm sm:text-base ${
+                  <h3 className={`font-black text-sm sm:text-base leading-snug ${
                     item.pasal === 11 || item.pasal === 12 ? 'text-white' : 'text-slate-900'
                   }`}>
                     {item.title}
