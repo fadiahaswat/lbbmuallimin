@@ -538,7 +538,7 @@ export default function Registration() {
                               Rp{tier.amountWithCode || tier.amount}
                             </span>
                             <span className="text-[10px] text-slate-400 block">
-                              / peleton (Kode: 108)
+                              / peleton
                             </span>
                           </div>
                         </div>
@@ -548,17 +548,12 @@ export default function Registration() {
                 </div>
               )}
 
-              {/* Peringatan Wajib Kode Unik 108 */}
-              <div className="mb-4 p-3.5 rounded-2xl bg-amber-500/15 border-2 border-amber-400/50 flex items-start gap-3">
-                <AlertCircle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
-                <div className="text-xs text-slate-200 leading-relaxed">
-                  <span className="text-amber-300 font-black uppercase tracking-wide block mb-0.5">
-                    Wajib Menambahkan Kode Unik 108 di Akhir Nominal:
-                  </span>
-                  <p>
-                    Sebelum transfer, pastikan nominal berakhiran <strong>108</strong> (contoh: <strong className="text-amber-300 font-mono font-bold">Rp350.108,-</strong> untuk Gelombang 1 atau <strong className="text-amber-300 font-mono font-bold">Rp400.108,-</strong> untuk Gelombang 2) agar pembayaran terverifikasi otomatis oleh sistem panitia.
-                  </p>
-                </div>
+              {/* Catatan Kode Unik 108 - Ringkas & Padat */}
+              <div className="mb-4 p-3 rounded-2xl bg-amber-500/10 border border-amber-400/30 flex items-center gap-2.5 text-xs text-slate-300">
+                <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />
+                <p className="text-[11px] leading-relaxed">
+                  Nominal sudah termasuk <strong className="text-amber-300 font-bold">kode unik 108</strong> untuk verifikasi sistem otomatis.
+                </p>
               </div>
 
               {/* Bank Account Box */}
@@ -594,10 +589,9 @@ export default function Registration() {
                   </button>
                 </div>
 
-                <div className="space-y-1.5 text-xs text-slate-300">
+                <div className="space-y-1 text-xs text-slate-300">
                   <p>A.n: <strong className="text-white">{PAYMENT.ACCOUNT_NAME}</strong></p>
                   <p>Berita: <span className="text-amber-400 font-mono font-bold">{PAYMENT.TRANSFER_NOTE_FORMAT}</span></p>
-                  <p className="text-[11px] text-amber-300/90 pt-0.5">Nominal Transfer: <strong className="text-white font-mono font-bold">Wajib +108</strong> (Rp350.108 / Rp400.108)</p>
                 </div>
 
                 {copied && (
