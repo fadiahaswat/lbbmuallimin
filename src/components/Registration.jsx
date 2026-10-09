@@ -871,15 +871,7 @@ export default function Registration() {
 
               </div>
 
-              {/* Fasilitas Resmi Peleton Terdaftar */}
-              <div className="mt-4 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-slate-300">
-                <span className="text-xs font-black uppercase tracking-wider text-amber-400 block mb-1">
-                  Fasilitas Resmi Setiap Peleton Terdaftar:
-                </span>
-                <p className="text-[11px] leading-relaxed text-slate-300">
-                  Setiap peleton berhak mendapatkan fasilitas: ruang kelas basecamp, 1 (satu) dus Air Minum Kemasan (botol) per peleton saat registrasi ulang, 3 buah ID Card resmi (1 Official & 2 Pendukung), Nomor Dada Peleton, 2 kantong sampah terpilah (organik & anorganik), akses kantong parkir resmi kontingen, dan E-Sertifikat resmi.
-                </p>
-              </div>
+
             </div>
 
             <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between text-xs text-slate-400">
