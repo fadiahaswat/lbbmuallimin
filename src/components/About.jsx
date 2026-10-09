@@ -50,13 +50,13 @@ export default function About() {
           <h2 className="text-xl sm:text-3xl md:text-5xl font-black text-white uppercase italic tracking-tight mb-4 leading-snug py-1">
             <span className="block">
               Membangun{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-amber-400 to-yellow-400">
+              <span className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-amber-400 to-yellow-400 pr-2 sm:pr-3">
                 Generasi
               </span>
             </span>
             <span className="block mt-0.5 sm:mt-1">
               Unggul Berkarakter{' '}
-              <span className="text-amber-400 font-extrabold">Ksatria</span>
+              <span className="inline-block text-amber-400 font-extrabold pr-1 sm:pr-2">Ksatria</span>
             </span>
           </h2>
 
