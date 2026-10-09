@@ -247,13 +247,6 @@ export default function Navbar({ onOpenMobileMenu }) {
                       ? (currentUser.schoolName || currentUser.name)
                       : (currentUser.name ? currentUser.name.split(' ')[0] : 'Staff')}
                   </div>
-                  <div className="flex items-center gap-1">
-                    <span className={`text-[9px] font-black uppercase tracking-wider leading-none ${
-                      isScrolled ? 'text-amber-600' : 'text-amber-400'
-                    }`}>
-                      {currentUser.role}
-                    </span>
-                  </div>
                 </div>
 
                 <ChevronDown className={`w-3.5 h-3.5 text-slate-400 group-hover:text-white transition-transform duration-200 ml-0.5 shrink-0 ${isUserDropdownOpen ? 'rotate-180' : ''}`} />
