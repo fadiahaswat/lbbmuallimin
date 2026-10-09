@@ -62,14 +62,8 @@ export default function DenahSection() {
               className="relative rounded-2xl bg-white p-2.5 sm:p-6 lg:p-8 shadow-lg border border-slate-200 cursor-pointer group overflow-hidden transition-all hover:border-red-400 hover:shadow-xl"
               title="Klik untuk memperbesar denah layar penuh"
             >
-              {/* Visual badge top right */}
-              <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-10 bg-slate-900/90 text-white text-[11px] sm:text-xs font-bold px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl backdrop-blur-sm border border-slate-700 flex items-center gap-1.5 sm:gap-2 shadow-lg">
-                <Maximize2 className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                <span>Klik untuk Zoom Layar Penuh</span>
-              </div>
-
               {/* Pure White Background wrapper */}
-              <div className="w-full flex items-center justify-center min-h-[260px] sm:min-h-[500px] lg:min-h-[750px] bg-white pt-10 sm:pt-4 pb-2">
+              <div className="w-full flex items-center justify-center min-h-[260px] sm:min-h-[500px] lg:min-h-[750px] bg-white py-2">
                 <img
                   src="/denah-perlombaan.png"
                   alt="Denah Resmi Area Perlombaan LBB Mu'allimin 2027"
