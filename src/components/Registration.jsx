@@ -24,6 +24,7 @@ import {
   Video,
   CreditCard,
   School,
+  GraduationCap,
   Clock
 } from 'lucide-react';
 import { EVENT, COMPETITION, PAYMENT, REGISTRATION, CONTACT, SOCIAL, CLIPBOARD } from '../config.js';
@@ -348,14 +349,6 @@ export default function Registration() {
                     <h3 className="font-black text-lg text-white uppercase italic tracking-tight">
                       Kuota & Personel
                     </h3>
-                    <div className="flex flex-wrap items-center gap-1.5 mt-1">
-                      <span className="text-[10px] font-bold bg-white/10 text-slate-200 px-2 py-0.5 rounded-md border border-white/10">
-                        SD/MI Sederajat
-                      </span>
-                      <span className="text-[10px] font-bold bg-white/10 text-slate-200 px-2 py-0.5 rounded-md border border-white/10">
-                        SMP/MTs Sederajat
-                      </span>
-                    </div>
                   </div>
                 </div>
                 <span className="text-[10px] font-black uppercase tracking-wider bg-red-950/60 text-red-300 px-2.5 py-1 rounded-lg border border-red-500/30 shrink-0 whitespace-nowrap">
@@ -364,18 +357,68 @@ export default function Registration() {
               </div>
 
               <div className="space-y-4">
-                {/* 1. Kuota Sekolah */}
-                <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/5">
-                  <div className="flex items-center gap-2 mb-1">
-                    <CheckCircle2 className="w-4 h-4 text-red-400 shrink-0" />
-                    <span className="text-xs font-bold text-white uppercase tracking-wider">Kuota per Sekolah</span>
+                {/* 1. Kuota Sekolah Berdasarkan Jenjang - UI Menonjol SD & SMP */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-red-400 shrink-0" />
+                      <span className="text-xs font-bold text-white uppercase tracking-wider">Kuota per Sekolah</span>
+                    </div>
+                    <span className="text-[10px] font-extrabold text-amber-300 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
+                      Maks 2 Peleton / Sekolah
+                    </span>
                   </div>
-                  <p className="text-sm font-black text-white ml-6">
-                    {COMPETITION.MAX_PLATOONS_PER_SCHOOL_LABEL}
-                  </p>
-                  <p className="text-[11px] text-slate-400 ml-6 mt-0.5 leading-relaxed">
-                    Tingkat <span className="text-white font-semibold">SD/MI Sederajat</span> & <span className="text-white font-semibold">SMP/MTs Sederajat</span>. Tiap sekolah dapat mengirimkan tim putra, putri, atau campuran.
-                  </p>
+
+                  {/* Dual Prominent Cards: SD/MI & SMP/MTs */}
+                  <div className="grid grid-cols-2 gap-2.5 pt-1">
+                    {/* SD / MI Card */}
+                    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-red-950/60 via-red-900/30 to-slate-950/80 border border-red-500/40 p-3 shadow-lg group/sd hover:border-red-400 transition-all">
+                      <div className="flex items-center gap-2 mb-1.5">
+                        <div className="w-7 h-7 rounded-lg bg-red-600/30 border border-red-500/40 flex items-center justify-center text-red-400 shrink-0">
+                          <School className="w-4 h-4" />
+                        </div>
+                        <div className="min-w-0">
+                          <span className="text-[9px] font-black uppercase tracking-wider text-red-400 block leading-tight">
+                            Jenjang Dasar
+                          </span>
+                          <h4 className="text-xs sm:text-sm font-black text-white leading-tight truncate">
+                            SD / MI
+                          </h4>
+                        </div>
+                      </div>
+                      <p className="text-[11px] text-red-200/90 font-medium leading-snug">
+                        Sederajat se-DIY
+                      </p>
+                      <div className="mt-2 pt-2 border-t border-red-500/20 flex items-center justify-between text-[10px]">
+                        <span className="text-slate-400">Putra/Putri/Campuran</span>
+                        <strong className="text-white font-bold">Max 2</strong>
+                      </div>
+                    </div>
+
+                    {/* SMP / MTs Card */}
+                    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-950/60 via-blue-900/30 to-slate-950/80 border border-blue-500/40 p-3 shadow-lg group/smp hover:border-blue-400 transition-all">
+                      <div className="flex items-center gap-2 mb-1.5">
+                        <div className="w-7 h-7 rounded-lg bg-blue-600/30 border border-blue-500/40 flex items-center justify-center text-blue-400 shrink-0">
+                          <GraduationCap className="w-4 h-4" />
+                        </div>
+                        <div className="min-w-0">
+                          <span className="text-[9px] font-black uppercase tracking-wider text-blue-400 block leading-tight">
+                            Jenjang Menengah
+                          </span>
+                          <h4 className="text-xs sm:text-sm font-black text-white leading-tight truncate">
+                            SMP / MTs
+                          </h4>
+                        </div>
+                      </div>
+                      <p className="text-[11px] text-blue-200/90 font-medium leading-snug">
+                        Sederajat se-DIY
+                      </p>
+                      <div className="mt-2 pt-2 border-t border-blue-500/20 flex items-center justify-between text-[10px]">
+                        <span className="text-slate-400">Putra/Putri/Campuran</span>
+                        <strong className="text-white font-bold">Max 2</strong>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 {/* 2. Komposisi Personil */}
