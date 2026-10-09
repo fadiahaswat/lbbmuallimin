@@ -304,7 +304,10 @@ export function CompetitionProvider({ children }) {
 
       const { teams: sheetTeams, scores: sheetScores, settings: sheetSettings } = res.data;
 
-      if (Array.isArray(sheetTeams) && sheetTeams.length > 0) {
+      if (Array.isArray(sheetTeams)) {
+        if (sheetTeams.length === 0) {
+          setTeams([]);
+        } else {
         setTeams(prev => {
           const map = new Map();
           prev.forEach(t => map.set(t.id, normalizeTeamData(t)));
@@ -437,6 +440,7 @@ export function CompetitionProvider({ children }) {
 
           return Array.from(map.values());
         });
+        }
       }
 
       if (allowScoresSync && Array.isArray(sheetScores) && sheetScores.length > 0) {
