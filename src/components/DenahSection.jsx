@@ -1,115 +1,15 @@
 import React, { useState } from 'react';
 import {
-  Map,
   Maximize2,
   Download,
   X,
   Compass,
-  Store,
-  ShieldCheck,
-  Flag,
-  Car,
-  Tent,
-  Info,
-  ExternalLink,
-  AlertCircle,
-  Trophy,
-  Swords,
-  Timer,
-  Megaphone,
-  ShoppingBag,
   ShieldAlert,
-  Sparkles,
-  Layers
 } from 'lucide-react';
 import { VENUE } from '../config.js';
 
 export default function DenahSection() {
   const [isZoomOpen, setIsZoomOpen] = useState(false);
-
-  const legendItems = [
-    {
-      label: 'Pos SD/MI (Arena 1)',
-      desc: 'Lapangan Basket Outdoor',
-      icon: Swords,
-      borderClass: 'border-red-200 hover:border-red-400',
-      bgClass: 'bg-red-50/50 hover:bg-red-50',
-      iconBg: 'bg-red-100 text-red-700 border-red-200',
-      titleColor: 'text-slate-900 group-hover:text-red-700',
-    },
-    {
-      label: 'Pos SMP/MTs (Arena 2)',
-      desc: 'Pelataran Embung Sedayu',
-      icon: Trophy,
-      borderClass: 'border-blue-200 hover:border-blue-400',
-      bgClass: 'bg-blue-50/50 hover:bg-blue-50',
-      iconBg: 'bg-blue-100 text-blue-700 border-blue-200',
-      titleColor: 'text-slate-900 group-hover:text-blue-700',
-    },
-    {
-      label: 'Daerah Persiapan (DP)',
-      desc: 'Area Warming Up & Baris Peleton',
-      icon: Timer,
-      borderClass: 'border-purple-200 hover:border-purple-400',
-      bgClass: 'bg-purple-50/50 hover:bg-purple-50',
-      iconBg: 'bg-purple-100 text-purple-700 border-purple-200',
-      titleColor: 'text-slate-900 group-hover:text-purple-700',
-    },
-    {
-      label: 'Lapangan Upacara',
-      desc: 'Lapangan Mini Soccer (Apel & Closing)',
-      icon: Flag,
-      borderClass: 'border-emerald-200 hover:border-emerald-400',
-      bgClass: 'bg-emerald-50/50 hover:bg-emerald-50',
-      iconBg: 'bg-emerald-100 text-emerald-700 border-emerald-200',
-      titleColor: 'text-slate-900 group-hover:text-emerald-700',
-    },
-    {
-      label: 'Tempat Transit Peserta',
-      desc: 'Basecamp & Ruang Istirahat Tim',
-      icon: Tent,
-      borderClass: 'border-teal-200 hover:border-teal-400',
-      bgClass: 'bg-teal-50/50 hover:bg-teal-50',
-      iconBg: 'bg-teal-100 text-teal-700 border-teal-200',
-      titleColor: 'text-slate-900 group-hover:text-teal-700',
-    },
-    {
-      label: 'Pusat Informasi & Sekretariat',
-      desc: 'Layanan Panitia & Registrasi Ulang',
-      icon: Megaphone,
-      borderClass: 'border-amber-200 hover:border-amber-400',
-      bgClass: 'bg-amber-50/50 hover:bg-amber-50',
-      iconBg: 'bg-amber-100 text-amber-700 border-amber-200',
-      titleColor: 'text-slate-900 group-hover:text-amber-800',
-    },
-    {
-      label: 'Lapak Kuliner & 1918 Mart',
-      desc: '1918 Foodcourt & Mart (Pusat Kuliner & Tenant)',
-      icon: ShoppingBag,
-      borderClass: 'border-orange-200 hover:border-orange-400',
-      bgClass: 'bg-orange-50/50 hover:bg-orange-50',
-      iconBg: 'bg-orange-100 text-orange-700 border-orange-200',
-      titleColor: 'text-slate-900 group-hover:text-orange-700',
-    },
-    {
-      label: 'Area Parkir Terpadu',
-      desc: 'Parkir Kendaraan Roda 2 & Roda 4',
-      icon: Car,
-      borderClass: 'border-slate-200 hover:border-slate-400',
-      bgClass: 'bg-slate-50 hover:bg-slate-100',
-      iconBg: 'bg-slate-200 text-slate-700 border-slate-300',
-      titleColor: 'text-slate-900 group-hover:text-slate-800',
-    },
-    {
-      label: 'Pos Satpam & Gerbang Utama',
-      desc: 'Akses Masuk & Pengamanan Kampus',
-      icon: ShieldCheck,
-      borderClass: 'border-slate-200 hover:border-slate-400',
-      bgClass: 'bg-slate-50 hover:bg-slate-100',
-      iconBg: 'bg-slate-200 text-slate-700 border-slate-300',
-      titleColor: 'text-slate-900 group-hover:text-slate-800',
-    },
-  ];
 
   return (
     <section id="denah" className="py-16 sm:py-24 lg:py-32 bg-white relative overflow-hidden text-slate-800 font-sans border-t border-slate-200">
@@ -179,50 +79,7 @@ export default function DenahSection() {
               </div>
             </div>
 
-            {/* Legend & Navigation Guide below the giant image - COMPACT & CLEAN */}
-            <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-6 shadow-md relative overflow-hidden">
-              {/* Header Legend Compact */}
-              <div className="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
-                <div className="flex items-center gap-2">
-                  <span className="p-1.5 rounded-lg bg-red-100 text-red-700 border border-red-200">
-                    <Layers className="w-4 h-4" />
-                  </span>
-                  <h4 className="text-xs sm:text-sm font-black text-slate-900 uppercase tracking-wider">
-                    Keterangan & Legenda Area Lomba
-                  </h4>
-                </div>
-              </div>
 
-              {/* Compact 3-Column Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                {legendItems.map((item, idx) => {
-                  const IconComp = item.icon;
-                  return (
-                    <div
-                      key={idx}
-                      className={`relative overflow-hidden rounded-xl border p-3 transition-all duration-300 group cursor-pointer ${item.bgClass} ${item.borderClass}`}
-                    >
-                      <div className="flex items-center gap-3">
-                        {/* Icon Box */}
-                        <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 border shadow-sm transition-all duration-300 ${item.iconBg}`}>
-                          <IconComp className="w-4 h-4" />
-                        </div>
-
-                        {/* Text */}
-                        <div className="flex-1 min-w-0">
-                          <h5 className={`text-xs font-bold transition-colors truncate ${item.titleColor}`}>
-                            {item.label}
-                          </h5>
-                          <p className="text-[11px] text-slate-600 transition-colors truncate leading-tight mt-0.5">
-                            {item.desc}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
 
             {/* Ketertiban Zona & Catatan Tambahan - Alert Banner */}
             <div className="relative overflow-hidden rounded-2xl bg-amber-50 border-2 border-amber-300 p-4 sm:p-5 shadow-sm">
