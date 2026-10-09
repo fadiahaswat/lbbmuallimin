@@ -235,7 +235,6 @@ export default function Navbar({ onOpenMobileMenu }) {
                       }
                     }}
                   />
-                  <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-slate-900" title="Online" />
                 </div>
 
                 {/* Name & Role Badge */}
@@ -275,7 +274,6 @@ export default function Navbar({ onOpenMobileMenu }) {
                           e.target.src = currentUser.googleAvatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.schoolName || currentUser.name)}&background=8B0000&color=fff`;
                         }}
                       />
-                      <span className="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-emerald-500 rounded-full border-2 border-slate-950" title="Online" />
                     </div>
                     <div className="min-w-0 flex-1">
                       <p className="font-black text-sm text-white truncate leading-tight">

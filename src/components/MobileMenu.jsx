@@ -132,7 +132,6 @@ export default function MobileMenu({ isOpen, onClose }) {
                         }
                       }}
                     />
-                    <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 rounded-full border-2 border-slate-950" title="Online" />
                   </div>
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-bold text-white leading-tight truncate">
