@@ -22,6 +22,7 @@ import {
 import { NAVBAR } from '../config.js';
 import { useCompetition } from '../context/CompetitionContext.jsx';
 import logoLbb from '../assets/logo-tonti.png';
+import titleLogo from '../assets/title-logo.png';
 
 export default function Navbar({ onOpenMobileMenu }) {
   const { openModal, currentUser, openAuthModal, logoutUser, setActiveView, getUserAvatar } = useCompetition();
@@ -108,7 +109,7 @@ export default function Navbar({ onOpenMobileMenu }) {
       <div className="container mx-auto px-6 flex justify-between items-center">
         <a
           href="#home"
-          className={`group flex items-center gap-3 focus:outline-none transition-all duration-300 ${
+          className={`group flex items-center gap-2 sm:gap-2.5 focus:outline-none transition-all duration-300 ${
             activeSection === 'home' && !isScrolled
               ? 'opacity-0 -translate-x-4 pointer-events-none'
               : 'opacity-100 translate-x-0 pointer-events-auto hover:scale-105'
@@ -118,9 +119,15 @@ export default function Navbar({ onOpenMobileMenu }) {
           <img
             src={logoLbb}
             alt="Logo LBB Mu'allimin"
-            className="h-11 md:h-13 w-auto drop-shadow-md filter brightness-105"
-            width="52"
-            height="52"
+            className="h-9 sm:h-10 md:h-12 w-auto drop-shadow-md filter brightness-105 shrink-0"
+            width="48"
+            height="48"
+            decoding="async"
+          />
+          <img
+            src={titleLogo}
+            alt="LBB Mu'allimin 2027"
+            className="h-6 sm:h-7 md:h-8 w-auto object-contain drop-shadow-sm select-none"
             decoding="async"
           />
         </a>
