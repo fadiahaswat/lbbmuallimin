@@ -348,6 +348,14 @@ export default function Registration() {
                     <h3 className="font-black text-lg text-white uppercase italic tracking-tight">
                       Kuota & Personel
                     </h3>
+                    <div className="flex flex-wrap items-center gap-1.5 mt-1">
+                      <span className="text-[10px] font-bold bg-white/10 text-slate-200 px-2 py-0.5 rounded-md border border-white/10">
+                        SD/MI Sederajat
+                      </span>
+                      <span className="text-[10px] font-bold bg-white/10 text-slate-200 px-2 py-0.5 rounded-md border border-white/10">
+                        SMP/MTs Sederajat
+                      </span>
+                    </div>
                   </div>
                 </div>
                 <span className="text-[10px] font-black uppercase tracking-wider bg-red-950/60 text-red-300 px-2.5 py-1 rounded-lg border border-red-500/30 shrink-0 whitespace-nowrap">
@@ -366,7 +374,7 @@ export default function Registration() {
                     {COMPETITION.MAX_PLATOONS_PER_SCHOOL_LABEL}
                   </p>
                   <p className="text-[11px] text-slate-400 ml-6 mt-0.5 leading-relaxed">
-                    Tiap sekolah dapat mengirimkan tim putra, putri, atau campuran.
+                    Tingkat <span className="text-white font-semibold">SD/MI Sederajat</span> & <span className="text-white font-semibold">SMP/MTs Sederajat</span>. Tiap sekolah dapat mengirimkan tim putra, putri, atau campuran.
                   </p>
                 </div>
 

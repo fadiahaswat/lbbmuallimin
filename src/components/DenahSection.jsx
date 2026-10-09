@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import {
+  Map,
   Maximize2,
   Download,
   X,
