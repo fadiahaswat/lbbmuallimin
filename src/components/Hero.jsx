@@ -115,7 +115,7 @@ export default function Hero() {
     >
       {/* Atmospheric Background & Lighting (Clean Pure CSS, No Video Play Icons) */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden select-none" aria-hidden="true">
-        <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/45 to-black/95"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/15 to-black/60"></div>
       </div>
 
       <div className="container mx-auto px-4 sm:px-6 relative z-10 flex flex-col justify-center h-full my-auto">
