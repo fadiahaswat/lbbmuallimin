@@ -524,11 +524,8 @@ export default function Registration() {
               <div className="bg-white/[0.03] rounded-2xl p-4 border border-white/10 relative">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 pb-3 border-b border-white/10">
                   <div>
-                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">
                       Rekening Tujuan Transfer
-                    </span>
-                    <span className="text-xs font-semibold text-emerald-400">
-                      Bank Syariah Indonesia (BSI)
                     </span>
                   </div>
                   <img 
