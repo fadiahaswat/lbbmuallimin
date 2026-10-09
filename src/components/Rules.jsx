@@ -346,7 +346,7 @@ export default function Rules() {
                         <ul className="list-[lower-alpha] pl-5 mt-1.5 space-y-1">
                           <li>Official menyerahkan 1 (satu) kartu identitas asli (KTP/SIM perwakilan kontingen) kepada panitia sebagai jaminan ketertiban, kebersihan, dan keutuhan fasilitas ruang basecamp.</li>
                           <li>Official menerima kit fasilitas kontingen: (1) Nomor Dada Peleton resmi; (2) ID Card Resmi (1 Official & 2 Pendukung Resmi); (3) 1 (satu) dus Air Minum Kemasan (botol) per peleton; serta (4) 2 (dua) kantong sampah terpilah (Organik dan Anorganik).</li>
-                          <li>Nomor dada peleton wajib disematkan pada dada sebelah kiri personel Penjuru Depan Tengah / Saf 2 Banjar 1 (S2B1).</li>
+                          <li>Nomor dada peleton wajib disematkan pada dada personel banjar paling kanan saf kedua (Saf 2 Banjar 1 / S2B1).</li>
                           <li>Peleton diarahkan dan dikawal oleh LO pendamping menuju ruang kelas basecamp resmi yang telah ditentukan panitia.</li>
                           <li>Meja registrasi ulang ditutup tepat pukul 09.00 WIB. Peleton yang tidak melakukan daftar ulang hingga batas waktu tersebut dinyatakan mengundurkan diri dan tidak diperkenankan tampil.</li>
                           <li>Regulasi Parkir Kendaraan Kontingen:

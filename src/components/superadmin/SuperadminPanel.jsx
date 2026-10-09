@@ -54,9 +54,10 @@ export default function SuperadminPanel() {
 
   // Form state untuk jadwal dan tanggal pelaksanaan
   const defaultDates = {
-    registrationStart: '2026-10-11T00:00:00+07:00',
-    registrationDeadline: '2026-11-07T23:59:59+07:00',
-    registrationRangeText: '11 Oktober – 7 November 2026',
+    registrationStart: '2026-10-16T00:00:00+07:00',
+    registrationDeadline: '2026-11-12T23:59:59+07:00',
+    registrationRangeText: '16 Oktober – 12 November 2026',
+    verificationRangeText: '13 – 15 November 2026',
     technicalMeetingDate: '9 Januari 2027',
     technicalMeetingTime: '13.00 - 16.30 WIB',
     technicalMeetingFullDate: 'Sabtu, 9 Januari 2027',

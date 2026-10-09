@@ -72,19 +72,19 @@ export const HERO = {
 // ---------------------------------------------------------------------------
 export const EVENT = {
     /** Teks badge di hero */
-    REGISTRATION_BADGE: 'Pendaftaran: 11 Oktober \u2013 7 November 2026',
+    REGISTRATION_BADGE: 'Pendaftaran: 16 Oktober \u2013 12 November 2026',
 
     /** Rentang pendaftaran daring */
-    REGISTRATION_RANGE: '11 Oktober \u2013 7 November 2026',
+    REGISTRATION_RANGE: '16 Oktober \u2013 12 November 2026',
 
-    /** Rentang verifikasi berkas oleh panitia */
-    VERIFICATION_RANGE: '8 \u2013 14 November 2026',
+    /** Rentang verifikasi berkas daring oleh panitia */
+    VERIFICATION_RANGE: '13 \u2013 15 November 2026',
 
     /** Tanggal pembukaan pendaftaran daring */
-    REGISTRATION_START: '2026-10-11T00:00:00+07:00',
+    REGISTRATION_START: '2026-10-16T00:00:00+07:00',
 
     /** Tanggal batas akhir pendaftaran – dipakai countdown timer */
-    REGISTRATION_DEADLINE: '2026-11-07T23:59:59+07:00',
+    REGISTRATION_DEADLINE: '2026-11-12T23:59:59+07:00',
 
     /** TM Juri */
     JURY_TM_DATE: '7 November 2026',
@@ -114,7 +114,7 @@ export const EVENT = {
     /** Uji Coba Lapangan */
     FIELD_TRIAL_DATE: '16 Januari 2027',
     FIELD_TRIAL_FULL_DATE: 'Sabtu, 16 Januari 2027',
-    FIELD_TRIAL_TIME_RANGE: '07.00 WIB \u2013 Selesai',
+    FIELD_TRIAL_TIME_RANGE: '07.00 \u2013 13.00 WIB',
 
     /** Hari & tanggal hari-H */
     COMPETITION_DATE: 'Ahad, 24 Januari 2027',
@@ -237,7 +237,7 @@ export const COMPETITION = {
         ARENA_WIDTH_LABEL: '26 METER',
         ARENA_HEIGHT_LABEL: '15m',
         DURATION_LABEL: 'Durasi Max: 12 Menit',
-        SUBSTITUTION_LABEL: 'Di antara Gerakan No. 22 & 23 (Saat Materi Bubar / Pasca Gerakan No. 19)',
+        SUBSTITUTION_LABEL: 'Di antara Gerakan No. 22 & 23 (Saat Materi Bubar)',
         ARENA_SPEC_LABEL: 'Ukuran Pos 26 \u00D7 15 Meter \u2013 Waktu 12 Menit',
     },
 };
@@ -282,12 +282,12 @@ export const PAYMENT = {
 
     /** Daftar gelombang / tier biaya pendaftaran */
     FEE_TIERS: [
-        { name: 'Gelombang 1 (11 \u2013 24 Okt)', amount: '350.000', amountWithCode: '350.108', label: '11 \u2013 24 Oktober 2026', endDate: '2026-10-24T23:59:59+07:00' },
-        { name: 'Gelombang 2 (25 Okt \u2013 7 Nov)', amount: '400.000', amountWithCode: '400.108', label: '25 Oktober \u2013 7 November 2026', endDate: '2026-11-07T23:59:59+07:00' },
+        { name: 'Gelombang 1 (16 \u2013 29 Okt)', amount: '350.000', amountWithCode: '350.108', label: '16 \u2013 29 Oktober 2026', endDate: '2026-10-29T23:59:59+07:00' },
+        { name: 'Gelombang 2 (30 Okt \u2013 12 Nov)', amount: '400.000', amountWithCode: '400.108', label: '30 Oktober \u2013 12 November 2026', endDate: '2026-11-12T23:59:59+07:00' },
     ],
 
     /** Teks biaya lengkap untuk FAQ */
-    FEE_FULL: 'Rp 350.000,- / peleton (Gelombang 1: 11–24 Oktober 2026) dan Rp 400.000,- / peleton (Gelombang 2: 25 Oktober – 7 November 2026). Setiap pembayaran wajib menggunakan kode unik 108.',
+    FEE_FULL: 'Rp 350.000,- / peleton (Gelombang 1: 16–29 Oktober 2026) dan Rp 400.000,- / peleton (Gelombang 2: 30 Oktober – 12 November 2026). Setiap pembayaran wajib menggunakan kode unik 108.',
 
     /** Keterangan format berita transfer */
     TRANSFER_NOTE_FORMAT: 'NAMA SEKOLAH_JUMLAH PELETON',
@@ -1010,18 +1010,18 @@ export const OFFICIAL_TIMELINE = [
     },
     {
         id: "tl-5",
-        phase: "B. Tahap Pendaftaran Peserta & Penjualan Stand Tenant (11 Oktober - 7 November 2026)",
-        period: "11 - 24 Oktober 2026",
+        phase: "B. Tahap Pendaftaran Peserta & Penjualan Stand Tenant (16 Oktober - 12 November 2026)",
+        period: "16 - 29 Oktober 2026",
         title: "PENDAFTARAN GELOMBANG PERTAMA (GELOMBANG 1)",
-        desc: "Pembukaan pendaftaran online via website resmi untuk SD/MI & SMP/MTs (11 - 24 Oktober 2026) dengan biaya pendaftaran Rp 350.000 per peleton. Verifikasi berkas kontingen (Surat Tugas Kepala Sekolah, NISN siswa, foto resmi, surat sehat). Penjualan stand bazar UMKM / tenant kuliner & merchandise Gelombang 1 (biaya sewa Rp 500.000 per tenant - tenda 2x2m, meja, kursi, listrik). Distribusi proposal sponsor ke instansi perbankan, BUMN/BUMD, dan mitra usaha.",
+        desc: "Pembukaan pendaftaran online via website resmi untuk SD/MI & SMP/MTs (16 - 29 Oktober 2026) dengan biaya pendaftaran Rp 350.000 per peleton (+ kode unik 108). Verifikasi berkas kontingen (Surat Rekomendasi Kepala Sekolah, NISN siswa, pasfoto resmi, surat tugas). Penjualan stand bazar UMKM / tenant kuliner & merchandise Gelombang 1 (biaya sewa Rp 500.000 per tenant - tenda 2x2m, meja, kursi, listrik). Distribusi proposal sponsor ke instansi perbankan, BUMN/BUMD, dan mitra usaha.",
         pic: "Divisi Acara (Pendaftaran), Divisi LO & Humas, Divisi Dana & Kemitraan",
     },
     {
         id: "tl-6",
-        phase: "B. Tahap Pendaftaran Peserta & Penjualan Stand Tenant (11 Oktober - 7 November 2026)",
-        period: "25 Oktober - 7 November 2026",
+        phase: "B. Tahap Pendaftaran Peserta & Penjualan Stand Tenant (16 Oktober - 12 November 2026)",
+        period: "30 Oktober - 12 November 2026",
         title: "PENDAFTARAN GELOMBANG KEDUA (GELOMBANG 2) & FINALISASI KUOTA",
-        desc: "Pembukaan pendaftaran gelombang kedua (25 Oktober - 7 November 2026) dengan biaya pendaftaran Rp 400.000 per peleton hingga kuota pasti terpenuhi: 36 Peleton (18 SD/MI dan 18 SMP/MTs). Pelunasan biaya sewa 20 tenant UMKM (@Rp 500.000 = total Rp 10.000.000) dan penandatanganan tata tertib tenant. Penutupan pendaftaran resmi, verifikasi berkas administrasi peleton, dan pembentukan Grup WhatsApp Resmi Ofisial Peserta dipandu LO.",
+        desc: "Pembukaan pendaftaran gelombang kedua (30 Oktober - 12 November 2026) dengan biaya pendaftaran Rp 400.000 per peleton (+ kode unik 108) hingga kuota pasti terpenuhi: 36 Peleton (18 SD/MI dan 18 SMP/MTs). Periode verifikasi administrasi daring berlangsung 13 - 15 November 2026 oleh tim sekretariat dan panitia pendaftaran. Pelunasan biaya sewa 20 tenant UMKM (@Rp 500.000 = total Rp 10.000.000) dan penandatanganan tata tertib tenant.",
         pic: "Divisi Acara (Pendaftaran), Divisi LO & Humas, Divisi Dana & Kemitraan, Bendahara",
     },
     {

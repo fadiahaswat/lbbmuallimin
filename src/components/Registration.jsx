@@ -223,7 +223,7 @@ export default function Registration() {
                 <span className="text-[11px] font-black uppercase tracking-wider">Pendaftaran 100% Online:</span>
               </div>
               <p className="text-xs text-slate-300 leading-relaxed">
-                Pendaftaran akun dan unggah berkas dilakukan daring melalui portal. Berkas fisik asli (Formulir A, B, C berstempel resmi) wajib diserahkan saat <strong>Technical Meeting</strong> untuk verifikasi faktual.
+                Pendaftaran akun dan unggah berkas dilakukan daring melalui portal. Berkas fisik asli (Surat Tugas/Rekomendasi Kepala Sekolah berstempel basah dan Pakta Integritas bermaterai Rp 10.000) wajib diserahkan saat <strong>Technical Meeting</strong> untuk verifikasi faktual.
               </p>
             </div>
           </div>
@@ -674,10 +674,10 @@ export default function Registration() {
                   <ShieldCheck className="w-4 h-4 text-red-400" />
                 </div>
                 <h4 className="font-black text-white text-xs sm:text-sm mb-1 uppercase tracking-tight">
-                  Validasi & Dashboard
+                  Konfirmasi & Aktivasi
                 </h4>
                 <p className="text-[11px] text-slate-300 leading-relaxed">
-                  Terima Kode Registrasi resmi, panitia memverifikasi dalam 1×24 jam, dan pantau status via <strong>Dashboard Tim</strong>.
+                  Tim menerima Kode Registrasi unik resmi. Panitia memverifikasi dalam 1×24 jam. Setelah diverifikasi, tim dapat login ke <strong>Dashboard Peserta</strong> untuk melengkapi susunan identitas peleton.
                 </p>
               </div>
             </div>
@@ -885,7 +885,7 @@ export default function Registration() {
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0 mt-1.5"></span>
-                  <span><strong className="text-white">Perubahan Data Personil:</strong> Hanya dilayani saat forum Technical Meeting dengan bukti resmi.</span>
+                  <span><strong className="text-white">Perubahan Data Personel:</strong> Diperbolehkan sampai sebelum Technical Meeting (TM), wajib dilaporkan dan disesuaikan dengan Surat Tugas/Rekomendasi resmi Kepala Sekolah.</span>
                 </li>
               </ul>
             </div>
