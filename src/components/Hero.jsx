@@ -4,7 +4,7 @@ import { HERO, EVENT, VENUE } from '../config.js';
 import { useCompetition } from '../context/CompetitionContext.jsx';
 import logoImg from '../assets/logo-tonti.png';
 import logoTonti from '../assets/logo-tonti-muallimin.png';
-import logoMuallimin from '../assets/logo-muallimin.png';
+import logoMuallimin from '../assets/logo-muallimin-white.png';
 
 const CADET_FIGURES = [
   {
@@ -151,7 +151,7 @@ export default function Hero() {
                 <img
                   src={logoMuallimin}
                   alt="Logo Madrasah Mu'allimin Muhammadiyah Yogyakarta"
-                  className="h-10 sm:h-12 md:h-14 w-auto object-contain brightness-0 invert"
+                  className="h-10 sm:h-12 md:h-14 w-auto object-contain"
                   loading="eager"
                 />
               </div>
@@ -163,7 +163,7 @@ export default function Hero() {
               return (
                 <div
                   key={scheduleIndex}
-                  className="relative inline-flex items-center gap-2.5 px-4 py-1.5 bg-black/40 border border-white/15 rounded-full shadow-sm cursor-default overflow-hidden animate-fade"
+                  className="relative inline-flex items-center gap-2.5 px-4 py-1.5 bg-black/40 border border-white/15 rounded-full shadow-sm cursor-default animate-fade"
                 >
                   <span className="relative flex h-2 w-2">
                     <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${currentSchedule.pingColor} opacity-75`}></span>

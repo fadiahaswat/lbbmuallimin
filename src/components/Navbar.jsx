@@ -111,15 +111,15 @@ export default function Navbar({ onOpenMobileMenu }) {
           href="#home"
           className={`group flex items-center gap-2 sm:gap-2.5 focus:outline-none transition-all duration-300 ${
             activeSection === 'home' && !isScrolled
-              ? 'opacity-0 -translate-x-4 pointer-events-none'
-              : 'opacity-100 translate-x-0 pointer-events-auto hover:scale-105'
+              ? 'opacity-0 -translate-x-4 pointer-events-none invisible'
+              : 'opacity-100 translate-x-0 pointer-events-auto visible hover:scale-105'
           }`}
           aria-label="Kembali ke Beranda"
         >
           <img
             src={logoLbb}
             alt="Logo LBB Mu'allimin"
-            className="h-11 md:h-13 w-auto drop-shadow-md filter brightness-105 shrink-0"
+            className="h-11 md:h-13 w-auto shrink-0"
             width="52"
             height="52"
             decoding="async"
@@ -127,7 +127,7 @@ export default function Navbar({ onOpenMobileMenu }) {
           <img
             src={titleLogo}
             alt="LBB Mu'allimin 2027"
-            className="h-7 sm:h-8 md:h-9 w-auto object-contain drop-shadow-sm select-none"
+            className="h-7 sm:h-8 md:h-9 w-auto object-contain select-none"
             decoding="async"
           />
         </a>
