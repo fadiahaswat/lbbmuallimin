@@ -65,16 +65,7 @@ export default function About() {
             </span>
             <span className="block sm:whitespace-nowrap mt-1">
               Berkarakter{' '}
-              <span className="relative inline-block pr-2 pb-1">
-                <span className="relative z-10 text-amber-400 font-extrabold">Ksatria</span>
-                <svg
-                  className="absolute w-full h-3 -bottom-1 left-0 text-amber-400 -z-0"
-                  viewBox="0 0 100 10"
-                  preserveAspectRatio="none"
-                >
-                  <path d="M0 5 Q 50 10 100 5" stroke="currentColor" strokeWidth="8" fill="none" opacity="0.7" />
-                </svg>
-              </span>
+              <span className="text-amber-400 font-extrabold">Ksatria</span>
             </span>
           </h2>
 
