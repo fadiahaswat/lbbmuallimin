@@ -119,15 +119,15 @@ export default function Navbar({ onOpenMobileMenu }) {
           <img
             src={logoLbb}
             alt="Logo LBB Mu'allimin"
-            className="h-9 sm:h-10 md:h-12 w-auto drop-shadow-md filter brightness-105 shrink-0"
-            width="48"
-            height="48"
+            className="h-11 md:h-13 w-auto drop-shadow-md filter brightness-105 shrink-0"
+            width="52"
+            height="52"
             decoding="async"
           />
           <img
             src={titleLogo}
             alt="LBB Mu'allimin 2027"
-            className="h-6 sm:h-7 md:h-8 w-auto object-contain drop-shadow-sm select-none"
+            className="h-7 sm:h-8 md:h-9 w-auto object-contain drop-shadow-sm select-none"
             decoding="async"
           />
         </a>

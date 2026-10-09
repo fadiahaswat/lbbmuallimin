@@ -111,7 +111,7 @@ export default function Hero() {
   return (
     <section
       id="home"
-      className="relative w-full min-h-screen supports-[height:100svh]:min-h-[100svh] flex flex-col items-center justify-center bg-gradient-to-b from-[#3a0505] via-[#6d0a0a] to-[#200202] text-white overflow-hidden isolate pt-24 pb-16"
+      className="relative w-full min-h-screen supports-[height:100svh]:min-h-[100svh] flex flex-col items-center justify-center bg-gradient-to-b from-[#3a0505] via-[#6d0a0a] to-[#200202] text-white pt-24 pb-16"
     >
       {/* Atmospheric Background & Lighting (Clean Pure CSS, No Video Play Icons) */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden select-none" aria-hidden="true">
@@ -131,7 +131,7 @@ export default function Hero() {
                 <img
                   src={logoImg}
                   alt="Logo Resmi LBB Mu'allimin 2027"
-                  className="relative h-20 sm:h-24 md:h-28 w-auto object-contain drop-shadow-[0_10px_20px_rgba(0,0,0,0.65)] filter brightness-110"
+                  className="relative h-20 sm:h-24 md:h-28 w-auto object-contain"
                   width="140"
                   height="140"
                   loading="eager"
@@ -146,7 +146,7 @@ export default function Hero() {
                 <img
                   src={logoTonti}
                   alt="Logo Korps Tonti Mu'allimin"
-                  className="h-12 md:h-14 w-auto object-contain drop-shadow-[0_6px_16px_rgba(0,0,0,0.5)]"
+                  className="h-12 md:h-14 w-auto object-contain"
                   loading="eager"
                 />
               </div>
@@ -156,7 +156,7 @@ export default function Hero() {
                 <img
                   src={logoMuallimin}
                   alt="Logo Madrasah Mu'allimin Muhammadiyah Yogyakarta"
-                  className="h-10 sm:h-12 md:h-14 w-auto object-contain filter brightness-0 invert drop-shadow-[0_4px_12px_rgba(255,255,255,0.25)]"
+                  className="h-10 sm:h-12 md:h-14 w-auto object-contain brightness-0 invert"
                   loading="eager"
                 />
               </div>
@@ -168,7 +168,7 @@ export default function Hero() {
               return (
                 <div
                   key={scheduleIndex}
-                  className="relative inline-flex items-center gap-2.5 px-4 py-1.5 glass glass-shimmer rounded-full shadow-sm cursor-default overflow-hidden animate-fade"
+                  className="relative inline-flex items-center gap-2.5 px-4 py-1.5 bg-black/40 border border-white/15 rounded-full shadow-sm cursor-default overflow-hidden animate-fade"
                 >
                   <span className="relative flex h-2 w-2">
                     <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${currentSchedule.pingColor} opacity-75`}></span>
@@ -186,7 +186,7 @@ export default function Hero() {
             {/* Main Title - Original LBB Mu'allimin Styling */}
             <div className="space-y-1">
               <h1 className="font-black uppercase tracking-tight flex flex-col select-none">
-                <span className="block text-3xl sm:text-5xl md:text-6xl font-black text-white drop-shadow-md">
+                <span className="block text-3xl sm:text-5xl md:text-6xl font-black text-white">
                   {HERO.TITLE_LINE1}
                 </span>
                 <span className="block text-4xl sm:text-6xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-amber-400 to-yellow-500">
@@ -216,7 +216,7 @@ export default function Hero() {
                 href="https://docs.google.com/document/d/1BN1RuwDcEiuibVvoBG4-5R7Rq8neV5st3nAZoISVQi0/edit?usp=sharing"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group px-8 py-3.5 glass hover:bg-white/10 text-white hover:text-yellow-400 hover:border-yellow-400/30 rounded-xl shadow-lg shadow-black/20 hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2 text-xs sm:text-sm font-bold tracking-widest uppercase cursor-pointer active:scale-95"
+                className="group px-8 py-3.5 bg-black/35 hover:bg-white/10 border border-white/20 hover:border-yellow-400/40 text-white hover:text-yellow-400 rounded-xl shadow-lg shadow-black/20 hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2 text-xs sm:text-sm font-bold tracking-widest uppercase cursor-pointer active:scale-95"
               >
                 <span>Juknis Lapangan</span>
                 <ExternalLink className="w-4 h-4 transition-transform group-hover:translate-x-0.5 text-yellow-400" />
