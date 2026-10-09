@@ -216,21 +216,8 @@ export default function Registration() {
 
               </div>
             </div>
-
-            {/* Space-Efficient Notice Bar */}
-            <div className="bg-slate-950/80 border-t border-white/10 px-6 py-3.5 flex flex-col sm:flex-row items-center gap-3 text-left">
-              <div className="flex items-center gap-2 text-amber-400 shrink-0">
-                <MonitorSmartphone className="w-4 h-4" />
-                <span className="text-[11px] font-black uppercase tracking-wider">Pendaftaran 100% Online:</span>
-              </div>
-              <p className="text-xs text-slate-300 leading-relaxed">
-                Pendaftaran akun dan unggah berkas dilakukan daring melalui portal. Berkas fisik asli (Surat Tugas/Rekomendasi Kepala Sekolah berstempel basah dan Pakta Integritas bermaterai Rp 10.000) wajib diserahkan saat <strong>Technical Meeting</strong> untuk verifikasi faktual.
-              </p>
-            </div>
           </div>
-        </div>
-
-        {/* ========================================================
+        </div>        {/* ========================================================
             3 OVERVIEW CARDS (TIMELINE, KUOTA & PERSONEL, BIAYA)
             ======================================================== */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-16 lg:mb-20 items-stretch">
