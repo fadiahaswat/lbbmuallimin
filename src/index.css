@@ -141,7 +141,6 @@ video::-webkit-media-controls-panel {
   background: radial-gradient(circle at 50% 50%, rgba(245, 158, 11, 0.28) 0%, rgba(239, 68, 68, 0.18) 36%, rgba(185, 28, 28, 0.08) 58%, transparent 78%);
   pointer-events: none;
   animation: heroCahayaNapas 9s ease-in-out infinite;
-  filter: blur(1px);
 }
 
 .hero-foto-cahaya:after {

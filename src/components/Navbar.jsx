@@ -574,10 +574,10 @@ export default function Navbar({ onOpenMobileMenu }) {
         <button
           id="mobile-menu-btn"
           onClick={onOpenMobileMenu}
-          className={`lg:hidden p-2.5 rounded-xl backdrop-blur-md border transition-all active:scale-95 ${
+          className={`lg:hidden p-2.5 rounded-xl border transition-all active:scale-95 ${
             isScrolled
               ? 'bg-slate-100 border-slate-200 text-slate-900 hover:bg-slate-200 hover:text-lbb-red'
-              : 'glass text-white hover:bg-white/12 hover:text-lbb-gold'
+              : 'bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-yellow-400'
           }`}
           aria-label="Buka Menu"
         >

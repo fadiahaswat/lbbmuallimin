@@ -111,7 +111,8 @@ export default function Hero() {
   return (
     <section
       id="home"
-      className="relative w-full min-h-screen supports-[height:100svh]:min-h-[100svh] flex flex-col items-center justify-center bg-gradient-to-b from-[#2e0404] via-[#630909] to-[#1c0202] text-white pt-24 pb-16"
+      style={{ backgroundColor: '#2e0404' }}
+      className="relative w-full min-h-screen supports-[height:100svh]:min-h-[100svh] flex flex-col items-center justify-center bg-[#2e0404] bg-gradient-to-b from-[#2e0404] via-[#630909] to-[#1c0202] text-white pt-24 pb-16"
     >
       <div className="container mx-auto px-4 sm:px-6 relative z-10 flex flex-col justify-center h-full my-auto">
         <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-center w-full max-w-7xl mx-auto">
@@ -122,7 +123,7 @@ export default function Hero() {
             {/* Logo Group in Hero Section: Logo LBB - Garis - Logo Tonti Mu'allimin - Logo Mu'allimin */}
             <div className="flex items-center gap-3.5 sm:gap-6">
               {/* Logo Utama LBB Mu'allimin 2027 */}
-              <div className="relative group transition-transform duration-300 hover:scale-105">
+              <div className="relative group lg:transition-transform lg:duration-300 lg:hover:scale-105">
                 <img
                   src={logoImg}
                   alt="Logo Resmi LBB Mu'allimin 2027"
@@ -137,7 +138,7 @@ export default function Hero() {
               <div className="h-12 sm:h-16 w-px bg-gradient-to-b from-transparent via-white/30 to-transparent" />
 
               {/* Logo Korps Tonti Mu'allimin (sembunyi di mobile, tampil di tablet/desktop) */}
-              <div className="hidden sm:block relative group transition-transform duration-300 hover:scale-105">
+              <div className="hidden sm:block relative group lg:transition-transform lg:duration-300 lg:hover:scale-105">
                 <img
                   src={logoTonti}
                   alt="Logo Korps Tonti Mu'allimin"
@@ -147,7 +148,7 @@ export default function Hero() {
               </div>
 
               {/* Logo Madrasah Mu'allimin */}
-              <div className="relative group transition-transform duration-300 hover:scale-105 opacity-90 hover:opacity-100">
+              <div className="relative group lg:transition-transform lg:duration-300 lg:hover:scale-105 opacity-90 lg:hover:opacity-100">
                 <img
                   src={logoMuallimin}
                   alt="Logo Madrasah Mu'allimin Muhammadiyah Yogyakarta"
@@ -162,12 +163,10 @@ export default function Hero() {
               const currentSchedule = schedules[scheduleIndex];
               return (
                 <div
-                  key={scheduleIndex}
-                  className="relative inline-flex items-center gap-2.5 px-4 py-1.5 bg-black/40 border border-white/15 rounded-full shadow-sm cursor-default animate-fade"
+                  className="relative inline-flex items-center gap-2.5 px-4 py-1.5 bg-black/40 border border-white/15 rounded-full shadow-sm cursor-default"
                 >
                   <span className="relative flex h-2 w-2">
-                    <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${currentSchedule.pingColor} opacity-75`}></span>
-                    <span className={`relative inline-flex rounded-full h-2 w-2 ${currentSchedule.dotColor}`}></span>
+                    <span className={`inline-flex rounded-full h-2 w-2 ${currentSchedule.dotColor} shadow-[0_0_8px_currentColor]`}></span>
                   </span>
                   <span className="text-[10px] sm:text-xs font-bold tracking-wider uppercase text-slate-200">
                     <span className="text-white font-bold mr-1">{currentSchedule.label}:</span>
