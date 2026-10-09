@@ -21,7 +21,7 @@ import SimpaskorSidebarLayout from '../navigation/SimpaskorSidebarLayout.jsx';
 export default function TataTertibView() {
   const [searchPenalty, setSearchPenalty] = useState('');
 
-  // Sanksi & Penalti Resmi LBB Mu'allimin 2027 (Bab G Juknis Lapangan & Pasal 6, 7, 8, 9, 14 Tata Tertib)
+  // Sanksi & Penalti Resmi LBB Mu'allimin 2027 (Bab H Juknis Lapangan & Pasal 6, 7, 8, 9, 14 Tata Tertib)
   const penaltiesList = [
     {
       violation: 'Tidak Mengikuti Upacara Pembukaan (Peleton Urutan 6 s.d. 10)',
@@ -184,7 +184,7 @@ export default function TataTertibView() {
             <div className="space-y-2">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/20 border border-red-400/30 text-red-300 text-xs font-black uppercase tracking-wider">
                 <ShieldAlert className="w-3.5 h-3.5" />
-                <span>15 Pasal Resmi & Matriks Penalti Bab G Juknis</span>
+                <span>15 Pasal Resmi & Matriks Penalti Bab H Juknis</span>
               </div>
               <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-white">
                 Tata Tertib & Matriks Sanksi Penalti
@@ -312,7 +312,7 @@ export default function TataTertibView() {
             <div>
               <h3 className="text-base font-black text-slate-900 uppercase flex items-center gap-2">
                 <Scale className="w-4 h-4 text-red-600" />
-                <span>Matriks Pengurangan Nilai Penalti Resmi (Bab G Juknis & Tatib)</span>
+                <span>Matriks Pengurangan Nilai Penalti Resmi (Bab H Juknis & Tatib)</span>
               </h3>
               <p className="text-xs text-slate-500">Pengurangan poin resmi dewan juri dan panitera yang dihitung langsung pada rekapitulasi nilai akhir</p>
             </div>

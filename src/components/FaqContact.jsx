@@ -63,7 +63,7 @@ const FAQ_DATA = [
     category: 'Biaya',
     icon: 'CreditCard',
     q: 'Berapa besaran biaya pendaftaran dan bagaimana skema periodenya?',
-    a: `Biaya pendaftaran dibagi menjadi 2 gelombang: Gelombang 1 (16 – 29 Oktober 2026) sebesar Rp350.000,- per peleton; Gelombang 2 (30 Oktober – 12 November 2026) sebesar Rp400.000,- per peleton. Setiap pembayaran wajib menambahkan kode unik 108 pada nominal transfer (contoh: 1 peleton Gelombang 1 mentransfer Rp350.108,-; 2 peleton Gelombang 1 mentransfer Rp700.108,-; 1 peleton Gelombang 2 mentransfer Rp400.108,-; 2 peleton Gelombang 2 mentransfer Rp800.108,-).`,
+    a: `Biaya pendaftaran dibagi menjadi 2 gelombang: Gelombang 1 (19 Oktober – 8 November 2026) sebesar Rp350.000,- per peleton; Gelombang 2 (9 November – 29 November 2026/Kuota Penuh) sebesar Rp400.000,- per peleton. Setiap pembayaran wajib menambahkan kode unik 108 pada nominal transfer (contoh: 1 peleton Gelombang 1 mentransfer Rp350.108,-; 2 peleton Gelombang 1 mentransfer Rp700.108,-; 1 peleton Gelombang 2 mentransfer Rp400.108,-; 2 peleton Gelombang 2 mentransfer Rp800.108,-).`,
   },
   {
     id: 7,

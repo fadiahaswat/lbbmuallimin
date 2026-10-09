@@ -15,10 +15,10 @@ export const INITIAL_SETTINGS = {
   quotaSMP: 18,
   currentWave: 1, // Gelombang 1
   eventDates: {
-    registrationStart: '2026-10-16T00:00:00+07:00',
-    registrationDeadline: '2026-11-12T23:59:59+07:00',
-    registrationRangeText: '16 Oktober – 12 November 2026',
-    verificationRangeText: '13 – 15 November 2026',
+    registrationStart: '2026-10-19T00:00:00+07:00',
+    registrationDeadline: '2026-11-29T23:59:59+07:00',
+    registrationRangeText: '19 Oktober – 29 November 2026',
+    verificationRangeText: '19 Oktober – 29 November 2026',
     technicalMeetingDate: '9 Januari 2027',
     technicalMeetingTime: '13.00 - 16.30 WIB',
     technicalMeetingFullDate: 'Sabtu, 9 Januari 2027',

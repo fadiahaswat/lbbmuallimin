@@ -72,19 +72,19 @@ export const HERO = {
 // ---------------------------------------------------------------------------
 export const EVENT = {
     /** Teks badge di hero */
-    REGISTRATION_BADGE: 'Pendaftaran: 16 Oktober \u2013 12 November 2026',
+    REGISTRATION_BADGE: 'Pendaftaran: 19 Oktober – 29 November 2026',
 
     /** Rentang pendaftaran daring */
-    REGISTRATION_RANGE: '16 Oktober \u2013 12 November 2026',
+    REGISTRATION_RANGE: '19 Oktober – 29 November 2026',
 
     /** Rentang verifikasi berkas daring oleh panitia */
-    VERIFICATION_RANGE: '13 \u2013 15 November 2026',
+    VERIFICATION_RANGE: '19 Oktober – 29 November 2026',
 
     /** Tanggal pembukaan pendaftaran daring */
-    REGISTRATION_START: '2026-10-16T00:00:00+07:00',
+    REGISTRATION_START: '2026-10-19T00:00:00+07:00',
 
     /** Tanggal batas akhir pendaftaran – dipakai countdown timer */
-    REGISTRATION_DEADLINE: '2026-11-12T23:59:59+07:00',
+    REGISTRATION_DEADLINE: '2026-11-29T23:59:59+07:00',
 
     /** TM Juri */
     JURY_TM_DATE: '7 November 2026',
@@ -282,12 +282,12 @@ export const PAYMENT = {
 
     /** Daftar gelombang / tier biaya pendaftaran */
     FEE_TIERS: [
-        { name: 'Gelombang 1 (16 \u2013 29 Okt)', amount: '350.000', amountWithCode: '350.108', label: '16 \u2013 29 Oktober 2026', endDate: '2026-10-29T23:59:59+07:00' },
-        { name: 'Gelombang 2 (30 Okt \u2013 12 Nov)', amount: '400.000', amountWithCode: '400.108', label: '30 Oktober \u2013 12 November 2026', endDate: '2026-11-12T23:59:59+07:00' },
+        { name: 'Gelombang 1 (19 Okt – 8 Nov)', amount: '350.000', amountWithCode: '350.108', label: '19 Oktober – 8 November 2026', endDate: '2026-11-08T23:59:59+07:00' },
+        { name: 'Gelombang 2 (9 – 29 Nov)', amount: '400.000', amountWithCode: '400.108', label: '9 November – 29 November 2026/Kuota Penuh', endDate: '2026-11-29T23:59:59+07:00' },
     ],
 
     /** Teks biaya lengkap untuk FAQ */
-    FEE_FULL: 'Rp 350.000,- / peleton (Gelombang 1: 16–29 Oktober 2026) dan Rp 400.000,- / peleton (Gelombang 2: 30 Oktober – 12 November 2026). Setiap pembayaran wajib menggunakan kode unik 108.',
+    FEE_FULL: 'Rp 350.000,- / peleton (Gelombang 1: 19 Oktober – 8 November 2026) dan Rp 400.000,- / peleton (Gelombang 2: 9 November – 29 November 2026/Kuota Penuh). Setiap pembayaran wajib menggunakan kode unik 108.',
 
     /** Keterangan format berita transfer */
     TRANSFER_NOTE_FORMAT: 'NAMA SEKOLAH_JUMLAH PELETON',
@@ -1010,18 +1010,18 @@ export const OFFICIAL_TIMELINE = [
     },
     {
         id: "tl-5",
-        phase: "B. Tahap Pendaftaran Peserta & Penjualan Stand Tenant (16 Oktober - 12 November 2026)",
-        period: "16 - 29 Oktober 2026",
+        phase: "B. Tahap Pendaftaran Peserta & Penjualan Stand Tenant (19 Oktober - 29 November 2026)",
+        period: "19 Oktober - 8 November 2026",
         title: "PENDAFTARAN GELOMBANG PERTAMA (GELOMBANG 1)",
-        desc: "Pembukaan pendaftaran online via website resmi untuk SD/MI & SMP/MTs (16 - 29 Oktober 2026) dengan biaya pendaftaran Rp 350.000 per peleton (+ kode unik 108). Verifikasi berkas kontingen (Surat Rekomendasi Kepala Sekolah, NISN siswa, pasfoto resmi, surat tugas). Penjualan stand bazar UMKM / tenant kuliner & merchandise Gelombang 1 (biaya sewa Rp 500.000 per tenant - tenda 2x2m, meja, kursi, listrik). Distribusi proposal sponsor ke instansi perbankan, BUMN/BUMD, dan mitra usaha.",
+        desc: "Pembukaan pendaftaran online via website resmi untuk SD/MI & SMP/MTs (19 Oktober - 8 November 2026) dengan biaya pendaftaran Rp 350.000 per peleton (+ kode unik 108). Verifikasi berkas kontingen (Surat Rekomendasi Kepala Sekolah, NISN siswa, pasfoto resmi, surat tugas). Penjualan stand bazar UMKM / tenant kuliner & merchandise Gelombang 1 (biaya sewa Rp 500.000 per tenant - tenda 2x2m, meja, kursi, listrik). Distribusi proposal sponsor ke instansi perbankan, BUMN/BUMD, dan mitra usaha.",
         pic: "Divisi Acara (Pendaftaran), Divisi LO & Humas, Divisi Dana & Kemitraan",
     },
     {
         id: "tl-6",
-        phase: "B. Tahap Pendaftaran Peserta & Penjualan Stand Tenant (16 Oktober - 12 November 2026)",
-        period: "30 Oktober - 12 November 2026",
+        phase: "B. Tahap Pendaftaran Peserta & Penjualan Stand Tenant (19 Oktober - 29 November 2026)",
+        period: "9 - 29 November 2026",
         title: "PENDAFTARAN GELOMBANG KEDUA (GELOMBANG 2) & FINALISASI KUOTA",
-        desc: "Pembukaan pendaftaran gelombang kedua (30 Oktober - 12 November 2026) dengan biaya pendaftaran Rp 400.000 per peleton (+ kode unik 108) hingga kuota pasti terpenuhi: 36 Peleton (18 SD/MI dan 18 SMP/MTs). Periode verifikasi administrasi daring berlangsung 13 - 15 November 2026 oleh tim sekretariat dan panitia pendaftaran. Pelunasan biaya sewa 20 tenant UMKM (@Rp 500.000 = total Rp 10.000.000) dan penandatanganan tata tertib tenant.",
+        desc: "Pembukaan pendaftaran gelombang kedua (9 - 29 November 2026/Kuota Penuh) dengan biaya pendaftaran Rp 400.000 per peleton (+ kode unik 108) hingga kuota pasti terpenuhi: 36 Peleton (18 SD/MI dan 18 SMP/MTs). Verifikasi berkas daring dilaksanakan oleh tim sekretariat dan panitia pendaftaran. Pelunasan biaya sewa 20 tenant UMKM (@Rp 500.000 = total Rp 10.000.000) dan penandatanganan tata tertib tenant.",
         pic: "Divisi Acara (Pendaftaran), Divisi LO & Humas, Divisi Dana & Kemitraan, Bendahara",
     },
     {
