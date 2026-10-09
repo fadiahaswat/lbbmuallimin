@@ -111,13 +111,8 @@ export default function Hero() {
   return (
     <section
       id="home"
-      className="relative w-full min-h-screen supports-[height:100svh]:min-h-[100svh] flex flex-col items-center justify-center bg-gradient-to-b from-[#3a0505] via-[#6d0a0a] to-[#200202] text-white pt-24 pb-16"
+      className="relative w-full min-h-screen supports-[height:100svh]:min-h-[100svh] flex flex-col items-center justify-center bg-gradient-to-b from-[#2e0404] via-[#630909] to-[#1c0202] text-white pt-24 pb-16"
     >
-      {/* Atmospheric Background & Lighting (Clean Pure CSS, No Video Play Icons) */}
-      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden select-none" aria-hidden="true">
-        <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/45 to-black/95"></div>
-      </div>
-
       <div className="container mx-auto px-4 sm:px-6 relative z-10 flex flex-col justify-center h-full my-auto">
         <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-center w-full max-w-7xl mx-auto">
 
@@ -189,7 +184,7 @@ export default function Hero() {
                 <span className="block text-3xl sm:text-5xl md:text-6xl font-black text-white">
                   {HERO.TITLE_LINE1}
                 </span>
-                <span className="block text-4xl sm:text-6xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-amber-400 to-yellow-500">
+                <span className="block text-4xl sm:text-6xl md:text-7xl font-black text-yellow-400">
                   {HERO.TITLE_LINE2}
                 </span>
               </h1>
