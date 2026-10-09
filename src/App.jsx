@@ -12,7 +12,6 @@ import Rules from './components/Rules.jsx';
 import MateriLomba from './components/MateriLomba.jsx';
 import Prizes from './components/Prizes.jsx';
 import TataTertib from './components/TataTertib.jsx';
-import Downloads from './components/Downloads.jsx';
 import FaqContact from './components/FaqContact.jsx';
 import Footer from './components/Footer.jsx';
 import FabWhatsApp from './components/FabWhatsApp.jsx';
@@ -106,7 +105,6 @@ function MainApp() {
             <MateriLomba />
             <Prizes />
             <TataTertib />
-            <Downloads />
             <FaqContact />
           </main>
 

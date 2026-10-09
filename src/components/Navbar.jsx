@@ -148,7 +148,6 @@ export default function Navbar({ onOpenMobileMenu }) {
               { href: '#registration', label: 'Pendaftaran' },
               { href: '#rules', label: 'Juknis' },
               { href: '#prizes', label: 'Hadiah' },
-              { href: '#downloads', label: 'Unduhan' },
               { href: '#contact', label: 'Kontak' },
             ].map(link => {
               const targetId = link.href.replace('#', '');

@@ -72,7 +72,6 @@ export default function MobileMenu({ isOpen, onClose }) {
     { href: '#registration', label: 'Pendaftaran', icon: ClipboardList },
     { href: '#rules', label: 'Juknis & Materi', icon: BookOpen },
     { href: '#prizes', label: 'Kategori & Hadiah', icon: Trophy },
-    { href: '#downloads', label: 'Unduhan', icon: Download },
     { href: '#contact', label: 'Kontak', icon: Phone },
   ];
 
