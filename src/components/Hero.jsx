@@ -189,7 +189,7 @@ export default function Hero() {
                 <span className="block text-3xl sm:text-5xl md:text-6xl font-black text-white drop-shadow-md">
                   {HERO.TITLE_LINE1}
                 </span>
-                <span className="block text-4xl sm:text-6xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-amber-400 to-yellow-500 drop-shadow-lg">
+                <span className="block text-4xl sm:text-6xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-amber-400 to-yellow-500">
                   {HERO.TITLE_LINE2}
                 </span>
               </h1>
