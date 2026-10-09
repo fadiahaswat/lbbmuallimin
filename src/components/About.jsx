@@ -47,13 +47,15 @@ export default function About() {
             <span className="truncate sm:whitespace-normal">Dasar Pelaksanaan: QS. As-Saff Ayat 4</span>
           </div>
 
-          <h2 className="text-2xl sm:text-4xl md:text-5xl font-black text-white uppercase italic tracking-tighter mb-4 leading-tight py-1">
-            <span>Membangun </span>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-amber-400 to-yellow-400">
-              Generasi Unggul
+          <h2 className="text-xl sm:text-3xl md:text-5xl font-black text-white uppercase italic tracking-tight mb-4 leading-snug py-1">
+            <span className="block">
+              Membangun{' '}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-amber-400 to-yellow-400">
+                Generasi
+              </span>
             </span>
-            <span className="block sm:inline sm:ml-2 mt-1 sm:mt-0">
-              Berkarakter{' '}
+            <span className="block mt-0.5 sm:mt-1">
+              Unggul Berkarakter{' '}
               <span className="text-amber-400 font-extrabold">Ksatria</span>
             </span>
           </h2>
