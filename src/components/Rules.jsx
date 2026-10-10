@@ -24,7 +24,7 @@ import {
 } from 'lucide-react';
 import { COMPETITION, EVENT, VENUE, VENUE_INDUK, PENALTIES } from '../config.js';
 
-export default function Rules() {
+export default function Rules({ embedded = false }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [openAccordions, setOpenAccordions] = useState({
     intro: false,
@@ -93,26 +93,32 @@ export default function Rules() {
   }
 
   return (
-    <section id="rules" className="py-24 lg:py-32 bg-white relative overflow-hidden font-sans">
-      <div className="hidden sm:block absolute top-0 right-0 w-[500px] h-[500px] bg-slate-100 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 opacity-60 pointer-events-none transform-gpu"></div>
-      <div className="hidden sm:block absolute bottom-0 left-0 w-[500px] h-[500px] bg-red-50 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 opacity-60 pointer-events-none transform-gpu"></div>
+    <section id="rules" className={`${embedded ? 'py-4' : 'py-24 lg:py-32'} bg-white relative overflow-hidden font-sans`}>
+      {!embedded && (
+        <>
+          <div className="hidden sm:block absolute top-0 right-0 w-[500px] h-[500px] bg-slate-100 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 opacity-60 pointer-events-none transform-gpu"></div>
+          <div className="hidden sm:block absolute bottom-0 left-0 w-[500px] h-[500px] bg-red-50 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 opacity-60 pointer-events-none transform-gpu"></div>
+        </>
+      )}
 
-      <div className="container mx-auto px-6 relative z-10">
-        <div className="mb-12 text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-600 text-[10px] font-bold uppercase tracking-widest mb-4">
-            <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse"></span>
-            Official Technical Guide 2027
+      <div className={embedded ? 'w-full relative z-10' : 'container mx-auto px-6 relative z-10'}>
+        {!embedded && (
+          <div className="mb-12 text-center">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-600 text-[10px] font-bold uppercase tracking-widest mb-4">
+              <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse"></span>
+              Official Technical Guide 2027
+            </div>
+            <h2 className="text-4xl md:text-5xl font-black text-slate-900 uppercase italic tracking-tighter mb-4 leading-tight py-1">
+              Petunjuk Teknis{' '}
+              <span className="inline-block pr-3 sm:pr-4 pb-1 text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-800">
+                Lapangan
+              </span>
+            </h2>
+            <p className="text-slate-500 mt-4 max-w-3xl mx-auto text-lg font-medium">
+              Pedoman teknis resmi alur kronologis, spesifikasi arena, penjurian, penalti, dan mekanisme sanggah LBB Mu'allimin 2027.
+            </p>
           </div>
-          <h2 className="text-4xl md:text-5xl font-black text-slate-900 uppercase italic tracking-tighter mb-4 leading-tight py-1">
-            Petunjuk Teknis{' '}
-            <span className="inline-block pr-3 sm:pr-4 pb-1 text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-800">
-              Lapangan
-            </span>
-          </h2>
-          <p className="text-slate-500 mt-4 max-w-3xl mx-auto text-lg font-medium">
-            Pedoman teknis resmi alur kronologis, spesifikasi arena, penjurian, penalti, dan mekanisme sanggah LBB Mu'allimin 2027.
-          </p>
-        </div>
+        )}
 
         <div className="max-w-4xl mx-auto flex flex-col gap-6">
           {/* Smart Search Bar */}

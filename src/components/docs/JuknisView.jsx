@@ -12,16 +12,20 @@ import {
   Users,
   Shield,
   Layers,
-  ArrowRight,
   ExternalLink,
-  Sparkles
+  Sparkles,
+  FileText,
+  Scale
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
 import { COMPETITION, DOWNLOADS, MATERIALS } from '../../config.js';
 import SimpaskorSidebarLayout from '../navigation/SimpaskorSidebarLayout.jsx';
+import Rules from '../Rules.jsx';
 
 export default function JuknisView() {
   const { currentTeam } = useCompetition();
+
+  const [activeTab, setActiveTab] = useState('chapters'); // 'chapters' (Bab A-J Verbatim) | 'materials' (Materi PBB & Denah)
 
   // Jika akun peleton peserta SMP, otomatis default ke 'SMP'. Jika SD, default ke 'SD'.
   const initialJenjang = currentTeam?.jenjang?.toUpperCase() === 'SMP' ? 'SMP' : 'SD';
@@ -129,6 +133,55 @@ export default function JuknisView() {
             </div>
           </div>
         </div>
+
+        {/* Tab Switcher: Bab A-J Verbatim vs Materi PBB & Denah */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-2.5 rounded-2xl border border-slate-200 shadow-xs">
+          <div className="flex items-center gap-1.5 p-1 bg-slate-100 rounded-xl">
+            <button
+              type="button"
+              onClick={() => setActiveTab('chapters')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-black transition-all cursor-pointer ${
+                activeTab === 'chapters'
+                  ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              <BookOpen className="w-3.5 h-3.5" />
+              <span>Bab Regulasi Lengkap (Bab A – J Verbatim)</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab('materials')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-black transition-all cursor-pointer ${
+                activeTab === 'materials'
+                  ? 'bg-slate-900 text-white shadow-md shadow-slate-900/30'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              <Swords className="w-3.5 h-3.5" />
+              <span>Daftar Materi Gerakan PBB & Denah Pos</span>
+            </button>
+          </div>
+
+          <div className="text-[11px] text-slate-500 font-semibold px-2">
+            {activeTab === 'chapters' ? (
+              <span>Menampilkan seluruh Bab A s.d. Bab J verbatim sama persis dengan Beranda</span>
+            ) : (
+              <span>Daftar gerakan SD (26) & SMP (28), durasi, dan denah pos visual</span>
+            )}
+          </div>
+        </div>
+
+        {/* TAB 1: BAB REGULASI LENGKAP BAB A - J VERBATIM */}
+        {activeTab === 'chapters' && (
+          <div className="bg-white rounded-3xl p-4 sm:p-6 border border-slate-200 shadow-xs">
+            <Rules embedded={true} />
+          </div>
+        )}
+
+        {/* TAB 2: MATERI GERAKAN & DENAH ARENA */}
+        {activeTab === 'materials' && (
+          <div className="space-y-6">
 
         {/* Arena & Duration Spec Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -391,6 +444,10 @@ export default function JuknisView() {
             </div>
           </div>
         </div>
+
+        {/* End of TAB 2 */}
+          </div>
+        )}
 
       </div>
     </SimpaskorSidebarLayout>
