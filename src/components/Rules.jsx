@@ -139,6 +139,34 @@ export default function Rules() {
             </p>
           </div>
 
+          <div className="flex items-center justify-between gap-3 text-xs">
+            <span className="text-slate-500 font-medium">
+              10 Bab Regulasi & Ketentuan Lapangan
+            </span>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  const allOpen = Object.keys(openAccordions).reduce((acc, k) => ({ ...acc, [k]: true }), {});
+                  setOpenAccordions(allOpen);
+                }}
+                className="px-3 py-1.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold transition-all cursor-pointer text-xs"
+              >
+                Buka Semua
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  const allClosed = Object.keys(openAccordions).reduce((acc, k) => ({ ...acc, [k]: false }), {});
+                  setOpenAccordions(allClosed);
+                }}
+                className="px-3 py-1.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold transition-all cursor-pointer text-xs"
+              >
+                Tutup Semua
+              </button>
+            </div>
+          </div>
+
           <div className="space-y-4" id="rules-accordion">
             {/* PENDAHULUAN */}
             {shouldShow('intro') && (

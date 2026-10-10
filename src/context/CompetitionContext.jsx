@@ -1005,8 +1005,6 @@ export function CompetitionProvider({ children }) {
     } else if (modalName === 'docViewer') {
       setDocViewerData(data);
       navigateTo('document_viewer', data);
-    } else if (modalName === 'pinModal') {
-      navigateTo('pin_auth');
     } else {
       setActiveModal(modalName);
     }
