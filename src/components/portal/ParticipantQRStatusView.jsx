@@ -68,36 +68,42 @@ export default function ParticipantQRStatusView({ regCode, onBack }) {
     );
   }
 
-  const isApproved = team.status === 'verified' || team.status === 'approved';
+  // Status yang dianggap sudah di-ACC: 'registered' (ACC Tahap 1), 'verified' (ACC Sah Tahap 2), 'drawn', atau 'approved'
+  const isApproved = ['registered', 'verified', 'drawn', 'approved'].includes(team.status);
   const isPending = team.status === 'pending' || !team.status;
   const isRejected = team.status === 'rejected';
 
   const handleEnterPortal = () => {
-    // If user is already logged in with this email or we auto-authenticate verified team session
-    if (currentUser?.email?.toLowerCase() === team.email?.toLowerCase()) {
-      navigateTo('peserta_dashboard');
-      return;
-    }
+    // 1. Bersihkan parameter ?reg= dari URL agar tidak menimpa tampilan portal
+    const url = new URL(window.location.href);
+    url.searchParams.delete('reg');
+    window.history.replaceState({}, '', url.pathname);
 
-    // Auto log in as participant if approved
-    if (isApproved) {
-      const user = {
-        id: `user-${team.id}`,
-        name: team.officialName || team.schoolName,
-        email: team.email,
-        role: 'peserta',
-        roleLabel: 'Calon Peserta Resmi',
-        teamId: team.id,
-        schoolName: team.schoolName,
-        avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(team.schoolName)}&background=8B0000&color=fff&bold=true`
-      };
-      if (setCurrentUser) setCurrentUser(user);
-      if (setRole) setRole('peserta');
-      if (setCurrentTeamId) setCurrentTeamId(team.id);
-      navigateTo('peserta_dashboard');
-    } else {
-      openAuthModal('login');
-    }
+    // 2. Siapkan data session peserta
+    const schoolLogo = team.files?.schoolLogo?.url && team.files?.schoolLogo?.url !== '#' && !team.files?.schoolLogo?.url.startsWith('#')
+      ? team.files.schoolLogo.url
+      : null;
+
+    const user = {
+      id: `user-${team.id}`,
+      name: team.officialName || team.schoolName,
+      email: team.email,
+      role: 'peserta',
+      roleLabel: 'Calon Peserta Resmi',
+      teamId: team.id,
+      schoolName: team.schoolName,
+      avatar: schoolLogo || `https://ui-avatars.com/api/?name=${encodeURIComponent(team.schoolName)}&background=8B0000&color=fff&bold=true`
+    };
+
+    if (setCurrentUser) setCurrentUser(user);
+    if (setRole) setRole('peserta');
+    if (setCurrentTeamId) setCurrentTeamId(team.id);
+
+    // 3. Panggil onBack agar MainApp menghilangkan state scannedRegCode
+    if (onBack) onBack();
+
+    // 4. Masuk ke dashboard portal peserta
+    navigateTo('peserta_dashboard');
   };
 
   const handleDownloadQR = () => {
