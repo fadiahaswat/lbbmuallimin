@@ -33,14 +33,14 @@ export function getChestNumberByLot(jenjang, lotNumber) {
 }
 
 export const STORAGE_KEYS = {
-  TEAMS: 'lbb_muallimin_teams_v4',
-  SCORES: 'lbb_muallimin_scores_v4',
+  TEAMS: 'lbb_muallimin_teams_v5',
+  SCORES: 'lbb_muallimin_scores_v5',
   SETTINGS: 'lbb_muallimin_settings_v9',
   ROLE: 'lbb_muallimin_active_role_v3',
-  CURRENT_TEAM_ID: 'lbb_muallimin_current_team_id_v4',
+  CURRENT_TEAM_ID: 'lbb_muallimin_current_team_id_v5',
   USERS: 'lbb_muallimin_users_v4',
   CURRENT_USER: 'lbb_muallimin_current_user_v4',
-  STAGING: 'lbb_muallimin_staging_v4',
+  STAGING: 'lbb_muallimin_staging_v5',
 };
 
 // Bersihkan data sampah/dummy legacy versi sebelumnya dari browser
@@ -61,7 +61,7 @@ export function cleanLegacyStorage() {
       if (k.startsWith('lbb_muallimin_current_user_') && k !== STORAGE_KEYS.CURRENT_USER) {
         localStorage.removeItem(k);
       }
-      if (legacyPrefixes.some(p => k.startsWith(p) && !k.endsWith('_v4') && !k.endsWith('_v9'))) {
+      if (legacyPrefixes.some(p => k.startsWith(p) && !k.endsWith('_v5') && !k.endsWith('_v9'))) {
         localStorage.removeItem(k);
       }
       if (k.startsWith('lbb_muallimin_settings_') && k !== STORAGE_KEYS.SETTINGS) {
