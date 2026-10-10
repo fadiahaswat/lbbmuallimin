@@ -23,6 +23,8 @@ export default function RosterTab({
   setRosterDraft,
   initRosterDraft,
   handleSaveRoster,
+  handleCancelRoster,
+  handleDiscardRosterDraft,
   openModal,
   draggedMember,
   setDraggedMember,
@@ -32,6 +34,12 @@ export default function RosterTab({
   triggerRosterPhotoUpload,
   availableClassOptions
 }) {
+  const hasSavedLocalDraft = Boolean(
+    typeof window !== 'undefined' &&
+    currentTeam?.id &&
+    localStorage.getItem(`lbb_roster_draft_${currentTeam.id}`)
+  );
+
   return (
     <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
       {currentTeam.status === 'pending' ? (
@@ -62,6 +70,11 @@ export default function RosterTab({
                 <span className="text-[10px] font-black uppercase tracking-wider bg-slate-900 text-white px-2 py-0.5 rounded-md font-mono">
                   25 Personel + 3 Pendamping
                 </span>
+                {hasSavedLocalDraft && !isEditingRoster && (
+                  <span className="text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300 px-2 py-0.5 rounded-md">
+                    Ada Draft Belum Disimpan
+                  </span>
+                )}
               </div>
               <p className="text-xs text-slate-500 mt-1">
                 Struktur resmi kontingen: <strong>1 Komandan Peleton</strong>, <strong>21 Pasukan Inti</strong> (3 Saf × 7 Anggota), <strong>3 Cadangan</strong>, serta <strong>3 Pendamping</strong> (1 Official Pelatih/Pembina + 2 Pendukung Medis/Dokumentasi).
@@ -74,19 +87,29 @@ export default function RosterTab({
                   className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl flex items-center gap-1.5 transition-all shadow-xs"
                 >
                   <Edit3 className="w-3.5 h-3.5" />
-                  <span>Edit & Atur Posisi (Drag & Drop)</span>
+                  <span>{hasSavedLocalDraft ? 'Lanjutkan Edit Draft Personel' : 'Edit & Atur Posisi (Drag & Drop)'}</span>
                 </button>
               ) : (
                 <>
+                  {hasSavedLocalDraft && (
+                    <button
+                      type="button"
+                      onClick={handleDiscardRosterDraft}
+                      className="px-3.5 py-2 bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-700 font-bold text-xs rounded-xl transition-all"
+                      title="Hapus draft yang belum disimpan dan kembali ke data server"
+                    >
+                      Hapus Draft
+                    </button>
+                  )}
                   <button
-                    onClick={() => {
+                    onClick={handleCancelRoster ? handleCancelRoster : () => {
                       setIsEditingRoster(false);
                       setDraggedMember(null);
                       setDragOverTarget(null);
                     }}
                     className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition-all"
                   >
-                    Batal
+                    Tutup
                   </button>
                   <button
                     onClick={handleSaveRoster}

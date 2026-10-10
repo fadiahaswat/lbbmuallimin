@@ -236,16 +236,65 @@ export default function ParticipantDashboard() {
     }
     officials = officials.slice(0, 3);
 
+    // Check if there is an existing unsaved roster draft in localStorage for this team
+    try {
+      const draftKey = `lbb_roster_draft_${currentTeam.id}`;
+      const savedDraft = localStorage.getItem(draftKey);
+      if (savedDraft) {
+        const parsed = JSON.parse(savedDraft);
+        if (parsed?.danton && parsed?.pasukan) {
+          setRosterDraft(parsed);
+          setIsEditingRoster(true);
+          setUploadToast('Draft susunan personel Anda sebelumnya berhasil dipulihkan!');
+          setTimeout(() => setUploadToast(''), 4000);
+          return;
+        }
+      }
+    } catch (e) {}
+
     setRosterDraft({ danton, pasukan, cadangan, officials });
     setIsEditingRoster(true);
   }
 
+  // Autosave roster draft to localStorage whenever rosterDraft changes during editing
+  useEffect(() => {
+    if (!isEditingRoster || !rosterDraft || !currentTeam?.id) return;
+    try {
+      const draftKey = `lbb_roster_draft_${currentTeam.id}`;
+      // Clean clone without giant base64 if needed, but standard photos are fine
+      localStorage.setItem(draftKey, JSON.stringify(rosterDraft));
+    } catch (e) {
+      console.warn('Failed saving roster draft:', e);
+    }
+  }, [rosterDraft, isEditingRoster, currentTeam?.id]);
+
   function handleSaveRoster() {
     if (!rosterDraft) return;
     updateTeamRoster(currentTeam.id, rosterDraft);
+    try {
+      localStorage.removeItem(`lbb_roster_draft_${currentTeam.id}`);
+    } catch (e) {}
     setIsEditingRoster(false);
     setUploadToast('Susunan 25 personel peleton & foto berhasil disimpan!');
     setTimeout(() => setUploadToast(''), 4000);
+  }
+
+  function handleCancelRoster() {
+    setIsEditingRoster(false);
+    setDraggedMember(null);
+    setDragOverTarget(null);
+  }
+
+  function handleDiscardRosterDraft() {
+    try {
+      localStorage.removeItem(`lbb_roster_draft_${currentTeam.id}`);
+    } catch (e) {}
+    setIsEditingRoster(false);
+    setRosterDraft(null);
+    setDraggedMember(null);
+    setDragOverTarget(null);
+    setUploadToast('Draft sementara personel telah dibatalkan & dibersihkan.');
+    setTimeout(() => setUploadToast(''), 3000);
   }
 
   function triggerFileUpload(key) {
@@ -732,6 +781,8 @@ export default function ParticipantDashboard() {
             setRosterDraft={setRosterDraft}
             initRosterDraft={initRosterDraft}
             handleSaveRoster={handleSaveRoster}
+            handleCancelRoster={handleCancelRoster}
+            handleDiscardRosterDraft={handleDiscardRosterDraft}
             openModal={openModal}
             draggedMember={draggedMember}
             setDraggedMember={setDraggedMember}

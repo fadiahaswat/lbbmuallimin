@@ -463,49 +463,99 @@ export default function SimpaskorSidebarLayout({
         {/* Top Header Bar */}
         {!hideHeader ? (
           <header className="bg-white/80 backdrop-blur-md border-b border-slate-200/70 px-4 sm:px-8 py-3.5 sticky top-0 z-20 flex items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              {/* Mobile Menu Toggle */}
-              <button
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="lg:hidden p-2 rounded-xl text-slate-600 hover:bg-slate-100"
+            {/* Desktop Brand / Title & Mobile Brand */}
+            <div className="flex items-center gap-3 min-w-0">
+              {/* Mobile Branding: logo lbb + logo title */}
+              <div 
+                onClick={() => setActiveView('landing')}
+                className="lg:hidden flex items-center gap-2 cursor-pointer shrink-0"
+                title="Ke Beranda Utama"
               >
-                <Menu className="w-5 h-5" />
-              </button>
+                <img
+                  src={logoLbb}
+                  alt="Logo LBB"
+                  className="h-8 w-auto object-contain shrink-0"
+                />
+                <img
+                  src={titleLogoImg}
+                  alt="LBB Mu'allimin"
+                  className="h-6 w-auto object-contain max-w-[125px]"
+                />
+              </div>
 
-              <div>
-                <h1 className="text-lg sm:text-xl font-black text-slate-900 tracking-tight">{title}</h1>
-                <p className="text-xs text-slate-500 hidden sm:block">{subtitle}</p>
+              {/* Desktop Title & Subtitle */}
+              <div className="hidden lg:block min-w-0">
+                <h1 className="text-lg sm:text-xl font-black text-slate-900 tracking-tight truncate">{title}</h1>
+                <p className="text-xs text-slate-500 truncate">{subtitle}</p>
               </div>
             </div>
 
-            {/* Right Area (Notification, Date, Actions) */}
-            <div className="flex items-center gap-3">
-              {rightActions}
+            {/* Right Area: Actions on Desktop & Mobile Menu Button on Far Right */}
+            <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+              <div className="hidden sm:flex items-center gap-2">
+                {rightActions}
+              </div>
 
               <button
                 onClick={() => setActiveView('landing')}
-                className="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-all flex items-center gap-1.5"
+                className="hidden sm:flex px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-all items-center gap-1.5"
               >
                 <Home className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Beranda</span>
+                <span>Beranda</span>
+              </button>
+
+              {/* Mobile Menu Toggle (Strip 3 Paling Kanan) */}
+              <button
+                type="button"
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="lg:hidden p-2 rounded-xl text-slate-700 hover:bg-slate-100 active:scale-95 transition-all flex items-center justify-center border border-slate-200/70 bg-slate-50/80"
+                aria-label="Buka Menu"
+                title="Buka Menu"
+              >
+                <Menu className="w-5 h-5 text-slate-800" />
               </button>
             </div>
           </header>
         ) : (
-          <div className="lg:hidden p-4 bg-white/80 backdrop-blur-md border-b border-slate-200/70 flex items-center justify-between sticky top-0 z-20">
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="p-2 rounded-xl text-slate-600 hover:bg-slate-100"
-            >
-              <Menu className="w-5 h-5" />
-            </button>
-            <button
+          <div className="lg:hidden px-4 py-3 bg-white/90 backdrop-blur-md border-b border-slate-200/70 flex items-center justify-between sticky top-0 z-20">
+            {/* Mobile Branding: logo lbb + logo title di kiri */}
+            <div 
               onClick={() => setActiveView('landing')}
-              className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold flex items-center gap-1.5"
+              className="flex items-center gap-2 cursor-pointer min-w-0"
+              title="Ke Beranda Utama"
             >
-              <Home className="w-3.5 h-3.5" />
-              <span>Beranda</span>
-            </button>
+              <img
+                src={logoLbb}
+                alt="Logo LBB"
+                className="h-8 w-auto object-contain shrink-0"
+              />
+              <img
+                src={titleLogoImg}
+                alt="LBB Mu'allimin"
+                className="h-6 w-auto object-contain max-w-[125px]"
+              />
+            </div>
+
+            {/* Menu Strip 3 Paling Kanan */}
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                onClick={() => setActiveView('landing')}
+                className="p-2 rounded-xl text-slate-500 hover:bg-slate-100 active:scale-95 transition-all flex items-center justify-center border border-slate-200/70 bg-slate-50/80"
+                title="Ke Beranda"
+                aria-label="Ke Beranda"
+              >
+                <Home className="w-4 h-4 text-slate-700" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="p-2 rounded-xl text-slate-700 hover:bg-slate-100 active:scale-95 transition-all flex items-center justify-center border border-slate-200/70 bg-slate-50/80"
+                aria-label="Buka Menu"
+                title="Buka Menu"
+              >
+                <Menu className="w-5 h-5 text-slate-800" />
+              </button>
+            </div>
           </div>
         )}
 

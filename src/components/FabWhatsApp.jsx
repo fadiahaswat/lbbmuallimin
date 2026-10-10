@@ -8,9 +8,7 @@ export default function FabWhatsApp({ isShiftedUp }) {
       href={CONTACT.WA_FAB_URL}
       target="_blank"
       rel="noopener noreferrer"
-      className={`fixed right-4 sm:right-6 z-40 group flex items-center justify-center transition-all duration-300 ease-in-out hover:scale-115 active:scale-95 ${
-        isShiftedUp ? 'bottom-[84px] lg:bottom-6' : 'bottom-6'
-      }`}
+      className={`fixed right-4 sm:right-6 z-40 group hidden lg:flex items-center justify-center transition-all duration-300 ease-in-out hover:scale-115 active:scale-95 bottom-6`}
       aria-label="Chat WhatsApp Panitia LBB Mu'allimin 2027"
       title="Tanya Panitia via WhatsApp"
     >

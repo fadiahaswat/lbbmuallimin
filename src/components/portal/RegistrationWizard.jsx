@@ -1,8 +1,10 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   ArrowLeft,
   AlertCircle,
-  ExternalLink
+  ExternalLink,
+  RotateCcw,
+  FileText
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
 import { PAYMENT, CONTACT } from '../../config.js';
@@ -39,22 +41,105 @@ export default function RegistrationWizard({ isOpen, onClose }) {
   const [step, setStep] = useState(1);
   const [copiedAccount, setCopiedAccount] = useState(false);
   const [validationError, setValidationError] = useState('');
+  const [hasRestoredDraft, setHasRestoredDraft] = useState(false);
 
-  // 12 Items Form State
-  const [formData, setFormData] = useState({
-    email: '', // 1. Email aktif untuk akun
-    jenjang: '', // 2. Jenjang sekolah SD apa SMP
-    schoolName: '', // 3. Nama Sekolah
-    teamUnit: 'Tunggal', // Pembeda Peleton: 'Tunggal' | 'Tim A' | 'Tim B'
-    schoolRegion: 'Kota Yogyakarta', // Daerah di D.I. Yogyakarta
-    schoolAddress: '', // Alamat Lengkap Sekolah
-    teamType: '', // 5. Homogen apa Heterogen
-    homogenGender: '', // Pilihan jika homogen: Putra | Putri
-    dantonName: '', // 6. Nama Komandan
-    officialName: '', // 8. Nama Official/Pelatih
-    waNumber: '',
-    agreeJuknis: false,
+  const DRAFT_STORAGE_KEY = 'lbb_registration_form_draft_v1';
+
+  // 12 Items Form State with Draft Restoration
+  const [formData, setFormData] = useState(() => {
+    try {
+      const saved = localStorage.getItem('lbb_registration_form_draft_v1');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed?.formData && typeof parsed.formData === 'object') {
+          return {
+            email: '',
+            jenjang: '',
+            schoolName: '',
+            teamUnit: 'Tunggal',
+            schoolRegion: 'Kota Yogyakarta',
+            schoolAddress: '',
+            teamType: '',
+            homogenGender: '',
+            dantonName: '',
+            officialName: '',
+            waNumber: '',
+            agreeJuknis: false,
+            ...parsed.formData,
+          };
+        }
+      }
+    } catch (e) {
+      console.warn('Failed restoring registration form draft:', e);
+    }
+    return {
+      email: '', // 1. Email aktif untuk akun
+      jenjang: '', // 2. Jenjang sekolah SD apa SMP
+      schoolName: '', // 3. Nama Sekolah
+      teamUnit: 'Tunggal', // Pembeda Peleton: 'Tunggal' | 'Tim A' | 'Tim B'
+      schoolRegion: 'Kota Yogyakarta', // Daerah di D.I. Yogyakarta
+      schoolAddress: '', // Alamat Lengkap Sekolah
+      teamType: '', // 5. Homogen apa Heterogen
+      homogenGender: '', // Pilihan jika homogen: Putra | Putri
+      dantonName: '', // 6. Nama Komandan
+      officialName: '', // 8. Nama Official/Pelatih
+      waNumber: '',
+      agreeJuknis: false,
+    };
   });
+
+  // Check if draft exists on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(DRAFT_STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed?.formData && (parsed.formData.schoolName || parsed.formData.email)) {
+          setHasRestoredDraft(true);
+        }
+      }
+    } catch (e) {}
+  }, []);
+
+  // Autosave draft to localStorage whenever formData changes
+  useEffect(() => {
+    try {
+      // Hanya simpan jika ada isian yang relevan
+      const hasContent = Boolean(
+        formData.email || formData.schoolName || formData.dantonName || formData.officialName || formData.waNumber
+      );
+      if (hasContent) {
+        localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify({
+          formData,
+          savedAt: new Date().toISOString()
+        }));
+      }
+    } catch (e) {
+      console.warn('Failed saving registration form draft:', e);
+    }
+  }, [formData]);
+
+  const clearFormDraft = () => {
+    try {
+      localStorage.removeItem(DRAFT_STORAGE_KEY);
+      setFormData({
+        email: '',
+        jenjang: '',
+        schoolName: '',
+        teamUnit: 'Tunggal',
+        schoolRegion: 'Kota Yogyakarta',
+        schoolAddress: '',
+        teamType: '',
+        homogenGender: '',
+        dantonName: '',
+        officialName: '',
+        waNumber: '',
+        agreeJuknis: false,
+      });
+      setHasRestoredDraft(false);
+      setStep(1);
+    } catch (e) {}
+  };
 
   // Helper untuk mendapatkan nama lengkap sekolah beserta pembeda peleton (A / B)
   const getFullSchoolName = () => {
@@ -421,6 +506,9 @@ export default function RegistrationWizard({ isOpen, onClose }) {
     });
 
     setCreatedTeam(newTeam);
+    try {
+      localStorage.removeItem(DRAFT_STORAGE_KEY);
+    } catch (e) {}
     setStep(4);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -504,6 +592,31 @@ export default function RegistrationWizard({ isOpen, onClose }) {
             <p className="text-xs sm:text-sm text-slate-600 mt-1.5 leading-relaxed">
               Lengkapi data dan berkas persyaratan peleton secara lengkap dan sah melalui formulir pendaftaran resmi LBB Mu'allimin 2027.
             </p>
+          </div>
+        )}
+
+        {/* Draft Restoration Banner */}
+        {step === 1 && hasRestoredDraft && (
+          <div className="mb-6 p-4 rounded-2xl bg-amber-50 border border-amber-200/90 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-xs animate-in fade-in">
+            <div className="flex items-center gap-2.5 text-amber-900">
+              <div className="w-8 h-8 rounded-xl bg-amber-100 flex items-center justify-center shrink-0 text-amber-700">
+                <FileText className="w-4 h-4" />
+              </div>
+              <div>
+                <p className="font-bold">Draft Formulir Terdeteksi & Dipulihkan Otomatis</p>
+                <p className="text-[11px] text-amber-700">
+                  Data formulir pendaftaran yang sebelumnya Anda ketik telah dimuat kembali.
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={clearFormDraft}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-amber-100 border border-amber-300 text-amber-900 font-bold text-[11px] transition-colors shrink-0 self-start sm:self-auto cursor-pointer"
+            >
+              <RotateCcw className="w-3.5 h-3.5 text-amber-700" />
+              <span>Mulai Baru (Hapus Draft)</span>
+            </button>
           </div>
         )}
 

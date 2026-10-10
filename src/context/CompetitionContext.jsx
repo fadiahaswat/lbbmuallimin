@@ -64,8 +64,26 @@ export function CompetitionProvider({ children }) {
     return localStorage.getItem(STORAGE_KEYS.ROLE) || 'publik';
   });
 
-  // 2. Active View
-  const [activeView, setActiveView] = useState('landing');
+  // 2. Active View with persistence for logged-in sessions
+  const [activeView, setActiveView] = useState(() => {
+    try {
+      const savedUser = localStorage.getItem(STORAGE_KEYS.CURRENT_USER);
+      const savedRole = localStorage.getItem(STORAGE_KEYS.ROLE);
+      const savedView = localStorage.getItem(STORAGE_KEYS.ACTIVE_VIEW);
+      if (savedUser || (savedRole && savedRole !== 'publik')) {
+        if (savedView && savedView !== 'landing' && savedView !== 'auth') {
+          return savedView;
+        }
+        if (savedRole === 'admin') return 'admin';
+        if (savedRole === 'superadmin') return 'superadmin';
+        if (savedRole === 'peserta') return 'peserta_dashboard';
+        if (['juri', 'penginput', 'verifikator', 'finalisator'].includes(savedRole)) return 'juri';
+      }
+      return savedView || 'landing';
+    } catch {
+      return 'landing';
+    }
+  });
   const [previousView, setPreviousView] = useState('landing');
   const [docViewerData, setDocViewerData] = useState(null);
 
@@ -247,6 +265,12 @@ export function CompetitionProvider({ children }) {
   useEffect(() => {
     safeSetItem(STORAGE_KEYS.ROLE, role);
   }, [role]);
+
+  useEffect(() => {
+    if (activeView && activeView !== 'auth') {
+      safeSetItem(STORAGE_KEYS.ACTIVE_VIEW, activeView);
+    }
+  }, [activeView]);
 
   useEffect(() => {
     safeSetItem(STORAGE_KEYS.TEAMS, JSON.stringify(teams));
@@ -745,6 +769,7 @@ export function CompetitionProvider({ children }) {
     try {
       localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
       localStorage.removeItem(STORAGE_KEYS.CURRENT_TEAM_ID);
+      localStorage.removeItem(STORAGE_KEYS.ACTIVE_VIEW);
       localStorage.setItem(STORAGE_KEYS.ROLE, 'publik');
     } catch (e) {
       console.warn('Error clearing session storage:', e);
