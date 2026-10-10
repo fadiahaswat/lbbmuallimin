@@ -421,9 +421,21 @@ export function CompetitionProvider({ children }) {
                 });
               }
 
-              map.set(normalizedSheetTeam.id, {
+              // Buat merged team dengan memprioritaskan nilai yang valid/tidak kosong
+              const mergedTeam = {
                 ...existing,
                 ...normalizedSheetTeam,
+              };
+
+              // Pastikan kolom-kolom penting dari existing tidak ditimpa string kosong/null dari sheet
+              ['schoolName', 'schoolBaseName', 'jenjang', 'teamType', 'status', 'regCode', 'email', 'waNumber', 'dantonName', 'officialName'].forEach(field => {
+                if (existing[field] && (!normalizedSheetTeam[field] || normalizedSheetTeam[field] === '')) {
+                  mergedTeam[field] = existing[field];
+                }
+              });
+
+              map.set(normalizedSheetTeam.id, {
+                ...mergedTeam,
                 files: mergedFiles,
                 roster: {
                   danton: mergedDanton,
