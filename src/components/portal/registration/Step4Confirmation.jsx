@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from 'react';
 import {
   Clock,
   Check,
@@ -9,7 +10,7 @@ import {
   QrCode
 } from 'lucide-react';
 import logoImg from '../../../assets/logo-tonti.png';
-import { generateParticipantQRCode, downloadDataUrl } from '../../../utils/qrGenerator.js';
+import { generateParticipantQRCode, downloadDataUrl, OFFICIAL_BASE_URL } from '../../../utils/qrGenerator.js';
 
 export default function Step4Confirmation({
   createdTeam,
@@ -21,7 +22,7 @@ export default function Step4Confirmation({
 
   React.useEffect(() => {
     if (!createdTeam?.regCode) return;
-    const targetUrl = `${window.location.origin}/?reg=${encodeURIComponent(createdTeam.regCode)}`;
+    const targetUrl = `${OFFICIAL_BASE_URL}/?reg=${encodeURIComponent(createdTeam.regCode)}`;
     setIsGeneratingQr(true);
     generateParticipantQRCode(targetUrl, { size: 600 })
       .then(url => {

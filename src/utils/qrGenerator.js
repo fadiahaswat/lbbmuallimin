@@ -1,5 +1,6 @@
 import QRCode from 'qrcode';
-import logoLbb from '../assets/title-logo.png'; // fallback or logo
+
+export const OFFICIAL_BASE_URL = 'https://lbb.tontimuallimin.com';
 
 /**
  * Generate QR code as Data URL with embedded logo in the center (no box container)

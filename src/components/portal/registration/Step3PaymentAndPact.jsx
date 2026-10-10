@@ -44,49 +44,102 @@ export default function Step3PaymentAndPact({
         </div>
       </div>
 
-      {/* Kotak Rekening Resmi Bendahara - Clean Slate-900 Card */}
-      <div className="p-5 sm:p-6 bg-slate-900 text-white rounded-2xl shadow-md relative overflow-hidden">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-5 mb-3">
-              <img 
-                src="/Bank_Syariah_Indonesia_white.svg" 
-                alt="Bank Syariah Indonesia" 
-                className="h-9 sm:h-11 w-auto object-contain filter drop-shadow-[0_2px_12px_rgba(255,255,255,0.25)]"
-              />
-              <span className="text-[11px] font-black uppercase tracking-wider text-yellow-400">
-                Rekening Resmi Bendahara LBB Mu'allimin 2027
+      {/* Kotak Rekening Resmi Bendahara - Modern Luxury Banking Card */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white border border-slate-800 shadow-xl">
+        {/* Subtle decorative glowing background shapes */}
+        <div className="absolute -top-16 -right-16 w-48 h-48 bg-amber-500/10 rounded-full blur-2xl pointer-events-none" />
+        <div className="absolute -bottom-16 -left-16 w-48 h-48 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none" />
+
+        <div className="relative p-5 sm:p-7">
+          {/* Header Row: Logo & Badge + Fee Box */}
+          <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-5 pb-5 border-b border-white/10">
+            {/* Left: Bank branding & status */}
+            <div className="space-y-3">
+              <div className="flex flex-wrap items-center gap-3">
+                <img 
+                  src="/Bank_Syariah_Indonesia_white.svg" 
+                  alt="Bank Syariah Indonesia" 
+                  className="h-8 sm:h-9 w-auto object-contain drop-shadow-md"
+                />
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wider uppercase bg-amber-400/15 border border-amber-400/30 text-amber-300">
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+                  Rekening Resmi Bendahara LBB Mu'allimin 2027
+                </span>
+              </div>
+              <p className="text-xs text-slate-400">
+                Lakukan transfer perbankan / mobile banking resmi ke rekening di bawah ini:
+              </p>
+            </div>
+
+            {/* Right: Total Fee Display */}
+            <div className="bg-white/5 border border-white/10 rounded-xl px-4 py-3 shrink-0 flex flex-col justify-center sm:min-w-[200px]">
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                Biaya Registrasi ({formData.jenjang})
+              </span>
+              <div className="flex items-baseline gap-1 mt-0.5">
+                <span className="text-2xl font-mono font-black text-amber-300 tracking-tight">
+                  {feeDisplay}
+                </span>
+              </div>
+              <span className="text-[10px] text-slate-400 mt-0.5">
+                *Termasuk 3 digit kode unik verifikasi otomatis
               </span>
             </div>
-            <div className="flex items-center gap-2.5 mt-1.5 flex-wrap">
-              <span className="text-sm font-bold text-white">{PAYMENT.BANK_NAME}:</span>
-              <span className="text-lg font-mono font-black text-yellow-400 tracking-wider">
-                {PAYMENT.ACCOUNT_NUMBER}
-              </span>
-              <button
-                type="button"
-                onClick={handleCopyAccount}
-                className="px-3 py-1 bg-yellow-400 hover:bg-yellow-300 text-slate-950 text-xs font-black rounded-lg shadow-xs flex items-center gap-1.5 active:scale-95 transition-all"
-              >
-                {copiedAccount ? <Check className="w-3.5 h-3.5 text-emerald-800 stroke-[3]" /> : <Copy className="w-3.5 h-3.5" />}
-                <span>{copiedAccount ? 'Tersalin' : 'Salin Rekening'}</span>
-              </button>
-            </div>
-            <span className="text-xs text-slate-300 block mt-1.5">
-              a.n. <strong className="text-white font-bold">{PAYMENT.ACCOUNT_NAME || PAYMENT.ACCOUNT_HOLDER}</strong>
-            </span>
-            <span className="text-[11px] text-amber-300 block mt-1">
-              Format Berita Transfer:{' '}
-              <code className="bg-black/40 border border-yellow-400/40 px-2 py-0.5 rounded text-yellow-300 font-mono font-bold">
-                {PAYMENT.TRANSFER_NOTE_FORMAT}
-              </code>
-            </span>
           </div>
-          <div className="text-left sm:text-right sm:border-l sm:border-slate-800 sm:pl-5 pt-3 sm:pt-0 border-t sm:border-t-0 border-slate-800">
-            <span className="text-[10px] font-bold text-slate-400 uppercase block tracking-wider">
-              Biaya Registrasi ({formData.jenjang})
-            </span>
-            <span className="text-2xl font-mono font-black text-white">{feeDisplay}</span>
+
+          {/* Account Details & Action Row */}
+          <div className="pt-5 grid grid-cols-1 md:grid-cols-12 gap-5 items-center">
+            {/* Account Number Box */}
+            <div className="md:col-span-7 space-y-2">
+              <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">
+                Nomor Rekening ({PAYMENT.BANK_NAME})
+              </span>
+              <div className="flex items-center gap-2.5 bg-slate-950/80 border border-slate-700/80 rounded-xl p-2.5 sm:p-3">
+                <span className="text-xl sm:text-2xl font-mono font-black text-white tracking-widest pl-1">
+                  {PAYMENT.ACCOUNT_NUMBER}
+                </span>
+                <button
+                  type="button"
+                  onClick={handleCopyAccount}
+                  className={`ml-auto px-3.5 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer shadow-sm ${
+                    copiedAccount
+                      ? 'bg-emerald-600 text-white shadow-emerald-900/30'
+                      : 'bg-amber-400 hover:bg-amber-300 text-slate-950 hover:shadow-amber-500/20'
+                  }`}
+                  aria-label="Salin nomor rekening"
+                >
+                  {copiedAccount ? (
+                    <>
+                      <Check className="w-3.5 h-3.5 stroke-[3]" />
+                      <span>Tersalin!</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-3.5 h-3.5" />
+                      <span>Salin Rekening</span>
+                    </>
+                  )}
+                </button>
+              </div>
+              <div className="text-xs text-slate-300 pl-1 pt-0.5">
+                a.n. <strong className="text-white font-semibold">{PAYMENT.ACCOUNT_NAME || PAYMENT.ACCOUNT_HOLDER}</strong>
+              </div>
+            </div>
+
+            {/* Transfer Note Guide */}
+            <div className="md:col-span-5 bg-white/5 border border-white/10 rounded-xl p-3.5 space-y-1.5">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-amber-300 block">
+                Format Berita Transfer Wajib
+              </span>
+              <div className="bg-slate-950/90 border border-amber-400/30 px-2.5 py-1.5 rounded-lg">
+                <code className="text-xs font-mono font-bold text-amber-300 break-all select-all">
+                  {PAYMENT.TRANSFER_NOTE_FORMAT}
+                </code>
+              </div>
+              <p className="text-[10px] text-slate-400 leading-tight">
+                Contoh: <span className="text-slate-300 font-mono">MTS MU'ALLIMIN YK_1</span>
+              </p>
+            </div>
           </div>
         </div>
       </div>

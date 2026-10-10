@@ -16,7 +16,7 @@ import {
 import { useCompetition } from '../../context/CompetitionContext.jsx';
 import logoTonti from '../../assets/logo-tonti.png';
 import titleLogoImg from '../../assets/title-logo.png';
-import { generateParticipantQRCode, downloadDataUrl } from '../../utils/qrGenerator.js';
+import { generateParticipantQRCode, downloadDataUrl, OFFICIAL_BASE_URL } from '../../utils/qrGenerator.js';
 
 export default function ParticipantQRStatusView({ regCode, onBack }) {
   const { teams, currentUser, openAuthModal, navigateTo, setCurrentUser, setRole, setCurrentTeamId } = useCompetition();
@@ -31,7 +31,7 @@ export default function ParticipantQRStatusView({ regCode, onBack }) {
 
   useEffect(() => {
     if (!regCode) return;
-    const targetUrl = `${window.location.origin}/?reg=${encodeURIComponent(regCode)}`;
+    const targetUrl = `${OFFICIAL_BASE_URL}/?reg=${encodeURIComponent(regCode)}`;
     setIsGeneratingQr(true);
     generateParticipantQRCode(targetUrl, { size: 600 })
       .then(url => {
