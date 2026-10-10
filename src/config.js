@@ -237,7 +237,7 @@ export const COMPETITION = {
         ARENA_WIDTH_LABEL: '26 METER',
         ARENA_HEIGHT_LABEL: '15m',
         DURATION_LABEL: 'Durasi Max: 12 Menit',
-        SUBSTITUTION_LABEL: 'Di antara Gerakan No. 22 & 23 (Saat Materi Bubar)',
+        SUBSTITUTION_LABEL: 'Di antara Gerakan No. 19 & 20 (Saat Materi Bubar)',
         ARENA_SPEC_LABEL: 'Ukuran Pos 26 \u00D7 15 Meter \u2013 Waktu 12 Menit',
     },
 };

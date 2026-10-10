@@ -233,11 +233,14 @@ export default function JuryScoringApp() {
   if (penalties.personelKurang) penaltyDeduction += 75;
   penaltyDeduction += (penalties.overTimeBlocks || 0) * 50;
   penaltyDeduction += (penalties.injakGarisCount || 0) * 50;
+  // Penalti Yel-Yel Selama Penampilan (Bab H.11): -50 poin per pelanggaran
+  penaltyDeduction += (penalties.yelYelCount || 0) * 50;
   // Gerakan penyesuaian tidak dikenakan penalti poin (0 poin) sesuai Juknis Bab H.6 & Bab A.6
 
   const peletonCombinedScore = useMemo(() => {
     if (pbb1Total > 0 && pbb2Total > 0) {
-      return parseFloat((pbb1Total * 0.7 + pbb2Total * 0.3).toFixed(2));
+      // Juknis Bab F.2.b: Perbandingan Kebenaran Teknik (1) dan Kekompakan (1) adalah 1:1
+      return parseFloat(((pbb1Total + pbb2Total) / 2).toFixed(2));
     }
     return pbb1Total || pbb2Total || 0;
   }, [pbb1Total, pbb2Total]);

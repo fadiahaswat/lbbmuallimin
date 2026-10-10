@@ -80,6 +80,8 @@ export function createScoringActions({ setScores, currentUser }) {
       if (incomingPen.personelKurang) totalPenalty += 75;
       totalPenalty += (incomingPen.overTimeBlocks || 0) * 50;
       totalPenalty += (incomingPen.injakGarisCount || 0) * 50;
+      // Penalti Yel-Yel Selama Penampilan (Bab H.11): -50 poin per pelanggaran
+      totalPenalty += (incomingPen.yelYelCount || 0) * 50;
       // Gerakan penyesuaian: 0 poin penalti (Bab H.6 & Bab A.6)
       const mergedPenalties = {
         ...incomingPen,

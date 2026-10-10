@@ -173,21 +173,7 @@ export default function SimpaskorSidebarLayout({
             </div>
           </div>
 
-          {/* Official Role Identity Badge (Compact & Professional) */}
-          <div className="mb-4 px-0.5">
-            <div className="flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-slate-50/90 border border-slate-200/80 hover:border-slate-300 transition-colors shadow-2xs">
-              <div className="flex items-center gap-2.5 min-w-0">
-                <span className="relative flex h-2 w-2 shrink-0">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                </span>
-                <span className="text-xs font-bold text-slate-800 truncate leading-none">
-                  {currentUser?.roleLabel || (currentUser?.role ? currentUser.role.toUpperCase() : 'Publik')}
-                </span>
-              </div>
-              <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0 ml-1.5" title="Akun Terverifikasi" />
-            </div>
-          </div>
+
 
           {/* Navigation Items (Scrollable jika layar pendek) */}
           <div className="flex-1 space-y-1.5 overflow-y-auto pr-1 pb-2">

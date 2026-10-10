@@ -58,8 +58,8 @@ export default function ScoresTab({ teamScore }) {
               </span>
               <span className="text-2xl font-black text-slate-900 font-mono">{teamScore.pbb.total}</span>
               <div className="text-[11px] text-slate-600 mt-2 space-y-0.5 border-t border-slate-200 pt-2">
-                <div className="flex justify-between"><span>Teknik (70%):</span><strong>{teamScore.pbb.teknik}</strong></div>
-                <div className="flex justify-between"><span>Kekompakan (30%):</span><strong>{teamScore.pbb.kekompakan}</strong></div>
+                <div className="flex justify-between"><span>Kebenaran Gerak (1):</span><strong>{teamScore.pbb.teknik || teamScore.pbb.j1 || '-'}</strong></div>
+                <div className="flex justify-between"><span>Kekompakan (1):</span><strong>{teamScore.pbb.kekompakan || teamScore.pbb.j2 || '-'}</strong></div>
               </div>
             </div>
 

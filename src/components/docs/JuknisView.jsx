@@ -68,7 +68,7 @@ export default function JuknisView() {
       no: idx + 1,
       name,
       category,
-      isSubstitutionPoint: idx === 21 // Di antara Materi No. 22 (Setengah Lengan Lencang Kanan - Balik Kanan) dan 23 (Lencang Kiri - Hitung)
+      isSubstitutionPoint: idx === 18 // Di antara Materi No. 19 (Hadap Kiri - Bubar) dan 20 (Berhimpun)
     };
   });
 
@@ -152,10 +152,10 @@ export default function JuknisView() {
           <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-1">
             <span className="text-[10px] font-bold uppercase text-slate-400 block">Slot Pergantian Pemain</span>
             <span className="text-lg font-black text-emerald-700 block font-mono">
-              {selectedJenjang === 'SD' ? 'Antara Gerakan No. 16 & 17' : 'Antara Gerakan No. 22 & 23'}
+              {selectedJenjang === 'SD' ? 'Antara Gerakan No. 16 & 17' : 'Antara Gerakan No. 19 & 20'}
             </span>
             <p className="text-[11px] text-slate-500">
-              {selectedJenjang === 'SD' ? 'Dilakukan saat materi "Bubar" (antara No. 16 & 17).' : 'Dilakukan saat materi "Bubar" (antara No. 22 & 23).'}
+              {selectedJenjang === 'SD' ? 'Dilakukan saat materi "Bubar" (antara No. 16 & 17).' : 'Dilakukan saat materi "Bubar" (antara No. 19 & 20).'}
             </p>
           </div>
         </div>

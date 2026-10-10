@@ -41,9 +41,9 @@ export default function OfficialScoreRecapModal({ isOpen, onClose, initialJenjan
       ? Number(juries.pos2.total)
       : (s?.kekompakan?.total !== undefined ? Number(s.kekompakan.total) : (s?.pbb?.j2 !== undefined ? Number(s.pbb.j2) : 0));
 
-    // Peleton combined: (J1 Teknik * 70%) + (J2 Kekompakan * 30%)
+    // Peleton combined: Perbandingan 1:1 Kebenaran Teknik dan Kekompakan (Juknis Bab F.2.b)
     const peletonCombined = (juri1Teknik > 0 && juri2Kekompakan > 0)
-      ? parseFloat((juri1Teknik * 0.7 + juri2Kekompakan * 0.3).toFixed(2))
+      ? parseFloat(((juri1Teknik + juri2Kekompakan) / 2).toFixed(2))
       : (juri1Teknik || juri2Kekompakan || 0);
 
     const juri3Danton = juries.pos3?.total !== undefined

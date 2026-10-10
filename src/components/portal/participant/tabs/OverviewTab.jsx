@@ -234,6 +234,38 @@ export default function OverviewTab({
                   </span>
                 </div>
               </div>
+
+              {/* Survei Mandiri Kesediaan Uji Coba Lapangan (Juknis Bab B.7) */}
+              <div className="p-4 rounded-2xl bg-white border border-emerald-200 shadow-xs space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-black uppercase text-emerald-950 flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+                    <span>Survei Kesediaan Uji Coba Lapangan (Bab B.7)</span>
+                  </span>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
+                    Mandiri Web-App
+                  </span>
+                </div>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Official peleton wajib mengonfirmasi kesediaan hadir pada agenda Uji Coba Lapangan (Sabtu, 16 Januari 2027) untuk penjadwalan slot alokasi waktu resmi oleh panitia.
+                </p>
+                <div className="flex flex-wrap items-center gap-2 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => alert('Terima kasih! Konfirmasi kesediaan Uji Coba Lapangan untuk peleton Anda telah tercatat di sistem panitia.')}
+                    className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-bold text-xs rounded-xl transition-all shadow-xs cursor-pointer"
+                  >
+                    ✓ Bersedia Hadir Uji Coba Lapangan
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => alert('Konfirmasi ketidakhadiran telah tercatat. Slot waktu peleton Anda akan dialihkan untuk peleton lain.')}
+                    className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition-all cursor-pointer"
+                  >
+                    Berhalangan Hadir
+                  </button>
+                </div>
+              </div>
             </div>
           )}
 

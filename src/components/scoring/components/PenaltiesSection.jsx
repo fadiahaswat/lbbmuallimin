@@ -108,6 +108,28 @@ export default function PenaltiesSection({
           </label>
         </div>
 
+        {/* Yel-Yel Selama Penampilan (Bab H.11) */}
+        <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-col justify-between">
+          <div className="flex justify-between items-center mb-1">
+            <span className="font-bold text-slate-900 text-sm">Yel-Yel Saat Tampil</span>
+            <span className="text-[10px] font-bold text-rose-700 bg-rose-50 px-2 py-0.5 rounded-md border border-rose-200">-50 / pelanggaran</span>
+          </div>
+          <p className="text-[11px] text-slate-500 mt-1 mb-3">Yel-yel suporter / aba-aba tim saat peleton tampil (setelah peringatan ke-2 atau disengaja)</p>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setPenalties(p => ({ ...p, yelYelCount: Math.max(0, (p.yelYelCount || 0) - 1) }))}
+              className="w-8 h-8 bg-white hover:bg-slate-100 text-slate-800 rounded-xl font-black text-sm flex items-center justify-center transition-all cursor-pointer border border-slate-300 shadow-xs"
+            >-</button>
+            <span className="font-mono font-black text-base w-10 text-center text-slate-900">{penalties.yelYelCount || 0}</span>
+            <button
+              type="button"
+              onClick={() => setPenalties(p => ({ ...p, yelYelCount: (p.yelYelCount || 0) + 1 }))}
+              className="w-8 h-8 bg-rose-600 hover:bg-rose-500 text-white rounded-xl font-black text-sm flex items-center justify-center transition-all cursor-pointer shadow-xs"
+            >+</button>
+          </div>
+        </div>
+
         {/* Tidak Ikut Upacara */}
         <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-col justify-between sm:col-span-2">
           <div>

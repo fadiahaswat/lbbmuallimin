@@ -92,7 +92,8 @@ export default function DaerahPersiapanView() {
     return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
   };
 
-  const maxDurationSec = activeTeam?.jenjang === 'SD' ? 10 * 60 : 13 * 60;
+  // Juknis Bab A.7 & Bab E.3.f: SD/MI maksimal 8 menit (480 detik), SMP/MTs maksimal 12 menit (720 detik)
+  const maxDurationSec = activeTeam?.jenjang === 'SD' ? 8 * 60 : 12 * 60;
   const isOvertime = fieldTimer.elapsedSeconds > maxDurationSec;
 
   return (
