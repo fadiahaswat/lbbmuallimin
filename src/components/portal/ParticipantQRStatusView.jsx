@@ -18,16 +18,74 @@ import logoTonti from '../../assets/logo-tonti.png';
 import titleLogoImg from '../../assets/title-logo.png';
 import { generateParticipantQRCode, downloadDataUrl, OFFICIAL_BASE_URL } from '../../utils/qrGenerator.js';
 
+import { fetchAllDataFromSheet, isGoogleSheetConfigured } from '../../services/sheetService.js';
+import { normalizeTeamData } from '../../context/competitionHelpers.js';
+
 export default function ParticipantQRStatusView({ regCode, onBack }) {
-  const { teams, currentUser, openAuthModal, navigateTo, setCurrentUser, setRole, setCurrentTeamId } = useCompetition();
+  const { teams, setTeams, currentUser, openAuthModal, navigateTo, setCurrentUser, setRole, setCurrentTeamId } = useCompetition();
 
   const [qrDataUrl, setQrDataUrl] = useState('');
   const [isGeneratingQr, setIsGeneratingQr] = useState(true);
+  const [isSearchingCloud, setIsSearchingCloud] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
 
   // Find the team by regCode
   const team = teams.find(
     t => String(t.regCode || '').toUpperCase() === String(regCode || '').toUpperCase()
   );
+
+  // Jika data belum ditemukan di browser lokal, lakukan auto-poll ke Google Sheet
+  useEffect(() => {
+    if (team) return; // Sudah ketemu di state
+    if (!regCode || !isGoogleSheetConfigured()) return;
+
+    let isCancelled = false;
+    setIsSearchingCloud(true);
+
+    const checkCloud = async () => {
+      try {
+        const res = await fetchAllDataFromSheet(false);
+        if (!isCancelled && res?.success && Array.isArray(res.data?.teams)) {
+          const freshTeams = res.data.teams.map(normalizeTeamData);
+          const foundInCloud = freshTeams.find(
+            t => String(t.regCode || '').toUpperCase() === String(regCode || '').toUpperCase()
+          );
+
+          if (foundInCloud) {
+            setTeams(prev => {
+              const map = new Map();
+              prev.forEach(t => map.set(t.id, t));
+              freshTeams.forEach(ft => map.set(ft.id, ft));
+              return Array.from(map.values());
+            });
+            setIsSearchingCloud(false);
+            return;
+          }
+        }
+      } catch (e) {
+        console.warn('Auto-polling team from cloud failed:', e);
+      }
+
+      if (!isCancelled) {
+        setIsSearchingCloud(false);
+      }
+    };
+
+    checkCloud();
+
+    // Polling ulang setiap 4 detik hingga 5 kali percobaan jika masih baru mendaftar
+    const timer = setInterval(() => {
+      if (retryCount < 5 && !team) {
+        setRetryCount(c => c + 1);
+        checkCloud();
+      }
+    }, 4000);
+
+    return () => {
+      isCancelled = true;
+      clearInterval(timer);
+    };
+  }, [team, regCode, retryCount]);
 
   useEffect(() => {
     if (!regCode) return;
@@ -45,24 +103,73 @@ export default function ParticipantQRStatusView({ regCode, onBack }) {
       });
   }, [regCode]);
 
+  // JIKA DATA MASIH DALAM PROSES SINKRONISASI / PENGECEKAN KE DATABASE
+  if (!team && isSearchingCloud) {
+    return (
+      <div className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center p-4">
+        <div className="max-w-md w-full bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 text-center space-y-4 shadow-2xl animate-in zoom-in-95 duration-200">
+          <div className="w-14 h-14 bg-amber-500/10 text-amber-400 border border-amber-500/30 rounded-2xl flex items-center justify-center mx-auto">
+            <Clock className="w-7 h-7 animate-spin" />
+          </div>
+          <div className="space-y-1">
+            <span className="text-[10px] font-black uppercase tracking-wider text-amber-400 bg-amber-400/10 px-2.5 py-0.5 rounded-full border border-amber-400/20">
+              Sinkronisasi Pendaftaran
+            </span>
+            <h2 className="text-xl font-black uppercase text-white tracking-tight mt-2">
+              Menghubungkan ke Database...
+            </h2>
+          </div>
+          <p className="text-xs text-slate-300 leading-relaxed">
+            Pendaftaran dengan kode <span className="font-mono text-amber-400 font-bold">{regCode}</span> sedang dalam proses penyimpanan ke server cloud panitia. Mohon tunggu beberapa detik...
+          </p>
+          <div className="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
+            <div className="bg-amber-400 h-full w-2/3 animate-pulse rounded-full" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // JIKA SETELAH DIPERIKSA TETAP TIDAK KETEMU
   if (!team) {
     return (
       <div className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center p-4">
-        <div className="max-w-md w-full bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 text-center space-y-4 shadow-2xl">
-          <div className="w-14 h-14 bg-red-500/20 text-red-400 border border-red-500/30 rounded-2xl flex items-center justify-center mx-auto">
-            <XCircle className="w-7 h-7" />
+        <div className="max-w-md w-full bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 text-center space-y-5 shadow-2xl animate-in zoom-in-95 duration-200">
+          <div className="w-14 h-14 bg-amber-500/10 text-amber-400 border border-amber-500/30 rounded-2xl flex items-center justify-center mx-auto">
+            <Clock className="w-7 h-7" />
           </div>
-          <h2 className="text-xl font-black uppercase text-white tracking-tight">Data Tidak Ditemukan</h2>
-          <p className="text-xs text-slate-400">
-            Nomor registrasi <span className="font-mono text-red-400 font-bold">{regCode}</span> tidak terdaftar dalam database pendaftaran.
-          </p>
-          <button
-            type="button"
-            onClick={onBack}
-            className="w-full py-3 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-all"
-          >
-            Kembali ke Beranda
-          </button>
+          <div>
+            <span className="text-[10px] font-black uppercase tracking-wider text-amber-400 bg-amber-400/10 px-2.5 py-0.5 rounded-full border border-amber-400/20">
+              Pendaftaran Baru Masuk
+            </span>
+            <h2 className="text-xl font-black uppercase text-white tracking-tight mt-2">
+              Data Sedang Diproses Cloud
+            </h2>
+            <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+              Jika peleton Anda baru saja selesai mendaftar, data dengan kode <span className="font-mono text-amber-400 font-bold">{regCode}</span> memerlukan waktu <strong>1–2 menit</strong> untuk sinkronisasi ke server. Jangan khawatir, pendaftaran Anda tetap aman!
+            </p>
+          </div>
+
+          <div className="space-y-2 pt-2">
+            <button
+              type="button"
+              onClick={() => {
+                setIsSearchingCloud(true);
+                setRetryCount(0);
+              }}
+              className="w-full py-3 bg-gradient-to-r from-yellow-400 to-amber-500 hover:from-yellow-300 hover:to-amber-400 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider transition-all shadow-md active:scale-95 flex items-center justify-center gap-2"
+            >
+              <span>Periksa Ulang Sekarang</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={onBack}
+              className="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl text-xs uppercase tracking-wider transition-all"
+            >
+              Kembali ke Beranda
+            </button>
+          </div>
         </div>
       </div>
     );

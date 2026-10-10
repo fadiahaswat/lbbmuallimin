@@ -46,6 +46,7 @@ export default function SimpaskorSidebarLayout({
     currentUser,
     role,
     setActiveView,
+    logoutUser,
     logoutTeam,
     navigateToStage,
     adminActiveTab,
@@ -95,13 +96,25 @@ export default function SimpaskorSidebarLayout({
     return baseNav;
   };
 
-  const saasDocItems = [
-    { id: 'proposal', label: 'Proposal Resmi', icon: FileText, view: 'proposal' },
-    { id: 'juknis', label: 'Juknis & Materi PBB', icon: BookOpen, view: 'juknis' },
-    { id: 'tatib', label: 'Tata Tertib & Sanksi', icon: ShieldAlert, view: 'tatib' },
-    { id: 'rab', label: 'RAB & Keuangan LBB', icon: Coins, view: 'rab' },
-    { id: 'timeline', label: 'Timeline Panitia', icon: Calendar, view: 'timeline' },
-  ];
+  const saasDocItems = useMemo(() => {
+    // Untuk peserta: HANYA tampilkan Juknis dan Tata Tertib
+    // Sembunyikan Proposal Internal, RAB & Keuangan, serta Timeline Panitia
+    if (userRole === 'peserta') {
+      return [
+        { id: 'juknis', label: 'Juknis & Materi PBB', icon: BookOpen, view: 'juknis' },
+        { id: 'tatib', label: 'Tata Tertib & Sanksi', icon: ShieldAlert, view: 'tatib' },
+      ];
+    }
+
+    // Untuk Admin, Panitia, dan Superadmin: Tampilkan semua dokumen SaaS
+    return [
+      { id: 'proposal', label: 'Proposal Resmi', icon: FileText, view: 'proposal' },
+      { id: 'juknis', label: 'Juknis & Materi PBB', icon: BookOpen, view: 'juknis' },
+      { id: 'tatib', label: 'Tata Tertib & Sanksi', icon: ShieldAlert, view: 'tatib' },
+      { id: 'rab', label: 'RAB & Keuangan LBB', icon: Coins, view: 'rab' },
+      { id: 'timeline', label: 'Timeline Panitia', icon: Calendar, view: 'timeline' },
+    ];
+  }, [userRole]);
 
   const navItems = getNavItems();
 
@@ -140,11 +153,7 @@ export default function SimpaskorSidebarLayout({
   };
 
   const handleLogout = () => {
-    if (userRole === 'peserta') {
-      logoutTeam();
-    } else {
-      setActiveView('landing');
-    }
+    logoutUser();
   };
 
 

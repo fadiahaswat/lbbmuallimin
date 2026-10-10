@@ -428,11 +428,24 @@ export function CompetitionProvider({ children }) {
               };
 
               // Pastikan kolom-kolom penting dari existing tidak ditimpa string kosong/null dari sheet
-              ['schoolName', 'schoolBaseName', 'jenjang', 'teamType', 'status', 'regCode', 'email', 'waNumber', 'dantonName', 'officialName'].forEach(field => {
+              ['schoolName', 'schoolBaseName', 'jenjang', 'teamType', 'regCode', 'email', 'waNumber', 'dantonName', 'officialName'].forEach(field => {
                 if (existing[field] && (!normalizedSheetTeam[field] || normalizedSheetTeam[field] === '')) {
                   mergedTeam[field] = existing[field];
                 }
               });
+
+              // Status Hierarchy Guard:
+              // Jika status lokal sudah lebih maju (misal: 'registered', 'verified', 'drawn')
+              // tetapi Google Sheet masih mengembalikan status lama ('pending' karena Google cache/lag),
+              // PERTAHANKAN status lokal agar tidak mental kembali ke pending!
+              const statusWeight = { pending: 1, revision: 2, registered: 3, verified: 4, drawn: 5, rejected: 0 };
+              const existingWeight = statusWeight[existing.status] || 1;
+              const sheetWeight = statusWeight[normalizedSheetTeam.status] || 1;
+              if (existingWeight > sheetWeight) {
+                mergedTeam.status = existing.status;
+              } else if (normalizedSheetTeam.status) {
+                mergedTeam.status = normalizedSheetTeam.status;
+              }
 
               map.set(normalizedSheetTeam.id, {
                 ...mergedTeam,
@@ -731,9 +744,17 @@ export function CompetitionProvider({ children }) {
 
   function logoutUser() {
     setCurrentUser(null);
+    setCurrentTeamId(null);
     setRole('publik');
     setActiveView('landing');
-    setCurrentTeamId(null);
+
+    try {
+      localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
+      localStorage.removeItem(STORAGE_KEYS.CURRENT_TEAM_ID);
+      localStorage.setItem(STORAGE_KEYS.ROLE, 'publik');
+    } catch (e) {
+      console.warn('Error clearing session storage:', e);
+    }
   }
 
   function addStaffUser({ name, email, role, roleLabel }) {
@@ -973,9 +994,7 @@ export function CompetitionProvider({ children }) {
   }
 
   function logoutTeam() {
-    setCurrentTeamId(null);
-    setRole('publik');
-    setActiveView('landing');
+    logoutUser();
   }
 
   function updateSettings(newSettings) {
