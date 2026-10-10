@@ -495,9 +495,9 @@ export default function RegistrationWizard({ isOpen, onClose }) {
               Juknis Resmi & Registrasi 2027
             </div>
 
-            <h1 className="text-2xl sm:text-4xl font-black uppercase italic tracking-tight text-slate-900 select-none leading-tight py-0.5">
+            <h1 className="text-2xl sm:text-4xl font-black uppercase italic tracking-tight text-slate-900 select-none leading-tight py-1">
               Formulir{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-700 to-red-600">
+              <span className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-red-700 to-red-600 px-1 py-0.5">
                 Pendaftaran
               </span>
             </h1>

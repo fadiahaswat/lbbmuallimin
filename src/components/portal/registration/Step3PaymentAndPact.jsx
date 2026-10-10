@@ -28,13 +28,13 @@ export default function Step3PaymentAndPact({
 }) {
   const [copiedNote, setCopiedNote] = useState(false);
 
-  // Otomatis hasilkan berita transfer berdasarkan nama sekolah atau fallback ke template
+  // Otomatis hasilkan berita transfer berdasarkan nama sekolah atau default ke MTS MU'ALLIMIN_1
   const rawSchool = (formData?.schoolName || '').trim().toUpperCase();
   const teamSuffix = formData?.teamUnit && formData.teamUnit !== 'Tunggal'
     ? (formData.teamUnit === 'Tim A' || formData.teamUnit === 'A' ? 'A' : 'B')
     : '';
   const schoolFormatted = rawSchool ? (teamSuffix ? `${rawSchool} ${teamSuffix}` : rawSchool) : '';
-  const autoTransferNote = schoolFormatted ? `${schoolFormatted}_1` : PAYMENT.TRANSFER_NOTE_FORMAT;
+  const autoTransferNote = schoolFormatted ? `${schoolFormatted}_1` : "MTS MU'ALLIMIN_1";
 
   const handleCopyNote = () => {
     navigator.clipboard?.writeText(autoTransferNote);
@@ -144,18 +144,13 @@ export default function Step3PaymentAndPact({
 
             {/* Transfer Note Guide - Dynamic & Copyable */}
             <div className="md:col-span-5 bg-white/5 border border-white/10 rounded-xl p-3.5 space-y-2">
-              <div className="flex items-center justify-between gap-2">
+              <div>
                 <span className="text-[10px] font-bold uppercase tracking-wider text-amber-300 block">
                   Berita Transfer Anda (Otomatis)
                 </span>
-                {schoolFormatted && (
-                  <span className="inline-flex items-center gap-1 text-[9px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
-                    <Sparkles className="w-2.5 h-2.5" /> Siap Salin
-                  </span>
-                )}
               </div>
               <div className="flex items-center justify-between gap-2 bg-slate-950/90 border border-amber-400/30 px-3 py-2 rounded-lg">
-                <code className="text-xs font-mono font-bold text-amber-300 break-all select-all">
+                <code className="text-[11px] sm:text-xs font-mono font-bold text-amber-300 break-words leading-tight select-all">
                   {autoTransferNote}
                 </code>
                 <button
@@ -182,7 +177,7 @@ export default function Step3PaymentAndPact({
                 </button>
               </div>
               <p className="text-[10px] text-slate-400 leading-tight">
-                Format: <span className="text-slate-300 font-mono">NAMA SEKOLAH_JUMLAH PELETON</span>
+                Format resmi: <span className="text-slate-300 font-mono">NAMA SEKOLAH_JUMLAH PELETON</span>
               </p>
             </div>
           </div>
