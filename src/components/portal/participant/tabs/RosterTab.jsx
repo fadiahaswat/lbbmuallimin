@@ -6,6 +6,9 @@ import {
   Printer,
   ArrowUpDown,
   User,
+  Users,
+  Shield,
+  Award,
   Upload,
   Camera,
   GripVertical
@@ -52,11 +55,16 @@ export default function RosterTab({
         <>
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-4">
             <div>
-              <h4 className="font-black text-xl text-slate-900 uppercase italic">
-                Daftar 25 Personel Resmi Peleton
-              </h4>
-              <p className="text-xs text-slate-500 mt-0.5">
-                1 Komandan Peleton, 21 Pasukan Inti (3 Saf × 7 Anggota), 3 Cadangan.
+              <div className="flex items-center gap-2">
+                <h4 className="font-black text-xl text-slate-900 uppercase italic">
+                  Susunan Kontingen Peleton
+                </h4>
+                <span className="text-[10px] font-black uppercase tracking-wider bg-slate-900 text-white px-2 py-0.5 rounded-md font-mono">
+                  25 Personel + 3 Pendamping
+                </span>
+              </div>
+              <p className="text-xs text-slate-500 mt-1">
+                Struktur resmi kontingen: <strong>1 Komandan Peleton</strong>, <strong>21 Pasukan Inti</strong> (3 Saf × 7 Anggota), <strong>3 Cadangan</strong>, serta <strong>3 Pendamping</strong> (1 Official Pelatih/Pembina + 2 Pendukung Medis/Dokumentasi).
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-2">
@@ -120,11 +128,33 @@ export default function RosterTab({
           {/* Top Grid: Danton (Kiri) & Pendamping Peleton (Kanan) */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
             {/* Danton Spotlight (lg:col-span-5) */}
-            <div className="lg:col-span-5 bg-gradient-to-r from-red-50 to-amber-50 border border-red-200 rounded-2xl p-5 flex flex-col justify-between">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+            <div className="lg:col-span-5 bg-gradient-to-br from-red-50/90 via-amber-50/50 to-white border-2 border-red-300 rounded-3xl p-5 shadow-xs flex flex-col justify-between relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/5 rounded-full blur-2xl pointer-events-none" />
+
+              {/* Danton Header Tag */}
+              <div className="flex items-center justify-between border-b border-red-200/80 pb-3 mb-4">
+                <div className="flex items-center gap-2">
+                  <span className="p-1.5 rounded-xl bg-red-600 text-white shadow-xs">
+                    <Award className="w-4 h-4" />
+                  </span>
+                  <div>
+                    <h5 className="font-black text-xs uppercase tracking-wider text-red-900 leading-tight">
+                      Komandan Peleton (Danton)
+                    </h5>
+                    <span className="text-[10px] text-red-600/90 font-medium">
+                      Pemimpin Barisan & Pengucap Aba-Aba
+                    </span>
+                  </div>
+                </div>
+                <span className="text-[10px] font-black uppercase tracking-wider bg-red-100 text-red-800 border border-red-200 px-2.5 py-0.5 rounded-full font-mono">
+                  Kotak 1,5×1,5M
+                </span>
+              </div>
+
+              <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 flex-1">
                 {/* Danton Photo */}
                 <div className="relative group shrink-0">
-                  <div className="aspect-[3/4] w-24 sm:w-28 rounded-2xl bg-gradient-to-br from-red-700 to-red-800 text-white font-black text-xs flex items-center justify-center shadow-md overflow-hidden border-2 border-red-300 relative">
+                  <div className="aspect-[3/4] w-28 rounded-2xl bg-gradient-to-br from-red-700 to-red-900 text-white font-black text-xs flex items-center justify-center shadow-md overflow-hidden border-2 border-red-400 relative">
                     {(() => {
                       const photoUrl = isEditingRoster ? rosterDraft?.danton?.photo : currentTeam.roster?.danton?.photo;
                       const hasValidPhoto = photoUrl && typeof photoUrl === 'string' && photoUrl !== '#' && !photoUrl.startsWith('#') && !photoUrl.includes('drive.google.com/open?id=');
@@ -143,7 +173,7 @@ export default function RosterTab({
                       ) : null;
                     })()}
                     <div
-                      className="w-full h-full flex flex-col items-center justify-center text-center p-1"
+                      className="w-full h-full flex flex-col items-center justify-center text-center p-2"
                       style={{
                         display: (() => {
                           const photoUrl = isEditingRoster ? rosterDraft?.danton?.photo : currentTeam.roster?.danton?.photo;
@@ -151,15 +181,16 @@ export default function RosterTab({
                         })()
                       }}
                     >
-                      <User className="w-7 h-7 mx-auto mb-0.5 opacity-80" />
-                      <span className="text-[9px] font-black uppercase tracking-wider block opacity-90">DANTON</span>
+                      <User className="w-8 h-8 mx-auto mb-1 opacity-70" />
+                      <span className="text-[9px] font-black uppercase tracking-widest block opacity-90">FOTO DANTON</span>
+                      <span className="text-[8px] text-red-200 block mt-0.5 font-normal">(Ukuran 3×4)</span>
                     </div>
                   </div>
                   {isEditingRoster && (
                     <button
                       type="button"
                       onClick={() => triggerRosterPhotoUpload({ type: 'danton' })}
-                      className="absolute -bottom-1.5 -right-1.5 p-1.5 rounded-lg bg-yellow-400 text-slate-950 shadow-md hover:bg-yellow-300 transition-all cursor-pointer"
+                      className="absolute -bottom-1.5 -right-1.5 p-1.5 rounded-xl bg-yellow-400 text-slate-950 shadow-md hover:bg-yellow-300 transition-all cursor-pointer"
                       title="Unggah Pasfoto Danton"
                     >
                       <Upload className="w-3.5 h-3.5" />
@@ -169,28 +200,41 @@ export default function RosterTab({
 
                 {/* Danton Info / Form */}
                 <div className="flex-1 w-full min-w-0">
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-[10px] font-black uppercase text-red-700 tracking-wider">
-                      Komandan Peleton
-                    </span>
-                    <span className="text-[9px] font-bold bg-red-100 text-red-800 px-1.5 py-0.5 rounded">
-                      Danton
-                    </span>
-                  </div>
-
                   {!isEditingRoster ? (
-                    <div className="mt-1 space-y-1">
-                      <h5 className="font-black text-base text-slate-900 break-words" title={currentTeam.roster?.danton?.name || currentTeam.dantonName}>
-                        {currentTeam.roster?.danton?.name || currentTeam.dantonName || '-'}
-                      </h5>
-                      <div className="space-y-0.5 text-xs text-slate-600">
-                        <div>TTL: <strong className="text-slate-800">{currentTeam.roster?.danton?.birthPlace || '-'}{currentTeam.roster?.danton?.birthDate ? `, ${currentTeam.roster.danton.birthDate}` : ''}</strong></div>
-                        <div>Kelas: <strong className="text-slate-800">{currentTeam.roster?.danton?.class ? `Kelas ${currentTeam.roster.danton.class}` : '-'}</strong></div>
-                        <div>NISN: <strong className="text-slate-800 font-mono">{currentTeam.roster?.danton?.nisn || '-'}</strong></div>
+                    <div className="space-y-2.5">
+                      <div>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                          Nama Lengkap
+                        </span>
+                        <h5 className="font-black text-base sm:text-lg text-slate-900 leading-snug break-words" title={currentTeam.roster?.danton?.name || currentTeam.dantonName}>
+                          {currentTeam.roster?.danton?.name || currentTeam.dantonName || '-'}
+                        </h5>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2 pt-1 border-t border-red-100 text-xs">
+                        <div className="bg-white/80 p-2 rounded-xl border border-red-100">
+                          <span className="text-[10px] font-bold text-slate-400 uppercase block">Kelas</span>
+                          <strong className="text-slate-800 text-xs">
+                            {currentTeam.roster?.danton?.class ? `Kelas ${currentTeam.roster.danton.class}` : '-'}
+                          </strong>
+                        </div>
+                        <div className="bg-white/80 p-2 rounded-xl border border-red-100">
+                          <span className="text-[10px] font-bold text-slate-400 uppercase block">NISN</span>
+                          <strong className="text-slate-800 font-mono text-xs">
+                            {currentTeam.roster?.danton?.nisn || '-'}
+                          </strong>
+                        </div>
+                      </div>
+
+                      <div className="bg-white/80 p-2 rounded-xl border border-red-100 text-xs">
+                        <span className="text-[10px] font-bold text-slate-400 uppercase block">Tempat, Tanggal Lahir</span>
+                        <strong className="text-slate-800 text-xs">
+                          {currentTeam.roster?.danton?.birthPlace || '-'}{currentTeam.roster?.danton?.birthDate ? `, ${currentTeam.roster.danton.birthDate}` : ''}
+                        </strong>
                       </div>
                     </div>
                   ) : (
-                    <div className="space-y-2 mt-2 w-full">
+                    <div className="space-y-2 w-full">
                       <div>
                         <label className="text-[10px] font-bold text-slate-500 uppercase block mb-0.5">Nama Lengkap Danton</label>
                         <input
@@ -269,18 +313,23 @@ export default function RosterTab({
             </div>
 
             {/* 3 Pendamping Peleton (lg:col-span-7) */}
-            <div className="lg:col-span-7 bg-slate-50 border border-slate-200 rounded-2xl p-4 flex flex-col justify-between space-y-3">
-              <div className="flex items-center justify-between border-b border-slate-200 pb-2">
+            <div className="lg:col-span-7 bg-slate-50/90 border border-slate-200 rounded-3xl p-5 flex flex-col justify-between space-y-4 shadow-xs">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 pb-3">
                 <div className="flex items-center gap-2">
-                  <h5 className="font-black text-xs uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
-                    <span>Pendamping Peleton (3 Orang)</span>
-                  </h5>
-                  <span className="text-[10px] font-bold text-blue-700 bg-blue-100 px-2 py-0.5 rounded-full">
-                    1 Official + 2 Pendukung
+                  <span className="p-1.5 rounded-xl bg-blue-600 text-white shadow-xs">
+                    <Users className="w-4 h-4" />
                   </span>
+                  <div>
+                    <h5 className="font-black text-xs uppercase tracking-wider text-slate-900 flex items-center gap-1.5">
+                      <span>Pendamping Peleton (3 Cocard Resmi)</span>
+                    </h5>
+                    <p className="text-[10px] text-slate-500">
+                      1 Official Utama (Pelatih/Pembina) + 2 Pendukung (Medis/Dokumentasi)
+                    </p>
+                  </div>
                 </div>
-                <span className="text-[10px] font-bold text-slate-500 bg-white border border-slate-200 px-2 py-0.5 rounded-full">
-                  3 Cocard
+                <span className="text-[10px] font-black uppercase tracking-wider bg-blue-100 text-blue-800 border border-blue-200 px-2.5 py-0.5 rounded-full w-fit">
+                  Akses Clear Area
                 </span>
               </div>
 
@@ -459,10 +508,30 @@ export default function RosterTab({
           </div>
 
           {/* 21 Pasukan Inti Grid */}
-          <div>
-            <h5 className="font-black text-sm uppercase tracking-wider text-slate-800 mb-3">
-              21 Pasukan Inti (Saf 1, 2, 3)
-            </h5>
+          <div className="space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 pb-2">
+              <div className="flex items-center gap-2">
+                <span className="p-1.5 rounded-xl bg-slate-900 text-white shadow-xs">
+                  <Shield className="w-4 h-4" />
+                </span>
+                <div>
+                  <h5 className="font-black text-sm uppercase tracking-wider text-slate-900">
+                    21 Pasukan Inti (3 Saf × 7 Banjar)
+                  </h5>
+                  <p className="text-[11px] text-slate-500">
+                    Formasi perlombaan utama: Saf 1 (Depan), Saf 2 (Tengah), dan Saf 3 (Belakang).
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-bold text-slate-600 bg-slate-100 border border-slate-200 px-2.5 py-1 rounded-full font-mono">
+                  S2B1: Posisi No. Dada
+                </span>
+                <span className="text-[10px] font-black uppercase tracking-wider bg-red-100 text-red-800 border border-red-200 px-2.5 py-1 rounded-full">
+                  Wajib 21 Anggota
+                </span>
+              </div>
+            </div>
             {!isEditingRoster ? (
               Array.isArray(currentTeam.roster?.pasukan) && currentTeam.roster.pasukan.length > 0 ? (
                 <div className="space-y-6">
@@ -725,17 +794,32 @@ export default function RosterTab({
 
           {/* Cadangan Section */}
           <div className="pt-2">
-            <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4">
-              <h5 className="font-black text-xs uppercase tracking-wider text-slate-800 mb-3">
-                3 Personel Cadangan
-              </h5>
+            <div className="bg-amber-50/50 border border-amber-200/80 rounded-3xl p-5 space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-amber-200/70 pb-3">
+                <div className="flex items-center gap-2">
+                  <span className="p-1.5 rounded-xl bg-amber-500 text-slate-950 font-black shadow-xs text-xs">
+                    C1-3
+                  </span>
+                  <div>
+                    <h5 className="font-black text-xs uppercase tracking-wider text-slate-900">
+                      3 Personel Cadangan Peleton
+                    </h5>
+                    <p className="text-[10px] text-slate-600">
+                      Pengganti darurat jika personel inti berhalangan atau sakit sebelum tampil.
+                    </p>
+                  </div>
+                </div>
+                <span className="text-[10px] font-bold text-amber-800 bg-amber-100 border border-amber-300 px-2.5 py-0.5 rounded-full w-fit">
+                  Slot Pergantian di Titik Bubar
+                </span>
+              </div>
               {!isEditingRoster ? (
                 Array.isArray(currentTeam.roster?.cadangan) && currentTeam.roster.cadangan.length > 0 ? (
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3">
                     {currentTeam.roster.cadangan.map((c, i) => {
                       const hasCPhoto = c.photo && typeof c.photo === 'string' && c.photo !== '#' && !c.photo.startsWith('#') && !c.photo.includes('drive.google.com/open?id=');
                       return (
-                        <div key={c.id || i} className="group/cadangan bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden flex flex-col justify-between">
+                        <div key={c.id || i} className="group/cadangan bg-white rounded-2xl border border-slate-200 shadow-2xs hover:shadow-md hover:border-amber-400 transition-all duration-300 overflow-hidden flex flex-col justify-between">
                           <div className="aspect-[3/4] w-full bg-slate-100 relative overflow-hidden flex items-center justify-center border-b border-slate-100">
                             {hasCPhoto ? (
                               <img
