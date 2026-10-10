@@ -213,15 +213,15 @@ export default function Navbar({ onOpenMobileMenu }) {
                     : 'bg-slate-950/60 hover:bg-slate-900/80 backdrop-blur-md border-white/15 hover:border-white/25 text-white shadow-md'
                 }`}
               >
-                {/* Avatar with subtle online status indicator */}
-                <div className="relative shrink-0">
+                {/* Avatar / School Logo without container box */}
+                <div className="relative shrink-0 flex items-center justify-center">
                   <img
                     src={avatarUrl}
                     alt={currentUser.name}
-                    className={`w-8 h-8 rounded-full ${
+                    className={`${
                       isSchoolLogo 
-                        ? 'object-contain bg-white p-0.5 border border-slate-200/80' 
-                        : 'object-cover ring-1.5 ring-amber-400/40'
+                        ? 'w-8 h-8 object-contain filter drop-shadow-sm' 
+                        : 'w-8 h-8 rounded-full object-cover ring-1.5 ring-amber-400/40'
                     }`}
                     width="32"
                     height="32"
@@ -256,12 +256,12 @@ export default function Navbar({ onOpenMobileMenu }) {
                 <div className="absolute right-0 mt-2.5 w-72 bg-slate-950/95 backdrop-blur-2xl border border-slate-800/80 rounded-2xl p-2.5 shadow-2xl z-50 text-white text-xs animate-in fade-in zoom-in-95 duration-150 space-y-1.5 ring-1 ring-white/10">
                   {/* User Profile Header Card */}
                   <div className="px-3 py-2.5 bg-slate-900/80 border border-slate-800 rounded-xl flex items-center gap-3">
-                    <div className="relative shrink-0">
+                    <div className="relative shrink-0 flex items-center justify-center">
                       <img
                         src={avatarUrl}
                         alt={currentUser.name}
-                        className={`w-11 h-11 rounded-xl shadow-md ${
-                          isSchoolLogo ? 'object-contain bg-white p-1' : 'object-cover ring-2 ring-yellow-400/40'
+                        className={`${
+                          isSchoolLogo ? 'w-11 h-11 object-contain filter drop-shadow-md' : 'w-11 h-11 rounded-xl shadow-md object-cover ring-2 ring-yellow-400/40'
                         }`}
                         onError={(e) => {
                           e.target.src = currentUser.googleAvatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.schoolName || currentUser.name)}&background=8B0000&color=fff`;

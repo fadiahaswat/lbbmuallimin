@@ -14,6 +14,12 @@ export default function OverviewTab({
   compTime,
   setActiveTab
 }) {
+  const allPasukan = Array.isArray(currentTeam.roster?.pasukan) ? currentTeam.roster.pasukan : [];
+  const allCadangan = Array.isArray(currentTeam.roster?.cadangan) ? currentTeam.roster.cadangan : [];
+
+  const filledPasukan = allPasukan.filter(p => p?.name && p.name !== '-' && p.name.trim() !== '').length;
+  const filledCadangan = allCadangan.filter(c => c?.name && c.name !== '-' && c.name.trim() !== '').length;
+
   return (
     <div className="space-y-6">
       {/* 3 Box Sorotan Status Tampil Peleton */}
@@ -362,16 +368,26 @@ export default function OverviewTab({
               <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-100">
                 <span className="text-slate-600">Pasukan Inti (21):</span>
                 <span className={`font-bold font-mono px-2 py-0.5 rounded ${
-                  (currentTeam.roster?.pasukan?.length || 0) >= 21 ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'
+                  filledPasukan >= 21
+                    ? 'bg-emerald-100 text-emerald-800 border border-emerald-300/60'
+                    : filledPasukan > 0
+                    ? 'bg-amber-100 text-amber-900 border border-amber-300/60'
+                    : 'bg-slate-100 text-slate-500 border border-slate-200'
                 }`}>
-                  {currentTeam.roster?.pasukan?.length || 0}/21 Personel
+                  {filledPasukan}/21 Personel
                 </span>
               </div>
 
               <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-100">
                 <span className="text-slate-600">Cadangan (Opsional):</span>
-                <span className="font-bold font-mono px-2 py-0.5 rounded bg-slate-200 text-slate-700">
-                  {currentTeam.roster?.cadangan?.length || 0}/3 Personel
+                <span className={`font-bold font-mono px-2 py-0.5 rounded ${
+                  filledCadangan >= 3
+                    ? 'bg-emerald-100 text-emerald-800 border border-emerald-300/60'
+                    : filledCadangan > 0
+                    ? 'bg-amber-100 text-amber-900 border border-amber-300/60'
+                    : 'bg-slate-100 text-slate-500 border border-slate-200'
+                }`}>
+                  {filledCadangan}/3 Personel
                 </span>
               </div>
 

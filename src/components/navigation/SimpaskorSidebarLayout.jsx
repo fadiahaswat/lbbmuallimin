@@ -186,11 +186,8 @@ export default function SimpaskorSidebarLayout({
 
           {/* Navigation Items (Scrollable jika layar pendek) */}
           <div className="flex-1 space-y-1.5 overflow-y-auto pr-1 pb-2">
-            <div className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-3 pt-1 mb-2 flex items-center justify-between">
+            <div className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-3 pt-1 mb-2">
               <span>9 Tahap Lomba</span>
-              <span className="text-[9px] text-slate-400 font-bold bg-slate-100 px-1.5 py-0.5 rounded">
-                SIMPASKOR
-              </span>
             </div>
             {navItems.map(item => {
               const Icon = item.icon;
@@ -421,12 +418,12 @@ export default function SimpaskorSidebarLayout({
             <div className="pt-3 border-t border-slate-100">
               <div className="p-2.5 bg-slate-50 border border-slate-200/80 rounded-2xl flex items-center justify-between gap-2.5 mb-2.5">
                 <div className="flex items-center gap-2.5 min-w-0">
-                  <div className="relative shrink-0">
+                  <div className="relative shrink-0 flex items-center justify-center">
                     <img
                       src={avatarUrl}
                       alt={currentUser?.name || 'User'}
-                      className={`w-9 h-9 rounded-xl shadow-xs ${
-                        isSchoolLogo ? 'object-contain bg-white p-0.5 border border-slate-200' : 'object-cover ring-1 ring-slate-200'
+                      className={`${
+                        isSchoolLogo ? 'w-9 h-9 object-contain filter drop-shadow-sm' : 'w-9 h-9 rounded-xl shadow-xs object-cover ring-1 ring-slate-200'
                       }`}
                       onError={(e) => {
                         if (currentUser?.googleAvatar) {

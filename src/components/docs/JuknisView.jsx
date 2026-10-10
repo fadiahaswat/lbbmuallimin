@@ -21,7 +21,11 @@ import { COMPETITION, DOWNLOADS, MATERIALS } from '../../config.js';
 import SimpaskorSidebarLayout from '../navigation/SimpaskorSidebarLayout.jsx';
 
 export default function JuknisView() {
-  const [selectedJenjang, setSelectedJenjang] = useState('SD');
+  const { currentTeam } = useCompetition();
+
+  // Jika akun peleton peserta SMP, otomatis default ke 'SMP'. Jika SD, default ke 'SD'.
+  const initialJenjang = currentTeam?.jenjang?.toUpperCase() === 'SMP' ? 'SMP' : 'SD';
+  const [selectedJenjang, setSelectedJenjang] = useState(initialJenjang);
   const [searchQuery, setSearchQuery] = useState('');
 
   // 26 Gerakan Resmi SD/MI LBB Mu'allimin 2027
