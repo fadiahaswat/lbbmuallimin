@@ -51,9 +51,7 @@ export function cleanLegacyStorage() {
       'lbb_muallimin_teams_',
       'lbb_muallimin_scores_',
       'lbb_muallimin_staging_',
-      'lbb_muallimin_votes_',
-      'lbb_muallimin_users_',
-      'lbb_muallimin_current_user_'
+      'lbb_muallimin_votes_'
     ];
     Object.keys(localStorage).forEach(k => {
       if (k.startsWith('lbb_muallimin_users_') && k !== STORAGE_KEYS.USERS) {

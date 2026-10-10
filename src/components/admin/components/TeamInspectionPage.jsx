@@ -423,7 +423,7 @@ export default function TeamInspectionPage({ team, inspectionStage = 'registrati
                 {team.lotNumber ? `#${String(team.lotNumber).padStart(2, '0')}` : 'Belum diundi'}
               </span>
               <span className="text-[10px] text-amber-700 font-medium block mt-1">
-                {team.lotNumber ? 'Undian Resmi TM' : 'Menunggu hasil kocokan TM'}
+                {team.lotNumber ? 'Undian Resmi TM' : 'Menunggu penetapan undian TM'}
               </span>
             </div>
 

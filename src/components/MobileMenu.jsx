@@ -282,7 +282,7 @@ export default function MobileMenu({ isOpen, onClose }) {
                         <div className="w-8 h-8 rounded-lg bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400">
                           <CalendarCheck className="w-4 h-4" />
                         </div>
-                        <span className="text-xs">Kocok Undian TM & No. Dada</span>
+                        <span className="text-xs">Undian TM & Jadwal Tampil</span>
                       </div>
                       <ArrowRight className="w-4 h-4 text-slate-500 group-hover:text-amber-400 group-hover:translate-x-0.5 transition-all" />
                     </button>

@@ -27,6 +27,10 @@ import {
   BookOpen,
   ShieldAlert,
   Coins,
+  ChevronLeft,
+  ChevronRight,
+  PanelLeftClose,
+  PanelLeftOpen
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
 import logoLbb from '../../assets/logo-tonti.png';
@@ -45,6 +49,7 @@ export default function SimpaskorSidebarLayout({
 }) {
   const {
     currentUser,
+    currentTeam,
     role,
     setActiveView,
     logoutUser,
@@ -57,12 +62,53 @@ export default function SimpaskorSidebarLayout({
     getUserAvatar
   } = useCompetition();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(() => {
+    try {
+      return localStorage.getItem('lbb_sidebar_collapsed') === 'true';
+    } catch (e) {
+      return false;
+    }
+  });
 
-  const userRole = currentUser?.role || role || 'publik';
+  const toggleSidebarCollapse = () => {
+    setIsCollapsed(prev => {
+      const next = !prev;
+      try {
+        localStorage.setItem('lbb_sidebar_collapsed', String(next));
+      } catch (e) {
+        // ignore
+      }
+      return next;
+    });
+  };
 
-  const avatarMeta = currentUser && getUserAvatar ? getUserAvatar(currentUser) : null;
-  const avatarUrl = avatarMeta?.url || currentUser?.avatar;
-  const isSchoolLogo = avatarMeta?.isSchoolLogo;
+  const userRole = currentUser?.role || (currentTeam ? 'peserta' : (role || 'publik'));
+
+  const avatarMeta = useMemo(() => {
+    if (!currentUser && !currentTeam) return null;
+    if (getUserAvatar) {
+      return getUserAvatar(currentUser || { role: 'peserta', schoolName: currentTeam?.schoolName, teamId: currentTeam?.id });
+    }
+    return null;
+  }, [currentUser, currentTeam, getUserAvatar]);
+
+  const displayName = userRole === 'peserta'
+    ? (currentUser?.schoolName || currentTeam?.schoolName || currentUser?.name || 'Peleton Peserta')
+    : (currentUser?.name || 'Panitia LBB');
+
+  const displaySubtitle = currentUser?.email || currentTeam?.email || (currentUser?.roleLabel || (userRole === 'peserta' ? 'Official Tim Peserta' : userRole));
+
+  const isSchoolLogo = userRole === 'peserta' && (
+    avatarMeta?.isSchoolLogo || Boolean(currentTeam?.files?.schoolLogo?.url && currentTeam.files.schoolLogo.url !== '#' && !currentTeam.files.schoolLogo.url.startsWith('#'))
+  );
+
+  const fallbackInitialAvatar = useMemo(() => {
+    const bg = userRole === 'peserta' ? '8B0000' : '020617';
+    const color = userRole === 'peserta' ? 'fff' : 'fbbf24';
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=${bg}&color=${color}&bold=true`;
+  }, [userRole, displayName]);
+
+  const avatarUrl = avatarMeta?.url || currentUser?.avatar || (isSchoolLogo ? currentTeam?.files?.schoolLogo?.url : null) || fallbackInitialAvatar;
 
   // Menu items disesuaikan dengan role
   const getNavItems = () => {
@@ -160,36 +206,61 @@ export default function SimpaskorSidebarLayout({
 
   return (
     <div className="min-h-screen bg-[#F8F9FA] text-slate-800 flex font-sans">
-      {/* 1. DESKTOP SIDEBAR (Fixed Left, Full 100vh, Sleek & Professional) */}
-      <aside className="hidden lg:flex flex-col w-72 bg-white border-r border-slate-200/90 px-4 py-5 fixed top-0 bottom-0 left-0 h-screen select-none shrink-0 z-30 justify-between shadow-[1px_0_12px_rgba(0,0,0,0.03)]">
+      {/* 1. DESKTOP SIDEBAR (Fixed Left, Full 100vh, Sleek & Professional with Collapse support) */}
+      <aside 
+        className={`hidden lg:flex flex-col bg-white border-r border-slate-200/90 fixed top-0 bottom-0 left-0 h-screen select-none shrink-0 z-30 justify-between shadow-[1px_0_12px_rgba(0,0,0,0.03)] transition-all duration-300 ${
+          isCollapsed ? 'w-20 px-2.5 py-4' : 'w-72 px-4 py-5'
+        }`}
+      >
+        {/* Toggle Collapse Button (Posisi kanan atas sidebar) */}
+        <button
+          type="button"
+          onClick={toggleSidebarCollapse}
+          className="absolute -right-3.5 top-6 w-7 h-7 bg-white border border-slate-200 rounded-full shadow-md flex items-center justify-center text-slate-500 hover:text-slate-900 hover:scale-110 active:scale-95 transition-all z-40 cursor-pointer"
+          title={isCollapsed ? 'Perbesar Menu Samping' : 'Kecilkan Menu Samping (Collapse)'}
+          aria-label={isCollapsed ? 'Perbesar Menu' : 'Kecilkan Menu'}
+        >
+          {isCollapsed ? (
+            <ChevronRight className="w-4 h-4 text-purple-600" />
+          ) : (
+            <ChevronLeft className="w-4 h-4 text-slate-600" />
+          )}
+        </button>
+
         <div className="flex flex-col min-h-0 flex-1 overflow-hidden">
           {/* Brand Header: Logo LBB & title-logo */}
           <div 
             onClick={() => setActiveView('landing')}
-            className="flex items-center justify-center py-2.5 px-3 rounded-2xl hover:bg-slate-50 border border-transparent hover:border-slate-100 cursor-pointer group transition-all duration-200 shrink-0 mb-4"
+            className={`flex items-center rounded-2xl hover:bg-slate-50 border border-transparent hover:border-slate-100 cursor-pointer group transition-all duration-200 shrink-0 mb-4 ${
+              isCollapsed ? 'justify-center py-2 px-1' : 'justify-center py-2.5 px-3'
+            }`}
             title="Ke Beranda Utama LBB Mu'allimin"
           >
-            <div className="flex items-center gap-2.5">
+            <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-2.5'}`}>
               <img
                 src={logoLbb}
                 alt="Logo LBB Mu'allimin"
-                className="h-10 w-auto object-contain filter drop-shadow-sm group-hover:scale-105 transition-transform shrink-0"
+                className={`w-auto object-contain filter drop-shadow-sm group-hover:scale-105 transition-transform shrink-0 ${
+                  isCollapsed ? 'h-9' : 'h-10'
+                }`}
               />
-              <img
-                src={titleLogoImg}
-                alt="LBB Mu'allimin"
-                className="h-8 w-auto object-contain max-w-[150px]"
-              />
+              {!isCollapsed && (
+                <img
+                  src={titleLogoImg}
+                  alt="LBB Mu'allimin"
+                  className="h-8 w-auto object-contain max-w-[150px]"
+                />
+              )}
             </div>
           </div>
 
-
-
           {/* Navigation Items (Scrollable jika layar pendek) */}
           <div className="flex-1 space-y-1.5 overflow-y-auto pr-1 pb-2">
-            <div className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-3 pt-1 mb-2">
-              <span>9 Tahap Lomba</span>
-            </div>
+            {!isCollapsed && (
+              <div className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-3 pt-1 mb-2">
+                <span>9 Tahap Lomba</span>
+              </div>
+            )}
             {navItems.map(item => {
               const Icon = item.icon;
               const isActive = isItemActive(item);
@@ -199,27 +270,32 @@ export default function SimpaskorSidebarLayout({
                   key={item.id}
                   type="button"
                   onClick={() => handleNavClick(item)}
-                  className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                  title={item.label}
+                  className={`w-full flex items-center rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                    isCollapsed ? 'justify-center p-2.5' : 'justify-between px-3.5 py-2.5'
+                  } ${
                     isActive
                       ? 'bg-gradient-to-r from-red-600 to-red-700 text-white shadow-sm shadow-red-600/30'
                       : 'text-slate-600 hover:text-slate-950 hover:bg-slate-100/80'
                   }`}
                 >
-                  <div className="flex items-center gap-3">
-                    <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-slate-400'}`} />
-                    <span>{item.label}</span>
+                  <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'}`}>
+                    <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-slate-400'}`} />
+                    {!isCollapsed && <span>{item.label}</span>}
                   </div>
-                  {isActive && <div className="w-1.5 h-1.5 rounded-full bg-white shadow-xs" />}
+                  {!isCollapsed && isActive && <div className="w-1.5 h-1.5 rounded-full bg-white shadow-xs" />}
                 </button>
               );
             })}
 
             {/* Dokumen & Regulasi SaaS */}
-            <div className="pt-4 mt-3 border-t border-slate-100">
-              <div className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-3 mb-2 flex items-center justify-between">
-                <span>Dokumen SaaS</span>
-                <span className="text-[9px] bg-red-50 text-red-700 border border-red-200/50 px-2 py-0.5 rounded-full font-bold">Resmi</span>
-              </div>
+            <div className={`pt-4 mt-3 border-t border-slate-100 ${isCollapsed ? 'border-dashed' : ''}`}>
+              {!isCollapsed && (
+                <div className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-3 mb-2 flex items-center justify-between">
+                  <span>Dokumen SaaS</span>
+                  <span className="text-[9px] bg-red-50 text-red-700 border border-red-200/50 px-2 py-0.5 rounded-full font-bold">Resmi</span>
+                </div>
+              )}
               <div className="space-y-1">
                 {saasDocItems.map(item => {
                   const Icon = item.icon;
@@ -230,15 +306,18 @@ export default function SimpaskorSidebarLayout({
                       key={item.id}
                       type="button"
                       onClick={() => handleNavClick(item)}
-                      className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                      title={item.label}
+                      className={`w-full flex items-center rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                        isCollapsed ? 'justify-center p-2.5' : 'justify-between px-3.5 py-2.5'
+                      } ${
                         isActive
                           ? 'bg-slate-900 text-white shadow-xs'
                           : 'text-slate-600 hover:text-slate-950 hover:bg-slate-100/80'
                       }`}
                     >
-                      <div className="flex items-center gap-3">
-                        <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-slate-400'}`} />
-                        <span>{item.label}</span>
+                      <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'}`}>
+                        <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-slate-400'}`} />
+                        {!isCollapsed && <span>{item.label}</span>}
                       </div>
                     </button>
                   );
@@ -248,22 +327,25 @@ export default function SimpaskorSidebarLayout({
 
             {/* Master System (KHUSUS Superadmin Tertinggi: tontimuallimin2026@gmail.com) */}
             {userRole === 'superadmin' && (
-              <div className="pt-3 mt-3 border-t border-slate-100">
+              <div className={`pt-3 mt-3 border-t border-slate-100 ${isCollapsed ? 'border-dashed' : ''}`}>
                 <button
                   type="button"
                   onClick={() => {
                     setIsMobileMenuOpen(false);
                     setActiveView('superadmin');
                   }}
-                  className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                  title="Master System"
+                  className={`w-full flex items-center rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                    isCollapsed ? 'justify-center p-2.5' : 'justify-between px-3.5 py-2.5'
+                  } ${
                     activeMenu === 'superadmin'
                       ? 'bg-purple-600 text-white shadow-sm shadow-purple-600/30'
                       : 'text-slate-500 hover:text-slate-950 hover:bg-slate-100/80'
                   }`}
                 >
-                  <div className="flex items-center gap-3">
-                    <Crown className={`w-4 h-4 ${activeMenu === 'superadmin' ? 'text-white' : 'text-purple-600'}`} />
-                    <span>Master System</span>
+                  <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'}`}>
+                    <Crown className={`w-4 h-4 shrink-0 ${activeMenu === 'superadmin' ? 'text-white' : 'text-purple-600'}`} />
+                    {!isCollapsed && <span>Master System</span>}
                   </div>
                 </button>
               </div>
@@ -273,33 +355,43 @@ export default function SimpaskorSidebarLayout({
 
         {/* User Card & Logout di Footer Sidebar (Paling Bawah) */}
         <div className="pt-4 border-t border-slate-100 mt-auto shrink-0">
-          <div className="p-3 bg-slate-50/90 border border-slate-200/80 rounded-2xl flex items-center justify-between gap-3 shadow-xs">
-            <div className="flex items-center gap-3 min-w-0">
-              <div className="relative shrink-0">
+          <div className={`bg-slate-50/90 border border-slate-200/80 rounded-2xl flex items-center justify-between shadow-xs ${
+            isCollapsed ? 'p-2 flex-col gap-2' : 'p-3 gap-3'
+          }`}>
+            <div className={`flex items-center min-w-0 ${isCollapsed ? 'justify-center' : 'gap-3'}`}>
+              <div className="relative shrink-0 flex items-center justify-center">
                 <img
                   src={avatarUrl}
-                  alt={currentUser?.name || 'User'}
-                  className={`w-9 h-9 rounded-xl shadow-xs ${
-                    isSchoolLogo ? 'object-contain bg-white p-0.5 border border-slate-200' : 'object-cover ring-1 ring-slate-200'
+                  alt={displayName}
+                  className={`rounded-xl shadow-xs ${
+                    isCollapsed ? 'w-8 h-8' : 'w-9 h-9'
+                  } ${
+                    isSchoolLogo 
+                      ? 'object-contain bg-white p-0.5 border border-slate-200' 
+                      : 'object-cover ring-1 ring-slate-200/80 bg-slate-900 text-[10px]'
                   }`}
+                  loading="lazy"
+                  decoding="async"
                   onError={(e) => {
-                    if (currentUser?.googleAvatar) {
+                    if (currentUser?.googleAvatar && e.target.src !== currentUser.googleAvatar) {
                       e.target.src = currentUser.googleAvatar;
-                    } else {
-                      e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser?.name || 'User')}&background=020617&color=fbbf24&bold=true`;
+                    } else if (e.target.src !== fallbackInitialAvatar) {
+                      e.target.src = fallbackInitialAvatar;
                     }
                   }}
                 />
                 <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-white" title="Online" />
               </div>
-              <div className="min-w-0 flex-1">
-                <div className="text-xs font-black text-slate-900 leading-tight truncate" title={currentUser?.name || currentUser?.schoolName || 'Panitia LBB'}>
-                  {currentUser?.role === 'peserta' ? (currentUser.schoolName || currentUser.name) : (currentUser?.name || 'Panitia LBB')}
+              {!isCollapsed && (
+                <div className="min-w-0 flex-1">
+                  <div className="text-xs font-black text-slate-900 leading-tight truncate" title={displayName}>
+                    {displayName}
+                  </div>
+                  <div className="text-[10px] text-slate-400 font-medium leading-tight truncate mt-1" title={displaySubtitle}>
+                    {displaySubtitle}
+                  </div>
                 </div>
-                <div className="text-[10px] text-slate-400 font-medium leading-tight truncate mt-1" title={currentUser?.email || ''}>
-                  {currentUser?.email || (currentUser?.roleLabel || userRole)}
-                </div>
-              </div>
+              )}
             </div>
             <button
               onClick={handleLogout}
@@ -422,15 +514,19 @@ export default function SimpaskorSidebarLayout({
                   <div className="relative shrink-0 flex items-center justify-center">
                     <img
                       src={avatarUrl}
-                      alt={currentUser?.name || 'User'}
-                      className={`${
-                        isSchoolLogo ? 'w-9 h-9 object-contain filter drop-shadow-sm' : 'w-9 h-9 rounded-xl shadow-xs object-cover ring-1 ring-slate-200'
+                      alt={displayName}
+                      className={`w-9 h-9 rounded-xl shadow-xs ${
+                        isSchoolLogo 
+                          ? 'object-contain bg-white p-0.5 border border-slate-200' 
+                          : 'object-cover ring-1 ring-slate-200/80 bg-slate-900 text-[10px]'
                       }`}
+                      loading="lazy"
+                      decoding="async"
                       onError={(e) => {
-                        if (currentUser?.googleAvatar) {
+                        if (currentUser?.googleAvatar && e.target.src !== currentUser.googleAvatar) {
                           e.target.src = currentUser.googleAvatar;
-                        } else {
-                          e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser?.name || 'User')}&background=020617&color=fbbf24&bold=true`;
+                        } else if (e.target.src !== fallbackInitialAvatar) {
+                          e.target.src = fallbackInitialAvatar;
                         }
                       }}
                     />
@@ -438,10 +534,10 @@ export default function SimpaskorSidebarLayout({
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="text-xs font-black text-slate-900 leading-tight truncate">
-                      {currentUser?.role === 'peserta' ? (currentUser.schoolName || currentUser.name) : (currentUser?.name || 'Panitia LBB')}
+                      {displayName}
                     </div>
                     <div className="text-[10px] text-slate-400 font-medium leading-tight truncate mt-0.5">
-                      {currentUser?.email || (currentUser?.roleLabel || userRole)}
+                      {displaySubtitle}
                     </div>
                   </div>
                 </div>
@@ -458,109 +554,56 @@ export default function SimpaskorSidebarLayout({
         </div>
       )}
 
-      {/* 3. MAIN CONTENT AREA (Offset lg:pl-72 untuk fixed sidebar w-72) */}
-      <div className="flex-1 flex flex-col min-w-0 pb-20 lg:pb-8 lg:pl-72">
-        {/* Top Header Bar */}
-        {!hideHeader ? (
-          <header className="bg-white/80 backdrop-blur-md border-b border-slate-200/70 px-4 sm:px-8 py-3.5 sticky top-0 z-20 flex items-center justify-between gap-4">
-            {/* Desktop Brand / Title & Mobile Brand */}
-            <div className="flex items-center gap-3 min-w-0">
-              {/* Mobile Branding: logo lbb + logo title */}
-              <div 
-                onClick={() => setActiveView('landing')}
-                className="lg:hidden flex items-center gap-2 cursor-pointer shrink-0"
-                title="Ke Beranda Utama"
-              >
-                <img
-                  src={logoLbb}
-                  alt="Logo LBB"
-                  className="h-8 w-auto object-contain shrink-0"
-                />
-                <img
-                  src={titleLogoImg}
-                  alt="LBB Mu'allimin"
-                  className="h-6 w-auto object-contain max-w-[125px]"
-                />
-              </div>
-
-              {/* Desktop Title & Subtitle */}
-              <div className="hidden lg:block min-w-0">
-                <h1 className="text-lg sm:text-xl font-black text-slate-900 tracking-tight truncate">{title}</h1>
-                <p className="text-xs text-slate-500 truncate">{subtitle}</p>
-              </div>
-            </div>
-
-            {/* Right Area: Actions on Desktop & Mobile Menu Button on Far Right */}
-            <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-              <div className="hidden sm:flex items-center gap-2">
-                {rightActions}
-              </div>
-
-              <button
-                onClick={() => setActiveView('landing')}
-                className="hidden sm:flex px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-all items-center gap-1.5"
-              >
-                <Home className="w-3.5 h-3.5" />
-                <span>Beranda</span>
-              </button>
-
-              {/* Mobile Menu Toggle (Strip 3 Paling Kanan) */}
-              <button
-                type="button"
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="lg:hidden p-2 rounded-xl text-slate-700 hover:bg-slate-100 active:scale-95 transition-all flex items-center justify-center border border-slate-200/70 bg-slate-50/80"
-                aria-label="Buka Menu"
-                title="Buka Menu"
-              >
-                <Menu className="w-5 h-5 text-slate-800" />
-              </button>
-            </div>
-          </header>
-        ) : (
-          <div className="lg:hidden px-4 py-3 bg-white/90 backdrop-blur-md border-b border-slate-200/70 flex items-center justify-between sticky top-0 z-20">
-            {/* Mobile Branding: logo lbb + logo title di kiri */}
-            <div 
-              onClick={() => setActiveView('landing')}
-              className="flex items-center gap-2 cursor-pointer min-w-0"
-              title="Ke Beranda Utama"
-            >
-              <img
-                src={logoLbb}
-                alt="Logo LBB"
-                className="h-8 w-auto object-contain shrink-0"
-              />
-              <img
-                src={titleLogoImg}
-                alt="LBB Mu'allimin"
-                className="h-6 w-auto object-contain max-w-[125px]"
-              />
-            </div>
-
-            {/* Menu Strip 3 Paling Kanan */}
-            <div className="flex items-center gap-2 shrink-0">
-              <button
-                onClick={() => setActiveView('landing')}
-                className="p-2 rounded-xl text-slate-500 hover:bg-slate-100 active:scale-95 transition-all flex items-center justify-center border border-slate-200/70 bg-slate-50/80"
-                title="Ke Beranda"
-                aria-label="Ke Beranda"
-              >
-                <Home className="w-4 h-4 text-slate-700" />
-              </button>
-              <button
-                type="button"
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="p-2 rounded-xl text-slate-700 hover:bg-slate-100 active:scale-95 transition-all flex items-center justify-center border border-slate-200/70 bg-slate-50/80"
-                aria-label="Buka Menu"
-                title="Buka Menu"
-              >
-                <Menu className="w-5 h-5 text-slate-800" />
-              </button>
-            </div>
+      {/* 3. MAIN CONTENT AREA (Offset dinamis: lg:pl-20 saat collapsed, lg:pl-72 saat expanded) */}
+      <div className={`flex-1 flex flex-col min-w-0 pb-20 lg:pb-8 transition-all duration-300 ${
+        isCollapsed ? 'lg:pl-20' : 'lg:pl-72'
+      }`}>
+        {/* Mobile-only Header Bar (Branding & Menu Toggle) */}
+        <div className="lg:hidden px-4 py-3 bg-white/90 backdrop-blur-md border-b border-slate-200/70 flex items-center justify-between sticky top-0 z-20">
+          {/* Mobile Branding: logo lbb + logo title di kiri */}
+          <div 
+            onClick={() => setActiveView('landing')}
+            className="flex items-center gap-2 cursor-pointer min-w-0"
+            title="Ke Beranda Utama"
+          >
+            <img
+              src={logoLbb}
+              alt="Logo LBB"
+              className="h-8 w-auto object-contain shrink-0"
+            />
+            <img
+              src={titleLogoImg}
+              alt="LBB Mu'allimin"
+              className="h-6 w-auto object-contain max-w-[125px]"
+            />
           </div>
-        )}
+
+          {/* Menu Strip 3 Paling Kanan */}
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              onClick={() => setActiveView('landing')}
+              className="p-2 rounded-xl text-slate-500 hover:bg-slate-100 active:scale-95 transition-all flex items-center justify-center border border-slate-200/70 bg-slate-50/80"
+              title="Ke Beranda"
+              aria-label="Ke Beranda"
+            >
+              <Home className="w-4 h-4 text-slate-700" />
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="p-2 rounded-xl text-slate-700 hover:bg-slate-100 active:scale-95 transition-all flex items-center justify-center border border-slate-200/70 bg-slate-50/80"
+              aria-label="Buka Menu"
+              title="Buka Menu"
+            >
+              <Menu className="w-5 h-5 text-slate-800" />
+            </button>
+          </div>
+        </div>
 
         {/* Content Body */}
-        <main className="p-4 sm:p-8 max-w-7xl w-full mx-auto">
+        <main className={`p-4 sm:p-6 lg:p-8 w-full mx-auto transition-all duration-300 ${
+          isCollapsed ? 'max-w-[1700px]' : 'max-w-7xl'
+        }`}>
           {children}
         </main>
       </div>

@@ -50,10 +50,40 @@ export function CompetitionProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.CURRENT_USER);
-      return saved ? JSON.parse(saved) : null;
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed === 'object') return parsed;
+      }
     } catch {
-      return null;
+      // ignore
     }
+    // Fallback: jika role peserta tersimpan dan ada saved team ID, restore session user otomatis
+    try {
+      const savedRole = localStorage.getItem(STORAGE_KEYS.ROLE);
+      const savedTeamId = localStorage.getItem(STORAGE_KEYS.CURRENT_TEAM_ID);
+      if (savedRole === 'peserta' && savedTeamId) {
+        const rawTeams = localStorage.getItem(STORAGE_KEYS.TEAMS);
+        if (rawTeams) {
+          const parsedTeams = JSON.parse(rawTeams);
+          const matched = Array.isArray(parsedTeams) ? parsedTeams.find(t => t.id === savedTeamId) : null;
+          if (matched) {
+            return {
+              id: `user-team-${matched.id}`,
+              name: matched.officialName || matched.schoolName,
+              email: matched.email || '',
+              role: 'peserta',
+              roleLabel: 'Official Tim',
+              teamId: matched.id,
+              schoolName: matched.schoolName,
+              avatar: matched.files?.schoolLogo?.url || `https://ui-avatars.com/api/?name=${encodeURIComponent(matched.schoolName)}&background=8B0000&color=fff&bold=true`,
+            };
+          }
+        }
+      }
+    } catch {
+      // ignore
+    }
+    return null;
   });
 
   const [authModal, setAuthModal] = useState({ isOpen: false, tab: 'login' });

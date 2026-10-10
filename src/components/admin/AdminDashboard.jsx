@@ -22,7 +22,6 @@ export default function AdminDashboard() {
     scores,
     verifyTeam,
     updateTeamDraw,
-    randomizeLotNumbers,
     deleteTeam,
     exportTeamsCSV,
     openModal,
@@ -117,12 +116,6 @@ export default function AdminDashboard() {
     if (inspectingTeam && inspectingTeam.id === teamId) {
       setInspectingTeam(prev => ({ ...prev, status, revisionNote: note }));
     }
-  }
-
-  function handleRandomize(jenjang) {
-    const count = randomizeLotNumbers(jenjang);
-    setLotSuccessMsg(`Berhasil mengocok ${count} nomor undian untuk jenjang ${jenjang}!`);
-    setTimeout(() => setLotSuccessMsg(''), 4000);
   }
 
   if (inspectingTeam) {
@@ -461,7 +454,6 @@ export default function AdminDashboard() {
         {activeTab === 'lottery' && (
           <LotteryTab
             teams={teams}
-            handleRandomize={handleRandomize}
             lotSuccessMsg={lotSuccessMsg}
             updateTeamDraw={updateTeamDraw}
           />

@@ -1,10 +1,9 @@
 import React from 'react';
-import { Shuffle, CheckCircle2 } from 'lucide-react';
+import { CheckCircle2 } from 'lucide-react';
 import { getChestNumberByLot } from '../../../context/competitionHelpers.js';
 
 export default function LotteryTab({
   teams,
-  handleRandomize,
   lotSuccessMsg,
   updateTeamDraw
 }) {
@@ -27,23 +26,7 @@ export default function LotteryTab({
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="text-[11px] text-slate-400 italic hidden sm:inline">Input Manual Lapangan</span>
-          <button
-            onClick={() => handleRandomize('SD')}
-            className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl flex items-center gap-1.5 border border-slate-200 transition-all cursor-pointer"
-            title="Opsi otomatis jika pengundian memakai sistem acak komputer"
-          >
-            <Shuffle className="w-3.5 h-3.5 text-slate-500" />
-            <span>Kocok Cepat SD</span>
-          </button>
-          <button
-            onClick={() => handleRandomize('SMP')}
-            className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl flex items-center gap-1.5 border border-slate-200 transition-all cursor-pointer"
-            title="Opsi otomatis jika pengundian memakai sistem acak komputer"
-          >
-            <Shuffle className="w-3.5 h-3.5 text-slate-500" />
-            <span>Kocok Cepat SMP</span>
-          </button>
+          <span className="text-[11px] text-slate-400 italic font-medium">Input Manual Lapangan</span>
         </div>
       </div>
 
