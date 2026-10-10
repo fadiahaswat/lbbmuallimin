@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   CreditCard,
   Copy,
@@ -8,7 +8,8 @@ import {
   PenTool,
   FileCheck,
   ArrowLeft,
-  CheckCircle2
+  CheckCircle2,
+  Sparkles
 } from 'lucide-react';
 import { PAYMENT } from '../../../config.js';
 
@@ -25,6 +26,21 @@ export default function Step3PaymentAndPact({
   handleSubmit,
   feeDisplay
 }) {
+  const [copiedNote, setCopiedNote] = useState(false);
+
+  // Otomatis hasilkan berita transfer berdasarkan nama sekolah atau fallback ke template
+  const rawSchool = (formData?.schoolName || '').trim().toUpperCase();
+  const teamSuffix = formData?.teamUnit && formData.teamUnit !== 'Tunggal'
+    ? (formData.teamUnit === 'Tim A' || formData.teamUnit === 'A' ? 'A' : 'B')
+    : '';
+  const schoolFormatted = rawSchool ? (teamSuffix ? `${rawSchool} ${teamSuffix}` : rawSchool) : '';
+  const autoTransferNote = schoolFormatted ? `${schoolFormatted}_1` : PAYMENT.TRANSFER_NOTE_FORMAT;
+
+  const handleCopyNote = () => {
+    navigator.clipboard?.writeText(autoTransferNote);
+    setCopiedNote(true);
+    setTimeout(() => setCopiedNote(false), 2000);
+  };
   return (
     <form
       onSubmit={handleSubmit}
@@ -126,18 +142,47 @@ export default function Step3PaymentAndPact({
               </div>
             </div>
 
-            {/* Transfer Note Guide */}
-            <div className="md:col-span-5 bg-white/5 border border-white/10 rounded-xl p-3.5 space-y-1.5">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-amber-300 block">
-                Format Berita Transfer Wajib
-              </span>
-              <div className="bg-slate-950/90 border border-amber-400/30 px-2.5 py-1.5 rounded-lg">
+            {/* Transfer Note Guide - Dynamic & Copyable */}
+            <div className="md:col-span-5 bg-white/5 border border-white/10 rounded-xl p-3.5 space-y-2">
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-amber-300 block">
+                  Berita Transfer Anda (Otomatis)
+                </span>
+                {schoolFormatted && (
+                  <span className="inline-flex items-center gap-1 text-[9px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                    <Sparkles className="w-2.5 h-2.5" /> Siap Salin
+                  </span>
+                )}
+              </div>
+              <div className="flex items-center justify-between gap-2 bg-slate-950/90 border border-amber-400/30 px-3 py-2 rounded-lg">
                 <code className="text-xs font-mono font-bold text-amber-300 break-all select-all">
-                  {PAYMENT.TRANSFER_NOTE_FORMAT}
+                  {autoTransferNote}
                 </code>
+                <button
+                  type="button"
+                  onClick={handleCopyNote}
+                  className={`px-2.5 py-1 rounded text-[11px] font-bold flex items-center gap-1 shrink-0 transition-all active:scale-95 cursor-pointer shadow-xs ${
+                    copiedNote
+                      ? 'bg-emerald-600 text-white'
+                      : 'bg-amber-400/20 hover:bg-amber-400 hover:text-slate-950 text-amber-300 border border-amber-400/40'
+                  }`}
+                  title="Salin berita transfer"
+                >
+                  {copiedNote ? (
+                    <>
+                      <Check className="w-3 h-3 stroke-[3]" />
+                      <span>Tersalin</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-3 h-3" />
+                      <span>Salin</span>
+                    </>
+                  )}
+                </button>
               </div>
               <p className="text-[10px] text-slate-400 leading-tight">
-                Contoh: <span className="text-slate-300 font-mono">MTS MU'ALLIMIN YK_1</span>
+                Format: <span className="text-slate-300 font-mono">NAMA SEKOLAH_JUMLAH PELETON</span>
               </p>
             </div>
           </div>

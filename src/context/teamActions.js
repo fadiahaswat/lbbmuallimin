@@ -4,11 +4,14 @@ import { checkTeamVerificationEligibility } from './competitionHelpers.js';
 
 export function createTeamActions({ teams, setTeams, scores, setScores, setCurrentUser, setUsers }) {
   function registerTeam(newTeamData) {
-    const jenjang = newTeamData.jenjang || 'SMP';
-    const existingSameJenjang = teams.filter(t => t.jenjang === jenjang);
-    const nextNumber = String(existingSameJenjang.length + 1).padStart(3, '0');
-    const regCode = `LBB26-${jenjang}-${nextNumber}`;
-    const id = `TEAM-${jenjang}-${Date.now()}`;
+    const jenjang = (newTeamData.jenjang || 'SMP').toUpperCase();
+    
+    // Generate kode pendaftaran yang 100% UNIK & TIDAK BISA DI-RECYCLE:
+    // Format: LBB27-{JENJANG}-{WAKTU_UNIK}-{RANDOM} (contoh: LBB27-SMP-M5K8-7X9B)
+    const timePart = Date.now().toString(36).toUpperCase().slice(-4);
+    const randPart = Math.random().toString(36).substring(2, 6).toUpperCase();
+    const regCode = `LBB27-${jenjang}-${timePart}-${randPart}`;
+    const id = `TEAM-${jenjang}-${Date.now()}-${randPart}`;
 
     const createdTeam = {
       id,

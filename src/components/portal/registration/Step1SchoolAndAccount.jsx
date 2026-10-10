@@ -331,7 +331,7 @@ export default function Step1SchoolAndAccount({
                       ? 'bg-red-50 text-red-700 border-red-200'
                       : 'bg-slate-100 text-slate-800 border-slate-200'
                   }`}>
-                    {formData.homogenGender === 'Putri' ? '👧 Peleton Putri' : '👦 Peleton Putra'}
+                    {formData.homogenGender === 'Putri' ? 'Peleton Putri' : 'Peleton Putra'}
                   </span>
                 ) : (
                   <span className="self-start sm:self-center text-[10px] font-bold text-slate-400 bg-slate-100 px-2.5 py-1 rounded-full border border-slate-200">

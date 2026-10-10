@@ -3,15 +3,16 @@ import QRCode from 'qrcode';
 export const OFFICIAL_BASE_URL = 'https://lbb.tontimuallimin.com';
 
 /**
- * Generate QR code as Data URL with embedded logo in the center (no box container)
+ * Generate QR code as Data URL with embedded logo in the center
+ * exactly like example 2 (clean crisp white contour, no dirty shadows or stacking)
  * @param {string} text - URL or text to encode
  * @param {object} options - Options
  * @returns {Promise<string>} Data URL PNG
  */
 export async function generateParticipantQRCode(text, options = {}) {
   const {
-    size = 600,
-    logoUrl = '/logo-lbb-2027.png',
+    size = 1000,
+    logoUrl = '/logo-badge-contour.png',
   } = options;
 
   // 1. Generate QR Code on an offscreen canvas
@@ -21,10 +22,10 @@ export async function generateParticipantQRCode(text, options = {}) {
 
   await QRCode.toCanvas(canvas, text, {
     width: size,
-    margin: 2,
+    margin: 3,
     errorCorrectionLevel: 'H',
     color: {
-      dark: '#0f172a',
+      dark: '#000000',
       light: '#ffffff',
     },
   });
@@ -32,19 +33,18 @@ export async function generateParticipantQRCode(text, options = {}) {
   const ctx = canvas.getContext('2d');
   if (!ctx) return canvas.toDataURL('image/png');
 
-  // 2. Load Logo Image
+  // 2. Load the contour badge logo (crisp white contour around logo)
   try {
     const logoImg = await new Promise((resolve, reject) => {
       const img = new Image();
       img.crossOrigin = 'anonymous';
       img.onload = () => resolve(img);
       img.onerror = reject;
-      // Try provided logoUrl, fallback to /logo-muallimin.png
       img.src = logoUrl;
     });
 
-    // Calculate logo dimensions (~23% of QR size)
-    const logoSize = Math.round(size * 0.23);
+    // Match exact proportions from the reference (around 24% - 25% of QR width)
+    const logoSize = Math.round(size * 0.245);
     const aspect = logoImg.width / logoImg.height;
     let drawW = logoSize;
     let drawH = logoSize;
@@ -59,25 +59,11 @@ export async function generateParticipantQRCode(text, options = {}) {
     const left = cx - drawW / 2;
     const top = cy - drawH / 2;
 
-    // 3. Create contour / breathing room around logo without box container
-    // We draw multiple semi-transparent / solid white expanded strokes behind logo
-    const padding = Math.max(6, Math.round(size * 0.015));
-    
-    // Draw white silhouette aura by drawing slightly scaled/dilated version or blurred shadow
-    ctx.save();
-    ctx.shadowColor = '#ffffff';
-    ctx.shadowBlur = padding * 2;
-    // Repeat to make solid white breathing margin
-    for (let i = 0; i < 4; i++) {
-      ctx.drawImage(logoImg, left - padding, top - padding, drawW + padding * 2, drawH + padding * 2);
-    }
-    ctx.restore();
-
-    // 4. Draw crisp logo on top
+    // Draw the crisp contour badge logo directly onto canvas in 1 clean pass
     ctx.drawImage(logoImg, left, top, drawW, drawH);
 
   } catch (err) {
-    console.warn('Could not embed logo into QR Code, falling back to raw QR:', err);
+    console.warn('Could not embed logo into QR Code:', err);
   }
 
   return canvas.toDataURL('image/png');
