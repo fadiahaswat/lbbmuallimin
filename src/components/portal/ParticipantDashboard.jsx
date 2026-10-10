@@ -20,7 +20,11 @@ import TeamProfileHeader from './participant/components/TeamProfileHeader.jsx';
 
 export default function ParticipantDashboard() {
   const {
-    currentTeam,
+    currentTeam: contextCurrentTeam,
+    teams,
+    currentUser,
+    currentTeamId,
+    setCurrentTeamId,
     updateTeamFiles,
     updateTeamRoster,
     scores,
@@ -29,6 +33,41 @@ export default function ParticipantDashboard() {
     logoutTeam,
     settings
   } = useCompetition();
+
+  // Robust currentTeam resolver: prioritize contextCurrentTeam, fallback to currentTeamId, currentUser, or localStorage
+  const currentTeam = React.useMemo(() => {
+    if (contextCurrentTeam) return contextCurrentTeam;
+    if (currentTeamId) {
+      const byId = teams?.find(t => t.id === currentTeamId);
+      if (byId) return byId;
+    }
+    const savedTeamId = typeof window !== 'undefined' ? localStorage.getItem('lbb_muallimin_current_team_id_v5') : null;
+    if (savedTeamId) {
+      const bySavedId = teams?.find(t => t.id === savedTeamId);
+      if (bySavedId) return bySavedId;
+    }
+    if (currentUser?.teamId) {
+      const byUserTeamId = teams?.find(t => t.id === currentUser.teamId);
+      if (byUserTeamId) return byUserTeamId;
+    }
+    if (currentUser?.regCode) {
+      const byReg = teams?.find(t => String(t.regCode || '').trim().toUpperCase() === String(currentUser.regCode).trim().toUpperCase());
+      if (byReg) return byReg;
+    }
+    if (currentUser?.email) {
+      const cleanEmail = currentUser.email.toLowerCase().trim();
+      const byEmail = teams?.find(t => t.email && t.email.toLowerCase().trim() === cleanEmail);
+      if (byEmail) return byEmail;
+    }
+    return null;
+  }, [contextCurrentTeam, currentTeamId, teams, currentUser]);
+
+  // Keep currentTeamId synchronized if resolved
+  React.useEffect(() => {
+    if (currentTeam && currentTeam.id !== currentTeamId && setCurrentTeamId) {
+      setCurrentTeamId(currentTeam.id);
+    }
+  }, [currentTeam, currentTeamId, setCurrentTeamId]);
 
   const eventDates = settings?.eventDates || {};
   const tmDate = eventDates.technicalMeetingDate || EVENT.TECHNICAL_MEETING_DATE;

@@ -831,9 +831,23 @@ export function CompetitionProvider({ children }) {
       const found = teams.find(t => t.id === currentUser.teamId);
       if (found) return found;
     }
+    if (currentUser?.regCode) {
+      const found = teams.find(t => String(t.regCode || '').trim().toUpperCase() === String(currentUser.regCode).trim().toUpperCase());
+      if (found) return found;
+    }
     if (currentUser?.email && currentUser.role === 'peserta') {
-      const cleanEmail = currentUser.email.toLowerCase();
-      const found = teams.find(t => t.email && t.email.toLowerCase() === cleanEmail);
+      const cleanEmail = currentUser.email.toLowerCase().trim();
+      const normalizeGmail = (e) => {
+        const parts = String(e || '').trim().toLowerCase().split('@');
+        if (parts.length !== 2) return e;
+        if (parts[1] === 'gmail.com' || parts[1] === 'googlemail.com') {
+          const username = parts[0].replace(/\./g, '').split('+')[0];
+          return `${username}@gmail.com`;
+        }
+        return `${parts[0]}@${parts[1]}`;
+      };
+      const normEmail = normalizeGmail(cleanEmail);
+      const found = teams.find(t => t.email && (t.email.toLowerCase().trim() === cleanEmail || normalizeGmail(t.email) === normEmail));
       if (found) return found;
     }
     if (currentUser?.schoolName && currentUser.role === 'peserta') {
@@ -1112,6 +1126,10 @@ export function CompetitionProvider({ children }) {
       setDocViewerData,
 
       currentUser,
+      setCurrentUser,
+      setRole,
+      setCurrentTeamId,
+      setTeams,
       users,
       authModal,
       authTab,

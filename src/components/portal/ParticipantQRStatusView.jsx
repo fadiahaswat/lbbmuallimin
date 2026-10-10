@@ -19,10 +19,10 @@ import titleLogoImg from '../../assets/title-logo.png';
 import { generateParticipantQRCode, downloadDataUrl, OFFICIAL_BASE_URL } from '../../utils/qrGenerator.js';
 
 import { fetchAllDataFromSheet, isGoogleSheetConfigured } from '../../services/sheetService.js';
-import { normalizeTeamData } from '../../context/competitionHelpers.js';
+import { normalizeTeamData, STORAGE_KEYS, safeSetItem } from '../../context/competitionHelpers.js';
 
 export default function ParticipantQRStatusView({ regCode, onBack }) {
-  const { teams, setTeams, currentUser, openAuthModal, navigateTo, setCurrentUser, setRole, setCurrentTeamId } = useCompetition();
+  const { teams, setTeams, currentUser, openAuthModal, navigateTo, setCurrentUser, setRole, setCurrentTeamId, loginAsTeam } = useCompetition();
 
   const [qrDataUrl, setQrDataUrl] = useState('');
   const [isGeneratingQr, setIsGeneratingQr] = useState(true);
@@ -194,17 +194,23 @@ export default function ParticipantQRStatusView({ regCode, onBack }) {
     const user = {
       id: `user-${team.id}`,
       name: team.officialName || team.schoolName,
-      email: team.email,
+      email: team.email || '',
       role: 'peserta',
       roleLabel: 'Calon Peserta Resmi',
       teamId: team.id,
+      regCode: team.regCode,
       schoolName: team.schoolName,
       avatar: schoolLogo || `https://ui-avatars.com/api/?name=${encodeURIComponent(team.schoolName)}&background=8B0000&color=fff&bold=true`
     };
 
+    // Pastikan tersimpan secara persisten di localStorage
+    safeSetItem(STORAGE_KEYS.CURRENT_TEAM_ID, team.id);
+    safeSetItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(user));
+    safeSetItem(STORAGE_KEYS.ROLE, 'peserta');
+
+    if (setCurrentTeamId) setCurrentTeamId(team.id);
     if (setCurrentUser) setCurrentUser(user);
     if (setRole) setRole('peserta');
-    if (setCurrentTeamId) setCurrentTeamId(team.id);
 
     // 3. Panggil onBack agar MainApp menghilangkan state scannedRegCode
     if (onBack) onBack();
