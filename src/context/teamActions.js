@@ -1,6 +1,6 @@
 import { saveRecordToSheet, deleteRecordFromSheet } from '../services/sheetService.js';
 import { generatePersonnels } from '../data/seedData.js';
-import { checkTeamVerificationEligibility } from './competitionHelpers.js';
+import { checkTeamVerificationEligibility, getChestNumberByLot } from './competitionHelpers.js';
 
 export function createTeamActions({ teams, setTeams, scores, setScores, setCurrentUser, setUsers }) {
   function registerTeam(newTeamData) {
@@ -153,7 +153,16 @@ export function createTeamActions({ teams, setTeams, scores, setScores, setCurre
       prev.map(team => {
         if (team.id === teamId) {
           const num = (lotNumber !== undefined && lotNumber !== '' && lotNumber !== null) ? parseInt(lotNumber, 10) : null;
-          const chest = (chestNumber !== undefined) ? (chestNumber ? String(chestNumber).trim() : '') : (team.chestNumber || '');
+          
+          // Auto-pair nomor dada sesuai aturan berpasangan jenjang jika tidak diisi manual atau jika nomor undian berubah
+          const defaultChestFromLot = num ? getChestNumberByLot(team.jenjang, num) : '';
+          let chest = team.chestNumber || '';
+          if (chestNumber !== undefined) {
+            chest = chestNumber ? String(chestNumber).trim() : defaultChestFromLot;
+          } else if (num && !chest) {
+            chest = defaultChestFromLot;
+          }
+
           const estTime = (estimatedTime !== undefined) ? (estimatedTime ? String(estimatedTime).trim() : '') : (team.estimatedTime || '');
           const basecamp = (basecampNumber !== undefined) ? (basecampNumber ? String(basecampNumber).trim() : '') : (team.basecampNumber || '');
           const nextStatus = num ? 'drawn' : (team.status === 'drawn' ? 'verified' : team.status);
@@ -199,9 +208,12 @@ export function createTeamActions({ teams, setTeams, scores, setScores, setCurre
     setTeams(prev =>
       prev.map(t => {
         if (idToNumber[t.id] !== undefined) {
+          const lotNum = idToNumber[t.id];
+          const autoChest = getChestNumberByLot(t.jenjang, lotNum);
           const updated = {
             ...t,
-            lotNumber: idToNumber[t.id],
+            lotNumber: lotNum,
+            chestNumber: autoChest || t.chestNumber || '',
             status: 'drawn',
             drawTime: nowIso,
           };

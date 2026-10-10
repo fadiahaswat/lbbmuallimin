@@ -1,5 +1,37 @@
 import { formatImageUrl } from '../services/sheetService.js';
 
+/**
+ * Mapping Resmi Nomor Urut Tampil ke Nomor Dada Peleton
+ * Berpasangan saat Technical Meeting (TM)
+ */
+export const LOTTERY_CHEST_MAP = {
+  SD: [
+    '111', '113', '115', '117', '119',
+    '131', '133', '135', '137', '139',
+    '151', '153', '155', '157', '159',
+    '171', '173', '175',
+  ],
+  SMP: [
+    '222', '224', '226', '228',
+    '240', '242', '244', '246', '248',
+    '260', '262', '264', '266', '268',
+    '280', '282', '284', '286',
+  ],
+};
+
+/**
+ * Dapatkan Nomor Dada resmi berdasarkan Jenjang dan Urutan Tampil (lotNumber 1-indexed)
+ * Contoh: Urutan 1 SD -> "111", Urutan 1 SMP -> "222"
+ */
+export function getChestNumberByLot(jenjang, lotNumber) {
+  if (!lotNumber || isNaN(lotNumber)) return '';
+  const num = parseInt(lotNumber, 10);
+  if (num < 1) return '';
+  const jKey = String(jenjang || '').toUpperCase().includes('SD') ? 'SD' : 'SMP';
+  const list = LOTTERY_CHEST_MAP[jKey] || [];
+  return list[num - 1] || '';
+}
+
 export const STORAGE_KEYS = {
   TEAMS: 'lbb_muallimin_teams_v4',
   SCORES: 'lbb_muallimin_scores_v4',

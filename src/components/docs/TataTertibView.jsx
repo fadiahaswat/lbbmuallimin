@@ -12,14 +12,28 @@ import {
   Users,
   Search,
   Scale,
-  Sparkles
+  Sparkles,
+  ChevronDown,
+  BookOpen,
+  X
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
 import { DOWNLOADS, EVENT, VENUE } from '../../config.js';
+import { TATA_TERTIB_ARTICLES } from '../../data/tataTertibArticles.js';
 import SimpaskorSidebarLayout from '../navigation/SimpaskorSidebarLayout.jsx';
 
 export default function TataTertibView() {
+  const [activeTab, setActiveTab] = useState('articles'); // 'articles' | 'penalties'
   const [searchPenalty, setSearchPenalty] = useState('');
+  const [searchArticle, setSearchArticle] = useState('');
+  const [openAccordions, setOpenAccordions] = useState({ 1: true });
+
+  function toggleAccordion(pasalNum) {
+    setOpenAccordions(prev => ({
+      ...prev,
+      [pasalNum]: !prev[pasalNum],
+    }));
+  }
 
   // Sanksi & Penalti Resmi LBB Mu'allimin 2027 (Bab H Juknis Lapangan & Pasal 6, 7, 8, 9, 14 Tata Tertib)
   const penaltiesList = [
@@ -143,6 +157,22 @@ export default function TataTertibView() {
     p.type.toLowerCase().includes(searchPenalty.toLowerCase())
   );
 
+  const queryArticle = searchArticle.trim().toLowerCase();
+  const filteredArticles = TATA_TERTIB_ARTICLES.filter(item => {
+    if (!queryArticle) return true;
+    return (
+      item.title.toLowerCase().includes(queryArticle) ||
+      item.pasal.toString().includes(queryArticle) ||
+      item.phase.toLowerCase().includes(queryArticle) ||
+      item.points.some(pt => pt.toLowerCase().includes(queryArticle))
+    );
+  });
+
+  const isArticleOpen = (pasalNum) => {
+    if (queryArticle) return true;
+    return Boolean(openAccordions[pasalNum]);
+  };
+
   const handlePrintTatib = () => {
     window.print();
   };
@@ -152,27 +182,7 @@ export default function TataTertibView() {
       activeMenu="tatib"
       title="Tata Tertib & Sanksi Penalti"
       subtitle="Regulasi kepatuhan kontingen 15 Pasal, kewajiban suporter, matriks sanksi penalti Perpang TNI, & mekanisme sanggah 60 menit"
-      rightActions={
-        <div className="flex items-center gap-2">
-          <a
-            href={DOWNLOADS[1]?.url || "https://docs.google.com/document/d/1rkVVB0XgycFRQgx8N4Zs7K6LB6T2J0cjYTtmALxpDzM/edit?usp=sharing"}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-3.5 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm cursor-pointer"
-          >
-            <Download className="w-4 h-4" />
-            <span className="hidden sm:inline">Unduh Dokumen Tatib</span>
-            <ExternalLink className="w-3.5 h-3.5 opacity-80" />
-          </a>
-          <button
-            onClick={handlePrintTatib}
-            className="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm cursor-pointer"
-          >
-            <Printer className="w-4 h-4" />
-            <span className="hidden sm:inline">Cetak</span>
-          </button>
-        </div>
-      }
+      hideHeader={true}
     >
       <div className="space-y-6">
 
@@ -181,7 +191,7 @@ export default function TataTertibView() {
           <div className="absolute -right-8 -bottom-8 w-60 h-60 bg-red-500/10 rounded-full blur-3xl pointer-events-none" />
 
           <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div className="space-y-2">
+            <div className="space-y-3">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/20 border border-red-400/30 text-red-300 text-xs font-black uppercase tracking-wider">
                 <ShieldAlert className="w-3.5 h-3.5" />
                 <span>15 Pasal Resmi & Matriks Penalti Bab H Juknis</span>
@@ -192,9 +202,29 @@ export default function TataTertibView() {
               <p className="text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed">
                 Pedoman kepatuhan kontingen, zonasi privasi Asrama Santri, kebersihan basecamp dengan jaminan KTP, sanksi pelanggaran arena dewan juri, serta transparansi live quick count & batas sanggah 60 menit.
               </p>
+              <div className="flex flex-wrap items-center gap-2.5 pt-1">
+                <a
+                  href={DOWNLOADS[1]?.url || "https://docs.google.com/document/d/1rkVVB0XgycFRQgx8N4Zs7K6LB6T2J0cjYTtmALxpDzM/edit?usp=sharing"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-bold transition-all shadow-md active:scale-95 cursor-pointer"
+                >
+                  <Download className="w-4 h-4" />
+                  <span>Unduh Dokumen Tatib</span>
+                  <ExternalLink className="w-3.5 h-3.5 opacity-80" />
+                </a>
+                <button
+                  type="button"
+                  onClick={handlePrintTatib}
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-white/20 text-white text-xs font-bold transition-all shadow-md active:scale-95 cursor-pointer"
+                >
+                  <Printer className="w-4 h-4" />
+                  <span>Cetak</span>
+                </button>
+              </div>
             </div>
 
-            <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-4 text-center min-w-[140px] shrink-0">
+            <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-4 text-center min-w-[140px] shrink-0 self-start md:self-center">
               <span className="text-[10px] uppercase font-bold text-red-300 block">Sanggah Resmi</span>
               <span className="text-2xl font-black text-white font-mono">60 Menit</span>
               <span className="text-[10px] text-slate-300 block mt-0.5">Setelah Pengumuman</span>
@@ -267,7 +297,7 @@ export default function TataTertibView() {
               </li>
               <li className="flex items-start gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 shrink-0 mt-1.5"></span>
-                <span>Mengikuti Upacara Pembukaan bagi Peleton No. 1–5 SD & SMP (SD-111 s.d. SD-119 & SMP-222 s.d. SMP-240; 1 Danton + 15 Anggota Lengkap berseragam lomba).</span>
+                <span>Mengikuti Upacara Pembukaan bagi Peleton Urutan Tampil 6–10 SD & SMP (SD-131 s.d. SD-139 & SMP-242 s.d. SMP-260; 1 Danton + 15 Anggota Lengkap berseragam lomba).</span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 shrink-0 mt-1.5"></span>

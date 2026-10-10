@@ -40,6 +40,7 @@ export default function SimpaskorSidebarLayout({
   subtitle = 'Ringkasan data dan informasi operasional lomba',
   rightActions = null,
   onSelectMenu = null,
+  hideHeader = false,
   children
 }) {
   const {
@@ -460,35 +461,53 @@ export default function SimpaskorSidebarLayout({
       {/* 3. MAIN CONTENT AREA (Offset lg:pl-72 untuk fixed sidebar w-72) */}
       <div className="flex-1 flex flex-col min-w-0 pb-20 lg:pb-8 lg:pl-72">
         {/* Top Header Bar */}
-        <header className="bg-white/80 backdrop-blur-md border-b border-slate-200/70 px-4 sm:px-8 py-3.5 sticky top-0 z-20 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            {/* Mobile Menu Toggle */}
+        {!hideHeader ? (
+          <header className="bg-white/80 backdrop-blur-md border-b border-slate-200/70 px-4 sm:px-8 py-3.5 sticky top-0 z-20 flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              {/* Mobile Menu Toggle */}
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="lg:hidden p-2 rounded-xl text-slate-600 hover:bg-slate-100"
+              >
+                <Menu className="w-5 h-5" />
+              </button>
+
+              <div>
+                <h1 className="text-lg sm:text-xl font-black text-slate-900 tracking-tight">{title}</h1>
+                <p className="text-xs text-slate-500 hidden sm:block">{subtitle}</p>
+              </div>
+            </div>
+
+            {/* Right Area (Notification, Date, Actions) */}
+            <div className="flex items-center gap-3">
+              {rightActions}
+
+              <button
+                onClick={() => setActiveView('landing')}
+                className="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-all flex items-center gap-1.5"
+              >
+                <Home className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Beranda</span>
+              </button>
+            </div>
+          </header>
+        ) : (
+          <div className="lg:hidden p-4 bg-white/80 backdrop-blur-md border-b border-slate-200/70 flex items-center justify-between sticky top-0 z-20">
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden p-2 rounded-xl text-slate-600 hover:bg-slate-100"
+              className="p-2 rounded-xl text-slate-600 hover:bg-slate-100"
             >
               <Menu className="w-5 h-5" />
             </button>
-
-            <div>
-              <h1 className="text-lg sm:text-xl font-black text-slate-900 tracking-tight">{title}</h1>
-              <p className="text-xs text-slate-500 hidden sm:block">{subtitle}</p>
-            </div>
-          </div>
-
-          {/* Right Area (Notification, Date, Actions) */}
-          <div className="flex items-center gap-3">
-            {rightActions}
-
             <button
               onClick={() => setActiveView('landing')}
-              className="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-all flex items-center gap-1.5"
+              className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold flex items-center gap-1.5"
             >
               <Home className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Beranda</span>
+              <span>Beranda</span>
             </button>
           </div>
-        </header>
+        )}
 
         {/* Content Body */}
         <main className="p-4 sm:p-8 max-w-7xl w-full mx-auto">

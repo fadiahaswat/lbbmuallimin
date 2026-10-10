@@ -500,8 +500,9 @@ export default function ParticipantDashboard() {
     <SimpaskorSidebarLayout
       activeMenu={activeTab}
       title={currentTeam.schoolName}
-      subtitle={`Portal Resmi Peleton • Tingkat ${currentTeam.jenjang} • No. Undi: ${currentTeam.lotNumber ? `#${String(currentTeam.lotNumber).padStart(2, '0')}` : 'Belum TM'}`}
+      subtitle={`Portal Resmi Peleton • Tingkat ${currentTeam.jenjang} • Urutan: ${currentTeam.lotNumber ? `#${String(currentTeam.lotNumber).padStart(2, '0')}` : 'Belum TM'}${currentTeam.chestNumber ? ` • No. Dada: ${currentTeam.chestNumber}` : ''}`}
       onSelectMenu={(menuId) => setActiveTab(menuId)}
+      hideHeader={true}
       rightActions={
         <div className="flex items-center gap-2">
           <button
@@ -598,6 +599,31 @@ export default function ParticipantDashboard() {
                   Unggah Perbaikan Berkas Sekarang
                 </button>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Notifikasi Wajib Upacara Pembukaan untuk Peleton Urutan 6 s.d. 10 */}
+        {Number(currentTeam.lotNumber) >= 6 && Number(currentTeam.lotNumber) <= 10 && (
+          <div className="bg-gradient-to-r from-red-600 via-rose-600 to-red-700 text-white p-4 sm:p-5 rounded-2xl shadow-lg border border-red-500 flex items-start gap-4 animate-in fade-in duration-300">
+            <div className="p-2.5 bg-white text-red-700 rounded-xl shrink-0 shadow-sm font-black text-sm flex items-center justify-center">
+              🚩
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-[10px] font-black uppercase tracking-wider bg-white/20 text-white px-2.5 py-0.5 rounded-full border border-white/30">
+                  Perhatian Khusus Urutan #{String(currentTeam.lotNumber).padStart(2, '0')} (Bab H.1 Juknis)
+                </span>
+                <span className="text-[10px] font-black uppercase tracking-wider bg-yellow-400 text-slate-950 px-2 py-0.5 rounded-full">
+                  Wajib Hadir Upacara Pembukaan
+                </span>
+              </div>
+              <h4 className="font-black text-white text-base mt-1.5 leading-snug">
+                Peleton Anda Wajib Berbaris Mengikuti Upacara Pembukaan Resmi!
+              </h4>
+              <p className="text-xs text-red-50 mt-1 leading-relaxed">
+                Sesuai Juknis Bab H.1 dan Tata Tertib Pasal 6.2, <strong>peleton dengan urutan tampil 6 s.d. 10</strong> wajib berbaris di Lapangan Utama pada <strong>pukul 06.45 WIB</strong> (komposisi 1 Komandan + 15 Anggota / 5 trio). Tidak mengikuti upacara atau tidak lengkap dikenakan sanksi penalti pengurangan <strong>-150 poin</strong>.
+              </p>
             </div>
           </div>
         )}

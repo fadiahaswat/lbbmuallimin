@@ -308,163 +308,157 @@ export function CompetitionProvider({ children }) {
         if (sheetTeams.length === 0) {
           setTeams([]);
         } else {
-        setTeams(prev => {
-          const map = new Map();
-          prev.forEach(t => map.set(t.id, normalizeTeamData(t)));
+          setTeams(prev => {
+            const prevMap = new Map();
+            prev.forEach(t => prevMap.set(t.id, normalizeTeamData(t)));
 
-          sheetTeams.forEach(rawSheetTeam => {
-            const normalizedSheetTeam = normalizeTeamData(rawSheetTeam);
-            const existing = map.get(normalizedSheetTeam.id);
+            const nextTeams = sheetTeams.map(rawSheetTeam => {
+              const normalizedSheetTeam = normalizeTeamData(rawSheetTeam);
+              const existing = prevMap.get(normalizedSheetTeam.id);
 
-            if (existing) {
-              const mergedFiles = {
-                ...existing.files,
-                ...normalizedSheetTeam.files,
-              };
-              Object.keys(existing.files || {}).forEach(k => {
-                if (existing.files[k]?.url && (!mergedFiles[k]?.url || mergedFiles[k]?.url === '#')) {
-                  mergedFiles[k] = existing.files[k];
+              if (existing) {
+                const mergedFiles = {
+                  ...existing.files,
+                  ...normalizedSheetTeam.files,
+                };
+                Object.keys(existing.files || {}).forEach(k => {
+                  if (existing.files[k]?.url && (!mergedFiles[k]?.url || mergedFiles[k]?.url === '#')) {
+                    mergedFiles[k] = existing.files[k];
+                  }
+                });
+
+                const existingRoster = existing.roster || {};
+                const sheetRoster = normalizedSheetTeam.roster || {};
+
+                const mergedDanton = {
+                  ...existingRoster.danton,
+                  ...sheetRoster.danton,
+                  name: (sheetRoster.danton?.name && sheetRoster.danton.name !== '-' && sheetRoster.danton.name !== 'Anggota Pratama') 
+                    ? sheetRoster.danton.name 
+                    : (existingRoster.danton?.name || existing.dantonName || normalizedSheetTeam.dantonName || '-'),
+                  photo: (sheetRoster.danton?.photo && sheetRoster.danton.photo !== '#' && !sheetRoster.danton.photo.startsWith('#'))
+                    ? sheetRoster.danton.photo
+                    : (existingRoster.danton?.photo || null),
+                };
+
+                const sheetPasukan = Array.isArray(sheetRoster.pasukan) ? sheetRoster.pasukan : [];
+                const existingPasukan = Array.isArray(existingRoster.pasukan) ? existingRoster.pasukan : [];
+                const maxPasukanLen = Math.max(sheetPasukan.length, existingPasukan.length, 21);
+                const mergedPasukan = [];
+
+                for (let i = 0; i < maxPasukanLen; i++) {
+                  const sP = sheetPasukan[i];
+                  const eP = existingPasukan[i];
+                  if (!sP && !eP) continue;
+
+                  const pId = sP?.id || eP?.id || `p-${i + 1}`;
+                  const safNumber = sP?.safNumber || eP?.safNumber || Math.ceil((i + 1) / 7);
+                  const banjarNumber = sP?.banjarNumber || eP?.banjarNumber || (((i) % 7) + 1);
+
+                  mergedPasukan.push({
+                    id: pId,
+                    role: 'pasukan',
+                    safNumber,
+                    banjarNumber,
+                    name: (sP?.name && sP.name !== '-') ? sP.name : (eP?.name || ''),
+                    nisn: (sP?.nisn && sP.nisn !== '-') ? sP.nisn : (eP?.nisn || ''),
+                    class: (sP?.class && sP.class !== '-') ? sP.class : (eP?.class || ''),
+                    birthPlace: sP?.birthPlace || eP?.birthPlace || '',
+                    birthDate: sP?.birthDate || eP?.birthDate || '',
+                    photo: (sP?.photo && sP.photo !== '#' && !sP.photo.startsWith('#'))
+                      ? sP.photo
+                      : (eP?.photo || null),
+                  });
                 }
-              });
 
-              const existingRoster = existing.roster || {};
-              const sheetRoster = normalizedSheetTeam.roster || {};
+                const sheetCadangan = Array.isArray(sheetRoster.cadangan) ? sheetRoster.cadangan : [];
+                const existingCadangan = Array.isArray(existingRoster.cadangan) ? existingRoster.cadangan : [];
+                const maxCadLen = Math.max(sheetCadangan.length, existingCadangan.length, 3);
+                const mergedCadangan = [];
 
-              const mergedDanton = {
-                ...existingRoster.danton,
-                ...sheetRoster.danton,
-                name: (sheetRoster.danton?.name && sheetRoster.danton.name !== '-' && sheetRoster.danton.name !== 'Anggota Pratama') 
-                  ? sheetRoster.danton.name 
-                  : (existingRoster.danton?.name || existing.dantonName || normalizedSheetTeam.dantonName || '-'),
-                photo: (sheetRoster.danton?.photo && sheetRoster.danton.photo !== '#' && !sheetRoster.danton.photo.startsWith('#'))
-                  ? sheetRoster.danton.photo
-                  : (existingRoster.danton?.photo || null),
-              };
-
-              const sheetPasukan = Array.isArray(sheetRoster.pasukan) ? sheetRoster.pasukan : [];
-              const existingPasukan = Array.isArray(existingRoster.pasukan) ? existingRoster.pasukan : [];
-              const maxPasukanLen = Math.max(sheetPasukan.length, existingPasukan.length, 21);
-              const mergedPasukan = [];
-
-              for (let i = 0; i < maxPasukanLen; i++) {
-                const sP = sheetPasukan[i];
-                const eP = existingPasukan[i];
-                if (!sP && !eP) continue;
-
-                const pId = sP?.id || eP?.id || `p-${i + 1}`;
-                const safNumber = sP?.safNumber || eP?.safNumber || Math.ceil((i + 1) / 7);
-                const banjarNumber = sP?.banjarNumber || eP?.banjarNumber || (((i) % 7) + 1);
-
-                mergedPasukan.push({
-                  id: pId,
-                  role: 'pasukan',
-                  safNumber,
-                  banjarNumber,
-                  name: (sP?.name && sP.name !== '-') ? sP.name : (eP?.name || ''),
-                  nisn: (sP?.nisn && sP.nisn !== '-') ? sP.nisn : (eP?.nisn || ''),
-                  class: (sP?.class && sP.class !== '-') ? sP.class : (eP?.class || ''),
-                  birthPlace: sP?.birthPlace || eP?.birthPlace || '',
-                  birthDate: sP?.birthDate || eP?.birthDate || '',
-                  photo: (sP?.photo && sP.photo !== '#' && !sP.photo.startsWith('#'))
-                    ? sP.photo
-                    : (eP?.photo || null),
-                });
-              }
-
-              const sheetCadangan = Array.isArray(sheetRoster.cadangan) ? sheetRoster.cadangan : [];
-              const existingCadangan = Array.isArray(existingRoster.cadangan) ? existingRoster.cadangan : [];
-              const maxCadLen = Math.max(sheetCadangan.length, existingCadangan.length, 3);
-              const mergedCadangan = [];
-
-              for (let i = 0; i < maxCadLen; i++) {
-                const sC = sheetCadangan[i];
-                const eC = existingCadangan[i];
-                if (!sC && !eC) continue;
-                mergedCadangan.push({
-                  id: sC?.id || eC?.id || `c-${i + 1}`,
-                  role: 'cadangan',
-                  name: (sC?.name && sC.name !== '-') ? sC.name : (eC?.name || ''),
-                  nisn: (sC?.nisn && sC.nisn !== '-') ? sC.nisn : (eC?.nisn || ''),
-                  class: (sC?.class && sC.class !== '-') ? sC.class : (eC?.class || ''),
-                  birthPlace: sC?.birthPlace || eC?.birthPlace || '',
-                  birthDate: sC?.birthDate || eC?.birthDate || '',
-                  photo: (sC?.photo && sC.photo !== '#' && !sC.photo.startsWith('#'))
-                    ? sC.photo
-                    : (eC?.photo || null),
-                });
-              }
-
-              const sheetOfficials = Array.isArray(sheetRoster.officials) ? sheetRoster.officials : [];
-              const existingOfficials = Array.isArray(existingRoster.officials) ? existingRoster.officials : [];
-              const maxOffLen = Math.max(sheetOfficials.length, existingOfficials.length, 3);
-              const mergedOfficials = [];
-
-              const defaultRoles = [
-                'Official (Pelatih / Pembina)',
-                'Pendukung 1 (Medis / Dokum)',
-                'Pendukung 2 (Medis / Dokum)'
-              ];
-
-              for (let i = 0; i < maxOffLen; i++) {
-                const sO = sheetOfficials[i];
-                const eO = existingOfficials[i];
-                if (!sO && !eO && i >= 3) continue;
-                mergedOfficials.push({
-                  id: sO?.id || eO?.id || `off-${i + 1}`,
-                  role: sO?.role || eO?.role || defaultRoles[i] || `Pendukung ${i + 1}`,
-                  category: i === 0 ? 'official' : 'pendukung',
-                  name: (sO?.name && sO.name !== '-') ? sO.name : (eO?.name || ''),
-                  phone: sO?.phone || eO?.phone || '',
-                  photo: (sO?.photo && sO.photo !== '#' && !sO.photo.startsWith('#'))
-                    ? sO.photo
-                    : (eO?.photo || null),
-                });
-              }
-
-              // Buat merged team dengan memprioritaskan nilai yang valid/tidak kosong
-              const mergedTeam = {
-                ...existing,
-                ...normalizedSheetTeam,
-              };
-
-              // Pastikan kolom-kolom penting dari existing tidak ditimpa string kosong/null dari sheet
-              ['schoolName', 'schoolBaseName', 'jenjang', 'teamType', 'regCode', 'email', 'waNumber', 'dantonName', 'officialName'].forEach(field => {
-                if (existing[field] && (!normalizedSheetTeam[field] || normalizedSheetTeam[field] === '')) {
-                  mergedTeam[field] = existing[field];
+                for (let i = 0; i < maxCadLen; i++) {
+                  const sC = sheetCadangan[i];
+                  const eC = existingCadangan[i];
+                  if (!sC && !eC) continue;
+                  mergedCadangan.push({
+                    id: sC?.id || eC?.id || `c-${i + 1}`,
+                    role: 'cadangan',
+                    name: (sC?.name && sC.name !== '-') ? sC.name : (eC?.name || ''),
+                    nisn: (sC?.nisn && sC.nisn !== '-') ? sC.nisn : (eC?.nisn || ''),
+                    class: (sC?.class && sC.class !== '-') ? sC.class : (eC?.class || ''),
+                    birthPlace: sC?.birthPlace || eC?.birthPlace || '',
+                    birthDate: sC?.birthDate || eC?.birthDate || '',
+                    photo: (sC?.photo && sC.photo !== '#' && !sC.photo.startsWith('#'))
+                      ? sC.photo
+                      : (eC?.photo || null),
+                  });
                 }
-              });
 
-              // Status Hierarchy Guard:
-              // Jika status lokal sudah lebih maju (misal: 'registered', 'verified', 'drawn')
-              // tetapi Google Sheet masih mengembalikan status lama ('pending' karena Google cache/lag),
-              // PERTAHANKAN status lokal agar tidak mental kembali ke pending!
-              const statusWeight = { pending: 1, revision: 2, registered: 3, verified: 4, drawn: 5, rejected: 0 };
-              const existingWeight = statusWeight[existing.status] || 1;
-              const sheetWeight = statusWeight[normalizedSheetTeam.status] || 1;
-              if (existingWeight > sheetWeight) {
-                mergedTeam.status = existing.status;
-              } else if (normalizedSheetTeam.status) {
-                mergedTeam.status = normalizedSheetTeam.status;
+                const sheetOfficials = Array.isArray(sheetRoster.officials) ? sheetRoster.officials : [];
+                const existingOfficials = Array.isArray(existingRoster.officials) ? existingRoster.officials : [];
+                const maxOffLen = Math.max(sheetOfficials.length, existingOfficials.length, 3);
+                const mergedOfficials = [];
+
+                const defaultRoles = [
+                  'Official (Pelatih / Pembina)',
+                  'Pendukung 1 (Medis / Dokum)',
+                  'Pendukung 2 (Medis / Dokum)'
+                ];
+
+                for (let i = 0; i < maxOffLen; i++) {
+                  const sO = sheetOfficials[i];
+                  const eO = existingOfficials[i];
+                  if (!sO && !eO && i >= 3) continue;
+                  mergedOfficials.push({
+                    id: sO?.id || eO?.id || `off-${i + 1}`,
+                    role: sO?.role || eO?.role || defaultRoles[i] || `Pendukung ${i + 1}`,
+                    category: i === 0 ? 'official' : 'pendukung',
+                    name: (sO?.name && sO.name !== '-') ? sO.name : (eO?.name || ''),
+                    phone: sO?.phone || eO?.phone || '',
+                    photo: (sO?.photo && sO.photo !== '#' && !sO.photo.startsWith('#'))
+                      ? sO.photo
+                      : (eO?.photo || null),
+                  });
+                }
+
+                const mergedTeam = {
+                  ...existing,
+                  ...normalizedSheetTeam,
+                };
+
+                ['schoolName', 'schoolBaseName', 'jenjang', 'teamType', 'regCode', 'email', 'waNumber', 'dantonName', 'officialName'].forEach(field => {
+                  if (existing[field] && (!normalizedSheetTeam[field] || normalizedSheetTeam[field] === '')) {
+                    mergedTeam[field] = existing[field];
+                  }
+                });
+
+                const statusWeight = { pending: 1, revision: 2, registered: 3, verified: 4, drawn: 5, rejected: 0 };
+                const existingWeight = statusWeight[existing.status] || 1;
+                const sheetWeight = statusWeight[normalizedSheetTeam.status] || 1;
+                if (existingWeight > sheetWeight) {
+                  mergedTeam.status = existing.status;
+                } else if (normalizedSheetTeam.status) {
+                  mergedTeam.status = normalizedSheetTeam.status;
+                }
+
+                return {
+                  ...mergedTeam,
+                  files: mergedFiles,
+                  roster: {
+                    danton: mergedDanton,
+                    pasukan: mergedPasukan,
+                    cadangan: mergedCadangan,
+                    officials: mergedOfficials,
+                  },
+                  dantonName: mergedDanton.name || normalizedSheetTeam.dantonName || existing.dantonName,
+                };
               }
 
-              map.set(normalizedSheetTeam.id, {
-                ...mergedTeam,
-                files: mergedFiles,
-                roster: {
-                  danton: mergedDanton,
-                  pasukan: mergedPasukan,
-                  cadangan: mergedCadangan,
-                  officials: mergedOfficials,
-                },
-                dantonName: mergedDanton.name || normalizedSheetTeam.dantonName || existing.dantonName,
-              });
-            } else {
-              map.set(normalizedSheetTeam.id, normalizedSheetTeam);
-            }
+              return normalizedSheetTeam;
+            });
+
+            return nextTeams;
           });
-
-          return Array.from(map.values());
-        });
         }
       }
 

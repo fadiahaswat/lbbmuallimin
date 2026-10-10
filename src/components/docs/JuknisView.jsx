@@ -88,20 +88,7 @@ export default function JuknisView() {
       activeMenu="juknis"
       title="Petunjuk Teknis (Juknis) & Materi PBB"
       subtitle="Pedoman baku urutan materi gerakan PBB resmi, pergantian pemain, ketentuan arena, & rubrik penilaian juri 1:1"
-      rightActions={
-        <div className="flex items-center gap-2">
-          <a
-            href={DOWNLOADS[0]?.url || "https://docs.google.com/document/d/1BN1RuwDcEiuibVvoBG4-5R7Rq8neV5st3nAZoISVQi0/edit?usp=sharing"}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm cursor-pointer"
-          >
-            <Download className="w-4 h-4" />
-            <span className="hidden sm:inline">Unduh Juknis Lengkap</span>
-            <ExternalLink className="w-3.5 h-3.5 opacity-80" />
-          </a>
-        </div>
-      }
+      hideHeader={true}
     >
       <div className="space-y-6">
 
@@ -110,7 +97,7 @@ export default function JuknisView() {
           <div className="absolute -right-8 -bottom-8 w-60 h-60 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
 
           <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div className="space-y-2">
+            <div className="space-y-3">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-300 text-xs font-black uppercase tracking-wider">
                 <BookOpen className="w-3.5 h-3.5" />
                 <span>Standar Regulasi Perpang TNI No. 58 & 57 Th 2018</span>
@@ -121,9 +108,21 @@ export default function JuknisView() {
               <p className="text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed">
                 Panduan materi PBB Murni (Perpang TNI No. 58 & 57 Th 2018 dan No. 45 Th 2014 untuk Hormat Kanan/Kiri), slot pergantian pemain resmi, matriks penilaian 1:1, dan spesifikasi 2 arena paralel.
               </p>
+              <div className="pt-1">
+                <a
+                  href={DOWNLOADS[0]?.url || "https://docs.google.com/document/d/1BN1RuwDcEiuibVvoBG4-5R7Rq8neV5st3nAZoISVQi0/edit?usp=sharing"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-all shadow-md active:scale-95 cursor-pointer"
+                >
+                  <Download className="w-4 h-4" />
+                  <span>Unduh Juknis Lengkap</span>
+                  <ExternalLink className="w-3.5 h-3.5 opacity-80" />
+                </a>
+              </div>
             </div>
 
-            <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-4 text-center min-w-[150px] shrink-0">
+            <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-4 text-center min-w-[150px] shrink-0 self-start md:self-center">
               <span className="text-[10px] uppercase font-bold text-blue-300 block">Rasio Peleton</span>
               <span className="text-2xl font-black text-white font-mono">1 : 1</span>
               <span className="text-[10px] text-slate-300 block mt-0.5">Kebenaran 50% • Kompak 50%</span>

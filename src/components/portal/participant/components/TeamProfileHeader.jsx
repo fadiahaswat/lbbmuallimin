@@ -128,10 +128,14 @@ export default function TeamProfileHeader({
             )}
           </div>
 
-          {/* Box Info Undian & Kontingen: No Tampil, No Dada, Est Tampil, Basecamp */}
+          {/* Box Info Undian & Kontingen: Urutan Tampil, Nomor Dada, Est Tampil, Basecamp */}
           <div className="flex flex-wrap items-center gap-2">
-            <div className="bg-white/10 border border-white/15 rounded-2xl p-2 px-3 text-center min-w-[78px]">
-              <span className="text-[9px] font-bold text-slate-300 uppercase block tracking-wider">No. Tampil</span>
+            <div className={`border rounded-2xl p-2 px-3 text-center min-w-[84px] relative ${
+              Number(currentTeam.lotNumber) >= 6 && Number(currentTeam.lotNumber) <= 10
+                ? 'bg-red-500/20 border-red-400/50 ring-1 ring-red-400'
+                : 'bg-white/10 border-white/15'
+            }`}>
+              <span className="text-[9px] font-bold text-slate-300 uppercase block tracking-wider">Urutan Tampil</span>
               {currentTeam.lotNumber ? (
                 <span className="text-lg sm:text-xl font-black text-yellow-400 font-mono block leading-tight mt-0.5">
                   #{String(currentTeam.lotNumber).padStart(2, '0')}
@@ -139,10 +143,15 @@ export default function TeamProfileHeader({
               ) : (
                 <span className="text-[10px] text-slate-400 italic block mt-1">Belum TM</span>
               )}
+              {Number(currentTeam.lotNumber) >= 6 && Number(currentTeam.lotNumber) <= 10 && (
+                <span className="text-[8px] font-black uppercase text-red-200 bg-red-700/80 px-1.5 py-0.2 rounded-full block mt-0.5 whitespace-nowrap">
+                  Wajib Upacara
+                </span>
+              )}
             </div>
 
-            <div className="bg-white/10 border border-white/15 rounded-2xl p-2 px-3 text-center min-w-[78px]">
-              <span className="text-[9px] font-bold text-slate-300 uppercase block tracking-wider">No. Dada</span>
+            <div className="bg-white/10 border border-white/15 rounded-2xl p-2 px-3 text-center min-w-[84px]">
+              <span className="text-[9px] font-bold text-slate-300 uppercase block tracking-wider">Nomor Dada</span>
               {currentTeam.chestNumber ? (
                 <span className="text-lg sm:text-xl font-black text-emerald-400 font-mono block leading-tight mt-0.5">
                   {currentTeam.chestNumber}

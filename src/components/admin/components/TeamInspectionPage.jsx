@@ -415,7 +415,7 @@ export default function TeamInspectionPage({ team, inspectionStage = 'registrati
             <div className="p-4 rounded-2xl bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-transparent border border-amber-300/80 relative overflow-hidden">
               <div className="flex items-center justify-between mb-1.5">
                 <span className="text-[10px] font-black text-amber-800 uppercase tracking-wider">
-                  No. Urut Tampil (TM)
+                  Urutan Tampil (TM)
                 </span>
                 <Trophy className="w-4 h-4 text-amber-600 shrink-0" />
               </div>

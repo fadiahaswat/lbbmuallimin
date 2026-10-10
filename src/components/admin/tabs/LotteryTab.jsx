@@ -1,5 +1,6 @@
 import React from 'react';
 import { Shuffle, CheckCircle2 } from 'lucide-react';
+import { getChestNumberByLot } from '../../../context/competitionHelpers.js';
 
 export default function LotteryTab({
   teams,
@@ -93,7 +94,14 @@ export default function LotteryTab({
                           <span className="text-[8px] text-slate-400 font-sans uppercase tracking-tight mt-0.5">Urut</span>
                         </div>
                         <div className="min-w-0">
-                          <span className="font-black text-slate-900 text-xs block truncate">{t.schoolName}</span>
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <span className="font-black text-slate-900 text-xs block truncate">{t.schoolName}</span>
+                            {Number(t.lotNumber) >= 6 && Number(t.lotNumber) <= 10 && (
+                              <span className="text-[9px] font-black uppercase text-red-700 bg-red-100 border border-red-200 px-1.5 py-0.2 rounded">
+                                Wajib Upacara
+                              </span>
+                            )}
+                          </div>
                           <span className="text-[10px] text-slate-500 block truncate">
                             {t.platoonName} • Danton: <strong className="text-slate-700">{t.dantonName || t.roster?.danton?.name || '-'}</strong>
                           </span>
@@ -102,26 +110,31 @@ export default function LotteryTab({
 
                       <div className="flex flex-wrap items-center gap-2 shrink-0 bg-slate-50 p-1.5 rounded-xl border border-slate-200 self-end sm:self-center">
                         <div className="flex flex-col">
-                          <span className="text-[9px] font-bold uppercase text-slate-400 tracking-wider">No. Urut</span>
+                          <span className="text-[9px] font-bold uppercase text-slate-400 tracking-wider">Urutan Tampil</span>
                           <input
                             type="number"
                             min={1}
                             max={100}
                             value={t.lotNumber || ''}
-                            onChange={e => updateTeamDraw(t.id, e.target.value, t.chestNumber, t.estimatedTime, t.basecampNumber)}
+                            onChange={e => {
+                              const val = e.target.value;
+                              const pairedChest = val ? getChestNumberByLot(t.jenjang, parseInt(val, 10)) : '';
+                              updateTeamDraw(t.id, val, pairedChest || t.chestNumber, t.estimatedTime, t.basecampNumber);
+                            }}
                             placeholder="1"
-                            className="w-16 px-2 py-1 bg-white border border-slate-300 rounded-lg text-xs font-mono font-bold text-center focus:ring-2 focus:ring-purple-500 outline-none"
+                            className="w-20 px-2 py-1 bg-white border border-slate-300 rounded-lg text-xs font-mono font-bold text-center focus:ring-2 focus:ring-purple-500 outline-none"
+                            title="Urutan tampil (1 = Main pertama)"
                           />
                         </div>
 
                         <div className="flex flex-col">
-                          <span className="text-[9px] font-bold uppercase text-slate-400 tracking-wider">No. Dada</span>
+                          <span className="text-[9px] font-bold uppercase text-slate-400 tracking-wider">Nomor Dada</span>
                           <input
                             type="text"
                             value={t.chestNumber || ''}
                             onChange={e => updateTeamDraw(t.id, t.lotNumber, e.target.value, t.estimatedTime, t.basecampNumber)}
-                            placeholder="Contoh: 07"
-                            className="w-18 px-2 py-1 bg-white border border-slate-300 rounded-lg text-xs font-mono font-bold text-center focus:ring-2 focus:ring-purple-500 outline-none"
+                            placeholder={t.lotNumber ? getChestNumberByLot(t.jenjang, t.lotNumber) : "Contoh: 111"}
+                            className="w-20 px-2 py-1 bg-white border border-slate-300 rounded-lg text-xs font-mono font-bold text-center focus:ring-2 focus:ring-purple-500 outline-none"
                           />
                         </div>
 

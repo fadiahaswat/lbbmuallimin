@@ -37,8 +37,21 @@ export default function BasecampLogisticsTab({
   // Handler Scan QR / Cari Peleton di Basecamp
   function handleScanOrSearchBasecamp(e) {
     e?.preventDefault();
-    if (!qrInput.trim()) return;
-    const clean = qrInput.trim().toLowerCase();
+    let q = qrInput.trim();
+    if (!q) return;
+
+    if (q.includes('?reg=')) {
+      try {
+        const urlObj = new URL(q.startsWith('http') ? q : `https://${q}`);
+        const regParam = urlObj.searchParams.get('reg');
+        if (regParam) q = regParam;
+      } catch {
+        const match = q.match(/[?&]reg=([^&#]+)/);
+        if (match && match[1]) q = decodeURIComponent(match[1]);
+      }
+    }
+
+    const clean = q.toLowerCase();
     const found = teams.find(t =>
       t.regCode?.toLowerCase() === clean ||
       t.schoolName?.toLowerCase().includes(clean) ||

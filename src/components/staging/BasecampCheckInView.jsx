@@ -87,13 +87,27 @@ export default function BasecampCheckInView() {
 
   const handleSearchQR = (e) => {
     e.preventDefault();
-    const q = qrInput.trim().toLowerCase();
+    let q = qrInput.trim();
     if (!q) return;
 
+    // Support scanning direct URL like https://lbb.tontimuallimin.com/?reg=LBB27-...
+    if (q.includes('?reg=')) {
+      try {
+        const urlObj = new URL(q.startsWith('http') ? q : `https://${q}`);
+        const regParam = urlObj.searchParams.get('reg');
+        if (regParam) q = regParam;
+      } catch {
+        const match = q.match(/[?&]reg=([^&#]+)/);
+        if (match && match[1]) q = decodeURIComponent(match[1]);
+      }
+    }
+
+    const qLower = q.toLowerCase();
+
     const matched = competitionTeams.find(t =>
-      t.regCode.toLowerCase() === q ||
-      t.schoolName.toLowerCase().includes(q) ||
-      (t.lotNumber && String(t.lotNumber) === q)
+      (t.regCode && t.regCode.toLowerCase() === qLower) ||
+      (t.schoolName && t.schoolName.toLowerCase().includes(qLower)) ||
+      (t.lotNumber && String(t.lotNumber) === qLower)
     );
 
     if (matched) {

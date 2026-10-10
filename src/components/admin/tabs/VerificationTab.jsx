@@ -157,8 +157,8 @@ export default function VerificationTab({
 
                 return (
                   <tr key={team.id} className="hover:bg-slate-50/80 transition-colors">
-                    <td className="p-3.5">
-                      <div className="flex items-center gap-3.5">
+                    <td className="p-3.5 align-middle">
+                      <div className="flex items-center gap-3">
                         {team.files?.schoolLogo?.url && team.files.schoolLogo.url !== '#' ? (
                           <img
                             src={formatImageUrl(team.files.schoolLogo.url)}
@@ -175,31 +175,31 @@ export default function VerificationTab({
                                 }
                               }
                             }}
-                            className="w-12 h-12 rounded-xl object-contain bg-white border border-slate-200 p-1 shrink-0 shadow-xs"
+                            className="w-10 h-10 object-contain filter drop-shadow-xs shrink-0"
                           />
                         ) : null}
                         <div
-                          className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-50 to-slate-100 text-emerald-700 border border-slate-200 flex items-center justify-center font-black text-sm shrink-0 shadow-xs"
+                          className="w-10 h-10 rounded-xl bg-slate-100 text-slate-800 border border-slate-200 flex items-center justify-center font-black text-xs shrink-0"
                           style={{ display: team.files?.schoolLogo?.url && team.files.schoolLogo.url !== '#' ? 'none' : 'flex' }}
                         >
                           {team.jenjang}
                         </div>
-                        <div>
-                          <span className="font-mono font-bold text-[10px] text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                        <div className="min-w-0">
+                          <span className="inline-block font-mono font-bold text-[10px] text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 mb-0.5">
                             {team.regCode}
                           </span>
-                          <div className="font-black text-slate-900 text-sm mt-0.5">{team.schoolName}</div>
-                          <div className="text-slate-500 text-[11px]">{team.platoonName} ({team.jenjang})</div>
+                          <div className="font-black text-slate-900 text-sm leading-tight truncate">{team.schoolName}</div>
+                          <div className="text-slate-500 text-[11px] mt-0.5">{team.platoonName} ({team.jenjang})</div>
                         </div>
                       </div>
                     </td>
 
-                    <td className="p-3.5">
-                      <div className="space-y-1">
-                        <span className="font-bold text-slate-800 block">
-                          Danton: {team.roster?.danton?.name || team.dantonName || '-'}
-                        </span>
-                        <div className="flex flex-wrap items-center gap-1.5 text-[11px] text-slate-500">
+                    <td className="p-3.5 align-middle">
+                      <div className="space-y-1.5">
+                        <div className="text-xs text-slate-800 font-bold leading-tight">
+                          Danton: <span className="font-semibold text-slate-700">{team.roster?.danton?.name || team.dantonName || '-'}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5 text-[11px]">
                           <span
                             title={`${filledPasukan.length} personel diisi, ${photoPasukanCount} pasfoto terunggah`}
                             className={`px-2 py-0.5 rounded font-mono font-bold inline-flex items-center gap-1 ${
@@ -215,7 +215,6 @@ export default function VerificationTab({
                               <span className="text-[9px] font-normal opacity-80">({photoPasukanCount} foto)</span>
                             )}
                           </span>
-                          <span>•</span>
                           <span
                             title={`${filledCadangan.length} cadangan diisi, ${photoCadanganCount} pasfoto terunggah`}
                             className={`px-2 py-0.5 rounded font-mono font-bold inline-flex items-center gap-1 ${
@@ -235,17 +234,17 @@ export default function VerificationTab({
                       </div>
                     </td>
 
-                    <td className="p-3.5">
+                    <td className="p-3.5 align-middle">
                       {hasRecLetter ? (
                         <div className="flex items-center gap-1.5">
-                          <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0"></span>
+                          <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
                           <span className="text-[11px] font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
                             Sudah Diunggah
                           </span>
                         </div>
                       ) : (
                         <div className="flex items-center gap-1.5">
-                          <span className="w-2.5 h-2.5 rounded-full bg-amber-400 shrink-0"></span>
+                          <span className="w-2 h-2 rounded-full bg-amber-400 shrink-0"></span>
                           <span className="text-[11px] font-medium text-amber-800 bg-amber-50 px-2 py-0.5 rounded border border-amber-200 italic">
                             Belum Ada Surat
                           </span>
@@ -253,7 +252,7 @@ export default function VerificationTab({
                       )}
                     </td>
 
-                    <td className="p-3.5">
+                    <td className="p-3.5 align-middle">
                       {team.status === 'pending' && (
                         <span className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-700 bg-amber-50 px-2.5 py-1 rounded-lg border border-amber-200">
                           <Clock className="w-3.5 h-3.5" /> Pendaftaran Pending
@@ -281,7 +280,7 @@ export default function VerificationTab({
                       )}
                     </td>
 
-                    <td className="p-3.5 text-center">
+                    <td className="p-3.5 align-middle text-center">
                       {team.lotNumber ? (
                         <span className="font-mono font-black text-xs text-yellow-800 bg-yellow-100 px-2.5 py-1 rounded-lg border border-yellow-200">
                           #{String(team.lotNumber).padStart(2, '0')}
@@ -291,7 +290,7 @@ export default function VerificationTab({
                       )}
                     </td>
 
-                    <td className="p-3.5 text-center">
+                    <td className="p-3.5 align-middle text-center">
                       {team.chestNumber ? (
                         <span className="font-mono font-black text-xs text-emerald-800 bg-emerald-100 px-2.5 py-1 rounded-lg border border-emerald-200">
                           {team.chestNumber}
@@ -301,7 +300,7 @@ export default function VerificationTab({
                       )}
                     </td>
 
-                    <td className="p-3.5 text-right">
+                    <td className="p-3.5 align-middle text-right">
                       <div className="flex items-center justify-end gap-1.5">
                         <button
                           onClick={() => {
@@ -310,7 +309,7 @@ export default function VerificationTab({
                             setRevisionNoteInput(team.revisionNote || '');
                             setShowRevisionBox(false);
                           }}
-                          className="px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold rounded-lg border border-emerald-200 transition-colors flex items-center gap-1 cursor-pointer"
+                          className="px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold rounded-lg border border-emerald-200 transition-colors flex items-center gap-1.5 cursor-pointer text-xs"
                           title="Periksa Biodata 25 Personel Peleton & Surat Rekomendasi"
                         >
                           <Eye className="w-3.5 h-3.5" />
@@ -328,10 +327,10 @@ export default function VerificationTab({
                                 }
                                 handleQuickVerify(team.id, 'verified');
                               }}
-                              className={`px-2.5 py-1.5 font-bold rounded-lg transition-colors flex items-center gap-1 shadow-xs ${
+                              className={`px-3 py-1.5 font-bold rounded-lg transition-all flex items-center gap-1 text-xs shadow-xs ${
                                 eligibility.isEligible
-                                  ? 'bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer'
-                                  : 'bg-slate-200 text-slate-400 hover:bg-slate-300 hover:text-slate-600 cursor-not-allowed'
+                                  ? 'bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer active:scale-95'
+                                  : 'bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed opacity-75'
                               }`}
                               title={
                                 eligibility.isEligible
@@ -340,7 +339,7 @@ export default function VerificationTab({
                               }
                             >
                               <Check className="w-3.5 h-3.5" />
-                              <span className="text-[10px]">ACC Sah</span>
+                              <span>ACC Sah</span>
                             </button>
                           );
                         })()}

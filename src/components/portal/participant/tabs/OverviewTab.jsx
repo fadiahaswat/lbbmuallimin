@@ -61,6 +61,11 @@ export default function OverviewTab({
                 {currentTeam.estimatedTime ? 'Arena Utama' : (currentTeam.lotNumber ? 'Sesuai undian TM' : 'Belum TM')}
               </span>
             </div>
+            {Number(currentTeam.lotNumber) >= 6 && Number(currentTeam.lotNumber) <= 10 && (
+              <div className="mt-2 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-red-100 text-red-800 border border-red-200 text-[10px] font-black uppercase">
+                <span>🚩 Wajib Ikut Upacara Pembukaan</span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -90,7 +95,7 @@ export default function OverviewTab({
         
         {/* Kolom Kiri (2 Span): Agenda Pelaksanaan Interaktif */}
         <div className="lg:col-span-2 bg-white rounded-3xl p-6 border border-slate-200 shadow-xs space-y-5">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+          <div className="space-y-3.5 border-b border-slate-100 pb-4">
             <div>
               <h4 className="font-black text-lg text-slate-900 uppercase italic flex items-center gap-2">
                 <Calendar className="w-5 h-5 text-red-700" />
@@ -101,15 +106,15 @@ export default function OverviewTab({
               </p>
             </div>
 
-            {/* Switcher Tab Agenda: TM vs Hari-H */}
-            <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-2xl border border-slate-200 self-start sm:self-auto">
+            {/* Switcher Tab Agenda di bawah judul - Full Width Flex */}
+            <div className="flex items-center gap-1.5 bg-slate-100 p-1.5 rounded-2xl border border-slate-200 w-full">
               <button
                 type="button"
                 onClick={() => setScheduleTab('tm')}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                className={`flex-1 px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 text-center ${
                   scheduleTab === 'tm'
                     ? 'bg-purple-600 text-white shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
                 }`}
               >
                 <span>1. TM</span>
@@ -117,10 +122,10 @@ export default function OverviewTab({
               <button
                 type="button"
                 onClick={() => setScheduleTab('trial')}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                className={`flex-1 px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 text-center ${
                   scheduleTab === 'trial'
                     ? 'bg-emerald-600 text-white shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
                 }`}
               >
                 <span>2. Uji Coba Lapangan</span>
@@ -128,10 +133,10 @@ export default function OverviewTab({
               <button
                 type="button"
                 onClick={() => setScheduleTab('competition')}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                className={`flex-1 px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 text-center ${
                   scheduleTab === 'competition'
                     ? 'bg-red-600 text-white shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
                 }`}
               >
                 <span>3. Hari-H Lomba</span>
