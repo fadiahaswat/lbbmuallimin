@@ -143,103 +143,142 @@ export default function RegistrationTab({
             ) : (
               filteredTeams.map(team => (
                 <tr key={team.id} className="hover:bg-slate-50/80 transition-colors">
-                  <td className="p-3.5">
-                    <div className="flex items-center gap-3.5">
+                  <td className="p-3.5 align-middle">
+                    <div className="flex items-center gap-3">
                       {team.files?.schoolLogo?.url && team.files.schoolLogo.url !== '#' ? (
-                        <img
-                          src={formatImageUrl(team.files.schoolLogo.url)}
-                          alt="Logo"
-                          referrerPolicy="no-referrer"
-                          onError={(e) => {
-                            const fallback = getFallbackImageUrl(team.files.schoolLogo.url);
-                            if (fallback && e.currentTarget.src !== fallback) {
-                              e.currentTarget.src = fallback;
-                            } else {
-                              e.currentTarget.style.display = 'none';
-                              if (e.currentTarget.nextElementSibling) {
-                                e.currentTarget.nextElementSibling.style.display = 'flex';
+                        <div className="w-11 h-11 rounded-xl bg-white border border-slate-200 p-1 shrink-0 shadow-xs flex items-center justify-center hover:scale-105 transition-transform">
+                          <img
+                            src={formatImageUrl(team.files.schoolLogo.url)}
+                            alt="Logo"
+                            referrerPolicy="no-referrer"
+                            onError={(e) => {
+                              const fallback = getFallbackImageUrl(team.files.schoolLogo.url);
+                              if (fallback && e.currentTarget.src !== fallback) {
+                                e.currentTarget.src = fallback;
+                              } else {
+                                e.currentTarget.parentElement.style.display = 'none';
+                                if (e.currentTarget.parentElement.nextElementSibling) {
+                                  e.currentTarget.parentElement.nextElementSibling.style.display = 'flex';
+                                }
                               }
-                            }
-                          }}
-                          className="w-12 h-12 rounded-xl object-contain bg-white border border-slate-200 p-1 shrink-0 shadow-xs hover:scale-105 transition-transform"
-                        />
+                            }}
+                            className="max-w-full max-h-full object-contain filter drop-shadow-xs"
+                          />
+                        </div>
                       ) : null}
                       <div
-                        className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-50 to-slate-100 text-blue-700 border border-slate-200 flex items-center justify-center font-black text-sm shrink-0 shadow-xs"
+                        className="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-50 to-slate-100 text-blue-700 border border-slate-200 flex items-center justify-center font-black text-xs shrink-0 shadow-xs"
                         style={{ display: team.files?.schoolLogo?.url && team.files.schoolLogo.url !== '#' ? 'none' : 'flex' }}
                       >
                         {team.jenjang}
                       </div>
-                      <div>
-                        <span className="font-mono font-bold text-[10px] text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-100">
-                          {team.regCode}
-                        </span>
-                        <div className="font-black text-slate-900 text-sm mt-0.5">{team.schoolName}</div>
-                        <div className="text-slate-500 text-[11px]">{team.platoonName}</div>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-1.5 mb-0.5">
+                          <span className="font-mono font-bold text-[10px] text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-200/80">
+                            {team.regCode}
+                          </span>
+                        </div>
+                        <div className="font-extrabold text-slate-900 text-sm leading-snug">
+                          {team.schoolName}
+                        </div>
+                        {team.platoonName && 
+                         team.platoonName.trim().toLowerCase() !== team.schoolName.trim().toLowerCase() && 
+                         team.platoonName.trim().toLowerCase() !== `pleton ${team.schoolName.trim().toLowerCase()}` && (
+                          <div className="text-slate-500 text-[11px] font-medium leading-tight">
+                            Peleton: {team.platoonName}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </td>
 
-                  <td className="p-3.5">
-                    <span className="font-bold text-slate-800 block">{team.jenjang}</span>
-                    <span className="text-slate-500 text-[11px]">Gelombang {team.wave || 1} • Rp{(team.feeAmount || 450000).toLocaleString('id-ID')}</span>
-                  </td>
-
-                  <td className="p-3.5">
-                    <span className="font-bold text-slate-800 block">
-                      {team.roster?.danton?.name || team.dantonName || '-'}
-                    </span>
-                    <span className="text-slate-500 text-[11px]">
-                      Pembina: {team.officialName || team.coachName || '-'}
-                    </span>
-                  </td>
-
-                  <td className="p-3.5">
+                  <td className="p-3.5 align-middle">
                     <div className="space-y-1">
-                      <div className="flex items-center gap-1.5">
-                        <span className={`w-2 h-2 rounded-full ${team.files?.paymentProof ? 'bg-emerald-500' : 'bg-red-400'}`} title="Bukti Bayar"></span>
-                        <span className="text-[11px] text-slate-700">Bukti Transfer Bank BRI</span>
+                      <span className="inline-block px-2 py-0.5 rounded-md font-extrabold text-xs bg-slate-100 text-slate-800 border border-slate-200">
+                        {team.jenjang}
+                      </span>
+                      <div className="text-slate-500 text-[11px] leading-tight font-medium">
+                        Gelombang {team.wave || 1}
                       </div>
-                      <div className="flex items-center gap-1.5">
-                        <span className={`w-2 h-2 rounded-full ${team.files?.dantonCard ? 'bg-emerald-500' : 'bg-red-400'}`} title="Kartu Pelajar Danton"></span>
-                        <span className="text-[11px] text-slate-700">Kartu Pelajar Danton</span>
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <span className={`w-2 h-2 rounded-full ${team.files?.officialKtp ? 'bg-emerald-500' : 'bg-red-400'}`} title="KTP Pembina"></span>
-                        <span className="text-[11px] text-slate-700">KTP Pembina / Official</span>
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <span className={`w-2 h-2 rounded-full ${team.files?.integrityPact ? 'bg-emerald-500' : 'bg-red-400'}`} title="Pakta Integritas"></span>
-                        <span className="text-[11px] text-slate-700">Pakta Integritas (TTD)</span>
+                      <div className="text-slate-700 font-bold text-[11px] leading-tight">
+                        Rp{(team.feeAmount || 450000).toLocaleString('id-ID')}
                       </div>
                     </div>
                   </td>
 
-                  <td className="p-3.5">
+                  <td className="p-3.5 align-middle">
+                    <div className="space-y-1">
+                      <div className="font-extrabold text-slate-900 text-xs">
+                        {team.roster?.danton?.name || team.dantonName || '-'}
+                      </div>
+                      <div className="text-slate-500 text-[11px] leading-tight">
+                        <span className="text-slate-400 font-medium">Pembina:</span> {team.officialName || team.coachName || '-'}
+                      </div>
+                    </div>
+                  </td>
+
+                  <td className="p-3.5 align-middle">
+                    <div className="flex flex-col gap-1">
+                      <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10.5px] font-medium border w-fit ${
+                        team.files?.paymentProof 
+                          ? 'bg-emerald-50 text-emerald-800 border-emerald-200' 
+                          : 'bg-rose-50 text-rose-700 border-rose-200'
+                      }`}>
+                        <span className={`w-1.5 h-1.5 rounded-full ${team.files?.paymentProof ? 'bg-emerald-500' : 'bg-rose-500'}`}></span>
+                        <span>Transfer Bank BRI</span>
+                      </div>
+                      <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10.5px] font-medium border w-fit ${
+                        team.files?.dantonCard 
+                          ? 'bg-emerald-50 text-emerald-800 border-emerald-200' 
+                          : 'bg-rose-50 text-rose-700 border-rose-200'
+                      }`}>
+                        <span className={`w-1.5 h-1.5 rounded-full ${team.files?.dantonCard ? 'bg-emerald-500' : 'bg-rose-500'}`}></span>
+                        <span>Kartu Danton</span>
+                      </div>
+                      <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10.5px] font-medium border w-fit ${
+                        team.files?.officialKtp 
+                          ? 'bg-emerald-50 text-emerald-800 border-emerald-200' 
+                          : 'bg-rose-50 text-rose-700 border-rose-200'
+                      }`}>
+                        <span className={`w-1.5 h-1.5 rounded-full ${team.files?.officialKtp ? 'bg-emerald-500' : 'bg-rose-500'}`}></span>
+                        <span>KTP Pembina</span>
+                      </div>
+                      <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10.5px] font-medium border w-fit ${
+                        team.files?.integrityPact 
+                          ? 'bg-emerald-50 text-emerald-800 border-emerald-200' 
+                          : 'bg-rose-50 text-rose-700 border-rose-200'
+                      }`}>
+                        <span className={`w-1.5 h-1.5 rounded-full ${team.files?.integrityPact ? 'bg-emerald-500' : 'bg-rose-500'}`}></span>
+                        <span>Pakta Integritas</span>
+                      </div>
+                    </div>
+                  </td>
+
+                  <td className="p-3.5 align-middle">
                     {team.status === 'pending' && (
-                      <span className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-700 bg-amber-50 px-2.5 py-1 rounded-lg border border-amber-200">
-                        <Clock className="w-3.5 h-3.5" /> Menunggu Pengecekan
+                      <span className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-700 bg-amber-50 px-3 py-1.5 rounded-xl border border-amber-200 shadow-2xs">
+                        <Clock className="w-3.5 h-3.5 text-amber-600" /> Menunggu Pengecekan
                       </span>
                     )}
                     {team.status === 'registered' && (
-                      <span className="inline-flex items-center gap-1 text-[11px] font-bold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-200">
-                        <CheckCircle2 className="w-3.5 h-3.5" /> ACC Terdaftar
+                      <span className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-700 bg-blue-50 px-3 py-1.5 rounded-xl border border-blue-200 shadow-2xs">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-blue-600" /> ACC Terdaftar
                       </span>
                     )}
                     {team.status === 'revision' && (
-                      <span className="inline-flex items-center gap-1 text-[11px] font-bold text-rose-700 bg-rose-50 px-2.5 py-1 rounded-lg border border-rose-200">
-                        <AlertTriangle className="w-3.5 h-3.5" /> Minta Revisi Berkas
+                      <span className="inline-flex items-center gap-1.5 text-xs font-bold text-rose-700 bg-rose-50 px-3 py-1.5 rounded-xl border border-rose-200 shadow-2xs">
+                        <AlertTriangle className="w-3.5 h-3.5 text-rose-600" /> Minta Revisi Berkas
                       </span>
                     )}
                     {['verified', 'drawn'].includes(team.status) && (
-                      <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200">
-                        <CheckCircle2 className="w-3.5 h-3.5" /> Terverifikasi Sah
+                      <span className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-200 shadow-2xs">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Terverifikasi Sah
                       </span>
                     )}
                   </td>
 
-                  <td className="p-3.5 text-right">
-                    <div className="flex items-center justify-end gap-1.5">
+                  <td className="p-3.5 align-middle text-right">
+                    <div className="flex items-center justify-end gap-2">
                       <button
                         onClick={() => {
                           setInspectingTeam(team);
@@ -247,7 +286,7 @@ export default function RegistrationTab({
                           setRevisionNoteInput(team.revisionNote || '');
                           setShowRevisionBox(false);
                         }}
-                        className="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold rounded-lg border border-blue-200 transition-colors flex items-center gap-1 cursor-pointer"
+                        className="px-3 py-2 bg-white hover:bg-blue-50 text-blue-700 font-bold text-xs rounded-xl border border-blue-200 hover:border-blue-300 transition-all flex items-center gap-1.5 shadow-2xs hover:shadow-xs active:scale-95 cursor-pointer"
                         title="Cek Berkas Pendaftaran Awal"
                       >
                         <Eye className="w-3.5 h-3.5" />
@@ -257,11 +296,11 @@ export default function RegistrationTab({
                       {team.status === 'pending' && (
                         <button
                           onClick={() => handleQuickVerify(team.id, 'registered')}
-                          className="px-2.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition-colors flex items-center gap-1 cursor-pointer shadow-xs"
+                          className="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl transition-all flex items-center gap-1.5 shadow-xs hover:shadow-md active:scale-95 cursor-pointer"
                           title="ACC Pendaftaran (Status Terdaftar)"
                         >
-                          <Check className="w-3.5 h-3.5" />
-                          <span className="text-[10px]">ACC Daftar</span>
+                          <Check className="w-3.5 h-3.5 stroke-[2.5]" />
+                          <span>ACC Daftar</span>
                         </button>
                       )}
 
@@ -271,7 +310,7 @@ export default function RegistrationTab({
                             deleteTeam(team.id);
                           }
                         }}
-                        className="p-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-lg transition-colors cursor-pointer"
+                        className="p-2 bg-white hover:bg-rose-50 text-rose-600 hover:text-rose-700 rounded-xl border border-slate-200 hover:border-rose-200 transition-all cursor-pointer shadow-2xs active:scale-95"
                         title="Hapus Peserta"
                       >
                         <Trash2 className="w-4 h-4" />

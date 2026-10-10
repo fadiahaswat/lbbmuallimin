@@ -21,11 +21,12 @@ import {
   MapPin,
   FileText
 } from 'lucide-react';
-import { checkTeamVerificationEligibility } from '../../../context/CompetitionContext.jsx';
+import { useCompetition, checkTeamVerificationEligibility } from '../../../context/CompetitionContext.jsx';
 import { formatImageUrl, getFallbackImageUrl } from '../../../services/sheetService.js';
 import DocumentFileCard from '../components/DocumentFileCard.jsx';
 
 export default function TeamInspectionPage({ team, inspectionStage = 'registration', onBack, onVerify, openModal, deleteTeam }) {
+  const { updateTeamFiles } = useCompetition();
   const [currentStageTab, setCurrentStageTab] = useState(inspectionStage); // 'registration' | 'verification'
   const [showRevisionBox, setShowRevisionBox] = useState(false);
   const [revisionNoteInput, setRevisionNoteInput] = useState(team.revisionNote || '');
@@ -585,24 +586,32 @@ export default function TeamInspectionPage({ team, inspectionStage = 'registrati
                 title="Logo Pangkalan / Peleton"
                 file={team.files?.schoolLogo}
                 colorClass="text-slate-700"
+                onUpload={(fileData) => updateTeamFiles(team.id, 'schoolLogo', fileData)}
+                onDelete={() => updateTeamFiles(team.id, 'schoolLogo', null)}
               />
               <DocumentFileCard
                 number="2"
                 title="Kartu Pelajar Danton"
                 file={team.files?.dantonCard}
                 colorClass="text-blue-700"
+                onUpload={(fileData) => updateTeamFiles(team.id, 'dantonCard', fileData)}
+                onDelete={() => updateTeamFiles(team.id, 'dantonCard', null)}
               />
               <DocumentFileCard
                 number="3"
                 title="KTP Pembina / Official"
                 file={team.files?.officialKtp}
                 colorClass="text-indigo-700"
+                onUpload={(fileData) => updateTeamFiles(team.id, 'officialKtp', fileData)}
+                onDelete={() => updateTeamFiles(team.id, 'officialKtp', null)}
               />
               <DocumentFileCard
                 number="4"
                 title="Bukti Transfer Pendaftaran"
                 file={team.files?.paymentProof}
                 colorClass="text-emerald-700"
+                onUpload={(fileData) => updateTeamFiles(team.id, 'paymentProof', fileData)}
+                onDelete={() => updateTeamFiles(team.id, 'paymentProof', null)}
               />
               <DocumentFileCard
                 number="5"
@@ -610,12 +619,16 @@ export default function TeamInspectionPage({ team, inspectionStage = 'registrati
                 file={team.files?.integrityPact}
                 colorClass="text-red-700"
                 isSignature={true}
+                onUpload={(fileData) => updateTeamFiles(team.id, 'integrityPact', fileData)}
+                onDelete={() => updateTeamFiles(team.id, 'integrityPact', null)}
               />
               <DocumentFileCard
                 number="6"
                 title="Surat Rekomendasi Kepala Sekolah"
                 file={team.files?.recommendationLetter}
                 colorClass="text-amber-700"
+                onUpload={(fileData) => updateTeamFiles(team.id, 'recommendationLetter', fileData)}
+                onDelete={() => updateTeamFiles(team.id, 'recommendationLetter', null)}
               />
             </div>
           </div>

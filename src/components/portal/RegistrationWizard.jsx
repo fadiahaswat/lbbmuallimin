@@ -230,7 +230,12 @@ export default function RegistrationWizard({ isOpen, onClose }) {
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, width, height);
 
-            const compressedUrl = canvas.toDataURL('image/jpeg', 0.65);
+            // Jika file asli adalah PNG, pertahankan format image/png agar transparansi (alpha channel) TIDAK menjadi hitam!
+            const isPng = file.type === 'image/png' || (file.name && file.name.toLowerCase().endsWith('.png'));
+            const compressedUrl = isPng
+              ? canvas.toDataURL('image/png')
+              : canvas.toDataURL('image/jpeg', 0.8);
+
             const estKb = Math.round((compressedUrl.length * 0.75) / 1024);
             resolve({
               name: file.name,

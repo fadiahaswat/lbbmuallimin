@@ -1,9 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { ExternalLink, FileText, AlertTriangle } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { ExternalLink, FileText, AlertTriangle, Upload, Trash2 } from 'lucide-react';
 import { formatImageUrl, getFallbackImageUrl } from '../../../services/sheetService.js';
 
-export default function DocumentFileCard({ title, file, number, colorClass = 'text-blue-700', isSignature = false }) {
+export default function DocumentFileCard({
+  title,
+  file,
+  number,
+  colorClass = 'text-blue-700',
+  isSignature = false,
+  onUpload,
+  onDelete
+}) {
   const [imgFailed, setImgFailed] = useState(false);
+  const fileInputRef = useRef(null);
 
   const rawUrl = isSignature ? (file?.signatureUrl || file?.url) : file?.url;
   const fileName = file?.name || title;
@@ -27,18 +36,117 @@ export default function DocumentFileCard({ title, file, number, colorClass = 'te
     isImageExt
   );
 
+  const handleFileChange = (e) => {
+    const uploadedFile = e.target.files?.[0];
+    if (!uploadedFile) return;
+
+    if (uploadedFile.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = (loadEvt) => {
+        const img = new Image();
+        img.onload = () => {
+          const MAX_DIM = 1200;
+          let width = img.width;
+          let height = img.height;
+          if (width > MAX_DIM || height > MAX_DIM) {
+            if (width > height) {
+              height = Math.round((height * MAX_DIM) / width);
+              width = MAX_DIM;
+            } else {
+              width = Math.round((width * MAX_DIM) / height);
+              height = MAX_DIM;
+            }
+          }
+
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+
+          // PENTING: Jika file asli adalah PNG, pertahankan format image/png agar transparansi (alpha channel) TIDAK menjadi hitam!
+          const isPng = uploadedFile.type === 'image/png' || (uploadedFile.name && uploadedFile.name.toLowerCase().endsWith('.png'));
+          const finalUrl = isPng
+            ? canvas.toDataURL('image/png')
+            : canvas.toDataURL('image/jpeg', 0.85);
+
+          const estKb = Math.round((finalUrl.length * 0.75) / 1024);
+          onUpload?.({
+            name: uploadedFile.name,
+            size: `${estKb} KB${isPng ? ' (PNG)' : ''}`,
+            uploadedAt: new Date().toISOString(),
+            url: finalUrl
+          });
+        };
+        img.src = loadEvt.target?.result;
+      };
+      reader.readAsDataURL(uploadedFile);
+    } else {
+      const reader = new FileReader();
+      reader.onload = (loadEvt) => {
+        onUpload?.({
+          name: uploadedFile.name,
+          size: `${(uploadedFile.size / 1024).toFixed(1)} KB`,
+          uploadedAt: new Date().toISOString(),
+          url: loadEvt.target?.result || '#'
+        });
+      };
+      reader.readAsDataURL(uploadedFile);
+    }
+
+    e.target.value = '';
+  };
+
+  const handleDelete = () => {
+    if (window.confirm(`Hapus berkas "${title}" ini?`)) {
+      onDelete?.();
+    }
+  };
+
   return (
     <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 flex flex-col justify-between hover:border-slate-300 transition-all shadow-xs">
+      {/* Hidden File Input for Panitia */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*,application/pdf"
+        className="hidden"
+        onChange={handleFileChange}
+      />
+
       <div>
         <div className="flex items-center justify-between mb-2">
           <span className={`text-[11px] font-bold uppercase ${colorClass}`}>
             {number}. {title}
           </span>
-          {file?.type === 'online' && (
-            <span className="text-[9px] bg-emerald-100 text-emerald-800 font-black px-1.5 py-0.5 rounded">
-              Online TTD
-            </span>
-          )}
+          <div className="flex items-center gap-1.5">
+            {file?.type === 'online' && (
+              <span className="text-[9px] bg-emerald-100 text-emerald-800 font-black px-1.5 py-0.5 rounded">
+                Online TTD
+              </span>
+            )}
+            {onUpload && (
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="text-[10px] font-bold text-blue-700 hover:text-blue-900 bg-blue-50 hover:bg-blue-100 border border-blue-200 px-2 py-0.5 rounded-lg flex items-center gap-1 transition-colors cursor-pointer"
+                title="Unggah atau ganti berkas ini (bisa PNG transparan)"
+              >
+                <Upload className="w-3 h-3" />
+                <span>{hasFile ? 'Ganti' : 'Unggah'}</span>
+              </button>
+            )}
+            {hasFile && onDelete && (
+              <button
+                type="button"
+                onClick={handleDelete}
+                className="text-[10px] font-bold text-red-600 hover:text-red-800 bg-red-50 hover:bg-red-100 border border-red-200 p-1 rounded-lg transition-colors cursor-pointer"
+                title="Hapus berkas ini"
+              >
+                <Trash2 className="w-3 h-3" />
+              </button>
+            )}
+          </div>
         </div>
 
         <div className="h-32 bg-white rounded-xl border border-slate-200 flex flex-col items-center justify-center overflow-hidden mb-3 p-2 relative group">
@@ -82,7 +190,16 @@ export default function DocumentFileCard({ title, file, number, colorClass = 'te
           ) : (
             <div className="flex flex-col items-center justify-center text-center p-2 text-slate-400">
               <AlertTriangle className="w-6 h-6 text-slate-300 mb-1" />
-              <span className="text-xs italic">Belum ada berkas</span>
+              <span className="text-xs italic mb-1.5">Belum ada berkas</span>
+              {onUpload && (
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="text-[11px] font-bold text-blue-600 hover:text-blue-800 underline cursor-pointer"
+                >
+                  + Unggah Berkas
+                </button>
+              )}
             </div>
           )}
         </div>

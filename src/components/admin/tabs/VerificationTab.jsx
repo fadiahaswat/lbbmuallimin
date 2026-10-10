@@ -189,7 +189,11 @@ export default function VerificationTab({
                             {team.regCode}
                           </span>
                           <div className="font-black text-slate-900 text-sm leading-tight truncate">{team.schoolName}</div>
-                          <div className="text-slate-500 text-[11px] mt-0.5">{team.platoonName} ({team.jenjang})</div>
+                          {team.platoonName &&
+                           team.platoonName.trim().toLowerCase() !== team.schoolName.trim().toLowerCase() &&
+                           team.platoonName.trim().toLowerCase() !== `pleton ${team.schoolName.trim().toLowerCase()}` && (
+                            <div className="text-slate-500 text-[11px] mt-0.5">Peleton: {team.platoonName}</div>
+                          )}
                         </div>
                       </div>
                     </td>
