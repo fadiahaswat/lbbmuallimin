@@ -20,6 +20,7 @@ import StickyCta from './components/StickyCta.jsx';
 // Dedicated Full Pages & Views (Lazy loaded for optimal initial bundle performance)
 const RegistrationWizard = React.lazy(() => import('./components/portal/RegistrationWizard.jsx'));
 const RegistrationStatusModal = React.lazy(() => import('./components/portal/RegistrationStatusModal.jsx'));
+const ParticipantQRStatusView = React.lazy(() => import('./components/portal/ParticipantQRStatusView.jsx'));
 const DocumentViewerModal = React.lazy(() => import('./components/documents/DocumentViewerModal.jsx'));
 const AuthModal = React.lazy(() => import('./components/auth/AuthModal.jsx'));
 // Portals & Backoffice Dashboards (Lazy loaded on demand)
@@ -58,10 +59,18 @@ function ViewLoader() {
 }
 
 function MainApp() {
-  const { activeView } = useCompetition();
+  const { activeView, setActiveView } = useCompetition();
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showStickyCta, setShowStickyCta] = useState(false);
+  const [scannedRegCode, setScannedRegCode] = useState(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('reg') || '';
+    } catch {
+      return '';
+    }
+  });
 
   useEffect(() => {
     // Set Document Title & Description
@@ -69,6 +78,13 @@ function MainApp() {
     const metaDesc = document.querySelector('meta[name="description"]');
     if (metaDesc) {
       metaDesc.setAttribute('content', SITE.DESCRIPTION);
+    }
+
+    // Check if URL has ?reg=
+    const params = new URLSearchParams(window.location.search);
+    const regParam = params.get('reg');
+    if (regParam) {
+      setScannedRegCode(regParam);
     }
 
     let ticking = false;
@@ -87,10 +103,28 @@ function MainApp() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const handleCloseScannedQR = () => {
+    setScannedRegCode('');
+    // Remove query parameter without reload
+    const url = new URL(window.location.href);
+    url.searchParams.delete('reg');
+    window.history.replaceState({}, '', url.pathname);
+  };
+
   return (
     <div className="min-h-screen bg-white text-slate-900 selection:bg-red-200 font-sans">
+      {/* Render Scanner View if URL has ?reg= */}
+      {scannedRegCode && (
+        <React.Suspense fallback={<ViewLoader />}>
+          <ParticipantQRStatusView
+            regCode={scannedRegCode}
+            onBack={handleCloseScannedQR}
+          />
+        </React.Suspense>
+      )}
+
       {/* 1. Public Landing Page */}
-      {activeView === 'landing' && (
+      {!scannedRegCode && activeView === 'landing' && (
         <>
           <Navbar onOpenMobileMenu={() => setIsMobileMenuOpen(true)} />
           <MobileMenu isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} />
@@ -115,12 +149,13 @@ function MainApp() {
       )}
 
       {/* 2. Secondary Full Pages & Backoffice (Lazy-Loaded in Suspense) */}
-      <React.Suspense fallback={<ViewLoader />}>
-        {activeView === 'register' && <RegistrationWizard />}
-        {activeView === 'status_check' && <RegistrationStatusModal />}
-        {activeView === 'document_viewer' && <DocumentViewerModal />}
-        {activeView === 'auth' && <AuthModal />}
-        {activeView === 'peserta_dashboard' && <ParticipantDashboard />}
+      {!scannedRegCode && (
+        <React.Suspense fallback={<ViewLoader />}>
+          {activeView === 'register' && <RegistrationWizard />}
+          {activeView === 'status_check' && <RegistrationStatusModal />}
+          {activeView === 'document_viewer' && <DocumentViewerModal />}
+          {activeView === 'auth' && <AuthModal />}
+          {activeView === 'peserta_dashboard' && <ParticipantDashboard />}
         {activeView === 'admin' && <AdminDashboard />}
         {activeView === 'juri' && <JuryScoringApp />}
         {activeView === 'superadmin' && <SuperadminPanel />}
@@ -139,6 +174,7 @@ function MainApp() {
         {activeView === 'tatib' && <TataTertibView />}
         {activeView === 'timeline' && <TimelinePanitiaView />}
       </React.Suspense>
+      )}
     </div>
   );
 }

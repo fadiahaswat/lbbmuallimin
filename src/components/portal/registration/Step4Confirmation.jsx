@@ -1,19 +1,47 @@
-import React from 'react';
 import {
   Clock,
   Check,
   Lock,
   MessageCircle,
   ExternalLink,
-  ArrowRight
+  ArrowRight,
+  Download,
+  QrCode
 } from 'lucide-react';
 import logoImg from '../../../assets/logo-tonti.png';
+import { generateParticipantQRCode, downloadDataUrl } from '../../../utils/qrGenerator.js';
 
 export default function Step4Confirmation({
   createdTeam,
   setActiveView,
   openAuthModal
 }) {
+  const [qrDataUrl, setQrDataUrl] = React.useState('');
+  const [isGeneratingQr, setIsGeneratingQr] = React.useState(true);
+
+  React.useEffect(() => {
+    if (!createdTeam?.regCode) return;
+    const targetUrl = `${window.location.origin}/?reg=${encodeURIComponent(createdTeam.regCode)}`;
+    setIsGeneratingQr(true);
+    generateParticipantQRCode(targetUrl, { size: 600 })
+      .then(url => {
+        setQrDataUrl(url);
+      })
+      .catch(err => {
+        console.error('Error generating confirmation QR:', err);
+      })
+      .finally(() => {
+        setIsGeneratingQr(false);
+      });
+  }, [createdTeam?.regCode]);
+
+  const handleDownloadQR = () => {
+    if (!qrDataUrl) return;
+    downloadDataUrl(
+      qrDataUrl,
+      `QR-${createdTeam.regCode}-${(createdTeam.schoolName || 'peleton').replace(/\s+/g, '_')}.png`
+    );
+  };
   return (
     <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-10 text-center max-w-2xl mx-auto shadow-sm space-y-6 animate-in zoom-in-95 duration-200">
       <div className="flex justify-center mb-1">
@@ -62,6 +90,46 @@ export default function Step4Confirmation({
           <span className="font-bold text-slate-800">
             {createdTeam.teamType} ({createdTeam.jenjang})
           </span>
+        </div>
+      </div>
+
+      {/* QR Code Khusus Peleton */}
+      <div className="bg-gradient-to-b from-slate-50 to-white border border-slate-200 rounded-3xl p-5 sm:p-6 text-center space-y-3">
+        <div className="flex items-center justify-center gap-2 text-slate-800">
+          <QrCode className="w-5 h-5 text-red-700" />
+          <h3 className="text-sm font-black uppercase tracking-tight">QR Code Registrasi Peleton Anda</h3>
+        </div>
+        <p className="text-[11px] text-slate-600 max-w-md mx-auto leading-relaxed">
+          Simpan atau unduh QR code ini. Setiap kali di-scan, QR code ini akan menampilkan status verifikasi ACC panitia secara *real-time* dan otomatis membuka portal peserta setelah di-ACC.
+        </p>
+
+        <div className="bg-white p-3.5 rounded-2xl border border-slate-200 inline-block shadow-sm">
+          {isGeneratingQr ? (
+            <div className="w-44 h-44 flex items-center justify-center text-slate-400 font-mono text-xs">
+              Menyiapkan QR...
+            </div>
+          ) : (
+            <img
+              src={qrDataUrl}
+              alt={`QR Code ${createdTeam.regCode}`}
+              className="w-48 h-48 object-contain mx-auto"
+            />
+          )}
+          <span className="block text-[11px] font-mono font-bold text-slate-700 mt-2">
+            {createdTeam.regCode}
+          </span>
+        </div>
+
+        <div>
+          <button
+            type="button"
+            onClick={handleDownloadQR}
+            disabled={!qrDataUrl}
+            className="py-2.5 px-5 bg-slate-900 hover:bg-slate-800 active:scale-95 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-all shadow-sm inline-flex items-center gap-2 cursor-pointer disabled:opacity-50"
+          >
+            <Download className="w-4 h-4 text-yellow-400" />
+            <span>Unduh QR Code (PNG)</span>
+          </button>
         </div>
       </div>
 
