@@ -149,11 +149,22 @@ export function createTeamActions({ teams, setTeams, scores, setScores, setCurre
   }
 
   function assignLotNumber(teamId, lotNumber, chestNumber = undefined, estimatedTime = undefined, basecampNumber = undefined) {
+    const target = teams.find(t => t.id === teamId);
+    const num = (lotNumber !== undefined && lotNumber !== '' && lotNumber !== null) ? parseInt(lotNumber, 10) : null;
+    
+    // Validasi ketat: Peleton HANYA bisa diundi jika berkas & biodata (Danton, 21 Pasukan, Surat Rekomendasi) sudah lengkap
+    if (num && target) {
+      const eligibility = checkTeamVerificationEligibility(target);
+      if (!eligibility.isEligible) {
+        console.warn(`[CompetitionContext] Peleton ${target.schoolName} belum dapat diundi:`, eligibility.issues);
+        alert(`Peleton belum dapat diundi karena belum lengkap:\n\n• ${eligibility.issues.join('\n• ')}`);
+        return { success: false, issues: eligibility.issues };
+      }
+    }
+
     setTeams(prev =>
       prev.map(team => {
         if (team.id === teamId) {
-          const num = (lotNumber !== undefined && lotNumber !== '' && lotNumber !== null) ? parseInt(lotNumber, 10) : null;
-          
           // Auto-pair nomor dada sesuai aturan berpasangan jenjang jika tidak diisi manual atau jika nomor undian berubah
           const defaultChestFromLot = num ? getChestNumberByLot(team.jenjang, num) : '';
           let chest = team.chestNumber || '';

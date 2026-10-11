@@ -301,8 +301,8 @@ export const PAYMENT = {
 export const DOWNLOADS = [
     {
         id: 'juknis',
-        title: 'Petunjuk Teknis Lengkap (Juknis)',
-        description: 'Dokumen panduan teknis resmi pelaksanaan LBB Mu\'allimin 2027 yang memuat ketentuan lomba, materi urutan PBB baku murni sesuai Perpang TNI No. 57 & 58 Tahun 2018, kriteria Danton, serta sistem penilaian juri.',
+        title: 'Petunjuk Teknis Lapangan (Juknis)',
+        description: 'Dokumen panduan teknis resmi pelaksanaan LBB Mu\'allimin 2027 yang memuat ketentuan lomba, alur kronologis arena, materi urutan PBB baku murni sesuai Perpang TNI No. 57 & 58 Tahun 2018.',
         size: 'Google Docs / PDF',
         type: 'DOCS / PDF',
         url: 'https://docs.google.com/document/d/1BN1RuwDcEiuibVvoBG4-5R7Rq8neV5st3nAZoISVQi0/edit?usp=sharing',
@@ -310,6 +310,18 @@ export const DOWNLOADS = [
         featured: true,
         icon: 'BookOpen',
         colorScheme: 'blue',
+    },
+    {
+        id: 'juknis-penilaian',
+        title: 'Petunjuk Teknis Penilaian & Kejuaraan',
+        description: 'Regulasi baku Dewan Juri 1:1, kriteria Danton (4 aspek), akumulasi Juara Umum & tie-breaker 7 tingkat, transparansi rolling release Gmail, serta tabel penalti resmi.',
+        size: 'Portal Web / PDF',
+        type: 'REGULASI JURI',
+        url: 'https://docs.google.com/document/d/1BN1RuwDcEiuibVvoBG4-5R7Rq8neV5st3nAZoISVQi0/edit?usp=sharing',
+        badge: 'Penilaian Resmi',
+        featured: false,
+        icon: 'Award',
+        colorScheme: 'amber',
     },
     {
         id: 'tatib',

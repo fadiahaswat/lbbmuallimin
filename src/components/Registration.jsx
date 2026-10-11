@@ -873,13 +873,6 @@ export default function Registration() {
 
 
             </div>
-
-            <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between text-xs text-slate-400">
-              <span className="inline-flex items-center gap-1.5 font-medium">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                Format digital diunggah ke formulir portal
-              </span>
-            </div>
           </div>
 
           {/* Kolom Kanan: Sanksi & Pusat Informasi (5 Kolom) */}
@@ -925,9 +918,6 @@ export default function Registration() {
                     </span>
                   </div>
                 </div>
-                <span className="text-[9px] font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 px-2.5 py-0.5 rounded-full">
-                  Terverifikasi
-                </span>
               </div>
 
               <p className="text-xs text-slate-400 mb-3 leading-relaxed">

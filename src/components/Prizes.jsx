@@ -372,10 +372,6 @@ export default function Prizes() {
           <div className="relative z-10">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 pb-6 border-b border-white/10 text-left">
               <div>
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 text-[10px] font-bold uppercase tracking-widest mb-2">
-                  <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                  <span>Penghargaan Khusus Individu</span>
-                </div>
                 <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-white uppercase italic tracking-tight">
                   Komandan Peleton (Danton) Terbaik
                 </h3>

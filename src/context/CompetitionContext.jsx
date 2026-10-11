@@ -101,7 +101,7 @@ export function CompetitionProvider({ children }) {
       const savedRole = localStorage.getItem(STORAGE_KEYS.ROLE);
       const savedView = localStorage.getItem(STORAGE_KEYS.ACTIVE_VIEW);
       if (savedUser || (savedRole && savedRole !== 'publik')) {
-        if (savedView && savedView !== 'landing' && savedView !== 'auth') {
+        if (savedView && savedView !== 'auth') {
           return savedView;
         }
         if (savedRole === 'admin') return 'admin';

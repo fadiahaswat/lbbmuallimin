@@ -9,6 +9,7 @@ import TimeLocation from './components/TimeLocation.jsx';
 import DenahSection from './components/DenahSection.jsx';
 import Registration from './components/Registration.jsx';
 import Rules from './components/Rules.jsx';
+import JuknisPenilaianSection from './components/JuknisPenilaianSection.jsx';
 import MateriLomba from './components/MateriLomba.jsx';
 import Prizes from './components/Prizes.jsx';
 import TataTertib from './components/TataTertib.jsx';
@@ -133,12 +134,13 @@ function MainApp() {
             <Hero />
             <About />
             <TimeLocation />
-            <DenahSection />
             <Registration />
             <Rules />
             <MateriLomba />
-            <Prizes />
+            <JuknisPenilaianSection />
             <TataTertib />
+            <Prizes />
+            <DenahSection />
             <FaqContact />
           </main>
 

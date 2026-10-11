@@ -38,7 +38,7 @@ export default function DocumentsTab({ currentTeam, triggerFileUpload, setActive
               </span>
             </div>
             <p className="text-xs text-slate-600 leading-relaxed">
-              Pasfoto Komandan, 21 Pasukan Inti, 3 Cadangan, dan 2 Official diunggah langsung per individu di menu <strong>Susunan Personel</strong>.
+              Pasfoto Komandan, 21 Pasukan Inti, 3 Cadangan, serta 1 Official dan 2 Pendukung Resmi diunggah langsung per individu di menu <strong>Susunan Personel</strong>.
             </p>
           </div>
           <div className="pt-3 border-t border-blue-100 flex items-center justify-between">

@@ -295,7 +295,7 @@ export default function VerificationTab({
                     </td>
 
                     <td className="p-3.5 align-middle text-center">
-                      {team.chestNumber ? (
+                      {team.lotNumber && team.chestNumber ? (
                         <span className="font-mono font-black text-xs text-emerald-800 bg-emerald-100 px-2.5 py-1 rounded-lg border border-emerald-200">
                           {team.chestNumber}
                         </span>

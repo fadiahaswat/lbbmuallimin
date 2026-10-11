@@ -1,6 +1,6 @@
 import React from 'react';
 import { CheckCircle2 } from 'lucide-react';
-import { getChestNumberByLot } from '../../../context/competitionHelpers.js';
+import { getChestNumberByLot, checkTeamVerificationEligibility } from '../../../context/competitionHelpers.js';
 
 export default function LotteryTab({
   teams,
@@ -15,7 +15,7 @@ export default function LotteryTab({
             <span className="text-[10px] font-black uppercase tracking-wider text-purple-700 bg-purple-50 px-2.5 py-0.5 rounded border border-purple-200">
               Tahap 3 Undian Lapangan (TM)
             </span>
-            <span className="text-xs text-slate-400">• Hanya Peleton Berstatus Sah</span>
+            <span className="text-xs text-slate-400">• Hanya Peleton Berstatus Sah & Lengkap</span>
           </div>
           <h3 className="font-black text-xl text-slate-900 uppercase italic mt-1">
             3. Undian (Nomor Urut Tampil & Nomor Dada Lapangan)
@@ -41,7 +41,14 @@ export default function LotteryTab({
       <div className="grid lg:grid-cols-2 gap-6">
         {['SD', 'SMP'].map(jenjang => {
           const list = teams
-            .filter(t => t.jenjang === jenjang && (t.status === 'verified' || t.status === 'drawn'))
+            .filter(t => {
+              if (t.jenjang !== jenjang) return false;
+              if (t.status === 'drawn') return true;
+              if (t.status === 'verified') {
+                return checkTeamVerificationEligibility(t).isEligible;
+              }
+              return false;
+            })
             .sort((a, b) => (a.lotNumber || 999) - (b.lotNumber || 999));
 
           return (

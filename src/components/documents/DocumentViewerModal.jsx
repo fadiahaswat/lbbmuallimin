@@ -142,8 +142,8 @@ export default function DocumentViewerModal({ isOpen, onClose }) {
                 <p>3. Pelaksanaan di Arena: Penghormatan awal (stopwatch DIMULAI saat aba-aba pelaksanaan "GERAK"), laporan pembuka ("Lapor, peleton dengan nomor dada ... siap melaksanakan materi gerakan lomba"), masuk Kotak Danton 1,5 x 1,5 meter.</p>
                 <p>4. Durasi Tampil: Maksimal 8 menit (SD/MI) dan 12 menit (SMP/MTs). Sinyal peluit 1x panjang (sisa 1 menit: menit ke-7 SD / menit ke-11 SMP), sinyal peluit 2x panjang (waktu habis: menit ke-8 SD / menit ke-12 SMP). Garis batas dipantau bendera Hakim Garis.</p>
                 <p>5. Atribut Terjatuh: TIDAK DIKENAKAN PENALTI PENGURANGAN NILAI (dilarang memungut hingga keluar arena).</p>
-                <p>6. Titik Pergantian Pemain Cadangan di Arena: Dilaksanakan pada saat materi "Bubar", yaitu di antara Materi No. 16 dan 17 (SD/MI) serta di antara Materi No. 22 dan 23 (SMP/MTs). Waktu stopwatch tetap berjalan.</p>
-                <p>7. Laporan Penutup, Penghormatan Penutup & Penghentian Waktu: Stopwatch BERHENTI saat aba-aba pelaksanaan "GERAK" pada penghormatan penutup ("Tegak = GERAK"). Nomor dada dikembalikan kepada petugas pos sebelum kembali ke basecamp.</p>
+                <p>6. Titik Pergantian Pemain Cadangan di Arena: Dilaksanakan pada saat materi "Bubar", yaitu di antara Materi No. 16 dan 17 (SD/MI) serta di antara Materi No. 19 dan 20 (SMP/MTs). Waktu stopwatch tetap berjalan.</p>
+                <p>7. Laporan Penutup, Penghormatan Penutup & Penghentian Waktu: Stopwatch BERHENTI saat aba-aba pelaksanaan "GERAK" pada penghormatan penutup ("Hormat = GERAK"). Nomor dada dikembalikan kepada petugas pos sebelum kembali ke basecamp.</p>
               </div>
 
               <div className="space-y-3 pt-2">

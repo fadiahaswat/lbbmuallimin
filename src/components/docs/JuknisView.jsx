@@ -15,17 +15,43 @@ import {
   ExternalLink,
   Sparkles,
   FileText,
-  Scale
+  Scale,
+  Award,
+  AlertTriangle,
+  ClipboardList,
+  Check,
+  Building
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
-import { COMPETITION, DOWNLOADS, MATERIALS } from '../../config.js';
+import { COMPETITION, DOWNLOADS, MATERIALS, PENALTIES } from '../../config.js';
+import { JUKNIS_PENILAIAN_CHAPTERS, JUKNIS_PENDAFTARAN_CHAPTERS } from '../../data/juknisDocsData.js';
 import SimpaskorSidebarLayout from '../navigation/SimpaskorSidebarLayout.jsx';
 import Rules from '../Rules.jsx';
 
 export default function JuknisView() {
   const { currentTeam } = useCompetition();
 
-  const [activeTab, setActiveTab] = useState('chapters'); // 'chapters' (Bab A-J Verbatim) | 'materials' (Materi PBB & Denah)
+  // Tab switch: 'penilaian' (Juknis Penilaian & Kejuaraan) | 'lapangan' (Juknis Lapangan) | 'pendaftaran' (Juknis Pendaftaran) | 'materials' (Materi PBB & Denah)
+  const [activeTab, setActiveTab] = useState('penilaian');
+  const [openPenilaianSections, setOpenPenilaianSections] = useState({
+    'bab-a': false,
+    'bab-b': false,
+    'bab-c': false,
+    'bab-d': false,
+  });
+
+  const [openPendaftaranSections, setOpenPendaftaranSections] = useState({
+    'reg-a': false,
+    'reg-b': false,
+  });
+
+  const togglePenilaianSection = (id) => {
+    setOpenPenilaianSections(prev => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const togglePendaftaranSection = (id) => {
+    setOpenPendaftaranSections(prev => ({ ...prev, [id]: !prev[id] }));
+  };
 
   // Jika akun peleton peserta SMP, otomatis default ke 'SMP'. Jika SD, default ke 'SD'.
   const initialJenjang = currentTeam?.jenjang?.toUpperCase() === 'SMP' ? 'SMP' : 'SD';
@@ -90,8 +116,8 @@ export default function JuknisView() {
   return (
     <SimpaskorSidebarLayout
       activeMenu="juknis"
-      title="Petunjuk Teknis (Juknis) & Materi PBB"
-      subtitle="Pedoman baku urutan materi gerakan PBB resmi, pergantian pemain, ketentuan arena, & rubrik penilaian juri 1:1"
+      title="Petunjuk Teknis (Juknis) & Regulasi LBB"
+      subtitle="Pedoman baku resmi: Juknis Penilaian & Kejuaraan, Juknis Lapangan, Juknis Pendaftaran, dan Materi PBB 2027"
       hideHeader={true}
     >
       <div className="space-y-6">
@@ -104,15 +130,15 @@ export default function JuknisView() {
             <div className="space-y-3">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-300 text-xs font-black uppercase tracking-wider">
                 <BookOpen className="w-3.5 h-3.5" />
-                <span>Standar Regulasi Perpang TNI No. 58 & 57 Th 2018</span>
+                <span>Dokumen Resmi Terpadu LBB Mu'allimin 2027</span>
               </div>
               <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-white">
-                Petunjuk Teknis & Materi Gerakan Lomba
+                Petunjuk Teknis & Regulasi Kejuaraan
               </h1>
               <p className="text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed">
-                Panduan materi PBB Murni (Perpang TNI No. 58 & 57 Th 2018 dan No. 45 Th 2014 untuk Hormat Kanan/Kiri), slot pergantian pemain resmi, matriks penilaian 1:1, dan spesifikasi 2 arena paralel.
+                Dokumen regulasi resmi terbagi dalam 3 naskah baku mandiri: <strong>Petunjuk Teknis Penilaian & Kejuaraan</strong> (sistem 1:1, Danton, Juara Umum, sanggah), <strong>Petunjuk Teknis Lapangan</strong> (kronologis pra s.d. pasca lomba & penalti), serta <strong>Petunjuk Teknis Pendaftaran</strong>.
               </p>
-              <div className="pt-1">
+              <div className="pt-1 flex flex-wrap gap-2.5">
                 <a
                   href={DOWNLOADS[0]?.url || "https://docs.google.com/document/d/1BN1RuwDcEiuibVvoBG4-5R7Rq8neV5st3nAZoISVQi0/edit?usp=sharing"}
                   target="_blank"
@@ -126,62 +152,436 @@ export default function JuknisView() {
               </div>
             </div>
 
-            <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-4 text-center min-w-[150px] shrink-0 self-start md:self-center">
-              <span className="text-[10px] uppercase font-bold text-blue-300 block">Rasio Peleton</span>
+            <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-4 text-center min-w-[170px] shrink-0 self-start md:self-center">
+              <span className="text-[10px] uppercase font-bold text-amber-300 block">Juri 1:1 • 6 Dewan Juri</span>
               <span className="text-2xl font-black text-white font-mono">1 : 1</span>
-              <span className="text-[10px] text-slate-300 block mt-0.5">Kebenaran 50% • Kompak 50%</span>
+              <span className="text-[10px] text-slate-300 block mt-0.5">Teknik 50% • Kompak 50%</span>
             </div>
           </div>
         </div>
 
-        {/* Tab Switcher: Bab A-J Verbatim vs Materi PBB & Denah */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-2.5 rounded-2xl border border-slate-200 shadow-xs">
-          <div className="flex items-center gap-1.5 p-1 bg-slate-100 rounded-xl">
+        {/* Document Tab Switcher (4 Tab Khusus & Terpisah) */}
+        <div className="flex flex-col gap-2 bg-white p-2.5 rounded-2xl border border-slate-200 shadow-xs">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-1.5 p-1 bg-slate-100 rounded-xl">
+            {/* Tab 1: Juknis Penilaian & Kejuaraan */}
             <button
               type="button"
-              onClick={() => setActiveTab('chapters')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-black transition-all cursor-pointer ${
-                activeTab === 'chapters'
-                  ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
-                  : 'text-slate-600 hover:text-slate-900'
+              onClick={() => setActiveTab('penilaian')}
+              className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-xs font-black transition-all cursor-pointer text-center ${
+                activeTab === 'penilaian'
+                  ? 'bg-amber-600 text-white shadow-md shadow-amber-600/30'
+                  : 'text-slate-700 hover:text-slate-900 hover:bg-slate-200/60'
               }`}
             >
-              <BookOpen className="w-3.5 h-3.5" />
-              <span>Bab Regulasi Lengkap (Bab A – J Verbatim)</span>
+              <Award className="w-4 h-4 shrink-0" />
+              <span>Juknis Penilaian & Kejuaraan</span>
             </button>
+
+            {/* Tab 2: Juknis Lapangan */}
+            <button
+              type="button"
+              onClick={() => setActiveTab('lapangan')}
+              className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-xs font-black transition-all cursor-pointer text-center ${
+                activeTab === 'lapangan'
+                  ? 'bg-red-700 text-white shadow-md shadow-red-700/30'
+                  : 'text-slate-700 hover:text-slate-900 hover:bg-slate-200/60'
+              }`}
+            >
+              <BookOpen className="w-4 h-4 shrink-0" />
+              <span>Juknis Lapangan (Bab A–J)</span>
+            </button>
+
+            {/* Tab 3: Juknis Pendaftaran */}
+            <button
+              type="button"
+              onClick={() => setActiveTab('pendaftaran')}
+              className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-xs font-black transition-all cursor-pointer text-center ${
+                activeTab === 'pendaftaran'
+                  ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
+                  : 'text-slate-700 hover:text-slate-900 hover:bg-slate-200/60'
+              }`}
+            >
+              <ClipboardList className="w-4 h-4 shrink-0" />
+              <span>Juknis Pendaftaran</span>
+            </button>
+
+            {/* Tab 4: Materi PBB & Denah */}
             <button
               type="button"
               onClick={() => setActiveTab('materials')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-black transition-all cursor-pointer ${
+              className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-xs font-black transition-all cursor-pointer text-center ${
                 activeTab === 'materials'
                   ? 'bg-slate-900 text-white shadow-md shadow-slate-900/30'
-                  : 'text-slate-600 hover:text-slate-900'
+                  : 'text-slate-700 hover:text-slate-900 hover:bg-slate-200/60'
               }`}
             >
-              <Swords className="w-3.5 h-3.5" />
-              <span>Daftar Materi Gerakan PBB & Denah Pos</span>
+              <Swords className="w-4 h-4 shrink-0" />
+              <span>Materi Gerakan & Pos Arena</span>
             </button>
           </div>
 
-          <div className="text-[11px] text-slate-500 font-semibold px-2">
-            {activeTab === 'chapters' ? (
-              <span>Menampilkan seluruh Bab A s.d. Bab J verbatim sama persis dengan Beranda</span>
-            ) : (
-              <span>Daftar gerakan SD (26) & SMP (28), durasi, dan denah pos visual</span>
-            )}
+          <div className="text-[11px] text-slate-500 font-semibold px-2 flex items-center justify-between">
+            <span>
+              {activeTab === 'penilaian' && 'Menampilkan naskah utuh: Sistem Penilaian 1:1, Danton, Penentuan Juara Umum & Tie-Breaker, Sanggah, Backup Digital & Sanksi Penalti.'}
+              {activeTab === 'lapangan' && 'Menampilkan Petunjuk Teknis Lapangan runtut dari alur pra-lomba (TM & Uji Coba), hari-H, hingga force majeure.'}
+              {activeTab === 'pendaftaran' && 'Menampilkan Petunjuk Teknis Pendaftaran: Kuota 36 Peleton, Timeline, Rekening BSI, Alur Digital & Berkas Fisik TM.'}
+              {activeTab === 'materials' && 'Menampilkan daftar 26 gerakan SD / 28 gerakan SMP, slot pergantian pemain, dan denah pos visual.'}
+            </span>
+            <span className="hidden sm:inline-block font-mono text-slate-400">Verbatim 2027</span>
           </div>
         </div>
 
-        {/* TAB 1: BAB REGULASI LENGKAP BAB A - J VERBATIM */}
-        {activeTab === 'chapters' && (
+        {/* ============================================================== */}
+        {/* TAB 1: PETUNJUK TEKNIS PENILAIAN & KEJUARAAN                   */}
+        {/* ============================================================== */}
+        {activeTab === 'penilaian' && (
+          <div className="space-y-6 animate-fade">
+            {/* Header Pengenal Dokumen */}
+            <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-3xl p-6 sm:p-7 shadow-xs space-y-2">
+              <div className="flex items-center gap-2 text-amber-800 font-black text-xs uppercase tracking-wider">
+                <Award className="w-4 h-4 text-amber-600" />
+                <span>Dokumen Regulasi Mandiri Resmi</span>
+              </div>
+              <h2 className="text-xl sm:text-2xl font-black text-slate-900 uppercase">
+                PETUNJUK TEKNIS PENILAIAN DAN KEJUARAAN
+              </h2>
+              <p className="text-xs sm:text-sm text-slate-700 leading-relaxed max-w-3xl">
+                Regulasi baku proses penjurian, rasio penilaian 1:1, rubrik Komandan Peleton (4 aspek), rumus akumulasi Juara Umum dan 7 kriteria tie-breaker, transparansi rolling release melalui akun Gmail terdaftar, prosedur pengajuan sanggah resmi, SOP penanganan gangguan digital, serta tabel sanksi penalti pengurangan nilai.
+              </p>
+            </div>
+
+            {/* Bab A: Sistem Penilaian, Sanggah, dan Penentuan Juara */}
+            <div className="border border-slate-200 rounded-3xl overflow-hidden bg-white shadow-xs">
+              <button
+                type="button"
+                onClick={() => togglePenilaianSection('bab-a')}
+                className="w-full flex items-center justify-between p-5 sm:p-6 bg-slate-50/80 hover:bg-slate-100/80 transition-colors text-left cursor-pointer border-b border-slate-100"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="w-8 h-8 rounded-xl bg-amber-600 text-white font-black text-sm flex items-center justify-center shrink-0">
+                    A
+                  </span>
+                  <div>
+                    <h3 className="font-black text-base sm:text-lg text-slate-900 uppercase">
+                      A. Sistem Penilaian, Sanggah, dan Penentuan Juara
+                    </h3>
+                    <span className="text-xs text-slate-500 font-medium">10 Butir Baku Regulasi Penjurian & Hasil</span>
+                  </div>
+                </div>
+                <ChevronDown className={`w-5 h-5 text-slate-400 transition-transform ${openPenilaianSections['bab-a'] ? 'rotate-180 text-amber-600' : ''}`} />
+              </button>
+
+              {openPenilaianSections['bab-a'] && (
+                <div className="p-5 sm:p-7 space-y-4">
+                  {JUKNIS_PENILAIAN_CHAPTERS[0].points.map(pt => (
+                    <div key={pt.number} className="p-4 sm:p-5 rounded-2xl bg-slate-50/70 border border-slate-200/90 space-y-2">
+                      <div className="flex items-start gap-3">
+                        <span className="w-6 h-6 rounded-lg bg-slate-900 text-white font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
+                          {pt.number}
+                        </span>
+                        <div className="flex-1 space-y-2">
+                          <strong className="text-sm font-black text-slate-900 block">
+                            {pt.title}:
+                          </strong>
+                          <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                            {pt.content}
+                          </p>
+
+                          {pt.subItems && (
+                            <ul className="list-disc pl-5 space-y-1.5 text-xs text-slate-700 pt-1">
+                              {pt.subItems.map((sub, sIdx) => (
+                                <li key={sIdx} className="leading-relaxed">{sub}</li>
+                              ))}
+                            </ul>
+                          )}
+
+                          {pt.pointCards && (
+                            <div className="space-y-2 pt-2">
+                              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs font-mono">
+                                {pt.pointCards.map((card, cIdx) => (
+                                  <div
+                                    key={cIdx}
+                                    className={`p-2.5 rounded-xl border flex flex-col justify-between ${
+                                      card.type === 'danton'
+                                        ? 'bg-amber-50 text-amber-950 border-amber-300'
+                                        : 'bg-white text-slate-900 border-slate-200'
+                                    }`}
+                                  >
+                                    <span className="text-[10px] font-sans font-bold text-slate-500 uppercase">{card.label}</span>
+                                    <strong className="text-sm font-black font-mono mt-0.5">{card.score}</strong>
+                                  </div>
+                                ))}
+                              </div>
+                              {pt.extraText && (
+                                <p className="text-xs text-slate-600 leading-relaxed pt-1">
+                                  {pt.extraText}
+                                </p>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Bab B: Gangguan Sistem Digital dan Prosedur Backup */}
+            <div className="border border-slate-200 rounded-3xl overflow-hidden bg-white shadow-xs">
+              <button
+                type="button"
+                onClick={() => togglePenilaianSection('bab-b')}
+                className="w-full flex items-center justify-between p-5 sm:p-6 bg-slate-50/80 hover:bg-slate-100/80 transition-colors text-left cursor-pointer border-b border-slate-100"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="w-8 h-8 rounded-xl bg-blue-600 text-white font-black text-sm flex items-center justify-center shrink-0">
+                    B
+                  </span>
+                  <div>
+                    <h3 className="font-black text-base sm:text-lg text-slate-900 uppercase">
+                      B. Gangguan Sistem Digital dan Prosedur Backup
+                    </h3>
+                    <span className="text-xs text-slate-500 font-medium">6 Ketentuan Penanganan Gangguan & Prosedur Manual Cadangan</span>
+                  </div>
+                </div>
+                <ChevronDown className={`w-5 h-5 text-slate-400 transition-transform ${openPenilaianSections['bab-b'] ? 'rotate-180 text-blue-600' : ''}`} />
+              </button>
+
+              {openPenilaianSections['bab-b'] && (
+                <div className="p-5 sm:p-7 space-y-3.5">
+                  {JUKNIS_PENILAIAN_CHAPTERS[1].points.map(pt => (
+                    <div key={pt.number} className="p-4 rounded-2xl bg-slate-50/70 border border-slate-200/90 flex items-start gap-3">
+                      <span className="w-6 h-6 rounded-lg bg-blue-700 text-white font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
+                        {pt.number}
+                      </span>
+                      <div className="space-y-1">
+                        <strong className="text-xs sm:text-sm font-bold text-slate-900 block">{pt.title}:</strong>
+                        <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">{pt.content}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Bab C: Ketentuan Sanksi dan Penalti Pengurangan Nilai */}
+            <div className="border border-slate-200 rounded-3xl overflow-hidden bg-white shadow-xs">
+              <button
+                type="button"
+                onClick={() => togglePenilaianSection('bab-c')}
+                className="w-full flex items-center justify-between p-5 sm:p-6 bg-slate-50/80 hover:bg-slate-100/80 transition-colors text-left cursor-pointer border-b border-slate-100"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="w-8 h-8 rounded-xl bg-red-600 text-white font-black text-sm flex items-center justify-center shrink-0">
+                    C
+                  </span>
+                  <div>
+                    <h3 className="font-black text-base sm:text-lg text-slate-900 uppercase">
+                      C. Ketentuan Sanksi dan Penalti Pengurangan Nilai
+                    </h3>
+                    <span className="text-xs text-slate-500 font-medium">Tabel Resmi Pemotongan Nilai Secara Kumulatif</span>
+                  </div>
+                </div>
+                <ChevronDown className={`w-5 h-5 text-slate-400 transition-transform ${openPenilaianSections['bab-c'] ? 'rotate-180 text-red-600' : ''}`} />
+              </button>
+
+              {openPenilaianSections['bab-c'] && (
+                <div className="p-5 sm:p-7 space-y-4">
+                  <p className="text-xs sm:text-sm text-slate-600 font-medium">
+                    Pelanggaran terhadap regulasi teknis lapangan dikenakan sanksi pemotongan nilai secara kumulatif pada lembar rekapitulasi nilai akhir:
+                  </p>
+                  <div className="overflow-x-auto rounded-2xl border border-slate-200 shadow-xs">
+                    <table className="w-full text-xs text-left">
+                      <thead className="bg-slate-100 text-slate-800 uppercase font-black tracking-wider text-[11px]">
+                        <tr>
+                          <th className="py-3 px-4">Jenis Pelanggaran</th>
+                          <th className="py-3 px-4 text-center">Besaran Penalti</th>
+                          <th className="py-3 px-4">Keterangan / Regulasi</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        {PENALTIES.map((p, idx) => (
+                          <tr key={idx} className="hover:bg-slate-50/80 transition-colors">
+                            <td className="py-3 px-4 font-bold text-slate-900 text-xs sm:text-sm">{p.label}</td>
+                            <td className="py-3 px-4 text-center">
+                              <span className={`font-mono font-black px-2.5 py-1 rounded-lg text-xs inline-block shadow-xs ${
+                                p.value.includes('0 Poin') ? 'bg-emerald-100 text-emerald-800 border border-emerald-200' : 'bg-red-100 text-red-700 border border-red-200'
+                              }`}>
+                                {p.value}
+                              </span>
+                            </td>
+                            <td className="py-3 px-4 text-slate-600 text-xs leading-relaxed">
+                              {idx === 0 && 'Urutan tampil 6 s.d. 10 (SD-131, 133, 135, 137, 139 & SMP-242, 244, 246, 248, 260) wajib hadir 1 danton + 15 anggota (5 trio).'}
+                              {idx === 1 && 'Dikenakan per kelipatan 5 menit keterlambatan memasuki barisan upacara.'}
+                              {idx === 2 && 'Setelah 3x panggilan interval 2 menit; jika tetap absen: Diskualifikasi.'}
+                              {idx === 3 && 'Personel masuk arena kurang dari 22 orang (1 Danton + 21 Pasukan).'}
+                              {idx === 4 && 'Melebihi durasi resmi (SD > 8 menit, SMP > 12 menit) per rentang 1-30 detik.'}
+                              {idx === 5 && 'Alas kaki/anggota tubuh menginjak garis arena atau keluar Kotak Danton 1,5x1,5m.'}
+                              {idx === 6 && 'Gerakan penyesuaian tidak dibatasi kuota (0 poin penalti), diperhitungkan dalam aspek Penguasaan Lapangan Danton.'}
+                              {idx === 7 && 'Gerakan terlewat namun dilakukan kemudian = Nilai Minimal; tidak dilakukan = Nilai 0.'}
+                              {idx === 8 && 'Danton salah aba-aba tetapi pasukan bergerak hafalan = Nilai 0 & potong nilai danton.'}
+                              {idx === 9 && 'Rangkaian bertanda (-) yang diselingi jeda/gerakan tambahan diberi Nilai Minimal.'}
+                              {idx === 10 && 'Menyanyikan yel-yel, tepukan berirama, nyanyian selama penampilan resmi: Peringatan 1, 2, lalu penalti.'}
+                              {idx === 11 && 'Topi/peci, dasi, pin, sarung tangan terlepas TIDAK dipotong nilai (0 poin).'}
+                              {idx === 12 && 'Ruang basecamp ditinggalkan kotor / berantakan saat checkout.'}
+                              {idx === 13 && 'Kerusakan/kehilangan sarpras kelas: KTP ditahan, ganti rugi fisik + denda Rp 500.000.'}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 flex items-start gap-3">
+                    <div className="w-2 h-2 rounded-full bg-slate-400 mt-1.5 shrink-0"></div>
+                    <p className="text-xs text-slate-700 leading-relaxed">
+                      <strong className="text-slate-900 font-bold">Pencatatan Penalti:</strong> Seluruh sanksi pengurangan nilai dicatat secara langsung dan transparan oleh Hakim Garis, Timekeeper, dan Koordinator Lapangan ke dalam Berita Acara Pelanggaran Resmi serta disahkan oleh Perwakilan Dewan Juri.
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Bab D: Penutup */}
+            <div className="border border-slate-200 rounded-3xl overflow-hidden bg-white shadow-xs">
+              <button
+                type="button"
+                onClick={() => togglePenilaianSection('bab-d')}
+                className="w-full flex items-center justify-between p-5 sm:p-6 bg-slate-50/80 hover:bg-slate-100/80 transition-colors text-left cursor-pointer border-b border-slate-100"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="w-8 h-8 rounded-xl bg-slate-800 text-white font-black text-sm flex items-center justify-center shrink-0">
+                    D
+                  </span>
+                  <div>
+                    <h3 className="font-black text-base sm:text-lg text-slate-900 uppercase">
+                      D. Penutup
+                    </h3>
+                    <span className="text-xs text-slate-500 font-medium">Asas Kepastian Hukum & Mengikat</span>
+                  </div>
+                </div>
+                <ChevronDown className={`w-5 h-5 text-slate-400 transition-transform ${openPenilaianSections['bab-d'] ? 'rotate-180 text-slate-800' : ''}`} />
+              </button>
+
+              {openPenilaianSections['bab-d'] && (
+                <div className="p-5 sm:p-7 space-y-4">
+                  <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 text-xs sm:text-sm text-slate-700 leading-relaxed">
+                    Petunjuk Teknis Penilaian dan Kejuaraan ini menjadi acuan baku dan mengikat dalam proses evaluasi hasil, penetapan peringkat, dan penegakan keadilan kompetisi LBB Mu'allimin Tahun 2027. Seluruh ketentuan yang telah ditetapkan berlaku mutlak bagi seluruh kontingen peserta dan perangkat perlombaan.
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* ============================================================== */}
+        {/* TAB 2: PETUNJUK TEKNIS LAPANGAN (BAB A – J VERBATIM)           */}
+        {/* ============================================================== */}
+        {activeTab === 'lapangan' && (
           <div className="bg-white rounded-3xl p-4 sm:p-6 border border-slate-200 shadow-xs">
             <Rules embedded={true} />
           </div>
         )}
 
-        {/* TAB 2: MATERI GERAKAN & DENAH ARENA */}
+        {/* ============================================================== */}
+        {/* TAB 3: PETUNJUK TEKNIS PENDAFTARAN                             */}
+        {/* ============================================================== */}
+        {activeTab === 'pendaftaran' && (
+          <div className="space-y-6 animate-fade">
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-3xl p-6 sm:p-7 shadow-xs space-y-2">
+              <div className="flex items-center gap-2 text-blue-800 font-black text-xs uppercase tracking-wider">
+                <ClipboardList className="w-4 h-4 text-blue-600" />
+                <span>Dokumen Regulasi Mandiri Resmi</span>
+              </div>
+              <h2 className="text-xl sm:text-2xl font-black text-slate-900 uppercase">
+                PETUNJUK TEKNIS PENDAFTARAN
+              </h2>
+              <p className="text-xs sm:text-sm text-slate-700 leading-relaxed max-w-3xl">
+                Ketentuan umum dan alur teknis pendaftaran resmi LBB Mu'allimin 2027: Alokasi kuota 36 peleton, periode gelombang (19 Okt – 29 Nov 2026), rekening BSI & kode unik 108, alur digital 5 langkah, komposisi personel 25+3, penyerahan berkas fisik asli saat Technical Meeting (TM), serta sanksi administratif diskualifikasi.
+              </p>
+            </div>
+
+            {/* Bagian A: Ketentuan Umum dan Alur Teknis Pendaftaran */}
+            <div className="border border-slate-200 rounded-3xl overflow-hidden bg-white shadow-xs">
+              <button
+                type="button"
+                onClick={() => togglePendaftaranSection('reg-a')}
+                className="w-full flex items-center justify-between p-5 sm:p-6 bg-slate-50/80 hover:bg-slate-100/80 transition-colors text-left cursor-pointer border-b border-slate-100"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="w-8 h-8 rounded-xl bg-blue-600 text-white font-black text-sm flex items-center justify-center shrink-0">
+                    A
+                  </span>
+                  <div>
+                    <h3 className="font-black text-base sm:text-lg text-slate-900 uppercase">
+                      A. Ketentuan Umum dan Alur Teknis Pendaftaran
+                    </h3>
+                    <span className="text-xs text-slate-500 font-medium">10 Butir Baku Regulasi Administratif & Verifikasi</span>
+                  </div>
+                </div>
+                <ChevronDown className={`w-5 h-5 text-slate-400 transition-transform ${openPendaftaranSections['reg-a'] ? 'rotate-180 text-blue-600' : ''}`} />
+              </button>
+
+              {openPendaftaranSections['reg-a'] && (
+                <div className="p-5 sm:p-7 space-y-4">
+                  {JUKNIS_PENDAFTARAN_CHAPTERS[0].items.map(item => (
+                    <div key={item.number} className="p-4 sm:p-5 rounded-2xl bg-slate-50/70 border border-slate-200/90 space-y-2">
+                      <div className="flex items-start gap-3">
+                        <span className="w-6 h-6 rounded-lg bg-blue-700 text-white font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
+                          {item.number}
+                        </span>
+                        <div className="flex-1 space-y-1.5">
+                          <strong className="text-sm font-black text-slate-900 block">{item.title}:</strong>
+                          <ul className="list-[lower-alpha] pl-5 space-y-1.5 text-xs text-slate-700 leading-relaxed">
+                            {item.sub.map((s, sIdx) => (
+                              <li key={sIdx}>{s}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Bagian B: Penutup Pendaftaran */}
+            <div className="border border-slate-200 rounded-3xl overflow-hidden bg-white shadow-xs">
+              <button
+                type="button"
+                onClick={() => togglePendaftaranSection('reg-b')}
+                className="w-full flex items-center justify-between p-5 sm:p-6 bg-slate-50/80 hover:bg-slate-100/80 transition-colors text-left cursor-pointer border-b border-slate-100"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="w-8 h-8 rounded-xl bg-slate-800 text-white font-black text-sm flex items-center justify-center shrink-0">
+                    B
+                  </span>
+                  <div>
+                    <h3 className="font-black text-base sm:text-lg text-slate-900 uppercase">
+                      B. Penutup
+                    </h3>
+                    <span className="text-xs text-slate-500 font-medium">Asas Kepastian Hukum & Mengikat</span>
+                  </div>
+                </div>
+                <ChevronDown className={`w-5 h-5 text-slate-400 transition-transform ${openPendaftaranSections['reg-b'] ? 'rotate-180 text-slate-800' : ''}`} />
+              </button>
+
+              {openPendaftaranSections['reg-b'] && (
+                <div className="p-5 sm:p-7 space-y-4">
+                  <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 text-xs sm:text-sm text-slate-700 leading-relaxed">
+                    Petunjuk Teknis Pendaftaran ini disusun sebagai pedoman baku dan mengikat dalam rangka menjamin tertib administrasi, kepastian hukum, transparansi, serta kelancaran operasional pendaftaran Lomba Baris-Berbaris Mu’allimin Tahun 2027.
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* ============================================================== */}
+        {/* TAB 4: MATERI GERAKAN & DENAH ARENA                            */}
+        {/* ============================================================== */}
         {activeTab === 'materials' && (
-          <div className="space-y-6">
+          <div className="space-y-6 animate-fade">
 
         {/* Arena & Duration Spec Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -445,7 +845,6 @@ export default function JuknisView() {
           </div>
         </div>
 
-        {/* End of TAB 2 */}
           </div>
         )}
 

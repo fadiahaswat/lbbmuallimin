@@ -27,7 +27,7 @@ import {
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
 import { EVENT, VENUE_INDUK, DOWNLOADS } from '../../config.js';
-import { LOTTERY_CHEST_MAP, getChestNumberByLot } from '../../context/competitionHelpers.js';
+import { LOTTERY_CHEST_MAP, getChestNumberByLot, checkTeamVerificationEligibility } from '../../context/competitionHelpers.js';
 import { HARI_H_SCHEDULE } from '../../data/scheduleMatrices.js';
 import { formatImageUrl } from '../../services/sheetService.js';
 import SimpaskorSidebarLayout from '../navigation/SimpaskorSidebarLayout.jsx';
@@ -50,8 +50,15 @@ export default function TechnicalMeetingView() {
   const [draggedTeam, setDraggedTeam] = useState(null); // team being dragged
   const [dragOverLotNumber, setDragOverLotNumber] = useState(null); // slot being hovered
 
-  // Teams eligible for TM (terdaftar & terverifikasi)
-  const eligibleTeams = teams.filter(t => ['registered', 'verified', 'drawn'].includes(t.status));
+  // Teams eligible for TM (Hanya yang lolos verifikasi sah: Danton, 21 Pasukan, dan Surat Rekomendasi lengkap)
+  const eligibleTeams = teams.filter(t => {
+    if (t.status === 'drawn') return true;
+    if (t.status === 'verified') {
+      const eligibility = checkTeamVerificationEligibility(t);
+      return eligibility.isEligible;
+    }
+    return false;
+  });
   const currentJenjangTeams = eligibleTeams.filter(t => t.jenjang === selectedJenjang);
 
   // Tim yang belum mendapatkan nomor undian
@@ -381,7 +388,7 @@ export default function TechnicalMeetingView() {
 
                           {/* Info Nama Sekolah & Danton */}
                           <div className="min-w-0 flex-1">
-                            <h4 className="text-sm font-black text-slate-900 truncate tracking-tight" title={team.schoolName}>
+                            <h4 className="text-sm font-black text-slate-900 break-words leading-snug tracking-tight" title={team.schoolName}>
                               {team.schoolName}
                             </h4>
                             
@@ -389,7 +396,7 @@ export default function TechnicalMeetingView() {
                               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-blue-50 text-blue-900 border border-blue-200/70 text-[11px] font-bold">
                                 <UserCheck className="w-3.5 h-3.5 text-blue-600 shrink-0" />
                                 <span className="text-[10px] uppercase font-bold text-blue-700">Danton:</span>
-                                <span className="font-black text-slate-900 truncate max-w-[130px] sm:max-w-[170px]">
+                                <span className="font-black text-slate-900 break-words">
                                   {team.dantonName || '-'}
                                 </span>
                               </span>
@@ -534,10 +541,10 @@ export default function TechnicalMeetingView() {
                                       />
                                     </div>
                                     <div className="min-w-0 flex-1">
-                                      <div className="font-black text-slate-900 text-xs truncate" title={assignedTeam.schoolName}>
+                                      <div className="font-black text-slate-900 text-xs break-words" title={assignedTeam.schoolName}>
                                         {assignedTeam.schoolName}
                                       </div>
-                                      <div className="text-[10px] text-blue-900 font-bold truncate">
+                                      <div className="text-[10px] text-blue-900 font-bold break-words">
                                         Danton: <span className="font-black text-slate-900">{assignedTeam.dantonName || '-'}</span>
                                       </div>
                                     </div>
@@ -622,48 +629,7 @@ export default function TechnicalMeetingView() {
 
           </div>
         </div>
-
-        {/* Berkas & Regulasi Hasil TM */}
-        <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-purple-50 border border-purple-200 text-purple-700 flex items-center justify-center">
-              <FileText className="w-5 h-5" />
-            </div>
-            <div>
-              <h3 className="text-base font-black text-slate-900 uppercase">
-                Dokumen Hasil Kesepakatan Technical Meeting
-              </h3>
-              <p className="text-xs text-slate-500">
-                Dokumen resmi yang disepakati oleh seluruh perwakilan pembina dan official kontingen
-              </p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-            {DOWNLOADS.map(doc => (
-              <a
-                key={doc.id}
-                href={doc.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-4 rounded-2xl bg-slate-50 hover:bg-purple-50/50 border border-slate-200 hover:border-purple-300 transition-all flex items-center justify-between group cursor-pointer"
-              >
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-purple-700 font-bold shrink-0">
-                    <Download className="w-4 h-4" />
-                  </div>
-                  <div className="min-w-0">
-                    <div className="text-xs font-bold text-slate-900 group-hover:text-purple-700 transition-colors truncate">
-                      {doc.title}
-                    </div>
-                    <div className="text-[10px] text-slate-400 mt-0.5 truncate">{doc.size}</div>
-                  </div>
-                </div>
-                <ExternalLink className="w-4 h-4 text-slate-400 group-hover:text-purple-600 transition-colors shrink-0" />
-              </a>
-            ))}
-          </div>
-        </div>
+      </div>
 
       </div>
     </SimpaskorSidebarLayout>

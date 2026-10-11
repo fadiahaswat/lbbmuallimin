@@ -58,16 +58,6 @@ export default function TimeLocation() {
               ======================================================== */}
           <div className="lg:col-span-5 space-y-4 relative">
             
-            {/* Header timeline */}
-            <div className="flex items-center justify-between pb-2 px-1 gap-2">
-              <h3 className="text-xs sm:text-sm font-black uppercase tracking-wider text-slate-800 flex items-center gap-2 min-w-0">
-                <span className="w-2.5 h-2.5 rounded-full bg-red-600 animate-pulse shrink-0"></span>
-                <span className="truncate">Tahapan & Jadwal Kegiatan</span>
-              </h3>
-              <span className="text-[10px] sm:text-[11px] font-bold text-slate-600 bg-white border border-slate-200 px-2.5 sm:px-3 py-1 rounded-full shadow-sm shrink-0 whitespace-nowrap">
-                4 Tahap Utama
-              </span>
-            </div>
 
             {/* Tahap 1: Pendaftaran Peleton (Biru) */}
             <div className="relative group rounded-2xl bg-white border border-blue-200 hover:border-blue-400 p-5 sm:p-6 shadow-md hover:shadow-lg transition-all duration-300">

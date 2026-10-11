@@ -275,6 +275,14 @@ export function normalizeTeamData(team) {
     t.roster.officials = normalizedOfficials;
   }
 
+  // Nomor dada HANYA ada setelah tim diundi (memiliki nomor undian lotNumber)
+  if (!t.lotNumber || isNaN(parseInt(t.lotNumber, 10)) || parseInt(t.lotNumber, 10) < 1) {
+    t.lotNumber = null;
+    t.chestNumber = '';
+  } else if (!t.chestNumber) {
+    t.chestNumber = getChestNumberByLot(t.jenjang, parseInt(t.lotNumber, 10)) || '';
+  }
+
   t.waNumber = t.waNumber != null ? String(t.waNumber) : '';
   return t;
 }

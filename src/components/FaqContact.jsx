@@ -144,7 +144,7 @@ const FAQ_DATA = [
 export default function FaqContact() {
   const [selectedFilter, setSelectedFilter] = useState('Semua');
   const [searchQuery, setSearchQuery] = useState('');
-  const [openIds, setOpenIds] = useState({ 1: true }); // Default buka pertanyaan pertama
+  const [openIds, setOpenIds] = useState({}); // Default semua pertanyaan tertutup
 
   function toggleFaq(id) {
     setOpenIds(prev => ({

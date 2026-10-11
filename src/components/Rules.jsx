@@ -20,7 +20,8 @@ import {
   Globe,
   Mail,
   Sliders,
-  Scale
+  Scale,
+  ClipboardList
 } from 'lucide-react';
 import { COMPETITION, EVENT, VENUE, VENUE_INDUK, PENALTIES } from '../config.js';
 
@@ -33,9 +34,7 @@ export default function Rules({ embedded = false }) {
     trial: false,
     reg: false,
     arena: false,
-    score: false,
-    digital: false,
-    penalty: false,
+    checkout: false,
     force: false,
     closing: false,
   });
@@ -59,8 +58,7 @@ export default function Rules({ embedded = false }) {
         trial: true,
         reg: true,
         arena: true,
-        score: true,
-        penalty: true,
+        checkout: true,
         force: true,
         closing: true,
       };
@@ -71,11 +69,9 @@ export default function Rules({ embedded = false }) {
       def: 'definisi istilah clear area dp 1 dp 2 holding area kotak danton 1.5 bendera hakim garis gerakan penyesuaian dimensi basket embung 25x14 26x15 official pendukung'.includes(query),
       tm: 'technical meeting tm peserta aula wirobrajan 9 januari 2027 berkas fisik surat tugas kepala sekolah pakta integritas undian lotting sd-111 smp-222'.includes(query),
       trial: 'uji coba lapangan familiarisasi medan sedayu 16 januari 2027 15 menit 10 menit efektif 5 menit transisi akustik vokal danton tekstur cengkeraman sepatu'.includes(query),
-      reg: 'hari perlombaan daftar ulang check in 06.00 09.00 ktp jaminan nomor dada s2b1 kantong sampah terpilah sterilisasi upacara pembukaan sd-111 sd-113 sd-115 sd-117 sd-119 smp-222 smp-224 smp-226 smp-228 smp-240 15 anggota'.includes(query),
-      arena: 'alur tampil arena posisi center juri laporan pembuka penghormatan peluit 1 kali panjang 1 menit habis menit 9 10 12 13 bendera hakim garis atribut terjatuh bubar pergantian pemain cadangan'.includes(query),
-      score: 'sistem penilaian dewan juri tni polri ppi rasio 1 1 kebenaran gerak kekompakan 50 90 danton materi 35 suara 25 sikap 20 lapangan 20 juara umum poin 6 rolling release sanggah 15.00 checkout'.includes(query),
-      digital: 'gangguan sistem digital prosedur backup server pemadaman listrik e-scoring lembar manual offline audit trail'.includes(query),
-      penalty: 'sanksi pengurangan nilai penalti upacara 150 50 keterlambatan dp 1 100 diskualifikasi personel 75 waktu 50 garis bendera 50 penyesuaian 25 atribut 0 kotor 50 yel-yel'.includes(query),
+      reg: 'hari perlombaan daftar ulang check in 06.00 09.00 ktp jaminan nomor dada s2b1 kantong sampah terpilah sterilisasi upacara pembukaan sd-131 smp-242 15 anggota'.includes(query),
+      arena: 'alur tampil arena posisi center juri laporan pembuka penghormatan peluit 1 kali panjang 1 menit habis menit 8 12 bendera hakim garis atribut terjatuh bubar pergantian pemain cadangan'.includes(query),
+      checkout: 'pasca lomba checkout basecamp 15.00 wib 4 langkah meja kursi kantong sampah terpilah verifikasi lo ktp jaminan denda 500.000'.includes(query),
       force: 'keadaan kahar force majeure darurat bencana alam hujan lebat badai petir henti reset stopwatch'.includes(query),
       closing: 'penutup juknis kesepakatan mengikat sah panitia dewan juri'.includes(query),
     };
@@ -115,113 +111,113 @@ export default function Rules({ embedded = false }) {
               </span>
             </h2>
             <p className="text-slate-500 mt-4 max-w-3xl mx-auto text-lg font-medium">
-              Pedoman teknis resmi alur kronologis, spesifikasi arena, penjurian, penalti, dan mekanisme sanggah LBB Mu'allimin 2027.
+              Pedoman teknis resmi alur kronologis, spesifikasi arena, alur tampil, prosedur checkout, dan keadaan kahar LBB Mu'allimin 2027.
             </p>
           </div>
         )}
 
         <div className="max-w-4xl mx-auto flex flex-col gap-6">
-          {/* Smart Search Bar */}
-          <div className="relative group">
-            <div className="relative flex items-center bg-slate-50 border-2 border-slate-200 focus-within:border-red-600 focus-within:bg-white focus-within:shadow-xl rounded-2xl transition-all duration-300">
-              <div className="pl-4 pr-2 text-slate-400 group-focus-within:text-red-600 transition-colors">
-                <Search className="w-5 h-5" />
-              </div>
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Cari kata kunci juknis (contoh: penalti, kotak danton, bendera, peluit, juri, sanggah)..."
-                className="w-full py-4 pr-12 text-slate-800 placeholder-slate-400 font-medium text-sm sm:text-base bg-transparent focus:outline-none"
-              />
-              {searchQuery && (
-                <button
-                  type="button"
-                  onClick={() => setSearchQuery('')}
-                  className="absolute right-3.5 p-1.5 rounded-full hover:bg-slate-200 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
-                  title="Hapus pencarian"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              )}
-            </div>
-
-            {isSearching && (
-              <div className="mt-3 flex items-center justify-between text-xs text-slate-500 font-medium px-1">
-                <span>
-                  Menampilkan hasil untuk: <strong className="text-red-700 font-bold">"{searchQuery}"</strong>
-                </span>
-                <span className="bg-red-100/80 text-red-800 px-2.5 py-0.5 rounded-full font-bold">
-                  {totalMatches} Bagian Ditemukan
-                </span>
-              </div>
-            )}
-          </div>
-
-
-          {/* Quick Toggle Accordion Controls */}
-          <div className="flex items-center justify-between gap-3 text-xs px-1">
-            <span className="text-slate-500 font-semibold flex items-center gap-1.5">
-              <BookOpen className="w-3.5 h-3.5 text-slate-400" />
-              10 Bab Regulasi & Ketentuan Lapangan
-            </span>
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => {
-                  const allOpen = Object.keys(openAccordions).reduce((acc, k) => ({ ...acc, [k]: true }), {});
-                  setOpenAccordions(allOpen);
-                }}
-                className="px-3.5 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 text-slate-700 font-bold transition-all shadow-xs cursor-pointer text-xs"
-              >
-                Buka Semua
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  const allClosed = Object.keys(openAccordions).reduce((acc, k) => ({ ...acc, [k]: false }), {});
-                  setOpenAccordions(allClosed);
-                }}
-                className="px-3.5 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 text-slate-700 font-bold transition-all shadow-xs cursor-pointer text-xs"
-              >
-                Tutup Semua
-              </button>
-            </div>
-          </div>
-
-          <div className="space-y-4" id="rules-accordion">
-            {/* PENDAHULUAN */}
-            {shouldShow('intro') && (
-              <div className="group border border-slate-200 rounded-2xl overflow-hidden bg-white hover:border-red-500/40 hover:shadow-md transition-all duration-300">
-                <button
-                  onClick={() => toggleAccordion('intro')}
-                  className="w-full flex justify-between items-center p-5 text-left bg-slate-50/70 hover:bg-slate-50 transition-colors cursor-pointer"
-                >
-                  <div className="flex items-center gap-3.5">
-                    <span className="w-8 h-8 rounded-xl bg-red-100 text-red-700 font-black flex items-center justify-center text-xs shadow-xs">
-                      INFO
-                    </span>
-                    <span className="font-bold text-base md:text-lg text-slate-900">Pendahuluan Petunjuk Teknis Lapangan</span>
+          <div className="space-y-6">
+              {/* Smart Search Bar */}
+              <div className="relative group">
+                <div className="relative flex items-center bg-slate-50 border-2 border-slate-200 focus-within:border-red-600 focus-within:bg-white focus-within:shadow-xl rounded-2xl transition-all duration-300">
+                  <div className="pl-4 pr-2 text-slate-400 group-focus-within:text-red-600 transition-colors">
+                    <Search className="w-5 h-5" />
                   </div>
-                  <ChevronDown className={`text-slate-400 transition-transform duration-300 w-5 h-5 ${isAccordionOpen('intro') ? 'rotate-180 text-red-600' : ''}`} />
-                </button>
-                {isAccordionOpen('intro') && (
-                  <div className="bg-white border-t border-slate-100 p-6 sm:p-7 text-slate-700 text-sm leading-relaxed space-y-4 animate-fade">
-                    <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 flex items-center gap-3">
-                      <div className="w-2.5 h-8 bg-red-600 rounded-full shrink-0"></div>
-                      <div className="font-black text-slate-900 text-base uppercase tracking-tight">
-                        LOMBA BARIS – BERBARIS MU'ALLIMIN TAHUN 2027
-                      </div>
-                    </div>
-                    <div className="p-5 rounded-2xl bg-white border border-slate-100 shadow-xs text-slate-700 leading-relaxed text-sm">
-                      <p>
-                        Petunjuk Teknis (Juknis) Lapangan ini merupakan regulasi teknis resmi yang khusus mengatur seluruh mekanisme operasional dan teknis perlombaan, disajikan secara runtut dan sistematis sesuai alur kronologis <em>(chronological order)</em> dari tahapan pra-lomba hingga pasca-lomba. Juknis ini memuat ketentuan materi gerakan PBB (berpedoman pada Peraturan Panglima TNI Nomor 58 Tahun 2018 tentang PBB TNI, Nomor 57 Tahun 2018 tentang PPM TNI, serta khusus gerakan Hormat Kanan/Kiri mengacu pada Peraturan Panglima TNI Nomor 45 Tahun 2014), spesifikasi dimensi arena perlombaan, alur transisi peleton di lapangan, sistem penjurian dan penalti, hingga mekanisme sanggah resmi.
-                      </p>
-                    </div>
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Cari kata kunci juknis lapangan (contoh: kotak danton, bendera, peluit, checkout basecamp, kahar)..."
+                    className="w-full py-4 pr-12 text-slate-800 placeholder-slate-400 font-medium text-sm sm:text-base bg-transparent focus:outline-none"
+                  />
+                  {searchQuery && (
+                    <button
+                      type="button"
+                      onClick={() => setSearchQuery('')}
+                      className="absolute right-3.5 p-1.5 rounded-full hover:bg-slate-200 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
+                      title="Hapus pencarian"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
+
+                {isSearching && (
+                  <div className="mt-3 flex items-center justify-between text-xs text-slate-500 font-medium px-1">
+                    <span>
+                      Menampilkan hasil untuk: <strong className="text-red-700 font-bold">"{searchQuery}"</strong>
+                    </span>
+                    <span className="bg-red-100/80 text-red-800 px-2.5 py-0.5 rounded-full font-bold">
+                      {totalMatches} Bagian Ditemukan
+                    </span>
                   </div>
                 )}
               </div>
-            )}
+
+              {/* Quick Toggle Accordion Controls */}
+              <div className="flex items-center justify-between gap-3 text-xs px-1">
+                <span className="text-slate-500 font-semibold flex items-center gap-1.5">
+                  <BookOpen className="w-3.5 h-3.5 text-slate-400" />
+                  8 Bab Regulasi & Ketentuan Lapangan
+                </span>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const allOpen = Object.keys(openAccordions).reduce((acc, k) => ({ ...acc, [k]: true }), {});
+                      setOpenAccordions(allOpen);
+                    }}
+                    className="px-3.5 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 text-slate-700 font-bold transition-all shadow-xs cursor-pointer text-xs"
+                  >
+                    Buka Semua
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const allClosed = Object.keys(openAccordions).reduce((acc, k) => ({ ...acc, [k]: false }), {});
+                      setOpenAccordions(allClosed);
+                    }}
+                    className="px-3.5 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 text-slate-700 font-bold transition-all shadow-xs cursor-pointer text-xs"
+                  >
+                    Tutup Semua
+                  </button>
+                </div>
+              </div>
+
+              <div className="space-y-4" id="rules-accordion">
+                {/* PENDAHULUAN */}
+                {shouldShow('intro') && (
+                  <div className="group border border-slate-200 rounded-2xl overflow-hidden bg-white hover:border-red-500/40 hover:shadow-md transition-all duration-300">
+                    <button
+                      onClick={() => toggleAccordion('intro')}
+                      className="w-full flex justify-between items-center p-5 text-left bg-slate-50/70 hover:bg-slate-50 transition-colors cursor-pointer"
+                    >
+                      <div className="flex items-center gap-3.5">
+                        <span className="w-8 h-8 rounded-xl bg-red-100 text-red-700 font-black flex items-center justify-center text-xs shadow-xs">
+                          INFO
+                        </span>
+                        <span className="font-bold text-base md:text-lg text-slate-900">Pendahuluan Petunjuk Teknis Lapangan</span>
+                      </div>
+                      <ChevronDown className={`text-slate-400 transition-transform duration-300 w-5 h-5 ${isAccordionOpen('intro') ? 'rotate-180 text-red-600' : ''}`} />
+                    </button>
+                    {isAccordionOpen('intro') && (
+                      <div className="bg-white border-t border-slate-100 p-6 sm:p-7 text-slate-700 text-sm leading-relaxed space-y-4 animate-fade">
+                        <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 flex items-center gap-3">
+                          <div className="w-2.5 h-8 bg-red-600 rounded-full shrink-0"></div>
+                          <div className="font-black text-slate-900 text-base uppercase tracking-tight">
+                            LOMBA BARIS – BERBARIS MU'ALLIMIN TAHUN 2027
+                          </div>
+                        </div>
+                        <div className="p-5 rounded-2xl bg-white border border-slate-100 shadow-xs text-slate-700 leading-relaxed text-sm">
+                          <p>
+                            Petunjuk Teknis (Juknis) Lapangan ini merupakan regulasi teknis resmi yang khusus mengatur seluruh mekanisme operasional dan teknis perlombaan, disajikan secara runtut dan sistematis sesuai alur kronologis <em>(chronological order)</em> dari tahapan pra-lomba hingga pasca-lomba. Juknis ini memuat ketentuan materi gerakan PBB (berpedoman pada Peraturan Panglima TNI Nomor 58 Tahun 2018 tentang PBB TNI, Nomor 57 Tahun 2018 tentang PPM TNI, serta khusus gerakan Hormat Kanan/Kiri mengacu pada Peraturan Panglima TNI Nomor 45 Tahun 2014), spesifikasi dimensi arena perlombaan, alur transisi peleton di lapangan, sistem penjurian dan penalti, hingga mekanisme sanggah resmi.
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
 
             {/* A. DEFINISI ISTILAH DAN KETENTUAN DASAR LAPANGAN */}
             {shouldShow('def') && (
@@ -832,7 +828,7 @@ export default function Rules({ embedded = false }) {
                             <li>Durasi maksimal tampil resmi: <strong className="text-slate-900">8 menit untuk tingkat SD/MI</strong> dan <strong className="text-slate-900">12 menit untuk tingkat SMP/MTs</strong>.</li>
                             <li><strong className="text-slate-800">Sinyal Peluit 1 Kali Panjang:</strong> Peringatan bahwa waktu tampil tersisa 1 menit (menit ke-7 untuk SD/MI dan menit ke-11 untuk SMP/MTs).</li>
                             <li><strong className="text-slate-800">Sinyal Peluit 2 Kali Panjang:</strong> Penanda resmi bahwa durasi waktu tampil telah habis (menit ke-8 untuk SD/MI dan menit ke-12 untuk SMP/MTs). Peleton wajib segera menyelesaikan materi dan meninggalkan arena.</li>
-                            <li>Waktu stopwatch resmi berakhir tepat saat Komandan Peleton menghentakkan aba-aba pelaksanaan 'GERAK' pada penghormatan penutup ('Tegak = GERAK').</li>
+                            <li>Waktu stopwatch resmi berakhir tepat saat Komandan Peleton menghentakkan aba-aba pelaksanaan 'GERAK' pada penghormatan penutup ('Hormat = GERAK').</li>
                           </ul>
                         </div>
                       </div>
@@ -872,7 +868,7 @@ export default function Rules({ embedded = false }) {
                           <strong className="text-slate-900 text-sm block">Ketentuan Khusus Pergantian Pemain dan Penanganan Insiden di Lapangan:</strong>
                           <ul className="list-[lower-alpha] pl-5 space-y-1 text-xs text-slate-700">
                             <li>Pemain inti hanya dapat digantikan oleh pemain cadangan resmi yang terdaftar pada peleton bersangkutan.</li>
-                            <li><strong className="text-slate-800">Jeda Pergantian Resmi di Arena:</strong> Pergantian pemain dilaksanakan pada saat materi “Bubar”, yaitu: (1) Tingkat SD/MI dilakukan di antara Materi No. 16 dan 17; (2) Tingkat SMP/MTs dilakukan di antara Materi No. 22 dan 23.</li>
+                            <li><strong className="text-slate-800">Jeda Pergantian Resmi di Arena:</strong> Pergantian pemain dilaksanakan pada saat materi “Bubar”, yaitu: (1) Tingkat SD/MI dilakukan di antara Materi No. 16 dan 17; (2) Tingkat SMP/MTs dilakukan di antara Materi No. 19 dan 20.</li>
                             <li><strong className="text-slate-800">Tata Cara Pergantian:</strong> Setelah Komandan Peleton memberikan aba-aba “Bubar”, anggota yang akan digantikan diperbolehkan meninggalkan arena dan anggota pengganti diperbolehkan memasuki arena untuk menempati posisi yang telah ditentukan. Pergerakan anggota yang digantikan dan anggota pengganti pada saat proses pergantian tersebut tidak dianggap sebagai pelanggaran garis dan tidak dikenai penalti. Setelah pergantian selesai, seluruh anggota wajib berada pada posisi yang ditentukan sebelum materi berikutnya dimulai.</li>
                             <li><strong className="text-slate-800">Waktu Pergantian:</strong> Waktu stopwatch tetap berjalan selama proses pergantian pemain. Tidak terdapat penghentian atau penambahan waktu khusus untuk proses pergantian.</li>
                             <li><strong className="text-slate-800">Pergantian Tidak Terencana (Darurat):</strong> Apabila terjadi cedera atau kondisi lain yang menyebabkan seorang anggota tidak dapat melanjutkan perlombaan, Official dapat memberikan isyarat kepada Panitia Lapangan untuk meminta izin pergantian pemain. Pergantian darurat dilakukan dengan menggunakan pemain cadangan resmi dan mengikuti arahan Panitia Lapangan. (1) Apabila cedera/kondisi tidak membahayakan keselamatan atau jiwa peserta, waktu perlombaan tetap berjalan dan penampilan dilanjutkan setelah pergantian selesai; (2) Apabila cedera/kondisi membahayakan keselamatan atau jiwa peserta, Panitia Lapangan berwenang menghentikan sementara penampilan. Setelah kondisi aman, penampilan dapat diulang dari awal berdasarkan keputusan Panitia Lapangan dan Dewan Juri.</li>
@@ -892,8 +888,8 @@ export default function Rules({ embedded = false }) {
                           <strong className="text-slate-900 text-sm block">Laporan Penutup, Penghormatan Penutup, dan Penghentian Waktu:</strong>
                           <ul className="list-[lower-alpha] pl-5 space-y-1 text-xs text-slate-700">
                             <li>Setelah seluruh materi gerakan selesai dilaksanakan, Komandan Peleton melangkah keluar dari Kotak Danton menuju posisi di depan peleton menghadap meja Dewan Juri untuk menyampaikan laporan penutup: <em>"Lapor, peleton dengan nomor dada (sebutkan nomor urut dalam ejaan kata) telah melaksanakan materi lomba, laporan selesai."</em></li>
-                            <li>Komandan Peleton kemudian melangkah mengambil posisi di samping kanan barisan pasukannya menghadap ke arah meja Dewan Juri, lalu memimpin penghormatan penutup: <em>"Kepada Dewan Juri, Hormat = GERAK"</em>, dan diakhiri dengan aba-aba: <em>"Tegak = GERAK"</em>.</li>
-                            <li><span className="font-bold text-red-700 bg-red-50 px-1.5 py-0.5 rounded border border-red-200">WAKTU TAMPIL RESMI (STOPWATCH) BERHENTI</span> tepat saat aba-aba pelaksanaan tegak penutup (kata <em>"GERAK"</em>) dihentakkan oleh Komandan Peleton.</li>
+                            <li>Komandan Peleton kemudian melangkah mengambil posisi di samping kanan barisan pasukannya menghadap ke arah meja Dewan Juri, lalu memimpin penghormatan penutup: <em>"Kepada Dewan Juri, Hormat = GERAK"</em>.</li>
+                            <li><span className="font-bold text-red-700 bg-red-50 px-1.5 py-0.5 rounded border border-red-200">WAKTU TAMPIL RESMI (STOPWATCH) BERHENTI</span> tepat saat aba-aba pelaksanaan penghormatan penutup (kata <em>"GERAK"</em> pada <em>"Hormat = GERAK"</em>) dihentakkan oleh Komandan Peleton. Selanjutnya Komandan Peleton memimpin peletonnya meninggalkan arena lomba.</li>
                           </ul>
                         </div>
                       </div>
@@ -916,22 +912,22 @@ export default function Rules({ embedded = false }) {
               </div>
             )}
 
-            {/* F. PASCA-LOMBA - PENILAIAN, LIVE SCORE & SANGGAH */}
-            {shouldShow('score') && (
+            {/* F. KETENTUAN PASCA-LOMBA DAN PROSEDUR CHECKOUT BASECAMP */}
+            {shouldShow('checkout') && (
               <div className="group border border-slate-200 rounded-2xl overflow-hidden bg-white hover:border-red-500/40 hover:shadow-md transition-all duration-300">
                 <button
-                  onClick={() => toggleAccordion('score')}
+                  onClick={() => toggleAccordion('checkout')}
                   className="w-full flex justify-between items-center p-5 text-left bg-slate-50/70 hover:bg-slate-50 transition-colors cursor-pointer"
                 >
                   <div className="flex items-center gap-3.5">
                     <span className="w-8 h-8 rounded-xl bg-slate-200 text-slate-800 font-black flex items-center justify-center text-sm shadow-xs">
                       F
                     </span>
-                    <span className="font-bold text-base md:text-lg text-slate-900">F. Tahap IV: Pasca-Lomba – Sistem Penilaian, Rolling Release, Sanggah & Penentuan Juara</span>
+                    <span className="font-bold text-base md:text-lg text-slate-900">F. Ketentuan Pasca-Lomba dan Prosedur Checkout Basecamp</span>
                   </div>
-                  <ChevronDown className={`text-slate-400 transition-transform duration-300 w-5 h-5 ${isAccordionOpen('score') ? 'rotate-180 text-red-600' : ''}`} />
+                  <ChevronDown className={`text-slate-400 transition-transform duration-300 w-5 h-5 ${isAccordionOpen('checkout') ? 'rotate-180 text-red-600' : ''}`} />
                 </button>
-                {isAccordionOpen('score') && (
+                {isAccordionOpen('checkout') && (
                   <div className="bg-white border-t border-slate-100 p-6 sm:p-7 text-slate-700 text-sm leading-relaxed space-y-4 animate-fade">
                     <div className="grid grid-cols-1 gap-3.5">
                       {/* Poin 1 */}
@@ -940,9 +936,9 @@ export default function Rules({ embedded = false }) {
                           1
                         </span>
                         <div className="space-y-1">
-                          <strong className="text-slate-900 text-sm block">Mekanisme dan Aspek Penilaian Dewan Juri:</strong>
+                          <strong className="text-slate-900 text-sm block">Batas Waktu Maksimal Pengosongan:</strong>
                           <p className="text-slate-700 text-xs sm:text-sm leading-relaxed">
-                            Penilaian dilakukan secara objektif oleh 6 Dewan Juri (unsur TNI, POLRI, dan PPI: 3 Juri Arena 1 SD & 3 Juri Arena 2 SMP). Keputusan Dewan Juri mengenai mutu gerak bersifat mutlak dan tidak dapat diganggu gugat.
+                            Seluruh peleton wajib menyelesaikan proses checkout dan mengosongkan ruang kelas basecamp selambat-lambatnya pukul 15.00 WIB (1 jam sebelum Upacara Penutupan dimulai).
                           </p>
                         </div>
                       </div>
@@ -953,222 +949,13 @@ export default function Rules({ embedded = false }) {
                           2
                         </span>
                         <div className="space-y-2 flex-1">
-                          <strong className="text-slate-900 text-sm block">Kriteria Penilaian:</strong>
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
-                            <div className="p-3 bg-white rounded-xl border border-slate-200 text-xs text-slate-700 shadow-xs">
-                              <strong className="text-slate-900 block mb-0.5">Penilaian Peleton:</strong>
-                              Perbandingan penilaian peleton adalah 1:1, yaitu Kebenaran Teknik (1) dan Kekompakan (1). Masing-masing aspek memiliki rentang nilai 50 s.d. 90 poin.
-                            </div>
-                            <div className="p-3 bg-white rounded-xl border border-slate-200 text-xs text-slate-700 shadow-xs">
-                              <strong className="text-slate-900 block mb-0.5">Nilai Murni Peleton:</strong>
-                              Total Nilai Kebenaran Teknik + Total Nilai Kekompakan.
-                            </div>
-                            <div className="p-3 bg-white rounded-xl border border-slate-200 text-xs text-slate-700 shadow-xs">
-                              <strong className="text-slate-900 block mb-0.5">Nilai Akhir Peleton:</strong>
-                              (Nilai Murni Peleton) – (Total Akumulasi Poin Penalti Peleton).
-                            </div>
-                            <div className="p-3 bg-white rounded-xl border border-slate-200 text-xs text-slate-700 shadow-xs">
-                              <strong className="text-slate-900 block mb-0.5">Nilai Murni Komandan:</strong>
-                              (Penguasaan Materi × 35%) + (Kualitas Suara/Vokal × 25%) + (Sikap dan Pelaporan × 20%) + (Penguasaan Lapangan × 20%).
-                            </div>
-                            <div className="p-3 bg-white rounded-xl border border-slate-200 text-xs text-slate-700 shadow-xs sm:col-span-2">
-                              <strong className="text-slate-900 block mb-0.5">Nilai Akhir Komandan:</strong>
-                              (Nilai Murni Komandan) – (Total Akumulasi Poin Penalti Komandan).
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Poin 3 */}
-                      <div className="p-4 sm:p-5 rounded-2xl bg-slate-50/60 border border-slate-200/90 hover:bg-white hover:border-slate-300 transition-all flex items-start gap-3.5">
-                        <span className="w-7 h-7 rounded-lg bg-slate-900 text-white font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
-                          3
-                        </span>
-                        <div className="space-y-2 flex-1">
-                          <strong className="text-slate-900 text-sm block">Kriteria Penentuan Juara Peleton:</strong>
-                          <p className="text-slate-700 text-xs sm:text-sm leading-relaxed">
-                            Penentuan Juara Peleton didasarkan pada Nilai Akhir Peleton dengan perolehan skor tertinggi. Apabila terdapat kesamaan Nilai Akhir Peleton, penentuan peringkat kejuaraan dilakukan berdasarkan urutan prioritas sebagai berikut:
-                          </p>
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-700 pt-1">
-                            <span className="p-2.5 bg-white rounded-xl border border-slate-200">(a) Nilai tertinggi pada aspek Kebenaran Teknik;</span>
-                            <span className="p-2.5 bg-white rounded-xl border border-slate-200">(b) Nilai tertinggi pada aspek Kekompakan;</span>
-                            <span className="p-2.5 bg-white rounded-xl border border-slate-200">(c) Akumulasi poin penalti paling sedikit; dan</span>
-                            <span className="p-2.5 bg-white rounded-xl border border-slate-200">(d) Hasil musyawarah serta pertimbangan Dewan Juri dalam Sidang Pleno Juri yang keputusannya bersifat final dan mengikat.</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Poin 4 */}
-                      <div className="p-4 sm:p-5 rounded-2xl bg-slate-50/60 border border-slate-200/90 hover:bg-white hover:border-slate-300 transition-all flex items-start gap-3.5">
-                        <span className="w-7 h-7 rounded-lg bg-slate-900 text-white font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
-                          4
-                        </span>
-                        <div className="space-y-2 flex-1">
-                          <strong className="text-slate-900 text-sm block">Kriteria Penentuan Juara Komandan:</strong>
-                          <p className="text-slate-700 text-xs sm:text-sm leading-relaxed">
-                            Penentuan Juara Komandan Peleton didasarkan pada Nilai Akhir Komandan dengan perolehan skor tertinggi dari seluruh aspek penilaian. Apabila terdapat kesamaan Nilai Akhir Komandan, penentuan peringkat kejuaraan dilakukan berdasarkan urutan prioritas sebagai berikut:
-                          </p>
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-700 pt-1">
-                            <span className="p-2.5 bg-white rounded-xl border border-slate-200">(a) Nilai tertinggi pada aspek Penguasaan Materi Lomba;</span>
-                            <span className="p-2.5 bg-white rounded-xl border border-slate-200">(b) Nilai tertinggi pada aspek Kualitas Suara/Vokal;</span>
-                            <span className="p-2.5 bg-white rounded-xl border border-slate-200">(c) Nilai tertinggi pada aspek Sikap & Pelaporan; dan</span>
-                            <span className="p-2.5 bg-white rounded-xl border border-slate-200">(d) Hasil musyawarah dan pertimbangan Dewan Juri dalam Sidang Pleno Juri yang keputusannya bersifat final serta mengikat.</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Poin 5 */}
-                      <div className="p-4 sm:p-5 rounded-2xl bg-slate-50/60 border border-slate-200/90 hover:bg-white hover:border-slate-300 transition-all flex items-start gap-3.5">
-                        <span className="w-7 h-7 rounded-lg bg-slate-900 text-white font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
-                          5
-                        </span>
-                        <div className="space-y-2 flex-1">
-                          <strong className="text-slate-900 text-sm block">Sistem Perolehan Poin Juara Umum:</strong>
-                          <p className="text-slate-700 text-xs sm:text-sm leading-relaxed">
-                            Juara Umum ditetapkan secara terpisah untuk masing-masing tingkatan, yaitu SD/MI dan SMP/MTs. Penetapan Juara Umum didasarkan pada akumulasi prestasi seluruh perwakilan yang berasal dari sekolah yang sama, meliputi capaian Juara Peleton dan Juara Komandan. Poin kejuaraan diberikan dengan ketentuan:
-                          </p>
-                          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 my-2 text-xs font-mono">
-                            <span className="bg-white p-2.5 rounded-xl border border-slate-200 font-bold text-slate-900">Juara 1 Peleton: 6 Poin</span>
-                            <span className="bg-white p-2.5 rounded-xl border border-slate-200 font-bold text-slate-900">Juara 2 Peleton: 5 Poin</span>
-                            <span className="bg-white p-2.5 rounded-xl border border-slate-200 font-bold text-slate-900">Juara 3 Peleton: 4 Poin</span>
-                            <span className="bg-white p-2.5 rounded-xl border border-slate-200 font-bold text-slate-900">Juara Harapan 1: 3 Poin</span>
-                            <span className="bg-white p-2.5 rounded-xl border border-slate-200 font-bold text-slate-900">Juara Harapan 2: 2 Poin</span>
-                            <span className="bg-white p-2.5 rounded-xl border border-slate-200 font-bold text-slate-900">Juara Harapan 3: 1 Poin</span>
-                            <span className="bg-amber-50 text-amber-900 p-2.5 rounded-xl border border-amber-300 font-bold">Juara 1 Komandan Terbaik: 3 Poin</span>
-                            <span className="bg-amber-50 text-amber-900 p-2.5 rounded-xl border border-amber-300 font-bold">Juara 2 Komandan Terbaik: 2 Poin</span>
-                            <span className="bg-amber-50 text-amber-900 p-2.5 rounded-xl border border-amber-300 font-bold">Juara 3 Komandan Terbaik: 1 Poin</span>
-                          </div>
-                          <p className="text-xs text-slate-600 leading-relaxed">
-                            Seluruh poin yang diperoleh oleh peleton dan komandan dari sekolah yang sama dijumlahkan sebagai akumulasi poin sekolah. Sekolah dengan total poin tertinggi ditetapkan sebagai Juara Umum pada tingkatannya.
-                          </p>
-                        </div>
-                      </div>
-
-                      {/* Poin 6 */}
-                      <div className="p-4 sm:p-5 rounded-2xl bg-slate-50/60 border border-slate-200/90 hover:bg-white hover:border-slate-300 transition-all flex items-start gap-3.5">
-                        <span className="w-7 h-7 rounded-lg bg-slate-900 text-white font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
-                          6
-                        </span>
-                        <div className="space-y-1">
-                          <strong className="text-slate-900 text-sm block">Definisi Nilai Murni Peleton/Komandan:</strong>
-                          <p className="text-slate-700 text-xs sm:text-sm leading-relaxed">
-                            Nilai yang diperoleh Peleton/Komandan berdasarkan hasil penilaian Dewan Juri sebelum dikurangi seluruh penalti atau pengurangan nilai yang dikenakan berdasarkan ketentuan Juknis Lapangan.
-                          </p>
-                        </div>
-                      </div>
-
-                      {/* Poin 7 */}
-                      <div className="p-4 sm:p-5 rounded-2xl bg-slate-50/60 border border-slate-200/90 hover:bg-white hover:border-slate-300 transition-all flex items-start gap-3.5">
-                        <span className="w-7 h-7 rounded-lg bg-slate-900 text-white font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
-                          7
-                        </span>
-                        <div className="space-y-2 flex-1">
-                          <strong className="text-slate-900 text-sm block">Tie-Breaker Juara Umum:</strong>
-                          <p className="text-slate-700 text-xs sm:text-sm leading-relaxed">
-                            Apabila terdapat dua atau lebih sekolah yang memperoleh total poin Juara Umum yang sama, penentuan peringkat dilakukan berdasarkan urutan prioritas sebagai berikut:
-                          </p>
-                          <ul className="list-[lower-alpha] pl-5 space-y-1 text-xs text-slate-700">
-                            <li><strong>Peringkat Tertinggi Peleton:</strong> Dibandingkan berdasarkan peringkat tertinggi yang berhasil diraih oleh peleton masing-masing sekolah. Peringkat yang lebih tinggi memiliki prioritas lebih besar (Juara 1 Peleton lebih diprioritaskan daripada Juara 2 Peleton).</li>
-                            <li><strong>Nilai Murni Peleton:</strong> Apabila peringkat tertinggi Peleton yang diraih masih sama, penentuan dilanjutkan berdasarkan nilai murni tertinggi dari peleton yang memiliki peringkat tertinggi tersebut.</li>
-                            <li><strong>Nilai Kebenaran Teknik Gerakan PBB:</strong> Apabila nilai murni Peleton masih sama, penentuan dilanjutkan berdasarkan nilai murni tertinggi pada aspek Kebenaran Teknik Gerakan PBB dari peleton yang dibandingkan.</li>
-                            <li><strong>Capaian Peleton Berikutnya:</strong> Apabila seluruh kriteria pada peleton dengan peringkat tertinggi masih sama, perbandingan dilanjutkan pada capaian peleton berikutnya secara berurutan berdasarkan peringkat yang diraih.</li>
-                            <li><strong>Capaian Komandan Terbaik:</strong> Apabila seluruh capaian Peleton masih menghasilkan nilai yang sama, penentuan dilanjutkan berdasarkan peringkat Komandan Terbaik yang diraih oleh masing-masing sekolah.</li>
-                            <li><strong>Sidang Pleno Juri:</strong> Apabila seluruh kriteria tersebut masih menghasilkan kedudukan yang sama, penentuan akhir dilakukan melalui musyawarah Dewan Juri dalam Sidang Pleno Juri.</li>
-                            <li><strong>Keputusan Akhir:</strong> Keputusan Dewan Juri dalam Sidang Pleno Juri bersifat mutlak dan tidak dapat diganggu gugat.</li>
+                          <strong className="text-slate-900 text-sm block">Alur 4 Langkah Checkout Resmi:</strong>
+                          <ul className="list-[lower-alpha] pl-5 space-y-1.5 text-xs text-slate-700">
+                            <li><strong>(1) Merapikan kembali susunan meja-kursi</strong> dan memastikan tidak ada barang peleton tertinggal di dalam ruang kelas basecamp;</li>
+                            <li><strong>(2) Membawa dan menyerahkan 2 (dua) kantong sampah terpilah</strong> (Organik & Non-Organik) ke Pos/Area Checkout Panitia;</li>
+                            <li><strong>(3) Pemeriksaan langsung kebersihan dan keutuhan fasilitas ruangan kelas</strong> oleh LO/Panitia Kebersihan guna memperoleh Tanda Bukti Lolos Verifikasi Checkout;</li>
+                            <li><strong>(4) Pengambilan kembali kartu identitas jaminan (KTP/SIM)</strong> di Ruang Informasi Panitia dengan menunjukkan Tanda Bukti Lolos Verifikasi Checkout.</li>
                           </ul>
-                        </div>
-                      </div>
-
-                      {/* Poin 8 */}
-                      <div className="p-4 sm:p-5 rounded-2xl bg-slate-50/60 border border-slate-200/90 hover:bg-white hover:border-slate-300 transition-all flex items-start gap-3.5">
-                        <span className="w-7 h-7 rounded-lg bg-slate-900 text-white font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
-                          8
-                        </span>
-                        <div className="space-y-1">
-                          <strong className="text-slate-900 text-sm block">Transparansi Nilai (Akses e-Rekapitulasi Berbasis Akun Gmail Peleton):</strong>
-                          <p className="text-slate-700 text-xs sm:text-sm leading-relaxed">
-                            Sebagai wujud integritas dan transparansi modern, publikasi rekapitulasi nilai peleton menerapkan sistem rilis bertahap (rolling release) tanpa harus menunggu seluruh peserta selesai tampil. Rincian perolehan nilai masing-masing peleton akan dirilis dan dapat diakses pada portal resmi https://lbb.tontimuallimin.com dengan estimasi waktu ±1 (satu) jam setelah peleton yang bersangkutan menyelesaikan penampilan di arena perlombaan. Official peleton dapat melihat lembar rekapitulasi nilai lengkap secara privat dan mandiri dengan login menggunakan akun Gmail masing-masing yang telah didaftarkan saat registrasi.
-                          </p>
-                        </div>
-                      </div>
-
-                      {/* Poin 9 */}
-                      <div className="p-4 sm:p-5 rounded-2xl bg-slate-50/60 border border-slate-200/90 hover:bg-white hover:border-slate-300 transition-all flex items-start gap-3.5">
-                        <span className="w-7 h-7 rounded-lg bg-slate-900 text-white font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
-                          9
-                        </span>
-                        <div className="space-y-2 flex-1">
-                          <strong className="text-slate-900 text-sm block">Mekanisme Pengajuan Sanggah (Protes Resmi):</strong>
-                          <ul className="list-[lower-alpha] pl-5 space-y-1 text-xs text-slate-700">
-                            <li><strong className="text-slate-800">Batasan Sanggah:</strong> Protes HANYA diterima untuk dugaan kekeliruan administratif non-penilaian (kesalahan penjumlahan skor, keliru input sistem dari lembar juri, atau ketidaksesuaian catatan penalti). Penilaian kualitatif juri mengenai mutu gerakan tidak dapat disanggah.</li>
-                            <li><strong className="text-slate-800">Batas Waktu Pengajuan:</strong> Pengajuan sanggah dapat dilakukan sejak nilai peleton dirilis di portal, dan seluruh masa sanggah resmi DITUTUP SERENTAK pukul 15.00 WIB. Penetapan hasil pasca-sanggah bersifat final dan mengikat sebelum Upacara Penutupan pukul 16.00 WIB.</li>
-                            <li><strong className="text-slate-800">Prosedur Sanggah:</strong> Diajukan secara TERTULIS menggunakan Formulir Sanggahan Resmi oleh 1 (satu) orang Official resmi terdaftar di Ruang Informasi Resmi Panitia (Ruang Registrasi Gedung Madrasah Lantai 1) dengan melampirkan bukti valid (video/foto/catatan). Panitia TIDAK melayani protes secara lisan.</li>
-                            <li><strong className="text-slate-800">Keputusan Sanggah:</strong> Jika protes diterima dan sah, Panitia menerbitkan 'Pemberitahuan Koreksi Hasil Resmi' yang menjadi dasar ketetapan kejuaraan.</li>
-                          </ul>
-                        </div>
-                      </div>
-
-                      {/* Poin 10 */}
-                      <div className="p-4 sm:p-5 rounded-2xl bg-slate-50/60 border border-slate-200/90 hover:bg-white hover:border-slate-300 transition-all flex items-start gap-3.5">
-                        <span className="w-7 h-7 rounded-lg bg-slate-900 text-white font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
-                          10
-                        </span>
-                        <div className="space-y-2 flex-1">
-                          <strong className="text-slate-900 text-sm block">Ketentuan Pasca-Lomba dan Prosedur Checkout Basecamp:</strong>
-                          <ul className="list-[lower-alpha] pl-5 space-y-1 text-xs text-slate-700">
-                            <li><strong className="text-slate-800">Batas Waktu Maksimal Pengosongan:</strong> Seluruh peleton wajib menyelesaikan proses checkout dan mengosongkan ruang kelas basecamp selambat-lambatnya pukul 15.00 WIB (1 jam sebelum Upacara Penutupan dimulai).</li>
-                            <li><strong className="text-slate-800">Alur 4 Langkah Checkout Resmi:</strong> (1) Merapikan kembali susunan meja-kursi dan memastikan tidak ada barang peleton tertinggal; (2) Membawa dan menyerahkan 2 (dua) kantong sampah terpilah (Organik & Non-Organik) ke Pos/Area Checkout Panitia; (3) Pemeriksaan langsung kebersihan dan keutuhan fasilitas ruangan kelas oleh LO/Panitia Kebersihan guna memperoleh Tanda Bukti Lolos Verifikasi Checkout; (4) Pengambilan kembali kartu identitas jaminan (KTP/SIM) di Ruang Informasi Panitia dengan menunjukkan Tanda Bukti Lolos Verifikasi.</li>
-                            <li><strong className="text-slate-800">Ketentuan Sanksi & Denda:</strong> Peleton yang meninggalkan basecamp dalam keadaan kotor/berantakan dikenai sanksi penalti -50 poin pada rekapitulasi nilai akhir. Apabila terjadi kerusakan fisik atau kehilangan fasilitas kelas, kartu jaminan KTP/SIM ditahan serta dikenakan sanksi ganti rugi penuh dan denda administratif Rp 500.000 sesuai Pasal 14 Tata Tertib Peserta.</li>
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* G. GANGGUAN SISTEM DIGITAL DAN PROSEDUR BACKUP */}
-            {shouldShow('digital') && (
-              <div className="group border border-slate-200 rounded-2xl overflow-hidden bg-white hover:border-red-500/40 hover:shadow-md transition-all duration-300">
-                <button
-                  onClick={() => toggleAccordion('digital')}
-                  className="w-full flex justify-between items-center p-5 text-left bg-slate-50/70 hover:bg-slate-50 transition-colors cursor-pointer"
-                >
-                  <div className="flex items-center gap-3.5">
-                    <span className="w-8 h-8 rounded-xl bg-slate-200 text-slate-800 font-black flex items-center justify-center text-sm shadow-xs">
-                      G
-                    </span>
-                    <span className="font-bold text-base md:text-lg text-slate-900">G. Gangguan Sistem Digital dan Prosedur Backup</span>
-                  </div>
-                  <ChevronDown className={`text-slate-400 transition-transform duration-300 w-5 h-5 ${isAccordionOpen('digital') ? 'rotate-180 text-red-600' : ''}`} />
-                </button>
-                {isAccordionOpen('digital') && (
-                  <div className="bg-white border-t border-slate-100 p-6 sm:p-7 text-slate-700 text-sm leading-relaxed space-y-4 animate-fade">
-                    <div className="grid grid-cols-1 gap-3.5">
-                      {/* Poin 1 */}
-                      <div className="p-4 sm:p-5 rounded-2xl bg-slate-50/60 border border-slate-200/90 hover:bg-white hover:border-slate-300 transition-all flex items-start gap-3.5">
-                        <span className="w-7 h-7 rounded-lg bg-slate-900 text-white font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
-                          1
-                        </span>
-                        <div className="space-y-1">
-                          <strong className="text-slate-900 text-sm block">Gangguan Sistem:</strong>
-                          <p className="text-slate-700 text-xs sm:text-sm leading-relaxed">
-                            Apabila terjadi gangguan pada website, jaringan internet, akun, upload dokumen, penyimpanan nilai, atau sistem digital lainnya, Panitia dapat menerapkan prosedur manual sementara.
-                          </p>
-                        </div>
-                      </div>
-
-                      {/* Poin 2 */}
-                      <div className="p-4 sm:p-5 rounded-2xl bg-slate-50/60 border border-slate-200/90 hover:bg-white hover:border-slate-300 transition-all flex items-start gap-3.5">
-                        <span className="w-7 h-7 rounded-lg bg-slate-900 text-white font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
-                          2
-                        </span>
-                        <div className="space-y-1">
-                          <strong className="text-slate-900 text-sm block">Backup Manual:</strong>
-                          <p className="text-slate-700 text-xs sm:text-sm leading-relaxed">
-                            Panitia wajib menyediakan formulir atau dokumen manual untuk pencatatan data peserta, administrasi, hasil penilaian, dan data penting lainnya sebagai cadangan.
-                          </p>
                         </div>
                       </div>
 
@@ -1178,48 +965,9 @@ export default function Rules({ embedded = false }) {
                           3
                         </span>
                         <div className="space-y-1">
-                          <strong className="text-slate-900 text-sm block">Gangguan Login dan Upload:</strong>
+                          <strong className="text-slate-900 text-sm block">Ketentuan Sanksi & Denda:</strong>
                           <p className="text-slate-700 text-xs sm:text-sm leading-relaxed">
-                            Apabila peserta mengalami kendala login atau gagal mengunggah dokumen karena gangguan sistem, Panitia memberikan alternatif verifikasi atau pengumpulan dokumen secara manual.
-                          </p>
-                        </div>
-                      </div>
-
-                      {/* Poin 4 */}
-                      <div className="p-4 sm:p-5 rounded-2xl bg-slate-50/60 border border-slate-200/90 hover:bg-white hover:border-slate-300 transition-all flex items-start gap-3.5">
-                        <span className="w-7 h-7 rounded-lg bg-slate-900 text-white font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
-                          4
-                        </span>
-                        <div className="space-y-1">
-                          <strong className="text-slate-900 text-sm block">Gangguan Penyimpanan Nilai:</strong>
-                          <p className="text-slate-700 text-xs sm:text-sm leading-relaxed">
-                            Apabila nilai tidak tersimpan atau sistem penilaian mengalami gangguan, nilai dicatat secara manual oleh Juri atau Asisten Juri dan dikonfirmasi setelah sistem kembali normal.
-                          </p>
-                        </div>
-                      </div>
-
-                      {/* Poin 5 */}
-                      <div className="p-4 sm:p-5 rounded-2xl bg-slate-50/60 border border-slate-200/90 hover:bg-white hover:border-slate-300 transition-all flex items-start gap-3.5">
-                        <span className="w-7 h-7 rounded-lg bg-slate-900 text-white font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
-                          5
-                        </span>
-                        <div className="space-y-1">
-                          <strong className="text-slate-900 text-sm block">Pemulihan Data:</strong>
-                          <p className="text-slate-700 text-xs sm:text-sm leading-relaxed">
-                            Setelah sistem kembali normal, data manual diverifikasi dan dimasukkan kembali ke sistem berdasarkan catatan resmi Panitia dan Juri.
-                          </p>
-                        </div>
-                      </div>
-
-                      {/* Poin 6 */}
-                      <div className="p-4 sm:p-5 rounded-2xl bg-slate-50/60 border border-slate-200/90 hover:bg-white hover:border-slate-300 transition-all flex items-start gap-3.5">
-                        <span className="w-7 h-7 rounded-lg bg-slate-900 text-white font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
-                          6
-                        </span>
-                        <div className="space-y-1">
-                          <strong className="text-slate-900 text-sm block">Keputusan Panitia:</strong>
-                          <p className="text-slate-700 text-xs sm:text-sm leading-relaxed">
-                            Gangguan teknis sistem tidak dapat dijadikan dasar untuk menghilangkan atau mengubah nilai peserta. Setiap keputusan terkait penggunaan data backup ditetapkan oleh Panitia berdasarkan catatan resmi yang tersedia.
+                            Peleton yang meninggalkan basecamp dalam keadaan kotor/berantakan dikenai sanksi penalti -50 poin pada rekapitulasi nilai akhir. Apabila terjadi kerusakan fisik atau kehilangan fasilitas kelas, kartu jaminan KTP/SIM ditahan serta dikenakan sanksi ganti rugi penuh dan denda administratif Rp 500.000 sesuai Pasal 14 Tata Tertib Peserta.
                           </p>
                         </div>
                       </div>
@@ -1229,79 +977,10 @@ export default function Rules({ embedded = false }) {
               </div>
             )}
 
-            {/* H. SANKSI DAN PENALTI PENGURANGAN NILAI */}
-            {shouldShow('penalty') && (
-              <div className="group border border-slate-200 rounded-2xl overflow-hidden bg-white hover:border-red-500/40 hover:shadow-md transition-all duration-300">
-                <button
-                  onClick={() => toggleAccordion('penalty')}
-                  className="w-full flex justify-between items-center p-5 text-left bg-slate-50/70 hover:bg-slate-50 transition-colors cursor-pointer"
-                >
-                  <div className="flex items-center gap-3.5">
-                    <span className="w-8 h-8 rounded-xl bg-red-100 text-red-700 font-black flex items-center justify-center text-sm shadow-xs">
-                      H
-                    </span>
-                    <span className="font-bold text-base md:text-lg text-slate-900">H. Ketentuan Sanksi dan Penalti Pengurangan Nilai</span>
-                  </div>
-                  <ChevronDown className={`text-slate-400 transition-transform duration-300 w-5 h-5 ${isAccordionOpen('penalty') ? 'rotate-180 text-red-600' : ''}`} />
-                </button>
-                {isAccordionOpen('penalty') && (
-                  <div className="bg-white border-t border-slate-100 p-6 sm:p-7 text-slate-700 text-sm leading-relaxed space-y-4 animate-fade">
-                    <p className="text-xs sm:text-sm text-slate-600 font-medium">
-                      Pelanggaran terhadap regulasi teknis lapangan dikenakan sanksi pemotongan nilai secara kumulatif pada lembar rekapitulasi nilai akhir:
-                    </p>
-                    <div className="overflow-x-auto rounded-2xl border border-slate-200 shadow-xs">
-                      <table className="w-full text-xs text-left">
-                        <thead className="bg-slate-100 text-slate-800 uppercase font-black tracking-wider text-[11px]">
-                          <tr>
-                            <th className="py-3 px-4">Jenis Pelanggaran</th>
-                            <th className="py-3 px-4 text-center">Besaran Penalti</th>
-                            <th className="py-3 px-4">Keterangan / Regulasi</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-100">
-                          {PENALTIES.map((p, idx) => (
-                            <tr key={idx} className="hover:bg-slate-50/80 transition-colors">
-                              <td className="py-3 px-4 font-bold text-slate-900 text-xs sm:text-sm">{p.label}</td>
-                              <td className="py-3 px-4 text-center">
-                                <span className={`font-mono font-black px-2.5 py-1 rounded-lg text-xs inline-block shadow-xs ${
-                                  p.value.includes('0 Poin') ? 'bg-emerald-100 text-emerald-800 border border-emerald-200' : 'bg-red-100 text-red-700 border border-red-200'
-                                }`}>
-                                  {p.value}
-                                </span>
-                              </td>
-                              <td className="py-3 px-4 text-slate-600 text-xs leading-relaxed">
-                                {idx === 0 && 'Urutan tampil 6 s.d. 10 (SD-131, 133, 135, 137, 139 & SMP-242, 244, 246, 248, 260) wajib hadir 1 danton + 15 anggota (5 trio).'}
-                                {idx === 1 && 'Dikenakan per kelipatan 5 menit keterlambatan memasuki barisan upacara.'}
-                                {idx === 2 && 'Setelah 3x panggilan interval 2 menit; jika tetap absen: Diskualifikasi.'}
-                                {idx === 3 && 'Personel masuk arena kurang dari 22 orang (1 Danton + 21 Pasukan).'}
-                                {idx === 4 && 'Melebihi durasi resmi (SD > 8 menit, SMP > 12 menit) per rentang 1-30 detik.'}
-                                {idx === 5 && 'Alas kaki/anggota tubuh menginjak garis arena atau keluar Kotak Danton 1,5x1,5m.'}
-                                {idx === 6 && 'Gerakan penyesuaian tidak dibatasi kuota (0 poin penalti), diperhitungkan dalam aspek Penguasaan Lapangan Danton.'}
-                                {idx === 7 && 'Gerakan terlewat namun dilakukan kemudian = Nilai Minimal; tidak dilakukan = Nilai 0.'}
-                                {idx === 8 && 'Danton salah aba-aba tetapi pasukan bergerak hafalan = Nilai 0 & potong nilai danton.'}
-                                {idx === 9 && 'Rangkaian bertanda (-) yang diselingi jeda/gerakan tambahan diberi Nilai Minimal.'}
-                                {idx === 10 && 'Menyanyikan yel-yel, tepukan berirama, nyanyian selama penampilan resmi: Peringatan 1, 2, lalu penalti.'}
-                                {idx === 11 && 'Topi/peci, dasi, pin, sarung tangan terlepas TIDAK dipotong nilai (0 poin).'}
-                                {idx === 12 && 'Ruang basecamp ditinggalkan kotor / berantakan saat checkout.'}
-                                {idx === 13 && 'Kerusakan/kehilangan sarpras kelas: KTP ditahan, ganti rugi fisik + denda Rp 500.000.'}
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                    <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 flex items-start gap-3">
-                      <div className="w-2 h-2 rounded-full bg-slate-400 mt-1.5 shrink-0"></div>
-                      <p className="text-xs text-slate-700 leading-relaxed">
-                        <strong className="text-slate-900 font-bold">Pencatatan Penalti:</strong> Seluruh sanksi pengurangan nilai dicatat secara langsung dan transparan oleh Hakim Garis, Timekeeper, dan Koordinator Lapangan ke dalam Berita Acara Pelanggaran Resmi serta disahkan oleh Perwakilan Dewan Juri.
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
 
-            {/* I. KEADAAN KAHAR (FORCE MAJEURE) */}
+
+
+            {/* G. KEADAAN KAHAR (FORCE MAJEURE) */}
             {shouldShow('force') && (
               <div className="group border border-slate-200 rounded-2xl overflow-hidden bg-white hover:border-red-500/40 hover:shadow-md transition-all duration-300">
                 <button
@@ -1310,9 +989,9 @@ export default function Rules({ embedded = false }) {
                 >
                   <div className="flex items-center gap-3.5">
                     <span className="w-8 h-8 rounded-xl bg-slate-200 text-slate-800 font-black flex items-center justify-center text-sm shadow-xs">
-                      I
+                      G
                     </span>
-                    <span className="font-bold text-base md:text-lg text-slate-900">I. Keadaan Kahar (Force Majeure)</span>
+                    <span className="font-bold text-base md:text-lg text-slate-900">G. Keadaan Kahar (Force Majeure)</span>
                   </div>
                   <ChevronDown className={`text-slate-400 transition-transform duration-300 w-5 h-5 ${isAccordionOpen('force') ? 'rotate-180 text-red-600' : ''}`} />
                 </button>
@@ -1387,7 +1066,7 @@ export default function Rules({ embedded = false }) {
               </div>
             )}
 
-            {/* J. PENUTUP */}
+            {/* H. PENUTUP */}
             {shouldShow('closing') && (
               <div className="group border border-slate-200 rounded-2xl overflow-hidden bg-white hover:border-red-500/40 hover:shadow-md transition-all duration-300">
                 <button
@@ -1396,9 +1075,9 @@ export default function Rules({ embedded = false }) {
                 >
                   <div className="flex items-center gap-3.5">
                     <span className="w-8 h-8 rounded-xl bg-slate-200 text-slate-800 font-black flex items-center justify-center text-sm shadow-xs">
-                      J
+                      H
                     </span>
-                    <span className="font-bold text-base md:text-lg text-slate-900">J. Penutup</span>
+                    <span className="font-bold text-base md:text-lg text-slate-900">H. Penutup</span>
                   </div>
                   <ChevronDown className={`text-slate-400 transition-transform duration-300 w-5 h-5 ${isAccordionOpen('closing') ? 'rotate-180 text-red-600' : ''}`} />
                 </button>
@@ -1448,6 +1127,7 @@ export default function Rules({ embedded = false }) {
           </div>
         </div>
       </div>
-    </section>
-  );
+    </div>
+  </section>
+);
 }

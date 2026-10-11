@@ -5,6 +5,7 @@ import { useCompetition } from '../context/CompetitionContext.jsx';
 import logoImg from '../assets/logo-tonti.png';
 import logoTonti from '../assets/logo-tonti-muallimin.png';
 import logoMuallimin from '../assets/logo-muallimin-white.png';
+import titleLogo from '../assets/title-logo.png';
 
 const CADET_FIGURES = [
   {
@@ -111,18 +112,18 @@ export default function Hero() {
   return (
     <section
       id="home"
-      className="relative w-full min-h-screen supports-[height:100svh]:min-h-[100svh] flex flex-col items-center justify-center bg-gradient-to-b from-[#3a0505] via-[#6d0a0a] to-[#200202] text-white pt-24 pb-16"
+      className="relative w-full min-h-screen supports-[height:100svh]:min-h-[100svh] flex flex-col items-center justify-center bg-gradient-to-b from-[#3a0505] via-[#6d0a0a] to-[#200202] text-white pt-20 sm:pt-22 pb-14"
     >
       {/* Atmospheric Background & Lighting (Clean Pure CSS, No Video Play Icons) */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden select-none" aria-hidden="true">
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/15 to-black/60"></div>
       </div>
 
-      <div className="container mx-auto px-4 sm:px-6 relative z-10 flex flex-col justify-center h-full my-auto">
+      <div className="container mx-auto px-4 sm:px-6 relative z-10 flex flex-col justify-center h-full my-auto -mt-2 sm:-mt-3 lg:-mt-4">
         <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-center w-full max-w-7xl mx-auto">
 
           {/* Left Columns: Text Content & Actions */}
-          <div className="lg:col-span-7 flex flex-col items-center lg:items-start text-center lg:text-left space-y-5 sm:space-y-6">
+          <div className="lg:col-span-7 flex flex-col items-center lg:items-start text-center lg:text-left space-y-4 sm:space-y-5">
             
             {/* Logo Group in Hero Section: Logo LBB - Garis - Logo Tonti Mu'allimin - Logo Mu'allimin */}
             <div className="flex items-center gap-3.5 sm:gap-6">
@@ -181,16 +182,15 @@ export default function Hero() {
             })()}
 
 
-            {/* Main Title - Original LBB Mu'allimin Styling */}
-            <div className="space-y-1">
-              <h1 className="font-black uppercase tracking-tight flex flex-col select-none">
-                <span className="block text-3xl sm:text-5xl md:text-6xl font-black text-white">
-                  {HERO.TITLE_LINE1}
-                </span>
-                <span className="block text-4xl sm:text-6xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-amber-400 to-yellow-500">
-                  {HERO.TITLE_LINE2}
-                </span>
-              </h1>
+            {/* Main Title - Grafis Resmi title-logo.png */}
+            <div className="pt-1 select-none">
+              <h1 className="sr-only">Lomba Baris-Berbaris Mu'allimin 2027</h1>
+              <img
+                src={titleLogo}
+                alt="LOMBA BARIS BERBARIS MU'ALLIMIN 2027"
+                className="h-auto w-full max-w-[420px] sm:max-w-[560px] md:max-w-[660px] lg:max-w-[720px] object-contain drop-shadow-lg"
+                loading="eager"
+              />
             </div>
 
             {/* Subtitle */}
@@ -216,7 +216,7 @@ export default function Hero() {
                 rel="noopener noreferrer"
                 className="group px-8 py-3.5 bg-black/35 hover:bg-white/10 border border-white/20 hover:border-yellow-400/40 text-white hover:text-yellow-400 rounded-xl shadow-lg shadow-black/20 hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2 text-xs sm:text-sm font-bold tracking-widest uppercase cursor-pointer active:scale-95"
               >
-                <span>Juknis Lapangan</span>
+                <span>Download Juknis</span>
                 <ExternalLink className="w-4 h-4 transition-transform group-hover:translate-x-0.5 text-yellow-400" />
               </a>
             </div>

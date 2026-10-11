@@ -174,10 +174,10 @@ export default function RosterTab({
                 </span>
               </div>
 
-              <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 flex-1">
+              <div className="flex flex-col sm:flex-row items-center sm:items-start gap-3.5 flex-1">
                 {/* Danton Photo */}
                 <div className="relative group shrink-0">
-                  <div className="aspect-[3/4] w-28 rounded-2xl bg-gradient-to-br from-red-700 to-red-900 text-white font-black text-xs flex items-center justify-center shadow-md overflow-hidden border-2 border-red-400 relative">
+                  <div className="aspect-[3/4] w-20 sm:w-24 rounded-xl bg-gradient-to-br from-red-700 to-red-900 text-white font-black text-xs flex items-center justify-center shadow-xs overflow-hidden border border-red-300 relative">
                     {(() => {
                       const photoUrl = isEditingRoster ? rosterDraft?.danton?.photo : currentTeam.roster?.danton?.photo;
                       const hasValidPhoto = photoUrl && typeof photoUrl === 'string' && photoUrl !== '#' && !photoUrl.startsWith('#') && !photoUrl.includes('drive.google.com/open?id=');
@@ -196,7 +196,7 @@ export default function RosterTab({
                       ) : null;
                     })()}
                     <div
-                      className="w-full h-full flex flex-col items-center justify-center text-center p-2"
+                      className="w-full h-full flex flex-col items-center justify-center text-center p-1.5"
                       style={{
                         display: (() => {
                           const photoUrl = isEditingRoster ? rosterDraft?.danton?.photo : currentTeam.roster?.danton?.photo;
@@ -204,19 +204,19 @@ export default function RosterTab({
                         })()
                       }}
                     >
-                      <User className="w-8 h-8 mx-auto mb-1 opacity-70" />
-                      <span className="text-[9px] font-black uppercase tracking-widest block opacity-90">FOTO DANTON</span>
-                      <span className="text-[8px] text-red-200 block mt-0.5 font-normal">(Ukuran 3×4)</span>
+                      <User className="w-6 h-6 mx-auto mb-0.5 opacity-70" />
+                      <span className="text-[8px] font-black uppercase tracking-widest block opacity-90">FOTO DANTON</span>
+                      <span className="text-[7px] text-red-200 block font-normal">(3×4)</span>
                     </div>
                   </div>
                   {isEditingRoster && (
                     <button
                       type="button"
                       onClick={() => triggerRosterPhotoUpload({ type: 'danton' })}
-                      className="absolute -bottom-1.5 -right-1.5 p-1.5 rounded-xl bg-yellow-400 text-slate-950 shadow-md hover:bg-yellow-300 transition-all cursor-pointer"
+                      className="absolute -bottom-1 -right-1 p-1 rounded-lg bg-yellow-400 text-slate-950 shadow-xs hover:bg-yellow-300 transition-all cursor-pointer"
                       title="Unggah Pasfoto Danton"
                     >
-                      <Upload className="w-3.5 h-3.5" />
+                      <Upload className="w-3 h-3" />
                     </button>
                   )}
                 </div>
@@ -224,33 +224,33 @@ export default function RosterTab({
                 {/* Danton Info / Form */}
                 <div className="flex-1 w-full min-w-0">
                   {!isEditingRoster ? (
-                    <div className="space-y-2.5">
+                    <div className="space-y-1.5">
                       <div>
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
                           Nama Lengkap
                         </span>
-                        <h5 className="font-black text-base sm:text-lg text-slate-900 leading-snug break-words" title={currentTeam.roster?.danton?.name || currentTeam.dantonName}>
+                        <h5 className="font-black text-sm sm:text-base text-slate-900 leading-snug break-words" title={currentTeam.roster?.danton?.name || currentTeam.dantonName}>
                           {currentTeam.roster?.danton?.name || currentTeam.dantonName || '-'}
                         </h5>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-2 pt-1 border-t border-red-100 text-xs">
-                        <div className="bg-white/80 p-2 rounded-xl border border-red-100">
-                          <span className="text-[10px] font-bold text-slate-400 uppercase block">Kelas</span>
+                      <div className="grid grid-cols-2 gap-1.5 pt-1 border-t border-red-100 text-xs">
+                        <div className="bg-white/80 p-1.5 rounded-lg border border-red-100">
+                          <span className="text-[9px] font-bold text-slate-400 uppercase block">Kelas</span>
                           <strong className="text-slate-800 text-xs">
                             {currentTeam.roster?.danton?.class ? `Kelas ${currentTeam.roster.danton.class}` : '-'}
                           </strong>
                         </div>
-                        <div className="bg-white/80 p-2 rounded-xl border border-red-100">
-                          <span className="text-[10px] font-bold text-slate-400 uppercase block">NISN</span>
+                        <div className="bg-white/80 p-1.5 rounded-lg border border-red-100">
+                          <span className="text-[9px] font-bold text-slate-400 uppercase block">NISN</span>
                           <strong className="text-slate-800 font-mono text-xs">
                             {currentTeam.roster?.danton?.nisn || '-'}
                           </strong>
                         </div>
                       </div>
 
-                      <div className="bg-white/80 p-2 rounded-xl border border-red-100 text-xs">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase block">Tempat, Tanggal Lahir</span>
+                      <div className="bg-white/80 p-1.5 rounded-lg border border-red-100 text-xs">
+                        <span className="text-[9px] font-bold text-slate-400 uppercase block">Tempat, Tanggal Lahir</span>
                         <strong className="text-slate-800 text-xs">
                           {currentTeam.roster?.danton?.birthPlace || '-'}{currentTeam.roster?.danton?.birthDate ? `, ${currentTeam.roster.danton.birthDate}` : ''}
                         </strong>
@@ -370,11 +370,11 @@ export default function RosterTab({
                       return (
                         <div
                           key={off.id || i}
-                          className={`group/off bg-white rounded-2xl border shadow-2xs overflow-hidden flex flex-col justify-between ${
-                            isMainOfficial ? 'border-blue-300 ring-1 ring-blue-200' : 'border-slate-200'
+                          className={`group/off bg-white rounded-xl border shadow-2xs overflow-hidden flex flex-col justify-between ${
+                            isMainOfficial ? 'border-blue-300 ring-1 ring-blue-100' : 'border-slate-200'
                           }`}
                         >
-                          <div className="aspect-[3/4] w-full bg-slate-100 relative overflow-hidden flex items-center justify-center border-b border-slate-100">
+                          <div className="aspect-[4/3] sm:aspect-[1/1] w-full bg-slate-100 relative overflow-hidden flex items-center justify-center border-b border-slate-100">
                             {hasOPhoto ? (
                               <img
                                 src={formatImageUrl(off.photo)}
@@ -395,13 +395,13 @@ export default function RosterTab({
                               />
                             ) : null}
                             <div
-                              className="w-full h-full flex flex-col items-center justify-center text-[9px] font-bold text-slate-400 bg-slate-100"
+                              className="w-full h-full flex flex-col items-center justify-center text-[8px] font-bold text-slate-400 bg-slate-100"
                               style={{ display: hasOPhoto ? 'none' : 'flex' }}
                             >
-                              <User className="w-6 h-6 opacity-40 mb-1" />
+                              <User className="w-5 h-5 opacity-40 mb-0.5" />
                               <span>{isMainOfficial ? 'OFFICIAL' : `CREW ${i}`}</span>
                             </div>
-                            <span className={`absolute top-1.5 right-1.5 px-2 py-0.5 rounded-md text-[9px] font-bold shadow-xs truncate max-w-[90%] ${
+                            <span className={`absolute top-1 right-1 px-1.5 py-0.5 rounded text-[8px] font-bold shadow-xs truncate max-w-[90%] ${
                               isMainOfficial ? 'bg-blue-600 text-white' : 'bg-slate-700 text-white'
                             }`} title={displayRole}>
                               {displayRole}

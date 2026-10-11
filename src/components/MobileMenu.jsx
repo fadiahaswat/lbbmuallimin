@@ -58,16 +58,28 @@ export default function MobileMenu({ isOpen, onClose }) {
       document.body.classList.add('overflow-hidden');
       window.addEventListener('keydown', handleKeyDown);
 
-      // Detect current section on open
-      const sections = ['home', 'about', 'time-location', 'registration', 'rules', 'prizes', 'contact'];
-      const scrollPos = window.scrollY + 200;
-      for (const sectionId of sections) {
-        const el = document.getElementById(sectionId);
+      // Detect current section on open (6 grup menu utama)
+      const sectionMap = [
+        { id: 'contact', menu: 'contact' },
+        { id: 'denah', menu: 'contact' },
+        { id: 'prizes', menu: 'prizes' },
+        { id: 'tata-tertib', menu: 'rules' },
+        { id: 'scoring', menu: 'rules' },
+        { id: 'materi-lomba', menu: 'rules' },
+        { id: 'rules', menu: 'rules' },
+        { id: 'registration', menu: 'registration' },
+        { id: 'time-location', menu: 'about' },
+        { id: 'about', menu: 'about' },
+        { id: 'home', menu: 'home' },
+      ];
+      const scrollPos = window.scrollY + 220;
+      for (const item of sectionMap) {
+        const el = document.getElementById(item.id);
         if (el) {
           const top = el.offsetTop;
           const height = el.offsetHeight;
           if (scrollPos >= top && scrollPos < top + height) {
-            setActiveSection(sectionId);
+            setActiveSection(item.menu);
             break;
           }
         }
@@ -86,12 +98,11 @@ export default function MobileMenu({ isOpen, onClose }) {
 
   const links = [
     { href: '#home', id: 'home', label: 'Beranda', icon: Home, desc: 'Halaman utama kompetisi' },
-    { href: '#about', id: 'about', label: 'Tentang', icon: Info, desc: 'Sejarah, tema & nilai LBB' },
-    { href: '#time-location', id: 'time-location', label: 'Waktu & Tempat', icon: CalendarDays, desc: 'Jadwal hari H & venue' },
-    { href: '#registration', id: 'registration', label: 'Pendaftaran', icon: ClipboardList, desc: 'Alur pendaftaran & kuota' },
-    { href: '#rules', id: 'rules', label: 'Juknis & Materi', icon: BookOpen, desc: 'Regulasi & materi gerakan PBB' },
-    { href: '#prizes', id: 'prizes', label: 'Kategori & Hadiah', icon: Trophy, desc: 'Trofi, sertifikat & penghargaan' },
-    { href: '#contact', id: 'contact', label: 'Kontak', icon: Phone, desc: 'Narahubung & sekretariat' },
+    { href: '#about', id: 'about', label: 'Informasi', icon: Info, desc: 'Sejarah, tema, jadwal & venue' },
+    { href: '#registration', id: 'registration', label: 'Pendaftaran', icon: ClipboardList, desc: 'Alur pendaftaran digital & kuota' },
+    { href: '#rules', id: 'rules', label: 'Petunjuk Teknis', icon: BookOpen, desc: 'Juknis lapangan, materi & penilaian' },
+    { href: '#prizes', id: 'prizes', label: 'Kejuaraan', icon: Trophy, desc: 'Kategori juara, trofi & penghargaan' },
+    { href: '#contact', id: 'contact', label: 'Kontak & Lokasi', icon: Phone, desc: 'Denah arena & narahubung resmi' },
   ];
 
   return (

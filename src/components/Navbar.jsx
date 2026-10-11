@@ -36,27 +36,40 @@ export default function Navbar({ onOpenMobileMenu }) {
   const isSchoolLogo = avatarMeta?.isSchoolLogo;
 
   useEffect(() => {
-    const sections = ['home', 'about', 'time-location', 'registration', 'rules', 'prizes', 'contact'];
+    // 6 grup menu utama: home, about (tentang & jadwal), registration, rules (juknis & penilaian), prizes, contact (denah & kontak)
+    const sectionMap = [
+      { id: 'contact', menu: 'contact' },
+      { id: 'denah', menu: 'contact' },
+      { id: 'prizes', menu: 'prizes' },
+      { id: 'tata-tertib', menu: 'rules' },
+      { id: 'scoring', menu: 'rules' },
+      { id: 'materi-lomba', menu: 'rules' },
+      { id: 'rules', menu: 'rules' },
+      { id: 'registration', menu: 'registration' },
+      { id: 'time-location', menu: 'about' },
+      { id: 'about', menu: 'about' },
+      { id: 'home', menu: 'home' },
+    ];
     let ticking = false;
 
     function checkActiveSection() {
       const scrollY = window.scrollY;
       setIsScrolled(scrollY > NAVBAR.SCROLL_SOLID_THRESHOLD);
 
-      // Jika user sudah sampai dekat dasar halaman, aktifkan kontak
+      // Jika user sudah sampai dekat dasar halaman, aktifkan menu Kontak
       if (window.innerHeight + scrollY >= document.documentElement.scrollHeight - 60) {
         setActiveSection('contact');
         return;
       }
 
-      const scrollPosition = scrollY + 200;
-      for (const sectionId of sections) {
-        const el = document.getElementById(sectionId);
+      const scrollPosition = scrollY + 220;
+      for (const item of sectionMap) {
+        const el = document.getElementById(item.id);
         if (el) {
           const top = el.offsetTop;
           const height = el.offsetHeight;
           if (scrollPosition >= top && scrollPosition < top + height) {
-            setActiveSection(sectionId);
+            setActiveSection(item.menu);
             break;
           }
         }
@@ -135,38 +148,36 @@ export default function Navbar({ onOpenMobileMenu }) {
         <div className="hidden lg:flex items-center gap-3 xl:gap-4">
           <div
             id="nav-pill"
-            className={`flex items-center gap-0.5 px-2 py-1.5 rounded-full backdrop-blur-md shadow-xl transition-colors duration-300 ${
+            className={`flex items-center gap-1 px-3 py-1.5 rounded-full transition-all duration-300 ${
               isScrolled
-                ? 'bg-slate-100/90 border border-slate-200'
-                : 'glass'
+                ? 'bg-slate-100/90 border border-slate-200 backdrop-blur-md shadow-md'
+                : 'bg-black/20 hover:bg-black/30 border border-white/10 backdrop-blur-sm'
             }`}
           >
             {[
-              { href: '#home', label: 'Beranda' },
-              { href: '#about', label: 'Tentang' },
-              { href: '#time-location', label: 'Waktu & Tempat' },
-              { href: '#registration', label: 'Pendaftaran' },
-              { href: '#rules', label: 'Juknis' },
-              { href: '#prizes', label: 'Hadiah' },
-              { href: '#contact', label: 'Kontak' },
+              { href: '#home', id: 'home', label: 'Beranda' },
+              { href: '#about', id: 'about', label: 'Informasi' },
+              { href: '#registration', id: 'registration', label: 'Pendaftaran' },
+              { href: '#rules', id: 'rules', label: 'Petunjuk Teknis' },
+              { href: '#prizes', id: 'prizes', label: 'Kejuaraan' },
+              { href: '#contact', id: 'contact', label: 'Kontak' },
             ].map(link => {
-              const targetId = link.href.replace('#', '');
-              const isActive = activeSection === targetId;
+              const isActive = activeSection === link.id;
 
               return (
                 <a
                   key={link.href}
                   href={link.href}
-                  className={`relative px-3.5 xl:px-4 py-1.5 text-xs xl:text-sm font-bold uppercase transition-all duration-200 group ${
+                  className={`relative px-3.5 xl:px-4 py-1.5 text-xs xl:text-sm font-semibold uppercase transition-all duration-200 group ${
                     isActive
-                      ? (isScrolled ? 'text-red-700 font-extrabold' : 'text-yellow-300 font-extrabold')
-                      : (isScrolled ? 'text-slate-600 hover:text-slate-950' : 'text-slate-200 hover:text-white')
+                      ? (isScrolled ? 'text-red-700 font-bold' : 'text-amber-300 font-bold')
+                      : (isScrolled ? 'text-slate-600 hover:text-slate-950' : 'text-slate-300 hover:text-white')
                   }`}
                 >
                   {link.label}
                   <span
-                    className={`absolute bottom-0.5 left-1/2 -translate-x-1/2 h-0.5 bg-yellow-400 transition-all duration-300 shadow-[0_0_8px_rgba(255,215,0,0.8)] ${
-                      isActive ? 'w-[70%]' : 'w-0 group-hover:w-[50%]'
+                    className={`absolute bottom-0.5 left-1/2 -translate-x-1/2 h-0.5 bg-yellow-400/90 transition-all duration-300 ${
+                      isActive ? 'w-[60%]' : 'w-0 group-hover:w-[40%]'
                     }`}
                   ></span>
                 </a>
@@ -178,7 +189,11 @@ export default function Navbar({ onOpenMobileMenu }) {
             <button
               type="button"
               onClick={() => openAuthModal('login')}
-              className="group relative px-5 py-2 bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 text-slate-950 rounded-full font-black hover:shadow-[0_0_20px_rgba(255,215,0,0.4)] hover:-translate-y-0.5 active:scale-95 transition-all border border-yellow-400/60 overflow-hidden shadow-md flex items-center gap-2"
+              className={`group relative px-5 py-2 rounded-full font-bold active:scale-95 transition-all overflow-hidden flex items-center gap-2 ${
+                isScrolled
+                  ? 'bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 text-slate-950 border border-yellow-400/60 shadow-md hover:shadow-lg'
+                  : 'bg-yellow-400/90 hover:bg-yellow-400 text-slate-950 border border-yellow-300/40 shadow-sm'
+              }`}
             >
               <svg className="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24">
                 <path
@@ -198,7 +213,7 @@ export default function Navbar({ onOpenMobileMenu }) {
                   d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"
                 />
               </svg>
-              <span className="uppercase tracking-wider text-xs font-black">
+              <span className="uppercase tracking-wider text-xs font-bold">
                 Daftar/Masuk
               </span>
             </button>
@@ -210,7 +225,7 @@ export default function Navbar({ onOpenMobileMenu }) {
                 className={`group flex items-center gap-2.5 pl-1.5 pr-3.5 py-1.5 rounded-full border transition-all duration-200 select-none cursor-pointer ${
                   isScrolled
                     ? 'bg-white/90 hover:bg-slate-50 border-slate-200/90 shadow-xs hover:border-slate-300 text-slate-800'
-                    : 'bg-slate-950/60 hover:bg-slate-900/80 backdrop-blur-md border-white/15 hover:border-white/25 text-white shadow-md'
+                    : 'bg-black/25 hover:bg-black/35 backdrop-blur-sm border-white/10 hover:border-white/20 text-slate-200 hover:text-white'
                 }`}
               >
                 {/* Avatar / School Logo without container box */}

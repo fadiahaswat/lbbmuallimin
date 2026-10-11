@@ -25,8 +25,7 @@ import SimpaskorSidebarLayout from '../navigation/SimpaskorSidebarLayout.jsx';
 export default function TataTertibView() {
   const [activeTab, setActiveTab] = useState('articles'); // 'articles' | 'penalties'
   const [searchPenalty, setSearchPenalty] = useState('');
-  const [searchArticle, setSearchArticle] = useState('');
-  const [openAccordions, setOpenAccordions] = useState({ 1: true });
+  const [openAccordions, setOpenAccordions] = useState({});
 
   function toggleAccordion(pasalNum) {
     setOpenAccordions(prev => ({

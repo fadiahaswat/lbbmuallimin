@@ -171,16 +171,11 @@ export default function AdminDashboard() {
                 <span className="text-[10px] font-black uppercase tracking-widest text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded border border-blue-400/20">
                   Panel Sekretariat
                 </span>
-                <span className="text-xs text-slate-400">Admin Manajemen LBB 2026</span>
               </div>
               <h1 className="text-xl sm:text-2xl font-black uppercase italic tracking-tight text-white mt-0.5">
                 Dashboard Manajemen & Rekapitulasi
               </h1>
             </div>
-          </div>
-          <div className="flex items-center gap-2 text-xs text-slate-400 font-medium">
-            <span>Sinkronisasi Otomatis Cloud & Spreadsheet</span>
-          </div>
         </div>
 
         {/* Quota & Key Metrics Grid (Compact & Professional) */}
@@ -250,7 +245,6 @@ export default function AdminDashboard() {
           <div className="bg-white p-3.5 rounded-xl border border-slate-200/90 shadow-xs flex flex-col justify-between">
             <div className="flex justify-between items-center mb-1">
               <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wide">Penerimaan Dana</span>
-              <span className="text-[10px] font-black text-emerald-700 bg-emerald-50 border border-emerald-200/60 px-1.5 py-0.2 rounded">BRI Valid</span>
             </div>
             <div className="text-xl sm:text-2xl font-black font-mono text-emerald-700 leading-none my-0.5">
               Rp{(totalRevenue / 1000).toLocaleString('id-ID')}k

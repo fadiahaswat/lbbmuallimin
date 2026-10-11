@@ -436,10 +436,10 @@ export default function TeamInspectionPage({ team, inspectionStage = 'registrati
                 <Tag className="w-4 h-4 text-emerald-600 shrink-0" />
               </div>
               <span className="font-mono font-black text-xl text-emerald-950 block">
-                {team.chestNumber || '-'}
+                {team.lotNumber && team.chestNumber ? team.chestNumber : '-'}
               </span>
               <span className="text-[10px] text-emerald-700 font-medium block mt-1">
-                {team.chestNumber ? 'Terverifikasi aktif' : 'Diserahkan saat registrasi ulang'}
+                {team.lotNumber && team.chestNumber ? 'Terverifikasi aktif' : 'Diserahkan saat registrasi ulang'}
               </span>
             </div>
 
@@ -656,18 +656,34 @@ export default function TeamInspectionPage({ team, inspectionStage = 'registrati
               </button>
             </div>
 
-            {/* Top Grid: Danton (Kiri) & Pendamping Peleton (Kanan) */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-              {/* Danton Hero Card (lg:col-span-5) */}
-              <div className="lg:col-span-5 p-5 bg-gradient-to-b from-red-50/80 via-white to-slate-50 rounded-3xl border border-red-200/90 shadow-xs flex flex-col justify-between">
-                <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 text-center sm:text-left">
-                  <div className="aspect-[3/4] w-32 sm:w-36 rounded-2xl overflow-hidden bg-red-900 text-white font-black text-xs flex items-center justify-center shrink-0 shadow-md border-2 border-red-300 relative group">
+            {/* 4 Kartu Pimpinan & Pendamping Peleton (1 Danton + 3 Pendamping) dalam 1 Container Rapi */}
+            <div className="bg-slate-50/80 p-4 rounded-2xl border border-slate-200/90 space-y-3">
+              <div className="flex items-center justify-between border-b border-slate-200/80 pb-2">
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-red-600"></span>
+                  <span className="font-black text-xs uppercase tracking-wider text-slate-900">
+                    Pimpinan & Pendamping Peleton (4 Personel)
+                  </span>
+                  <span className="text-[10px] font-bold text-slate-500 hidden sm:inline">
+                    • 1 Komandan Peleton + 1 Official + 2 Pendukung
+                  </span>
+                </div>
+                <span className="text-[10px] font-bold text-slate-600 bg-white border border-slate-200 px-2.5 py-0.5 rounded-full">
+                  4 Cocard Khusus
+                </span>
+              </div>
+
+              {/* Grid 4 Kartu: Ukuran kompak dan diposisikan tepat di tengah-tengah (center) */}
+              <div className="flex flex-wrap items-center justify-center gap-3">
+                {/* 1. Danton */}
+                <div className="w-[calc(50%-6px)] sm:w-[calc(25%-9px)] lg:w-[calc(14.285%-11px)] min-w-[130px] max-w-[160px] group/danton bg-white rounded-2xl border border-red-300 ring-1 ring-red-200/70 shadow-2xs overflow-hidden flex flex-col justify-between">
+                  <div className="aspect-[3/4] w-full bg-red-950 relative overflow-hidden flex items-center justify-center border-b border-red-100">
                     {danton?.photo && typeof danton.photo === 'string' && danton.photo !== '#' && !danton.photo.startsWith('#') && !danton.photo.includes('drive.google.com/open?id=') ? (
                       <img
                         src={formatImageUrl(danton.photo)}
                         alt="Danton"
                         referrerPolicy="no-referrer"
-                        className="w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-105"
+                        className="w-full h-full object-cover object-top transition-transform duration-300 group-hover/danton:scale-105"
                         onError={(e) => {
                           const fallback = getFallbackImageUrl(danton.photo);
                           if (fallback && e.currentTarget.src !== fallback) {
@@ -682,129 +698,88 @@ export default function TeamInspectionPage({ team, inspectionStage = 'registrati
                       />
                     ) : null}
                     <div
-                      className="w-full h-full flex flex-col items-center justify-center font-black text-xs text-white/90 bg-gradient-to-b from-red-800 to-red-950 p-2 text-center"
+                      className="w-full h-full flex flex-col items-center justify-center text-[8px] font-bold text-red-200 bg-gradient-to-b from-red-800 to-red-950"
                       style={{
                         display: danton?.photo && typeof danton.photo === 'string' && danton.photo !== '#' && !danton.photo.startsWith('#') && !danton.photo.includes('drive.google.com/open?id=') ? 'none' : 'flex'
                       }}
                     >
-                      <User className="w-8 h-8 mb-1 text-red-200 opacity-90" />
-                      <span className="font-mono text-xs tracking-wider">DANTON</span>
+                      <User className="w-5 h-5 opacity-90 mb-0.5 text-red-200" />
+                      <span className="font-mono tracking-wider">DANTON</span>
                     </div>
-                    <span className="absolute top-1.5 right-1.5 px-2 py-0.5 rounded-md bg-red-700 text-white text-[9px] font-black uppercase tracking-wider shadow-sm">
-                      Danton
+                    <span className="absolute top-1 right-1 px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-wider bg-red-600 text-white shadow-xs">
+                      Danton Utama
                     </span>
                   </div>
 
-                  <div className="flex-1 space-y-1.5 min-w-0">
-                    <div className="flex flex-wrap items-center justify-center sm:justify-start gap-1.5">
-                      <span className="text-[10px] font-black uppercase text-red-700 bg-red-100 border border-red-200 px-2 py-0.5 rounded-full">
-                        Komandan Utama
-                      </span>
-                    </div>
-
-                    <h4 className="font-black text-lg text-slate-900 tracking-tight break-words" title={danton?.name || team.dantonName}>
+                  <div className="p-2 text-left space-y-1">
+                    <span className="font-black text-xs text-slate-900 block truncate" title={danton?.name || team.dantonName}>
                       {danton?.name || team.dantonName || '-'}
-                    </h4>
+                    </span>
+                    <div className="text-[10px] text-slate-500 font-mono flex items-center justify-between border-t border-slate-100 pt-1">
+                      <span>{danton?.class ? `Kls ${danton.class}` : '-'}</span>
+                      <span>NISN: {danton?.nisn || '-'}</span>
+                    </div>
+                  </div>
+                </div>
 
-                    <div className="space-y-1 text-xs pt-1">
-                      <div className="flex justify-between items-center py-0.5 border-b border-slate-100">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase">TTL:</span>
-                        <span className="font-medium text-slate-800 text-[11px] truncate max-w-[180px]" title={danton?.birthPlace ? `${danton.birthPlace}${danton.birthDate ? `, ${danton.birthDate}` : ''}` : '-'}>
-                          {danton?.birthPlace ? `${danton.birthPlace}${danton.birthDate ? `, ${danton.birthDate}` : ''}` : '-'}
+                {/* 2, 3, 4. Tiga Pendamping Peleton */}
+                {officials.map((o, i) => {
+                  const hasOPhoto = o.photo && typeof o.photo === 'string' && o.photo !== '#' && !o.photo.startsWith('#') && !o.photo.includes('drive.google.com/open?id=');
+                  const isMainOfficial = i === 0 || o.category === 'official';
+                  const defaultRoleTitle = isMainOfficial
+                    ? 'Official (Pelatih / Pembina)'
+                    : `Pendukung ${i} (Medis / Dokum)`;
+                  const displayRole = o.role && o.role !== '-' ? o.role : defaultRoleTitle;
+
+                  return (
+                    <div key={o.id || i} className={`w-[calc(50%-6px)] sm:w-[calc(25%-9px)] lg:w-[calc(14.285%-11px)] min-w-[130px] max-w-[160px] group/off bg-white rounded-2xl border shadow-2xs overflow-hidden flex flex-col justify-between ${
+                      isMainOfficial ? 'border-blue-300 ring-1 ring-blue-100' : 'border-slate-200'
+                    }`}>
+                      <div className="aspect-[3/4] w-full bg-slate-100 relative overflow-hidden flex items-center justify-center border-b border-slate-100">
+                        {hasOPhoto ? (
+                          <img
+                            src={formatImageUrl(o.photo)}
+                            alt={o.name}
+                            referrerPolicy="no-referrer"
+                            className="w-full h-full object-cover object-top transition-transform duration-300 group-hover/off:scale-105"
+                            onError={(e) => {
+                              const fallback = getFallbackImageUrl(o.photo);
+                              if (fallback && e.currentTarget.src !== fallback) {
+                                e.currentTarget.src = fallback;
+                              } else {
+                                e.currentTarget.style.display = 'none';
+                                if (e.currentTarget.nextElementSibling) {
+                                  e.currentTarget.nextElementSibling.style.display = 'flex';
+                                }
+                              }
+                            }}
+                          />
+                        ) : null}
+                        <div
+                          className="w-full h-full flex flex-col items-center justify-center text-[8px] font-bold text-slate-400 bg-slate-100"
+                          style={{ display: hasOPhoto ? 'none' : 'flex' }}
+                        >
+                          <User className="w-5 h-5 opacity-40 mb-0.5" />
+                          <span>{isMainOfficial ? 'OFFICIAL' : `CREW ${i}`}</span>
+                        </div>
+                        <span className={`absolute top-1 right-1 px-1.5 py-0.5 rounded text-[8px] font-bold shadow-xs truncate max-w-[90%] ${
+                          isMainOfficial ? 'bg-blue-600 text-white' : 'bg-slate-700 text-white'
+                        }`} title={displayRole}>
+                          {displayRole}
                         </span>
                       </div>
-                      <div className="flex justify-between items-center py-0.5 border-b border-slate-100">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase">Kelas:</span>
-                        <span className="font-bold text-slate-900">{danton?.class ? `Kelas ${danton.class}` : '-'}</span>
-                      </div>
-                      <div className="flex justify-between items-center py-0.5">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase">NISN:</span>
-                        <span className="font-mono font-bold text-slate-900">{danton?.nisn || '-'}</span>
+
+                      <div className="p-2 text-left space-y-0.5">
+                        <span className="font-bold text-xs text-slate-900 block truncate" title={o.name}>
+                          {o.name || '-'}
+                        </span>
+                        <span className="text-[10px] text-slate-500 font-mono block truncate">
+                          WA: {o.phone || '-'}
+                        </span>
                       </div>
                     </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* 3 Pendamping Peleton (lg:col-span-7) */}
-              <div className="lg:col-span-7 bg-slate-50 p-5 rounded-3xl border border-slate-200 flex flex-col justify-between space-y-3">
-                <div className="flex items-center justify-between border-b border-slate-200 pb-2">
-                  <div className="flex items-center gap-2">
-                    <span className="font-black text-xs text-slate-800 uppercase tracking-wider">
-                      Pendamping Peleton (3 Orang)
-                    </span>
-                    <span className="text-[10px] font-bold text-blue-800 bg-blue-100 px-2 py-0.5 rounded-full">
-                      1 Official + 2 Pendukung
-                    </span>
-                  </div>
-                  <span className="text-[10px] font-bold text-slate-500 bg-white border border-slate-200 px-2 py-0.5 rounded-full">
-                    3 Cocard
-                  </span>
-                </div>
-
-                {officials.length > 0 ? (
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    {officials.map((o, i) => {
-                      const hasOPhoto = o.photo && typeof o.photo === 'string' && o.photo !== '#' && !o.photo.startsWith('#') && !o.photo.includes('drive.google.com/open?id=');
-                      const isMainOfficial = i === 0 || o.category === 'official';
-                      const defaultRoleTitle = isMainOfficial
-                        ? 'Official (Pelatih / Pembina)'
-                        : `Pendukung ${i} (Medis / Dokum)`;
-                      const displayRole = o.role && o.role !== '-' ? o.role : defaultRoleTitle;
-
-                      return (
-                        <div key={o.id || i} className={`group/off bg-white rounded-2xl border shadow-2xs overflow-hidden flex flex-col justify-between ${
-                          isMainOfficial ? 'border-blue-300 ring-1 ring-blue-200' : 'border-slate-200'
-                        }`}>
-                          <div className="aspect-[3/4] w-full bg-slate-100 relative overflow-hidden flex items-center justify-center border-b border-slate-100">
-                            {hasOPhoto ? (
-                              <img
-                                src={formatImageUrl(o.photo)}
-                                alt={o.name}
-                                referrerPolicy="no-referrer"
-                                className="w-full h-full object-cover object-top transition-transform duration-300 group-hover/off:scale-105"
-                                onError={(e) => {
-                                  const fallback = getFallbackImageUrl(o.photo);
-                                  if (fallback && e.currentTarget.src !== fallback) {
-                                    e.currentTarget.src = fallback;
-                                  } else {
-                                    e.currentTarget.style.display = 'none';
-                                    if (e.currentTarget.nextElementSibling) {
-                                      e.currentTarget.nextElementSibling.style.display = 'flex';
-                                    }
-                                  }
-                                }}
-                              />
-                            ) : null}
-                            <div
-                              className="w-full h-full flex flex-col items-center justify-center text-[9px] font-bold text-slate-400 bg-slate-100"
-                              style={{ display: hasOPhoto ? 'none' : 'flex' }}
-                            >
-                              <User className="w-6 h-6 opacity-40 mb-1" />
-                              <span>{isMainOfficial ? 'OFFICIAL' : `CREW ${i}`}</span>
-                            </div>
-                            <span className={`absolute top-1.5 right-1.5 px-2 py-0.5 rounded-md text-[9px] font-bold shadow-xs truncate max-w-[90%] ${
-                              isMainOfficial ? 'bg-blue-600 text-white' : 'bg-slate-700 text-white'
-                            }`} title={displayRole}>
-                              {displayRole}
-                            </span>
-                          </div>
-
-                          <div className="p-2 text-left space-y-0.5">
-                            <span className="font-bold text-xs text-slate-900 block truncate" title={o.name}>
-                              {o.name || '-'}
-                            </span>
-                            <span className="text-[10px] text-slate-500 font-mono block truncate">
-                              WA: {o.phone || '-'}
-                            </span>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                ) : (
-                  <span className="text-xs text-slate-400 italic block py-4 text-center">Belum ada data pendamping</span>
-                )}
+                  );
+                })}
               </div>
             </div>
 
@@ -918,11 +893,11 @@ export default function TeamInspectionPage({ team, inspectionStage = 'registrati
                 </span>
               </div>
               {cadangan.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="flex flex-wrap items-center justify-center gap-3">
                   {cadangan.map((c, i) => {
                     const hasCPhoto = c.photo && typeof c.photo === 'string' && c.photo !== '#' && !c.photo.startsWith('#') && !c.photo.includes('drive.google.com/open?id=');
                     return (
-                      <div key={c.id || i} className="group/cadangan bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden flex flex-col justify-between">
+                      <div key={c.id || i} className="w-[calc(50%-6px)] sm:w-[calc(33.333%-9px)] lg:w-[calc(14.285%-11px)] min-w-[130px] max-w-[160px] group/cadangan bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden flex flex-col justify-between">
                         <div className="aspect-[3/4] w-full bg-slate-100 relative overflow-hidden flex items-center justify-center border-b border-slate-100">
                           {hasCPhoto ? (
                             <img
