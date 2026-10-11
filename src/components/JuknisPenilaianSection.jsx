@@ -74,18 +74,19 @@ export default function JuknisPenilaianSection({ embedded = false }) {
         {/* Section Header */}
         {!embedded && (
           <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/20 border border-amber-400/30 text-amber-300 text-xs font-black uppercase tracking-wider mb-4 shadow-sm">
-              <Award className="w-3.5 h-3.5" />
-              <span>Dokumen Regulasi Mandiri Resmi</span>
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/[0.06] border border-white/10 text-slate-300 text-xs font-semibold uppercase tracking-wider mb-4">
+              <Award className="w-3.5 h-3.5 text-amber-400" />
+              <span>Regulasi Penjurian Resmi</span>
             </div>
-            <h2 className="text-4xl md:text-5xl font-black text-white uppercase italic tracking-tighter mb-4 leading-tight py-1">
+            <h2 className="text-3xl md:text-5xl font-black text-white uppercase tracking-tight mb-4 leading-tight">
               Petunjuk Teknis{' '}
-              <span className="inline-block pr-3 sm:pr-4 pb-1 text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">
+              <span className="text-amber-400">
                 Penilaian & Kejuaraan
               </span>
             </h2>
-            <p className="text-slate-300 mt-3 max-w-2xl mx-auto text-base sm:text-lg font-medium leading-relaxed">
-              Standar baku evaluasi dewan juri rasio 1:1, rubrik Komandan Peleton (4 aspek), rumus akumulasi Juara Umum & 7 tie-breaker, transparansi rolling release akun Gmail, serta tabel sanksi penalti pengurangan nilai.
+            <div className="w-16 h-1 bg-red-700 mx-auto rounded-full mb-4"></div>
+            <p className="text-slate-300 max-w-2xl mx-auto text-base sm:text-lg font-normal leading-relaxed">
+              Standar baku evaluasi dewan juri rasio 1:1, rubrik Komandan Peleton, formula akumulasi Juara Umum dan 7 kriteria tie-breaker, transparansi lembar nilai, serta tabel sanksi penalti.
             </p>
           </div>
         )}

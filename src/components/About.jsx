@@ -1,12 +1,14 @@
 import React from 'react';
 import {
-  Scroll,
-  Shield,
+  Compass,
+  Sparkles,
   HeartHandshake,
-  Activity,
-  Trophy,
-  BrainCircuit,
-  Network
+  ShieldCheck,
+  Shield,
+  Target,
+  CheckCircle2,
+  Users,
+  Award
 } from 'lucide-react';
 import logoLbb from '../assets/logo-tonti.png';
 
@@ -15,137 +17,146 @@ const ABOUT_BG_PHOTO = {
   fallback: '/section-tentang.jpg'
 };
 
+const VALUES = [
+  { label: 'Kedisiplinan', icon: Shield },
+  { label: 'Kepemimpinan', icon: Target },
+  { label: 'Tanggung Jawab', icon: CheckCircle2 },
+  { label: 'Kerja Sama', icon: Users },
+  { label: 'Sportivitas', icon: Award },
+];
+
 export default function About() {
   return (
     <section 
       id="about" 
-      className="pt-24 sm:pt-32 pb-[420px] sm:pb-[560px] md:pb-[660px] lg:pb-[780px] bg-slate-950 relative overflow-hidden font-sans isolate text-white"
+      className="pt-24 sm:pt-32 pb-[380px] sm:pb-[500px] md:pb-[620px] lg:pb-[750px] bg-slate-950 relative overflow-hidden font-sans isolate text-white"
     >
-      {/* 1. Background: 1 Foto Utuh Proporsional (Tanpa Zoom/Crop, Bawah Jelas) */}
+      {/* Background Photo Dokumentasi Bawah */}
       <div className="absolute inset-x-0 bottom-0 z-0 pointer-events-none overflow-hidden select-none">
         <picture>
           <source srcSet={ABOUT_BG_PHOTO.webp} type="image/webp" />
           <img
             src={ABOUT_BG_PHOTO.fallback}
-            alt="Dokumentasi Peleton Inti Tonti Mu'allimin"
-            className="w-full h-auto max-w-none block filter brightness-100 contrast-105"
+            alt="Dokumentasi Peleton LBB Mu'allimin"
+            className="w-full h-auto max-w-none block filter brightness-95 contrast-105"
             loading="lazy"
           />
         </picture>
 
-        {/* Gradient Overlay: Bawah terbuka transparan, semakin ke atas memudar halus ke latar gelap section */}
-        <div className="absolute inset-0 bg-gradient-to-t from-transparent from-20% via-slate-950/60 via-55% to-slate-950 to-85%" />
+        {/* Gradient Overlay Transparan ke Gelap */}
+        <div className="absolute inset-0 bg-gradient-to-t from-transparent from-20% via-slate-950/70 via-55% to-slate-950 to-85%" />
         <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-slate-950 to-transparent" />
       </div>
 
-      <div className="container mx-auto px-6 relative z-10">
+      <div className="container mx-auto px-4 sm:px-6 relative z-10">
         
-        {/* Section Header */}
+        {/* ========================================================
+            HEADER: JUDUL & PARAGRAF 1
+            ======================================================== */}
         <div className="max-w-4xl mx-auto text-center mb-12 sm:mb-16">
-          <div className="inline-flex items-center justify-center gap-2 px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full bg-red-900/50 border border-red-500/30 text-red-200 text-[10px] sm:text-xs font-bold uppercase tracking-wider sm:tracking-widest mb-5 max-w-full text-center leading-normal">
-            <Scroll className="w-3.5 h-3.5 shrink-0 text-amber-400" />
-            <span className="truncate sm:whitespace-normal">Dasar Pelaksanaan: QS. As-Saff Ayat 4</span>
+          <div className="inline-flex items-center justify-center gap-2 px-3.5 py-1 rounded-full bg-white/[0.06] border border-white/10 text-slate-300 text-xs font-semibold uppercase tracking-wider mb-4">
+            <Compass className="w-3.5 h-3.5 text-amber-400" />
+            <span>Profil Kegiatan</span>
           </div>
 
-          <h2 className="text-xl sm:text-3xl md:text-5xl font-black text-white uppercase italic tracking-tight mb-4 leading-snug py-1">
-            <span className="block">
-              Membangun{' '}
-              <span className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-amber-400 to-yellow-400 pr-2 sm:pr-3">
-                Generasi
-              </span>
-            </span>
-            <span className="block mt-0.5 sm:mt-1">
-              Unggul Berkarakter{' '}
-              <span className="inline-block text-amber-400 font-extrabold pr-1 sm:pr-2">Ksatria</span>
-            </span>
+          <h2 className="text-3xl sm:text-5xl font-black text-white uppercase tracking-tight mb-4 leading-tight">
+            <span>Tentang </span>
+            <span className="text-amber-400">LBB MU’ALLIMIN 2027</span>
           </h2>
 
-          <p className="text-sm sm:text-base text-slate-300 leading-relaxed font-medium max-w-3xl mx-auto">
-            <strong className="text-white">LBB Mu'allimin 2027</strong> hadir sebagai manifestasi peran historis Madrasah Mu'allimin sejak 1918. Mengusung tema resmi <em className="text-amber-300 font-bold">"SEMANGAT SEBAGAI KSATRIA, BERJUANG DENGAN GEMBIRA"</em>, kawah candradimuka penempa Profil Pelajar Pancasila dan Kader Bangsa berlandaskan nilai CADRE (Creative, Active, Discipline, Religious, Entrepreneur).
+          <div className="w-16 h-1 bg-red-700 mx-auto rounded-full mb-6"></div>
+
+          {/* Paragraf 1 Teks Asli User */}
+          <p className="text-base sm:text-lg text-slate-300 leading-relaxed font-normal max-w-3xl mx-auto">
+            Lomba Baris-Berbaris (LBB) Mu’allimin 2027 merupakan ajang kompetisi baris-berbaris antarpelajar tingkat <strong className="text-white font-semibold">SD/MI dan SMP/MTs sederajat se-Daerah Istimewa Yogyakarta</strong> yang diselenggarakan oleh Madrasah Mu’allimin Muhammadiyah Yogyakarta.
           </p>
         </div>
 
-        {/* Showcase Tema Resmi 2027 & Target Peserta Se-DIY */}
-        <div className="max-w-6xl mx-auto space-y-8 lg:space-y-10">
-          
-          {/* ========================================================
-              1. SHOWCASE TEMA RESMI 2027 (PREMIUM GLASS HERO BANNER)
-              ======================================================== */}
-          <div className="relative rounded-3xl bg-gradient-to-b from-slate-900/90 via-slate-900/80 to-slate-950/95 border border-white/10 shadow-2xl backdrop-blur-xl p-6 sm:p-8 lg:p-10 overflow-hidden">
-            {/* Ambient Background Glows */}
-            <div className="absolute -top-24 -left-24 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
-            <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-red-600/10 rounded-full blur-3xl pointer-events-none" />
-            <div className="absolute inset-0 bg-carbon-pattern opacity-10 pointer-events-none" />
-            <Shield className="absolute -right-10 -bottom-10 text-white/[0.03] w-64 h-64 pointer-events-none select-none" />
+        {/* ========================================================
+            KONTEN UTAMA
+            ======================================================== */}
+        <div className="max-w-5xl mx-auto space-y-6">
 
-            <div className="relative z-10">
-              {/* Header Bar: Badge, Master Theme Title, & Official Logo */}
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-white/10">
-                <div className="space-y-2.5">
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/25 text-amber-300 text-[11px] font-bold uppercase tracking-widest">
-                    <Shield className="w-3.5 h-3.5 text-amber-400" />
-                    <span>Tema Resmi LBB Mu'allimin 2027</span>
-                  </div>
-                  <h3 className="text-xl sm:text-2xl md:text-3xl font-black uppercase italic tracking-tight leading-tight">
-                    <span className="block text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-slate-300">
-                      SEMANGAT SEBAGAI KSATRIA,
-                    </span>
-                    <span className="block text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500">
-                      BERJUANG DENGAN GEMBIRA
-                    </span>
-                  </h3>
-                  <p className="text-xs sm:text-sm text-slate-300 max-w-2xl font-medium leading-relaxed">
-                    Jiwa dan pedoman kehormatan seluruh kontingen dalam menumbuhkan karakter tangguh, kedisiplinan ksatria, dan sportivitas barisan.
-                  </p>
+          {/* Banner Tema Resmi: Paragraf 2 */}
+          <div className="relative rounded-2xl bg-slate-900/90 border border-white/[0.08] shadow-lg p-6 sm:p-8 lg:p-10 overflow-hidden">
+            <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
+              
+              <div className="space-y-4 max-w-2xl">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-white/[0.06] border border-white/10 text-amber-300 text-xs font-semibold uppercase tracking-wider">
+                  <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Tema Resmi</span>
                 </div>
+                
+                <h3 className="text-2xl sm:text-3xl font-extrabold uppercase tracking-tight text-white leading-tight">
+                  “Semangat sebagai Ksatria, <br />
+                  <span className="text-amber-400">Berjuang dengan Gembira”</span>
+                </h3>
 
-                {/* Logo LBB 2027 (Tanpa Wadah - Ukuran Lebih Besar) */}
-                <div className="shrink-0 flex items-center justify-center self-start md:self-auto group">
-                  <img
-                    src={logoLbb}
-                    alt="Logo LBB Mu'allimin 2027"
-                    className="w-20 h-20 sm:w-28 sm:h-28 md:w-36 md:h-36 object-contain drop-shadow-[0_12px_28px_rgba(0,0,0,0.65)] filter brightness-105 group-hover:scale-105 transition-transform duration-300"
-                  />
+                {/* Paragraf 2 Asli */}
+                <p className="text-sm sm:text-base text-slate-300 leading-relaxed font-normal">
+                  Tema ini menjadi landasan kegiatan bagi para peleton pelajar untuk melatih keterampilan baris-berbaris, kedisiplinan, kepemimpinan regu, serta kerja sama tim di lapangan.
+                </p>
+
+                {/* Tag Nilai dari Paragraf 2 */}
+                <div className="pt-2 flex flex-wrap gap-2">
+                  {VALUES.map((item, idx) => {
+                    const Icon = item.icon;
+                    return (
+                      <span
+                        key={idx}
+                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white/[0.04] border border-white/[0.08] text-xs font-medium text-slate-200"
+                      >
+                        <Icon className="w-3.5 h-3.5 text-amber-400/90" />
+                        <span>{item.label}</span>
+                      </span>
+                    );
+                  })}
                 </div>
               </div>
 
-              {/* 2 Philosophy Pillars */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 pt-6">
-                {/* Pilar 1 */}
-                <div className="group rounded-2xl bg-white/[0.03] hover:bg-white/[0.06] border border-amber-500/20 hover:border-amber-500/40 p-4 sm:p-5 transition-all duration-300 shadow-sm">
-                  <div className="flex items-start gap-4">
-                    <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-amber-500/20 to-amber-600/10 border border-amber-500/30 text-amber-400 flex items-center justify-center shrink-0 shadow-md group-hover:scale-105 transition-transform">
-                      <HeartHandshake className="w-5 h-5" />
-                    </div>
-                    <div className="space-y-1">
-                      <h4 className="font-bold text-sm sm:text-base text-white">Semangat Sebagai Ksatria</h4>
-                      <p className="text-xs text-slate-300 leading-relaxed font-normal">
-                        Menempa karakter kepemimpinan, integritas, kedisiplinan murni, keteguhan hati, dan mental pantang menyerah di setiap langkah barisan.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Pilar 2 */}
-                <div className="group rounded-2xl bg-white/[0.03] hover:bg-white/[0.06] border border-rose-500/20 hover:border-rose-500/40 p-4 sm:p-5 transition-all duration-300 shadow-sm">
-                  <div className="flex items-start gap-4">
-                    <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-rose-500/20 to-rose-600/10 border border-rose-500/30 text-rose-400 flex items-center justify-center shrink-0 shadow-md group-hover:scale-105 transition-transform">
-                      <Activity className="w-5 h-5" />
-                    </div>
-                    <div className="space-y-1">
-                      <h4 className="font-bold text-sm sm:text-base text-white">Berjuang Dengan Gembira</h4>
-                      <p className="text-xs text-slate-300 leading-relaxed font-normal">
-                        Daya juang barisan PBB yang dijalani penuh sukacita, optimisme, sportivitas persaudaraan, dan energi positif untuk meraih prestasi tertinggi.
-                      </p>
-                    </div>
-                  </div>
-                </div>
+              {/* Logo Resmi LBB 2027 */}
+              <div className="shrink-0 flex items-center justify-center self-center md:self-auto">
+                <img
+                  src={logoLbb}
+                  alt="Logo LBB Mu'allimin 2027"
+                  className="w-32 h-32 sm:w-40 sm:h-40 md:w-44 md:h-44 object-contain drop-shadow-md"
+                />
               </div>
-
-
 
             </div>
           </div>
+
+          {/* 2 Kartu: Paragraf 3 & Paragraf 4 */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
+            
+            {/* Kartu 1 */}
+            <div className="rounded-2xl bg-slate-900/75 border border-white/[0.08] p-6 sm:p-7 shadow-md flex flex-col justify-start space-y-3.5">
+              <div className="w-10 h-10 rounded-xl bg-white/[0.06] border border-white/10 text-amber-400 flex items-center justify-center">
+                <HeartHandshake className="w-5 h-5" />
+              </div>
+              <h4 className="text-lg font-bold text-white tracking-tight">
+                Silaturahmi & Prestasi Pelajar
+              </h4>
+              <p className="text-sm text-slate-300 leading-relaxed font-normal">
+                Menjadi sarana mempererat silaturahmi antarpangkalan sekolah, mengukur hasil latihan peleton, serta menumbuhkan jiwa sportivitas kompetisi yang sehat.
+              </p>
+            </div>
+
+            {/* Kartu 2 */}
+            <div className="rounded-2xl bg-slate-900/75 border border-white/[0.08] p-6 sm:p-7 shadow-md flex flex-col justify-start space-y-3.5">
+              <div className="w-10 h-10 rounded-xl bg-white/[0.06] border border-white/10 text-red-400 flex items-center justify-center">
+                <ShieldCheck className="w-5 h-5" />
+              </div>
+              <h4 className="text-lg font-bold text-white tracking-tight">
+                Standar Penilaian Edukatif
+              </h4>
+              <p className="text-sm text-slate-300 leading-relaxed font-normal">
+                Disusun dengan juknis yang jelas dan transparan oleh tim juri kompeten guna membina integritas, tata tertib peleton, serta ketepatan aba-aba danton.
+              </p>
+            </div>
+
+          </div>
+
         </div>
 
       </div>

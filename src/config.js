@@ -62,9 +62,9 @@ export const HERO = {
 
     /** Teks deskripsi singkat di bawah judul (HTML) */
     SUBTITLE:
-        'Ajang pembuktian <span class="text-white font-bold">Disiplin</span>, '
-        + '<span class="text-white font-bold">Karakter</span>, dan '
-        + '<span class="text-white font-bold">Solidaritas</span> pelajar SD/MI & SMP/MTs se-Daerah Istimewa Yogyakarta.',
+        'Kompetisi baris-berbaris tingkat <span class="text-white font-semibold">SD/MI</span> dan '
+        + '<span class="text-white font-semibold">SMP/MTs sederajat</span> se-Daerah Istimewa Yogyakarta. '
+        + 'Diselenggarakan oleh Madrasah Mu\u2019allimin Muhammadiyah Yogyakarta.',
 };
 
 // ---------------------------------------------------------------------------

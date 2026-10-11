@@ -69,28 +69,24 @@ export default function TataTertib() {
 
       <div className="container mx-auto px-6 relative z-10">
         <div className="mb-12 text-center max-w-3xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-slate-100 border border-slate-200 text-slate-700 text-[10px] font-bold uppercase tracking-widest mb-4 rounded-full shadow-xs">
-            <Scale className="w-3.5 h-3.5 text-slate-700" /> Dokumen Resmi Non-Teknis & Etika
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 bg-slate-100 border border-slate-200/80 text-slate-600 text-xs font-semibold uppercase tracking-wider mb-4 rounded-full">
+            <Scale className="w-3.5 h-3.5 text-slate-600" />
+            <span>Dokumen Etika & Regulasi</span>
           </div>
-          <h2 className="text-4xl md:text-5xl font-black text-slate-900 uppercase italic tracking-tighter mb-4 leading-tight py-1">
-            Tata Tertib{' '}
-            <span className="inline-block pr-3 sm:pr-4 pb-1 text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-800">
-              Peserta
-            </span>
+          <h2 className="text-3xl md:text-5xl font-black text-slate-900 uppercase tracking-tight mb-4 leading-tight">
+            Tata Tertib <span className="text-red-700">Peserta</span>
           </h2>
-          <p className="text-slate-500 font-mono text-xs sm:text-sm uppercase tracking-wide">
-            15 PASAL RESMI LOMBA BARIS – BERBARIS MU'ALLIMIN TAHUN 2027
-          </p>
-          <p className="text-slate-500 mt-3 text-sm leading-relaxed max-w-2xl mx-auto font-medium">
-            Pedoman kedisiplinan, zonasi pesantren, pemanfaatan basecamp, check-in KTP, larangan modifikasi sol sepatu, dan sanksi penalti resmi.
+          <div className="w-16 h-1 bg-red-700 mx-auto rounded-full mb-4"></div>
+          <p className="text-slate-600 text-base font-normal leading-relaxed max-w-2xl mx-auto">
+            Pedoman kedisiplinan 15 pasal resmi: zonasi kampus, pemanfaatan basecamp kontingen, check-in identitas, kepatuhan seragam, dan sanksi penalti.
           </p>
         </div>
 
         <div className="max-w-4xl mx-auto flex flex-col gap-6">
           {/* Smart Search Bar */}
           <div className="relative group">
-            <div className="relative flex items-center bg-slate-50 border-2 border-slate-200 focus-within:border-red-600 focus-within:bg-white focus-within:shadow-xl rounded-2xl transition-all duration-300">
-              <div className="pl-4 pr-2 text-slate-400 group-focus-within:text-red-600 transition-colors">
+            <div className="relative flex items-center bg-slate-50 border border-slate-300 focus-within:border-slate-500 focus-within:bg-white focus-within:shadow-sm rounded-xl transition-all">
+              <div className="pl-4 pr-2 text-slate-400 group-focus-within:text-slate-700 transition-colors">
                 <Search className="w-5 h-5" />
               </div>
               <input
@@ -98,13 +94,13 @@ export default function TataTertib() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Cari pasal atau kata kunci tata tertib (contoh: seragam, basecamp, ktp, sampah, suporter)..."
-                className="w-full py-4 pr-12 text-slate-800 placeholder-slate-400 font-medium text-sm sm:text-base bg-transparent focus:outline-none"
+                className="w-full py-3.5 pr-12 text-slate-800 placeholder-slate-400 font-normal text-sm bg-transparent focus:outline-none"
               />
               {searchQuery && (
                 <button
                   type="button"
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-3.5 p-1.5 rounded-full hover:bg-slate-200 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
+                  className="absolute right-3.5 p-1 rounded-md hover:bg-slate-200 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
                   title="Hapus pencarian"
                 >
                   <X className="w-4 h-4" />
@@ -115,9 +111,9 @@ export default function TataTertib() {
             {isSearching && (
               <div className="mt-3 flex items-center justify-between text-xs text-slate-500 font-medium px-1">
                 <span>
-                  Menampilkan hasil untuk: <strong className="text-red-700 font-bold">"{searchQuery}"</strong>
+                  Menampilkan hasil untuk: <strong className="text-slate-900 font-semibold">"{searchQuery}"</strong>
                 </span>
-                <span className="bg-red-100/80 text-red-800 px-2.5 py-0.5 rounded-full font-bold">
+                <span className="bg-slate-100 text-slate-700 px-2.5 py-0.5 rounded-full font-semibold border border-slate-200">
                   {filteredArticles.length} Pasal Ditemukan
                 </span>
               </div>
@@ -126,7 +122,7 @@ export default function TataTertib() {
 
           {/* Quick Toggle Accordion Controls */}
           <div className="flex items-center justify-between gap-3 text-xs px-1">
-            <span className="text-slate-500 font-semibold flex items-center gap-1.5">
+            <span className="text-slate-500 font-medium flex items-center gap-1.5">
               <BookOpen className="w-3.5 h-3.5 text-slate-400" />
               15 Pasal Regulasi Non-Teknis & Etika
             </span>
@@ -137,7 +133,7 @@ export default function TataTertib() {
                   const allOpen = articles.reduce((acc, a) => ({ ...acc, [a.pasal]: true }), {});
                   setOpenAccordions(allOpen);
                 }}
-                className="px-3.5 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 text-slate-700 font-bold transition-all shadow-xs cursor-pointer text-xs"
+                className="px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 text-slate-700 font-semibold transition-all shadow-xs cursor-pointer text-xs"
               >
                 Buka Semua
               </button>
@@ -147,7 +143,7 @@ export default function TataTertib() {
                   const allClosed = articles.reduce((acc, a) => ({ ...acc, [a.pasal]: false }), {});
                   setOpenAccordions(allClosed);
                 }}
-                className="px-3.5 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 text-slate-700 font-bold transition-all shadow-xs cursor-pointer text-xs"
+                className="px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 text-slate-700 font-semibold transition-all shadow-xs cursor-pointer text-xs"
               >
                 Tutup Semua
               </button>
@@ -155,13 +151,13 @@ export default function TataTertib() {
           </div>
 
           {/* List of Accordions */}
-          <div className="space-y-4">
+          <div className="space-y-3.5">
             {filteredArticles.map((item) => {
               const isOpen = isArticleOpen(item.pasal);
               return (
                 <div
                   key={item.pasal}
-                  className="group border border-slate-200 rounded-2xl overflow-hidden bg-white hover:border-red-500/40 hover:shadow-md transition-all duration-300"
+                  className="group border border-slate-200 rounded-xl overflow-hidden bg-white hover:border-slate-300 transition-all"
                 >
                   <button
                     type="button"

@@ -108,24 +108,21 @@ export default function Registration() {
             SECTION HEADER
             ======================================================== */}
         <div className="mb-14 md:mb-16 text-center max-w-3xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-red-950/60 border border-red-500/30 text-red-300 text-xs font-bold uppercase tracking-widest mb-4 shadow-sm">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
-            </span>
-            <span>Juknis Resmi 2027</span>
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/[0.06] border border-white/10 text-slate-300 text-xs font-semibold uppercase tracking-wider mb-4">
+            <span className="w-2 h-2 rounded-full bg-amber-400"></span>
+            <span>Juknis & Administrasi 2027</span>
           </div>
 
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black uppercase italic tracking-tight leading-tight py-1 text-white overflow-visible">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight leading-tight py-1 text-white">
             Informasi{' '}
-            <span className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-amber-400 to-yellow-400 pr-2.5">
+            <span className="inline-block text-amber-400">
               Pendaftaran
             </span>
           </h2>
-          <div className="w-20 h-1.5 bg-red-600 mx-auto mt-4 rounded-full skew-x-12 shadow-[0_0_15px_rgba(220,38,38,0.5)]"></div>
+          <div className="w-16 h-1 bg-red-700 mx-auto mt-4 rounded-full"></div>
 
-          <p className="text-slate-400 text-sm sm:text-base mt-5 leading-relaxed font-medium max-w-2xl mx-auto">
-            Pedoman resmi tata cara pendaftaran, batas kuota peserta, dan ketentuan administrasi LBB Mu’allimin 2027.
+          <p className="text-slate-300 text-sm sm:text-base mt-4 leading-relaxed font-normal max-w-2xl mx-auto">
+            Prosedur resmi pengisian formulir, alokasi kuota peleton, rincian biaya, serta verifikasi berkas administrasi peserta.
           </p>
         </div>
 
@@ -248,72 +245,72 @@ export default function Registration() {
               {/* Steps */}
               <div className="space-y-3">
                 {/* Step 1 */}
-                <div className="p-3 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-amber-500/30 transition-colors">
+                <div className="p-3 rounded-xl bg-white/[0.04] border border-white/[0.08] transition-colors">
                   <div className="flex items-center justify-between gap-2 mb-1">
-                    <span className="text-[10px] font-bold text-amber-400 uppercase tracking-wider">
+                    <span className="text-[10px] font-semibold text-slate-300 uppercase tracking-wider">
                       {regRange}
                     </span>
-                    <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300">
+                    <span className="text-[9px] font-bold uppercase px-2 py-0.5 rounded-md bg-white/[0.08] text-amber-300">
                       Tahap 1
                     </span>
                   </div>
-                  <h4 className="text-xs sm:text-sm font-black text-white">Pendaftaran Daring</h4>
+                  <h4 className="text-xs sm:text-sm font-bold text-white">Pendaftaran Daring</h4>
                   <p className="text-[11px] text-slate-400 mt-0.5 leading-relaxed">Unggah berkas via portal resmi s.d. 23.59 WIB.</p>
                 </div>
 
                 {/* Step 2 */}
-                <div className="p-3 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-blue-500/30 transition-colors">
+                <div className="p-3 rounded-xl bg-white/[0.04] border border-white/[0.08] transition-colors">
                   <div className="flex items-center justify-between gap-2 mb-1">
-                    <span className="text-[10px] font-bold text-blue-400 uppercase tracking-wider">
+                    <span className="text-[10px] font-semibold text-slate-300 uppercase tracking-wider">
                       {verifRange}
                     </span>
-                    <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-blue-500/15 text-blue-300">
+                    <span className="text-[9px] font-bold uppercase px-2 py-0.5 rounded-md bg-white/[0.08] text-slate-300">
                       Tahap 2
                     </span>
                   </div>
-                  <h4 className="text-xs sm:text-sm font-black text-white">Verifikasi Berkas</h4>
+                  <h4 className="text-xs sm:text-sm font-bold text-white">Verifikasi Berkas</h4>
                   <p className="text-[11px] text-slate-400 mt-0.5 leading-relaxed">Pemeriksaan & kurasi kelengkapan oleh panitia.</p>
                 </div>
 
                 {/* Step 3 */}
-                <div className="p-3 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-purple-500/30 transition-colors">
+                <div className="p-3 rounded-xl bg-white/[0.04] border border-white/[0.08] transition-colors">
                   <div className="flex items-center justify-between gap-2 mb-1">
-                    <span className="text-[10px] font-bold text-purple-400 uppercase tracking-wider">
+                    <span className="text-[10px] font-semibold text-slate-300 uppercase tracking-wider">
                       {tmDate}
                     </span>
-                    <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-purple-500/15 text-purple-300">
+                    <span className="text-[9px] font-bold uppercase px-2 py-0.5 rounded-md bg-white/[0.08] text-slate-300">
                       Tahap 3
                     </span>
                   </div>
-                  <h4 className="text-xs sm:text-sm font-black text-white">Technical Meeting</h4>
+                  <h4 className="text-xs sm:text-sm font-bold text-white">Technical Meeting</h4>
                   <p className="text-[11px] text-slate-400 mt-0.5 leading-relaxed">Pengundian nomor urut & verifikasi fisik • {tmTime}</p>
                 </div>
 
                 {/* Step 4 */}
-                <div className="p-3 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-emerald-500/30 transition-colors">
+                <div className="p-3 rounded-xl bg-white/[0.04] border border-white/[0.08] transition-colors">
                   <div className="flex items-center justify-between gap-2 mb-1">
-                    <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider">
+                    <span className="text-[10px] font-semibold text-slate-300 uppercase tracking-wider">
                       {trialDate}
                     </span>
-                    <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300">
+                    <span className="text-[9px] font-bold uppercase px-2 py-0.5 rounded-md bg-white/[0.08] text-slate-300">
                       Tahap 4
                     </span>
                   </div>
-                  <h4 className="text-xs sm:text-sm font-black text-white">Uji Coba Lapangan</h4>
+                  <h4 className="text-xs sm:text-sm font-bold text-white">Uji Coba Lapangan</h4>
                   <p className="text-[11px] text-slate-400 mt-0.5 leading-relaxed">Orientasi pos perlombaan peserta • {trialTime}</p>
                 </div>
 
                 {/* Step 5 */}
-                <div className="p-3 rounded-2xl bg-red-950/40 border border-red-500/30 transition-colors">
+                <div className="p-3 rounded-xl bg-white/[0.06] border border-white/10 transition-colors">
                   <div className="flex items-center justify-between gap-2 mb-1">
-                    <span className="text-[10px] font-bold text-red-400 uppercase tracking-wider">
+                    <span className="text-[10px] font-bold text-amber-400 uppercase tracking-wider">
                       {compDate}
                     </span>
-                    <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-red-600 text-white animate-pulse">
+                    <span className="text-[9px] font-bold uppercase px-2 py-0.5 rounded-md bg-red-800 text-white">
                       Hari H
                     </span>
                   </div>
-                  <h4 className="text-xs sm:text-sm font-black text-white">Daftar Ulang & Pelaksanaan Lomba</h4>
+                  <h4 className="text-xs sm:text-sm font-bold text-white">Daftar Ulang & Pelaksanaan Lomba</h4>
                   <p className="text-[11px] text-slate-300 mt-0.5 leading-relaxed">Pembukaan & kompetisi • {compTimeStart}</p>
                 </div>
               </div>
@@ -351,41 +348,23 @@ export default function Registration() {
                   </span>
                   <div className="grid grid-cols-2 gap-2.5">
                     {/* SD / MI Card */}
-                    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-red-950/70 via-red-900/40 to-slate-950/90 border-2 border-red-500/40 p-3.5 shadow-lg group/sd hover:border-red-400 transition-all">
-                      <div className="flex items-center gap-2.5 mb-1.5">
-                        <div className="w-8 h-8 rounded-xl bg-red-600/30 border border-red-500/40 flex items-center justify-center text-red-400 shrink-0 shadow-sm">
-                          <School className="w-4 h-4" />
-                        </div>
-                        <div className="min-w-0">
-                          <span className="text-[9px] font-black uppercase tracking-wider text-red-400 block leading-tight">
-                            Tingkat Dasar
-                          </span>
-                          <h4 className="text-sm font-black text-white leading-tight">
-                            SD / MI
-                          </h4>
-                        </div>
+                    <div className="rounded-xl bg-white/[0.04] border border-white/[0.08] p-3 text-left">
+                      <div className="flex items-center gap-2 mb-1">
+                        <School className="w-4 h-4 text-red-400 shrink-0" />
+                        <span className="text-xs font-bold text-white">SD / MI</span>
                       </div>
-                      <p className="text-[11px] font-semibold text-red-200">
+                      <p className="text-[11px] text-slate-400">
                         Sederajat Se-DIY
                       </p>
                     </div>
 
                     {/* SMP / MTs Card */}
-                    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-950/70 via-blue-900/40 to-slate-950/90 border-2 border-blue-500/40 p-3.5 shadow-lg group/smp hover:border-blue-400 transition-all">
-                      <div className="flex items-center gap-2.5 mb-1.5">
-                        <div className="w-8 h-8 rounded-xl bg-blue-600/30 border border-blue-500/40 flex items-center justify-center text-blue-400 shrink-0 shadow-sm">
-                          <GraduationCap className="w-4 h-4" />
-                        </div>
-                        <div className="min-w-0">
-                          <span className="text-[9px] font-black uppercase tracking-wider text-blue-400 block leading-tight">
-                            Tingkat Menengah
-                          </span>
-                          <h4 className="text-sm font-black text-white leading-tight">
-                            SMP / MTs
-                          </h4>
-                        </div>
+                    <div className="rounded-xl bg-white/[0.04] border border-white/[0.08] p-3 text-left">
+                      <div className="flex items-center gap-2 mb-1">
+                        <GraduationCap className="w-4 h-4 text-blue-400 shrink-0" />
+                        <span className="text-xs font-bold text-white">SMP / MTs</span>
                       </div>
-                      <p className="text-[11px] font-semibold text-blue-200">
+                      <p className="text-[11px] text-slate-400">
                         Sederajat Se-DIY
                       </p>
                     </div>
@@ -456,24 +435,24 @@ export default function Registration() {
           </div>
 
           {/* Card 3: Biaya Pendaftaran & Rekening */}
-          <div className="group rounded-3xl bg-gradient-to-b from-slate-900/90 via-slate-900/80 to-slate-950/95 border-2 border-amber-500/40 hover:border-amber-500/70 p-6 sm:p-7 shadow-2xl backdrop-blur-xl flex flex-col justify-between transition-all duration-300 relative text-left">
+          <div className="group rounded-2xl bg-slate-900/90 border border-white/[0.08] hover:border-white/15 p-6 sm:p-7 shadow-lg flex flex-col justify-between transition-all duration-200 relative text-left">
             <div>
               {/* Header */}
               <div className="flex items-start justify-between gap-2.5 mb-6 pb-4 border-b border-white/10">
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-11 h-11 rounded-2xl bg-amber-500/15 border border-amber-500/30 text-amber-400 flex items-center justify-center shrink-0 shadow-md group-hover:scale-105 transition-transform">
+                  <div className="w-10 h-10 rounded-xl bg-white/[0.06] border border-white/10 text-amber-400 flex items-center justify-center shrink-0">
                     <Wallet className="w-5 h-5" />
                   </div>
                   <div className="min-w-0">
-                    <span className="text-[10px] font-bold text-amber-400 uppercase tracking-widest block truncate">
-                      Investasi Tim
+                    <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block truncate">
+                      Biaya & Pembayaran
                     </span>
-                    <h3 className="font-black text-lg text-white uppercase italic tracking-tight">
+                    <h3 className="font-bold text-lg text-white uppercase tracking-tight">
                       Biaya Pendaftaran
                     </h3>
                   </div>
                 </div>
-                <span className="text-[10px] font-black uppercase tracking-wider bg-amber-500/20 text-amber-300 px-2.5 py-1 rounded-lg border border-amber-500/40 shrink-0 whitespace-nowrap">
+                <span className="text-[10px] font-bold uppercase tracking-wider bg-white/[0.06] text-amber-300 px-2.5 py-1 rounded-md border border-white/10 shrink-0 whitespace-nowrap">
                   Non-Refundable
                 </span>
               </div>
@@ -601,17 +580,15 @@ export default function Registration() {
         {/* ========================================================
             PROSEDUR PENDAFTARAN (5 TAHAPAN PRAKTIS)
             ======================================================== */}
-        <div className="rounded-3xl bg-gradient-to-b from-slate-900/90 via-slate-900/80 to-slate-950/95 border border-white/10 p-6 sm:p-10 shadow-2xl backdrop-blur-xl relative overflow-hidden mb-16 lg:mb-20">
-          <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-red-600 via-amber-400 to-red-600"></div>
-
+        <div className="rounded-2xl bg-slate-900/90 border border-white/[0.08] p-6 sm:p-10 shadow-lg relative overflow-hidden mb-16 lg:mb-20">
           <div className="text-center max-w-2xl mx-auto mb-10">
-            <span className="text-amber-400 font-bold uppercase tracking-widest text-[11px] block mb-2">
+            <span className="text-amber-400 font-semibold uppercase tracking-wider text-xs block mb-2">
               Alur Pendaftaran Peleton
             </span>
-            <h3 className="text-2xl sm:text-3xl font-black uppercase italic tracking-tight text-white overflow-visible">
-              Prosedur <span className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-amber-400 pr-2.5">Pendaftaran</span>
+            <h3 className="text-2xl sm:text-3xl font-extrabold uppercase tracking-tight text-white">
+              Prosedur <span className="text-amber-400">Pendaftaran</span>
             </h3>
-            <p className="text-xs sm:text-sm text-slate-400 mt-2 leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-300 mt-2 leading-relaxed font-normal">
               Ikuti 5 tahapan praktis berikut untuk mendaftarkan peleton sekolah Anda hingga status terverifikasi resmi.
             </p>
           </div>

@@ -134,10 +134,10 @@ export default function Footer() {
                   href={SOCIAL.INSTAGRAM_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-gradient-to-r hover:from-purple-600 hover:to-pink-600 border border-slate-800 hover:border-transparent flex items-center gap-2 text-slate-300 hover:text-white transition-all text-xs font-bold group shadow-sm"
+                  className="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 flex items-center gap-2 text-slate-300 hover:text-white transition-all text-xs font-semibold group shadow-sm"
                   aria-label="Instagram Resmi LBB"
                 >
-                  <Instagram className="w-4 h-4 text-pink-400 group-hover:text-white transition-colors" />
+                  <Instagram className="w-4 h-4 text-slate-400 group-hover:text-white transition-colors" />
                   <span>Instagram</span>
                 </a>
                 <a

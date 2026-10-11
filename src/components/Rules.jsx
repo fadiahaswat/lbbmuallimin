@@ -100,18 +100,19 @@ export default function Rules({ embedded = false }) {
       <div className={embedded ? 'w-full relative z-10' : 'container mx-auto px-6 relative z-10'}>
         {!embedded && (
           <div className="mb-12 text-center">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-600 text-[10px] font-bold uppercase tracking-widest mb-4">
-              <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse"></span>
-              Official Technical Guide 2027
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 border border-slate-200/80 text-slate-600 text-xs font-semibold uppercase tracking-wider mb-4">
+              <span className="w-2 h-2 rounded-full bg-red-600"></span>
+              Juknis Lapangan Resmi
             </div>
-            <h2 className="text-4xl md:text-5xl font-black text-slate-900 uppercase italic tracking-tighter mb-4 leading-tight py-1">
+            <h2 className="text-3xl md:text-5xl font-black text-slate-900 uppercase tracking-tight mb-4 leading-tight">
               Petunjuk Teknis{' '}
-              <span className="inline-block pr-3 sm:pr-4 pb-1 text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-800">
+              <span className="text-red-700">
                 Lapangan
               </span>
             </h2>
-            <p className="text-slate-500 mt-4 max-w-3xl mx-auto text-lg font-medium">
-              Pedoman teknis resmi alur kronologis, spesifikasi arena, alur tampil, prosedur checkout, dan keadaan kahar LBB Mu'allimin 2027.
+            <div className="w-16 h-1 bg-red-700 mx-auto rounded-full mb-4"></div>
+            <p className="text-slate-600 max-w-3xl mx-auto text-base sm:text-lg font-normal leading-relaxed">
+              Pedoman teknis alur kronologis kegiatan, dimensi arena lomba, tata tertib tampil peleton, prosedur checkout basecamp, dan protokol keadaan darurat.
             </p>
           </div>
         )}

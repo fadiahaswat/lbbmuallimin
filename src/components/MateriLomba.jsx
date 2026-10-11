@@ -106,50 +106,47 @@ export default function MateriLomba() {
       <div className="absolute -right-20 bottom-1/4 w-96 h-96 bg-blue-100/50 rounded-full blur-[100px] pointer-events-none"></div>
 
       <div className="container mx-auto px-6 relative z-10">
-        <div className="mb-16 text-center">
-          <span className="text-red-700 font-bold tracking-[0.25em] text-xs uppercase mb-3 block">
+        <div className="mb-14 md:mb-16 text-center max-w-3xl mx-auto">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-slate-100 border border-slate-200/80 text-slate-600 text-xs font-semibold uppercase tracking-wider mb-4">
+            <span className="w-2 h-2 rounded-full bg-red-600"></span>
             Regulasi Resmi PBB
-          </span>
-          <h2 className="text-4xl md:text-5xl font-black text-slate-900 uppercase italic tracking-tighter mb-4 leading-tight py-1">
-            Materi <span className="inline-block pr-3 sm:pr-4 pb-1 text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-amber-600">Lomba 2027</span>
+          </div>
+          <h2 className="text-3xl md:text-5xl font-black text-slate-900 uppercase tracking-tight mb-4 leading-tight">
+            Materi <span className="text-red-700">Lomba 2027</span>
           </h2>
-          <div className="w-20 h-1.5 bg-red-600 mx-auto mt-2 rounded-full skew-x-12 shadow-sm"></div>
-          <p className="text-slate-600 max-w-2xl mx-auto text-sm sm:text-base font-medium mt-4">
-            Urutan Gerakan Wajib Sesuai Petunjuk Teknis Resmi LBB Mu’allimin 2027
+          <div className="w-16 h-1 bg-red-700 mx-auto rounded-full mb-4"></div>
+          <p className="text-slate-600 max-w-2xl mx-auto text-base font-normal leading-relaxed">
+            Urutan gerakan wajib baris-berbaris sesuai Petunjuk Teknis Resmi LBB Mu’allimin 2027 berpedoman pada Perpang TNI.
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-10">
+        <div className="grid lg:grid-cols-2 gap-8">
           {/* SD / MI Card */}
           <div className="relative group">
-            <div className="relative bg-white rounded-3xl border border-red-200 hover:border-red-400 p-6 sm:p-8 h-full shadow-lg hover:shadow-xl transition-all duration-300">
-              <div className="absolute top-0 right-0 p-6 opacity-10 pointer-events-none">
-                <Shield className="text-red-700 w-28 h-28 stroke-[1]" />
-              </div>
-
-              <div className="relative z-10 border-b border-slate-100 pb-6 mb-6">
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-100 text-red-800 text-[10px] sm:text-xs font-bold uppercase tracking-wider mb-2">
+            <div className="relative bg-white rounded-2xl border border-slate-200/90 p-6 sm:p-8 h-full shadow-sm hover:shadow-md transition-all">
+              <div className="relative z-10 border-b border-slate-100 pb-5 mb-6">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-slate-100 text-slate-700 text-xs font-semibold uppercase tracking-wider mb-2">
                   Kategori Sekolah Dasar
                 </div>
-                <h3 className="text-2xl font-black text-slate-900 leading-tight mb-1">
-                  MATERI LOMBA TINGKAT SD/MI
+                <h3 className="text-xl sm:text-2xl font-bold text-slate-900 leading-tight mb-1">
+                  Materi Lomba Tingkat SD / MI
                 </h3>
-                <p className="text-xs text-slate-500 font-mono mb-4">LOMBA BARIS – BERBARIS MU’ALLIMIN TAHUN 2027</p>
+                <p className="text-xs text-slate-500 mb-4">Lomba Baris-Berbaris Mu’allimin 2027</p>
 
                 <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
-                  <div className="inline-flex items-center gap-2.5 bg-red-50 border border-red-200 px-3.5 py-1.5 rounded-xl">
-                    <Ruler className="text-red-600 w-4 h-4 shrink-0" />
-                    <span className="text-xs sm:text-sm font-bold text-red-800 font-mono">
+                  <div className="inline-flex items-center gap-2 bg-slate-100/80 border border-slate-200 px-3 py-1.5 rounded-lg">
+                    <Ruler className="text-slate-600 w-4 h-4 shrink-0" />
+                    <span className="text-xs sm:text-sm font-semibold text-slate-800">
                       {COMPETITION.SD.ARENA_SPEC_LABEL}
                     </span>
                   </div>
 
-                  {/* Tombol Salin Materi & Unduh Word */}
+                  {/* Tombol Salin Materi & Unduh PDF */}
                   <div className="flex items-center gap-2">
                     <button
                       type="button"
                       onClick={() => handleCopy('SD')}
-                      className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-900 border border-slate-200 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-sm active:scale-95"
+                      className="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-900 border border-slate-200 text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer active:scale-95"
                       title="Salin teks materi SD ke papan klip"
                     >
                       {copiedLevel === 'SD' ? (
@@ -168,30 +165,30 @@ export default function MateriLomba() {
                     <button
                       type="button"
                       onClick={() => handleDownloadPdf('SD')}
-                      className="px-3.5 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-md shadow-red-200 active:scale-95"
+                      className="px-3.5 py-1.5 rounded-lg bg-red-700 hover:bg-red-800 text-white text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer shadow-sm active:scale-95"
                       title="Unduh / Cetak Materi Lomba SD (PDF)"
                     >
                       <FileDown className="w-3.5 h-3.5 text-white" />
-                      <span>Download</span>
+                      <span>Unduh PDF</span>
                     </button>
                   </div>
                 </div>
               </div>
 
-              <div className="relative z-10 font-mono text-sm text-slate-700 leading-relaxed max-h-[600px] overflow-y-auto custom-scrollbar pr-2">
-                <ol className="list-decimal list-outside pl-8 space-y-3">
+              <div className="relative z-10 font-sans text-sm text-slate-700 leading-relaxed max-h-[600px] overflow-y-auto custom-scrollbar pr-2">
+                <ol className="list-decimal list-outside pl-6 space-y-2.5">
                   {MATERIALS.SD.map((item, idx) => (
                     <li key={idx} className="hover:text-red-700 transition-colors">{item}</li>
                   ))}
                 </ol>
 
-                <div className="mt-8 pt-6 border-t border-slate-200">
-                  <h4 className="text-xs font-bold text-red-700 uppercase mb-3">Keterangan:</h4>
-                  <ul className="space-y-2 list-[lower-alpha] list-outside pl-8 text-xs text-slate-600">
+                <div className="mt-8 pt-5 border-t border-slate-200">
+                  <h4 className="text-xs font-bold text-slate-900 uppercase mb-2">Keterangan Teknis:</h4>
+                  <ul className="space-y-1.5 list-[lower-alpha] list-outside pl-6 text-xs text-slate-600">
                     <li>Gerakan materi dilaksanakan secara berurutan sesuai nomor;</li>
                     <li>Materi gerakan berantai bertanda strip ( – ) wajib dilaksanakan satu rangkaian tanpa gerakan tambahan;</li>
-                    <li>Materi gerakan lomba sudah dibuat runtut. Komandan Peleton diperbolehkan melakukan gerakan penyesuaian tanpa pembatasan jumlah kuota, namun penggunaannya berpengaruh langsung terhadap penilaian aspek Penguasaan Lapangan Komandan Peleton;</li>
-                    <li>Kebenaran teknik gerakan berpedoman pada Perpang TNI No. 58 dan 57 Tahun 2018, khusus pelaksanaan Hormat Kanan berpedoman pada Perpang TNI No. 45 Tahun 2014.</li>
+                    <li>Komandan Peleton diperbolehkan melakukan gerakan penyesuaian tanpa pembatasan jumlah kuota, namun berpengaruh terhadap penilaian aspek Penguasaan Lapangan;</li>
+                    <li>Kebenaran teknik gerakan berpedoman pada Perpang TNI No. 58 dan 57 Tahun 2018, khusus Hormat Kanan berpedoman pada Perpang TNI No. 45 Tahun 2014.</li>
                   </ul>
                 </div>
               </div>
@@ -200,34 +197,30 @@ export default function MateriLomba() {
 
           {/* SMP / MTs Card */}
           <div className="relative group">
-            <div className="relative bg-white rounded-3xl border border-blue-200 hover:border-blue-400 p-6 sm:p-8 h-full shadow-lg hover:shadow-xl transition-all duration-300">
-              <div className="absolute top-0 right-0 p-6 opacity-10 pointer-events-none">
-                <ShieldCheck className="text-blue-700 w-28 h-28 stroke-[1]" />
-              </div>
-
-              <div className="relative z-10 border-b border-slate-100 pb-6 mb-6">
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-100 text-blue-800 text-[10px] sm:text-xs font-bold uppercase tracking-wider mb-2">
+            <div className="relative bg-white rounded-2xl border border-slate-200/90 p-6 sm:p-8 h-full shadow-sm hover:shadow-md transition-all">
+              <div className="relative z-10 border-b border-slate-100 pb-5 mb-6">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-slate-100 text-slate-700 text-xs font-semibold uppercase tracking-wider mb-2">
                   Kategori Sekolah Menengah
                 </div>
-                <h3 className="text-2xl font-black text-slate-900 leading-tight mb-1">
-                  MATERI LOMBA TINGKAT SMP/MTS
+                <h3 className="text-xl sm:text-2xl font-bold text-slate-900 leading-tight mb-1">
+                  Materi Lomba Tingkat SMP / MTs
                 </h3>
-                <p className="text-xs text-slate-500 font-mono mb-4">LOMBA BARIS – BERBARIS MU’ALLIMIN TAHUN 2027</p>
+                <p className="text-xs text-slate-500 mb-4">Lomba Baris-Berbaris Mu’allimin 2027</p>
 
                 <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
-                  <div className="inline-flex items-center gap-2.5 bg-blue-50 border border-blue-200 px-3.5 py-1.5 rounded-xl">
-                    <Ruler className="text-blue-600 w-4 h-4 shrink-0" />
-                    <span className="text-xs sm:text-sm font-bold text-blue-800 font-mono">
+                  <div className="inline-flex items-center gap-2 bg-slate-100/80 border border-slate-200 px-3 py-1.5 rounded-lg">
+                    <Ruler className="text-slate-600 w-4 h-4 shrink-0" />
+                    <span className="text-xs sm:text-sm font-semibold text-slate-800">
                       {COMPETITION.SMP.ARENA_SPEC_LABEL}
                     </span>
                   </div>
 
-                  {/* Tombol Salin Materi & Download */}
+                  {/* Tombol Salin Materi & Unduh PDF */}
                   <div className="flex items-center gap-2">
                     <button
                       type="button"
                       onClick={() => handleCopy('SMP')}
-                      className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-900 border border-slate-200 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-sm active:scale-95"
+                      className="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-900 border border-slate-200 text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer active:scale-95"
                       title="Salin teks materi SMP ke papan klip"
                     >
                       {copiedLevel === 'SMP' ? (
@@ -246,11 +239,11 @@ export default function MateriLomba() {
                     <button
                       type="button"
                       onClick={() => handleDownloadPdf('SMP')}
-                      className="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-md shadow-blue-200 active:scale-95"
+                      className="px-3.5 py-1.5 rounded-lg bg-red-700 hover:bg-red-800 text-white text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer shadow-sm active:scale-95"
                       title="Unduh / Cetak Materi Lomba SMP (PDF)"
                     >
                       <FileDown className="w-3.5 h-3.5 text-white" />
-                      <span>Download</span>
+                      <span>Unduh PDF</span>
                     </button>
                   </div>
                 </div>

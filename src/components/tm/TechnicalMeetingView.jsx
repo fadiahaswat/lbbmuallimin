@@ -202,39 +202,37 @@ export default function TechnicalMeetingView() {
       <div className="space-y-6">
 
         {/* Top Info Banner TM */}
-        <div className="bg-gradient-to-r from-purple-950 via-slate-900 to-indigo-950 text-white rounded-3xl p-6 sm:p-8 shadow-xl border border-purple-900/40 relative overflow-hidden">
-          <div className="absolute -right-8 -bottom-8 w-60 h-60 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
-
+        <div className="bg-slate-900 text-white rounded-2xl p-6 sm:p-7 shadow-md border border-slate-800 relative overflow-hidden">
           <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="space-y-2">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/20 border border-purple-400/30 text-purple-300 text-xs font-black uppercase tracking-wider">
-                <CalendarCheck className="w-3.5 h-3.5" />
-                <span>Tahap 2: Pertemuan Teknis & Undian</span>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.08] border border-white/10 text-slate-300 text-xs font-semibold uppercase tracking-wider">
+                <CalendarCheck className="w-3.5 h-3.5 text-amber-400" />
+                <span>Tahap 2: Temu Teknis & Undian</span>
               </div>
-              <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-white">
+              <h1 className="text-2xl sm:text-3xl font-extrabold uppercase tracking-tight text-white">
                 Technical Meeting & Pengundian Nomor Tampil
               </h1>
-              <p className="text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed font-normal">
                 Penetapan nomor dada, urutan tampil arena, validasi fisik berkas, serta pengesahan kesepakatan tata tertib lomba LBB Mu'allimin 2027.
               </p>
             </div>
 
-            <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-4 sm:p-5 shrink-0 space-y-2">
-              <div className="flex items-center gap-2 text-xs font-bold text-purple-300">
-                <Clock className="w-4 h-4" />
+            <div className="bg-white/5 border border-white/10 rounded-xl p-4 sm:p-5 shrink-0 space-y-2">
+              <div className="flex items-center gap-2 text-xs font-semibold text-slate-200">
+                <Clock className="w-4 h-4 text-amber-400" />
                 <span>{EVENT.TECHNICAL_MEETING_FULL_DATE} • {EVENT.TECHNICAL_MEETING_TIME_RANGE}</span>
               </div>
-              <div className="flex items-center gap-2 text-xs text-slate-200">
-                <MapPin className="w-4 h-4 text-purple-400 shrink-0" />
+              <div className="flex items-center gap-2 text-xs text-slate-300">
+                <MapPin className="w-4 h-4 text-slate-400 shrink-0" />
                 <span className="truncate max-w-[220px]">{VENUE_INDUK.NAME}</span>
               </div>
               <a
                 href={EVENT.TECHNICAL_MEETING_MAPS_URL || "https://maps.app.goo.gl/8tSQHpribqPXTSA79"}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-[11px] font-bold text-purple-300 hover:text-white underline pt-1"
+                className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-amber-400 hover:text-amber-300 underline pt-1"
               >
-                <span>Buka Petunjuk Rute Maps</span>
+                <span>Buka Rute Google Maps</span>
                 <ExternalLink className="w-3 h-3" />
               </a>
             </div>
@@ -631,7 +629,6 @@ export default function TechnicalMeetingView() {
         </div>
       </div>
 
-      </div>
     </SimpaskorSidebarLayout>
   );
 }

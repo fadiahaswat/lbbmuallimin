@@ -6,6 +6,7 @@ import logoImg from '../assets/logo-tonti.png';
 import logoTonti from '../assets/logo-tonti-muallimin.png';
 import logoMuallimin from '../assets/logo-muallimin-white.png';
 import titleLogo from '../assets/title-logo.png';
+import titleLogoMobile from '../assets/logo-title-tabmobile.png';
 
 const CADET_FIGURES = [
   {
@@ -182,13 +183,21 @@ export default function Hero() {
             })()}
 
 
-            {/* Main Title - Grafis Resmi title-logo.png */}
-            <div className="pt-1 select-none">
+            {/* Main Title - Grafis Resmi title-logo (Desktop) & logo-title-tabmobile (Mobile & Tablet) */}
+            <div className="pt-1 select-none w-full flex justify-center lg:justify-start">
               <h1 className="sr-only">Lomba Baris-Berbaris Mu'allimin 2027</h1>
+              {/* Khusus Mobile & Tablet (di bawah lg) */}
+              <img
+                src={titleLogoMobile}
+                alt="LOMBA BARIS BERBARIS MU'ALLIMIN 2027"
+                className="block lg:hidden h-auto w-full max-w-[340px] sm:max-w-[460px] md:max-w-[540px] object-contain drop-shadow-lg mx-auto lg:mx-0"
+                loading="eager"
+              />
+              {/* Khusus Desktop (lg ke atas) */}
               <img
                 src={titleLogo}
                 alt="LOMBA BARIS BERBARIS MU'ALLIMIN 2027"
-                className="h-auto w-full max-w-[420px] sm:max-w-[560px] md:max-w-[660px] lg:max-w-[720px] object-contain drop-shadow-lg"
+                className="hidden lg:block h-auto w-full lg:max-w-[720px] object-contain drop-shadow-lg"
                 loading="eager"
               />
             </div>
@@ -204,20 +213,20 @@ export default function Hero() {
               <button
                 type="button"
                 onClick={() => openModal('regWizard')}
-                className="group px-8 py-3.5 bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 hover:from-yellow-300 hover:to-amber-400 text-slate-950 font-black rounded-xl shadow-lg shadow-yellow-500/25 hover:shadow-yellow-500/40 hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2 text-xs sm:text-sm tracking-widest uppercase cursor-pointer active:scale-95"
+                className="group px-7 py-3.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl shadow-md hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2 text-xs sm:text-sm tracking-wider uppercase cursor-pointer active:scale-95"
               >
                 <span>Daftar Sekarang</span>
-                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1 text-slate-950" />
               </button>
 
               <a
                 href="https://docs.google.com/document/d/1BN1RuwDcEiuibVvoBG4-5R7Rq8neV5st3nAZoISVQi0/edit?usp=sharing"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group px-8 py-3.5 bg-black/35 hover:bg-white/10 border border-white/20 hover:border-yellow-400/40 text-white hover:text-yellow-400 rounded-xl shadow-lg shadow-black/20 hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2 text-xs sm:text-sm font-bold tracking-widest uppercase cursor-pointer active:scale-95"
+                className="group px-7 py-3.5 bg-white/10 hover:bg-white/15 border border-white/15 hover:border-white/25 text-white rounded-xl shadow-sm hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2 text-xs sm:text-sm font-semibold tracking-wider uppercase cursor-pointer active:scale-95"
               >
-                <span>Download Juknis</span>
-                <ExternalLink className="w-4 h-4 transition-transform group-hover:translate-x-0.5 text-yellow-400" />
+                <span>Unduh Petunjuk Teknis</span>
+                <ExternalLink className="w-4 h-4 transition-transform group-hover:translate-x-0.5 text-slate-300" />
               </a>
             </div>
 

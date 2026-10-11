@@ -25,62 +25,59 @@ export default function Prizes() {
             SECTION HEADER
             ======================================================== */}
         <div className="mb-14 md:mb-16 text-center max-w-3xl mx-auto">
-          <div className="inline-flex items-center justify-center gap-2 px-3.5 sm:px-4 py-1.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 text-[10px] sm:text-xs font-bold uppercase tracking-wider sm:tracking-widest mb-4 shadow-sm max-w-full text-center leading-normal">
+          <div className="inline-flex items-center justify-center gap-2 px-3.5 py-1 rounded-full bg-white/[0.06] border border-white/10 text-slate-300 text-xs font-semibold uppercase tracking-wider mb-4">
             <Crown className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-            <span className="truncate sm:whitespace-normal">{PRIZES.TOTAL_LABEL}</span>
+            <span>{PRIZES.TOTAL_LABEL}</span>
           </div>
 
-          <h2 className="text-2xl sm:text-4xl md:text-5xl font-black uppercase italic tracking-tighter leading-tight py-1 text-white">
-            <span className="block sm:inline">Kategori &{' '}</span>
-            <span className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight leading-tight py-1 text-white">
+            <span>Kategori & </span>
+            <span className="text-amber-400">
               Penghargaan
             </span>
           </h2>
-          <div className="w-20 h-1.5 bg-gradient-to-r from-red-600 to-amber-500 mx-auto mt-4 rounded-full skew-x-12 shadow-[0_0_15px_rgba(245,158,11,0.5)]"></div>
+          <div className="w-16 h-1 bg-red-700 mx-auto mt-4 rounded-full"></div>
 
-          <p className="text-slate-400 text-sm sm:text-base mt-5 leading-relaxed font-medium max-w-2xl mx-auto">
-            Apresiasi tertinggi bagi kontingen dan komandan terbaik yang menunjukkan disiplin, ketangkasan, dan sportivitas ksatria di arena perlombaan.
+          <p className="text-slate-300 text-sm sm:text-base mt-4 leading-relaxed font-normal max-w-2xl mx-auto">
+            Apresiasi resmi bagi peleton dan danton terbaik berdasarkan akumulasi penilaian rubrik juri di arena perlombaan.
           </p>
         </div>
 
         {/* ========================================================
             1. SUPREME SHOWCASE: PIALA BERGILIR JUARA UMUM
             ======================================================== */}
-        <div className="max-w-5xl mx-auto mb-12 sm:mb-16 relative group">
-          {/* Subtle Ambient Backlight */}
-          <div className="absolute -inset-1 bg-gradient-to-r from-amber-500/20 via-yellow-500/30 to-amber-500/20 rounded-3xl blur-xl opacity-60 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
-
-          <div className="relative rounded-3xl bg-gradient-to-b from-slate-900/95 via-slate-900/85 to-slate-950/95 border border-amber-500/30 shadow-2xl backdrop-blur-xl p-6 sm:p-8 lg:p-10 overflow-hidden text-center">
+        <div className="max-w-5xl mx-auto mb-12 sm:mb-16">
+          <div className="relative rounded-2xl bg-slate-900/90 border border-white/[0.08] shadow-lg p-6 sm:p-8 lg:p-10 overflow-hidden text-center">
             
             {/* Top Trophy Icon Badge */}
-            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-amber-400 via-yellow-500 to-amber-600 rounded-2xl flex items-center justify-center mb-4 mx-auto shadow-[0_0_35px_rgba(245,158,11,0.4)] border border-white/20 transform group-hover:scale-105 transition-transform duration-300">
-              <Trophy className="w-8 h-8 sm:w-10 sm:h-10 text-slate-950" />
+            <div className="w-14 h-14 bg-amber-500 rounded-xl flex items-center justify-center mb-4 mx-auto shadow-md">
+              <Trophy className="w-7 h-7 text-slate-950" />
             </div>
 
-            <span className="inline-block text-[11px] font-black uppercase tracking-[0.25em] text-amber-400 mb-1">
-              SUPREMASI TERTINGGI LBB MU'ALLIMIN 2027
+            <span className="inline-block text-[11px] font-bold uppercase tracking-wider text-amber-400 mb-1">
+              Supremasi Kejuaraan LBB Mu'allimin 2027
             </span>
-            <h3 className="text-2xl sm:text-3xl md:text-4xl font-black text-white uppercase italic tracking-tight mb-2">
+            <h3 className="text-2xl sm:text-3xl font-extrabold text-white uppercase tracking-tight mb-2">
               {PRIZES.ROLLING_TROPHY_TITLE}
             </h3>
-            <p className="text-slate-400 text-xs sm:text-sm max-w-xl mx-auto mb-8 font-medium leading-relaxed">
+            <p className="text-slate-300 text-xs sm:text-sm max-w-xl mx-auto mb-8 font-normal leading-relaxed">
               Dianugerahkan kepada pangkalan sekolah dengan akumulasi poin kejuaraan tertinggi (Peleton + Danton) pada masing-masing jenjang.
             </p>
 
             {/* Dual Trophies (SD & SMP) */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 text-left">
               {/* SD Rolling Trophy */}
-              <div className="p-4 sm:p-5 rounded-2xl bg-white/[0.03] hover:bg-white/[0.06] border border-red-500/20 hover:border-red-500/40 transition-all flex items-start gap-4">
-                <div className="w-11 h-11 rounded-xl bg-red-600/20 border border-red-500/30 text-red-400 flex items-center justify-center shrink-0 shadow-md">
+              <div className="p-4 sm:p-5 rounded-xl bg-white/[0.04] border border-white/[0.08] flex items-start gap-4">
+                <div className="w-10 h-10 rounded-lg bg-white/[0.06] border border-white/10 text-red-400 flex items-center justify-center shrink-0">
                   <School className="w-5 h-5" />
                 </div>
                 <div>
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-red-500/15 text-red-300 border border-red-500/25">
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-white/[0.06] text-slate-300 border border-white/10">
                       Tingkat SD / MI
                     </span>
                   </div>
-                  <h4 className="text-sm sm:text-base font-black text-white leading-snug">
+                  <h4 className="text-sm sm:text-base font-bold text-white leading-snug">
                     {PRIZES.ROLLING_TROPHY_SD}
                   </h4>
                   <p className="text-xs text-slate-400 mt-1 leading-relaxed">
@@ -90,17 +87,17 @@ export default function Prizes() {
               </div>
 
               {/* SMP Rolling Trophy */}
-              <div className="p-4 sm:p-5 rounded-2xl bg-white/[0.03] hover:bg-white/[0.06] border border-blue-500/20 hover:border-blue-500/40 transition-all flex items-start gap-4">
-                <div className="w-11 h-11 rounded-xl bg-blue-600/20 border border-blue-500/30 text-blue-400 flex items-center justify-center shrink-0 shadow-md">
+              <div className="p-4 sm:p-5 rounded-xl bg-white/[0.04] border border-white/[0.08] flex items-start gap-4">
+                <div className="w-10 h-10 rounded-lg bg-white/[0.06] border border-white/10 text-blue-400 flex items-center justify-center shrink-0">
                   <GraduationCap className="w-5 h-5" />
                 </div>
                 <div>
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-blue-500/15 text-blue-300 border border-blue-500/25">
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-white/[0.06] text-slate-300 border border-white/10">
                       Tingkat SMP / MTs
                     </span>
                   </div>
-                  <h4 className="text-sm sm:text-base font-black text-white leading-snug">
+                  <h4 className="text-sm sm:text-base font-bold text-white leading-snug">
                     {PRIZES.ROLLING_TROPHY_SMP}
                   </h4>
                   <p className="text-xs text-slate-400 mt-1 leading-relaxed">
@@ -141,64 +138,64 @@ export default function Prizes() {
             </div>
 
             {/* Juara Utama Card */}
-            <div className="rounded-3xl bg-gradient-to-b from-slate-900/90 via-slate-900/80 to-slate-950/95 border border-red-500/25 hover:border-red-500/40 p-5 sm:p-6 shadow-xl backdrop-blur-xl transition-all">
+            <div className="rounded-2xl bg-slate-900/90 border border-white/[0.08] p-5 sm:p-6 shadow-md transition-all">
               <div className="flex items-center justify-between gap-2 pb-3 mb-4 border-b border-white/10">
                 <div className="flex items-center gap-2 min-w-0">
                   <Medal className="w-4 h-4 text-amber-400 shrink-0" />
-                  <h4 className="text-sm sm:text-base font-black text-white uppercase tracking-wider truncate">
+                  <h4 className="text-sm sm:text-base font-bold text-white uppercase tracking-wider truncate">
                     Juara Utama
                   </h4>
                 </div>
-                <span className="text-[10px] font-bold uppercase text-slate-400 shrink-0 whitespace-nowrap">
+                <span className="text-[10px] font-semibold uppercase text-slate-400 shrink-0 whitespace-nowrap">
                   Peringkat 1, 2, dan 3
                 </span>
               </div>
 
               <div className="space-y-2.5">
                 {/* Juara 1 */}
-                <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-between gap-3">
+                <div className="p-3.5 rounded-xl bg-white/[0.05] border border-white/[0.08] flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3">
-                    <span className="w-7 h-7 rounded-lg bg-amber-500 text-slate-950 font-black text-xs flex items-center justify-center shrink-0 shadow-sm">
+                    <span className="w-7 h-7 rounded-lg bg-amber-500 text-slate-950 font-bold text-xs flex items-center justify-center shrink-0">
                       1
                     </span>
                     <div>
-                      <span className="text-xs sm:text-sm font-black text-white block">Juara I</span>
+                      <span className="text-xs sm:text-sm font-bold text-white block">Juara I</span>
                       <span className="text-[11px] text-slate-300">Piala Tetap + Piagam</span>
                     </div>
                   </div>
-                  <span className="text-xs font-black uppercase px-2.5 py-1 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 shrink-0">
+                  <span className="text-xs font-bold uppercase px-2.5 py-1 rounded-md bg-white/[0.08] text-amber-300 shrink-0">
                     + Uang Pembinaan
                   </span>
                 </div>
 
                 {/* Juara 2 */}
-                <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-between gap-3">
+                <div className="p-3.5 rounded-xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3">
-                    <span className="w-7 h-7 rounded-lg bg-slate-300 text-slate-950 font-black text-xs flex items-center justify-center shrink-0 shadow-sm">
+                    <span className="w-7 h-7 rounded-lg bg-slate-400 text-slate-950 font-bold text-xs flex items-center justify-center shrink-0">
                       2
                     </span>
                     <div>
-                      <span className="text-xs sm:text-sm font-black text-white block">Juara II</span>
+                      <span className="text-xs sm:text-sm font-bold text-white block">Juara II</span>
                       <span className="text-[11px] text-slate-300">Piala Tetap + Piagam</span>
                     </div>
                   </div>
-                  <span className="text-xs font-black uppercase px-2.5 py-1 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 shrink-0">
+                  <span className="text-xs font-bold uppercase px-2.5 py-1 rounded-md bg-white/[0.08] text-amber-300 shrink-0">
                     + Uang Pembinaan
                   </span>
                 </div>
 
                 {/* Juara 3 */}
-                <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-between gap-3">
+                <div className="p-3.5 rounded-xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3">
-                    <span className="w-7 h-7 rounded-lg bg-amber-700 text-white font-black text-xs flex items-center justify-center shrink-0 shadow-sm">
+                    <span className="w-7 h-7 rounded-lg bg-amber-700 text-white font-bold text-xs flex items-center justify-center shrink-0">
                       3
                     </span>
                     <div>
-                      <span className="text-xs sm:text-sm font-black text-white block">Juara III</span>
+                      <span className="text-xs sm:text-sm font-bold text-white block">Juara III</span>
                       <span className="text-[11px] text-slate-300">Piala Tetap + Piagam</span>
                     </div>
                   </div>
-                  <span className="text-xs font-black uppercase px-2.5 py-1 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 shrink-0">
+                  <span className="text-xs font-bold uppercase px-2.5 py-1 rounded-md bg-white/[0.08] text-amber-300 shrink-0">
                     + Uang Pembinaan
                   </span>
                 </div>
@@ -262,64 +259,64 @@ export default function Prizes() {
             </div>
 
             {/* Juara Utama Card */}
-            <div className="rounded-3xl bg-gradient-to-b from-slate-900/90 via-slate-900/80 to-slate-950/95 border border-blue-500/25 hover:border-blue-500/40 p-5 sm:p-6 shadow-xl backdrop-blur-xl transition-all">
+            <div className="rounded-2xl bg-slate-900/90 border border-white/[0.08] p-5 sm:p-6 shadow-md transition-all">
               <div className="flex items-center justify-between gap-2 pb-3 mb-4 border-b border-white/10">
                 <div className="flex items-center gap-2 min-w-0">
                   <Medal className="w-4 h-4 text-amber-400 shrink-0" />
-                  <h4 className="text-sm sm:text-base font-black text-white uppercase tracking-wider truncate">
+                  <h4 className="text-sm sm:text-base font-bold text-white uppercase tracking-wider truncate">
                     Juara Utama
                   </h4>
                 </div>
-                <span className="text-[10px] font-bold uppercase text-slate-400 shrink-0 whitespace-nowrap">
+                <span className="text-[10px] font-semibold uppercase text-slate-400 shrink-0 whitespace-nowrap">
                   Peringkat 1, 2, dan 3
                 </span>
               </div>
 
               <div className="space-y-2.5">
                 {/* Juara 1 */}
-                <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-between gap-3">
+                <div className="p-3.5 rounded-xl bg-white/[0.05] border border-white/[0.08] flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3">
-                    <span className="w-7 h-7 rounded-lg bg-amber-500 text-slate-950 font-black text-xs flex items-center justify-center shrink-0 shadow-sm">
+                    <span className="w-7 h-7 rounded-lg bg-amber-500 text-slate-950 font-bold text-xs flex items-center justify-center shrink-0">
                       1
                     </span>
                     <div>
-                      <span className="text-xs sm:text-sm font-black text-white block">Juara I</span>
+                      <span className="text-xs sm:text-sm font-bold text-white block">Juara I</span>
                       <span className="text-[11px] text-slate-300">Piala Tetap + Piagam</span>
                     </div>
                   </div>
-                  <span className="text-xs font-black uppercase px-2.5 py-1 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 shrink-0">
+                  <span className="text-xs font-bold uppercase px-2.5 py-1 rounded-md bg-white/[0.08] text-amber-300 shrink-0">
                     + Uang Pembinaan
                   </span>
                 </div>
 
                 {/* Juara 2 */}
-                <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-between gap-3">
+                <div className="p-3.5 rounded-xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3">
-                    <span className="w-7 h-7 rounded-lg bg-slate-300 text-slate-950 font-black text-xs flex items-center justify-center shrink-0 shadow-sm">
+                    <span className="w-7 h-7 rounded-lg bg-slate-400 text-slate-950 font-bold text-xs flex items-center justify-center shrink-0">
                       2
                     </span>
                     <div>
-                      <span className="text-xs sm:text-sm font-black text-white block">Juara II</span>
+                      <span className="text-xs sm:text-sm font-bold text-white block">Juara II</span>
                       <span className="text-[11px] text-slate-300">Piala Tetap + Piagam</span>
                     </div>
                   </div>
-                  <span className="text-xs font-black uppercase px-2.5 py-1 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 shrink-0">
+                  <span className="text-xs font-bold uppercase px-2.5 py-1 rounded-md bg-white/[0.08] text-amber-300 shrink-0">
                     + Uang Pembinaan
                   </span>
                 </div>
 
                 {/* Juara 3 */}
-                <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-between gap-3">
+                <div className="p-3.5 rounded-xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3">
-                    <span className="w-7 h-7 rounded-lg bg-amber-700 text-white font-black text-xs flex items-center justify-center shrink-0 shadow-sm">
+                    <span className="w-7 h-7 rounded-lg bg-amber-700 text-white font-bold text-xs flex items-center justify-center shrink-0">
                       3
                     </span>
                     <div>
-                      <span className="text-xs sm:text-sm font-black text-white block">Juara III</span>
+                      <span className="text-xs sm:text-sm font-bold text-white block">Juara III</span>
                       <span className="text-[11px] text-slate-300">Piala Tetap + Piagam</span>
                     </div>
                   </div>
-                  <span className="text-xs font-black uppercase px-2.5 py-1 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 shrink-0">
+                  <span className="text-xs font-bold uppercase px-2.5 py-1 rounded-md bg-white/[0.08] text-amber-300 shrink-0">
                     + Uang Pembinaan
                   </span>
                 </div>
@@ -365,14 +362,11 @@ export default function Prizes() {
         {/* ========================================================
             3. SPECIAL AWARDS: KOMANDAN PELETON (DANTON) TERBAIK
             ======================================================== */}
-        <div className="rounded-3xl bg-gradient-to-b from-slate-900/95 via-slate-900/80 to-slate-950/95 border border-amber-500/30 p-6 sm:p-8 lg:p-10 shadow-2xl backdrop-blur-xl relative overflow-hidden mb-12">
-          {/* Subtle Ambient Glow */}
-          <div className="absolute top-0 right-0 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
-
+        <div className="rounded-2xl bg-slate-900/90 border border-white/[0.08] p-6 sm:p-8 lg:p-10 shadow-lg relative overflow-hidden mb-12">
           <div className="relative z-10">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 pb-6 border-b border-white/10 text-left">
               <div>
-                <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-white uppercase italic tracking-tight">
+                <h3 className="text-xl sm:text-2xl font-extrabold text-white uppercase tracking-tight">
                   Komandan Peleton (Danton) Terbaik
                 </h3>
               </div>

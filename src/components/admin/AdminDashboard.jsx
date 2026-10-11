@@ -161,21 +161,22 @@ export default function AdminDashboard() {
       <div className="space-y-6">
 
         {/* Page Title & Subtitle banner */}
-        <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-blue-950 text-white rounded-3xl p-6 shadow-xl border border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="bg-slate-900 text-white rounded-2xl p-6 shadow-sm border border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-blue-600/30 border border-blue-400/40 text-blue-400 flex items-center justify-center shadow-inner">
-              <Shield className="w-6 h-6" />
+            <div className="w-11 h-11 rounded-xl bg-white/[0.08] border border-white/10 text-slate-300 flex items-center justify-center shrink-0">
+              <Shield className="w-5 h-5 text-amber-400" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-[10px] font-black uppercase tracking-widest text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded border border-blue-400/20">
+                <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-300 bg-white/[0.06] px-2 py-0.5 rounded border border-white/10">
                   Panel Sekretariat
                 </span>
               </div>
-              <h1 className="text-xl sm:text-2xl font-black uppercase italic tracking-tight text-white mt-0.5">
+              <h1 className="text-xl sm:text-2xl font-bold uppercase tracking-tight text-white mt-1">
                 Dashboard Manajemen & Rekapitulasi
               </h1>
             </div>
+          </div>
         </div>
 
         {/* Quota & Key Metrics Grid (Compact & Professional) */}
