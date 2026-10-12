@@ -17,6 +17,18 @@ import { JUKNIS_PENILAIAN_CHAPTERS } from '../data/juknisDocsData.js';
 import { DOWNLOADS, PENALTIES } from '../config.js';
 
 export default function JuknisPenilaianSection({ embedded = false }) {
+  // Hanya tampil di localhost/dev, atau di production setelah H+1 TM Juri (TM Juri: 7 Nov 2026 -> rilis mulai 8 Nov 2026 00:00 WIB)
+  const isVisible = useMemo(() => {
+    if (typeof window === 'undefined') return true;
+    const hostname = window.location.hostname;
+    const isLocalhost = hostname === 'localhost' || hostname === '127.0.0.1' || hostname.startsWith('192.168.') || hostname.startsWith('10.');
+    if (isLocalhost) return true;
+
+    // TM Juri: Sabtu, 7 November 2026. H+1: Minggu, 8 November 2026 00:00:00 WIB (+07:00)
+    const releaseDate = new Date('2026-11-08T00:00:00+07:00');
+    return new Date() >= releaseDate;
+  }, []);
+
   const [searchQuery, setSearchQuery] = useState('');
   const [openAccordions, setOpenAccordions] = useState({
     'bab-a': false,
@@ -24,6 +36,10 @@ export default function JuknisPenilaianSection({ embedded = false }) {
     'bab-c': false,
     'bab-d': false,
   });
+
+  if (!isVisible) {
+    return null;
+  }
 
   function toggleAccordion(id) {
     setOpenAccordions(prev => ({
