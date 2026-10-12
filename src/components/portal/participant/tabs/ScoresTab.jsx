@@ -5,7 +5,7 @@ export default function ScoresTab({ teamScore }) {
   return (
     <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
       <div className="border-b border-slate-200 pb-4">
-        <h4 className="font-black text-xl text-slate-900 uppercase italic">
+        <h4 className="font-black text-xl text-slate-900 uppercase">
           Lembar Rekapitulasi Nilai Dewan Juri
         </h4>
         <p className="text-xs text-slate-500 mt-0.5">
@@ -16,12 +16,12 @@ export default function ScoresTab({ teamScore }) {
       {teamScore ? (
         <div className="space-y-6">
           {/* Total Score Banner */}
-          <div className="bg-gradient-to-r from-slate-900 via-slate-950 to-red-950 text-white p-6 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 border border-slate-800">
+          <div className="bg-slate-900 text-white p-6 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 border border-slate-800">
             <div>
-              <span className="text-[10px] font-black uppercase tracking-wider text-yellow-400 block mb-0.5">
+              <span className="text-[10px] font-black uppercase tracking-wider text-amber-400 block mb-0.5">
                 Total Nilai Akhir
               </span>
-              <h5 className="text-3xl sm:text-4xl font-black text-yellow-400 font-mono">
+              <h5 className="text-3xl sm:text-4xl font-black text-amber-400 font-mono">
                 {teamScore.finalScore} <span className="text-sm font-sans text-slate-300 font-normal">Poin</span>
               </h5>
               <p className="text-xs text-slate-400 mt-1">
@@ -83,7 +83,7 @@ export default function ScoresTab({ teamScore }) {
               <span className="text-xs font-black uppercase tracking-wider text-amber-900 block mb-1">
                 Evaluasi & Catatan Dewan Juri
               </span>
-              <p className="text-xs text-slate-700 leading-relaxed italic">
+              <p className="text-xs text-slate-700 leading-relaxed">
                 "{teamScore.notes}"
               </p>
             </div>

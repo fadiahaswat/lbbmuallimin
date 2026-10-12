@@ -32,10 +32,6 @@ export default function Footer() {
       {/* Top Gradient Accent Line matching Madrasah Brand Identity */}
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-800 via-amber-400 to-red-800"></div>
 
-      {/* Subtle Ambient Red Glow */}
-      <div className="hidden sm:block absolute top-0 left-1/4 -translate-y-1/2 w-96 h-96 bg-red-900/15 rounded-full blur-3xl pointer-events-none transform-gpu"></div>
-      <div className="hidden sm:block absolute bottom-0 right-10 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl pointer-events-none transform-gpu"></div>
-
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Pre-Footer Action Banner / Callout Strip */}
@@ -72,10 +68,10 @@ export default function Footer() {
               <button
                 type="button"
                 onClick={() => setActiveView('register')}
-                className="px-6 py-3 bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 hover:from-yellow-300 hover:to-amber-400 text-slate-950 font-black rounded-xl shadow-lg shadow-yellow-500/20 text-xs sm:text-sm uppercase tracking-wider flex items-center gap-2 hover:scale-105 active:scale-95 transition-all cursor-pointer"
+                className="px-6 py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl shadow-md text-xs sm:text-sm uppercase tracking-wider flex items-center gap-2 hover:-translate-y-0.5 active:scale-95 transition-all cursor-pointer"
               >
                 <span>Daftar Peleton Sekarang</span>
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRight className="w-4 h-4 text-slate-950" />
               </button>
               <a
                 href="#rules"

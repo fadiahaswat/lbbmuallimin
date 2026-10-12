@@ -189,11 +189,7 @@ export default function Navbar({ onOpenMobileMenu }) {
             <button
               type="button"
               onClick={() => openAuthModal('login')}
-              className={`group relative px-5 py-2 rounded-full font-bold active:scale-95 transition-all overflow-hidden flex items-center gap-2 ${
-                isScrolled
-                  ? 'bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 text-slate-950 border border-yellow-400/60 shadow-md hover:shadow-lg'
-                  : 'bg-yellow-400/90 hover:bg-yellow-400 text-slate-950 border border-yellow-300/40 shadow-sm'
-              }`}
+              className="group relative px-5 py-2 rounded-full font-bold active:scale-95 transition-all overflow-hidden flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-950 border border-amber-600/20 shadow-sm"
             >
               <svg className="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24">
                 <path

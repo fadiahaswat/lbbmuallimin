@@ -5,7 +5,6 @@ import {
   CheckCircle2,
   AlertTriangle,
   ShieldCheck,
-  Sparkles,
   Users,
   Phone
 } from 'lucide-react';
@@ -21,9 +20,7 @@ export default function TeamProfileHeader({
   triggerFileUpload
 }) {
   return (
-    <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-red-950 text-white rounded-3xl p-6 sm:p-8 shadow-xl border border-slate-800 relative overflow-hidden">
-      <div className="absolute top-0 right-0 w-80 h-80 bg-red-600/15 rounded-full blur-3xl pointer-events-none"></div>
-
+    <div className="bg-slate-900 text-white rounded-3xl p-6 sm:p-8 shadow-xl border border-slate-800 relative overflow-hidden">
       <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
         
         {/* School & Platoon Profile */}
@@ -48,7 +45,7 @@ export default function TeamProfileHeader({
                 />
               ) : (
                 <div className="w-full h-full flex flex-col items-center justify-center text-center p-1">
-                  <span className="font-black text-xl sm:text-2xl text-yellow-300 drop-shadow-xs">
+                  <span className="font-black text-xl sm:text-2xl text-amber-400 drop-shadow-xs">
                     {currentTeam.jenjang || 'LBB'}
                   </span>
                   <span className="text-[9px] uppercase font-bold text-white/70 tracking-wider">
@@ -59,7 +56,7 @@ export default function TeamProfileHeader({
             </div>
             <button
               onClick={() => triggerFileUpload('schoolLogo')}
-              className="absolute -bottom-1 -right-1 p-2 rounded-xl bg-yellow-400 text-slate-950 shadow-md hover:bg-yellow-300 transition-all cursor-pointer"
+              className="absolute -bottom-1 -right-1 p-2 rounded-xl bg-amber-400 text-slate-950 shadow-md hover:bg-amber-300 transition-all cursor-pointer"
               title="Ubah Logo Sekolah"
             >
               <Camera className="w-3.5 h-3.5" />
@@ -68,7 +65,7 @@ export default function TeamProfileHeader({
 
           <div>
             <div className="flex flex-wrap items-center gap-2 mb-1">
-              <span className="font-mono font-black text-xs sm:text-sm text-yellow-400 bg-yellow-400/15 px-2.5 py-0.5 rounded-md border border-yellow-400/30">
+              <span className="font-mono font-black text-xs sm:text-sm text-amber-400 bg-amber-400/15 px-2.5 py-0.5 rounded-md border border-amber-400/30">
                 {currentTeam.regCode}
               </span>
               <span className="text-xs font-bold px-2.5 py-0.5 rounded-md bg-white/10 text-slate-200">
@@ -79,10 +76,10 @@ export default function TeamProfileHeader({
               </span>
             </div>
 
-            <h2 className="text-xl sm:text-3xl font-black uppercase italic tracking-tight text-white">
+            <h2 className="text-xl sm:text-3xl font-black uppercase tracking-tight text-white">
               {currentTeam.schoolName}
             </h2>
-            <p className="text-sm font-semibold text-yellow-300/90 mt-0.5">
+            <p className="text-sm font-semibold text-amber-300/90 mt-0.5">
               {currentTeam.platoonName}
             </p>
 
@@ -122,8 +119,8 @@ export default function TeamProfileHeader({
               </span>
             )}
             {currentTeam.status === 'drawn' && (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-500/20 text-purple-300 border border-purple-500/40 text-xs font-black uppercase tracking-wider">
-                <Sparkles className="w-4 h-4 text-purple-400" /> 4. Peleton Siap Tampil
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-500/40 text-xs font-black uppercase tracking-wider">
+                <CheckCircle2 className="w-4 h-4 text-amber-400" /> 4. Peleton Siap Tampil
               </span>
             )}
           </div>
@@ -132,19 +129,19 @@ export default function TeamProfileHeader({
           <div className="flex flex-wrap items-center gap-2">
             <div className={`border rounded-2xl p-2 px-3 text-center min-w-[84px] relative ${
               Number(currentTeam.lotNumber) >= 6 && Number(currentTeam.lotNumber) <= 10
-                ? 'bg-red-500/20 border-red-400/50 ring-1 ring-red-400'
+                ? 'bg-rose-500/15 border-rose-400/40 ring-1 ring-rose-400/50'
                 : 'bg-white/10 border-white/15'
             }`}>
               <span className="text-[9px] font-bold text-slate-300 uppercase block tracking-wider">Urutan Tampil</span>
               {currentTeam.lotNumber ? (
-                <span className="text-lg sm:text-xl font-black text-yellow-400 font-mono block leading-tight mt-0.5">
+                <span className="text-lg sm:text-xl font-black text-amber-400 font-mono block leading-tight mt-0.5">
                   #{String(currentTeam.lotNumber).padStart(2, '0')}
                 </span>
               ) : (
-                <span className="text-[10px] text-slate-400 italic block mt-1">Belum TM</span>
+                <span className="text-[10px] text-slate-400 block mt-1">Belum TM</span>
               )}
               {Number(currentTeam.lotNumber) >= 6 && Number(currentTeam.lotNumber) <= 10 && (
-                <span className="text-[8px] font-black uppercase text-red-200 bg-red-700/80 px-1.5 py-0.2 rounded-full block mt-0.5 whitespace-nowrap">
+                <span className="text-[8px] font-black uppercase text-rose-200 bg-rose-700/80 px-1.5 py-0.2 rounded-full block mt-0.5 whitespace-nowrap">
                   Wajib Upacara
                 </span>
               )}
@@ -157,7 +154,7 @@ export default function TeamProfileHeader({
                   {currentTeam.chestNumber}
                 </span>
               ) : (
-                <span className="text-[10px] text-slate-400 italic block mt-1">-</span>
+                <span className="text-[10px] text-slate-400 block mt-1">-</span>
               )}
             </div>
 
@@ -168,7 +165,7 @@ export default function TeamProfileHeader({
                   {currentTeam.estimatedTime}
                 </span>
               ) : (
-                <span className="text-[10px] text-slate-400 italic block mt-1">-</span>
+                <span className="text-[10px] text-slate-400 block mt-1">-</span>
               )}
             </div>
 
@@ -179,7 +176,7 @@ export default function TeamProfileHeader({
                   {currentTeam.basecampNumber}
                 </span>
               ) : (
-                <span className="text-[10px] text-slate-400 italic block mt-1">-</span>
+                <span className="text-[10px] text-slate-400 block mt-1">-</span>
               )}
             </div>
           </div>

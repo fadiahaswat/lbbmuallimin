@@ -107,23 +107,23 @@ export default function AnnouncementPortal() {
           <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-red-600/20 rounded-full blur-3xl pointer-events-none"></div>
 
           <div className="relative z-10 max-w-3xl mx-auto space-y-4">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-yellow-400/15 border border-yellow-400/30 text-yellow-300 text-xs font-black uppercase tracking-widest">
-              <Trophy className="w-4 h-4 text-yellow-400" />
-              <span>Hasil Resmi LBB Mu'allimin 2026</span>
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-400/15 border border-amber-400/30 text-amber-300 text-xs font-black uppercase tracking-widest">
+              <Trophy className="w-4 h-4 text-amber-400" />
+              <span>Hasil Resmi LBB Mu'allimin 2027</span>
             </div>
 
-            <h1 className="text-3xl sm:text-5xl font-black uppercase italic tracking-tight text-white leading-tight">
+            <h1 className="text-3xl sm:text-5xl font-black uppercase tracking-tight text-white leading-tight">
               PENGUMUMAN JUARA & REKAP NILAI DEWAN JURI
             </h1>
 
             <p className="text-sm sm:text-base text-slate-300 leading-relaxed max-w-xl mx-auto font-medium">
-              Keputusan Dewan Juri LBB Mu'allimin 2026 bersifat mutlak, sah, dan mengikat berdasarkan akumulasi penilaian teknis dan kekompakan di arena.
+              Keputusan Dewan Juri LBB Mu'allimin 2027 bersifat mutlak, sah, dan mengikat berdasarkan akumulasi penilaian teknis dan kekompakan di arena.
             </p>
 
             <div className="pt-2 flex flex-wrap justify-center gap-3">
               <button
                 onClick={() => openModal('docViewer', { docId: 'berita-acara' })}
-                className="px-6 py-3 bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl shadow-lg shadow-yellow-500/25 flex items-center gap-2 hover:from-yellow-300 hover:to-amber-400 transition-all"
+                className="px-6 py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl shadow-lg shadow-amber-500/20 flex items-center gap-2 transition-all cursor-pointer"
               >
                 <Printer className="w-4 h-4" />
                 <span>Unduh Berita Acara Rekapitulasi (PDF)</span>
@@ -137,15 +137,15 @@ export default function AnnouncementPortal() {
           <div className="bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 rounded-3xl p-1 shadow-xl">
             <div className="bg-slate-950 text-white rounded-[22px] p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
               <div className="flex items-center gap-5 text-left">
-                <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-gradient-to-br from-yellow-400 to-amber-600 flex items-center justify-center text-slate-950 shadow-lg shrink-0">
+                <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-amber-500 flex items-center justify-center text-slate-950 shadow-lg shrink-0">
                   <Crown className="w-12 h-12" />
                 </div>
                 <div>
-                  <span className="text-xs font-black uppercase tracking-widest text-yellow-400 flex items-center gap-1.5">
+                  <span className="text-xs font-black uppercase tracking-widest text-amber-400 flex items-center gap-1.5">
                     <Sparkles className="w-4 h-4" />
                     {PRIZES.ROLLING_TROPHY_TITLE} • PIALA GUBERNUR DIY
                   </span>
-                  <h3 className="text-2xl sm:text-3xl font-black text-white uppercase italic tracking-tight mt-1">
+                  <h3 className="text-2xl sm:text-3xl font-black text-white uppercase tracking-tight mt-1">
                     {grandChampion.schoolName}
                   </h3>
                   <p className="text-sm text-yellow-200/90 font-semibold mt-0.5">
@@ -298,7 +298,7 @@ export default function AnnouncementPortal() {
         <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 pb-3">
             <div>
-              <h4 className="font-black text-lg text-slate-900 uppercase italic">
+              <h4 className="font-black text-lg text-slate-900 uppercase">
                 Peringkat & Nilai Rinci Dewan Juri ({activeJenjang})
               </h4>
               <p className="text-xs text-slate-500">

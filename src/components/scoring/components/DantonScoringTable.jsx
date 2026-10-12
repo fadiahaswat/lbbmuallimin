@@ -38,7 +38,7 @@ export default function DantonScoringTable({
           <span className="px-2.5 py-0.5 rounded-md bg-emerald-600 text-white font-black text-[10px] shadow-xs">BAIK (Hijau)</span>
           <span className="px-2.5 py-0.5 rounded-md bg-blue-600 text-white font-black text-[10px] shadow-xs">SANGAT BAIK (Biru)</span>
         </div>
-        <span className="text-slate-500 italic">Tap angka skor pada kolom warna untuk memilih nilai</span>
+        <span className="text-slate-500">Tap angka skor pada kolom warna untuk memilih nilai</span>
       </div>
 
       {/* Red Simpaskor Category Header Banner */}

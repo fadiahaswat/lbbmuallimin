@@ -211,17 +211,17 @@ export default function TimeLocation() {
           <div className="lg:col-span-7 space-y-6">
             
             {/* CARD 1: Kampus Terpadu Sedayu - Pelaksanaan & Uji Coba */}
-            <div className="group relative rounded-3xl bg-white border border-slate-200 hover:border-red-300 shadow-xl p-5 sm:p-7 transition-all duration-300 overflow-hidden">
+            <div className="group relative rounded-3xl bg-white border border-slate-200 hover:border-slate-300 shadow-sm p-5 sm:p-7 transition-all duration-300 overflow-hidden">
               <div className="relative z-10 space-y-4">
                 {/* Header Card */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-red-600 to-red-700 text-white flex items-center justify-center shadow-md shadow-red-200 shrink-0 group-hover:scale-105 transition-transform">
+                    <div className="w-12 h-12 rounded-2xl bg-slate-900 text-amber-400 flex items-center justify-center shadow-xs shrink-0 group-hover:scale-105 transition-transform">
                       <MapPin className="w-6 h-6" />
                     </div>
                     <div>
                       <div className="flex items-center gap-2 mb-0.5">
-                        <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-red-100 text-red-800 border border-red-200">
+                        <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200">
                           Pusat Lomba & Uji Coba
                         </span>
                       </div>
@@ -280,17 +280,17 @@ export default function TimeLocation() {
             </div>
 
             {/* CARD 2: Kampus Induk Wirobrajan - Technical Meeting */}
-            <div className="group relative rounded-3xl bg-white border border-slate-200 hover:border-blue-300 shadow-xl p-5 sm:p-7 transition-all duration-300 overflow-hidden">
+            <div className="group relative rounded-3xl bg-white border border-slate-200 hover:border-slate-300 shadow-sm p-5 sm:p-7 transition-all duration-300 overflow-hidden">
               <div className="relative z-10 space-y-4">
                 {/* Header Card */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-600 to-blue-700 text-white flex items-center justify-center shadow-md shadow-blue-200 shrink-0 group-hover:scale-105 transition-transform">
+                    <div className="w-12 h-12 rounded-2xl bg-slate-900 text-amber-400 flex items-center justify-center shadow-xs shrink-0 group-hover:scale-105 transition-transform">
                       <MapPin className="w-6 h-6" />
                     </div>
                     <div>
                       <div className="flex items-center gap-2 mb-0.5">
-                        <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 border border-blue-200">
+                        <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200">
                           Pusat Technical Meeting (TM)
                         </span>
                       </div>

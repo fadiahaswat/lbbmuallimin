@@ -64,7 +64,7 @@ export default function RosterTab({
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-4">
             <div>
               <div className="flex items-center gap-2">
-                <h4 className="font-black text-xl text-slate-900 uppercase italic">
+                <h4 className="font-black text-xl text-slate-900 uppercase">
                   Susunan Kontingen Peleton
                 </h4>
                 <span className="text-[10px] font-black uppercase tracking-wider bg-slate-900 text-white px-2 py-0.5 rounded-md font-mono">
@@ -421,7 +421,7 @@ export default function RosterTab({
                     })}
                   </div>
                 ) : (
-                  <div className="text-xs text-slate-400 italic">Belum ada data pendamping</div>
+                  <div className="text-xs text-slate-400">Belum ada data pendamping</div>
                 )
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -625,7 +625,7 @@ export default function RosterTab({
                 </div>
               ) : (
                 <div className="p-6 bg-slate-50 border border-slate-200 rounded-2xl text-xs text-slate-500 text-center space-y-2">
-                  <p className="italic">Data 21 pasukan inti belum diisi.</p>
+                  <p>Data 21 pasukan inti belum diisi.</p>
                   <button
                     onClick={initRosterDraft}
                     className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs inline-flex items-center gap-1.5"
@@ -887,7 +887,7 @@ export default function RosterTab({
                     })}
                   </div>
                 ) : (
-                  <div className="text-xs text-slate-400 italic">Belum ada personel cadangan</div>
+                  <div className="text-xs text-slate-400">Belum ada personel cadangan</div>
                 )
               ) : (
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">

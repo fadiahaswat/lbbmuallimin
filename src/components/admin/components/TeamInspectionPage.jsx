@@ -150,7 +150,7 @@ export default function TeamInspectionPage({ team, inspectionStage = 'registrati
                       No. Undian #{String(team.lotNumber).padStart(2, '0')}
                     </span>
                   ) : (
-                    <span className="text-xs bg-slate-800 text-slate-400 px-2.5 py-1 rounded-lg italic">
+                    <span className="text-xs bg-slate-800 text-slate-400 px-2.5 py-1 rounded-lg">
                       Belum Diundi
                     </span>
                   )}
@@ -304,7 +304,7 @@ export default function TeamInspectionPage({ team, inspectionStage = 'registrati
                 <li key={idx}>{issue}</li>
               ))}
             </ul>
-            <p className="text-[11px] text-amber-700 italic pt-1">
+            <p className="text-[11px] text-amber-700 pt-1">
               *Catatan: 3 Anggota cadangan bersifat opsional dan tidak menghalangi verifikasi.
             </p>
           </div>
@@ -871,7 +871,7 @@ export default function TeamInspectionPage({ team, inspectionStage = 'registrati
                   ))}
                 </div>
               ) : (
-                <div className="p-8 bg-slate-50 rounded-2xl border border-slate-200 text-xs text-slate-400 italic text-center">
+                <div className="p-8 bg-slate-50 rounded-2xl border border-slate-200 text-xs text-slate-400 text-center">
                   Daftar susunan 21 anggota pasukan belum diisi secara detail oleh kontingen.
                 </div>
               )}
@@ -947,7 +947,7 @@ export default function TeamInspectionPage({ team, inspectionStage = 'registrati
                   })}
                 </div>
               ) : (
-                <span className="text-xs text-slate-400 italic block py-4 text-center">Belum ada personel cadangan</span>
+                <span className="text-xs text-slate-400 block py-4 text-center">Belum ada personel cadangan</span>
               )}
             </div>
           </div>

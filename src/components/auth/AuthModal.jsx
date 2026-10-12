@@ -231,7 +231,7 @@ export default function AuthModal() {
                 <Lock className="w-3 h-3" />
                 <span>Autentikasi Google Peserta</span>
               </div>
-              <h2 className="text-2xl sm:text-3xl font-black text-slate-900 uppercase italic tracking-tight">
+              <h2 className="text-2xl sm:text-3xl font-black text-slate-900 uppercase tracking-tight">
                 Masuk ke <span className="text-red-700">Dashboard Tim</span>
               </h2>
               <p className="text-xs text-slate-500 mt-1 leading-relaxed">

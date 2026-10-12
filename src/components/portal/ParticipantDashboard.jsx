@@ -117,7 +117,7 @@ export default function ParticipantDashboard() {
             />
           </picture>
         </div>
-        <h3 className="text-2xl font-black text-slate-900 uppercase italic">Belum Ada Peleton Terdaftar</h3>
+        <h3 className="text-2xl font-black text-slate-900 uppercase">Belum Ada Peleton Terdaftar</h3>
         <p className="text-slate-500 text-sm max-w-md mt-1 mb-6">
           Akun Anda belum memiliki peleton yang didaftarkan. Daftarkan peleton sekolah Anda sekarang untuk mengikuti perlombaan.
         </p>
@@ -636,8 +636,8 @@ export default function ParticipantDashboard() {
 
         {/* Panduan Pengunggahan Berkas jika status === 'registered' */}
         {currentTeam.status === 'registered' && (
-          <div className="bg-blue-50 border-2 border-blue-400 p-4 sm:p-5 rounded-2xl shadow-md flex items-start gap-4">
-            <div className="p-2.5 bg-blue-600 text-white rounded-xl shrink-0 shadow-xs">
+          <div className="bg-blue-50/70 border border-blue-200 p-4 sm:p-5 rounded-2xl shadow-xs flex items-start gap-4">
+            <div className="p-2.5 bg-blue-600 text-white rounded-xl shrink-0">
               <Sparkles className="w-6 h-6" />
             </div>
             <div className="flex-1">
@@ -673,8 +673,8 @@ export default function ParticipantDashboard() {
 
         {/* Peringatan Revisi Dokumen jika status === 'revision' */}
         {currentTeam.status === 'revision' && (
-          <div className="bg-amber-50 border-2 border-amber-400 p-4 sm:p-5 rounded-2xl shadow-md flex items-start gap-4">
-            <div className="p-2.5 bg-amber-500 text-white rounded-xl shrink-0 shadow-xs">
+          <div className="bg-amber-50/80 border border-amber-300 p-4 sm:p-5 rounded-2xl shadow-xs flex items-start gap-4">
+            <div className="p-2.5 bg-amber-500 text-white rounded-xl shrink-0">
               <AlertTriangle className="w-6 h-6" />
             </div>
             <div className="flex-1">
@@ -688,7 +688,7 @@ export default function ParticipantDashboard() {
               <div className="mt-3 flex gap-2">
                 <button
                   onClick={() => setActiveTab('documents')}
-                  className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded-xl transition-all shadow-sm"
+                  className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded-xl transition-all shadow-xs"
                 >
                   Unggah Perbaikan Berkas Sekarang
                 </button>
@@ -699,23 +699,23 @@ export default function ParticipantDashboard() {
 
         {/* Notifikasi Wajib Upacara Pembukaan untuk Peleton Urutan 6 s.d. 10 */}
         {Number(currentTeam.lotNumber) >= 6 && Number(currentTeam.lotNumber) <= 10 && (
-          <div className="bg-gradient-to-r from-red-600 via-rose-600 to-red-700 text-white p-4 sm:p-5 rounded-2xl shadow-lg border border-red-500 flex items-start gap-4 animate-in fade-in duration-300">
-            <div className="p-2.5 bg-white text-red-700 rounded-xl shrink-0 shadow-sm font-black text-sm flex items-center justify-center">
+          <div className="bg-slate-900 text-white p-4 sm:p-5 rounded-2xl shadow-md border border-red-700/60 flex items-start gap-4 animate-in fade-in duration-300">
+            <div className="p-2.5 bg-red-700 text-white rounded-xl shrink-0 font-black text-sm flex items-center justify-center">
               🚩
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="text-[10px] font-black uppercase tracking-wider bg-white/20 text-white px-2.5 py-0.5 rounded-full border border-white/30">
+                <span className="text-[10px] font-black uppercase tracking-wider bg-white/10 text-slate-200 px-2.5 py-0.5 rounded-full border border-white/20">
                   Perhatian Khusus Urutan #{String(currentTeam.lotNumber).padStart(2, '0')} (Bab H.1 Juknis)
                 </span>
-                <span className="text-[10px] font-black uppercase tracking-wider bg-yellow-400 text-slate-950 px-2 py-0.5 rounded-full">
+                <span className="text-[10px] font-black uppercase tracking-wider bg-amber-500 text-slate-950 px-2 py-0.5 rounded-full">
                   Wajib Hadir Upacara Pembukaan
                 </span>
               </div>
               <h4 className="font-black text-white text-base mt-1.5 leading-snug">
                 Peleton Anda Wajib Berbaris Mengikuti Upacara Pembukaan Resmi!
               </h4>
-              <p className="text-xs text-red-50 mt-1 leading-relaxed">
+              <p className="text-xs text-slate-300 mt-1 leading-relaxed">
                 Sesuai Juknis Bab H.1 dan Tata Tertib Pasal 6.2, <strong>peleton dengan urutan tampil 6 s.d. 10</strong> wajib berbaris di Lapangan Utama pada <strong>pukul 06.45 WIB</strong> (komposisi 1 Komandan + 15 Anggota / 5 trio). Tidak mengikuti upacara atau tidak lengkap dikenakan sanksi penalti pengurangan <strong>-150 poin</strong>.
               </p>
             </div>

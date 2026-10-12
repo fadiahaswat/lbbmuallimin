@@ -172,17 +172,17 @@ export default function StagingDashboard() {
         {/* Sub Header & Staging Controls Bar */}
         <div className="bg-white border border-slate-200 rounded-3xl p-5 sm:p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-5">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-indigo-50 border border-indigo-200 text-indigo-600 flex items-center justify-center shadow-xs">
+            <div className="w-12 h-12 rounded-2xl bg-slate-100 border border-slate-200 text-slate-800 flex items-center justify-center shadow-xs">
               <ShieldCheck className="w-6 h-6" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-[10px] font-black uppercase tracking-widest text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-slate-700 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
                   SOP HARI-H PERLOMBAAN
                 </span>
                 <span className="text-xs text-slate-500 font-medium">{TIMELINE.COMPETITION_DATE}</span>
               </div>
-              <h1 className="text-xl sm:text-2xl font-black uppercase italic tracking-tight text-slate-900 mt-0.5">
+              <h1 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-slate-900 mt-0.5">
                 Staging Area & Operasional Lapangan
               </h1>
               <p className="text-xs text-slate-500 mt-0.5">

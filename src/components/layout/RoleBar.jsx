@@ -64,20 +64,20 @@ export default function RoleBar() {
         <div className="container mx-auto flex flex-wrap items-center justify-between gap-2">
           {/* Left Info */}
           <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-1.5 font-bold uppercase tracking-wider text-[10px] text-yellow-400 bg-yellow-400/10 px-2 py-0.5 rounded border border-yellow-400/20">
-              <span className="w-1.5 h-1.5 rounded-full bg-yellow-400 animate-pulse"></span>
-              Sistem Terpadu LBB 2026
+            <span className="inline-flex items-center gap-1.5 font-bold uppercase tracking-wider text-[10px] text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded border border-amber-400/20">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+              Sistem Terpadu LBB 2027
             </span>
             <span className="hidden sm:inline text-slate-400 text-[11px]">
               Mode Akses: <strong className="text-white uppercase tracking-wide">{role}</strong>
             </span>
             {role === 'peserta' && currentTeam && (
-              <span className="bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded border border-amber-500/30 text-[10px] font-bold">
+              <span className="bg-slate-800 text-slate-200 px-2 py-0.5 rounded border border-slate-700 text-[10px] font-bold">
                 {currentTeam.schoolName} ({currentTeam.regCode})
               </span>
             )}
             {pendingCount > 0 && (role === 'admin' || role === 'superadmin') && (
-              <span className="bg-red-500/20 text-red-300 px-2 py-0.5 rounded border border-red-500/30 text-[10px] font-extrabold animate-pulse">
+              <span className="bg-red-950/60 text-red-300 px-2 py-0.5 rounded border border-red-700/50 text-[10px] font-bold">
                 {pendingCount} Verifikasi Pending
               </span>
             )}
@@ -94,7 +94,7 @@ export default function RoleBar() {
                   onClick={() => handleRoleClick(item.id, item.needsPin)}
                   className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-bold transition-all whitespace-nowrap ${
                     isActive
-                      ? 'bg-red-700 text-white shadow-sm ring-1 ring-red-500'
+                      ? 'bg-red-700 text-white shadow-xs border border-red-600'
                       : 'bg-slate-900/80 text-slate-300 hover:bg-slate-800 hover:text-white border border-slate-800'
                   }`}
                   title={`Beralih ke mode ${item.label}`}
@@ -113,11 +113,11 @@ export default function RoleBar() {
               onClick={() => setActiveView(activeView === 'announcement' ? 'landing' : 'announcement')}
               className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-bold transition-all whitespace-nowrap ${
                 activeView === 'announcement'
-                  ? 'bg-amber-600 text-white shadow-sm'
-                  : 'bg-amber-500/10 text-amber-300 hover:bg-amber-500/20 border border-amber-500/30'
+                  ? 'bg-slate-800 text-white border border-slate-600 shadow-xs'
+                  : 'bg-slate-900 text-slate-300 hover:bg-slate-800 hover:text-white border border-slate-800'
               }`}
             >
-              <Award className="w-3.5 h-3.5" />
+              <Award className="w-3.5 h-3.5 text-amber-400" />
               <span>Pengumuman & Juara</span>
             </button>
 

@@ -131,9 +131,6 @@ export default function Registration() {
             ======================================================== */}
         <div className="max-w-6xl mx-auto mb-12 sm:mb-16">
           <div className="bg-gradient-to-b from-slate-900/95 via-slate-900/80 to-slate-950/95 border border-white/10 rounded-3xl shadow-2xl backdrop-blur-xl relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-96 h-96 bg-red-600/10 rounded-full blur-3xl pointer-events-none"></div>
-            <div className="absolute bottom-0 left-0 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
-
             <div className="relative z-10 p-6 sm:p-8">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
                 
@@ -225,19 +222,19 @@ export default function Registration() {
               {/* Header */}
               <div className="flex items-start justify-between gap-3 mb-6 pb-4 border-b border-white/10">
                 <div className="flex items-center gap-3">
-                  <div className="w-11 h-11 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center shrink-0 shadow-md group-hover:scale-105 transition-transform">
+                  <div className="w-10 h-10 rounded-xl bg-white/[0.06] border border-white/10 text-amber-400 flex items-center justify-center shrink-0">
                     <CalendarClock className="w-5 h-5" />
                   </div>
                   <div>
-                    <span className="text-[10px] font-bold text-amber-400 uppercase tracking-widest block">
+                    <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">
                       Agenda Pelaksanaan
                     </span>
-                    <h3 className="font-black text-lg text-white uppercase italic tracking-tight">
+                    <h3 className="font-bold text-lg text-white uppercase tracking-tight">
                       Lini Masa (Timeline)
                     </h3>
                   </div>
                 </div>
-                <span className="text-[10px] font-black uppercase tracking-wider bg-white/[0.04] text-slate-300 px-2.5 py-1 rounded-lg border border-white/10 shrink-0 whitespace-nowrap">
+                <span className="text-[10px] font-semibold uppercase tracking-wider bg-white/[0.04] text-slate-300 px-2.5 py-1 rounded-md border border-white/10 shrink-0 whitespace-nowrap">
                   5 Tahap
                 </span>
               </div>
@@ -323,19 +320,19 @@ export default function Registration() {
               {/* Header */}
               <div className="flex items-start justify-between gap-2.5 mb-6 pb-4 border-b border-white/10">
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-11 h-11 rounded-2xl bg-red-600/15 border border-red-500/30 text-red-400 flex items-center justify-center shrink-0 shadow-md group-hover:scale-105 transition-transform">
+                  <div className="w-11 h-11 rounded-2xl bg-white/[0.06] border border-white/10 text-amber-400 flex items-center justify-center shrink-0 shadow-md group-hover:scale-105 transition-transform">
                     <Users className="w-5 h-5" />
                   </div>
                   <div className="min-w-0">
-                    <span className="text-[10px] font-bold text-red-400 uppercase tracking-widest block truncate">
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block truncate">
                       Regulasi Kontingen
                     </span>
-                    <h3 className="font-black text-lg text-white uppercase italic tracking-tight">
+                    <h3 className="font-black text-lg text-white uppercase tracking-tight">
                       Kuota & Personel
                     </h3>
                   </div>
                 </div>
-                <span className="text-[10px] font-black uppercase tracking-wider bg-red-950/60 text-red-300 px-2.5 py-1 rounded-lg border border-red-500/30 shrink-0 whitespace-nowrap">
+                <span className="text-[10px] font-black uppercase tracking-wider bg-white/[0.06] text-slate-200 px-2.5 py-1 rounded-lg border border-white/10 shrink-0 whitespace-nowrap">
                   Maks. 25
                 </span>
               </div>
@@ -706,7 +703,7 @@ export default function Registration() {
               <button
                 type="button"
                 onClick={() => openModal('regWizard')}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-black text-xs uppercase tracking-wider transition-all shadow-lg shadow-red-700/30 hover:shadow-red-600/50 shrink-0 cursor-pointer"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-red-700 hover:bg-red-600 text-white font-bold text-xs uppercase tracking-wider transition-all shadow-sm shrink-0 cursor-pointer"
               >
                 <span>Buka Formulir Pendaftaran</span>
                 <ExternalLink className="w-4 h-4" />
@@ -909,36 +906,36 @@ export default function Registration() {
                     href={person.WA_URL}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-between p-2.5 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 hover:border-emerald-500/30 transition-all group"
+                    className="flex items-center justify-between p-2.5 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 hover:border-white/20 transition-all group"
                   >
                     <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0">
+                      <div className="w-8 h-8 rounded-lg bg-white/10 text-emerald-400 flex items-center justify-center shrink-0">
                         <Phone className="w-4 h-4" />
                       </div>
                       <div>
                         <span className="text-[10px] text-slate-400 block">WhatsApp Resmi ({person.SHORT_NAME})</span>
-                        <span className="font-bold text-white group-hover:text-emerald-400">{person.PHONE_DISPLAY}</span>
+                        <span className="font-bold text-white group-hover:text-amber-400">{person.PHONE_DISPLAY}</span>
                       </div>
                     </div>
-                    <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-emerald-400 transition-transform" />
+                    <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-amber-400 transition-transform" />
                   </a>
                 ))}
 
                 {/* Email */}
                 <a
                   href={CONTACT.EMAIL_HREF}
-                  className="flex items-center justify-between p-2.5 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 hover:border-blue-500/30 transition-all group"
+                  className="flex items-center justify-between p-2.5 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 hover:border-white/20 transition-all group"
                 >
                   <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-400 flex items-center justify-center shrink-0">
+                    <div className="w-8 h-8 rounded-lg bg-white/10 text-slate-300 flex items-center justify-center shrink-0">
                       <Globe className="w-4 h-4" />
                     </div>
                     <div>
                       <span className="text-[10px] text-slate-400 block">Email Panitia</span>
-                      <span className="font-bold text-white group-hover:text-blue-400">{CONTACT.EMAIL}</span>
+                      <span className="font-bold text-white group-hover:text-amber-400">{CONTACT.EMAIL}</span>
                     </div>
                   </div>
-                  <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-400 transition-transform" />
+                  <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-amber-400 transition-transform" />
                 </a>
 
                 {/* Socials */}
@@ -947,14 +944,14 @@ export default function Registration() {
                     href={SOCIAL.INSTAGRAM_URL}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 p-2 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 hover:border-pink-500/30 transition-all group"
+                    className="flex items-center gap-2 p-2 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 hover:border-white/20 transition-all group"
                   >
-                    <div className="w-7 h-7 rounded-lg bg-pink-500/10 text-pink-400 flex items-center justify-center shrink-0">
+                    <div className="w-7 h-7 rounded-lg bg-white/10 text-slate-300 flex items-center justify-center shrink-0">
                       <Instagram className="w-3.5 h-3.5" />
                     </div>
                     <div className="truncate">
                       <span className="text-[9px] text-slate-400 block">Instagram</span>
-                      <span className="font-bold text-slate-200 group-hover:text-pink-400 truncate block text-[11px]">
+                      <span className="font-bold text-slate-200 group-hover:text-white truncate block text-[11px]">
                         {SOCIAL.INSTAGRAM_HANDLE}
                       </span>
                     </div>
@@ -964,14 +961,14 @@ export default function Registration() {
                     href={SOCIAL.TIKTOK_URL}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 p-2 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 hover:border-cyan-500/30 transition-all group"
+                    className="flex items-center gap-2 p-2 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 hover:border-white/20 transition-all group"
                   >
-                    <div className="w-7 h-7 rounded-lg bg-cyan-500/10 text-cyan-400 flex items-center justify-center shrink-0">
+                    <div className="w-7 h-7 rounded-lg bg-white/10 text-slate-300 flex items-center justify-center shrink-0">
                       <Video className="w-3.5 h-3.5" />
                     </div>
                     <div className="truncate">
                       <span className="text-[9px] text-slate-400 block">TikTok</span>
-                      <span className="font-bold text-slate-200 group-hover:text-cyan-400 truncate block text-[11px]">
+                      <span className="font-bold text-slate-200 group-hover:text-white truncate block text-[11px]">
                         {SOCIAL.TIKTOK_HANDLE}
                       </span>
                     </div>

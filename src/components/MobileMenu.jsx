@@ -156,13 +156,13 @@ export default function MobileMenu({ isOpen, onClose }) {
                   }}
                   className={`group flex items-center gap-3.5 p-3 rounded-2xl border transition-all duration-200 ${
                     isActive
-                      ? 'bg-gradient-to-r from-red-950/70 via-red-900/40 to-slate-900/80 border-red-500/40 shadow-lg text-white'
+                      ? 'bg-white/[0.08] border-white/20 shadow-sm text-white'
                       : 'bg-white/[0.03] hover:bg-white/[0.07] border-white/5 hover:border-white/10 text-slate-300 hover:text-white'
                   }`}
                 >
                   <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors shadow-sm ${
                     isActive
-                      ? 'bg-red-600 text-white shadow-red-700/30'
+                      ? 'bg-white/15 text-amber-400 border border-white/10'
                       : 'bg-white/5 text-slate-400 group-hover:text-amber-400 group-hover:bg-white/10'
                   }`}>
                     <Icon className="w-5 h-5" />
@@ -550,7 +550,7 @@ export default function MobileMenu({ isOpen, onClose }) {
                 onClose();
                 openAuthModal('login');
               }}
-              className="w-full py-3.5 px-4 bg-gradient-to-r from-yellow-400 via-amber-400 to-amber-500 hover:brightness-110 text-slate-950 font-black rounded-2xl text-center shadow-lg shadow-amber-500/20 active:scale-98 transition-all text-xs uppercase tracking-wider flex items-center justify-center gap-2.5 cursor-pointer"
+              className="w-full py-3.5 px-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-2xl text-center shadow-md active:scale-98 transition-all text-xs uppercase tracking-wider flex items-center justify-center gap-2.5 cursor-pointer border border-amber-600/20"
             >
               <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
                 <path
@@ -582,18 +582,18 @@ export default function MobileMenu({ isOpen, onClose }) {
                 onClose();
                 setActiveView('announcement');
               }}
-              className="w-full p-3.5 bg-gradient-to-r from-amber-500/10 via-yellow-500/5 to-transparent hover:from-amber-500/15 rounded-2xl border border-amber-500/25 hover:border-amber-400/40 text-left transition-all group flex items-center justify-between cursor-pointer shadow-sm"
+              className="w-full p-3.5 bg-white/[0.04] hover:bg-white/[0.07] rounded-2xl border border-white/10 hover:border-white/20 text-left transition-all group flex items-center justify-between cursor-pointer shadow-xs"
             >
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0">
+                <div className="w-9 h-9 rounded-xl bg-white/[0.08] border border-white/10 flex items-center justify-center text-amber-400 shrink-0">
                   <Trophy className="w-4 h-4" />
                 </div>
                 <div>
-                  <span className="text-xs font-bold text-amber-300 block">Papan Juara & Pengumuman</span>
+                  <span className="text-xs font-bold text-white block">Papan Juara & Pengumuman</span>
                   <span className="text-[10px] text-slate-400 block font-normal">Hasil lomba & live leaderboard</span>
                 </div>
               </div>
-              <ArrowRight className="w-4 h-4 text-amber-400 group-hover:translate-x-0.5 transition-transform shrink-0" />
+              <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-amber-400 group-hover:translate-x-0.5 transition-all shrink-0" />
             </button>
           </div>
 
@@ -605,7 +605,7 @@ export default function MobileMenu({ isOpen, onClose }) {
                 href={SOCIAL.INSTAGRAM_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-8 h-8 rounded-xl bg-white/5 hover:bg-pink-600/20 border border-white/10 hover:border-pink-500/30 text-slate-400 hover:text-pink-400 flex items-center justify-center transition-all"
+                className="w-8 h-8 rounded-xl bg-white/5 hover:bg-white/15 border border-white/10 hover:border-white/20 text-slate-400 hover:text-white flex items-center justify-center transition-all"
                 aria-label="Instagram Resmi LBB"
               >
                 <Instagram className="w-4 h-4" />
@@ -614,7 +614,7 @@ export default function MobileMenu({ isOpen, onClose }) {
                 href={SOCIAL.TIKTOK_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-8 h-8 rounded-xl bg-white/5 hover:bg-cyan-600/20 border border-white/10 hover:border-cyan-500/30 text-slate-400 hover:text-cyan-400 flex items-center justify-center transition-all"
+                className="w-8 h-8 rounded-xl bg-white/5 hover:bg-white/15 border border-white/10 hover:border-white/20 text-slate-400 hover:text-white flex items-center justify-center transition-all"
                 aria-label="TikTok Resmi Tonti"
               >
                 <Video className="w-4 h-4" />

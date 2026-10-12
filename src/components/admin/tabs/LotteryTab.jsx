@@ -17,7 +17,7 @@ export default function LotteryTab({
             </span>
             <span className="text-xs text-slate-400">• Hanya Peleton Berstatus Sah & Lengkap</span>
           </div>
-          <h3 className="font-black text-xl text-slate-900 uppercase italic mt-1">
+          <h3 className="font-black text-xl text-slate-900 uppercase mt-1">
             3. Undian (Nomor Urut Tampil & Nomor Dada Lapangan)
           </h3>
           <p className="text-xs text-slate-500 mt-0.5">
@@ -26,7 +26,7 @@ export default function LotteryTab({
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="text-[11px] text-slate-400 italic font-medium">Input Manual Lapangan</span>
+          <span className="text-[11px] text-slate-400 font-medium">Input Manual Lapangan</span>
         </div>
       </div>
 
@@ -69,7 +69,7 @@ export default function LotteryTab({
 
               <div className="space-y-2.5 max-h-[500px] overflow-y-auto pr-1">
                 {list.length === 0 ? (
-                  <p className="text-xs text-slate-400 italic py-6 text-center">
+                  <p className="text-xs text-slate-400 py-6 text-center">
                     Belum ada peleton {jenjang} dengan status sah (terverifikasi). Lakukan verifikasi di Tab 2 terlebih dahulu.
                   </p>
                 ) : (

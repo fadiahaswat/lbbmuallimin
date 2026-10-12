@@ -288,9 +288,9 @@ export default function TechnicalMeetingView() {
               <span className="text-[10px] uppercase font-bold text-slate-400 block">Total Peleton Lolos</span>
               <span className="text-2xl font-black text-slate-900 font-mono">{totalCount} Tim</span>
             </div>
-            <div className="p-4 rounded-2xl bg-purple-50 border border-purple-200">
-              <span className="text-[10px] uppercase font-bold text-purple-700 block">Sudah Dapat Nomor</span>
-              <span className="text-2xl font-black text-purple-900 font-mono">{drawnCount} Tim</span>
+            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200">
+              <span className="text-[10px] uppercase font-bold text-slate-500 block">Sudah Dapat Nomor</span>
+              <span className="text-2xl font-black text-slate-900 font-mono">{drawnCount} Tim</span>
             </div>
             <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200">
               <span className="text-[10px] uppercase font-bold text-emerald-700 block">Status Pengundian</span>
@@ -308,7 +308,7 @@ export default function TechnicalMeetingView() {
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               placeholder="Cari sekolah, nama komandan (danton), atau kode pendaftaran..."
-              className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:bg-white focus:border-purple-600 outline-none transition-all"
+              className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:bg-white focus:border-slate-400 outline-none transition-all"
             />
           </div>
 
@@ -422,7 +422,7 @@ export default function TechnicalMeetingView() {
                                     handlePairTeamToLot(team.id, val);
                                   }
                                 }}
-                                className="w-full h-8 pl-2.5 pr-7 bg-blue-50/70 hover:bg-blue-100/70 focus:bg-white text-blue-950 font-black text-xs border border-blue-200 hover:border-blue-300 focus:border-blue-600 rounded-xl outline-none cursor-pointer transition-all shadow-2xs appearance-none truncate"
+                                className="w-full h-8 pl-2.5 pr-7 bg-slate-50 hover:bg-slate-100 focus:bg-white text-slate-900 font-bold text-xs border border-slate-200 hover:border-slate-300 focus:border-slate-400 rounded-xl outline-none cursor-pointer transition-all shadow-2xs appearance-none truncate"
                                 title="Pilih nomor urutan tampil"
                               >
                                 <option value="" disabled>Pilih Urutan...</option>
@@ -432,7 +432,7 @@ export default function TechnicalMeetingView() {
                                   </option>
                                 ))}
                               </select>
-                              <ChevronDown className="w-4 h-4 text-blue-600 absolute right-2 top-2 pointer-events-none" />
+                              <ChevronDown className="w-4 h-4 text-slate-500 absolute right-2 top-2 pointer-events-none" />
                             </div>
                           </div>
                         )}
@@ -459,7 +459,7 @@ export default function TechnicalMeetingView() {
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <span className="text-[11px] font-mono font-black px-2.5 py-1 rounded-xl bg-blue-50 text-blue-700 border border-blue-200">
+                  <span className="text-[11px] font-mono font-black px-2.5 py-1 rounded-xl bg-slate-100 text-slate-800 border border-slate-200">
                     {drawnCount} / {totalSlotsCount} Peleton Terpasang
                   </span>
                 </div>
@@ -505,7 +505,7 @@ export default function TechnicalMeetingView() {
                           >
                             {/* 1. No Urut Dada */}
                             <td className="py-2.5 px-3 text-center whitespace-nowrap">
-                              <span className="inline-flex items-center justify-center font-mono font-black text-base sm:text-lg px-3.5 py-1 rounded-xl bg-blue-50 text-blue-900 border-2 border-blue-300 shadow-2xs">
+                              <span className="inline-flex items-center justify-center font-mono font-black text-base sm:text-lg px-3.5 py-1 rounded-xl bg-blue-50 text-blue-900 border border-blue-200 shadow-2xs">
                                 {slot.chestNumber}
                               </span>
                             </td>

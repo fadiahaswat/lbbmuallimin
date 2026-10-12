@@ -4,7 +4,9 @@ import {
   AlertCircle,
   ExternalLink,
   RotateCcw,
-  FileText
+  FileText,
+  X,
+  AlertTriangle
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
 import { PAYMENT, CONTACT } from '../../config.js';
@@ -206,11 +208,30 @@ export default function RegistrationWizard({ isOpen, onClose }) {
 
       const isImgFile = (file.type && file.type.startsWith('image/')) || ALLOWED_IMAGE_EXTS.includes(ext);
       if (isImgFile) {
+        // Khusus Logo Sekolah atau file PNG transparan: Pertahankan file asli apa adanya via FileReader readAsDataURL
+        // agar tidak terjadi degradasi kualitas, distorsi pixel, atau hilangnya transparansi alpha channel
+        const isPng = file.type === 'image/png' || ext === '.png';
+        if (isDocument === false && isPng) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const kb = Math.round(file.size / 1024);
+            resolve({
+              name: file.name,
+              size: `${kb} KB (Original PNG)`,
+              uploadedAt: new Date().toISOString(),
+              url: e.target?.result || '#',
+            });
+          };
+          reader.onerror = () => resolve(null);
+          reader.readAsDataURL(file);
+          return;
+        }
+
         const reader = new FileReader();
         reader.onload = (e) => {
           const img = new Image();
           img.onload = () => {
-            const MAX_DIM = 640;
+            const MAX_DIM = 960;
             let width = img.width;
             let height = img.height;
 
@@ -230,16 +251,14 @@ export default function RegistrationWizard({ isOpen, onClose }) {
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, width, height);
 
-            // Jika file asli adalah PNG, pertahankan format image/png agar transparansi (alpha channel) TIDAK menjadi hitam!
-            const isPng = file.type === 'image/png' || (file.name && file.name.toLowerCase().endsWith('.png'));
             const compressedUrl = isPng
               ? canvas.toDataURL('image/png')
-              : canvas.toDataURL('image/jpeg', 0.8);
+              : canvas.toDataURL('image/jpeg', 0.85);
 
             const estKb = Math.round((compressedUrl.length * 0.75) / 1024);
             resolve({
               name: file.name,
-              size: `${estKb} KB (Compressed)`,
+              size: `${estKb} KB`,
               uploadedAt: new Date().toISOString(),
               url: compressedUrl,
             });
@@ -348,7 +367,7 @@ export default function RegistrationWizard({ isOpen, onClose }) {
     }
     const canvas = canvasRef.current;
     const signatureDataUrl = canvas.toDataURL('image/png');
-    const signCode = `PI-ONLINE-2026-${Date.now().toString(36).toUpperCase()}`;
+    const signCode = `PI-ONLINE-2027-${Date.now().toString(36).toUpperCase()}`;
     const signTime = new Date().toISOString();
 
     setFiles(prev => ({
@@ -368,45 +387,68 @@ export default function RegistrationWizard({ isOpen, onClose }) {
   }
 
   // Step Validations
+  const errorTimerRef = useRef(null);
+
+  function triggerValidationError(msg, targetSelector) {
+    setValidationError(msg);
+    if (errorTimerRef.current) {
+      clearTimeout(errorTimerRef.current);
+    }
+    // Auto-dismiss setelah 6 detik
+    errorTimerRef.current = setTimeout(() => {
+      setValidationError('');
+    }, 6000);
+
+    if (targetSelector) {
+      setTimeout(() => {
+        const el = document.querySelector(targetSelector);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          if (el.focus) el.focus();
+        }
+      }, 50);
+    }
+  }
+
   function validateStep1() {
     if (!isRegOpenMaster) {
-      setValidationError('Pendaftaran saat ini sedang ditutup oleh panitia.');
+      triggerValidationError('Pendaftaran saat ini sedang ditutup oleh panitia.');
       return false;
     }
     if (!formData.email.trim() || !formData.email.includes('@')) {
-      setValidationError('Alamat email aktif untuk akun wajib diisi dengan benar.');
+      triggerValidationError('Alamat email aktif untuk akun wajib diisi dengan benar.', 'input[type="email"]');
       return false;
     }
     if (!formData.jenjang) {
-      setValidationError('Silakan pilih Jenjang Sekolah (SD/MI atau SMP/MTs).');
+      triggerValidationError('Silakan pilih Jenjang Sekolah (SD/MI atau SMP/MTs).', 'button[type="button"]');
       return false;
     }
     if (formData.jenjang === 'SD' && isSDFull) {
-      setValidationError('Mohon maaf, kuota peleton untuk tingkat SD/MI telah penuh.');
+      triggerValidationError('Mohon maaf, kuota peleton untuk tingkat SD/MI telah penuh.');
       return false;
     }
     if (formData.jenjang === 'SMP' && isSMPFull) {
-      setValidationError('Mohon maaf, kuota peleton untuk tingkat SMP/MTs telah penuh.');
+      triggerValidationError('Mohon maaf, kuota peleton untuk tingkat SMP/MTs telah penuh.');
       return false;
     }
     if (!formData.schoolName.trim()) {
-      setValidationError('Nama lengkap sekolah wajib diisi.');
+      triggerValidationError('Nama lengkap sekolah wajib diisi.', 'input[placeholder*="NAMA LENGKAP SEKOLAH"]');
       return false;
     }
     if (!formData.schoolAddress.trim()) {
-      setValidationError('Alamat lengkap sekolah wajib diisi.');
+      triggerValidationError('Alamat lengkap sekolah wajib diisi.', 'textarea');
       return false;
     }
     if (!files.schoolLogo) {
-      setValidationError('Logo sekolah wajib diunggah.');
+      triggerValidationError('Logo sekolah wajib diunggah.', 'input[type="file"]');
       return false;
     }
     if (!formData.teamType) {
-      setValidationError('Silakan pilih Tipe Pasukan Peleton (Homogen atau Heterogen).');
+      triggerValidationError('Silakan pilih Tipe Pasukan Peleton (Homogen atau Heterogen).');
       return false;
     }
     if (formData.teamType === 'Homogen' && !formData.homogenGender) {
-      setValidationError('Silakan pilih komposisi Pasukan Homogen (Pasukan Putra atau Pasukan Putri).');
+      triggerValidationError('Silakan pilih komposisi Pasukan Homogen (Pasukan Putra atau Pasukan Putri).');
       return false;
     }
     setValidationError('');
@@ -415,28 +457,28 @@ export default function RegistrationWizard({ isOpen, onClose }) {
 
   function validateStep2() {
     if (!formData.dantonName.trim()) {
-      setValidationError('Nama komandan peleton (Danton) wajib diisi.');
+      triggerValidationError('Nama komandan peleton (Danton) wajib diisi.', 'input[placeholder*="NAMA LENGKAP KOMANDAN"]');
       return false;
     }
     if (!files.dantonCard) {
-      setValidationError('Foto Kartu Pelajar Komandan wajib diunggah.');
+      triggerValidationError('Foto Kartu Pelajar Komandan wajib diunggah.');
       return false;
     }
     if (!formData.officialName.trim()) {
-      setValidationError('Nama Official / Pelatih wajib diisi.');
+      triggerValidationError('Nama Official / Pelatih wajib diisi.', 'input[placeholder*="NAMA LENGKAP OFFICIAL"]');
       return false;
     }
     if (!formData.waNumber.trim()) {
-      setValidationError('Nomor WhatsApp Official / Pelatih (Aktif) wajib diisi.');
+      triggerValidationError('Nomor WhatsApp Official / Pelatih (Aktif) wajib diisi.', 'input[type="tel"]');
       return false;
     }
     const cleanDigits = formData.waNumber.replace(/\D/g, '');
     if (cleanDigits.length < 9) {
-      setValidationError('Nomor WhatsApp tidak valid. Masukkan nomor WhatsApp aktif minimal 9 digit.');
+      triggerValidationError('Nomor WhatsApp tidak valid. Masukkan nomor WhatsApp aktif minimal 9 digit.', 'input[type="tel"]');
       return false;
     }
     if (!files.officialKtp) {
-      setValidationError('Foto KTP Official / Pelatih wajib diunggah.');
+      triggerValidationError('Foto KTP Official / Pelatih wajib diunggah.');
       return false;
     }
     setValidationError('');
@@ -445,15 +487,15 @@ export default function RegistrationWizard({ isOpen, onClose }) {
 
   function validateStep3() {
     if (!files.paymentProof) {
-      setValidationError('Bukti transfer pembayaran pendaftaran wajib diunggah.');
+      triggerValidationError('Bukti transfer pembayaran pendaftaran wajib diunggah.');
       return false;
     }
     if (!files.integrityPact) {
-      setValidationError('Pakta Integritas Online wajib ditandatangani secara digital.');
+      triggerValidationError('Pakta Integritas Online wajib ditandatangani secara digital.');
       return false;
     }
     if (!formData.agreeJuknis) {
-      setValidationError('Mohon centang persetujuan Petunjuk Teknis Resmi LBB Mu\'allimin 2026.');
+      triggerValidationError('Mohon centang persetujuan Petunjuk Teknis Resmi LBB Mu\'allimin 2027.', 'input[type="checkbox"]');
       return false;
     }
     setValidationError('');
@@ -531,8 +573,6 @@ export default function RegistrationWizard({ isOpen, onClose }) {
           backgroundSize: '40px 40px',
         }}
       />
-      <div className="hidden sm:block absolute left-0 top-1/4 w-96 h-96 bg-yellow-500/5 rounded-full blur-3xl pointer-events-none z-0 transform-gpu" />
-      <div className="hidden sm:block absolute right-0 bottom-1/4 w-96 h-96 bg-red-900/5 rounded-full blur-3xl pointer-events-none z-0 transform-gpu" />
 
       {/* Top Header */}
       <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-xs">
@@ -588,11 +628,8 @@ export default function RegistrationWizard({ isOpen, onClose }) {
               Juknis Resmi & Registrasi 2027
             </div>
 
-            <h1 className="text-2xl sm:text-4xl font-black uppercase italic tracking-tight text-slate-900 select-none leading-tight py-1">
-              Formulir{' '}
-              <span className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-red-700 to-red-600 px-1 py-0.5">
-                Pendaftaran
-              </span>
+            <h1 className="text-2xl sm:text-4xl font-black uppercase tracking-tight text-slate-900 select-none leading-tight py-1">
+              Formulir Pendaftaran
             </h1>
             <p className="text-xs sm:text-sm text-slate-600 mt-1.5 leading-relaxed">
               Lengkapi data dan berkas persyaratan peleton secara lengkap dan sah melalui formulir pendaftaran resmi LBB Mu'allimin 2027.
@@ -622,14 +659,6 @@ export default function RegistrationWizard({ isOpen, onClose }) {
               <RotateCcw className="w-3.5 h-3.5 text-amber-700" />
               <span>Mulai Baru (Hapus Draft)</span>
             </button>
-          </div>
-        )}
-
-        {/* Validation error banner */}
-        {validationError && (
-          <div className="mb-6 p-4 rounded-2xl bg-red-50 border border-red-200 flex items-center gap-3 text-red-700 text-xs shadow-xs animate-shake">
-            <AlertCircle className="w-5 h-5 shrink-0 text-red-600" />
-            <span className="font-bold">{validationError}</span>
           </div>
         )}
 
@@ -703,6 +732,40 @@ export default function RegistrationWizard({ isOpen, onClose }) {
         clearCanvasSignature={clearCanvasSignature}
         saveOnlineSignature={saveOnlineSignature}
       />
+
+      {/* FLOATING TOAST NOTIFICATION (Sangat jelas & mencolok di HP, Tablet & Desktop) */}
+      {validationError && (
+        <aside
+          role="alert"
+          aria-live="assertive"
+          className="fixed bottom-6 left-4 right-4 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 z-50 max-w-lg w-auto transition-all animate-in slide-in-from-bottom-5 duration-300"
+        >
+          <div className="bg-slate-950/95 backdrop-blur-md text-white border border-red-500/40 px-4 py-3.5 rounded-2xl shadow-2xl flex items-center justify-between gap-3.5 ring-1 ring-red-500/20">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-8 h-8 rounded-xl bg-red-600/20 border border-red-500/40 flex items-center justify-center shrink-0 text-red-400">
+                <AlertCircle className="w-4 h-4 text-red-400 stroke-[2.5]" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-[11px] font-black uppercase tracking-wider text-red-400 leading-tight">
+                  Perhatian Pengisian
+                </p>
+                <p className="text-xs sm:text-sm font-semibold text-slate-100 leading-snug break-words mt-0.5">
+                  {validationError}
+                </p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setValidationError('')}
+              className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 active:scale-95 transition-all shrink-0 cursor-pointer"
+              title="Tutup Notifikasi"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        </aside>
+      )}
 
       {/* Official Mu'allimin Brand Footer */}
       <footer className="border-t border-slate-200 py-6 px-6 text-center text-xs text-slate-500 bg-white">

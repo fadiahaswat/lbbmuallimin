@@ -111,7 +111,7 @@ export default function ParticipantDocCard({ title, file, uploadKey, btnLabel, b
             )
           ) : (
             <div className="flex flex-col items-center justify-center text-center p-2 text-slate-400">
-              <span className="text-xs italic">Belum ada berkas terunggah</span>
+              <span className="text-xs">Belum ada berkas terunggah</span>
             </div>
           )}
         </div>

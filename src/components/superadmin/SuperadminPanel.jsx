@@ -200,7 +200,7 @@ export default function SuperadminPanel() {
                 </span>
                 <span className="text-xs text-slate-400">Ketua Panitia & Pengawas Sistem</span>
               </div>
-              <h1 className="text-2xl sm:text-3xl font-black uppercase italic tracking-tight text-white mt-0.5">
+              <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-white mt-0.5">
                 Pengaturan Sistem Kompetisi
               </h1>
             </div>
@@ -209,7 +209,7 @@ export default function SuperadminPanel() {
 
         {/* Master Toggles Grid */}
         <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
-          <h3 className="font-black text-lg text-slate-900 uppercase italic border-b border-slate-200 pb-3">
+          <h3 className="font-black text-lg text-slate-900 uppercase border-b border-slate-200 pb-3">
             Saklar Operasional Lomba
           </h3>
 
@@ -293,7 +293,7 @@ export default function SuperadminPanel() {
                 </span>
                 <span className="text-xs text-slate-500 font-medium">Anti Kebocoran Data</span>
               </div>
-              <h3 className="font-black text-lg text-slate-900 uppercase italic mt-1">
+              <h3 className="font-black text-lg text-slate-900 uppercase mt-1">
                 Kelola Email & Role Petugas Resmi
               </h3>
               <p className="text-xs text-slate-500 mt-0.5">
@@ -579,7 +579,7 @@ export default function SuperadminPanel() {
                 </span>
                 <span className="text-xs text-slate-500 font-medium">Pengaturan Dinamis Waktu & Agenda</span>
               </div>
-              <h3 className="font-black text-lg text-slate-900 uppercase italic mt-1">
+              <h3 className="font-black text-lg text-slate-900 uppercase mt-1">
                 Kelola Tanggal Pelaksanaan Kegiatan
               </h3>
             </div>
@@ -669,7 +669,7 @@ export default function SuperadminPanel() {
                     placeholder="2026-10-31T23:59:59+07:00"
                   />
                 </div>
-                <p className="text-[11px] text-slate-500 italic">
+                <p className="text-[11px] text-slate-500">
                   * Sistem otomatis menutup tombol pendaftaran bila kuota SD & SMP telah habis terisi.
                 </p>
               </div>
@@ -840,7 +840,7 @@ export default function SuperadminPanel() {
                 </span>
                 <span className="text-xs text-slate-500 font-medium">Google Apps Script Auto-Schema</span>
               </div>
-              <h3 className="font-black text-lg text-slate-900 uppercase italic mt-1">
+              <h3 className="font-black text-lg text-slate-900 uppercase mt-1">
                 Konektivitas Google Sheets
               </h3>
             </div>
@@ -915,7 +915,7 @@ export default function SuperadminPanel() {
 
         {/* Database & Backup Actions */}
         <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
-          <h3 className="font-black text-lg text-slate-900 uppercase italic border-b border-slate-200 pb-3">
+          <h3 className="font-black text-lg text-slate-900 uppercase border-b border-slate-200 pb-3">
             Cadangan & Pemulihan Basis Data (Backup & Reset)
           </h3>
 

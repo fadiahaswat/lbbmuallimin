@@ -8,8 +8,7 @@ import {
   PenTool,
   FileCheck,
   ArrowLeft,
-  CheckCircle2,
-  Sparkles
+  CheckCircle2
 } from 'lucide-react';
 import { PAYMENT } from '../../../config.js';
 
@@ -51,7 +50,7 @@ export default function Step3PaymentAndPact({
           <CreditCard className="w-5 h-5" />
         </div>
         <div>
-          <h2 className="text-lg sm:text-xl font-black text-slate-900 uppercase italic tracking-wide">
+          <h2 className="text-lg sm:text-xl font-black text-slate-900 uppercase tracking-wide">
             3. Pembayaran & Pakta Integritas Online
           </h2>
           <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">
@@ -61,11 +60,7 @@ export default function Step3PaymentAndPact({
       </div>
 
       {/* Kotak Rekening Resmi Bendahara - Modern Luxury Banking Card */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white border border-slate-800 shadow-xl">
-        {/* Subtle decorative glowing background shapes */}
-        <div className="absolute -top-16 -right-16 w-48 h-48 bg-amber-500/10 rounded-full blur-2xl pointer-events-none" />
-        <div className="absolute -bottom-16 -left-16 w-48 h-48 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none" />
-
+      <div className="relative overflow-hidden rounded-2xl bg-slate-950 text-white border border-slate-800 shadow-xl">
         <div className="relative p-5 sm:p-7">
           {/* Header Row: Logo & Badge + Fee Box */}
           <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-5 pb-5 border-b border-white/10">
@@ -342,7 +337,7 @@ export default function Step3PaymentAndPact({
 
         <button
           type="submit"
-          className="px-8 py-3.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black rounded-xl text-xs sm:text-sm uppercase tracking-wider flex items-center gap-2 shadow-md active:scale-95 transition-all"
+          className="px-8 py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-xl text-xs sm:text-sm uppercase tracking-wider flex items-center gap-2 shadow-md active:scale-95 transition-all cursor-pointer"
         >
           <span>Kirim Pendaftaran Peleton</span>
           <CheckCircle2 className="w-4 h-4 text-white stroke-[2.5]" />

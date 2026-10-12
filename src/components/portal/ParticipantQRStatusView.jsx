@@ -252,20 +252,20 @@ export default function ParticipantQRStatusView({ regCode, onBack }) {
           )}
 
           {isPending && (
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-amber-500/10 border border-amber-500/30 text-amber-400 animate-pulse">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-amber-500/10 border border-amber-500/20 text-amber-400">
               <Clock className="w-4 h-4 text-amber-400" />
               <span>Menunggu ACC / Verifikasi Panitia</span>
             </div>
           )}
 
           {isRejected && (
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-red-500/10 border border-red-500/30 text-red-400">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-red-500/10 border border-red-500/20 text-red-400">
               <XCircle className="w-4 h-4 text-red-400" />
               <span>Pendaftaran Ditolak / Butuh Revisi</span>
             </div>
           )}
 
-          <h2 className="text-xl sm:text-2xl font-black text-white uppercase italic tracking-tight">
+          <h2 className="text-xl sm:text-2xl font-black text-white uppercase tracking-tight">
             {team.schoolName}
           </h2>
           <p className="text-xs text-slate-400">

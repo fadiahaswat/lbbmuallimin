@@ -105,13 +105,11 @@ export default function DaerahPersiapanView() {
       <div className="space-y-6">
 
         {/* Top Header Card */}
-        <div className="bg-gradient-to-r from-blue-950 via-slate-900 to-indigo-950 text-white rounded-3xl p-6 sm:p-8 shadow-xl border border-blue-900/40 relative overflow-hidden">
-          <div className="absolute -right-8 -bottom-8 w-60 h-60 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
-
+        <div className="bg-slate-900 text-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-800 relative overflow-hidden">
           <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="space-y-2">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-300 text-xs font-black uppercase tracking-wider">
-                <Clock className="w-3.5 h-3.5" />
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-slate-200 text-xs font-bold uppercase tracking-wider">
+                <Clock className="w-3.5 h-3.5 text-amber-400" />
                 <span>Tahap 5: Filter & Antrean Lapangan</span>
               </div>
               <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-white">
@@ -127,8 +125,8 @@ export default function DaerahPersiapanView() {
               <button
                 type="button"
                 onClick={() => setActiveSubTab('dp1')}
-                className={`px-4 py-2 rounded-xl text-xs font-black transition-all cursor-pointer ${
-                  activeSubTab === 'dp1' ? 'bg-blue-600 text-white shadow-md' : 'text-slate-300 hover:text-white'
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                  activeSubTab === 'dp1' ? 'bg-white text-slate-950 shadow-xs' : 'text-slate-300 hover:text-white'
                 }`}
               >
                 1. DP 1 (Inspeksi & Verifikasi)
@@ -151,7 +149,7 @@ export default function DaerahPersiapanView() {
           <div className="flex items-center gap-2">
             <span className="text-xs font-black uppercase text-slate-400 pl-2">Peleton di DP:</span>
             {checkedInTeams.length === 0 ? (
-              <span className="text-xs text-slate-400 italic">Belum ada tim yang Check-In Basecamp</span>
+              <span className="text-xs text-slate-400">Belum ada tim yang Check-In Basecamp</span>
             ) : (
               checkedInTeams.map(t => (
                 <button

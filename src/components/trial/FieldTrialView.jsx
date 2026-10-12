@@ -112,7 +112,7 @@ export default function FieldTrialView() {
         {/* 3 Metric Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-700 flex items-center justify-center font-black shrink-0">
+            <div className="w-12 h-12 rounded-2xl bg-slate-100 border border-slate-200 text-slate-700 flex items-center justify-center font-black shrink-0">
               <Timer className="w-6 h-6" />
             </div>
             <div>
@@ -123,7 +123,7 @@ export default function FieldTrialView() {
           </div>
 
           <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-red-50 border border-red-200 text-red-700 flex items-center justify-center font-black shrink-0">
+            <div className="w-12 h-12 rounded-2xl bg-slate-100 border border-slate-200 text-slate-700 flex items-center justify-center font-black shrink-0">
               <Swords className="w-6 h-6" />
             </div>
             <div>
@@ -134,7 +134,7 @@ export default function FieldTrialView() {
           </div>
 
           <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-blue-50 border border-blue-200 text-blue-700 flex items-center justify-center font-black shrink-0">
+            <div className="w-12 h-12 rounded-2xl bg-slate-100 border border-slate-200 text-slate-700 flex items-center justify-center font-black shrink-0">
               <Trophy className="w-6 h-6" />
             </div>
             <div>
@@ -278,9 +278,7 @@ export default function FieldTrialView() {
                           <div className="text-[10px] text-slate-400 font-mono">{team.regCode}</div>
                         </td>
                         <td className="py-3.5 px-3">
-                          <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-black uppercase ${
-                            isSD ? 'bg-red-50 text-red-700 border border-red-200' : 'bg-blue-50 text-blue-700 border border-blue-200'
-                          }`}>
+                          <span className="inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-slate-100 text-slate-700 border border-slate-200">
                             {team.jenjang} • {isSD ? 'Arena Basket' : 'Pelataran Embung'}
                           </span>
                         </td>

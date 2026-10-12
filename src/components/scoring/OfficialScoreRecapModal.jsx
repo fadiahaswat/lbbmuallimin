@@ -374,7 +374,7 @@ export default function OfficialScoreRecapModal({ isOpen, onClose, initialJenjan
           </div>
 
           {/* Legal Statement */}
-          <div className="text-xs text-slate-600 italic leading-relaxed mb-10 border-l-2 border-slate-400 pl-3">
+          <div className="text-xs text-slate-600 leading-relaxed mb-10 border-l-2 border-slate-400 pl-3">
             Catatan Dewan Juri: Rekapitulasi nilai ini sah dan final setelah ditandatangani oleh Dewan Juri LBB Mu'allimin 2027. Sesuai Petunjuk Teknis LBB Mu'allimin 2027, Nilai Peleton dihitung dengan bobot 70% Kebenaran Teknik PBB (Juri 1) + 30% Kekompakan Peleton (Juri 2). Skor akhir merupakan penjumlahan Nilai Peleton + Nilai Komandan Peleton (Juri 3) dikurangi akumulasi penalti lapangan. Keputusan Dewan Juri bersifat mutlak dan tidak dapat diganggu gugat.
           </div>
 

@@ -76,7 +76,7 @@ export default function EvidenceSection({
             <FileText className="w-3.5 h-3.5 text-blue-600" />
             <span>Catatan Verifikator / Finalisator:</span>
           </div>
-          <p className="text-slate-700 pl-5 italic">
+          <p className="text-slate-700 pl-5">
             "{existingScore.verificationNotes}"
           </p>
         </div>

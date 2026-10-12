@@ -131,11 +131,8 @@ export default function RegistrationStatusModal({ isOpen, onClose }) {
               VALIDASI & STATUS PENDAFTARAN 2027
             </span>
           </div>
-          <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-slate-900 uppercase italic py-0.5">
-            Cek Status{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-700 to-red-600">
-              Pendaftaran Peleton
-            </span>
+          <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-slate-900 uppercase py-0.5">
+            Cek Status Pendaftaran Peleton
           </h1>
           <p className="text-slate-600 text-xs sm:text-sm mt-1.5 max-w-xl mx-auto leading-relaxed">
             Pantau status verifikasi berkas administrasi, pakta integritas online, dan konfirmasi ACC Admin tim sekolah Anda.
@@ -213,11 +210,11 @@ export default function RegistrationStatusModal({ isOpen, onClose }) {
               <div
                 key={team.id}
                 onClick={() => handleSelectTeam(team)}
-                className="group bg-white hover:border-red-400 border border-slate-200 p-5 rounded-3xl shadow-xs hover:shadow-md transition-all cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                className="group bg-white hover:border-slate-300 border border-slate-200 p-5 rounded-3xl shadow-xs hover:shadow-md transition-all cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-4"
               >
                 <div className="space-y-1.5">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="font-mono font-bold text-xs text-red-800 bg-red-50 border border-red-200 px-2.5 py-0.5 rounded-lg">
+                    <span className="font-mono font-bold text-xs text-slate-800 bg-slate-100 border border-slate-200 px-2.5 py-0.5 rounded-lg">
                       {team.regCode}
                     </span>
                     <span className="text-[11px] font-bold bg-slate-100 text-slate-700 px-2.5 py-0.5 rounded-lg border border-slate-200">
@@ -230,7 +227,7 @@ export default function RegistrationStatusModal({ isOpen, onClose }) {
                     )}
                   </div>
 
-                  <h3 className="font-black text-lg text-slate-900 group-hover:text-red-700 transition-colors">
+                  <h3 className="font-black text-lg text-slate-900 group-hover:text-amber-600 transition-colors">
                     {team.schoolName}
                   </h3>
 
@@ -248,8 +245,8 @@ export default function RegistrationStatusModal({ isOpen, onClose }) {
                     </span>
                   )}
                   {team.status === 'registered' && (
-                    <span className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-800 bg-blue-50 px-3 py-1.5 rounded-xl border border-blue-200">
-                      <ShieldCheck className="w-4 h-4 text-blue-600" /> 2. Terdaftar (Lengkapi Peleton)
+                    <span className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-800 bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200">
+                      <ShieldCheck className="w-4 h-4 text-slate-600" /> 2. Terdaftar (Lengkapi Peleton)
                     </span>
                   )}
                   {team.status === 'revision' && (
@@ -258,13 +255,13 @@ export default function RegistrationStatusModal({ isOpen, onClose }) {
                     </span>
                   )}
                   {team.status === 'verified' && (
-                    <span className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-200">
+                    <span className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-800 bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-200">
                       <ShieldCheck className="w-4 h-4 text-emerald-600" /> 3. Terverifikasi Sah
                     </span>
                   )}
                   {team.status === 'drawn' && (
-                    <span className="inline-flex items-center gap-1.5 text-xs font-bold text-purple-700 bg-purple-50 px-3 py-1.5 rounded-xl border border-purple-200">
-                      <Sparkles className="w-4 h-4 text-purple-600" /> 4. Siap Tampil (Terundi)
+                    <span className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-800 bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200">
+                      <CalendarCheck className="w-4 h-4 text-slate-600" /> 4. Siap Tampil (Terundi)
                     </span>
                   )}
 

@@ -94,7 +94,7 @@ export default function About() {
 
                 {/* Paragraf 2 Asli */}
                 <p className="text-sm sm:text-base text-slate-300 leading-relaxed font-normal">
-                  Tema ini menjadi landasan kegiatan bagi para peleton pelajar untuk melatih keterampilan baris-berbaris, kedisiplinan, kepemimpinan regu, serta kerja sama tim di lapangan.
+                  Kegiatan ini menjadi wadah bagi pelajar untuk mengembangkan potensi, mengasah keterampilan baris-berbaris, serta menanamkan nilai kedisiplinan, kepemimpinan, tanggung jawab, kerja sama, dan sportivitas.
                 </p>
 
                 {/* Tag Nilai dari Paragraf 2 */}
@@ -129,29 +129,29 @@ export default function About() {
           {/* 2 Kartu: Paragraf 3 & Paragraf 4 */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
             
-            {/* Kartu 1 */}
+            {/* Kartu 1: Paragraf 3 */}
             <div className="rounded-2xl bg-slate-900/75 border border-white/[0.08] p-6 sm:p-7 shadow-md flex flex-col justify-start space-y-3.5">
               <div className="w-10 h-10 rounded-xl bg-white/[0.06] border border-white/10 text-amber-400 flex items-center justify-center">
                 <HeartHandshake className="w-5 h-5" />
               </div>
               <h4 className="text-lg font-bold text-white tracking-tight">
-                Silaturahmi & Prestasi Pelajar
+                Silaturahmi & Semangat Berprestasi
               </h4>
               <p className="text-sm text-slate-300 leading-relaxed font-normal">
-                Menjadi sarana mempererat silaturahmi antarpangkalan sekolah, mengukur hasil latihan peleton, serta menumbuhkan jiwa sportivitas kompetisi yang sehat.
+                Menjadi sarana mempererat silaturahmi antarsekolah, membangun semangat berprestasi, serta memperkenalkan nilai-nilai pendidikan Mu’allimin kepada generasi muda.
               </p>
             </div>
 
-            {/* Kartu 2 */}
+            {/* Kartu 2: Paragraf 4 */}
             <div className="rounded-2xl bg-slate-900/75 border border-white/[0.08] p-6 sm:p-7 shadow-md flex flex-col justify-start space-y-3.5">
               <div className="w-10 h-10 rounded-xl bg-white/[0.06] border border-white/10 text-red-400 flex items-center justify-center">
                 <ShieldCheck className="w-5 h-5" />
               </div>
               <h4 className="text-lg font-bold text-white tracking-tight">
-                Standar Penilaian Edukatif
+                Kompetisi Edukatif & Berkarakter
               </h4>
               <p className="text-sm text-slate-300 leading-relaxed font-normal">
-                Disusun dengan juknis yang jelas dan transparan oleh tim juri kompeten guna membina integritas, tata tertib peleton, serta ketepatan aba-aba danton.
+                Berkomitmen menghadirkan kompetisi yang edukatif, sportif, dan berkarakter sebagai bagian dari upaya membentuk generasi muda yang tangguh, berintegritas, dan siap menjadi pemimpin masa depan.
               </p>
             </div>
 

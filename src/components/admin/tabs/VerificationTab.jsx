@@ -249,7 +249,7 @@ export default function VerificationTab({
                       ) : (
                         <div className="flex items-center gap-1.5">
                           <span className="w-2 h-2 rounded-full bg-amber-400 shrink-0"></span>
-                          <span className="text-[11px] font-medium text-amber-800 bg-amber-50 px-2 py-0.5 rounded border border-amber-200 italic">
+                          <span className="text-[11px] font-medium text-amber-800 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
                             Belum Ada Surat
                           </span>
                         </div>
@@ -278,19 +278,19 @@ export default function VerificationTab({
                         </span>
                       )}
                       {team.status === 'drawn' && (
-                        <span className="inline-flex items-center gap-1 text-[11px] font-bold text-purple-700 bg-purple-50 px-2.5 py-1 rounded-lg border border-purple-200">
-                          <Sparkles className="w-3.5 h-3.5" /> Siap Tampil (Terundi)
+                        <span className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-800 bg-amber-50 px-2.5 py-1 rounded-lg border border-amber-200">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-amber-600" /> Siap Tampil (Terundi)
                         </span>
                       )}
                     </td>
 
                     <td className="p-3.5 align-middle text-center">
                       {team.lotNumber ? (
-                        <span className="font-mono font-black text-xs text-yellow-800 bg-yellow-100 px-2.5 py-1 rounded-lg border border-yellow-200">
+                        <span className="font-mono font-black text-xs text-amber-800 bg-amber-50 px-2.5 py-1 rounded-lg border border-amber-200">
                           #{String(team.lotNumber).padStart(2, '0')}
                         </span>
                       ) : (
-                        <span className="text-slate-400 text-[11px] italic">Belum diundi</span>
+                        <span className="text-slate-400 text-[11px]">Belum diundi</span>
                       )}
                     </td>
 
@@ -300,7 +300,7 @@ export default function VerificationTab({
                           {team.chestNumber}
                         </span>
                       ) : (
-                        <span className="text-slate-400 text-[11px] italic">-</span>
+                        <span className="text-slate-400 text-[11px]">-</span>
                       )}
                     </td>
 

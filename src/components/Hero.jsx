@@ -230,6 +230,19 @@ export default function Hero() {
               </a>
             </div>
 
+            {/* Scroll Down Indicator (Mobile: Berada lebih ke bawah di bawah tombol aksi) */}
+            <div
+              className="flex sm:hidden flex-col items-center justify-center pt-8 pb-3 w-full cursor-pointer select-none"
+              onClick={scrollToAbout}
+            >
+              <div className="flex flex-col items-center justify-center gap-1.5 opacity-80 active:opacity-100 animate-bounce">
+                <span className="text-[10px] uppercase tracking-[0.3em] indent-[0.3em] text-white font-semibold text-center block">
+                  Scroll Down
+                </span>
+                <ChevronsDown className="w-4 h-4 text-yellow-400" />
+              </div>
+            </div>
+
           </div>
 
           {/* Right Columns: Adapted Paskibra Cadet Illustration with Fixed Stable Container */}
@@ -265,9 +278,9 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Scroll Down Indicator */}
+      {/* Scroll Down Indicator (Tablet & Desktop: Tetap di bagian paling bawah layar Hero) */}
       <div
-        className="absolute bottom-5 left-1/2 -translate-x-1/2 z-20 cursor-pointer"
+        className="hidden sm:block absolute bottom-5 left-1/2 -translate-x-1/2 z-20 cursor-pointer"
         onClick={scrollToAbout}
       >
         <div className="flex flex-col items-center justify-center gap-1.5 opacity-70 hover:opacity-100 transition-opacity animate-bounce select-none">

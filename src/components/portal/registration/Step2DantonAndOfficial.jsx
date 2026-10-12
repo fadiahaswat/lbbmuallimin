@@ -26,7 +26,7 @@ export default function Step2DantonAndOfficial({
           <Users className="w-5 h-5" />
         </div>
         <div>
-          <h2 className="text-lg sm:text-xl font-black text-slate-900 uppercase italic tracking-wide">
+          <h2 className="text-lg sm:text-xl font-black text-slate-900 uppercase tracking-wide">
             2. Komandan Peleton & Official Pelatih
           </h2>
           <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">

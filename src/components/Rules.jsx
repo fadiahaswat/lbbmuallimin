@@ -90,13 +90,6 @@ export default function Rules({ embedded = false }) {
 
   return (
     <section id="rules" className={`${embedded ? 'py-4' : 'py-24 lg:py-32'} bg-white relative overflow-hidden font-sans`}>
-      {!embedded && (
-        <>
-          <div className="hidden sm:block absolute top-0 right-0 w-[500px] h-[500px] bg-slate-100 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 opacity-60 pointer-events-none transform-gpu"></div>
-          <div className="hidden sm:block absolute bottom-0 left-0 w-[500px] h-[500px] bg-red-50 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 opacity-60 pointer-events-none transform-gpu"></div>
-        </>
-      )}
-
       <div className={embedded ? 'w-full relative z-10' : 'container mx-auto px-6 relative z-10'}>
         {!embedded && (
           <div className="mb-12 text-center">

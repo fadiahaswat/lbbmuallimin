@@ -26,7 +26,7 @@ export default function IntegrityPactModal({
               <span className="text-[10px] font-black uppercase tracking-wider text-red-700 block">
                 Dokumen Resmi Digital LBB 2027
               </span>
-              <h3 className="text-base sm:text-lg font-black text-slate-900 uppercase italic">
+              <h3 className="text-base sm:text-lg font-black text-slate-900 uppercase">
                 Pakta Integritas & Keabsahan
               </h3>
             </div>
@@ -98,7 +98,7 @@ export default function IntegrityPactModal({
               className="w-full h-36 block"
             />
           </div>
-          <p className="text-[10px] text-slate-400 text-center italic">
+          <p className="text-[10px] text-slate-400 text-center">
             *Gunakan jari pada layar sentuh ponsel atau kursor mouse pada laptop untuk membubuhkan tanda tangan.
           </p>
         </div>

@@ -199,7 +199,7 @@ export default function DocumentViewerModal({ isOpen, onClose }) {
                 <div>
                   <p>Yogyakarta, 1 September 2026</p>
                   <p className="font-bold mt-1">Ketua Panitia Pelaksana,</p>
-                  <div className="h-16 flex items-center justify-center text-slate-300 italic text-[10px]">
+                  <div className="h-16 flex items-center justify-center text-slate-300 text-[10px]">
                     (Tanda Tangan & Cap Panitia)
                   </div>
                   <p className="font-bold underline">Falhan Zuhdi Mubarok</p>

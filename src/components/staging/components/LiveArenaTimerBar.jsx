@@ -51,7 +51,7 @@ export default function LiveArenaTimerBar({
             </div>
           ) : (
             <div>
-              <h2 className="text-xl font-bold text-slate-500 italic">
+              <h2 className="text-xl font-bold text-slate-500">
                 Belum ada peleton yang sedang tampil di arena.
               </h2>
               <p className="text-xs text-slate-500">

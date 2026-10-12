@@ -25,7 +25,7 @@ export default function OverviewTab({
       {/* 3 Box Sorotan Status Tampil Peleton */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {/* Card 1: No. Dada */}
-        <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-xs flex items-center gap-4 hover:border-emerald-300 transition-colors">
+        <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-xs flex items-center gap-4 hover:border-slate-300 transition-colors">
           <div className="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
             <Tag className="w-6 h-6" />
           </div>
@@ -45,7 +45,7 @@ export default function OverviewTab({
         </div>
 
         {/* Card 2: Jam Estimasi Tampil */}
-        <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-xs flex items-center gap-4 hover:border-blue-300 transition-colors">
+        <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-xs flex items-center gap-4 hover:border-slate-300 transition-colors">
           <div className="w-12 h-12 rounded-2xl bg-blue-100 text-blue-700 flex items-center justify-center shrink-0">
             <Timer className="w-6 h-6" />
           </div>
@@ -62,7 +62,7 @@ export default function OverviewTab({
               </span>
             </div>
             {Number(currentTeam.lotNumber) >= 6 && Number(currentTeam.lotNumber) <= 10 && (
-              <div className="mt-2 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-red-100 text-red-800 border border-red-200 text-[10px] font-black uppercase">
+              <div className="mt-2 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-rose-100 text-rose-800 border border-rose-200 text-[10px] font-black uppercase">
                 <span>🚩 Wajib Ikut Upacara Pembukaan</span>
               </div>
             )}
@@ -70,7 +70,7 @@ export default function OverviewTab({
         </div>
 
         {/* Card 3: Nomor Basecamp */}
-        <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-xs flex items-center gap-4 hover:border-amber-300 transition-colors">
+        <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-xs flex items-center gap-4 hover:border-slate-300 transition-colors">
           <div className="w-12 h-12 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center shrink-0">
             <Home className="w-6 h-6" />
           </div>
@@ -97,7 +97,7 @@ export default function OverviewTab({
         <div className="lg:col-span-2 bg-white rounded-3xl p-6 border border-slate-200 shadow-xs space-y-5">
           <div className="space-y-3.5 border-b border-slate-100 pb-4">
             <div>
-              <h4 className="font-black text-lg text-slate-900 uppercase italic flex items-center gap-2">
+              <h4 className="font-black text-lg text-slate-900 uppercase flex items-center gap-2">
                 <Calendar className="w-5 h-5 text-red-700" />
                 <span>Agenda Wajib Kontingen & Peta Lokasi</span>
               </h4>
@@ -113,7 +113,7 @@ export default function OverviewTab({
                 onClick={() => setScheduleTab('tm')}
                 className={`flex-1 px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 text-center ${
                   scheduleTab === 'tm'
-                    ? 'bg-purple-600 text-white shadow-xs'
+                    ? 'bg-slate-900 text-white shadow-xs'
                     : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
                 }`}
               >
@@ -124,7 +124,7 @@ export default function OverviewTab({
                 onClick={() => setScheduleTab('trial')}
                 className={`flex-1 px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 text-center ${
                   scheduleTab === 'trial'
-                    ? 'bg-emerald-600 text-white shadow-xs'
+                    ? 'bg-slate-900 text-white shadow-xs'
                     : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
                 }`}
               >
@@ -135,7 +135,7 @@ export default function OverviewTab({
                 onClick={() => setScheduleTab('competition')}
                 className={`flex-1 px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 text-center ${
                   scheduleTab === 'competition'
-                    ? 'bg-red-600 text-white shadow-xs'
+                    ? 'bg-slate-900 text-white shadow-xs'
                     : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
                 }`}
               >
@@ -437,7 +437,7 @@ export default function OverviewTab({
                 className="w-14 h-14 object-contain filter drop-shadow-md shrink-0"
               />
               <div>
-                <div className="flex items-center gap-1.5 text-yellow-400">
+                <div className="flex items-center gap-1.5 text-amber-400">
                   <HelpCircle className="w-4 h-4" />
                   <h4 className="font-black text-xs uppercase tracking-wider">Bantuan Panitia</h4>
                 </div>

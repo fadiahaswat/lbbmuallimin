@@ -61,7 +61,7 @@ export default function Step4Confirmation({
         <span className="text-xs font-black uppercase tracking-widest text-amber-800 bg-amber-100 border border-amber-200 px-3.5 py-1 rounded-full">
           Status: Menunggu ACC Admin
         </span>
-        <h2 className="text-2xl sm:text-3xl font-black text-slate-900 uppercase italic tracking-tight mt-3">
+        <h2 className="text-2xl sm:text-3xl font-black text-slate-900 uppercase tracking-tight mt-3">
           Pendaftaran Berhasil Dikirim!
         </h2>
         <p className="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed">
@@ -128,7 +128,7 @@ export default function Step4Confirmation({
             disabled={!qrDataUrl}
             className="py-2.5 px-5 bg-slate-900 hover:bg-slate-800 active:scale-95 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-all shadow-sm inline-flex items-center gap-2 cursor-pointer disabled:opacity-50"
           >
-            <Download className="w-4 h-4 text-yellow-400" />
+            <Download className="w-4 h-4 text-amber-400" />
             <span>Unduh QR Code (PNG)</span>
           </button>
         </div>
@@ -148,7 +148,7 @@ export default function Step4Confirmation({
       </div>
 
       {/* WhatsApp Confirmation Banner */}
-      <div className="p-4 sm:p-5 bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-50 border-2 border-emerald-500/30 rounded-2xl text-left space-y-3 shadow-xs">
+      <div className="p-4 sm:p-5 bg-emerald-50/70 border border-emerald-200 rounded-2xl text-left space-y-3 shadow-xs">
         <div className="flex items-start gap-3">
           <div className="w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center shrink-0 shadow-sm">
             <MessageCircle className="w-5 h-5 fill-white/20" />
@@ -191,7 +191,7 @@ export default function Step4Confirmation({
         <button
           type="button"
           onClick={() => openAuthModal('login')}
-          className="flex-1 py-3 px-4 bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 hover:from-yellow-300 hover:to-amber-400 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider transition-all shadow-md active:scale-95 flex items-center justify-center gap-2"
+          className="flex-1 py-3 px-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-xs uppercase tracking-wider transition-all shadow-md active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
         >
           <span>Coba Masuk Portal</span>
           <ArrowRight className="w-4 h-4" />

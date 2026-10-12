@@ -55,7 +55,7 @@ export default function LeaderboardView({
 
                 <div className="space-y-3">
                   {rankedTeams.length === 0 ? (
-                    <div className="py-10 text-center text-slate-400 text-xs italic">
+                    <div className="py-10 text-center text-slate-400 text-xs">
                       Belum ada tim {jenjang} yang selesai dinilai juri.
                     </div>
                   ) : (

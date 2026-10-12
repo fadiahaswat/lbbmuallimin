@@ -20,7 +20,7 @@ export default function RecapTab({
             </span>
             <span className="text-xs text-slate-400">• Rekapitulasi Dewan Juri Resmi</span>
           </div>
-          <h3 className="font-black text-xl text-slate-900 uppercase italic mt-1">
+          <h3 className="font-black text-xl text-slate-900 uppercase mt-1">
             4. Rekap Nilai & Pengumuman Juara LBB
           </h3>
           <p className="text-xs text-slate-500 mt-0.5">
@@ -138,7 +138,7 @@ export default function RecapTab({
                           {sc.finalScore}
                         </span>
                       ) : (
-                        <span className="text-slate-400 italic text-[11px]">Belum dinilai juri</span>
+                        <span className="text-slate-400 text-[11px]">Belum dinilai juri</span>
                       )}
                     </td>
                   </tr>

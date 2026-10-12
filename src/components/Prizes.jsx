@@ -120,19 +120,19 @@ export default function Prizes() {
             {/* Column Header */}
             <div className="flex items-center justify-between pb-2 border-b border-white/10">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-red-600/20 text-red-400 border border-red-500/30 flex items-center justify-center shadow-md">
-                  <School className="w-5 h-5" />
+                <div className="w-9 h-9 rounded-lg bg-white/[0.06] border border-white/10 text-red-400 flex items-center justify-center">
+                  <School className="w-4 h-4" />
                 </div>
                 <div>
-                  <span className="text-[10px] font-bold text-red-400 uppercase tracking-widest block">
+                  <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">
                     Tingkat Dasar
                   </span>
-                  <h3 className="text-lg sm:text-xl font-black text-white uppercase italic tracking-tight">
+                  <h3 className="text-lg font-bold text-white uppercase tracking-tight">
                     Kategori SD / MI
                   </h3>
                 </div>
               </div>
-              <span className="text-[10px] sm:text-[11px] font-semibold text-slate-400 bg-white/[0.04] border border-white/10 px-2.5 sm:px-3 py-1 rounded-full shrink-0 whitespace-nowrap">
+              <span className="text-[10px] sm:text-[11px] font-medium text-slate-400 bg-white/[0.04] border border-white/10 px-2.5 sm:px-3 py-1 rounded-full shrink-0 whitespace-nowrap">
                 6 Gelar Juara
               </span>
             </div>
@@ -241,19 +241,19 @@ export default function Prizes() {
             {/* Column Header */}
             <div className="flex items-center justify-between pb-2 border-b border-white/10">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-blue-600/20 text-blue-400 border border-blue-500/30 flex items-center justify-center shadow-md">
-                  <GraduationCap className="w-5 h-5" />
+                <div className="w-9 h-9 rounded-lg bg-white/[0.06] border border-white/10 text-blue-400 flex items-center justify-center">
+                  <GraduationCap className="w-4 h-4" />
                 </div>
                 <div>
-                  <span className="text-[10px] font-bold text-blue-400 uppercase tracking-widest block">
+                  <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">
                     Tingkat Menengah
                   </span>
-                  <h3 className="text-lg sm:text-xl font-black text-white uppercase italic tracking-tight">
+                  <h3 className="text-lg font-bold text-white uppercase tracking-tight">
                     Kategori SMP / MTs
                   </h3>
                 </div>
               </div>
-              <span className="text-[10px] sm:text-[11px] font-semibold text-slate-400 bg-white/[0.04] border border-white/10 px-2.5 sm:px-3 py-1 rounded-full shrink-0 whitespace-nowrap">
+              <span className="text-[10px] sm:text-[11px] font-medium text-slate-400 bg-white/[0.04] border border-white/10 px-2.5 sm:px-3 py-1 rounded-full shrink-0 whitespace-nowrap">
                 6 Gelar Juara
               </span>
             </div>

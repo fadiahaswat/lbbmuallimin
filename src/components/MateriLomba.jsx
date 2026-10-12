@@ -102,9 +102,6 @@ export default function MateriLomba() {
   return (
     <section id="materi-lomba" className="py-24 lg:py-32 bg-slate-50 relative overflow-hidden font-sans border-t border-slate-200">
       <div className="absolute inset-0 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:16px_16px] opacity-60 pointer-events-none"></div>
-      <div className="absolute -left-20 top-1/3 w-96 h-96 bg-red-100/50 rounded-full blur-[100px] pointer-events-none"></div>
-      <div className="absolute -right-20 bottom-1/4 w-96 h-96 bg-blue-100/50 rounded-full blur-[100px] pointer-events-none"></div>
-
       <div className="container mx-auto px-6 relative z-10">
         <div className="mb-14 md:mb-16 text-center max-w-3xl mx-auto">
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-slate-100 border border-slate-200/80 text-slate-600 text-xs font-semibold uppercase tracking-wider mb-4">
@@ -249,16 +246,16 @@ export default function MateriLomba() {
                 </div>
               </div>
 
-              <div className="relative z-10 font-mono text-sm text-slate-700 leading-relaxed max-h-[600px] overflow-y-auto custom-scrollbar pr-2">
-                <ol className="list-decimal list-outside pl-8 space-y-3">
+              <div className="relative z-10 font-sans text-sm text-slate-700 leading-relaxed max-h-[600px] overflow-y-auto custom-scrollbar pr-2">
+                <ol className="list-decimal list-outside pl-6 space-y-2.5">
                   {MATERIALS.SMP.map((item, idx) => (
-                    <li key={idx} className="hover:text-blue-700 transition-colors">{item}</li>
+                    <li key={idx} className="hover:text-red-700 transition-colors">{item}</li>
                   ))}
                 </ol>
 
-                <div className="mt-8 pt-6 border-t border-slate-200">
-                  <h4 className="text-xs font-bold text-blue-700 uppercase mb-3">Keterangan:</h4>
-                  <ul className="space-y-2 list-[lower-alpha] list-outside pl-8 text-xs text-slate-600">
+                <div className="mt-8 pt-5 border-t border-slate-200">
+                  <h4 className="text-xs font-bold text-slate-900 uppercase mb-2">Keterangan Teknis:</h4>
+                  <ul className="space-y-1.5 list-[lower-alpha] list-outside pl-6 text-xs text-slate-600">
                     <li>Gerakan materi dilaksanakan secara berurutan sesuai nomor;</li>
                     <li>Materi gerakan berantai bertanda strip ( – ) wajib dilaksanakan satu rangkaian tanpa gerakan tambahan;</li>
                     <li>Materi gerakan lomba sudah dibuat runtut. Komandan Peleton diperbolehkan melakukan gerakan penyesuaian tanpa pembatasan jumlah kuota, namun penggunaannya berpengaruh langsung terhadap penilaian aspek Penguasaan Lapangan Komandan Peleton;</li>
@@ -274,21 +271,21 @@ export default function MateriLomba() {
         <div className="mt-10 grid lg:grid-cols-2 gap-10">
           {/* Wadah Denah SD/MI */}
           <div className="relative group">
-            <div className="relative bg-white rounded-3xl border border-red-200 p-6 sm:p-8 h-full flex flex-col justify-between shadow-lg">
+            <div className="relative bg-white rounded-3xl border border-slate-200/90 p-6 sm:p-8 h-full flex flex-col justify-between shadow-sm">
               <div>
                 <div className="flex flex-wrap sm:flex-nowrap items-start sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-slate-100">
                   <div className="flex items-center gap-2.5 min-w-0">
-                    <span className="p-2 rounded-xl bg-red-100 text-red-700 border border-red-200 shrink-0">
+                    <span className="p-2 rounded-xl bg-slate-100 text-slate-700 border border-slate-200 shrink-0">
                       <Map className="w-5 h-5" />
                     </span>
                     <div className="min-w-0">
                       <h4 className="text-sm sm:text-lg font-black text-slate-900 uppercase tracking-wider">
                         Denah Arena & Spesifikasi Pos
                       </h4>
-                      <p className="text-xs font-bold text-red-700 uppercase tracking-widest mt-0.5">Tingkat SD/MI Sederajat</p>
+                      <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mt-0.5">Tingkat SD/MI Sederajat</p>
                     </div>
                   </div>
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-100 border border-red-200 text-red-800 text-xs font-bold font-mono shrink-0 whitespace-nowrap self-start sm:self-auto">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-800 text-xs font-bold font-mono shrink-0 whitespace-nowrap self-start sm:self-auto">
                     <Timer className="w-3.5 h-3.5 shrink-0" />
                     <span>{COMPETITION.SD.DURATION_LABEL}</span>
                   </div>
@@ -316,21 +313,21 @@ export default function MateriLomba() {
 
           {/* Wadah Denah SMP/MTs */}
           <div className="relative group">
-            <div className="relative bg-white rounded-3xl border border-blue-200 p-6 sm:p-8 h-full flex flex-col justify-between shadow-lg">
+            <div className="relative bg-white rounded-3xl border border-slate-200/90 p-6 sm:p-8 h-full flex flex-col justify-between shadow-sm">
               <div>
                 <div className="flex flex-wrap sm:flex-nowrap items-start sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-slate-100">
                   <div className="flex items-center gap-2.5 min-w-0">
-                    <span className="p-2 rounded-xl bg-blue-100 text-blue-700 border border-blue-200 shrink-0">
+                    <span className="p-2 rounded-xl bg-slate-100 text-slate-700 border border-slate-200 shrink-0">
                       <Map className="w-5 h-5" />
                     </span>
                     <div className="min-w-0">
                       <h4 className="text-sm sm:text-lg font-black text-slate-900 uppercase tracking-wider">
                         Denah Arena & Spesifikasi Pos
                       </h4>
-                      <p className="text-xs font-bold text-blue-700 uppercase tracking-widest mt-0.5">Tingkat SMP/MTs Sederajat</p>
+                      <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mt-0.5">Tingkat SMP/MTs Sederajat</p>
                     </div>
                   </div>
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-100 border border-blue-200 text-blue-800 text-xs font-bold font-mono shrink-0 whitespace-nowrap self-start sm:self-auto">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-800 text-xs font-bold font-mono shrink-0 whitespace-nowrap self-start sm:self-auto">
                     <Timer className="w-3.5 h-3.5 shrink-0" />
                     <span>{COMPETITION.SMP.DURATION_LABEL}</span>
                   </div>

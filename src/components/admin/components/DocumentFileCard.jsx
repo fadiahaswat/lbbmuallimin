@@ -190,7 +190,7 @@ export default function DocumentFileCard({
           ) : (
             <div className="flex flex-col items-center justify-center text-center p-2 text-slate-400">
               <AlertTriangle className="w-6 h-6 text-slate-300 mb-1" />
-              <span className="text-xs italic mb-1.5">Belum ada berkas</span>
+              <span className="text-xs mb-1.5">Belum ada berkas</span>
               {onUpload && (
                 <button
                   type="button"

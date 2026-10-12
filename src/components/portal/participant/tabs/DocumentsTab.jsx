@@ -6,7 +6,7 @@ export default function DocumentsTab({ currentTeam, triggerFileUpload, setActive
   return (
     <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
       <div>
-        <h4 className="font-black text-xl text-slate-900 uppercase italic">
+        <h4 className="font-black text-xl text-slate-900 uppercase">
           Pusat Pengunggahan Berkas Digital
         </h4>
         <p className="text-xs text-slate-500 mt-0.5">
@@ -21,7 +21,7 @@ export default function DocumentsTab({ currentTeam, triggerFileUpload, setActive
           file={currentTeam.files?.schoolLogo}
           uploadKey="schoolLogo"
           btnLabel="Unggah Logo"
-          btnColor="bg-yellow-400 hover:bg-yellow-500 text-slate-950"
+          btnColor="bg-amber-400 hover:bg-amber-500 text-slate-950 font-bold"
           onUpload={() => triggerFileUpload('schoolLogo')}
         />
 

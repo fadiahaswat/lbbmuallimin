@@ -35,7 +35,7 @@ export default function Step1SchoolAndAccount({
           <School className="w-5 h-5" />
         </div>
         <div>
-          <h2 className="text-lg sm:text-xl font-black text-slate-900 uppercase italic tracking-wide">
+          <h2 className="text-lg sm:text-xl font-black text-slate-900 uppercase tracking-wide">
             1. Identitas Sekolah, Akun & Tipe Pasukan
           </h2>
           <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">
@@ -81,20 +81,20 @@ export default function Step1SchoolAndAccount({
                 label: 'Tingkat SD / MI',
                 badge: isSDFull ? 'KUOTA PENUH' : `Sisa ${Math.max(0, quotaSD - registeredSD)} Slot`,
                 isFull: isSDFull,
-                activeClass: 'bg-red-50 border-2 border-red-700 text-red-900 shadow-xs ring-2 ring-red-600/10',
-                activeIcon: 'text-red-700',
-                activeBadge: isSDFull ? 'bg-red-200 text-red-800' : 'bg-red-100 text-red-800 border border-red-200',
-                hoverBorder: 'hover:border-red-300',
+                activeClass: 'bg-slate-900 border border-slate-900 text-white shadow-xs',
+                activeIcon: 'text-amber-400',
+                activeBadge: isSDFull ? 'bg-red-200 text-red-800' : 'bg-white/20 text-white border border-white/20',
+                hoverBorder: 'hover:border-slate-300',
               },
               {
                 id: 'SMP',
                 label: 'Tingkat SMP / MTs',
                 badge: isSMPFull ? 'KUOTA PENUH' : `Sisa ${Math.max(0, quotaSMP - registeredSMP)} Slot`,
                 isFull: isSMPFull,
-                activeClass: 'bg-blue-50 border-2 border-blue-600 text-blue-950 shadow-xs ring-2 ring-blue-600/10',
-                activeIcon: 'text-blue-600',
-                activeBadge: isSMPFull ? 'bg-rose-200 text-rose-900' : 'bg-blue-100 text-blue-800 border border-blue-200',
-                hoverBorder: 'hover:border-blue-300',
+                activeClass: 'bg-slate-900 border border-slate-900 text-white shadow-xs',
+                activeIcon: 'text-amber-400',
+                activeBadge: isSMPFull ? 'bg-rose-200 text-rose-900' : 'bg-white/20 text-white border border-white/20',
+                hoverBorder: 'hover:border-slate-300',
               },
             ].map(item => {
               const isSelected = formData.jenjang === item.id;
@@ -265,10 +265,10 @@ export default function Step1SchoolAndAccount({
                   <UploadCloud className="w-5 h-5 text-red-700" />
                 </div>
                 <span className="text-xs font-bold text-slate-800">Klik untuk memilih file Logo Sekolah</span>
-                <span className="text-[11px] text-slate-500 mt-1">Format PNG, JPG, JPEG (Maks. 3 MB)</span>
+                <span className="text-[11px] text-slate-500 mt-1">Disarankan format PNG transparan (Maks. 3 MB)</span>
                 <input
                   type="file"
-                  accept="image/*"
+                  accept="image/png,image/jpeg,image/jpg"
                   onChange={e => handleFileChange('schoolLogo', e)}
                   className="hidden"
                 />
@@ -295,14 +295,14 @@ export default function Step1SchoolAndAccount({
                   onClick={() => setFormData({ ...formData, teamType: t.id })}
                   className={`p-4 rounded-2xl border text-left transition-all duration-200 ${
                     isSelected
-                      ? 'bg-red-50 border-2 border-red-700 shadow-xs ring-2 ring-red-600/10'
+                      ? 'bg-slate-900 border border-slate-900 text-white shadow-xs'
                       : 'bg-white border border-slate-200 text-slate-600 hover:border-slate-300'
                   }`}
                 >
-                  <span className={`text-xs font-black uppercase block ${isSelected ? 'text-red-800' : 'text-slate-800'}`}>
+                  <span className={`text-xs font-black uppercase block ${isSelected ? 'text-white' : 'text-slate-800'}`}>
                     {t.title}
                   </span>
-                  <span className="text-[11px] text-slate-500 mt-1 block leading-relaxed">{t.desc}</span>
+                  <span className={`text-[11px] mt-1 block leading-relaxed ${isSelected ? 'text-slate-300' : 'text-slate-500'}`}>{t.desc}</span>
                 </button>
               );
             })}
@@ -365,8 +365,8 @@ export default function Step1SchoolAndAccount({
                       onClick={() => setFormData({ ...formData, homogenGender: g.id })}
                       className={`p-4 rounded-2xl border text-left transition-all duration-200 relative group flex items-start gap-3.5 ${
                         isGenderActive
-                          ? 'bg-white border-2 border-red-700 shadow-sm ring-2 ring-red-600/10'
-                          : 'bg-slate-50/70 hover:bg-white border border-slate-200/90 text-slate-600 hover:border-slate-300'
+                          ? 'bg-slate-900 border border-slate-900 text-white shadow-xs'
+                          : 'bg-white hover:bg-slate-50 border border-slate-200 text-slate-600 hover:border-slate-300'
                       }`}
                     >
                       <div
@@ -383,7 +383,7 @@ export default function Step1SchoolAndAccount({
                         <div className="flex items-center gap-2">
                           <span
                             className={`text-xs sm:text-sm font-black uppercase tracking-tight block ${
-                              isGenderActive ? 'text-slate-950' : 'text-slate-700'
+                              isGenderActive ? 'text-white' : 'text-slate-800'
                             }`}
                           >
                             {g.label}
@@ -391,14 +391,16 @@ export default function Step1SchoolAndAccount({
                           <span
                             className={`text-[9px] font-black uppercase px-1.5 py-0.5 rounded ${
                               isGenderActive
-                                ? 'bg-red-100 text-red-800'
+                                ? 'bg-red-700 text-white'
                                 : 'bg-slate-200/70 text-slate-600'
                             }`}
                           >
                             {g.tag}
                           </span>
                         </div>
-                        <p className="text-[11px] text-slate-500 mt-1 leading-snug">
+                        <p className={`text-[11px] mt-1 leading-snug ${
+                          isGenderActive ? 'text-slate-300' : 'text-slate-500'
+                        }`}>
                           {g.desc}
                         </p>
                       </div>
