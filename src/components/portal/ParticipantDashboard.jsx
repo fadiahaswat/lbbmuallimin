@@ -17,6 +17,8 @@ import RosterTab from './participant/tabs/RosterTab.jsx';
 import DocumentsTab from './participant/tabs/DocumentsTab.jsx';
 import ScoresTab from './participant/tabs/ScoresTab.jsx';
 import TeamProfileHeader from './participant/components/TeamProfileHeader.jsx';
+import PhysicalIntegrityPactModal from './participant/components/PhysicalIntegrityPactModal.jsx';
+import { downloadIntegrityPactPDF } from '../../utils/downloadIntegrityPactPDF.js';
 
 export default function ParticipantDashboard() {
   const {
@@ -27,7 +29,9 @@ export default function ParticipantDashboard() {
     setCurrentTeamId,
     updateTeamFiles,
     updateTeamRoster,
+    updateTeamVehicleSurvey,
     scores,
+    staging,
     setActiveView,
     openModal,
     logoutTeam,
@@ -93,6 +97,28 @@ export default function ParticipantDashboard() {
   const [draggedMember, setDraggedMember] = useState(null);
   const [dragOverTarget, setDragOverTarget] = useState(null);
 
+  const [isPactModalOpen, setIsPactModalOpen] = useState(false);
+  const [isDownloadingPact, setIsDownloadingPact] = useState(false);
+
+  const handleDownloadPact = async () => {
+    if (!currentTeam || isDownloadingPact) return;
+    setIsDownloadingPact(true);
+    try {
+      await downloadIntegrityPactPDF(currentTeam);
+    } catch (err) {
+      console.error('Gagal generate PDF Pakta:', err);
+      // Fallback: buka modal cetak jika html2canvas terhalang
+      setIsPactModalOpen(true);
+    } finally {
+      setIsDownloadingPact(false);
+    }
+  };
+
+  // Regulasi Penguncian Data Personel (Bab A.9.c): Perubahan data personel diperbolehkan s.d. sebelum Technical Meeting (9 Jan 2027)
+  const tmCutoffDate = new Date('2027-01-09T12:00:00+07:00');
+  const isPastTMCutoff = new Date() >= tmCutoffDate;
+  const isRosterLocked = Boolean(currentTeam?.isRosterLocked || isPastTMCutoff);
+
   const [logoLoadFailed, setLogoLoadFailed] = useState(false);
   const rawLogoUrl = currentTeam?.files?.schoolLogo?.url || '';
   const hasLogo = Boolean(rawLogoUrl && rawLogoUrl !== '#' && !rawLogoUrl.startsWith('#'));
@@ -154,6 +180,7 @@ export default function ParticipantDashboard() {
       birthPlace: existing.danton?.birthPlace || '',
       birthDate: existing.danton?.birthDate || '',
       class: existing.danton?.class || '',
+      medicalHistory: existing.danton?.medicalHistory || '',
       photo: existing.danton?.photo || null,
     };
     // ensure 21 pasukan
@@ -173,6 +200,7 @@ export default function ParticipantDashboard() {
           birthPlace: '',
           birthDate: '',
           class: '',
+          medicalHistory: '',
           photo: null,
         });
       }
@@ -184,6 +212,7 @@ export default function ParticipantDashboard() {
         birthPlace: p.birthPlace || '',
         birthDate: p.birthDate || '',
         class: p.class || '',
+        medicalHistory: p.medicalHistory || '',
         photo: p.photo || null,
       }));
     }
@@ -200,6 +229,7 @@ export default function ParticipantDashboard() {
           birthPlace: '',
           birthDate: '',
           class: '',
+          medicalHistory: '',
           photo: null,
         });
       }
@@ -211,6 +241,7 @@ export default function ParticipantDashboard() {
         birthPlace: c.birthPlace || '',
         birthDate: c.birthDate || '',
         class: c.class || '',
+        medicalHistory: c.medicalHistory || '',
         photo: c.photo || null,
       }));
     }
@@ -623,7 +654,7 @@ export default function ParticipantDashboard() {
         accept="image/*"
       />
 
-      <div className="max-w-6xl mx-auto space-y-6">
+      <div className="max-w-6xl mx-auto space-y-3.5 sm:space-y-6">
         {/* Toast Notifikasi */}
         {uploadToast && (
           <div className="bg-emerald-600 text-white text-xs font-bold px-4 py-3 rounded-2xl shadow-lg flex items-center justify-between animate-in fade-in slide-in-from-top-2 duration-300">
@@ -634,95 +665,7 @@ export default function ParticipantDashboard() {
           </div>
         )}
 
-        {/* Panduan Pengunggahan Berkas jika status === 'registered' */}
-        {currentTeam.status === 'registered' && (
-          <div className="bg-blue-50/70 border border-blue-200 p-4 sm:p-5 rounded-2xl shadow-xs flex items-start gap-4">
-            <div className="p-2.5 bg-blue-600 text-white rounded-xl shrink-0">
-              <Sparkles className="w-6 h-6" />
-            </div>
-            <div className="flex-1">
-              <div className="flex items-center gap-2">
-                <span className="text-[10px] font-black uppercase tracking-wider text-blue-800 bg-blue-200/80 px-2 py-0.5 rounded">
-                  Pendaftaran Awal Disetujui
-                </span>
-                <span className="text-xs font-bold text-blue-700">Langkah 2 dari 4</span>
-              </div>
-              <h4 className="font-black text-slate-900 text-base mt-1">Lengkapi Susunan 25 Personel & Unggah Surat Rekomendasi</h4>
-              <p className="text-xs text-slate-700 mt-1 leading-relaxed">
-                Pendaftaran awal sekolah Anda telah disetujui panitia! Silakan lengkapi biodata 25 personel peleton (nama, NISN, kelas) pada tab <strong>"Susunan 25 Personel"</strong> dan unggah <strong>Surat Rekomendasi Kepala Sekolah</strong> pada tab <strong>"Berkas Persyaratan"</strong> untuk melanjutkan ke verifikasi peleton sah.
-              </p>
-              <div className="mt-3 flex flex-wrap gap-2">
-                <button
-                  onClick={() => setActiveTab('roster')}
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl transition-all shadow-sm flex items-center gap-1.5"
-                >
-                  <Users className="w-3.5 h-3.5" />
-                  <span>Isi Data 25 Personel Peleton</span>
-                </button>
-                <button
-                  onClick={() => setActiveTab('documents')}
-                  className="px-4 py-2 bg-white hover:bg-blue-100 text-blue-900 font-bold text-xs rounded-xl border border-blue-300 transition-all flex items-center gap-1.5"
-                >
-                  <Upload className="w-3.5 h-3.5" />
-                  <span>Unggah Surat Rekomendasi Sekolah</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Peringatan Revisi Dokumen jika status === 'revision' */}
-        {currentTeam.status === 'revision' && (
-          <div className="bg-amber-50/80 border border-amber-300 p-4 sm:p-5 rounded-2xl shadow-xs flex items-start gap-4">
-            <div className="p-2.5 bg-amber-500 text-white rounded-xl shrink-0">
-              <AlertTriangle className="w-6 h-6" />
-            </div>
-            <div className="flex-1">
-              <span className="text-[10px] font-black uppercase tracking-wider text-amber-800 bg-amber-200/80 px-2 py-0.5 rounded">
-                Tindakan Diperlukan
-              </span>
-              <h4 className="font-black text-slate-900 text-base mt-1">Perbaikan Berkas Administrasi</h4>
-              <p className="text-xs text-slate-700 mt-1 leading-relaxed">
-                <strong>Catatan Panitia:</strong> "{currentTeam.revisionNote || 'Mohon unggah ulang berkas yang kurang jelas atau belum lengkap.'}"
-              </p>
-              <div className="mt-3 flex gap-2">
-                <button
-                  onClick={() => setActiveTab('documents')}
-                  className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded-xl transition-all shadow-xs"
-                >
-                  Unggah Perbaikan Berkas Sekarang
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Notifikasi Wajib Upacara Pembukaan untuk Peleton Urutan 6 s.d. 10 */}
-        {Number(currentTeam.lotNumber) >= 6 && Number(currentTeam.lotNumber) <= 10 && (
-          <div className="bg-slate-900 text-white p-4 sm:p-5 rounded-2xl shadow-md border border-red-700/60 flex items-start gap-4 animate-in fade-in duration-300">
-            <div className="p-2.5 bg-red-700 text-white rounded-xl shrink-0 font-black text-sm flex items-center justify-center">
-              🚩
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="text-[10px] font-black uppercase tracking-wider bg-white/10 text-slate-200 px-2.5 py-0.5 rounded-full border border-white/20">
-                  Perhatian Khusus Urutan #{String(currentTeam.lotNumber).padStart(2, '0')} (Bab H.1 Juknis)
-                </span>
-                <span className="text-[10px] font-black uppercase tracking-wider bg-amber-500 text-slate-950 px-2 py-0.5 rounded-full">
-                  Wajib Hadir Upacara Pembukaan
-                </span>
-              </div>
-              <h4 className="font-black text-white text-base mt-1.5 leading-snug">
-                Peleton Anda Wajib Berbaris Mengikuti Upacara Pembukaan Resmi!
-              </h4>
-              <p className="text-xs text-slate-300 mt-1 leading-relaxed">
-                Sesuai Juknis Bab H.1 dan Tata Tertib Pasal 6.2, <strong>peleton dengan urutan tampil 6 s.d. 10</strong> wajib berbaris di Lapangan Utama pada <strong>pukul 06.45 WIB</strong> (komposisi 1 Komandan + 15 Anggota / 5 trio). Tidak mengikuti upacara atau tidak lengkap dikenakan sanksi penalti pengurangan <strong>-150 poin</strong>.
-              </p>
-            </div>
-          </div>
-        )}
-
-        {/* Main Team Profile Banner */}
+        {/* Main Team Profile Banner - Paling Atas */}
         <TeamProfileHeader
           currentTeam={currentTeam}
           hasLogo={hasLogo}
@@ -733,28 +676,107 @@ export default function ParticipantDashboard() {
           triggerFileUpload={triggerFileUpload}
         />
 
-        {/* Tab Navigation */}
-        <div className="flex border-b border-slate-200 bg-white rounded-2xl px-2 py-1.5 shadow-xs overflow-x-auto gap-1">
-          {[
-            { id: 'overview', label: 'Ringkasan & Jadwal' },
-            { id: 'idcard', label: 'ID Card / Tiket QR' },
-            { id: 'roster', label: 'Susunan 25 Personel' },
-            { id: 'documents', label: 'Unggah Berkas & Logo' },
-            { id: 'scores', label: 'Hasil Rekap Nilai' },
-          ].map(tab => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
-                activeTab === tab.id
-                  ? 'bg-red-700 text-white shadow-sm'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+        {/* Panduan Pengunggahan Berkas jika status === 'registered' */}
+        {currentTeam.status === 'registered' && (
+          <div className="bg-blue-50/70 border border-blue-200 p-3.5 sm:p-5 rounded-2xl shadow-xs flex items-start gap-3 sm:gap-4">
+            <div className="p-2 sm:p-2.5 bg-blue-600 text-white rounded-xl shrink-0">
+              <Sparkles className="w-5 h-5 sm:w-6 sm:h-6" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2">
+                <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-blue-800 bg-blue-200/80 px-2 py-0.5 rounded">
+                  Pendaftaran Awal Disetujui
+                </span>
+                <span className="text-[11px] sm:text-xs font-bold text-blue-700">Langkah 2 dari 4</span>
+              </div>
+              <h4 className="font-black text-slate-900 text-sm sm:text-base mt-1 leading-snug">
+                Lengkapi Susunan 25 Personel & Unggah Surat Rekomendasi
+              </h4>
+              <p className="text-[11px] sm:text-xs text-slate-700 mt-1 leading-relaxed">
+                Pendaftaran awal disetujui! Lengkapi biodata 25 personel peleton pada tab <strong>"Susunan 25 Personel"</strong> dan unggah <strong>Surat Rekomendasi Sekolah</strong> pada tab <strong>"Berkas Persyaratan"</strong> untuk verifikasi sah.
+              </p>
+              <div className="mt-2.5 sm:mt-3 flex flex-col sm:flex-row gap-2">
+                <button
+                  onClick={() => setActiveTab('roster')}
+                  className="w-full sm:w-auto px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl transition-all shadow-xs flex items-center justify-center gap-1.5 cursor-pointer active:scale-95"
+                >
+                  <Users className="w-3.5 h-3.5" />
+                  <span>Isi Data 25 Personel Peleton</span>
+                </button>
+                <button
+                  onClick={() => setActiveTab('documents')}
+                  className="w-full sm:w-auto px-3.5 py-2 bg-white hover:bg-blue-100 text-blue-900 font-bold text-xs rounded-xl border border-blue-300 transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-95"
+                >
+                  <Upload className="w-3.5 h-3.5" />
+                  <span>Unggah Surat Rekomendasi</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Peringatan Revisi Dokumen jika status === 'revision' */}
+        {currentTeam.status === 'revision' && (
+          <div className="bg-amber-50/80 border border-amber-300 p-3.5 sm:p-5 rounded-2xl shadow-xs flex items-start gap-3 sm:gap-4">
+            <div className="p-2 sm:p-2.5 bg-amber-500 text-white rounded-xl shrink-0">
+              <AlertTriangle className="w-5 h-5 sm:w-6 sm:h-6" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-amber-800 bg-amber-200/80 px-2 py-0.5 rounded">
+                Tindakan Diperlukan
+              </span>
+              <h4 className="font-black text-slate-900 text-sm sm:text-base mt-1 leading-snug">Perbaikan Berkas Administrasi</h4>
+              <p className="text-[11px] sm:text-xs text-slate-700 mt-1 leading-relaxed">
+                <strong>Catatan Panitia:</strong> "{currentTeam.revisionNote || 'Mohon unggah ulang berkas yang kurang jelas atau belum lengkap.'}"
+              </p>
+              <div className="mt-2.5 sm:mt-3 flex">
+                <button
+                  onClick={() => setActiveTab('documents')}
+                  className="w-full sm:w-auto px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded-xl transition-all shadow-xs cursor-pointer active:scale-95 text-center"
+                >
+                  Unggah Perbaikan Berkas Sekarang
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Notifikasi Wajib Upacara Pembukaan untuk Peleton Urutan 6 s.d. 10 (Juknis Bab D.3 & Pasal 6) */}
+        {((Number(currentTeam.lotNumber) >= 6 && Number(currentTeam.lotNumber) <= 10) ||
+          ['SD-131', 'SD-133', 'SD-135', 'SD-137', 'SD-139', 'SMP-242', 'SMP-244', 'SMP-246', 'SMP-248', 'SMP-260'].includes(String(currentTeam.chestNumber || '').trim())) && (
+          <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-red-950 text-white p-4 sm:p-5 rounded-2xl sm:rounded-3xl shadow-lg border-2 border-red-600/80 flex items-start gap-3.5 sm:gap-4 animate-in fade-in duration-300">
+            <div className="p-2.5 sm:p-3 bg-red-700 text-white rounded-2xl shrink-0 font-black text-lg flex items-center justify-center shadow-md">
+              🚩
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                <span className="text-[10px] font-black uppercase tracking-wider bg-red-600 text-white px-2.5 py-0.5 rounded-full shadow-xs">
+                  Urutan Tampil #{String(currentTeam.lotNumber || '').padStart(2, '0')} {currentTeam.chestNumber ? `(${currentTeam.chestNumber})` : ''}
+                </span>
+                <span className="text-[10px] font-black uppercase tracking-wider bg-amber-400 text-slate-950 px-2.5 py-0.5 rounded-full shadow-xs">
+                  WAJIB HADIR UPACARA PEMBUKAAN
+                </span>
+                <span className="text-[10px] font-bold text-red-300">
+                  Pasal 6 & Juknis Lapangan D.3
+                </span>
+              </div>
+              <h4 className="font-black text-white text-base sm:text-lg mt-1.5 leading-snug">
+                Peleton Anda Termasuk Dalam 5 Tim Wajib Upacara Pembukaan!
+              </h4>
+              <p className="text-xs text-slate-200 mt-1 leading-relaxed">
+                Peleton dengan <strong>urutan tampil 6 s.d. 10</strong> wajib berbaris di Lapangan Upacara pada <strong>pukul 06.45 WIB</strong> (Upacara mulai tepat 07.00 WIB) dengan komposisi: <strong>1 Komandan Peleton + 15 Anggota</strong> (5 trio lengkap) mengenakan <strong>seragam perlombaan lengkap</strong>.
+              </p>
+              <div className="mt-2.5 flex items-center gap-2 p-2 bg-black/40 border border-red-500/30 rounded-xl text-[11px] text-amber-300 font-semibold">
+                <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
+                <span>
+                  Sanksi Ketidakhadiran: Penalti pemotongan <strong>-150 poin</strong> pada nilai Peleton, atau <strong>-50 poin per kelipatan keterlambatan 5 menit</strong>.
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
+
+
 
         {/* TAB 1: OVERVIEW */}
         {activeTab === 'overview' && (
@@ -769,6 +791,10 @@ export default function ParticipantDashboard() {
             compDate={compDate}
             compTime={compTime}
             setActiveTab={setActiveTab}
+            updateTeamVehicleSurvey={updateTeamVehicleSurvey}
+            stagingInfo={staging?.[currentTeam.id] || null}
+            onOpenPactModal={handleDownloadPact}
+            isDownloadingPact={isDownloadingPact}
           />
         )}
 
@@ -797,6 +823,9 @@ export default function ParticipantDashboard() {
             swapRosterMembers={swapRosterMembers}
             triggerRosterPhotoUpload={triggerRosterPhotoUpload}
             availableClassOptions={availableClassOptions}
+            isRosterLocked={isRosterLocked}
+            onOpenPactModal={handleDownloadPact}
+            isDownloadingPact={isDownloadingPact}
           />
         )}
 
@@ -806,6 +835,8 @@ export default function ParticipantDashboard() {
             currentTeam={currentTeam}
             triggerFileUpload={triggerFileUpload}
             setActiveTab={setActiveTab}
+            onOpenPactModal={handleDownloadPact}
+            isDownloadingPact={isDownloadingPact}
           />
         )}
 
@@ -813,6 +844,13 @@ export default function ParticipantDashboard() {
         {activeTab === 'scores' && (
           <ScoresTab teamScore={teamScore} />
         )}
+
+        {/* Modal Cetak Fisik Pakta Integritas Bermaterai Rp 10.000 */}
+        <PhysicalIntegrityPactModal
+          isOpen={isPactModalOpen}
+          onClose={() => setIsPactModalOpen(false)}
+          team={currentTeam}
+        />
       </div>
     </SimpaskorSidebarLayout>
   );

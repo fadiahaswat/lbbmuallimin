@@ -10,23 +10,23 @@ export const JUKNIS_PENILAIAN_CHAPTERS = [
   {
     id: 'bab-a',
     letter: 'A',
-    title: 'SISTEM PENILAIAN, SANGGAH, DAN PENENTUAN JUARA',
+    title: 'SISTEM PENILAIAN, SANGGAH & PENENTUAN JUARA',
     points: [
       {
         number: 1,
         title: 'Mekanisme dan Aspek Penilaian Dewan Juri',
-        content: `Penilaian dilakukan secara objektif oleh Dewan Juri yang berjumlah 6 orang (unsur TNI, POLRI, dan PPI: 3 Juri bertugas di Arena 1 SD/MI dan 3 Juri bertugas di Arena 2 SMP/MTs). Keputusan Dewan Juri mengenai mutu gerak bersifat mutlak dan tidak dapat diganggu gugat.`
+        content: `Penilaian dilakukan secara objektif oleh 6 Dewan Juri (unsur TNI, POLRI, dan PPI: 3 Juri Arena 1 SD & 3 Juri Arena 2 SMP). Keputusan Dewan Juri mengenai mutu gerak bersifat mutlak dan tidak dapat diganggu gugat.`
       },
       {
         number: 2,
-        title: 'Kriteria Penilaian Peleton dan Komandan',
-        content: `Rincian formula dan skala penilaian Dewan Juri:`,
+        title: 'Kriteria Penilaian',
+        content: `Kriteria penilaian meliputi:`,
         subItems: [
           `Penilaian Peleton: Perbandingan penilaian peleton adalah 1:1, yaitu Kebenaran Teknik (1) dan Kekompakan (1). Masing-masing aspek memiliki rentang nilai 50 s.d. 90 poin.`,
-          `Nilai Murni Peleton: Total Nilai Kebenaran Teknik + Total Nilai Kekompakan.`,
-          `Nilai Akhir Peleton: (Nilai Murni Peleton) – (Total Akumulasi Poin Penalti Peleton).`,
-          `Nilai Murni Komandan: (Penguasaan Materi × 35%) + (Kualitas Suara/Vokal × 25%) + (Sikap dan Pelaporan × 20%) + (Penguasaan Lapangan × 20%).`,
-          `Nilai Akhir Komandan: (Nilai Murni Komandan) – (Total Akumulasi Poin Penalti Komandan).`
+          `Nilai Murni Peleton = Total Nilai Kebenaran Teknik + Total Nilai Kekompakan.`,
+          `Nilai Akhir Peleton = (Nilai Murni Peleton) – (Total Akumulasi Poin Penalti Peleton).`,
+          `Nilai Murni Komandan = (Penguasaan Materi × 35%) + (Kualitas Suara/Vokal × 25%) + (Sikap dan Pelaporan × 20%) + (Penguasaan Lapangan × 20%).`,
+          `Nilai Akhir Komandan = (Nilai Murni Komandan) – (Total Akumulasi Poin Penalti Komandan).`
         ]
       },
       {
@@ -34,34 +34,34 @@ export const JUKNIS_PENILAIAN_CHAPTERS = [
         title: 'Kriteria Penentuan Juara Peleton',
         content: `Penentuan Juara Peleton didasarkan pada Nilai Akhir Peleton dengan perolehan skor tertinggi. Apabila terdapat kesamaan Nilai Akhir Peleton, penentuan peringkat kejuaraan dilakukan berdasarkan urutan prioritas sebagai berikut:`,
         subItems: [
-          `(a) Nilai tertinggi pada aspek Kebenaran Teknik;`,
-          `(b) Nilai tertinggi pada aspek Kekompakan;`,
-          `(c) Akumulasi poin penalti paling sedikit; dan`,
-          `(d) Hasil musyawarah serta pertimbangan Dewan Juri dalam Sidang Pleno Juri yang keputusannya bersifat final dan mengikat.`
+          `a. Nilai tertinggi pada aspek Kebenaran Teknik;`,
+          `b. Nilai tertinggi pada aspek Kekompakan;`,
+          `c. Akumulasi poin penalti paling sedikit; dan`,
+          `d. Hasil musyawarah serta pertimbangan Dewan Juri dalam Sidang Pleno Juri yang keputusannya bersifat final dan mengikat.`
         ]
       },
       {
         number: 4,
-        title: 'Kriteria Penentuan Juara Komandan Peleton',
+        title: 'Kriteria Penentuan Juara Komandan',
         content: `Penentuan Juara Komandan Peleton didasarkan pada Nilai Akhir Komandan dengan perolehan skor tertinggi dari seluruh aspek penilaian. Apabila terdapat kesamaan Nilai Akhir Komandan, penentuan peringkat kejuaraan dilakukan berdasarkan urutan prioritas sebagai berikut:`,
         subItems: [
-          `(a) Nilai tertinggi pada aspek Penguasaan Materi Lomba;`,
-          `(b) Nilai tertinggi pada aspek Kualitas Suara/Vokal;`,
-          `(c) Nilai tertinggi pada aspek Sikap & Pelaporan; dan`,
-          `(d) Hasil musyawarah dan pertimbangan Dewan Juri dalam Sidang Pleno Juri yang keputusannya bersifat final serta mengikat.`
+          `a. Nilai tertinggi pada aspek Penguasaan Materi Lomba;`,
+          `b. Nilai tertinggi pada aspek Kualitas Suara/Vokal;`,
+          `c. Nilai tertinggi pada aspek Sikap & Pelaporan; dan`,
+          `d. Hasil musyawarah dan pertimbangan Dewan Juri dalam Sidang Pleno Juri yang keputusannya bersifat final serta mengikat.`
         ]
       },
       {
         number: 5,
         title: 'Sistem Perolehan Poin Juara Umum',
-        content: `Juara Umum ditetapkan secara terpisah untuk masing-masing tingkatan, yaitu SD/MI dan SMP/MTs. Penetapan Juara Umum didasarkan pada akumulasi prestasi seluruh perwakilan yang berasal dari sekolah yang sama, meliputi capaian Juara Peleton dan Juara Komandan. Poin kejuaraan diberikan dengan ketentuan:`,
+        content: `Juara Umum ditetapkan secara terpisah untuk masing-masing tingkatan, yaitu SD/MI dan SMP/MTs. Penetapan Juara Umum didasarkan pada akumulasi prestasi seluruh perwakilan yang berasal dari sekolah yang sama, meliputi capaian Juara Peleton dan Juara Komandan. Poin kejuaraan diberikan dengan ketentuan sebagai berikut:`,
         pointCards: [
           { label: 'Juara 1 Peleton', score: '6 Poin', type: 'peleton' },
           { label: 'Juara 2 Peleton', score: '5 Poin', type: 'peleton' },
           { label: 'Juara 3 Peleton', score: '4 Poin', type: 'peleton' },
-          { label: 'Juara Harapan 1', score: '3 Poin', type: 'peleton' },
-          { label: 'Juara Harapan 2', score: '2 Poin', type: 'peleton' },
-          { label: 'Juara Harapan 3', score: '1 Poin', type: 'peleton' },
+          { label: 'Juara Harapan 1 Peleton', score: '3 Poin', type: 'peleton' },
+          { label: 'Juara Harapan 2 Peleton', score: '2 Poin', type: 'peleton' },
+          { label: 'Juara Harapan 3 Peleton', score: '1 Poin', type: 'peleton' },
           { label: 'Juara 1 Komandan Terbaik', score: '3 Poin', type: 'danton' },
           { label: 'Juara 2 Komandan Terbaik', score: '2 Poin', type: 'danton' },
           { label: 'Juara 3 Komandan Terbaik', score: '1 Poin', type: 'danton' },
@@ -70,20 +70,20 @@ export const JUKNIS_PENILAIAN_CHAPTERS = [
       },
       {
         number: 6,
-        title: 'Definisi Nilai Murni Peleton / Komandan',
-        content: `Nilai yang diperoleh Peleton/Komandan berdasarkan hasil penilaian Dewan Juri sebelum dikurangi seluruh penalti atau pengurangan nilai yang dikenakan berdasarkan ketentuan Juknis.`
+        title: 'Definisi Nilai Murni Peleton/Komandan',
+        content: `Nilai Murni Peleton/Komandan adalah nilai yang diperoleh Peleton/Komandan berdasarkan hasil penilaian Dewan Juri sebelum dikurangi seluruh penalti atau pengurangan nilai yang dikenakan berdasarkan ketentuan Juknis Lapangan.`
       },
       {
         number: 7,
-        title: 'Kriteria Penyelesaian Kesamaan Poin Juara Umum (Tie-Breaker)',
+        title: 'Tie-Breaker Juara Umum',
         content: `Apabila terdapat dua atau lebih sekolah yang memperoleh total poin Juara Umum yang sama, penentuan peringkat dilakukan berdasarkan urutan prioritas sebagai berikut:`,
         subItems: [
-          `a. Peringkat Tertinggi Peleton: Dibandingkan berdasarkan peringkat tertinggi yang berhasil diraih oleh peleton masing-masing sekolah. Peringkat yang lebih tinggi memiliki prioritas lebih besar (contoh: sekolah dengan capaian Juara 1 Peleton lebih diprioritaskan dibandingkan sekolah dengan capaian Juara 2 Peleton).`,
-          `b. Nilai Murni Peleton: Apabila peringkat tertinggi Peleton yang diraih oleh sekolah-sekolah tersebut masih sama, penentuan dilanjutkan berdasarkan nilai murni tertinggi dari peleton yang memiliki peringkat tertinggi tersebut.`,
+          `a. Peringkat Tertinggi Peleton: Dibandingkan berdasarkan peringkat tertinggi yang berhasil diraih oleh peleton masing-masing sekolah. Peringkat yang lebih tinggi memiliki prioritas lebih besar. Contoh, Juara 1 Peleton lebih diprioritaskan daripada Juara 2 Peleton.`,
+          `b. Nilai Murni Peleton: Apabila peringkat tertinggi Peleton yang diraih masih sama, penentuan dilanjutkan berdasarkan nilai murni tertinggi dari peleton yang memiliki peringkat tertinggi tersebut.`,
           `c. Nilai Kebenaran Teknik Gerakan PBB: Apabila nilai murni Peleton masih sama, penentuan dilanjutkan berdasarkan nilai murni tertinggi pada aspek Kebenaran Teknik Gerakan PBB dari peleton yang dibandingkan.`,
-          `d. Capaian Peleton Berikutnya: Apabila seluruh kriteria pada peleton dengan peringkat tertinggi masih menghasilkan nilai yang sama, perbandingan dilanjutkan pada capaian peleton berikutnya secara berurutan berdasarkan peringkat yang diraih.`,
+          `d. Capaian Peleton Berikutnya: Apabila seluruh kriteria pada peleton dengan peringkat tertinggi masih sama, perbandingan dilanjutkan pada capaian peleton berikutnya secara berurutan berdasarkan peringkat yang diraih.`,
           `e. Capaian Komandan Terbaik: Apabila seluruh capaian Peleton masih menghasilkan nilai yang sama, penentuan dilanjutkan berdasarkan peringkat Komandan Terbaik yang diraih oleh masing-masing sekolah.`,
-          `f. Sidang Pleno Juri: Apabila seluruh kriteria tersebut di atas masih menghasilkan kedudukan yang sama, penentuan akhir dilakukan melalui musyawarah Dewan Juri dalam Sidang Pleno Juri.`,
+          `f. Sidang Pleno Juri: Apabila seluruh kriteria tersebut masih menghasilkan kedudukan yang sama, penentuan akhir dilakukan melalui musyawarah Dewan Juri dalam Sidang Pleno Juri.`,
           `g. Keputusan Akhir: Keputusan Dewan Juri dalam Sidang Pleno Juri bersifat mutlak dan tidak dapat diganggu gugat.`
         ]
       },
@@ -95,22 +95,12 @@ export const JUKNIS_PENILAIAN_CHAPTERS = [
       {
         number: 9,
         title: 'Mekanisme Pengajuan Sanggah (Protes Resmi)',
-        content: `Ketentuan dan prosedur resmi pengajuan sanggahan:`,
+        content: `Ketentuan resmi pengajuan sanggahan:`,
         subItems: [
-          `a. Batasan Sanggah: Pengajuan sanggah hanya dapat dilakukan terhadap dugaan kesalahan administratif atau teknis sistem penghitungan nilai (seperti kesalahan penjumlahan nilai, ketidaksesuaian input nilai dari lembar penilaian juri ke dalam sistem, atau kekeliruan pencatatan penalti). Hasil penilaian juri mengenai mutu gerak bersifat mutlak dan tidak dapat diganggu gugat.`,
-          `b. Batas Waktu Pengajuan: Pengajuan sanggah dapat dilakukan sejak nilai peleton dirilis di portal resmi, dan seluruh masa sanggah resmi ditutup secara serentak pada pukul 15.00 WIB pada hari pelaksanaan perlombaan. Pengajuan sanggah yang melewati batas waktu tersebut tidak akan diterima atau diproses oleh Panitia.`,
-          `c. Prosedur Sanggah: Sanggahan diajukan secara tertulis menggunakan Formulir Sanggahan Resmi oleh 1 (satu) orang Official resmi yang terdaftar, bertempat di Ruang Informasi Resmi Panitia (Ruang Registrasi Gedung Madrasah Lantai 1). Formulir sanggahan wajib memuat alasan yang jelas dan dapat disertai bukti pendukung (seperti rekaman video, foto, atau catatan resmi). Panitia tidak melayani pengajuan sanggah secara lisan atau di luar prosedur yang telah ditentukan.`,
-          `d. Keputusan Sanggah: Apabila sanggahan dinyatakan diterima dan terbukti terdapat kekeliruan administratif, Panitia akan menerbitkan Pemberitahuan Koreksi Hasil Resmi yang ditandatangani oleh Ketua Pelaksana dan Dewan Juri. Keputusan Panitia dan Dewan Juri atas sanggahan bersifat final dan mengikat.`
-        ]
-      },
-      {
-        number: 10,
-        title: 'Ketentuan Pasca-Lomba dan Prosedur Checkout Basecamp',
-        content: `Ketentuan dan alur pengosongan ruang basecamp:`,
-        subItems: [
-          `a. Batas Waktu Maksimal Pengosongan: Seluruh peleton wajib menyelesaikan proses checkout dan mengosongkan ruang kelas basecamp selambat-lambatnya pukul 15.00 WIB (1 jam sebelum Upacara Penutupan dimulai).`,
-          `b. Alur 4 Langkah Checkout Resmi: (1) Merapikan kembali susunan meja-kursi dan memastikan tidak ada barang peleton tertinggal; (2) Membawa dan menyerahkan 2 (dua) kantong sampah terpilah (Organik & Non-Organik) ke Pos/Area Checkout Panitia; (3) Pemeriksaan langsung kebersihan dan keutuhan fasilitas ruangan kelas oleh LO/Panitia Kebersihan guna memperoleh Tanda Bukti Lolos Verifikasi Checkout; (4) Pengambilan kembali kartu identitas jaminan (KTP/SIM) di Ruang Informasi Panitia dengan menunjukkan Tanda Bukti Lolos Verifikasi.`,
-          `c. Ketentuan Sanksi & Denda: Peleton yang meninggalkan basecamp dalam keadaan kotor/berantakan dikenai sanksi penalti -50 poin pada rekapitulasi nilai akhir. Apabila terjadi kerusakan fisik atau kehilangan fasilitas kelas, kartu jaminan KTP/SIM ditahan serta dikenakan sanksi ganti rugi penuh dan denda administratif Rp 500.000 sesuai Pasal 14 Tata Tertib Peserta.`
+          `a. Batasan Sanggah: Protes HANYA diterima untuk dugaan kekeliruan administratif non-penilaian (kesalahan penjumlahan skor, keliru input sistem dari lembar juri, atau ketidaksesuaian catatan penalti). Penilaian kualitatif juri mengenai mutu gerakan tidak dapat disanggah.`,
+          `b. Batas Waktu Pengajuan: Pengajuan sanggah dapat dilakukan sejak nilai peleton dirilis di portal, dan seluruh masa sanggah resmi DITUTUP SERENTAK pukul 15.00 WIB. Penetapan hasil pasca-sanggah bersifat final dan mengikat sebelum Upacara Penutupan pukul 16.00 WIB.`,
+          `c. Prosedur Sanggah: Diajukan secara TERTULIS menggunakan Formulir Sanggahan Resmi oleh 1 (satu) orang Official resmi terdaftar di Ruang Informasi Resmi Panitia (Ruang Registrasi Gedung Madrasah Lantai 1) dengan melampirkan bukti valid (video/foto/catatan). Panitia TIDAK melayani protes secara lisan.`,
+          `d. Keputusan Sanggah: Jika protes diterima dan sah, Panitia menerbitkan 'Pemberitahuan Koreksi Hasil Resmi' yang menjadi dasar ketetapan kejuaraan.`
         ]
       }
     ]
@@ -118,37 +108,32 @@ export const JUKNIS_PENILAIAN_CHAPTERS = [
   {
     id: 'bab-b',
     letter: 'B',
-    title: 'GANGGUAN SISTEM DIGITAL DAN PROSEDUR BACKUP',
+    title: 'PROSEDUR BACKUP DAN MITIGASI GANGGUAN SISTEM E-PENILAIAN',
     points: [
       {
         number: 1,
-        title: 'Gangguan Sistem',
-        content: `Apabila terjadi gangguan pada website, jaringan internet, akun, upload dokumen, penyimpanan nilai, atau sistem digital lainnya, Panitia dapat menerapkan prosedur manual sementara.`
+        title: 'Penerapan Prosedur Backup Manual',
+        content: `Apabila terjadi gangguan pada sistem digital e-penilaian yang digunakan dalam LBB Mu’allimin 2027 (sistem input nilai juri, kalkulasi skor, portal rilis nilai, dan penyimpanan database), panitia menerapkan prosedur backup manual untuk menjamin kelancaran penilaian.`
       },
       {
         number: 2,
-        title: 'Backup Manual',
-        content: `Panitia wajib menyediakan formulir atau dokumen manual untuk pencatatan data peserta, administrasi, hasil penilaian, dan data penting lainnya sebagai cadangan.`
+        title: 'Kesiapan Media Backup Manual',
+        content: `Panitia menyiapkan prosedur dan media backup manual sebagai alternatif apabila sistem digital mengalami gangguan. Backup dapat mencakup data identitas peserta, rekapitulasi peserta, lembar penilaian, hasil perolehan nilai, serta data penting lainnya yang diperlukan dalam penyelenggaraan LBB Mu’allimin 2027.`
       },
       {
         number: 3,
-        title: 'Gangguan Login dan Upload',
-        content: `Apabila peserta mengalami kendala login atau gagal mengunggah dokumen karena gangguan sistem, Panitia memberikan alternatif verifikasi atau pengumpulan dokumen secara manual.`
+        title: 'Pencatatan Manual Saat Gangguan',
+        content: `Apabila terjadi gangguan pada sistem penilaian yang mengakibatkan nilai tidak tersimpan, tidak dapat diakses, atau berpotensi hilang, juri dan/atau asisten juri wajib melakukan pencatatan nilai secara manual menggunakan formulir atau media pencatatan yang telah disiapkan panitia. Hasil pencatatan tersebut menjadi dasar verifikasi dan pemulihan data setelah sistem kembali berfungsi normal.`
       },
       {
         number: 4,
-        title: 'Gangguan Penyimpanan Nilai',
-        content: `Apabila nilai tidak tersimpan atau sistem penilaian mengalami gangguan, nilai dicatat secara manual oleh Juri atau Asisten Juri dan dikonfirmasi setelah sistem kembali normal.`
+        title: 'Verifikasi dan Pemulihan Data',
+        content: `Setelah sistem digital kembali berfungsi normal, panitia melakukan verifikasi dan pemulihan data berdasarkan catatan manual, dokumen resmi, serta bukti pendukung yang dapat dipertanggungjawabkan. Data yang telah diverifikasi dimasukkan kembali ke dalam sistem oleh petugas yang berwenang. Apabila ditemukan perbedaan data, penyelesaiannya dilakukan berdasarkan dokumen dan catatan resmi yang menjadi bukti.`
       },
       {
         number: 5,
-        title: 'Pemulihan Data',
-        content: `Setelah sistem kembali normal, data manual diverifikasi dan dimasukkan kembali ke sistem berdasarkan catatan resmi Panitia dan Juri.`
-      },
-      {
-        number: 6,
-        title: 'Keputusan Panitia',
-        content: `Gangguan teknis sistem tidak dapat dijadikan dasar untuk menghilangkan atau mengubah nilai peserta. Setiap keputusan terkait penggunaan data backup ditetapkan oleh Panitia berdasarkan catatan resmi yang tersedia.`
+        title: 'Kewenangan Panitia dan Dasar Pemulihan',
+        content: `Dalam hal terjadi gangguan sistem digital, panitia berwenang menetapkan langkah penanganan dan penggunaan prosedur backup berdasarkan kondisi yang terjadi serta bukti dan catatan resmi yang tersedia. Gangguan sistem digital tidak dapat dijadikan alasan untuk menghapus, mengubah, atau menetapkan data secara sepihak tanpa dasar yang dapat dipertanggungjawabkan. Setiap koreksi atau pemulihan data wajib melalui proses verifikasi oleh pihak yang berwenang.`
       }
     ]
   },
@@ -156,14 +141,14 @@ export const JUKNIS_PENILAIAN_CHAPTERS = [
     id: 'bab-c',
     letter: 'C',
     title: 'KETENTUAN SANKSI DAN PENALTI PENGURANGAN NILAI',
-    tableNote: `Pelanggaran terhadap regulasi teknis lapangan dikenakan sanksi pemotongan nilai secara kumulatif pada lembar rekapitulasi nilai akhir:`,
-    closingNote: `Pencatatan Penalti: Seluruh sanksi pengurangan nilai dicatat secara langsung dan transparan oleh Hakim Garis, Timekeeper, dan Koordinator Lapangan ke dalam Berita Acara Pelanggaran Resmi serta disahkan oleh Perwakilan Dewan Juri.`
+    tableNote: `Pelanggaran teknis dan ketentuan lapangan dikenai sanksi berupa pengurangan nilai secara kumulatif pada rekapitulasi nilai akhir. Pengurangan nilai diberlakukan sesuai dengan pihak yang melakukan pelanggaran, yaitu Peleton, Komandan Peleton, atau keduanya.`,
+    closingNote: `Setiap penalti dicatat oleh Asisten Juri pada lembar penilaian sesuai dengan kategori pelanggaran dan pihak yang dikenai penalti.`
   },
   {
     id: 'bab-d',
     letter: 'D',
     title: 'PENUTUP',
-    content: `Petunjuk Teknis Penilaian dan Kejuaraan ini menjadi acuan baku dan mengikat dalam proses evaluasi hasil, penetapan peringkat, dan penegakan keadilan kompetisi LBB Mu'allimin Tahun 2027. Seluruh ketentuan yang telah ditetapkan berlaku mutlak bagi seluruh kontingen peserta dan perangkat perlombaan.`
+    content: `Petunjuk Teknis Penilaian dan Kejuaraan ini menjadi pedoman operasional resmi bagi seluruh panitia, dewan juri, dan peserta LBB Mu'allimin Tahun 2027. Seluruh hal teknis tambahan yang disepakati bersama dalam forum Technical Meeting mengikat secara sah dan menjadi bagian tak terpisahkan dari juknis ini.`
   }
 ];
 
@@ -186,85 +171,96 @@ export const JUKNIS_PENDAFTARAN_CHAPTERS = [
         number: 2,
         title: 'Alokasi Kuota Peserta',
         sub: [
-          `Tingkat SD/MI Sederajat: Kuota maksimal 18 (delapan belas) peleton se-DIY.`,
-          `Tingkat SMP/MTs Sederajat: Kuota maksimal 18 (delapan belas) peleton se-DIY.`,
-          `Total Kuota Keseluruhan: Tepat 36 (tiga puluh enam) peleton.`,
-          `Batasan Delegasi Sekolah: Setiap pangkalan sekolah diperkenankan mendaftarkan maksimal 2 (dua) peleton (Peleton A dan Peleton B).`
+          `Batas total kuota peserta adalah 36 Peleton se-Daerah Istimewa Yogyakarta, dengan alokasi berimbang: (1) Tingkat SD/MI Sederajat: Kuota 18 Peleton (Arena 1 - Lapangan Basket); (2) Tingkat SMP/MTs Sederajat: Kuota 18 Peleton (Arena 2 - Pelataran Embung).`,
+          `Setiap sekolah/madrasah diperkenankan mengirimkan maksimal 2 (dua) peleton (dapat berupa peleton putra, peleton putri, maupun peleton campuran).`
         ]
       },
       {
         number: 3,
-        title: 'Linimasa (Timeline) Periode Pendaftaran',
+        title: 'Jadwal dan Lini Masa Pendaftaran',
         sub: [
-          `Gelombang I (Early Bird): Dibuka pada hari Senin, 19 Oktober 2026 pukul 08.00 WIB dan ditutup pada hari Ahad, 8 November 2026 pukul 23.59 WIB.`,
-          `Gelombang II (Reguler): Dibuka pada hari Senin, 9 November 2026 pukul 00.00 WIB dan ditutup pada hari Ahad, 29 November 2026 pukul 23.59 WIB, ATAU ditutup sewaktu-waktu secara otomatis oleh sistem apabila alokasi total 36 kuota peleton telah terpenuhi secara penuh.`
+          `Periode Pendaftaran Daring: Dibuka mulai 19 Oktober 2026 pukul 00.00 WIB s.d. 29 November 2026 pukul 23.59 WIB (pendaftaran otomatis ditutup lebih awal apabila kuota 36 peleton telah terpenuhi).`,
+          `Technical Meeting & Verifikasi Dokumen Fisik: Sabtu, 9 Januari 2027 pukul 13.00 - 16.30 WIB di Aula Kampus Induk Madrasah Mu’allimin Wirobrajan.`,
+          `Uji Coba Lapangan: Sabtu, 16 Januari 2027 pukul 07.00 – 13.00 WIB di Kampus Terpadu Sedayu.`,
+          `Hari Pelaksanaan Lomba & Daftar Ulang: Ahad, 24 Januari 2027 mulai pukul 06.00 WIB di Kampus Terpadu Sedayu.`
         ]
       },
       {
         number: 4,
-        title: 'Biaya Pendaftaran dan Rekening Resmi',
+        title: 'Biaya Pendaftaran dan Tata Cara Pembayaran',
         sub: [
-          `Gelombang I: Rp350.108,- per peleton (biaya pokok pendaftaran Rp350.000,- ditambah kode unik sistem 108).`,
-          `Gelombang II: Rp400.108,- per peleton (biaya pokok pendaftaran Rp400.000,- ditambah kode unik sistem 108).`,
-          `Rekening Resmi Pembayaran: Bank Syariah Indonesia (BSI) | Nomor Rekening: 2600051817 | Atas Nama: Kepala Urusan Admisi, Humas, dan Kerja Sama.`,
-          `Format Berita Transfer (Catatan Transaksi): NAMA SEKOLAH_JUMLAH PELETON (Contoh: SDN PERCOBAAN 2_1 PELETON atau SMPN 1 BANTUL_2 PELETON).`,
-          `Uang pendaftaran yang telah disetorkan tidak dapat ditarik kembali (non-refundable) dengan alasan apa pun, kecuali pembatalan kegiatan secara sepihak oleh panitia.`
+          `Biaya pendaftaran per peleton terbagi ke dalam 2 (dua) gelombang berjenjang (bersifat Non-Refundable / tidak dapat ditarik kembali apabila peleton mengundurkan diri): Gelombang 1 (19 Oktober – 8 November 2026): Rp 350.000,- / peleton; Gelombang 2 (9 November – 29 November 2026/Kuota Penuh): Rp 400.000,- / peleton; Gelombang 2 hanya dibuka jika sisa kuota masih ada. Keterangan: Setiap pembayaran wajib menggunakan kode unik 108 pada nominal transfer.`,
+          `Pembayaran disetorkan via transfer perbankan ke rekening resmi panitia: Bank Tujuan: BSI (Bank Syariah Indonesia) | Nomor Rekening: 2600051817 | Atas Nama: Kepala Urusan Admisi, Humas, dan Kerja Sama | Format Berita Transfer Wajib: NAMA SEKOLAH_JUMLAH PELETON (Contoh: MTS MU’ALLIMIN YK_1).`,
+          `Ketentuan Nominal Pembayaran: 1 (satu) peleton Gelombang 1: Rp350.108,-; 2 (dua) peleton Gelombang 1: Rp700.108,-; 1 (satu) peleton Gelombang 2: Rp400.108,-; 2 (dua) peleton Gelombang 2: Rp800.108,-.`,
+          `Bukti transfer asli (struk ATM/teller atau tangkapan layar m-banking yang jelas) wajib diunggah pada formulir digital pendaftaran.`,
+          `Setiap peleton terdaftar berhak mendapatkan fasilitas: ruang kelas basecamp, 1 (satu) dus Air Minum Kemasan (botol) per peleton saat registrasi ulang, 3 buah ID Card resmi (1 Official & 2 Pendukung Resmi), Nomor Dada Peleton, 2 kantong sampah terpilah, akses kantong parkir, dan E-Sertifikat resmi.`
         ]
       },
       {
         number: 5,
-        title: 'Tahapan dan Alur Pendaftaran Daring (Online)',
+        title: 'Alur Prosedur Pendaftaran Digital (5 Langkah)',
         sub: [
-          `Langkah 1 (Pembuatan Akun): Kontingen mengakses laman https://lbb.tontimuallimin.com/ , membuat akun resmi perwakilan sekolah menggunakan alamat email aktif (disarankan akun Google/Gmail), serta melakukan konfirmasi aktivasi akun.`,
-          `Langkah 2 (Pengisian Formulir Identitas): Mengisi form data pangkalan sekolah, identitas penanggung jawab/Official, data Komandan Peleton, serta jumlah kontingen yang didaftarkan.`,
-          `Langkah 3 (Pembayaran dan Verifikasi Transaksi): Mentransfer biaya pendaftaran ke rekening resmi BSI sesuai nominal gelombang bersangkutan (wajib menyertakan kode unik 108), mengunggah bukti transfer sah (format JPG/PNG/PDF maks. 2 MB), lalu menunggu validasi bendahara maksimal 1 x 24 jam.`,
-          `Langkah 4 (Pengisian Data Personel & Dokumen): Menginput nama lengkap 25 personel peleton (1 Danton, 21 Inti, 3 Cadangan) serta mengunggah pasfoto resmi masing-masing berlatar belakang merah (SD/MI) atau biru (SMP/MTs). Mengunggah pindaian (scan) Surat Tugas/Rekomendasi Kepala Sekolah berstempel basah.`,
-          `Langkah 5 (Penerbitan Bukti Registrasi): Mengunduh Bukti Pendaftaran Resmi (dilengkapi QR Code Verifikasi) dan Surat Pakta Integritas baku dari sistem sebagai dokumen resmi kontingen.`
+          `Langkah 1 (Akses Formulir): Perwakilan sekolah/peleton membuka portal resmi https://lbb.tontimuallimin.com/ lalu meng-klik tombol "Daftar Peleton" untuk masuk ke formulir pendaftaran.`,
+          `Langkah 2 (Data Sekolah & Akun Tim): Memilih jenjang perlombaan (SD/MI atau SMP/MTs), mendaftarkan email Google aktif (digunakan untuk login Dashboard Tim), mengisi biodata sekolah, mengunggah logo sekolah, dan memilih kategori peleton (Putra/Putri/Campuran).`,
+          `Langkah 3 (Data Danton & Official): Meng-input identitas lengkap Komandan Peleton beserta unggahan scan Kartu Pelajar sah, serta mengisi identitas Official/Pelatih pendamping lengkap dengan nomor WhatsApp aktif dan unggahan scan KTP asli.`,
+          `Langkah 4 (Pembayaran & Pakta Integritas): Mengunggah bukti transfer biaya pendaftaran yang valid dan membubuhkan tanda tangan digital pada kanvas Pakta Integritas Online.`,
+          `Langkah 5 (Konfirmasi & Aktivasi Dashboard Tim): Tim menerima Kode Registrasi unik resmi. Panitia melakukan verifikasi dalam 1x24 jam. Setelah diverifikasi, tim dapat login ke Dashboard Peserta untuk melengkapi susunan identitas peleton.`
         ]
       },
       {
         number: 6,
-        title: 'Persyaratan Dokumen Administrasi Digital (Unggahan Web)',
+        title: 'Dokumen Persyaratan yang Wajib Diunggah (Digital)',
         sub: [
-          `Scan Surat Rekomendasi/Tugas Resmi dari Kepala Sekolah yang mencantumkan daftar nama lengkap personel peleton (format PDF maks. 5 MB).`,
-          `Pasfoto resmi berwarna terbaru ukuran 3x4 (pose tegap, seragam sekolah/tonti rapi, tanpa kacamata hitam, background merah untuk SD/MI dan biru untuk SMP/MTs, format JPG/PNG maks. 1 MB per foto) untuk seluruh personel peleton.`,
-          `Bukti transfer asli biaya pendaftaran yang memuat tanggal, jam, nominal dengan kode unik, dan keterangan transaksi yang jelas (format JPG/PNG/PDF maks. 2 MB).`
+          `Surat Tugas / Rekomendasi Resmi dari Kepala Sekolah/Madrasah asli bertanda tangan dan berstempel basah (format PDF/JPG, maks. 2 MB).`,
+          `Bukti transfer biaya pendaftaran sesuai biaya pendaftaran gelombang berjalan (format JPG/PNG, maks. 2 MB).`,
+          `Scan/Foto Kartu Pelajar sah Komandan Peleton (Danton) pangkalan bersangkutan (format Foto/PDF, maks. 3 MB).`,
+          `Scan/Foto KTP asli Official atau Pelatih pendamping resmi peleton sekolah (format Foto/PDF, maks. 3 MB).`,
+          `Logo peleton atau sekolah/madrasah beresolusi tinggi format PNG transparan.`,
+          `Pasfoto resmi seluruh personel peleton ukuran 3x4 (latar belakang Merah untuk jenjang SD/MI dan latar belakang Biru untuk jenjang SMP/MTs) diunggah melalui menu Identitas Personel di portal peserta.`,
+          `Data identitas seluruh personel peleton berupa Nama Lengkap sesuai ijazah terakhir atau dokumen resmi (digunakan untuk penerbitan sertifikat), NISN, Tempat dan Tanggal Lahir, serta Kelas. Data diisi melalui portal peserta sesuai format yang telah disediakan.`
         ]
       },
       {
         number: 7,
-        title: 'Komposisi Personel dan Pendamping Peleton',
+        title: 'Regulasi Komposisi Personel Peleton',
         sub: [
-          `Komposisi Personel Peleton (Maksimal 25 Orang): 1 (satu) orang Komandan Peleton (Danton); 21 (dua puluh satu) orang Pasukan Inti (formasi 3 saf x 7 banjar); 3 (tiga) orang Anggota Cadangan Resmi.`,
-          `Komposisi Pendamping Resmi (Maksimal 3 Orang): 1 (satu) orang Official Resmi (Pelatih/Pembina Pendamping); 2 (dua) orang Pendukung Resmi (masing-masing dapat difungsikan sebagai tim Medis dan tim Dokumentasi).`,
-          `Total Maksimal Rombongan Resmi: 28 (dua puluh delapan) orang per peleton. Seluruh personel dan pendamping resmi wajib terdaftar dalam Surat Rekomendasi Kepala Sekolah.`
+          `Komposisi resmi peleton berjumlah maksimal 25 personel, terdiri atas: 1 Komandan Peleton (Danton), 21 Anggota Inti (3 saf x 7 banjar), dan 3 Orang Cadangan.`,
+          `Didampingi maksimal 3 orang pendamping peleton: 1 Official (Pelatih/Pembina) dan 2 Pendukung Resmi (Medis/Dokumentasi) yang akan mengenakan ID Card resmi panitia.`,
+          `Batas minimal personel tampil di arena adalah 22 orang (1 Danton + 21 Anggota Inti). Penggantian pemain inti dengan cadangan hanya diperkenankan saat transisi resmi yang diatur dalam materi juknis.`
         ]
       },
       {
         number: 8,
-        title: 'Ketentuan Penyerahan Berkas Fisik Asli pada Saat Technical Meeting (TM)',
+        title: 'Kewajiban Penyerahan Berkas Fisik Asli saat Technical Meeting',
         sub: [
-          `Seluruh berkas fisik asli wajib diserahkan di Meja Registrasi TM pada hari Sabtu, 9 Januari 2027 pukul 12.30 – 13.00 WIB di Aula Kampus Induk Madrasah Mu’allimin (Jl. Letjen S. Parman No. 68, Wirobrajan, Yogyakarta).`,
-          `Berkas Fisik yang Wajib Diserahkan: (1) 1 (satu) lembar Surat Tugas/Rekomendasi Asli bertandatangan Kepala Sekolah dan berstempel basah; (2) 1 (satu) lembar Surat Pakta Integritas bermaterai Rp10.000,- bertandatangan basah Official; (3) 1 (satu) lembar cetak Bukti Registrasi Daring ber-QR Code dari sistem.`,
-          `Ketentuan Map Berkas: Seluruh berkas dimasukkan rapi dalam stopmap folio kertas: Warna MERAH untuk Tingkat SD/MI; Warna BIRU untuk Tingkat SMP/MTs; Bagian depan map ditulis identitas: NAMA SEKOLAH - JENJANG - PELETON (A/B) - NAMA OFFICIAL - NO. WHATSAPP.`
+          `Meskipun proses pendaftaran awal diselenggarakan secara digital, delegasi resmi sekolah/madrasah (maksimal 2 orang perwakilan per SEKOLAH/MADRASAH, baik yang mengirimkan 1 maupun 2 peleton) WAJIB membawa dan menyerahkan berkas fisik asli pada saat registrasi Technical Meeting (Sabtu, 9 Januari 2027 pukul 12.30 - 13.00 WIB di Aula Kampus Induk Mu’allimin Wirobrajan). Bagi sekolah yang mengirimkan 2 (dua) peleton, delegasi yang hadir berhak mewakili proses verifikasi kedua peleton tersebut sekaligus.`,
+          `Berkas fisik asli yang diserahkan meliputi: (1) Surat Tugas / Rekomendasi Kepala Sekolah asli berstempel basah yang memuat daftar nama lengkap seluruh peleton (1 Danton, 21 Inti, 3 Cadangan, 1 Official, 2 Pendukung Resmi); (2) Pakta Integritas fisik bermaterai Rp 10.000 yang telah ditandatangani basah oleh Official bersangkutan.`
         ]
       },
       {
         number: 9,
-        title: 'Sanksi Administratif dan Pembatalan Pendaftaran',
+        title: 'Ketentuan Diskualifikasi & Sanksi Administrasi',
         sub: [
-          `Tim yang terbukti memalsukan identitas siswa (misal: siswa bukan berasal dari sekolah bersangkutan atau bukan jenjang yang sesuai) didiskualifikasi secara permanen dari perlombaan.`,
-          `Peleton yang tidak menyerahkan berkas fisik asli berstempel basah dan pakta integritas bermaterai hingga berakhirnya forum TM tidak berhak mengikuti pengundian nomor urut tampil (lotting) dan slotnya dapat dialihkan ke daftar tunggu (waiting list).`
+          `Diskualifikasi Mutlak: Diberikan kepada peleton yang memanipulasi data identitas siswa, memalsukan stempel/tanda tangan surat rekomendasi kepala sekolah, atau menyertakan siswa dari luar pangkalan sekolah yang bersangkutan.`,
+          `Ketentuan Pembatalan (Non-Refundable): Uang pendaftaran yang telah dibayarkan tidak dapat ditarik kembali apabila peleton membatalkan keikutsertaan secara sepihak.`,
+          `Pergantian Personel: Perubahan data personel, termasuk nama, susunan, posisi, foto, maupun pergantian individu, diperbolehkan sampai dengan sebelum pelaksanaan Technical Meeting (TM). Setiap perubahan wajib dilaporkan dan disesuaikan dengan Surat Tugas/Rekomendasi resmi dari Kepala Sekolah/Madrasah. Perubahan yang tidak tercantum atau tidak sesuai dengan Surat Tugas/Rekomendasi resmi dinyatakan tidak sah.`
         ]
       },
       {
         number: 10,
-        title: 'Pusat Informasi dan Narahubung Pendaftaran',
+        title: 'Pusat Layanan dan Narahubung Resmi',
         sub: [
-          `Portal Layanan Terpadu: https://lbb.tontimuallimin.com/`,
-          `WhatsApp Helpdesk Registrasi: 0819-4749-1505 (Admin Tonti Mu'allimin)`,
-          `Surel (Email) Sekretariat: lbb@tontimuallimin.com`,
+          `Website Portal Pendaftaran: https://lbb.tontimuallimin.com/`,
+          `WhatsApp Helpdesk Resmi: https://wa.me/6281947491505 (Admin: 0819-4749-1505)`,
+          `Email Resmi: lbb@tontimuallimin.com`,
           `Instagram Resmi: @lbbmuin | @mualliminjogja | TikTok: @tontimuallimin`
+        ]
+      },
+      {
+        number: 11,
+        title: 'Mitigasi Gangguan Sistem Digital Pendaftaran',
+        sub: [
+          `Apabila peserta mengalami kendala teknis login atau gagal unggah dokumen akibat gangguan server/portal resmi, panitia menyediakan mekanisme verifikasi dan pengumpulan dokumen secara manual/darurat melalui koordinasi Helpdesk Resmi WhatsApp. Kendala akibat kelalaian peserta melewati batas waktu tidak termasuk dalam ketentuan ini.`
         ]
       }
     ]
@@ -273,6 +269,6 @@ export const JUKNIS_PENDAFTARAN_CHAPTERS = [
     id: 'reg-b',
     letter: 'B',
     title: 'PENUTUP',
-    content: `Petunjuk Teknis Pendaftaran ini disusun sebagai pedoman baku dan mengikat dalam rangka menjamin tertib administrasi, kepastian hukum, transparansi, serta kelancaran operasional pendaftaran Lomba Baris-Berbaris Mu’allimin Tahun 2027.`
+    content: `Petunjuk Teknis Pendaftaran ini menjadi pedoman operasional resmi bagi seluruh panitia, dewan juri, dan peserta LBB Mu'allimin Tahun 2027. Seluruh hal teknis tambahan yang disepakati bersama dalam forum Technical Meeting mengikat secara sah dan menjadi bagian tak terpisahkan dari juknis ini.`
   }
 ];

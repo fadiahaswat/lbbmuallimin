@@ -147,39 +147,31 @@ export default function DocumentViewerModal({ isOpen, onClose }) {
               </div>
 
               <div className="space-y-3 pt-2">
-                <h4 className="font-black text-sm uppercase text-red-700">F. TAHAP IV: PASCA-LOMBA - PENILAIAN, LIVE SCORE, SANGGAH & PENENTUAN JUARA</h4>
-                <p>1. Penilaian oleh 6 Dewan Juri (TNI, POLRI, PPI). Rasio penilaian peleton 1:1 (Kebenaran Teknik dan Kekompakan), rentang 50 s.d. 90 poin. Nilai Akhir = Nilai Murni – Penalti.</p>
-                <p>2. Nilai Danton = (Penguasaan Materi × 35%) + (Kualitas Suara/Vokal × 25%) + (Sikap & Pelaporan × 20%) + (Penguasaan Lapangan × 20%) – Penalti Danton.</p>
-                <p>3. Poin Juara Umum: Juara 1 Peleton (6), Juara 2 (5), Juara 3 (4), Juara Harapan 1 (3), Harapan 2 (2), Harapan 3 (1). Juara 1 Danton (3), Juara 2 (2), Juara 3 (1). Tie-breaker: Peringkat Tertinggi Peleton &gt; Nilai Murni Peleton &gt; Nilai Kebenaran Teknik PBB &gt; Capaian Peleton Berikutnya &gt; Capaian Komandan Terbaik &gt; Sidang Pleno Juri.</p>
-                <p>4. Transparansi Nilai (Rolling Release): Rilis mandiri privat di portal lbb.tontimuallimin.com via login Gmail estimasi ±1 jam setelah tampil.</p>
-                <p>5. Masa Sanggah Ditutup Pukul 15.00 WIB di Ruang Informasi Panitia secara tertulis menggunakan Formulir Sanggahan Resmi untuk dugaan kekeliruan administratif non-penilaian.</p>
-                <p>6. Pengosongan Basecamp selambat-lambatnya pukul 15.00 WIB (4 langkah: bersihkan ruangan, serahkan 2 kantong sampah terpilah ke Pos Checkout, inspeksi lolos verifikasi, ambil KTP/SIM jaminan).</p>
+                <h4 className="font-black text-sm uppercase text-red-700">F. KETENTUAN PASCA-LOMBA DAN PROSEDUR CHECKOUT BASECAMP</h4>
+                <p>1. Batas Waktu Maksimal Pengosongan: Seluruh peleton wajib menyelesaikan proses checkout dan mengosongkan ruang kelas basecamp selambat-lambatnya pukul 15.00 WIB (1 jam sebelum Upacara Penutupan dimulai).</p>
+                <p>2. Alur 4 Langkah Checkout Resmi: (1) Merapikan kembali susunan meja-kursi dan memastikan tidak ada barang peleton tertinggal; (2) Membawa dan menyerahkan 2 (dua) kantong sampah terpilah (Organik & Non-Organik) ke Pos/Area Checkout Panitia; (3) Pemeriksaan langsung kebersihan dan keutuhan fasilitas ruangan kelas oleh LO/Panitia Kebersihan guna memperoleh Tanda Bukti Lolos Verifikasi Checkout; (4) Pengambilan kembali kartu identitas jaminan (KTP/SIM) di Ruang Informasi Panitia dengan menunjukkan Tanda Bukti Lolos Verifikasi.</p>
+                <p>3. Ketentuan Sanksi & Denda: Peleton yang meninggalkan basecamp dalam keadaan kotor atau berantakan dikenai sanksi penalti pengurangan nilai sesuai Petunjuk Teknis Penilaian & Kejuaraan. Apabila terjadi kerusakan fisik atau kehilangan fasilitas kelas, kartu jaminan KTP/SIM ditahan serta pihak sekolah dikenakan sanksi ganti rugi penuh dan denda administratif sesuai Pasal 14 Tata Tertib Peserta.</p>
               </div>
 
               <div className="space-y-3 pt-2">
-                <h4 className="font-black text-sm uppercase text-red-700">G. GANGGUAN SISTEM DIGITAL DAN PROSEDUR BACKUP</h4>
-                <p>Didukung formulir/dokumen manual cadangan untuk pencatatan peserta, administrasi, dan hasil penilaian juri. Gangguan teknis sistem tidak dapat dijadikan dasar untuk menghilangkan atau mengubah nilai peserta.</p>
+                <h4 className="font-black text-sm uppercase text-red-700">G. KEADAAN KAHAR (FORCE MAJEURE)</h4>
+                <p>1. Ruang Lingkup Kahar: Keadaan kahar mencakup kondisi atau kejadian di luar kendali Panitia Pelaksana maupun peserta yang dapat mengganggu atau membahayakan pelaksanaan perlombaan, antara lain hujan deras ekstrem, badai atau angin kencang, bencana alam, gangguan keamanan, pemadaman listrik total, atau kondisi lain yang dinilai membahayakan keselamatan.</p>
+                <p>2. Kondisi Hujan Ringan (Gerimis): Perlombaan tetap dilaksanakan sesuai jadwal. Peserta tetap mengikuti perlombaan dengan memperhatikan arahan Panitia dan Dewan Juri.</p>
+                <p>3. Kondisi Hujan Deras / Badai Ekstrem: Apabila kondisi cuaca dinilai membahayakan keselamatan peserta, Panitia Pelaksana bersama Dewan Juri berwenang menghentikan perlombaan sementara. Apabila perlombaan dihentikan saat peleton sedang melaksanakan penampilan, penampilan peleton tersebut dinyatakan dihentikan dan akan diulang setelah kondisi dinyatakan aman dan kondusif. Penampilan ulang dimulai dari awal masuk arena, dengan waktu penampilan dihitung kembali dari 00:00.</p>
+                <p>4. Wewenang Keputusan: Keputusan penghentian dan kelanjutan perlombaan merupakan wewenang mutlak Panitia Pelaksana dan Dewan Juri.</p>
               </div>
 
               <div className="space-y-3 pt-2">
-                <h4 className="font-black text-sm uppercase text-red-700">H. KETENTUAN SANKSI DAN PENALTI PENGURANGAN NILAI</h4>
-                <p>1. Upacara Pembukaan: Tidak hadir -150 poin; terlambat -50 poin per kelipatan 5 menit (Nilai Peleton).</p>
-                <p>2. Keterlambatan Hadir di DP 1: Setelah 3x panggilan (interval 2 menit) penalti -100 poin & urutan digeser paling akhir; tetap tidak hadir = DISKUALIFIKASI (Nilai Peleton).</p>
-                <p>3. Jumlah Personel Kurang: Kurang dari 22 orang penalti tetap -75 poin (Nilai Peleton).</p>
-                <p>4. Kelebihan Durasi Waktu: Melebihi 8 mnt (SD) / 12 mnt (SMP) penalti -50 poin untuk setiap rentang 1 s.d. 30 detik dan kelipatannya (Nilai Peleton & Komandan).</p>
-                <p>5. Pelanggaran Garis: Anggota injak/keluar garis penalti -50 poin/kejadian (Nilai Peleton & Komandan); Komandan injak/keluar Kotak Danton 1,5x1,5m penalti -50 poin/kejadian (Nilai Komandan saja, tidak mengurangi nilai Peleton).</p>
-                <p>6. Gerakan Penyesuaian: Tidak dibatasi jumlahnya dan 0 poin penalti (pengurangan skor kualitatif Penguasaan Lapangan Komandan bobot 20%).</p>
-                <p>7. Gerakan Terlewat / Tidak Urut: Terlewat tapi dilakukan di luar urutan = Nilai Minimal (50); tidak dilaksanakan = Nilai 0 (Penguasaan Materi Danton).</p>
-                <p>8. Peleton Hafalan: Danton salah aba-aba tapi peleton hafal = Nilai 0 Kebenaran Teknik Peleton & potong Penguasaan Materi Danton.</p>
-                <p>9. Gerakan Berangkai Terputus: Rangkaian bertanda (-) diselingi jeda/gerakan tambahan = Nilai Minimal (50) & potong Penguasaan Materi Danton.</p>
-                <p>10. Kebersihan Basecamp: Meninggalkan kotor/berantakan = Penalti -50 poin.</p>
-                <p>11. Yel-Yel Selama Penampilan: Peringatan 1, Peringatan 2, lalu penalti -50 poin/kejadian (pelanggaran berat dapat langsung penalti -50 poin).</p>
-                <p>12. Kerusakan Fasilitas Basecamp: KTP/SIM ditahan, ganti rugi fisik penuh + denda administratif Rp 500.000.</p>
+                <h4 className="font-black text-sm uppercase text-red-700">H. PENUTUP (JUKNIS LAPANGAN)</h4>
+                <p>Petunjuk Teknis Lapangan ini menjadi pedoman operasional resmi bagi seluruh panitia, dewan juri, dan peserta LBB Mu'allimin Tahun 2027. Seluruh hal teknis tambahan yang disepakati bersama dalam forum Technical Meeting mengikat secara sah dan menjadi bagian tak terpisahkan dari juknis ini.</p>
               </div>
 
-              <div className="space-y-3 pt-2">
-                <h4 className="font-black text-sm uppercase text-red-700">I & J. KEADAAN KAHAR (FORCE MAJEURE) & PENUTUP</h4>
-                <p>Gerimis perlombaan tetap berjalan. Hujan deras/badai ekstrem yang membahayakan peserta dihentikan sementara dan diulang dari awal masuk arena (stopwatch reset 00:00). Helpdesk Resmi: 0819-4749-1505 (Admin), Website: https://lbb.tontimuallimin.com/ , Email: lbb@tontimuallimin.com, Instagram: @lbbmuin | @mualliminjogja | TikTok: @tontimuallimin.</p>
+              <div className="space-y-3 pt-4 border-t border-slate-300">
+                <h4 className="font-black text-base uppercase text-amber-700">PETUNJUK TEKNIS PENILAIAN & KEJUARAAN</h4>
+                <p><strong>A. Sistem Penilaian, Sanggah & Penentuan Juara:</strong> Penilaian dilakukan oleh 6 Dewan Juri (TNI, POLRI, PPI: 3 Juri Arena 1 SD & 3 Juri Arena 2 SMP). Nilai Peleton 1:1 (Kebenaran Teknik dan Kekompakan skala 50–90 poin). Nilai Danton = (Penguasaan Materi × 35%) + (Kualitas Suara/Vokal × 25%) + (Sikap & Pelaporan × 20%) + (Penguasaan Lapangan × 20%). Poin Juara Umum: Juara 1 Peleton (6), Juara 2 (5), Juara 3 (4), Harapan 1 (3), Harapan 2 (2), Harapan 3 (1). Juara 1 Danton (3), Juara 2 (2), Juara 3 (1). Tie-breaker Juara Umum: Peringkat Tertinggi Peleton &gt; Nilai Murni Peleton &gt; Nilai Kebenaran Teknik PBB &gt; Capaian Peleton Berikutnya &gt; Capaian Komandan Terbaik &gt; Sidang Pleno Juri. Transparansi e-rekapitulasi rolling release akun Gmail ±1 jam setelah tampil. Pengajuan sanggah tertulis ditutup pukul 15.00 WIB.</p>
+                <p><strong>B. Prosedur Backup & Mitigasi Gangguan Sistem E-Penilaian:</strong> Prosedur backup manual diterapkan apabila sistem digital mengalami gangguan untuk menjamin kelancaran penilaian dan data penting lainnya.</p>
+                <p><strong>C. Ketentuan Sanksi dan Penalti Pengurangan Nilai:</strong> Tidak hadir Upacara Pembukaan (-150 poin), terlambat Upacara Pembukaan (-50 poin/5 menit), telat DP 1 setelah 3x pemanggilan (-100 poin & urutan akhir; tidak hadir = Diskualifikasi), personel &lt; 22 orang (-75 poin), kelebihan durasi waktu (-50 poin / 1–30 detik pada nilai Peleton & Danton), anggota peleton injak/keluar garis (-50 poin/kejadian pada nilai Peleton & Danton), komandan injak/keluar kotak danton (-50 poin/kejadian pada nilai Komandan saja), gerakan penyesuaian (0 poin penalti), gerakan terlewat di luar urutan (Nilai Minimal 50; tidak dilakukan = Nilai 0), peleton hafalan (Nilai 0 Kebenaran Teknik Peleton & potong Penguasaan Materi Danton), gerakan berangkai terputus (Nilai Minimal 50 & potong Penguasaan Materi Danton), pelanggaran kebersihan basecamp (-50 poin), yel-yel selama penampilan (Peringatan 1, Peringatan 2, lalu -50 poin/kejadian), atribut terjatuh (0 poin penalti).</p>
+                <p><strong>D. Penutup:</strong> Menjadi pedoman operasional resmi bagi seluruh panitia, dewan juri, dan peserta LBB Mu'allimin Tahun 2027.</p>
               </div>
 
               <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-center justify-between text-xs">

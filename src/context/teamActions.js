@@ -22,7 +22,7 @@ export function createTeamActions({ teams, setTeams, scores, setScores, setCurre
       jenjang: newTeamData.jenjang,
       teamType: newTeamData.teamType || 'Homogen',
       category: newTeamData.category || newTeamData.teamType || 'Homogen',
-      platoonName: newTeamData.platoonName || `Pleton ${newTeamData.schoolName}`,
+      platoonName: newTeamData.platoonName || `Peleton ${newTeamData.schoolName}`,
       dantonName: newTeamData.dantonName || '',
       officialName: newTeamData.officialName || '',
       coachName: newTeamData.officialName || '',
@@ -109,6 +109,33 @@ export function createTeamActions({ teams, setTeams, scores, setScores, setCurre
           };
           saveRecordToSheet('teams', updated).catch(err =>
             console.warn('[CompetitionContext] Sync updateTeamRoster failed:', err)
+          );
+          return updated;
+        }
+        return team;
+      })
+    );
+  }
+
+  function updateTeamVehicleSurvey(teamId, agendaKey, surveyData) {
+    setTeams(prev =>
+      prev.map(team => {
+        if (team.id === teamId) {
+          const existingSurveys = team.vehicleSurveys || {};
+          const updatedSurveys = {
+            ...existingSurveys,
+            [agendaKey]: {
+              ...(existingSurveys[agendaKey] || {}),
+              ...surveyData,
+              updatedAt: new Date().toISOString()
+            }
+          };
+          const updated = {
+            ...team,
+            vehicleSurveys: updatedSurveys
+          };
+          saveRecordToSheet('teams', updated).catch(err =>
+            console.warn('[CompetitionContext] Sync vehicleSurveys failed:', err)
           );
           return updated;
         }
@@ -261,6 +288,7 @@ export function createTeamActions({ teams, setTeams, scores, setScores, setCurre
     registerTeam,
     updateTeamFiles,
     updateTeamRoster,
+    updateTeamVehicleSurvey,
     verifyTeam,
     assignLotNumber,
     updateTeamDraw,

@@ -1,6 +1,8 @@
-import React from 'react';
-import { Tag, Timer, Home, Calendar, MapPin, ExternalLink, Navigation, FileText, HelpCircle, Phone } from 'lucide-react';
+import React, { useState } from 'react';
+import { Tag, Timer, Home, Calendar, MapPin, ExternalLink, Navigation, FileText, HelpCircle, Phone, ClipboardCheck, CheckCircle2, ChevronRight, Sparkles, Bus, Car, Bike, Check, Clock, AlertCircle, Shield, Printer, Download, Loader2 } from 'lucide-react';
 import { EVENT, VENUE } from '../../../../config.js';
+import { HARI_H_SCHEDULE, UJI_COBA_SCHEDULE } from '../../../../data/scheduleMatrices.js';
+import BasecampCheckoutTracker from '../components/BasecampCheckoutTracker.jsx';
 
 export default function OverviewTab({
   currentTeam,
@@ -12,7 +14,11 @@ export default function OverviewTab({
   trialTime,
   compDate,
   compTime,
-  setActiveTab
+  setActiveTab,
+  updateTeamVehicleSurvey,
+  stagingInfo,
+  onOpenPactModal,
+  isDownloadingPact
 }) {
   const allPasukan = Array.isArray(currentTeam.roster?.pasukan) ? currentTeam.roster.pasukan : [];
   const allCadangan = Array.isArray(currentTeam.roster?.cadangan) ? currentTeam.roster.cadangan : [];
@@ -20,70 +26,106 @@ export default function OverviewTab({
   const filledPasukan = allPasukan.filter(p => p?.name && p.name !== '-' && p.name.trim() !== '').length;
   const filledCadangan = allCadangan.filter(c => c?.name && c.name !== '-' && c.name.trim() !== '').length;
 
+  // Lookup otomatis jadwal hari-H & Uji Coba berdasarkan nomor undian (lotNumber)
+  const lotIdx = currentTeam.lotNumber ? parseInt(currentTeam.lotNumber, 10) - 1 : -1;
+  const jKey = String(currentTeam.jenjang || '').toUpperCase().includes('SD') ? 'SD' : 'SMP';
+  const autoSchedule = (lotIdx >= 0 && HARI_H_SCHEDULE[jKey]?.[lotIdx]) ? HARI_H_SCHEDULE[jKey][lotIdx] : null;
+  const autoTrialSchedule = (lotIdx >= 0 && UJI_COBA_SCHEDULE[jKey]?.[lotIdx]) ? UJI_COBA_SCHEDULE[jKey][lotIdx] : null;
+
+  const displayEstimatedTime = currentTeam.estimatedTime || autoSchedule?.startTampil || (currentTeam.lotNumber ? `#${String(currentTeam.lotNumber).padStart(2, '0')}` : null);
+  const displayBasecamp = currentTeam.basecampNumber || (currentTeam.lotNumber ? `Ruang ${String(currentTeam.lotNumber).padStart(2, '0')}` : null);
+
+  const [surveySaveToast, setSurveySaveToast] = useState('');
+
+  // Helper untuk menyimpan survei kesediaan hadir UCL
+  const handleConfirmTrialAttendance = (isAttending) => {
+    if (!updateTeamVehicleSurvey) return;
+    updateTeamVehicleSurvey(currentTeam.id, 'trialAttendance', {
+      status: isAttending ? 'confirmed' : 'declined',
+      confirmedAt: new Date().toISOString()
+    });
+    setSurveySaveToast(isAttending ? '✓ Kesediaan hadir Uji Coba Lapangan berhasil dikonfirmasi!' : 'Konfirmasi ketidakhadiran Uji Coba Lapangan telah dicatat.');
+    setTimeout(() => setSurveySaveToast(''), 3500);
+  };
+
+  // Helper untuk update jumlah kendaraan spesifik (motor, mobil, elf, bus)
+  const handleUpdateVehicleCount = (agendaKey, vehicleKey, delta) => {
+    if (!updateTeamVehicleSurvey) return;
+    const currentCounts = currentTeam.vehicleSurveys?.[agendaKey]?.counts || {};
+    const curVal = currentCounts[vehicleKey] || 0;
+    const nextVal = Math.max(0, curVal + delta);
+    
+    const updatedCounts = {
+      ...currentCounts,
+      [vehicleKey]: nextVal
+    };
+
+    updateTeamVehicleSurvey(currentTeam.id, agendaKey, {
+      counts: updatedCounts
+    });
+    setSurveySaveToast(`Jumlah armada diperbarui!`);
+    setTimeout(() => setSurveySaveToast(''), 2500);
+  };
+
   return (
-    <div className="space-y-6">
-      {/* 3 Box Sorotan Status Tampil Peleton */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+    <div className="space-y-4 sm:space-y-6">
+      {/* 3 Box Sorotan Status Tampil Peleton: Di HP 3 kolom ringkas berdampingan atau compact grid */}
+      <div className="grid grid-cols-3 gap-2 sm:gap-4">
         {/* Card 1: No. Dada */}
-        <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-xs flex items-center gap-4 hover:border-slate-300 transition-colors">
-          <div className="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
-            <Tag className="w-6 h-6" />
+        <div className="bg-white p-2.5 sm:p-5 rounded-2xl sm:rounded-3xl border border-slate-200/90 shadow-xs flex flex-col sm:flex-row items-center sm:items-center text-center sm:text-left gap-1.5 sm:gap-4 hover:border-slate-300 transition-colors">
+          <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+            <Tag className="w-4 h-4 sm:w-6 sm:h-6" />
           </div>
-          <div className="min-w-0">
-            <span className="text-[10px] font-black uppercase tracking-wider text-emerald-800 block">
-              Nomor Dada Lapangan
+          <div className="min-w-0 w-full">
+            <span className="text-[8px] sm:text-[10px] font-black uppercase tracking-wider text-emerald-800 block truncate">
+              Nomor Dada
             </span>
-            <div className="flex items-baseline gap-2 mt-0.5">
-              <span className="text-2xl font-black text-slate-900 font-mono">
+            <div className="flex flex-col sm:flex-row sm:items-baseline sm:gap-2 mt-0.5">
+              <span className="text-base sm:text-2xl font-black text-slate-900 font-mono leading-none sm:leading-normal">
                 {currentTeam.chestNumber || '-'}
               </span>
-              <span className="text-[11px] text-slate-500 truncate">
-                {currentTeam.chestNumber ? 'Terpasang di seragam' : 'Diambil saat TM'}
+              <span className="text-[9px] sm:text-[11px] text-slate-500 truncate mt-0.5 sm:mt-0">
+                {currentTeam.chestNumber ? 'Seragam' : 'Saat TM'}
               </span>
             </div>
           </div>
         </div>
 
         {/* Card 2: Jam Estimasi Tampil */}
-        <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-xs flex items-center gap-4 hover:border-slate-300 transition-colors">
-          <div className="w-12 h-12 rounded-2xl bg-blue-100 text-blue-700 flex items-center justify-center shrink-0">
-            <Timer className="w-6 h-6" />
+        <div className="bg-white p-2.5 sm:p-5 rounded-2xl sm:rounded-3xl border border-slate-200/90 shadow-xs flex flex-col sm:flex-row items-center sm:items-center text-center sm:text-left gap-1.5 sm:gap-4 hover:border-slate-300 transition-colors">
+          <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-blue-100 text-blue-700 flex items-center justify-center shrink-0">
+            <Timer className="w-4 h-4 sm:w-6 sm:h-6" />
           </div>
-          <div className="min-w-0">
-            <span className="text-[10px] font-black uppercase tracking-wider text-blue-800 block">
-              Jam Estimasi Tampil
+          <div className="min-w-0 w-full">
+            <span className="text-[8px] sm:text-[10px] font-black uppercase tracking-wider text-blue-800 block truncate">
+              Est. Tampil
             </span>
-            <div className="flex items-baseline gap-2 mt-0.5">
-              <span className="text-2xl font-black text-slate-900 font-mono">
-                {currentTeam.estimatedTime ? `${currentTeam.estimatedTime} WIB` : (currentTeam.lotNumber ? `Urutan #${String(currentTeam.lotNumber).padStart(2, '0')}` : '-')}
+            <div className="flex flex-col sm:flex-row sm:items-baseline sm:gap-2 mt-0.5">
+              <span className="text-xs sm:text-2xl font-black text-slate-900 font-mono leading-tight sm:leading-normal truncate">
+                {displayEstimatedTime || '-'}
               </span>
-              <span className="text-[11px] text-slate-500 truncate">
-                {currentTeam.estimatedTime ? 'Arena Utama' : (currentTeam.lotNumber ? 'Sesuai undian TM' : 'Belum TM')}
+              <span className="text-[9px] sm:text-[11px] text-slate-500 truncate mt-0.5 sm:mt-0">
+                {displayEstimatedTime ? (autoSchedule?.arena ? autoSchedule.arena.split(' ')[0] : 'Arena') : 'Belum TM'}
               </span>
             </div>
-            {Number(currentTeam.lotNumber) >= 6 && Number(currentTeam.lotNumber) <= 10 && (
-              <div className="mt-2 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-rose-100 text-rose-800 border border-rose-200 text-[10px] font-black uppercase">
-                <span>🚩 Wajib Ikut Upacara Pembukaan</span>
-              </div>
-            )}
           </div>
         </div>
 
         {/* Card 3: Nomor Basecamp */}
-        <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-xs flex items-center gap-4 hover:border-slate-300 transition-colors">
-          <div className="w-12 h-12 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center shrink-0">
-            <Home className="w-6 h-6" />
+        <div className="bg-white p-2.5 sm:p-5 rounded-2xl sm:rounded-3xl border border-slate-200/90 shadow-xs flex flex-col sm:flex-row items-center sm:items-center text-center sm:text-left gap-1.5 sm:gap-4 hover:border-slate-300 transition-colors">
+          <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center shrink-0">
+            <Home className="w-4 h-4 sm:w-6 sm:h-6" />
           </div>
-          <div className="min-w-0">
-            <span className="text-[10px] font-black uppercase tracking-wider text-amber-800 block">
-              Ruang Basecamp Kontingen
+          <div className="min-w-0 w-full">
+            <span className="text-[8px] sm:text-[10px] font-black uppercase tracking-wider text-amber-800 block truncate">
+              Basecamp
             </span>
-            <div className="flex items-baseline gap-2 mt-0.5">
-              <span className="text-2xl font-black text-slate-900 font-mono">
-                {currentTeam.basecampNumber ? `Ruang ${currentTeam.basecampNumber}` : '-'}
+            <div className="flex flex-col sm:flex-row sm:items-baseline sm:gap-2 mt-0.5">
+              <span className="text-xs sm:text-2xl font-black text-slate-900 font-mono leading-tight sm:leading-normal truncate">
+                {displayBasecamp || '-'}
               </span>
-              <span className="text-[11px] text-slate-500 truncate">
-                {currentTeam.basecampNumber ? 'Ruang transit tim' : 'Diumumkan saat TM'}
+              <span className="text-[9px] sm:text-[11px] text-slate-500 truncate mt-0.5 sm:mt-0">
+                {displayBasecamp ? 'Transit' : 'Saat TM'}
               </span>
             </div>
           </div>
@@ -91,27 +133,27 @@ export default function OverviewTab({
       </div>
 
       {/* Grid 2 Kolom: Kiri Agenda & Maps Tab, Kanan Status Berkas & Kontak */}
-      <div className="grid lg:grid-cols-3 gap-6">
+      <div className="grid lg:grid-cols-3 gap-4 sm:gap-6">
         
         {/* Kolom Kiri (2 Span): Agenda Pelaksanaan Interaktif */}
-        <div className="lg:col-span-2 bg-white rounded-3xl p-6 border border-slate-200 shadow-xs space-y-5">
-          <div className="space-y-3.5 border-b border-slate-100 pb-4">
+        <div className="lg:col-span-2 bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-slate-200/90 shadow-xs space-y-4 sm:space-y-5">
+          <div className="space-y-2.5 sm:space-y-3.5 border-b border-slate-100 pb-3 sm:pb-4">
             <div>
-              <h4 className="font-black text-lg text-slate-900 uppercase flex items-center gap-2">
-                <Calendar className="w-5 h-5 text-red-700" />
-                <span>Agenda Wajib Kontingen & Peta Lokasi</span>
+              <h4 className="font-black text-base sm:text-lg text-slate-900 uppercase flex items-center gap-2">
+                <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-red-700" />
+                <span>Agenda Wajib Kontingen & Peta</span>
               </h4>
-              <p className="text-xs text-slate-500 mt-0.5">
-                Pilih agenda untuk melihat jadwal detail, alamat resmi, dan rute navigasi Google Maps.
+              <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5">
+                Pilih agenda untuk melihat jadwal detail dan navigasi Google Maps.
               </p>
             </div>
 
             {/* Switcher Tab Agenda di bawah judul - Full Width Flex */}
-            <div className="flex items-center gap-1.5 bg-slate-100 p-1.5 rounded-2xl border border-slate-200 w-full">
+            <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl sm:rounded-2xl border border-slate-200 w-full">
               <button
                 type="button"
                 onClick={() => setScheduleTab('tm')}
-                className={`flex-1 px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 text-center ${
+                className={`flex-1 px-2.5 sm:px-4 py-2 sm:py-2.5 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-bold transition-all cursor-pointer flex items-center justify-center text-center ${
                   scheduleTab === 'tm'
                     ? 'bg-slate-900 text-white shadow-xs'
                     : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
@@ -122,24 +164,24 @@ export default function OverviewTab({
               <button
                 type="button"
                 onClick={() => setScheduleTab('trial')}
-                className={`flex-1 px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 text-center ${
+                className={`flex-1 px-2 sm:px-4 py-2 sm:py-2.5 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-bold transition-all cursor-pointer flex items-center justify-center text-center leading-tight ${
                   scheduleTab === 'trial'
                     ? 'bg-slate-900 text-white shadow-xs'
                     : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
                 }`}
               >
-                <span>2. Uji Coba Lapangan</span>
+                <span>2. Uji Coba</span>
               </button>
               <button
                 type="button"
                 onClick={() => setScheduleTab('competition')}
-                className={`flex-1 px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 text-center ${
+                className={`flex-1 px-2 sm:px-4 py-2 sm:py-2.5 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-bold transition-all cursor-pointer flex items-center justify-center text-center leading-tight ${
                   scheduleTab === 'competition'
                     ? 'bg-slate-900 text-white shadow-xs'
                     : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
                 }`}
               >
-                <span>3. Hari-H Lomba</span>
+                <span>3. Hari-H</span>
               </button>
             </div>
           </div>
@@ -149,10 +191,15 @@ export default function OverviewTab({
             <div className="space-y-4 animate-in fade-in duration-150">
               <div className="p-4 rounded-2xl bg-purple-50/70 border border-purple-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div className="space-y-1">
-                  <span className="text-[10px] font-black text-purple-700 uppercase tracking-wider block">
-                    {tmDate} • {tmTime}
-                  </span>
-                  <h5 className="font-black text-base text-slate-900">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-[10px] font-black text-purple-700 bg-purple-200/70 px-2 py-0.5 rounded uppercase tracking-wider">
+                      Sabtu, 9 Januari 2027
+                    </span>
+                    <span className="text-[10px] font-bold text-purple-900 bg-purple-100 px-2 py-0.5 rounded">
+                      13.00 WIB s.d. Selesai
+                    </span>
+                  </div>
+                  <h5 className="font-black text-base text-slate-900 mt-1">
                     Technical Meeting & Validasi Fisik Berkas
                   </h5>
                   <p className="text-xs text-slate-600">
@@ -171,6 +218,28 @@ export default function OverviewTab({
                 </a>
               </div>
 
+              {/* Status Hasil Undian TM untuk Tim Ini */}
+              <div className="p-3.5 rounded-2xl bg-slate-900 text-white border border-purple-500/30 flex items-center justify-between gap-3 flex-wrap">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-xl bg-purple-500/20 border border-purple-400/30 flex items-center justify-center font-black text-purple-300 text-sm">
+                    {currentTeam.lotNumber ? `#${String(currentTeam.lotNumber).padStart(2, '0')}` : '?'}
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                      Hasil Undian Nomor Urut Tampil Peleton
+                    </span>
+                    <strong className="text-xs sm:text-sm text-white">
+                      {currentTeam.lotNumber ? `Urutan #${String(currentTeam.lotNumber).padStart(2, '0')} (Tingkat ${currentTeam.jenjang})` : 'Belum Melakukan Undian TM'}
+                    </strong>
+                  </div>
+                </div>
+                {currentTeam.chestNumber && (
+                  <span className="font-mono text-xs font-black bg-amber-400 text-slate-950 px-2.5 py-1 rounded-lg shadow-sm">
+                    No. Dada: {currentTeam.chestNumber}
+                  </span>
+                )}
+              </div>
+
               {/* Detail Alamat Tempat TM */}
               <div className="flex items-start gap-2.5 p-3.5 bg-slate-50 rounded-2xl border border-slate-200 text-xs">
                 <MapPin className="w-4 h-4 text-purple-700 shrink-0 mt-0.5" />
@@ -184,12 +253,113 @@ export default function OverviewTab({
                 </div>
               </div>
 
+              {/* Box Cetak Pakta Integritas Bermaterai Rp 10.000 untuk TM */}
+              <div className="p-4 rounded-2xl bg-gradient-to-r from-red-50 to-amber-50 border border-red-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-1.5 text-red-800 font-black text-xs uppercase tracking-wider">
+                    <Shield className="w-4 h-4 text-red-700" />
+                    <span>Berkas Fisik Wajib TM: Pakta Integritas Bermaterai</span>
+                  </div>
+                  <p className="text-[11px] text-slate-600 leading-relaxed max-w-lg">
+                    Official wajib membawa lembar Pakta Integritas bermaterai <strong>Rp 10.000,-</strong> bertanda tangan basah saat registrasi TM di Kampus Induk Mu'allimin Wirobrajan (Pasal 2 & 3).
+                  </p>
+                </div>
+                {onOpenPactModal && (
+                  <button
+                    type="button"
+                    onClick={onOpenPactModal}
+                    disabled={isDownloadingPact}
+                    className="px-4 py-2.5 bg-red-700 hover:bg-red-800 disabled:bg-slate-400 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-xs shrink-0 cursor-pointer active:scale-95"
+                  >
+                    {isDownloadingPact ? (
+                      <>
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        <span>Mengunduh PDF...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Download className="w-3.5 h-3.5" />
+                        <span>Unduh PDF Pakta Integritas</span>
+                      </>
+                    )}
+                  </button>
+                )}
+              </div>
+
+              {/* Survei Kendaraan TM - Kuantitas Terpisah (Motor, Mobil Pribadi, Elf) */}
+              <div className="p-4 rounded-2xl bg-white border border-purple-200/90 shadow-xs space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-black uppercase text-purple-950 flex items-center gap-2">
+                    <Car className="w-4 h-4 text-purple-600" />
+                    <span>Estimasi Kendaraan Hadir TM (Sabtu, 9 Jan 2027)</span>
+                  </span>
+                  <span className="text-[10px] font-bold text-slate-500">
+                    Bisa lebih dari 1 kendaraan
+                  </span>
+                </div>
+                <p className="text-[11px] text-slate-600 leading-relaxed">
+                  Tentukan estimasi jumlah unit kendaraan yang akan dibawa perwakilan kontingen (Pembina, Pelatih, & Danton) untuk alokasi slot parkir Kampus Induk:
+                </p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                  {[
+                    { key: 'motor', label: 'Sepeda Motor', icon: Bike, desc: 'Roda Dua' },
+                    { key: 'mobil', label: 'Mobil Pribadi', icon: Car, desc: 'Sedan / MPV / SUV' },
+                    { key: 'elf', label: 'Minibus / Elf', icon: Bus, desc: 'HiAce / Elf' },
+                  ].map(v => {
+                    const count = currentTeam.vehicleSurveys?.tm?.counts?.[v.key] || 0;
+                    const VIcon = v.icon;
+                    return (
+                      <div
+                        key={v.key}
+                        className={`p-3 rounded-xl border flex items-center justify-between gap-3 transition-all ${
+                          count > 0 ? 'bg-purple-50/80 border-purple-300 ring-1 ring-purple-200' : 'bg-slate-50 border-slate-200'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${count > 0 ? 'bg-purple-600 text-white' : 'bg-slate-200 text-slate-600'}`}>
+                            <VIcon className="w-4 h-4" />
+                          </div>
+                          <div className="min-w-0">
+                            <span className="text-xs font-bold text-slate-900 block truncate">{v.label}</span>
+                            <span className="text-[10px] text-slate-500 block">{v.desc}</span>
+                          </div>
+                        </div>
+
+                        {/* Counter Plus-Minus */}
+                        <div className="flex items-center gap-1.5 shrink-0 bg-white border border-slate-200 rounded-lg p-0.5 shadow-2xs">
+                          <button
+                            type="button"
+                            onClick={() => handleUpdateVehicleCount('tm', v.key, -1)}
+                            className="w-6 h-6 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 font-black text-xs flex items-center justify-center transition-all cursor-pointer active:scale-90"
+                            title="Kurang"
+                          >
+                            -
+                          </button>
+                          <span className="w-6 text-center font-mono font-bold text-xs text-slate-900">
+                            {count}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => handleUpdateVehicleCount('tm', v.key, 1)}
+                            className="w-6 h-6 rounded-md bg-purple-600 hover:bg-purple-700 text-white font-black text-xs flex items-center justify-center transition-all cursor-pointer active:scale-90"
+                            title="Tambah"
+                          >
+                            +
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
               {/* Preview Peta Google Maps Interaktif TM */}
               <div className="rounded-2xl overflow-hidden border border-purple-200 bg-slate-100 shadow-inner relative group">
                 <iframe
                   title="Peta Lokasi Technical Meeting"
                   src="https://maps.google.com/maps?q=Madrasah+Mu'allimin+Muhammadiyah+Yogyakarta+Jl.+Letjen+S.+Parman+No.+68&t=&z=16&ie=UTF8&iwloc=&output=embed"
-                  className="w-full h-64 border-0 block"
+                  className="w-full h-56 sm:h-64 border-0 block"
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
                 />
@@ -207,16 +377,21 @@ export default function OverviewTab({
             </div>
           )}
 
-          {/* Konten Agenda Tab 2: UJI COBA LAPANGAN */}
+          {/* Konten Agenda Tab 2: UJI COBA LAPANGAN (UCL) */}
           {scheduleTab === 'trial' && (
             <div className="space-y-4 animate-in fade-in duration-150">
               <div className="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div className="space-y-1">
-                  <span className="text-[10px] font-black text-emerald-700 uppercase tracking-wider block">
-                    {trialDate} • {trialTime}
-                  </span>
-                  <h5 className="font-black text-base text-slate-900">
-                    Uji Coba Lapangan & Orientasi Arena
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-[10px] font-black text-emerald-800 bg-emerald-200/70 px-2 py-0.5 rounded uppercase tracking-wider">
+                      Sabtu, 16 Januari 2027
+                    </span>
+                    <span className="text-[10px] font-bold text-emerald-950 bg-emerald-100 px-2 py-0.5 rounded">
+                      08.00 WIB s.d. 13.30 WIB
+                    </span>
+                  </div>
+                  <h5 className="font-black text-base text-slate-900 mt-1">
+                    Uji Coba Lapangan (UCL) & Orientasi Arena
                   </h5>
                   <p className="text-xs text-slate-600">
                     Pengenalan pos arena perlombaan, pos DP 1, DP 2, dan area steril demi kesiapan teknis peleton.
@@ -234,6 +409,187 @@ export default function OverviewTab({
                 </a>
               </div>
 
+              {/* LANGKAH 1: KONFIRMASI KESEDIAAN HADIR UCL (HIRARKI PERTAMA) */}
+              <div className="p-4 rounded-2xl bg-white border border-emerald-300 shadow-sm space-y-3 relative overflow-hidden">
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <span className="text-xs font-black uppercase text-emerald-950 flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+                    <span>Langkah 1: Konfirmasi Kesediaan Hadir Uji Coba Lapangan (Bab B.7)</span>
+                  </span>
+                  <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full border ${
+                    currentTeam.vehicleSurveys?.trialAttendance?.status === 'confirmed'
+                      ? 'bg-emerald-100 text-emerald-800 border-emerald-300'
+                      : currentTeam.vehicleSurveys?.trialAttendance?.status === 'declined'
+                      ? 'bg-rose-100 text-rose-800 border-rose-300'
+                      : 'bg-amber-100 text-amber-800 border-amber-300'
+                  }`}>
+                    {currentTeam.vehicleSurveys?.trialAttendance?.status === 'confirmed'
+                      ? '✓ Terkonfirmasi Hadir'
+                      : currentTeam.vehicleSurveys?.trialAttendance?.status === 'declined'
+                      ? '✕ Berhalangan Hadir'
+                      : 'Belum Konfirmasi'}
+                  </span>
+                </div>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Official peleton wajib mengonfirmasi kesediaan kontingen sebelum panitia merilis alokasi menit jadwal dan membuka izin kantong parkir armada.
+                </p>
+
+                <div className="flex flex-wrap items-center gap-2.5 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => handleConfirmTrialAttendance(true)}
+                    className={`px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer flex items-center gap-1.5 active:scale-95 ${
+                      currentTeam.vehicleSurveys?.trialAttendance?.status === 'confirmed'
+                        ? 'bg-emerald-700 text-white ring-2 ring-emerald-400'
+                        : 'bg-emerald-600 hover:bg-emerald-500 text-white'
+                    }`}
+                  >
+                    <Check className="w-3.5 h-3.5" />
+                    <span>✓ Bersedia Hadir Uji Coba Lapangan</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleConfirmTrialAttendance(false)}
+                    className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer active:scale-95 ${
+                      currentTeam.vehicleSurveys?.trialAttendance?.status === 'declined'
+                        ? 'bg-rose-600 text-white ring-2 ring-rose-400'
+                        : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                    }`}
+                  >
+                    <span>Berhalangan Hadir</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* JIKA BERHALANGAN HADIR */}
+              {currentTeam.vehicleSurveys?.trialAttendance?.status === 'declined' && (
+                <div className="p-4 rounded-2xl bg-amber-50 border border-amber-300 text-amber-900 text-xs space-y-1">
+                  <div className="flex items-center gap-2 font-bold">
+                    <AlertCircle className="w-4 h-4 text-amber-600" />
+                    <span>Peleton Dinyatakan Berhalangan Hadir Pada Uji Coba Lapangan</span>
+                  </div>
+                  <p className="text-amber-800 text-[11px]">
+                    Slot alokasi waktu peleton Anda telah dialihkan. Jika ingin mengubah kesediaan menjadi hadir, silakan klik tombol "Bersedia Hadir" di atas.
+                  </p>
+                </div>
+              )}
+
+              {/* LANGKAH 2 & 3: MUNCUL SETELAH KONFIRMASI BERSEDIA HADIR */}
+              {currentTeam.vehicleSurveys?.trialAttendance?.status === 'confirmed' && (
+                <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-200">
+                  
+                  {/* Rincian Waktu & Urutan Uji Coba Tim Ini */}
+                  <div className="p-4 rounded-2xl bg-gradient-to-br from-slate-900 to-slate-950 text-white border border-emerald-500/30 space-y-3">
+                    <div className="flex items-center justify-between border-b border-white/10 pb-2.5">
+                      <div className="flex items-center gap-2">
+                        <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                        <span className="text-xs font-bold uppercase tracking-wider text-emerald-300">
+                          Jadwal Alokasi Waktu Peleton Anda (UCL)
+                        </span>
+                      </div>
+                      <span className="text-[11px] font-mono font-bold text-slate-300">
+                        {autoTrialSchedule?.session || 'Sesi Terjadwal'}
+                      </span>
+                    </div>
+
+                    {autoTrialSchedule ? (
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
+                        <div className="p-2 rounded-xl bg-white/5 border border-white/10">
+                          <span className="text-[10px] text-slate-400 block font-medium">Tiba Lokasi</span>
+                          <strong className="text-xs sm:text-sm text-emerald-300 font-mono font-bold">{autoTrialSchedule.arrival}</strong>
+                        </div>
+                        <div className="p-2 rounded-xl bg-white/5 border border-white/10">
+                          <span className="text-[10px] text-slate-400 block font-medium">Panggilan DP</span>
+                          <strong className="text-xs sm:text-sm text-amber-300 font-mono font-bold">{autoTrialSchedule.callDP}</strong>
+                        </div>
+                        <div className="p-2 rounded-xl bg-white/5 border border-white/10">
+                          <span className="text-[10px] text-slate-400 block font-medium">Masuk Arena</span>
+                          <strong className="text-xs sm:text-sm text-white font-mono font-bold">{autoTrialSchedule.enterArena}</strong>
+                        </div>
+                        <div className="p-2 rounded-xl bg-white/5 border border-white/10">
+                          <span className="text-[10px] text-slate-400 block font-medium">Durasi Bersih</span>
+                          <strong className="text-xs sm:text-sm text-blue-300 font-mono font-bold">{autoTrialSchedule.allocation}</strong>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="p-3 rounded-xl bg-white/5 border border-white/5 text-center text-xs text-slate-400">
+                        {currentTeam.lotNumber
+                          ? `Urutan tampil #${String(currentTeam.lotNumber).padStart(2, '0')}. Waktu uji coba dialokasikan sesuai urutan undian saat TM.`
+                          : 'Slot waktu resmi UCL akan muncul otomatis setelah peleton mendapatkan nomor urutan saat TM.'}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Survei Kuantitas Kendaraan Uji Coba Lapangan (Motor, Mobil, Elf, Bus) */}
+                  <div className="p-4 rounded-2xl bg-white border border-emerald-200 shadow-xs space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-black uppercase text-emerald-950 flex items-center gap-2">
+                        <Bus className="w-4 h-4 text-emerald-600" />
+                        <span>Langkah 2: Survei Kuantitas Armada UCL (Sabtu, 16 Jan 2027)</span>
+                      </span>
+                      <span className="text-[10px] font-bold text-slate-500">
+                        Bisa kombinasi armada
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-slate-600 leading-relaxed">
+                      Masukkan rincian jumlah kendaraan kontingen menuju Kampus Terpadu Sedayu untuk penataan jalur drop-off personel & kapasitas parkir:
+                    </p>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                      {[
+                        { key: 'motor', label: 'Sepeda Motor', icon: Bike, desc: 'Armada official / suporter' },
+                        { key: 'mobil', label: 'Mobil Pribadi', icon: Car, desc: 'Sedan / Avanza / Innova' },
+                        { key: 'elf', label: 'Minibus / Elf / HiAce', icon: Bus, desc: 'Kapasitas 12-19 kursi' },
+                        { key: 'bus', label: 'Big / Medium Bus', icon: Bus, desc: 'Bus pariwisata kontingen' },
+                      ].map(v => {
+                        const count = currentTeam.vehicleSurveys?.trial?.counts?.[v.key] || 0;
+                        const VIcon = v.icon;
+                        return (
+                          <div
+                            key={v.key}
+                            className={`p-3 rounded-xl border flex items-center justify-between gap-3 transition-all ${
+                              count > 0 ? 'bg-emerald-50/80 border-emerald-300 ring-1 ring-emerald-200' : 'bg-slate-50 border-slate-200'
+                            }`}
+                          >
+                            <div className="flex items-center gap-2.5 min-w-0">
+                              <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${count > 0 ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-600'}`}>
+                                <VIcon className="w-4 h-4" />
+                              </div>
+                              <div className="min-w-0">
+                                <span className="text-xs font-bold text-slate-900 block truncate">{v.label}</span>
+                                <span className="text-[10px] text-slate-500 block">{v.desc}</span>
+                              </div>
+                            </div>
+
+                            {/* Counter Plus-Minus */}
+                            <div className="flex items-center gap-1.5 shrink-0 bg-white border border-slate-200 rounded-lg p-0.5 shadow-2xs">
+                              <button
+                                type="button"
+                                onClick={() => handleUpdateVehicleCount('trial', v.key, -1)}
+                                className="w-6 h-6 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 font-black text-xs flex items-center justify-center transition-all cursor-pointer active:scale-90"
+                              >
+                                -
+                              </button>
+                              <span className="w-6 text-center font-mono font-bold text-xs text-slate-900">
+                                {count}
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => handleUpdateVehicleCount('trial', v.key, 1)}
+                                className="w-6 h-6 rounded-md bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs flex items-center justify-center transition-all cursor-pointer active:scale-90"
+                              >
+                                +
+                              </button>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Detail Alamat Tempat UCL */}
               <div className="flex items-start gap-2.5 p-3.5 bg-slate-50 rounded-2xl border border-slate-200 text-xs">
                 <MapPin className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
                 <div>
@@ -245,38 +601,6 @@ export default function OverviewTab({
                   </span>
                 </div>
               </div>
-
-              {/* Survei Mandiri Kesediaan Uji Coba Lapangan (Juknis Bab B.7) */}
-              <div className="p-4 rounded-2xl bg-white border border-emerald-200 shadow-xs space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-black uppercase text-emerald-950 flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
-                    <span>Survei Kesediaan Uji Coba Lapangan (Bab B.7)</span>
-                  </span>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
-                    Mandiri Web-App
-                  </span>
-                </div>
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  Official peleton wajib mengonfirmasi kesediaan hadir pada agenda Uji Coba Lapangan (Sabtu, 16 Januari 2027) untuk penjadwalan slot alokasi waktu resmi oleh panitia.
-                </p>
-                <div className="flex flex-wrap items-center gap-2 pt-1">
-                  <button
-                    type="button"
-                    onClick={() => alert('Terima kasih! Konfirmasi kesediaan Uji Coba Lapangan untuk peleton Anda telah tercatat di sistem panitia.')}
-                    className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-bold text-xs rounded-xl transition-all shadow-xs cursor-pointer"
-                  >
-                    ✓ Bersedia Hadir Uji Coba Lapangan
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => alert('Konfirmasi ketidakhadiran telah tercatat. Slot waktu peleton Anda akan dialihkan untuk peleton lain.')}
-                    className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition-all cursor-pointer"
-                  >
-                    Berhalangan Hadir
-                  </button>
-                </div>
-              </div>
             </div>
           )}
 
@@ -285,10 +609,15 @@ export default function OverviewTab({
             <div className="space-y-4 animate-in fade-in duration-150">
               <div className="p-4 rounded-2xl bg-red-50/70 border border-red-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div className="space-y-1">
-                  <span className="text-[10px] font-black text-red-700 uppercase tracking-wider block">
-                    {compDate} • {compTime}
-                  </span>
-                  <h5 className="font-black text-base text-slate-900">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-[10px] font-black text-red-800 bg-red-200/70 px-2 py-0.5 rounded uppercase tracking-wider">
+                      Ahad, 24 Januari 2027
+                    </span>
+                    <span className="text-[10px] font-bold text-red-950 bg-red-100 px-2 py-0.5 rounded">
+                      06.00 WIB s.d. 17.00 WIB
+                    </span>
+                  </div>
+                  <h5 className="font-black text-base text-slate-900 mt-1">
                     Hari-H Pelaksanaan LBB Mu'allimin 2027
                   </h5>
                   <p className="text-xs text-slate-600">
@@ -307,6 +636,55 @@ export default function OverviewTab({
                 </a>
               </div>
 
+              {/* Rincian Alur Waktu Tampil Hari-H Peleton Ini */}
+              <div className="p-4 rounded-2xl bg-gradient-to-br from-slate-900 to-slate-950 text-white border border-red-500/30 space-y-3">
+                <div className="flex items-center justify-between border-b border-white/10 pb-2.5 flex-wrap gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping"></span>
+                    <span className="text-xs font-bold uppercase tracking-wider text-red-400">
+                      Rondown Alur Tampil Peleton (Hari-H)
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {currentTeam.chestNumber && (
+                      <span className="text-[10px] font-mono font-bold bg-amber-400 text-slate-950 px-2 py-0.5 rounded">
+                        No. Dada: {currentTeam.chestNumber}
+                      </span>
+                    )}
+                    <span className="text-[11px] font-mono font-bold text-slate-300">
+                      {autoSchedule?.arena || (currentTeam.jenjang === 'SD' ? 'Arena 1 (Basket)' : 'Arena 2 (Embung)')}
+                    </span>
+                  </div>
+                </div>
+
+                {autoSchedule ? (
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
+                    <div className="p-2 rounded-xl bg-white/5 border border-white/10">
+                      <span className="text-[10px] text-slate-400 block font-medium">Stanby Basecamp</span>
+                      <strong className="text-xs sm:text-sm text-amber-300 font-mono font-bold">{autoSchedule.readyBasecamp}</strong>
+                    </div>
+                    <div className="p-2 rounded-xl bg-white/5 border border-white/10">
+                      <span className="text-[10px] text-slate-400 block font-medium">Pemeriksaan DP 1</span>
+                      <strong className="text-xs sm:text-sm text-blue-300 font-mono font-bold">{autoSchedule.checkDP1}</strong>
+                    </div>
+                    <div className="p-2 rounded-xl bg-white/5 border border-white/10">
+                      <span className="text-[10px] text-slate-400 block font-medium">Masuk Arena</span>
+                      <strong className="text-xs sm:text-sm text-emerald-300 font-mono font-bold">{autoSchedule.enterArena}</strong>
+                    </div>
+                    <div className="p-2 rounded-xl bg-white/5 border border-white/10">
+                      <span className="text-[10px] text-slate-400 block font-medium">Selesai / Keluar</span>
+                      <strong className="text-xs sm:text-sm text-rose-300 font-mono font-bold">{autoSchedule.exitArena}</strong>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="p-3 rounded-xl bg-white/5 border border-white/5 text-center text-xs text-slate-400">
+                    {currentTeam.lotNumber
+                      ? `Urutan Tampil #${String(currentTeam.lotNumber).padStart(2, '0')}. Jadwal ronde DP1, DP2, dan arena tampil telah dipetakan.`
+                      : 'Jadwal detail alur tampil menit-ke-menit akan tampil setelah nomor urutan diundi pada Technical Meeting.'}
+                  </div>
+                )}
+              </div>
+
               {/* Detail Alamat Tempat Lomba */}
               <div className="flex items-start gap-2.5 p-3.5 bg-slate-50 rounded-2xl border border-slate-200 text-xs">
                 <MapPin className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
@@ -320,12 +698,85 @@ export default function OverviewTab({
                 </div>
               </div>
 
+              {/* Survei Kuantitas Kendaraan Hari-H (Motor, Mobil, Elf, Bus) */}
+              <div className="p-4 rounded-2xl bg-white border border-red-200 shadow-xs space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-black uppercase text-red-950 flex items-center gap-2">
+                    <Bus className="w-4 h-4 text-red-600" />
+                    <span>Survei Jumlah Kendaraan Kontingen Hari-H (Ahad, 24 Jan 2027)</span>
+                  </span>
+                  <span className="text-[10px] font-bold text-slate-500">
+                    Tentukan jumlah unit
+                  </span>
+                </div>
+                <p className="text-[11px] text-slate-600 leading-relaxed">
+                  Konfirmasikan kuantitas unit kendaraan yang dibawa kontingen pada Hari-H untuk penerbitan stiker parkir resmi pos keamanan:
+                </p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  {[
+                    { key: 'motor', label: 'Sepeda Motor', icon: Bike, desc: 'Suporter & Official' },
+                    { key: 'mobil', label: 'Mobil Pribadi', icon: Car, desc: 'Kendaraan guru & pendamping' },
+                    { key: 'elf', label: 'Minibus / Elf / HiAce', icon: Bus, desc: 'Elf kontingen (12-19 seat)' },
+                    { key: 'bus', label: 'Big / Medium Bus', icon: Bus, desc: 'Bus besar rombongan (30-50+ seat)' },
+                  ].map(v => {
+                    const count = currentTeam.vehicleSurveys?.competition?.counts?.[v.key] || 0;
+                    const VIcon = v.icon;
+                    return (
+                      <div
+                        key={v.key}
+                        className={`p-3 rounded-xl border flex items-center justify-between gap-3 transition-all ${
+                          count > 0 ? 'bg-red-50/80 border-red-300 ring-1 ring-red-200' : 'bg-slate-50 border-slate-200'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${count > 0 ? 'bg-red-700 text-white' : 'bg-slate-200 text-slate-600'}`}>
+                            <VIcon className="w-4 h-4" />
+                          </div>
+                          <div className="min-w-0">
+                            <span className="text-xs font-bold text-slate-900 block truncate">{v.label}</span>
+                            <span className="text-[10px] text-slate-500 block">{v.desc}</span>
+                          </div>
+                        </div>
+
+                        {/* Counter Plus-Minus */}
+                        <div className="flex items-center gap-1.5 shrink-0 bg-white border border-slate-200 rounded-lg p-0.5 shadow-2xs">
+                          <button
+                            type="button"
+                            onClick={() => handleUpdateVehicleCount('competition', v.key, -1)}
+                            className="w-6 h-6 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 font-black text-xs flex items-center justify-center transition-all cursor-pointer active:scale-90"
+                          >
+                            -
+                          </button>
+                          <span className="w-6 text-center font-mono font-bold text-xs text-slate-900">
+                            {count}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => handleUpdateVehicleCount('competition', v.key, 1)}
+                            className="w-6 h-6 rounded-md bg-red-700 hover:bg-red-800 text-white font-black text-xs flex items-center justify-center transition-all cursor-pointer active:scale-90"
+                          >
+                            +
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Tracker Prosedur Basecamp & Checkout Hari-H */}
+              <BasecampCheckoutTracker
+                currentTeam={currentTeam}
+                stagingInfo={stagingInfo}
+              />
+
               {/* Preview Peta Google Maps Interaktif Hari-H */}
               <div className="rounded-2xl overflow-hidden border border-red-200 bg-slate-100 shadow-inner relative group">
                 <iframe
                   title="Peta Lokasi Lomba Hari-H"
                   src="https://maps.google.com/maps?q=Madrasah+Mu'allimin+Muhammadiyah+Yogyakarta+Kampus+Terpadu+Sedayu&t=&z=15&ie=UTF8&iwloc=&output=embed"
-                  className="w-full h-64 border-0 block"
+                  className="w-full h-56 sm:h-64 border-0 block"
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
                 />
@@ -337,7 +788,7 @@ export default function OverviewTab({
                 >
                   <Navigation className="w-3.5 h-3.5 text-red-400 fill-current" />
                   <span>Mulai Navigasi Rute</span>
-                  <ExternalLink className="w-3 h-3 text-slate-400" />
+                  <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
                 </a>
               </div>
             </div>
@@ -347,61 +798,182 @@ export default function OverviewTab({
         {/* Kolom Kanan (1 Span): Ringkasan Berkas & Bantuan Panitia */}
         <div className="space-y-6">
           {/* Ringkasan Cepat Persyaratan Peleton */}
-          <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs space-y-4">
+          {/* Ringkasan Cepat Persyaratan Peleton - Modern & Menarik */}
+          <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 border border-slate-200/90 shadow-sm space-y-3.5 relative overflow-hidden">
+            {/* Ambient Background Accent */}
+            <div className="absolute top-0 right-0 w-28 h-28 bg-gradient-to-br from-blue-500/10 to-indigo-500/5 rounded-full blur-xl pointer-events-none" />
+
+            {/* Header with Progress Ring / Percentage */}
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <div className="flex items-center gap-2">
-                <FileText className="w-5 h-5 text-blue-600" />
-                <h4 className="font-black text-sm uppercase text-slate-900">Kelengkapan Peleton</h4>
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-xs">
+                  <ClipboardCheck className="w-4 h-4" />
+                </div>
+                <div>
+                  <h4 className="font-black text-xs sm:text-sm uppercase tracking-wide text-slate-900">
+                    Kelengkapan Peleton
+                  </h4>
+                  <p className="text-[10px] text-slate-400">Verifikasi berkas & 25 personel</p>
+                </div>
               </div>
               <button
                 type="button"
                 onClick={() => setActiveTab('roster')}
-                className="text-[11px] font-bold text-blue-600 hover:text-blue-800"
+                className="text-[11px] font-bold text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100/80 px-2.5 py-1 rounded-lg transition-all flex items-center gap-1 active:scale-95"
               >
-                Kelola →
+                <span>Kelola</span>
+                <ChevronRight className="w-3 h-3" />
               </button>
             </div>
 
-            <div className="space-y-2.5 text-xs">
-              <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-100">
-                <span className="text-slate-600">Komandan (Danton):</span>
-                <span className="font-bold text-slate-900">
-                  {currentTeam.dantonName || currentTeam.roster?.danton?.name || '-'}
-                </span>
-              </div>
+            {/* Overall Readiness Bar */}
+            {(() => {
+              const danton = currentTeam.roster?.danton;
+              const dantonName = danton?.name || currentTeam.dantonName || '';
+              const hasFullDantonBio = Boolean(dantonName && danton?.nisn && danton?.class);
+              const isPasukanDone = filledPasukan >= 21;
+              const isDocDone = Boolean(currentTeam.files?.recommendationLetter?.url && currentTeam.files?.recommendationLetter?.url !== '#');
+              const score = (hasFullDantonBio ? 30 : dantonName ? 10 : 0) + (isPasukanDone ? 45 : (filledPasukan / 21) * 45) + (isDocDone ? 25 : 0);
+              const percent = Math.min(100, Math.round(score));
 
-              <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-100">
-                <span className="text-slate-600">Pasukan Inti (21):</span>
-                <span className={`font-bold font-mono px-2 py-0.5 rounded ${
+              return (
+                <div className="p-2.5 rounded-xl bg-gradient-to-r from-slate-50 to-blue-50/50 border border-slate-100 space-y-1.5">
+                  <div className="flex items-center justify-between text-[11px]">
+                    <span className="font-bold text-slate-700 flex items-center gap-1.5">
+                      <Sparkles className="w-3 h-3 text-amber-500" />
+                      <span>Kesiapan Administrasi</span>
+                    </span>
+                    <span className={`font-black font-mono text-xs ${percent >= 100 ? 'text-emerald-600' : 'text-blue-600'}`}>
+                      {percent}% Siap
+                    </span>
+                  </div>
+                  <div className="w-full h-2 bg-slate-200/80 rounded-full overflow-hidden">
+                    <div
+                      className={`h-full rounded-full transition-all duration-500 ${
+                        percent >= 100
+                          ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]'
+                          : percent > 50
+                          ? 'bg-blue-600'
+                          : 'bg-amber-500'
+                      }`}
+                      style={{ width: `${percent}%` }}
+                    />
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* Interactive Checklist Items */}
+            <div className="space-y-2 text-xs">
+              {/* Item 1: Danton */}
+              {(() => {
+                const danton = currentTeam.roster?.danton;
+                const dantonName = danton?.name || currentTeam.dantonName || '';
+                const hasFullBio = Boolean(dantonName && danton?.nisn && danton?.class);
+                const hasNameOnly = Boolean(dantonName && (!danton?.nisn || !danton?.class));
+
+                return (
+                  <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50/80 hover:bg-slate-50 border border-slate-100 transition-colors">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <div className={`w-5 h-5 rounded-md flex items-center justify-center shrink-0 ${
+                        hasFullBio
+                          ? 'bg-emerald-100 text-emerald-600'
+                          : hasNameOnly
+                          ? 'bg-amber-100 text-amber-600'
+                          : 'bg-slate-200 text-slate-400'
+                      }`}>
+                        {hasFullBio ? (
+                          <CheckCircle2 className="w-3.5 h-3.5" />
+                        ) : hasNameOnly ? (
+                          <span className="text-[10px] font-black">!</span>
+                        ) : (
+                          <span className="text-[10px]">•</span>
+                        )}
+                      </div>
+                      <span className="text-slate-600 text-[11px] font-medium truncate">Komandan (Danton)</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 ml-2 truncate">
+                      <span className="font-bold text-slate-900 text-[11px] truncate max-w-[110px]">
+                        {dantonName || '-'}
+                      </span>
+                      {hasNameOnly ? (
+                        <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-amber-100 text-amber-800 border border-amber-300 whitespace-nowrap">
+                          Lengkapi Bio
+                        </span>
+                      ) : hasFullBio ? (
+                        <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800 whitespace-nowrap">
+                          Lengkap
+                        </span>
+                      ) : null}
+                    </div>
+                  </div>
+                );
+              })()}
+
+              {/* Item 2: Pasukan 21 */}
+              <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50/80 hover:bg-slate-50 border border-slate-100 transition-colors">
+                <div className="flex items-center gap-2 min-w-0">
+                  <div className={`w-5 h-5 rounded-md flex items-center justify-center shrink-0 ${
+                    filledPasukan >= 21
+                      ? 'bg-emerald-100 text-emerald-600'
+                      : filledPasukan > 0
+                      ? 'bg-amber-100 text-amber-600'
+                      : 'bg-slate-200 text-slate-400'
+                  }`}>
+                    {filledPasukan >= 21 ? (
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                    ) : (
+                      <span className="text-[10px] font-bold font-mono">{filledPasukan}</span>
+                    )}
+                  </div>
+                  <span className="text-slate-600 text-[11px] font-medium">Pasukan Inti (21)</span>
+                </div>
+                <span className={`font-black font-mono text-[11px] px-2 py-0.5 rounded-md ${
                   filledPasukan >= 21
-                    ? 'bg-emerald-100 text-emerald-800 border border-emerald-300/60'
+                    ? 'bg-emerald-500/15 text-emerald-700 border border-emerald-500/30'
                     : filledPasukan > 0
-                    ? 'bg-amber-100 text-amber-900 border border-amber-300/60'
-                    : 'bg-slate-100 text-slate-500 border border-slate-200'
+                    ? 'bg-amber-500/15 text-amber-700 border border-amber-500/30'
+                    : 'bg-slate-200/70 text-slate-500'
                 }`}>
-                  {filledPasukan}/21 Personel
+                  {filledPasukan}/21
                 </span>
               </div>
 
-              <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-100">
-                <span className="text-slate-600">Cadangan (Opsional):</span>
-                <span className={`font-bold font-mono px-2 py-0.5 rounded ${
-                  filledCadangan >= 3
-                    ? 'bg-emerald-100 text-emerald-800 border border-emerald-300/60'
-                    : filledCadangan > 0
-                    ? 'bg-amber-100 text-amber-900 border border-amber-300/60'
-                    : 'bg-slate-100 text-slate-500 border border-slate-200'
-                }`}>
-                  {filledCadangan}/3 Personel
+              {/* Item 3: Cadangan */}
+              <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50/80 hover:bg-slate-50 border border-slate-100 transition-colors">
+                <div className="flex items-center gap-2 min-w-0">
+                  <div className={`w-5 h-5 rounded-md flex items-center justify-center shrink-0 ${
+                    filledCadangan > 0 ? 'bg-amber-100 text-amber-600' : 'bg-slate-200 text-slate-400'
+                  }`}>
+                    <span className="text-[10px] font-bold font-mono">{filledCadangan}</span>
+                  </div>
+                  <span className="text-slate-600 text-[11px] font-medium">Cadangan (Maks 3)</span>
+                </div>
+                <span className="font-bold font-mono text-[11px] text-slate-600 px-2 py-0.5 rounded-md bg-slate-100">
+                  {filledCadangan}/3
                 </span>
               </div>
 
-              <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-100">
-                <span className="text-slate-600">Surat Rekomendasi:</span>
-                <span className={`font-bold px-2 py-0.5 rounded text-[11px] ${
+              {/* Item 4: Surat Rekomendasi */}
+              <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50/80 hover:bg-slate-50 border border-slate-100 transition-colors">
+                <div className="flex items-center gap-2 min-w-0">
+                  <div className={`w-5 h-5 rounded-md flex items-center justify-center shrink-0 ${
+                    currentTeam.files?.recommendationLetter?.url && currentTeam.files?.recommendationLetter?.url !== '#'
+                      ? 'bg-emerald-100 text-emerald-600'
+                      : 'bg-amber-100 text-amber-600'
+                  }`}>
+                    {currentTeam.files?.recommendationLetter?.url && currentTeam.files?.recommendationLetter?.url !== '#' ? (
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                    ) : (
+                      <span className="text-[10px] font-bold">!</span>
+                    )}
+                  </div>
+                  <span className="text-slate-600 text-[11px] font-medium">Surat Rekomendasi</span>
+                </div>
+                <span className={`font-bold text-[10px] px-2 py-0.5 rounded-md ${
                   currentTeam.files?.recommendationLetter?.url && currentTeam.files?.recommendationLetter?.url !== '#'
-                    ? 'bg-emerald-100 text-emerald-800'
-                    : 'bg-amber-100 text-amber-800'
+                    ? 'bg-emerald-500/15 text-emerald-700 border border-emerald-500/30'
+                    : 'bg-amber-500/15 text-amber-700 border border-amber-500/30'
                 }`}>
                   {currentTeam.files?.recommendationLetter?.url && currentTeam.files?.recommendationLetter?.url !== '#'
                     ? 'Sudah Diunggah'
@@ -410,52 +982,65 @@ export default function OverviewTab({
               </div>
             </div>
 
-            <div className="pt-2 flex gap-2">
-              <button
-                type="button"
-                onClick={() => setActiveTab('roster')}
-                className="flex-1 py-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-xl transition-all text-center"
-              >
-                Isi 25 Personel
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveTab('documents')}
-                className="flex-1 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold rounded-xl transition-all text-center"
-              >
-                Unggah Surat
-              </button>
+            {/* Quick Action Buttons */}
+            <div className="pt-1.5 flex flex-col gap-2">
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('roster')}
+                  className="flex-1 py-2 px-3 bg-slate-900 hover:bg-slate-800 active:scale-95 text-white text-[11px] font-bold rounded-xl transition-all shadow-xs text-center cursor-pointer"
+                >
+                  Isi 25 Personel
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('documents')}
+                  className="flex-1 py-2 px-3 bg-blue-50 hover:bg-blue-100 active:scale-95 text-blue-700 border border-blue-200 text-[11px] font-bold rounded-xl transition-all text-center cursor-pointer"
+                >
+                  Unggah Surat
+                </button>
+              </div>
+              {onOpenPactModal && (
+                <button
+                  type="button"
+                  onClick={onOpenPactModal}
+                  className="w-full py-2 px-3 bg-red-50 hover:bg-red-100 active:scale-95 text-red-700 border border-red-200 text-[11px] font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                >
+                  <Printer className="w-3.5 h-3.5 text-red-600" />
+                  <span>Cetak Pakta Integritas (TM)</span>
+                </button>
+              )}
             </div>
           </div>
 
           {/* Bantuan Panitia dengan Maskot Danton */}
-          <div className="bg-slate-900 text-white rounded-3xl p-6 border border-slate-800 space-y-4 relative overflow-hidden">
+          <div className="bg-slate-900 text-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-slate-800 space-y-3 relative overflow-hidden">
             <div className="flex items-center gap-3">
               <img
                 src="/manganperpunk.png"
                 alt="Maskot Komandan Peleton"
-                className="w-14 h-14 object-contain filter drop-shadow-md shrink-0"
+                className="w-10 h-10 sm:w-12 sm:h-12 object-contain filter drop-shadow-md shrink-0"
               />
-              <div>
+              <div className="min-w-0">
                 <div className="flex items-center gap-1.5 text-amber-400">
-                  <HelpCircle className="w-4 h-4" />
+                  <HelpCircle className="w-3.5 h-3.5 shrink-0" />
                   <h4 className="font-black text-xs uppercase tracking-wider">Bantuan Panitia</h4>
                 </div>
-                <p className="text-[11px] text-slate-300 mt-0.5">
+                <p className="text-[10px] sm:text-[11px] text-slate-300 mt-0.5 truncate">
                   Siap pandu pengunggahan berkas & teknis tim!
                 </p>
               </div>
             </div>
-            <p className="text-xs text-slate-300 leading-relaxed">
-              Jika terdapat kendala pengunggahan berkas atau revisi nama personel, silakan hubungi narahubung resmi sekretariat:
+            <p className="text-[11px] sm:text-xs text-slate-300 leading-relaxed">
+              Jika terdapat kendala pengunggahan berkas atau revisi nama personel, silakan hubungi narahubung:
             </p>
             <a
               href="https://wa.me/6281947491505"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black rounded-xl transition-all w-full justify-center uppercase tracking-wider shadow-md hover:scale-[1.02] active:scale-98"
+              className="inline-flex items-center gap-2 px-3.5 py-2 sm:py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] sm:text-xs font-black rounded-xl transition-all w-full justify-center tracking-wider shadow-sm active:scale-95"
             >
-              <Phone className="w-4 h-4" />
+              <Phone className="w-3.5 h-3.5" />
               <span>WhatsApp Admin (0819-4749-1505)</span>
             </a>
           </div>

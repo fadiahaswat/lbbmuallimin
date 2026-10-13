@@ -541,7 +541,7 @@ export default function RegistrationWizard({ isOpen, onClose }) {
       address: fullAddress,
       schoolAddress: formData.schoolAddress.trim(),
       schoolRegion: formData.schoolRegion,
-      platoonName: `Pleton ${finalSchoolName}`,
+      platoonName: `Peleton ${finalSchoolName}`,
       teamType: teamTypeLabel,
       category: categoryLabel,
       homogenGender: formData.teamType === 'Homogen' ? (formData.homogenGender || 'Putra') : null,

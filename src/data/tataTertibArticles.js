@@ -12,7 +12,7 @@ export const TATA_TERTIB_ARTICLES = [
       "LBB MU'ALLIMIN 2027 dilaksanakan pada hari Ahad, 24 Januari 2027 di Kampus Terpadu Madrasah Mu'allimin Muhammadiyah Yogyakarta (Sedayu, Bantul).",
       "Peserta LBB MU'ALLIMIN 2027 merupakan siswa SD/MI sederajat dan SMP/MTs sederajat dalam lingkup Daerah Istimewa Yogyakarta, sesuai yang tertera pada formulir pendaftaran.",
       "Tata Tertib ini merupakan pedoman resmi yang mengatur seluruh ketentuan non-lomba, etika lingkungan madrasah/pesantren, pemanfaatan basecamp, prosedur Check-In & Checkout, kebersihan, suporter, serta penegakan sportivitas dan integritas. Adapun petunjuk teknis gerakan PBB (berpedoman pada Peraturan Panglima TNI Nomor 58 dan 57 Tahun 2018, serta khusus pelaksanaan Hormat Kanan/Kiri berpedoman pada Peraturan Panglima TNI Nomor 45 Tahun 2014), arena lomba, dan sistem penjurian diatur secara tersendiri dalam Petunjuk Teknis (Juknis) Lapangan.",
-      "Ketentuan seragam resmi peserta lomba:\na. Ketentuan Umum: Peserta diperbolehkan mengenakan seragam tonti/paskibra sekolah, seragam nasional, seragam OSIS, atau seragam lain yang telah disepakati secara internal oleh masing-masing sekolah, dengan ketentuan tetap rapi, sopan, seragam, dan sesuai dengan karakter sekolah.\nb. Keseragaman Peleton: Seluruh personel dalam satu peleton wajib mengenakan seragam yang sama dan dilengkapi atribut yang sesuai dengan ketentuan internal sekolah.\nc. Atribut Komandan: Komandan Peleton wajib menggunakan atribut atau tanda pembeda yang jelas dari personel peleton lainnya sehingga mudah dikenali selama perlombaan. Bentuk dan jenis atribut disesuaikan dengan ketentuan internal masing-masing sekolah.\nd. Ketentuan Peserta Putri: Peserta putri yang mengenakan rok wajib menggunakan legging di dalam rok selama mengikuti perlombaan.",
+      "Ketentuan seragam resmi peserta lomba:\na. Ketentuan Umum\nPeserta diperbolehkan mengenakan seragam tonti/paskibra sekolah, seragam nasional, seragam OSIS, atau seragam lain yang telah disepakati secara internal oleh masing-masing sekolah, dengan ketentuan tetap rapi, sopan, seragam, dan sesuai dengan karakter sekolah.\nb. Keseragaman Peleton: Seluruh personel dalam satu peleton wajib mengenakan seragam yang sama dan dilengkapi atribut yang sesuai dengan ketentuan internal sekolah.\nc. Atribut Komandan\nKomandan Peleton wajib menggunakan atribut atau tanda pembeda yang jelas dari personel peleton lainnya sehingga mudah dikenali selama perlombaan. Bentuk dan jenis atribut disesuaikan dengan ketentuan internal masing-masing sekolah.\nd. Ketentuan Peserta Putri: Peserta putri yang mengenakan rok wajib menggunakan legging di dalam rok selama mengikuti perlombaan.\ne. Ketentuan Alas Kaki / Sepatu: Peserta wajib mengenakan sepatu yang rapi dan aman. DILARANG KERAS menempelkan atau memasang pines, paku payung, paku besi, spikes, pul logam, atau benda keras lainnya pada sol sepatu yang berpotensi merusak permukaan lantai arena atau membahayakan peserta.",
       "Setiap peleton didampingi oleh maksimal 1 (satu) orang Official (Pelatih/Pembina) dan 2 (dua) orang Pendukung Resmi (masing-masing dapat berfungsi sebagai Medis dan Dokumentasi), serta seluruh anggota cadangan resmi yang telah terdaftar."
     ]
   },
@@ -32,9 +32,7 @@ export const TATA_TERTIB_ARTICLES = [
     title: 'Tahap I: Pra-Lomba – Teknis Technical Meeting (TM) Peserta',
     points: [
       "Waktu dan Tempat: Technical Meeting (TM) Peserta dilaksanakan pada hari Sabtu, 9 Januari 2027 pukul 13.00 - 16.30 WIB bertempat di Kampus Induk Madrasah Mu'allimin Muhammadiyah Yogyakarta (Jl. Letjen S. Parman No. 68, Wirobrajan, Kota Yogyakarta).",
-      "Kehadiran Delegasi: Setiap peleton wajib diwakili oleh maksimal 2 (dua) orang perwakilan resmi (Official/Pembina atau Komandan Peleton). Perwakilan wajib mengenakan pakaian rapi, sopan, dan bersepatu.",
-      "Verifikasi Berkas Fisik Asli (12.30 - 13.00 WIB): Sebelum forum dimulai, perwakilan peleton melakukan presensi kehadiran dan menyerahkan berkas fisik asli di meja registrasi TM panitia.",
-      "Agenda Technical Meeting: Agenda TM meliputi pemaparan regulasi teknis oleh Panitia dan Dewan Juri, sesi tanya jawab/klarifikasi, pengundian resmi terbuka (lotting) nomor urut tampil peleton (Tingkat SD/MI SD-111 s.d. SD-175 dan Tingkat SMP/MTs SMP-222 s.d. SMP-286), penandatanganan Berita Acara TM, serta pembagian jadwal resmi slot uji coba lapangan.",
+      "Kehadiran Delegasi: Setiap sekolah/madrasah wajib diwakili oleh maksimal 2 (dua) orang perwakilan resmi per SEKOLAH (Official/Pembina atau Komandan Peleton), baik yang mengirimkan 1 (satu) peleton maupun 2 (dua) peleton. Perwakilan wajib mengenakan pakaian rapi, sopan, dan bersepatu.",
       "Hasil technical meeting wajib dipatuhi dan dilaksanakan selama perlombaan berlangsung. Pada hari pelaksanaan perlombaan, panitia tidak menerima protes tentang ketentuan-ketentuan yang sudah disepakati pada saat technical meeting, baik yang berupa ketentuan tertulis maupun yang tidak tertulis."
     ]
   },
@@ -139,34 +137,34 @@ export const TATA_TERTIB_ARTICLES = [
   {
     pasal: 12,
     phase: 'Penilaian',
-    title: 'Penentuan Juara dan Sistem Perolehan Poin',
+    title: 'PENENTUAN JUARA DAN SISTEM PEROLEHAN POIN',
     points: [
       "Penentuan Juara Peleton, Juara Harapan, dan Komandan Peleton Terbaik (tingkat SD/MI maupun SMP/MTs) ditetapkan secara sah berdasarkan hasil rekapitulasi nilai dan hasil Sidang Dewan Juri independen dari unsur TNI, POLRI, dan PPI. Keputusan ini bersifat mutlak serta tidak dapat diganggu gugat.",
-      "Regulasi Teknis Penjurian & Poin Juara Umum: Rincian formula bobot penilaian (Kebenaran Teknik dan Kekompakan 1:1, serta 4 aspek penilaian Komandan Peleton), tabel perolehan poin Juara Umum (skala 6 s.d. 1 poin), kriteria pemecah seri (tie-breaker), serta penalti pengurangan nilai teknis diatur secara lengkap dan mengikat dalam dokumen Petunjuk Teknis (Juknis) Lapangan Bab F dan Bab H.",
-      "Keputusan Dewan Juri: Keputusan Dewan Juri mengenai aspek kualitatif penilaian mutu gerakan bersifat mutlak dan tidak dapat diganggu gugat. Segala bentuk sanggahan hanya dilayani untuk kekeliruan administratif sesuai prosedur pada Pasal 13 Tata Tertib ini dan Juknis Lapangan."
+      "Regulasi mengenai formula penilaian, kriteria pemecah seri (tie-breaker), sanksi penalti pengurangan nilai, serta penentuan Juara Umum diatur secara penuh dan mengikat dalam dokumen Petunjuk Teknis Penilaian & Kejuaraan.",
+      "Segala bentuk sanggahan hanya dilayani untuk kekeliruan administratif sesuai prosedur pada Pasal 13 Tata Tertib ini dan Petunjuk Teknis Penilaian & Kejuaraan."
     ]
   },
   {
     pasal: 13,
     phase: 'Tahap IV: Pasca-Lomba',
-    title: 'Tahap IV: Pasca-Lomba – Apel Penutupan, Pengumuman Juara, dan Mekanisme Sanggah',
+    title: 'TAHAP IV: PASCA-LOMBA - APEL PENUTUPAN, PENGUMUMAN JUARA, DAN MEKANISME SANGGAH',
     points: [
       "Apel Penutupan: Pukul 15.45 WIB, SELURUH perwakilan peserta penutupan (1 Komandan dan 4 Anggota Peleton) WAJIB telah berada di lokasi barisan Lapangan Mini Soccer dalam formasi rapi, tertib, dan berseragam lengkap bersepatu untuk pengecekan presensi barisan oleh Panitia Protokol. Apel Penutupan resmi dimulai tepat pukul 16.00 WIB.",
       "Pengumuman Kejuaraan: Pengumuman kejuaraan dilaksanakan setelah Apel Penutupan selesai. Area pengumuman di Lapangan Mini Soccer terbuka bagi seluruh peserta dan pendukung peleton.",
       "Nilai setiap peleton akan ditampilkan secara transparan pada portal peserta melalui situs web https://lbb.tontimuallimin.com dengan sistem rilis bertahap (rolling release) tanpa menunggu seluruh peserta selesai tampil. Rekapitulasi nilai diperkirakan akan muncul di portal dengan estimasi waktu ±1 (satu) jam setelah peleton menyelesaikan materi penampilannya di arena lomba. Official atau perwakilan peleton hanya dapat mengakses rekapitulasi nilai peletonnya sendiri secara privat melalui akun Gmail yang telah didaftarkan.",
-      "Mekanisme Pengajuan Protes Resmi (Sanggah): Keputusan Dewan Juri mengenai penilaian yang bersifat kualitatif bersifat mutlak dan tidak dapat diganggu gugat. Protes hanya diterima untuk dugaan kesalahan administratif non-penilaian (kesalahan penjumlahan skor, kesalahan input data, atau kesalahan penerapan poin penalti).",
-      "Protes hanya sah jika diajukan secara TERTULIS menggunakan Formulir Sanggahan Resmi oleh 1 (satu) orang Official resmi terdaftar dengan menyertakan bukti valid di Ruang Informasi Panitia (sama dengan ruang registrasi). Pengajuan sanggah dapat dilakukan segera setelah nilai peleton terbit di portal, dan seluruh masa sanggah ditutup serentak selambat-lambatnya pukul 15.00 WIB."
+      "Keputusan Dewan Juri mengenai penilaian mutu gerakan bersifat mutlak dan tidak dapat diganggu gugat.",
+      "Pengajuan keberatan/sanggah hanya dilayani untuk kekeliruan administratif non-penilaian dengan tata cara, batas waktu, dan prosedur yang diatur dalam Petunjuk Teknis Penilaian & Kejuaraan."
     ]
   },
   {
     pasal: 14,
     phase: 'Tahap IV: Pasca-Lomba',
-    title: 'Tahap IV: Pasca-Lomba – Kebersihan Basecamp, Checkout, dan Pemulangan',
+    title: 'TAHAP IV: PASCA-LOMBA - KEBERSIHAN BASECAMP, CHECKOUT, DAN PEMULANGAN',
     points: [
       "Kewajiban Menjaga Kebersihan & Fasilitas: Seluruh partisipan DIWAJIBKAN menjaga kebersihan, kerapian, dan keutuhan fasilitas di lingkungan Kampus Terpadu Madrasah Mu'allimin Muhammadiyah Yogyakarta (Sedayu, Bantul).",
       "Batas Waktu Maksimal Pengosongan Basecamp: Seluruh peleton wajib telah menyelesaikan proses checkout, membersihkan ruangan, menyerahkan sampah terpilah ke Area Checkout, dan mengosongkan ruang kelas basecamp selambat-lambatnya pukul 15.00 WIB (1 jam sebelum Upacara Penutupan dimulai).",
       "Alur dan Prosedur Resmi Checkout Basecamp:\na. Langkah 1 (Pembersihan & Penataan Ruangan): Peserta membersihkan ruang kelas basecamp dari sisa makanan/kotoran, memastikan tidak ada barang bawaan pribadi atau peleton yang tertinggal, serta merapikan dan mengembalikan posisi meja dan kursi sesuai tata letak semula.\nb. Langkah 2 (Pemilahan & Penyerahan Sampah): Sampah wajib dipilah secara tertib ke dalam 2 (dua) buah trash bag resmi yang telah disediakan panitia (Trash Bag Organik dan Non-Organik). Setelah diikat rapi, kedua kantong sampah diserahkan langsung oleh perwakilan peleton ke Pos/Area Checkout Kebersihan Panitia.\nc. Langkah 3 (Inspeksi & Verifikasi Fasilitas Ruang Kelas): Petugas Panitia (Divisi Kebersihan / LO pendamping) bersama Official melakukan pemeriksaan langsung ke ruang kelas basecamp guna memverifikasi kebersihan, kerapian, dan keutuhan inventaris/sarana-prasarana madrasah, kemudian menerbitkan Tanda Bukti Lolos Verifikasi Checkout.\nd. Langkah 4 (Pengambilan Kembali Jaminan Identitas): Official menyerahkan Tanda Bukti Lolos Verifikasi Checkout ke Ruang Informasi/Registrasi Panitia untuk mengambil kembali kartu identitas asli (KTP/SIM) yang dijaminkan saat check-in awal.",
-      "Sanksi Pelanggaran Kebersihan Basecamp: Apabila ruang basecamp ditinggalkan dalam keadaan kotor, berantakan, atau sampah tidak diserahkan ke Pos Checkout, peleton dikenai sanksi penalti pengurangan nilai sebesar 50 poin (-50 poin) pada rekapitulasi nilai akhir sesuai ketentuan Bab H Juknis Lapangan.",
+      "Sanksi Pelanggaran Kebersihan Basecamp: Apabila ruang basecamp ditinggalkan dalam keadaan kotor, berantakan, atau sampah tidak diserahkan ke Pos Checkout, peleton dikenai sanksi penalti pengurangan nilai sebesar 50 poin (-50 poin) pada rekapitulasi nilai akhir sesuai ketentuan Petunjuk Teknis Penilaian & Kejuaraan.",
       "Sanksi Kerusakan Fasilitas & Aset Madrasah: Apabila terbukti terjadi kerusakan fisik atau kehilangan aset sarana-prasarana ruang kelas (meja, kursi, kaca jendela, stopkontak, LCD/proyektor, perangkat kelas, dll.), kartu identitas jaminan (KTP/SIM) DITAHAN panitia, dan pihak sekolah yang bersangkutan dikenakan sanksi ganti rugi finansial penuh sesuai nilai perbaikan aset serta denda administratif perbaikan sebesar Rp 500.000 (lima ratus ribu rupiah)."
     ]
   },

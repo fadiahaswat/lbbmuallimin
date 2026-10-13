@@ -32,7 +32,9 @@ export default function RosterTab({
   setDragOverTarget,
   swapRosterMembers,
   triggerRosterPhotoUpload,
-  availableClassOptions
+  availableClassOptions,
+  isRosterLocked,
+  onOpenPactModal
 }) {
   const hasSavedLocalDraft = Boolean(
     typeof window !== 'undefined' &&
@@ -41,53 +43,92 @@ export default function RosterTab({
   );
 
   return (
-    <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
+    <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-8 border border-slate-200/90 shadow-xs space-y-4 sm:space-y-6">
+      {/* Banner Penguncian Data Personel H-TM (Bab A.9.c) */}
+      {isRosterLocked && (
+        <div className="p-3.5 sm:p-4 bg-slate-900 text-white rounded-2xl border border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm animate-in fade-in">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-amber-400 text-slate-950 flex items-center justify-center font-black shrink-0">
+              <ShieldAlert className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-black uppercase tracking-wider bg-amber-400 text-slate-950 px-2 py-0.5 rounded">
+                  Data Terkunci (Read-Only)
+                </span>
+                <span className="text-[10px] text-slate-400">Juknis Bab A.9.c</span>
+              </div>
+              <p className="text-xs text-slate-300 mt-0.5 leading-snug">
+                Batas pengubahan data personel berakhir sebelum Technical Meeting (9 Jan 2027). Perubahan hanya dapat diproses melalui surat resmi Kepala Sekolah kepada Panitia.
+              </p>
+            </div>
+          </div>
+          {onOpenPactModal && (
+            <button
+              type="button"
+              onClick={onOpenPactModal}
+              className="px-3.5 py-2 bg-red-700 hover:bg-red-800 text-white text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 transition-all shadow-xs shrink-0 cursor-pointer"
+            >
+              <Printer className="w-3.5 h-3.5" />
+              <span>Cetak Pakta TM</span>
+            </button>
+          )}
+        </div>
+      )}
+
       {currentTeam.status === 'pending' ? (
-        <div className="p-8 bg-amber-50/70 border-2 border-dashed border-amber-300 rounded-3xl text-center space-y-4">
-          <div className="w-16 h-16 bg-amber-100 text-amber-700 rounded-2xl flex items-center justify-center mx-auto border border-amber-200 shadow-xs">
-            <ShieldAlert className="w-8 h-8" />
+        <div className="p-6 sm:p-8 bg-amber-50/70 border-2 border-dashed border-amber-300 rounded-2xl sm:rounded-3xl text-center space-y-3 sm:space-y-4">
+          <div className="w-12 h-12 sm:w-16 sm:h-16 bg-amber-100 text-amber-700 rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto border border-amber-200 shadow-xs">
+            <ShieldAlert className="w-6 h-6 sm:w-8 sm:h-8" />
           </div>
           <div className="max-w-md mx-auto space-y-1.5">
-            <h4 className="font-black text-lg text-slate-900 uppercase">
+            <h4 className="font-black text-base sm:text-lg text-slate-900 uppercase">
               Tahap Pengisian Roster Masih Terkunci
             </h4>
-            <p className="text-xs text-slate-600 leading-relaxed">
-              Peleton Anda saat ini berstatus <strong>Menunggu Verifikasi Pendaftaran Awal (Pending)</strong>. Panitia sedang mengecek kelengkapan bukti transfer dan berkas pendaftaran Anda.
+            <p className="text-[11px] sm:text-xs text-slate-600 leading-relaxed">
+              Peleton Anda masih <strong>Menunggu Verifikasi Pendaftaran Awal</strong>. Panitia sedang memvalidasi berkas pendaftaran Anda.
             </p>
-            <div className="p-3 bg-white rounded-xl border border-amber-200 text-xs text-amber-900 font-bold mt-3">
-              Pengisian biodata 25 personel peleton (Danton, Pasukan, Cadangan) akan otomatis terbuka setelah pendaftaran peleton Anda disetujui (ACC) oleh Panitia Sekretariat.
+            <div className="p-2.5 sm:p-3 bg-white rounded-xl border border-amber-200 text-[11px] sm:text-xs text-amber-900 font-bold mt-2">
+              Pengisian biodata 25 personel peleton akan otomatis terbuka setelah pendaftaran disetujui (ACC).
             </div>
           </div>
         </div>
       ) : (
         <>
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3 sm:pb-4">
             <div>
               <div className="flex items-center gap-2">
-                <h4 className="font-black text-xl text-slate-900 uppercase">
+                <h4 className="font-black text-base sm:text-xl text-slate-900 uppercase">
                   Susunan Kontingen Peleton
                 </h4>
-                <span className="text-[10px] font-black uppercase tracking-wider bg-slate-900 text-white px-2 py-0.5 rounded-md font-mono">
-                  25 Personel + 3 Pendamping
-                </span>
-                {hasSavedLocalDraft && !isEditingRoster && (
-                  <span className="text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300 px-2 py-0.5 rounded-md">
-                    Ada Draft Belum Disimpan
+                {isRosterLocked ? (
+                  <span className="text-[9px] sm:text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-300 px-2 py-0.5 rounded-md">
+                    Terkunci H-TM
                   </span>
-                )}
+                ) : hasSavedLocalDraft && !isEditingRoster ? (
+                  <span className="text-[9px] sm:text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300 px-2 py-0.5 rounded-md">
+                    Ada Draft
+                  </span>
+                ) : null}
               </div>
-              <p className="text-xs text-slate-500 mt-1">
-                Struktur resmi kontingen: <strong>1 Komandan Peleton</strong>, <strong>21 Pasukan Inti</strong> (3 Saf × 7 Anggota), <strong>3 Cadangan</strong>, serta <strong>3 Pendamping</strong> (1 Official Pelatih/Pembina + 2 Pendukung Medis/Dokumentasi).
+              <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5">
+                1 Danton, 21 Pasukan Inti (3 Saf × 7 Banjar), 3 Cadangan, dan 3 Pendamping.
               </p>
             </div>
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex items-center gap-2 w-full sm:w-auto">
               {!isEditingRoster ? (
                 <button
-                  onClick={initRosterDraft}
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl flex items-center gap-1.5 transition-all shadow-xs"
+                  onClick={isRosterLocked ? undefined : initRosterDraft}
+                  disabled={isRosterLocked}
+                  className={`flex-1 sm:flex-none justify-center px-3.5 py-2 sm:py-2.5 font-bold text-xs rounded-xl flex items-center gap-1.5 transition-all shadow-xs ${
+                    isRosterLocked
+                      ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                      : 'bg-blue-600 hover:bg-blue-700 text-white active:scale-95 cursor-pointer'
+                  }`}
+                  title={isRosterLocked ? 'Data personel telah dikunci menjelang Technical Meeting (Bab A.9.c)' : 'Edit Susunan Personel'}
                 >
                   <Edit3 className="w-3.5 h-3.5" />
-                  <span>{hasSavedLocalDraft ? 'Lanjutkan Edit Draft Personel' : 'Edit & Atur Posisi (Drag & Drop)'}</span>
+                  <span>{isRosterLocked ? 'Data Terkunci' : hasSavedLocalDraft ? 'Lanjutkan Edit' : 'Edit Personel'}</span>
                 </button>
               ) : (
                 <>
@@ -95,10 +136,10 @@ export default function RosterTab({
                     <button
                       type="button"
                       onClick={handleDiscardRosterDraft}
-                      className="px-3.5 py-2 bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-700 font-bold text-xs rounded-xl transition-all"
-                      title="Hapus draft yang belum disimpan dan kembali ke data server"
+                      className="px-3 py-2 bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-700 font-bold text-xs rounded-xl transition-all active:scale-95"
+                      title="Hapus draft yang belum disimpan"
                     >
-                      Hapus Draft
+                      Batal Draft
                     </button>
                   )}
                   <button
@@ -107,25 +148,25 @@ export default function RosterTab({
                       setDraggedMember(null);
                       setDragOverTarget(null);
                     }}
-                    className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition-all"
+                    className="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition-all active:scale-95"
                   >
                     Tutup
                   </button>
                   <button
                     onClick={handleSaveRoster}
-                    className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl flex items-center gap-1.5 transition-all shadow-md"
+                    className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl flex items-center gap-1.5 transition-all shadow-md active:scale-95"
                   >
                     <Save className="w-3.5 h-3.5" />
-                    <span>Simpan & Perbarui Roster</span>
+                    <span>Simpan</span>
                   </button>
                 </>
               )}
               <button
                 onClick={() => openModal('docViewer', { docId: 'form-b', team: currentTeam })}
-                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs rounded-xl flex items-center gap-2 transition-all"
+                className="flex-1 sm:flex-none justify-center px-3.5 py-2 sm:py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs rounded-xl flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer"
               >
                 <Printer className="w-3.5 h-3.5" />
-                <span>Cetak Biodata Personel</span>
+                <span>Cetak Biodata</span>
               </button>
             </div>
           </div>
@@ -155,23 +196,20 @@ export default function RosterTab({
               <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/5 rounded-full blur-2xl pointer-events-none" />
 
               {/* Danton Header Tag */}
-              <div className="flex items-center justify-between border-b border-red-200/80 pb-3 mb-4">
+              <div className="flex items-center justify-between border-b border-red-200/80 pb-2.5 mb-3">
                 <div className="flex items-center gap-2">
                   <span className="p-1.5 rounded-xl bg-red-600 text-white shadow-xs">
-                    <Award className="w-4 h-4" />
+                    <Award className="w-3.5 h-3.5" />
                   </span>
                   <div>
                     <h5 className="font-black text-xs uppercase tracking-wider text-red-900 leading-tight">
                       Komandan Peleton (Danton)
                     </h5>
                     <span className="text-[10px] text-red-600/90 font-medium">
-                      Pemimpin Barisan & Pengucap Aba-Aba
+                      Pemimpin Barisan & Aba-Aba
                     </span>
                   </div>
                 </div>
-                <span className="text-[10px] font-black uppercase tracking-wider bg-red-100 text-red-800 border border-red-200 px-2.5 py-0.5 rounded-full font-mono">
-                  Kotak 1,5×1,5M
-                </span>
               </div>
 
               <div className="flex flex-col sm:flex-row items-center sm:items-start gap-3.5 flex-1">
@@ -255,6 +293,14 @@ export default function RosterTab({
                           {currentTeam.roster?.danton?.birthPlace || '-'}{currentTeam.roster?.danton?.birthDate ? `, ${currentTeam.roster.danton.birthDate}` : ''}
                         </strong>
                       </div>
+
+                      {/* Riwayat Sakit / Alergi (Opsional Medis) */}
+                      <div className="bg-white/80 p-1.5 rounded-lg border border-red-100 text-xs">
+                        <span className="text-[9px] font-bold text-slate-400 uppercase block">Riwayat Medis / Sakit (Opsional)</span>
+                        <span className={`text-[11px] ${currentTeam.roster?.danton?.medicalHistory ? 'text-rose-700 font-bold' : 'text-slate-500'}`}>
+                          {currentTeam.roster?.danton?.medicalHistory || 'Tidak ada catatan sakit (sehat)'}
+                        </span>
+                      </div>
                     </div>
                   ) : (
                     <div className="space-y-2 w-full">
@@ -329,6 +375,19 @@ export default function RosterTab({
                           />
                         </div>
                       </div>
+                      <div>
+                        <label className="text-[10px] font-bold text-slate-500 uppercase block mb-0.5">Riwayat Sakit / Alergi (Opsional)</label>
+                        <input
+                          type="text"
+                          placeholder="Contoh: Asma ringan, maag, alergi dingin (kosongkan jika tidak ada)"
+                          value={rosterDraft?.danton?.medicalHistory || ''}
+                          onChange={e => setRosterDraft({
+                            ...rosterDraft,
+                            danton: { ...rosterDraft.danton, medicalHistory: e.target.value }
+                          })}
+                          className="w-full px-2 py-1 bg-white border border-red-300 rounded-lg text-[11px]"
+                        />
+                      </div>
                     </div>
                   )}
                 </div>
@@ -337,23 +396,20 @@ export default function RosterTab({
 
             {/* 3 Pendamping Peleton (lg:col-span-7) */}
             <div className="lg:col-span-7 bg-slate-50/90 border border-slate-200 rounded-3xl p-5 flex flex-col justify-between space-y-4 shadow-xs">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 pb-3">
+              <div className="flex items-center justify-between border-b border-slate-200 pb-2.5">
                 <div className="flex items-center gap-2">
                   <span className="p-1.5 rounded-xl bg-blue-600 text-white shadow-xs">
-                    <Users className="w-4 h-4" />
+                    <Users className="w-3.5 h-3.5" />
                   </span>
                   <div>
-                    <h5 className="font-black text-xs uppercase tracking-wider text-slate-900 flex items-center gap-1.5">
-                      <span>Pendamping Peleton (3 Cocard Resmi)</span>
+                    <h5 className="font-black text-xs uppercase tracking-wider text-slate-900 leading-tight">
+                      3 Pendamping Peleton
                     </h5>
                     <p className="text-[10px] text-slate-500">
-                      1 Official Utama (Pelatih/Pembina) + 2 Pendukung (Medis/Dokumentasi)
+                      1 Official Utama + 2 Pendukung (Medis/Dokum)
                     </p>
                   </div>
                 </div>
-                <span className="text-[10px] font-black uppercase tracking-wider bg-blue-100 text-blue-800 border border-blue-200 px-2.5 py-0.5 rounded-full w-fit">
-                  Akses Clear Area
-                </span>
               </div>
 
               {!isEditingRoster ? (
@@ -532,27 +588,19 @@ export default function RosterTab({
 
           {/* 21 Pasukan Inti Grid */}
           <div className="space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 pb-2">
+            <div className="flex items-center justify-between border-b border-slate-200 pb-2">
               <div className="flex items-center gap-2">
                 <span className="p-1.5 rounded-xl bg-slate-900 text-white shadow-xs">
-                  <Shield className="w-4 h-4" />
+                  <Shield className="w-3.5 h-3.5" />
                 </span>
                 <div>
-                  <h5 className="font-black text-sm uppercase tracking-wider text-slate-900">
+                  <h5 className="font-black text-xs uppercase tracking-wider text-slate-900">
                     21 Pasukan Inti (3 Saf × 7 Banjar)
                   </h5>
-                  <p className="text-[11px] text-slate-500">
-                    Formasi perlombaan utama: Saf 1 (Depan), Saf 2 (Tengah), dan Saf 3 (Belakang).
+                  <p className="text-[10px] text-slate-500">
+                    Saf 1 (Depan), Saf 2 (Tengah), Saf 3 (Belakang)
                   </p>
                 </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-[10px] font-bold text-slate-600 bg-slate-100 border border-slate-200 px-2.5 py-1 rounded-full font-mono">
-                  S2B1: Posisi No. Dada
-                </span>
-                <span className="text-[10px] font-black uppercase tracking-wider bg-red-100 text-red-800 border border-red-200 px-2.5 py-1 rounded-full">
-                  Wajib 21 Anggota
-                </span>
               </div>
             </div>
             {!isEditingRoster ? (
@@ -615,6 +663,11 @@ export default function RosterTab({
                                     <span>{person.class ? `Kls ${person.class}` : '-'}</span>
                                     <span>NISN: {person.nisn || '-'}</span>
                                   </div>
+                                  {person.medicalHistory && (
+                                    <div className="text-[9px] text-rose-700 bg-rose-50 px-1.5 py-0.5 rounded border border-rose-200 truncate mt-0.5" title={`Riwayat Medis: ${person.medicalHistory}`}>
+                                      🩺 {person.medicalHistory}
+                                    </div>
+                                  )}
                                 </div>
                               </div>
                             );
@@ -803,6 +856,19 @@ export default function RosterTab({
                                       className="w-full px-2 py-1 bg-slate-50 border border-slate-200 rounded-lg text-[11px] focus:outline-none focus:ring-1 focus:ring-blue-500"
                                     />
                                   </div>
+
+                                  <input
+                                    type="text"
+                                    placeholder="Riwayat Sakit / Alergi (Opsional)"
+                                    value={person.medicalHistory || ''}
+                                    onChange={e => {
+                                      const updated = rosterDraft.pasukan.map(p =>
+                                        p.id === person.id ? { ...p, medicalHistory: e.target.value } : p
+                                      );
+                                      setRosterDraft({ ...rosterDraft, pasukan: updated });
+                                    }}
+                                    className="w-full px-2 py-0.5 bg-slate-50 border border-slate-200 rounded text-[10px] focus:outline-none focus:ring-1 focus:ring-rose-400 placeholder:text-slate-400"
+                                  />
                                 </div>
                               </div>
                             </div>
@@ -818,7 +884,7 @@ export default function RosterTab({
           {/* Cadangan Section */}
           <div className="pt-2">
             <div className="bg-amber-50/50 border border-amber-200/80 rounded-3xl p-5 space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-amber-200/70 pb-3">
+              <div className="flex items-center justify-between border-b border-amber-200/70 pb-2.5">
                 <div className="flex items-center gap-2">
                   <span className="p-1.5 rounded-xl bg-amber-500 text-slate-950 font-black shadow-xs text-xs">
                     C1-3
@@ -828,13 +894,10 @@ export default function RosterTab({
                       3 Personel Cadangan Peleton
                     </h5>
                     <p className="text-[10px] text-slate-600">
-                      Pengganti darurat jika personel inti berhalangan atau sakit sebelum tampil.
+                      Pengganti darurat jika personel inti berhalangan
                     </p>
                   </div>
                 </div>
-                <span className="text-[10px] font-bold text-amber-800 bg-amber-100 border border-amber-300 px-2.5 py-0.5 rounded-full w-fit">
-                  Slot Pergantian di Titik Bubar
-                </span>
               </div>
               {!isEditingRoster ? (
                 Array.isArray(currentTeam.roster?.cadangan) && currentTeam.roster.cadangan.length > 0 ? (
@@ -881,6 +944,11 @@ export default function RosterTab({
                               <span>{c.class ? `Kls ${c.class}` : '-'}</span>
                               <span>NISN: {c.nisn || '-'}</span>
                             </div>
+                            {c.medicalHistory && (
+                              <div className="text-[9px] text-rose-700 bg-rose-50 px-1.5 py-0.5 rounded border border-rose-200 truncate mt-0.5" title={`Riwayat Medis: ${c.medicalHistory}`}>
+                                🩺 {c.medicalHistory}
+                              </div>
+                            )}
                           </div>
                         </div>
                       );
@@ -1046,6 +1114,19 @@ export default function RosterTab({
                               className="w-full px-2 py-1 bg-slate-50 border border-slate-200 rounded-lg text-[11px]"
                             />
                           </div>
+
+                          <input
+                            type="text"
+                            placeholder="Riwayat Sakit / Alergi (Opsional)"
+                            value={c.medicalHistory || ''}
+                            onChange={e => {
+                              const updated = rosterDraft.cadangan.map((item, idx) =>
+                                idx === i ? { ...item, medicalHistory: e.target.value } : item
+                              );
+                              setRosterDraft({ ...rosterDraft, cadangan: updated });
+                            }}
+                            className="w-full px-2 py-0.5 bg-slate-50 border border-slate-200 rounded text-[10px] focus:outline-none focus:ring-1 focus:ring-rose-400 placeholder:text-slate-400"
+                          />
                         </div>
                       </div>
                     </div>

@@ -1,14 +1,17 @@
 import React from 'react';
 import {
   Camera,
-  Clock,
   CheckCircle2,
   AlertTriangle,
+  Clock,
   ShieldCheck,
-  Users,
-  Phone
+  User,
+  Shield,
+  Phone,
+  Sparkles,
+  School
 } from 'lucide-react';
-import { formatImageUrl, getFallbackImageUrl } from '../../../../services/sheetService.js';
+import { getFallbackImageUrl } from '../../../../services/sheetService.js';
 
 export default function TeamProfileHeader({
   currentTeam,
@@ -19,165 +22,177 @@ export default function TeamProfileHeader({
   setLogoLoadFailed,
   triggerFileUpload
 }) {
+  const dantonName = currentTeam.roster?.danton?.name || currentTeam.dantonName || '-';
+  const officialName = currentTeam.roster?.officials?.[0]?.name || currentTeam.officialName || currentTeam.coachName || '-';
+  const waNumber = currentTeam.waNumber || '-';
+
+  // Config status badge
+  const statusConfig = {
+    pending: {
+      label: 'Menunggu Verifikasi',
+      icon: Clock,
+      theme: 'bg-amber-500/15 text-amber-300 border-amber-500/40'
+    },
+    registered: {
+      label: 'Terdaftar',
+      icon: CheckCircle2,
+      theme: 'bg-blue-500/15 text-blue-300 border-blue-500/40'
+    },
+    revision: {
+      label: 'Perlu Revisi',
+      icon: AlertTriangle,
+      theme: 'bg-rose-500/15 text-rose-300 border-rose-500/40'
+    },
+    verified: {
+      label: 'Terverifikasi Sah',
+      icon: ShieldCheck,
+      theme: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/40'
+    },
+    drawn: {
+      label: 'Siap Tampil',
+      icon: Sparkles,
+      theme: 'bg-amber-400/20 text-amber-300 border-amber-400/50'
+    }
+  };
+
+  const status = statusConfig[currentTeam.status] || statusConfig.registered;
+  const StatusIcon = status.icon;
+
+  const showSubtitle =
+    currentTeam.platoonName &&
+    currentTeam.platoonName.trim().toLowerCase() !== currentTeam.schoolName?.trim().toLowerCase() &&
+    currentTeam.platoonName.trim().toLowerCase() !== `peleton ${currentTeam.schoolName?.trim().toLowerCase()}` &&
+    currentTeam.platoonName.trim().toLowerCase() !== `pleton ${currentTeam.schoolName?.trim().toLowerCase()}`;
+
   return (
-    <div className="bg-slate-900 text-white rounded-3xl p-6 sm:p-8 shadow-xl border border-slate-800 relative overflow-hidden">
-      <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+    <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-slate-900 border border-slate-800 shadow-xl">
+      {/* Dynamic Ambient Background Glow */}
+      <div className="absolute -top-24 -right-24 w-72 h-72 bg-red-600/15 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-24 -left-24 w-72 h-72 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
+
+      {/* Main Content Card Container */}
+      <div className="relative z-10 p-4 sm:p-5 lg:p-6 space-y-3.5 sm:space-y-4">
         
-        {/* School & Platoon Profile */}
-        <div className="flex items-center gap-5">
-          {/* Logo / Emblem */}
-          <div className="relative group shrink-0">
-            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-white/10 border-2 border-white/20 p-2 flex items-center justify-center overflow-hidden shadow-lg backdrop-blur-md">
-              {hasLogo && !logoLoadFailed ? (
-                <img
-                  src={logoFormattedUrl}
-                  alt="Logo Sekolah"
-                  referrerPolicy="no-referrer"
-                  onError={(e) => {
-                    const fallback = getFallbackImageUrl(rawLogoUrl);
-                    if (fallback && e.currentTarget.src !== fallback) {
-                      e.currentTarget.src = fallback;
-                    } else {
-                      setLogoLoadFailed(true);
-                    }
-                  }}
-                  className="w-full h-full object-contain drop-shadow-sm"
-                />
-              ) : (
-                <div className="w-full h-full flex flex-col items-center justify-center text-center p-1">
-                  <span className="font-black text-xl sm:text-2xl text-amber-400 drop-shadow-xs">
-                    {currentTeam.jenjang || 'LBB'}
-                  </span>
-                  <span className="text-[9px] uppercase font-bold text-white/70 tracking-wider">
-                    {(currentTeam.schoolName || '').split(' ')[0] || 'Tonti'}
-                  </span>
-                </div>
+        {/* Top Header: Identity & Status */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+          
+          {/* Sisi Kiri: Logo + Nama Sekolah + Badge Jenjang/Kategori */}
+          <div className="flex items-center gap-3.5 sm:gap-4.5 min-w-0 flex-1">
+            {/* Logo Sekolah Avatar */}
+            <div className="relative shrink-0">
+              <div className="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-2xl bg-gradient-to-br from-slate-800 to-slate-950 border border-white/10 p-1.5 sm:p-2 flex items-center justify-center overflow-hidden shadow-lg ring-1 ring-white/5">
+                {hasLogo && !logoLoadFailed ? (
+                  <img
+                    src={logoFormattedUrl}
+                    alt="Logo Sekolah"
+                    referrerPolicy="no-referrer"
+                    onError={(e) => {
+                      const fallback = getFallbackImageUrl(rawLogoUrl);
+                      if (fallback && e.currentTarget.src !== fallback) {
+                        e.currentTarget.src = fallback;
+                      } else {
+                        setLogoLoadFailed(true);
+                      }
+                    }}
+                    className="w-full h-full object-contain filter drop-shadow"
+                  />
+                ) : (
+                  <div className="w-full h-full flex flex-col items-center justify-center text-center p-1">
+                    <School className="w-6 h-6 text-amber-400/80 mb-0.5" />
+                    <span className="text-[9px] uppercase font-black text-white/70 tracking-wider">
+                      {currentTeam.jenjang || 'LBB'}
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {/* Quick Upload Button */}
+              <button
+                onClick={() => triggerFileUpload('schoolLogo')}
+                className="absolute -bottom-1 -right-1 p-1 sm:p-1.5 rounded-lg sm:rounded-xl bg-amber-400 text-slate-950 shadow-md hover:bg-amber-300 hover:scale-105 active:scale-95 transition-all cursor-pointer ring-2 ring-slate-900"
+                title="Ganti Logo Sekolah"
+              >
+                <Camera className="w-3 h-3" />
+              </button>
+            </div>
+
+            {/* Nama Sekolah & Metadata */}
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-1.5 mb-1 flex-wrap">
+                <span className="text-[10px] sm:text-xs font-bold text-slate-300 bg-white/5 px-2 py-0.5 rounded-md border border-white/10">
+                  Tingkat {currentTeam.jenjang}
+                </span>
+                <span className="text-[10px] sm:text-xs font-bold text-rose-300 bg-rose-500/10 px-2 py-0.5 rounded-md border border-rose-500/20">
+                  {currentTeam.category}
+                </span>
+              </div>
+
+              <h1 className="text-lg sm:text-xl lg:text-2xl font-black text-white uppercase tracking-tight leading-snug line-clamp-2 drop-shadow-xs">
+                {currentTeam.schoolName}
+              </h1>
+
+              {showSubtitle && (
+                <p className="text-xs sm:text-sm font-semibold text-amber-300/90 mt-0.5 truncate">
+                  {currentTeam.platoonName}
+                </p>
               )}
             </div>
-            <button
-              onClick={() => triggerFileUpload('schoolLogo')}
-              className="absolute -bottom-1 -right-1 p-2 rounded-xl bg-amber-400 text-slate-950 shadow-md hover:bg-amber-300 transition-all cursor-pointer"
-              title="Ubah Logo Sekolah"
-            >
-              <Camera className="w-3.5 h-3.5" />
-            </button>
           </div>
 
-          <div>
-            <div className="flex flex-wrap items-center gap-2 mb-1">
-              <span className="font-mono font-black text-xs sm:text-sm text-amber-400 bg-amber-400/15 px-2.5 py-0.5 rounded-md border border-amber-400/30">
-                {currentTeam.regCode}
-              </span>
-              <span className="text-xs font-bold px-2.5 py-0.5 rounded-md bg-white/10 text-slate-200">
-                Tingkat {currentTeam.jenjang}
-              </span>
-              <span className="text-xs font-bold px-2.5 py-0.5 rounded-md bg-white/10 text-slate-200">
-                Kategori {currentTeam.category}
-              </span>
-            </div>
-
-            <h2 className="text-xl sm:text-3xl font-black uppercase tracking-tight text-white">
-              {currentTeam.schoolName}
-            </h2>
-            <p className="text-sm font-semibold text-amber-300/90 mt-0.5">
-              {currentTeam.platoonName}
-            </p>
-
-            <div className="flex flex-wrap items-center gap-4 text-xs text-slate-400 mt-2">
-              <span className="inline-flex items-center gap-1">
-                <Users className="w-3.5 h-3.5 text-slate-300" /> Danton: <strong className="text-slate-200">{currentTeam.roster?.danton?.name || currentTeam.dantonName || '-'}</strong>
-              </span>
-              <span className="inline-flex items-center gap-1">
-                <Phone className="w-3.5 h-3.5 text-slate-300" /> WA: <strong className="text-slate-200">{currentTeam.waNumber}</strong>
-              </span>
-            </div>
+          {/* Sisi Kanan: Status Badge Mandiri (Rapi di desktop & mobile) */}
+          <div className="shrink-0 flex items-center justify-start sm:justify-end">
+            <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-[11px] sm:text-xs font-bold uppercase tracking-wider shadow-xs ${status.theme}`}>
+              <StatusIcon className="w-3.5 h-3.5" />
+              <span>{status.label}</span>
+            </span>
           </div>
+
         </div>
 
-        {/* Status & Lot Number Cards */}
-        <div className="flex flex-wrap md:flex-col items-end gap-3 shrink-0">
-          {/* Verification Status */}
-          <div>
-            {currentTeam.status === 'pending' && (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-500/40 text-xs font-black uppercase tracking-wider">
-                <Clock className="w-4 h-4 text-amber-400 animate-spin" /> 1. Menunggu Verifikasi
+        {/* Bottom Bar: Personel & Kontak (Data Table / Grid Elegan) */}
+        <div className="bg-slate-950/60 rounded-xl sm:rounded-2xl border border-white/5 p-2.5 sm:p-3 grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 divide-y sm:divide-y-0 sm:divide-x divide-white/5">
+          {/* Danton */}
+          <div className="flex items-center gap-2.5 sm:px-2 pt-1 sm:pt-0">
+            <div className="w-8 h-8 rounded-lg bg-amber-400/10 border border-amber-400/20 flex items-center justify-center shrink-0">
+              <User className="w-4 h-4 text-amber-400" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <span className="text-[10px] font-medium text-slate-400 block leading-tight">
+                Komandan Peleton
               </span>
-            )}
-            {currentTeam.status === 'registered' && (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-500/20 text-blue-300 border border-blue-500/40 text-xs font-black uppercase tracking-wider">
-                <CheckCircle2 className="w-4 h-4 text-blue-400" /> 2. Terdaftar (Lengkapi Peleton)
+              <span className="text-xs sm:text-sm font-bold text-white truncate block">
+                {dantonName}
               </span>
-            )}
-            {currentTeam.status === 'revision' && (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-500/20 text-rose-300 border border-rose-500/40 text-xs font-black uppercase tracking-wider">
-                <AlertTriangle className="w-4 h-4 text-rose-400" /> Perlu Perbaikan
-              </span>
-            )}
-            {currentTeam.status === 'verified' && (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-xs font-black uppercase tracking-wider">
-                <ShieldCheck className="w-4 h-4 text-emerald-400" /> 3. Terverifikasi Sah
-              </span>
-            )}
-            {currentTeam.status === 'drawn' && (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-500/40 text-xs font-black uppercase tracking-wider">
-                <CheckCircle2 className="w-4 h-4 text-amber-400" /> 4. Peleton Siap Tampil
-              </span>
-            )}
+            </div>
           </div>
 
-          {/* Box Info Undian & Kontingen: Urutan Tampil, Nomor Dada, Est Tampil, Basecamp */}
-          <div className="flex flex-wrap items-center gap-2">
-            <div className={`border rounded-2xl p-2 px-3 text-center min-w-[84px] relative ${
-              Number(currentTeam.lotNumber) >= 6 && Number(currentTeam.lotNumber) <= 10
-                ? 'bg-rose-500/15 border-rose-400/40 ring-1 ring-rose-400/50'
-                : 'bg-white/10 border-white/15'
-            }`}>
-              <span className="text-[9px] font-bold text-slate-300 uppercase block tracking-wider">Urutan Tampil</span>
-              {currentTeam.lotNumber ? (
-                <span className="text-lg sm:text-xl font-black text-amber-400 font-mono block leading-tight mt-0.5">
-                  #{String(currentTeam.lotNumber).padStart(2, '0')}
-                </span>
-              ) : (
-                <span className="text-[10px] text-slate-400 block mt-1">Belum TM</span>
-              )}
-              {Number(currentTeam.lotNumber) >= 6 && Number(currentTeam.lotNumber) <= 10 && (
-                <span className="text-[8px] font-black uppercase text-rose-200 bg-rose-700/80 px-1.5 py-0.2 rounded-full block mt-0.5 whitespace-nowrap">
-                  Wajib Upacara
-                </span>
-              )}
+          {/* Official */}
+          <div className="flex items-center gap-2.5 sm:px-2 pt-2 sm:pt-0">
+            <div className="w-8 h-8 rounded-lg bg-blue-400/10 border border-blue-400/20 flex items-center justify-center shrink-0">
+              <Shield className="w-4 h-4 text-blue-400" />
             </div>
-
-            <div className="bg-white/10 border border-white/15 rounded-2xl p-2 px-3 text-center min-w-[84px]">
-              <span className="text-[9px] font-bold text-slate-300 uppercase block tracking-wider">Nomor Dada</span>
-              {currentTeam.chestNumber ? (
-                <span className="text-lg sm:text-xl font-black text-emerald-400 font-mono block leading-tight mt-0.5">
-                  {currentTeam.chestNumber}
-                </span>
-              ) : (
-                <span className="text-[10px] text-slate-400 block mt-1">-</span>
-              )}
+            <div className="min-w-0 flex-1">
+              <span className="text-[10px] font-medium text-slate-400 block leading-tight">
+                Official / Pendamping
+              </span>
+              <span className="text-xs sm:text-sm font-bold text-white truncate block">
+                {officialName}
+              </span>
             </div>
+          </div>
 
-            <div className="bg-white/10 border border-white/15 rounded-2xl p-2 px-3 text-center min-w-[78px]">
-              <span className="text-[9px] font-bold text-slate-300 uppercase block tracking-wider">Est. Tampil</span>
-              {currentTeam.estimatedTime ? (
-                <span className="text-sm sm:text-base font-black text-cyan-400 font-mono block leading-tight mt-0.5">
-                  {currentTeam.estimatedTime}
-                </span>
-              ) : (
-                <span className="text-[10px] text-slate-400 block mt-1">-</span>
-              )}
+          {/* WhatsApp */}
+          <div className="flex items-center gap-2.5 sm:px-2 pt-2 sm:pt-0">
+            <div className="w-8 h-8 rounded-lg bg-emerald-400/10 border border-emerald-400/20 flex items-center justify-center shrink-0">
+              <Phone className="w-4 h-4 text-emerald-400" />
             </div>
-
-            <div className="bg-white/10 border border-white/15 rounded-2xl p-2 px-3 text-center min-w-[78px]">
-              <span className="text-[9px] font-bold text-slate-300 uppercase block tracking-wider">Basecamp</span>
-              {currentTeam.basecampNumber ? (
-                <span className="text-sm sm:text-base font-black text-amber-400 font-mono block leading-tight mt-0.5">
-                  {currentTeam.basecampNumber}
-                </span>
-              ) : (
-                <span className="text-[10px] text-slate-400 block mt-1">-</span>
-              )}
+            <div className="min-w-0 flex-1">
+              <span className="text-[10px] font-medium text-slate-400 block leading-tight">
+                No. WhatsApp Tim
+              </span>
+              <span className="text-xs sm:text-sm font-mono font-bold text-emerald-300 truncate block">
+                {waNumber}
+              </span>
             </div>
           </div>
         </div>

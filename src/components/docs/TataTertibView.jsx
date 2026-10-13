@@ -24,6 +24,7 @@ import SimpaskorSidebarLayout from '../navigation/SimpaskorSidebarLayout.jsx';
 
 export default function TataTertibView() {
   const [activeTab, setActiveTab] = useState('articles'); // 'articles' | 'penalties'
+  const [searchArticle, setSearchArticle] = useState('');
   const [searchPenalty, setSearchPenalty] = useState('');
   const [openAccordions, setOpenAccordions] = useState({});
 
@@ -34,110 +35,110 @@ export default function TataTertibView() {
     }));
   }
 
-  // Sanksi & Penalti Resmi LBB Mu'allimin 2027 (Bab H Juknis Lapangan & Pasal 6, 7, 8, 9, 14 Tata Tertib)
+  // Sanksi & Penalti Resmi LBB Mu'allimin 2027 (Bab C Petunjuk Teknis Penilaian & Kejuaraan & Tata Tertib)
   const penaltiesList = [
     {
       violation: 'Tidak Mengikuti Upacara Pembukaan (Peleton Urutan 6 s.d. 10)',
       points: 150,
       pointsDisplay: '-150 Poin',
-      rule: 'Bab H.1 Juknis / Pasal 6.2 Tatib',
-      desc: 'Peleton urutan tampil lomba 6 sampai dengan 10 pada masing-masing tingkatan (SD-131, SD-133, SD-135, SD-137, SD-139 dan SMP-242, SMP-244, SMP-246, SMP-248, SMP-260) yang tidak hadir lengkap (1 komandan + 15 anggota / 5 trio) saat upacara pembukaan resmi. Penalti berlaku terhadap nilai Peleton.',
+      rule: 'Bab C.1 Juknis Penilaian / Pasal 6.2 Tatib',
+      desc: 'Peleton yang diwajibkan mengikuti Upacara Pembukaan (SD/SMP Urutan Tampil 6 s.d. 10) tetapi tidak hadir dikenai penalti sebesar -150 poin. Komposisi 1 Komandan Peleton dan 15 Anggota (5 trio lengkap) mengenakan seragam perlombaan. Penalti berlaku terhadap nilai Peleton.',
       type: 'Disiplin Upacara',
     },
     {
       violation: 'Keterlambatan Hadir Upacara Pembukaan',
       points: 50,
       pointsDisplay: '-50 Poin / kelipatan 5 mnt',
-      rule: 'Bab H.1 Juknis / Pasal 6.3 Tatib',
-      desc: 'Keterlambatan hadir berbaris pada upacara pembukaan dihitung per kelipatan 5 menit. Penalti berlaku terhadap nilai Peleton.',
+      rule: 'Bab C.1 Juknis Penilaian / Pasal 6.3 Tatib',
+      desc: 'Peleton yang terlambat hadir dikenai penalti sebesar -50 poin untuk setiap kelipatan keterlambatan 5 menit. Penalti berlaku terhadap nilai Peleton.',
       type: 'Disiplin Upacara',
     },
     {
       violation: 'Keterlambatan Memasuki Pos DP 1 (3x Pemanggilan Resmi)',
       points: 100,
       pointsDisplay: '-100 Poin & Urutan Akhir',
-      rule: 'Bab H.2 Juknis / Pasal 7.3 Tatib',
-      desc: 'Peleton tidak hadir di DP 1 setelah 3 kali pemanggilan resmi lewat pengeras suara (interval 2 menit). Urutan tampil digeser paling akhir. Jika tanpa konfirmasi resmi = DISKUALIFIKASI. Penalti berlaku terhadap nilai Peleton.',
+      rule: 'Bab C.2 Juknis Penilaian / Pasal 7.3 Tatib',
+      desc: 'Peleton yang tidak hadir di DP 1 setelah 3 (tiga) kali pemanggilan resmi melalui pengeras suara, dengan interval 2 (dua) menit antar pemanggilan, dikenai pengurangan nilai sebesar -100 poin dan urutan tampil digeser ke posisi paling akhir. Apabila peleton tetap tidak hadir tanpa konfirmasi resmi, peserta dikenai sanksi DISKUALIFIKASI. Penalti berlaku terhadap nilai Peleton.',
       type: 'Ketepatan Waktu',
     },
     {
       violation: 'Kekurangan Personel Pasukan di Arena (< 22 Orang)',
       points: 75,
       pointsDisplay: '-75 Poin Tetap',
-      rule: 'Bab H.3 Juknis',
-      desc: 'Peleton memasuki arena dengan jumlah personel kurang dari 22 orang (1 Komandan Peleton + 21 Anggota). Penalti berlaku terhadap nilai Peleton.',
+      rule: 'Bab C.3 Juknis Penilaian',
+      desc: 'Peleton yang memasuki arena dengan jumlah personel kurang dari 22 orang, terdiri atas 1 Komandan Peleton dan 21 anggota, dikenai penalti tetap sebesar -75 poin. Penalti berlaku terhadap nilai Peleton.',
       type: 'Komposisi Personel',
     },
     {
       violation: 'Kelebihan Durasi Waktu Tampil di Arena',
       points: 50,
       pointsDisplay: '-50 Poin / rentang 1–30 dtk',
-      rule: 'Bab H.4 Juknis',
-      desc: 'Kelebihan durasi maksimal (8 menit SD, 12 menit SMP) dikenai penalti -50 poin untuk setiap rentang 1 s.d. 30 detik dan kelipatannya. Penalti diberlakukan terhadap nilai Peleton dan nilai Komandan Peleton.',
+      rule: 'Bab C.4 Juknis Penilaian',
+      desc: 'Peleton dan Komandan Peleton wajib menyelesaikan materi lomba dalam durasi maksimal 8 menit untuk SD dan 12 menit untuk SMP. Kelebihan durasi dikenai penalti sebesar -50 poin untuk setiap rentang 1 s.d. 30 detik dan kelipatannya. Penalti diberlakukan terhadap nilai Peleton dan nilai Komandan Peleton.',
       type: 'Waktu Tampil',
     },
     {
       violation: 'Pelanggaran Garis Arena / Kotak Danton (Asas "Garis sebagai Garis")',
       points: 50,
       pointsDisplay: '-50 Poin / kejadian',
-      rule: 'Bab H.5 & Bab A.4 Juknis',
-      desc: 'Anggota peleton menginjak/keluar garis arena penalti -50 poin pada nilai Peleton & nilai Komandan. Komandan menginjak/keluar Kotak Danton (1,5×1,5 m) penalti -50 poin pada nilai Komandan (tidak mengurangi nilai Peleton).',
+      rule: 'Bab C.5 Juknis Penilaian / Bab A.4 Juknis Lapangan',
+      desc: 'Anggota Peleton yang menginjak atau keluar dari garis arena dikenai penalti -50 poin untuk setiap kejadian terhadap nilai Peleton. Komandan Peleton yang menginjak atau keluar dari Kotak Danton berukuran 1,5 × 1,5 meter dikenai penalti -50 poin untuk setiap kejadian terhadap nilai Komandan Peleton. Pelanggaran yang dilakukan Komandan Peleton tidak mengurangi nilai Peleton. Pelanggaran yang dilakukan anggota Peleton mengurangi nilai Komandan Peleton.',
       type: 'Arena & Garis',
     },
     {
       violation: 'Gerakan Penyesuaian (Tidak Dibatasi / Tanpa Penalti Poin)',
       points: 0,
       pointsDisplay: '0 Poin (Bebas Kuota)',
-      rule: 'Bab H.6 & Bab A.6 Juknis',
-      desc: 'Gerakan penyesuaian TIDAK DIBATASI jumlahnya (tidak dikenakan penalti potongan angka kuota). Namun, frekuensi serta efektivitas gerakan penyesuaian diperhitungkan oleh Dewan Juri dalam penilaian kualitatif Penguasaan Lapangan Komandan Peleton (bobot 20%).',
+      rule: 'Bab A.6 Juknis Lapangan',
+      desc: 'Penggunaan Gerakan Penyesuaian TIDAK DIBATASI jumlahnya (tidak dikenakan penalti potongan angka kuota), namun frekuensi dan efektivitas penggunaannya berpengaruh langsung terhadap penilaian aspek Penguasaan Lapangan Komandan Peleton. Ditegaskan bahwa dilarang keras menggunakan gerakan tambahan yang menyerupai materi sebelum dan sesudah gerakan tambahan tersebut dilakukan.',
       type: 'Teknik Gerakan',
     },
     {
       violation: 'Gerakan Terlewat / Tidak Urut',
       points: 0,
-      pointsDisplay: 'Nilai Minimal / Nilai 0',
-      rule: 'Bab H.7 Juknis',
-      desc: 'Gerakan terlewat namun dilaksanakan di luar urutan diberi nilai minimal (50). Gerakan terlewat dan tidak dilaksanakan sama sekali diberi nilai 0 (nol). Memengaruhi penilaian Penguasaan Materi Danton.',
+      pointsDisplay: 'Nilai Minimal (50) / Nilai 0',
+      rule: 'Bab C.6 Juknis Penilaian',
+      desc: 'Gerakan yang terlewat tetapi kemudian dilaksanakan di luar urutan diberikan nilai minimal (50) pada gerakan tersebut. Gerakan yang terlewat dan tidak dilaksanakan sama sekali diberikan nilai 0 (nol). Kesalahan gerakan terlewat/tidak urut diperhitungkan dalam penilaian Penguasaan Materi Komandan Peleton.',
       type: 'Teknis Materi',
     },
     {
-      violation: 'Peleton Hafalan (Gerakan Tidak Sesuai Aba-Aba Danton)',
+      violation: 'Peleton Hafalan (Danton Salah Aba-Aba)',
       points: 0,
-      pointsDisplay: 'Nilai 0 & Potong Nilai Danton',
-      rule: 'Bab H.8 Juknis',
-      desc: 'Komandan salah aba-aba tetapi peleton tetap bergerak benar hafalan: nilai 0 pada Kebenaran Teknik Peleton, dan kesalahan aba-aba diperhitungkan pada Penguasaan Materi Komandan.',
+      pointsDisplay: 'Nilai 0 & Potong Penguasaan Materi',
+      rule: 'Bab C.7 Juknis Penilaian',
+      desc: 'Apabila Komandan Peleton memberikan aba-aba yang salah, tetapi Peleton tetap melaksanakan gerakan yang benar berdasarkan hafalan, maka: (a) Gerakan tersebut diberikan nilai 0 (nol) pada penilaian Kebenaran Teknik Peleton; (b) Kesalahan aba-aba diperhitungkan dalam penilaian Penguasaan Materi Komandan Peleton. Dengan demikian, kesalahan Komandan dan respons Peleton dinilai pada kategori masing-masing.',
       type: 'Teknis Aba-Aba',
     },
     {
       violation: 'Gerakan Berangkai Terputus',
       points: 0,
-      pointsDisplay: 'Nilai Minimal',
-      rule: 'Bab H.9 Juknis',
-      desc: 'Rangkaian gerakan bertanda "-" yang diselingi jeda atau gerakan tambahan yang tidak diperintahkan: nilai minimal (50) pada Kebenaran Teknik Peleton, dan diperhitungkan pada Penguasaan Materi Komandan.',
+      pointsDisplay: 'Nilai Minimal (50) & Potong Materi Danton',
+      rule: 'Bab C.8 Juknis Penilaian',
+      desc: 'Rangkaian gerakan yang ditandai dengan tanda "-" wajib dilaksanakan secara berkesinambungan. Apabila rangkaian tersebut diselingi jeda atau gerakan tambahan yang tidak diperintahkan, maka: (a) Gerakan tersebut diberikan nilai minimal (50) pada penilaian Kebenaran Teknik Peleton; (b) Kesalahan gerakan berangkai terputus diperhitungkan dalam penilaian Penguasaan Materi Komandan Peleton. Dengan demikian, kesalahan Komandan dan respons Peleton dinilai pada kategori masing-masing.',
       type: 'Teknik Gerakan',
     },
     {
       violation: 'Pelanggaran Kebersihan Basecamp',
       points: 50,
       pointsDisplay: '-50 Poin',
-      rule: 'Bab H.10 Juknis / Pasal 14.4 Tatib',
-      desc: 'Meninggalkan ruang basecamp dalam keadaan kotor atau berantakan dikenai penalti -50 poin pada rekapitulasi nilai akhir peleton.',
+      rule: 'Bab C.9 Juknis Penilaian / Pasal 14.4 Tatib',
+      desc: 'Meninggalkan ruang basecamp dalam keadaan kotor atau berantakan dikenai penalti -50 poin pada rekapitulasi nilai akhir peleton sesuai ketentuan Pasal 14 Tata Tertib Peserta.',
       type: 'Kebersihan & Lingkungan',
     },
     {
       violation: 'Yel-Yel Selama Penampilan di Arena',
       points: 50,
       pointsDisplay: '-50 Poin (Setelah Peringatan 1 & 2)',
-      rule: 'Bab H.11 Juknis / Pasal 9.2 Tatib',
-      desc: 'Dilarang meneriakkan yel-yel/aba-aba saat peleton tampil. Pelanggaran 1 & 2 diberi peringatan; pelanggaran ke-3 dan seterusnya penalti -50 poin terhadap nilai Peleton. Pelanggaran berat dapat langsung penalti -50 poin.',
+      rule: 'Bab C.10 Juknis Penilaian',
+      desc: 'Peserta, Official, atau pihak yang menjadi bagian dari tim dilarang meneriakkan yel-yel, memberikan aba-aba, atau memberikan bentuk dukungan suara yang dapat memengaruhi jalannya penampilan selama Peleton sedang tampil. Pelanggaran pertama diberikan Peringatan Pertama oleh Panitia Lapangan. Pelanggaran kedua diberikan Peringatan Kedua oleh Panitia Lapangan. Pelanggaran ketiga dan setiap pelanggaran berikutnya dikenai penalti sebesar -50 poin terhadap nilai Peleton untuk setiap kejadian. Yel-yel atau bentuk dukungan suara yang dilakukan secara sengaja, berulang, atau dengan intensitas yang mengganggu jalannya penampilan dan dinilai sebagai pelanggaran berat dapat langsung dikenai penalti sebesar -50 poin tanpa melalui Peringatan Pertama dan Peringatan Kedua.',
       type: 'Etika & Suporter',
     },
     {
       violation: 'Atribut / Aksesoris Terlepas atau Terjatuh di Arena',
       points: 0,
-      pointsDisplay: '0 Poin (TIDAK PENALTI)',
-      rule: 'Bab E.3.i Juknis',
-      desc: 'Atribut topi/peci, dasi, pin, lencana, sabuk, sarung tangan, dll. yang terlepas/jatuh TIDAK DIKENAKAN PENALTI (0 poin). Peleton dilarang memungut atribut hingga keluar arena.',
+      pointsDisplay: '0 Poin (TIDAK DIKENAKAN PENALTI)',
+      rule: 'Bab E.3.i Juknis Lapangan',
+      desc: 'Apabila atribut peserta (topi/peci, dasi, pin/lencana, sabuk, sarung tangan, dll.) terlepas atau terjatuh di arena, TIDAK DIKENAKAN PENALTI PENGURANGAN NILAI. Peleton dilarang memungut atribut tersebut hingga peleton keluar arena.',
       type: 'Kerapian Atribut',
     },
     {
@@ -145,7 +146,7 @@ export default function TataTertibView() {
       points: 0,
       pointsDisplay: 'Ganti Rugi + Denda Rp 500.000',
       rule: 'Pasal 14.5 Tatib',
-      desc: 'Kerusakan meja, kursi, kaca jendela, stopkontak, LCD proyektor: kartu jaminan KTP/SIM DITAHAN, wajib ganti rugi fisik penuh + denda administratif perbaikan aset Rp 500.000.',
+      desc: 'Apabila terbukti terjadi kerusakan fisik atau kehilangan aset sarana-prasarana ruang kelas (meja, kursi, kaca jendela, stopkontak, LCD/proyektor, perangkat kelas, dll.), kartu identitas jaminan (KTP/SIM) DITAHAN panitia, dan pihak sekolah yang bersangkutan dikenakan sanksi ganti rugi finansial penuh sesuai nilai perbaikan aset serta denda administratif perbaikan sebesar Rp 500.000 (lima ratus ribu rupiah).',
       type: 'Sanksi Aset & Fasilitas',
     },
   ];
@@ -193,13 +194,13 @@ export default function TataTertibView() {
             <div className="space-y-3">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/20 border border-red-400/30 text-red-300 text-xs font-black uppercase tracking-wider">
                 <ShieldAlert className="w-3.5 h-3.5" />
-                <span>15 Pasal Resmi & Matriks Penalti Bab H Juknis</span>
+                <span>15 Pasal Resmi & Matriks Penalti Bab C Juknis Penilaian</span>
               </div>
               <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-white">
                 Tata Tertib & Matriks Sanksi Penalti
               </h1>
               <p className="text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed">
-                Pedoman kepatuhan kontingen, zonasi privasi Asrama Santri, kebersihan basecamp dengan jaminan KTP, sanksi pelanggaran arena dewan juri, serta transparansi live quick count & batas sanggah 60 menit.
+                Pedoman kepatuhan kontingen, zonasi privasi Asrama Santri, kebersihan basecamp dengan jaminan KTP, sanksi pelanggaran arena dewan juri, serta transparansi e-rekapitulasi nilai rolling release akun Gmail & batas sanggah pukul 15.00 WIB.
               </p>
               <div className="flex flex-wrap items-center gap-2.5 pt-1">
                 <a
@@ -504,9 +505,9 @@ export default function TataTertibView() {
             <div>
               <h3 className="text-base font-black text-slate-900 uppercase flex items-center gap-2">
                 <Scale className="w-4 h-4 text-red-600" />
-                <span>Matriks Pengurangan Nilai Penalti Resmi (Bab H Juknis & Tatib)</span>
+                <span>Matriks Pengurangan Nilai Penalti Resmi (Bab C Juknis Penilaian & Tatib)</span>
               </h3>
-              <p className="text-xs text-slate-500">Pengurangan poin resmi dewan juri dan panitera yang dihitung langsung pada rekapitulasi nilai akhir</p>
+              <p className="text-xs text-slate-500">Pengurangan poin resmi dewan juri dan panitera yang dihitung secara kumulatif pada rekapitulasi nilai akhir</p>
             </div>
 
             <div className="relative">

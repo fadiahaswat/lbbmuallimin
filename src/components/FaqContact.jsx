@@ -93,14 +93,14 @@ const FAQ_DATA = [
     category: 'Teknis',
     icon: 'Layers',
     q: 'Berapa ukuran kotak arena dan durasi tampil masing-masing jenjang?',
-    a: 'Jenjang SD/MI: Arena 1 bertempat di Lapangan Basket berukuran 25 meter × 14 meter dengan durasi tampil maksimal 8 menit (peluit 1x panjang peringatan sisa 1 menit pada menit ke-7, peluit 2x panjang waktu habis pada menit ke-8). Jenjang SMP/MTs: Arena 2 bertempat di Pelataran Embung berukuran 26 meter × 15 meter dengan durasi tampil maksimal 12 menit (peluit 1x panjang peringatan sisa 1 menit pada menit ke-11, peluit 2x panjang waktu habis pada menit ke-12). Waktu stopwatch resmi dimulai saat aba-aba pelaksanaan penghormatan awal ("GERAK") dan berhenti saat aba-aba pelaksanaan tegak penutup ("GERAK").',
+    a: 'Jenjang SD/MI: Arena 1 bertempat di Lapangan Basket berukuran 25 meter × 14 meter dengan durasi tampil maksimal 8 menit (peluit 1x panjang peringatan sisa 1 menit pada menit ke-7, peluit 2x panjang waktu habis pada menit ke-8). Jenjang SMP/MTs: Arena 2 bertempat di Pelataran Embung berukuran 26 meter × 15 meter dengan durasi tampil maksimal 12 menit (peluit 1x panjang peringatan sisa 1 menit pada menit ke-11, peluit 2x panjang waktu habis pada menit ke-12). Waktu stopwatch resmi dimulai saat aba-aba pelaksanaan penghormatan awal ("Hormat = GERAK") dan berhenti saat aba-aba pelaksanaan penghormatan penutup ("Hormat = GERAK").',
   },
   {
     id: 11,
     category: 'Teknis',
     icon: 'Layers',
     q: 'Kapan pergantian personel pasukan cadangan boleh dilakukan?',
-    a: 'Pergantian pemain di arena hanya diperbolehkan pada saat materi "Bubar", yaitu di antara Materi No. 16 dan 17 untuk SD/MI; serta di antara Materi No. 22 dan 23 untuk SMP/MTs. Waktu stopwatch tetap berjalan selama proses pergantian pemain.',
+    a: 'Pergantian pemain di arena hanya diperbolehkan pada saat materi "Bubar", yaitu di antara Materi No. 16 dan 17 untuk SD/MI; serta di antara Materi No. 19 dan 20 untuk SMP/MTs. Waktu stopwatch tetap berjalan selama proses pergantian pemain.',
   },
   {
     id: 12,

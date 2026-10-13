@@ -144,13 +144,9 @@ export default function SimpaskorSidebarLayout({
   };
 
   const saasDocItems = useMemo(() => {
-    // Untuk peserta: HANYA tampilkan Juknis dan Tata Tertib
-    // Sembunyikan Proposal Internal, RAB & Keuangan, serta Timeline Panitia
+    // Untuk peserta: Dokumen SaaS tidak perlu tampil di dasbor peserta
     if (userRole === 'peserta') {
-      return [
-        { id: 'juknis', label: 'Juknis & Materi PBB', icon: BookOpen, view: 'juknis' },
-        { id: 'tatib', label: 'Tata Tertib & Sanksi', icon: ShieldAlert, view: 'tatib' },
-      ];
+      return [];
     }
 
     // Untuk Admin, Panitia, dan Superadmin: Tampilkan semua dokumen SaaS
@@ -208,7 +204,7 @@ export default function SimpaskorSidebarLayout({
     <div className="min-h-screen bg-[#F8F9FA] text-slate-800 flex font-sans">
       {/* 1. DESKTOP SIDEBAR (Fixed Left, Full 100vh, Sleek & Professional with Collapse support) */}
       <aside 
-        className={`hidden lg:flex flex-col bg-white border-r border-slate-200/90 fixed top-0 bottom-0 left-0 h-screen select-none shrink-0 z-30 justify-between shadow-[1px_0_12px_rgba(0,0,0,0.03)] transition-all duration-300 ${
+        className={`hidden lg:flex flex-col bg-white border-r border-slate-200/90 fixed top-0 bottom-0 left-0 h-screen select-none shrink-0 z-30 justify-between shadow-[2px_0_20px_rgba(0,0,0,0.03)] transition-all duration-300 ${
           isCollapsed ? 'w-20 px-2.5 py-4' : 'w-72 px-4 py-5'
         }`}
       >
@@ -216,23 +212,23 @@ export default function SimpaskorSidebarLayout({
         <button
           type="button"
           onClick={toggleSidebarCollapse}
-          className="absolute -right-3.5 top-6 w-7 h-7 bg-white border border-slate-200 rounded-full shadow-md flex items-center justify-center text-slate-500 hover:text-slate-900 hover:scale-110 active:scale-95 transition-all z-40 cursor-pointer"
+          className="absolute -right-3.5 top-6 w-7 h-7 bg-white border border-slate-200/90 rounded-full shadow-md hover:shadow-lg flex items-center justify-center text-slate-500 hover:text-red-700 hover:scale-110 active:scale-95 transition-all z-40 cursor-pointer"
           title={isCollapsed ? 'Perbesar Menu Samping' : 'Kecilkan Menu Samping (Collapse)'}
           aria-label={isCollapsed ? 'Perbesar Menu' : 'Kecilkan Menu'}
         >
           {isCollapsed ? (
-            <ChevronRight className="w-4 h-4 text-purple-600" />
+            <ChevronRight className="w-4 h-4 text-red-600" />
           ) : (
             <ChevronLeft className="w-4 h-4 text-slate-600" />
           )}
         </button>
 
         <div className="flex flex-col min-h-0 flex-1 overflow-hidden">
-          {/* Brand Header: Logo LBB & title-logo */}
+          {/* Brand Header: Logo LBB & title-logo with subtle gradient background */}
           <div 
             onClick={() => setActiveView('landing')}
-            className={`flex items-center rounded-2xl hover:bg-slate-50 border border-transparent hover:border-slate-100 cursor-pointer group transition-all duration-200 shrink-0 mb-4 ${
-              isCollapsed ? 'justify-center py-2 px-1' : 'justify-center py-2.5 px-3'
+            className={`flex items-center rounded-2xl bg-gradient-to-b from-slate-50/70 to-slate-100/40 hover:from-red-50/50 hover:to-slate-100/70 border border-slate-200/60 hover:border-red-200/70 cursor-pointer group transition-all duration-300 shrink-0 mb-4 shadow-2xs ${
+              isCollapsed ? 'justify-center py-2.5 px-1' : 'justify-center py-3 px-3'
             }`}
             title="Ke Beranda Utama LBB Mu'allimin"
           >
@@ -245,20 +241,33 @@ export default function SimpaskorSidebarLayout({
                 }`}
               />
               {!isCollapsed && (
-                <img
-                  src={titleLogoImg}
-                  alt="LBB Mu'allimin"
-                  className="h-8 w-auto object-contain max-w-[150px]"
-                />
+                <div className="flex flex-col">
+                  <img
+                    src={titleLogoImg}
+                    alt="LBB Mu'allimin"
+                    className="h-7 w-auto object-contain max-w-[145px]"
+                  />
+                  <span className="text-[9px] font-black uppercase tracking-wider text-slate-400 group-hover:text-red-600 transition-colors mt-0.5">
+                    Sistem Lomba 2026
+                  </span>
+                </div>
               )}
             </div>
           </div>
 
           {/* Navigation Items (Scrollable jika layar pendek) */}
-          <div className="flex-1 space-y-1.5 overflow-y-auto pr-1 pb-2">
+          <div className="flex-1 space-y-1.5 overflow-y-auto pr-1 pb-2 custom-scrollbar">
             {!isCollapsed && (
-              <div className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-3 pt-1 mb-2">
-                <span>9 Tahap Lomba</span>
+              <div className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-3 pt-1 mb-2.5 flex items-center justify-between">
+                <span className="flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-red-600 inline-block animate-pulse"></span>
+                  {userRole === 'peserta' ? 'Portal Peleton' : '9 Tahap Lomba'}
+                </span>
+                {userRole === 'peserta' && (
+                  <span className="text-[9px] font-black tracking-wide text-red-700 bg-red-100/70 border border-red-200/80 px-2 py-0.5 rounded-md shadow-2xs uppercase">
+                    Official
+                  </span>
+                )}
               </div>
             )}
             {navItems.map(item => {
@@ -271,59 +280,78 @@ export default function SimpaskorSidebarLayout({
                   type="button"
                   onClick={() => handleNavClick(item)}
                   title={item.label}
-                  className={`w-full flex items-center rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                    isCollapsed ? 'justify-center p-2.5' : 'justify-between px-3.5 py-2.5'
+                  className={`w-full flex items-center rounded-2xl text-xs font-bold transition-all duration-200 cursor-pointer relative group ${
+                    isCollapsed ? 'justify-center p-3' : 'justify-between px-3.5 py-3'
                   } ${
                     isActive
-                      ? 'bg-gradient-to-r from-red-600 to-red-700 text-white shadow-sm shadow-red-600/30'
-                      : 'text-slate-600 hover:text-slate-950 hover:bg-slate-100/80'
+                      ? 'bg-gradient-to-r from-red-700 via-red-600 to-rose-600 text-white shadow-lg shadow-red-700/25 ring-1 ring-red-500/30 font-black'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/90 hover:shadow-2xs'
                   }`}
                 >
-                  <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'}`}>
-                    <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-slate-400'}`} />
-                    {!isCollapsed && <span>{item.label}</span>}
+                  {/* Subtle active left highlight strip */}
+                  {isActive && !isCollapsed && (
+                    <div className="absolute left-1 top-2.5 bottom-2.5 w-1 bg-white/40 rounded-full" />
+                  )}
+
+                  <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-3.5 pl-0.5'}`}>
+                    <div className={`w-8.5 h-8.5 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 ${
+                      isActive 
+                        ? 'bg-white/20 text-white shadow-inner shadow-black/10' 
+                        : 'bg-slate-100 group-hover:bg-red-50 text-slate-500 group-hover:text-red-700 group-hover:scale-105'
+                    }`}>
+                      <Icon className="w-4 h-4 transition-transform group-hover:scale-110" />
+                    </div>
+                    {!isCollapsed && (
+                      <span className="tracking-tight text-xs">{item.label}</span>
+                    )}
                   </div>
-                  {!isCollapsed && isActive && <div className="w-1.5 h-1.5 rounded-full bg-white shadow-xs" />}
+                  {!isCollapsed && isActive && (
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      <div className="w-2 h-2 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.9)]" />
+                    </div>
+                  )}
                 </button>
               );
             })}
 
             {/* Dokumen & Regulasi SaaS */}
-            <div className={`pt-4 mt-3 border-t border-slate-100 ${isCollapsed ? 'border-dashed' : ''}`}>
-              {!isCollapsed && (
-                <div className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-3 mb-2 flex items-center justify-between">
-                  <span>Dokumen SaaS</span>
-                  <span className="text-[9px] bg-red-50 text-red-700 border border-red-200/50 px-2 py-0.5 rounded-full font-bold">Resmi</span>
-                </div>
-              )}
-              <div className="space-y-1">
-                {saasDocItems.map(item => {
-                  const Icon = item.icon;
-                  const isActive = activeMenu === item.id;
+            {saasDocItems.length > 0 && (
+              <div className={`pt-4 mt-3 border-t border-slate-100 ${isCollapsed ? 'border-dashed' : ''}`}>
+                {!isCollapsed && (
+                  <div className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-3 mb-2 flex items-center justify-between">
+                    <span>Dokumen SaaS</span>
+                    <span className="text-[9px] bg-red-50 text-red-700 border border-red-200/50 px-2 py-0.5 rounded-full font-bold">Resmi</span>
+                  </div>
+                )}
+                <div className="space-y-1">
+                  {saasDocItems.map(item => {
+                    const Icon = item.icon;
+                    const isActive = activeMenu === item.id;
 
-                  return (
-                    <button
-                      key={item.id}
-                      type="button"
-                      onClick={() => handleNavClick(item)}
-                      title={item.label}
-                      className={`w-full flex items-center rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                        isCollapsed ? 'justify-center p-2.5' : 'justify-between px-3.5 py-2.5'
-                      } ${
-                        isActive
-                          ? 'bg-slate-900 text-white shadow-xs'
-                          : 'text-slate-600 hover:text-slate-950 hover:bg-slate-100/80'
-                      }`}
-                    >
-                      <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'}`}>
-                        <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-slate-400'}`} />
-                        {!isCollapsed && <span>{item.label}</span>}
-                      </div>
-                    </button>
-                  );
-                })}
+                    return (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => handleNavClick(item)}
+                        title={item.label}
+                        className={`w-full flex items-center rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                          isCollapsed ? 'justify-center p-2.5' : 'justify-between px-3.5 py-2.5'
+                        } ${
+                          isActive
+                            ? 'bg-slate-900 text-white shadow-xs'
+                            : 'text-slate-600 hover:text-slate-950 hover:bg-slate-100/80'
+                        }`}
+                      >
+                        <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'}`}>
+                          <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-slate-400'}`} />
+                          {!isCollapsed && <span>{item.label}</span>}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Master System (KHUSUS Superadmin Tertinggi: tontimuallimin2026@gmail.com) */}
             {userRole === 'superadmin' && (
@@ -354,8 +382,8 @@ export default function SimpaskorSidebarLayout({
         </div>
 
         {/* User Card & Logout di Footer Sidebar (Paling Bawah) */}
-        <div className="pt-4 border-t border-slate-100 mt-auto shrink-0">
-          <div className={`bg-slate-50/90 border border-slate-200/80 rounded-2xl flex items-center justify-between shadow-xs ${
+        <div className="pt-3 border-t border-slate-100 mt-auto shrink-0">
+          <div className={`bg-gradient-to-br from-slate-50 to-slate-100/80 border border-slate-200/90 rounded-2xl flex items-center justify-between shadow-xs hover:border-slate-300 transition-all ${
             isCollapsed ? 'p-2 flex-col gap-2' : 'p-3 gap-3'
           }`}>
             <div className={`flex items-center min-w-0 ${isCollapsed ? 'justify-center' : 'gap-3'}`}>
@@ -363,12 +391,12 @@ export default function SimpaskorSidebarLayout({
                 <img
                   src={avatarUrl}
                   alt={displayName}
-                  className={`rounded-xl shadow-xs ${
-                    isCollapsed ? 'w-8 h-8' : 'w-9 h-9'
+                  className={`rounded-xl shadow-xs transition-transform hover:scale-105 ${
+                    isCollapsed ? 'w-8 h-8' : 'w-10 h-10'
                   } ${
                     isSchoolLogo 
-                      ? 'object-contain bg-white p-0.5 border border-slate-200' 
-                      : 'object-cover ring-1 ring-slate-200/80 bg-slate-900 text-[10px]'
+                      ? 'object-contain bg-white p-1 border border-slate-200' 
+                      : 'object-cover ring-1 ring-slate-200 bg-slate-900 text-[10px]'
                   }`}
                   loading="lazy"
                   decoding="async"
@@ -380,14 +408,15 @@ export default function SimpaskorSidebarLayout({
                     }
                   }}
                 />
-                <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-white" title="Online" />
+                <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 rounded-full border-2 border-white shadow-xs" title="Akun Terhubung & Aktif" />
               </div>
               {!isCollapsed && (
                 <div className="min-w-0 flex-1">
                   <div className="text-xs font-black text-slate-900 leading-tight truncate" title={displayName}>
                     {displayName}
                   </div>
-                  <div className="text-[10px] text-slate-400 font-medium leading-tight truncate mt-1" title={displaySubtitle}>
+                  <div className="text-[10px] text-slate-500 font-semibold leading-tight truncate mt-1 flex items-center gap-1" title={displaySubtitle}>
+                    <span className="w-1.5 h-1.5 rounded-full bg-red-600 inline-block"></span>
                     {displaySubtitle}
                   </div>
                 </div>
@@ -395,7 +424,7 @@ export default function SimpaskorSidebarLayout({
             </div>
             <button
               onClick={handleLogout}
-              className="p-2 rounded-xl text-slate-400 hover:text-red-600 hover:bg-red-50/80 transition-colors shrink-0"
+              className="p-2 rounded-xl text-slate-400 hover:text-red-600 hover:bg-red-50 border border-transparent hover:border-red-100 transition-all shrink-0 cursor-pointer"
               title="Keluar / Ganti Akun"
             >
               <LogOut className="w-4 h-4" />
@@ -454,34 +483,36 @@ export default function SimpaskorSidebarLayout({
                 })}
 
                 {/* Dokumen & Regulasi SaaS Mobile */}
-                <div className="pt-3 mt-2 border-t border-slate-100">
-                  <div className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-3 mb-1.5 flex items-center justify-between">
-                    <span>Dokumen SaaS</span>
-                    <span className="text-[9px] bg-red-100 text-red-700 px-1.5 py-0.5 rounded-full font-bold">Resmi</span>
-                  </div>
-                  {saasDocItems.map(item => {
-                    const Icon = item.icon;
-                    const isActive = activeMenu === item.id;
+                {saasDocItems.length > 0 && (
+                  <div className="pt-3 mt-2 border-t border-slate-100">
+                    <div className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-3 mb-1.5 flex items-center justify-between">
+                      <span>Dokumen SaaS</span>
+                      <span className="text-[9px] bg-red-100 text-red-700 px-1.5 py-0.5 rounded-full font-bold">Resmi</span>
+                    </div>
+                    {saasDocItems.map(item => {
+                      const Icon = item.icon;
+                      const isActive = activeMenu === item.id;
 
-                    return (
-                      <button
-                        key={item.id}
-                        type="button"
-                        onClick={() => handleNavClick(item)}
-                        className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                          isActive
-                            ? 'bg-slate-900 text-white shadow-md'
-                            : 'text-slate-600 hover:text-slate-950 hover:bg-slate-100'
-                        }`}
-                      >
-                        <div className="flex items-center gap-2.5">
-                          <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-slate-400'}`} />
-                          <span>{item.label}</span>
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
+                      return (
+                        <button
+                          key={item.id}
+                          type="button"
+                          onClick={() => handleNavClick(item)}
+                          className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                            isActive
+                              ? 'bg-slate-900 text-white shadow-md'
+                              : 'text-slate-600 hover:text-slate-950 hover:bg-slate-100'
+                          }`}
+                        >
+                          <div className="flex items-center gap-2.5">
+                            <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-slate-400'}`} />
+                            <span>{item.label}</span>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
 
                 {/* Master System (KHUSUS Superadmin Tertinggi: tontimuallimin2026@gmail.com) */}
                 {userRole === 'superadmin' && (
@@ -601,7 +632,7 @@ export default function SimpaskorSidebarLayout({
         </div>
 
         {/* Content Body */}
-        <main className={`p-4 sm:p-6 lg:p-8 w-full mx-auto transition-all duration-300 ${
+        <main className={`p-3 sm:p-6 lg:p-8 w-full mx-auto transition-all duration-300 ${
           isCollapsed ? 'max-w-[1700px]' : 'max-w-7xl'
         }`}>
           {children}
