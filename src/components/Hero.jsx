@@ -205,7 +205,7 @@ export default function Hero() {
             {/* Subtitle */}
             <p className="text-sm sm:text-base md:text-lg text-slate-200/90 font-normal leading-relaxed max-w-xl">
               Kompetisi baris-berbaris tingkat <span className="text-white font-semibold">SD/MI</span> dan{' '}
-              <span className="text-white font-semibold">SMP/MTs sederajat</span> se-Daerah Istimewa Yogyakarta. Diselenggarakan oleh Korps Pasukan Mu'allimin (TONTI).
+              <span className="text-white font-semibold">SMP/MTs sederajat</span> se-Daerah Istimewa Yogyakarta. Diselenggarakan oleh Madrasah Mu'allimin Muhammadiyah Yogyakarta.
             </p>
 
             {/* Primary Action Buttons */}

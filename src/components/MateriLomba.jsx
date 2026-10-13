@@ -45,6 +45,8 @@ export default function MateriLomba() {
     const spec = isSD ? COMPETITION.SD.ARENA_SPEC_LABEL : COMPETITION.SMP.ARENA_SPEC_LABEL;
     const list = isSD ? MATERIALS.SD : MATERIALS.SMP;
 
+    const primaryColor = isSD ? '#991b1b' : '#1d4ed8';
+
     const printWindow = window.open('', '_blank');
     if (!printWindow) return;
 
@@ -57,8 +59,8 @@ export default function MateriLomba() {
         <style>
           @page { size: A4 portrait; margin: 18mm 15mm; }
           body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11pt; line-height: 1.5; color: #0f172a; margin: 0; padding: 10px; }
-          .kop { text-align: center; border-bottom: 3px double #991b1b; padding-bottom: 12px; margin-bottom: 20px; }
-          .title { font-size: 16pt; font-weight: 900; color: #991b1b; text-transform: uppercase; letter-spacing: 0.5px; }
+          .kop { text-align: center; border-bottom: 3px double ${primaryColor}; padding-bottom: 12px; margin-bottom: 20px; }
+          .title { font-size: 16pt; font-weight: 900; color: ${primaryColor}; text-transform: uppercase; letter-spacing: 0.5px; }
           .sub { font-size: 11pt; font-weight: bold; color: #334155; margin-top: 4px; }
           .spec { display: inline-block; font-size: 10pt; font-weight: bold; color: #1e293b; background: #f1f5f9; border: 1px solid #cbd5e1; padding: 4px 12px; border-radius: 6px; margin-top: 8px; }
           h4 { margin: 16px 0 8px 0; font-size: 11pt; text-transform: uppercase; color: #1e293b; }
@@ -122,7 +124,7 @@ export default function MateriLomba() {
           <div className="relative group">
             <div className="relative bg-white rounded-2xl border border-slate-200/90 p-6 sm:p-8 h-full shadow-sm hover:shadow-md transition-all">
               <div className="relative z-10 border-b border-slate-100 pb-5 mb-6">
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-slate-100 text-slate-700 text-xs font-semibold uppercase tracking-wider mb-2">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-red-50 text-red-700 border border-red-200 text-xs font-bold uppercase tracking-wider mb-2">
                   Kategori Sekolah Dasar
                 </div>
                 <h3 className="text-xl sm:text-2xl font-bold text-slate-900 leading-tight mb-1">
@@ -196,7 +198,7 @@ export default function MateriLomba() {
           <div className="relative group">
             <div className="relative bg-white rounded-2xl border border-slate-200/90 p-6 sm:p-8 h-full shadow-sm hover:shadow-md transition-all">
               <div className="relative z-10 border-b border-slate-100 pb-5 mb-6">
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-slate-100 text-slate-700 text-xs font-semibold uppercase tracking-wider mb-2">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-blue-50 text-blue-700 border border-blue-200 text-xs font-bold uppercase tracking-wider mb-2">
                   Kategori Sekolah Menengah
                 </div>
                 <h3 className="text-xl sm:text-2xl font-bold text-slate-900 leading-tight mb-1">
@@ -236,7 +238,7 @@ export default function MateriLomba() {
                     <button
                       type="button"
                       onClick={() => handleDownloadPdf('SMP')}
-                      className="px-3.5 py-1.5 rounded-lg bg-red-700 hover:bg-red-800 text-white text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer shadow-sm active:scale-95"
+                      className="px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer shadow-sm active:scale-95"
                       title="Unduh / Cetak Materi Lomba SMP (PDF)"
                     >
                       <FileDown className="w-3.5 h-3.5 text-white" />
@@ -249,7 +251,7 @@ export default function MateriLomba() {
               <div className="relative z-10 font-sans text-sm text-slate-700 leading-relaxed max-h-[600px] overflow-y-auto custom-scrollbar pr-2">
                 <ol className="list-decimal list-outside pl-6 space-y-2.5">
                   {MATERIALS.SMP.map((item, idx) => (
-                    <li key={idx} className="hover:text-red-700 transition-colors">{item}</li>
+                    <li key={idx} className="hover:text-blue-700 transition-colors">{item}</li>
                   ))}
                 </ol>
 
@@ -258,8 +260,8 @@ export default function MateriLomba() {
                   <ul className="space-y-1.5 list-[lower-alpha] list-outside pl-6 text-xs text-slate-600">
                     <li>Gerakan materi dilaksanakan secara berurutan sesuai nomor;</li>
                     <li>Materi gerakan berantai bertanda strip ( – ) wajib dilaksanakan satu rangkaian tanpa gerakan tambahan;</li>
-                    <li>Materi gerakan lomba sudah dibuat runtut. Komandan Peleton diperbolehkan melakukan gerakan penyesuaian tanpa pembatasan jumlah kuota, namun penggunaannya berpengaruh langsung terhadap penilaian aspek Penguasaan Lapangan Komandan Peleton;</li>
-                    <li>Kebenaran teknik gerakan berpedoman pada Perpang TNI No. 58 dan 57 Tahun 2018, khusus pelaksanaan Hormat Kanan berpedoman pada Perpang TNI No. 45 Tahun 2014.</li>
+                    <li>Komandan Peleton diperbolehkan melakukan gerakan penyesuaian tanpa pembatasan jumlah kuota, namun berpengaruh terhadap penilaian aspek Penguasaan Lapangan;</li>
+                    <li>Kebenaran teknik gerakan berpedoman pada Perpang TNI No. 58 dan 57 Tahun 2018, khusus Hormat Kanan berpedoman pada Perpang TNI No. 45 Tahun 2014.</li>
                   </ul>
                 </div>
               </div>
@@ -275,17 +277,17 @@ export default function MateriLomba() {
               <div>
                 <div className="flex flex-wrap sm:flex-nowrap items-start sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-slate-100">
                   <div className="flex items-center gap-2.5 min-w-0">
-                    <span className="p-2 rounded-xl bg-slate-100 text-slate-700 border border-slate-200 shrink-0">
+                    <span className="p-2 rounded-xl bg-red-50 text-red-700 border border-red-200 shrink-0">
                       <Map className="w-5 h-5" />
                     </span>
                     <div className="min-w-0">
                       <h4 className="text-sm sm:text-lg font-black text-slate-900 uppercase tracking-wider">
                         Denah Arena & Spesifikasi Pos
                       </h4>
-                      <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mt-0.5">Tingkat SD/MI Sederajat</p>
+                      <p className="text-xs font-bold text-red-700 uppercase tracking-widest mt-0.5">Tingkat SD/MI Sederajat</p>
                     </div>
                   </div>
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-800 text-xs font-bold font-mono shrink-0 whitespace-nowrap self-start sm:self-auto">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 border border-red-200 text-red-800 text-xs font-bold font-mono shrink-0 whitespace-nowrap self-start sm:self-auto">
                     <Timer className="w-3.5 h-3.5 shrink-0" />
                     <span>{COMPETITION.SD.DURATION_LABEL}</span>
                   </div>
@@ -317,17 +319,17 @@ export default function MateriLomba() {
               <div>
                 <div className="flex flex-wrap sm:flex-nowrap items-start sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-slate-100">
                   <div className="flex items-center gap-2.5 min-w-0">
-                    <span className="p-2 rounded-xl bg-slate-100 text-slate-700 border border-slate-200 shrink-0">
+                    <span className="p-2 rounded-xl bg-blue-50 text-blue-700 border border-blue-200 shrink-0">
                       <Map className="w-5 h-5" />
                     </span>
                     <div className="min-w-0">
                       <h4 className="text-sm sm:text-lg font-black text-slate-900 uppercase tracking-wider">
                         Denah Arena & Spesifikasi Pos
                       </h4>
-                      <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mt-0.5">Tingkat SMP/MTs Sederajat</p>
+                      <p className="text-xs font-bold text-blue-700 uppercase tracking-widest mt-0.5">Tingkat SMP/MTs Sederajat</p>
                     </div>
                   </div>
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-800 text-xs font-bold font-mono shrink-0 whitespace-nowrap self-start sm:self-auto">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-800 text-xs font-bold font-mono shrink-0 whitespace-nowrap self-start sm:self-auto">
                     <Timer className="w-3.5 h-3.5 shrink-0" />
                     <span>{COMPETITION.SMP.DURATION_LABEL}</span>
                   </div>

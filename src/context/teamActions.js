@@ -6,7 +6,7 @@ export function createTeamActions({ teams, setTeams, scores, setScores, setCurre
   function registerTeam(newTeamData) {
     const jenjang = (newTeamData.jenjang || 'SMP').toUpperCase();
     
-    // Generate kode pendaftaran yang 100% UNIK & TIDAK BISA DI-RECYCLE:
+    // Generate kode pendaftaran unik 8 karakter (2 blok x 4 karakter):
     // Format: LBB27-{JENJANG}-{WAKTU_UNIK}-{RANDOM} (contoh: LBB27-SMP-M5K8-7X9B)
     const timePart = Date.now().toString(36).toUpperCase().slice(-4);
     const randPart = Math.random().toString(36).substring(2, 6).toUpperCase();

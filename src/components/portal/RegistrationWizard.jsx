@@ -416,7 +416,7 @@ export default function RegistrationWizard({ isOpen, onClose }) {
       return false;
     }
     if (!formData.email.trim() || !formData.email.includes('@')) {
-      triggerValidationError('Alamat email aktif untuk akun wajib diisi dengan benar.', 'input[type="email"]');
+      triggerValidationError('Silakan pilih dan hubungkan Akun Google terlebih dahulu.');
       return false;
     }
     if (!formData.jenjang) {

@@ -161,7 +161,7 @@ export default function JuknisPenilaianSection({ embedded = false }) {
                   className="w-full flex justify-between items-center p-5 text-left bg-slate-800/40 hover:bg-slate-800/70 transition-colors cursor-pointer"
                 >
                   <div className="flex items-center gap-3.5">
-                    <span className="w-8 h-8 rounded-xl bg-amber-500 text-slate-950 font-black flex items-center justify-center text-sm shadow-xs shrink-0">
+                    <span className="w-8 h-8 rounded-xl bg-slate-800 border border-slate-700 text-slate-200 font-bold flex items-center justify-center text-sm shadow-xs shrink-0">
                       A
                     </span>
                     <div>
@@ -175,7 +175,7 @@ export default function JuknisPenilaianSection({ embedded = false }) {
                   </div>
                   <ChevronDown
                     className={`text-slate-400 transition-transform duration-300 w-5 h-5 shrink-0 ${
-                      openAccordions['bab-a'] ? 'rotate-180 text-amber-400' : ''
+                      openAccordions['bab-a'] ? 'rotate-180 text-white' : ''
                     }`}
                   />
                 </button>
@@ -188,7 +188,7 @@ export default function JuknisPenilaianSection({ embedded = false }) {
                         className="p-4 sm:p-5 rounded-2xl bg-slate-800/50 border border-slate-700/70 space-y-2.5"
                       >
                         <div className="flex items-start gap-3">
-                          <span className="w-6 h-6 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-400/30 font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
+                          <span className="w-6 h-6 rounded-lg bg-slate-800 border border-slate-700 text-slate-300 font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
                             {pt.number}
                           </span>
                           <div className="flex-1 space-y-2">
@@ -206,7 +206,7 @@ export default function JuknisPenilaianSection({ embedded = false }) {
                                     key={sIdx}
                                     className="text-xs sm:text-sm text-slate-300 flex items-start gap-2 leading-relaxed"
                                   >
-                                    <span className="text-amber-400 font-bold mt-0.5">•</span>
+                                    <span className="text-slate-400 font-bold mt-0.5">•</span>
                                     <span className="flex-1">{sub}</span>
                                   </li>
                                 ))}
@@ -255,7 +255,7 @@ export default function JuknisPenilaianSection({ embedded = false }) {
                   className="w-full flex justify-between items-center p-5 text-left bg-slate-800/40 hover:bg-slate-800/70 transition-colors cursor-pointer"
                 >
                   <div className="flex items-center gap-3.5">
-                    <span className="w-8 h-8 rounded-xl bg-blue-500 text-white font-black flex items-center justify-center text-sm shadow-xs shrink-0">
+                    <span className="w-8 h-8 rounded-xl bg-slate-800 border border-slate-700 text-slate-200 font-bold flex items-center justify-center text-sm shadow-xs shrink-0">
                       B
                     </span>
                     <div>
@@ -269,7 +269,7 @@ export default function JuknisPenilaianSection({ embedded = false }) {
                   </div>
                   <ChevronDown
                     className={`text-slate-400 transition-transform duration-300 w-5 h-5 shrink-0 ${
-                      openAccordions['bab-b'] ? 'rotate-180 text-blue-400' : ''
+                      openAccordions['bab-b'] ? 'rotate-180 text-white' : ''
                     }`}
                   />
                 </button>
@@ -281,7 +281,7 @@ export default function JuknisPenilaianSection({ embedded = false }) {
                         key={pt.number}
                         className="p-4 rounded-2xl bg-slate-800/50 border border-slate-700/70 flex items-start gap-3"
                       >
-                        <span className="w-6 h-6 rounded-lg bg-blue-600 text-white font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
+                        <span className="w-6 h-6 rounded-lg bg-slate-800 border border-slate-700 text-slate-300 font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
                           {pt.number}
                         </span>
                         <div className="space-y-1">
@@ -304,7 +304,7 @@ export default function JuknisPenilaianSection({ embedded = false }) {
                   className="w-full flex justify-between items-center p-5 text-left bg-slate-800/40 hover:bg-slate-800/70 transition-colors cursor-pointer"
                 >
                   <div className="flex items-center gap-3.5">
-                    <span className="w-8 h-8 rounded-xl bg-red-600 text-white font-black flex items-center justify-center text-sm shadow-xs shrink-0">
+                    <span className="w-8 h-8 rounded-xl bg-slate-800 border border-slate-700 text-slate-200 font-bold flex items-center justify-center text-sm shadow-xs shrink-0">
                       C
                     </span>
                     <div>
@@ -318,7 +318,7 @@ export default function JuknisPenilaianSection({ embedded = false }) {
                   </div>
                   <ChevronDown
                     className={`text-slate-400 transition-transform duration-300 w-5 h-5 shrink-0 ${
-                      openAccordions['bab-c'] ? 'rotate-180 text-red-400' : ''
+                      openAccordions['bab-c'] ? 'rotate-180 text-white' : ''
                     }`}
                   />
                 </button>
@@ -389,7 +389,7 @@ export default function JuknisPenilaianSection({ embedded = false }) {
                   className="w-full flex justify-between items-center p-5 text-left bg-slate-800/40 hover:bg-slate-800/70 transition-colors cursor-pointer"
                 >
                   <div className="flex items-center gap-3.5">
-                    <span className="w-8 h-8 rounded-xl bg-slate-700 text-white font-black flex items-center justify-center text-sm shadow-xs shrink-0">
+                    <span className="w-8 h-8 rounded-xl bg-slate-800 border border-slate-700 text-slate-200 font-bold flex items-center justify-center text-sm shadow-xs shrink-0">
                       D
                     </span>
                     <div>
@@ -403,7 +403,7 @@ export default function JuknisPenilaianSection({ embedded = false }) {
                   </div>
                   <ChevronDown
                     className={`text-slate-400 transition-transform duration-300 w-5 h-5 shrink-0 ${
-                      openAccordions['bab-d'] ? 'rotate-180 text-slate-400' : ''
+                      openAccordions['bab-d'] ? 'rotate-180 text-white' : ''
                     }`}
                   />
                 </button>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   X,
   Search,
@@ -20,8 +20,10 @@ import titleLogoImg from '../../assets/title-logo.png';
 export default function RegistrationStatusModal({ isOpen, onClose }) {
   const { teams, currentUser, openAuthModal, navigateTo, goBack } = useCompetition();
 
-  const [query, setQuery] = useState('');
+  const [jenjang, setJenjang] = useState('SMP');
+  const [otpValues, setOtpValues] = useState(Array(8).fill(''));
   const [errorMessage, setErrorMessage] = useState('');
+  const inputRefs = useRef([]);
 
   if (isOpen === false) return null;
 
@@ -33,26 +35,124 @@ export default function RegistrationStatusModal({ isOpen, onClose }) {
     }
   };
 
-  const cleanQ = query.trim().toLowerCase();
-  const queryDigits = cleanQ.replace(/\D/g, '');
-  const normQueryDigits = queryDigits.replace(/^(0|62)/, '');
+  // Privasi: Hasil HANYA dicari & dimunculkan jika seluruh 8 karakter sudah selesai diketik
+  const isCompleted = otpValues.every(ch => ch.trim() !== '');
+  const part1 = otpValues.slice(0, 4).join('').toUpperCase();
+  const part2 = otpValues.slice(4, 8).join('').toUpperCase();
+  const enteredCodeFormatted = `${part1}-${part2}`;
+  const fullTargetCode = `LBB27-${jenjang}-${enteredCodeFormatted}`;
+  const targetClean = `LBB27${jenjang}${part1}${part2}`;
+  const targetSuffixClean = `${part1}${part2}`;
 
-  const filteredTeams = cleanQ
+  const filteredTeams = isCompleted
     ? teams.filter(t => {
-        const reg = String(t.regCode || '').toLowerCase();
-        const school = String(t.schoolName || '').toLowerCase();
-        const email = String(t.email || '').toLowerCase();
-        const wa = String(t.waNumber || '').replace(/\D/g, '');
-        const waNorm = wa.replace(/^(0|62)/, '');
-
-        if (reg.includes(cleanQ)) return true;
-        if (school.includes(cleanQ)) return true;
-        if (email.includes(cleanQ)) return true;
-        if (normQueryDigits && (waNorm.includes(normQueryDigits) || wa.includes(normQueryDigits))) return true;
-        if (queryDigits && wa.includes(queryDigits)) return true;
-        return false;
+        const reg = String(t.regCode || '').trim().toUpperCase();
+        const cleanReg = reg.replace(/[^A-Z0-9]/g, '');
+        // Cocokkan secara eksak dengan kode registrasi lengkap
+        return (
+          reg === fullTargetCode ||
+          cleanReg === targetClean ||
+          cleanReg.endsWith(targetSuffixClean)
+        );
       })
     : [];
+
+  const handleOtpChange = (val, idx) => {
+    setErrorMessage('');
+    const rawChars = val.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+    if (!rawChars) {
+      const nextOtp = [...otpValues];
+      nextOtp[idx] = '';
+      setOtpValues(nextOtp);
+      return;
+    }
+
+    if (rawChars.length > 1) {
+      // User pasted or typed multiple characters
+      const nextOtp = [...otpValues];
+      for (let i = 0; i < rawChars.length && idx + i < 8; i++) {
+        nextOtp[idx + i] = rawChars[i];
+      }
+      setOtpValues(nextOtp);
+      const nextFocus = Math.min(7, idx + rawChars.length);
+      inputRefs.current[nextFocus]?.focus();
+      return;
+    }
+
+    const char = rawChars.slice(-1);
+    const nextOtp = [...otpValues];
+    nextOtp[idx] = char;
+    setOtpValues(nextOtp);
+
+    if (char && idx < 7) {
+      inputRefs.current[idx + 1]?.focus();
+    }
+  };
+
+  const handleOtpKeyDown = (e, idx) => {
+    if (e.key === 'Backspace') {
+      if (!otpValues[idx] && idx > 0) {
+        const nextOtp = [...otpValues];
+        nextOtp[idx - 1] = '';
+        setOtpValues(nextOtp);
+        inputRefs.current[idx - 1]?.focus();
+      }
+    } else if (e.key === 'ArrowLeft' && idx > 0) {
+      inputRefs.current[idx - 1]?.focus();
+    } else if (e.key === 'ArrowRight' && idx < 7) {
+      inputRefs.current[idx + 1]?.focus();
+    }
+  };
+
+  const parseAndFillCode = (text) => {
+    if (!text) return;
+    const cleanText = text.trim().toUpperCase();
+
+    if (cleanText.includes('SD')) {
+      setJenjang('SD');
+    } else if (cleanText.includes('SMP')) {
+      setJenjang('SMP');
+    }
+
+    let extracted = cleanText
+      .replace(/^LBB2[67]-?/i, '')
+      .replace(/^(SD|SMP)-?/i, '')
+      .replace(/[^A-Z0-9]/g, '');
+
+    if (!extracted) return;
+    extracted = extracted.slice(0, 8);
+
+    const nextOtp = Array(8).fill('');
+    for (let i = 0; i < extracted.length; i++) {
+      nextOtp[i] = extracted[i];
+    }
+    setOtpValues(nextOtp);
+    const focusIdx = Math.min(7, extracted.length);
+    inputRefs.current[focusIdx]?.focus();
+  };
+
+  const handlePaste = (e) => {
+    e.preventDefault();
+    const pasted = e.clipboardData?.getData('text') || '';
+    parseAndFillCode(pasted);
+  };
+
+  const handleClipboardPaste = async () => {
+    try {
+      if (navigator?.clipboard?.readText) {
+        const text = await navigator.clipboard.readText();
+        parseAndFillCode(text);
+      }
+    } catch (err) {
+      // Fallback
+    }
+  };
+
+  const handleResetOtp = () => {
+    setOtpValues(Array(8).fill(''));
+    setErrorMessage('');
+    inputRefs.current[0]?.focus();
+  };
 
   function handleSelectTeam(team) {
     setErrorMessage('');
@@ -139,37 +239,130 @@ export default function RegistrationStatusModal({ isOpen, onClose }) {
           </p>
         </div>
 
-        {/* Search Console Card */}
-        <div className="bg-white border border-slate-200/90 rounded-3xl p-5 sm:p-7 shadow-sm mb-6">
-          <div className="space-y-3">
-            <label className="block text-xs font-extrabold uppercase tracking-wider text-slate-700">
-              Ketik Kode Registrasi, Nama Sekolah, atau No. WhatsApp Official
-            </label>
-            <div className="relative">
-              <input
-                type="text"
-                autoFocus
-                value={query}
-                onChange={e => {
-                  setQuery(e.target.value);
-                  setErrorMessage('');
-                }}
-                placeholder="Masukkan Kode Registrasi (contoh: LBB26-SMP-001) atau Nama Sekolah..."
-                className="w-full pl-12 pr-20 py-3.5 bg-slate-50 border border-slate-200 focus:border-red-600 focus:bg-white focus:ring-2 focus:ring-red-600/10 rounded-2xl text-slate-900 font-medium text-sm sm:text-base placeholder:text-slate-400 transition-all outline-none"
-              />
-              <Search className="w-5 h-5 text-slate-400 absolute left-4 top-4" />
-              {query && (
+        {/* Search Console Card - Segmented OTP Input (8 Karakter: 2 Kelompok x 4) */}
+        <div className="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-8 shadow-sm mb-6">
+          <div className="space-y-4 text-center">
+            <div>
+              <label className="block text-xs font-black uppercase tracking-wider text-slate-800 mb-1">
+                KODE REGISTRASI PELETON
+              </label>
+              <p className="text-xs text-slate-500 max-w-md mx-auto">
+                Masukkan 8 karakter kode registrasi peleton yang tercantum pada bukti pendaftaran (contoh: C6T0-RM70).
+              </p>
+            </div>
+
+            {/* Segmented Controls: Prefix + Jenjang Toggle + 8 OTP Boxes */}
+            <div className="flex flex-col items-center gap-4 pt-2">
+              {/* Segmented Prefix & Jenjang */}
+              <div className="flex items-center justify-center gap-2 flex-wrap">
+                <span className="px-3 py-1.5 rounded-xl bg-slate-900 text-white font-mono font-black text-xs sm:text-sm tracking-wider shadow-xs">
+                  LBB27
+                </span>
+                <span className="text-slate-300 font-bold">-</span>
+                <div className="inline-flex p-1 bg-slate-100 rounded-xl border border-slate-200">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setJenjang('SD');
+                      setErrorMessage('');
+                    }}
+                    className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                      jenjang === 'SD'
+                        ? 'bg-red-700 text-white shadow-xs'
+                        : 'text-slate-600 hover:text-slate-900'
+                    }`}
+                  >
+                    SD / MI
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setJenjang('SMP');
+                      setErrorMessage('');
+                    }}
+                    className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                      jenjang === 'SMP'
+                        ? 'bg-blue-600 text-white shadow-xs'
+                        : 'text-slate-600 hover:text-slate-900'
+                    }`}
+                  >
+                    SMP / MTs
+                  </button>
+                </div>
+                <span className="text-slate-300 font-bold">-</span>
+              </div>
+
+              {/* 8 OTP Boxes: 2 Blok x 4 Kotak */}
+              <div className="flex items-center justify-center gap-2 sm:gap-3 flex-wrap" onPaste={handlePaste}>
+                {/* Blok 1 (Karakter 1 - 4) */}
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  {[0, 1, 2, 3].map(idx => (
+                    <input
+                      key={idx}
+                      ref={el => (inputRefs.current[idx] = el)}
+                      type="text"
+                      maxLength={1}
+                      value={otpValues[idx]}
+                      onChange={e => handleOtpChange(e.target.value, idx)}
+                      onKeyDown={e => handleOtpKeyDown(e, idx)}
+                      className={`w-9 h-12 sm:w-12 sm:h-15 text-center font-mono font-black text-base sm:text-xl rounded-xl border-2 border-slate-200 focus:bg-white focus:ring-4 bg-slate-50 text-slate-900 outline-none transition-all uppercase shadow-2xs ${
+                        jenjang === 'SMP'
+                          ? 'focus:border-blue-600 focus:ring-blue-600/10 selection:bg-blue-200'
+                          : 'focus:border-red-600 focus:ring-red-600/10 selection:bg-red-200'
+                      }`}
+                      placeholder="•"
+                      autoFocus={idx === 0}
+                    />
+                  ))}
+                </div>
+
+                <span className="text-slate-400 font-bold text-lg hidden sm:inline">-</span>
+
+                {/* Blok 2 (Karakter 5 - 8) */}
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  {[4, 5, 6, 7].map(idx => (
+                    <input
+                      key={idx}
+                      ref={el => (inputRefs.current[idx] = el)}
+                      type="text"
+                      maxLength={1}
+                      value={otpValues[idx]}
+                      onChange={e => handleOtpChange(e.target.value, idx)}
+                      onKeyDown={e => handleOtpKeyDown(e, idx)}
+                      className={`w-9 h-12 sm:w-12 sm:h-15 text-center font-mono font-black text-base sm:text-xl rounded-xl border-2 border-slate-200 focus:bg-white focus:ring-4 bg-slate-50 text-slate-900 outline-none transition-all uppercase shadow-2xs ${
+                        jenjang === 'SMP'
+                          ? 'focus:border-blue-600 focus:ring-blue-600/10 selection:bg-blue-200'
+                          : 'focus:border-red-600 focus:ring-red-600/10 selection:bg-red-200'
+                      }`}
+                      placeholder="•"
+                    />
+                  ))}
+                </div>
+              </div>
+
+              {/* Action buttons (Paste & Reset) */}
+              <div className="flex items-center justify-center gap-3 text-xs pt-1">
+                {otpValues.some(v => v !== '') && (
+                  <button
+                    type="button"
+                    onClick={handleResetOtp}
+                    className="text-slate-500 hover:text-red-600 font-medium transition-colors cursor-pointer py-1 px-2.5 rounded-lg hover:bg-slate-100"
+                  >
+                    Hapus Kode
+                  </button>
+                )}
                 <button
                   type="button"
-                  onClick={() => setQuery('')}
-                  className="absolute right-4 top-3 text-xs text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 border border-slate-200 px-2.5 py-1.5 rounded-lg transition-colors"
+                  onClick={handleClipboardPaste}
+                  className="text-slate-600 hover:text-slate-900 font-semibold transition-colors cursor-pointer py-1 px-3 rounded-lg border border-slate-200 hover:border-slate-300 bg-slate-50 hover:bg-white shadow-2xs"
                 >
-                  Hapus
+                  Tempel Kode
                 </button>
-              )}
+              </div>
             </div>
+
             {errorMessage && (
-              <p className="text-xs text-red-700 font-bold bg-red-50 border border-red-200 p-3 rounded-xl">
+              <p className="text-xs text-red-700 font-bold bg-red-50 border border-red-200 p-3 rounded-xl max-w-md mx-auto">
                 {errorMessage}
               </p>
             )}
@@ -178,23 +371,18 @@ export default function RegistrationStatusModal({ isOpen, onClose }) {
 
         {/* Results Container */}
         <div className="space-y-3 mb-8">
-          {query.trim() === '' ? (
+          {!isCompleted ? (
             <div className="bg-white border border-slate-200 rounded-3xl p-8 sm:p-12 text-center text-slate-500 relative overflow-hidden">
-              <div className="w-24 h-24 mx-auto mb-3 rounded-full bg-red-50 border border-red-100 flex items-center justify-center p-2 overflow-hidden shadow-inner">
-                <picture>
-                  <source srcSet="/fotoslide/3.webp" type="image/webp" />
-                  <img
-                    src="/fotoslide/3.png"
-                    alt="Paskibra Danton"
-                    className="w-full h-full object-contain object-top"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </picture>
-              </div>
+              <img
+                src="/manganperpunk.png"
+                alt="Maskot Manganperpunk"
+                className="w-32 h-32 sm:w-40 sm:h-40 mx-auto mb-4 object-contain"
+                loading="lazy"
+                decoding="async"
+              />
               <h4 className="text-sm font-bold text-slate-900">Pencarian Data Peleton</h4>
               <p className="text-xs text-slate-500 mt-1 max-w-md mx-auto">
-                Silakan ketikkan kode registrasi, nama sekolah, atau nomor kontak official yang didaftarkan pada formulir online.
+                Silakan ketikkan 8 karakter kode registrasi secara lengkap pada kotak di atas untuk melihat status pendaftaran peleton Anda.
               </p>
             </div>
           ) : filteredTeams.length === 0 ? (
@@ -202,7 +390,7 @@ export default function RegistrationStatusModal({ isOpen, onClose }) {
               <AlertTriangle className="w-12 h-12 mx-auto mb-3 opacity-50 text-amber-500" />
               <h4 className="text-sm font-bold text-slate-900">Tidak Ditemukan Pendaftar</h4>
               <p className="text-xs text-slate-500 mt-1 max-w-md mx-auto">
-                Tidak ada tim yang cocok dengan kata kunci <span className="text-red-700 font-bold">"{query}"</span>. Pastikan nomor atau penulisan kode sudah sesuai.
+                Tidak ada tim yang cocok dengan kode <span className={`font-bold ${jenjang === 'SMP' ? 'text-blue-700' : 'text-red-700'}`}>LBB27-{jenjang}-{enteredCodeFormatted}</span>. Pastikan penulisan kode sudah sesuai dengan bukti pendaftaran online.
               </p>
             </div>
           ) : (
@@ -217,7 +405,11 @@ export default function RegistrationStatusModal({ isOpen, onClose }) {
                     <span className="font-mono font-bold text-xs text-slate-800 bg-slate-100 border border-slate-200 px-2.5 py-0.5 rounded-lg">
                       {team.regCode}
                     </span>
-                    <span className="text-[11px] font-bold bg-slate-100 text-slate-700 px-2.5 py-0.5 rounded-lg border border-slate-200">
+                    <span className={`text-[11px] font-bold px-2.5 py-0.5 rounded-lg border ${
+                      team.jenjang === 'SMP'
+                        ? 'bg-blue-50 text-blue-700 border-blue-200'
+                        : 'bg-red-50 text-red-700 border-red-200'
+                    }`}>
                       {team.jenjang} • {team.category}
                     </span>
                     {team.lotNumber && (

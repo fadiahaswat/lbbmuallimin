@@ -247,7 +247,7 @@ export default function Registration() {
                     <span className="text-[10px] font-semibold text-slate-300 uppercase tracking-wider">
                       {regRange}
                     </span>
-                    <span className="text-[9px] font-bold uppercase px-2 py-0.5 rounded-md bg-white/[0.08] text-amber-300">
+                    <span className="text-[9px] font-bold uppercase px-2 py-0.5 rounded-md bg-sky-500/15 border border-sky-500/30 text-sky-300">
                       Tahap 1
                     </span>
                   </div>
@@ -261,7 +261,7 @@ export default function Registration() {
                     <span className="text-[10px] font-semibold text-slate-300 uppercase tracking-wider">
                       {verifRange}
                     </span>
-                    <span className="text-[9px] font-bold uppercase px-2 py-0.5 rounded-md bg-white/[0.08] text-slate-300">
+                    <span className="text-[9px] font-bold uppercase px-2 py-0.5 rounded-md bg-amber-500/15 border border-amber-500/30 text-amber-300">
                       Tahap 2
                     </span>
                   </div>
@@ -275,7 +275,7 @@ export default function Registration() {
                     <span className="text-[10px] font-semibold text-slate-300 uppercase tracking-wider">
                       {tmDate}
                     </span>
-                    <span className="text-[9px] font-bold uppercase px-2 py-0.5 rounded-md bg-white/[0.08] text-slate-300">
+                    <span className="text-[9px] font-bold uppercase px-2 py-0.5 rounded-md bg-purple-500/15 border border-purple-500/30 text-purple-300">
                       Tahap 3
                     </span>
                   </div>
@@ -289,7 +289,7 @@ export default function Registration() {
                     <span className="text-[10px] font-semibold text-slate-300 uppercase tracking-wider">
                       {trialDate}
                     </span>
-                    <span className="text-[9px] font-bold uppercase px-2 py-0.5 rounded-md bg-white/[0.08] text-slate-300">
+                    <span className="text-[9px] font-bold uppercase px-2 py-0.5 rounded-md bg-indigo-500/15 border border-indigo-500/30 text-indigo-300">
                       Tahap 4
                     </span>
                   </div>
@@ -303,7 +303,7 @@ export default function Registration() {
                     <span className="text-[10px] font-bold text-amber-400 uppercase tracking-wider">
                       {compDate}
                     </span>
-                    <span className="text-[9px] font-bold uppercase px-2 py-0.5 rounded-md bg-red-800 text-white">
+                    <span className="text-[9px] font-bold uppercase px-2 py-0.5 rounded-md bg-red-700 text-white">
                       Hari H
                     </span>
                   </div>
@@ -940,34 +940,36 @@ export default function Registration() {
 
                 {/* Socials */}
                 <div className="grid grid-cols-2 gap-2 pt-1">
+                  {/* Instagram Button */}
                   <a
                     href={SOCIAL.INSTAGRAM_URL}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 p-2 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 hover:border-white/20 transition-all group"
+                    className="flex items-center gap-2 p-2 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 hover:border-pink-500/40 transition-all group"
                   >
-                    <div className="w-7 h-7 rounded-lg bg-white/10 text-slate-300 flex items-center justify-center shrink-0">
+                    <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white flex items-center justify-center shrink-0 shadow-xs">
                       <Instagram className="w-3.5 h-3.5" />
                     </div>
                     <div className="truncate">
-                      <span className="text-[9px] text-slate-400 block">Instagram</span>
+                      <span className="text-[9px] text-pink-400 block font-medium">Instagram</span>
                       <span className="font-bold text-slate-200 group-hover:text-white truncate block text-[11px]">
                         {SOCIAL.INSTAGRAM_HANDLE}
                       </span>
                     </div>
                   </a>
 
+                  {/* TikTok Button */}
                   <a
                     href={SOCIAL.TIKTOK_URL}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 p-2 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 hover:border-white/20 transition-all group"
+                    className="flex items-center gap-2 p-2 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 hover:border-cyan-500/40 transition-all group"
                   >
-                    <div className="w-7 h-7 rounded-lg bg-white/10 text-slate-300 flex items-center justify-center shrink-0">
-                      <Video className="w-3.5 h-3.5" />
+                    <div className="w-7 h-7 rounded-lg bg-slate-900 border border-slate-700 text-cyan-400 flex items-center justify-center shrink-0 shadow-xs">
+                      <Video className="w-3.5 h-3.5 text-cyan-400" />
                     </div>
                     <div className="truncate">
-                      <span className="text-[9px] text-slate-400 block">TikTok</span>
+                      <span className="text-[9px] text-cyan-400 block font-medium">TikTok</span>
                       <span className="font-bold text-slate-200 group-hover:text-white truncate block text-[11px]">
                         {SOCIAL.TIKTOK_HANDLE}
                       </span>
