@@ -238,15 +238,6 @@ export default function Footer() {
                 </button>
               </li>
             </ul>
-
-            <div className="mt-5 p-3 rounded-xl bg-slate-900 border border-slate-800">
-              <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 block mb-1">
-                Layanan Informasi:
-              </span>
-              <p className="text-[11px] text-slate-400 leading-snug">
-                Pastikan data sekolah dan berkas yang didaftarkan telah sesuai dengan ketentuan juknis resmi.
-              </p>
-            </div>
           </div>
 
           {/* Col 4: Sekretariat & Kontak (lg:col-span-3) */}

@@ -443,10 +443,9 @@ export default function FaqContact() {
                   </a>
                 </div>
 
-                <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-[11px] text-slate-600 leading-snug">
-                  <span className="font-bold text-red-700">Fungsi:</span> Lokasi perlombaan PBB SD & SMP, apel besar, transit kontingen, serta arena latihan uji coba lapangan.
-                  <p className="text-[10px] text-slate-500 mt-1 font-mono">{VENUE.ADDRESS}</p>
-                </div>
+                <p className="text-[10px] text-slate-500 font-mono leading-snug p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                  {VENUE.ADDRESS}
+                </p>
 
                 {/* Interactive Map Preview Terpadu */}
                 <div className="relative rounded-2xl overflow-hidden border border-slate-200 bg-slate-100 shadow-inner group">
@@ -486,10 +485,9 @@ export default function FaqContact() {
                   </a>
                 </div>
 
-                <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-[11px] text-slate-600 leading-snug">
-                  <span className="font-bold text-blue-700">Fungsi:</span> Pertemuan teknis official & pembina, pengundian nomor urut dada peleton, dan verifikasi akhir berkas fisik.
-                  <p className="text-[10px] text-slate-500 mt-1 font-mono">{VENUE_INDUK.ADDRESS}</p>
-                </div>
+                <p className="text-[10px] text-slate-500 font-mono leading-snug p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                  {VENUE_INDUK.ADDRESS}
+                </p>
 
                 {/* Interactive Map Preview Induk */}
                 <div className="relative rounded-2xl overflow-hidden border border-slate-200 bg-slate-100 shadow-inner group">
