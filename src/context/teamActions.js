@@ -117,6 +117,32 @@ export function createTeamActions({ teams, setTeams, scores, setScores, setCurre
     );
   }
 
+  function updateTeamProfile(teamId, profileData) {
+    setTeams(prev =>
+      prev.map(team => {
+        if (team.id === teamId) {
+          const updated = {
+            ...team,
+            ...profileData,
+            schoolName: profileData.schoolName !== undefined ? profileData.schoolName : team.schoolName,
+            city: profileData.city !== undefined ? profileData.city : team.city,
+            province: profileData.province !== undefined ? profileData.province : team.province,
+            address: profileData.address !== undefined ? profileData.address : team.address,
+            waNumber: profileData.waNumber !== undefined ? profileData.waNumber : team.waNumber,
+            officialName: profileData.officialName !== undefined ? profileData.officialName : team.officialName,
+            platoonName: profileData.platoonName !== undefined ? profileData.platoonName : team.platoonName,
+          };
+          saveRecordToSheet('teams', updated).catch(err =>
+            console.warn('[CompetitionContext] Sync updateTeamProfile failed:', err)
+          );
+          return updated;
+        }
+        return team;
+      })
+    );
+    return { success: true };
+  }
+
   function updateTeamVehicleSurvey(teamId, agendaKey, surveyData) {
     setTeams(prev =>
       prev.map(team => {
@@ -288,6 +314,7 @@ export function createTeamActions({ teams, setTeams, scores, setScores, setCurre
     registerTeam,
     updateTeamFiles,
     updateTeamRoster,
+    updateTeamProfile,
     updateTeamVehicleSurvey,
     verifyTeam,
     assignLotNumber,

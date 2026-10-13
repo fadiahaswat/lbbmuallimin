@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { Tag, Timer, Home, Calendar, MapPin, ExternalLink, Navigation, FileText, HelpCircle, Phone, ClipboardCheck, CheckCircle2, ChevronRight, Sparkles, Bus, Car, Bike, Check, Clock, AlertCircle, Shield, Printer, Download, Loader2 } from 'lucide-react';
-import { EVENT, VENUE } from '../../../../config.js';
+import { Tag, Timer, Home, Calendar, MapPin, ExternalLink, Navigation, FileText, HelpCircle, Phone, ClipboardCheck, CheckCircle2, ChevronRight, Sparkles, Bus, Car, Bike, Check, Clock, AlertCircle, Shield, Printer, Download, Loader2, BookOpen } from 'lucide-react';
+import { EVENT, VENUE, DOWNLOADS } from '../../../../config.js';
 import { HARI_H_SCHEDULE, UJI_COBA_SCHEDULE } from '../../../../data/scheduleMatrices.js';
+import { calculateDynamicTrialSchedule } from '../../../../context/competitionHelpers.js';
 import BasecampCheckoutTracker from '../components/BasecampCheckoutTracker.jsx';
 
 export default function OverviewTab({
   currentTeam,
+  allTeams = [],
   scheduleTab,
   setScheduleTab,
   tmDate,
@@ -26,14 +28,30 @@ export default function OverviewTab({
   const filledPasukan = allPasukan.filter(p => p?.name && p.name !== '-' && p.name.trim() !== '').length;
   const filledCadangan = allCadangan.filter(c => c?.name && c.name !== '-' && c.name.trim() !== '').length;
 
-  // Lookup otomatis jadwal hari-H & Uji Coba berdasarkan nomor undian (lotNumber)
+  // Lookup jadwal hari-H berdasarkan nomor undian (lotNumber)
   const lotIdx = currentTeam.lotNumber ? parseInt(currentTeam.lotNumber, 10) - 1 : -1;
   const jKey = String(currentTeam.jenjang || '').toUpperCase().includes('SD') ? 'SD' : 'SMP';
   const autoSchedule = (lotIdx >= 0 && HARI_H_SCHEDULE[jKey]?.[lotIdx]) ? HARI_H_SCHEDULE[jKey][lotIdx] : null;
-  const autoTrialSchedule = (lotIdx >= 0 && UJI_COBA_SCHEDULE[jKey]?.[lotIdx]) ? UJI_COBA_SCHEDULE[jKey][lotIdx] : null;
+
+  // Kalkulasi jadwal dinamis Uji Coba Lapangan (UCL) dengan perapatan slot jika ada yang berhalangan
+  const dynamicTrialMap = React.useMemo(() => {
+    const teamsList = (allTeams && allTeams.length > 0) ? allTeams : [currentTeam];
+    return calculateDynamicTrialSchedule(teamsList, UJI_COBA_SCHEDULE);
+  }, [allTeams, currentTeam]);
+
+  const teamDynamicTrial = dynamicTrialMap[currentTeam.id];
+  const autoTrialSchedule = teamDynamicTrial?.schedule || (lotIdx >= 0 ? UJI_COBA_SCHEDULE[jKey]?.[lotIdx] : null);
 
   const displayEstimatedTime = currentTeam.estimatedTime || autoSchedule?.startTampil || (currentTeam.lotNumber ? `#${String(currentTeam.lotNumber).padStart(2, '0')}` : null);
   const displayBasecamp = currentTeam.basecampNumber || (currentTeam.lotNumber ? `Ruang ${String(currentTeam.lotNumber).padStart(2, '0')}` : null);
+  
+  // Format jam spesifik Uji Coba Lapangan (UCL) dari matriks resmi (dinamis sesuai slot yang terisi)
+  const trialArenaTime = autoTrialSchedule?.enterArena && autoTrialSchedule?.finishArena 
+    ? `${autoTrialSchedule.enterArena.replace(' WIB', '')} - ${autoTrialSchedule.finishArena.replace(' WIB', '')}`
+    : autoTrialSchedule?.enterArena || null;
+  const displayTrialTime = currentTeam.vehicleSurveys?.trialAttendance?.status === 'declined'
+    ? 'Berhalangan'
+    : (currentTeam.trialSpecificTime || trialArenaTime || (currentTeam.lotNumber ? '16 Jan 2027' : null));
 
   const [surveySaveToast, setSurveySaveToast] = useState('');
 
@@ -69,8 +87,8 @@ export default function OverviewTab({
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      {/* 3 Box Sorotan Status Tampil Peleton: Di HP 3 kolom ringkas berdampingan atau compact grid */}
-      <div className="grid grid-cols-3 gap-2 sm:gap-4">
+      {/* 4 Box Sorotan Status Tampil Peleton: Rapi 2 kolom di mobile dan 4 kolom di desktop */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4">
         {/* Card 1: No. Dada */}
         <div className="bg-white p-2.5 sm:p-5 rounded-2xl sm:rounded-3xl border border-slate-200/90 shadow-xs flex flex-col sm:flex-row items-center sm:items-center text-center sm:text-left gap-1.5 sm:gap-4 hover:border-slate-300 transition-colors">
           <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
@@ -91,14 +109,34 @@ export default function OverviewTab({
           </div>
         </div>
 
-        {/* Card 2: Jam Estimasi Tampil */}
+        {/* Card 2: Jadwal Uji Coba Lapangan (UCL) Jam Spesifik (Sabtu, 16 Jan 2027) */}
+        <div className="bg-white p-2.5 sm:p-5 rounded-2xl sm:rounded-3xl border border-slate-200/90 shadow-xs flex flex-col sm:flex-row items-center sm:items-center text-center sm:text-left gap-1.5 sm:gap-4 hover:border-slate-300 transition-colors">
+          <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-purple-100 text-purple-700 flex items-center justify-center shrink-0">
+            <Clock className="w-4 h-4 sm:w-6 sm:h-6" />
+          </div>
+          <div className="min-w-0 w-full">
+            <span className="text-[8px] sm:text-[10px] font-black uppercase tracking-wider text-purple-800 block truncate">
+              Uji Coba (UCL)
+            </span>
+            <div className="flex flex-col sm:flex-row sm:items-baseline sm:gap-2 mt-0.5">
+              <span className="text-xs sm:text-xl font-black text-slate-900 font-mono leading-tight sm:leading-normal truncate">
+                {displayTrialTime || '-'}
+              </span>
+              <span className="text-[9px] sm:text-[11px] text-slate-500 truncate mt-0.5 sm:mt-0">
+                {displayTrialTime ? '16 Jan (Sedayu)' : 'Saat TM'}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Card 3: Jam Estimasi Tampil Hari-H (Ahad, 24 Jan 2027) */}
         <div className="bg-white p-2.5 sm:p-5 rounded-2xl sm:rounded-3xl border border-slate-200/90 shadow-xs flex flex-col sm:flex-row items-center sm:items-center text-center sm:text-left gap-1.5 sm:gap-4 hover:border-slate-300 transition-colors">
           <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-blue-100 text-blue-700 flex items-center justify-center shrink-0">
             <Timer className="w-4 h-4 sm:w-6 sm:h-6" />
           </div>
           <div className="min-w-0 w-full">
             <span className="text-[8px] sm:text-[10px] font-black uppercase tracking-wider text-blue-800 block truncate">
-              Est. Tampil
+              Est. Tampil (Hari-H)
             </span>
             <div className="flex flex-col sm:flex-row sm:items-baseline sm:gap-2 mt-0.5">
               <span className="text-xs sm:text-2xl font-black text-slate-900 font-mono leading-tight sm:leading-normal truncate">
@@ -111,7 +149,7 @@ export default function OverviewTab({
           </div>
         </div>
 
-        {/* Card 3: Nomor Basecamp */}
+        {/* Card 4: Nomor Basecamp */}
         <div className="bg-white p-2.5 sm:p-5 rounded-2xl sm:rounded-3xl border border-slate-200/90 shadow-xs flex flex-col sm:flex-row items-center sm:items-center text-center sm:text-left gap-1.5 sm:gap-4 hover:border-slate-300 transition-colors">
           <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center shrink-0">
             <Home className="w-4 h-4 sm:w-6 sm:h-6" />
@@ -301,11 +339,10 @@ export default function OverviewTab({
                   Tentukan estimasi jumlah unit kendaraan yang akan dibawa perwakilan kontingen (Pembina, Pelatih, & Danton) untuk alokasi slot parkir Kampus Induk:
                 </p>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                   {[
-                    { key: 'motor', label: 'Sepeda Motor', icon: Bike, desc: 'Roda Dua' },
-                    { key: 'mobil', label: 'Mobil Pribadi', icon: Car, desc: 'Sedan / MPV / SUV' },
-                    { key: 'elf', label: 'Minibus / Elf', icon: Bus, desc: 'HiAce / Elf' },
+                    { key: 'motor', label: 'Sepeda Motor', icon: Bike, desc: 'Roda Dua (Parkir Motor)' },
+                    { key: 'mobil', label: 'Mobil Pribadi', icon: Car, desc: 'Sedan / MPV / SUV (Parkir Mobil)' },
                   ].map(v => {
                     const count = currentTeam.vehicleSurveys?.tm?.counts?.[v.key] || 0;
                     const VIcon = v.icon;
@@ -409,113 +446,104 @@ export default function OverviewTab({
                 </a>
               </div>
 
-              {/* LANGKAH 1: KONFIRMASI KESEDIAAN HADIR UCL (HIRARKI PERTAMA) */}
-              <div className="p-4 rounded-2xl bg-white border border-emerald-300 shadow-sm space-y-3 relative overflow-hidden">
+              {/* KONFIRMASI KESEDIAAN HADIR UCL */}
+              <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
                 <div className="flex items-center justify-between flex-wrap gap-2">
-                  <span className="text-xs font-black uppercase text-emerald-950 flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-                    <span>Langkah 1: Konfirmasi Kesediaan Hadir Uji Coba Lapangan (Bab B.7)</span>
+                  <span className="text-xs font-bold text-slate-800">
+                    Konfirmasi Kehadiran Uji Coba Lapangan
                   </span>
-                  <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full border ${
+                  <span className={`text-[11px] font-semibold px-2 py-0.5 rounded border ${
                     currentTeam.vehicleSurveys?.trialAttendance?.status === 'confirmed'
-                      ? 'bg-emerald-100 text-emerald-800 border-emerald-300'
+                      ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
                       : currentTeam.vehicleSurveys?.trialAttendance?.status === 'declined'
-                      ? 'bg-rose-100 text-rose-800 border-rose-300'
-                      : 'bg-amber-100 text-amber-800 border-amber-300'
+                      ? 'bg-rose-50 text-rose-700 border-rose-200'
+                      : 'bg-amber-50 text-amber-700 border-amber-200'
                   }`}>
                     {currentTeam.vehicleSurveys?.trialAttendance?.status === 'confirmed'
-                      ? '✓ Terkonfirmasi Hadir'
+                      ? 'Hadir'
                       : currentTeam.vehicleSurveys?.trialAttendance?.status === 'declined'
-                      ? '✕ Berhalangan Hadir'
+                      ? 'Tidak Hadir'
                       : 'Belum Konfirmasi'}
                   </span>
                 </div>
                 <p className="text-xs text-slate-600 leading-relaxed">
-                  Official peleton wajib mengonfirmasi kesediaan kontingen sebelum panitia merilis alokasi menit jadwal dan membuka izin kantong parkir armada.
+                  Batas konfirmasi kehadiran paling lambat <strong>Ahad, 10 Januari 2027 pukul 23.59 WIB (H+1 TM)</strong>. Slot peleton yang tidak hadir akan dimajukan untuk efisiensi waktu.
                 </p>
 
-                <div className="flex flex-wrap items-center gap-2.5 pt-1">
+                <div className="flex flex-wrap items-center gap-2 pt-1">
                   <button
                     type="button"
                     onClick={() => handleConfirmTrialAttendance(true)}
-                    className={`px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer flex items-center gap-1.5 active:scale-95 ${
+                    className={`px-3.5 py-2 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
                       currentTeam.vehicleSurveys?.trialAttendance?.status === 'confirmed'
-                        ? 'bg-emerald-700 text-white ring-2 ring-emerald-400'
-                        : 'bg-emerald-600 hover:bg-emerald-500 text-white'
+                        ? 'bg-emerald-700 text-white'
+                        : 'bg-white border border-slate-300 hover:bg-slate-50 text-slate-700'
                     }`}
                   >
-                    <Check className="w-3.5 h-3.5" />
-                    <span>✓ Bersedia Hadir Uji Coba Lapangan</span>
+                    Hadir
                   </button>
                   <button
                     type="button"
                     onClick={() => handleConfirmTrialAttendance(false)}
-                    className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer active:scale-95 ${
+                    className={`px-3.5 py-2 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
                       currentTeam.vehicleSurveys?.trialAttendance?.status === 'declined'
-                        ? 'bg-rose-600 text-white ring-2 ring-rose-400'
-                        : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                        ? 'bg-rose-700 text-white'
+                        : 'bg-white border border-slate-300 hover:bg-slate-50 text-slate-700'
                     }`}
                   >
-                    <span>Berhalangan Hadir</span>
+                    Tidak Hadir
                   </button>
                 </div>
               </div>
 
-              {/* JIKA BERHALANGAN HADIR */}
+              {/* JIKA TIDAK HADIR */}
               {currentTeam.vehicleSurveys?.trialAttendance?.status === 'declined' && (
-                <div className="p-4 rounded-2xl bg-amber-50 border border-amber-300 text-amber-900 text-xs space-y-1">
-                  <div className="flex items-center gap-2 font-bold">
-                    <AlertCircle className="w-4 h-4 text-amber-600" />
-                    <span>Peleton Dinyatakan Berhalangan Hadir Pada Uji Coba Lapangan</span>
-                  </div>
-                  <p className="text-amber-800 text-[11px]">
-                    Slot alokasi waktu peleton Anda telah dialihkan. Jika ingin mengubah kesediaan menjadi hadir, silakan klik tombol "Bersedia Hadir" di atas.
-                  </p>
+                <div className="p-3.5 rounded-xl bg-slate-100 border border-slate-200 text-xs text-slate-700">
+                  Peleton tercatat tidak hadir pada Uji Coba Lapangan. Slot dialihkan ke peleton berikutnya.
                 </div>
               )}
 
-              {/* LANGKAH 2 & 3: MUNCUL SETELAH KONFIRMASI BERSEDIA HADIR */}
+              {/* JADWAL UCL & SURVEI KENDARAAN */}
               {currentTeam.vehicleSurveys?.trialAttendance?.status === 'confirmed' && (
-                <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-200">
-                  
-                  {/* Rincian Waktu & Urutan Uji Coba Tim Ini */}
-                  <div className="p-4 rounded-2xl bg-gradient-to-br from-slate-900 to-slate-950 text-white border border-emerald-500/30 space-y-3">
-                    <div className="flex items-center justify-between border-b border-white/10 pb-2.5">
+                <div className="space-y-4">
+                  {/* Rincian Waktu Uji Coba */}
+                  <div className="p-4 rounded-xl bg-slate-900 text-white space-y-3">
+                    <div className="flex items-center justify-between border-b border-slate-800 pb-2.5 flex-wrap gap-2 text-xs">
                       <div className="flex items-center gap-2">
-                        <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                        <span className="text-xs font-bold uppercase tracking-wider text-emerald-300">
-                          Jadwal Alokasi Waktu Peleton Anda (UCL)
-                        </span>
+                        <span className="font-bold text-white">Jadwal Uji Coba Lapangan</span>
+                        {teamDynamicTrial?.isAdvanced && (
+                          <span className="text-[10px] text-amber-300 bg-amber-400/10 border border-amber-400/30 px-1.5 py-0.5 rounded font-mono">
+                            Urutan Ke-{teamDynamicTrial.slotIndex + 1}
+                          </span>
+                        )}
                       </div>
-                      <span className="text-[11px] font-mono font-bold text-slate-300">
-                        {autoTrialSchedule?.session || 'Sesi Terjadwal'}
+                      <span className="text-slate-400 font-mono text-[11px]">
+                        {autoTrialSchedule?.session || '-'}
                       </span>
                     </div>
 
                     {autoTrialSchedule ? (
-                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
-                        <div className="p-2 rounded-xl bg-white/5 border border-white/10">
-                          <span className="text-[10px] text-slate-400 block font-medium">Tiba Lokasi</span>
-                          <strong className="text-xs sm:text-sm text-emerald-300 font-mono font-bold">{autoTrialSchedule.arrival}</strong>
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs">
+                        <div className="p-2.5 rounded-lg bg-slate-800/80 border border-slate-700/60">
+                          <span className="text-[10px] text-slate-400 block">Tiba Kampus</span>
+                          <span className="text-sm text-white font-mono font-bold mt-0.5 block">{autoTrialSchedule.arrival}</span>
                         </div>
-                        <div className="p-2 rounded-xl bg-white/5 border border-white/10">
-                          <span className="text-[10px] text-slate-400 block font-medium">Panggilan DP</span>
-                          <strong className="text-xs sm:text-sm text-amber-300 font-mono font-bold">{autoTrialSchedule.callDP}</strong>
+                        <div className="p-2.5 rounded-lg bg-slate-800/80 border border-slate-700/60">
+                          <span className="text-[10px] text-slate-400 block">Panggilan DP</span>
+                          <span className="text-sm text-white font-mono font-bold mt-0.5 block">{autoTrialSchedule.callDP}</span>
                         </div>
-                        <div className="p-2 rounded-xl bg-white/5 border border-white/10">
-                          <span className="text-[10px] text-slate-400 block font-medium">Masuk Arena</span>
-                          <strong className="text-xs sm:text-sm text-white font-mono font-bold">{autoTrialSchedule.enterArena}</strong>
+                        <div className="p-2.5 rounded-lg bg-slate-800/80 border border-slate-700/60">
+                          <span className="text-[10px] text-slate-400 block">Masuk Arena</span>
+                          <span className="text-sm text-amber-300 font-mono font-bold mt-0.5 block">{autoTrialSchedule.enterArena}</span>
                         </div>
-                        <div className="p-2 rounded-xl bg-white/5 border border-white/10">
-                          <span className="text-[10px] text-slate-400 block font-medium">Durasi Bersih</span>
-                          <strong className="text-xs sm:text-sm text-blue-300 font-mono font-bold">{autoTrialSchedule.allocation}</strong>
+                        <div className="p-2.5 rounded-lg bg-slate-800/80 border border-slate-700/60">
+                          <span className="text-[10px] text-slate-400 block">Durasi Arena</span>
+                          <span className="text-sm text-white font-mono font-bold mt-0.5 block">{autoTrialSchedule.allocation}</span>
                         </div>
                       </div>
                     ) : (
-                      <div className="p-3 rounded-xl bg-white/5 border border-white/5 text-center text-xs text-slate-400">
-                        {currentTeam.lotNumber
-                          ? `Urutan tampil #${String(currentTeam.lotNumber).padStart(2, '0')}. Waktu uji coba dialokasikan sesuai urutan undian saat TM.`
-                          : 'Slot waktu resmi UCL akan muncul otomatis setelah peleton mendapatkan nomor urutan saat TM.'}
+                      <div className="p-3 text-center text-xs text-slate-400">
+                        Jadwal resmi akan tampil setelah nomor undian TM ditetapkan.
                       </div>
                     )}
                   </div>
@@ -765,12 +793,6 @@ export default function OverviewTab({
                 </div>
               </div>
 
-              {/* Tracker Prosedur Basecamp & Checkout Hari-H */}
-              <BasecampCheckoutTracker
-                currentTeam={currentTeam}
-                stagingInfo={stagingInfo}
-              />
-
               {/* Preview Peta Google Maps Interaktif Hari-H */}
               <div className="rounded-2xl overflow-hidden border border-red-200 bg-slate-100 shadow-inner relative group">
                 <iframe
@@ -1011,6 +1033,32 @@ export default function OverviewTab({
                 </button>
               )}
             </div>
+          </div>
+
+          {/* Kartu Terpisah: Unduh Petunjuk Teknis (Clean & Elegan) */}
+          <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 border border-slate-200/90 shadow-xs flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-10 h-10 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center text-red-700 shrink-0">
+                <BookOpen className="w-5 h-5" />
+              </div>
+              <div className="min-w-0">
+                <h4 className="text-xs font-bold text-slate-900 truncate">
+                  Petunjuk Teknis (Juknis)
+                </h4>
+                <p className="text-[11px] text-slate-500 truncate mt-0.5">
+                  Regulasi & materi PBB resmi
+                </p>
+              </div>
+            </div>
+            <a
+              href={DOWNLOADS?.[0]?.url || "https://docs.google.com/document/d/1BN1RuwDcEiuibVvoBG4-5R7Rq8neV5st3nAZoISVQi0/edit?usp=sharing"}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-3.5 py-2 bg-slate-900 hover:bg-slate-800 active:scale-95 text-white text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 shrink-0 shadow-xs cursor-pointer"
+            >
+              <Download className="w-3.5 h-3.5" />
+              <span>Unduh</span>
+            </a>
           </div>
 
           {/* Bantuan Panitia dengan Maskot Danton */}

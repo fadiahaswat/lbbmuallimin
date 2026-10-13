@@ -32,6 +32,70 @@ export function getChestNumberByLot(jenjang, lotNumber) {
   return list[num - 1] || '';
 }
 
+/**
+ * Kalkulasi jadwal dinamis Uji Coba Lapangan (UCL).
+ * Jika ada tim yang menolak/berhalangan hadir (status === 'declined'), slot waktu di belakangnya otomatis dimajukan.
+ *
+ * @param {Array} allTeams - Seluruh tim terdaftar
+ * @param {Object} masterSchedule - UJI_COBA_SCHEDULE (SD & SMP)
+ * @returns {Object} Mapping teamId -> { slotIndex, schedule, originalLot, isDeclined }
+ */
+export function calculateDynamicTrialSchedule(allTeams = [], masterSchedule = {}) {
+  const result = {};
+
+  ['SD', 'SMP'].forEach(jenjangKey => {
+    // Ambil tim per jenjang yang sudah memiliki lotNumber (hasil TM)
+    const jenjangTeams = allTeams.filter(t => {
+      const matchJenjang = String(t.jenjang || '').toUpperCase().includes(jenjangKey);
+      return matchJenjang && t.lotNumber;
+    });
+
+    // Urutkan berdasarkan lotNumber awal
+    jenjangTeams.sort((a, b) => parseInt(a.lotNumber, 10) - parseInt(b.lotNumber, 10));
+
+    // Pisahkan yang bersedia hadir vs yang menolak
+    // Tim yang belum konfirmasi defaultnya tetap dianggap hadir sampai deadline/panitia menutup
+    const attendingTeams = [];
+    const declinedTeams = [];
+
+    jenjangTeams.forEach(t => {
+      const isDeclined = t.vehicleSurveys?.trialAttendance?.status === 'declined';
+      if (isDeclined) {
+        declinedTeams.push(t);
+      } else {
+        attendingTeams.push(t);
+      }
+    });
+
+    const slots = masterSchedule[jenjangKey] || [];
+
+    // Petakan tim yang hadir ke slot berurutan dari 0 (dirapatkan maju)
+    attendingTeams.forEach((team, slotIdx) => {
+      const schedule = slots[slotIdx] || null;
+      result[team.id] = {
+        slotIndex: slotIdx,
+        schedule,
+        isDeclined: false,
+        isAdvanced: slotIdx < (parseInt(team.lotNumber, 10) - 1),
+        originalLot: parseInt(team.lotNumber, 10)
+      };
+    });
+
+    // Tim yang berhalangan hadir tidak mendapat slot aktif
+    declinedTeams.forEach(team => {
+      result[team.id] = {
+        slotIndex: -1,
+        schedule: null,
+        isDeclined: true,
+        isAdvanced: false,
+        originalLot: parseInt(team.lotNumber, 10)
+      };
+    });
+  });
+
+  return result;
+}
+
 export const STORAGE_KEYS = {
   TEAMS: 'lbb_muallimin_teams_v5',
   SCORES: 'lbb_muallimin_scores_v5',

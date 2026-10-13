@@ -224,15 +224,15 @@ export default function SimpaskorSidebarLayout({
         </button>
 
         <div className="flex flex-col min-h-0 flex-1 overflow-hidden">
-          {/* Brand Header: Logo LBB & title-logo with subtle gradient background */}
+          {/* Brand Header: Logo LBB & title-logo tanpa wadah/bingkai */}
           <div 
             onClick={() => setActiveView('landing')}
-            className={`flex items-center rounded-2xl bg-gradient-to-b from-slate-50/70 to-slate-100/40 hover:from-red-50/50 hover:to-slate-100/70 border border-slate-200/60 hover:border-red-200/70 cursor-pointer group transition-all duration-300 shrink-0 mb-4 shadow-2xs ${
-              isCollapsed ? 'justify-center py-2.5 px-1' : 'justify-center py-3 px-3'
+            className={`flex items-center cursor-pointer group transition-all duration-200 shrink-0 mb-5 ${
+              isCollapsed ? 'justify-center py-2 px-1' : 'justify-center py-2 px-2'
             }`}
             title="Ke Beranda Utama LBB Mu'allimin"
           >
-            <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-2.5'}`}>
+            <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'}`}>
               <img
                 src={logoLbb}
                 alt="Logo LBB Mu'allimin"
@@ -241,16 +241,11 @@ export default function SimpaskorSidebarLayout({
                 }`}
               />
               {!isCollapsed && (
-                <div className="flex flex-col">
-                  <img
-                    src={titleLogoImg}
-                    alt="LBB Mu'allimin"
-                    className="h-7 w-auto object-contain max-w-[145px]"
-                  />
-                  <span className="text-[9px] font-black uppercase tracking-wider text-slate-400 group-hover:text-red-600 transition-colors mt-0.5">
-                    Sistem Lomba 2026
-                  </span>
-                </div>
+                <img
+                  src={titleLogoImg}
+                  alt="LBB Mu'allimin"
+                  className="h-8.5 w-auto object-contain max-w-[155px] group-hover:opacity-90 transition-opacity"
+                />
               )}
             </div>
           </div>
@@ -259,8 +254,8 @@ export default function SimpaskorSidebarLayout({
           <div className="flex-1 space-y-1.5 overflow-y-auto pr-1 pb-2 custom-scrollbar">
             {!isCollapsed && (
               <div className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-3 pt-1 mb-2.5 flex items-center justify-between">
-                <span className="flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-red-600 inline-block animate-pulse"></span>
+                <span className="flex items-center gap-2">
+                  <span className="w-0.5 h-3 bg-red-600 rounded-full inline-block"></span>
                   {userRole === 'peserta' ? 'Portal Peleton' : '9 Tahap Lomba'}
                 </span>
                 {userRole === 'peserta' && (
@@ -288,12 +283,7 @@ export default function SimpaskorSidebarLayout({
                       : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/90 hover:shadow-2xs'
                   }`}
                 >
-                  {/* Subtle active left highlight strip */}
-                  {isActive && !isCollapsed && (
-                    <div className="absolute left-1 top-2.5 bottom-2.5 w-1 bg-white/40 rounded-full" />
-                  )}
-
-                  <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-3.5 pl-0.5'}`}>
+                  <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-3.5'}`}>
                     <div className={`w-8.5 h-8.5 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 ${
                       isActive 
                         ? 'bg-white/20 text-white shadow-inner shadow-black/10' 
@@ -378,6 +368,58 @@ export default function SimpaskorSidebarLayout({
                 </button>
               </div>
             )}
+
+            {/* Countdown Widget: Khusus Peserta / Official di Sidebar */}
+            {userRole === 'peserta' && !isCollapsed && (() => {
+              const now = new Date();
+              const tmTarget = new Date('2027-01-09T13:00:00+07:00');
+              const compTarget = new Date('2027-01-24T06:00:00+07:00');
+
+              const isPastTM = now >= tmTarget;
+              const isPastComp = now >= compTarget;
+
+              const activeTarget = isPastTM ? compTarget : tmTarget;
+              const titleLabel = isPastComp 
+                ? 'Lomba Selesai' 
+                : isPastTM 
+                ? 'Hari-H Lomba' 
+                : 'Technical Meeting';
+              const targetDateText = isPastTM ? '24 Jan 2027' : '9 Jan 2027';
+
+              const diffMs = Math.max(0, activeTarget.getTime() - now.getTime());
+              const daysLeft = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+              const hoursLeft = Math.floor((diffMs / (1000 * 60 * 60)) % 24);
+
+              return (
+                <div className="pt-3 mt-2 border-t border-slate-100">
+                  <div className="px-3 py-2.5 rounded-xl bg-slate-50/70 border border-slate-200/60 flex items-center justify-between">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <div className="w-7 h-7 rounded-lg bg-red-100/80 text-red-700 flex items-center justify-center shrink-0">
+                        <Clock className="w-3.5 h-3.5" />
+                      </div>
+                      <div className="min-w-0">
+                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block leading-none">
+                          H-Min Menuju {titleLabel}
+                        </span>
+                        <span className="text-[11px] font-semibold text-slate-700 block truncate mt-0.5">
+                          {targetDateText}
+                        </span>
+                      </div>
+                    </div>
+                    {!isPastComp && (
+                      <div className="flex items-baseline gap-1 shrink-0 bg-white px-2 py-1 rounded-lg border border-slate-200/70 shadow-2xs">
+                        <span className="text-sm font-black text-slate-900 font-mono leading-none">
+                          {daysLeft}
+                        </span>
+                        <span className="text-[9px] font-bold text-slate-400 uppercase">
+                          Hari
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })()}
           </div>
         </div>
 

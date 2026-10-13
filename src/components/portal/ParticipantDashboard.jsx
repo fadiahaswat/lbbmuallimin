@@ -29,6 +29,7 @@ export default function ParticipantDashboard() {
     setCurrentTeamId,
     updateTeamFiles,
     updateTeamRoster,
+    updateTeamProfile,
     updateTeamVehicleSurvey,
     scores,
     staging,
@@ -674,6 +675,7 @@ export default function ParticipantDashboard() {
           rawLogoUrl={rawLogoUrl}
           setLogoLoadFailed={setLogoLoadFailed}
           triggerFileUpload={triggerFileUpload}
+          updateTeamProfile={updateTeamProfile}
         />
 
         {/* Panduan Pengunggahan Berkas jika status === 'registered' */}
@@ -782,6 +784,7 @@ export default function ParticipantDashboard() {
         {activeTab === 'overview' && (
           <OverviewTab
             currentTeam={currentTeam}
+            allTeams={teams}
             scheduleTab={scheduleTab}
             setScheduleTab={setScheduleTab}
             tmDate={tmDate}

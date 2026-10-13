@@ -82,23 +82,23 @@ export default function IdCardTab({ currentTeam }) {
         {/* Body Badge: QR Code & Team Meta */}
         <div className="relative py-4 flex flex-col items-center gap-4">
           {/* QR Code Container */}
-          <div className="bg-white p-3 rounded-2xl shadow-lg border border-slate-200 shrink-0 text-center w-full max-w-[240px]">
+          <div className="bg-white p-4 sm:p-5 rounded-3xl shadow-xl border border-slate-200 shrink-0 text-center w-full max-w-[320px] sm:max-w-[340px]">
             {isGeneratingQr ? (
-              <div className="w-36 h-36 mx-auto flex items-center justify-center text-slate-400 font-mono text-[10px]">
+              <div className="w-56 h-56 sm:w-64 sm:h-64 mx-auto flex items-center justify-center text-slate-400 font-mono text-xs">
                 Menyiapkan QR...
               </div>
             ) : (
               <img
                 src={qrDataUrl}
                 alt={`QR Code ${currentTeam.regCode}`}
-                className="w-36 h-36 mx-auto block rounded-lg object-contain"
+                className="w-56 h-56 sm:w-64 sm:h-64 mx-auto block rounded-xl object-contain"
                 loading="eager"
               />
             )}
-            <span className="font-mono font-black text-xs text-slate-950 block mt-1.5 tracking-wider">
+            <span className="font-mono font-black text-sm sm:text-base text-slate-950 block mt-2.5 tracking-wider">
               {currentTeam.regCode}
             </span>
-            <span className="text-[9px] text-slate-500 font-bold uppercase block">Scan saat Check-in</span>
+            <span className="text-[10px] sm:text-xs text-slate-500 font-bold uppercase block mt-0.5">Scan saat Check-in</span>
           </div>
 
           {/* Team Details */}
