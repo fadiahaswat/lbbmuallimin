@@ -113,7 +113,7 @@ export default function JuknisPenilaianSection({ embedded = false }) {
                 type="text"
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                placeholder="Cari kata kunci penilaian (skor 1:1, danton, juara umum, tie-breaker, sanggah, penalti)..."
+                placeholder="Cari kata kunci penilaian (skor, danton, tie-breaker, penalti)..."
                 className="w-full pl-11 pr-10 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-sm text-white placeholder-slate-400 focus:outline-none focus:border-amber-400 transition-colors"
               />
               {searchQuery && (
@@ -128,13 +128,13 @@ export default function JuknisPenilaianSection({ embedded = false }) {
             </div>
 
             {/* Toggle All Accordions & Unduh */}
-            <div className="flex items-center gap-2 shrink-0">
+            <div className="grid grid-cols-2 sm:flex sm:items-center gap-2 w-full sm:w-auto shrink-0">
               <button
                 type="button"
                 onClick={() => {
                   setOpenAccordions({ 'bab-a': true, 'bab-b': true, 'bab-c': true, 'bab-d': true });
                 }}
-                className="px-3 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-bold transition-colors cursor-pointer"
+                className="w-full text-center px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700/60 text-slate-300 hover:text-white text-xs font-bold transition-colors cursor-pointer shadow-xs"
               >
                 Buka Semua
               </button>
@@ -143,7 +143,7 @@ export default function JuknisPenilaianSection({ embedded = false }) {
                 onClick={() => {
                   setOpenAccordions({ 'bab-a': false, 'bab-b': false, 'bab-c': false, 'bab-d': false });
                 }}
-                className="px-3 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-bold transition-colors cursor-pointer"
+                className="w-full text-center px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700/60 text-slate-300 hover:text-white text-xs font-bold transition-colors cursor-pointer shadow-xs"
               >
                 Tutup Semua
               </button>

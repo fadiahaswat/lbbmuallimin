@@ -62,7 +62,9 @@ export default function RekapNilaiView() {
     return matchesJenjang && matchesSearch;
   });
 
-  // Calculate ranks
+  const hasAccess = ['superadmin', 'finalisator', 'verifikator', 'penginput'].includes(userRole);
+
+  // Calculate ranks with Tie-Breaker: Final Score -> PBB -> Danton -> Least Penalty
   const calculateFinalTotal = (teamId) => {
     const sc = scores[teamId];
     if (!sc) return 0;
@@ -73,10 +75,50 @@ export default function RekapNilaiView() {
   };
 
   const rankedTeams = [...filteredTeams].sort((a, b) => {
+    const scA = scores[a.id];
+    const scB = scores[b.id];
     const totalA = calculateFinalTotal(a.id);
     const totalB = calculateFinalTotal(b.id);
-    return totalB - totalA;
+    if (totalB !== totalA) return totalB - totalA;
+    const pbbA = Number(scA?.pbbTotal || scA?.categories?.pbb || scA?.pbb?.total || 0);
+    const pbbB = Number(scB?.pbbTotal || scB?.categories?.pbb || scB?.pbb?.total || 0);
+    if (pbbB !== pbbA) return pbbB - pbbA;
+    const dantonA = Number(scA?.dantonTotal || scA?.categories?.danton || scA?.danton?.total || 0);
+    const dantonB = Number(scB?.dantonTotal || scB?.categories?.danton || scB?.danton?.total || 0);
+    if (dantonB !== dantonA) return dantonB - dantonA;
+    const penA = Number(scA?.penaltiesTotal || scA?.penalty || scA?.penalties?.totalPenalty || 0);
+    const penB = Number(scB?.penaltiesTotal || scB?.penalty || scB?.penalties?.totalPenalty || 0);
+    return penA - penB;
   });
+
+  if (!hasAccess) {
+    return (
+      <div className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center p-6 text-center">
+        <div className="max-w-md w-full bg-slate-900 border border-slate-800 rounded-3xl p-8 space-y-5 shadow-2xl">
+          <div className="w-16 h-16 rounded-2xl bg-red-500/10 border border-red-500/30 text-red-400 flex items-center justify-center mx-auto">
+            <Lock className="w-8 h-8" />
+          </div>
+          <div className="space-y-2">
+            <span className="text-[10px] font-black uppercase tracking-widest text-red-400 bg-red-500/10 px-3 py-1 rounded-full border border-red-500/20">
+              Akses Ditolak
+            </span>
+            <h2 className="text-xl font-black uppercase tracking-tight text-white">
+              Rekapitulasi Nilai Terkunci
+            </h2>
+            <p className="text-xs text-slate-400 leading-relaxed">
+              Halaman ini bersifat rahasia dan hanya dapat diakses oleh Panitia Terotorisasi: Operator Penginput, Verifikator, Finalisator Dewan Juri, atau Superadmin.
+            </p>
+          </div>
+          <button
+            onClick={() => window.location.reload()}
+            className="w-full py-3 bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all cursor-pointer"
+          >
+            Kembali ke Beranda
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   // Stats
   const scoredCount = competitionTeams.filter(t => scores[t.id]).length;

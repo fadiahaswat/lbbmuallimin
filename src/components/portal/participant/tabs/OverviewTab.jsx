@@ -291,15 +291,15 @@ export default function OverviewTab({
                 </div>
               </div>
 
-              {/* Box Cetak Pakta Integritas Bermaterai Rp 10.000 untuk TM */}
-              <div className="p-4 rounded-2xl bg-gradient-to-r from-red-50 to-amber-50 border border-red-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              {/* Box Cetak Pakta Integritas Bermaterai Rp 10.000 untuk TM - Clean & Elegan */}
+              <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div className="space-y-1">
-                  <div className="flex items-center gap-1.5 text-red-800 font-black text-xs uppercase tracking-wider">
-                    <Shield className="w-4 h-4 text-red-700" />
-                    <span>Berkas Fisik Wajib TM: Pakta Integritas Bermaterai</span>
+                  <div className="flex items-center gap-1.5 text-slate-900 font-bold text-xs uppercase tracking-wider">
+                    <Shield className="w-4 h-4 text-red-600" />
+                    <span>Pakta Integritas Bermaterai (Wajib TM)</span>
                   </div>
                   <p className="text-[11px] text-slate-600 leading-relaxed max-w-lg">
-                    Official wajib membawa lembar Pakta Integritas bermaterai <strong>Rp 10.000,-</strong> bertanda tangan basah saat registrasi TM di Kampus Induk Mu'allimin Wirobrajan (Pasal 2 & 3).
+                    Official wajib membawa lembar fisik Pakta Integritas bertanda tangan basah dan bermaterai <strong>Rp 10.000,-</strong> saat registrasi TM di Kampus Induk Mu'allimin Wirobrajan.
                   </p>
                 </div>
                 {onOpenPactModal && (
@@ -307,17 +307,17 @@ export default function OverviewTab({
                     type="button"
                     onClick={onOpenPactModal}
                     disabled={isDownloadingPact}
-                    className="px-4 py-2.5 bg-red-700 hover:bg-red-800 disabled:bg-slate-400 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-xs shrink-0 cursor-pointer active:scale-95"
+                    className="px-3.5 py-2 bg-slate-900 hover:bg-slate-800 disabled:bg-slate-300 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-2xs shrink-0 cursor-pointer active:scale-95"
                   >
                     {isDownloadingPact ? (
                       <>
                         <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                        <span>Mengunduh PDF...</span>
+                        <span>Mengunduh...</span>
                       </>
                     ) : (
                       <>
                         <Download className="w-3.5 h-3.5" />
-                        <span>Unduh PDF Pakta Integritas</span>
+                        <span>Unduh PDF Pakta</span>
                       </>
                     )}
                   </button>
@@ -664,22 +664,21 @@ export default function OverviewTab({
                 </a>
               </div>
 
-              {/* Rincian Alur Waktu Tampil Hari-H Peleton Ini */}
-              <div className="p-4 rounded-2xl bg-gradient-to-br from-slate-900 to-slate-950 text-white border border-red-500/30 space-y-3">
-                <div className="flex items-center justify-between border-b border-white/10 pb-2.5 flex-wrap gap-2">
+              {/* Rincian Alur Waktu Tampil Hari-H Peleton Ini - Clean & Modern */}
+              <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-3">
+                <div className="flex items-center justify-between border-b border-slate-100 pb-2.5 flex-wrap gap-2">
                   <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping"></span>
-                    <span className="text-xs font-bold uppercase tracking-wider text-red-400">
-                      Rondown Alur Tampil Peleton (Hari-H)
+                    <span className="text-xs font-bold uppercase tracking-wider text-slate-800">
+                      Rundown Alur Tampil Peleton (Hari-H)
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
                     {currentTeam.chestNumber && (
-                      <span className="text-[10px] font-mono font-bold bg-amber-400 text-slate-950 px-2 py-0.5 rounded">
+                      <span className="text-[10px] font-mono font-bold bg-slate-100 text-slate-700 border border-slate-200 px-2 py-0.5 rounded">
                         No. Dada: {currentTeam.chestNumber}
                       </span>
                     )}
-                    <span className="text-[11px] font-mono font-bold text-slate-300">
+                    <span className="text-[11px] font-mono font-bold text-slate-600 bg-slate-50 border border-slate-200 px-2 py-0.5 rounded">
                       {autoSchedule?.arena || (currentTeam.jenjang === 'SD' ? 'Arena 1 (Basket)' : 'Arena 2 (Embung)')}
                     </span>
                   </div>
@@ -687,28 +686,28 @@ export default function OverviewTab({
 
                 {autoSchedule ? (
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
-                    <div className="p-2 rounded-xl bg-white/5 border border-white/10">
-                      <span className="text-[10px] text-slate-400 block font-medium">Stanby Basecamp</span>
-                      <strong className="text-xs sm:text-sm text-amber-300 font-mono font-bold">{autoSchedule.readyBasecamp}</strong>
+                    <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                      <span className="text-[10px] text-slate-500 block font-medium">Standby Basecamp</span>
+                      <strong className="text-xs sm:text-sm text-slate-900 font-mono font-bold">{autoSchedule.readyBasecamp}</strong>
                     </div>
-                    <div className="p-2 rounded-xl bg-white/5 border border-white/10">
-                      <span className="text-[10px] text-slate-400 block font-medium">Pemeriksaan DP 1</span>
-                      <strong className="text-xs sm:text-sm text-blue-300 font-mono font-bold">{autoSchedule.checkDP1}</strong>
+                    <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                      <span className="text-[10px] text-slate-500 block font-medium">Pemeriksaan DP 1</span>
+                      <strong className="text-xs sm:text-sm text-blue-700 font-mono font-bold">{autoSchedule.checkDP1}</strong>
                     </div>
-                    <div className="p-2 rounded-xl bg-white/5 border border-white/10">
-                      <span className="text-[10px] text-slate-400 block font-medium">Masuk Arena</span>
-                      <strong className="text-xs sm:text-sm text-emerald-300 font-mono font-bold">{autoSchedule.enterArena}</strong>
+                    <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                      <span className="text-[10px] text-slate-500 block font-medium">Masuk Arena</span>
+                      <strong className="text-xs sm:text-sm text-emerald-700 font-mono font-bold">{autoSchedule.enterArena}</strong>
                     </div>
-                    <div className="p-2 rounded-xl bg-white/5 border border-white/10">
-                      <span className="text-[10px] text-slate-400 block font-medium">Selesai / Keluar</span>
-                      <strong className="text-xs sm:text-sm text-rose-300 font-mono font-bold">{autoSchedule.exitArena}</strong>
+                    <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                      <span className="text-[10px] text-slate-500 block font-medium">Selesai / Keluar</span>
+                      <strong className="text-xs sm:text-sm text-rose-700 font-mono font-bold">{autoSchedule.exitArena}</strong>
                     </div>
                   </div>
                 ) : (
-                  <div className="p-3 rounded-xl bg-white/5 border border-white/5 text-center text-xs text-slate-400">
+                  <div className="p-4 rounded-xl bg-slate-50/80 border border-slate-100 text-center text-xs text-slate-500">
                     {currentTeam.lotNumber
-                      ? `Urutan Tampil #${String(currentTeam.lotNumber).padStart(2, '0')}. Jadwal ronde DP1, DP2, dan arena tampil telah dipetakan.`
-                      : 'Jadwal detail alur tampil menit-ke-menit akan tampil setelah nomor urutan diundi pada Technical Meeting.'}
+                      ? `Urutan Tampil #${String(currentTeam.lotNumber).padStart(2, '0')}. Jadwal alur DP1, DP2, dan arena tampil telah dipetakan.`
+                      : 'Jadwal detail menit-ke-menit akan diumumkan otomatis setelah sesi undian nomor tampil pada Technical Meeting.'}
                   </div>
                 )}
               </div>
@@ -820,182 +819,90 @@ export default function OverviewTab({
         {/* Kolom Kanan (1 Span): Ringkasan Berkas & Bantuan Panitia */}
         <div className="space-y-6">
           {/* Ringkasan Cepat Persyaratan Peleton */}
-          {/* Ringkasan Cepat Persyaratan Peleton - Modern & Menarik */}
-          <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 border border-slate-200/90 shadow-sm space-y-3.5 relative overflow-hidden">
-            {/* Ambient Background Accent */}
-            <div className="absolute top-0 right-0 w-28 h-28 bg-gradient-to-br from-blue-500/10 to-indigo-500/5 rounded-full blur-xl pointer-events-none" />
-
-            {/* Header with Progress Ring / Percentage */}
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-xs">
-                  <ClipboardCheck className="w-4 h-4" />
-                </div>
-                <div>
-                  <h4 className="font-black text-xs sm:text-sm uppercase tracking-wide text-slate-900">
-                    Kelengkapan Peleton
-                  </h4>
-                  <p className="text-[10px] text-slate-400">Verifikasi berkas & 25 personel</p>
-                </div>
+          {/* Ringkasan Status Administrasi Peleton - Clean & Professional */}
+          <div className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs p-4 sm:p-5 space-y-4">
+            {/* Header: Judul & Persentase Sederhana */}
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <div>
+                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-800">
+                  Kelengkapan Tim
+                </h4>
+                <p className="text-[11px] text-slate-500 mt-0.5">25 Personel & Berkas Persyaratan</p>
               </div>
-              <button
-                type="button"
-                onClick={() => setActiveTab('roster')}
-                className="text-[11px] font-bold text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100/80 px-2.5 py-1 rounded-lg transition-all flex items-center gap-1 active:scale-95"
-              >
-                <span>Kelola</span>
-                <ChevronRight className="w-3 h-3" />
-              </button>
+
+              {(() => {
+                const danton = currentTeam.roster?.danton;
+                const dantonName = danton?.name || currentTeam.dantonName || '';
+                const hasFullDantonBio = Boolean(dantonName && danton?.nisn && danton?.class);
+                const isPasukanDone = filledPasukan >= 21;
+                const isDocDone = Boolean(currentTeam.files?.recommendationLetter?.url && currentTeam.files?.recommendationLetter?.url !== '#');
+                const score = (hasFullDantonBio ? 30 : dantonName ? 10 : 0) + (isPasukanDone ? 45 : (filledPasukan / 21) * 45) + (isDocDone ? 25 : 0);
+                const percent = Math.min(100, Math.round(score));
+
+                return (
+                  <span className={`text-xs font-black font-mono px-2 py-0.5 rounded-md ${
+                    percent >= 100 
+                      ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/60' 
+                      : 'bg-slate-100 text-slate-700 border border-slate-200/60'
+                  }`}>
+                    {percent}% Lengkap
+                  </span>
+                );
+              })()}
             </div>
 
-            {/* Overall Readiness Bar */}
-            {(() => {
-              const danton = currentTeam.roster?.danton;
-              const dantonName = danton?.name || currentTeam.dantonName || '';
-              const hasFullDantonBio = Boolean(dantonName && danton?.nisn && danton?.class);
-              const isPasukanDone = filledPasukan >= 21;
-              const isDocDone = Boolean(currentTeam.files?.recommendationLetter?.url && currentTeam.files?.recommendationLetter?.url !== '#');
-              const score = (hasFullDantonBio ? 30 : dantonName ? 10 : 0) + (isPasukanDone ? 45 : (filledPasukan / 21) * 45) + (isDocDone ? 25 : 0);
-              const percent = Math.min(100, Math.round(score));
-
-              return (
-                <div className="p-2.5 rounded-xl bg-gradient-to-r from-slate-50 to-blue-50/50 border border-slate-100 space-y-1.5">
-                  <div className="flex items-center justify-between text-[11px]">
-                    <span className="font-bold text-slate-700 flex items-center gap-1.5">
-                      <Sparkles className="w-3 h-3 text-amber-500" />
-                      <span>Kesiapan Administrasi</span>
-                    </span>
-                    <span className={`font-black font-mono text-xs ${percent >= 100 ? 'text-emerald-600' : 'text-blue-600'}`}>
-                      {percent}% Siap
-                    </span>
-                  </div>
-                  <div className="w-full h-2 bg-slate-200/80 rounded-full overflow-hidden">
-                    <div
-                      className={`h-full rounded-full transition-all duration-500 ${
-                        percent >= 100
-                          ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]'
-                          : percent > 50
-                          ? 'bg-blue-600'
-                          : 'bg-amber-500'
-                      }`}
-                      style={{ width: `${percent}%` }}
-                    />
-                  </div>
-                </div>
-              );
-            })()}
-
-            {/* Interactive Checklist Items */}
-            <div className="space-y-2 text-xs">
-              {/* Item 1: Danton */}
+            {/* Checklist Items Sederhana & Kompak */}
+            <div className="divide-y divide-slate-100 text-xs">
+              {/* Danton */}
               {(() => {
                 const danton = currentTeam.roster?.danton;
                 const dantonName = danton?.name || currentTeam.dantonName || '';
                 const hasFullBio = Boolean(dantonName && danton?.nisn && danton?.class);
-                const hasNameOnly = Boolean(dantonName && (!danton?.nisn || !danton?.class));
 
                 return (
-                  <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50/80 hover:bg-slate-50 border border-slate-100 transition-colors">
-                    <div className="flex items-center gap-2 min-w-0">
-                      <div className={`w-5 h-5 rounded-md flex items-center justify-center shrink-0 ${
-                        hasFullBio
-                          ? 'bg-emerald-100 text-emerald-600'
-                          : hasNameOnly
-                          ? 'bg-amber-100 text-amber-600'
-                          : 'bg-slate-200 text-slate-400'
-                      }`}>
-                        {hasFullBio ? (
-                          <CheckCircle2 className="w-3.5 h-3.5" />
-                        ) : hasNameOnly ? (
-                          <span className="text-[10px] font-black">!</span>
-                        ) : (
-                          <span className="text-[10px]">•</span>
-                        )}
-                      </div>
-                      <span className="text-slate-600 text-[11px] font-medium truncate">Komandan (Danton)</span>
-                    </div>
-                    <div className="flex items-center gap-1.5 ml-2 truncate">
-                      <span className="font-bold text-slate-900 text-[11px] truncate max-w-[110px]">
+                  <div className="py-2.5 flex items-center justify-between gap-2">
+                    <span className="text-slate-600 font-medium">Komandan (Danton)</span>
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <span className="font-semibold text-slate-900 truncate max-w-[130px]">
                         {dantonName || '-'}
                       </span>
-                      {hasNameOnly ? (
-                        <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-amber-100 text-amber-800 border border-amber-300 whitespace-nowrap">
-                          Lengkapi Bio
-                        </span>
-                      ) : hasFullBio ? (
-                        <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800 whitespace-nowrap">
-                          Lengkap
-                        </span>
-                      ) : null}
+                      <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
+                        hasFullBio 
+                          ? 'bg-emerald-50 text-emerald-700' 
+                          : 'bg-amber-50 text-amber-700'
+                      }`}>
+                        {hasFullBio ? 'Lengkap' : 'Belum Lengkap'}
+                      </span>
                     </div>
                   </div>
                 );
               })()}
 
-              {/* Item 2: Pasukan 21 */}
-              <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50/80 hover:bg-slate-50 border border-slate-100 transition-colors">
-                <div className="flex items-center gap-2 min-w-0">
-                  <div className={`w-5 h-5 rounded-md flex items-center justify-center shrink-0 ${
-                    filledPasukan >= 21
-                      ? 'bg-emerald-100 text-emerald-600'
-                      : filledPasukan > 0
-                      ? 'bg-amber-100 text-amber-600'
-                      : 'bg-slate-200 text-slate-400'
-                  }`}>
-                    {filledPasukan >= 21 ? (
-                      <CheckCircle2 className="w-3.5 h-3.5" />
-                    ) : (
-                      <span className="text-[10px] font-bold font-mono">{filledPasukan}</span>
-                    )}
-                  </div>
-                  <span className="text-slate-600 text-[11px] font-medium">Pasukan Inti (21)</span>
-                </div>
-                <span className={`font-black font-mono text-[11px] px-2 py-0.5 rounded-md ${
-                  filledPasukan >= 21
-                    ? 'bg-emerald-500/15 text-emerald-700 border border-emerald-500/30'
-                    : filledPasukan > 0
-                    ? 'bg-amber-500/15 text-amber-700 border border-amber-500/30'
-                    : 'bg-slate-200/70 text-slate-500'
+              {/* Pasukan Inti */}
+              <div className="py-2.5 flex items-center justify-between gap-2">
+                <span className="text-slate-600 font-medium">Pasukan Inti</span>
+                <span className={`font-mono text-xs font-bold ${
+                  filledPasukan >= 21 ? 'text-emerald-700' : 'text-slate-700'
                 }`}>
-                  {filledPasukan}/21
+                  {filledPasukan} / 21
                 </span>
               </div>
 
-              {/* Item 3: Cadangan */}
-              <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50/80 hover:bg-slate-50 border border-slate-100 transition-colors">
-                <div className="flex items-center gap-2 min-w-0">
-                  <div className={`w-5 h-5 rounded-md flex items-center justify-center shrink-0 ${
-                    filledCadangan > 0 ? 'bg-amber-100 text-amber-600' : 'bg-slate-200 text-slate-400'
-                  }`}>
-                    <span className="text-[10px] font-bold font-mono">{filledCadangan}</span>
-                  </div>
-                  <span className="text-slate-600 text-[11px] font-medium">Cadangan (Maks 3)</span>
-                </div>
-                <span className="font-bold font-mono text-[11px] text-slate-600 px-2 py-0.5 rounded-md bg-slate-100">
-                  {filledCadangan}/3
+              {/* Cadangan */}
+              <div className="py-2.5 flex items-center justify-between gap-2">
+                <span className="text-slate-600 font-medium">Cadangan</span>
+                <span className="font-mono text-xs font-bold text-slate-700">
+                  {filledCadangan} / 3
                 </span>
               </div>
 
-              {/* Item 4: Surat Rekomendasi */}
-              <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50/80 hover:bg-slate-50 border border-slate-100 transition-colors">
-                <div className="flex items-center gap-2 min-w-0">
-                  <div className={`w-5 h-5 rounded-md flex items-center justify-center shrink-0 ${
-                    currentTeam.files?.recommendationLetter?.url && currentTeam.files?.recommendationLetter?.url !== '#'
-                      ? 'bg-emerald-100 text-emerald-600'
-                      : 'bg-amber-100 text-amber-600'
-                  }`}>
-                    {currentTeam.files?.recommendationLetter?.url && currentTeam.files?.recommendationLetter?.url !== '#' ? (
-                      <CheckCircle2 className="w-3.5 h-3.5" />
-                    ) : (
-                      <span className="text-[10px] font-bold">!</span>
-                    )}
-                  </div>
-                  <span className="text-slate-600 text-[11px] font-medium">Surat Rekomendasi</span>
-                </div>
-                <span className={`font-bold text-[10px] px-2 py-0.5 rounded-md ${
+              {/* Surat Rekomendasi */}
+              <div className="py-2.5 flex items-center justify-between gap-2">
+                <span className="text-slate-600 font-medium">Surat Rekomendasi</span>
+                <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
                   currentTeam.files?.recommendationLetter?.url && currentTeam.files?.recommendationLetter?.url !== '#'
-                    ? 'bg-emerald-500/15 text-emerald-700 border border-emerald-500/30'
-                    : 'bg-amber-500/15 text-amber-700 border border-amber-500/30'
+                    ? 'bg-emerald-50 text-emerald-700'
+                    : 'bg-amber-50 text-amber-700'
                 }`}>
                   {currentTeam.files?.recommendationLetter?.url && currentTeam.files?.recommendationLetter?.url !== '#'
                     ? 'Sudah Diunggah'
@@ -1004,29 +911,27 @@ export default function OverviewTab({
               </div>
             </div>
 
-            {/* Quick Action Buttons */}
-            <div className="pt-1.5 flex flex-col gap-2">
-              <div className="flex gap-2">
-                <button
-                  type="button"
-                  onClick={() => setActiveTab('roster')}
-                  className="flex-1 py-2 px-3 bg-slate-900 hover:bg-slate-800 active:scale-95 text-white text-[11px] font-bold rounded-xl transition-all shadow-xs text-center cursor-pointer"
-                >
-                  Isi 25 Personel
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setActiveTab('documents')}
-                  className="flex-1 py-2 px-3 bg-blue-50 hover:bg-blue-100 active:scale-95 text-blue-700 border border-blue-200 text-[11px] font-bold rounded-xl transition-all text-center cursor-pointer"
-                >
-                  Unggah Surat
-                </button>
-              </div>
+            {/* Quick Action Buttons: Rapih & Proporsional */}
+            <div className="pt-2 grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => setActiveTab('roster')}
+                className="py-2 px-3 bg-slate-900 hover:bg-slate-800 active:scale-95 text-white text-xs font-bold rounded-xl transition-all text-center cursor-pointer shadow-2xs"
+              >
+                Isi 25 Personel
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab('documents')}
+                className="py-2 px-3 bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 border border-slate-200/80 text-xs font-bold rounded-xl transition-all text-center cursor-pointer"
+              >
+                Unggah Surat
+              </button>
               {onOpenPactModal && (
                 <button
                   type="button"
                   onClick={onOpenPactModal}
-                  className="w-full py-2 px-3 bg-red-50 hover:bg-red-100 active:scale-95 text-red-700 border border-red-200 text-[11px] font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                  className="col-span-2 py-2 px-3 bg-red-50 hover:bg-red-100/80 active:scale-95 text-red-700 border border-red-200/80 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                 >
                   <Printer className="w-3.5 h-3.5 text-red-600" />
                   <span>Cetak Pakta Integritas (TM)</span>

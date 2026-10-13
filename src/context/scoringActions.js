@@ -1,55 +1,101 @@
 import { saveRecordToSheet } from '../services/sheetService.js';
 
 export function createScoringActions({ setScores, currentUser }) {
+  function recordAuditLog(teamId, action, prevScore, newScore, actor, reason = '') {
+    const auditEntry = {
+      id: `audit-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
+      teamId,
+      action,
+      prevFinalScore: prevScore?.finalScore ?? null,
+      newFinalScore: newScore?.finalScore ?? null,
+      actorName: actor?.name || 'Sistem',
+      actorRole: actor?.role || 'operator',
+      actorEmail: actor?.email || '-',
+      timestamp: new Date().toISOString(),
+      reason,
+    };
+    saveRecordToSheet('scores_audit_log', auditEntry).catch(err => {
+      console.warn('[CompetitionContext] Sync audit log to sheet failed:', err);
+    });
+  }
+
   function saveScore(teamId, scoreData) {
-    const pbb1Val = Number(scoreData.juries?.pos1?.total ?? scoreData.pbb1?.total ?? scoreData.pbb?.total ?? 0);
-    const pbb2Val = Number(scoreData.juries?.pos2?.total ?? scoreData.pbb2?.total ?? 0);
-    
-    let pbbAvg = 0;
-    if (pbb1Val > 0 && pbb2Val > 0) {
-      pbbAvg = (pbb1Val + pbb2Val) / 2;
-    } else {
-      pbbAvg = pbb1Val || pbb2Val || 0;
+    let previousRecord = null;
+    let newRecord = null;
+
+    setScores(prev => {
+      const existing = prev[teamId];
+      if (existing && (existing.isLocked || existing.status === 'finalized') && currentUser?.role !== 'superadmin') {
+        console.warn(`[Security] Nilai peleton ${teamId} sudah dikunci dan tidak dapat diubah.`);
+        alert('Peringatan: Nilai peleton ini sudah disahkan & dikunci (Finalized). Perubahan ditolak.');
+        return prev;
+      }
+      previousRecord = existing;
+
+      const pbb1Val = Number(scoreData.juries?.pos1?.total ?? scoreData.pbb1?.total ?? scoreData.pbb?.total ?? 0);
+      const pbb2Val = Number(scoreData.juries?.pos2?.total ?? scoreData.pbb2?.total ?? 0);
+      
+      let pbbAvg = 0;
+      if (pbb1Val > 0 && pbb2Val > 0) {
+        pbbAvg = (pbb1Val + pbb2Val) / 2;
+      } else {
+        pbbAvg = pbb1Val || pbb2Val || 0;
+      }
+
+      const dantonVal = Number(scoreData.danton?.total || scoreData.juries?.pos3?.total || 0);
+      const penaltyVal = Number(scoreData.penalties?.totalPenalty || 0);
+
+      const finalScore = Math.max(0, parseFloat((pbbAvg + dantonVal - penaltyVal).toFixed(2)));
+
+      const record = {
+        teamId,
+        juryName: scoreData.juryName || currentUser?.name || 'Dewan Juri LBB Muallimin',
+        juryRole: scoreData.juryRole || currentUser?.roleLabel || 'Juri Lapangan',
+        scoredAt: new Date().toISOString(),
+        juries: scoreData.juries || {},
+        danton: scoreData.danton,
+        pbb: {
+          total: parseFloat(pbbAvg.toFixed(2)),
+          j1: pbb1Val,
+          j2: pbb2Val,
+          rubricScores: scoreData.pbb?.rubricScores || {},
+        },
+        penalties: scoreData.penalties,
+        finalScore,
+        notes: scoreData.notes || '',
+        isLocked: existing?.isLocked || false,
+        status: existing?.status || 'draft',
+      };
+      newRecord = record;
+
+      return {
+        ...prev,
+        [teamId]: record,
+      };
+    });
+
+    if (newRecord) {
+      saveRecordToSheet('scores', { id: teamId, ...newRecord }).catch(err =>
+        console.warn('[CompetitionContext] Sync saveScore to sheet failed:', err)
+      );
+      recordAuditLog(teamId, 'saveScore', previousRecord, newRecord, currentUser, 'Update skor via saveScore');
     }
 
-    const dantonVal = Number(scoreData.danton?.total || scoreData.juries?.pos3?.total || 0);
-    const penaltyVal = Number(scoreData.penalties?.totalPenalty || 0);
-
-    const finalScore = Math.max(0, parseFloat((pbbAvg + dantonVal - penaltyVal).toFixed(2)));
-
-    const record = {
-      teamId,
-      juryName: scoreData.juryName || 'Dewan Juri LBB Muallimin',
-      juryRole: scoreData.juryRole || 'Juri Lapangan',
-      scoredAt: new Date().toISOString(),
-      juries: scoreData.juries || {},
-      danton: scoreData.danton,
-      pbb: {
-        total: parseFloat(pbbAvg.toFixed(2)),
-        j1: pbb1Val,
-        j2: pbb2Val,
-        rubricScores: scoreData.pbb?.rubricScores || {},
-      },
-      penalties: scoreData.penalties,
-      finalScore,
-      notes: scoreData.notes || '',
-    };
-
-    setScores(prev => ({
-      ...prev,
-      [teamId]: record,
-    }));
-
-    saveRecordToSheet('scores', { id: teamId, ...record }).catch(err =>
-      console.warn('[CompetitionContext] Sync saveScore to sheet failed:', err)
-    );
-
-    return record;
+    return newRecord;
   }
 
   function saveJuryPostScore(teamId, postKey, postScoreData) {
     let updatedRecord = null;
+    let prevRecord = null;
     setScores(prev => {
+      const existing = prev[teamId];
+      if (existing && (existing.isLocked || existing.status === 'finalized') && currentUser?.role !== 'superadmin') {
+        console.warn(`[Security] Nilai peleton ${teamId} sudah dikunci (finalized).`);
+        alert('Peringatan: Nilai peleton ini sudah dikunci secara sah. Perubahan ditolak.');
+        return prev;
+      }
+      prevRecord = existing;
+
       const currentTeamScore = prev[teamId] || {
         teamId,
         juries: {},
@@ -143,81 +189,110 @@ export function createScoringActions({ setScores, currentUser }) {
       saveRecordToSheet('scores', updatedRecord).catch(err =>
         console.warn('[CompetitionContext] Sync saveJuryPostScore to sheet failed:', err)
       );
+      recordAuditLog(teamId, 'saveJuryPostScore', prevRecord, updatedRecord, currentUser, `Update pos ${postKey}`);
     }
 
     return updatedRecord;
   }
 
   function saveDraftScore(teamId, draftData) {
-    const pbb1Val = Number(draftData.pbb1?.total ?? draftData.juries?.pos1?.total ?? draftData.pbb?.total ?? 0);
-    const pbb2Val = Number(draftData.pbb2?.total ?? draftData.juries?.pos2?.total ?? draftData.kekompakan?.total ?? 0);
-    
-    let pbbVal = 0;
-    if (pbb1Val > 0 && pbb2Val > 0) {
-      pbbVal = parseFloat(((pbb1Val + pbb2Val) / 2).toFixed(2));
-    } else {
-      pbbVal = pbb1Val || pbb2Val || Number(draftData.pbb?.total ?? 0);
+    let prevDraftRecord = null;
+    let createdRecord = null;
+
+    setScores(prev => {
+      const existing = prev[teamId];
+      if (existing && (existing.isLocked || existing.status === 'finalized') && currentUser?.role !== 'superadmin') {
+        console.warn(`[Security] Nilai peleton ${teamId} sudah dikunci (finalized). Input draft ditolak.`);
+        alert('Peringatan: Nilai peleton ini sudah dikunci (Finalized). Operator tidak dapat menimpa dengan draft baru.');
+        return prev;
+      }
+      prevDraftRecord = existing;
+
+      const pbb1Val = Number(draftData.pbb1?.total ?? draftData.juries?.pos1?.total ?? draftData.pbb?.total ?? 0);
+      const pbb2Val = Number(draftData.pbb2?.total ?? draftData.juries?.pos2?.total ?? draftData.kekompakan?.total ?? 0);
+      
+      let pbbVal = 0;
+      if (pbb1Val > 0 && pbb2Val > 0) {
+        pbbVal = parseFloat(((pbb1Val + pbb2Val) / 2).toFixed(2));
+      } else {
+        pbbVal = pbb1Val || pbb2Val || Number(draftData.pbb?.total ?? 0);
+      }
+
+      const dantonVal = Number(draftData.danton?.total ?? draftData.juries?.pos3?.total ?? 0);
+      const penaltyVal = Number(draftData.penalties?.totalPenalty ?? 0);
+
+      const calculatedFinal = Math.max(0, parseFloat((pbbVal + dantonVal - penaltyVal).toFixed(2)));
+
+      const record = {
+        teamId,
+        status: 'draft',
+        inputBy: currentUser?.name || 'Operator Penginput',
+        inputAt: new Date().toISOString(),
+        paperEvidenceUrl: draftData.paperEvidenceUrl || '',
+        paperEvidenceName: draftData.paperEvidenceName || 'Lembar_Kertas_Juri.jpg',
+        juries: {
+          pos1: {
+            title: 'Juri 1: Kebenaran Teknik PBB',
+            total: pbb1Val,
+            rubricScores: draftData.pbb1?.rubricScores || draftData.juries?.pos1?.rubricScores || draftData.pbb?.rubricScores || {},
+          },
+          pos2: {
+            title: 'Juri 2: Kekompakan Peleton',
+            total: pbb2Val,
+            rubricScores: draftData.pbb2?.rubricScores || draftData.juries?.pos2?.rubricScores || draftData.kekompakan?.rubricScores || {},
+          },
+          pos3: {
+            title: 'Juri 3: Komandan Peleton (Danton)',
+            total: dantonVal,
+            rubricScores: draftData.danton?.rubricScores || draftData.juries?.pos3?.rubricScores || {},
+          },
+        },
+        pbb: {
+          total: pbbVal,
+          j1: pbb1Val,
+          j2: pbb2Val,
+          rubricScores: draftData.pbb?.rubricScores || draftData.pbb1?.rubricScores || {},
+        },
+        danton: { total: dantonVal, rubricScores: draftData.danton?.rubricScores || {} },
+        penalties: draftData.penalties || { totalPenalty: 0 },
+        fieldTimerData: draftData.fieldTimerData || {},
+        finalScore: calculatedFinal,
+        notes: draftData.notes || '',
+        verificationNotes: '',
+        isLocked: false,
+      };
+      createdRecord = record;
+
+      return {
+        ...prev,
+        [teamId]: record,
+      };
+    });
+
+    if (createdRecord) {
+      saveRecordToSheet('scores', { id: teamId, ...createdRecord }).catch(err =>
+        console.warn('[CompetitionContext] Sync draftScore to sheet failed:', err)
+      );
+      recordAuditLog(teamId, 'saveDraftScore', prevDraftRecord, createdRecord, currentUser, 'Input draft lembar fisik juri');
     }
 
-    const dantonVal = Number(draftData.danton?.total ?? draftData.juries?.pos3?.total ?? 0);
-    const penaltyVal = Number(draftData.penalties?.totalPenalty ?? 0);
-
-    const calculatedFinal = Math.max(0, parseFloat((pbbVal + dantonVal - penaltyVal).toFixed(2)));
-
-    const record = {
-      teamId,
-      status: 'draft',
-      inputBy: currentUser?.name || 'Operator Penginput',
-      inputAt: new Date().toISOString(),
-      paperEvidenceUrl: draftData.paperEvidenceUrl || '',
-      paperEvidenceName: draftData.paperEvidenceName || 'Lembar_Kertas_Juri.jpg',
-      juries: {
-        pos1: {
-          title: 'Juri 1: Kebenaran Teknik PBB',
-          total: pbb1Val,
-          rubricScores: draftData.pbb1?.rubricScores || draftData.juries?.pos1?.rubricScores || draftData.pbb?.rubricScores || {},
-        },
-        pos2: {
-          title: 'Juri 2: Kekompakan Peleton',
-          total: pbb2Val,
-          rubricScores: draftData.pbb2?.rubricScores || draftData.juries?.pos2?.rubricScores || draftData.kekompakan?.rubricScores || {},
-        },
-        pos3: {
-          title: 'Juri 3: Komandan Peleton (Danton)',
-          total: dantonVal,
-          rubricScores: draftData.danton?.rubricScores || draftData.juries?.pos3?.rubricScores || {},
-        },
-      },
-      pbb: {
-        total: pbbVal,
-        j1: pbb1Val,
-        j2: pbb2Val,
-        rubricScores: draftData.pbb?.rubricScores || draftData.pbb1?.rubricScores || {},
-      },
-      danton: { total: dantonVal, rubricScores: draftData.danton?.rubricScores || {} },
-      penalties: draftData.penalties || { totalPenalty: 0 },
-      fieldTimerData: draftData.fieldTimerData || {},
-      finalScore: calculatedFinal,
-      notes: draftData.notes || '',
-      verificationNotes: '',
-    };
-
-    setScores(prev => ({
-      ...prev,
-      [teamId]: record,
-    }));
-
-    saveRecordToSheet('scores', { id: teamId, ...record }).catch(err =>
-      console.warn('[CompetitionContext] Sync draftScore to sheet failed:', err)
-    );
-
-    return record;
+    return createdRecord;
   }
 
   function verifyScore(teamId, isApproved, note = '') {
+    if (!['verifikator', 'superadmin'].includes(currentUser?.role)) {
+      console.warn('[Security] Unauthorized call to verifyScore:', currentUser);
+      alert('Akses Ditolak: Hanya Verifikator Nilai atau Superadmin yang berhak memverifikasi skor.');
+      return;
+    }
+
+    let prevRecord = null;
+    let nextRecord = null;
+
     setScores(prev => {
       const existing = prev[teamId];
       if (!existing) return prev;
+      prevRecord = existing;
 
       const updated = {
         ...existing,
@@ -226,6 +301,7 @@ export function createScoringActions({ setScores, currentUser }) {
         verifiedAt: new Date().toISOString(),
         verificationNotes: note,
       };
+      nextRecord = updated;
 
       saveRecordToSheet('scores', { id: teamId, ...updated }).catch(err =>
         console.warn('[CompetitionContext] Sync verifyScore to sheet failed:', err)
@@ -236,12 +312,26 @@ export function createScoringActions({ setScores, currentUser }) {
         [teamId]: updated,
       };
     });
+
+    if (nextRecord) {
+      recordAuditLog(teamId, isApproved ? 'verifyScore_approve' : 'verifyScore_reject', prevRecord, nextRecord, currentUser, note);
+    }
   }
 
   function finalizeScore(teamId, signatureName = null) {
+    if (!['finalisator', 'superadmin'].includes(currentUser?.role)) {
+      console.warn('[Security] Unauthorized call to finalizeScore:', currentUser);
+      alert('Akses Ditolak: Hanya Finalisator (Ketua Dewan Juri) atau Superadmin yang berhak mengesahkan & mengunci skor.');
+      return;
+    }
+
+    let prevRecord = null;
+    let nextRecord = null;
+
     setScores(prev => {
       const existing = prev[teamId];
       if (!existing) return prev;
+      prevRecord = existing;
 
       const updated = {
         ...existing,
@@ -250,6 +340,7 @@ export function createScoringActions({ setScores, currentUser }) {
         finalizedBy: signatureName || currentUser?.name || 'Ketua Dewan Juri',
         finalizedAt: new Date().toISOString(),
       };
+      nextRecord = updated;
 
       saveRecordToSheet('scores', { id: teamId, ...updated }).catch(err =>
         console.warn('[CompetitionContext] Sync finalizeScore to sheet failed:', err)
@@ -260,6 +351,10 @@ export function createScoringActions({ setScores, currentUser }) {
         [teamId]: updated,
       };
     });
+
+    if (nextRecord) {
+      recordAuditLog(teamId, 'finalizeScore', prevRecord, nextRecord, currentUser, `Finalisasi mutlak oleh ${signatureName || currentUser?.name}`);
+    }
   }
 
   return {

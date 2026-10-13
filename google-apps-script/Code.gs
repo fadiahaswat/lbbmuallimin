@@ -49,9 +49,43 @@ function doGet(e) {
       });
     }
 
-    // Pengecekan otentikasi kunci rahasia untuk membaca data skor
+    // Pengecekan otentikasi kunci rahasia untuk membaca data skor & data sensitif
     var userAuthKey = params.authKey || params.token || '';
     var isScoreAuthorized = (userAuthKey === CONFIG.SCORE_SECRET_KEY);
+
+    // Helper sanitasi data pribadi (UU PDP) untuk pengunjung publik
+    function sanitizePublicTeams(list) {
+      if (!Array.isArray(list)) return [];
+      return list.map(function(t) {
+        var copy = Object.assign({}, t);
+        delete copy.waNumber;
+        delete copy.email;
+        delete copy.officialKtp;
+        delete copy.file_officialKtp;
+        delete copy.file_ktp_official;
+        delete copy.paymentProof;
+        delete copy.file_paymentProof;
+        delete copy.file_bukti_bayar;
+        if (copy.files && typeof copy.files === 'object') {
+          var safeFiles = Object.assign({}, copy.files);
+          delete safeFiles.officialKtp;
+          delete safeFiles.paymentProof;
+          copy.files = safeFiles;
+        }
+        return copy;
+      });
+    }
+
+    function sanitizePublicRoster(list) {
+      if (!Array.isArray(list)) return [];
+      return list.map(function(r) {
+        var copy = Object.assign({}, r);
+        if (copy.nisn) copy.nisn = '******';
+        delete copy.birthDate;
+        delete copy.birthPlace;
+        return copy;
+      });
+    }
 
     if (action === 'getAll') {
       var sheets = ss.getSheets();
@@ -63,7 +97,12 @@ function doGet(e) {
           return;
         }
         if (name !== CONFIG.DEFAULT_SHEET) {
-          allData[name] = readSheetData(sh);
+          var rawData = readSheetData(sh);
+          if (!isScoreAuthorized) {
+            if (name === 'teams') rawData = sanitizePublicTeams(rawData);
+            if (name === 'team_roster') rawData = sanitizePublicRoster(rawData);
+          }
+          allData[name] = rawData;
         }
       });
       return jsonResponse({
@@ -96,6 +135,12 @@ function doGet(e) {
     }
 
     var records = readSheetData(sheet);
+
+    // Sanitasi data jika publik meminta tabel pendaftaran atau anggota peleton
+    if (!isScoreAuthorized) {
+      if (tableName === 'teams') records = sanitizePublicTeams(records);
+      if (tableName === 'team_roster') records = sanitizePublicRoster(records);
+    }
 
     // Search Query (S dari SCRUD)
     var searchQuery = (params.q || params.search || '').trim().toLowerCase();
@@ -163,6 +208,10 @@ function doPost(e) {
       payload = e.parameter;
     }
 
+    // Ekstraksi kunci otorisasi dari payload atau query parameter
+    var userAuthKey = payload.authKey || payload.token || (e && e.parameter && (e.parameter.authKey || e.parameter.token)) || '';
+    var isAuthorized = (userAuthKey === CONFIG.SCORE_SECRET_KEY);
+
     var action = payload.action || 'upsert';
     var tableName = payload.table || 'teams';
     var ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -175,6 +224,43 @@ function doPost(e) {
 
     if (action === 'upsert') {
       var item = payload.data || payload.item || {};
+
+      // KEAMANAN 1: Proteksi tabel nilai (scores) & pengaturan (settings)
+      if ((tableName === 'scores' || tableName === 'settings') && !isAuthorized) {
+        return jsonResponse({
+          success: false,
+          error: 'Akses Ditolak: Perubahan data pada tabel ' + tableName + ' memerlukan otorisasi resmi dewan juri / superadmin.'
+        });
+      }
+
+      // KEAMANAN 2: Penegakan Penguncian Nilai (Score Lock Enforcement)
+      if (tableName === 'scores') {
+        var targetScoreId = item.id || item.teamId;
+        if (targetScoreId) {
+          var existingScores = readSheetData(sheet);
+          for (var sIdx = 0; sIdx < existingScores.length; sIdx++) {
+            var sRow = existingScores[sIdx];
+            if (String(sRow.id) === String(targetScoreId) || String(sRow.teamId) === String(targetScoreId)) {
+              if (sRow.isLocked === true || sRow.isLocked === 'true' || sRow.status === 'finalized') {
+                if (payload.overrideLock !== true && !isAuthorized) {
+                  return jsonResponse({
+                    success: false,
+                    error: 'Integritas Terjaga: Nilai peleton ini sudah berstatus Finalized / dikunci. Mutasi ditolak.'
+                  });
+                }
+              }
+              break;
+            }
+          }
+        }
+      }
+
+      // KEAMANAN 3: Pencegahan Bypass Status Pendaftaran
+      if (tableName === 'teams' && !isAuthorized) {
+        // Pendaftaran mandiri dari publik dipaksa ke status pending & unverified
+        item.status = 'pending';
+        item.paymentStatus = 'unverified';
+      }
       
       // 1. OTOMATIS UPLOAD BASE64 KE GOOGLE DRIVE
       item = processAndUploadFilesRecursively(item, driveFolder, item.id || item.regCode || tableName);
@@ -196,11 +282,23 @@ function doPost(e) {
       });
     } 
     else if (action === 'bulkSync' || action === 'bulkUpsert') {
+      // Hanya operasi terotorisasi yang boleh bulk sync tabel skor/pengaturan
+      if ((tableName === 'scores' || tableName === 'settings') && !isAuthorized) {
+        return jsonResponse({
+          success: false,
+          error: 'Akses Ditolak: Bulk sync tabel ' + tableName + ' memerlukan otorisasi resmi.'
+        });
+      }
+
       var items = payload.data || payload.items || [];
       if (!Array.isArray(items)) items = [items];
 
       var count = 0;
       items.forEach(function(item) {
+        if (tableName === 'teams' && !isAuthorized) {
+          item.status = 'pending';
+          item.paymentStatus = 'unverified';
+        }
         item = processAndUploadFilesRecursively(item, driveFolder, item.id || item.regCode || tableName);
         if (tableName === 'teams' && item.roster) {
           syncTeamRosterToSeparateSheet(ss, item);
@@ -218,6 +316,14 @@ function doPost(e) {
       });
     }
     else if (action === 'delete') {
+      // KEAMANAN: Hapus data wajib memiliki otorisasi resmi
+      if (!isAuthorized) {
+        return jsonResponse({
+          success: false,
+          error: 'Akses Ditolak: Operasi delete memerlukan token otorisasi resmi panitia.'
+        });
+      }
+
       var deleteId = payload.id || (payload.data && payload.data.id);
       var deleted = deleteRecord(sheet, deleteId);
 
@@ -239,12 +345,10 @@ function doPost(e) {
       });
     }
     else if (action === 'clearTable') {
-      clearSheetContents(sheet);
+      // KEAMANAN: Aksi clearTable dinonaktifkan permanen demi mencegah sabotase
       return jsonResponse({
-        success: true,
-        action: 'clearTable',
-        table: tableName,
-        timestamp: new Date().toISOString()
+        success: false,
+        error: 'Akses Ditolak: Aksi clearTable telah dinonaktifkan permanen demi perlindungan ketersediaan dan integritas data lomba.'
       });
     }
     else {
@@ -431,6 +535,12 @@ function uploadBase64ToDrive(dataUrl, fileName, folder) {
     var base64Data = parts[1];
     var decoded = Utilities.base64Decode(base64Data);
 
+    // Pembatasan ukuran file maksimal 5 MB untuk mencegah DoS / Drive exhaustion
+    if (base64Data.length > 7 * 1024 * 1024) {
+      console.warn('Ukuran berkas melebihi 5 MB. Unggahan dibatalkan.');
+      return dataUrl;
+    }
+
     var extension = '.jpg';
     if (contentType.indexOf('png') > -1) extension = '.png';
     else if (contentType.indexOf('pdf') > -1) extension = '.pdf';
@@ -445,9 +555,14 @@ function uploadBase64ToDrive(dataUrl, fileName, folder) {
     var blob = Utilities.newBlob(decoded, contentType, finalFileName);
     var file = folder.createFile(blob);
 
-    try {
-      file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-    } catch (e) {}
+    // UU PDP: Dokumen sensitif (KTP, Bukti Bayar) TIDAK disetel public anyone with link
+    var fnLower = finalFileName.toLowerCase();
+    var isSensitiveDoc = fnLower.includes('ktp') || fnLower.includes('bayar') || fnLower.includes('payment') || fnLower.includes('rekomendasi');
+    if (!isSensitiveDoc) {
+      try {
+        file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+      } catch (e) {}
+    }
 
     return file.getUrl();
   } catch (err) {

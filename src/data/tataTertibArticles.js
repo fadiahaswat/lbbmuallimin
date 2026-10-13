@@ -1,11 +1,10 @@
 /**
  * src/data/tataTertibArticles.js
- * 15 Pasal Resmi Tata Tertib LBB Mu'allimin 2027 (Single Source of Truth / Verbatim)
+ * 15 Pasal Resmi Tata Tertib Peserta LBB Mu'allimin 2027 (Verbatim Resmi)
  */
 export const TATA_TERTIB_ARTICLES = [
   {
     pasal: 1,
-    phase: 'Ketentuan Umum',
     title: 'Ketentuan Umum dan Asas Pelaksanaan',
     points: [
       "Lomba Baris - Berbaris Mu'allimin Tahun 2027 (selanjutnya disingkat LBB MU'ALLIMIN 2027) merupakan lomba baris-berbaris tingkat Daerah Istimewa Yogyakarta yang diselenggarakan oleh Madrasah Mu'allimin Muhammadiyah Yogyakarta.",
@@ -18,8 +17,7 @@ export const TATA_TERTIB_ARTICLES = [
   },
   {
     pasal: 2,
-    phase: 'Tahap I: Pra-Lomba',
-    title: 'Tahap I: Pra-Lomba – Pendaftaran Resmi dan Registrasi Administrasi',
+    title: 'Pendaftaran Resmi dan Registrasi Administrasi',
     points: [
       "Pendaftaran resmi dilakukan secara online melalui website resmi: https://lbb.tontimuallimin.com sesuai dengan batas periode waktu yang telah ditentukan oleh panitia.",
       "Seluruh proses pendaftaran bersifat paperless (unggah digital), kecuali berkas fisik asli yang wajib dibawa dan diserahkan langsung saat forum Technical Meeting (TM) Peserta.",
@@ -28,8 +26,7 @@ export const TATA_TERTIB_ARTICLES = [
   },
   {
     pasal: 3,
-    phase: 'Tahap I: Pra-Lomba',
-    title: 'Tahap I: Pra-Lomba – Teknis Technical Meeting (TM) Peserta',
+    title: 'Technical Meeting (TM) Peserta',
     points: [
       "Waktu dan Tempat: Technical Meeting (TM) Peserta dilaksanakan pada hari Sabtu, 9 Januari 2027 pukul 13.00 - 16.30 WIB bertempat di Kampus Induk Madrasah Mu'allimin Muhammadiyah Yogyakarta (Jl. Letjen S. Parman No. 68, Wirobrajan, Kota Yogyakarta).",
       "Kehadiran Delegasi: Setiap sekolah/madrasah wajib diwakili oleh maksimal 2 (dua) orang perwakilan resmi per SEKOLAH (Official/Pembina atau Komandan Peleton), baik yang mengirimkan 1 (satu) peleton maupun 2 (dua) peleton. Perwakilan wajib mengenakan pakaian rapi, sopan, dan bersepatu.",
@@ -38,11 +35,9 @@ export const TATA_TERTIB_ARTICLES = [
   },
   {
     pasal: 4,
-    phase: 'Tahap I: Pra-Lomba',
-    title: 'Tahap I: Pra-Lomba – Teknis Uji Coba Lapangan',
+    title: 'Uji Coba Lapangan',
     points: [
       "Waktu dan Tempat: Uji Coba Lapangan (Familiarisasi Medan Perlombaan) dilaksanakan pada hari Sabtu, 16 Januari 2027 pukul 07.00 – 13.00 WIB di Kampus Terpadu Madrasah Mu'allimin Muhammadiyah Yogyakarta (Sedayu, Bantul).",
-      "Pelaksanaan Paralel di Dua Arena: Uji coba dilaksanakan secara bersamaan di 2 arena resmi:\na. Arena 1 (Lapangan Basket Kampus Terpadu Sedayu): Khusus untuk 18 Peleton Tingkat SD/MI (ukuran 25 m x 14 m).\nb. Arena 2 (Pelataran Embung Kampus Terpadu Sedayu): Khusus untuk 18 Peleton Tingkat SMP/MTs (ukuran 26 m x 15 m).",
       "Alokasi Waktu Resmi Peleton: Setiap peleton memperoleh durasi latihan sesuai waktu lomba, yaitu 8 menit untuk SD dan 12 menit untuk SMP, ditambah 5 menit waktu transisi yang dipandu oleh petugas timekeeper dan LO pendamping. Mohon perhatikan rundown resmi dari panitia, dan setiap peleton wajib bersiap di lokasi 15 menit sebelum gilirannya tiba.",
       "Fokus dan Sasaran Uji Coba: Uji coba lapangan difokuskan murni untuk familiarisasi medan perlombaan bagi peserta (penyesuaian hentakan langkah terhadap tekstur lantai arena serta simulasi alur masuk/keluar arena). Uji coba dilaksanakan tanpa ada penilaian dewan juri.",
       "Ketentuan Perlengkapan Uji Coba: Peserta diperbolehkan mengenakan seragam olahraga/latihan sekolah yang seragam, rapi, dan bersepatu (DILARANG KERAS menggunakan sepatu berpines/paku)."
@@ -50,29 +45,26 @@ export const TATA_TERTIB_ARTICLES = [
   },
   {
     pasal: 5,
-    phase: 'Tahap II: Hari Perlombaan',
-    title: 'Tahap II: Hari Perlombaan – Daftar Ulang, Check-In, dan Jaminan Identitas',
+    title: 'Daftar Ulang, Check-In, dan Jaminan Identitas',
     points: [
       "Daftar ulang peserta pada hari-H perlombaan dilayani pukul 06.00 - 09.00 WIB di Ruang Registrasi Resmi Kampus Terpadu Sedayu.",
       "Daftar ulang lebih dari pukul 09.00 WIB tidak akan dilayani. Bagi peleton yang tidak melakukan daftar ulang dikenakan sanksi tidak dapat mengikuti perlombaan.",
-      "Prosedur Check-In Peleton:\na. Official menyerahkan 1 (satu) kartu identitas resmi (KTP/SIM perwakilan sekolah) sebagai jaminan ketertiban serta kebersihan basecamp.\nb. Official menerima Nomor Dada Peleton resmi (wajib disematkan pada dada personel banjar paling kanan saf kedua (Saf 2 Banjar 1 / S2B1).\nc. Setiap peleton akan menerima fasilitas resmi berupa: ruang kelas basecamp, 1 (satu) dus Air Minum Kemasan (botol) per peleton, 3 (tiga) buah ID Card resmi (1 untuk Official dan 2 untuk Pendukung Resmi), serta 2 (dua) kantong sampah terpilah (organik dan anorganik). Khusus bagi anggota cadangan tidak diberikan ID Card, namun wajib mengenakan seragam peleton lengkap sebagai tanda pengenal resmi.\nd. Peleton diarahkan dan dikawal oleh LO pendamping menuju ruang kelas basecamp resmi yang telah ditentukan.",
+      "Prosedur Check-In Peleton:\na. Official menyerahkan 1 (satu) kartu identitas resmi (KTP/SIM perwakilan sekolah) sebagai jaminan ketertibat serta kebersihan basecamp.\nb. Official menerima Nomor Dada Peleton resmi (wajib disematkan pada dada personel banjar paling kanan saf kedua (Saf 2 Banjar 1 / S2B1).\nc. Setiap peleton akan menerima fasilitas resmi berupa: ruang kelas basecamp, 1 (satu) dus Air Minum Kemasan (botol) per peleton, 3 (tiga) buah ID Card resmi (1 untuk Official dan 2 untuk Pendukung Resmi), serta 2 (dua) kantong sampah terpilah (organik dan anorganik). Khusus bagi anggota cadangan tidak diberikan ID Card, namun wajib mengenakan seragam peleton lengkap sebagai tanda pengenal resmi.\nd. Peleton diarahkan dan dikawal oleh LO pendamping menuju ruang kelas basecamp resmi yang telah ditentukan.",
       "Pengembalian nomor dada dilakukan di pos/arena terakhir kepada petugas pos setelah peleton menyelesaikan seluruh rangkaian materi lomba."
     ]
   },
   {
     pasal: 6,
-    phase: 'Tahap II: Hari Perlombaan',
-    title: 'Tahap II: Hari Perlombaan – Upacara Pembukaan dan Sterilisasi Arena',
+    title: 'Upacara Pembukaan dan Sterilisasi Arena',
     points: [
       "Mulai pukul 06.45 WIB, Lapangan Mini Soccer resmi ditutup dan disterilkan dari seluruh aktivitas umum, penonton, maupun latihan mandiri, serta seluruh peserta upacara pembukaan wajib telah berada di lokasi barisan upacara. Upacara pembukaan dimulai tepat pukul 07.00 WIB. Lapangan hanya diperuntukkan bagi peserta dan petugas upacara pembukaan. Aktivitas peleton di luar rangkaian upacara baru diperbolehkan kembali setelah seluruh rangkaian upacara selesai. Perlombaan dimulai pukul 08.00 WIB.",
-      "Upacara pembukaan resmi wajib diikuti oleh peserta dengan urutan tampil lomba 6 sampai dengan 10 pada masing-masing tingkatan (SD-131, SD-133, SD-135, SD-137, SD-139 dan SMP-242, SMP-244, SMP-246, SMP-248, SMP-260) dengan formasi 1 komandan dan 15 anggota (5 trio lengkap) mengenakan seragam perlombaan.",
-      "Pengecekan barisan upacara dilakukan oleh panitia 15 menit sebelum upacara dimulai. Peleton yang tidak hadir atau terlambat dikenakan sanksi penalti pengurangan nilai sesuai ketentuan Juknis Lapangan."
+      "Upacara pembukaan resmi wajib diikuti oleh peserta dengan urutan tampil lomba 6 sampai dengan 10 (SD-131, SD-133, SD-135, SD-137, SD-139 dan SMP-242, SMP-244, SMP-246, SMP-248, SMP-260) dengan formasi 1 komandan dan 15 anggota (5 trio lengkap) mengenakan seragam perlombaan lengkap.",
+      "Pengecekan barisan upacara dilakukan oleh panitia 15 menit sebelum upacara dimulai. Peleton yang tidak hadir atau terlambat dikenakan sanksi penalti pengurangan nilai sesuai ketentuan Petunjuk Teknis Penilaian & Kejuaraan."
     ]
   },
   {
     pasal: 7,
-    phase: 'Tahap III: Hari Perlombaan',
-    title: 'Tahap III: Hari Perlombaan – Prosedur Daerah Persiapan (DP 1 & DP 2)',
+    title: 'Prosedur Daerah Persiapan (DP 1 & DP 2)',
     points: [
       "Kesiapan di Basecamp: Peleton bersama official sebaiknya sudah bersiap-siap di ruang basecamp sekurang-kurangnya 15 (lima belas) menit sebelum estimasi waktu nomor urutnya akan dipanggil oleh LO pendamping.",
       "Prosedur Pemanggilan Masuk DP 1: Peleton HANYA diperkenankan masuk ke Daerah Persiapan 1 (DP 1) setelah dipanggil secara resmi oleh panitia melalui pengeras suara (mic). Peleton DILARANG KERAS masuk ke DP 1 sebelum dipanggil.",
@@ -83,8 +75,7 @@ export const TATA_TERTIB_ARTICLES = [
   },
   {
     pasal: 8,
-    phase: 'Tahap III: Hari Perlombaan',
-    title: 'Tahap III: Hari Perlombaan – Area Lomba, Penggunaan Basecamp, dan Zonasi Pesantren',
+    title: 'Area Lomba, Penggunaan Basecamp, dan Zonasi Pesantren',
     points: [
       "Lokasi kegiatan dibagi menjadi beberapa area: Area Lomba (Arena 1 & 2), Area Basecamp (ruang kelas transit peleton), Daerah Persiapan (DP 1 Pengecekan Personel & DP 2 Ruang Tunggu), Area Penonton/Suporter, dan Area Steril/Privat Pesantren.",
       "Setiap 1 (satu) ruang kelas difungsikan sebagai basecamp bersama untuk 2 (dua) peleton dengan pembagian resmi yang ditetapkan oleh panitia. Akses masuk ke area ini dijaga ketat dan HANYA diperuntukkan bagi anggota peleton (inti maupun cadangan) yang mengenakan seragam lengkap, serta 1 Official dan 2 Pendukung Resmi yang mengenakan ID Card resmi.",
@@ -100,25 +91,22 @@ export const TATA_TERTIB_ARTICLES = [
   },
   {
     pasal: 9,
-    phase: 'Tahap III: Hari Perlombaan',
-    title: 'Tahap III: Hari Perlombaan – Etika Suporter, Ketertiban Ibadah, dan Integritas',
+    title: 'Etika Suporter, Ketertiban Ibadah, dan Integritas',
     points: [
       "Prinsip Sportivitas: Seluruh peserta, official, pendukung Resmi, dan keluarga besar peleton wajib menjunjung tinggi nilai-nilai sportivitas, kejujuran, saling menghormati, dan kebersamaan pelajar berkarakter.",
       "Ketertiban Suporter saat Tampil: Penonton dan suporter DILARANG membunyikan instrumen musik/alat tabuh, terompet, peluit, megafon/toa, maupun meneriakkan yel-yel saat ada peleton yang sedang tampil di arena perlombaan agar tidak mengganggu konsentrasi komandan, peleton, dan dewan juri.",
       "Larangan Tepukan dan Sorakan Sinis: Tepukan tangan dan yel-yel suporter hanya diizinkan saat jeda pergantian peleton atau sebelum/setelah peleton tampil di arena lomba. DILARANG KERAS melakukan tepukan, teriakan, atau sorakan sinis (mencemooh, mengejek, atau menertawakan) saat melihat peleton lain melakukan kesalahan aba-aba atau gerakan di arena lomba. Pelanggaran terhadap adab suporter ini akan diberi peringatan tegas oleh Divisi Keamanan, dan jika diabaikan dapat berakibat pada sanksi penalti pengurangan nilai bagi peleton yang didukung.",
       "Ketertiban Ibadah Salat: Mengingat Kampus Terpadu Madrasah Mu'allimin merupakan lingkungan Pondok Pesantren, seluruh peserta, official, pendukung resmi, dan penonton diwajibkan menjaga ketenangan, menghentikan aktivitas kegaduhan/yel-yel saat adzan berkumandang dan masuk waktu salat, serta bagi yang beragama Islam dipersilakan menunaikan salat berjamaah di Masjid Kampus Terpadu.",
-      "Larangan Ujaran Kebencian, Hoaks, dan Fitnah:\nPeserta, Official, maupun suporter DILARANG KERAS menyebarkan hoaks, fitnah, ujaran kebencian, kata-kata kotor/tidak pantas, serta penghinaan bernuansa SARA, baik secara lisan, tulisan, maupun melalui media sosial, yang ditujukan secara langsung maupun tidak langsung kepada Panitia, Dewan Juri, maupun sesama peserta.\na. Setiap laporan wajib disertai bukti dan diverifikasi oleh Panitia.\nb. Pihak yang diduga melanggar diberikan kesempatan untuk memberikan klarifikasi.\nc. Sanksi hanya diberikan kepada pihak yang terbukti melakukan pelanggaran. Pelanggaran individu tidak otomatis menjadi pelanggaran peleton atau sekolah.\nd. Pelanggaran terbukti dapat dikenai DISKUALIFIKASI, pelaporan kepada pihak sekolah, dan/atau PEMBLOKIRAN (BLACKLIST) berdasarkan keputusan Panitia.\ne. BLACKLIST terhadap peleton atau sekolah hanya dapat diberlakukan apabila terbukti pelanggaran dilakukan secara terorganisasi, mengatasnamakan, atau melibatkan pihak sekolah/peleton.",
-      "Larangan Modifikasi Sol Sepatu: DILARANG KERAS menempelkan atau memasang pines, paku payung, paku besi, spikes, pul logam, atau benda tajam/keras lainnya pada alas kaki/sol sepatu yang berpotensi merusak permukaan lantai arena dan membahayakan peserta. Pemeriksaan sepatu dilakukan secara ketat di DP 1.",
+      "Larangan Ujaran Kebencian, Hoaks, dan Fitnah: Peserta, Official, maupun suporter DILARANG KERAS menyebarkan hoaks, fitnah, ujaran kebencian, kata-kata kotor/tidak pantas, serta penghinaan bernuansa SARA, baik secara lisan, tulisan, maupun melalui media sosial, yang ditujukan secara langsung maupun tidak langsung kepada Panitia, Dewan Juri, maupun sesama peserta.\na. Setiap laporan wajib disertai bukti dan diverifikasi oleh Panitia.\nb. Pihak yang diduga melanggar diberikan kesempatan untuk memberikan klarifikasi.\nc. Sanksi hanya diberikan kepada pihak yang terbukti melakukan pelanggaran. Pelanggaran individu tidak otomatis menjadi pelanggaran peleton atau sekolah.\nd. Pelanggaran terbukti dapat dikenai DISKUALIFIKASI, pelaporan kepada pihak sekolah, dan/atau PEMBLOKIRAN (BLACKLIST) berdasarkan keputusan Panitia.\ne. BLACKLIST terhadap peleton atau sekolah hanya dapat diberlakukan apabila terbukti pelanggaran dilakukan secara terorganisasi, mengatasnamakan, atau melibatkan pihak sekolah/peleton.",
       "Larangan Senjata & Tindakan Kekerasan: Peserta dan seluruh unsur pendukungnya DILARANG membawa senjata tajam, senjata api, bahan peledak, rokok, miras, maupun obat-obatan terlarang, serta DILARANG terlibat dalam segala bentuk kekerasan fisik atau perkelahian. Pelanggaran dikenakan sanksi DISKUALIFIKASI dan diserahkan kepada pihak berwajib."
     ]
   },
   {
     pasal: 10,
-    phase: 'Kesehatan & Keamanan',
     title: 'Kesehatan dan Penanganan Medis Lapangan',
     points: [
       "Seluruh peserta yang mengikuti lomba diharapkan berada dalam kondisi sehat jasmani dan rohani serta mampu mengikuti seluruh rangkaian perlombaan.",
-      "Peserta dan Official wajib menyampaikan informasi mengenai kondisi kesehatan penting atau riwayat medis peserta yang dapat memengaruhi keselamatan selama perlombaan kepada Panitia sebelum lomba berlangsung.",
+      "Peserta dan Official wajib menyampaikan informasi mengenai kondisi kesehatan penting atau riwayat medis peserta yang dapat memengaruhi keselamatan selama perlombaan kepada Panitia sebelum lomba berlangsung",
       "Panitia menyediakan Pos Pertolongan Pertama pada Kecelakaan (P3K) dan tim medis untuk penanganan insiden darurat selama kegiatan berlangsung. Layanan medis didukung oleh Palang Merah Remaja Siswa Mu'allimin (SUMMIT), Puskesmas Sedayu, serta tenaga medis terkait lainnya.",
       "Penanganan medis di lokasi difokuskan pada pertolongan pertama. Apabila diperlukan penanganan lanjutan, tim medis Panitia membantu proses rujukan ke fasilitas kesehatan terdekat dengan koordinasi bersama Official atau pihak sekolah yang bersangkutan.",
       "Keputusan terkait kelanjutan peserta dalam perlombaan setelah mengalami kondisi medis menjadi pertimbangan tim medis dan Panitia dengan mengutamakan keselamatan peserta.",
@@ -127,17 +115,15 @@ export const TATA_TERTIB_ARTICLES = [
   },
   {
     pasal: 11,
-    phase: 'Penghargaan',
     title: 'Kategori dan Penghargaan Juara',
     points: [
-      "Sebagai bentuk apresiasi dan motivasi bagi peserta, panitia LBB Mu'allimin Tahun 2027 menyediakan hadiah dan penghargaan berikut:\na. Piala Bergilir Juara Umum:\n  1) Piala Bergilir Juara Umum Tingkat SD/MI Sederajat\n  2) Piala Bergilir Juara Umum Tingkat SMP/MTs Sederajat\nb. Kategori Peleton Tingkat SD/MI Sederajat: Juara I, II, III (Piala Tetap + Uang Pembinaan) dan Juara Harapan I, II, III (Piala Tetap).\nc. Kategori Peleton Tingkat SMP/MTs Sederajat: Juara I, II, III (Piala Tetap + Uang Pembinaan) dan Juara Harapan I, II, III (Piala Tetap).\nd. Kategori Komandan Peleton Terbaik Tingkat SD/MI: Juara I (Piala Tetap + Uang Pembinaan) serta Juara II dan III (Piala Tetap).\ne. Kategori Komandan Peleton Terbaik Tingkat SMP/MTs: Juara I (Piala Tetap + Uang Pembinaan) serta Juara II dan III (Piala Tetap).",
+      "Sebagai bentuk apresiasi dan motivasi bagi peserta, panitia LBB Mu'allimin Tahun 2027 menyediakan hadiah dan penghargaan berikut:\na. Piala Bergilir Juara Umum:\n1) Piala Bergilir Juara Umum Tingkat SD/MI Sederajat\n2) Piala Bergilir Juara Umum Tingkat SMP/MTs Sederajat\nb. Kategori Peleton Tingkat SD/MI Sederajat: Juara I, II, III (Piala Tetap + Uang Pembinaan) dan Juara Harapan I, II, III (Piala Tetap).\nc. Kategori Peleton Tingkat SMP/MTs Sederajat: Juara I, II, III (Piala Tetap + Uang Pembinaan) dan Juara Harapan I, II, III (Piala Tetap).\nd. Kategori Komandan Peleton Terbaik Tingkat SD/MI: Juara I (Piala Tetap + Uang Pembinaan) serta Juara II dan III (Piala Tetap).\ne. Kategori Komandan Peleton Terbaik Tingkat SMP/MTs: Juara I (Piala Tetap + Uang Pembinaan) serta Juara II dan III (Piala Tetap).",
       "Seluruh Pemenang (mencakup Juara I, II, III Peleton; Juara Harapan I, II, III Peleton; dan Juara I, II, III Komandan Peleton Terbaik untuk setiap tingkatan) akan mendapatkan E-Sertifikat Piagam Penghargaan sesuai dengan prestasi yang telah diraih."
     ]
   },
   {
     pasal: 12,
-    phase: 'Penilaian',
-    title: 'PENENTUAN JUARA DAN SISTEM PEROLEHAN POIN',
+    title: 'Penentuan Juara dan Sistem Perolehan Poin',
     points: [
       "Penentuan Juara Peleton, Juara Harapan, dan Komandan Peleton Terbaik (tingkat SD/MI maupun SMP/MTs) ditetapkan secara sah berdasarkan hasil rekapitulasi nilai dan hasil Sidang Dewan Juri independen dari unsur TNI, POLRI, dan PPI. Keputusan ini bersifat mutlak serta tidak dapat diganggu gugat.",
       "Regulasi mengenai formula penilaian, kriteria pemecah seri (tie-breaker), sanksi penalti pengurangan nilai, serta penentuan Juara Umum diatur secara penuh dan mengikat dalam dokumen Petunjuk Teknis Penilaian & Kejuaraan.",
@@ -146,8 +132,7 @@ export const TATA_TERTIB_ARTICLES = [
   },
   {
     pasal: 13,
-    phase: 'Tahap IV: Pasca-Lomba',
-    title: 'TAHAP IV: PASCA-LOMBA - APEL PENUTUPAN, PENGUMUMAN JUARA, DAN MEKANISME SANGGAH',
+    title: 'Apel Penutupan, Pengumuman Juara, dan Mekanisme Sanggah',
     points: [
       "Apel Penutupan: Pukul 15.45 WIB, SELURUH perwakilan peserta penutupan (1 Komandan dan 4 Anggota Peleton) WAJIB telah berada di lokasi barisan Lapangan Mini Soccer dalam formasi rapi, tertib, dan berseragam lengkap bersepatu untuk pengecekan presensi barisan oleh Panitia Protokol. Apel Penutupan resmi dimulai tepat pukul 16.00 WIB.",
       "Pengumuman Kejuaraan: Pengumuman kejuaraan dilaksanakan setelah Apel Penutupan selesai. Area pengumuman di Lapangan Mini Soccer terbuka bagi seluruh peserta dan pendukung peleton.",
@@ -158,8 +143,7 @@ export const TATA_TERTIB_ARTICLES = [
   },
   {
     pasal: 14,
-    phase: 'Tahap IV: Pasca-Lomba',
-    title: 'TAHAP IV: PASCA-LOMBA - KEBERSIHAN BASECAMP, CHECKOUT, DAN PEMULANGAN',
+    title: 'Kebersihan Basecamp, Checkout, dan Pemulangan',
     points: [
       "Kewajiban Menjaga Kebersihan & Fasilitas: Seluruh partisipan DIWAJIBKAN menjaga kebersihan, kerapian, dan keutuhan fasilitas di lingkungan Kampus Terpadu Madrasah Mu'allimin Muhammadiyah Yogyakarta (Sedayu, Bantul).",
       "Batas Waktu Maksimal Pengosongan Basecamp: Seluruh peleton wajib telah menyelesaikan proses checkout, membersihkan ruangan, menyerahkan sampah terpilah ke Area Checkout, dan mengosongkan ruang kelas basecamp selambat-lambatnya pukul 15.00 WIB (1 jam sebelum Upacara Penutupan dimulai).",
@@ -170,7 +154,6 @@ export const TATA_TERTIB_ARTICLES = [
   },
   {
     pasal: 15,
-    phase: 'Ketentuan Penutup',
     title: 'Penutup',
     points: [
       "Demikian Tata Tertib ini dibuat untuk menjadi pedoman resmi bagi seluruh pihak yang terlibat dalam Lomba Baris-Berbaris Mu'allimin Tahun 2027.",

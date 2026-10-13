@@ -223,12 +223,12 @@ export default function FaqContact() {
           {/* FAQ Column (Left - 8 Cols) */}
           <div className="lg:col-span-8 space-y-6">
             {/* Category Filter Pills */}
-            <div className="flex flex-wrap items-center gap-2 pb-2 border-b border-slate-200">
+            <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1 pb-2.5 sm:flex-wrap border-b border-slate-200 -mx-4 px-4 sm:mx-0 sm:px-0">
               {categories.map(cat => (
                 <button
                   key={cat.label}
                   onClick={() => setSelectedFilter(cat.label)}
-                  className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-2 cursor-pointer shadow-sm ${
+                  className={`shrink-0 whitespace-nowrap px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all flex items-center gap-2 cursor-pointer shadow-xs ${
                     selectedFilter === cat.label
                       ? 'bg-slate-900 text-white'
                       : 'bg-white hover:bg-slate-100 text-slate-600 hover:text-slate-900 border border-slate-200'
@@ -236,7 +236,7 @@ export default function FaqContact() {
                 >
                   <span>{cat.label}</span>
                   <span
-                    className={`text-[10px] px-1.5 py-0.5 rounded ${
+                    className={`text-[10px] px-1.5 py-0.5 rounded-md ${
                       selectedFilter === cat.label ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500'
                     }`}
                   >

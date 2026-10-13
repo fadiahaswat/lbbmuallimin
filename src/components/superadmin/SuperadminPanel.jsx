@@ -47,8 +47,40 @@ export default function SuperadminPanel() {
     users,
     addStaffUser,
     updateStaffUser,
-    deleteStaffUser
+    deleteStaffUser,
+    currentUser,
+    role
   } = useCompetition();
+
+  const userRole = currentUser?.role || role;
+  if (userRole !== 'superadmin') {
+    return (
+      <div className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center p-6 text-center">
+        <div className="max-w-md w-full bg-slate-900 border border-slate-800 rounded-3xl p-8 space-y-5 shadow-2xl">
+          <div className="w-16 h-16 rounded-2xl bg-red-500/10 border border-red-500/30 text-red-400 flex items-center justify-center mx-auto">
+            <Lock className="w-8 h-8" />
+          </div>
+          <div className="space-y-2">
+            <span className="text-[10px] font-black uppercase tracking-widest text-red-400 bg-red-500/10 px-3 py-1 rounded-full border border-red-500/20">
+              Akses Ditolak
+            </span>
+            <h2 className="text-xl font-black uppercase tracking-tight text-white">
+              Panel Superadmin Terkunci
+            </h2>
+            <p className="text-xs text-slate-400 leading-relaxed">
+              Halaman ini memiliki kewenangan tertinggi dan hanya dapat diakses oleh Akun Resmi Ketua Panitia / IT Master (Superadmin).
+            </p>
+          </div>
+          <button
+            onClick={() => setActiveView('landing')}
+            className="w-full py-3 bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all cursor-pointer"
+          >
+            Kembali ke Beranda
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   const [toastMsg, setToastMsg] = useState('');
 

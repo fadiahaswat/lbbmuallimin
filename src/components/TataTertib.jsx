@@ -49,8 +49,8 @@ export default function TataTertib() {
     if (!query) return articles;
     return articles.filter(item => {
       const titleMatch = item.title.toLowerCase().includes(query);
-      const phaseMatch = item.phase.toLowerCase().includes(query);
-      const pasalMatch = `pasal ${item.pasal}`.includes(query);
+      const phaseMatch = item.phase ? item.phase.toLowerCase().includes(query) : false;
+      const pasalMatch = `pasal ${item.pasal}`.includes(query) || `${item.pasal}`.includes(query);
       const pointsMatch = item.points.some(p => p.toLowerCase().includes(query));
       return titleMatch || phaseMatch || pasalMatch || pointsMatch;
     });
@@ -118,19 +118,19 @@ export default function TataTertib() {
           </div>
 
           {/* Quick Toggle Accordion Controls */}
-          <div className="flex items-center justify-between gap-3 text-xs px-1">
-            <span className="text-slate-500 font-medium flex items-center gap-1.5">
-              <BookOpen className="w-3.5 h-3.5 text-slate-400" />
-              15 Pasal Regulasi Non-Teknis & Etika
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 text-xs px-1">
+            <span className="text-slate-500 font-semibold flex items-center gap-1.5">
+              <BookOpen className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+              <span>15 Pasal Regulasi Non-Teknis & Etika</span>
             </span>
-            <div className="flex items-center gap-2">
+            <div className="grid grid-cols-2 sm:flex sm:items-center gap-2 w-full sm:w-auto">
               <button
                 type="button"
                 onClick={() => {
                   const allOpen = articles.reduce((acc, a) => ({ ...acc, [a.pasal]: true }), {});
                   setOpenAccordions(allOpen);
                 }}
-                className="px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 text-slate-700 font-semibold transition-all shadow-xs cursor-pointer text-xs"
+                className="px-3.5 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 text-slate-700 font-bold transition-all shadow-xs cursor-pointer text-xs text-center justify-center"
               >
                 Buka Semua
               </button>
@@ -140,7 +140,7 @@ export default function TataTertib() {
                   const allClosed = articles.reduce((acc, a) => ({ ...acc, [a.pasal]: false }), {});
                   setOpenAccordions(allClosed);
                 }}
-                className="px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 text-slate-700 font-semibold transition-all shadow-xs cursor-pointer text-xs"
+                className="px-3.5 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 text-slate-700 font-bold transition-all shadow-xs cursor-pointer text-xs text-center justify-center"
               >
                 Tutup Semua
               </button>
@@ -166,13 +166,8 @@ export default function TataTertib() {
                         {item.pasal}
                       </span>
                       <div className="min-w-0">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <span className="font-bold text-base md:text-lg text-slate-900 leading-snug">
-                            Pasal {item.pasal}: {item.title}
-                          </span>
-                        </div>
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mt-0.5">
-                          {item.phase}
+                        <span className="font-bold text-base md:text-lg text-slate-900 leading-snug block">
+                          Pasal {item.pasal}: {item.title}
                         </span>
                       </div>
                     </div>

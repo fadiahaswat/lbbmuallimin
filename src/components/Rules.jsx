@@ -150,19 +150,19 @@ export default function Rules({ embedded = false }) {
               </div>
 
               {/* Quick Toggle Accordion Controls */}
-              <div className="flex items-center justify-between gap-3 text-xs px-1">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 text-xs px-1">
                 <span className="text-slate-500 font-semibold flex items-center gap-1.5">
-                  <BookOpen className="w-3.5 h-3.5 text-slate-400" />
-                  8 Bab Regulasi & Ketentuan Lapangan
+                  <BookOpen className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                  <span>8 Bab Regulasi & Ketentuan Lapangan</span>
                 </span>
-                <div className="flex items-center gap-2">
+                <div className="grid grid-cols-2 sm:flex sm:items-center gap-2 w-full sm:w-auto">
                   <button
                     type="button"
                     onClick={() => {
                       const allOpen = Object.keys(openAccordions).reduce((acc, k) => ({ ...acc, [k]: true }), {});
                       setOpenAccordions(allOpen);
                     }}
-                    className="px-3.5 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 text-slate-700 font-bold transition-all shadow-xs cursor-pointer text-xs"
+                    className="px-3.5 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 text-slate-700 font-bold transition-all shadow-xs cursor-pointer text-xs text-center justify-center"
                   >
                     Buka Semua
                   </button>
@@ -172,7 +172,7 @@ export default function Rules({ embedded = false }) {
                       const allClosed = Object.keys(openAccordions).reduce((acc, k) => ({ ...acc, [k]: false }), {});
                       setOpenAccordions(allClosed);
                     }}
-                    className="px-3.5 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 text-slate-700 font-bold transition-all shadow-xs cursor-pointer text-xs"
+                    className="px-3.5 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 text-slate-700 font-bold transition-all shadow-xs cursor-pointer text-xs text-center justify-center"
                   >
                     Tutup Semua
                   </button>

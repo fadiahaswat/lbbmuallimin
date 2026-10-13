@@ -84,6 +84,7 @@ export async function saveRecordToSheet(table, data) {
       action: 'upsert',
       table,
       data,
+      authKey: BACKEND_CONFIG?.SCORE_SECRET_KEY || '',
     };
 
     const response = await fetch(APPS_SCRIPT_URL, {
@@ -126,6 +127,7 @@ export async function bulkSyncToSheet(table, items) {
       action: 'bulkSync',
       table,
       data: items,
+      authKey: BACKEND_CONFIG?.SCORE_SECRET_KEY || '',
     };
 
     const response = await fetch(APPS_SCRIPT_URL, {
@@ -241,6 +243,7 @@ export async function deleteRecordFromSheet(table, id) {
       action: 'delete',
       table,
       id,
+      authKey: BACKEND_CONFIG?.SCORE_SECRET_KEY || '',
     };
 
     const response = await fetch(APPS_SCRIPT_URL, {

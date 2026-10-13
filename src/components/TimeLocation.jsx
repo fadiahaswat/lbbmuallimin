@@ -215,7 +215,7 @@ export default function TimeLocation() {
               <div className="relative z-10 space-y-4">
                 {/* Header Card */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-start sm:items-center gap-3">
                     <div className="w-12 h-12 rounded-2xl bg-slate-900 text-amber-400 flex items-center justify-center shadow-xs shrink-0 group-hover:scale-105 transition-transform">
                       <MapPin className="w-6 h-6" />
                     </div>
@@ -235,7 +235,7 @@ export default function TimeLocation() {
                     href={VENUE.MAPS_URL}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 text-xs font-bold text-red-700 hover:text-red-800 transition-colors bg-red-50 hover:bg-red-100 border border-red-200 px-3.5 py-2 rounded-xl shrink-0 self-start sm:self-auto shadow-sm"
+                    className="inline-flex items-center justify-center gap-1.5 text-xs font-bold text-red-700 hover:text-red-800 transition-colors bg-red-50 hover:bg-red-100 border border-red-200 px-3.5 py-2.5 rounded-xl shrink-0 w-full sm:w-auto shadow-xs active:scale-[0.99]"
                   >
                     <span>Buka Google Maps</span>
                     <ExternalLink className="w-3.5 h-3.5" />
@@ -284,7 +284,7 @@ export default function TimeLocation() {
               <div className="relative z-10 space-y-4">
                 {/* Header Card */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-start sm:items-center gap-3">
                     <div className="w-12 h-12 rounded-2xl bg-slate-900 text-amber-400 flex items-center justify-center shadow-xs shrink-0 group-hover:scale-105 transition-transform">
                       <MapPin className="w-6 h-6" />
                     </div>
@@ -304,7 +304,7 @@ export default function TimeLocation() {
                     href={VENUE_INDUK.MAPS_URL}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-700 hover:text-blue-800 transition-colors bg-blue-50 hover:bg-blue-100 border border-blue-200 px-3.5 py-2 rounded-xl shrink-0 self-start sm:self-auto shadow-sm"
+                    className="inline-flex items-center justify-center gap-1.5 text-xs font-bold text-blue-700 hover:text-blue-800 transition-colors bg-blue-50 hover:bg-blue-100 border border-blue-200 px-3.5 py-2.5 rounded-xl shrink-0 w-full sm:w-auto shadow-xs active:scale-[0.99]"
                   >
                     <span>Buka Google Maps</span>
                     <ExternalLink className="w-3.5 h-3.5" />

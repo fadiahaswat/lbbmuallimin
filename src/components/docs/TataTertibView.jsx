@@ -162,8 +162,9 @@ export default function TataTertibView() {
     if (!queryArticle) return true;
     return (
       item.title.toLowerCase().includes(queryArticle) ||
+      `pasal ${item.pasal}`.includes(queryArticle) ||
       item.pasal.toString().includes(queryArticle) ||
-      item.phase.toLowerCase().includes(queryArticle) ||
+      (item.phase && item.phase.toLowerCase().includes(queryArticle)) ||
       item.points.some(pt => pt.toLowerCase().includes(queryArticle))
     );
   });
@@ -297,19 +298,19 @@ export default function TataTertibView() {
                 )}
               </div>
 
-              <div className="flex items-center justify-between text-xs text-slate-500 font-medium px-1">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 text-xs text-slate-500 font-medium px-1">
                 <span className="flex items-center gap-1.5 text-xs text-slate-600 font-bold">
-                  <BookOpen className="w-3.5 h-3.5 text-red-600" />
-                  15 Pasal Regulasi Non-Teknis & Etika (Sama Persis Beranda)
+                  <BookOpen className="w-3.5 h-3.5 text-red-600 shrink-0" />
+                  <span>15 Pasal Regulasi Non-Teknis & Etika (Sama Persis Beranda)</span>
                 </span>
-                <div className="flex items-center gap-2">
+                <div className="grid grid-cols-2 sm:flex sm:items-center gap-2 w-full sm:w-auto">
                   <button
                     type="button"
                     onClick={() => {
                       const allOpen = TATA_TERTIB_ARTICLES.reduce((acc, a) => ({ ...acc, [a.pasal]: true }), {});
                       setOpenAccordions(allOpen);
                     }}
-                    className="px-2.5 py-1 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-[11px] shadow-2xs cursor-pointer"
+                    className="px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-2xs cursor-pointer text-center justify-center"
                   >
                     Buka Semua
                   </button>
@@ -319,7 +320,7 @@ export default function TataTertibView() {
                       const allClosed = TATA_TERTIB_ARTICLES.reduce((acc, a) => ({ ...acc, [a.pasal]: false }), {});
                       setOpenAccordions(allClosed);
                     }}
-                    className="px-2.5 py-1 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-[11px] shadow-2xs cursor-pointer"
+                    className="px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-2xs cursor-pointer text-center justify-center"
                   >
                     Tutup Semua
                   </button>
@@ -348,9 +349,6 @@ export default function TataTertibView() {
                         <div className="min-w-0">
                           <span className="font-bold text-sm text-slate-900 leading-snug block">
                             Pasal {item.pasal}: {item.title}
-                          </span>
-                          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mt-0.5">
-                            {item.phase}
                           </span>
                         </div>
                       </div>

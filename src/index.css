@@ -90,6 +90,15 @@ video::-webkit-media-controls-panel {
   background: #94a3b8;
 }
 
+/* Hide scrollbar utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 /* Halftone Gradients */
 .bg-halftone {
   background-image: radial-gradient(#ffffff 1px, transparent 1px);

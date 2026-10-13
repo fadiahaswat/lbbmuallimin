@@ -12,7 +12,9 @@ import {
   ArrowLeft,
   Heart,
   TrendingUp,
-  Share2
+  Share2,
+  Lock,
+  Shield
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
 import { SITE, TIMELINE, VENUE } from '../../config.js';
@@ -39,17 +41,28 @@ export default function LiveLeaderboard() {
     return matchJenjang && matchSearch;
   });
 
-  // Calculate official ranked teams
+  // Calculate official ranked teams with tie-breaker criteria (FinalScore -> PBB -> Danton -> Least Penalty)
   const rankedOfficialTeams = [...filteredTeams].map(team => {
     const s = scores[team.id];
     const finalScore = s?.finalScore || 0;
+    const pbbScore = Number(s?.pbb?.total || 0);
+    const dantonScore = Number(s?.danton?.total || 0);
+    const penaltyTotal = Number(s?.penalties?.totalPenalty || 0);
     return {
       team,
       scoreData: s,
       finalScore,
+      pbbScore,
+      dantonScore,
+      penaltyTotal,
       hasScore: Boolean(s),
     };
-  }).sort((a, b) => b.finalScore - a.finalScore);
+  }).sort((a, b) => {
+    if (b.finalScore !== a.finalScore) return b.finalScore - a.finalScore;
+    if (b.pbbScore !== a.pbbScore) return b.pbbScore - a.pbbScore;
+    if (b.dantonScore !== a.dantonScore) return b.dantonScore - a.dantonScore;
+    return a.penaltyTotal - b.penaltyTotal;
+  });
 
   // Toggle fullscreen mode
   function toggleStageMode() {
@@ -172,8 +185,28 @@ export default function LiveLeaderboard() {
           </div>
         </div>
 
-        {/* Podium Display for Top 3 (Mode Panggung / Videotron Aesthetic) */}
-        {rankedOfficialTeams.length >= 3 && (
+        {/* Banner Kerahasiaan Jika Skor Belum Dipublikasikan Resmi */}
+        {!isOfficialScoreVisible && (
+          <div className="bg-amber-500/10 border border-amber-500/30 rounded-3xl p-6 sm:p-8 text-center space-y-4">
+            <div className="w-14 h-14 rounded-2xl bg-amber-500/20 text-amber-500 mx-auto flex items-center justify-center">
+              <Lock className="w-7 h-7" />
+            </div>
+            <div className="max-w-xl mx-auto space-y-1.5">
+              <span className="text-[10px] font-black uppercase tracking-widest text-amber-500 bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/20">
+                Kerahasiaan Penjurian LBB 2027
+              </span>
+              <h3 className="text-lg sm:text-xl font-black uppercase tracking-tight text-slate-900 dark:text-white">
+                Hasil Klasemen & Skor Sementara Terkunci
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                Dewan Juri sedang melakukan rekapitulasi, scrutineering, dan verifikasi silang bukti fisik. Skor resmi akan ditampilkan secara transparan setelah pengesahan Berita Acara Dewan Juri.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Podium Display for Top 3 (Hanya jika skor resmi sudah dibuka) */}
+        {isOfficialScoreVisible && rankedOfficialTeams.length >= 3 && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4">
             {/* Podium 2 (Perak) */}
             <div className={`p-6 rounded-3xl border flex flex-col items-center justify-between text-center relative order-2 md:order-1 ${
@@ -224,7 +257,7 @@ export default function LiveLeaderboard() {
           </div>
         )}
 
-        {/* Official Scores Table */}
+        {/* Tabel Peleton / Scores Table */}
         <div className={`rounded-3xl border overflow-hidden shadow-lg ${
           isStageMode ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'
         }`}>
@@ -233,29 +266,35 @@ export default function LiveLeaderboard() {
               <tr className={`uppercase text-[11px] font-black border-b ${
                 isStageMode ? 'bg-slate-950 text-slate-400 border-slate-800' : 'bg-slate-900 text-white border-slate-800'
               }`}>
-                <th className="py-4 px-4 text-center w-16">Peringkat</th>
+                {isOfficialScoreVisible && <th className="py-4 px-4 text-center w-16">Peringkat</th>}
                 <th className="py-4 px-3 text-center w-16">No. Undi</th>
                 <th className="py-4 px-4">Peleton & Sekolah</th>
                 <th className="py-4 px-3 text-center w-20">Jenjang</th>
-                <th className="py-4 px-3 text-center w-24">Juri 1 (PBB)</th>
-                <th className="py-4 px-3 text-center w-24">Juri 2 (PBB)</th>
-                <th className="py-4 px-3 text-center w-24 bg-blue-500/10 text-blue-400">Rerata PBB</th>
-                <th className="py-4 px-3 text-center w-24">Juri 3 (Danton)</th>
-                <th className="py-4 px-3 text-center w-20 text-red-400">Penalti</th>
-                <th className="py-4 px-4 text-right w-28 bg-amber-500/20 text-amber-400">Skor Akhir</th>
+                {isOfficialScoreVisible ? (
+                  <>
+                    <th className="py-4 px-3 text-center w-24">Juri 1 (PBB)</th>
+                    <th className="py-4 px-3 text-center w-24">Juri 2 (PBB)</th>
+                    <th className="py-4 px-3 text-center w-24 bg-blue-500/10 text-blue-400">Rerata PBB</th>
+                    <th className="py-4 px-3 text-center w-24">Juri 3 (Danton)</th>
+                    <th className="py-4 px-3 text-center w-20 text-red-400">Penalti</th>
+                    <th className="py-4 px-4 text-right w-28 bg-amber-500/20 text-amber-400">Skor Akhir</th>
+                  </>
+                ) : (
+                  <th className="py-4 px-4 text-center w-36">Status Tampil</th>
+                )}
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200 dark:divide-slate-800 font-medium">
               {rankedOfficialTeams.length === 0 ? (
                 <tr>
-                  <td colSpan={10} className="py-8 text-center text-slate-400">
-                    Belum ada nilai resmi yang terinput.
+                  <td colSpan={isOfficialScoreVisible ? 10 : 4} className="py-8 text-center text-slate-400">
+                    Belum ada peleton yang terdaftar pada kategori ini.
                   </td>
                 </tr>
               ) : (
                 rankedOfficialTeams.map((item, idx) => {
                   const rank = idx + 1;
-                  const isTop3 = rank <= 3;
+                  const isTop3 = isOfficialScoreVisible && rank <= 3;
                   const s = item.scoreData;
                   const juries = s?.juries || {};
 
@@ -280,12 +319,14 @@ export default function LiveLeaderboard() {
                           : (isStageMode ? 'hover:bg-slate-800/50' : 'hover:bg-slate-50')
                       }`}
                     >
-                      <td className="py-4 px-4 text-center">
-                        {rank === 1 && <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-yellow-400 text-slate-950 font-black text-xs shadow-xs">1</span>}
-                        {rank === 2 && <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-slate-300 text-slate-900 font-black text-xs shadow-xs">2</span>}
-                        {rank === 3 && <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-amber-600 text-white font-black text-xs shadow-xs">3</span>}
-                        {rank > 3 && <span className="text-slate-500 font-bold">{rank}</span>}
-                      </td>
+                      {isOfficialScoreVisible && (
+                        <td className="py-4 px-4 text-center">
+                          {rank === 1 && <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-yellow-400 text-slate-950 font-black text-xs shadow-xs">1</span>}
+                          {rank === 2 && <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-slate-300 text-slate-900 font-black text-xs shadow-xs">2</span>}
+                          {rank === 3 && <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-amber-600 text-white font-black text-xs shadow-xs">3</span>}
+                          {rank > 3 && <span className="text-slate-500 font-bold">{rank}</span>}
+                        </td>
+                      )}
                       <td className="py-4 px-3 text-center font-mono font-bold text-slate-600 dark:text-slate-300">
                         {item.team.lotNumber ? String(item.team.lotNumber).padStart(2, '0') : '--'}
                       </td>
@@ -298,16 +339,30 @@ export default function LiveLeaderboard() {
                           {item.team.jenjang}
                         </span>
                       </td>
-                      <td className="py-4 px-3 text-center font-mono text-slate-700 dark:text-slate-300">{juri1}</td>
-                      <td className="py-4 px-3 text-center font-mono text-slate-700 dark:text-slate-300">{juri2}</td>
-                      <td className="py-4 px-3 text-center font-mono font-bold text-blue-600 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-950/20">{pbbAvg}</td>
-                      <td className="py-4 px-3 text-center font-mono text-slate-700 dark:text-slate-300">{juri3}</td>
-                      <td className="py-4 px-3 text-center font-mono text-rose-600 font-bold">
-                        {penalty > 0 ? `-${penalty}` : '0'}
-                      </td>
-                      <td className="py-4 px-4 text-right font-mono font-black text-base text-amber-500">
-                        {item.finalScore.toFixed(2)}
-                      </td>
+                      {isOfficialScoreVisible ? (
+                        <>
+                          <td className="py-4 px-3 text-center font-mono text-slate-700 dark:text-slate-300">{juri1}</td>
+                          <td className="py-4 px-3 text-center font-mono text-slate-700 dark:text-slate-300">{juri2}</td>
+                          <td className="py-4 px-3 text-center font-mono font-bold text-blue-600 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-950/20">{pbbAvg}</td>
+                          <td className="py-4 px-3 text-center font-mono text-slate-700 dark:text-slate-300">{juri3}</td>
+                          <td className="py-4 px-3 text-center font-mono text-rose-600 font-bold">
+                            {penalty > 0 ? `-${penalty}` : '0'}
+                          </td>
+                          <td className="py-4 px-4 text-right font-mono font-black text-base text-amber-500">
+                            {item.finalScore.toFixed(2)}
+                          </td>
+                        </>
+                      ) : (
+                        <td className="py-4 px-4 text-center">
+                          <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold ${
+                            item.hasScore
+                              ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                              : 'bg-slate-100 text-slate-600 border border-slate-200'
+                          }`}>
+                            {item.hasScore ? 'Sudah Tampil (Terekap)' : 'Menunggu Giliran'}
+                          </span>
+                        </td>
+                      )}
                     </tr>
                   );
                 })

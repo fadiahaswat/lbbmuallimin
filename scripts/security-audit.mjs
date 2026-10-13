@@ -107,8 +107,9 @@ console.log(`${BOLD}${CYAN}=====================================================
     const gitTracked = execSync('git ls-files', { encoding: 'utf8' });
     const lines = gitTracked.split('\n');
     for (const l of lines) {
-      if (l.trim().startsWith('.env')) {
-        trackedEnvFiles.push(l.trim());
+      const trimmed = l.trim();
+      if (trimmed.startsWith('.env') && !trimmed.endsWith('.example')) {
+        trackedEnvFiles.push(trimmed);
       }
     }
   } catch (e) {

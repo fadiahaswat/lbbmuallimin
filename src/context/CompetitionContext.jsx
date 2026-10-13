@@ -757,22 +757,28 @@ export function CompetitionProvider({ children }) {
       return { success: false, message: 'Email sudah terdaftar. Silakan gunakan tab Masuk.' };
     }
 
+    // Security Gate: Self-registration HANYA diizinkan untuk peran 'peserta'
+    // Peran panitia (admin/juri/superadmin) wajib didaftarkan melalui superadmin panel
+    const assignedRole = (currentUser?.role === 'superadmin' && ['admin', 'juri', 'superadmin', 'penginput', 'verifikator', 'finalisator'].includes(requestedRole))
+      ? requestedRole
+      : 'peserta';
+
     const newUser = {
       id: `user-${Date.now()}`,
       name,
       email: cleanEmail,
-      role: requestedRole,
+      role: assignedRole,
       roleLabel:
-        requestedRole === 'admin'
+        assignedRole === 'admin'
           ? 'Panitia Sekretariat'
-          : requestedRole === 'juri'
+          : assignedRole === 'juri'
           ? 'Dewan Juri'
-          : requestedRole === 'superadmin'
+          : assignedRole === 'superadmin'
           ? 'Ketua Panitia'
           : 'Official Peserta',
       teamId: null,
       schoolName,
-      avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(name || cleanEmail)}&background=${requestedRole === 'peserta' ? '8B0000' : '020617'}&color=${requestedRole === 'peserta' ? 'fff' : 'fbbf24'}&bold=true`,
+      avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(name || cleanEmail)}&background=${assignedRole === 'peserta' ? '8B0000' : '020617'}&color=${assignedRole === 'peserta' ? 'fff' : 'fbbf24'}&bold=true`,
     };
 
     setUsers(prev => [newUser, ...prev]);
@@ -1257,7 +1263,9 @@ export function CompetitionProvider({ children }) {
         return results;
       },
       pullFromGoogleSheet: async () => {
-        const res = await fetchAllDataFromSheet();
+        const isStaffOrJury = ['admin', 'juri', 'superadmin'].includes(role);
+        const allowScoresSync = isStaffOrJury || Boolean(settings.announcementPublished);
+        const res = await fetchAllDataFromSheet(allowScoresSync);
         if (res && res.success && res.data) {
           const { teams: sheetTeams, scores: sheetScores, settings: sheetSettings } = res.data;
           if (Array.isArray(sheetTeams) && sheetTeams.length > 0) {

@@ -39,31 +39,32 @@ export default function ParticipantDashboard() {
     settings
   } = useCompetition();
 
-  // Robust currentTeam resolver: prioritize contextCurrentTeam, fallback to currentTeamId, currentUser, or localStorage
+  // Secure currentTeam resolver: ensure participant can ONLY access their own authorized team (IDOR Defense)
   const currentTeam = React.useMemo(() => {
-    if (contextCurrentTeam) return contextCurrentTeam;
-    if (currentTeamId) {
-      const byId = teams?.find(t => t.id === currentTeamId);
-      if (byId) return byId;
+    // 1. Jika pengguna login sebagai peserta, kunci akses secara ketat ke tim miliknya
+    if (currentUser?.role === 'peserta') {
+      const authorizedTeam = teams?.find(t => 
+        (currentUser.teamId && t.id === currentUser.teamId) ||
+        (currentUser.email && t.email && t.email.toLowerCase().trim() === currentUser.email.toLowerCase().trim()) ||
+        (currentUser.regCode && String(t.regCode || '').trim().toUpperCase() === String(currentUser.regCode).trim().toUpperCase())
+      );
+      return authorizedTeam || null;
     }
-    const savedTeamId = typeof window !== 'undefined' ? localStorage.getItem('lbb_muallimin_current_team_id_v5') : null;
-    if (savedTeamId) {
-      const bySavedId = teams?.find(t => t.id === savedTeamId);
-      if (bySavedId) return bySavedId;
+
+    // 2. Jika staff/admin/superadmin, izinkan melihat tim yang dipilih secara administratif
+    if (['admin', 'superadmin'].includes(currentUser?.role)) {
+      if (currentTeamId) {
+        const byId = teams?.find(t => t.id === currentTeamId);
+        if (byId) return byId;
+      }
+      if (contextCurrentTeam) return contextCurrentTeam;
     }
-    if (currentUser?.teamId) {
-      const byUserTeamId = teams?.find(t => t.id === currentUser.teamId);
-      if (byUserTeamId) return byUserTeamId;
+
+    // 3. Fallback jika contextCurrentTeam cocok dengan currentTeamId yang terverifikasi
+    if (contextCurrentTeam && contextCurrentTeam.id === currentTeamId) {
+      return contextCurrentTeam;
     }
-    if (currentUser?.regCode) {
-      const byReg = teams?.find(t => String(t.regCode || '').trim().toUpperCase() === String(currentUser.regCode).trim().toUpperCase());
-      if (byReg) return byReg;
-    }
-    if (currentUser?.email) {
-      const cleanEmail = currentUser.email.toLowerCase().trim();
-      const byEmail = teams?.find(t => t.email && t.email.toLowerCase().trim() === cleanEmail);
-      if (byEmail) return byEmail;
-    }
+
     return null;
   }, [contextCurrentTeam, currentTeamId, teams, currentUser]);
 
@@ -678,44 +679,7 @@ export default function ParticipantDashboard() {
           updateTeamProfile={updateTeamProfile}
         />
 
-        {/* Panduan Pengunggahan Berkas jika status === 'registered' */}
-        {currentTeam.status === 'registered' && (
-          <div className="bg-blue-50/70 border border-blue-200 p-3.5 sm:p-5 rounded-2xl shadow-xs flex items-start gap-3 sm:gap-4">
-            <div className="p-2 sm:p-2.5 bg-blue-600 text-white rounded-xl shrink-0">
-              <Sparkles className="w-5 h-5 sm:w-6 sm:h-6" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2">
-                <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-blue-800 bg-blue-200/80 px-2 py-0.5 rounded">
-                  Pendaftaran Awal Disetujui
-                </span>
-                <span className="text-[11px] sm:text-xs font-bold text-blue-700">Langkah 2 dari 4</span>
-              </div>
-              <h4 className="font-black text-slate-900 text-sm sm:text-base mt-1 leading-snug">
-                Lengkapi Susunan 25 Personel & Unggah Surat Rekomendasi
-              </h4>
-              <p className="text-[11px] sm:text-xs text-slate-700 mt-1 leading-relaxed">
-                Pendaftaran awal disetujui! Lengkapi biodata 25 personel peleton pada tab <strong>"Susunan 25 Personel"</strong> dan unggah <strong>Surat Rekomendasi Sekolah</strong> pada tab <strong>"Berkas Persyaratan"</strong> untuk verifikasi sah.
-              </p>
-              <div className="mt-2.5 sm:mt-3 flex flex-col sm:flex-row gap-2">
-                <button
-                  onClick={() => setActiveTab('roster')}
-                  className="w-full sm:w-auto px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl transition-all shadow-xs flex items-center justify-center gap-1.5 cursor-pointer active:scale-95"
-                >
-                  <Users className="w-3.5 h-3.5" />
-                  <span>Isi Data 25 Personel Peleton</span>
-                </button>
-                <button
-                  onClick={() => setActiveTab('documents')}
-                  className="w-full sm:w-auto px-3.5 py-2 bg-white hover:bg-blue-100 text-blue-900 font-bold text-xs rounded-xl border border-blue-300 transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-95"
-                >
-                  <Upload className="w-3.5 h-3.5" />
-                  <span>Unggah Surat Rekomendasi</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+
 
         {/* Peringatan Revisi Dokumen jika status === 'revision' */}
         {currentTeam.status === 'revision' && (

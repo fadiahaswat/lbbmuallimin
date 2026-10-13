@@ -203,10 +203,10 @@ export default function Hero() {
             </div>
 
             {/* Subtitle */}
-            <p
-              className="text-sm sm:text-base md:text-lg text-slate-200/90 font-normal leading-relaxed max-w-xl"
-              dangerouslySetInnerHTML={{ __html: HERO.SUBTITLE }}
-            />
+            <p className="text-sm sm:text-base md:text-lg text-slate-200/90 font-normal leading-relaxed max-w-xl">
+              Kompetisi baris-berbaris tingkat <span className="text-white font-semibold">SD/MI</span> dan{' '}
+              <span className="text-white font-semibold">SMP/MTs sederajat</span> se-Daerah Istimewa Yogyakarta. Diselenggarakan oleh Korps Pasukan Mu'allimin (TONTI).
+            </p>
 
             {/* Primary Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto">

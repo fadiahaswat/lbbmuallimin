@@ -184,18 +184,19 @@ export default function TeamProfileHeader({
 
             {/* Nama Sekolah & Metadata */}
             <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-1.5 mb-1 flex-wrap">
-                <span className="text-[10px] sm:text-xs font-bold text-slate-300 bg-white/5 px-2 py-0.5 rounded-md border border-white/10">
+              {/* Badge Metadata (Disembunyikan di Mobile, Tampil di Layar Tablet/Desktop) */}
+              <div className="hidden sm:flex items-center gap-1.5 mb-1 flex-wrap">
+                <span className="text-xs font-bold text-slate-300 bg-white/5 px-2 py-0.5 rounded-md border border-white/10">
                   Tingkat {currentTeam.jenjang}
                 </span>
-                <span className="text-[10px] sm:text-xs font-bold text-rose-300 bg-rose-500/10 px-2 py-0.5 rounded-md border border-rose-500/20">
+                <span className="text-xs font-bold text-rose-300 bg-rose-500/10 px-2 py-0.5 rounded-md border border-rose-500/20">
                   {currentTeam.category}
                 </span>
 
-                {/* Badge Asal Kota/Provinsi */}
-                <span className="inline-flex items-center gap-1 text-[10px] sm:text-xs font-semibold text-emerald-300 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20">
+                {/* Badge Asal Kota/Kabupaten */}
+                <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-300 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20">
                   <MapPin className="w-3 h-3 text-emerald-400 shrink-0" />
-                  <span className="truncate max-w-[160px] sm:max-w-[220px]">{locationText}</span>
+                  <span className="truncate max-w-[220px]">{locationText}</span>
                 </span>
               </div>
 

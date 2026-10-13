@@ -35,7 +35,7 @@ export function createTeamActions({ teams, setTeams, scores, setScores, setCurre
       registeredAt: new Date().toISOString(),
       wave: newTeamData.wave || 1,
       feeAmount: newTeamData.feeAmount || 450000,
-      paymentStatus: 'paid',
+      paymentStatus: 'unverified',
       files: {
         schoolLogo: newTeamData.files?.schoolLogo || null,
         dantonCard: newTeamData.files?.dantonCard || null,
@@ -188,6 +188,7 @@ export function createTeamActions({ teams, setTeams, scores, setScores, setCurre
           const updated = {
             ...team,
             status: newStatus,
+            paymentStatus: newStatus === 'verified' ? 'paid' : team.paymentStatus,
             revisionNote: note,
           };
           saveRecordToSheet('teams', updated).catch(err =>

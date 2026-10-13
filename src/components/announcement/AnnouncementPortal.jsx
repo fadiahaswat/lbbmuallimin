@@ -53,31 +53,55 @@ export default function AnnouncementPortal() {
     );
   }
 
-  // Calculate ranks
+  // Comparator Resmi Penentuan Juara (Aturan Tie-Breaker Juknis LBB 2027):
+  // 1. Skor Akhir Tertinggi
+  // 2. Nilai Rerata Teknik PBB Tertinggi
+  // 3. Nilai Komandan Peleton (Danton) Tertinggi
+  // 4. Jumlah Poin Penalti Pelanggaran Terendah
+  const compareTeamsTieBreaker = (a, b) => {
+    if (b.finalScore !== a.finalScore) return b.finalScore - a.finalScore;
+    if (b.pbbScore !== a.pbbScore) return b.pbbScore - a.pbbScore;
+    if (b.dantonScore !== a.dantonScore) return b.dantonScore - a.dantonScore;
+    return (a.penaltyTotal || 0) - (b.penaltyTotal || 0);
+  };
+
+  // Calculate ranks per jenjang
   const calculateRanking = jenjang => {
     return teams
-      .filter(t => t.jenjang === jenjang && scores[t.id])
-      .map(t => ({
-        ...t,
-        scoreData: scores[t.id],
-        finalScore: scores[t.id].finalScore,
-        dantonScore: scores[t.id].danton.total,
-        pbbScore: scores[t.id].pbb.total,
-      }))
-      .sort((a, b) => b.finalScore - a.finalScore);
+      .filter(t => t.jenjang === jenjang && scores[t.id] && scores[t.id].finalScore !== undefined)
+      .map(t => {
+        const sc = scores[t.id];
+        return {
+          ...t,
+          scoreData: sc,
+          finalScore: Number(sc.finalScore || 0),
+          dantonScore: Number(sc.danton?.total || sc.juries?.pos3?.total || 0),
+          pbbScore: Number(sc.pbb?.total || 0),
+          penaltyTotal: Number(sc.penalties?.totalPenalty || 0),
+          isFinalized: Boolean(sc.status === 'finalized' || sc.isLocked),
+        };
+      })
+      .sort(compareTeamsTieBreaker);
   };
 
   const rankedSD = calculateRanking('SD');
   const rankedSMP = calculateRanking('SMP');
   const currentRanked = activeJenjang === 'SD' ? rankedSD : rankedSMP;
 
-  // Best Danton
-  const bestDanton = [...currentRanked].sort((a, b) => b.dantonScore - a.dantonScore)[0] || null;
-  // Best Pasukan
-  const bestPasukan = [...currentRanked].sort((a, b) => b.pbbScore - a.pbbScore)[0] || null;
+  // Best Danton (Tie-breaker: Danton Score -> Final Score)
+  const bestDanton = [...currentRanked].sort((a, b) => {
+    if (b.dantonScore !== a.dantonScore) return b.dantonScore - a.dantonScore;
+    return b.finalScore - a.finalScore;
+  })[0] || null;
 
-  // Juara Umum: Peleton dengan skor tertinggi dari semua jenjang
-  const allRanked = [...rankedSD, ...rankedSMP].sort((a, b) => b.finalScore - a.finalScore);
+  // Best Pasukan (Tie-breaker: PBB Score -> Final Score)
+  const bestPasukan = [...currentRanked].sort((a, b) => {
+    if (b.pbbScore !== a.pbbScore) return b.pbbScore - a.pbbScore;
+    return b.finalScore - a.finalScore;
+  })[0] || null;
+
+  // Juara Umum: Peleton dengan performa terbaik lintas jenjang menggunakan tie-breaker resmi
+  const allRanked = [...rankedSD, ...rankedSMP].sort(compareTeamsTieBreaker);
   const grandChampion = allRanked[0] || null;
 
   return (
