@@ -20,19 +20,26 @@ import {
   AlertTriangle,
   ClipboardList,
   Check,
-  Building
+  Building,
+  CalendarCheck,
+  Compass,
+  Coffee,
+  Flag,
+  MapPin,
+  CalendarDays
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
-import { COMPETITION, DOWNLOADS, MATERIALS, PENALTIES } from '../../config.js';
-import { JUKNIS_PENILAIAN_CHAPTERS, JUKNIS_PENDAFTARAN_CHAPTERS } from '../../data/juknisDocsData.js';
+import { COMPETITION, DOWNLOADS, MATERIALS, PENALTIES, VENUE, VENUE_INDUK } from '../../config.js';
+import { JUKNIS_PENILAIAN_CHAPTERS, JUKNIS_PENDAFTARAN_CHAPTERS, RUNDOWN_DATA } from '../../data/juknisDocsData.js';
 import SimpaskorSidebarLayout from '../navigation/SimpaskorSidebarLayout.jsx';
 import Rules from '../Rules.jsx';
 
 export default function JuknisView() {
   const { currentTeam } = useCompetition();
 
-  // Tab switch: 'penilaian' (Juknis Penilaian & Kejuaraan) | 'lapangan' (Juknis Lapangan) | 'pendaftaran' (Juknis Pendaftaran) | 'materials' (Materi PBB & Denah)
+  // Tab switch: 'penilaian' | 'lapangan' | 'pendaftaran' | 'materials' | 'rundown'
   const [activeTab, setActiveTab] = useState('penilaian');
+  const [rundownSubTab, setRundownSubTab] = useState('competition'); // 'competition' | 'tm' | 'trial'
   const [openPenilaianSections, setOpenPenilaianSections] = useState({
     'bab-a': false,
     'bab-b': false,
@@ -160,42 +167,42 @@ export default function JuknisView() {
           </div>
         </div>
 
-        {/* Document Tab Switcher (4 Tab Khusus & Terpisah) */}
+        {/* Document Tab Switcher (5 Tab Khusus & Terpisah) */}
         <div className="flex flex-col gap-2 bg-white p-2.5 rounded-2xl border border-slate-200 shadow-xs">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-1.5 p-1 bg-slate-100 rounded-xl">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-1.5 p-1 bg-slate-100 rounded-xl">
             {/* Tab 1: Juknis Penilaian & Kejuaraan */}
             <button
               type="button"
               onClick={() => setActiveTab('penilaian')}
-              className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-xs font-black transition-all cursor-pointer text-center ${
+              className={`flex items-center justify-center gap-2 px-2.5 py-2.5 rounded-lg text-xs font-black transition-all cursor-pointer text-center ${
                 activeTab === 'penilaian'
                   ? 'bg-amber-600 text-white shadow-md shadow-amber-600/30'
                   : 'text-slate-700 hover:text-slate-900 hover:bg-slate-200/60'
               }`}
             >
               <Award className="w-4 h-4 shrink-0" />
-              <span>Juknis Penilaian & Kejuaraan</span>
+              <span>Juknis Penilaian</span>
             </button>
 
             {/* Tab 2: Juknis Lapangan */}
             <button
               type="button"
               onClick={() => setActiveTab('lapangan')}
-              className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-xs font-black transition-all cursor-pointer text-center ${
+              className={`flex items-center justify-center gap-2 px-2.5 py-2.5 rounded-lg text-xs font-black transition-all cursor-pointer text-center ${
                 activeTab === 'lapangan'
                   ? 'bg-red-700 text-white shadow-md shadow-red-700/30'
                   : 'text-slate-700 hover:text-slate-900 hover:bg-slate-200/60'
               }`}
             >
               <BookOpen className="w-4 h-4 shrink-0" />
-              <span>Juknis Lapangan (Bab A–J)</span>
+              <span>Juknis Lapangan</span>
             </button>
 
             {/* Tab 3: Juknis Pendaftaran */}
             <button
               type="button"
               onClick={() => setActiveTab('pendaftaran')}
-              className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-xs font-black transition-all cursor-pointer text-center ${
+              className={`flex items-center justify-center gap-2 px-2.5 py-2.5 rounded-lg text-xs font-black transition-all cursor-pointer text-center ${
                 activeTab === 'pendaftaran'
                   ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
                   : 'text-slate-700 hover:text-slate-900 hover:bg-slate-200/60'
@@ -209,14 +216,28 @@ export default function JuknisView() {
             <button
               type="button"
               onClick={() => setActiveTab('materials')}
-              className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-xs font-black transition-all cursor-pointer text-center ${
+              className={`flex items-center justify-center gap-2 px-2.5 py-2.5 rounded-lg text-xs font-black transition-all cursor-pointer text-center ${
                 activeTab === 'materials'
                   ? 'bg-slate-900 text-white shadow-md shadow-slate-900/30'
                   : 'text-slate-700 hover:text-slate-900 hover:bg-slate-200/60'
               }`}
             >
               <Swords className="w-4 h-4 shrink-0" />
-              <span>Materi Gerakan & Pos Arena</span>
+              <span>Materi & Arena</span>
+            </button>
+
+            {/* Tab 5: Rundown Resmi Kegiatan */}
+            <button
+              type="button"
+              onClick={() => setActiveTab('rundown')}
+              className={`flex items-center justify-center gap-2 px-2.5 py-2.5 rounded-lg text-xs font-black transition-all cursor-pointer text-center col-span-2 sm:col-span-1 ${
+                activeTab === 'rundown'
+                  ? 'bg-red-600 text-white shadow-md shadow-red-600/30 ring-2 ring-red-400'
+                  : 'text-slate-700 hover:text-slate-900 hover:bg-slate-200/60'
+              }`}
+            >
+              <Clock className="w-4 h-4 shrink-0 text-amber-400" />
+              <span>Rundown Acara</span>
             </button>
           </div>
 
@@ -226,6 +247,7 @@ export default function JuknisView() {
               {activeTab === 'lapangan' && 'Menampilkan Petunjuk Teknis Lapangan runtut dari alur pra-lomba (TM & Uji Coba), hari-H, hingga force majeure.'}
               {activeTab === 'pendaftaran' && 'Menampilkan Petunjuk Teknis Pendaftaran: Kuota 36 Peleton, Timeline, Rekening BSI, Alur Digital & Berkas Fisik TM.'}
               {activeTab === 'materials' && 'Menampilkan daftar 26 gerakan SD / 28 gerakan SMP, slot pergantian pemain, dan denah pos visual.'}
+              {activeTab === 'rundown' && 'Menampilkan matriks jadwal lengkap 3 sesi: Hari-H Perlombaan (24 Jan), Technical Meeting (9 Jan), & Gladi Uji Coba (16 Jan).'}
             </span>
             <span className="hidden sm:inline-block font-mono text-slate-400">Verbatim 2027</span>
           </div>
@@ -831,6 +853,205 @@ export default function JuknisView() {
             </div>
           </div>
         </div>
+
+          </div>
+        )}
+
+        {/* ============================================================== */}
+        {/* TAB 5: RUNDOWN RESMI KEGIATAN LBB MU'ALLIMIN 2027               */}
+        {/* ============================================================== */}
+        {activeTab === 'rundown' && (
+          <div className="space-y-6 animate-fade">
+            
+            {/* Sub-tab Navigation */}
+            <div className="bg-white p-3 rounded-2xl border border-slate-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setRundownSubTab('competition')}
+                  className={`px-4 py-2 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center gap-2 ${
+                    rundownSubTab === 'competition'
+                      ? 'bg-red-700 text-white shadow-md shadow-red-700/20'
+                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                  }`}
+                >
+                  <Swords className="w-3.5 h-3.5" />
+                  <span>Hari-H Perlombaan (24 Jan 2027)</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setRundownSubTab('tm')}
+                  className={`px-4 py-2 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center gap-2 ${
+                    rundownSubTab === 'tm'
+                      ? 'bg-amber-600 text-white shadow-md shadow-amber-600/20'
+                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                  }`}
+                >
+                  <CalendarCheck className="w-3.5 h-3.5" />
+                  <span>Technical Meeting (9 Jan 2027)</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setRundownSubTab('trial')}
+                  className={`px-4 py-2 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center gap-2 ${
+                    rundownSubTab === 'trial'
+                      ? 'bg-teal-700 text-white shadow-md shadow-teal-700/20'
+                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                  }`}
+                >
+                  <Compass className="w-3.5 h-3.5" />
+                  <span>Uji Coba Lapangan (16 Jan 2027)</span>
+                </button>
+              </div>
+
+              <div className="text-xs text-slate-500 font-semibold flex items-center gap-2">
+                <Clock className="w-3.5 h-3.5 text-slate-400" />
+                <span>Dokumen Resmi Sesuai Juknis 2027</span>
+              </div>
+            </div>
+
+            {/* Sub-tab 1: Hari-H Perlombaan */}
+            {rundownSubTab === 'competition' && (
+              <div className="space-y-4">
+                <div className="bg-gradient-to-r from-red-950 via-slate-900 to-slate-900 text-white p-5 rounded-2xl border border-red-900/40 flex flex-col md:flex-row md:items-center justify-between gap-3">
+                  <div>
+                    <span className="text-[10px] uppercase font-bold text-red-300 tracking-wider">Bagian C</span>
+                    <h3 className="text-base font-black uppercase text-white">Rundown Hari-H Perlombaan (Ahad, 24 Januari 2027)</h3>
+                    <p className="text-xs text-slate-300 mt-0.5">{VENUE.NAME} • 13 Blok Tahapan Lengkap (06.00 s.d. 17.15+ WIB)</p>
+                  </div>
+                  <div className="text-xs bg-white/10 px-3 py-1.5 rounded-xl text-amber-300 font-mono font-bold w-fit">
+                    18 SD + 18 SMP (2 Arena Paralel)
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-xs">
+                      <thead className="bg-slate-900 text-white uppercase text-[10px] tracking-wider">
+                        <tr>
+                          <th className="py-3 px-3 text-center w-12">No</th>
+                          <th className="py-3 px-3.5 w-32">Waktu (WIB)</th>
+                          <th className="py-3 px-3 w-16 text-center">Durasi</th>
+                          <th className="py-3 px-4 w-60">Agenda Kegiatan</th>
+                          <th className="py-3 px-4">Deskripsi Operasional / Penanggung Jawab</th>
+                          <th className="py-3 px-4 w-48">Lokasi / Venue</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100 font-sans">
+                        {RUNDOWN_DATA.competition.items.map((item, idx) => (
+                          <tr key={idx} className="hover:bg-slate-50 transition-colors">
+                            <td className="py-3 px-3 text-center font-bold text-slate-400 font-mono">{idx + 1}</td>
+                            <td className="py-3 px-3.5 font-bold font-mono text-slate-900 whitespace-nowrap">{item.time}</td>
+                            <td className="py-3 px-3 text-center font-mono font-semibold text-slate-500">{item.duration}</td>
+                            <td className="py-3 px-4 font-bold text-slate-900">{item.agenda}</td>
+                            <td className="py-3 px-4 text-slate-600 leading-relaxed text-[11px]">{item.desc}</td>
+                            <td className="py-3 px-4 text-slate-700 font-medium text-[11px]">
+                              <span className="inline-flex items-center gap-1 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
+                                <MapPin className="w-3 h-3 text-slate-400 shrink-0" />
+                                <span>{item.location}</span>
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Sub-tab 2: Technical Meeting */}
+            {rundownSubTab === 'tm' && (
+              <div className="space-y-4">
+                <div className="bg-gradient-to-r from-amber-950 via-slate-900 to-slate-900 text-white p-5 rounded-2xl border border-amber-900/40 flex flex-col md:flex-row md:items-center justify-between gap-3">
+                  <div>
+                    <span className="text-[10px] uppercase font-bold text-amber-300 tracking-wider">Bagian A</span>
+                    <h3 className="text-base font-black uppercase text-white">Rundown Technical Meeting (Sabtu, 9 Januari 2027)</h3>
+                    <p className="text-xs text-slate-300 mt-0.5">Aula Kampus Induk Madrasah Mu’allimin Wirobrajan (12.30 – 16.30 WIB)</p>
+                  </div>
+                  <div className="text-xs bg-white/10 px-3 py-1.5 rounded-xl text-amber-300 font-mono font-bold w-fit">
+                    Presensi & Lotting Undian Tampil
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-xs">
+                      <thead className="bg-slate-900 text-white uppercase text-[10px] tracking-wider">
+                        <tr>
+                          <th className="py-3 px-3 text-center w-12">No</th>
+                          <th className="py-3 px-3.5 w-36">Waktu (WIB)</th>
+                          <th className="py-3 px-3 w-16 text-center">Durasi</th>
+                          <th className="py-3 px-4 w-64">Agenda Kegiatan</th>
+                          <th className="py-3 px-4">Deskripsi Operasional / Penanggung Jawab</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100 font-sans">
+                        {RUNDOWN_DATA.tm.items.map((item, idx) => (
+                          <tr key={idx} className="hover:bg-slate-50 transition-colors">
+                            <td className="py-3.5 px-3 text-center font-bold text-slate-400 font-mono">{idx + 1}</td>
+                            <td className="py-3.5 px-3.5 font-bold font-mono text-slate-900 whitespace-nowrap">{item.time} WIB</td>
+                            <td className="py-3.5 px-3 text-center font-mono font-semibold text-amber-800">{item.duration}</td>
+                            <td className="py-3.5 px-4 font-bold text-slate-900">{item.agenda}</td>
+                            <td className="py-3.5 px-4 text-slate-600 leading-relaxed text-[11px]">{item.desc}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Sub-tab 3: Uji Coba Lapangan */}
+            {rundownSubTab === 'trial' && (
+              <div className="space-y-4">
+                <div className="bg-gradient-to-r from-teal-950 via-slate-900 to-slate-900 text-white p-5 rounded-2xl border border-teal-900/40 flex flex-col md:flex-row md:items-center justify-between gap-3">
+                  <div>
+                    <span className="text-[10px] uppercase font-bold text-teal-300 tracking-wider">Bagian B</span>
+                    <h3 className="text-base font-black uppercase text-white">Rundown Uji Coba Lapangan (Sabtu, 16 Januari 2027)</h3>
+                    <p className="text-xs text-slate-300 mt-0.5">Kampus Terpadu Sedayu • 2 Arena Paralel • 15 Menit/Peleton (06.30 – 12.00 WIB)</p>
+                  </div>
+                  <div className="text-xs bg-white/10 px-3 py-1.5 rounded-xl text-teal-300 font-mono font-bold w-fit">
+                    18 Slot Paralel (SD Arena 1 & SMP Arena 2)
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-xs">
+                      <thead className="bg-slate-900 text-white uppercase text-[10px] tracking-wider">
+                        <tr>
+                          <th className="py-3 px-3 text-center w-12">No</th>
+                          <th className="py-3 px-4 w-36">Waktu (WIB)</th>
+                          <th className="py-3 px-4 w-1/2 bg-red-950/80 text-red-100 border-r border-slate-800">
+                            Arena 1 (SD/MI - Lapangan Basket)
+                          </th>
+                          <th className="py-3 px-4 w-1/2 bg-blue-950/80 text-blue-100">
+                            Arena 2 (SMP/MTs - Pelataran Embung)
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100 font-sans">
+                        {RUNDOWN_DATA.trial.slots.map((slot, idx) => {
+                          const isSpecial = idx === 0 || idx === RUNDOWN_DATA.trial.slots.length - 1;
+                          return (
+                            <tr key={idx} className={`${isSpecial ? 'bg-slate-50 font-bold' : 'hover:bg-slate-50'} transition-colors`}>
+                              <td className="py-3 px-3 text-center font-mono text-slate-400">
+                                {idx === 0 ? '-' : idx === RUNDOWN_DATA.trial.slots.length - 1 ? '-' : idx}
+                              </td>
+                              <td className="py-3 px-4 font-bold font-mono text-slate-900 whitespace-nowrap">{slot.time} WIB</td>
+                              <td className="py-3 px-4 border-r border-slate-100 text-red-700 font-semibold">{slot.arena1}</td>
+                              <td className="py-3 px-4 text-blue-700 font-semibold">{slot.arena2}</td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            )}
 
           </div>
         )}

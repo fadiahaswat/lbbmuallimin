@@ -185,6 +185,19 @@ export default function Navbar({ onOpenMobileMenu }) {
             })}
           </div>
 
+          <button
+            type="button"
+            onClick={() => setActiveView('rundown')}
+            className={`hidden xl:flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold uppercase transition-all duration-300 cursor-pointer active:scale-95 shadow-xs ${
+              isScrolled
+                ? 'bg-red-50 text-red-700 hover:bg-red-100 border border-red-200'
+                : 'bg-red-950/50 text-amber-300 hover:bg-red-900/60 border border-red-500/30'
+            }`}
+          >
+            <Clock className="w-3.5 h-3.5 text-amber-400" />
+            <span>Rundown</span>
+          </button>
+
           {!currentUser ? (
             <button
               type="button"
@@ -546,6 +559,22 @@ export default function Navbar({ onOpenMobileMenu }) {
                         <span>Lihat Papan Klasemen</span>
                       </div>
                       <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-amber-400 transition-colors" />
+                    </button>
+
+                    {/* Shared Link: Rundown Resmi Kegiatan */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsUserDropdownOpen(false);
+                        setActiveView('rundown');
+                      }}
+                      className="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-white/10 text-left transition-colors text-amber-300 hover:text-amber-200 cursor-pointer group"
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <Clock className="w-4 h-4 text-amber-400 shrink-0" />
+                        <span className="font-bold">Rundown Resmi Kegiatan</span>
+                      </div>
+                      <ArrowRight className="w-3.5 h-3.5 text-amber-400 group-hover:translate-x-0.5 transition-transform" />
                     </button>
                   </div>
 

@@ -29,6 +29,7 @@ import { useCompetition } from '../../context/CompetitionContext.jsx';
 import { EVENT, VENUE_INDUK, DOWNLOADS } from '../../config.js';
 import { LOTTERY_CHEST_MAP, getChestNumberByLot, checkTeamVerificationEligibility } from '../../context/competitionHelpers.js';
 import { HARI_H_SCHEDULE } from '../../data/scheduleMatrices.js';
+import { RUNDOWN_DATA } from '../../data/juknisDocsData.js';
 import { formatImageUrl } from '../../services/sheetService.js';
 import SimpaskorSidebarLayout from '../navigation/SimpaskorSidebarLayout.jsx';
 
@@ -47,6 +48,7 @@ export default function TechnicalMeetingView() {
   const [selectedJenjang, setSelectedJenjang] = useState('SD');
   const [searchQuery, setSearchQuery] = useState('');
   const [lotSuccessMsg, setLotSuccessMsg] = useState('');
+  const [showTmRundown, setShowTmRundown] = useState(false);
   const [draggedTeam, setDraggedTeam] = useState(null); // team being dragged
   const [dragOverLotNumber, setDragOverLotNumber] = useState(null); // slot being hovered
 
@@ -237,6 +239,71 @@ export default function TechnicalMeetingView() {
               </a>
             </div>
           </div>
+        </div>
+
+        {/* Rundown Resmi TM Panel */}
+        <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
+          <div className="p-4 sm:p-5 flex items-center justify-between gap-3 bg-amber-50/50">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center font-bold text-xs shrink-0">
+                <Clock className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-sm font-black text-slate-900 uppercase">
+                  Rundown Resmi Technical Meeting (12.30 – 16.30 WIB)
+                </h3>
+                <p className="text-[11px] text-slate-500">
+                  Sabtu, 9 Januari 2027 • 7 Tahap Kegiatan di Aula Kampus Induk Wirobrajan
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setShowTmRundown(!showTmRundown)}
+                className="px-3 py-1.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
+              >
+                <span>{showTmRundown ? 'Tutup Rundown' : 'Lihat 7 Agenda'}</span>
+                <ChevronDown className={`w-3.5 h-3.5 transition-transform ${showTmRundown ? 'rotate-180' : ''}`} />
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveView('rundown')}
+                className="hidden sm:inline-flex px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all items-center gap-1.5 cursor-pointer shadow-xs"
+              >
+                <span>Rundown Penuh</span>
+                <ExternalLink className="w-3 h-3" />
+              </button>
+            </div>
+          </div>
+
+          {showTmRundown && (
+            <div className="p-4 sm:p-5 border-t border-slate-100 overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-slate-900 text-white uppercase text-[10px] tracking-wider">
+                  <tr>
+                    <th className="py-2.5 px-3 text-center w-10">No</th>
+                    <th className="py-2.5 px-3 w-32">Waktu (WIB)</th>
+                    <th className="py-2.5 px-2.5 w-16 text-center">Durasi</th>
+                    <th className="py-2.5 px-3 w-56">Agenda Kegiatan</th>
+                    <th className="py-2.5 px-3">Deskripsi Operasional / Penanggung Jawab</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {RUNDOWN_DATA.tm.items.map((item, idx) => (
+                    <tr key={idx} className="hover:bg-slate-50/80 transition-colors">
+                      <td className="py-2.5 px-3 text-center font-bold text-slate-400 font-mono">{idx + 1}</td>
+                      <td className="py-2.5 px-3 font-bold font-mono text-slate-900 whitespace-nowrap">{item.time} WIB</td>
+                      <td className="py-2.5 px-2.5 text-center font-mono font-semibold text-amber-700">{item.duration}</td>
+                      <td className="py-2.5 px-3 font-bold text-slate-900">{item.agenda}</td>
+                      <td className="py-2.5 px-3 text-slate-600 text-[11px] leading-relaxed">{item.desc}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
 
         {lotSuccessMsg && (

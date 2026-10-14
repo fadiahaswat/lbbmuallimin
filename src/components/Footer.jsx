@@ -176,6 +176,16 @@ export default function Footer() {
                 </a>
               </li>
               <li>
+                <button
+                  type="button"
+                  onClick={() => setActiveView('rundown')}
+                  className="text-slate-400 hover:text-yellow-400 transition-colors flex items-center gap-1.5 group cursor-pointer"
+                >
+                  <ChevronRight className="w-3.5 h-3.5 text-yellow-400 opacity-60 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                  <span className="font-bold text-amber-300">Rundown Resmi Kegiatan</span>
+                </button>
+              </li>
+              <li>
                 <a href="#prizes" className="text-slate-400 hover:text-yellow-400 transition-colors flex items-center gap-1.5 group">
                   <ChevronRight className="w-3.5 h-3.5 text-yellow-400 opacity-60 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
                   <span>Hadiah & Piala</span>
@@ -197,6 +207,16 @@ export default function Footer() {
               <span>Layanan Portal</span>
             </h4>
             <ul className="space-y-2.5 text-xs sm:text-sm">
+              <li>
+                <button
+                  type="button"
+                  onClick={() => setActiveView('rundown')}
+                  className="text-left text-slate-400 hover:text-yellow-400 transition-colors flex items-center gap-1.5 group cursor-pointer"
+                >
+                  <ChevronRight className="w-3.5 h-3.5 text-yellow-400 opacity-60 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                  <span className="font-bold text-amber-300">Rundown Hari-H & TM 2027</span>
+                </button>
+              </li>
               <li>
                 <button
                   type="button"

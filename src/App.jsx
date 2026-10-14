@@ -49,6 +49,7 @@ const ProposalView = React.lazy(() => import('./components/docs/ProposalView.jsx
 const JuknisView = React.lazy(() => import('./components/docs/JuknisView.jsx'));
 const TataTertibView = React.lazy(() => import('./components/docs/TataTertibView.jsx'));
 const TimelinePanitiaView = React.lazy(() => import('./components/docs/TimelinePanitiaView.jsx'));
+const RundownView = React.lazy(() => import('./components/docs/RundownView.jsx'));
 
 function ViewLoader() {
   return (
@@ -175,6 +176,7 @@ function MainApp() {
         {activeView === 'juknis' && <JuknisView />}
         {activeView === 'tatib' && <TataTertibView />}
         {activeView === 'timeline' && <TimelinePanitiaView />}
+        {activeView === 'rundown' && <RundownView />}
       </React.Suspense>
       )}
     </div>

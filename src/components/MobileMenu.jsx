@@ -183,6 +183,30 @@ export default function MobileMenu({ isOpen, onClose }) {
                 </a>
               );
             })}
+
+            {/* Direct Rundown Button */}
+            <button
+              type="button"
+              onClick={() => {
+                onClose();
+                setActiveView('rundown');
+              }}
+              className="w-full group flex items-center gap-3.5 p-3 rounded-2xl border border-red-500/30 bg-red-950/40 hover:bg-red-900/50 text-white transition-all text-left cursor-pointer active:scale-98 shadow-md"
+            >
+              <div className="w-10 h-10 rounded-xl bg-red-600/30 text-amber-400 border border-red-500/40 flex items-center justify-center shrink-0">
+                <Clock className="w-5 h-5" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <span className="text-sm font-bold block leading-tight text-white flex items-center gap-2">
+                  <span>Rundown Resmi Kegiatan</span>
+                  <span className="text-[9px] bg-red-600 text-white px-1.5 py-0.5 rounded font-black uppercase">Resmi</span>
+                </span>
+                <span className="text-[11px] text-red-200/80 truncate block mt-0.5">
+                  Hari-H Perlombaan, TM & Uji Coba Lapangan
+                </span>
+              </div>
+              <ChevronRight className="w-4 h-4 text-red-400 group-hover:translate-x-1 transition-transform" />
+            </button>
           </div>
         </div>
 

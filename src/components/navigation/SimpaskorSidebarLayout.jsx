@@ -154,6 +154,7 @@ export default function SimpaskorSidebarLayout({
       { id: 'proposal', label: 'Proposal Resmi', icon: FileText, view: 'proposal' },
       { id: 'juknis', label: 'Juknis & Materi PBB', icon: BookOpen, view: 'juknis' },
       { id: 'tatib', label: 'Tata Tertib & Sanksi', icon: ShieldAlert, view: 'tatib' },
+      { id: 'rundown', label: 'Rundown Acara', icon: Clock, view: 'rundown' },
       { id: 'rab', label: 'RAB & Keuangan LBB', icon: Coins, view: 'rab' },
       { id: 'timeline', label: 'Timeline Panitia', icon: Calendar, view: 'timeline' },
     ];

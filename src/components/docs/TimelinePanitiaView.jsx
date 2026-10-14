@@ -22,14 +22,16 @@ import {
 import { useCompetition } from '../../context/CompetitionContext.jsx';
 import { EVENT, VENUE, VENUE_INDUK, OFFICIAL_TIMELINE } from '../../config.js';
 import { UJI_COBA_SCHEDULE, HARI_H_SCHEDULE } from '../../data/scheduleMatrices.js';
+import { RUNDOWN_DATA } from '../../data/juknisDocsData.js';
 import SimpaskorSidebarLayout from '../navigation/SimpaskorSidebarLayout.jsx';
 
 export default function TimelinePanitiaView() {
   const { settings, currentUser } = useCompetition();
-  const [activeTab, setActiveTab] = useState('roadmap'); // 'roadmap' | 'hari-h' | 'uji-coba'
+  const [activeTab, setActiveTab] = useState('roadmap'); // 'roadmap' | 'hari-h' | 'uji-coba' | 'rundown'
   const [matrixJenjang, setMatrixJenjang] = useState('SD');
   const [filterPhase, setFilterPhase] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [rundownSubTab, setRundownSubTab] = useState('competition'); // 'competition' | 'tm' | 'trial'
 
   // 37 Tahapan Kronologis Resmi dari TIMELINE LBB MU'ALLIMIN 2027.xlsx
   const timelineSchedule = OFFICIAL_TIMELINE.map((item, idx) => {
@@ -167,6 +169,17 @@ export default function TimelinePanitiaView() {
           >
             <Timer className="w-4 h-4" />
             <span>Matriks Uji Coba (Sheet 3)</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('rundown')}
+            className={`pb-3 px-3 sm:px-4 text-xs sm:text-sm font-black transition-all border-b-2 flex items-center gap-2 cursor-pointer ${
+              activeTab === 'rundown'
+                ? 'border-red-600 text-red-600'
+                : 'border-transparent text-slate-500 hover:text-slate-900'
+            }`}
+          >
+            <Clock className="w-4 h-4 text-amber-500" />
+            <span>Rundown Resmi Kegiatan</span>
           </button>
         </div>
 
@@ -449,6 +462,140 @@ export default function TimelinePanitiaView() {
                 </tbody>
               </table>
             </div>
+          </div>
+        )}
+
+        {/* Tab 4: Rundown Resmi Kegiatan */}
+        {activeTab === 'rundown' && (
+          <div className="space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-slate-200">
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  onClick={() => setRundownSubTab('competition')}
+                  className={`px-3.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${
+                    rundownSubTab === 'competition'
+                      ? 'bg-red-600 text-white shadow-xs'
+                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                  }`}
+                >
+                  Hari-H Perlombaan (24 Jan 2027)
+                </button>
+                <button
+                  onClick={() => setRundownSubTab('tm')}
+                  className={`px-3.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${
+                    rundownSubTab === 'tm'
+                      ? 'bg-amber-600 text-white shadow-xs'
+                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                  }`}
+                >
+                  Technical Meeting (9 Jan 2027)
+                </button>
+                <button
+                  onClick={() => setRundownSubTab('trial')}
+                  className={`px-3.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${
+                    rundownSubTab === 'trial'
+                      ? 'bg-teal-600 text-white shadow-xs'
+                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                  }`}
+                >
+                  Uji Coba Lapangan (16 Jan 2027)
+                </button>
+              </div>
+              <div className="text-xs text-slate-500 font-semibold">
+                Matriks Rundown Resmi Juknis 2027
+              </div>
+            </div>
+
+            {/* Sub-tab 1: Hari-H */}
+            {rundownSubTab === 'competition' && (
+              <div className="bg-white rounded-2xl border border-slate-200 overflow-x-auto shadow-xs">
+                <table className="w-full text-left text-xs whitespace-nowrap">
+                  <thead className="bg-slate-50 text-slate-700 font-bold border-b border-slate-200 uppercase text-[10px]">
+                    <tr>
+                      <th className="py-3 px-3 text-center">No</th>
+                      <th className="py-3 px-3">Waktu (WIB)</th>
+                      <th className="py-3 px-3 text-center">Durasi</th>
+                      <th className="py-3 px-4">Agenda Kegiatan</th>
+                      <th className="py-3 px-4 whitespace-normal">Deskripsi Operasional / Penanggung Jawab</th>
+                      <th className="py-3 px-4">Lokasi / Venue</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 text-[11px]">
+                    {RUNDOWN_DATA.competition.items.map((item, idx) => (
+                      <tr key={idx} className="hover:bg-slate-50/80 transition-colors">
+                        <td className="py-3 px-3 text-center font-bold text-slate-400 font-mono">{idx + 1}</td>
+                        <td className="py-3 px-3 font-bold font-mono text-slate-900">{item.time}</td>
+                        <td className="py-3 px-3 text-center font-mono text-slate-500">{item.duration}</td>
+                        <td className="py-3 px-4 font-bold text-slate-900">{item.agenda}</td>
+                        <td className="py-3 px-4 text-slate-600 whitespace-normal leading-relaxed max-w-md">{item.desc}</td>
+                        <td className="py-3 px-4 text-slate-700 font-medium">
+                          <span className="bg-slate-100 px-2 py-0.5 rounded border border-slate-200 text-[10px]">{item.location}</span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            {/* Sub-tab 2: TM */}
+            {rundownSubTab === 'tm' && (
+              <div className="bg-white rounded-2xl border border-slate-200 overflow-x-auto shadow-xs">
+                <table className="w-full text-left text-xs whitespace-nowrap">
+                  <thead className="bg-slate-50 text-slate-700 font-bold border-b border-slate-200 uppercase text-[10px]">
+                    <tr>
+                      <th className="py-3 px-3 text-center">No</th>
+                      <th className="py-3 px-3">Waktu (WIB)</th>
+                      <th className="py-3 px-3 text-center">Durasi</th>
+                      <th className="py-3 px-4">Agenda Kegiatan</th>
+                      <th className="py-3 px-4 whitespace-normal">Deskripsi Operasional / Penanggung Jawab</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 text-[11px]">
+                    {RUNDOWN_DATA.tm.items.map((item, idx) => (
+                      <tr key={idx} className="hover:bg-slate-50/80 transition-colors">
+                        <td className="py-3 px-3 text-center font-bold text-slate-400 font-mono">{idx + 1}</td>
+                        <td className="py-3 px-3 font-bold font-mono text-slate-900">{item.time} WIB</td>
+                        <td className="py-3 px-3 text-center font-mono font-semibold text-amber-700">{item.duration}</td>
+                        <td className="py-3 px-4 font-bold text-slate-900">{item.agenda}</td>
+                        <td className="py-3 px-4 text-slate-600 whitespace-normal leading-relaxed max-w-lg">{item.desc}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            {/* Sub-tab 3: Uji Coba */}
+            {rundownSubTab === 'trial' && (
+              <div className="bg-white rounded-2xl border border-slate-200 overflow-x-auto shadow-xs">
+                <table className="w-full text-left text-xs whitespace-nowrap">
+                  <thead className="bg-slate-50 text-slate-700 font-bold border-b border-slate-200 uppercase text-[10px]">
+                    <tr>
+                      <th className="py-3 px-3 text-center">No</th>
+                      <th className="py-3 px-4">Waktu (WIB)</th>
+                      <th className="py-3 px-4 text-red-700">Arena 1 (SD/MI - Lapangan Basket)</th>
+                      <th className="py-3 px-4 text-blue-700">Arena 2 (SMP/MTs - Pelataran Embung)</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 text-[11px]">
+                    {RUNDOWN_DATA.trial.slots.map((slot, idx) => {
+                      const isSpecial = idx === 0 || idx === RUNDOWN_DATA.trial.slots.length - 1;
+                      return (
+                        <tr key={idx} className={`${isSpecial ? 'bg-slate-50 font-bold' : 'hover:bg-slate-50/80'} transition-colors`}>
+                          <td className="py-3 px-3 text-center font-mono text-slate-400">
+                            {idx === 0 ? '-' : idx === RUNDOWN_DATA.trial.slots.length - 1 ? '-' : idx}
+                          </td>
+                          <td className="py-3 px-4 font-bold font-mono text-slate-900">{slot.time} WIB</td>
+                          <td className="py-3 px-4 text-red-700 font-semibold">{slot.arena1}</td>
+                          <td className="py-3 px-4 text-blue-700 font-semibold">{slot.arena2}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         )}
       </div>

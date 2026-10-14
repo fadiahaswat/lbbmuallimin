@@ -19,11 +19,13 @@ import {
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
 import { EVENT, VENUE } from '../../config.js';
+import { RUNDOWN_DATA } from '../../data/juknisDocsData.js';
 import SimpaskorSidebarLayout from '../navigation/SimpaskorSidebarLayout.jsx';
 
 export default function FieldTrialView() {
   const { teams, currentUser, role, setActiveView } = useCompetition();
   const [selectedJenjang, setSelectedJenjang] = useState('ALL');
+  const [showParallelTable, setShowParallelTable] = useState(true);
 
   // Teams eligible for field trial: registered, verified, drawn
   const trialTeams = teams.filter(t => ['registered', 'verified', 'drawn'].includes(t.status));
@@ -34,20 +36,18 @@ export default function FieldTrialView() {
     ? trialTeams
     : trialTeams.filter(t => t.jenjang === selectedJenjang);
 
-  // Generate estimated schedule slot for each team
-  // SD: starts 08.00 WIB, 10 min each
-  // SMP: starts 10.30 WIB, 10 min each
+  // Generate official schedule slot for each team according to Section B Juknis:
+  // 15 minutes per peleton, running parallel in Arena 1 & Arena 2 starting at 07.00 WIB
   const getTrialSlot = (team, index) => {
     const isSD = team.jenjang === 'SD';
-    const baseHour = isSD ? 8 : 10;
-    const baseMin = isSD ? 0 : 30;
     const teamIndex = isSD ? sdTeams.findIndex(t => t.id === team.id) : smpTeams.findIndex(t => t.id === team.id);
     const safeIndex = teamIndex >= 0 ? teamIndex : index;
 
-    const totalMinutes = baseHour * 60 + baseMin + safeIndex * 12;
-    const startH = String(Math.floor(totalMinutes / 60)).padStart(2, '0');
-    const startM = String(totalMinutes % 60).padStart(2, '0');
-    const endMinutes = totalMinutes + 10;
+    const baseMinutes = 7 * 60; // 07.00 WIB start
+    const startMinutes = baseMinutes + (safeIndex % 18) * 15;
+    const startH = String(Math.floor(startMinutes / 60)).padStart(2, '0');
+    const startM = String(startMinutes % 60).padStart(2, '0');
+    const endMinutes = startMinutes + 15;
     const endH = String(Math.floor(endMinutes / 60)).padStart(2, '0');
     const endM = String(endMinutes % 60).padStart(2, '0');
 
@@ -99,7 +99,7 @@ export default function FieldTrialView() {
               </div>
               <div className="flex items-center gap-2 text-xs text-slate-200">
                 <Clock className="w-4 h-4 text-emerald-400" />
-                <span>{EVENT.FIELD_TRIAL_TIME_RANGE || '08.00 – 13.30 WIB'}</span>
+                <span>{EVENT.FIELD_TRIAL_TIME_RANGE || '06.30 – 12.00 WIB'}</span>
               </div>
               <div className="flex items-center gap-2 text-xs text-slate-300">
                 <MapPin className="w-4 h-4 text-emerald-400 shrink-0" />
@@ -117,7 +117,7 @@ export default function FieldTrialView() {
             </div>
             <div>
               <span className="text-[11px] font-bold text-slate-500 uppercase block">Durasi Efektif Arena</span>
-              <span className="text-xl font-black text-slate-900 font-mono">8 / 12 Menit</span>
+              <span className="text-xl font-black text-slate-900 font-mono">15 Menit/Tim</span>
               <p className="text-[10px] text-slate-400 mt-0.5">8 mnt SD, 12 mnt SMP (+ 5 mnt transisi)</p>
             </div>
           </div>
@@ -129,7 +129,7 @@ export default function FieldTrialView() {
             <div>
               <span className="text-[11px] font-bold text-slate-500 uppercase block">Arena 1 (SD/MI)</span>
               <span className="text-2xl font-black text-slate-900 font-mono">{sdTeams.length} Tim</span>
-              <p className="text-[10px] text-slate-400 mt-0.5">Lapangan Basket Outdoor (08.00)</p>
+              <p className="text-[10px] text-slate-400 mt-0.5">Lapangan Basket Outdoor (07.00 – 11.30)</p>
             </div>
           </div>
 
@@ -140,7 +140,7 @@ export default function FieldTrialView() {
             <div>
               <span className="text-[11px] font-bold text-slate-500 uppercase block">Arena 2 (SMP/MTs)</span>
               <span className="text-2xl font-black text-slate-900 font-mono">{smpTeams.length} Tim</span>
-              <p className="text-[10px] text-slate-400 mt-0.5">Pelataran Embung (10.30)</p>
+              <p className="text-[10px] text-slate-400 mt-0.5">Pelataran Embung (07.00 – 11.30)</p>
             </div>
           </div>
         </div>
@@ -202,6 +202,77 @@ export default function FieldTrialView() {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Rundown Resmi Uji Coba: 2 Arena Paralel (Section B Juknis) */}
+        <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="px-2 py-0.5 rounded-md bg-teal-50 text-teal-800 border border-teal-200 text-[10px] font-black uppercase tracking-wider">
+                  Bagian B Juknis
+                </span>
+                <h3 className="text-base font-black text-slate-900 uppercase">
+                  Rundown Uji Coba Lapangan (2 Arena Paralel)
+                </h3>
+              </div>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Sabtu, 16 Januari 2027 • 18 Slot 15 Menit/Peleton di Kampus Terpadu Sedayu
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setShowParallelTable(!showParallelTable)}
+                className="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
+              >
+                <span>{showParallelTable ? 'Tutup Matriks' : 'Buka Matriks Paralel'}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveView('rundown')}
+                className="px-3.5 py-1.5 rounded-xl bg-teal-700 hover:bg-teal-600 text-white text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
+              >
+                <span>Rundown Lengkap</span>
+                <ExternalLink className="w-3 h-3" />
+              </button>
+            </div>
+          </div>
+
+          {showParallelTable && (
+            <div className="rounded-2xl border border-slate-200 overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-slate-900 text-white uppercase text-[10px] tracking-wider">
+                  <tr>
+                    <th className="py-2.5 px-3 text-center w-12">No</th>
+                    <th className="py-2.5 px-4 w-36">Waktu (WIB)</th>
+                    <th className="py-2.5 px-4 bg-red-950/80 text-red-100 border-r border-slate-800">
+                      Arena 1 (SD/MI - Lapangan Basket)
+                    </th>
+                    <th className="py-2.5 px-4 bg-blue-950/80 text-blue-100">
+                      Arena 2 (SMP/MTs - Pelataran Embung)
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 font-sans">
+                  {RUNDOWN_DATA.trial.slots.map((slot, idx) => {
+                    const isSpecial = idx === 0 || idx === RUNDOWN_DATA.trial.slots.length - 1;
+                    return (
+                      <tr key={idx} className={`${isSpecial ? 'bg-slate-50 font-bold' : 'hover:bg-slate-50'} transition-colors`}>
+                        <td className="py-2.5 px-3 text-center font-mono text-slate-400">
+                          {idx === 0 ? '-' : idx === RUNDOWN_DATA.trial.slots.length - 1 ? '-' : idx}
+                        </td>
+                        <td className="py-2.5 px-4 font-bold font-mono text-slate-900 whitespace-nowrap">{slot.time} WIB</td>
+                        <td className="py-2.5 px-4 border-r border-slate-100 text-red-700 font-semibold">{slot.arena1}</td>
+                        <td className="py-2.5 px-4 text-blue-700 font-semibold">{slot.arena2}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
 
         {/* Jadwal Antrean Uji Coba per Peleton */}
