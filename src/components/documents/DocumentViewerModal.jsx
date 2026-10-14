@@ -109,18 +109,18 @@ export default function DocumentViewerModal({ isOpen, onClose }) {
               </div>
 
               <div className="space-y-3 pt-2">
-                <h4 className="font-black text-sm uppercase text-red-700">B. TAHAP I: PRA-LOMBA - TEKNIS TECHNICAL MEETING (TM) PESERTA</h4>
+                <h4 className="font-black text-sm uppercase text-red-700">B. TECHNICAL MEETING (TM) PESERTA</h4>
                 <p>1. Waktu dan Tempat Pelaksanaan: Dilaksanakan pada hari Sabtu, 9 Januari 2027 pukul 13.00 - 16.30 WIB bertempat di Aula Kampus Induk Madrasah Mu'allimin Muhammadiyah Yogyakarta (Jl. Letjen S. Parman No. 68, Patangpuluhan, Wirobrajan, Kota Yogyakarta).</p>
-                <p>2. Ketentuan Kehadiran Delegasi: Setiap peleton wajib mendelegasikan maksimal 2 (dua) orang perwakilan resmi (Official/Pelatih/Pembina atau Komandan Peleton). Seluruh perwakilan wajib mengenakan pakaian rapi, sopan, dan bersepatu. Perwakilan putri wajib mengenakan pakaian berlengan panjang.</p>
+                <p>2. Ketentuan Kehadiran Delegasi: Setiap sekolah/madrasah wajib mendelegasikan maksimal 2 (dua) orang perwakilan resmi per SEKOLAH (terdiri atas Official/Pelatih/Pembina dan/atau Komandan Peleton), tanpa memandang jumlah peleton yang didaftarkan (1 atau 2 peleton). Seluruh perwakilan wajib mengenakan pakaian rapi, sopan, dan bersepatu. Perwakilan putri wajib mengenakan pakaian berlengan panjang.</p>
                 <p>3. Agenda Registrasi dan Verifikasi Berkas Fisik Asli (12.30 - 13.00 WIB): Surat Tugas / Rekomendasi Resmi Kepala Sekolah asli berstempel basah (1 Danton, 21 Inti, 3 Cadangan, 1 Official, 2 Pendukung Resmi) & Pakta Integritas bermaterai Rp 10.000 yang ditandatangani basah oleh Official.</p>
-                <p>4. Pemaparan Materi Teknis & Juknis Lomba (13.00 - 14.30 WIB): Penjelasan Perpang TNI No. 58 & 57 Tahun 2018 (serta No. 45 Tahun 2014 untuk Hormat Kanan/Kiri), rasio penilaian 1:1, ketentuan gerakan penyesuaian tanpa kuota yang mempengaruhi Penguasaan Lapangan Danton, garis batas, kotak danton, stopwatch, dan rilis nilai di website lbb.tontimuallimin.com.</p>
-                <p>5. Sesi Tanya Jawab Teknis (14.30 - 15.15 WIB) dicatat dalam Notulensi Resmi TM.</p>
-                <p>6. Pengundian Resmi (Lotting) Nomor Urut Tampil (15.15 - 16.00 WIB): Tingkat SD/MI: Nomor undian SD-111 s.d. SD-175; Tingkat SMP/MTs: Nomor undian SMP-222 s.d. SMP-286.</p>
+                <p>4. Pemaparan Materi Teknis & Juknis Lomba (13.00 - 14.30 WIB): Penjelasan Perpang TNI No. 58 & 57 Tahun 2018 (serta No. 45 Tahun 2014 untuk Hormat Kanan/Kiri), rasio penilaian 1:1, regulasi arena, garis batas, kotak danton, stopwatch, dan rilis nilai di website lbb.tontimuallimin.com.</p>
+                <p>5. Sesi Tanya Jawab Teknis (14.30 - 15.15 WIB) dicatat dalam Notulen Resmi TM.</p>
+                <p>6. Pengundian Resmi (Lotting) Nomor Urut Tampil (15.15 - 16.00 WIB): Tingkat SD/MI: Nomor undian SD-111 s.d. SD-175; Tingkat SMP/MTs: Nomor undian SMP-222 s.d. SMP-286. Bagi sekolah yang mengirimkan 2 peleton, perwakilan berhak mengambil 2 undian sekaligus.</p>
                 <p>7. Konfirmasi Uji Coba Lapangan & Penutupan (16.00 – 16.30 WIB): Pengisian survei mandiri via web-app lbb.tontimuallimin.com.</p>
               </div>
 
               <div className="space-y-3 pt-2">
-                <h4 className="font-black text-sm uppercase text-red-700">C. TAHAP I: PRA-LOMBA - TEKNIS UJI COBA LAPANGAN (FAMILIARISASI MEDAN)</h4>
+                <h4 className="font-black text-sm uppercase text-red-700">C. UJI COBA LAPANGAN</h4>
                 <p>1. Waktu dan Tempat Pelaksanaan: Dilaksanakan pada hari Sabtu, 16 Januari 2027 pukul 07.00 – 13.00 WIB bertempat di Kampus Terpadu Sedayu.</p>
                 <p>2. Sistem Pelaksanaan Paralel di Dua Arena: Arena 1 (Lapangan Basket, 25 m x 14 m) untuk SD/MI; Arena 2 (Pelataran Embung, 26 m x 15 m) untuk SMP/MTs.</p>
                 <p>3. Alokasi Waktu Resmi per Peleton: Tepat 15 – 18 menit (waktu efektif 8 menit untuk SD/MI dan 12 menit untuk SMP/MTs, ditambah 5 menit transisi).</p>
@@ -129,21 +129,19 @@ export default function DocumentViewerModal({ isOpen, onClose }) {
               </div>
 
               <div className="space-y-3 pt-2">
-                <h4 className="font-black text-sm uppercase text-red-700">D. TAHAP II: HARI PERLOMBAAN - REGISTRASI S.D. UPACARA PEMBUKAAN</h4>
-                <p>1. Kedatangan dan Check-In Peleton (Pukul 06.00–09.00 WIB) di Ruang Registrasi Resmi Gedung Madrasah Lantai 1 dengan jaminan KTP/SIM. Menerima Nomor Dada (disematkan pada Saf 2 Banjar 1 / S2B1), 3 ID Card (1 Official & 2 Pendukung), 1 dus air botol, dan 2 kantong sampah terpilah. Registrasi ditutup tepat pukul 09.00 WIB. Bus wajib parkir di Lapangan Hibrida Argomulyo setelah drop-off.</p>
+                <h4 className="font-black text-sm uppercase text-red-700">D. REGISTRASI S.D. UPACARA PEMBUKAAN</h4>
+                <p>1. Kedatangan dan Check-In Peleton (Pukul 06.00–09.00 WIB): Prosedur kedatangan dan daftar ulang di Ruang Registrasi Resmi Gedung Madrasah Lantai 1 dengan jaminan KTP/SIM. Menerima Nomor Dada (disematkan pada Saf 2 Banjar 1 / S2B1), 3 ID Card (1 Official & 2 Pendukung), 1 dus air botol, dan 2 kantong sampah terpilah. Registrasi ditutup tepat pukul 09.00 WIB. Bus wajib parkir di Lapangan Hibrida Argomulyo setelah drop-off.</p>
                 <p>2. Sterilisasi Arena Perlombaan (Pukul 06.45 WIB): Arena disterilkan, upacara pembukaan mulai pukul 07.00 WIB, sesi pertama lomba mulai pukul 08.00 WIB.</p>
                 <p>3. Pelaksanaan Upacara Pembukaan Resmi (Pukul 07.00 - 07.45 WIB): Peleton urutan tampil 6 sampai dengan 10 pada masing-masing tingkatan WAJIB mengikuti: SD/MI (SD-131, SD-133, SD-135, SD-137, SD-139) dan SMP/MTs (SMP-242, SMP-244, SMP-246, SMP-248, SMP-260) dengan formasi 1 Danton dan 15 Anggota (5 trio) berseragam lomba.</p>
               </div>
 
               <div className="space-y-3 pt-2">
-                <h4 className="font-black text-sm uppercase text-red-700">E. TAHAP III: HARI PERLOMBAAN - ALUR PERSIAPAN & PELAKSANAAN TAMPIL DI ARENA</h4>
-                <p>1. Kesiapan di DP 1: Masuk HANYA setelah dipanggil resmi melalui mic (dilarang masuk sebelum dipanggil). Verifikasi jumlah 22 orang di arena, nomor dada S2B1, sol sepatu tanpa pines/paku.</p>
-                <p>2. DP 2 difungsikan murni sebagai Holding Area (Ruang Tunggu Siap Tampil) yang tenang.</p>
-                <p>3. Pelaksanaan di Arena: Penghormatan awal (stopwatch DIMULAI saat aba-aba pelaksanaan "GERAK"), laporan pembuka ("Lapor, peleton dengan nomor dada ... siap melaksanakan materi gerakan lomba"), masuk Kotak Danton 1,5 x 1,5 meter.</p>
-                <p>4. Durasi Tampil: Maksimal 8 menit (SD/MI) dan 12 menit (SMP/MTs). Sinyal peluit 1x panjang (sisa 1 menit: menit ke-7 SD / menit ke-11 SMP), sinyal peluit 2x panjang (waktu habis: menit ke-8 SD / menit ke-12 SMP). Garis batas dipantau bendera Hakim Garis.</p>
-                <p>5. Atribut Terjatuh: TIDAK DIKENAKAN PENALTI PENGURANGAN NILAI (dilarang memungut hingga keluar arena).</p>
-                <p>6. Titik Pergantian Pemain Cadangan di Arena: Dilaksanakan pada saat materi "Bubar", yaitu di antara Materi No. 16 dan 17 (SD/MI) serta di antara Materi No. 19 dan 20 (SMP/MTs). Waktu stopwatch tetap berjalan.</p>
-                <p>7. Laporan Penutup, Penghormatan Penutup & Penghentian Waktu: Stopwatch BERHENTI saat aba-aba pelaksanaan "GERAK" pada penghormatan penutup ("Hormat = GERAK"). Nomor dada dikembalikan kepada petugas pos sebelum kembali ke basecamp.</p>
+                <h4 className="font-black text-sm uppercase text-red-700">E. ALUR PERSIAPAN & PELAKSANAAN TAMPIL DI ARENA</h4>
+                <p>1. Tahap Kesiapan dan Pengecekan di Daerah Persiapan 1 (DP 1): Masuk HANYA setelah dipanggil resmi melalui mic (dilarang masuk sebelum dipanggil). Verifikasi jumlah 22 orang di arena (1 Danton + 21 Inti), nomor dada S2B1, sol sepatu tanpa pines/paku/logam tajam.</p>
+                <p>2. Tahap Ruang Tunggu di Daerah Persiapan 2 (DP 2): Difungsikan murni sebagai Holding Area (Ruang Tunggu Siap Tampil) yang tenang.</p>
+                <p>3. Tahap Pelaksanaan Tampil di Arena Perlombaan: Penghormatan awal (stopwatch DIMULAI saat aba-aba pelaksanaan "GERAK"), laporan pembuka ("Lapor, peleton dengan nomor dada ... siap melaksanakan materi gerakan lomba"), masuk Kotak Danton 1,5 x 1,5 meter. Durasi tampil maksimal 8 menit (SD/MI) dan 12 menit (SMP/MTs). Sinyal peluit 1x panjang (sisa 1 menit: menit ke-7 SD / menit ke-11 SMP), sinyal peluit 2x panjang (waktu habis: menit ke-8 SD / menit ke-12 SMP). Garis batas dipantau bendera Hakim Garis. Atribut terjatuh tidak dikenakan penalti (0 poin). Laporan dan penghormatan penutup menghentikan waktu perlombaan.</p>
+                <p>4. Ketentuan Khusus Pergantian Pemain dan Penanganan Insiden di Lapangan: Pergantian pemain inti dengan cadangan resmi dilaksanakan pada saat materi "Bubar", yaitu di antara Materi No. 16 dan 17 (SD/MI) serta di antara Materi No. 19 dan 20 (SMP/MTs). Waktu stopwatch tetap berjalan.</p>
+                <p>5. Alur Keluar Arena dan Kepemilikan Nomor Dada: Setelah selesai tampil dan penghormatan penutup, peleton keluar arena menuju basecamp. Nomor Dada Peleton resmi TIDAK PERLU dikembalikan kepada panitia dan sepenuhnya menjadi hak milik serta cenderamata resmi (souvenir) bagi peleton/sekolah bersangkutan.</p>
               </div>
 
               <div className="space-y-3 pt-2">
@@ -162,7 +160,7 @@ export default function DocumentViewerModal({ isOpen, onClose }) {
               </div>
 
               <div className="space-y-3 pt-2">
-                <h4 className="font-black text-sm uppercase text-red-700">H. PENUTUP (JUKNIS LAPANGAN)</h4>
+                <h4 className="font-black text-sm uppercase text-red-700">H. PENUTUP</h4>
                 <p>Petunjuk Teknis Lapangan ini menjadi pedoman operasional resmi bagi seluruh panitia, dewan juri, dan peserta LBB Mu'allimin Tahun 2027. Seluruh hal teknis tambahan yang disepakati bersama dalam forum Technical Meeting mengikat secara sah dan menjadi bagian tak terpisahkan dari juknis ini.</p>
               </div>
 
@@ -170,7 +168,7 @@ export default function DocumentViewerModal({ isOpen, onClose }) {
                 <h4 className="font-black text-base uppercase text-amber-700">PETUNJUK TEKNIS PENILAIAN & KEJUARAAN</h4>
                 <p><strong>A. Sistem Penilaian, Sanggah & Penentuan Juara:</strong> Penilaian dilakukan oleh 6 Dewan Juri (TNI, POLRI, PPI: 3 Juri Arena 1 SD & 3 Juri Arena 2 SMP). Nilai Peleton 1:1 (Kebenaran Teknik dan Kekompakan skala 50–90 poin). Nilai Danton = (Penguasaan Materi × 35%) + (Kualitas Suara/Vokal × 25%) + (Sikap & Pelaporan × 20%) + (Penguasaan Lapangan × 20%). Poin Juara Umum: Juara 1 Peleton (6), Juara 2 (5), Juara 3 (4), Harapan 1 (3), Harapan 2 (2), Harapan 3 (1). Juara 1 Danton (3), Juara 2 (2), Juara 3 (1). Tie-breaker Juara Umum: Peringkat Tertinggi Peleton &gt; Nilai Murni Peleton &gt; Nilai Kebenaran Teknik PBB &gt; Capaian Peleton Berikutnya &gt; Capaian Komandan Terbaik &gt; Sidang Pleno Juri. Transparansi e-rekapitulasi rolling release akun Gmail ±1 jam setelah tampil. Pengajuan sanggah tertulis ditutup pukul 15.00 WIB.</p>
                 <p><strong>B. Prosedur Backup & Mitigasi Gangguan Sistem E-Penilaian:</strong> Prosedur backup manual diterapkan apabila sistem digital mengalami gangguan untuk menjamin kelancaran penilaian dan data penting lainnya.</p>
-                <p><strong>C. Ketentuan Sanksi dan Penalti Pengurangan Nilai:</strong> Tidak hadir Upacara Pembukaan (-150 poin), terlambat Upacara Pembukaan (-50 poin/5 menit), telat DP 1 setelah 3x pemanggilan (-100 poin & urutan akhir; tidak hadir = Diskualifikasi), personel &lt; 22 orang (-75 poin), kelebihan durasi waktu (-50 poin / 1–30 detik pada nilai Peleton & Danton), anggota peleton injak/keluar garis (-50 poin/kejadian pada nilai Peleton & Danton), komandan injak/keluar kotak danton (-50 poin/kejadian pada nilai Komandan saja), gerakan penyesuaian (0 poin penalti), gerakan terlewat di luar urutan (Nilai Minimal 50; tidak dilakukan = Nilai 0), peleton hafalan (Nilai 0 Kebenaran Teknik Peleton & potong Penguasaan Materi Danton), gerakan berangkai terputus (Nilai Minimal 50 & potong Penguasaan Materi Danton), pelanggaran kebersihan basecamp (-50 poin), yel-yel selama penampilan (Peringatan 1, Peringatan 2, lalu -50 poin/kejadian), atribut terjatuh (0 poin penalti).</p>
+                <p><strong>C. Ketentuan Sanksi dan Penalti Pengurangan Nilai:</strong> Tidak hadir Upacara Pembukaan (-150 poin), terlambat Upacara Pembukaan (-50 poin/5 menit), telat DP 1 setelah 3x pemanggilan (-100 poin & urutan akhir; tidak hadir = Diskualifikasi), personel &lt; 22 orang (-75 poin), kelebihan durasi waktu (-50 poin / 1–30 detik pada nilai Peleton & Danton), anggota peleton injak/keluar garis (-50 poin/kejadian pada nilai Peleton & Danton), komandan injak/keluar kotak danton (-50 poin/kejadian pada nilai Komandan saja), gerakan penyesuaian (0 poin penalti), gerakan terlewat di luar urutan (Nilai Minimal 50; tidak dilakukan = Nilai 0), peleton hafalan (Nilai 0 Kebenaran Teknik Peleton & potong Penguasaan Materi Danton), gerakan berangkai terputus (Nilai Minimal 50 & potong Penguasaan Materi Danton), pelanggaran kebersihan basecamp (-50 poin), pelanggaran kawasan tanpa rokok & vape (-50 poin), yel-yel selama penampilan (Peringatan 1, Peringatan 2, lalu -50 poin/kejadian), atribut terjatuh (0 poin penalti).</p>
                 <p><strong>D. Penutup:</strong> Menjadi pedoman operasional resmi bagi seluruh panitia, dewan juri, dan peserta LBB Mu'allimin Tahun 2027.</p>
               </div>
 

@@ -137,7 +137,14 @@ const FAQ_DATA = [
     category: 'Jadwal',
     icon: 'MapPin',
     q: 'Di mana lokasi perlombaan pada hari-H dan fasilitas apa saja yang tersedia?',
-    a: `Hari-H dilaksanakan pada ${EVENT.COMPETITION_DATE} (mulai pukul 06.00 WIB) di Kampus Terpadu Mu'allimin Sedayu, Bantul. Fasilitas lengkap meliputi: Basecamp transit ruang kelas, Masjid Hj. Yuliana untuk ibadah, kantin & stan kuliner 1918 Foodcourt / Math'am, area parkir luas, pos kesehatan & ambulans siaga, serta arena upacara mini soccer.`,
+    a: `Hari-H dilaksanakan pada ${EVENT.COMPETITION_DATE} (mulai pukul 06.00 WIB) di Kampus Terpadu Mu'allimin Sedayu, Bantul. Fasilitas lengkap meliputi: Basecamp transit ruang kelas, Masjid Hj. Yuliana untuk ibadah, kantin & stan kuliner 1918 Foodcourt & Mart, area parkir luas, pos kesehatan & ambulans siaga, serta arena upacara mini soccer.`,
+  },
+  {
+    id: 17,
+    category: 'Teknis',
+    icon: 'FileCheck2',
+    q: 'Apakah nomor dada peleton wajib dikembalikan ke panitia setelah tampil?',
+    a: 'Nomor Dada Peleton resmi TIDAK PERLU dikembalikan kepada panitia setelah perlombaan selesai. Nomor dada tersebut sepenuhnya menjadi hak milik serta cenderamata resmi (souvenir) bagi masing-masing peleton/sekolah bersangkutan.',
   },
 ];
 

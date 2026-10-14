@@ -341,7 +341,7 @@ export default function TimelinePanitiaView() {
                     <th className="py-3 px-3">Peluit 1x (Warning)</th>
                     <th className="py-3 px-3 text-rose-700">Peluit 2x (Stop)</th>
                     <th className="py-3 px-3">Keluar Arena</th>
-                    <th className="py-3 px-3 text-emerald-700">Kembalikan No Dada</th>
+                    <th className="py-3 px-3 text-emerald-700">Selesai / Menuju Basecamp</th>
                     <th className="py-3 px-3">Sesi</th>
                   </tr>
                 </thead>

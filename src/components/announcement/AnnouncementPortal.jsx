@@ -39,7 +39,7 @@ export default function AnnouncementPortal() {
               Hasil Lomba Belum Diumumkan
             </h2>
             <p className="text-xs text-slate-400 leading-relaxed">
-              Dewan Juri sedang melakukan rekapitulasi dan verifikasi nilai. Pengumuman resmi juara dan perolehan trofi akan dipublikasikan sesuai jadwal acara LBB Mu'allimin 2026.
+              Dewan Juri sedang melakukan rekapitulasi dan verifikasi nilai. Pengumuman resmi juara dan perolehan trofi akan dipublikasikan sesuai jadwal acara LBB Mu'allimin 2027.
             </p>
           </div>
           <button

@@ -130,8 +130,94 @@ export default function PenaltiesSection({
           </div>
         </div>
 
+        {/* Kotak Danton 1,5x1,5m (Bab C.5.b) */}
+        <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-col justify-between">
+          <div className="flex justify-between items-center mb-1">
+            <span className="font-bold text-slate-900 text-sm">Keluar Kotak Danton</span>
+            <span className="text-[10px] font-bold text-rose-700 bg-rose-50 px-2 py-0.5 rounded-md border border-rose-200">-50 / kejadian</span>
+          </div>
+          <p className="text-[11px] text-slate-500 mt-1 mb-3">Komandan menginjak atau keluar kotak 1,5×1,5 m (potong nilai Komandan)</p>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setPenalties(p => ({ ...p, kotakDantonCount: Math.max(0, (p.kotakDantonCount || 0) - 1) }))}
+              className="w-8 h-8 bg-white hover:bg-slate-100 text-slate-800 rounded-xl font-black text-sm flex items-center justify-center transition-all cursor-pointer border border-slate-300 shadow-xs"
+            >-</button>
+            <span className="font-mono font-black text-base w-10 text-center text-slate-900">{penalties.kotakDantonCount || 0}</span>
+            <button
+              type="button"
+              onClick={() => setPenalties(p => ({ ...p, kotakDantonCount: (p.kotakDantonCount || 0) + 1 }))}
+              className="w-8 h-8 bg-rose-600 hover:bg-rose-500 text-white rounded-xl font-black text-sm flex items-center justify-center transition-all cursor-pointer shadow-xs"
+            >+</button>
+          </div>
+        </div>
+
+        {/* Pelanggaran Rokok & Vape (Bab C.10 / Pasal 9.6) */}
+        <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-col justify-between">
+          <div className="flex justify-between items-center mb-1">
+            <span className="font-bold text-slate-900 text-sm">Rokok / Vape Kontingen</span>
+            <span className="text-[10px] font-bold text-rose-700 bg-rose-50 px-2 py-0.5 rounded-md border border-rose-200">-50 / kejadian</span>
+          </div>
+          <p className="text-[11px] text-slate-500 mt-1 mb-3">Pelanggaran di basecamp atau melibatkan personel berseragam (Pasal 9 & Bab C.10)</p>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setPenalties(p => ({ ...p, rokokCount: Math.max(0, (p.rokokCount || 0) - 1) }))}
+              className="w-8 h-8 bg-white hover:bg-slate-100 text-slate-800 rounded-xl font-black text-sm flex items-center justify-center transition-all cursor-pointer border border-slate-300 shadow-xs"
+            >-</button>
+            <span className="font-mono font-black text-base w-10 text-center text-slate-900">{penalties.rokokCount || 0}</span>
+            <button
+              type="button"
+              onClick={() => setPenalties(p => ({ ...p, rokokCount: (p.rokokCount || 0) + 1 }))}
+              className="w-8 h-8 bg-rose-600 hover:bg-rose-500 text-white rounded-xl font-black text-sm flex items-center justify-center transition-all cursor-pointer shadow-xs"
+            >+</button>
+          </div>
+        </div>
+
+        {/* Terlambat Upacara Pembukaan (Bab C.1) */}
+        <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-col justify-between">
+          <div className="flex justify-between items-center mb-1">
+            <span className="font-bold text-slate-900 text-sm">Terlambat Upacara</span>
+            <span className="text-[10px] font-bold text-rose-700 bg-rose-50 px-2 py-0.5 rounded-md border border-rose-200">-50 / 5 mnt</span>
+          </div>
+          <p className="text-[11px] text-slate-500 mt-1 mb-3">Keterlambatan hadir upacara pembukaan tiap kelipatan 5 menit</p>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setPenalties(p => ({ ...p, upacaraTerlambatBlocks: Math.max(0, (p.upacaraTerlambatBlocks || 0) - 1) }))}
+              className="w-8 h-8 bg-white hover:bg-slate-100 text-slate-800 rounded-xl font-black text-sm flex items-center justify-center transition-all cursor-pointer border border-slate-300 shadow-xs"
+            >-</button>
+            <span className="font-mono font-black text-base w-10 text-center text-slate-900">{penalties.upacaraTerlambatBlocks || 0}</span>
+            <button
+              type="button"
+              onClick={() => setPenalties(p => ({ ...p, upacaraTerlambatBlocks: (p.upacaraTerlambatBlocks || 0) + 1 }))}
+              className="w-8 h-8 bg-rose-600 hover:bg-rose-500 text-white rounded-xl font-black text-sm flex items-center justify-center transition-all cursor-pointer shadow-xs"
+            >+</button>
+          </div>
+        </div>
+
+        {/* Pelanggaran Kebersihan Basecamp (Bab C.9 / Pasal 14.4) */}
+        <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-col justify-between">
+          <div>
+            <div className="flex justify-between items-center mb-1">
+              <span className="font-bold text-slate-900 text-sm">Basecamp Kotor</span>
+              <span className="text-[10px] font-bold text-rose-700 bg-rose-50 px-2 py-0.5 rounded-md border border-rose-200">-50 Poin</span>
+            </div>
+            <p className="text-[11px] text-slate-500 mt-1">Ruang basecamp ditinggalkan kotor / berantakan saat verifikasi checkout</p>
+          </div>
+          <label className="flex items-center gap-2.5 mt-3 cursor-pointer bg-white p-2 rounded-xl border border-slate-200 hover:border-slate-300">
+            <input
+              type="checkbox"
+              checked={penalties.basecampKotor || false}
+              onChange={e => setPenalties({ ...penalties, basecampKotor: e.target.checked })}
+              className="w-4 h-4 text-rose-600 accent-rose-600 rounded cursor-pointer"
+            />
+            <span className="text-[11px] font-bold text-slate-700">Terapkan Penalti</span>
+          </label>
+        </div>
+
         {/* Tidak Ikut Upacara */}
-        <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-col justify-between sm:col-span-2">
+        <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-col justify-between">
           <div>
             <div className="flex justify-between items-center mb-1">
               <span className="font-bold text-slate-900 text-sm">Tidak Ikut Upacara Pembukaan</span>

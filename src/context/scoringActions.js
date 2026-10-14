@@ -101,11 +101,16 @@ export function createScoringActions({ setScores, currentUser }) {
         juries: {},
         penalties: {
           upacara: false,
+          upacaraTerlambatBlocks: 0,
           dp1: false,
           personelKurang: false,
           overTimeBlocks: 0,
           injakGarisCount: 0,
+          kotakDantonCount: 0,
           penyesuaianCount: 0,
+          yelYelCount: 0,
+          rokokCount: 0,
+          basecampKotor: false,
           totalPenalty: 0,
         },
         notes: '',
@@ -122,12 +127,15 @@ export function createScoringActions({ setScores, currentUser }) {
       const incomingPen = postScoreData.penalties || currentTeamScore.penalties || {};
       let totalPenalty = 0;
       if (incomingPen.upacara) totalPenalty += 150;
+      totalPenalty += (incomingPen.upacaraTerlambatBlocks || 0) * 50;
       if (incomingPen.dp1) totalPenalty += 100;
       if (incomingPen.personelKurang) totalPenalty += 75;
       totalPenalty += (incomingPen.overTimeBlocks || 0) * 50;
       totalPenalty += (incomingPen.injakGarisCount || 0) * 50;
-      // Penalti Yel-Yel Selama Penampilan (Bab H.11): -50 poin per pelanggaran
+      totalPenalty += (incomingPen.kotakDantonCount || 0) * 50;
       totalPenalty += (incomingPen.yelYelCount || 0) * 50;
+      totalPenalty += (incomingPen.rokokCount || 0) * 50;
+      if (incomingPen.basecampKotor) totalPenalty += 50;
       // Gerakan penyesuaian: 0 poin penalti (Bab H.6 & Bab A.6)
       const mergedPenalties = {
         ...incomingPen,

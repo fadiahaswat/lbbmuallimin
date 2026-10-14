@@ -588,21 +588,86 @@ export function getScaleTemplateForMaterial(materiText) {
 // PENALTIES – daftar sanksi & pengurangan nilai resmi (Bab H Juknis Lapangan & Tatib)
 // ---------------------------------------------------------------------------
 export const PENALTIES = [
-    { label: 'Tidak ikut Upacara Pembukaan (Peleton Urutan 6 s.d. 10)', value: '-150 Poin (Nilai Peleton)' },
-    { label: 'Keterlambatan Upacara Pembukaan',                        value: '-50 Poin / kelipatan 5 menit (Nilai Peleton)' },
-    { label: 'Keterlambatan Hadir di DP 1 (3x Panggilan @ 2 menit)',   value: '-100 Poin & Urutan Paling Akhir' },
-    { label: 'Jumlah Personel Kurang (< 22 orang di arena)',            value: '-75 Poin (Nilai Peleton)' },
-    { label: 'Kelebihan Durasi Waktu Tampil (per rentang 1–30 detik)', value: '-50 Poin (Nilai Peleton & Danton)' },
-    { label: 'Pelanggaran Garis Arena (Anggota Peleton)',              value: '-50 Poin / kejadian (Nilai Peleton & Danton)' },
-    { label: 'Pelanggaran Garis Kotak Danton 1,5×1,5 m (Komandan)',    value: '-50 Poin / kejadian (Nilai Danton Saja)' },
-    { label: 'Ketentuan Gerakan Penyesuaian',                           value: '0 Poin (Tidak Dibatasi, Nilai Kualitatif Penguasaan Lapangan)' },
-    { label: 'Gerakan Terlewat / Tidak Urut',                           value: 'Nilai Minimal (50) / Nilai 0 (Penguasaan Materi Danton)' },
-    { label: 'Peleton Hafalan (Danton Salah Aba-Aba)',                  value: 'Nilai 0 Kebenaran Teknik & Potong Penguasaan Materi Danton' },
-    { label: 'Gerakan Berangkai Terputus (Tanda -)',                   value: 'Nilai Minimal (50) & Potong Penguasaan Materi Danton' },
-    { label: 'Atribut Terlepas / Terjatuh di Arena',                    value: '0 Poin (TIDAK DIKENAKAN PENALTI)' },
-    { label: 'Pelanggaran Kebersihan Basecamp',                         value: '-50 Poin (Nilai Peleton)' },
-    { label: 'Yel-Yel Mengganggu Selama Penampilan',                    value: '-50 Poin (Peringatan 1, 2, lalu -50 Poin/kejadian)' },
-    { label: 'Kerusakan / Kehilangan Fasilitas Basecamp',              value: 'KTP/SIM Ditahan, Ganti Rugi Penuh + Denda Rp 500.000' },
+    {
+        label: 'Tidak ikut Upacara Pembukaan (Urutan 6 s.d. 10)',
+        value: '-150 Poin (Nilai Peleton)',
+        desc: 'Urutan tampil 6 s.d. 10 (SD-131, 133, 135, 137, 139 & SMP-242, 244, 246, 248, 260) wajib hadir 1 Danton + 15 Anggota (5 trio lengkap) mengenakan seragam lomba.',
+    },
+    {
+        label: 'Keterlambatan Upacara Pembukaan',
+        value: '-50 Poin / kelipatan 5 menit (Nilai Peleton)',
+        desc: 'Dikenakan per kelipatan 5 menit keterlambatan memasuki barisan upacara pembukaan (maks. toleransi 15 menit).',
+    },
+    {
+        label: 'Keterlambatan Hadir di DP 1 (3x Panggilan @ 2 menit)',
+        value: '-100 Poin & Urutan Paling Akhir',
+        desc: 'Tidak hadir di DP 1 setelah 3x pemanggilan resmi interval 2 menit. Urutan tampil digeser paling akhir. Jika tetap absen tanpa konfirmasi: Diskualifikasi.',
+    },
+    {
+        label: 'Jumlah Personel Kurang (< 22 orang di arena)',
+        value: '-75 Poin Tetap (Nilai Peleton)',
+        desc: 'Peleton memasuki arena dengan jumlah personel kurang dari 22 orang (1 Komandan Peleton dan 21 Anggota Inti).',
+    },
+    {
+        label: 'Kelebihan Durasi Waktu Tampil (per rentang 1–30 detik)',
+        value: '-50 Poin (Nilai Peleton & Danton)',
+        desc: 'Melebihi durasi maksimal (SD > 8 menit, SMP > 12 menit) dikenai penalti per rentang 1 s.d. 30 detik dan kelipatannya terhadap Peleton & Komandan.',
+    },
+    {
+        label: 'Pelanggaran Garis Arena (Anggota Peleton)',
+        value: '-50 Poin / kejadian (Nilai Peleton & Danton)',
+        desc: 'Anggota peleton menginjak atau keluar dari garis arena luar (asas "Garis sebagai Garis"). Mengurangi nilai Peleton dan nilai Komandan Peleton.',
+    },
+    {
+        label: 'Pelanggaran Garis Kotak Danton 1,5×1,5 m (Komandan)',
+        value: '-50 Poin / kejadian (Nilai Danton Saja)',
+        desc: 'Komandan Peleton menginjak atau keluar dari Kotak Danton 1,5 x 1,5 m selama memimpin materi (hanya mengurangi nilai Komandan Peleton).',
+    },
+    {
+        label: 'Ketentuan Gerakan Penyesuaian',
+        value: '0 Poin (Bebas Kuota / Tanpa Penalti)',
+        desc: 'Penggunaan gerakan penyesuaian tidak dibatasi kuota (0 poin), namun efektivitasnya mempengaruhi penilaian Penguasaan Lapangan Danton.',
+    },
+    {
+        label: 'Gerakan Terlewat / Tidak Urut',
+        value: 'Nilai Minimal (50) / Nilai 0 (Penguasaan Materi Danton)',
+        desc: 'Gerakan terlewat namun dilakukan kemudian = Nilai Minimal (50); tidak dilakukan sama sekali = Nilai 0. Mengurangi nilai Penguasaan Materi Danton.',
+    },
+    {
+        label: 'Peleton Hafalan (Danton Salah Aba-Aba)',
+        value: 'Nilai 0 Kebenaran Teknik & Potong Penguasaan Materi Danton',
+        desc: 'Danton salah aba-aba tetapi peleton bergerak benar karena hafalan: Nilai 0 Kebenaran Teknik Peleton dan memotong nilai Penguasaan Materi Danton.',
+    },
+    {
+        label: 'Gerakan Berangkai Terputus (Tanda -)',
+        value: 'Nilai Minimal (50) & Potong Penguasaan Materi Danton',
+        desc: 'Rangkaian gerakan bertanda (-) yang diselingi jeda/gerakan tambahan diberi Nilai Minimal (50) dan memotong nilai Penguasaan Materi Danton.',
+    },
+    {
+        label: 'Pelanggaran Kebersihan & Ketertiban Basecamp',
+        value: '-50 Poin (Nilai Peleton)',
+        desc: 'Meninggalkan ruang basecamp dalam keadaan kotor, berantakan, atau sampah tidak diserahkan ke Pos Checkout sesuai Pasal 14 Tatib.',
+    },
+    {
+        label: 'Pelanggaran Kawasan Tanpa Rokok & Vape',
+        value: '-50 Poin (Nilai Peleton)',
+        desc: 'Pelanggaran terang-terangan di ruang basecamp atau yang melibatkan personel berseragam peleton setelah diberikan teguran (Pasal 9 & Bab C.10).',
+    },
+    {
+        label: 'Yel-Yel Mengganggu Selama Penampilan',
+        value: '-50 Poin / kejadian (Nilai Peleton)',
+        desc: 'Meneriakkan yel-yel / aba-aba saat ada tim tampil: Peringatan 1, 2, lalu penalti -50 poin per kejadian. Pelanggaran berat/sengaja langsung -50 poin.',
+    },
+    {
+        label: 'Atribut Terlepas / Terjatuh di Arena',
+        value: '0 Poin (TIDAK DIKENAKAN PENALTI)',
+        desc: 'Atribut peserta (topi/peci, dasi, pin, sabuk, sarung tangan, dll.) terjatuh TIDAK dipotong nilai (0 poin). Peleton dilarang memungut hingga keluar arena.',
+    },
+    {
+        label: 'Kerusakan / Kehilangan Fasilitas Basecamp',
+        value: 'KTP/SIM Ditahan, Ganti Rugi Penuh + Denda Rp 500.000',
+        desc: 'Kerusakan fisik atau kehilangan sarpras kelas: kartu identitas jaminan ditahan, ganti rugi fisik penuh + denda perbaikan Rp 500.000 (Pasal 14 Tatib).',
+    },
 ];
 
 // ---------------------------------------------------------------------------
@@ -707,9 +772,9 @@ export const GOOGLE_AUTH = {
 // JURY_POSTS – Konfigurasi Dewan Juri Resmi LBB Mu'allimin 2027
 // 2 Pos Lapangan: Pos SD/MI dan Pos SMP/MTs
 // 3 Dewan Juri per Pos:
-// 1. Juri Kebenaran Teknik Gerakan PBB (Bobot 70% Peleton)
-// 2. Juri Kekompakan Gerakan Peleton (Bobot 30% Peleton)
-// 3. Juri Komandan Peleton / Danton (Bobot 100% Danton)
+// 1. Juri Kebenaran Teknik Gerakan PBB (Rasio 1:1 / Bobot 50% Peleton)
+// 2. Juri Kekompakan Gerakan Peleton (Rasio 1:1 / Bobot 50% Peleton)
+// 3. Juri Komandan Peleton / Danton (Bobot 100% Danton: 35% Materi, 25% Suara, 20% Sikap, 20% Lapangan)
 // ---------------------------------------------------------------------------
 export const JURY_ROLES = {
     teknik: {
@@ -718,8 +783,8 @@ export const JURY_ROLES = {
         title: 'Juri 1: Kebenaran Teknik PBB',
         shortTitle: 'Juri 1 (Teknik PBB)',
         badge: 'Kebenaran Teknik PBB',
-        weightPct: 70,
-        description: 'Menilai presisi, ketepatan urutan aba-aba & gerakan PBB berpedoman pada Perpang TNI No. 57 & 58 Th 2018 (Bobot 70% Peleton).',
+        weightPct: 50,
+        description: 'Menilai presisi, ketepatan urutan aba-aba & gerakan PBB berpedoman pada Perpang TNI No. 57 & 58 Th 2018 (Rasio 1:1 Peleton / Bobot 50%, nilai 50 s.d. 90 genap).',
         defaultNameSD: 'Mayor (Mar) Bambang S., S.E.',
         defaultNameSMP: 'Mayor Inf. Supriyadi, M.M.',
     },
@@ -730,7 +795,7 @@ export const JURY_ROLES = {
         shortTitle: 'Juri 2 (Kekompakan)',
         badge: 'Kekompakan Peleton',
         weightPct: 50,
-        description: 'Menilai keseragaman langkah, kelurusan saf/banjar, irama, tempo, serta harmonisasi gerakan peleton (Rasio 1:1 Peleton, nilai 50 s.d. 90 genap).',
+        description: 'Menilai keseragaman langkah, kelurusan saf/banjar, irama, tempo, serta harmonisasi gerakan peleton (Rasio 1:1 Peleton / Bobot 50%, nilai 50 s.d. 90 genap).',
         defaultNameSD: 'Kapten Kav. Hendra Wijaya',
         defaultNameSMP: 'Kapten Arh. Agus Prasetyo',
     },

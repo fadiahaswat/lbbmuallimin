@@ -143,11 +143,16 @@ export default function JuryScoringApp() {
   // Penalties (Hakim Garis & Timer)
   const [penalties, setPenalties] = useState({
     upacara: false,
+    upacaraTerlambatBlocks: 0,
     dp1: false,
     personelKurang: false,
     overTimeBlocks: 0,
     injakGarisCount: 0,
+    kotakDantonCount: 0,
     penyesuaianCount: 0,
+    yelYelCount: 0,
+    rokokCount: 0,
+    basecampKotor: false,
   });
 
   const [juryNotes, setJuryNotes] = useState('');
@@ -199,7 +204,7 @@ export default function JuryScoringApp() {
 
       setPaperEvidenceUrl(score.paperEvidenceUrl || '');
       setVerificationNoteInput(score.verificationNotes || '');
-      setPenalties(score.penalties || { upacara: false, dp1: false, personelKurang: false, overTimeBlocks: 0, injakGarisCount: 0, penyesuaianCount: 0 });
+      setPenalties(score.penalties || { upacara: false, upacaraTerlambatBlocks: 0, dp1: false, personelKurang: false, overTimeBlocks: 0, injakGarisCount: 0, kotakDantonCount: 0, penyesuaianCount: 0, yelYelCount: 0, rokokCount: 0, basecampKotor: false });
       setJuryNotes(score.notes || '');
     } else {
       setPbb1RubricScores(getInitialRubricScores(mList));
@@ -207,7 +212,7 @@ export default function JuryScoringApp() {
       setDantonRubricScores(getInitialDantonRubric());
       setPaperEvidenceUrl('');
       setVerificationNoteInput('');
-      setPenalties({ upacara: false, dp1: false, personelKurang: false, overTimeBlocks: 0, injakGarisCount: 0, penyesuaianCount: 0 });
+      setPenalties({ upacara: false, upacaraTerlambatBlocks: 0, dp1: false, personelKurang: false, overTimeBlocks: 0, injakGarisCount: 0, kotakDantonCount: 0, penyesuaianCount: 0, yelYelCount: 0, rokokCount: 0, basecampKotor: false });
       setJuryNotes('');
     }
   }
@@ -229,12 +234,15 @@ export default function JuryScoringApp() {
 
   let penaltyDeduction = 0;
   if (penalties.upacara) penaltyDeduction += 150;
+  penaltyDeduction += (penalties.upacaraTerlambatBlocks || 0) * 50;
   if (penalties.dp1) penaltyDeduction += 100;
   if (penalties.personelKurang) penaltyDeduction += 75;
   penaltyDeduction += (penalties.overTimeBlocks || 0) * 50;
   penaltyDeduction += (penalties.injakGarisCount || 0) * 50;
-  // Penalti Yel-Yel Selama Penampilan (Bab H.11): -50 poin per pelanggaran
+  penaltyDeduction += (penalties.kotakDantonCount || 0) * 50;
   penaltyDeduction += (penalties.yelYelCount || 0) * 50;
+  penaltyDeduction += (penalties.rokokCount || 0) * 50;
+  if (penalties.basecampKotor) penaltyDeduction += 50;
   // Gerakan penyesuaian tidak dikenakan penalti poin (0 poin) sesuai Juknis Bab H.6 & Bab A.6
 
   const peletonCombinedScore = useMemo(() => {
@@ -383,7 +391,7 @@ export default function JuryScoringApp() {
                   <span className="text-[10px] font-black uppercase tracking-widest text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
                     E-SCORING DEWAN JURI
                   </span>
-                  <span className="text-xs text-slate-500 font-medium">LBB Mu'allimin 2026 • 1 Pos Arena</span>
+                  <span className="text-xs text-slate-500 font-medium">LBB Mu'allimin 2027 • 1 Pos Arena</span>
                   {currentUser && (
                     <span className="text-[10px] font-bold px-2 py-0.5 rounded-full border bg-slate-50 text-slate-700 border-slate-200 flex items-center gap-1">
                       <span className={`w-1.5 h-1.5 rounded-full ${

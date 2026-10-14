@@ -135,7 +135,7 @@ export default function AuthModal() {
 
           <div className="flex items-center gap-2">
             <a
-              href={`https://wa.me/${CONTACT.WHATSAPP || '6281230093737'}?text=Halo%20Panitia%20LBB%20Mu'allimin%202026,%20saya%20butuh%20bantuan%20login%20portal.`}
+              href={`https://wa.me/6281947491505?text=Halo%20Panitia%20LBB%20Mu'allimin%202027,%20saya%20butuh%20bantuan%20login%20portal.`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-[11px] font-bold text-emerald-700 transition-colors shadow-xs"

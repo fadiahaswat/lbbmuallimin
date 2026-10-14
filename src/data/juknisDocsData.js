@@ -142,6 +142,83 @@ export const JUKNIS_PENILAIAN_CHAPTERS = [
     letter: 'C',
     title: 'KETENTUAN SANKSI DAN PENALTI PENGURANGAN NILAI',
     tableNote: `Pelanggaran teknis dan ketentuan lapangan dikenai sanksi berupa pengurangan nilai secara kumulatif pada rekapitulasi nilai akhir. Pengurangan nilai diberlakukan sesuai dengan pihak yang melakukan pelanggaran, yaitu Peleton, Komandan Peleton, atau keduanya.`,
+    points: [
+      {
+        number: 1,
+        title: 'Upacara Pembukaan',
+        content: 'Peleton yang diwajibkan mengikuti Upacara Pembukaan (SD/SMP Urutan Tampil 6 s.d. 10) tetapi tidak hadir dikenai penalti sebesar -150 poin. Peleton yang terlambat hadir dikenai penalti sebesar -50 poin untuk setiap kelipatan keterlambatan 5 menit. Penalti berlaku terhadap nilai Peleton.'
+      },
+      {
+        number: 2,
+        title: 'Keterlambatan Hadir di DP 1',
+        content: 'Peleton yang tidak hadir di DP 1 setelah 3 (tiga) kali pemanggilan resmi melalui pengeras suara, dengan interval 2 (dua) menit antar pemanggilan, dikenai pengurangan nilai sebesar -100 poin dan urutan tampil digeser ke posisi paling akhir. Apabila peleton tetap tidak hadir tanpa konfirmasi resmi, peserta dikenai sanksi DISKUALIFIKASI. Penalti berlaku terhadap nilai Peleton.'
+      },
+      {
+        number: 3,
+        title: 'Jumlah Personel Kurang',
+        content: 'Peleton yang memasuki arena dengan jumlah personel kurang dari 22 orang, terdiri atas 1 Komandan Peleton dan 21 anggota, dikenai penalti tetap sebesar -75 poin. Penalti berlaku terhadap nilai Peleton.'
+      },
+      {
+        number: 4,
+        title: 'Kelebihan Durasi Waktu',
+        content: 'Peleton dan Komandan Peleton wajib menyelesaikan materi lomba dalam durasi maksimal 8 menit untuk SD dan 12 menit untuk SMP. Kelebihan durasi dikenai penalti sebesar -50 poin untuk setiap rentang 1 s.d. 30 detik dan kelipatannya. Penalti diberlakukan terhadap nilai Peleton dan nilai Komandan Peleton.'
+      },
+      {
+        number: 5,
+        title: 'Pelanggaran Garis (Asas "Garis sebagai Garis")',
+        content: 'Pelanggaran garis dibedakan berdasarkan pihak yang melakukan pelanggaran:',
+        subItems: [
+          'a. Anggota Peleton yang menginjak atau keluar dari garis arena dikenai penalti -50 poin untuk setiap kejadian terhadap nilai Peleton.',
+          'b. Komandan Peleton yang menginjak atau keluar dari Kotak Danton berukuran 1,5 × 1,5 meter dikenai penalti -50 poin untuk setiap kejadian terhadap nilai Komandan Peleton.',
+          'c. Pelanggaran yang dilakukan Komandan Peleton tidak mengurangi nilai Peleton.',
+          'd. Pelanggaran yang dilakukan anggota Peleton mengurangi nilai Komandan Peleton.',
+          'e. Setiap pelanggaran ditandai dengan bendera oleh Hakim Garis dan dicatat berdasarkan kategori penilaiannya.'
+        ]
+      },
+      {
+        number: 6,
+        title: 'Gerakan Terlewat / Tidak Urut',
+        content: 'Gerakan yang terlewat tetapi kemudian dilaksanakan di luar urutan diberikan nilai minimal (50) pada gerakan tersebut. Gerakan yang terlewat dan tidak dilaksanakan sama sekali diberikan nilai 0 (nol). Kesalahan gerakan terlewat/tidak urut diperhitungkan dalam penilaian Penguasaan Materi Komandan Peleton.'
+      },
+      {
+        number: 7,
+        title: 'Peleton Hafalan',
+        content: 'Apabila Komandan Peleton memberikan aba-aba yang salah, tetapi Peleton tetap melaksanakan gerakan yang benar berdasarkan hafalan, maka: (a) Gerakan tersebut diberikan nilai 0 (nol) pada penilaian Kebenaran Teknik Peleton; (b) Kesalahan aba-aba diperhitungkan dalam penilaian Penguasaan Materi Komandan Peleton. Dengan demikian, kesalahan Komandan dan respons Peleton dinilai pada kategori masing-masing.'
+      },
+      {
+        number: 8,
+        title: 'Gerakan Berangkai Terputus',
+        content: 'Rangkaian gerakan yang ditandai dengan tanda "-" wajib dilaksanakan secara berkesinambungan. Apabila rangkaian tersebut diselingi jeda atau gerakan tambahan yang tidak diperintahkan, maka: (a) Gerakan tersebut diberikan nilai minimal (50) pada penilaian Kebenaran Teknik Peleton; (b) Kesalahan gerakan berangkai terputus diperhitungkan dalam penilaian Penguasaan Materi Komandan Peleton. Dengan demikian, kesalahan Komandan dan respons Peleton dinilai pada kategori masing-masing.'
+      },
+      {
+        number: 9,
+        title: 'Pelanggaran Kebersihan Basecamp',
+        content: 'Meninggalkan ruang basecamp dalam keadaan kotor atau berantakan dikenai penalti -50 poin pada rekapitulasi nilai akhir peleton sesuai ketentuan Pasal 14 Tata Tertib Peserta.'
+      },
+      {
+        number: 10,
+        title: 'Pelanggaran Kawasan Tanpa Rokok & Vape',
+        content: 'Pelanggaran terang-terangan di ruang basecamp atau yang melibatkan personel kontingen berseragam setelah diberikan teguran dikenai penalti sebesar -50 poin terhadap nilai Peleton sesuai Pasal 9 Tata Tertib Peserta.'
+      },
+      {
+        number: 11,
+        title: 'Yel-Yel Selama Penampilan',
+        content: 'Peserta, Official, atau pihak yang menjadi bagian dari tim dilarang meneriakkan yel-yel, memberikan aba-aba, atau memberikan bentuk dukungan suara yang dapat memengaruhi jalannya penampilan selama Peleton sedang tampil.',
+        subItems: [
+          'a. Pelanggaran pertama diberikan Peringatan Pertama oleh Panitia Lapangan.',
+          'b. Pelanggaran kedua diberikan Peringatan Kedua oleh Panitia Lapangan.',
+          'c. Pelanggaran ketiga dan setiap pelanggaran berikutnya dikenai penalti sebesar -50 poin terhadap nilai Peleton untuk setiap kejadian.',
+          'd. Yel-yel atau bentuk dukungan suara yang dilakukan secara sengaja, berulang, atau dengan intensitas yang mengganggu jalannya penampilan dan dinilai sebagai pelanggaran berat dapat langsung dikenai penalti sebesar -50 poin tanpa melalui Peringatan Pertama dan Peringatan Kedua.',
+          'e. Panitia berhak melakukan verifikasi identitas suporter melalui koordinasi dengan Official sekolah bersangkutan sebelum menjatuhkan sanksi pengurangan nilai.',
+          'f. Peringatan dan penalti dicatat oleh Panitia Lapangan atau Asisten Juri pada lembar pengawasan dan disampaikan kepada Dewan Juri untuk dicatat dalam rekapitulasi nilai.'
+        ]
+      },
+      {
+        number: 12,
+        title: 'Pencatatan Penalti',
+        content: 'Setiap penalti dicatat oleh Asisten Juri pada lembar penilaian sesuai dengan kategori pelanggaran dan pihak yang dikenai penalti.'
+      }
+    ],
     closingNote: `Setiap penalti dicatat oleh Asisten Juri pada lembar penilaian sesuai dengan kategori pelanggaran dan pihak yang dikenai penalti.`
   },
   {
@@ -272,3 +349,68 @@ export const JUKNIS_PENDAFTARAN_CHAPTERS = [
     content: `Petunjuk Teknis Pendaftaran ini menjadi pedoman operasional resmi bagi seluruh panitia, dewan juri, dan peserta LBB Mu'allimin Tahun 2027. Seluruh hal teknis tambahan yang disepakati bersama dalam forum Technical Meeting mengikat secara sah dan menjadi bagian tak terpisahkan dari juknis ini.`
   }
 ];
+
+export const RUNDOWN_DATA = {
+  tm: {
+    title: 'Rundown Technical Meeting (TM) Peserta',
+    date: 'Sabtu, 9 Januari 2027',
+    venue: 'Aula Kampus Induk Madrasah Mu’allimin Wirobrajan (Jl. Letjen S. Parman No. 68, Yogyakarta)',
+    items: [
+      { time: '12.30 – 13.00', duration: "30'", agenda: 'Registrasi & Verifikasi Dokumen Fisik Asli', desc: 'Delegasi resmi sekolah (maksimal 2 orang) melakukan presensi dan menyerahkan berkas fisik: Surat Rekomendasi/Tugas Kepala Sekolah asli berstempel basah & Pakta Integritas bermaterai Rp 10.000. (Divisi Kesekretariatan)' },
+      { time: '13.00 – 13.15', duration: "15'", agenda: 'Pembukaan Technical Meeting', desc: 'Pembukaan forum TM oleh MC, pembacaan kalam ilahi, menyanyikan lagu Indonesia Raya & Mars Sang Surya. (Divisi Acara)' },
+      { time: '13.15 – 13.30', duration: "15'", agenda: 'Sambutan Panitia & Pimpinan', desc: 'Sambutan Perwakilan Direksi Madrasah Mu\'allimin Muhammadiyah Yogyakarta.' },
+      { time: '13.30 – 14.30', duration: "60'", agenda: 'Pemaparan Materi Teknis & Juknis Lomba', desc: 'Pemaparan regulasi PBB Perpang TNI 58 & 57/2018 (Hormat Kanan Perpang 45/2014), ketentuan arena, alur DP 1 & DP 2, sistem e-penilaian, dan tata tertib madrasah/basecamp. (Divisi Acara & Dewan Juri)' },
+      { time: '14.30 – 15.15', duration: "45'", agenda: 'Sesi Tanya Jawab Teknis', desc: 'Diskusi interaktif, klarifikasi materi teknis perlombaan, dan penandatanganan Berita Acara / Notulen Resmi TM yang mengikat secara sah.' },
+      { time: '15.15 – 16.00', duration: "45'", agenda: 'Pengundian Terbuka (Lotting) Nomor Urut Tampil', desc: 'Lotting resmi nomor dada: SD (SD-111 s.d. SD-175) dan SMP (SMP-222 s.d. SMP-286). Pencatatan resmi daftar urutan tampil. (Divisi Acara)' },
+      { time: '16.00 – 16.30', duration: "30'", agenda: 'Konfirmasi Uji Coba Lapangan & Penutup', desc: 'Penjelasan teknis orientasi medan/uji coba lapangan, pengisian survei kesediaan melalui portal digital, doa bersama, dan penutupan.' }
+    ]
+  },
+  trial: {
+    title: 'Rundown Uji Coba Lapangan (Orientasi Medan)',
+    date: 'Sabtu, 16 Januari 2027',
+    venue: 'Kampus Terpadu Madrasah Mu’allimin Sedayu, Bantul',
+    notes: 'Berjalan paralel di 2 arena (Arena 1 Lapangan Basket untuk SD/MI; Arena 2 Pelataran Embung untuk SMP/MTs). Setiap peleton dialokasikan waktu total 15 menit (orientasi bersih sesuai durasi lomba + 5 menit transisi).',
+    slots: [
+      { time: '06.30 – 07.00', arena1: 'Presensi & Kedatangan Kontingen', arena2: 'Presensi & Kedatangan Kontingen' },
+      { time: '07.00 – 07.15', arena1: 'Peleton Urutan 1 SD/MI', arena2: 'Peleton Urutan 1 SMP/MTs' },
+      { time: '07.15 – 07.30', arena1: 'Peleton Urutan 2 SD/MI', arena2: 'Peleton Urutan 2 SMP/MTs' },
+      { time: '07.30 – 07.45', arena1: 'Peleton Urutan 3 SD/MI', arena2: 'Peleton Urutan 3 SMP/MTs' },
+      { time: '07.45 – 08.00', arena1: 'Peleton Urutan 4 SD/MI', arena2: 'Peleton Urutan 4 SMP/MTs' },
+      { time: '08.00 – 08.15', arena1: 'Peleton Urutan 5 SD/MI', arena2: 'Peleton Urutan 5 SMP/MTs' },
+      { time: '08.15 – 08.30', arena1: 'Peleton Urutan 6 SD/MI', arena2: 'Peleton Urutan 6 SMP/MTs' },
+      { time: '08.30 – 08.45', arena1: 'Peleton Urutan 7 SD/MI', arena2: 'Peleton Urutan 7 SMP/MTs' },
+      { time: '08.45 – 09.00', arena1: 'Peleton Urutan 8 SD/MI', arena2: 'Peleton Urutan 8 SMP/MTs' },
+      { time: '09.00 – 09.15', arena1: 'Peleton Urutan 9 SD/MI', arena2: 'Peleton Urutan 9 SMP/MTs' },
+      { time: '09.15 – 09.30', arena1: 'Peleton Urutan 10 SD/MI', arena2: 'Peleton Urutan 10 SMP/MTs' },
+      { time: '09.30 – 09.45', arena1: 'Peleton Urutan 11 SD/MI', arena2: 'Peleton Urutan 11 SMP/MTs' },
+      { time: '09.45 – 10.00', arena1: 'Peleton Urutan 12 SD/MI', arena2: 'Peleton Urutan 12 SMP/MTs' },
+      { time: '10.00 – 10.15', arena1: 'Peleton Urutan 13 SD/MI', arena2: 'Peleton Urutan 13 SMP/MTs' },
+      { time: '10.15 – 10.30', arena1: 'Peleton Urutan 14 SD/MI', arena2: 'Peleton Urutan 14 SMP/MTs' },
+      { time: '10.30 – 10.45', arena1: 'Peleton Urutan 15 SD/MI', arena2: 'Peleton Urutan 15 SMP/MTs' },
+      { time: '10.45 – 11.00', arena1: 'Peleton Urutan 16 SD/MI', arena2: 'Peleton Urutan 16 SMP/MTs' },
+      { time: '11.00 – 11.15', arena1: 'Peleton Urutan 17 SD/MI', arena2: 'Peleton Urutan 17 SMP/MTs' },
+      { time: '11.15 – 11.30', arena1: 'Peleton Urutan 18 SD/MI', arena2: 'Peleton Urutan 18 SMP/MTs' },
+      { time: '11.30 – 12.00', arena1: 'Evaluasi & Pengosongan Venue', arena2: 'Evaluasi & Pengosongan Venue' }
+    ]
+  },
+  competition: {
+    title: 'Rundown Hari-H Perlombaan',
+    date: 'Ahad, 24 Januari 2027',
+    venue: 'Kampus Terpadu Madrasah Mu’allimin Sedayu, Bantul',
+    items: [
+      { time: '06.00 – 06.45', duration: "45'", agenda: 'Kedatangan Peleton, Check-In & Penempatan Basecamp', desc: 'Official menyerahkan kartu identitas (KTP/SIM) sebagai jaminan basecamp, menerima Nomor Dada Peleton resmi, 3 ID Card (1 Official & 2 Pendukung), 1 dus air mineral, dan 2 trash bag terpilah. Pengawalan LO ke ruang basecamp. (Registrasi ditutup tepat 09.00 WIB).', location: 'Meja Registrasi (Gd. Madrasah Lt. 1) & Basecamp' },
+      { time: '06.45 – 07.00', duration: "15'", agenda: 'Sterilisasi Arena, Penyambutan Juri & Penyiapan Upacara', desc: 'Seluruh arena ditutup dari aktivitas umum. Barisan Upacara disiapkan di Lapangan Mini Soccer. Peleton Wajib Upacara: Urutan tampil 6 s.d. 10 (SD-131 s.d. SD-139 dan SMP-242 s.d. SMP-260). Penyambutan Dewan Juri di Ruang VIP.', location: 'Lapangan Mini Soccer & Ruang VIP' },
+      { time: '07.00 – 07.45', duration: "45'", agenda: 'Upacara Pembukaan Resmi LBB Mu\'allimin 2027', desc: 'Upacara resmi pembukaan dipimpin Direktur Madrasah Mu\'allimin. Pembacaan Janji Wasit/Juri dan Janji Peserta, prosesi simbolis pembukaan, dan doa.', location: 'Lapangan Mini Soccer' },
+      { time: '07.45 – 08.00', duration: "15'", agenda: 'Jeda Kesiapan Peserta, Mobilisasi Pos Juri & Pemanggilan DP 1', desc: 'Transisi peleton awal. Dewan Juri menempati meja penilaian di Arena 1 & 2. Peleton urutan 1 (SD-111 & SMP-222) dipanggil resmi ke DP 1 pukul 07.45 WIB.', location: 'Pos DP 1 & Meja Dewan Juri' },
+      { time: '08.00 – 11.30', duration: "210'", agenda: 'Pelaksanaan Lomba Sesi I (Pagi) (Urutan Tampil 1 s.d. 14)', desc: 'Dilaksanakan secara simultan/paralel: Arena 1 (Basket): SD-111 s.d. SD-157 (14 Peleton); Arena 2 (Embung): SMP-222 s.d. SMP-268 (14 Peleton). Estimasi rolling release e-nilai ±1 jam setelah tampil.', location: 'Arena 1 (Lap. Basket) & Arena 2 (Pelataran Embung)' },
+      { time: '11.30 – 12.30', duration: "60'", agenda: 'ISHOMA (Istirahat, Salat Dhuhur Berjamaah, & Makan Siang)', desc: 'Penghentian sementara seluruh aktivitas arena lomba. Salat Dhuhur berjamaah di Masjid Kampus Terpadu. Jamuan makan siang juri, panitia, dan peserta di 1918 Foodcourt.', location: 'Masjid Kampus Terpadu Sedayu & 1918 Foodcourt' },
+      { time: '12.30 – 13.30', duration: "60'", agenda: 'Pelaksanaan Lomba Sesi II (Siang) (Urutan Tampil 15 s.d. 18)', desc: 'Lanjutan penampilan 4 peleton terakhir: Arena 1 (Basket): SD-159 s.d. SD-175 (4 Peleton); Arena 2 (Embung): SMP-280 s.d. SMP-286 (4 Peleton). Seluruh penampilan tuntas pukul 13.30 WIB.', location: 'Arena 1 (Lap. Basket) & Arena 2 (Pelataran Embung)' },
+      { time: '13.30 – 15.00', duration: "90'", agenda: 'Sidang Pleno Dewan Juri, Masa Sanggah & Checkout Basecamp', desc: 'Sidang Pleno: Rekapitulasi final, pengesahan nilai murni, pemotongan penalti, dan penandatanganan SK Juara Umum/Peleton oleh Dewan Juri. Masa Sanggah Administrasi: Ditutup tepat pukul 15.00 WIB. Checkout Basecamp: Pembersihan kelas, penyerahan 2 trash bag sampah ke pos checkout, inspeksi LO, dan penukaran kartu identitas jaminan KTP/SIM.', location: 'Ruang VIP Pleno Juri, Ruang Informasi Sanggah, & Basecamp' },
+      { time: '15.00 – 15.45', duration: "45'", agenda: 'Istirahat Sore, Salat Ashar Berjamaah & Pembagian Kudapan', desc: 'Pelaksanaan salat Ashar berjamaah di Masjid Kampus Terpadu dan pembagian snack sore kontingen.', location: 'Masjid Kampus Terpadu & 1918 Foodcourt' },
+      { time: '15.45 – 16.00', duration: "15'", agenda: 'Standby & Pengecekan Barisan Apel Penutupan', desc: 'Seluruh perwakilan kontingen (1 Danton + 4 Anggota berseragam lengkap) wajib telah berbaris rapi di Lapangan Mini Soccer. Pengecekan kehadiran oleh protokol panitia.', location: 'Lapangan Mini Soccer' },
+      { time: '16.00 – 16.30', duration: "30'", agenda: 'Upacara / Apel Penutupan Resmi', desc: 'Upacara penutupan resmi dipimpin Pimpinan Madrasah Mu\'allimin Muhammadiyah Yogyakarta dan amanat penutup.', location: 'Lapangan Mini Soccer' },
+      { time: '16.30 – 17.15', duration: "45'", agenda: 'Pengumuman Kejuaraan & Penganugerahan Hadiah', desc: 'Pembacaan SK Kejuaraan oleh Koordinator Juri. Penyerahan Piala Bergilir Juara Umum SD & SMP, Trophy Tetap, Piagam Penghargaan, dan Uang Pembinaan secara simbolis.', location: 'Panggung Kehormatan Lapangan Mini Soccer' },
+      { time: '17.15 – Selesai', duration: "-", agenda: 'Pembubaran Kontingen & Kepulangan Peserta', desc: 'Pelepasan kepulangan armada peleton secara tertib meninggalkan kawasan kampus melalui koordinasi petugas keamanan dan parkir.', location: 'Gerbang Utama Kampus Terpadu Sedayu' }
+    ]
+  }
+};

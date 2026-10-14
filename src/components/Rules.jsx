@@ -68,11 +68,11 @@ export default function Rules({ embedded = false }) {
       intro: 'pendahuluan petunjuk teknis resmi lbb muallimin perpang tni 58 57 45 hormat kanan pbb ppm alur kronologis'.includes(query),
       def: 'definisi istilah clear area dp 1 dp 2 holding area kotak danton 1.5 bendera hakim garis gerakan penyesuaian dimensi basket embung 25x14 26x15 official pendukung'.includes(query),
       tm: 'technical meeting tm peserta aula wirobrajan 9 januari 2027 berkas fisik surat tugas kepala sekolah pakta integritas undian lotting sd-111 smp-222'.includes(query),
-      trial: 'uji coba lapangan familiarisasi medan sedayu 16 januari 2027 15 menit 10 menit efektif 5 menit transisi akustik vokal danton tekstur cengkeraman sepatu'.includes(query),
-      reg: 'hari perlombaan daftar ulang check in 06.00 09.00 ktp jaminan nomor dada s2b1 kantong sampah terpilah sterilisasi upacara pembukaan sd-131 smp-242 15 anggota'.includes(query),
-      arena: 'alur tampil arena posisi center juri laporan pembuka penghormatan peluit 1 kali panjang 1 menit habis menit 8 12 bendera hakim garis atribut terjatuh bubar pergantian pemain cadangan'.includes(query),
+      trial: 'uji coba lapangan familiarisasi medan sedayu 16 januari 2027 15 menit 8 menit 12 menit 5 menit transisi'.includes(query),
+      reg: 'registrasi s.d. upacara pembukaan kedatangan check-in 06.00 09.00 ktp jaminan nomor dada s2b1 kantong sampah terpilah sterilisasi upacara pembukaan sd-131 smp-242 15 anggota'.includes(query),
+      arena: 'alur persiapan pelaksanaan tampil arena posisi center juri laporan pembuka penghormatan peluit 1 kali panjang 1 menit habis menit 8 12 bendera hakim garis atribut terjatuh bubar pergantian pemain cadangan cenderamata souvenir nomor dada'.includes(query),
       checkout: 'pasca lomba checkout basecamp 15.00 wib 4 langkah meja kursi kantong sampah terpilah verifikasi lo ktp jaminan denda 500.000'.includes(query),
-      force: 'keadaan kahar force majeure darurat bencana alam hujan lebat badai petir henti reset stopwatch'.includes(query),
+      force: 'keadaan kahar force majeure darurat bencana alam hujan lebat badai petir henti reset stopwatch wewenang'.includes(query),
       closing: 'penutup juknis kesepakatan mengikat sah panitia dewan juri'.includes(query),
     };
   }, [query]);
@@ -377,7 +377,7 @@ export default function Rules({ embedded = false }) {
               </div>
             )}
 
-            {/* B. PRA-LOMBA - TEKNIS TECHNICAL MEETING */}
+            {/* B. TECHNICAL MEETING (TM) PESERTA */}
             {shouldShow('tm') && (
               <div className="group border border-slate-200 rounded-2xl overflow-hidden bg-white hover:border-red-500/40 hover:shadow-md transition-all duration-300">
                 <button
@@ -388,12 +388,15 @@ export default function Rules({ embedded = false }) {
                     <span className="w-8 h-8 rounded-xl bg-slate-200 text-slate-800 font-black flex items-center justify-center text-sm shadow-xs">
                       B
                     </span>
-                    <span className="font-bold text-base md:text-lg text-slate-900">B. Tahap I: Pra-Lomba – Teknis Technical Meeting (TM) Peserta</span>
+                    <span className="font-bold text-base md:text-lg text-slate-900">B. Technical Meeting (TM) Peserta</span>
                   </div>
                   <ChevronDown className={`text-slate-400 transition-transform duration-300 w-5 h-5 ${isAccordionOpen('tm') ? 'rotate-180 text-red-600' : ''}`} />
                 </button>
                 {isAccordionOpen('tm') && (
                   <div className="bg-white border-t border-slate-100 p-6 sm:p-7 text-slate-700 text-sm leading-relaxed space-y-4 animate-fade">
+                    <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
+                      Technical Meeting (TM) Peserta merupakan forum resmi penyamaan persepsi teknis dan materi perlombaan, tata tertib peserta, serta penentuan nomor urut tampil lomba yang diselenggarakan dengan rincian teknis operasional sebagai berikut:
+                    </p>
                     <div className="grid grid-cols-1 gap-3.5">
                       {/* Poin 1 */}
                       <div className="p-4 sm:p-5 rounded-2xl bg-slate-50/60 border border-slate-200/90 hover:bg-white hover:border-slate-300 transition-all flex items-start gap-3.5">
@@ -416,7 +419,7 @@ export default function Rules({ embedded = false }) {
                         <div className="space-y-1">
                           <strong className="text-slate-900 text-sm block">Ketentuan Kehadiran Delegasi:</strong>
                           <p className="text-slate-700 text-xs sm:text-sm leading-relaxed">
-                            Setiap peleton wajib mendelegasikan maksimal 2 (dua) orang perwakilan resmi (Official/Pelatih/Pembina atau Komandan Peleton). Seluruh perwakilan wajib mengenakan pakaian rapi, sopan, dan bersepatu. Perwakilan putri wajib mengenakan pakaian berlengan panjang.
+                            Setiap sekolah/madrasah wajib mendelegasikan maksimal 2 (dua) orang perwakilan resmi per SEKOLAH (terdiri atas Official/Pelatih/Pembina dan/atau Komandan Peleton), tanpa memandang jumlah peleton yang didaftarkan (1 atau 2 peleton). Seluruh perwakilan wajib mengenakan pakaian rapi, sopan, dan bersepatu. Perwakilan putri wajib mengenakan pakaian berlengan panjang.
                           </p>
                         </div>
                       </div>
@@ -455,11 +458,11 @@ export default function Rules({ embedded = false }) {
                             </div>
                             <div className="p-3 bg-white rounded-xl border border-slate-200 text-xs text-slate-700 shadow-xs">
                               <span className="text-[10px] font-bold text-amber-600 uppercase block mb-0.5">Materi (c)</span>
-                              Penjelasan ketentuan gerakan penyesuaian (tanpa batas kuota namun mempengaruhi penilaian Penguasaan Lapangan Komandan), prinsip garis batas arena, bendera hakim garis, dan ketentuan Kotak Danton.
+                              Penjelasan regulasi arena, batas garis, ketentuan Kotak Danton, serta teknis pelaksanaan gerakan di lapangan.
                             </div>
                             <div className="p-3 bg-white rounded-xl border border-slate-200 text-xs text-slate-700 shadow-xs">
                               <span className="text-[10px] font-bold text-emerald-600 uppercase block mb-0.5">Materi (d)</span>
-                              Mekanisme perhitungan waktu resmi menggunakan stopwatch serta publikasi hasil penilaian melalui portal peserta di website lbb.tontimuallimin.com menggunakan akun Gmail masing-masing peleton. Seluruh nilai peserta akan ditampilkan secara langsung pada akun masing-masing peleton setelah pelaksanaan upacara dan pengumuman kejuaraan.
+                              Mekanisme perhitungan waktu resmi menggunakan stopwatch serta publikasi hasil penilaian melalui portal peserta di website lbb.tontimuallimin.com menggunakan akun Gmail masing-masing peleton.
                             </div>
                           </div>
                         </div>
@@ -473,7 +476,7 @@ export default function Rules({ embedded = false }) {
                         <div className="space-y-1">
                           <strong className="text-slate-900 text-sm block">Sesi Tanya Jawab Teknis (14.30 - 15.15 WIB):</strong>
                           <p className="text-slate-700 text-xs sm:text-sm leading-relaxed">
-                            Peserta diberikan ruang diskusi langsung bersama Dewan Juri ataupun Panitia guna menyamakan persepsi serta mengklarifikasi hal-hal teknis yang belum jelas. Setiap keputusan dan kesepakatan akhir akan dicatat ke dalam Notulensi Resmi TM sebagai rujukan sah perlombaan.
+                            Peserta diberikan ruang diskusi langsung bersama Dewan Juri ataupun Panitia guna menyamakan persepsi serta mengklarifikasi hal-hal teknis yang belum jelas. Setiap keputusan dan kesepakatan akhir akan dicatat ke dalam Notulen Resmi TM sebagai rujukan sah perlombaan.
                           </p>
                         </div>
                       </div>
@@ -486,7 +489,7 @@ export default function Rules({ embedded = false }) {
                         <div className="space-y-1">
                           <strong className="text-slate-900 text-sm block">Pengundian Resmi (Lotting) Nomor Urut Tampil (15.15 - 16.00 WIB):</strong>
                           <p className="text-slate-700 text-xs sm:text-sm leading-relaxed">
-                            Panitia memimpin undian terbuka nomor urut tampil resmi: Tingkat SD/MI: Nomor undian SD-111 sampai dengan SD-175; Tingkat SMP/MTs: Nomor undian SMP-222 sampai dengan SMP-286. Penukaran nomor urut tampil hanya diperkenankan dilakukan di hadapan panitia dan disaksikan oleh peserta lain selama forum TM masih berlangsung.
+                            Panitia memimpin undian terbuka nomor urut tampil resmi: Tingkat SD/MI: Nomor undian SD-111 sampai dengan SD-175; Tingkat SMP/MTs: Nomor undian SMP-222 sampai dengan SMP-286. Penukaran nomor urut tampil hanya diperkenankan dilakukan di hadapan panitia dan disaksikan oleh peserta lain selama forum TM masih berlangsung. Bagi sekolah/madrasah yang mengirimkan 2 (dua) peleton, perwakilan sekolah yang hadir berhak dan sah mengambil 2 (dua) nomor undian lotting sekaligus untuk masing-masing peletonnya.
                           </p>
                         </div>
                       </div>
@@ -509,7 +512,7 @@ export default function Rules({ embedded = false }) {
               </div>
             )}
 
-            {/* C. PRA-LOMBA - TEKNIS UJI COBA LAPANGAN */}
+            {/* C. UJI COBA LAPANGAN */}
             {shouldShow('trial') && (
               <div className="group border border-slate-200 rounded-2xl overflow-hidden bg-white hover:border-red-500/40 hover:shadow-md transition-all duration-300">
                 <button
@@ -520,12 +523,15 @@ export default function Rules({ embedded = false }) {
                     <span className="w-8 h-8 rounded-xl bg-slate-200 text-slate-800 font-black flex items-center justify-center text-sm shadow-xs">
                       C
                     </span>
-                    <span className="font-bold text-base md:text-lg text-slate-900">C. Tahap I: Pra-Lomba – Teknis Uji Coba Lapangan (Familiarisasi Medan)</span>
+                    <span className="font-bold text-base md:text-lg text-slate-900">C. Uji Coba Lapangan</span>
                   </div>
                   <ChevronDown className={`text-slate-400 transition-transform duration-300 w-5 h-5 ${isAccordionOpen('trial') ? 'rotate-180 text-red-600' : ''}`} />
                 </button>
                 {isAccordionOpen('trial') && (
                   <div className="bg-white border-t border-slate-100 p-6 sm:p-7 text-slate-700 text-sm leading-relaxed space-y-4 animate-fade">
+                    <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
+                      Uji Coba Lapangan diselenggarakan untuk memberikan kesempatan adaptasi langsung bagi peleton terhadap arena sebelum hari pelaksanaan lomba, dengan rincian teknis sebagai berikut:
+                    </p>
                     <div className="grid grid-cols-1 gap-3.5">
                       {/* Poin 1 */}
                       <div className="p-4 sm:p-5 rounded-2xl bg-slate-50/60 border border-slate-200/90 hover:bg-white hover:border-slate-300 transition-all flex items-start gap-3.5">
@@ -547,14 +553,17 @@ export default function Rules({ embedded = false }) {
                         </span>
                         <div className="space-y-2 flex-1">
                           <strong className="text-slate-900 text-sm block">Sistem Pelaksanaan Paralel di Dua Arena:</strong>
+                          <p className="text-slate-700 text-xs sm:text-sm leading-relaxed">
+                            Uji coba dilaksanakan secara simultan dan terpisah:
+                          </p>
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
                             <div className="p-3 bg-white rounded-xl border border-slate-200 text-xs text-slate-700 shadow-xs">
                               <strong className="text-slate-800 block mb-0.5">Arena 1 (Lapangan Basket Kampus Terpadu Sedayu):</strong>
-                              Khusus untuk 18 Peleton Tingkat SD/MI (ukuran 25 meter x 14 meter).
+                              Khusus untuk 18 Peleton Tingkat SD/MI (ukuran 25 m x 14 m).
                             </div>
                             <div className="p-3 bg-white rounded-xl border border-slate-200 text-xs text-slate-700 shadow-xs">
                               <strong className="text-slate-800 block mb-0.5">Arena 2 (Pelataran Embung Kampus Terpadu Sedayu):</strong>
-                              Khusus untuk 18 Peleton Tingkat SMP/MTs (ukuran 26 meter x 15 meter).
+                              Khusus untuk 18 Peleton Tingkat SMP/MTs (ukuran 26 m x 15 m).
                             </div>
                           </div>
                         </div>
@@ -584,9 +593,9 @@ export default function Rules({ embedded = false }) {
                           4
                         </span>
                         <div className="space-y-1">
-                          <strong className="text-slate-900 text-sm block">Ketentuan Pakaian dan Perlengkapan Uji Coba:</strong>
+                          <strong className="text-slate-900 text-sm block">Ketentuan Perlengkapan Uji Coba:</strong>
                           <p className="text-slate-700 text-xs sm:text-sm leading-relaxed">
-                            Peserta diperbolehkan mengenakan seragam olahraga sekolah atau seragam latihan masing-masing yang rapi, sopan, dan bersepatu. Ditegaskan bahwa <span className="text-red-600 font-bold bg-red-50 px-1 rounded border border-red-200">DILARANG KERAS menggunakan sol sepatu berpines/paku atau modifikasi logam tajam</span> yang berpotensi merusak permukaan arena.
+                            Peserta wajib mengenakan seragam olahraga atau seragam latihan sekolah yang seragam (sama) dan rapi. Seluruh peserta wajib mengenakan celana panjang dan sepatu. Peserta putri wajib mengenakan pakaian berlengan panjang. Peserta disarankan mengenakan topi. <span className="text-red-600 font-bold bg-red-50 px-1 rounded border border-red-200">DILARANG KERAS menggunakan sepatu dengan sol berpaku atau ber-pines pada saat uji coba</span>.
                           </p>
                         </div>
                       </div>
@@ -596,17 +605,10 @@ export default function Rules({ embedded = false }) {
                         <span className="w-7 h-7 rounded-lg bg-slate-900 text-white font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
                           5
                         </span>
-                        <div className="space-y-2 flex-1">
-                          <strong className="text-slate-900 text-sm block">Fokus Orientasi Medan:</strong>
-                          <p className="text-slate-700 text-xs sm:text-sm leading-relaxed">
-                            Uji coba lapangan dimanfaatkan untuk:
+                        <div className="space-y-1">
+                          <p className="text-slate-700 text-xs sm:text-sm leading-relaxed font-semibold">
+                            Uji coba ini murni merupakan kegiatan orientasi medan dan <span className="text-red-700 font-bold">TIDAK ADA penilaian dari juri</span>.
                           </p>
-                          <ul className="list-[lower-alpha] pl-5 space-y-1 text-xs text-slate-700">
-                            <li>Adaptasi tekstur dan tingkat cengkeraman permukaan paving/lantai arena terhadap alas kaki peleton.</li>
-                            <li>Orientasi batas-batas garis arena dan tata letak meja Dewan Juri.</li>
-                            <li>Penyesuaian artikulasi, volume, dan gema vokal Komandan Peleton di ruang terbuka.</li>
-                            <li>Simulasi alur pergerakan masuk dan keluar arena lomba bersama Liaison Officer (LO). Uji coba ini murni merupakan kegiatan familiarisasi medan dan <span className="font-semibold text-slate-800 bg-slate-100 px-1 rounded">TIDAK ADA penilaian dari Dewan Juri</span>.</li>
-                          </ul>
                         </div>
                       </div>
                     </div>
@@ -615,7 +617,7 @@ export default function Rules({ embedded = false }) {
               </div>
             )}
 
-            {/* D. HARI PERLOMBAAN - REGISTRASI & UPACARA PEMBUKAAN */}
+            {/* D. REGISTRASI S.D. UPACARA PEMBUKAAN */}
             {shouldShow('reg') && (
               <div className="group border border-slate-200 rounded-2xl overflow-hidden bg-white hover:border-red-500/40 hover:shadow-md transition-all duration-300">
                 <button
@@ -626,7 +628,7 @@ export default function Rules({ embedded = false }) {
                     <span className="w-8 h-8 rounded-xl bg-slate-200 text-slate-800 font-black flex items-center justify-center text-sm shadow-xs">
                       D
                     </span>
-                    <span className="font-bold text-base md:text-lg text-slate-900">D. Tahap II: Hari Perlombaan – Registrasi Ulang s.d. Upacara Pembukaan</span>
+                    <span className="font-bold text-base md:text-lg text-slate-900">D. Registrasi s.d. Upacara Pembukaan</span>
                   </div>
                   <ChevronDown className={`text-slate-400 transition-transform duration-300 w-5 h-5 ${isAccordionOpen('reg') ? 'rotate-180 text-red-600' : ''}`} />
                 </button>
@@ -639,22 +641,29 @@ export default function Rules({ embedded = false }) {
                           1
                         </span>
                         <div className="space-y-2 flex-1">
-                          <strong className="text-slate-900 text-sm block">Kedatangan dan Registrasi Ulang Kontingen (06.00 – 09.00 WIB):</strong>
+                          <strong className="text-slate-900 text-sm block">Kedatangan dan Check-In Peleton (Pukul 06.00–09.00 WIB)</strong>
                           <p className="text-slate-700 text-xs sm:text-sm leading-relaxed">
-                            Prosedur kedatangan dan daftar ulang kontingen di Meja Registrasi Resmi (Ruang Registrasi Gedung Madrasah Lantai 1):
+                            Prosedur kedatangan dan daftar ulang peleton dilaksanakan di Ruang Registrasi Resmi yang berlokasi di Gedung Madrasah Lantai 1, Kampus Terpadu Mu’allimin Sedayu, dengan urutan sebagai berikut:
                           </p>
                           <ul className="list-[lower-alpha] pl-5 space-y-1.5 text-xs text-slate-700">
-                            <li>Official menyerahkan 1 (satu) kartu identitas asli (KTP/SIM perwakilan kontingen) kepada panitia sebagai jaminan ketertiban, kebersihan, dan keutuhan fasilitas ruang basecamp.</li>
-                            <li>Official menerima kit fasilitas kontingen: (1) Nomor Dada Peleton resmi; (2) ID Card Resmi (1 Official & 2 Pendukung Resmi); (3) 1 (satu) dus Air Minum Kemasan (botol) per peleton; serta (4) 2 (dua) kantong sampah terpilah (Organik dan Anorganik).</li>
-                            <li>Nomor dada peleton wajib disematkan pada dada personel banjar paling kanan saf kedua (Saf 2 Banjar 1 / S2B1).</li>
-                            <li>Peleton diarahkan dan dikawal oleh LO pendamping menuju ruang kelas basecamp resmi yang telah ditentukan panitia.</li>
-                            <li>Meja registrasi ulang ditutup tepat pukul 09.00 WIB. Peleton yang tidak melakukan daftar ulang hingga batas waktu tersebut dinyatakan mengundurkan diri dan tidak diperkenankan tampil.</li>
-                            <li>Regulasi Parkir Kendaraan Kontingen:
+                            <li><strong className="text-slate-800">Regulasi Parkir Kendaraan Peleton:</strong>
                               <ul className="list-[circle] pl-5 mt-1 space-y-1">
-                                <li><strong className="text-slate-800">Bus / Kendaraan Besar Kontingen:</strong> Dilarang parkir di dalam area Kampus Terpadu Mu'allimin; bus hanya diperkenankan masuk untuk proses drop-off peserta serta perlengkapan di Drop Zone resmi, kemudian wajib segera menuju dan parkir di kantong parkir Lapangan Hibrida Argomulyo.</li>
-                                <li><strong className="text-slate-800">Kendaraan Roda 4 (Mobil) dan Roda 2 (Motor):</strong> Diparkirkan di kantong parkir internal Kampus Terpadu Sedayu sesuai arahan petugas, dan apabila kapasitas parkir internal telah penuh, arus kendaraan dialihkan menuju kantong parkir Lapangan Hibrida Argomulyo.</li>
+                                <li>Bus atau kendaraan besar peleton dilarang parkir di dalam area Kampus Terpadu Mu’allimin. Bus hanya diperkenankan masuk untuk proses drop-off peserta dan perlengkapan di Drop Zone resmi, kemudian wajib segera menuju kantong parkir Lapangan Hibrida Argomulyo.</li>
+                                <li>Kendaraan roda 4 dan roda 2 diparkir di area parkir internal Kampus Terpadu Sedayu sesuai arahan petugas. Apabila kapasitas parkir internal telah penuh, kendaraan diarahkan menuju kantong parkir Lapangan Hibrida Argomulyo.</li>
                               </ul>
                             </li>
+                            <li><strong className="text-slate-800">Proses Registrasi:</strong> Official melakukan daftar ulang di Ruang Registrasi Resmi Gedung Madrasah Lantai 1 dengan menyerahkan 1 (satu) kartu identitas asli berupa KTP/SIM sebagai jaminan ketertiban dan kebersihan ruang basecamp.</li>
+                            <li><strong className="text-slate-800">Penerimaan Perlengkapan Peleton:</strong> Setelah proses registrasi, Official menerima fasilitas resmi Peleton berupa:
+                              <ol className="list-decimal pl-5 mt-1 space-y-0.5">
+                                <li>Nomor Dada Peleton resmi.</li>
+                                <li>Tanda Pengenal ID Card resmi untuk 1 (satu) Official dan 2 (dua) Pendukung Resmi.</li>
+                                <li>1 (satu) dus air minum kemasan botol untuk setiap peleton.</li>
+                                <li>2 (dua) kantong sampah terpilah, yaitu Organik dan Anorganik.</li>
+                              </ol>
+                            </li>
+                            <li><strong className="text-slate-800">Pemasangan Nomor Dada:</strong> Nomor Dada Peleton wajib disematkan pada dada personel banjar paling kanan saf kedua (Saf 2 Banjar 1 / S2B1).</li>
+                            <li><strong className="text-slate-800">Pengarahan Menuju Basecamp:</strong> Setelah menerima perlengkapan, peleton diarahkan dan dikawal oleh LO pendamping menuju ruang kelas basecamp resmi yang telah ditentukan oleh panitia.</li>
+                            <li><strong className="text-slate-800">Batas Waktu Registrasi:</strong> Registrasi ditutup tepat pukul 09.00 WIB. Peleton yang tidak melakukan daftar ulang sampai batas waktu tersebut tidak diperkenankan mengikuti perlombaan.</li>
                           </ul>
                         </div>
                       </div>
@@ -665,9 +674,9 @@ export default function Rules({ embedded = false }) {
                           2
                         </span>
                         <div className="space-y-1">
-                          <strong className="text-slate-900 text-sm block">Sterilisasi Arena Perlombaan (06.45 WIB):</strong>
+                          <strong className="text-slate-900 text-sm block">Sterilisasi Arena Perlombaan (Pukul 06.45 WIB)</strong>
                           <p className="text-slate-700 text-xs sm:text-sm leading-relaxed">
-                            Tepat pukul 06.45 WIB, seluruh arena perlombaan (Arena 1 & Arena 2 serta Lapangan Mini Soccer) dinyatakan steril dari segala aktivitas umum. Seluruh peserta upacara pembukaan wajib telah siap berbaris tertib di Lapangan Upacara.
+                            Mulai pukul 06.45 WIB, seluruh arena perlombaan (Arena 1 & Arena 2 serta Lapangan Mini Soccer) ditutup dan disterilkan dari aktivitas umum, serta seluruh peserta upacara pembukaan wajib telah berada di lokasi barisan upacara. Upacara pembukaan dimulai tepat pukul 07.00 WIB. Perlombaan sesi pertama dimulai tepat pukul 08.00 WIB (jeda 15 menit setelah Upacara Pembukaan selesai pukul 07.45 WIB).
                           </p>
                         </div>
                       </div>
@@ -678,7 +687,7 @@ export default function Rules({ embedded = false }) {
                           3
                         </span>
                         <div className="space-y-2 flex-1">
-                          <strong className="text-slate-900 text-sm block">Pelaksanaan Upacara Pembukaan Resmi (Pukul 07.00 - 07.45 WIB):</strong>
+                          <strong className="text-slate-900 text-sm block">Pelaksanaan Upacara Pembukaan Resmi (Pukul 07.00 - 07.45 WIB)</strong>
                           <ul className="list-[lower-alpha] pl-5 space-y-1.5 text-xs text-slate-700">
                             <li>Peleton dengan 5 (lima) peleton urutan tampil 6 sampai dengan 10 pada masing-masing tingkatan WAJIB mengikuti Upacara Pembukaan resmi. Yakni:
                               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 my-1.5">
@@ -694,7 +703,7 @@ export default function Rules({ embedded = false }) {
                             </li>
                             <li>Komposisi barisan upacara pembukaan terdiri dari 1 Komandan Peleton dan 15 Anggota (5 trio lengkap) mengenakan seragam perlombaan.</li>
                             <li>Pengecekan kehadiran barisan upacara dilakukan oleh panitia 15 menit sebelum upacara dimulai.</li>
-                            <li>Peleton yang tidak hadir atau terlambat dikenakan sanksi penalti pengurangan nilai sesuai ketentuan Bab H.</li>
+                            <li>Peleton yang tidak hadir atau terlambat dikenakan sanksi penalti pengurangan nilai sesuai ketentuan Petunjuk Teknis Penilaian & Kejuaraan.</li>
                           </ul>
                         </div>
                       </div>
@@ -715,7 +724,7 @@ export default function Rules({ embedded = false }) {
                     <span className="w-8 h-8 rounded-xl bg-slate-200 text-slate-800 font-black flex items-center justify-center text-sm shadow-xs">
                       E
                     </span>
-                    <span className="font-bold text-base md:text-lg text-slate-900">E. Tahap III: Hari Perlombaan – Alur Persiapan & Pelaksanaan Tampil di Arena</span>
+                    <span className="font-bold text-base md:text-lg text-slate-900">E. Alur Persiapan & Pelaksanaan Tampil di Arena</span>
                   </div>
                   <ChevronDown className={`text-slate-400 transition-transform duration-300 w-5 h-5 ${isAccordionOpen('arena') ? 'rotate-180 text-red-600' : ''}`} />
                 </button>
@@ -727,11 +736,21 @@ export default function Rules({ embedded = false }) {
                         <span className="w-7 h-7 rounded-lg bg-slate-900 text-white font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
                           1
                         </span>
-                        <div className="space-y-1">
-                          <strong className="text-slate-900 text-sm block">Pemberitahuan Kesiapan Peleton di Basecamp:</strong>
-                          <p className="text-slate-700 text-xs sm:text-sm leading-relaxed">
-                            LO mendatangi basecamp 15 menit sebelum jadwal pemanggilan resmi ke DP 1 guna memastikan kesiapan pasukan, kelengkapan atribut seragam tonti, serta keutuhan personel.
-                          </p>
+                        <div className="space-y-2 flex-1">
+                          <strong className="text-slate-900 text-sm block">Tahap Kesiapan dan Pengecekan di Daerah Persiapan 1 (DP 1):</strong>
+                          <ul className="list-[lower-alpha] pl-5 space-y-1.5 text-xs text-slate-700">
+                            <li><strong className="text-slate-800">Kesiapan di Basecamp:</strong> Peleton bersama official sebaiknya sudah bersiap-siap di ruang basecamp sekurang-kurangnya 15 (lima belas) menit sebelum estimasi waktu nomor urutnya akan dipanggil oleh LO pendamping.</li>
+                            <li><strong className="text-slate-800">Prosedur Masuk DP 1:</strong> Peleton HANYA diperkenankan masuk ke Daerah Persiapan 1 (DP 1) setelah dipanggil secara resmi oleh panitia melalui pengeras suara (mic). Ditegaskan bahwa peleton DILARANG KERAS masuk ke DP 1 sebelum dipanggil.</li>
+                            <li><strong className="text-slate-800">Pemeriksaan di DP 1:</strong> Petugas DP 1 melakukan verifikasi fisik dan administrasi menyeluruh meliputi:
+                              <ol className="list-decimal pl-5 mt-1 space-y-0.5">
+                                <li>Pemeriksaan kelengkapan jumlah personel: 1 Danton, 21 Anggota Inti, anggota cadangan, 1 Official, dan 2 Pendukung Resmi ber-ID Card.</li>
+                                <li>Pemeriksaan pemasangan nomor dada peleton di personel banjar paling kanan saf kedua (Saf 2 Banjar 1 / S2B1).</li>
+                                <li>Pemeriksaan fisik sol sepatu: DILARANG KERAS menggunakan pines, paku payung, spikes, pul logam, atau material sejenis yang dapat merusak permukaan lapangan/lantai.</li>
+                                <li>Ketentuan Sanksi/Penalti: Setiap bentuk ketidaksesuaian administrasi, ketidaklengkapan personel, maupun pelanggaran terhadap aturan sol sepatu akan dikenakan sanksi penalti pada rekapitulasi penilaian akhir, serta personel yang melanggar aturan sol sepatu dilarang memasuki arena lomba sebelum alas kakinya disesuaikan.</li>
+                              </ol>
+                            </li>
+                            <li><strong className="text-slate-800">Pergantian Terencana:</strong> Apabila terdapat pergantian pemain cadangan yang telah direncanakan, Official wajib melaporkannya kepada Petugas DP 1.</li>
+                          </ul>
                         </div>
                       </div>
 
@@ -740,19 +759,12 @@ export default function Rules({ embedded = false }) {
                         <span className="w-7 h-7 rounded-lg bg-slate-900 text-white font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
                           2
                         </span>
-                        <div className="space-y-2 flex-1">
-                          <strong className="text-slate-900 text-sm block">Pemanggilan Resmi & Tahap Kesiapan di DP 1 (Pos Pengecekan & Verifikasi):</strong>
+                        <div className="space-y-1.5 flex-1">
+                          <strong className="text-slate-900 text-sm block">Tahap Ruang Tunggu di Daerah Persiapan 2 (DP 2):</strong>
                           <ul className="list-[lower-alpha] pl-5 space-y-1 text-xs text-slate-700">
-                            <li>Peleton <span className="text-red-600 font-bold bg-red-50 px-1 rounded border border-red-200">HANYA DIPERBOLEHKAN menuju dan memasuki area DP 1 setelah dipanggil resmi oleh panitia</span> melalui pengeras suara (mic). Peleton dilarang keras memasuki area DP 1 sebelum dipanggil resmi.</li>
-                            <li>Peleton yang tidak hadir di DP 1 setelah dilakukan 3 (tiga) kali pemanggilan resmi dengan interval masing-masing 2 (dua) menit dikenakan <span className="text-red-700 font-bold bg-red-50 px-1 rounded border border-red-200">sanksi pemotongan nilai sebesar -100 poin</span>. Apabila setelah sanksi tersebut diberikan peleton tetap tidak hadir saat peleton urutan berikutnya telah menyelesaikan penampilannya di arena, maka peleton tersebut <span className="text-red-700 font-bold bg-red-50 px-1 rounded border border-red-200">dinyatakan DISKUALIFIKASI</span>.</li>
-                            <li>Di DP 1, petugas panitia melakukan:
-                              <ul className="list-[circle] pl-5 mt-1 space-y-1">
-                                <li>Pemeriksaan komposisi personel: tepat 22 orang masuk arena (1 Komandan Peleton dan 21 Pasukan Inti). Pelanggaran atas kekurangan personel dikenakan sanksi pemotongan nilai -75 poin per personel yang kurang.</li>
-                                <li>Pemeriksaan pemasangan nomor dada peleton di dada kiri personel S2B1.</li>
-                                <li>Pemeriksaan fisik sol sepatu seluruh personel. Ditegaskan bahwa <span className="text-red-600 font-bold">DILARANG KERAS menggunakan pines, paku payung, spikes, logam tajam, atau pul sepatu bola/futsal bergerigi tajam</span>. Penggunaan modifikasi terlarang tersebut berakibat personel yang bersangkutan dilarang tampil.</li>
-                                <li>Pelaporan pergantian cadangan terencana kepada petugas panitia di DP 1.</li>
-                              </ul>
-                            </li>
+                            <li>Setelah dinyatakan lengkap dan lolos verifikasi di DP 1, peleton bergerak menuju DP 2.</li>
+                            <li>DP 2 difungsikan murni sebagai Holding Area (Ruang Tunggu Siap Tampil). Di area ini peleton menjaga fokus mental dan ketenangan, serta dilarang membuat kegaduhan.</li>
+                            <li>Peleton berbaris rapi secara terpimpin atau bubar di alur masuk arena lomba menunggu aba-aba dari panitia pengatur lapangan.</li>
                           </ul>
                         </div>
                       </div>
@@ -762,11 +774,29 @@ export default function Rules({ embedded = false }) {
                         <span className="w-7 h-7 rounded-lg bg-slate-900 text-white font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
                           3
                         </span>
-                        <div className="space-y-1">
-                          <strong className="text-slate-900 text-sm block">Tahap Ruang Tunggu di DP 2 (Holding Area Siap Tampil):</strong>
-                          <p className="text-slate-700 text-xs sm:text-sm leading-relaxed">
-                            Setelah dinyatakan lolos verifikasi dari DP 1, peleton diarahkan bergeser menuju DP 2 yang difungsikan murni sebagai Ruang Tunggu Siap Tampil. Peleton menjaga ketenangan, fokus mental, dan berbaris rapi menunggu aba-aba dari pengatur lapangan untuk memasuki arena lomba.
-                          </p>
+                        <div className="space-y-2 flex-1">
+                          <strong className="text-slate-900 text-sm block">Tahap Pelaksanaan Tampil di Arena Perlombaan:</strong>
+                          <ul className="list-[lower-alpha] pl-5 space-y-1.5 text-xs text-slate-700">
+                            <li><strong className="text-slate-800">Memasuki Arena dan Posisi Peleton:</strong> Komandan Peleton memimpin peleton memasuki arena perlombaan menuju posisi tengah arena sehingga posisi peleton berada tepat di tengah menghadap meja Dewan Juri.</li>
+                            <li><strong className="text-slate-800">Pengondisian Peleton:</strong> Sebelum melapor, Komandan Peleton mengondisikan peletonnya terlebih dahulu di posisi tengah tersebut (diberi aba-aba siap atau diluruskan).</li>
+                            <li><strong className="text-slate-800">Penghormatan Awal:</strong> Setelah peleton terkondisi rapi dan siap sempurna, Komandan Peleton mengambil posisi di samping kanan barisan menghadap ke arah meja Dewan Juri, kemudian memberikan aba-aba penghormatan: <em>"Kepada Dewan Juri, Hormat = GERAK"</em>. Stopwatch waktu resmi lomba DIMULAI tepat saat aba-aba pelaksanaan penghormatan pembuka ini dihentakkan.</li>
+                            <li><strong className="text-slate-800">Laporan Pembuka:</strong> Setelah aba-aba tegak (Tegak = GERAK), Komandan Peleton berpindah mengambil posisi di depan peleton menghadap Dewan Juri, lalu menyampaikan laporan: <em>"Lapor, peleton dengan nomor dada (sebutkan nomor urut dalam ejaan kata per digit, contoh tingkat SD: satu satu satu / tingkat SMP: dua dua dua) siap melaksanakan materi gerakan lomba."</em></li>
+                            <li><strong className="text-slate-800">Berpindah ke Kotak Danton:</strong> Setelah selesai melapor, Komandan Peleton melangkah menuju Kotak Danton (1,5 x 1,5 meter) yang terletak di batas depan arena menghadap peleton. Danton wajib berada di dalam kotak selama memimpin gerakan lomba (kecuali pada materi tertentu yang mengharuskan komandan berada di luar kotak seperti materi bubar peleton, berhimpun, atau untuk perhatian istirahat di tempat). Komandan Peleton kemudian memulai materi selanjutnya.</li>
+                            <li><strong className="text-slate-800">Durasi Waktu dan Sinyal Peluit Timekeeper:</strong>
+                              <ol className="list-decimal pl-5 mt-1 space-y-0.5">
+                                <li>Durasi maksimal tampil resmi: 8 menit untuk tingkat SD/MI dan 12 menit untuk tingkat SMP/MTs.</li>
+                                <li>Sinyal Peluit 1 Kali Panjang: Peringatan bahwa waktu tampil tersisa 1 menit (menit ke-7 untuk SD/MI dan menit ke-11 untuk SMP/MTs).</li>
+                                <li>Sinyal Peluit 2 Kali Panjang: Penanda resmi bahwa durasi waktu tampil telah habis (menit ke-8 untuk SD/MI dan menit ke-12 untuk SMP/MTs). Peleton wajib segera menyelesaikan materi dan meninggalkan arena.</li>
+                                <li>Waktu stopwatch resmi berakhir tepat saat Komandan Peleton menghentakkan aba-aba pelaksanaan 'GERAK' pada penghormatan penutup ('Hormat = GERAK').</li>
+                              </ol>
+                            </li>
+                            <li><strong className="text-slate-800">Sinyal Pelanggaran Garis (Bendera):</strong> Hakim Garis menggunakan bendera untuk menandai terjadinya pelanggaran garis batas arena oleh peleton atau keluarnya komandan dari Kotak Danton saat memimpin materi.</li>
+                            <li><strong className="text-slate-800">Pelaksanaan Materi Gerakan:</strong> Dilaksanakan secara berurutan sesuai lembar materi PBB resmi tanpa jeda atau pengulangan di luar ketentuan.</li>
+                            <li><strong className="text-slate-800">Ketentuan Atribut Terjatuh:</strong> Apabila atribut peserta (topi/peci, dasi, pin/lencana, sabuk, sarung tangan, dll.) terlepas atau terjatuh di arena, TIDAK DIKENAKAN PENALTI PENGURANGAN NILAI. Peleton dilarang memungut atribut tersebut hingga peleton keluar arena.</li>
+                            <li><strong className="text-slate-800">Laporan Penutup:</strong> Komandan Peleton mengambil posisi di depan peleton menghadap meja Dewan Juri, lalu menyampaikan laporan: <em>"Lapor, peleton dengan nomor dada (sebutkan nomor urut dalam ejaan kata, contoh: satu satu satu) telah melaksanakan materi lomba, laporan selesai."</em></li>
+                            <li><strong className="text-slate-800">Penghormatan Penutup:</strong> Setelah melapor, Komandan Peleton berpindah mengambil posisi di samping kanan barisan menghadap Dewan Juri, kemudian memimpin penghormatan: <em>"Kepada Dewan Juri, Hormat = GERAK"</em>.</li>
+                            <li><strong className="text-slate-800">Penghentian Waktu & Keluar Arena:</strong> Penghormatan diakhiri dengan aba-aba "Hormat = GERAK" (stopwatch waktu resmi lomba BERHENTI tepat saat aba-aba pelaksanaan "GERAK" ini dihentakkan), selanjutnya Komandan Peleton memimpin peletonnya meninggalkan arena lomba.</li>
+                          </ul>
                         </div>
                       </div>
 
@@ -775,11 +805,23 @@ export default function Rules({ embedded = false }) {
                         <span className="w-7 h-7 rounded-lg bg-slate-900 text-white font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
                           4
                         </span>
-                        <div className="space-y-1">
-                          <strong className="text-slate-900 text-sm block">Memasuki Arena dan Penentuan Posisi Center Juri:</strong>
-                          <p className="text-slate-700 text-xs sm:text-sm leading-relaxed">
-                            Komandan Peleton memimpin pasukannya memasuki arena menuju titik tengah arena sehingga posisi peleton berada tepat di tengah (center) menghadap langsung ke arah meja Dewan Juri. Sebelum melapor, danton mengondisikan pasukannya terlebih dahulu (diberi aba-aba siap atau diluruskan).
-                          </p>
+                        <div className="space-y-2 flex-1">
+                          <strong className="text-slate-900 text-sm block">Ketentuan Khusus Pergantian Pemain dan Penanganan Insiden di Lapangan:</strong>
+                          <ul className="list-[lower-alpha] pl-5 space-y-1.5 text-xs text-slate-700">
+                            <li>Pemain inti hanya dapat digantikan oleh pemain cadangan resmi yang terdaftar pada peleton bersangkutan.</li>
+                            <li><strong className="text-slate-800">Jeda Pergantian Resmi di Arena:</strong> Pergantian pemain dilaksanakan pada saat materi “Bubar”, yaitu: 1) Tingkat SD/MI dilakukan di antara Materi No. 16 dan 17; 2) Tingkat SMP/MTs dilakukan di antara Materi No. 19 dan 20.</li>
+                            <li><strong className="text-slate-800">Tata Cara Pergantian:</strong> Setelah Komandan Peleton memberikan aba-aba “Bubar”, anggota yang akan digantikan diperbolehkan meninggalkan arena dan anggota pengganti diperbolehkan memasuki arena untuk menempati posisi yang telah ditentukan. Pergerakan anggota yang digantikan dan anggota pengganti pada saat proses pergantian tersebut tidak dianggap sebagai pelanggaran garis dan tidak dikenai penalti. Setelah pergantian selesai, seluruh anggota wajib berada pada posisi yang ditentukan sebelum materi berikutnya dimulai.</li>
+                            <li><strong className="text-slate-800">Waktu Pergantian:</strong> Waktu stopwatch tetap berjalan selama proses pergantian pemain. Tidak terdapat penghentian atau penambahan waktu khusus untuk proses pergantian.</li>
+                            <li><strong className="text-slate-800">Pergantian Tidak Terencana (Darurat):</strong> Apabila terjadi cedera atau kondisi lain yang menyebabkan seorang anggota tidak dapat melanjutkan perlombaan, Official dapat memberikan isyarat kepada Panitia Lapangan untuk meminta izin pergantian pemain. Pergantian darurat dilakukan dengan menggunakan pemain cadangan resmi dan mengikuti arahan Panitia Lapangan:
+                              <ol className="list-decimal pl-5 mt-1 space-y-0.5">
+                                <li>Apabila cedera atau kondisi tersebut tidak membahayakan keselamatan atau jiwa peserta, waktu perlombaan tetap berjalan dan penampilan dilanjutkan setelah pergantian selesai.</li>
+                                <li>Apabila terjadi cedera atau kondisi yang membahayakan keselamatan atau jiwa peserta, Panitia Lapangan berwenang menghentikan sementara penampilan. Setelah kondisi dinyatakan aman, penampilan dapat diulang dari awal berdasarkan keputusan Panitia Lapangan dan Dewan Juri.</li>
+                              </ol>
+                            </li>
+                            <li><strong className="text-slate-800">Pergantian Komandan Peleton:</strong> Komandan Peleton hanya dapat digantikan apabila mengalami kondisi darurat, seperti sakit berat, pingsan, atau kondisi lain yang menyebabkan tidak dapat melanjutkan perlombaan. Apabila kondisi tersebut terjadi di dalam arena, Komandan Peleton dapat digantikan oleh personel yang berada di dalam arena sesuai arahan Panitia Lapangan. Komandan pengganti tidak berhak mengikuti penilaian atau perebutan kategori Juara Komandan Peleton.</li>
+                            <li><strong className="text-slate-800">Penanganan Insiden Fisik:</strong> Personel yang mengalami cedera, pingsan, atau insiden fisik lainnya dapat ditangani oleh Official, pemain cadangan, atau tim medis tanpa menghentikan waktu perlombaan. Apabila insiden dinilai membahayakan keselamatan atau jiwa peserta, Panitia Lapangan berwenang menghentikan sementara penampilan untuk penanganan keadaan darurat.</li>
+                            <li><strong className="text-slate-800">Ketentuan Garis Selama Pergantian:</strong> Pergerakan pemain yang digantikan untuk keluar dari arena dan pemain pengganti untuk memasuki arena hanya dibebaskan dari ketentuan pelanggaran garis selama proses pergantian resmi sebagaimana dimaksud pada huruf b dan c. Di luar proses pergantian resmi tersebut, setiap anggota tetap wajib mematuhi ketentuan garis arena dan dapat dikenai penalti sesuai ketentuan yang berlaku.</li>
+                          </ul>
                         </div>
                       </div>
 
@@ -788,115 +830,10 @@ export default function Rules({ embedded = false }) {
                         <span className="w-7 h-7 rounded-lg bg-slate-900 text-white font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
                           5
                         </span>
-                        <div className="space-y-2 flex-1">
-                          <strong className="text-slate-900 text-sm block">Penghormatan Awal kepada Dewan Juri:</strong>
-                          <ul className="list-[lower-alpha] pl-5 space-y-1 text-xs text-slate-700">
-                            <li>Komandan Peleton mengambil posisi di samping kanan barisan pasukannya menghadap ke arah meja Dewan Juri, lalu memimpin penghormatan dengan lantang: <em>"Kepada Dewan Juri, Hormat = GERAK"</em>.</li>
-                            <li><span className="font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">WAKTU TAMPIL RESMI (STOPWATCH) DIMULAI</span> tepat saat aba-aba pelaksanaan penghormatan pembuka (kata <em>"GERAK"</em>) dihentakkan oleh Komandan Peleton.</li>
-                          </ul>
-                        </div>
-                      </div>
-
-                      {/* Poin 6 */}
-                      <div className="p-4 sm:p-5 rounded-2xl bg-slate-50/60 border border-slate-200/90 hover:bg-white hover:border-slate-300 transition-all flex items-start gap-3.5">
-                        <span className="w-7 h-7 rounded-lg bg-slate-900 text-white font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
-                          6
-                        </span>
-                        <div className="space-y-2 flex-1">
-                          <strong className="text-slate-900 text-sm block">Laporan Pembuka dan Transisi ke Kotak Danton:</strong>
-                          <ul className="list-[lower-alpha] pl-5 space-y-1 text-xs text-slate-700">
-                            <li>Setelah aba-aba <em>"Tegak = GERAK"</em>, Komandan Peleton melangkah mengambil posisi di depan tengah peleton menghadap meja Dewan Juri untuk menyampaikan laporan resmi: <em>"Lapor, peleton dengan nomor dada (sebutkan nomor urut dalam ejaan kata, contoh: satu satu satu) siap melaksanakan materi gerakan lomba."</em></li>
-                            <li>Setelah melapor, Komandan Peleton melangkah memasuki Kotak Danton (1,5 x 1,5 meter) dengan posisi menghadap peleton (posisi komando), dilarang keras membelakangi meja juri, dan memimpin penampilan seluruh materi gerakan secara urut dan tuntas.</li>
-                          </ul>
-                        </div>
-                      </div>
-
-                      {/* Poin 7 */}
-                      <div className="p-4 sm:p-5 rounded-2xl bg-slate-50/60 border border-slate-200/90 hover:bg-white hover:border-slate-300 transition-all flex items-start gap-3.5">
-                        <span className="w-7 h-7 rounded-lg bg-slate-900 text-white font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
-                          7
-                        </span>
-                        <div className="space-y-2 flex-1">
-                          <strong className="text-slate-900 text-sm block">Durasi Waktu dan Sinyal Peluit Timekeeper:</strong>
-                          <ul className="list-[lower-alpha] pl-5 space-y-1 text-xs text-slate-700">
-                            <li>Durasi maksimal tampil resmi: <strong className="text-slate-900">8 menit untuk tingkat SD/MI</strong> dan <strong className="text-slate-900">12 menit untuk tingkat SMP/MTs</strong>.</li>
-                            <li><strong className="text-slate-800">Sinyal Peluit 1 Kali Panjang:</strong> Peringatan bahwa waktu tampil tersisa 1 menit (menit ke-7 untuk SD/MI dan menit ke-11 untuk SMP/MTs).</li>
-                            <li><strong className="text-slate-800">Sinyal Peluit 2 Kali Panjang:</strong> Penanda resmi bahwa durasi waktu tampil telah habis (menit ke-8 untuk SD/MI dan menit ke-12 untuk SMP/MTs). Peleton wajib segera menyelesaikan materi dan meninggalkan arena.</li>
-                            <li>Waktu stopwatch resmi berakhir tepat saat Komandan Peleton menghentakkan aba-aba pelaksanaan 'GERAK' pada penghormatan penutup ('Hormat = GERAK').</li>
-                          </ul>
-                        </div>
-                      </div>
-
-                      {/* Poin 8 */}
-                      <div className="p-4 sm:p-5 rounded-2xl bg-slate-50/60 border border-slate-200/90 hover:bg-white hover:border-slate-300 transition-all flex items-start gap-3.5">
-                        <span className="w-7 h-7 rounded-lg bg-slate-900 text-white font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
-                          8
-                        </span>
                         <div className="space-y-1">
-                          <strong className="text-slate-900 text-sm block">Sinyal Pelanggaran Garis:</strong>
+                          <strong className="text-slate-900 text-sm block">Alur Keluar Arena dan Kepemilikan Nomor Dada:</strong>
                           <p className="text-slate-700 text-xs sm:text-sm leading-relaxed">
-                            Hakim Garis mengibaskan bendera khusus sebagai penanda resmi setiap kali terjadi pelanggaran garis batas arena oleh anggota pasukan maupun batas Kotak Danton oleh Komandan Peleton berdasarkan asas "Garis sebagai Garis".
-                          </p>
-                        </div>
-                      </div>
-
-                      {/* Poin 9 */}
-                      <div className="p-4 sm:p-5 rounded-2xl bg-slate-50/60 border border-slate-200/90 hover:bg-white hover:border-slate-300 transition-all flex items-start gap-3.5">
-                        <span className="w-7 h-7 rounded-lg bg-slate-900 text-white font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
-                          9
-                        </span>
-                        <div className="space-y-1">
-                          <strong className="text-slate-900 text-sm block">Ketentuan Khusus Atribut Terjatuh di Arena:</strong>
-                          <p className="text-slate-700 text-xs sm:text-sm leading-relaxed">
-                            Apabila terdapat atribut pakaian atau seragam peserta (seperti topi/peci, dasi, pin, lencana, tanda pangkat, sabuk, selempang, sarung tangan, atau tali sepatu) yang terlepas atau terjatuh di dalam arena lomba, <span className="font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">TIDAK DIKENAKAN SANKSI PENALTI PENGURANGAN NILAI (0 POIN)</span>. Personel peleton dilarang memungut atribut yang terjatuh sampai seluruh rangkaian penampilan selesai dan peleton telah keluar dari arena lomba.
-                          </p>
-                        </div>
-                      </div>
-
-                      {/* Poin 10 */}
-                      <div className="p-4 sm:p-5 rounded-2xl bg-slate-50/60 border border-slate-200/90 hover:bg-white hover:border-slate-300 transition-all flex items-start gap-3.5">
-                        <span className="w-7 h-7 rounded-lg bg-slate-900 text-white font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
-                          10
-                        </span>
-                        <div className="space-y-2 flex-1">
-                          <strong className="text-slate-900 text-sm block">Ketentuan Khusus Pergantian Pemain dan Penanganan Insiden di Lapangan:</strong>
-                          <ul className="list-[lower-alpha] pl-5 space-y-1 text-xs text-slate-700">
-                            <li>Pemain inti hanya dapat digantikan oleh pemain cadangan resmi yang terdaftar pada peleton bersangkutan.</li>
-                            <li><strong className="text-slate-800">Jeda Pergantian Resmi di Arena:</strong> Pergantian pemain dilaksanakan pada saat materi “Bubar”, yaitu: (1) Tingkat SD/MI dilakukan di antara Materi No. 16 dan 17; (2) Tingkat SMP/MTs dilakukan di antara Materi No. 19 dan 20.</li>
-                            <li><strong className="text-slate-800">Tata Cara Pergantian:</strong> Setelah Komandan Peleton memberikan aba-aba “Bubar”, anggota yang akan digantikan diperbolehkan meninggalkan arena dan anggota pengganti diperbolehkan memasuki arena untuk menempati posisi yang telah ditentukan. Pergerakan anggota yang digantikan dan anggota pengganti pada saat proses pergantian tersebut tidak dianggap sebagai pelanggaran garis dan tidak dikenai penalti. Setelah pergantian selesai, seluruh anggota wajib berada pada posisi yang ditentukan sebelum materi berikutnya dimulai.</li>
-                            <li><strong className="text-slate-800">Waktu Pergantian:</strong> Waktu stopwatch tetap berjalan selama proses pergantian pemain. Tidak terdapat penghentian atau penambahan waktu khusus untuk proses pergantian.</li>
-                            <li><strong className="text-slate-800">Pergantian Tidak Terencana (Darurat):</strong> Apabila terjadi cedera atau kondisi lain yang menyebabkan seorang anggota tidak dapat melanjutkan perlombaan, Official dapat memberikan isyarat kepada Panitia Lapangan untuk meminta izin pergantian pemain. Pergantian darurat dilakukan dengan menggunakan pemain cadangan resmi dan mengikuti arahan Panitia Lapangan. (1) Apabila cedera/kondisi tidak membahayakan keselamatan atau jiwa peserta, waktu perlombaan tetap berjalan dan penampilan dilanjutkan setelah pergantian selesai; (2) Apabila cedera/kondisi membahayakan keselamatan atau jiwa peserta, Panitia Lapangan berwenang menghentikan sementara penampilan. Setelah kondisi aman, penampilan dapat diulang dari awal berdasarkan keputusan Panitia Lapangan dan Dewan Juri.</li>
-                            <li><strong className="text-slate-800">Pergantian Komandan Peleton:</strong> Komandan Peleton hanya dapat digantikan apabila mengalami kondisi darurat, seperti sakit berat, pingsan, atau kondisi lain yang menyebabkan tidak dapat melanjutkan perlombaan. Apabila kondisi tersebut terjadi di dalam arena, Komandan Peleton dapat digantikan oleh personel yang berada di dalam arena sesuai arahan Panitia Lapangan. Komandan pengganti tidak berhak mengikuti penilaian atau perebutan kategori Juara Komandan Peleton.</li>
-                            <li><strong className="text-slate-800">Penanganan Insiden Fisik:</strong> Personel yang mengalami cedera, pingsan, atau insiden fisik lainnya dapat ditangani oleh Official, pemain cadangan, atau tim medis tanpa menghentikan waktu perlombaan. Apabila insiden dinilai membahayakan keselamatan atau jiwa peserta, Panitia Lapangan berwenang menghentikan sementara penampilan untuk penanganan keadaan darurat.</li>
-                            <li><strong className="text-slate-800">Ketentuan Garis Selama Pergantian:</strong> Pergerakan pemain yang digantikan untuk keluar dari arena dan pemain pengganti untuk memasuki arena hanya dibebaskan dari ketentuan pelanggaran garis selama proses pergantian resmi sebagaimana dimaksud pada huruf b dan c. Di luar proses pergantian resmi tersebut, setiap anggota tetap wajib mematuhi ketentuan garis arena dan dapat dikenai penalti sesuai ketentuan yang berlaku.</li>
-                          </ul>
-                        </div>
-                      </div>
-
-                      {/* Poin 11 */}
-                      <div className="p-4 sm:p-5 rounded-2xl bg-slate-50/60 border border-slate-200/90 hover:bg-white hover:border-slate-300 transition-all flex items-start gap-3.5">
-                        <span className="w-7 h-7 rounded-lg bg-slate-900 text-white font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
-                          11
-                        </span>
-                        <div className="space-y-2 flex-1">
-                          <strong className="text-slate-900 text-sm block">Laporan Penutup, Penghormatan Penutup, dan Penghentian Waktu:</strong>
-                          <ul className="list-[lower-alpha] pl-5 space-y-1 text-xs text-slate-700">
-                            <li>Setelah seluruh materi gerakan selesai dilaksanakan, Komandan Peleton melangkah keluar dari Kotak Danton menuju posisi di depan peleton menghadap meja Dewan Juri untuk menyampaikan laporan penutup: <em>"Lapor, peleton dengan nomor dada (sebutkan nomor urut dalam ejaan kata) telah melaksanakan materi lomba, laporan selesai."</em></li>
-                            <li>Komandan Peleton kemudian melangkah mengambil posisi di samping kanan barisan pasukannya menghadap ke arah meja Dewan Juri, lalu memimpin penghormatan penutup: <em>"Kepada Dewan Juri, Hormat = GERAK"</em>.</li>
-                            <li><span className="font-bold text-red-700 bg-red-50 px-1.5 py-0.5 rounded border border-red-200">WAKTU TAMPIL RESMI (STOPWATCH) BERHENTI</span> tepat saat aba-aba pelaksanaan penghormatan penutup (kata <em>"GERAK"</em> pada <em>"Hormat = GERAK"</em>) dihentakkan oleh Komandan Peleton. Selanjutnya Komandan Peleton memimpin peletonnya meninggalkan arena lomba.</li>
-                          </ul>
-                        </div>
-                      </div>
-
-                      {/* Poin 12 */}
-                      <div className="p-4 sm:p-5 rounded-2xl bg-slate-50/60 border border-slate-200/90 hover:bg-white hover:border-slate-300 transition-all flex items-start gap-3.5">
-                        <span className="w-7 h-7 rounded-lg bg-slate-900 text-white font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
-                          12
-                        </span>
-                        <div className="space-y-1">
-                          <strong className="text-slate-900 text-sm block">Alur Keluar Arena dan Pengembalian Nomor Dada:</strong>
-                          <p className="text-slate-700 text-xs sm:text-sm leading-relaxed">
-                            Komandan Peleton memimpin pasukannya melangkah keluar arena perlombaan secara tertib menuju titik keluar. Di pos keluar arena, Official peleton wajib mengembalikan nomor dada peleton kepada petugas panitia, selanjutnya peleton dipandu oleh LO kembali menuju ruang basecamp kontingen.
+                            Setelah peleton menyelesaikan seluruh rangkaian materi perlombaan dan penghormatan penutup, Komandan Peleton memimpin peleton melangkah keluar arena melalui jalur evakuasi/steril resmi yang telah ditentukan panitia menuju basecamp. <strong className="text-slate-900 font-bold">Nomor Dada Peleton resmi TIDAK PERLU dikembalikan kepada panitia</strong> dan sepenuhnya menjadi hak milik serta cenderamata resmi (souvenir) bagi masing-masing peleton/sekolah bersangkutan.
                           </p>
                         </div>
                       </div>
@@ -998,8 +935,9 @@ export default function Rules({ embedded = false }) {
                           1
                         </span>
                         <div className="space-y-1">
+                          <strong className="text-slate-900 text-sm block">Ruang Lingkup Kahar:</strong>
                           <p className="text-slate-700 text-xs sm:text-sm leading-relaxed">
-                            Keadaan kahar adalah peristiwa darurat di luar kemampuan manusia dan kendali teknis Panitia maupun Peserta, meliputi: bencana alam, gempa bumi, angin puting beliung, hujan badai ekstrem yang membahayakan keselamatan fisik peserta, huru-hara, atau gangguan massal tak terduga.
+                            Keadaan kahar mencakup kondisi atau kejadian di luar kendali Panitia Pelaksana maupun peserta yang dapat mengganggu atau membahayakan pelaksanaan perlombaan, antara lain hujan deras ekstrem, badai atau angin kencang, bencana alam, gangguan keamanan, pemadaman listrik total, atau kondisi lain yang dinilai membahayakan keselamatan.
                           </p>
                         </div>
                       </div>
@@ -1012,7 +950,7 @@ export default function Rules({ embedded = false }) {
                         <div className="space-y-1">
                           <strong className="text-slate-900 text-sm block">Kondisi Hujan Ringan (Gerimis):</strong>
                           <p className="text-slate-700 text-xs sm:text-sm leading-relaxed">
-                            Perlombaan tetap dilanjutkan secara normal.
+                            Perlombaan tetap dilaksanakan sesuai jadwal. Peserta tetap mengikuti perlombaan dengan memperhatikan arahan Panitia dan Dewan Juri.
                           </p>
                         </div>
                       </div>
@@ -1025,7 +963,7 @@ export default function Rules({ embedded = false }) {
                         <div className="space-y-1">
                           <strong className="text-slate-900 text-sm block">Kondisi Hujan Deras / Badai Ekstrem:</strong>
                           <p className="text-slate-700 text-xs sm:text-sm leading-relaxed">
-                            Panitia Pelaksana bersama Dewan Juri berhak menghentikan perlombaan untuk sementara waktu demi keselamatan peserta.
+                            Apabila kondisi cuaca dinilai membahayakan keselamatan peserta, Panitia Pelaksana bersama Dewan Juri berwenang menghentikan perlombaan sementara. Apabila perlombaan dihentikan saat peleton sedang melaksanakan penampilan, penampilan peleton tersebut dinyatakan dihentikan dan akan diulang setelah kondisi dinyatakan aman dan kondusif. Penampilan ulang dimulai dari awal masuk arena, dengan waktu penampilan dihitung kembali dari 00:00.
                           </p>
                         </div>
                       </div>
@@ -1036,21 +974,9 @@ export default function Rules({ embedded = false }) {
                           4
                         </span>
                         <div className="space-y-1">
-                          <strong className="text-slate-900 text-sm block">Prosedur Pengulangan Tampil:</strong>
+                          <strong className="text-slate-900 text-sm block">Wewenang Keputusan:</strong>
                           <p className="text-slate-700 text-xs sm:text-sm leading-relaxed">
-                            Apabila perlombaan dihentikan saat suatu peleton sedang tampil akibat keadaan kahar, maka setelah kondisi dinyatakan aman dan kondusif kembali, peleton yang bersangkutan diberikan hak untuk mengulang penampilannya dari awal masuk arena, dengan perhitungan waktu (stopwatch) di-reset kembali ke 00:00. Nilai yang diakui secara sah adalah nilai dari penampilan ulangan tersebut.
-                          </p>
-                        </div>
-                      </div>
-
-                      {/* Poin 5 */}
-                      <div className="p-4 sm:p-5 rounded-2xl bg-slate-50/60 border border-slate-200/90 hover:bg-white hover:border-slate-300 transition-all flex items-start gap-3.5">
-                        <span className="w-7 h-7 rounded-lg bg-slate-900 text-white font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
-                          5
-                        </span>
-                        <div className="space-y-1">
-                          <p className="text-slate-700 text-xs sm:text-sm leading-relaxed">
-                            Keputusan terkait status keadaan kahar, penundaan, penghentian, maupun penjadwalan ulang merupakan kewenangan mutlak Panitia Pelaksana setelah berkonsultasi dengan Dewan Juri.
+                            Keputusan penghentian dan kelanjutan perlombaan merupakan wewenang mutlak Panitia Pelaksana dan Dewan Juri.
                           </p>
                         </div>
                       </div>

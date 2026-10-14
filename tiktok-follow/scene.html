@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1080px;height:1920px;overflow:hidden;background:#140202}
+body{font-family:'Segoe UI',sans-serif}
+.k{font-family:'Impact','Bahnschrift','Arial Black',sans-serif;font-weight:900;text-transform:uppercase;letter-spacing:1px}
+.abs{position:absolute}
+#stage{position:relative;width:1080px;height:1920px;overflow:hidden;background:radial-gradient(1400px 1400px at 50% 30%,#7a0f0f 0%,#400505 50%,#140202 100%)}
+
+/* Rotating Sunburst background */
+#sun{position:absolute;left:-960px;top:-540px;width:3000px;height:3000px;border-radius:50%;
+  background:repeating-conic-gradient(rgba(251,191,36,.08) 0 7deg,transparent 7deg 14deg);
+  -webkit-mask-image:radial-gradient(circle,#000 15%,transparent 65%);mask-image:radial-gradient(circle,#000 15%,transparent 65%)}
+.glow{position:absolute;border-radius:50%;filter:blur(110px)}
+
+/* ================= HOOK (0 - 4s) ================= */
+#hookWrap{position:absolute;inset:0}
+#mont{position:absolute;inset:0}
+.clip{position:absolute;inset:0;opacity:0;overflow:hidden}
+.clip .bgb{position:absolute;inset:-60px;background-size:cover;background-position:center;filter:blur(30px) brightness(.45) saturate(1.4)}
+.clip .card{position:absolute;left:40px;width:1000px;top:220px;height:780px;background-size:cover;background-position:center;border:6px solid #fbbf24;border-radius:24px;box-shadow:0 35px 80px rgba(0,0,0,.75)}
+.clip .cut{position:absolute;background-size:contain;background-repeat:no-repeat;background-position:center bottom;filter:drop-shadow(0 30px 45px rgba(0,0,0,.75))}
+#grade{position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,rgba(0,0,0,.1) 0%,rgba(20,2,2,.85) 100%);pointer-events:none}
+#streaks{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.streak{position:absolute;height:6px;border-radius:6px;background:linear-gradient(90deg,transparent,rgba(255,236,170,.9),transparent)}
+#flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:300}
+
+#hook{position:absolute;inset:0;z-index:40;pointer-events:none}
+.ln{position:absolute;left:0;width:1080px;text-align:center;line-height:.95;opacity:0;white-space:nowrap}
+#h1{top:130px;font-size:180px;color:#fff;text-shadow:0 8px 0 #7a0f0f,0 20px 40px rgba(0,0,0,.9);letter-spacing:4px}
+#h2{top:1130px;font-size:124px;color:#fbbf24;text-shadow:0 8px 0 #5c0707,0 20px 40px rgba(0,0,0,.9);letter-spacing:2px}
+#h3{top:1250px;font-size:390px;color:#fff;line-height:.85;
+  background:linear-gradient(180deg,#ffffff 0%,#fef3c7 35%,#fbbf24 60%,#d97706 100%);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  filter:drop-shadow(0 14px 0 #5c0707) drop-shadow(0 28px 45px rgba(0,0,0,0.9));
+  letter-spacing:-3px}
+.ln.gl{filter:drop-shadow(14px 0 #00e5ff) drop-shadow(-14px 0 #ff0055) drop-shadow(0 10px 0 #7a0f0f) !important}
+
+/* ================= MAIN (4 - 14s) ================= */
+#main{position:absolute;inset:0;visibility:hidden}
+#rig{position:absolute;left:0;top:0;width:1080px;height:1920px;transform-origin:0 0}
+#phoneWrap{position:absolute;left:190px;top:410px;width:700px;height:1480px;transform-origin:50% 45%}
+#phoneShadow{position:absolute;left:60px;bottom:40px;width:580px;height:80px;border-radius:50%;background:rgba(0,0,0,.7);filter:blur(32px)}
+#phone{position:absolute;left:0;top:0;width:622px;height:1312px;transform:scale(1.12);transform-origin:0 0;border-radius:92px;
+  background:linear-gradient(145deg,#4e535e 0%,#1a1c22 28%,#0b0c0e 55%,#30343e 80%,#15171c 100%);
+  box-shadow:inset 0 0 0 3px #727986,inset 0 0 0 10px #08090b,0 0 0 2px rgba(255,255,255,.15),0 30px 100px rgba(0,0,0,.8),0 0 90px rgba(251,191,36,.22)}
+.sbtn{position:absolute;width:7px;border-radius:4px;background:linear-gradient(90deg,#2b2d33,#5b606d)}
+#screen{position:absolute;left:16px;top:16px;width:590px;height:1280px;border-radius:78px;overflow:hidden;background:#000}
+#shot{position:absolute;left:0;top:0;width:590px;height:1280px;display:block}
+#island{position:absolute;left:236px;top:14px;width:118px;height:34px;border-radius:20px;background:#000;z-index:5;box-shadow:inset 0 0 0 2px #181818}
+#sheen{position:absolute;inset:0;z-index:30;pointer-events:none;mix-blend-mode:screen;background:linear-gradient(115deg,transparent 38%,rgba(255,255,255,.16) 48%,rgba(255,255,255,.05) 56%,transparent 64%);width:200%;left:-100%}
+#glass{position:absolute;inset:0;z-index:31;pointer-events:none;border-radius:78px;box-shadow:inset 0 0 0 2px rgba(255,255,255,.08),inset 0 0 40px rgba(0,0,0,.4)}
+#dim{position:absolute;inset:0;background:rgba(2,4,8,.82);opacity:0;z-index:8}
+
+/* Avatar golden glow ring (avatar: left 24px, top 185px, w 154px, h 154px) */
+#ring{position:absolute;left:24px;top:185px;width:154px;height:154px;border-radius:50%;z-index:9;opacity:0;pointer-events:none}
+#ring i{position:absolute;inset:-6px;border-radius:50%;border:5px solid #fbbf24;box-shadow:0 0 30px #fbbf24,inset 0 0 24px rgba(251,191,36,.6)}
+.pulseRing{position:absolute;left:24px;top:185px;width:154px;height:154px;border-radius:50%;border:4px solid #fde68a;z-index:9;opacity:0;pointer-events:none}
+
+/* Follow button micro-interaction: exact coords left 25px, top 456px, w 239px, h 48px */
+#follow{position:absolute;left:25px;top:456px;width:239px;height:48px;border-radius:10px;background:#0095f6;color:#fff;font-weight:700;font-size:18px;display:flex;align-items:center;justify-content:center;z-index:15;font-family:'Segoe UI',sans-serif;box-shadow:0 4px 15px rgba(0,149,246,.5);transform-origin:50% 50%}
+#follow span{display:inline-block;letter-spacing:.3px}
+#fripple{position:absolute;left:144px;top:480px;width:60px;height:60px;margin:-30px 0 0 -30px;border-radius:50%;border:4px solid #fbbf24;z-index:16;opacity:0}
+#cursor{position:absolute;width:68px;height:68px;margin:-34px 0 0 -34px;border-radius:50%;background:rgba(255,255,255,.32);border:3px solid rgba(255,255,255,.95);box-shadow:0 10px 30px rgba(0,0,0,.6),0 0 0 8px rgba(255,255,255,.12);z-index:25;opacity:0;pointer-events:none}
+#cursor::after{content:'';position:absolute;left:50%;top:50%;width:24px;height:24px;margin:-12px;border-radius:50%;background:#ffffff;box-shadow:0 0 10px #fbbf24}
+
+/* Dynamic bio magnifying lens */
+.lens{position:absolute;opacity:0;z-index:12;border:3px solid #fbbf24;border-radius:10px;background-color:#05070a;background-image:url(assets/follow.jpg);box-shadow:0 0 35px rgba(251,191,36,.95),0 15px 35px rgba(0,0,0,.8);overflow:hidden}
+
+/* Header banners and callouts */
+#t2{position:absolute;left:0;width:1080px;top:90px;text-align:center;z-index:60;opacity:0}
+#t2 div{line-height:1.02;text-shadow:0 6px 0 #5c0707,0 16px 35px rgba(0,0,0,.7)}
+#t2 .a{font-size:104px;color:#fbbf24;letter-spacing:1px}
+#t2 .b{font-size:82px;color:#fff;letter-spacing:1px}
+
+#t3{position:absolute;left:50%;top:85px;transform:translateX(-50%);z-index:60;opacity:0;white-space:nowrap}
+#t3 .badge{background:linear-gradient(135deg,rgba(40,5,5,.92),rgba(80,10,10,.88));border:3.5px solid #fbbf24;border-radius:60px;padding:12px 42px;box-shadow:0 15px 40px rgba(0,0,0,.8),0 0 30px rgba(251,191,36,.35);display:flex;align-items:center;justify-content:center}
+#t3 .badge span{font-size:72px;line-height:1;color:#fff;text-shadow:0 4px 15px rgba(0,0,0,.8)}
+#t3 .badge span.g{color:#fbbf24}
+
+#std{position:absolute;left:50%;top:95px;transform:translateX(-50%);z-index:62;opacity:0;white-space:nowrap;background:linear-gradient(90deg,#fbbf24,#f59e0b);color:#3c0404;font-size:56px;padding:14px 44px;border-radius:70px;border:4px solid #fff;box-shadow:0 14px 40px rgba(251,191,36,.55),0 6px 0 #8a4b00}
+.cap{position:absolute;left:50%;top:1470px;transform:translateX(-50%);z-index:62;opacity:0;white-space:nowrap;background:#ffffff;color:#6b0707;font-size:52px;padding:18px 44px;border-radius:28px;border:6px solid #fbbf24;box-shadow:0 14px 0 #6e0b0b,0 25px 60px rgba(0,0,0,.8);letter-spacing:.5px}
+
+#fx{position:absolute;inset:0;z-index:120;pointer-events:none}
+.pt{position:absolute;opacity:0}
+
+/* ================= OUTRO (14 - 18s) ================= */
+#outro{position:absolute;inset:0;visibility:hidden;background:radial-gradient(1300px 1300px at 50% 35%,#8c1010 0%,#4a0707 55%,#140202 100%);overflow:hidden}
+#osun{position:absolute;left:-960px;top:-700px;width:3000px;height:3000px;border-radius:50%;background:repeating-conic-gradient(rgba(251,191,36,.12) 0 7deg,transparent 7deg 14deg);-webkit-mask-image:radial-gradient(circle,#000 12%,transparent 62%)}
+#logo2{position:absolute;left:300px;top:130px;width:480px;filter:drop-shadow(0 0 55px rgba(251,191,36,.8)) drop-shadow(0 25px 35px rgba(0,0,0,.7))}
+#o1{position:absolute;left:0;width:1080px;top:660px;text-align:center;font-size:98px;color:#fff;line-height:1;text-shadow:0 7px 0 #6e0b0b,0 16px 35px rgba(0,0,0,.7);letter-spacing:2px}
+#cta{position:absolute;left:60px;top:770px;width:960px;height:215px;border-radius:44px;background:linear-gradient(180deg,#fff1a8,#fbbf24 55%,#f59e0b);display:flex;align-items:center;justify-content:center;font-size:180px;color:#3d0404;text-transform:none;box-shadow:0 14px 0 #8a4b00,0 0 90px rgba(251,191,36,.85);transform-origin:50% 50%;line-height:1;border:4px solid #fff}
+#bellWrap{position:absolute;left:390px;top:1040px;width:300px;height:300px}
+#bell{position:absolute;left:50px;top:20px;width:200px;height:230px;transform-origin:50% 8%;filter:drop-shadow(0 15px 30px rgba(0,0,0,.6))}
+#bdot{position:absolute;left:190px;top:28px;width:78px;height:78px;border-radius:50%;background:#ef4444;border:5px solid #fff;color:#fff;font-size:46px;display:flex;align-items:center;justify-content:center;z-index:5;font-family:'Impact';box-shadow:0 6px 20px rgba(239,68,68,.7)}
+.brg{position:absolute;left:50px;top:30px;width:200px;height:200px;border-radius:50%;border:6px solid #fbbf24;opacity:0}
+#date{position:absolute;left:50px;top:1380px;width:980px;height:120px;border-radius:26px;background:#fff;border:6px solid #fbbf24;color:#6b0707;font-size:50px;display:flex;align-items:center;justify-content:center;box-shadow:0 12px 0 #6e0b0b,0 20px 45px rgba(0,0,0,.7);white-space:nowrap;letter-spacing:1px}
+#chips{position:absolute;left:0;width:1080px;top:1545px;display:flex;justify-content:center;gap:18px}
+#chips div{background:rgba(255,255,255,.15);border:3px solid #fbbf24;color:#fff;font-size:40px;padding:10px 30px;border-radius:50px;font-weight:700;box-shadow:0 8px 25px rgba(0,0,0,.4)}
+
+/* Wipes */
+#wipe,#wipe2{position:absolute;top:-200px;height:2320px;left:0;width:1800px;z-index:400;transform:skewX(-14deg) translateX(-2300px)}
+#wipe{background:linear-gradient(90deg,#fbbf24,#fff1a8)}
+#wipe2{background:#7a0f0f;width:2000px}
+#fade{position:absolute;inset:0;background:#120101;opacity:0;z-index:500;pointer-events:none}
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="sun"></div>
+  <div class="glow" style="width:800px;height:800px;left:-300px;top:200px;background:rgba(251,191,36,.28)"></div>
+  <div class="glow" style="width:900px;height:900px;right:-400px;top:1000px;background:rgba(239,68,68,.35)"></div>
+
+  <!-- MAIN (4-14s) -->
+  <div id="main">
+    <div id="rig">
+      <div id="phoneWrap">
+        <div id="phoneShadow"></div>
+        <div id="phone">
+          <i class="sbtn" style="left:-5px;top:210px;height:60px"></i>
+          <i class="sbtn" style="left:-5px;top:300px;height:100px"></i>
+          <i class="sbtn" style="left:-5px;top:420px;height:100px"></i>
+          <i class="sbtn" style="right:-5px;top:340px;height:150px"></i>
+          <div id="screen">
+            <img id="shot" src="assets/follow.jpg">
+            <div id="island"></div>
+            <div id="ring"><i></i></div>
+            <div id="dim"></div>
+            <!-- Follow Button Overlay matching exact position -->
+            <div id="follow"><span id="ftxt">+ Follow</span></div>
+            <div id="fripple"></div>
+            <div id="cursor"></div>
+            <div id="sheen"></div>
+          </div>
+          <div id="glass"></div>
+        </div>
+      </div>
+    </div>
+    <div id="t2" class="k"><div class="a">INFO RESMI &amp;</div><div class="b">KUOTA UPDATE DI SINI!</div></div>
+    <div id="t3" class="k">
+      <div class="badge">
+        <span id="t3a">FOLLOW DULU!</span>
+        <span id="t3b" class="g" style="display:none">JUKNIS • KUOTA • VENUE</span>
+      </div>
+    </div>
+    <div id="std" class="k">📅 SAVE THE DATE &amp; VENUE</div>
+    <div class="cap k" id="c1">🎖️ SD/MI &amp; SMP/MTs SEDERAJAT</div>
+    <div class="cap k" id="c2">⏱️ 24 JANUARI 2027</div>
+    <div class="cap k" id="c3">📍 KAMPUS TERPADU MU'ALLIMIN SEDAYU</div>
+  </div>
+
+  <!-- HOOK (0-4s) -->
+  <div id="hookWrap">
+    <div id="mont"></div>
+    <div id="grade"></div>
+    <div id="streaks"></div>
+    <div id="hook" class="k">
+      <div class="ln" id="h1">MAU IKUT</div>
+      <div class="ln" id="h2">LBB MU'ALLIMIN</div>
+      <div class="ln" id="h3">2027?</div>
+    </div>
+  </div>
+
+  <!-- OUTRO (14-18s) -->
+  <div id="outro">
+    <div id="osun"></div>
+    <img id="logo2" src="assets/logo-lbb-2027.png">
+    <div id="o1" class="k">FOLLOW SEKARANG:</div>
+    <div id="cta" class="k">@lbbmuin</div>
+    <div id="bellWrap">
+      <div class="brg"></div><div class="brg"></div>
+      <svg id="bell" viewBox="0 0 200 230">
+        <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2b0"/><stop offset=".5" stop-color="#fbbf24"/><stop offset="1" stop-color="#c77700"/></linearGradient></defs>
+        <circle cx="100" cy="22" r="14" fill="url(#bg)"/>
+        <path d="M100 30 C55 30 40 70 40 110 C40 150 30 165 12 182 L12 195 L188 195 L188 182 C170 165 160 150 160 110 C160 70 145 30 100 30Z" fill="url(#bg)" stroke="#7a4a00" stroke-width="5"/>
+        <path d="M62 60 C48 80 50 110 52 135" stroke="#fff" stroke-opacity=".7" stroke-width="8" fill="none" stroke-linecap="round"/>
+        <path d="M72 200 a28 28 0 0 0 56 0Z" fill="url(#bg)" stroke="#7a4a00" stroke-width="5"/>
+      </svg>
+      <div id="bdot">1</div>
+    </div>
+    <div id="date" class="k">24 JANUARI 2027 • SEDAYU BANTUL</div>
+    <div id="chips"><div>📘 Juknis</div><div>🔔 Kuota</div><div>📍 Venue</div></div>
+  </div>
+
+  <div id="wipe"></div><div id="wipe2"></div>
+  <div id="fx"></div>
+  <div id="flash"></div>
+  <div id="fade"></div>
+</div>
+
+<script src="../video-tutorial/node_modules/gsap/dist/gsap.min.js"></script>
+<script>
+const $=s=>document.querySelector(s);
+const CUES=[];window.CUES=CUES;
+const S=(t,type,vol=1,pan=0)=>CUES.push({t,type,vol,pan});
+let sd=7;const rnd=()=>(sd=(sd*16807)%2147483647)/2147483647;
+const BEAT=60/128; // ~0.46875s
+const tl=gsap.timeline({paused:true});
+
+/* ============ HOOK 0 - 3.75s ============ */
+const IM='assets/';
+const shots=[
+ {t:'card',src:'IMG_3360.webp',pos:'50% 50%',rot:-2},
+ {t:'card',src:'section-tentang.jpg',pos:'50% 50%',rot:2},
+ {t:'card',src:'IMG_3355.webp',pos:'30% 50%',rot:-3},
+ {t:'cut',src:'1.webp',w:1180,h:820,x:-50,y:400},
+ {t:'card',src:'section-tentang.jpg',pos:'75% 45%',rot:3},
+ {t:'cut',src:'3.webp',w:560,h:1030,x:260,y:300},
+ {t:'card',src:'IMG_3360.webp',pos:'20% 60%',rot:-2},
+ {t:'cut',src:'1.webp',w:1240,h:860,x:-80,y:360},
+];
+const mont=$('#mont');
+shots.forEach((s,i)=>{
+  const c=document.createElement('div');c.className='clip';
+  const bg=document.createElement('div');bg.className='bgb';
+  bg.style.backgroundImage=`url(${IM}${s.t==='cut'?'section-tentang.jpg':s.src})`;c.appendChild(bg);
+  const fg=document.createElement('div');
+  if(s.t==='card'){
+    fg.className='card';fg.style.backgroundImage=`url(${IM}${s.src})`;fg.style.backgroundPosition=s.pos;fg.style.top=(160+(i%2)*50)+'px';
+  } else {
+    fg.className='cut';fg.style.cssText+=`;left:${s.x}px;top:${s.y}px;width:${s.w}px;height:${s.h}px;background-image:url(${IM}${s.src});background-position:center bottom`;
+  }
+  c.appendChild(fg);mont.appendChild(c);
+  const t0=i*BEAT, t1=(i+1)*BEAT;
+  tl.set(c,{opacity:1},t0);
+  if(i<shots.length-1)tl.set(c,{opacity:0},t1);
+  const dir=i%2?1:-1;
+  tl.fromTo(fg,{scale:1.32,x:dir*150,rotate:(s.rot||0)+dir*3.5,filter:'blur(24px)'},{scale:1.02,x:0,rotate:s.rot||0,duration:BEAT,ease:'power2.out',immediateRender:false},t0);
+  tl.to(fg,{filter:'blur(0px)',duration:.16,ease:'power1.out'},t0);
+  tl.fromTo('#flash',{opacity:i===0?0:.4},{opacity:0,duration:.12,immediateRender:false},t0);
+  if(i>0)S(t0,'tick',.7);
+});
+
+/* speed streaks */
+const stk=$('#streaks');
+for(let i=0;i<24;i++){
+  const e=document.createElement('div');e.className='streak';
+  const w=350+rnd()*550;e.style.cssText+=`;width:${w}px;top:${rnd()*1920}px;left:-700px;opacity:${.35+rnd()*.55}`;stk.appendChild(e);
+  const st=rnd()*3.1;
+  tl.fromTo(e,{x:0},{x:2100+rnd()*400,duration:.32+rnd()*.22,ease:'power1.in',immediateRender:false,repeat:1,repeatDelay:.45},st);
+}
+
+/* Hook text popups */
+S(0.0,'glitch',1);S(0.04,'bassdrop',1);
+function pop(sel,t,rot,snd){
+  tl.fromTo(sel,{scale:3.0,opacity:0,rotate:rot,filter:'blur(24px)'},{scale:1,opacity:1,rotate:0,filter:'blur(0px)',duration:.34,ease:'back.out(2.3)',immediateRender:false},t);
+  tl.set(sel,{className:'ln gl'},t+.2).set(sel,{className:'ln'},t+.28).set(sel,{className:'ln gl'},t+.34).set(sel,{className:'ln'},t+.4);
+  tl.fromTo(sel,{x:0},{x:14,duration:.04,yoyo:true,repeat:5,immediateRender:false},t+.3);
+  if(snd)S(t+.02,snd,1);
+}
+pop('#h1',0.12,-8,'slam');
+pop('#h2',0.94,6,'slam');
+pop('#h3',1.4,-4,'slam');S(1.38,'riser',.6);
+tl.fromTo('#h3',{scale:1},{scale:1.08,duration:.22,yoyo:true,repeat:1,ease:'sine.inOut',immediateRender:false},2.0);
+for(let b=4;b<8;b++)tl.fromTo('#hook',{scale:1},{scale:1.04,duration:.07,yoyo:true,repeat:1,immediateRender:false},b*BEAT);
+tl.fromTo('#hook',{y:0},{y:-10,duration:.05,yoyo:true,repeat:7,immediateRender:false},1.4);
+
+/* ============ WIPE 1 (3.45 -> 3.75 swap) ============ */
+function wipe(t){
+  S(t-.05,'whoosh',1.1);
+  tl.fromTo('#wipe2',{x:-2400},{x:1900,duration:.62,ease:'power2.inOut',immediateRender:false},t+.06);
+  tl.fromTo('#wipe',{x:-2200},{x:1900,duration:.62,ease:'power2.inOut',immediateRender:false},t);
+}
+wipe(3.45);
+tl.set(['#hookWrap'],{autoAlpha:0},3.76);
+tl.set('#main',{autoAlpha:1},3.76);
+
+/* ============ MAIN: 3D Phone reveal (4.2 - 9.0s) ============ */
+const SC=1.12, PL=190, PT=410;
+
+gsap.set('#phoneWrap',{transformPerspective:2000,opacity:0});
+tl.fromTo('#phoneWrap',{y:1100,rotateY:-58,rotateX:12,scale:.8,opacity:0},{y:0,rotateY:-15,rotateX:0,scale:1,opacity:1,duration:1.15,ease:'power3.out',immediateRender:false},4.2);
+tl.fromTo('#flash',{opacity:.95},{opacity:0,duration:.24,immediateRender:false},4.2);
+S(4.2,'shutter',1);S(4.32,'pop',.9);
+
+tl.fromTo('#t2 .a',{y:-130,opacity:0,scale:1.6},{y:0,opacity:1,scale:1,duration:.42,ease:'back.out(2)',immediateRender:false},4.55);
+tl.fromTo('#t2 .b',{y:-130,opacity:0,scale:1.6},{y:0,opacity:1,scale:1,duration:.42,ease:'back.out(2)',immediateRender:false},4.85);
+tl.set('#t2',{opacity:1},4.5);
+S(4.55,'pop',.8);S(4.85,'pop',.8);
+
+/* 3D tilt sway */
+tl.to('#phoneWrap',{rotateY:14,duration:1.5,ease:'sine.inOut'},5.4);
+tl.to('#phoneWrap',{rotateY:-10,duration:1.4,ease:'sine.inOut'},6.9);
+tl.to('#phoneWrap',{rotateY:6,duration:1.2,ease:'sine.inOut'},8.3);
+tl.to('#phoneWrap',{y:-18,duration:1.1,ease:'sine.inOut',yoyo:true,repeat:3},5.4);
+
+/* Phone glass sheen sweep */
+tl.fromTo('#sheen',{x:-300},{x:750,duration:3.2,ease:'sine.inOut'},4.6);
+
+/* Golden pulse glow around avatar */
+tl.set('#ring',{opacity:1},5.4);
+tl.fromTo('#ring i',{scale:.92,boxShadow:'0 0 12px #fbbf24,inset 0 0 10px rgba(251,191,36,.4)'},{scale:1.08,boxShadow:'0 0 50px #fbbf24,inset 0 0 30px rgba(251,191,36,.8)',duration:.45,yoyo:true,repeat:15,ease:'sine.inOut',immediateRender:false},5.4);
+for(let k=0;k<4;k++){
+  const r=document.createElement('div');
+  r.className='pulseRing';
+  $('#screen').appendChild(r);
+  tl.fromTo(r,{scale:1,opacity:.95},{scale:2.2,opacity:0,duration:1.1,ease:'power2.out',immediateRender:false},5.5+k*.85);
+  S(5.5+k*.85,'sparkle',.5);
+}
+
+/* Follow button attention pulse in profile view */
+tl.fromTo('#follow',{boxShadow:'0 0 0 0 rgba(0,149,246,.95)'},{boxShadow:'0 0 0 20px rgba(0,149,246,0)',duration:.7,repeat:2,immediateRender:false},7.6);
+
+/* ============ ACTION: Zoom & Follow Tap (9 - 14s) ============ */
+tl.to('#t2',{opacity:0,y:-60,duration:.3},8.55);
+tl.to('#phoneWrap',{rotateY:0,y:0,duration:.8,ease:'power2.inOut'},8.8);
+
+// Zoom in smoothly, keeping phone centered and shifting slightly up
+tl.fromTo('#rig',{scale:1,x:0,y:0},{scale:1.42,x:-225,y:-160,duration:1.0,ease:'power3.inOut',immediateRender:false},8.85);
+S(8.85,'whoosh',.7);
+
+tl.set('#t3',{opacity:1},8.95);
+tl.fromTo('#t3',{y:-50,opacity:0,scale:1.3},{y:0,opacity:1,scale:1,duration:.4,ease:'back.out(2)',immediateRender:false},9.0);
+S(9.0,'pop',.8);
+
+/* Animated cursor / thumb tap */
+const BX=144.5, BY=480;
+tl.fromTo('#cursor',{left:460,top:780,opacity:0,scale:1.3},{left:BX+8,top:BY+6,opacity:1,duration:.85,ease:'power3.out',immediateRender:false},9.55);
+tl.to('#cursor',{scale:.76,duration:.09,ease:'power2.in'},10.36);
+tl.to('#follow',{scale:.88,duration:.09,ease:'power2.in'},10.36);
+S(10.36,'tap',1);
+
+tl.fromTo('#fripple',{scale:.3,opacity:.95},{scale:3.4,opacity:0,duration:.55,ease:'power2.out',immediateRender:false},10.4);
+
+/* State change + elastic haptic bounce */
+tl.set('#follow',{backgroundColor:'#262626',boxShadow:'none'},10.45)
+  .set('#ftxt',{innerHTML:'Following ✓'},10.45);
+tl.to('#follow',{scale:1,duration:.9,ease:'elastic.out(1.4,.28)'},10.45);
+tl.fromTo('#follow',{x:0},{x:4,duration:.04,yoyo:true,repeat:5,immediateRender:false},10.47);
+tl.to('#cursor',{scale:1.15,opacity:0,duration:.35},10.55);
+S(10.46,'ding',1);
+S(10.48,'confetti',1);
+
+// Switch banner text to JUKNIS • KUOTA • VENUE
+tl.to('#t3a',{opacity:0,scale:0.8,duration:.2},10.6);
+tl.set('#t3a',{display:'none'},10.8);
+tl.set('#t3b',{display:'inline-block'},10.8);
+tl.fromTo('#t3b',{opacity:0,scale:1.4},{opacity:1,scale:1,duration:.4,ease:'back.out(2)',immediateRender:false},10.82);
+S(10.82,'pop',.8);
+
+/* Confetti burst from button */
+const fx=$('#fx'),cols=['#fbbf24','#f59e0b','#fde68a','#fff7d6','#d97706','#ffd24a','#ffffff'];
+for(let i=0;i<120;i++){
+  const p=document.createElement('div');p.className='pt';const w=10+rnd()*14;const circ=i%3===0;
+  p.style.cssText=`left:300px;top:1210px;width:${w}px;height:${circ?w:w*.5}px;background:${cols[i%7]};border-radius:${circ?'50%':'2px'};box-shadow:0 0 14px rgba(251,191,36,.9)`;
+  fx.appendChild(p);
+  const a=rnd()*Math.PI*2,sp=260+rnd()*700,t0=10.46;
+  tl.fromTo(p,{opacity:1,x:0,y:0,rotate:0},{x:Math.cos(a)*sp,y:Math.sin(a)*sp*.85-220,rotate:(rnd()-.5)*900,duration:.75,ease:'power3.out',immediateRender:false},t0);
+  tl.to(p,{y:'+=750',x:'+='+((rnd()-.5)*220),rotate:'+='+((rnd()-.5)*600),duration:1.5,ease:'power1.in'},t0+.75);
+  tl.to(p,{opacity:0,duration:.4},t0+1.7);
+}
+
+/* Dynamic bio highlights */
+tl.to('#t3',{opacity:0,duration:.25},11.2);
+tl.to('#rig',{scale:1.32,x:-170,y:-80,duration:.8,ease:'power3.inOut'},11.15);
+S(11.15,'whoosh',.7);
+
+tl.to('#dim',{opacity:1,duration:.4},11.5);
+tl.fromTo('#std',{y:-60,opacity:0,scale:1.4},{y:0,opacity:1,scale:1,duration:.45,ease:'back.out(2)',immediateRender:false},11.35);
+S(11.4,'pop',.9);
+
+// Exact bio line coordinates:
+// All 3 bio lines are in x: 16 to 574 (w: 558)
+const lensSpec=[
+  {sy:345, h:36, cap:'#c1', t:11.55},
+  {sy:368, h:36, cap:'#c2', t:12.35},
+  {sy:392, h:36, cap:'#c3', t:13.15},
+];
+
+lensSpec.forEach(l=>{
+  const e=document.createElement('div');e.className='lens';
+  const LW=558, LH=l.h, LX=16, LY=l.sy-LH/2;
+  // Natural 1:1 crisp crop matching exact coordinates
+  e.style.cssText+=`;left:${LX}px;top:${LY}px;width:${LW}px;height:${LH}px;background-size:590px 1280px;background-position:-${LX+3}px -${LY+3}px`;
+  $('#screen').appendChild(e);
+
+  tl.fromTo(e,{opacity:0,scaleX:.3,scaleY:.2},{opacity:1,scaleX:1.04,scaleY:1.15,duration:.38,ease:'back.out(2.2)',immediateRender:false},l.t);
+  tl.to(e,{opacity:0,scaleX:.9,duration:.2},l.t+.75);
+  tl.fromTo(l.cap,{y:60,opacity:0,scale:.7,xPercent:-50},{y:0,opacity:1,scale:1,xPercent:-50,duration:.4,ease:'back.out(2.4)',immediateRender:false},l.t+.05);
+  tl.to(l.cap,{opacity:0,y:30,duration:.18},l.t+.72);
+  S(l.t,'lens',1);
+  S(l.t+.06,'sparkle',.7);
+});
+
+tl.to('#dim',{opacity:0,duration:.2},13.75);
+tl.to('#std',{opacity:0,y:-30,duration:.2},13.7);
+
+/* ============ WIPE 2 (13.8 -> swap 14.1s) ============ */
+wipe(13.8);
+tl.set('#main',{autoAlpha:0},14.1);
+tl.set('#fx',{opacity:0},14.1);
+tl.set('#outro',{autoAlpha:1},14.1);
+
+/* ============ OUTRO & CTA (14.1 - 18s) ============ */
+gsap.set('#logo2',{scale:.2,opacity:0});
+gsap.set('#o1',{opacity:0,y:60});
+gsap.set('#cta',{opacity:0,scale:.3});
+gsap.set('#bellWrap',{opacity:0,scale:.3});
+gsap.set('#date',{opacity:0,y:80});
+gsap.set('#chips>*',{opacity:0,y:30});
+gsap.set('#bdot',{scale:0});
+
+tl.to('#osun',{rotate:45,duration:4,ease:'none'},14.1);
+tl.to('#logo2',{scale:1,opacity:1,duration:.75,ease:'elastic.out(1,.5)'},14.2);
+S(14.2,'bassdrop',.8);
+S(14.22,'pop',1);
+
+tl.to('#logo2',{scale:1.05,duration:.234,yoyo:true,repeat:11,ease:'sine.inOut'},15.0);
+tl.to('#o1',{opacity:1,y:0,duration:.4,ease:'back.out(2)'},14.55);
+S(14.55,'pop',.9);
+
+tl.to('#cta',{opacity:1,scale:1,duration:.55,ease:'back.out(2.4)'},14.9);
+S(14.9,'slam',1);
+
+/* High-contrast CTA pulse on every beat */
+for(let b=0;b<7;b++){
+  const t=15.5+b*BEAT*2;
+  tl.to('#cta',{scale:1.08,duration:.12,ease:'power2.out'},t)
+    .to('#cta',{scale:1,duration:.34,ease:'power2.inOut'},t+.12);
+  tl.to('#cta',{background:'linear-gradient(180deg,#ffffff,#fff3c4 60%,#ffe58a)',duration:.05},t)
+    .to('#cta',{background:'linear-gradient(180deg,#fff1a8,#fbbf24 55%,#f59e0b)',duration:.3},t+.16);
+}
+
+/* Ringing Bell micro-animation */
+tl.to('#bellWrap',{opacity:1,scale:1,duration:.5,ease:'back.out(2.5)'},15.2);
+S(15.2,'pop',.9);
+tl.to('#bdot',{scale:1,duration:.4,ease:'elastic.out(1.2,.4)'},15.45);
+
+[15.5, 16.3, 17.1].forEach((t,i)=>{
+  tl.to('#bell',{rotate:24,duration:.09,ease:'sine.out'},t);
+  [-20,16,-12,8,-4,0].forEach((r,k)=>tl.to('#bell',{rotate:r,duration:.12,ease:'sine.inOut'},t+.09+k*.12));
+  document.querySelectorAll('.brg').forEach((e,j)=>tl.fromTo(e,{scale:.8,opacity:.85},{scale:1.9,opacity:0,duration:.8,ease:'power2.out',immediateRender:false},t+j*.18));
+  S(t,'bell',1);
+  S(t+.18,'bell',.7);
+  S(t+.36,'bell',.5);
+});
+
+tl.to('#date',{opacity:1,y:0,duration:.5,ease:'back.out(2)'},15.7);
+S(15.7,'pop',.9);
+tl.to('#chips>*',{opacity:1,y:0,duration:.35,stagger:.12,ease:'back.out(2)'},16.1);
+
+/* Snare crescendo hit / stinger */
+S(16.875,'stinger',1);
+tl.fromTo('#flash',{opacity:.6},{opacity:0,duration:.25,immediateRender:false},16.875);
+tl.fromTo('#outro',{x:0},{x:8,duration:.04,yoyo:true,repeat:5,immediateRender:false},16.875);
+
+/* Outro falling confetti & final burst */
+const out2=document.createElement('div');
+out2.style.cssText='position:absolute;inset:0;z-index:90;pointer-events:none';
+$('#stage').appendChild(out2);
+for(let i=0;i<65;i++){
+  const p=document.createElement('div');const w=9+rnd()*12;
+  p.style.cssText=`position:absolute;left:${rnd()*1080}px;top:-40px;width:${w}px;height:${w*.5}px;background:${cols[i%7]};border-radius:2px;opacity:0`;
+  out2.appendChild(p);
+  const t0=14.3+rnd()*2.6;
+  tl.fromTo(p,{opacity:1,y:0,rotate:0},{y:2000,x:(rnd()-.5)*250,rotate:(rnd()-.5)*900,duration:2.2+rnd()*1.2,ease:'none',immediateRender:false},t0);
+  tl.set(p,{opacity:0},t0+3.6);
+}
+for(let i=0;i<75;i++){
+  const p=document.createElement('div');const w=10+rnd()*14;
+  p.style.cssText=`position:absolute;left:540px;top:880px;width:${w}px;height:${w*.5}px;background:${cols[i%7]};border-radius:2px;opacity:0;box-shadow:0 0 12px rgba(251,191,36,.85)`;
+  out2.appendChild(p);
+  const a=rnd()*Math.PI*2,sp=420+rnd()*850;
+  tl.fromTo(p,{opacity:1,x:0,y:0,rotate:0},{x:Math.cos(a)*sp,y:Math.sin(a)*sp*.9,rotate:(rnd()-.5)*700,duration:.8,ease:'power3.out',immediateRender:false},16.88);
+  tl.to(p,{y:'+=500',opacity:0,duration:.9,ease:'power1.in'},17.6);
+}
+
+tl.to('#fade',{opacity:1,duration:.3,ease:'power1.in'},17.7);
+
+tl.duration(18);
+window.seek=t=>{tl.time(t,false)};
+window.READY=true;
+</script>
+</body>
+</html>

@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1920px;height:1080px;overflow:hidden;background:#240303}
+body{font-family:'Segoe UI',sans-serif}
+.h{font-family:'Bahnschrift','Impact','Segoe UI',sans-serif;font-weight:700}
+#stage{position:relative;width:1920px;height:1080px;overflow:hidden;
+  background:radial-gradient(1400px 900px at 30% 20%,#7a0f0f 0%,#4a0707 45%,#240303 100%)}
+.abs{position:absolute}
+.glow{position:absolute;border-radius:50%;filter:blur(90px)}
+.g1{width:700px;height:700px;left:-150px;top:-200px;background:rgba(251,191,36,.28)}
+.g2{width:800px;height:800px;right:-250px;bottom:-300px;background:rgba(239,68,68,.35)}
+.stripe{position:absolute;height:90px;width:2600px;left:-300px;transform:rotate(-14deg);
+  background:repeating-linear-gradient(90deg,rgba(255,255,255,.05) 0 90px,rgba(255,255,255,0) 90px 180px)}
+.dot{position:absolute;border-radius:50%;background:#fbbf24}
+
+/* intro */
+#intro{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+#logo{width:520px;filter:drop-shadow(0 30px 50px rgba(0,0,0,.55))}
+.ttl{display:flex;gap:26px;margin-top:10px;font-size:112px;line-height:1;color:#fff;letter-spacing:2px;text-transform:uppercase}
+.mask{overflow:hidden;display:inline-block;padding:6px 0}
+.mask>span{display:inline-block}
+#pill{margin-top:22px;background:linear-gradient(90deg,#fbbf24,#f59e0b);color:#3a0505;font-size:44px;padding:10px 40px;border-radius:60px;letter-spacing:3px;box-shadow:0 12px 40px rgba(251,191,36,.45)}
+#tag{margin-top:22px;color:#fde7b0;font-size:32px;letter-spacing:1px}
+
+/* main */
+#main{position:absolute;inset:0}
+#left{position:absolute;left:90px;top:0;width:700px;height:1080px}
+.cap{position:absolute;left:0;top:300px;width:700px}
+.num{font-size:210px;line-height:.9;color:#fbbf24;letter-spacing:-4px;text-shadow:0 10px 40px rgba(251,191,36,.35)}
+.cap h2{font-size:68px;line-height:1.05;color:#fff;margin-top:6px;text-transform:uppercase}
+.cap p{font-size:30px;line-height:1.35;color:#fde7b0;margin-top:20px;font-weight:400;width:620px}
+.chips{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px;width:640px}
+.chip{background:rgba(255,255,255,.12);border:2px solid rgba(251,191,36,.55);color:#fff;font-size:24px;padding:8px 20px;border-radius:40px;font-weight:600}
+#browser{position:absolute;left:830px;top:120px;width:1030px;height:840px;border-radius:26px;background:#fff;overflow:hidden;
+  box-shadow:0 50px 120px rgba(0,0,0,.6),0 0 0 2px rgba(255,255,255,.18)}
+#bbar{height:58px;background:#1f1f24;display:flex;align-items:center;padding:0 22px;gap:10px}
+.bd{width:15px;height:15px;border-radius:50%}
+#url{margin-left:22px;flex:1;height:36px;border-radius:18px;background:#34343c;color:#d6d6de;font-size:18px;display:flex;align-items:center;padding-left:18px}
+#stepper{height:96px;background:#fff7f5;border-bottom:2px solid #fde2de;position:relative;display:flex;align-items:center;justify-content:space-between;padding:0 64px}
+.st{display:flex;align-items:center;gap:12px;font-size:19px;font-weight:700;color:#9a8a88;z-index:2;background:#fff7f5;padding:0 8px}
+.st i{font-style:normal;width:42px;height:42px;border-radius:50%;background:#eadad7;color:#8d7a77;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800}
+#track{position:absolute;left:100px;right:100px;top:46px;height:6px;background:#eadad7;border-radius:4px}
+#fill{height:100%;width:0;background:linear-gradient(90deg,#dc2626,#fbbf24);border-radius:4px}
+#screens{position:relative;height:686px;background:#fff}
+.scr{position:absolute;inset:0;padding:30px 44px;opacity:0}
+.scr h3{font-size:34px;color:#1e1b1b;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.sub{font-size:18px;color:#6b6362;margin-bottom:20px}
+.row{display:flex;gap:22px}
+.col{flex:1}
+label{display:block;font-size:15px;font-weight:800;letter-spacing:1.5px;color:#3b3433;text-transform:uppercase;margin-bottom:8px}
+label b{color:#dc2626}
+.inp{height:60px;border:2px solid #e5dedc;border-radius:14px;background:#fff;display:flex;align-items:center;padding:0 18px;font-size:23px;font-weight:600;color:#1e1b1b;text-transform:none;position:relative}
+.inp .ph{color:#b6adab;font-weight:500;position:absolute;left:18px}
+.inp .caret{display:inline-block;width:2px;height:28px;background:#dc2626;margin-left:2px;opacity:0}
+.opt{flex:1;height:100px;border:2px solid #e5dedc;border-radius:16px;padding:14px 18px;position:relative;background:#fff}
+.opt .t{font-size:24px;font-weight:800;color:#1e1b1b}
+.opt .d{font-size:16px;color:#7a7170;margin-top:4px}
+.opt .bg{position:absolute;inset:0;border-radius:14px;background:linear-gradient(135deg,#dc2626,#9f1212);opacity:0}
+.opt .t,.opt .d,.opt .bdg{position:relative}
+.opt .bdg{position:absolute;right:14px;top:14px;font-size:14px;font-weight:800;background:#dcfce7;color:#166534;padding:4px 12px;border-radius:20px}
+.btn{height:64px;border-radius:16px;background:linear-gradient(135deg,#dc2626,#9f1212);color:#fff;font-size:24px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:12px;letter-spacing:.5px;box-shadow:0 14px 30px rgba(185,28,28,.35)}
+.drop{height:112px;border:3px dashed #e8b4b0;border-radius:16px;background:#fff7f6;display:flex;align-items:center;justify-content:center;gap:12px;font-size:19px;font-weight:700;color:#b91c1c;position:relative;overflow:hidden}
+.drop .done{position:absolute;inset:0;background:#f0fdf4;border:3px solid #22c55e;border-radius:13px;display:flex;align-items:center;gap:16px;padding:0 20px;color:#166534;font-size:19px;font-weight:800;opacity:0}
+.thumb{width:68px;height:68px;border-radius:12px;background:linear-gradient(135deg,#fcd34d,#f59e0b);display:flex;align-items:center;justify-content:center;font-size:30px;flex:none}
+.ok{width:36px;height:36px;border-radius:50%;background:#22c55e;color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;margin-left:auto;flex:none}
+.card{border:2px solid #f1e6e4;border-radius:20px;padding:22px;background:#fffdfc}
+.card .ct{font-size:21px;font-weight:800;color:#b91c1c;margin-bottom:14px;text-transform:uppercase;letter-spacing:1px}
+.bank{border-radius:20px;padding:26px;color:#fff;background:linear-gradient(135deg,#1a1a1a,#4a0707 60%,#7a0f0f);position:relative;overflow:hidden;box-shadow:0 18px 40px rgba(0,0,0,.28)}
+.bank:after{content:"";position:absolute;right:-60px;top:-60px;width:220px;height:220px;border-radius:50%;background:rgba(251,191,36,.25)}
+.bank img{height:42px}
+.acc{font-size:44px;letter-spacing:4px;font-weight:700;margin:20px 0 6px;font-family:'Bahnschrift',sans-serif}
+.copy{position:absolute;right:26px;bottom:26px;background:#fbbf24;color:#3a0505;font-weight:800;font-size:19px;padding:12px 24px;border-radius:12px;z-index:2}
+#toast{opacity:0;position:absolute;left:50%;top:-80px;transform:translateX(-50%);background:#16a34a;color:#fff;font-weight:800;font-size:20px;padding:14px 28px;border-radius:40px;z-index:30;box-shadow:0 14px 30px rgba(0,0,0,.3)}
+#modal{position:absolute;inset:0;background:rgba(20,5,5,.55);display:flex;align-items:center;justify-content:center;opacity:0;z-index:20}
+#mbox{width:640px;background:#fff;border-radius:24px;padding:28px;box-shadow:0 40px 90px rgba(0,0,0,.5)}
+#mbox h4{font-size:26px;color:#b91c1c;text-transform:uppercase;margin-bottom:14px}
+#sig{height:220px;border:3px dashed #e8b4b0;border-radius:16px;background:#fffafa;position:relative;margin-bottom:18px}
+#sig svg{position:absolute;left:0;top:0}
+.ptxt{font-size:16px;color:#7a7170;margin-bottom:16px}
+
+/* success */
+#s4{text-align:center}
+#okc{width:150px;height:150px;border-radius:50%;background:linear-gradient(135deg,#22c55e,#15803d);margin:6px auto 14px;display:flex;align-items:center;justify-content:center;box-shadow:0 20px 50px rgba(34,197,94,.45)}
+#s4 h3{font-size:40px;text-transform:none;letter-spacing:0}
+.reg{display:inline-flex;gap:14px;align-items:center;background:#fff7e0;border:2px solid #fbbf24;border-radius:14px;padding:10px 24px;font-size:22px;font-weight:800;color:#78350f;margin-top:10px}
+#qrw{display:flex;gap:30px;justify-content:center;align-items:center;margin-top:20px}
+#qr{display:grid;grid-template-columns:repeat(21,10px);grid-auto-rows:10px;padding:14px;background:#fff;border:3px solid #1e1b1b;border-radius:14px}
+#qr div{background:#111;opacity:0}
+.qinfo{text-align:left}
+.pill{display:inline-block;padding:8px 20px;border-radius:30px;font-weight:800;font-size:18px}
+.wa{margin-top:14px;height:58px;padding:0 28px;border-radius:14px;background:#22c55e;color:#fff;font-weight:800;font-size:21px;display:flex;align-items:center;gap:10px}
+
+#cursor{position:absolute;left:0;top:0;width:44px;height:44px;z-index:100;filter:drop-shadow(0 6px 8px rgba(0,0,0,.45));opacity:0}
+.ripple{position:absolute;width:20px;height:20px;margin:-10px 0 0 -10px;border-radius:50%;border:4px solid #fbbf24;z-index:99;opacity:0;pointer-events:none}
+
+/* outro */
+#outro{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+#url2{margin-top:30px;background:#fff;color:#7a0f0f;font-size:60px;padding:16px 56px;border-radius:70px;box-shadow:0 20px 60px rgba(0,0,0,.4);letter-spacing:1px}
+#cta{font-size:96px;color:#fff;text-transform:uppercase;margin-top:6px;line-height:1}
+#flow{margin-top:34px;display:flex;gap:18px;align-items:center;color:#fde7b0;font-size:34px;font-weight:700}
+#flow span.a{color:#fbbf24}
+.wipe{position:absolute;top:-200px;bottom:-200px;width:1500px;left:0;background:linear-gradient(90deg,#fbbf24,#f59e0b);transform:skewX(-18deg) translateX(-3000px);z-index:200}
+.wipe.w2{background:#7a0f0f;width:1300px;z-index:201}
+#fade{position:absolute;inset:0;background:#000;opacity:0;z-index:300}
+</style>
+</head>
+<body>
+<div id="stage">
+  <div class="glow g1"></div><div class="glow g2"></div>
+  <div id="stripes"></div><div id="dots"></div>
+
+  <div id="intro">
+    <img id="logo" src="assets/logo-lbb-2027.png">
+    <div class="ttl h"><span class="mask"><span id="t1">Cara</span></span><span class="mask"><span id="t2">Daftar</span></span></div>
+    <div id="pill" class="h">4 LANGKAH MUDAH</div>
+    <div id="tag">Tingkat SD/MI &amp; SMP/MTs se-DIY</div>
+  </div>
+
+  <div id="main">
+    <div id="left">
+      <div class="cap" id="c1"><div class="num h">01</div><h2 class="h">Data Sekolah<br>&amp; Akun</h2><p>Isi nama sekolah, email aktif, pilih jenjang &amp; tipe peleton.</p>
+        <div class="chips"><span class="chip">🏫 Nama sekolah</span><span class="chip">✉️ Email aktif</span><span class="chip">SD/MI · SMP/MTs</span></div></div>
+      <div class="cap" id="c2"><div class="num h">02</div><h2 class="h">Danton<br>&amp; Official</h2><p>Lengkapi nama komandan &amp; pendamping, plus nomor WhatsApp aktif.</p>
+        <div class="chips"><span class="chip">🪪 Kartu pelajar Danton</span><span class="chip">🪪 KTP Official</span><span class="chip">📱 WhatsApp</span></div></div>
+      <div class="cap" id="c3"><div class="num h">03</div><h2 class="h">Bayar &amp;<br>Pakta Integritas</h2><p>Transfer ke rekening resmi, unggah bukti, lalu tanda tangan online.</p>
+        <div class="chips"><span class="chip">🏦 Bukti transfer</span><span class="chip">✍️ Tanda tangan digital</span></div></div>
+      <div class="cap" id="c4"><div class="num h">04</div><h2 class="h">Selesai!<br>Tunggu Verifikasi</h2><p>Simpan QR registrasi lalu konfirmasi ke panitia lewat WhatsApp.</p>
+        <div class="chips"><span class="chip">🔳 QR registrasi</span><span class="chip">✅ Verifikasi panitia</span></div></div>
+    </div>
+
+    <div id="browser">
+      <div id="bbar"><div class="bd" style="background:#ff5f57"></div><div class="bd" style="background:#febc2e"></div><div class="bd" style="background:#28c840"></div><div id="url">🔒&nbsp; lbb.tontimuallimin.com</div></div>
+      <div id="stepper"><div id="track"><div id="fill"></div></div>
+        <div class="st" id="st1"><i>1</i>Sekolah</div><div class="st" id="st2"><i>2</i>Danton</div><div class="st" id="st3"><i>3</i>Bayar</div><div class="st" id="st4"><i>4</i>Selesai</div></div>
+      <div id="screens">
+        <div id="toast">✓ Nomor rekening disalin</div>
+
+        <div class="scr" id="s1">
+          <h3 class="h">1. Data Sekolah &amp; Akun</h3><div class="sub">Lengkapi data dasar sekolah dan email untuk login.</div>
+          <div class="row" style="margin-bottom:20px">
+            <div class="col"><label>Nama Sekolah <b>*</b></label><div class="inp" id="f_school"><span class="ph">NAMA LENGKAP SEKOLAH</span><span class="v"></span><span class="caret"></span></div></div>
+            <div class="col"><label>Email Aktif <b>*</b></label><div class="inp" id="f_email"><span class="ph">email@sekolah.sch.id</span><span class="v"></span><span class="caret"></span></div></div>
+          </div>
+          <label style="margin-bottom:10px">Jenjang Sekolah <b>*</b></label>
+          <div class="row" style="margin-bottom:20px">
+            <div class="opt" id="o_sd"><div class="bg"></div><div class="t">Tingkat SD / MI</div><div class="d">Sekolah Dasar / Madrasah Ibtidaiyah</div><div class="bdg">Slot tersedia</div></div>
+            <div class="opt" id="o_smp"><div class="bg"></div><div class="t">Tingkat SMP / MTs</div><div class="d">Sekolah Menengah Pertama / MTs</div><div class="bdg">Slot tersedia</div></div>
+          </div>
+          <label style="margin-bottom:10px">Tipe Peleton <b>*</b></label>
+          <div class="row" style="margin-bottom:24px">
+            <div class="opt" id="o_hom"><div class="bg"></div><div class="t">Homogen</div><div class="d">Seluruh personil sejenis (Putra / Putri)</div></div>
+            <div class="opt" id="o_het"><div class="bg"></div><div class="t">Heterogen</div><div class="d">Personil campuran Putra &amp; Putri</div></div>
+          </div>
+          <div class="btn" id="b1">Lanjut &nbsp;→</div>
+        </div>
+
+        <div class="scr" id="s2">
+          <h3 class="h">2. Danton &amp; Official</h3><div class="sub">Data komandan peleton dan pendamping resmi.</div>
+          <div class="row">
+            <div class="col card">
+              <div class="ct">🎖️ Komandan (Danton)</div>
+              <label>Nama Lengkap <b>*</b></label><div class="inp" id="f_danton" style="margin-bottom:18px"><span class="ph">NAMA KOMANDAN</span><span class="v"></span><span class="caret"></span></div>
+              <label>Foto Kartu Pelajar <b>*</b></label>
+              <div class="drop" id="d_card">⬆ Unggah foto<div class="done"><div class="thumb">🪪</div><div>kartu_pelajar.jpg<div style="font-weight:600;font-size:15px;opacity:.8">Berhasil diunggah</div></div><div class="ok">✓</div></div></div>
+            </div>
+            <div class="col card">
+              <div class="ct">🧑‍🏫 Official / Pelatih</div>
+              <label>Nama Lengkap <b>*</b></label><div class="inp" id="f_off" style="margin-bottom:14px"><span class="ph">NAMA OFFICIAL</span><span class="v"></span><span class="caret"></span></div>
+              <label>WhatsApp Aktif <b>*</b></label><div class="inp" id="f_wa" style="margin-bottom:14px"><span class="ph">081234567890</span><span class="v"></span><span class="caret"></span></div>
+              <label>Foto KTP <b>*</b></label>
+              <div class="drop" id="d_ktp" style="height:96px">⬆ Unggah foto<div class="done"><div class="thumb">🪪</div><div>ktp_official.jpg<div style="font-weight:600;font-size:15px;opacity:.8">Berhasil diunggah</div></div><div class="ok">✓</div></div></div>
+            </div>
+          </div>
+          <div class="btn" id="b2" style="margin-top:22px">Lanjut &nbsp;→</div>
+        </div>
+
+        <div class="scr" id="s3">
+          <h3 class="h">3. Pembayaran &amp; Pakta</h3><div class="sub">Transfer, unggah bukti, tanda tangani pakta integritas.</div>
+          <div class="row">
+            <div class="col">
+              <div class="bank"><img src="assets/Bank_Syariah_Indonesia_white.svg"><div style="font-size:15px;opacity:.8;margin-top:14px;letter-spacing:1px">NOMOR REKENING RESMI BENDAHARA</div>
+                <div class="acc">•••• •••• ••••</div><div style="font-size:16px;opacity:.85;padding-bottom:42px">a.n. Panitia LBB Mu'allimin</div>
+                <div class="copy" id="copy">⧉ Salin</div></div>
+            </div>
+            <div class="col">
+              <div class="card" style="padding:18px"><label>Bukti Transfer <b>*</b></label>
+                <div class="drop" id="d_pay" style="height:122px">⬆ Unggah bukti<div class="done"><div class="thumb">🧾</div><div>bukti_transfer.jpg<div style="font-weight:600;font-size:15px;opacity:.8">Berhasil diunggah</div></div><div class="ok">✓</div></div></div>
+              </div>
+            </div>
+          </div>
+          <div class="card" style="margin-top:20px;display:flex;align-items:center;gap:20px;padding:20px">
+            <div class="thumb" style="background:#fee2e2">✍️</div>
+            <div style="flex:1"><div style="font-size:23px;font-weight:800;color:#1e1b1b" id="ptitle">Pakta Integritas Online</div><div style="font-size:16px;color:#7a7170" id="psub">Wajib ditandatangani digital</div></div>
+            <div class="btn" id="b_pakta" style="height:56px;padding:0 26px;font-size:20px">Tanda Tangani</div>
+            <div class="ok" id="pok" style="position:absolute;right:68px;opacity:0;transform:scale(0)">✓</div>
+          </div>
+          <div class="btn" id="b3" style="margin-top:20px">Kirim Pendaftaran &nbsp;🚀</div>
+        </div>
+
+        <div class="scr" id="s4">
+          <div id="okc"><svg width="84" height="84" viewBox="0 0 84 84"><path id="chk" d="M16 44 L36 62 L70 22" fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <h3 class="h" id="s4t">Pendaftaran Berhasil Dikirim!</h3>
+          <div class="reg" id="regc">No. Registrasi <span style="color:#b91c1c">LBB-2027-XXX</span></div>
+          <div id="qrw"><div id="qr"></div>
+            <div class="qinfo"><div style="font-size:19px;font-weight:800;color:#1e1b1b;margin-bottom:10px">QR Registrasi Peleton</div>
+              <div class="pill" id="vp" style="background:#fef3c7;color:#92400e">⏳ Menunggu verifikasi</div>
+              <div class="wa" id="wa">💬 Konfirmasi via WhatsApp</div></div></div>
+        </div>
+
+        <div id="modal"><div id="mbox"><h4 class="h">Pakta Integritas Online</h4><div class="ptxt">Tanda tangani di kotak bawah ini.</div>
+          <div id="sig"><svg id="sigsvg" width="584" height="220" viewBox="0 0 584 220"><path id="sigp" d="M60 150 C 90 40, 130 40, 120 120 C 115 170, 160 160, 190 90 C 205 55, 225 60, 220 110 C 218 150, 260 150, 290 90 C 310 50, 330 60, 335 100 C 340 150, 380 160, 420 80 C 440 40, 470 70, 450 130 C 445 160, 500 150, 530 120" fill="none" stroke="#1d3a8a" stroke-width="5" stroke-linecap="round"/></svg></div>
+          <div class="btn" id="b_sig" style="height:56px;font-size:20px">Simpan Tanda Tangan</div></div></div>
+      </div>
+    </div>
+    <svg id="cursor" viewBox="0 0 44 44"><path d="M4 2 L4 32 L12 25 L18 39 L24 36 L18 23 L29 23 Z" fill="#fff" stroke="#111" stroke-width="2.5" stroke-linejoin="round"/></svg>
+  </div>
+
+  <div id="outro">
+    <img id="logo2" src="assets/logo-lbb-2027.png" style="width:400px;filter:drop-shadow(0 30px 50px rgba(0,0,0,.55))">
+    <div id="cta" class="h">Daftar Sekarang!</div>
+    <div id="url2" class="h">lbb.tontimuallimin.com</div>
+    <div id="flow"><span>Siapkan berkas</span><span class="a">›</span><span>Isi data</span><span class="a">›</span><span>Bayar</span><span class="a">›</span><span>Selesai</span></div>
+  </div>
+
+  <div class="wipe" id="wipeA"></div><div class="wipe w2" id="wipeB"></div>
+  <div id="fade"></div>
+</div>
+
+<script src="node_modules/gsap/dist/gsap.min.js"></script>
+<script>
+window.CUES=[];
+const S=(t,type,vol=1,pan=0)=>window.CUES.push({t,type,vol,pan});
+const $=s=>document.querySelector(s);
+const tl=gsap.timeline({paused:true,defaults:{ease:'power3.out'}});
+const stageR=()=>$('#stage').getBoundingClientRect();
+const ctr=(el,dx=0,dy=0)=>{const r=(typeof el==='string'?$(el):el).getBoundingClientRect();return{x:r.left+r.width/2+dx,y:r.top+r.height/2+dy}};
+
+/* ---------- background ---------- */
+for(let i=0;i<3;i++){const s=document.createElement('div');s.className='stripe';s.style.top=(180+i*330)+'px';$('#stripes').appendChild(s);
+  tl.fromTo(s,{x:i%2?-200:200},{x:i%2?200:-200,duration:30,ease:'none'},0)}
+let seed=7;const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
+for(let i=0;i<26;i++){const d=document.createElement('div');d.className='dot';const sz=4+rnd()*9;d.style.cssText=`width:${sz}px;height:${sz}px;left:${rnd()*1920}px;top:${rnd()*1080}px;opacity:${.15+rnd()*.35}`;$('#dots').appendChild(d);
+  tl.to(d,{y:-(150+rnd()*350),x:(rnd()-.5)*160,duration:30,ease:'none'},0)}
+
+/* ---------- helpers ---------- */
+function typeText(sel,text,t0,dur){
+  const f=$(sel),v=f.querySelector('.v'),ph=f.querySelector('.ph'),c=f.querySelector('.caret');
+  const o={p:0};
+  tl.set(ph,{opacity:0},t0).set(c,{opacity:1},t0);
+  tl.to(o,{p:1,duration:dur,ease:'none',onUpdate(){v.textContent=text.slice(0,Math.round(o.p*text.length))}},t0);
+  for(let i=0;i<text.length;i++)S(t0+dur*i/text.length,'tick',.6);
+  tl.set(c,{opacity:0},t0+dur+.05);
+}
+function focus(sel,t){const f=$(sel);tl.to(f,{borderColor:'#dc2626',boxShadow:'0 0 0 5px rgba(220,38,38,.14)',duration:.15},t);
+  tl.to(f,{borderColor:'#e5dedc',boxShadow:'0 0 0 0 rgba(220,38,38,0)',duration:.3},t+2.2)}
+const cur=$('#cursor');
+let ripN=0;
+function click(sel,t,{dx=0,dy=0,dur=.55,snd='click'}={}){
+  const p=ctr(sel,dx,dy);
+  tl.to(cur,{x:p.x-4,y:p.y-2,duration:dur,ease:'power3.inOut'},t-dur);
+  tl.to(cur,{scale:.82,duration:.07,transformOrigin:'4px 2px'},t).to(cur,{scale:1,duration:.15},t+.07);
+  const r=document.createElement('div');r.className='ripple';r.style.left=p.x+'px';r.style.top=p.y+'px';$('#main').appendChild(r);
+  tl.fromTo(r,{scale:.3,opacity:.95},{scale:3.2,opacity:0,duration:.5,ease:'power2.out',immediateRender:false},t);
+  S(t,snd);
+}
+function upload(dropSel,t){const d=$(dropSel+' .done');
+  tl.to(d,{opacity:1,duration:.25},t+.12).fromTo(d.querySelector('.thumb'),{scale:.3,rotate:-20},{scale:1,rotate:0,duration:.5,ease:'back.out(2.5)',immediateRender:false},t+.12)
+    .fromTo(d.querySelector('.ok'),{scale:0},{scale:1,duration:.4,ease:'back.out(3)',immediateRender:false},t+.3);
+  S(t+.12,'bloop');}
+function select(optSel,t){const o=$(optSel);
+  tl.to(o.querySelector('.bg'),{opacity:1,duration:.2},t).to(o.querySelectorAll('.t,.d'),{color:'#fff',duration:.2},t)
+    .to(o,{borderColor:'#9f1212',scale:1.04,duration:.12},t).to(o,{scale:1,duration:.3,ease:'back.out(3)'},t+.12);
+  S(t,'pop',.9);}
+
+/* ---------- initial states ---------- */
+gsap.set(['#main','#outro'],{autoAlpha:0});
+gsap.set('.cap',{autoAlpha:0});
+gsap.set('#cursor',{x:1500,y:1200,opacity:0});
+
+/* ================= INTRO 0-3 ================= */
+gsap.set('#logo',{scale:.2,rotate:-12,opacity:0});
+gsap.set(['#t1','#t2'],{yPercent:110});
+gsap.set('#pill',{scale:0,rotate:-4});gsap.set('#tag',{opacity:0,y:20});
+tl.to('#logo',{scale:1,rotate:0,opacity:1,duration:.9,ease:'elastic.out(1,.55)'},.1);
+S(.1,'boom',1);S(.12,'pop',1);
+tl.to('#t1',{yPercent:0,duration:.55,ease:'back.out(2)'},.85).to('#t2',{yPercent:0,duration:.55,ease:'back.out(2)'},1.0);
+S(.85,'whoosh',.5,-.4);S(1.0,'whoosh',.5,.4);
+tl.to('#pill',{scale:1,rotate:0,duration:.6,ease:'back.out(3)'},1.45);S(1.45,'pop',1);
+tl.to('#tag',{opacity:1,y:0,duration:.5},1.85);
+tl.to('#logo',{y:-6,duration:.8,yoyo:true,repeat:1,ease:'sine.inOut'},1.2);
+
+/* wipe to main */
+S(2.45,'whoosh',1.1,0);
+tl.fromTo('#wipeA',{x:-3000},{x:3200,duration:.8,ease:'power2.inOut',immediateRender:false},2.45);
+tl.fromTo('#wipeB',{x:-3000},{x:3200,duration:.8,ease:'power2.inOut',immediateRender:false},2.55);
+tl.set('#intro',{autoAlpha:0},2.85).set('#main',{autoAlpha:1},2.85);
+
+/* ================= MAIN ================= */
+tl.to('#browser',{x:0,opacity:1,rotateY:0,scale:1,duration:.9,ease:'power4.out'},2.9);
+const stNum=n=>{ // stepper state
+  const t=stT[n];};
+gsap.set('#st2 i,#st3 i,#st4 i',{});
+function stepper(n,t){
+  tl.to('#fill',{width:((n-1)/3*100)+'%',duration:.6,ease:'power2.inOut'},t);
+  for(let i=1;i<=n;i++){tl.to(`#st${i} i`,{backgroundColor:'#dc2626',color:'#fff',duration:.25},t+.1);
+    tl.fromTo(`#st${i} i`,{scale:1},{scale:1.25,duration:.15,yoyo:true,repeat:1,immediateRender:false},t+.1)}
+  tl.to(`#st${n}`,{color:'#7a0f0f',duration:.25},t+.1);
+  if(n>1)tl.to(`#st${n-1}`,{color:'#16a34a',duration:.2},t);
+}
+function capIn(id,t){
+  tl.fromTo(id,{autoAlpha:0,x:-120},{autoAlpha:1,x:0,duration:.7,ease:'power4.out',immediateRender:false},t);
+  tl.fromTo(id+' .num',{scale:.6,x:-60},{scale:1,x:0,duration:.8,ease:'back.out(2.2)',transformOrigin:'0 100%',immediateRender:false},t);
+  tl.fromTo(id+' h2,'+id+' p',{y:40,opacity:0},{y:0,opacity:1,duration:.6,stagger:.1,immediateRender:false},t+.12);
+  tl.fromTo(id+' .chip',{scale:0,opacity:0},{scale:1,opacity:1,duration:.45,stagger:.12,ease:'back.out(3)',immediateRender:false},t+.4);
+  S(t+.4,'pop',.5);S(t+.52,'pop',.5);
+}
+function capOut(id,t){tl.to(id,{autoAlpha:0,x:-160,duration:.4,ease:'power3.in'},t)}
+function scrIn(id,t){tl.fromTo(id,{opacity:0,x:140},{opacity:1,x:0,duration:.55,ease:'power4.out',immediateRender:false},t)}
+function scrOut(id,t){tl.to(id,{opacity:0,x:-140,duration:.4,ease:'power3.in'},t)}
+function swap(a,b,t){S(t,'whoosh',.9,.2);scrOut('#s'+a,t);capOut('#c'+a,t);scrIn('#s'+b,t+.35);capIn('#c'+b,t+.35);stepper(b,t+.3);
+  tl.fromTo('#wipeA',{x:-3000,opacity:1},{x:3200,duration:.7,ease:'power2.inOut',immediateRender:false},t-.1).set('#wipeA',{opacity:0},t+.7)}
+
+/* build positions BEFORE any screen transforms: temporarily show all screens */
+gsap.set('.scr',{opacity:1});
+gsap.set('#st1 i',{backgroundColor:'#dc2626',color:'#fff'});gsap.set('#st1',{color:'#7a0f0f'});
+const POS={};
+
+/* ---- step 1 (3.0 - 8.5) ---- */
+capIn('#c1',3.0);
+tl.fromTo('#s1',{opacity:0,y:40},{opacity:1,y:0,duration:.6,immediateRender:false},3.3);
+tl.set(cur,{opacity:1},3.4);
+S(3.3,'whoosh',.5,.3);
+click('#f_school',3.95,{dx:-200,dur:.7});focus('#f_school',3.95);
+typeText('#f_school','SMP Negeri 1 Contoh',4.05,.85);
+click('#f_email',5.15,{dx:-180});focus('#f_email',5.15);
+typeText('#f_email','panitia@sekolah.sch.id',5.25,.85);
+click('#o_smp',6.45);select('#o_smp',6.45);
+click('#o_hom',7.25);select('#o_hom',7.25);
+click('#b1',8.0,{dur:.5});
+tl.to('#b1',{scale:.96,duration:.08},8.0).to('#b1',{scale:1,duration:.2},8.08);
+
+/* ---- step 2 ---- */
+swap(1,2,8.45);
+click('#f_danton',9.75,{dx:-120,dur:.7});focus('#f_danton',9.75);typeText('#f_danton','AHMAD FAUZAN',9.85,.55);
+click('#d_card',10.75);upload('#d_card',10.75);
+click('#f_off',11.55,{dx:-110});focus('#f_off',11.55);typeText('#f_off','USTADZ RIZKI',11.65,.55);
+click('#f_wa',12.5,{dx:-110});focus('#f_wa',12.5);typeText('#f_wa','081234567890',12.6,.65);
+click('#d_ktp',13.5);upload('#d_ktp',13.5);
+click('#b2',14.3,{dur:.55});tl.to('#b2',{scale:.96,duration:.08},14.3).to('#b2',{scale:1,duration:.2},14.38);
+
+/* ---- step 3 ---- */
+swap(2,3,14.65);
+click('#copy',16.1,{dur:.8,snd:'click'});
+tl.to('#copy',{scale:.9,duration:.08},16.1).to('#copy',{scale:1,duration:.25,ease:'back.out(3)'},16.18);
+tl.fromTo('#toast',{y:0,opacity:0},{y:110,opacity:1,duration:.45,ease:'back.out(2.5)',immediateRender:false},16.15).to('#toast',{y:0,opacity:0,duration:.35,ease:'power3.in'},17.0);
+S(16.2,'ding',.9);
+click('#d_pay',17.35);upload('#d_pay',17.35);
+click('#b_pakta',18.25,{dur:.6});
+tl.set('#modal',{opacity:0},0);
+tl.to('#modal',{opacity:1,duration:.25},18.3);
+tl.fromTo('#mbox',{scale:.6,y:60},{scale:1,y:0,duration:.55,ease:'back.out(2.2)',immediateRender:false},18.3);S(18.3,'pop',1);
+/* signature drawn along path with cursor */
+const sp=$('#sigp'),L=sp.getTotalLength();gsap.set(sp,{strokeDasharray:L,strokeDashoffset:L});
+const sr=$('#sigsvg').getBoundingClientRect(); // computed at untransformed state
+const sigO={p:0};
+tl.to(cur,{x:sr.left+60-4,y:sr.top+150-2,duration:.5,ease:'power3.inOut'},18.4);
+tl.to(sigO,{p:1,duration:1.3,ease:'power1.inOut',onUpdate(){
+  sp.style.strokeDashoffset=L*(1-sigO.p);const pt=sp.getPointAtLength(L*sigO.p);
+  gsap.set(cur,{x:sr.left+pt.x-4,y:sr.top+pt.y-2})}},18.95);
+S(18.95,'scribble',.8);
+click('#b_sig',20.55,{dur:.5});
+tl.to('#modal',{opacity:0,duration:.25},20.7).set('#modal',{opacity:0},20.96);
+tl.to('#mbox',{scale:.85,duration:.25},20.7);
+tl.to('#b_pakta',{opacity:0,scale:.6,duration:.2},20.75);
+tl.to('#pok',{opacity:1,scale:1,duration:.5,ease:'back.out(3)'},20.85);S(20.85,'ding',.8);
+tl.set('#ptitle',{innerHTML:'Pakta Ditandatangani Online ✓'},20.85).set('#psub',{innerHTML:'Tanda tangan digital tersimpan'},20.85);
+click('#b3',21.5,{dur:.55});tl.to('#b3',{scale:.96,duration:.08},21.5).to('#b3',{scale:1,duration:.2},21.58);
+
+/* ---- step 4 ---- */
+swap(3,4,21.7);
+const T4=22.5;
+gsap.set('#okc',{scale:0});gsap.set('#chk',{strokeDasharray:100,strokeDashoffset:100});
+gsap.set(['#s4t','#regc'],{opacity:0,y:30});gsap.set('#qrw',{opacity:0});gsap.set('#wa',{opacity:0,y:20});gsap.set('#vp',{opacity:0,scale:.5});
+tl.to('#okc',{scale:1,duration:.7,ease:'elastic.out(1,.5)'},T4);
+tl.to('#chk',{strokeDashoffset:0,duration:.45,ease:'power2.out'},T4+.25);
+S(T4,'pop',1);S(T4+.3,'chime',1);
+tl.to('#s4t',{opacity:1,y:0,duration:.5},T4+.35).to('#regc',{opacity:1,y:0,duration:.5},T4+.5);
+/* QR */
+const qr=$('#qr');const N=21;const cells=[];let qs=11;const qrnd=()=>(qs=(qs*48271)%2147483647)/2147483647;
+const fin=(x,y)=>(x<7&&y<7)||(x>13&&y<7)||(x<7&&y>13);
+const finOn=(x,y)=>{const lx=x%14>=7?x-14:x,ly=y>13?y-14:y;const dx=x>13?x-14:x,dy=y>13?y-14:y;
+  const m=Math.max(Math.abs(dx-3),Math.abs(dy-3));return m===3||m<=1};
+for(let y=0;y<N;y++)for(let x=0;x<N;x++){const d=document.createElement('div');qr.appendChild(d);
+  const on=fin(x,y)?finOn(x,y):qrnd()>.5;if(on)cells.push(d)}
+tl.to('#qrw',{opacity:1,duration:.3},T4+.9);
+tl.fromTo(cells,{opacity:0,scale:0},{opacity:1,scale:1,duration:.25,stagger:{each:.0045,from:'random'},ease:'back.out(3)',immediateRender:false},T4+1.0);
+for(let i=0;i<9;i++)S(T4+1.0+i*.1,'sparkle',.5);
+tl.to('#vp',{opacity:1,scale:1,duration:.5,ease:'back.out(3)'},T4+2.0);S(T4+2.0,'pop',.8);
+tl.to('#wa',{opacity:1,y:0,duration:.5},T4+2.35);
+click('#wa',25.55,{dur:.7,dy:-20});tl.to('#wa',{scale:.94,duration:.08},25.55).to('#wa',{scale:1,duration:.3,ease:'back.out(3)'},25.63);
+tl.to('#vp',{backgroundColor:'#dcfce7',color:'#166534',duration:.3},25.6).set('#vp',{innerHTML:'✅ Terkirim ke panitia'},25.62);
+S(25.6,'ding',.7);
+/* confetti */
+const cols=['#fbbf24','#ef4444','#ffffff','#22c55e','#f59e0b','#fb7185'];
+const cf=[];for(let i=0;i<70;i++){const c=document.createElement('div');const w=10+rnd()*10;
+  c.style.cssText=`position:absolute;left:1345px;top:560px;width:${w}px;height:${w*.5}px;background:${cols[i%6]};z-index:150;opacity:0;border-radius:2px`;$('#main').appendChild(c);cf.push(c)}
+cf.forEach((c,i)=>{const a=-Math.PI/2+(rnd()-.5)*2.6,sp=300+rnd()*650;
+  tl.fromTo(c,{opacity:1,x:0,y:0,rotate:0},{x:Math.cos(a)*sp,y:Math.sin(a)*sp*.9,rotate:(rnd()-.5)*900,duration:.9,ease:'power2.out',immediateRender:false},T4+.1);
+  tl.to(c,{y:'+=560',x:'+='+(rnd()-.5)*160,rotate:'+='+(rnd()-.5)*500,duration:1.5,ease:'power1.in'},T4+1.0);
+  tl.to(c,{opacity:0,duration:.5},T4+2.0)});
+S(T4+.05,'confetti',1);
+
+/* ================= OUTRO 27-30 ================= */
+S(26.4,'riser',.9);
+S(26.55,'whoosh',1.1,0);
+tl.fromTo('#wipeB',{x:-3000},{x:3200,duration:.85,ease:'power2.inOut',immediateRender:false},26.55);
+tl.fromTo('#wipeA',{x:-3000,opacity:1},{x:3200,duration:.85,ease:'power2.inOut',immediateRender:false},26.65);
+tl.set('#main',{autoAlpha:0},27.0).set('#outro',{autoAlpha:1},27.0);
+gsap.set('#logo2',{scale:.3,opacity:0});gsap.set('#cta',{y:60,opacity:0});gsap.set('#url2',{scale:.5,opacity:0});gsap.set('#flow>*',{opacity:0,y:20});
+tl.to('#logo2',{scale:1,opacity:1,duration:.8,ease:'elastic.out(1,.55)'},27.15);S(27.15,'boom',1);S(27.17,'pop',1);
+tl.to('#cta',{y:0,opacity:1,duration:.55,ease:'back.out(2)'},27.5);S(27.5,'pop',.9);
+tl.to('#url2',{scale:1,opacity:1,duration:.6,ease:'back.out(3)'},27.85);S(27.85,'pop',.9);
+tl.to('#flow>*',{opacity:1,y:0,duration:.4,stagger:.1},28.2);
+S(28.1,'chime',.9);
+tl.to('#url2',{scale:1.06,duration:.3,yoyo:true,repeat:3,ease:'sine.inOut'},28.4);
+tl.to('#fade',{opacity:1,duration:.35,ease:'power1.in'},29.65);
+
+/* apply initial states only AFTER all positions were measured */
+gsap.set('.scr',{opacity:0});
+gsap.set('#browser',{x:600,opacity:0,rotateY:-18,scale:.9,transformPerspective:1600});
+tl.duration(30);
+window.seek=t=>{tl.time(t,false);};
+window.READY=true;
+</script>
+</body>
+</html>
