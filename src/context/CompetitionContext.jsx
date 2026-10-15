@@ -607,6 +607,7 @@ export function CompetitionProvider({ children }) {
       'tontimuallimin2026@gmail.com': { role: 'superadmin', roleLabel: 'Ketua Panitia (Superadmin)' },
       'andiaqillah@muallimin.sch.id': { role: 'admin', roleLabel: 'Panitia Sekretariat (Admin)' },
       'andiaqillah.2018@student.uny.ac.id': { role: 'admin', roleLabel: 'Panitia Sekretariat & Staging' },
+      'andiaqillahfadiahaswat@gmail.com': { role: 'superadmin', roleLabel: 'Ketua Panitia (Superadmin)' },
       'penginput@lbbmuallimin.com': { role: 'penginput', roleLabel: 'Operator Input Nilai Kertas' },
       'verifikator@lbbmuallimin.com': { role: 'verifikator', roleLabel: 'Verifikator & Checker Nilai' },
       'finalisator@lbbmuallimin.com': { role: 'finalisator', roleLabel: 'Finalisator & Pengesah Rekap Nilai' },
@@ -657,7 +658,7 @@ export function CompetitionProvider({ children }) {
 
     if ((!matchedTeam || matchedTeam.status === 'pending') && isGoogleSheetConfigured()) {
       try {
-        const sheetRes = await fetchAllDataFromSheet(false);
+        const sheetRes = await fetchAllDataFromSheet(true);
         if (sheetRes && sheetRes.success && sheetRes.data?.teams && Array.isArray(sheetRes.data.teams)) {
           const freshTeams = sheetRes.data.teams.map(normalizeTeamData);
           setTeams(prev => {

@@ -55,6 +55,14 @@ export const INITIAL_USERS = [
     roleLabel: 'Panitia Sekretariat (Admin)',
   },
   {
+    id: 'user-admin-fadia',
+    name: 'Andi Aqillah Fadia Haswat',
+    email: 'andiaqillahfadiahaswat@gmail.com',
+    role: 'superadmin',
+    avatar: 'https://ui-avatars.com/api/?name=Andi+Aqillah&background=020617&color=fbbf24&bold=true',
+    roleLabel: 'Ketua Panitia (Superadmin)',
+  },
+  {
     id: 'user-staff-uny',
     name: 'Andi Aqillah (UNY)',
     email: 'andiaqillah.2018@student.uny.ac.id',
