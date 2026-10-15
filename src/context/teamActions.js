@@ -182,23 +182,29 @@ export function createTeamActions({ teams, setTeams, scores, setScores, setCurre
       }
     }
 
+    let updatedTeam = null;
+
     setTeams(prev =>
       prev.map(team => {
         if (team.id === teamId) {
-          const updated = {
+          updatedTeam = {
             ...team,
             status: newStatus,
             paymentStatus: newStatus === 'verified' ? 'paid' : team.paymentStatus,
             revisionNote: note,
           };
-          saveRecordToSheet('teams', updated).catch(err =>
-            console.warn('[CompetitionContext] Sync verifyTeam failed:', err)
-          );
-          return updated;
+          return updatedTeam;
         }
         return team;
       })
     );
+
+    if (updatedTeam) {
+      saveRecordToSheet('teams', updatedTeam).catch(err =>
+        console.warn('[CompetitionContext] Sync verifyTeam failed:', err)
+      );
+    }
+
     return { success: true };
   }
 
