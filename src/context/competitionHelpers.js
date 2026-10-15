@@ -266,20 +266,23 @@ export function normalizeTeamData(team) {
     t.files = {};
   }
 
-  if (!t.files.schoolLogo && t.file_logo_sekolah) {
-    t.files.schoolLogo = { url: t.file_logo_sekolah, name: 'Logo_Sekolah.png' };
+  if (!t.files.schoolLogo && (t.file_logo_sekolah || t.file_schoolLogo)) {
+    t.files.schoolLogo = { url: t.file_logo_sekolah || t.file_schoolLogo, name: 'Logo_Sekolah.png' };
   }
-  if (!t.files.dantonCard && t.file_kartu_danton) {
-    t.files.dantonCard = { url: t.file_kartu_danton, name: 'Kartu_Pelajar_Danton.jpg' };
+  if (!t.files.dantonCard && (t.file_kartu_danton || t.file_dantonCard)) {
+    t.files.dantonCard = { url: t.file_kartu_danton || t.file_dantonCard, name: 'Kartu_Pelajar_Danton.jpg' };
   }
-  if (!t.files.officialKtp && t.file_ktp_official) {
-    t.files.officialKtp = { url: t.file_ktp_official, name: 'KTP_Official.jpg' };
+  if (!t.files.officialKtp && (t.file_ktp_official || t.file_officialKtp)) {
+    t.files.officialKtp = { url: t.file_ktp_official || t.file_officialKtp, name: 'KTP_Official.jpg' };
   }
-  if (!t.files.paymentProof && t.file_bukti_bayar) {
-    t.files.paymentProof = { url: t.file_bukti_bayar, name: 'Bukti_Bayar.jpg' };
+  if (!t.files.paymentProof && (t.file_bukti_bayar || t.file_paymentProof)) {
+    t.files.paymentProof = { url: t.file_bukti_bayar || t.file_paymentProof, name: 'Bukti_Bayar.jpg' };
   }
-  if (!t.files.recommendationLetter && t.file_surat_rekomendasi) {
-    t.files.recommendationLetter = { url: t.file_surat_rekomendasi, name: 'Surat_Rekomendasi.pdf' };
+  if (!t.files.recommendationLetter && (t.file_surat_rekomendasi || t.file_recommendationLetter)) {
+    t.files.recommendationLetter = { url: t.file_surat_rekomendasi || t.file_recommendationLetter, name: 'Surat_Rekomendasi.pdf' };
+  }
+  if (!t.files.integrityPact && (t.file_pakta_integritas || t.file_integrityPact)) {
+    t.files.integrityPact = { url: t.file_pakta_integritas || t.file_integrityPact, name: 'Pakta_Integritas.pdf' };
   }
 
   if (typeof t.roster === 'string') {

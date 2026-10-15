@@ -135,7 +135,7 @@ export default function AdminDashboard() {
   const countSD = teams.filter(t => t.jenjang === 'SD').length;
   const countSMP = teams.filter(t => t.jenjang === 'SMP').length;
   const totalRevenue = teams
-    .filter(t => t.status === 'verified' || t.paymentStatus === 'paid')
+    .filter(t => ['registered', 'verified', 'drawn'].includes(t.status) || t.paymentStatus === 'paid')
     .reduce((sum, t) => sum + (t.feeAmount || 350000), 0);
 
   // Detailed stats for 4 stages:

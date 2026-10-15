@@ -187,10 +187,15 @@ export function createTeamActions({ teams, setTeams, scores, setScores, setCurre
     setTeams(prev =>
       prev.map(team => {
         if (team.id === teamId) {
+          // Ketika status di-ACC menjadi 'registered' atau 'verified', pembayaran pendaftaran resmi disahkan (paid)
+          const nextPaymentStatus = (newStatus === 'registered' || newStatus === 'verified' || newStatus === 'drawn') 
+            ? 'paid' 
+            : (newStatus === 'pending' ? 'unverified' : team.paymentStatus);
+
           updatedTeam = {
             ...team,
             status: newStatus,
-            paymentStatus: newStatus === 'verified' ? 'paid' : team.paymentStatus,
+            paymentStatus: nextPaymentStatus,
             revisionNote: note,
           };
           return updatedTeam;

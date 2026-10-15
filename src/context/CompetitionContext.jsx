@@ -351,7 +351,7 @@ export function CompetitionProvider({ children }) {
   useEffect(() => {
     if (!isGoogleSheetConfigured()) return;
 
-    const isStaffOrJury = ['admin', 'juri', 'superadmin'].includes(role);
+    const isStaffOrJury = ['admin', 'juri', 'superadmin', 'penginput', 'verifikator', 'finalisator'].includes(role);
     const allowScoresSync = isStaffOrJury || Boolean(settings.announcementPublished);
 
     let isMounted = true;
@@ -1263,13 +1263,89 @@ export function CompetitionProvider({ children }) {
         return results;
       },
       pullFromGoogleSheet: async () => {
-        const isStaffOrJury = ['admin', 'juri', 'superadmin'].includes(role);
+        const isStaffOrJury = ['admin', 'juri', 'superadmin', 'penginput', 'verifikator', 'finalisator'].includes(role);
         const allowScoresSync = isStaffOrJury || Boolean(settings.announcementPublished);
         const res = await fetchAllDataFromSheet(allowScoresSync);
         if (res && res.success && res.data) {
           const { teams: sheetTeams, scores: sheetScores, settings: sheetSettings } = res.data;
           if (Array.isArray(sheetTeams) && sheetTeams.length > 0) {
-            setTeams(sheetTeams.map(normalizeTeamData));
+            setTeams(prev => {
+              const prevMap = new Map();
+              prev.forEach(t => prevMap.set(t.id, normalizeTeamData(t)));
+
+              const mergedTeams = sheetTeams.map(rawSheetTeam => {
+                const normalized = normalizeTeamData(rawSheetTeam);
+                const existing = prevMap.get(normalized.id);
+                if (!existing) return normalized;
+
+                // Merge files: prioritize non-empty valid files
+                const mergedFiles = { ...existing.files, ...normalized.files };
+                Object.keys(existing.files || {}).forEach(k => {
+                  if (existing.files[k]?.url && (!mergedFiles[k]?.url || mergedFiles[k]?.url === '#')) {
+                    mergedFiles[k] = existing.files[k];
+                  }
+                });
+
+                // Merge roster
+                const existingRoster = existing.roster || {};
+                const sheetRoster = normalized.roster || {};
+                const mergedDanton = {
+                  ...existingRoster.danton,
+                  ...sheetRoster.danton,
+                  name: (sheetRoster.danton?.name && sheetRoster.danton.name !== '-' && sheetRoster.danton.name !== 'Anggota Pratama')
+                    ? sheetRoster.danton.name
+                    : (existingRoster.danton?.name || existing.dantonName || normalized.dantonName || '-'),
+                  photo: (sheetRoster.danton?.photo && sheetRoster.danton.photo !== '#' && !sheetRoster.danton.photo.startsWith('#'))
+                    ? sheetRoster.danton.photo
+                    : (existingRoster.danton?.photo || null),
+                };
+
+                const mergedTeam = {
+                  ...existing,
+                  ...normalized,
+                  files: mergedFiles,
+                  roster: {
+                    ...existingRoster,
+                    ...sheetRoster,
+                    danton: mergedDanton,
+                    pasukan: (Array.isArray(sheetRoster.pasukan) && sheetRoster.pasukan.length > 0) ? sheetRoster.pasukan : (existingRoster.pasukan || []),
+                    cadangan: (Array.isArray(sheetRoster.cadangan) && sheetRoster.cadangan.length > 0) ? sheetRoster.cadangan : (existingRoster.cadangan || []),
+                    officials: (Array.isArray(sheetRoster.officials) && sheetRoster.officials.length > 0) ? sheetRoster.officials : (existingRoster.officials || []),
+                  },
+                };
+
+                // Preserve non-empty fields if sheet returned empty
+                ['schoolName', 'schoolBaseName', 'jenjang', 'teamType', 'regCode', 'email', 'waNumber', 'dantonName', 'officialName'].forEach(field => {
+                  if (existing[field] && (!normalized[field] || normalized[field] === '')) {
+                    mergedTeam[field] = existing[field];
+                  }
+                });
+
+                // Preserve status progression
+                const statusWeight = { pending: 1, revision: 2, registered: 3, verified: 4, drawn: 5, rejected: 0 };
+                const existingWeight = statusWeight[existing.status] || 1;
+                const sheetWeight = statusWeight[normalized.status] || 1;
+                if (existingWeight > sheetWeight) {
+                  mergedTeam.status = existing.status;
+                }
+
+                // Preserve paymentStatus
+                if (existing.paymentStatus === 'paid' && normalized.paymentStatus !== 'paid') {
+                  mergedTeam.paymentStatus = 'paid';
+                }
+
+                return mergedTeam;
+              });
+
+              // Keep any local teams that might not yet be in the fetched sheet
+              prev.forEach(t => {
+                if (!mergedTeams.some(mt => mt.id === t.id)) {
+                  mergedTeams.push(t);
+                }
+              });
+
+              return mergedTeams;
+            });
           }
           if (Array.isArray(sheetScores) && sheetScores.length > 0) {
             const nextScores = {};
