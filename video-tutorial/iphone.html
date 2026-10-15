@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:1080px;height:1920px;background:#000;overflow:hidden;font-family:"SF Pro Display","Segoe UI Variable Display","Segoe UI",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+#stage{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 55%,#0d0e11 0%,#000 65%);overflow:hidden}
+.bokeh{position:absolute;border-radius:50%;background:radial-gradient(circle,rgba(190,205,230,.35),rgba(190,205,230,0) 70%);filter:blur(6px)}
+#cam{position:absolute;left:0;top:0;width:1080px;height:1920px;transform-origin:0 0}
+#phoneWrap{position:absolute;left:240px;top:335px;width:600px;height:1250px;perspective:2200px}
+#phone{position:absolute;inset:0;transform-style:preserve-3d;border-radius:96px;
+ background:linear-gradient(135deg,#6a6862 0%,#2b2a28 22%,#55534e 40%,#1f1e1d 58%,#5f5d58 78%,#2a2927 100%);
+ box-shadow:0 0 0 2px #0a0a0a,0 60px 140px rgba(0,0,0,.9),0 0 120px rgba(150,170,210,.08)}
+#sheen{position:absolute;inset:0;border-radius:96px;pointer-events:none;mix-blend-mode:screen}
+#bezel{position:absolute;inset:11px;border-radius:85px;background:#050505;box-shadow:inset 0 0 0 2px #151515}
+#screen{position:absolute;left:20px;top:20px;width:560px;height:1210px;border-radius:76px;background:#000;overflow:hidden;color:#fff}
+.btn{position:absolute;width:7px;border-radius:3px;background:linear-gradient(90deg,#3a3936,#7a7872,#3a3936)}
+#glass{position:absolute;inset:0;border-radius:96px;pointer-events:none;background:linear-gradient(115deg,rgba(255,255,255,.07) 0%,rgba(255,255,255,0) 30%,rgba(255,255,255,0) 70%,rgba(255,255,255,.04) 100%)}
+/* IG */
+#status{position:absolute;top:0;left:0;right:0;height:60px;font-weight:600;font-size:21px}
+#status .t{position:absolute;left:52px;top:20px}
+#status .r{position:absolute;right:46px;top:23px;display:flex;gap:7px;align-items:center}
+#island{position:absolute;left:50%;top:14px;width:128px;height:36px;margin-left:-64px;border-radius:20px;background:#000;z-index:5}
+.hdr{position:absolute;top:70px;left:24px;right:24px;font-size:27px;font-weight:700;display:flex;justify-content:space-between;align-items:center}
+.row1{position:absolute;top:130px;left:24px;right:24px;display:flex;align-items:center;gap:26px}
+.av{width:128px;height:128px;border-radius:50%;padding:4px;background:linear-gradient(45deg,#f9ce34,#ee2a7b,#6228d7);flex:none}
+.av div{width:100%;height:100%;border-radius:50%;border:5px solid #000;background:#111 url(../public/logo-lbb-2027.png) center/cover}
+.stats{display:flex;flex:1;justify-content:space-between;text-align:center}
+.stats b{display:block;font-size:24px}.stats span{font-size:16px;color:#d6d6d6}
+.name{position:absolute;top:278px;left:24px;font-weight:700;font-size:19px}
+.cat{position:absolute;top:304px;left:24px;font-size:16px;color:#a8a8a8}
+.bio{position:absolute;top:330px;left:24px;right:24px;font-size:17px;line-height:1.35;color:#f0f0f0}
+#link{position:absolute;top:432px;left:24px;font-size:18px;font-weight:600;color:#e0f1ff;padding:6px 10px;margin-left:-10px;border-radius:10px;display:flex;gap:7px;align-items:center}
+.btns{position:absolute;top:490px;left:24px;right:24px;display:flex;gap:8px}
+.b{height:46px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:18px;background:#363636}
+#follow{background:#0095f6;flex:1.3}
+.hl{position:absolute;top:560px;left:24px;display:flex;gap:22px}
+.hl div{text-align:center;font-size:13px;color:#ddd}.hl i{display:block;width:70px;height:70px;border-radius:50%;border:2px solid #444;margin-bottom:6px;background:#1c1c1c center/cover}
+.tabs{position:absolute;top:672px;left:0;right:0;height:46px;border-top:1px solid #262626;border-bottom:1px solid #262626;display:flex}
+.tabs div{flex:1;display:flex;align-items:center;justify-content:center}
+.grid{position:absolute;top:720px;left:0;right:0;display:grid;grid-template-columns:repeat(3,1fr);gap:2px}
+.grid div{height:186px;background:#1a1a1a center/cover}
+#dim{position:absolute;inset:0;background:#000;opacity:0}
+#sheet{position:absolute;left:0;right:0;bottom:0;height:790px;border-radius:40px 40px 0 0;background:linear-gradient(180deg,rgba(70,72,80,.55),rgba(30,31,36,.72));backdrop-filter:blur(44px) saturate(1.8);-webkit-backdrop-filter:blur(44px) saturate(1.8);border-top:1.5px solid rgba(255,255,255,.28);box-shadow:0 -20px 60px rgba(0,0,0,.4);transform:translateY(100%)}
+#sheet .gr{width:46px;height:5px;border-radius:3px;background:rgba(255,255,255,.4);margin:12px auto 0}
+#sheet h2{font-size:30px;font-weight:700;text-align:center;margin-top:20px}
+#sheet p.s{text-align:center;font-size:16px;color:rgba(255,255,255,.65);margin-top:4px}
+.it{margin:14px 24px 0;padding:14px 18px;border-radius:18px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:16px}
+.it i{flex:none;width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-style:normal;font-weight:800;font-size:17px}
+.it b{display:block;font-size:19px}.it span{font-size:14.5px;color:rgba(255,255,255,.7)}
+.cta{margin:18px 24px 0;height:54px;border-radius:16px;background:#fff;color:#000;font-weight:700;font-size:19px;display:flex;align-items:center;justify-content:center}
+#finger{position:absolute;left:0;top:0;width:0;height:0;opacity:0;z-index:20;filter:drop-shadow(0 18px 18px rgba(0,0,0,.55))}
+#fg{position:absolute;left:-70px;top:-14px;width:140px;height:900px;border-radius:70px 70px 40px 40px;transform-origin:70px 14px;
+ background:linear-gradient(90deg,#8d5a43 0%,#c88a6a 22%,#e7ad8c 48%,#d89b7b 72%,#9a6249 100%)}
+#fg:before{content:"";position:absolute;left:30px;top:6px;width:80px;height:86px;border-radius:36px 36px 28px 28px;background:linear-gradient(180deg,rgba(255,225,215,.55),rgba(240,190,170,.25));box-shadow:inset 0 0 8px rgba(120,60,50,.35)}
+#fg:after{content:"";position:absolute;left:10px;top:0;width:50px;height:120px;border-radius:50%;background:radial-gradient(ellipse at 40% 25%,rgba(255,255,255,.35),rgba(255,255,255,0) 70%)}
+#ripple{position:absolute;width:0;height:0;left:0;top:0;z-index:15}
+#ripple i{position:absolute;left:-40px;top:-40px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.35);opacity:0}
+#dof{position:absolute;inset:0;backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);-webkit-mask-image:radial-gradient(circle at 50% 50%,transparent 26%,#000 72%);mask-image:radial-gradient(circle at 50% 50%,transparent 26%,#000 72%);pointer-events:none;opacity:0}
+#vig{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(0,0,0,0) 45%,rgba(0,0,0,.65) 100%);pointer-events:none}
+#grain{position:absolute;inset:0;opacity:.07;mix-blend-mode:overlay;pointer-events:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/></filter><rect width='240' height='240' filter='url(%23n)'/></svg>")}
+#end{position:absolute;left:0;right:0;top:50%;margin-top:-70px;text-align:center;color:#fff;font-size:104px;font-weight:600;letter-spacing:-3px;opacity:0}
+#black{position:absolute;inset:0;background:#000;opacity:0}
+</style></head>
+<body>
+<div id="stage">
+ <div id="bk"></div>
+ <div id="cam">
+  <div id="phoneWrap"><div id="phone">
+   <div class="btn" style="left:-5px;top:210px;height:50px"></div>
+   <div class="btn" style="left:-5px;top:300px;height:92px"></div>
+   <div class="btn" style="left:-5px;top:410px;height:92px"></div>
+   <div class="btn" style="right:-5px;top:340px;height:150px"></div>
+   <div id="bezel"></div>
+   <div id="screen">
+    <div id="island"></div>
+    <div id="status"><span class="t">9:41</span><span class="r"><svg width="26" height="16" viewBox="0 0 26 16" fill="#fff"><rect x="0" y="10" width="4" height="6" rx="1"/><rect x="7" y="7" width="4" height="9" rx="1"/><rect x="14" y="3" width="4" height="13" rx="1"/><rect x="21" y="0" width="4" height="16" rx="1"/></svg><svg width="38" height="18" viewBox="0 0 38 18"><rect x="1" y="1" width="31" height="16" rx="5" fill="none" stroke="#fff" opacity=".5"/><rect x="3.5" y="3.5" width="24" height="11" rx="3" fill="#fff"/></svg></span></div>
+    <div class="hdr"><span>lbbmuin</span><span style="font-size:30px;letter-spacing:3px;font-weight:400">+ &#8801;</span></div>
+    <div class="row1"><div class="av"><div></div></div><div class="stats"><div><b>36</b><span>posts</span></div><div><b>2,4K</b><span>followers</span></div><div><b>18</b><span>following</span></div></div></div>
+    <div class="name">LBB Mu'allimin 2027</div>
+    <div class="cat">Event</div>
+    <div class="bio">Lomba Baris-Berbaris Mu'allimin 2027<br>Tingkat SD/MI &amp; SMP/MTs se-DIY<br>Semangat Sebagai Ksatria, Berjuang Dengan Gembira</div>
+    <div id="link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#e0f1ff" stroke-width="2.4" stroke-linecap="round"><path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg><span>lbb.tontimuallimin.com</span></div>
+    <div class="btns"><div class="b" id="follow">Follow</div><div class="b" style="flex:1.3">Message</div><div class="b" style="width:46px">&#8964;</div></div>
+    <div class="hl"><div><i style="background-image:url(../public/fotoslide/1.webp)"></i>Aksi</div><div><i style="background-image:url(../public/fotoslide/2.webp)"></i>Juara</div><div><i style="background-image:url(../public/fotoslide/3.webp)"></i>Juri</div><div><i style="background-image:url(../public/fotoslide/4.webp)"></i>Venue</div></div>
+    <div class="tabs"><div>&#9638;</div><div style="opacity:.4">&#9654;</div><div style="opacity:.4">&#9786;</div></div>
+    <div class="grid"><div style="background-image:url(../public/fotoslide/1.webp)"></div><div style="background-image:url(../public/fotoslide/2.webp)"></div><div style="background-image:url(../public/fotoslide/3.webp)"></div><div style="background-image:url(../public/fotoslide/4.webp)"></div><div style="background-image:url(../public/fotoslide/5.webp)"></div><div style="background-image:url(../public/fotoslide/1.webp)"></div></div>
+    <div id="dim"></div>
+    <div id="sheet"><div class="gr"></div><h2>Pedoman Lomba</h2><p class="s">LBB Mu'allimin 2027</p>
+     <div class="it"><i style="background:#ff9f0a">36</i><div><b>Kuota 36 Peleton</b><span>18 SD/MI &middot; 18 SMP/MTs</span></div></div>
+     <div class="it"><i style="background:#30d158">28</i><div><b>28 Personil Resmi</b><span>Danton, pasukan inti, cadangan &amp; official</span></div></div>
+     <div class="it"><i style="background:#0a84ff">6</i><div><b>6 Dewan Juri</b><span>Standar Perpang TNI No. 57 &amp; 58/2018</span></div></div>
+     <div class="it"><i style="background:#bf5af2">24</i><div><b>Pendaftaran 19 Okt - 29 Nov 2026</b><span>Lomba: Ahad, 24 Januari 2027</span></div></div>
+     <div class="cta">Daftar Sekarang</div>
+    </div>
+   </div>
+   <div id="glass"></div><div id="sheen"></div>
+  </div></div>
+  <div id="ripple"><i></i></div>
+  <div id="finger"><div id="fg"></div></div>
+ </div>
+ <div id="dof"></div><div id="vig"></div>
+ <div id="end">Link in bio</div>
+ <div id="grain"></div>
+ <div id="black"></div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const cl=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
+const sm=x=>{x=cl(x);return x*x*x*(x*(x*6-15)+10)};
+const seg=(t,a,b)=>sm((t-a)/(b-a));
+const lerp=(a,b,k)=>a+(b-a)*k;
+// bokeh
+const bk=$('bk');const B=[];
+for(let i=0;i<22;i++){const s=30+((i*53)%90);const d=document.createElement('div');d.className='bokeh';d.style.width=d.style.height=s+'px';bk.appendChild(d);B.push({d,x:(i*197)%1080,y:(i*331)%1920,s,ph:i*1.7,o:.15+((i*7)%10)/60});}
+// layout measurement (identity state)
+function ctr(el){const r=el.getBoundingClientRect();return {x:r.left+r.width/2,y:r.top+r.height/2,l:r.left,w:r.width}}
+const FOL=ctr($('follow')), LNK=(()=>{const r=$('link').querySelector('span').getBoundingClientRect();return {x:r.left+r.width*0.4,y:r.top+r.height/2}})();
+const PH={x:540,y:960};
+// camera keys: [t, fx, fy, zoom]
+const K=[[0,PH.x,PH.y,0.92],[3,PH.x,PH.y,1.12],[6.3,FOL.x,FOL.y,2.5],[6.8,FOL.x,FOL.y,2.55],[9.3,LNK.x,LNK.y,2.7],[10.2,LNK.x,LNK.y,2.7],[12.3,PH.x,PH.y+60,1.0],[15,PH.x,PH.y+40,0.9]];
+function cam(t){let i=0;while(i<K.length-2&&t>K[i+1][0])i++;const a=K[i],b=K[i+1];
+ let k=sm((t-a[0])/(b[0]-a[0]));
+ // glide shot: smooth directional move only between 6.8 and 9.3 (handled by keys)
+ return [lerp(a[1],b[1],k),lerp(a[2],b[2],k),lerp(a[3],b[3],k)]}
+window.CUES=[{t:3.0,n:'push'},{t:6.8,n:'glide'},{t:10.0,n:'tap'},{t:10.3,n:'sheet'},{t:12.8,n:'end'}];
+window.seek=function(t){
+ const [fx,fy,z]=cam(t);
+ const ph=$('phone');
+ // floating & rotation (settles while zoomed)
+ const calm=1-seg(t,2.5,5.5)*(1-seg(t,10.8,12.5));
+ const fl=Math.sin(t*0.9)*14*calm;
+ const ry=(Math.sin(t*0.5)*13+ (-8))*calm, rx=Math.cos(t*0.6)*4*calm;
+ const intro=seg(t,0,2.5);
+ const pyaw=lerp(-26,0,0)+0;
+ $('phoneWrap').style.transform=`translateY(${fl}px)`;
+ ph.style.transform=`rotateY(${ry}deg) rotateX(${rx}deg)`;
+ $('sheen').style.background=`linear-gradient(${110+Math.sin(t*0.5)*35}deg,rgba(255,255,255,0) ${30+Math.sin(t*0.7)*10}%,rgba(210,225,255,${0.12+0.26*calm}) ${42+Math.sin(t*0.7)*10}%,rgba(255,255,255,0) ${55+Math.sin(t*0.7)*10}%)`;
+ // when phone is floating, screen content shifts with fl; offset camera focus accordingly
+ $('cam').style.transform=`translate(${540-fx*z}px,${960-(fy+fl*0)*z}px) scale(${z})`;
+ // intro fade from black
+ $('black').style.opacity=1-cl(t/1.4)+seg(t,14.4,15)*0.0;
+ // dof
+ $('dof').style.opacity=cl((z-1.3)/1.0)*0.9;
+ // bokeh
+ B.forEach(o=>{const y=(o.y-t*14*(0.5+o.s/90)+3840)%2100-90;o.d.style.transform=`translate(${o.x+Math.sin(t*0.3+o.ph)*20}px,${y}px)`;o.d.style.opacity=o.o*(0.6+0.4*Math.sin(t*0.8+o.ph))*(1-seg(t,12.3,13.3));});
+ // phone fade for end
+ $('phoneWrap').style.opacity=1-seg(t,12.4,13.6);
+ // finger
+ const f=$('finger'),rp=$('ripple');
+ const fin=seg(t,8.9,9.9), fout=seg(t,10.3,10.9);
+ const press=seg(t,9.95,10.08)*(1-seg(t,10.14,10.3));
+ const off=lerp(1,0,fin)+fout;
+ f.style.opacity=(t>8.8&&t<11.0)?cl(fin*3)*(1-fout):0;
+ const fx0=LNK.x+off*150, fy0=LNK.y+off*420+press*10;
+ f.style.transform=`translate(${fx0}px,${fy0}px)`;
+ $('fg').style.transform=`rotate(-22deg) scale(${1-press*0.06})`;
+ // tap ripple + link flash
+ const rk=cl((t-10.0)/0.5);
+ rp.style.transform=`translate(${LNK.x}px,${LNK.y}px)`;
+ const ri=rp.firstChild;ri.style.opacity=rk>0&&rk<1?(1-rk)*0.8:0;ri.style.transform=`scale(${0.5+rk*2.5})`;
+ $('link').style.background=`rgba(255,255,255,${press*0.28+ (t>10.1&&t<10.5?0.12*(1-seg(t,10.1,10.5)):0)})`;
+ // follow button breathing highlight
+ $('follow').style.boxShadow=`0 0 ${12+8*Math.sin(t*2)}px rgba(0,149,246,${0.35*seg(t,3.5,5)*(1-seg(t,6.8,7.6))})`;
+ // sheet
+ const sk=seg(t,10.3,11.7);
+ $('sheet').style.transform=`translateY(${(1-sk)*100}%)`;
+ $('dim').style.opacity=sk*0.5;
+ // end
+ $('end').style.opacity=seg(t,13.0,14.0);
+ $('end').style.transform=`translateY(${(1-seg(t,13.0,14.2))*18}px)`;
+ $('end').style.filter=`blur(${(1-seg(t,13.0,14.0))*8}px)`;
+};
+window.READY=true;window.seek(0);
+</script></body></html>

@@ -185,19 +185,6 @@ export default function Navbar({ onOpenMobileMenu }) {
             })}
           </div>
 
-          <button
-            type="button"
-            onClick={() => setActiveView('rundown')}
-            className={`hidden xl:flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold uppercase transition-all duration-300 cursor-pointer active:scale-95 shadow-xs ${
-              isScrolled
-                ? 'bg-red-50 text-red-700 hover:bg-red-100 border border-red-200'
-                : 'bg-red-950/50 text-amber-300 hover:bg-red-900/60 border border-red-500/30'
-            }`}
-          >
-            <Clock className="w-3.5 h-3.5 text-amber-400" />
-            <span>Rundown</span>
-          </button>
-
           {!currentUser ? (
             <button
               type="button"

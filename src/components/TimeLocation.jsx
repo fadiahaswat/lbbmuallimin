@@ -51,37 +51,16 @@ export default function TimeLocation() {
           <p className="text-slate-600 text-base mt-4 max-w-2xl mx-auto leading-relaxed font-normal">
             Jadwal kronologis 4 tahapan kompetisi dan panduan navigasi ke 2 kampus resmi Madrasah Mu'allimin Muhammadiyah Yogyakarta.
           </p>
-        </div>
-
-        {/* Callout Banner: Rundown Resmi Kegiatan */}
-        <div className="mb-10 p-5 sm:p-6 rounded-3xl bg-gradient-to-r from-slate-950 via-slate-900 to-red-950 border border-red-900/40 shadow-xl flex flex-col md:flex-row items-center justify-between gap-5 text-white">
-          <div className="flex items-center gap-4 text-center sm:text-left">
-            <div className="w-12 h-12 rounded-2xl bg-red-600/20 border border-red-500/30 text-amber-400 flex items-center justify-center shrink-0">
-              <Clock className="w-6 h-6" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2 justify-center sm:justify-start">
-                <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-red-600 text-white">
-                  Resmi Dirilis
-                </span>
-                <span className="text-xs font-semibold text-slate-300">Dokumen Acara Terpadu 2027</span>
-              </div>
-              <h3 className="text-base sm:text-lg font-black text-white uppercase tracking-tight mt-0.5">
-                Rundown Resmi Kegiatan LBB Mu'allimin 2027
-              </h3>
-              <p className="text-xs text-slate-400 mt-0.5">
-                Rundown Technical Meeting (Wirobrajan), Uji Coba Lapangan 2 Arena Paralel, dan Hari-H Perlombaan (Sedayu).
-              </p>
-            </div>
+          <div className="mt-5 flex items-center justify-center">
+            <button
+              type="button"
+              onClick={() => setActiveView('rundown')}
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-slate-900 hover:bg-red-800 text-white text-xs font-bold transition-all shadow-sm active:scale-95 cursor-pointer"
+            >
+              <Clock className="w-3.5 h-3.5 text-amber-400" />
+              <span>Lihat Rundown Lengkap Acara</span>
+            </button>
           </div>
-          <button
-            type="button"
-            onClick={() => setActiveView('rundown')}
-            className="px-6 py-3 rounded-2xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs uppercase tracking-wider transition-all shadow-lg shadow-amber-500/20 flex items-center gap-2 shrink-0 cursor-pointer active:scale-95"
-          >
-            <span>Buka Rundown Acara</span>
-            <ExternalLink className="w-4 h-4 text-slate-950" />
-          </button>
         </div>
 
         <div className="grid lg:grid-cols-12 gap-8 lg:gap-10 items-start">
@@ -157,19 +136,9 @@ export default function TimeLocation() {
                 </p>
               </div>
 
-              <div className="pt-2.5 border-t border-slate-100 flex items-center justify-between gap-2">
-                <p className="text-xs text-slate-500 leading-relaxed">
-                  Pengundian nomor urut tampil, verifikasi faktual berkas fisik asli, dan penegasan tata tertib lomba.
-                </p>
-                <button
-                  type="button"
-                  onClick={() => setActiveView('rundown')}
-                  className="shrink-0 px-2.5 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 font-bold text-[10px] transition-colors flex items-center gap-1 cursor-pointer"
-                >
-                  <span>Rundown TM</span>
-                  <ExternalLink className="w-3 h-3" />
-                </button>
-              </div>
+              <p className="text-xs text-slate-500 leading-relaxed pt-2.5 border-t border-slate-100">
+                Pengundian nomor urut tampil, verifikasi faktual berkas fisik asli, dan penegasan tata tertib lomba.
+              </p>
             </div>
 
             {/* Tahap 3: Uji Coba Lapangan */}
@@ -203,19 +172,9 @@ export default function TimeLocation() {
                 </p>
               </div>
 
-              <div className="pt-2.5 border-t border-slate-100 flex items-center justify-between gap-2">
-                <p className="text-xs text-slate-500 leading-relaxed">
-                  Orientasi arena pos perlombaan di Kampus Terpadu Sedayu agar danton dan pasukan beradaptasi dengan kontur medan.
-                </p>
-                <button
-                  type="button"
-                  onClick={() => setActiveView('rundown')}
-                  className="shrink-0 px-2.5 py-1 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-[10px] transition-colors flex items-center gap-1 cursor-pointer"
-                >
-                  <span>Rundown Gladi</span>
-                  <ExternalLink className="w-3 h-3" />
-                </button>
-              </div>
+              <p className="text-xs text-slate-500 leading-relaxed pt-2.5 border-t border-slate-100">
+                Orientasi arena pos perlombaan di Kampus Terpadu Sedayu agar danton dan pasukan beradaptasi dengan kontur medan.
+              </p>
             </div>
 
             {/* Tahap 4: Hari-H Pelaksanaan Lomba */}
@@ -249,16 +208,8 @@ export default function TimeLocation() {
                 </p>
               </div>
 
-              <div className="bg-white/5 rounded-lg p-2.5 text-xs text-slate-300 leading-relaxed mt-2.5 space-y-2">
-                <p>Pelaksanaan lomba kategori SD/MI dan SMP/MTs, upacara pembukaan dan penutupan, serta penganugerahan piala kejuaraan.</p>
-                <button
-                  type="button"
-                  onClick={() => setActiveView('rundown')}
-                  className="w-full py-1.5 px-3 rounded-lg bg-red-600 hover:bg-red-500 text-white font-bold text-[11px] uppercase tracking-wider transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-sm active:scale-98"
-                >
-                  <span>Lihat Rundown Hari-H Lengkap</span>
-                  <ExternalLink className="w-3.5 h-3.5" />
-                </button>
+              <div className="bg-white/5 rounded-lg p-2.5 text-xs text-slate-300 leading-relaxed mt-2.5">
+                Pelaksanaan lomba kategori SD/MI dan SMP/MTs, upacara pembukaan dan penutupan, serta penganugerahan piala kejuaraan.
               </div>
             </div>
 

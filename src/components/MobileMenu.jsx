@@ -184,28 +184,27 @@ export default function MobileMenu({ isOpen, onClose }) {
               );
             })}
 
-            {/* Direct Rundown Button */}
+            {/* Rundown Link */}
             <button
               type="button"
               onClick={() => {
                 onClose();
                 setActiveView('rundown');
               }}
-              className="w-full group flex items-center gap-3.5 p-3 rounded-2xl border border-red-500/30 bg-red-950/40 hover:bg-red-900/50 text-white transition-all text-left cursor-pointer active:scale-98 shadow-md"
+              className="w-full group flex items-center gap-3.5 p-3 rounded-2xl border transition-all duration-200 bg-white/[0.03] hover:bg-white/[0.07] border-white/5 hover:border-white/10 text-slate-300 hover:text-white text-left cursor-pointer"
             >
-              <div className="w-10 h-10 rounded-xl bg-red-600/30 text-amber-400 border border-red-500/40 flex items-center justify-center shrink-0">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors shadow-sm bg-white/5 text-slate-400 group-hover:text-amber-400 group-hover:bg-white/10">
                 <Clock className="w-5 h-5" />
               </div>
               <div className="flex-1 min-w-0">
-                <span className="text-sm font-bold block leading-tight text-white flex items-center gap-2">
-                  <span>Rundown Resmi Kegiatan</span>
-                  <span className="text-[9px] bg-red-600 text-white px-1.5 py-0.5 rounded font-black uppercase">Resmi</span>
+                <span className="text-sm font-bold block leading-tight">
+                  Rundown Acara
                 </span>
-                <span className="text-[11px] text-red-200/80 truncate block mt-0.5">
-                  Hari-H Perlombaan, TM & Uji Coba Lapangan
+                <span className="text-[11px] text-slate-400 truncate block mt-0.5">
+                  Hari-H, TM & Uji Coba Lapangan 2027
                 </span>
               </div>
-              <ChevronRight className="w-4 h-4 text-red-400 group-hover:translate-x-1 transition-transform" />
+              <ChevronRight className="w-4 h-4 shrink-0 transition-transform text-slate-600 group-hover:text-slate-400" />
             </button>
           </div>
         </div>
