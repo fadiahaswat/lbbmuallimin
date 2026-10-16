@@ -205,7 +205,8 @@ export async function fetchAllDataFromSheet(includeSecretScores = false) {
   }
 
   try {
-    const authParam = includeSecretScores ? `&authKey=${encodeURIComponent(BACKEND_CONFIG.SCORE_SECRET_KEY)}` : '';
+    const secretKey = BACKEND_CONFIG?.SCORE_SECRET_KEY || '';
+    const authParam = secretKey ? `&authKey=${encodeURIComponent(secretKey)}` : '';
     const url = `${APPS_SCRIPT_URL}?action=getAll&t=${Date.now()}${authParam}`;
     const response = await fetch(url, { method: 'GET', mode: 'cors' });
     if (!response.ok) {

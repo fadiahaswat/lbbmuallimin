@@ -13,6 +13,7 @@ export function createTeamActions({ teams, setTeams, scores, setScores, setCurre
     const regCode = `LBB27-${jenjang}-${timePart}-${randPart}`;
     const id = `TEAM-${jenjang}-${Date.now()}-${randPart}`;
 
+    const nowIso = new Date().toISOString();
     const createdTeam = {
       id,
       regCode,
@@ -32,7 +33,8 @@ export function createTeamActions({ teams, setTeams, scores, setScores, setCurre
       status: 'pending',
       lotNumber: null,
       drawTime: null,
-      registeredAt: new Date().toISOString(),
+      registeredAt: nowIso,
+      updatedAt: nowIso,
       wave: newTeamData.wave || 1,
       feeAmount: newTeamData.feeAmount || 450000,
       paymentStatus: 'unverified',
@@ -57,6 +59,9 @@ export function createTeamActions({ teams, setTeams, scores, setScores, setCurre
   }
 
   function updateTeamFiles(teamId, fileKey, fileData) {
+    let updatedTeam = null;
+    const nowIso = new Date().toISOString();
+
     setTeams(prev =>
       prev.map(team => {
         if (team.id === teamId) {
@@ -65,11 +70,13 @@ export function createTeamActions({ teams, setTeams, scores, setScores, setCurre
             [fileKey]: fileData,
           };
           const nextStatus = team.status === 'revision' ? 'registered' : team.status;
-          return {
+          updatedTeam = {
             ...team,
             files: updatedFiles,
             status: nextStatus,
+            updatedAt: nowIso,
           };
+          return updatedTeam;
         }
         return team;
       })
@@ -88,40 +95,55 @@ export function createTeamActions({ teams, setTeams, scores, setScores, setCurre
       );
     }
 
-    const targetTeam = teams.find(t => t.id === teamId);
-    if (targetTeam) {
-      saveRecordToSheet('teams', {
-        ...targetTeam,
-        files: { ...targetTeam.files, [fileKey]: fileData },
-        status: targetTeam.status === 'revision' ? 'registered' : targetTeam.status,
-      }).catch(err => console.warn('[CompetitionContext] Sync file update failed:', err));
+    const fallbackTeam = teams.find(t => t.id === teamId);
+    const toSave = updatedTeam || (fallbackTeam ? {
+      ...fallbackTeam,
+      files: { ...fallbackTeam.files, [fileKey]: fileData },
+      status: fallbackTeam.status === 'revision' ? 'registered' : fallbackTeam.status,
+      updatedAt: nowIso,
+    } : null);
+
+    if (toSave) {
+      saveRecordToSheet('teams', toSave).catch(err =>
+        console.warn('[CompetitionContext] Sync file update failed:', err)
+      );
     }
   }
 
   function updateTeamRoster(teamId, newRoster) {
+    let updatedTeam = null;
+    const nowIso = new Date().toISOString();
+
     setTeams(prev =>
       prev.map(team => {
         if (team.id === teamId) {
-          const updated = {
+          updatedTeam = {
             ...team,
             roster: newRoster,
             dantonName: newRoster?.danton?.name || team.dantonName,
+            updatedAt: nowIso,
           };
-          saveRecordToSheet('teams', updated).catch(err =>
-            console.warn('[CompetitionContext] Sync updateTeamRoster failed:', err)
-          );
-          return updated;
+          return updatedTeam;
         }
         return team;
       })
     );
+
+    if (updatedTeam) {
+      saveRecordToSheet('teams', updatedTeam).catch(err =>
+        console.warn('[CompetitionContext] Sync updateTeamRoster failed:', err)
+      );
+    }
   }
 
   function updateTeamProfile(teamId, profileData) {
+    let updatedTeam = null;
+    const nowIso = new Date().toISOString();
+
     setTeams(prev =>
       prev.map(team => {
         if (team.id === teamId) {
-          const updated = {
+          updatedTeam = {
             ...team,
             ...profileData,
             schoolName: profileData.schoolName !== undefined ? profileData.schoolName : team.schoolName,
@@ -131,19 +153,26 @@ export function createTeamActions({ teams, setTeams, scores, setScores, setCurre
             waNumber: profileData.waNumber !== undefined ? profileData.waNumber : team.waNumber,
             officialName: profileData.officialName !== undefined ? profileData.officialName : team.officialName,
             platoonName: profileData.platoonName !== undefined ? profileData.platoonName : team.platoonName,
+            updatedAt: nowIso,
           };
-          saveRecordToSheet('teams', updated).catch(err =>
-            console.warn('[CompetitionContext] Sync updateTeamProfile failed:', err)
-          );
-          return updated;
+          return updatedTeam;
         }
         return team;
       })
     );
+
+    if (updatedTeam) {
+      saveRecordToSheet('teams', updatedTeam).catch(err =>
+        console.warn('[CompetitionContext] Sync updateTeamProfile failed:', err)
+      );
+    }
     return { success: true };
   }
 
   function updateTeamVehicleSurvey(teamId, agendaKey, surveyData) {
+    let updatedTeam = null;
+    const nowIso = new Date().toISOString();
+
     setTeams(prev =>
       prev.map(team => {
         if (team.id === teamId) {
@@ -153,21 +182,25 @@ export function createTeamActions({ teams, setTeams, scores, setScores, setCurre
             [agendaKey]: {
               ...(existingSurveys[agendaKey] || {}),
               ...surveyData,
-              updatedAt: new Date().toISOString()
+              updatedAt: nowIso
             }
           };
-          const updated = {
+          updatedTeam = {
             ...team,
-            vehicleSurveys: updatedSurveys
+            vehicleSurveys: updatedSurveys,
+            updatedAt: nowIso,
           };
-          saveRecordToSheet('teams', updated).catch(err =>
-            console.warn('[CompetitionContext] Sync vehicleSurveys failed:', err)
-          );
-          return updated;
+          return updatedTeam;
         }
         return team;
       })
     );
+
+    if (updatedTeam) {
+      saveRecordToSheet('teams', updatedTeam).catch(err =>
+        console.warn('[CompetitionContext] Sync vehicleSurveys failed:', err)
+      );
+    }
   }
 
   function verifyTeam(teamId, newStatus, note = '') {
@@ -183,6 +216,7 @@ export function createTeamActions({ teams, setTeams, scores, setScores, setCurre
     }
 
     let updatedTeam = null;
+    const nowIso = new Date().toISOString();
 
     setTeams(prev =>
       prev.map(team => {
@@ -197,6 +231,7 @@ export function createTeamActions({ teams, setTeams, scores, setScores, setCurre
             status: newStatus,
             paymentStatus: nextPaymentStatus,
             revisionNote: note,
+            updatedAt: nowIso,
           };
           return updatedTeam;
         }
@@ -227,6 +262,9 @@ export function createTeamActions({ teams, setTeams, scores, setScores, setCurre
       }
     }
 
+    let updatedTeam = null;
+    const nowIso = new Date().toISOString();
+
     setTeams(prev =>
       prev.map(team => {
         if (team.id === teamId) {
@@ -242,23 +280,27 @@ export function createTeamActions({ teams, setTeams, scores, setScores, setCurre
           const estTime = (estimatedTime !== undefined) ? (estimatedTime ? String(estimatedTime).trim() : '') : (team.estimatedTime || '');
           const basecamp = (basecampNumber !== undefined) ? (basecampNumber ? String(basecampNumber).trim() : '') : (team.basecampNumber || '');
           const nextStatus = num ? 'drawn' : (team.status === 'drawn' ? 'verified' : team.status);
-          const updated = {
+          updatedTeam = {
             ...team,
             lotNumber: num,
             chestNumber: chest,
             estimatedTime: estTime,
             basecampNumber: basecamp,
             status: nextStatus,
-            drawTime: num ? new Date().toISOString() : null,
+            drawTime: num ? nowIso : null,
+            updatedAt: nowIso,
           };
-          saveRecordToSheet('teams', updated).catch(err =>
-            console.warn('[CompetitionContext] Sync assignLot failed:', err)
-          );
-          return updated;
+          return updatedTeam;
         }
         return team;
       })
     );
+
+    if (updatedTeam) {
+      saveRecordToSheet('teams', updatedTeam).catch(err =>
+        console.warn('[CompetitionContext] Sync assignLot failed:', err)
+      );
+    }
   }
 
   function updateTeamDraw(teamId, lotNumber, chestNumber, estimatedTime, basecampNumber) {
@@ -281,6 +323,8 @@ export function createTeamActions({ teams, setTeams, scores, setScores, setCurre
     });
 
     const nowIso = new Date().toISOString();
+    const updatedList = [];
+
     setTeams(prev =>
       prev.map(t => {
         if (idToNumber[t.id] !== undefined) {
@@ -292,15 +336,20 @@ export function createTeamActions({ teams, setTeams, scores, setScores, setCurre
             chestNumber: autoChest || t.chestNumber || '',
             status: 'drawn',
             drawTime: nowIso,
+            updatedAt: nowIso,
           };
-          saveRecordToSheet('teams', updated).catch(err =>
-            console.warn('[CompetitionContext] Sync randomizeLot failed:', err)
-          );
+          updatedList.push(updated);
           return updated;
         }
         return t;
       })
     );
+
+    updatedList.forEach(updated => {
+      saveRecordToSheet('teams', updated).catch(err =>
+        console.warn('[CompetitionContext] Sync randomizeLot failed:', err)
+      );
+    });
 
     return eligibleTeams.length;
   }

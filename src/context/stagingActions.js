@@ -2,6 +2,7 @@ import { saveRecordToSheet } from '../services/sheetService.js';
 
 export function createStagingActions({ staging, setStaging, currentUser }) {
   function updateTeamStaging(teamId, newStage, updates = {}) {
+    let nextRecord = null;
     setStaging(prev => {
       const current = prev[teamId] || {
         teamId,
@@ -14,6 +15,8 @@ export function createStagingActions({ staging, setStaging, currentUser }) {
 
       const next = {
         ...current,
+        id: teamId,
+        teamId,
         stage: newStage,
         ...updates,
         checklist: {
@@ -30,11 +33,18 @@ export function createStagingActions({ staging, setStaging, currentUser }) {
         next.finishedAt = new Date().toISOString();
       }
 
+      nextRecord = next;
       return {
         ...prev,
         [teamId]: next,
       };
     });
+
+    if (nextRecord) {
+      saveRecordToSheet('staging', nextRecord).catch(err =>
+        console.warn('[CompetitionContext] Sync updateTeamStaging to sheet failed:', err)
+      );
+    }
   }
 
   function checkInBasecamp(teamId, logistikData = {}) {
@@ -80,8 +90,9 @@ export function createStagingActions({ staging, setStaging, currentUser }) {
   }
 
   function updateDP1PersonnelInspection(teamId, personId, isVerified, note = '') {
+    let nextRecord = null;
     setStaging(prev => {
-      const cur = prev[teamId] || { teamId, stage: 'dp1', dp1Inspections: {} };
+      const cur = prev[teamId] || { id: teamId, teamId, stage: 'dp1', dp1Inspections: {} };
       const inspections = cur.dp1Inspections || {};
       const updatedInspections = {
         ...inspections,
@@ -93,15 +104,26 @@ export function createStagingActions({ staging, setStaging, currentUser }) {
         },
       };
 
+      const next = {
+        ...cur,
+        id: teamId,
+        teamId,
+        dp1Inspections: updatedInspections,
+        updatedAt: new Date().toISOString(),
+      };
+      nextRecord = next;
+
       return {
         ...prev,
-        [teamId]: {
-          ...cur,
-          dp1Inspections: updatedInspections,
-          updatedAt: new Date().toISOString(),
-        },
+        [teamId]: next,
       };
     });
+
+    if (nextRecord) {
+      saveRecordToSheet('staging', nextRecord).catch(err =>
+        console.warn('[CompetitionContext] Sync updateDP1PersonnelInspection to sheet failed:', err)
+      );
+    }
   }
 
   function passToDP2(teamId) {

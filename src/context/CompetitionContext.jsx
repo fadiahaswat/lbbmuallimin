@@ -358,7 +358,7 @@ export function CompetitionProvider({ children }) {
     fetchAllDataFromSheet(allowScoresSync).then(res => {
       if (!isMounted || !res || !res.success || !res.data) return;
 
-      const { teams: sheetTeams, scores: sheetScores, settings: sheetSettings } = res.data;
+      const { teams: sheetTeams, scores: sheetScores, settings: sheetSettings, staging: sheetStaging } = res.data;
 
       if (Array.isArray(sheetTeams)) {
         if (sheetTeams.length === 0) {
@@ -488,13 +488,21 @@ export function CompetitionProvider({ children }) {
                   }
                 });
 
-                const statusWeight = { pending: 1, revision: 2, registered: 3, verified: 4, drawn: 5, rejected: 0 };
-                const existingWeight = statusWeight[existing.status] || 1;
-                const sheetWeight = statusWeight[normalizedSheetTeam.status] || 1;
-                if (existingWeight > sheetWeight) {
+                const existingTime = existing.updatedAt ? new Date(existing.updatedAt).getTime() : 0;
+                const sheetTime = normalizedSheetTeam.updatedAt ? new Date(normalizedSheetTeam.updatedAt).getTime() : 0;
+
+                if (existingTime > sheetTime && existing.status) {
                   mergedTeam.status = existing.status;
+                  mergedTeam.paymentStatus = existing.paymentStatus || mergedTeam.paymentStatus;
+                  mergedTeam.revisionNote = existing.revisionNote ?? mergedTeam.revisionNote;
                 } else if (normalizedSheetTeam.status) {
                   mergedTeam.status = normalizedSheetTeam.status;
+                } else if (existing.status) {
+                  mergedTeam.status = existing.status;
+                }
+
+                if (['registered', 'verified', 'drawn'].includes(mergedTeam.status)) {
+                  mergedTeam.paymentStatus = 'paid';
                 }
 
                 return {
@@ -513,6 +521,17 @@ export function CompetitionProvider({ children }) {
               return normalizedSheetTeam;
             });
 
+            // Keep any very recently registered local teams not yet reflected in sheet fetch
+            const nowMs = Date.now();
+            prev.forEach(t => {
+              if (!nextTeams.some(nt => nt.id === t.id)) {
+                const regMs = t.registeredAt ? new Date(t.registeredAt).getTime() : 0;
+                if (nowMs - regMs < 120000) {
+                  nextTeams.unshift(t);
+                }
+              }
+            });
+
             return nextTeams;
           });
         }
@@ -525,6 +544,17 @@ export function CompetitionProvider({ children }) {
             if (sc.teamId) nextScores[sc.teamId] = sc;
           });
           return nextScores;
+        });
+      }
+
+      if (Array.isArray(sheetStaging) && sheetStaging.length > 0) {
+        setStaging(prev => {
+          const nextStaging = { ...prev };
+          sheetStaging.forEach(st => {
+            const stId = st.teamId || st.id;
+            if (stId) nextStaging[stId] = st;
+          });
+          return nextStaging;
         });
       }
 
@@ -995,6 +1025,18 @@ export function CompetitionProvider({ children }) {
     }
 
     const cleanId = rawInput.toLowerCase();
+    const normalizeEmailComparison = (em) => {
+      if (!em) return '';
+      const str = String(em).trim().toLowerCase();
+      const parts = str.split('@');
+      if (parts.length !== 2) return str;
+      const [local, domain] = parts;
+      if (domain === 'gmail.com' || domain === 'googlemail.com') {
+        return `${local.replace(/\./g, '')}@gmail.com`;
+      }
+      return str;
+    };
+    const cleanEmailNormalized = normalizeEmailComparison(cleanId);
     const cleanDigits = cleanId.replace(/\D/g, '');
     const cleanDigitsNormalized = cleanDigits.replace(/^(0|62)/, '');
 
@@ -1003,7 +1045,7 @@ export function CompetitionProvider({ children }) {
       const teamReg = String(t.regCode || '').trim().toLowerCase();
       if (teamReg && teamReg === cleanId) return true;
       const teamEmail = String(t.email || '').trim().toLowerCase();
-      if (teamEmail && teamEmail === cleanId) return true;
+      if (teamEmail && (teamEmail === cleanId || normalizeEmailComparison(teamEmail) === cleanEmailNormalized)) return true;
       const teamWa = String(t.waNumber || '').replace(/\D/g, '');
       const teamWaNormalized = teamWa.replace(/^(0|62)/, '');
       if (cleanDigitsNormalized && teamWaNormalized && cleanDigitsNormalized === teamWaNormalized) {
@@ -1267,7 +1309,7 @@ export function CompetitionProvider({ children }) {
         const allowScoresSync = isStaffOrJury || Boolean(settings.announcementPublished);
         const res = await fetchAllDataFromSheet(allowScoresSync);
         if (res && res.success && res.data) {
-          const { teams: sheetTeams, scores: sheetScores, settings: sheetSettings } = res.data;
+          const { teams: sheetTeams, scores: sheetScores, settings: sheetSettings, staging: sheetStaging } = res.data;
           if (Array.isArray(sheetTeams) && sheetTeams.length > 0) {
             setTeams(prev => {
               const prevMap = new Map();
@@ -1321,38 +1363,56 @@ export function CompetitionProvider({ children }) {
                   }
                 });
 
-                // Preserve status progression
-                const statusWeight = { pending: 1, revision: 2, registered: 3, verified: 4, drawn: 5, rejected: 0 };
-                const existingWeight = statusWeight[existing.status] || 1;
-                const sheetWeight = statusWeight[normalized.status] || 1;
-                if (existingWeight > sheetWeight) {
+                // Smart status resolution based on updatedAt timestamp
+                const existingTime = existing.updatedAt ? new Date(existing.updatedAt).getTime() : 0;
+                const sheetTime = normalized.updatedAt ? new Date(normalized.updatedAt).getTime() : 0;
+                if (existingTime > sheetTime && existing.status) {
+                  mergedTeam.status = existing.status;
+                  mergedTeam.paymentStatus = existing.paymentStatus || mergedTeam.paymentStatus;
+                  mergedTeam.revisionNote = existing.revisionNote ?? mergedTeam.revisionNote;
+                } else if (normalized.status) {
+                  mergedTeam.status = normalized.status;
+                } else if (existing.status) {
                   mergedTeam.status = existing.status;
                 }
 
-                // Preserve paymentStatus
-                if (existing.paymentStatus === 'paid' && normalized.paymentStatus !== 'paid') {
+                if (['registered', 'verified', 'drawn'].includes(mergedTeam.status)) {
                   mergedTeam.paymentStatus = 'paid';
                 }
 
                 return mergedTeam;
               });
 
-              // Keep any local teams that might not yet be in the fetched sheet
+              // Keep any local teams that were very recently registered
+              const nowMs = Date.now();
               prev.forEach(t => {
                 if (!mergedTeams.some(mt => mt.id === t.id)) {
-                  mergedTeams.push(t);
+                  const regMs = t.registeredAt ? new Date(t.registeredAt).getTime() : 0;
+                  if (nowMs - regMs < 120000) {
+                    mergedTeams.unshift(t);
+                  }
                 }
               });
 
               return mergedTeams;
             });
           }
-          if (Array.isArray(sheetScores) && sheetScores.length > 0) {
+          if (allowScoresSync && Array.isArray(sheetScores) && sheetScores.length > 0) {
             const nextScores = {};
             sheetScores.forEach(sc => {
               if (sc.teamId) nextScores[sc.teamId] = sc;
             });
             setScores(nextScores);
+          }
+          if (Array.isArray(sheetStaging) && sheetStaging.length > 0) {
+            setStaging(prev => {
+              const nextStaging = { ...prev };
+              sheetStaging.forEach(st => {
+                const stId = st.teamId || st.id;
+                if (stId) nextStaging[stId] = st;
+              });
+              return nextStaging;
+            });
           }
           if (Array.isArray(sheetSettings) && sheetSettings[0]) {
             setSettings(prev => ({ ...prev, ...sheetSettings[0] }));
