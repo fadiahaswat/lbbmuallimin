@@ -122,12 +122,15 @@ export default function RekapNilaiView() {
 
   // Stats
   const scoredCount = competitionTeams.filter(t => scores[t.id]).length;
-  const verifiedCount = competitionTeams.filter(t => scores[t.id]?.isVerified).length;
-  const finalizedCount = competitionTeams.filter(t => scores[t.id]?.isLocked).length;
+  const verifiedCount = competitionTeams.filter(t => {
+    const sc = scores[t.id];
+    return Boolean(sc?.isVerified || sc?.status === 'verified' || sc?.status === 'finalized' || sc?.isLocked);
+  }).length;
+  const finalizedCount = competitionTeams.filter(t => Boolean(scores[t.id]?.isLocked || scores[t.id]?.status === 'finalized')).length;
 
   const handleVerify = (teamId) => {
     if (!isVerifikator) return;
-    verifyScore(teamId, currentUser?.name || 'Verifikator');
+    verifyScore(teamId, true, `Diverifikasi oleh ${currentUser?.name || 'Verifikator'}`);
     alert(`Nilai peleton berhasil diverifikasi & disetujui!`);
   };
 
@@ -276,8 +279,9 @@ export default function RekapNilaiView() {
                   const penalty = sc?.penaltiesTotal || sc?.penalty || sc?.penalties?.totalPenalty || 0;
                   const totalFinal = calculateFinalTotal(team.id);
 
-                  const isVerified = Boolean(sc?.isVerified);
-                  const isLocked = Boolean(sc?.isLocked);
+                  const isVerified = Boolean(sc?.isVerified || sc?.status === 'verified' || sc?.status === 'finalized');
+                  const isLocked = Boolean(sc?.isLocked || sc?.status === 'finalized');
+                  const evidenceUrl = sc?.paperEvidenceUrl || sc?.photoUrl;
 
                   return (
                     <tr key={team.id} className="hover:bg-amber-50/30 transition-colors">
@@ -330,11 +334,11 @@ export default function RekapNilaiView() {
                       <td className="py-3.5 px-3 text-right">
                         <div className="inline-flex items-center gap-1.5 justify-end">
                           {/* Bukti Foto Blangko */}
-                          {sc?.photoUrl && (
+                          {evidenceUrl && (
                             <button
                               type="button"
                               onClick={() => {
-                                setPhotoModalUrl(sc.photoUrl);
+                                setPhotoModalUrl(evidenceUrl);
                                 setIsPhotoModalOpen(true);
                               }}
                               className="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700"

@@ -49,13 +49,23 @@ export default function BasecampCheckInView() {
   // Eligible teams (drawn or verified)
   const competitionTeams = teams.filter(t => ['verified', 'drawn'].includes(t.status) || t.lotNumber);
 
+  const isTeamCheckedIn = (teamId) => {
+    const st = staging?.[teamId] || staging?.basecamp?.[teamId];
+    return Boolean(st?.checkedIn || st?.basecampLogistics?.ktpDeposited || (st?.stage && st.stage !== 'waiting'));
+  };
+
+  const getTeamCheckInTime = (teamId) => {
+    const st = staging?.[teamId] || staging?.basecamp?.[teamId];
+    return st?.checkedInAt || st?.basecampLogistics?.checkedInAt || 'Hadir';
+  };
+
   // Stats
-  const checkedInTeams = competitionTeams.filter(t => staging?.basecamp?.[t.id]?.checkedIn);
-  const pendingTeams = competitionTeams.filter(t => !staging?.basecamp?.[t.id]?.checkedIn);
+  const checkedInTeams = competitionTeams.filter(t => isTeamCheckedIn(t.id));
+  const pendingTeams = competitionTeams.filter(t => !isTeamCheckedIn(t.id));
 
   const handleSelectTeam = (team) => {
     setSelectedTeamId(team.id);
-    setKtpOfficialName(team.coachName || '');
+    setKtpOfficialName(team.officialName || team.coachName || '');
   };
 
   const handleProcessCheckIn = (e) => {
@@ -356,7 +366,7 @@ export default function BasecampCheckInView() {
                 .filter(t => t.schoolName.toLowerCase().includes(searchFilter.toLowerCase()))
                 .sort((a, b) => (a.lotNumber || 99) - (b.lotNumber || 99))
                 .map(t => {
-                  const isChecked = staging?.basecamp?.[t.id]?.checkedIn;
+                  const isChecked = isTeamCheckedIn(t.id);
                   const isSelected = selectedTeamId === t.id;
 
                   return (
@@ -389,7 +399,7 @@ export default function BasecampCheckInView() {
                         {isChecked ? (
                           <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-full">
                             <CheckCircle2 className="w-3 h-3" />
-                            {staging?.basecamp?.[t.id]?.checkedInAt || 'Hadir'}
+                            {getTeamCheckInTime(t.id)}
                           </span>
                         ) : (
                           <span className="text-[10px] font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">

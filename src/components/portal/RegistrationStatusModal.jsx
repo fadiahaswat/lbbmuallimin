@@ -11,7 +11,8 @@ import {
   Users,
   Printer,
   Sparkles,
-  School
+  School,
+  CalendarCheck
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
 import logoImg from '../../assets/logo-tonti.png';

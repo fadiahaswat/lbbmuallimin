@@ -629,6 +629,7 @@ function prepareRecordForSpreadsheet(record) {
       flat['file_bukti_bayar'] = val.paymentProof?.url || '';
       flat['file_selfie'] = val.selfie?.url || '';
       flat['file_pakta_integritas'] = val.integrityPact?.url || '';
+      flat['file_surat_rekomendasi'] = val.recommendationLetter?.url || '';
       // Simpan metadata ringkas di 'files' (tanpa Base64)
       flat['files'] = JSON.stringify(val);
       return;
@@ -763,27 +764,41 @@ function readSheetData(sheet) {
   var records = [];
   for (var r = 0; r < dataRange.length; r++) {
     var row = dataRange[r];
+    var rawRow = {};
     var obj = {};
     var hasContent = false;
 
     for (var c = 0; c < headers.length; c++) {
       var headerKey = headers[c];
       if (!headerKey) continue;
-
       var cellValue = row[c];
       if (cellValue !== '' && cellValue !== null && cellValue !== undefined) {
         hasContent = true;
       }
+      rawRow[headerKey] = cellValue;
+    }
 
-      // Re-stitch split chunks if any (_part2, etc.)
-      if (typeof cellValue === 'string' && (cellValue.startsWith('{') || cellValue.startsWith('['))) {
+    for (var k = 0; k < headers.length; k++) {
+      var key = headers[k];
+      if (!key || /_part\d+$/.test(key)) continue;
+
+      var combinedVal = rawRow[key];
+      if (typeof combinedVal === 'string') {
+        var partIdx = 2;
+        while (rawRow[key + '_part' + partIdx] !== undefined && rawRow[key + '_part' + partIdx] !== '') {
+          combinedVal += String(rawRow[key + '_part' + partIdx]);
+          partIdx++;
+        }
+      }
+
+      if (typeof combinedVal === 'string' && (combinedVal.startsWith('{') || combinedVal.startsWith('['))) {
         try {
-          obj[headerKey] = JSON.parse(cellValue);
+          obj[key] = JSON.parse(combinedVal);
         } catch (e) {
-          obj[headerKey] = cellValue;
+          obj[key] = combinedVal;
         }
       } else {
-        obj[headerKey] = cellValue;
+        obj[key] = combinedVal;
       }
     }
 

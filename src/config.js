@@ -1277,7 +1277,7 @@ export const OFFICIAL_TIMELINE = [
 export const BACKEND_CONFIG = {
     DEFAULT_APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbxLkfu6DLYOfjwK3gQBOgtKMy6k6ELn_Ma1COMfx0SivJEYGEbb64KAtt2H76XAN8QK/exec',
     DEFAULT_GOOGLE_CLIENT_ID: '587440262077-ms6nf4jopejuqre6f1pan5as2umlv2nr.apps.googleusercontent.com',
-    SCORE_SECRET_KEY: import.meta.env.VITE_SCORE_SECRET_KEY || 'LBB_SECURE_JURY_SCORES_MUALLIMIN_2026',
+    SCORE_SECRET_KEY: import.meta.env?.VITE_SCORE_SECRET_KEY || 'LBB_SECURE_JURY_SCORES_MUALLIMIN_2026',
 };
 
 

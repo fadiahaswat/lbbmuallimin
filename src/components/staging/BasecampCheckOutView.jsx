@@ -40,13 +40,23 @@ export default function BasecampCheckOutView() {
   const [searchFilter, setSearchFilter] = useState('');
   const [toastMsg, setToastMsg] = useState('');
 
+  const getTeamStaging = (teamId) => staging?.[teamId] || staging?.basecamp?.[teamId] || null;
+  const isTeamCheckedIn = (teamId) => {
+    const st = getTeamStaging(teamId);
+    return Boolean(st?.checkedIn || st?.basecampLogistics?.ktpDeposited || (st?.stage && st.stage !== 'waiting'));
+  };
+  const isTeamCheckedOut = (teamId) => {
+    const st = getTeamStaging(teamId);
+    return Boolean(st?.checkedOut || st?.stage === 'checkout' || st?.basecampLogistics?.ktpReturned);
+  };
+
   // Teams that have checked in and are currently in the venue
-  const checkedInTeams = teams.filter(t => staging?.basecamp?.[t.id]?.checkedIn);
-  const checkedOutTeams = teams.filter(t => staging?.basecamp?.[t.id]?.checkedOut);
-  const activeInVenueTeams = checkedInTeams.filter(t => !staging?.basecamp?.[t.id]?.checkedOut);
+  const checkedInTeams = teams.filter(t => isTeamCheckedIn(t.id));
+  const checkedOutTeams = teams.filter(t => isTeamCheckedOut(t.id));
+  const activeInVenueTeams = checkedInTeams.filter(t => !isTeamCheckedOut(t.id));
 
   const selectedTeamData = teams.find(t => t.id === selectedTeamId);
-  const selectedTeamStaging = selectedTeamId ? staging?.basecamp?.[selectedTeamId] : null;
+  const selectedTeamStaging = selectedTeamId ? getTeamStaging(selectedTeamId) : null;
 
   const handleProcessCheckOut = (e) => {
     e.preventDefault();
@@ -129,7 +139,7 @@ export default function BasecampCheckOutView() {
                     <div>
                       <h4 className="text-base font-black text-slate-900">{selectedTeamData.schoolName}</h4>
                       <p className="text-xs text-slate-500 font-mono">
-                        {selectedTeamData.regCode} • Check-In: {selectedTeamStaging?.checkedInAt || '-'}
+                        {selectedTeamData.regCode} • Check-In: {selectedTeamStaging?.checkedInAt || selectedTeamStaging?.basecampLogistics?.checkedInAt || '-'}
                       </p>
                     </div>
                   </div>
@@ -153,10 +163,10 @@ export default function BasecampCheckOutView() {
                     </div>
                     <div>
                       <div className="text-xs font-black text-slate-900">
-                        {selectedTeamStaging?.ktpOfficialName || selectedTeamData.coachName || 'Pembina Resmi'}
+                        {selectedTeamStaging?.ktpOfficialName || selectedTeamStaging?.basecampLogistics?.ktpHolderName || selectedTeamData.officialName || selectedTeamData.coachName || 'Pembina Resmi'}
                       </div>
                       <div className="text-[10px] text-slate-500 font-medium">
-                        {selectedTeamStaging?.ktpType || 'KTP Asli Fisik'} • Wajib dikembalikan kepada pembina bersangkutan
+                        {selectedTeamStaging?.ktpType || selectedTeamStaging?.basecampLogistics?.ktpType || 'KTP Asli Fisik'} • Wajib dikembalikan kepada pembina bersangkutan
                       </div>
                     </div>
                   </div>
@@ -257,7 +267,8 @@ export default function BasecampCheckOutView() {
               {checkedInTeams
                 .filter(t => t.schoolName.toLowerCase().includes(searchFilter.toLowerCase()))
                 .map(t => {
-                  const isCheckedOut = staging?.basecamp?.[t.id]?.checkedOut;
+                  const tStaging = getTeamStaging(t.id);
+                  const isCheckedOut = isTeamCheckedOut(t.id);
                   const isSelected = selectedTeamId === t.id;
 
                   return (
@@ -283,7 +294,7 @@ export default function BasecampCheckOutView() {
                         <div className="min-w-0">
                           <div className="text-xs font-bold text-slate-900 truncate">{t.schoolName}</div>
                           <div className="text-[10px] text-slate-400 truncate">
-                            {t.jenjang} • Jaminan: {staging?.basecamp?.[t.id]?.ktpOfficialName || t.coachName || '-'}
+                            {t.jenjang} • Jaminan: {tStaging?.ktpOfficialName || tStaging?.basecampLogistics?.ktpHolderName || t.officialName || t.coachName || '-'}
                           </div>
                         </div>
                       </div>
@@ -291,7 +302,7 @@ export default function BasecampCheckOutView() {
                       <div>
                         {isCheckedOut ? (
                           <span className="inline-flex items-center gap-1 text-[10px] font-bold text-slate-500 bg-slate-200 px-2 py-0.5 rounded-full">
-                            Pulang ({staging?.basecamp?.[t.id]?.checkedOutAt || '-'})
+                            Pulang ({tStaging?.checkedOutAt || tStaging?.basecampLogistics?.checkedOutAt || '-'})
                           </span>
                         ) : (
                           <span className="text-[10px] font-bold text-rose-700 bg-rose-50 border border-rose-200 px-2.5 py-0.5 rounded-full">

@@ -287,13 +287,14 @@ export function createScoringActions({ setScores, currentUser }) {
     return createdRecord;
   }
 
-  function verifyScore(teamId, isApproved, note = '') {
+  function verifyScore(teamId, isApproved = true, note = '') {
     if (!['verifikator', 'superadmin'].includes(currentUser?.role)) {
       console.warn('[Security] Unauthorized call to verifyScore:', currentUser);
       alert('Akses Ditolak: Hanya Verifikator Nilai atau Superadmin yang berhak memverifikasi skor.');
       return;
     }
 
+    const approved = typeof isApproved === 'boolean' ? isApproved : Boolean(isApproved);
     let prevRecord = null;
     let nextRecord = null;
 
@@ -304,16 +305,15 @@ export function createScoringActions({ setScores, currentUser }) {
 
       const updated = {
         ...existing,
-        status: isApproved ? 'verified' : 'rejected_to_draft',
+        id: teamId,
+        teamId,
+        status: approved ? 'verified' : 'rejected_to_draft',
+        isVerified: approved,
         verifiedBy: currentUser?.name || 'Verifikator Nilai',
         verifiedAt: new Date().toISOString(),
         verificationNotes: note,
       };
       nextRecord = updated;
-
-      saveRecordToSheet('scores', { id: teamId, ...updated }).catch(err =>
-        console.warn('[CompetitionContext] Sync verifyScore to sheet failed:', err)
-      );
 
       return {
         ...prev,
@@ -322,7 +322,10 @@ export function createScoringActions({ setScores, currentUser }) {
     });
 
     if (nextRecord) {
-      recordAuditLog(teamId, isApproved ? 'verifyScore_approve' : 'verifyScore_reject', prevRecord, nextRecord, currentUser, note);
+      saveRecordToSheet('scores', { id: teamId, ...nextRecord }).catch(err =>
+        console.warn('[CompetitionContext] Sync verifyScore to sheet failed:', err)
+      );
+      recordAuditLog(teamId, approved ? 'verifyScore_approve' : 'verifyScore_reject', prevRecord, nextRecord, currentUser, note);
     }
   }
 
@@ -343,16 +346,15 @@ export function createScoringActions({ setScores, currentUser }) {
 
       const updated = {
         ...existing,
+        id: teamId,
+        teamId,
         status: 'finalized',
+        isVerified: true,
         isLocked: true,
         finalizedBy: signatureName || currentUser?.name || 'Ketua Dewan Juri',
         finalizedAt: new Date().toISOString(),
       };
       nextRecord = updated;
-
-      saveRecordToSheet('scores', { id: teamId, ...updated }).catch(err =>
-        console.warn('[CompetitionContext] Sync finalizeScore to sheet failed:', err)
-      );
 
       return {
         ...prev,
@@ -361,6 +363,9 @@ export function createScoringActions({ setScores, currentUser }) {
     });
 
     if (nextRecord) {
+      saveRecordToSheet('scores', { id: teamId, ...nextRecord }).catch(err =>
+        console.warn('[CompetitionContext] Sync finalizeScore to sheet failed:', err)
+      );
       recordAuditLog(teamId, 'finalizeScore', prevRecord, nextRecord, currentUser, `Finalisasi mutlak oleh ${signatureName || currentUser?.name}`);
     }
   }

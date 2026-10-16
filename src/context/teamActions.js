@@ -1,8 +1,8 @@
-import { saveRecordToSheet, deleteRecordFromSheet } from '../services/sheetService.js';
+import { saveRecordToSheet, bulkSyncToSheet, deleteRecordFromSheet } from '../services/sheetService.js';
 import { generatePersonnels } from '../data/seedData.js';
 import { checkTeamVerificationEligibility, getChestNumberByLot } from './competitionHelpers.js';
 
-export function createTeamActions({ teams, setTeams, scores, setScores, setCurrentUser, setUsers }) {
+export function createTeamActions({ teams, setTeams, scores, setScores, setStaging, setCurrentUser, setUsers }) {
   function registerTeam(newTeamData) {
     const jenjang = (newTeamData.jenjang || 'SMP').toUpperCase();
     
@@ -44,6 +44,7 @@ export function createTeamActions({ teams, setTeams, scores, setScores, setCurre
         officialKtp: newTeamData.files?.officialKtp || null,
         paymentProof: newTeamData.files?.paymentProof || null,
         integrityPact: newTeamData.files?.integrityPact || null,
+        recommendationLetter: newTeamData.files?.recommendationLetter || null,
       },
       revisionNote: '',
       roster: generatePersonnels(newTeamData.schoolName, jenjang, 'Anggota', newTeamData.dantonName),
@@ -345,11 +346,11 @@ export function createTeamActions({ teams, setTeams, scores, setScores, setCurre
       })
     );
 
-    updatedList.forEach(updated => {
-      saveRecordToSheet('teams', updated).catch(err =>
-        console.warn('[CompetitionContext] Sync randomizeLot failed:', err)
+    if (updatedList.length > 0) {
+      bulkSyncToSheet('teams', updatedList).catch(err =>
+        console.warn('[CompetitionContext] Sync randomizeLot bulk failed:', err)
       );
-    });
+    }
 
     return eligibleTeams.length;
   }
@@ -367,6 +368,17 @@ export function createTeamActions({ teams, setTeams, scores, setScores, setCurre
       });
       deleteRecordFromSheet('scores', teamId).catch(err =>
         console.warn('[CompetitionContext] Sync deleteScore failed:', err)
+      );
+    }
+    if (setStaging) {
+      setStaging(prev => {
+        if (!prev || !prev[teamId]) return prev;
+        const next = { ...prev };
+        delete next[teamId];
+        return next;
+      });
+      deleteRecordFromSheet('staging', teamId).catch(err =>
+        console.warn('[CompetitionContext] Sync deleteStaging failed:', err)
       );
     }
   }

@@ -11,7 +11,7 @@
 
 import { BACKEND_CONFIG } from '../config.js';
 
-const APPS_SCRIPT_URL = import.meta.env.VITE_APPS_SCRIPT_URL || BACKEND_CONFIG?.DEFAULT_APPS_SCRIPT_URL || '';
+const APPS_SCRIPT_URL = import.meta.env?.VITE_APPS_SCRIPT_URL || BACKEND_CONFIG?.DEFAULT_APPS_SCRIPT_URL || '';
 
 /**
  * Cek apakah konfigurasi URL Google Apps Script sudah disetel
@@ -139,6 +139,10 @@ export async function bulkSyncToSheet(table, items) {
       body: JSON.stringify(payload),
     });
 
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
     const result = await response.json();
     return result;
   } catch (error) {
@@ -255,6 +259,10 @@ export async function deleteRecordFromSheet(table, id) {
       },
       body: JSON.stringify(payload),
     });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
 
     const result = await response.json();
     return result;

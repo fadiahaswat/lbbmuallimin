@@ -47,14 +47,23 @@ export default function DaerahPersiapanView() {
   const [activeSubTab, setActiveSubTab] = useState('dp1'); // 'dp1' | 'dp2'
   const [selectedTeamId, setSelectedTeamId] = useState(null);
 
+  const isTeamCheckedIn = (teamId) => {
+    const st = staging?.[teamId] || staging?.basecamp?.[teamId];
+    return Boolean(st?.checkedIn || st?.basecampLogistics?.ktpDeposited || (st?.stage && st.stage !== 'waiting'));
+  };
+
   // Teams that have checked-in and are ready for DP
-  const checkedInTeams = teams.filter(t => staging?.basecamp?.[t.id]?.checkedIn);
+  const checkedInTeams = teams.filter(t => isTeamCheckedIn(t.id));
 
   // Fallback to first checked in team if not selected
   const activeTeam = teams.find(t => t.id === selectedTeamId) || checkedInTeams[0];
 
-  const dp1TeamInspections = activeTeam ? staging?.dp1?.[activeTeam.id]?.personnels || {} : {};
-  const isTeamDP1Passed = activeTeam ? staging?.dp1?.[activeTeam.id]?.passed : false;
+  const dp1TeamInspections = activeTeam
+    ? (staging?.[activeTeam.id]?.dp1Inspections || staging?.dp1?.[activeTeam.id]?.personnels || {})
+    : {};
+  const isTeamDP1Passed = activeTeam
+    ? Boolean(staging?.[activeTeam.id]?.dp1Passed || staging?.[activeTeam.id]?.stage === 'dp2' || staging?.dp1?.[activeTeam.id]?.passed)
+    : false;
 
   // Personnels list for active team
   const danton = activeTeam?.roster?.danton ? [{ ...activeTeam.roster.danton, role: 'danton', id: 'danton' }] : [];
@@ -73,9 +82,7 @@ export default function DaerahPersiapanView() {
 
   const handleVerifyAll = () => {
     if (!canOperateDP || !activeTeam) return;
-    allPersonnels.forEach(p => {
-      updateDP1PersonnelInspection(activeTeam.id, p.id, true);
-    });
+    updateDP1PersonnelInspection(activeTeam.id, allPersonnels.map(p => p.id), true);
   };
 
   const handlePassDP1 = () => {
@@ -380,11 +387,9 @@ export default function DaerahPersiapanView() {
                   <button
                     type="button"
                     onClick={() => {
-                      stopAndSaveFieldTimer(activeTeam?.id);
-                      if (updateTeamStaging && activeTeam) {
-                        updateTeamStaging(activeTeam.id, 'finished');
-                      }
-                      alert(`Waktu tampil ${activeTeam?.schoolName} (${formatTimer(fieldTimer.elapsedSeconds)}) berhasil disimpan ke rekap nilai!`);
+                      if (!activeTeam) return;
+                      stopAndSaveFieldTimer(activeTeam.id, activeTeam.jenjang);
+                      alert(`Waktu tampil ${activeTeam.schoolName} (${formatTimer(fieldTimer.elapsedSeconds)}) berhasil disimpan ke rekap nilai!`);
                     }}
                     className="px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white font-black text-xs uppercase tracking-wider rounded-xl transition-all shadow-lg shadow-blue-950 flex items-center gap-2 cursor-pointer active:scale-95"
                   >

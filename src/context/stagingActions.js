@@ -48,19 +48,31 @@ export function createStagingActions({ staging, setStaging, currentUser }) {
   }
 
   function checkInBasecamp(teamId, logistikData = {}) {
+    const timeStr = logistikData.checkedInAt || new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+    const officialName = logistikData.ktpOfficialName || logistikData.ktpHolderName || '';
+    const ktpType = logistikData.ktpType || 'KTP Fisik';
+    const logisticsObj = logistikData.logistics || {};
+
     const defaultData = {
       ktpDeposited: true,
-      ktpHolderName: logistikData.ktpHolderName || '',
+      ktpOfficialName: officialName,
+      ktpHolderName: officialName,
+      ktpType,
       ktpNumber: logistikData.ktpNumber || '',
-      waterBoxGiven: true,
-      chestNumberGiven: true,
-      cocardGiven: true,
-      trashBagGiven: true,
+      waterBoxGiven: logistikData.waterBoxGiven ?? logisticsObj.waterBox ?? true,
+      chestNumberGiven: logistikData.chestNumberGiven ?? logisticsObj.chestNumber ?? true,
+      cocardGiven: logistikData.cocardOfficialGiven ?? logistikData.cocardGiven ?? logisticsObj.cocardOfficial ?? true,
+      trashBagGiven: logistikData.trashBagGiven ?? logisticsObj.trashBag ?? true,
       checkInTime: new Date().toISOString(),
+      checkedInAt: timeStr,
       checkedInBy: currentUser?.name || 'Panitia Basecamp',
     };
 
     updateTeamStaging(teamId, 'basecamp', {
+      checkedIn: true,
+      checkedInAt: timeStr,
+      ktpOfficialName: officialName,
+      ktpType,
       basecampLogistics: {
         ...(staging[teamId]?.basecampLogistics || {}),
         ...defaultData,
@@ -72,6 +84,7 @@ export function createStagingActions({ staging, setStaging, currentUser }) {
   }
 
   function checkOutBasecamp(teamId, checkoutData = {}) {
+    const timeStr = checkoutData.checkedOutAt || new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
     const currentLogistics = staging[teamId]?.basecampLogistics || {};
     const updated = {
       ...currentLogistics,
@@ -79,37 +92,58 @@ export function createStagingActions({ staging, setStaging, currentUser }) {
       sortedTrashReturned: checkoutData.sortedTrashReturned ?? true,
       ktpReturned: checkoutData.ktpReturned ?? true,
       checkOutTime: new Date().toISOString(),
+      checkedOutAt: timeStr,
       checkedOutBy: currentUser?.name || 'Panitia Basecamp',
     };
 
     updateTeamStaging(teamId, 'checkout', {
+      checkedIn: true,
+      checkedOut: true,
+      checkedOutAt: timeStr,
       basecampLogistics: updated,
     });
 
     return { success: true, message: 'Check-out Basecamp sukses! Ruangan bersih, sampah terpilah terkumpul, dan KTP/SIM dikembalikan.' };
   }
 
-  function updateDP1PersonnelInspection(teamId, personId, isVerified, note = '') {
+  function getPersonnelKeyAliases(personId) {
+    const idStr = String(personId || '');
+    if (idStr === 'danton' || idStr === 'p-danton') return ['danton', 'p-danton'];
+    const pMatch = idStr.match(/^(?:p|pasukan)-(\d+)$/);
+    if (pMatch) return [`p-${pMatch[1]}`, `pasukan-${pMatch[1]}`];
+    const cMatch = idStr.match(/^(?:c|cadangan)-(\d+)$/);
+    if (cMatch) return [`c-${cMatch[1]}`, `cadangan-${cMatch[1]}`];
+    return [idStr];
+  }
+
+  function updateDP1PersonnelInspection(teamId, personIdOrList, isVerified, note = '') {
     let nextRecord = null;
+    const nowIso = new Date().toISOString();
+    const targetIds = Array.isArray(personIdOrList) ? personIdOrList : [personIdOrList];
+
     setStaging(prev => {
       const cur = prev[teamId] || { id: teamId, teamId, stage: 'dp1', dp1Inspections: {} };
-      const inspections = cur.dp1Inspections || {};
-      const updatedInspections = {
-        ...inspections,
-        [personId]: {
-          verified: isVerified,
-          inspectedAt: new Date().toISOString(),
-          inspectedBy: currentUser?.name || 'Panitia DP 1',
-          note: note || '',
-        },
+      const updatedInspections = { ...(cur.dp1Inspections || {}) };
+
+      const entry = {
+        verified: isVerified,
+        inspectedAt: nowIso,
+        inspectedBy: currentUser?.name || 'Panitia DP 1',
+        note: note || '',
       };
+
+      targetIds.forEach(pid => {
+        getPersonnelKeyAliases(pid).forEach(aliasKey => {
+          updatedInspections[aliasKey] = entry;
+        });
+      });
 
       const next = {
         ...cur,
         id: teamId,
         teamId,
         dp1Inspections: updatedInspections,
-        updatedAt: new Date().toISOString(),
+        updatedAt: nowIso,
       };
       nextRecord = next;
 
@@ -128,6 +162,7 @@ export function createStagingActions({ staging, setStaging, currentUser }) {
 
   function passToDP2(teamId) {
     updateTeamStaging(teamId, 'dp2', {
+      dp1Passed: true,
       dp1PassedAt: new Date().toISOString(),
       dp1PassedBy: currentUser?.name || 'Panitia DP 1',
     });

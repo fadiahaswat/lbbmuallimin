@@ -10,6 +10,7 @@ import {
   saveRecordToSheet,
   bulkSyncToSheet,
   fetchAllDataFromSheet,
+  deleteRecordFromSheet,
   isGoogleSheetConfigured,
   pingSheetDatabase
 } from '../services/sheetService.js';
@@ -272,7 +273,7 @@ export function CompetitionProvider({ children }) {
     randomizeLotNumbers,
     deleteTeam
   } = useMemo(
-    () => createTeamActions({ teams, setTeams, scores, setScores, setCurrentUser, setUsers }),
+    () => createTeamActions({ teams, setTeams, scores, setScores, setStaging, setCurrentUser, setUsers }),
     [teams, scores]
   );
 
@@ -309,7 +310,7 @@ export function CompetitionProvider({ children }) {
   }, [teams]);
 
   useEffect(() => {
-    const isStaffOrJury = ['admin', 'juri', 'superadmin'].includes(role);
+    const isStaffOrJury = ['admin', 'juri', 'superadmin', 'penginput', 'verifikator', 'finalisator'].includes(role);
     if (isStaffOrJury || settings.announcementPublished) {
       safeSetItem(STORAGE_KEYS.SCORES, JSON.stringify(scores));
     } else {
@@ -558,6 +559,22 @@ export function CompetitionProvider({ children }) {
         });
       }
 
+      if (Array.isArray(res.data.users) && res.data.users.length > 0) {
+        setUsers(prev => {
+          const byEmail = new Map();
+          INITIAL_USERS.forEach(u => {
+            if (u.email) byEmail.set(u.email.toLowerCase(), u);
+          });
+          prev.forEach(u => {
+            if (u.email) byEmail.set(u.email.toLowerCase(), u);
+          });
+          res.data.users.forEach(u => {
+            if (u && u.email) byEmail.set(String(u.email).toLowerCase(), u);
+          });
+          return Array.from(byEmail.values());
+        });
+      }
+
       if (Array.isArray(sheetSettings) && sheetSettings.length > 0) {
         const remoteSettings = sheetSettings[0];
         if (remoteSettings) {
@@ -628,15 +645,19 @@ export function CompetitionProvider({ children }) {
 
     const cleanEmail = rawEmail;
     const normEmail = normalizeGmail(cleanEmail);
+    const STAFF_ROLES = ['admin', 'superadmin', 'penginput', 'verifikator', 'finalisator', 'checkin', 'dp', 'juri'];
 
     let user = users.find(
-      u => u.email && (u.email.toLowerCase() === cleanEmail || normalizeGmail(u.email) === normEmail) && ['admin', 'superadmin', 'penginput', 'verifikator', 'finalisator'].includes(u.role)
+      u => u.email && (u.email.toLowerCase() === cleanEmail || normalizeGmail(u.email) === normEmail) && STAFF_ROLES.includes(u.role)
     );
 
     const DEFAULT_STAFF_SEEDS = {
       'tontimuallimin2026@gmail.com': { role: 'superadmin', roleLabel: 'Ketua Panitia (Superadmin)' },
       'andiaqillah@muallimin.sch.id': { role: 'admin', roleLabel: 'Panitia Sekretariat (Admin)' },
       'andiaqillah.2018@student.uny.ac.id': { role: 'admin', roleLabel: 'Panitia Sekretariat & Staging' },
+      'checkin@lbbmuallimin.com': { role: 'checkin', roleLabel: 'Petugas Basecamp (Check-In & Check-Out)' },
+      'dp@lbbmuallimin.com': { role: 'dp', roleLabel: 'Petugas Daerah Persiapan (DP 1-2)' },
+      'juri@lbbmuallimin.com': { role: 'juri', roleLabel: 'Dewan Juri PBB & Formasi Lapangan' },
       'penginput@lbbmuallimin.com': { role: 'penginput', roleLabel: 'Operator Input Nilai Kertas' },
       'verifikator@lbbmuallimin.com': { role: 'verifikator', roleLabel: 'Verifikator & Checker Nilai' },
       'finalisator@lbbmuallimin.com': { role: 'finalisator', roleLabel: 'Finalisator & Pengesah Rekap Nilai' },
@@ -683,21 +704,48 @@ export function CompetitionProvider({ children }) {
 
     let currentTeamsList = teams;
     let matchedTeam = currentTeamsList.find(t => t.email && (t.email.toLowerCase() === cleanEmail || normalizeGmail(t.email) === normEmail));
-    let existingUser = users.find(u => u.email && (u.email.toLowerCase() === cleanEmail || normalizeGmail(u.email) === normEmail));
+    let existingUser = users.find(u => u.email && (u.email.toLowerCase() === cleanEmail || normalizeGmail(t.email) === normEmail));
 
     if ((!matchedTeam || matchedTeam.status === 'pending') && isGoogleSheetConfigured()) {
       try {
         const sheetRes = await fetchAllDataFromSheet(true);
-        if (sheetRes && sheetRes.success && sheetRes.data?.teams && Array.isArray(sheetRes.data.teams)) {
-          const freshTeams = sheetRes.data.teams.map(normalizeTeamData);
-          setTeams(prev => {
-            const map = new Map();
-            prev.forEach(t => map.set(t.id, t));
-            freshTeams.forEach(ft => map.set(ft.id, ft));
-            return Array.from(map.values());
-          });
-          currentTeamsList = freshTeams;
-          matchedTeam = freshTeams.find(t => t.email && (t.email.toLowerCase() === cleanEmail || normalizeGmail(t.email) === normEmail)) || matchedTeam;
+        if (sheetRes && sheetRes.success) {
+          if (Array.isArray(sheetRes.data?.users) && sheetRes.data.users.length > 0) {
+            const remoteStaff = sheetRes.data.users.find(
+              u => u?.email && (String(u.email).toLowerCase() === cleanEmail || normalizeGmail(u.email) === normEmail) && STAFF_ROLES.includes(u.role)
+            );
+            if (remoteStaff) {
+              const staffUser = {
+                ...remoteStaff,
+                avatar: googleAvatar || remoteStaff.avatar,
+                googleAvatar: googleAvatar || remoteStaff.googleAvatar || null,
+                name: name || remoteStaff.name,
+              };
+              setUsers(prev => [staffUser, ...prev.filter(u => u.id !== staffUser.id && u.email?.toLowerCase() !== cleanEmail)]);
+              setCurrentUser(staffUser);
+              setRole(staffUser.role);
+              let targetView = 'landing';
+              if (staffUser.role === 'admin') targetView = 'admin';
+              else if (staffUser.role === 'superadmin') targetView = 'superadmin';
+              else if (staffUser.role === 'checkin') targetView = 'checkin';
+              else if (staffUser.role === 'dp') targetView = 'dp';
+              else if (['juri', 'penginput'].includes(staffUser.role)) targetView = 'juri';
+              else if (['verifikator', 'finalisator'].includes(staffUser.role)) targetView = 'rekap_nilai';
+              closeAuthModal(targetView);
+              return { success: true, user: staffUser };
+            }
+          }
+          if (sheetRes.data?.teams && Array.isArray(sheetRes.data.teams)) {
+            const freshTeams = sheetRes.data.teams.map(normalizeTeamData);
+            setTeams(prev => {
+              const map = new Map();
+              prev.forEach(t => map.set(t.id, t));
+              freshTeams.forEach(ft => map.set(ft.id, ft));
+              return Array.from(map.values());
+            });
+            currentTeamsList = freshTeams;
+            matchedTeam = freshTeams.find(t => t.email && (t.email.toLowerCase() === cleanEmail || normalizeGmail(t.email) === normEmail)) || matchedTeam;
+          }
         }
       } catch (err) {
         console.warn('[CompetitionContext] Auto-refresh teams from sheet on login failed:', err);
@@ -856,6 +904,9 @@ export function CompetitionProvider({ children }) {
     const defaultRoleLabels = {
       superadmin: 'Ketua Panitia (Superadmin)',
       admin: 'Panitia Sekretariat (Admin)',
+      checkin: 'Petugas Basecamp (Check-In & Check-Out)',
+      dp: 'Petugas Daerah Persiapan (DP 1-2)',
+      juri: 'Dewan Juri PBB & Formasi Lapangan',
       penginput: 'Operator Input Nilai Kertas',
       verifikator: 'Verifikator & Checker Nilai',
       finalisator: 'Finalisator & Pengesah Rekap Nilai',
@@ -872,6 +923,9 @@ export function CompetitionProvider({ children }) {
     };
 
     setUsers(prev => [newStaff, ...prev]);
+    saveRecordToSheet('users', newStaff).catch(err =>
+      console.warn('[CompetitionContext] Sync addStaffUser to sheet failed:', err)
+    );
     return { success: true, message: `Petugas ${newStaff.name} (${cleanEmail}) berhasil ditambahkan sebagai ${newStaff.roleLabel}.`, user: newStaff };
   }
 
@@ -888,7 +942,12 @@ export function CompetitionProvider({ children }) {
       updates.email = cleanEmail;
     }
 
-    setUsers(prev => prev.map(u => (u.id === userId ? { ...u, ...updates } : u)));
+    const updatedUser = { ...targetUser, ...updates };
+    setUsers(prev => prev.map(u => (u.id === userId ? updatedUser : u)));
+
+    saveRecordToSheet('users', updatedUser).catch(err =>
+      console.warn('[CompetitionContext] Sync updateStaffUser to sheet failed:', err)
+    );
 
     if (currentUser?.id === userId) {
       setCurrentUser(prev => ({ ...prev, ...updates }));
@@ -907,6 +966,9 @@ export function CompetitionProvider({ children }) {
     }
 
     setUsers(prev => prev.filter(u => u.id !== userId));
+    deleteRecordFromSheet('users', userId).catch(err =>
+      console.warn('[CompetitionContext] Sync deleteStaffUser from sheet failed:', err)
+    );
 
     if (currentUser?.id === userId) {
       logoutUser();
@@ -1111,6 +1173,7 @@ export function CompetitionProvider({ children }) {
   }
 
   function updateSettings(newSettings) {
+    let nextSettings = null;
     setSettings(prev => {
       const merged = { ...prev, ...newSettings };
       if (newSettings?.eventDates) {
@@ -1119,8 +1182,15 @@ export function CompetitionProvider({ children }) {
           ...newSettings.eventDates,
         };
       }
+      nextSettings = merged;
       return merged;
     });
+
+    if (nextSettings) {
+      saveRecordToSheet('settings', { id: 'competition_settings', ...nextSettings }).catch(err =>
+        console.warn('[CompetitionContext] Sync updateSettings to sheet failed:', err)
+      );
+    }
   }
 
   function resetToSeedData() {
@@ -1301,6 +1371,14 @@ export function CompetitionProvider({ children }) {
         if (scoreArray.length > 0) {
           results.scores = await bulkSyncToSheet('scores', scoreArray);
         }
+        const stagingArray = Object.values(staging).map(st => ({ id: st.teamId || st.id, ...st }));
+        if (stagingArray.length > 0) {
+          results.staging = await bulkSyncToSheet('staging', stagingArray);
+        }
+        const staffUsers = users.filter(u => u && u.role && u.role !== 'peserta');
+        if (staffUsers.length > 0) {
+          results.users = await bulkSyncToSheet('users', staffUsers);
+        }
         results.settings = await saveRecordToSheet('settings', { id: 'competition_settings', ...settings });
         return results;
       },
@@ -1309,93 +1387,97 @@ export function CompetitionProvider({ children }) {
         const allowScoresSync = isStaffOrJury || Boolean(settings.announcementPublished);
         const res = await fetchAllDataFromSheet(allowScoresSync);
         if (res && res.success && res.data) {
-          const { teams: sheetTeams, scores: sheetScores, settings: sheetSettings, staging: sheetStaging } = res.data;
-          if (Array.isArray(sheetTeams) && sheetTeams.length > 0) {
-            setTeams(prev => {
-              const prevMap = new Map();
-              prev.forEach(t => prevMap.set(t.id, normalizeTeamData(t)));
+          const { teams: sheetTeams, scores: sheetScores, settings: sheetSettings, staging: sheetStaging, users: sheetUsers } = res.data;
+          if (Array.isArray(sheetTeams)) {
+            if (sheetTeams.length === 0) {
+              setTeams([]);
+            } else {
+              setTeams(prev => {
+                const prevMap = new Map();
+                prev.forEach(t => prevMap.set(t.id, normalizeTeamData(t)));
 
-              const mergedTeams = sheetTeams.map(rawSheetTeam => {
-                const normalized = normalizeTeamData(rawSheetTeam);
-                const existing = prevMap.get(normalized.id);
-                if (!existing) return normalized;
+                const mergedTeams = sheetTeams.map(rawSheetTeam => {
+                  const normalized = normalizeTeamData(rawSheetTeam);
+                  const existing = prevMap.get(normalized.id);
+                  if (!existing) return normalized;
 
-                // Merge files: prioritize non-empty valid files
-                const mergedFiles = { ...existing.files, ...normalized.files };
-                Object.keys(existing.files || {}).forEach(k => {
-                  if (existing.files[k]?.url && (!mergedFiles[k]?.url || mergedFiles[k]?.url === '#')) {
-                    mergedFiles[k] = existing.files[k];
+                  // Merge files: prioritize non-empty valid files
+                  const mergedFiles = { ...existing.files, ...normalized.files };
+                  Object.keys(existing.files || {}).forEach(k => {
+                    if (existing.files[k]?.url && (!mergedFiles[k]?.url || mergedFiles[k]?.url === '#')) {
+                      mergedFiles[k] = existing.files[k];
+                    }
+                  });
+
+                  // Merge roster
+                  const existingRoster = existing.roster || {};
+                  const sheetRoster = normalized.roster || {};
+                  const mergedDanton = {
+                    ...existingRoster.danton,
+                    ...sheetRoster.danton,
+                    name: (sheetRoster.danton?.name && sheetRoster.danton.name !== '-' && sheetRoster.danton.name !== 'Anggota Pratama')
+                      ? sheetRoster.danton.name
+                      : (existingRoster.danton?.name || existing.dantonName || normalized.dantonName || '-'),
+                    photo: (sheetRoster.danton?.photo && sheetRoster.danton.photo !== '#' && !sheetRoster.danton.photo.startsWith('#'))
+                      ? sheetRoster.danton.photo
+                      : (existingRoster.danton?.photo || null),
+                  };
+
+                  const mergedTeam = {
+                    ...existing,
+                    ...normalized,
+                    files: mergedFiles,
+                    roster: {
+                      ...existingRoster,
+                      ...sheetRoster,
+                      danton: mergedDanton,
+                      pasukan: (Array.isArray(sheetRoster.pasukan) && sheetRoster.pasukan.length > 0) ? sheetRoster.pasukan : (existingRoster.pasukan || []),
+                      cadangan: (Array.isArray(sheetRoster.cadangan) && sheetRoster.cadangan.length > 0) ? sheetRoster.cadangan : (existingRoster.cadangan || []),
+                      officials: (Array.isArray(sheetRoster.officials) && sheetRoster.officials.length > 0) ? sheetRoster.officials : (existingRoster.officials || []),
+                    },
+                  };
+
+                  // Preserve non-empty fields if sheet returned empty
+                  ['schoolName', 'schoolBaseName', 'jenjang', 'teamType', 'regCode', 'email', 'waNumber', 'dantonName', 'officialName'].forEach(field => {
+                    if (existing[field] && (!normalized[field] || normalized[field] === '')) {
+                      mergedTeam[field] = existing[field];
+                    }
+                  });
+
+                  // Smart status resolution based on updatedAt timestamp
+                  const existingTime = existing.updatedAt ? new Date(existing.updatedAt).getTime() : 0;
+                  const sheetTime = normalized.updatedAt ? new Date(normalized.updatedAt).getTime() : 0;
+                  if (existingTime > sheetTime && existing.status) {
+                    mergedTeam.status = existing.status;
+                    mergedTeam.paymentStatus = existing.paymentStatus || mergedTeam.paymentStatus;
+                    mergedTeam.revisionNote = existing.revisionNote ?? mergedTeam.revisionNote;
+                  } else if (normalized.status) {
+                    mergedTeam.status = normalized.status;
+                  } else if (existing.status) {
+                    mergedTeam.status = existing.status;
+                  }
+
+                  if (['registered', 'verified', 'drawn'].includes(mergedTeam.status)) {
+                    mergedTeam.paymentStatus = 'paid';
+                  }
+
+                  return mergedTeam;
+                });
+
+                // Keep any local teams that were very recently registered
+                const nowMs = Date.now();
+                prev.forEach(t => {
+                  if (!mergedTeams.some(mt => mt.id === t.id)) {
+                    const regMs = t.registeredAt ? new Date(t.registeredAt).getTime() : 0;
+                    if (nowMs - regMs < 120000) {
+                      mergedTeams.unshift(t);
+                    }
                   }
                 });
 
-                // Merge roster
-                const existingRoster = existing.roster || {};
-                const sheetRoster = normalized.roster || {};
-                const mergedDanton = {
-                  ...existingRoster.danton,
-                  ...sheetRoster.danton,
-                  name: (sheetRoster.danton?.name && sheetRoster.danton.name !== '-' && sheetRoster.danton.name !== 'Anggota Pratama')
-                    ? sheetRoster.danton.name
-                    : (existingRoster.danton?.name || existing.dantonName || normalized.dantonName || '-'),
-                  photo: (sheetRoster.danton?.photo && sheetRoster.danton.photo !== '#' && !sheetRoster.danton.photo.startsWith('#'))
-                    ? sheetRoster.danton.photo
-                    : (existingRoster.danton?.photo || null),
-                };
-
-                const mergedTeam = {
-                  ...existing,
-                  ...normalized,
-                  files: mergedFiles,
-                  roster: {
-                    ...existingRoster,
-                    ...sheetRoster,
-                    danton: mergedDanton,
-                    pasukan: (Array.isArray(sheetRoster.pasukan) && sheetRoster.pasukan.length > 0) ? sheetRoster.pasukan : (existingRoster.pasukan || []),
-                    cadangan: (Array.isArray(sheetRoster.cadangan) && sheetRoster.cadangan.length > 0) ? sheetRoster.cadangan : (existingRoster.cadangan || []),
-                    officials: (Array.isArray(sheetRoster.officials) && sheetRoster.officials.length > 0) ? sheetRoster.officials : (existingRoster.officials || []),
-                  },
-                };
-
-                // Preserve non-empty fields if sheet returned empty
-                ['schoolName', 'schoolBaseName', 'jenjang', 'teamType', 'regCode', 'email', 'waNumber', 'dantonName', 'officialName'].forEach(field => {
-                  if (existing[field] && (!normalized[field] || normalized[field] === '')) {
-                    mergedTeam[field] = existing[field];
-                  }
-                });
-
-                // Smart status resolution based on updatedAt timestamp
-                const existingTime = existing.updatedAt ? new Date(existing.updatedAt).getTime() : 0;
-                const sheetTime = normalized.updatedAt ? new Date(normalized.updatedAt).getTime() : 0;
-                if (existingTime > sheetTime && existing.status) {
-                  mergedTeam.status = existing.status;
-                  mergedTeam.paymentStatus = existing.paymentStatus || mergedTeam.paymentStatus;
-                  mergedTeam.revisionNote = existing.revisionNote ?? mergedTeam.revisionNote;
-                } else if (normalized.status) {
-                  mergedTeam.status = normalized.status;
-                } else if (existing.status) {
-                  mergedTeam.status = existing.status;
-                }
-
-                if (['registered', 'verified', 'drawn'].includes(mergedTeam.status)) {
-                  mergedTeam.paymentStatus = 'paid';
-                }
-
-                return mergedTeam;
+                return mergedTeams;
               });
-
-              // Keep any local teams that were very recently registered
-              const nowMs = Date.now();
-              prev.forEach(t => {
-                if (!mergedTeams.some(mt => mt.id === t.id)) {
-                  const regMs = t.registeredAt ? new Date(t.registeredAt).getTime() : 0;
-                  if (nowMs - regMs < 120000) {
-                    mergedTeams.unshift(t);
-                  }
-                }
-              });
-
-              return mergedTeams;
-            });
+            }
           }
           if (allowScoresSync && Array.isArray(sheetScores) && sheetScores.length > 0) {
             const nextScores = {};
@@ -1412,6 +1494,21 @@ export function CompetitionProvider({ children }) {
                 if (stId) nextStaging[stId] = st;
               });
               return nextStaging;
+            });
+          }
+          if (Array.isArray(sheetUsers) && sheetUsers.length > 0) {
+            setUsers(prev => {
+              const byEmail = new Map();
+              INITIAL_USERS.forEach(u => {
+                if (u.email) byEmail.set(u.email.toLowerCase(), u);
+              });
+              prev.forEach(u => {
+                if (u.email) byEmail.set(u.email.toLowerCase(), u);
+              });
+              sheetUsers.forEach(u => {
+                if (u && u.email) byEmail.set(String(u.email).toLowerCase(), u);
+              });
+              return Array.from(byEmail.values());
             });
           }
           if (Array.isArray(sheetSettings) && sheetSettings[0]) {
