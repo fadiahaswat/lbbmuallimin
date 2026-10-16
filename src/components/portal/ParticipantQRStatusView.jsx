@@ -44,7 +44,7 @@ export default function ParticipantQRStatusView({ regCode, onBack }) {
 
     const checkCloud = async () => {
       try {
-        const res = await fetchAllDataFromSheet(false);
+        const res = await fetchAllDataFromSheet(true);
         if (!isCancelled && res?.success && Array.isArray(res.data?.teams)) {
           const freshTeams = res.data.teams.map(normalizeTeamData);
           const foundInCloud = freshTeams.find(
