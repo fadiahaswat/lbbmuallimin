@@ -72,19 +72,19 @@ export const HERO = {
 // ---------------------------------------------------------------------------
 export const EVENT = {
     /** Teks badge di hero */
-    REGISTRATION_BADGE: 'Pendaftaran: 19 Oktober – 29 November 2026',
+    REGISTRATION_BADGE: 'Pendaftaran: 26 Oktober – 22 November 2026',
 
     /** Rentang pendaftaran daring */
-    REGISTRATION_RANGE: '19 Oktober – 29 November 2026',
+    REGISTRATION_RANGE: '26 Oktober – 22 November 2026',
 
     /** Rentang verifikasi berkas daring oleh panitia */
-    VERIFICATION_RANGE: '19 Oktober – 29 November 2026',
+    VERIFICATION_RANGE: '26 Oktober – 22 November 2026',
 
     /** Tanggal pembukaan pendaftaran daring */
-    REGISTRATION_START: '2026-10-19T00:00:00+07:00',
+    REGISTRATION_START: '2026-10-26T00:00:00+07:00',
 
     /** Tanggal batas akhir pendaftaran – dipakai countdown timer */
-    REGISTRATION_DEADLINE: '2026-11-29T23:59:59+07:00',
+    REGISTRATION_DEADLINE: '2026-11-22T23:59:59+07:00',
 
     /** TM Juri */
     JURY_TM_DATE: '7 November 2026',
@@ -202,7 +202,7 @@ export const COMPETITION = {
     PERFORMANCE_TIME_LIMIT_MINUTES: '8 (SD/MI) / 12 (SMP/MTs)',
 
     /** Deskripsi unsur dewan juri */
-    JURY_MEMBERS: '6 Dewan Juri Independen (unsur TNI, POLRI, dan PPI: 3 Juri SD & 3 Juri SMP)',
+    JURY_MEMBERS: '6 Dewan Juri Independen (unsur TNI, POLRI, dan Profesional/Sipil: 3 Juri SD & 3 Juri SMP)',
 
     /** Proporsi penilaian peleton & danton */
     SCORING_PROPORTIONS: {
@@ -282,12 +282,12 @@ export const PAYMENT = {
 
     /** Daftar gelombang / tier biaya pendaftaran */
     FEE_TIERS: [
-        { name: 'Gelombang 1 (19 Okt – 8 Nov)', amount: '350.000', amountWithCode: '350.108', label: '19 Oktober – 8 November 2026', endDate: '2026-11-08T23:59:59+07:00' },
-        { name: 'Gelombang 2 (9 – 29 Nov)', amount: '400.000', amountWithCode: '400.108', label: '9 November – 29 November 2026/Kuota Penuh', endDate: '2026-11-29T23:59:59+07:00' },
+        { name: 'Gelombang 1 (26 Okt – 8 Nov)', amount: '350.000', amountWithCode: '350.108', label: '26 Oktober – 8 November 2026', endDate: '2026-11-08T23:59:59+07:00' },
+        { name: 'Gelombang 2 (9 – 22 Nov)', amount: '400.000', amountWithCode: '400.108', label: '9 November – 22 November 2026/Kuota Penuh', endDate: '2026-11-22T23:59:59+07:00' },
     ],
 
     /** Teks biaya lengkap untuk FAQ */
-    FEE_FULL: 'Rp 350.000,- / peleton (Gelombang 1: 19 Oktober – 8 November 2026) dan Rp 400.000,- / peleton (Gelombang 2: 9 November – 29 November 2026/Kuota Penuh). Setiap pembayaran wajib menggunakan kode unik 108.',
+    FEE_FULL: 'Rp 350.000,- / peleton (Gelombang 1: 26 Oktober – 8 November 2026) dan Rp 400.000,- / peleton (Gelombang 2: 9 November – 22 November 2026/Kuota Penuh). Setiap pembayaran wajib menggunakan kode unik 108.',
 
     /** Keterangan format berita transfer */
     TRANSFER_NOTE_FORMAT: 'NAMA SEKOLAH_JUMLAH PELETON',
@@ -599,74 +599,64 @@ export const PENALTIES = [
         desc: 'Dikenakan per kelipatan 5 menit keterlambatan memasuki barisan upacara pembukaan (maks. toleransi 15 menit).',
     },
     {
-        label: 'Keterlambatan Hadir di DP 1 (3x Panggilan @ 2 menit)',
+        label: 'Keterlambatan Hadir di DP 1 (3x Panggilan Berturut-turut Interval 2 Menit)',
         value: '-100 Poin & Urutan Paling Akhir',
-        desc: 'Tidak hadir di DP 1 setelah 3x pemanggilan resmi interval 2 menit. Urutan tampil digeser paling akhir. Jika tetap absen tanpa konfirmasi: Diskualifikasi.',
+        desc: 'Tidak hadir di DP 1 setelah 3x pemanggilan resmi interval 2 menit. Urutan tampil digeser paling akhir. Jika tetap tidak hadir tanpa konfirmasi sah = Diskualifikasi.',
     },
     {
-        label: 'Jumlah Personel Kurang (< 22 orang di arena)',
+        label: 'Jumlah Personel Kurang dari Ketentuan Minimal (< 22 Orang Tampil)',
         value: '-75 Poin Tetap (Nilai Peleton)',
-        desc: 'Peleton memasuki arena dengan jumlah personel kurang dari 22 orang (1 Komandan Peleton dan 21 Anggota Inti).',
+        desc: 'Peleton memasuki arena dengan jumlah personel kurang dari 22 orang (1 Komandan Peleton dan 21 Anggota Inti), diberlakukan terhadap Nilai Peleton.',
     },
     {
-        label: 'Kelebihan Durasi Waktu Tampil (per rentang 1–30 detik)',
-        value: '-50 Poin (Nilai Peleton & Danton)',
-        desc: 'Melebihi durasi maksimal (SD > 8 menit, SMP > 12 menit) dikenai penalti per rentang 1 s.d. 30 detik dan kelipatannya terhadap Peleton & Komandan.',
+        label: 'Kelebihan Durasi Waktu Tampil (SD > 8 Menit, SMP > 12 Menit)',
+        value: '-50 Poin (Nilai Peleton)',
+        desc: '-50 Poin per rentang 1 s.d. 30 detik kelebihan waktu dan kelipatannya, diberlakukan terhadap Nilai Peleton.',
     },
     {
-        label: 'Pelanggaran Garis Arena (Anggota Peleton)',
-        value: '-50 Poin / kejadian (Nilai Peleton & Danton)',
-        desc: 'Anggota peleton menginjak atau keluar dari garis arena luar (asas "Garis sebagai Garis"). Mengurangi nilai Peleton dan nilai Komandan Peleton.',
+        label: 'Pelanggaran Garis Batas Arena Luar oleh Anggota Peleton',
+        value: '-50 Poin / kejadian (Nilai Peleton)',
+        desc: '-50 Poin per kejadian (menginjak atau keluar garis pembatas arena), diberlakukan terhadap Nilai Peleton.',
     },
     {
-        label: 'Pelanggaran Garis Kotak Danton 1,5×1,5 m (Komandan)',
-        value: '-50 Poin / kejadian (Nilai Danton Saja)',
-        desc: 'Komandan Peleton menginjak atau keluar dari Kotak Danton 1,5 x 1,5 m selama memimpin materi (hanya mengurangi nilai Komandan Peleton).',
-    },
-    {
-        label: 'Ketentuan Gerakan Penyesuaian',
-        value: '0 Poin (Bebas Kuota / Tanpa Penalti)',
-        desc: 'Penggunaan gerakan penyesuaian tidak dibatasi kuota (0 poin), namun efektivitasnya mempengaruhi penilaian Penguasaan Lapangan Danton.',
+        label: 'Pelanggaran Garis Kotak Danton 1,5 x 1,5 Meter oleh Komandan',
+        value: '-50 Poin / kejadian (Nilai Komandan Peleton)',
+        desc: '-50 Poin per kejadian (menginjak atau keluar garis kotak selama memimpin materi), diberlakukan terhadap Nilai Komandan Peleton.',
     },
     {
         label: 'Gerakan Terlewat / Tidak Urut',
         value: 'Nilai Minimal (50) / Nilai 0 (Penguasaan Materi Danton)',
-        desc: 'Gerakan terlewat namun dilakukan kemudian = Nilai Minimal (50); tidak dilakukan sama sekali = Nilai 0. Mengurangi nilai Penguasaan Materi Danton.',
+        desc: 'Gerakan terlewat namun dilakukan kemudian = Nilai Minimal (50); tidak dilakukan sama sekali = Nilai 0. Mengurangi akumulasi nilai Penguasaan Materi Danton.',
     },
     {
-        label: 'Peleton Hafalan (Danton Salah Aba-Aba)',
-        value: 'Nilai 0 Kebenaran Teknik & Potong Penguasaan Materi Danton',
-        desc: 'Danton salah aba-aba tetapi peleton bergerak benar karena hafalan: Nilai 0 Kebenaran Teknik Peleton dan memotong nilai Penguasaan Materi Danton.',
-    },
-    {
-        label: 'Gerakan Berangkai Terputus (Tanda -)',
+        label: 'Gerakan Berangkai Terputus (Tanda Garis Penghubung -)',
         value: 'Nilai Minimal (50) & Potong Penguasaan Materi Danton',
-        desc: 'Rangkaian gerakan bertanda (-) yang diselingi jeda/gerakan tambahan diberi Nilai Minimal (50) dan memotong nilai Penguasaan Materi Danton.',
+        desc: 'Diberi Nilai Minimal (50) untuk materi bersangkutan dan memotong nilai Penguasaan Materi Danton.',
     },
     {
-        label: 'Pelanggaran Kebersihan & Ketertiban Basecamp',
+        label: 'Pelanggaran Kebersihan & Ketertiban Basecamp / Kerusakan Sarpras',
+        value: '-150 Poin (Nilai Peleton)',
+        desc: '-150 Poin diberlakukan terhadap Nilai Peleton jika basecamp ditinggalkan kotor atau sampah tidak diserahkan ke Pos Checkout. Kerusakan fisik sarpras wajib diganti rugi penuh + denda perbaikan Rp 500.000,- (Pasal 14 Tatib & Bab C.8).',
+    },
+    {
+        label: 'Pelanggaran Kawasan Tanpa Rokok & Vape di Lingkungan Madrasah',
         value: '-50 Poin (Nilai Peleton)',
-        desc: 'Meninggalkan ruang basecamp dalam keadaan kotor, berantakan, atau sampah tidak diserahkan ke Pos Checkout sesuai Pasal 14 Tatib.',
+        desc: '-50 Poin diberlakukan terhadap Nilai Peleton bagi sekolah/kontingen yang melanggar setelah diberikan teguran resmi (Pasal 9 Tatib & Bab C.9).',
     },
     {
-        label: 'Pelanggaran Kawasan Tanpa Rokok & Vape',
-        value: '-50 Poin (Nilai Peleton)',
-        desc: 'Pelanggaran terang-terangan di ruang basecamp atau yang melibatkan personel berseragam peleton setelah diberikan teguran (Pasal 9 & Bab C.10).',
+        label: 'Yel-Yel / Teriakan yang Mengganggu Jalannya Perlombaan',
+        value: 'Peringatan 1-2 & -50 Poin ke-3 dst (Nilai Peleton & Danton)',
+        desc: 'Peringatan 1 dan 2 secara lisan; pelanggaran ke-3 dan seterusnya dikenai penalti -50 Poin per kejadian terhadap Nilai Peleton dan Nilai Danton (Pasal 8 Tatib & Bab C.10).',
     },
     {
-        label: 'Yel-Yel Mengganggu Selama Penampilan',
-        value: '-50 Poin / kejadian (Nilai Peleton)',
-        desc: 'Meneriakkan yel-yel / aba-aba saat ada tim tampil: Peringatan 1, 2, lalu penalti -50 poin per kejadian. Pelanggaran berat/sengaja langsung -50 poin.',
+        label: 'Penggunaan Gerakan Penyesuaian',
+        value: '0 Poin (Bebas Kuota / Bebas Penalti)',
+        desc: 'Tidak dibatasi kuota (0 Poin / Bebas Penalti), namun efektivitas dan kepatutannya dinilai secara kualitatif pada aspek Penguasaan Lapangan Komandan Peleton.',
     },
     {
         label: 'Atribut Terlepas / Terjatuh di Arena',
         value: '0 Poin (TIDAK DIKENAKAN PENALTI)',
         desc: 'Atribut peserta (topi/peci, dasi, pin, sabuk, sarung tangan, dll.) terjatuh TIDAK dipotong nilai (0 poin). Peleton dilarang memungut hingga keluar arena.',
-    },
-    {
-        label: 'Kerusakan / Kehilangan Fasilitas Basecamp',
-        value: 'KTP/SIM Ditahan, Ganti Rugi Penuh + Denda Rp 500.000',
-        desc: 'Kerusakan fisik atau kehilangan sarpras kelas: kartu identitas jaminan ditahan, ganti rugi fisik penuh + denda perbaikan Rp 500.000 (Pasal 14 Tatib).',
     },
 ];
 
@@ -921,7 +911,7 @@ export const OFFICIAL_RAB = {
         },
         {
             id: 'div-3',
-            name: 'Divisi Juri & Penilaian (6 Dewan Juri: TNI, Polri, PPI)',
+            name: 'Divisi Juri & Penilaian (6 Dewan Juri: TNI, Polri, Profesional/Sipil)',
             subtotal: 3020000,
             items: [
                 { item: 'Honorarium 6 Dewan Juri (3 SD & 3 SMP)', volume: 6, unit: 'Orang', price: 350000, total: 2100000 },
@@ -1087,18 +1077,18 @@ export const OFFICIAL_TIMELINE = [
     },
     {
         id: "tl-5",
-        phase: "B. Tahap Pendaftaran Peserta & Penjualan Stand Tenant (19 Oktober - 29 November 2026)",
-        period: "19 Oktober - 8 November 2026",
+        phase: "B. Tahap Pendaftaran Peserta & Penjualan Stand Tenant (26 Oktober - 22 November 2026)",
+        period: "26 Oktober - 8 November 2026",
         title: "PENDAFTARAN GELOMBANG PERTAMA (GELOMBANG 1)",
-        desc: "Pembukaan pendaftaran online via website resmi untuk SD/MI & SMP/MTs (19 Oktober - 8 November 2026) dengan biaya pendaftaran Rp 350.000 per peleton (+ kode unik 108). Verifikasi berkas kontingen (Surat Rekomendasi Kepala Sekolah, NISN siswa, pasfoto resmi, surat tugas). Penjualan stand bazar UMKM / tenant kuliner & merchandise Gelombang 1 (biaya sewa Rp 500.000 per tenant - tenda 2x2m, meja, kursi, listrik). Distribusi proposal sponsor ke instansi perbankan, BUMN/BUMD, dan mitra usaha.",
+        desc: "Pembukaan pendaftaran online via website resmi untuk SD/MI & SMP/MTs (26 Oktober - 8 November 2026) dengan biaya pendaftaran Rp 350.000 per peleton (+ kode unik 108). Verifikasi berkas kontingen (Surat Rekomendasi Kepala Sekolah, NISN siswa, pasfoto resmi, surat tugas). Penjualan stand bazar UMKM / tenant kuliner & merchandise Gelombang 1 (biaya sewa Rp 500.000 per tenant - tenda 2x2m, meja, kursi, listrik). Distribusi proposal sponsor ke instansi perbankan, BUMN/BUMD, dan mitra usaha.",
         pic: "Divisi Acara (Pendaftaran), Divisi LO & Humas, Divisi Dana & Kemitraan",
     },
     {
         id: "tl-6",
-        phase: "B. Tahap Pendaftaran Peserta & Penjualan Stand Tenant (19 Oktober - 29 November 2026)",
-        period: "9 - 29 November 2026",
+        phase: "B. Tahap Pendaftaran Peserta & Penjualan Stand Tenant (26 Oktober - 22 November 2026)",
+        period: "9 - 22 November 2026",
         title: "PENDAFTARAN GELOMBANG KEDUA (GELOMBANG 2) & FINALISASI KUOTA",
-        desc: "Pembukaan pendaftaran gelombang kedua (9 - 29 November 2026/Kuota Penuh) dengan biaya pendaftaran Rp 400.000 per peleton (+ kode unik 108) hingga kuota pasti terpenuhi: 36 Peleton (18 SD/MI dan 18 SMP/MTs). Verifikasi berkas daring dilaksanakan oleh tim sekretariat dan panitia pendaftaran. Pelunasan biaya sewa 20 tenant UMKM (@Rp 500.000 = total Rp 10.000.000) dan penandatanganan tata tertib tenant.",
+        desc: "Pembukaan pendaftaran gelombang kedua (9 - 22 November 2026/Kuota Penuh) dengan biaya pendaftaran Rp 400.000 per peleton (+ kode unik 108) hingga kuota pasti terpenuhi: 36 Peleton (18 SD/MI dan 18 SMP/MTs). Verifikasi berkas daring dilaksanakan oleh tim sekretariat dan panitia pendaftaran. Pelunasan biaya sewa 20 tenant UMKM (@Rp 500.000 = total Rp 10.000.000) dan penandatanganan tata tertib tenant.",
         pic: "Divisi Acara (Pendaftaran), Divisi LO & Humas, Divisi Dana & Kemitraan, Bendahara",
     },
     {
@@ -1106,7 +1096,7 @@ export const OFFICIAL_TIMELINE = [
         phase: "C. Rangkaian Agenda Technical Meeting Dewan Juri / TM Juri (November 2026)",
         period: "2 - 5 November 2026",
         title: "PERSIAPAN ADMINISTRASI & LOGISTIK TM JURI",
-        desc: "Penerbitan & pengiriman surat permohonan Dewan Juri ke KODIM/Koramil (TNI), Polresta/Polsek (POLRI), dan PPI Kota Yogyakarta (masing-masing 2 personil: 1 SD & 1 SMP, total 6 juri). Konfirmasi tertulis kesediaan hadir 6 juri pada Sabtu, 7 November 2026 pukul 13.00 WIB. Penggandaan berkas draf juknis & penyiapan uang transport TM (@Rp 50.000).",
+        desc: "Penerbitan & pengiriman surat permohonan Dewan Juri ke KODIM/Koramil (TNI), Polresta/Polsek (POLRI), dan Praktisi Profesional/Sipil (masing-masing 2 personil: 1 SD & 1 SMP, total 6 juri). Konfirmasi tertulis kesediaan hadir 6 juri pada Sabtu, 7 November 2026 pukul 13.00 WIB. Penggandaan berkas draf juknis & penyiapan uang transport TM (@Rp 50.000).",
         pic: "Sekretaris, Divisi Juri & Penilaian, Bendahara",
     },
     {

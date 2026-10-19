@@ -395,7 +395,7 @@ export default function OfficialScoreRecapModal({ isOpen, onClose, initialJenjan
             <div className="flex flex-col items-center justify-between h-36">
               <div>
                 <p className="font-bold text-slate-800">Juri 2 (Kekompakan Peleton)</p>
-                <p className="text-[11px] text-slate-500">Unsur PPI / Paskibra (Bobot 30%)</p>
+                <p className="text-[11px] text-slate-500">Unsur Profesional / Sipil (Rasio 1:1 / 50%)</p>
               </div>
               <div className="w-40 border-b border-slate-900 pb-1">
                 <span className="font-bold text-slate-900">{JURY_POSTS.pos2.defaultName}</span>

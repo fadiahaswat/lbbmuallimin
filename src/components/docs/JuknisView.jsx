@@ -506,7 +506,7 @@ export default function JuknisView() {
                 PETUNJUK TEKNIS PENDAFTARAN
               </h2>
               <p className="text-xs sm:text-sm text-slate-700 leading-relaxed max-w-3xl">
-                Ketentuan umum dan alur teknis pendaftaran resmi LBB Mu'allimin 2027: Alokasi kuota 36 peleton, periode gelombang (19 Okt – 29 Nov 2026), rekening BSI & kode unik 108, alur digital 5 langkah, komposisi personel 25+3, penyerahan berkas fisik asli saat Technical Meeting (TM), serta sanksi administratif diskualifikasi.
+                Ketentuan umum dan alur teknis pendaftaran resmi LBB Mu'allimin 2027: Alokasi kuota 36 peleton, periode gelombang (26 Okt – 22 Nov 2026), rekening BSI & kode unik 108, alur digital 5 langkah, komposisi personel 25+3, penyerahan berkas fisik asli saat Technical Meeting (TM), serta sanksi administratif diskualifikasi.
               </p>
             </div>
 
@@ -769,7 +769,7 @@ export default function JuknisView() {
               </li>
               <li className="flex items-start gap-2">
                 <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 shrink-0 mt-0.5" />
-                <span><strong>Skala Nilai:</strong> Diberikan dalam rentang 50 s.d. 90 poin (bilangan genap) oleh 6 Dewan Juri Independen (TNI, POLRI, PPI).</span>
+                <span><strong>Skala Nilai:</strong> Diberikan dalam rentang 50 s.d. 90 poin (bilangan genap) oleh 6 Dewan Juri Independen (TNI, POLRI, Profesional/Sipil).</span>
               </li>
               <li className="flex items-start gap-2">
                 <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 shrink-0 mt-0.5" />

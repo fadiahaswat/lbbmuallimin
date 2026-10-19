@@ -60,7 +60,7 @@ export default function JuknisPenilaianSection({ embedded = false }) {
       };
     }
 
-    const babAText = `sistem penilaian sanggah penentuan juara dewan juri tni polri ppi rasio 1:1 kebenaran teknik kekompakan formula danton 35 25 20 20 akumulasi juara umum tie breaker rolling release gmail 15.00 wib sanggahan checkout basecamp`.toLowerCase();
+    const babAText = `sistem penilaian sanggah penentuan juara dewan juri tni polri profesional sipil rasio 1:1 kebenaran gerak kekompakan formula danton 35 25 20 20 akumulasi juara umum tie breaker rolling release gmail 15.00 wib sanggahan checkout basecamp`.toLowerCase();
     const babBText = `gangguan sistem digital prosedur backup manual cadangan website upload login formulir pemulihan data`.toLowerCase();
     const babCText = `sanksi penalti pengurangan nilai pemotongan kumulatif denda garis bendera atribut kotak danton diskualifikasi upacara`.toLowerCase();
     const babDText = `penutup asas kepastian hukum mengikat evaluasi hasil penetapan peringkat`.toLowerCase();

@@ -224,7 +224,7 @@ export default function ProposalView() {
               </div>
               <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
                 <span className="text-[10px] text-slate-400 block uppercase font-bold">Dewan Juri:</span>
-                <span className="font-bold text-slate-900">6 Juri Independen (TNI, POLRI, PPI)</span>
+                <span className="font-bold text-slate-900">6 Juri Independen (TNI, POLRI, Profesional/Sipil)</span>
               </div>
             </div>
           </div>

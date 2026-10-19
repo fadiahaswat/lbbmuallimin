@@ -59,7 +59,7 @@ export default function Hero() {
     },
     {
       label: 'Pendaftaran',
-      date: regRangeText, // "19 Oktober – 29 November 2026"
+      date: regRangeText, // "26 Oktober – 22 November 2026"
       dotColor: 'bg-amber-500',
       pingColor: 'bg-amber-400',
       textColor: 'text-amber-300',

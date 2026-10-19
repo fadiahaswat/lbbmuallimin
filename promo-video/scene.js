@@ -459,7 +459,7 @@ function voucher(t, cx, cy, price, lab, d1, d2, d3, light) {
 function scenePrice(t) {
   chip('PENDAFTARAN', 540, 300, t, 26.05, { size: 32 });
   kin('PILIH GELOMBANGMU', 540, 380, 84, t, 26.1, { gold: true, drop: 6, maxW: 900, weight: 800, stag: .02 });
-  [['350.108', 'PRESALE', '19 OKT', '8 NOV', '2026', true, 600, -1], ['400.108', 'WAVE 2', '9 NOV', '29 NOV', '2026', false, 960, 1]].forEach(([p, lab, d1, d2, yr, light, y, dir], i) => {
+  [['350.108', 'PRESALE', '26 OKT', '8 NOV', '2026', true, 600, -1], ['400.108', 'WAVE 2', '9 NOV', '22 NOV', '2026', false, 960, 1]].forEach(([p, lab, d1, d2, yr, light, y, dir], i) => {
     const p0 = T.price.cards[i], pp = pr(t, p0, .6); if (pp <= 0) return; const e = eExpo(pp);
     withTilt(540 + dir * (1 - e) * 900, y, dir * (1 - e) * 1.0 + dir * .07 * Math.sin(t * 1.7), -.04 * Math.sin(t * 1.3), () => voucher(t, 0, 0, `Rp ${p}`.replace('Rp ', ''), lab, d1, d2, '', light));
   });

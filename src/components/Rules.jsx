@@ -898,7 +898,7 @@ export default function Rules({ embedded = false }) {
                         <div className="space-y-1">
                           <strong className="text-slate-900 text-sm block">Ketentuan Sanksi & Denda:</strong>
                           <p className="text-slate-700 text-xs sm:text-sm leading-relaxed">
-                            Peleton yang meninggalkan basecamp dalam keadaan kotor/berantakan dikenai sanksi penalti -50 poin pada rekapitulasi nilai akhir. Apabila terjadi kerusakan fisik atau kehilangan fasilitas kelas, kartu jaminan KTP/SIM ditahan serta dikenakan sanksi ganti rugi penuh dan denda administratif Rp 500.000 sesuai Pasal 14 Tata Tertib Peserta.
+                            Peleton yang meninggalkan basecamp dalam keadaan kotor atau berantakan dikenai sanksi penalti pengurangan nilai sebesar -150 poin pada rekapitulasi nilai akhir. Apabila terbukti terjadi kerusakan fisik atau kehilangan fasilitas kelas (meja, kursi, kaca jendela, stopkontak, LCD/proyektor, dll.), kartu jaminan KTP/SIM ditahan serta dikenakan sanksi ganti rugi penuh dan denda administratif perbaikan sebesar Rp 500.000,- sesuai Pasal 14 Tata Tertib Peserta dan Bab C.8 Juknis Penilaian.
                           </p>
                         </div>
                       </div>

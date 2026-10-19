@@ -47,7 +47,7 @@ const FAQ_DATA = [
     category: 'Pendaftaran',
     icon: 'FileCheck2',
     q: 'Kapan periode pendaftaran online dibuka dan ditutup?',
-    a: `Pendaftaran online resmi dibuka mulai ${EVENT.REGISTRATION_RANGE} pukul 23.59 WIB melalui portal web resmi. Pendaftaran dapat ditutup lebih awal apabila kuota kuota 18 peleton per jenjang telah terpenuhi.`,
+    a: 'Pendaftaran daring resmi dibuka mulai Senin, 26 Oktober 2026 pukul 00.00 WIB s.d. Ahad, 22 November 2026 pukul 23.59 WIB melalui portal web resmi. Pendaftaran otomatis ditutup lebih awal apabila total kuota 36 peleton telah terpenuhi.',
   },
   {
     id: 5,
@@ -63,7 +63,7 @@ const FAQ_DATA = [
     category: 'Biaya',
     icon: 'CreditCard',
     q: 'Berapa besaran biaya pendaftaran dan bagaimana skema periodenya?',
-    a: `Biaya pendaftaran dibagi menjadi 2 gelombang: Gelombang 1 (19 Oktober – 8 November 2026) sebesar Rp350.000,- per peleton; Gelombang 2 (9 November – 29 November 2026/Kuota Penuh) sebesar Rp400.000,- per peleton. Setiap pembayaran wajib menambahkan kode unik 108 pada nominal transfer (contoh: 1 peleton Gelombang 1 mentransfer Rp350.108,-; 2 peleton Gelombang 1 mentransfer Rp700.108,-; 1 peleton Gelombang 2 mentransfer Rp400.108,-; 2 peleton Gelombang 2 mentransfer Rp800.108,-).`,
+    a: `Biaya pendaftaran dibagi menjadi 2 gelombang: Gelombang 1 (26 Oktober – 8 November 2026) sebesar Rp350.000,- per peleton; Gelombang 2 (9 November – 22 November 2026/Kuota Penuh) sebesar Rp400.000,- per peleton. Gelombang 2 hanya dibuka jika sisa kuota masih ada. Setiap pembayaran wajib menambahkan kode unik 108 pada nominal transfer (contoh: 1 peleton Gelombang 1 mentransfer Rp350.108,-; 2 peleton Gelombang 1 mentransfer Rp700.108,-; 1 peleton Gelombang 2 mentransfer Rp400.108,-; 2 peleton Gelombang 2 mentransfer Rp800.108,-).`,
   },
   {
     id: 7,
@@ -114,7 +114,7 @@ const FAQ_DATA = [
     category: 'Teknis',
     icon: 'Calendar',
     q: 'Siapa saja dewan juri yang bertugas menilai?',
-    a: 'Penilaian dilakukan secara objektif dan independen oleh 6 Dewan Juri berkompeten dari unsur profesional militer TNI, POLRI, dan Purna Paskibraka Indonesia (PPI) DIY yang berpengalaman di berbagai kejuaraan nasional.',
+    a: 'Penilaian dilakukan secara objektif dan independen oleh 6 Dewan Juri berkompeten dari unsur TNI, POLRI, dan Profesional/Sipil (3 Juri Arena 1 untuk SD/MI dan 3 Juri Arena 2 untuk SMP/MTs).',
   },
 
   // --- KATEGORI 4: JADWAL & LOKASI ---
