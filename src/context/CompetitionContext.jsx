@@ -15,6 +15,8 @@ import {
   pingSheetDatabase
 } from '../services/sheetService.js';
 
+import { EVENT } from '../config.js';
+
 // Modular helpers & actions
 import {
   STORAGE_KEYS,
@@ -22,7 +24,10 @@ import {
   safeSetItem,
   checkTeamVerificationEligibility,
   resolveUserAvatar,
-  normalizeTeamData
+  normalizeTeamData,
+  isLocalhostEnvironment,
+  isRegistrationDateReached,
+  canFillRegistrationForm
 } from './competitionHelpers.js';
 import { useFieldTimer } from './useFieldTimer.js';
 import { createScoringActions } from './scoringActions.js';
@@ -240,6 +245,12 @@ export function CompetitionProvider({ children }) {
     if (userR === 'admin') return ['pendaftaran', 'tm', 'uji_coba', 'klasemen'].includes(stageId);
     return false;
   };
+
+  // 10. Registration Timing & Localhost Testing Bypass
+  const isLocalhost = useMemo(() => isLocalhostEnvironment(), []);
+  const regStartStr = settings?.eventDates?.registrationStart || EVENT.REGISTRATION_START;
+  const isRegistrationStarted = useMemo(() => isRegistrationDateReached(regStartStr), [regStartStr]);
+  const canAccessRegistration = useMemo(() => canFillRegistrationForm(regStartStr), [regStartStr]);
 
   // Modular Staging Actions
   const {
@@ -1529,6 +1540,11 @@ export function CompetitionProvider({ children }) {
       setStagingBasecampAction,
       navigateToStage,
       canAccessStage,
+
+      // Registration Timing & Localhost Bypass Access
+      isLocalhost,
+      isRegistrationStarted,
+      canAccessRegistration,
     }),
     [
       role,
@@ -1551,6 +1567,9 @@ export function CompetitionProvider({ children }) {
       adminActiveTab,
       stagingActiveMode,
       stagingBasecampAction,
+      isLocalhost,
+      isRegistrationStarted,
+      canAccessRegistration,
     ]
   );
 

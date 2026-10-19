@@ -4,7 +4,7 @@ import { useCompetition } from '../context/CompetitionContext.jsx';
 import { CONTACT } from '../config.js';
 
 export default function StickyCta({ isVisible }) {
-  const { openModal } = useCompetition();
+  const { openModal, canAccessRegistration } = useCompetition();
 
   return (
     <div
@@ -50,7 +50,7 @@ export default function StickyCta({ isVisible }) {
         onClick={() => openModal('regWizard')}
         className="flex-[1.6] min-w-0 flex items-center justify-center gap-1.5 h-10 px-3 text-xs sm:text-sm font-bold text-white bg-red-700 hover:bg-red-800 active:bg-red-900 rounded-xl shadow-md shadow-red-700/20 active:scale-95 transition-all whitespace-nowrap text-center"
       >
-        <span className="truncate">Daftar Sekarang!</span>
+        <span className="truncate">{canAccessRegistration ? 'Daftar Sekarang!' : 'Buka 26 Okt'}</span>
         <ArrowRight className="w-4 h-4 shrink-0" />
       </button>
     </div>

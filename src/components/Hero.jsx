@@ -42,7 +42,7 @@ const CADET_FIGURES = [
 ];
 
 export default function Hero() {
-  const { openModal, setActiveView, settings } = useCompetition();
+  const { openModal, setActiveView, settings, canAccessRegistration } = useCompetition();
   const [activeCadetIndex, setActiveCadetIndex] = useState(0);
   const [scheduleIndex, setScheduleIndex] = useState(0);
 
@@ -215,7 +215,7 @@ export default function Hero() {
                 onClick={() => openModal('regWizard')}
                 className="group px-7 py-3.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl shadow-md hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2 text-xs sm:text-sm tracking-wider uppercase cursor-pointer active:scale-95"
               >
-                <span>Daftar Sekarang</span>
+                <span>{canAccessRegistration ? 'Daftar Sekarang' : 'Daftar (Buka 26 Okt)'}</span>
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1 text-slate-950" />
               </button>
 

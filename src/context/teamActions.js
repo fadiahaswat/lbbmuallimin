@@ -1,9 +1,13 @@
 import { saveRecordToSheet, bulkSyncToSheet, deleteRecordFromSheet } from '../services/sheetService.js';
 import { generatePersonnels } from '../data/seedData.js';
-import { checkTeamVerificationEligibility, getChestNumberByLot } from './competitionHelpers.js';
+import { checkTeamVerificationEligibility, getChestNumberByLot, canFillRegistrationForm } from './competitionHelpers.js';
+import { EVENT } from '../config.js';
 
 export function createTeamActions({ teams, setTeams, scores, setScores, setStaging, setCurrentUser, setUsers }) {
   function registerTeam(newTeamData) {
+    if (!canFillRegistrationForm(EVENT.REGISTRATION_START)) {
+      throw new Error('Pendaftaran daring baru dibuka resmi pada 26 Oktober 2026 pukul 00.00 WIB.');
+    }
     const jenjang = (newTeamData.jenjang || 'SMP').toUpperCase();
     
     // Generate kode pendaftaran unik 8 karakter (2 blok x 4 karakter):

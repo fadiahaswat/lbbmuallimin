@@ -6,10 +6,11 @@ import {
   RotateCcw,
   FileText,
   X,
-  AlertTriangle
+  AlertTriangle,
+  Clock
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
-import { PAYMENT, CONTACT } from '../../config.js';
+import { PAYMENT, CONTACT, EVENT } from '../../config.js';
 import logoImg from '../../assets/logo-tonti.png';
 import titleLogoImg from '../../assets/title-logo.png';
 
@@ -21,7 +22,17 @@ import Step4Confirmation from './registration/Step4Confirmation.jsx';
 import IntegrityPactModal from './registration/IntegrityPactModal.jsx';
 
 export default function RegistrationWizard({ isOpen, onClose }) {
-  const { registerTeam, setActiveView, goBack, openAuthModal, teams, settings } = useCompetition();
+  const {
+    registerTeam,
+    setActiveView,
+    goBack,
+    openAuthModal,
+    teams,
+    settings,
+    isLocalhost,
+    isRegistrationStarted,
+    canAccessRegistration
+  } = useCompetition();
 
   const handleClose = () => {
     if (onClose) {
@@ -411,6 +422,10 @@ export default function RegistrationWizard({ isOpen, onClose }) {
   }
 
   function validateStep1() {
+    if (!canAccessRegistration) {
+      triggerValidationError('Pendaftaran daring resmi baru dibuka pada 26 Oktober 2026 pukul 00.00 WIB.');
+      return false;
+    }
     if (!isRegOpenMaster) {
       triggerValidationError('Pendaftaran saat ini sedang ditutup oleh panitia.');
       return false;
@@ -562,6 +577,120 @@ export default function RegistrationWizard({ isOpen, onClose }) {
 
   const feeDisplay = `Rp${PAYMENT.FEE_DISPLAY}`;
 
+  // JIKA BELUM 26 OKTOBER & BUKAN LOCALHOST: TAMPILKAN LAYAR INFORMASI JADWAL PENDAFTARAN
+  if (!canAccessRegistration) {
+    return (
+      <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col justify-between relative font-sans overflow-x-hidden">
+        {/* Background Subtle Grid Pattern */}
+        <div
+          className="absolute inset-0 opacity-[0.03] pointer-events-none z-0"
+          style={{
+            backgroundImage:
+              'linear-gradient(#8B0000 1px, transparent 1px), linear-gradient(to right, #8B0000 1px, transparent 1px)',
+            backgroundSize: '40px 40px',
+          }}
+        />
+
+        {/* Top Header */}
+        <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-xs">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+            <button
+              onClick={handleClose}
+              className="flex items-center gap-2 text-xs font-bold text-slate-600 hover:text-slate-950 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 transition-all group cursor-pointer"
+            >
+              <ArrowLeft className="w-4 h-4 text-slate-500 group-hover:text-slate-950 group-hover:-translate-x-0.5 transition-transform" />
+              <span>Kembali ke Beranda</span>
+            </button>
+
+            <div className="flex items-center gap-2.5">
+              <img
+                src={logoImg}
+                alt="Logo Tonti Mu'allimin"
+                className="h-8 sm:h-9 w-auto filter drop-shadow-xs shrink-0"
+              />
+              <img
+                src={titleLogoImg}
+                alt="LBB Mu'allimin"
+                className="h-7 sm:h-8 w-auto object-contain hidden xs:block"
+              />
+            </div>
+          </div>
+        </header>
+
+        {/* Main Notice Body */}
+        <main className="max-w-3xl mx-auto px-4 sm:px-6 py-12 relative z-10 flex-1 flex flex-col justify-center">
+          <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-10 shadow-xl text-center space-y-6">
+            <div className="w-16 h-16 rounded-2xl bg-amber-50 border border-amber-200 text-amber-600 flex items-center justify-center mx-auto shadow-inner">
+              <Clock className="w-8 h-8" />
+            </div>
+
+            <div className="space-y-2">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 border border-amber-300 text-amber-800 text-xs font-black uppercase tracking-wider">
+                Pendaftaran Daring Belum Dibuka
+              </span>
+              <h2 className="text-2xl sm:text-3xl font-black text-slate-900 uppercase tracking-tight">
+                Pendaftaran Resmi LBB Mu'allimin 2027
+              </h2>
+              <p className="text-sm text-slate-600 max-w-xl mx-auto leading-relaxed">
+                Formulir pendaftaran digital dibuka secara serentak mulai hari{' '}
+                <strong className="text-red-700">Senin, 26 Oktober 2026 pukul 00.00 WIB</strong> s.d.{' '}
+                <strong className="text-slate-800">Ahad, 22 November 2026 pukul 23.59 WIB</strong>.
+              </p>
+            </div>
+
+            {/* Rincian Gelombang Biaya & Kuota */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 text-left pt-2">
+              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
+                <span className="text-[10px] font-bold text-blue-700 uppercase tracking-wider block">Gelombang 1 (Presale)</span>
+                <p className="text-lg font-black text-slate-900">Rp 350.108,- <span className="text-xs font-normal text-slate-500">/ peleton</span></p>
+                <p className="text-xs text-slate-600">26 Oktober – 8 November 2026</p>
+              </div>
+              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
+                <span className="text-[10px] font-bold text-amber-700 uppercase tracking-wider block">Gelombang 2 (Reguler)</span>
+                <p className="text-lg font-black text-slate-900">Rp 400.108,- <span className="text-xs font-normal text-slate-500">/ peleton</span></p>
+                <p className="text-xs text-slate-600">9 – 22 November 2026 (jika sisa kuota ada)</p>
+              </div>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-amber-50/70 border border-amber-200 text-xs text-amber-900 text-left space-y-1.5">
+              <strong className="block font-bold">📋 Dokumen yang Dapat Dipersiapkan Terlebih Dahulu:</strong>
+              <ul className="list-disc pl-5 space-y-0.5 text-amber-800">
+                <li>Surat Tugas / Rekomendasi Resmi Kepala Sekolah (Asli berstempel basah, format PDF/JPG maks 2 MB)</li>
+                <li>Scan/Foto Kartu Pelajar sah Komandan Peleton (Danton)</li>
+                <li>Scan/Foto KTP Asli Official / Pelatih Pendamping</li>
+                <li>Logo Sekolah / Peleton resolusi tinggi (PNG transparan)</li>
+                <li>Setoran biaya pendaftaran sesuai kode unik 108 ke BSI No. Rek. 2600051817 a.n. Kepala Urusan Admisi, Humas, dan Kerja Sama</li>
+              </ul>
+            </div>
+
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+              <button
+                type="button"
+                onClick={handleClose}
+                className="w-full sm:w-auto px-6 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs uppercase tracking-wider transition-all cursor-pointer shadow-sm"
+              >
+                Kembali ke Beranda
+              </button>
+              <a
+                href="https://docs.google.com/document/d/1BN1RuwDcEiuibVvoBG4-5R7Rq8neV5st3nAZoISVQi0/edit?usp=sharing"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white hover:bg-slate-100 border border-slate-300 text-slate-800 font-bold text-xs uppercase tracking-wider transition-all cursor-pointer"
+              >
+                <span>Pelajari Petunjuk Teknis</span>
+                <ExternalLink className="w-4 h-4 text-slate-500" />
+              </a>
+            </div>
+          </div>
+        </main>
+
+        <footer className="py-4 text-center text-xs text-slate-400">
+          © 2027 Korps Tonti Madrasah Mu'allimin Muhammadiyah Yogyakarta
+        </footer>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col justify-between relative font-sans overflow-x-hidden">
       {/* Background Subtle Grid Pattern */}
@@ -576,6 +705,23 @@ export default function RegistrationWizard({ isOpen, onClose }) {
 
       {/* Top Header */}
       <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-xs">
+        {/* Localhost Testing Mode Banner */}
+        {isLocalhost && !isRegistrationStarted && (
+          <div className="bg-amber-500 text-slate-950 px-4 py-2 text-xs font-bold border-b border-amber-600 shadow-xs">
+            <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-1.5 text-center sm:text-left">
+              <div className="flex items-center gap-2">
+                <span className="px-2 py-0.5 rounded-md bg-slate-950 text-amber-300 text-[10px] font-black uppercase tracking-wider shrink-0">
+                  Localhost Testing Mode
+                </span>
+                <span className="text-[11px] sm:text-xs">
+                  Akses formulir dibuka untuk pengujian lokal (Produksi baru dibuka 26 Oktober 2026).
+                </span>
+              </div>
+              <span className="text-[10px] text-slate-900/80 font-mono">Bypass Aktif</span>
+            </div>
+          </div>
+        )}
+
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
           <button
             onClick={handleClose}

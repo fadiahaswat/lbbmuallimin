@@ -32,7 +32,15 @@ import { useCompetition } from '../context/CompetitionContext.jsx';
 import CountdownTimer from './CountdownTimer.jsx';
 
 export default function Registration() {
-  const { openModal, setActiveView, teams, settings } = useCompetition();
+  const {
+    openModal,
+    setActiveView,
+    teams,
+    settings,
+    isLocalhost,
+    isRegistrationStarted,
+    canAccessRegistration
+  } = useCompetition();
   const [copied, setCopied] = useState(false);
 
   // Perhitungan kuota & slot tersisa realtime
@@ -57,7 +65,7 @@ export default function Registration() {
   const compDate = eventDates.competitionDate || EVENT.COMPETITION_DATE;
   const compTimeStart = EVENT.COMPETITION_TIME_START_LABEL;
 
-  const isRegistrationAvailable = isRegOpenMaster && !isQuotaFull;
+  const isRegistrationAvailable = isRegOpenMaster && !isQuotaFull && canAccessRegistration;
 
   function triggerCopied() {
     setCopied(true);
@@ -707,6 +715,15 @@ export default function Registration() {
               >
                 <span>Buka Formulir Pendaftaran</span>
                 <ExternalLink className="w-4 h-4" />
+              </button>
+            ) : !canAccessRegistration ? (
+              <button
+                type="button"
+                onClick={() => openModal('regWizard')}
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs uppercase tracking-wider transition-all shadow-sm shrink-0 cursor-pointer"
+              >
+                <Clock className="w-4 h-4 text-slate-950" />
+                <span>Dibuka 26 Okt 2026 (00.00 WIB)</span>
               </button>
             ) : (
               <div className="w-full sm:w-auto px-5 py-3 rounded-xl bg-white/5 border border-white/10 text-slate-400 font-bold text-xs uppercase tracking-wider text-center shrink-0">

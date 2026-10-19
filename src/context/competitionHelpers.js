@@ -353,3 +353,45 @@ export function normalizeTeamData(team) {
   t.waNumber = t.waNumber != null ? String(t.waNumber) : '';
   return t;
 }
+
+/**
+ * Mendeteksi apakah aplikasi sedang diakses dari lingkungan lokal / localhost untuk keperluan testing
+ */
+export function isLocalhostEnvironment() {
+  if (typeof window === 'undefined') return true;
+  const hostname = window.location.hostname || '';
+  return (
+    hostname === 'localhost' ||
+    hostname === '127.0.0.1' ||
+    hostname === '::1' ||
+    hostname.startsWith('192.168.') ||
+    hostname.startsWith('10.') ||
+    hostname.startsWith('172.') ||
+    hostname.endsWith('.local')
+  );
+}
+
+/**
+ * Memeriksa apakah waktu saat ini telah mencapai tanggal resmi dibukanya pendaftaran
+ * (Senin, 26 Oktober 2026 pukul 00.00 WIB)
+ * @param {string} regStartStr - Format ISO tanggal pendaftaran dibuka
+ * @returns {boolean} True jika sudah mencapai/melewati waktu pembukaan
+ */
+export function isRegistrationDateReached(regStartStr) {
+  if (!regStartStr) return true;
+  const startTime = new Date(regStartStr).getTime();
+  if (isNaN(startTime)) return true;
+  return Date.now() >= startTime;
+}
+
+/**
+ * Memeriksa apakah pengisian formulir pendaftaran diizinkan:
+ * - Dibuka jika tanggal sudah masuk minimal 26 Oktober 2026 pukul 00.00 WIB
+ * - KECUALI jika diakses dari localhost (bisa langsung daftar untuk testing)
+ * @param {string} regStartStr - Format ISO tanggal pendaftaran dibuka
+ * @returns {boolean} True jika diizinkan mengisi formulir pendaftaran
+ */
+export function canFillRegistrationForm(regStartStr) {
+  if (isLocalhostEnvironment()) return true;
+  return isRegistrationDateReached(regStartStr);
+}
