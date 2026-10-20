@@ -86,17 +86,7 @@ export default function DocumentsTab({ currentTeam, triggerFileUpload, setActive
           onUpload={() => triggerFileUpload('dantonCard')}
         />
 
-        {/* 6. KTP Official / Pelatih */}
-        <ParticipantDocCard
-          title="KTP Official / Pelatih"
-          file={currentTeam.files?.officialKtp}
-          uploadKey="officialKtp"
-          btnLabel="Unggah KTP"
-          btnColor="bg-amber-600 hover:bg-amber-700 text-white"
-          onUpload={() => triggerFileUpload('officialKtp')}
-        />
-
-        {/* 7. Pakta Integritas Bermaterai Rp 10.000 (Cetak Fisik untuk TM) */}
+        {/* 6. Pakta Integritas Bermaterai Rp 10.000 (Cetak Fisik untuk TM) */}
         <div className="sm:col-span-2 bg-gradient-to-r from-red-50/80 via-white to-amber-50/80 border border-red-200 rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-1">
             <div className="flex items-center gap-2">

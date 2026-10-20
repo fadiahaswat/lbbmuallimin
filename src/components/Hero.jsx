@@ -113,11 +113,22 @@ export default function Hero() {
   return (
     <section
       id="home"
-      className="relative w-full min-h-screen supports-[height:100svh]:min-h-[100svh] flex flex-col items-center justify-center bg-gradient-to-b from-[#3a0505] via-[#6d0a0a] to-[#200202] text-white pt-20 sm:pt-22 pb-14"
+      className="relative w-full min-h-screen supports-[height:100svh]:min-h-[100svh] flex flex-col items-center justify-center bg-gradient-to-b from-[#3a0505] via-[#6d0a0a] to-[#200202] text-white pt-20 sm:pt-22 pb-14 overflow-hidden"
     >
-      {/* Atmospheric Background & Lighting (Clean Pure CSS, No Video Play Icons) */}
+      {/* Atmospheric Background & Lighting (Latar Paling Belakang di Atas BG Merah) */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden select-none" aria-hidden="true">
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/15 to-black/60"></div>
+
+        {/* Ornamental Milad Graphic Motif di Latar Belakang Kanan Atas (Khusus Desktop lg ke Atas) */}
+        <div className="hidden lg:block absolute -top-14 lg:-top-24 -right-14 lg:-right-24 w-[560px] lg:w-[680px] pointer-events-none select-none">
+          <img
+            src="/logo-milad.svg"
+            alt=""
+            className="w-full h-auto object-contain opacity-20 filter drop-shadow-md"
+            loading="eager"
+            decoding="async"
+          />
+        </div>
       </div>
 
       <div className="container mx-auto px-4 sm:px-6 relative z-10 flex flex-col justify-center h-full my-auto -mt-2 sm:-mt-3 lg:-mt-4">
@@ -220,13 +231,13 @@ export default function Hero() {
               </button>
 
               <a
-                href="https://docs.google.com/document/d/1BN1RuwDcEiuibVvoBG4-5R7Rq8neV5st3nAZoISVQi0/edit?usp=sharing"
+                href="https://drive.google.com/file/d/1wxLlEIRVEzeMi2Qr0OAJCpqoKZXz-4vh/view?usp=sharing"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group px-7 py-3.5 bg-white/10 hover:bg-white/15 border border-white/15 hover:border-white/25 text-white rounded-xl shadow-sm hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2 text-xs sm:text-sm font-semibold tracking-wider uppercase cursor-pointer active:scale-95"
               >
                 <span>Unduh Petunjuk Teknis</span>
-                <ExternalLink className="w-4 h-4 transition-transform group-hover:translate-x-0.5 text-slate-300" />
+                <Download className="w-4 h-4 transition-transform group-hover:translate-y-0.5 text-slate-300" />
               </a>
             </div>
 
@@ -251,9 +262,23 @@ export default function Hero() {
             {/* Authentic Simpaskor Breathing Halo (.hero-foto-cahaya) */}
             <span aria-hidden="true" className="hero-foto-cahaya" />
 
+            {/* Khusus Mobile & Tablet: Logo Milad Tepat di Belakang Fotoslide Kadet */}
+            <div 
+              className="block lg:hidden absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] sm:w-[380px] pointer-events-none z-0 select-none overflow-visible"
+              aria-hidden="true"
+            >
+              <img
+                src="/logo-milad.svg"
+                alt=""
+                className="w-full h-auto object-contain opacity-25 filter drop-shadow-md"
+                loading="eager"
+                decoding="async"
+              />
+            </div>
+
             {/* Stable Stage Container (Prevents Any Shifting of Neighboring Elements) */}
             <div className="relative w-full h-full flex items-end justify-center overflow-visible pointer-events-none">
-              {/* Stable Cadet Illustration */}
+              {/* Stable Cadet Illustration (Fully Opaque Solid Uniform, z-10) */}
               <img
                 key={activeCadetIndex}
                 src={currentCadet.src}
@@ -265,7 +290,7 @@ export default function Hero() {
                 alt={currentCadet.title}
                 loading="eager"
                 decoding="async"
-                className={`hero-foto hero-foto-smooth max-w-none pointer-events-auto ${
+                className={`hero-foto hero-foto-smooth max-w-none pointer-events-auto relative z-10 ${
                   isLandscape
                     ? 'w-[125%] sm:w-[135%] lg:w-[150%] max-h-[85%] object-contain object-bottom'
                     : 'w-auto max-w-[85%] sm:max-w-[80%] h-auto max-h-[96%] object-contain object-bottom'

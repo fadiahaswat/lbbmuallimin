@@ -599,14 +599,6 @@ export default function TeamInspectionPage({ team, inspectionStage = 'registrati
               />
               <DocumentFileCard
                 number="3"
-                title="KTP Pembina / Official"
-                file={team.files?.officialKtp}
-                colorClass="text-indigo-700"
-                onUpload={(fileData) => updateTeamFiles(team.id, 'officialKtp', fileData)}
-                onDelete={() => updateTeamFiles(team.id, 'officialKtp', null)}
-              />
-              <DocumentFileCard
-                number="4"
                 title="Bukti Transfer Pendaftaran"
                 file={team.files?.paymentProof}
                 colorClass="text-emerald-700"
@@ -614,7 +606,7 @@ export default function TeamInspectionPage({ team, inspectionStage = 'registrati
                 onDelete={() => updateTeamFiles(team.id, 'paymentProof', null)}
               />
               <DocumentFileCard
-                number="5"
+                number="4"
                 title="Pakta Integritas Resmi"
                 file={team.files?.integrityPact}
                 colorClass="text-red-700"
@@ -623,7 +615,7 @@ export default function TeamInspectionPage({ team, inspectionStage = 'registrati
                 onDelete={() => updateTeamFiles(team.id, 'integrityPact', null)}
               />
               <DocumentFileCard
-                number="6"
+                number="5"
                 title="Surat Rekomendasi Kepala Sekolah"
                 file={team.files?.recommendationLetter}
                 colorClass="text-amber-700"

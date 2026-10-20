@@ -210,23 +210,24 @@ export default function Step1SchoolAndAccount({
                 label: 'Tingkat SD / MI',
                 badge: isSDFull ? 'KUOTA PENUH' : `Sisa ${Math.max(0, quotaSD - registeredSD)} Slot`,
                 isFull: isSDFull,
-                activeClass: 'bg-slate-900 border border-slate-900 text-white shadow-xs',
-                activeIcon: 'text-amber-400',
+                icon: School,
+                activeClass: 'bg-red-700 border-red-700 text-white shadow-xs',
                 activeBadge: isSDFull ? 'bg-red-200 text-red-800' : 'bg-white/20 text-white border border-white/20',
-                hoverBorder: 'hover:border-slate-300',
+                hoverBorder: 'hover:border-red-300 hover:text-red-700',
               },
               {
                 id: 'SMP',
                 label: 'Tingkat SMP / MTs',
                 badge: isSMPFull ? 'KUOTA PENUH' : `Sisa ${Math.max(0, quotaSMP - registeredSMP)} Slot`,
                 isFull: isSMPFull,
-                activeClass: 'bg-slate-900 border border-slate-900 text-white shadow-xs',
-                activeIcon: 'text-amber-400',
+                icon: Building2,
+                activeClass: 'bg-blue-700 border-blue-700 text-white shadow-xs',
                 activeBadge: isSMPFull ? 'bg-rose-200 text-rose-900' : 'bg-white/20 text-white border border-white/20',
-                hoverBorder: 'hover:border-slate-300',
+                hoverBorder: 'hover:border-blue-300 hover:text-blue-700',
               },
             ].map(item => {
               const isSelected = formData.jenjang === item.id;
+              const IconComponent = item.icon;
               return (
                 <button
                   key={item.id}
@@ -241,15 +242,15 @@ export default function Step1SchoolAndAccount({
                       ? 'bg-slate-100 border-slate-300 text-slate-400 cursor-not-allowed opacity-75'
                       : isSelected
                       ? item.activeClass
-                      : `bg-white border border-slate-200 text-slate-600 ${item.hoverBorder} hover:text-slate-900 cursor-pointer`
+                      : `bg-white border-slate-200 text-slate-600 ${item.hoverBorder} hover:text-slate-900 cursor-pointer`
                   }`}
                 >
                   <div className="flex items-center gap-2">
-                    <Building2 className={`w-4 h-4 ${isSelected ? item.activeIcon : 'text-slate-400'}`} />
+                    <IconComponent className="w-4 h-4 shrink-0" />
                     <span>{item.label}</span>
                   </div>
                   <span
-                    className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider ${
+                    className={`text-[10px] px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider ${
                       item.isFull
                         ? 'bg-red-100 text-red-700 font-black border border-red-200'
                         : isSelected

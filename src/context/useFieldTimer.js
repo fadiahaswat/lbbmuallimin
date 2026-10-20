@@ -109,7 +109,7 @@ export function useFieldTimer({ updateTeamStaging, setScores }) {
       totalPenalty += (pen.kotakDantonCount || 0) * 50;
       totalPenalty += (pen.yelYelCount || 0) * 50;
       totalPenalty += (pen.rokokCount || 0) * 50;
-      if (pen.basecampKotor) totalPenalty += 50;
+      if (pen.basecampKotor) totalPenalty += 150;
       // Gerakan penyesuaian: 0 poin penalti (Bab H.6 & Bab A.6)
       pen.totalPenalty = totalPenalty;
 

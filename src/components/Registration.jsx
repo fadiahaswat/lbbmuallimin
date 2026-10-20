@@ -650,7 +650,7 @@ export default function Registration() {
                   Danton & Official
                 </h4>
                 <p className="text-[11px] text-slate-400 leading-relaxed">
-                  Lengkapi identitas Danton & Kartu Pelajar, nama Official/Pelatih, No. WhatsApp aktif, dan KTP resmi.
+                  Lengkapi identitas Danton & Kartu Pelajar, nama Official/Pelatih, dan No. WhatsApp aktif.
                 </p>
               </div>
             </div>
@@ -755,7 +755,7 @@ export default function Registration() {
                 </div>
               </div>
 
-              {/* Grid 6 Document Cards */}
+              {/* Grid 5 Document Cards */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                 
                 {/* Doc 1 */}
@@ -810,40 +810,6 @@ export default function Registration() {
                 </div>
 
                 {/* Doc 4 */}
-                <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-amber-500/30 transition-all flex flex-col justify-between">
-                  <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <UserCheck className="w-4 h-4 text-amber-400" />
-                      <span className="text-[9px] font-black uppercase tracking-wider text-amber-300 bg-amber-500/15 border border-amber-500/30 px-2 py-0.5 rounded">
-                        Foto / PDF
-                      </span>
-                    </div>
-                    <h5 className="font-black text-white text-xs mb-1">KTP Official / Pelatih</h5>
-                    <p className="text-[11px] text-slate-400 leading-relaxed">
-                      Scan/Foto KTP asli Official atau Pelatih pendamping resmi peleton sekolah.
-                    </p>
-                  </div>
-                  <span className="text-[10px] text-slate-500 mt-2 block">Maks. 3 MB</span>
-                </div>
-
-                {/* Doc 5 */}
-                <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-blue-500/30 transition-all flex flex-col justify-between">
-                  <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <Users className="w-4 h-4 text-blue-400" />
-                      <span className="text-[9px] font-black uppercase tracking-wider text-blue-300 bg-blue-500/15 border border-blue-500/30 px-2 py-0.5 rounded">
-                        Foto 3×4
-                      </span>
-                    </div>
-                    <h5 className="font-black text-white text-xs mb-1">Pasfoto Personel</h5>
-                    <p className="text-[11px] text-slate-400 leading-relaxed">
-                      Latar <span className="text-red-400 font-bold">Merah (SD)</span> atau <span className="text-blue-400 font-bold">Biru (SMP)</span>. Diunggah per nama di menu portal.
-                    </p>
-                  </div>
-                  <span className="text-[10px] text-slate-500 mt-2 block">Diinput di Menu Personel</span>
-                </div>
-
-                {/* Doc 6 */}
                 <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-purple-500/30 transition-all flex flex-col justify-between">
                   <div>
                     <div className="flex items-center justify-between mb-2">
@@ -858,6 +824,23 @@ export default function Registration() {
                     </p>
                   </div>
                   <span className="text-[10px] text-slate-500 mt-2 block">HD Resolution</span>
+                </div>
+
+                {/* Doc 5 */}
+                <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-blue-500/30 transition-all flex flex-col justify-between sm:col-span-2">
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <Users className="w-4 h-4 text-blue-400" />
+                      <span className="text-[9px] font-black uppercase tracking-wider text-blue-300 bg-blue-500/15 border border-blue-500/30 px-2 py-0.5 rounded">
+                        Foto 3×4
+                      </span>
+                    </div>
+                    <h5 className="font-black text-white text-xs mb-1">Pasfoto Personel</h5>
+                    <p className="text-[11px] text-slate-400 leading-relaxed">
+                      Latar <span className="text-red-400 font-bold">Merah (SD)</span> atau <span className="text-blue-400 font-bold">Biru (SMP)</span>. Diunggah per nama di menu portal peserta.
+                    </p>
+                  </div>
+                  <span className="text-[10px] text-slate-500 mt-2 block">Diinput di Menu Personel</span>
                 </div>
 
               </div>

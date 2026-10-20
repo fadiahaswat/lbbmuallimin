@@ -172,7 +172,6 @@ export default function RegistrationWizard({ isOpen, onClose }) {
   const [files, setFiles] = useState({
     schoolLogo: null,
     dantonCard: null,
-    officialKtp: null,
     paymentProof: null,
     integrityPact: null,
   });
@@ -306,7 +305,7 @@ export default function RegistrationWizard({ isOpen, onClose }) {
   async function handleFileChange(key, e) {
     const file = e.target.files?.[0];
     if (file) {
-      const isDocument = ['dantonCard', 'officialKtp', 'paymentProof'].includes(key);
+      const isDocument = ['dantonCard', 'paymentProof'].includes(key);
       const processed = await processUploadedFile(file, isDocument);
       if (processed) {
         setFiles(prev => ({
@@ -492,10 +491,6 @@ export default function RegistrationWizard({ isOpen, onClose }) {
       triggerValidationError('Nomor WhatsApp tidak valid. Masukkan nomor WhatsApp aktif minimal 9 digit.', 'input[type="tel"]');
       return false;
     }
-    if (!files.officialKtp) {
-      triggerValidationError('Foto KTP Official / Pelatih wajib diunggah.');
-      return false;
-    }
     setValidationError('');
     return true;
   }
@@ -535,7 +530,9 @@ export default function RegistrationWizard({ isOpen, onClose }) {
     e.preventDefault();
     if (!validateStep3()) return;
 
-    const feeAmount = parseInt(PAYMENT.FEE_DISPLAY.replace(/\D/g, ''), 10) || 350000;
+    const isWave2 = Date.now() > new Date('2026-11-08T23:59:59+07:00').getTime();
+    const activeTier = isWave2 ? PAYMENT.FEE_TIERS[1] : PAYMENT.FEE_TIERS[0];
+    const feeAmount = parseInt((activeTier?.amountWithCode || PAYMENT.FEE_DISPLAY).replace(/\D/g, ''), 10) || 350108;
 
     const teamTypeLabel = formData.teamType === 'Homogen'
       ? `Homogen (${formData.homogenGender || 'Putra'})`
@@ -575,7 +572,9 @@ export default function RegistrationWizard({ isOpen, onClose }) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  const feeDisplay = `Rp${PAYMENT.FEE_DISPLAY}`;
+  const isWave2 = Date.now() > new Date('2026-11-08T23:59:59+07:00').getTime();
+  const activeTier = isWave2 ? PAYMENT.FEE_TIERS[1] : PAYMENT.FEE_TIERS[0];
+  const feeDisplay = `Rp${activeTier?.amountWithCode || PAYMENT.FEE_DISPLAY}`;
 
   // JIKA BELUM 26 OKTOBER & BUKAN LOCALHOST: TAMPILKAN LAYAR INFORMASI JADWAL PENDAFTARAN
   if (!canAccessRegistration) {
@@ -657,7 +656,6 @@ export default function RegistrationWizard({ isOpen, onClose }) {
               <ul className="list-disc pl-5 space-y-0.5 text-amber-800">
                 <li>Surat Tugas / Rekomendasi Resmi Kepala Sekolah (Asli berstempel basah, format PDF/JPG maks 2 MB)</li>
                 <li>Scan/Foto Kartu Pelajar sah Komandan Peleton (Danton)</li>
-                <li>Scan/Foto KTP Asli Official / Pelatih Pendamping</li>
                 <li>Logo Sekolah / Peleton resolusi tinggi (PNG transparan)</li>
                 <li>Setoran biaya pendaftaran sesuai kode unik 108 ke BSI No. Rek. 2600051817 a.n. Kepala Urusan Admisi, Humas, dan Kerja Sama</li>
               </ul>
@@ -672,7 +670,7 @@ export default function RegistrationWizard({ isOpen, onClose }) {
                 Kembali ke Beranda
               </button>
               <a
-                href="https://docs.google.com/document/d/1BN1RuwDcEiuibVvoBG4-5R7Rq8neV5st3nAZoISVQi0/edit?usp=sharing"
+                href="https://drive.google.com/file/d/1wxLlEIRVEzeMi2Qr0OAJCpqoKZXz-4vh/view?usp=sharing"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white hover:bg-slate-100 border border-slate-300 text-slate-800 font-bold text-xs uppercase tracking-wider transition-all cursor-pointer"
@@ -705,23 +703,6 @@ export default function RegistrationWizard({ isOpen, onClose }) {
 
       {/* Top Header */}
       <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-xs">
-        {/* Localhost Testing Mode Banner */}
-        {isLocalhost && !isRegistrationStarted && (
-          <div className="bg-amber-500 text-slate-950 px-4 py-2 text-xs font-bold border-b border-amber-600 shadow-xs">
-            <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-1.5 text-center sm:text-left">
-              <div className="flex items-center gap-2">
-                <span className="px-2 py-0.5 rounded-md bg-slate-950 text-amber-300 text-[10px] font-black uppercase tracking-wider shrink-0">
-                  Localhost Testing Mode
-                </span>
-                <span className="text-[11px] sm:text-xs">
-                  Akses formulir dibuka untuk pengujian lokal (Produksi baru dibuka 26 Oktober 2026).
-                </span>
-              </div>
-              <span className="text-[10px] text-slate-900/80 font-mono">Bypass Aktif</span>
-            </div>
-          </div>
-        )}
-
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
           <button
             onClick={handleClose}

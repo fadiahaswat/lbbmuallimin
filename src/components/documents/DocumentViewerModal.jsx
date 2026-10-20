@@ -172,16 +172,16 @@ export default function DocumentViewerModal({ isOpen, onClose }) {
                 <p><strong>D. Penutup:</strong> Menjadi pedoman operasional resmi bagi seluruh panitia, dewan juri, dan peserta LBB Mu'allimin Tahun 2027.</p>
               </div>
 
-              <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-center justify-between text-xs">
-                <span className="text-red-900 font-semibold">Tersedia versi dokumen interaktif lengkap di Google Docs:</span>
+              <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg flex flex-wrap items-center justify-between gap-2 text-xs">
+                <span className="text-red-900 font-semibold">Tersedia dokumen resmi Petunjuk Teknis di Google Drive:</span>
                 <a
-                  href="https://docs.google.com/document/d/1BN1RuwDcEiuibVvoBG4-5R7Rq8neV5st3nAZoISVQi0/edit?usp=sharing"
+                  href="https://drive.google.com/file/d/1wxLlEIRVEzeMi2Qr0OAJCpqoKZXz-4vh/view?usp=sharing"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="px-3 py-1 bg-red-700 hover:bg-red-800 text-white font-bold rounded shadow transition-colors inline-flex items-center gap-1.5"
                 >
-                  <BookOpen className="w-3.5 h-3.5" />
-                  Buka Google Docs
+                  <Download className="w-3.5 h-3.5" />
+                  Unduh Dokumen Juknis
                 </a>
               </div>
 

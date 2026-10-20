@@ -201,7 +201,7 @@ export default function PenaltiesSection({
           <div>
             <div className="flex justify-between items-center mb-1">
               <span className="font-bold text-slate-900 text-sm">Basecamp Kotor</span>
-              <span className="text-[10px] font-bold text-rose-700 bg-rose-50 px-2 py-0.5 rounded-md border border-rose-200">-50 Poin</span>
+              <span className="text-[10px] font-bold text-rose-700 bg-rose-50 px-2 py-0.5 rounded-md border border-rose-200">-150 Poin</span>
             </div>
             <p className="text-[11px] text-slate-500 mt-1">Ruang basecamp ditinggalkan kotor / berantakan saat verifikasi checkout</p>
           </div>

@@ -9,10 +9,7 @@ import {
   ExternalLink,
   ArrowUp,
   ShieldCheck,
-  Award,
-  FileText,
-  ArrowRight,
-  Sparkles
+  Award
 } from 'lucide-react';
 import { SITE, SOCIAL, CONTACT, VENUE, REGISTRATION } from '../config.js';
 import { useCompetition } from '../context/CompetitionContext.jsx';
@@ -34,56 +31,6 @@ export default function Footer() {
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
-        {/* Pre-Footer Action Banner / Callout Strip */}
-        <div className="mb-16 p-6 sm:p-8 rounded-3xl bg-slate-900 border border-slate-800 shadow-xl relative overflow-hidden">
-          {/* Subtle Monochrome Cadet Watermark in the Right Background */}
-          <div className="absolute right-0 top-0 bottom-0 w-96 pointer-events-none opacity-15 hidden lg:block z-0">
-            <picture>
-              <source srcSet="/fotoslide/1.webp" type="image/webp" />
-              <img
-                src="/fotoslide/1.png"
-                alt="Paskibra Pasukan"
-                className="w-full h-full object-cover object-center grayscale contrast-125 filter [mask-image:linear-gradient(to_left,black_20%,transparent_90%)]"
-                loading="lazy"
-                decoding="async"
-              />
-            </picture>
-          </div>
-          
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
-            <div className="space-y-2 max-w-xl">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800/80 border border-slate-700 text-amber-400 text-[10px] sm:text-xs font-bold uppercase tracking-wider">
-                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                <span>Pendaftaran Masih Dibuka • Kuota Terbatas</span>
-              </div>
-              <h3 className="text-xl sm:text-2xl lg:text-3xl font-black text-white uppercase tracking-tight">
-                Siap Tampil di Panggung Kehormatan LBB {SITE.YEAR}?
-              </h3>
-              <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
-                Segera daftarkan peleton terbaik sekolah Anda. Perebutkan Piala Bergilir bergengsi dan total pembinaan puluhan juta rupiah.
-              </p>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-3">
-              <button
-                type="button"
-                onClick={() => setActiveView('register')}
-                className="px-6 py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl shadow-md text-xs sm:text-sm uppercase tracking-wider flex items-center gap-2 hover:-translate-y-0.5 active:scale-95 transition-all cursor-pointer"
-              >
-                <span>Daftar Peleton Sekarang</span>
-                <ArrowRight className="w-4 h-4 text-slate-950" />
-              </button>
-              <a
-                href="#rules"
-                className="px-5 py-3 bg-white/10 hover:bg-white/15 text-white font-bold rounded-xl border border-white/15 text-xs sm:text-sm uppercase tracking-wider transition-all flex items-center gap-2"
-              >
-                <FileText className="w-4 h-4 text-yellow-400" />
-                <span>Petunjuk Teknis</span>
-              </a>
-            </div>
-          </div>
-        </div>
-
         {/* Main Footer 4-Column Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8 mb-16">
           
@@ -182,7 +129,7 @@ export default function Footer() {
                   className="text-slate-400 hover:text-yellow-400 transition-colors flex items-center gap-1.5 group cursor-pointer"
                 >
                   <ChevronRight className="w-3.5 h-3.5 text-yellow-400 opacity-60 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
-                  <span className="font-bold text-amber-300">Rundown Resmi Kegiatan</span>
+                  <span>Rundown Resmi Kegiatan</span>
                 </button>
               </li>
               <li>
@@ -214,7 +161,7 @@ export default function Footer() {
                   className="text-left text-slate-400 hover:text-yellow-400 transition-colors flex items-center gap-1.5 group cursor-pointer"
                 >
                   <ChevronRight className="w-3.5 h-3.5 text-yellow-400 opacity-60 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
-                  <span className="font-bold text-amber-300">Rundown Hari-H & TM 2027</span>
+                  <span>Rundown Hari-H & TM 2027</span>
                 </button>
               </li>
               <li>
@@ -322,7 +269,7 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar: Copyright, Portal Badge, Scroll to Top */}
-        <div className="border-t border-slate-800/80 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-500">
+        <div className="border-t border-slate-800/80 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-500 relative z-10">
           <p>© {SITE.YEAR} Madrasah Mu'allimin Muhammadiyah Yogyakarta • Panitia LBB {SITE.YEAR}</p>
           
           <div className="flex items-center gap-4 sm:gap-6 flex-wrap justify-center">
@@ -337,6 +284,20 @@ export default function Footer() {
           </div>
         </div>
 
+      </div>
+
+      {/* Authentic Milad Illustration Motif Emerging from Bottom Center-Right (Tengah Agak ke Kanan, 100% Opacity, Di Depan Garis Border) */}
+      <div 
+        className="absolute bottom-0 left-[48%] sm:left-[52%] lg:left-[56%] -translate-x-1/2 pointer-events-none z-20 select-none overflow-hidden"
+        aria-hidden="true"
+      >
+        <img
+          src="/logo-milad.svg"
+          alt=""
+          className="w-[280px] sm:w-[360px] lg:w-[440px] h-auto object-contain translate-y-[58%] opacity-100 filter drop-shadow-2xl pointer-events-none select-none"
+          loading="lazy"
+          decoding="async"
+        />
       </div>
     </footer>
   );

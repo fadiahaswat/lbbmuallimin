@@ -33,22 +33,30 @@ export const JUKNIS_PENILAIAN_CHAPTERS = [
       {
         number: 3,
         title: 'Kriteria Penilaian dan Sebaran Nilai',
+        hasSebaranTable: true,
         content: `Kriteria penilaian dan sebaran nilai mencakup sebaran materi peleton, sebaran komandan peleton, serta formula nilai murni dan nilai akhir:`,
+        formulaItems: [
+          `1) Nilai Murni Peleton = Skor Peleton Juri 1 + Skor Peleton Juri 2 + Skor Peleton Juri 3.`,
+          `2) Nilai Akhir Peleton = (Nilai Murni Peleton) – (Total Akumulasi Penalti Peleton).`,
+          `3) Skor Danton Juri = (Materi × 35%) + (Vokal × 25%) + (Sikap × 20%) + (Lapangan × 20%).`,
+          `4) Nilai Murni Danton = Skor Danton Juri 1 + Skor Danton Juri 2 + Skor Danton Juri 3.`,
+          `5) Nilai Akhir Danton = (Nilai Murni Danton) – (Total Akumulasi Penalti Danton).`
+        ],
         subItems: [
           `a. Sebaran Nilai Materi Peleton:`,
-          `• Sederhana: KS = 50 | K = 52, 54, 56 | C = 58, 60, 62 | B = 64, 66, 68 | BS = 70`,
-          `• Menengah: KS = 50 | K = 53, 56, 59 | C = 62, 65, 68 | B = 71, 74, 77 | BS = 80`,
-          `• Kompleks: KS = 50 | K = 54, 58, 62 | C = 66, 70, 74 | B = 78, 82, 86 | BS = 90`,
+          `• Sederhana (50 – 80): KS = 50 | K = 53, 56, 59 | C = 62, 65, 68 | B = 71, 74, 77 | BS = 80`,
+          `• Sedang / Menengah (50 – 85): KS = 50 | K = 53, 57, 60 | C = 64, 67, 71 | B = 74, 78, 81 | BS = 85`,
+          `• Sulit / Kompleks (50 – 90): KS = 50 | K = 54, 58, 62 | C = 66, 70, 74 | B = 78, 82, 86 | BS = 90`,
           `Gerakan yang terlewat atau tidak dilaksanakan sama sekali diberi nilai 0 (nol).`,
           `b. Sebaran Nilai Komandan Peleton (Danton): Dinilai pada 4 aspek dengan sebaran nilai skala maksimal 90 (KS=50 | K=54, 58, 62 | C=66, 70, 74 | B=78, 82, 86 | BS=90):`,
-          `1) Aspek 1: Penguasaan Materi Lomba (Bobot 35%)`,
-          `2) Aspek 2: Kualitas Suara / Vokal (Bobot 25%)`,
-          `3) Aspek 3: Sikap & Pelaporan (Bobot 20%)`,
-          `4) Aspek 4: Penguasaan Lapangan (Bobot 20%)`,
+          `1) Penguasaan Materi Lomba (Bobot 35%)`,
+          `2) Kualitas Suara / Vokal (Bobot 25%)`,
+          `3) Sikap & Pelaporan (Bobot 20%)`,
+          `4) Penguasaan Lapangan (Bobot 20%)`,
           `c. Formula Nilai Murni & Nilai Akhir (Akumulasi 3 Dewan Juri):`,
           `1) Nilai Murni Peleton = Skor Peleton Juri 1 + Skor Peleton Juri 2 + Skor Peleton Juri 3.`,
           `2) Nilai Akhir Peleton = (Nilai Murni Peleton) – (Total Akumulasi Penalti Peleton).`,
-          `3) Skor Danton Juri n = (Materi × 35%) + (Vokal × 25%) + (Sikap × 20%) + (Lapangan × 20%).`,
+          `3) Skor Danton Juri = (Materi × 35%) + (Vokal × 25%) + (Sikap × 20%) + (Lapangan × 20%).`,
           `4) Nilai Murni Danton = Skor Danton Juri 1 + Skor Danton Juri 2 + Skor Danton Juri 3.`,
           `5) Nilai Akhir Danton = (Nilai Murni Danton) – (Total Akumulasi Penalti Danton).`
         ]
@@ -217,7 +225,7 @@ export const JUKNIS_PENILAIAN_CHAPTERS = [
           'a. Pelanggaran ke-1 dan ke-2 diberikan Peringatan Lisan oleh Panitia Lapangan.',
           'b. Pelanggaran ketiga dan setiap pelanggaran berikutnya dikenai penalti -50 poin terhadap Nilai Peleton dan Nilai Komandan Peleton untuk setiap kejadian.',
           'c. Pelanggaran sengaja, berulang, atau berat dapat langsung dikenai penalti tanpa peringatan awal.',
-          'd. Penalti akibat kegaduhan suporter dibebankan terhadap NILAI PELETON dan NILAI DANTON.'
+          'd. Penalti akibat kegaduhan suporter dibebankan terhadap Nilai Peleton.'
         ]
       },
       {
@@ -286,7 +294,7 @@ export const JUKNIS_PENDAFTARAN_CHAPTERS = [
         sub: [
           `a. Langkah 1 (Akses Formulir): Perwakilan sekolah/peleton membuka portal resmi https://lbb.tontimuallimin.com/ lalu meng-klik tombol "Daftar Peleton" untuk masuk ke formulir pendaftaran.`,
           `b. Langkah 2 (Data Sekolah & Akun Tim): Memilih jenjang perlombaan (SD/MI atau SMP/MTs), mendaftarkan email Google aktif (digunakan untuk login Dashboard Tim), mengisi biodata sekolah, mengunggah logo sekolah, dan memilih kategori peleton (Putra/Putri/Campuran).`,
-          `c. Langkah 3 (Data Danton & Official): Meng-input identitas lengkap Komandan Peleton beserta unggahan scan Kartu Pelajar sah, serta mengisi identitas Official/Pelatih pendamping lengkap dengan nomor WhatsApp aktif dan unggahan scan KTP asli.`,
+          `c. Langkah 3 (Data Danton & Official): Meng-input identitas lengkap Komandan Peleton beserta unggahan scan Kartu Pelajar sah, serta mengisi identitas Official/Pelatih pendamping lengkap dengan nomor WhatsApp aktif.`,
           `d. Langkah 4 (Pembayaran & Pakta Integritas): Mengunggah bukti transfer biaya pendaftaran yang valid dan membubuhkan tanda tangan digital pada kanvas Pakta Integritas Online.`,
           `e. Langkah 5 (Konfirmasi & Aktivasi Dashboard Tim): Tim menerima Kode Registrasi unik resmi. Panitia melakukan verifikasi dalam 1x24 jam. Setelah diverifikasi, tim dapat login ke Dashboard Peserta untuk melengkapi susunan identitas peleton.`
         ]
@@ -298,10 +306,9 @@ export const JUKNIS_PENDAFTARAN_CHAPTERS = [
           `a. Surat Tugas / Rekomendasi Resmi dari Kepala Sekolah/Madrasah asli bertanda tangan dan berstempel basah (format PDF/JPG, maks. 2 MB).`,
           `b. Bukti transfer biaya pendaftaran sesuai biaya pendaftaran gelombang berjalan (format JPG/PNG, maks. 2 MB).`,
           `c. Scan/Foto Kartu Pelajar sah Komandan Peleton (Danton) pangkalan bersangkutan (format Foto/PDF, maks. 3 MB).`,
-          `d. Scan/Foto KTP asli Official atau Pelatih pendamping resmi peleton sekolah (format Foto/PDF, maks. 3 MB).`,
-          `e. Logo peleton atau sekolah/madrasah beresolusi tinggi format PNG transparan.`,
-          `f. Pasfoto resmi seluruh personel peleton ukuran 3x4 (latar belakang Merah untuk jenjang SD/MI dan latar belakang Biru untuk jenjang SMP/MTs) diunggah melalui menu Identitas Personel di portal peserta.`,
-          `g. Data identitas seluruh personel peleton berupa Nama Lengkap sesuai ijazah terakhir atau dokumen resmi (digunakan untuk penerbitan sertifikat), NISN, Tempat dan Tanggal Lahir, serta Kelas. Data diisi melalui portal peserta sesuai format yang telah disediakan.`
+          `d. Logo peleton atau sekolah/madrasah beresolusi tinggi format PNG transparan`,
+          `e. Pasfoto resmi seluruh personel peleton ukuran 3x4 (latar belakang Merah untuk jenjang SD/MI dan latar belakang Biru untuk jenjang SMP/MTs) diunggah melalui menu Identitas Personel di portal peserta.`,
+          `f. Data identitas seluruh personel peleton berupa Nama Lengkap sesuai ijazah terakhir atau dokumen resmi (digunakan untuk penerbitan sertifikat), NISN, Tempat dan Tanggal Lahir, serta Kelas. Data diisi melalui portal peserta sesuai format yang telah disediakan.`
         ]
       },
       {

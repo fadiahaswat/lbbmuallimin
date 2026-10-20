@@ -44,7 +44,7 @@ export default function RegistrationTab({
             </h3>
           </div>
           <p className="text-xs text-slate-500 mt-1">
-            Verifikasi transfer bank, KTP pembina, KTA danton, dan pakta integritas.
+            Verifikasi transfer bank BSI, kartu pelajar danton, logo sekolah, dan pakta integritas.
           </p>
         </div>
 
@@ -217,7 +217,7 @@ export default function RegistrationTab({
                           : 'bg-rose-50 text-rose-700 border-rose-200'
                       }`}>
                         <span className={`w-1.5 h-1.5 rounded-full ${team.files?.paymentProof ? 'bg-emerald-500' : 'bg-rose-500'}`}></span>
-                        <span>Transfer Bank BRI</span>
+                        <span>Transfer BSI</span>
                       </div>
                       <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10.5px] font-medium border w-fit ${
                         team.files?.dantonCard 
@@ -228,12 +228,12 @@ export default function RegistrationTab({
                         <span>Kartu Danton</span>
                       </div>
                       <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10.5px] font-medium border w-fit ${
-                        team.files?.officialKtp 
+                        team.files?.schoolLogo 
                           ? 'bg-emerald-50 text-emerald-800 border-emerald-200' 
                           : 'bg-rose-50 text-rose-700 border-rose-200'
                       }`}>
-                        <span className={`w-1.5 h-1.5 rounded-full ${team.files?.officialKtp ? 'bg-emerald-500' : 'bg-rose-500'}`}></span>
-                        <span>KTP Pembina</span>
+                        <span className={`w-1.5 h-1.5 rounded-full ${team.files?.schoolLogo ? 'bg-emerald-500' : 'bg-rose-500'}`}></span>
+                        <span>Logo Sekolah</span>
                       </div>
                       <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10.5px] font-medium border w-fit ${
                         team.files?.integrityPact 

@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { JUKNIS_PENILAIAN_CHAPTERS } from '../data/juknisDocsData.js';
 import { DOWNLOADS, PENALTIES } from '../config.js';
+import SebaranNilaiTable from './docs/SebaranNilaiTable.jsx';
 
 export default function JuknisPenilaianSection({ embedded = false }) {
   // Hanya tampil di localhost/dev, atau di production setelah H+1 TM Juri (TM Juri: 7 Nov 2026 -> rilis mulai 8 Nov 2026 00:00 WIB)
@@ -199,18 +200,42 @@ export default function JuknisPenilaianSection({ embedded = false }) {
                               {pt.content}
                             </p>
 
-                            {pt.subItems && (
-                              <ul className="space-y-1.5 pl-1 pt-1">
-                                {pt.subItems.map((sub, sIdx) => (
-                                  <li
-                                    key={sIdx}
-                                    className="text-xs sm:text-sm text-slate-300 flex items-start gap-2 leading-relaxed"
-                                  >
-                                    <span className="text-slate-400 font-bold mt-0.5">•</span>
-                                    <span className="flex-1">{sub}</span>
-                                  </li>
-                                ))}
-                              </ul>
+                            {pt.hasSebaranTable ? (
+                              <div className="space-y-4 pt-2">
+                                <SebaranNilaiTable showSectionHeader={false} />
+                                {pt.formulaItems && (
+                                  <div className="pt-2 space-y-2">
+                                    <strong className="text-xs sm:text-sm font-bold text-slate-200 block">
+                                      c. Formula Nilai Murni &amp; Nilai Akhir (Akumulasi 3 Dewan Juri):
+                                    </strong>
+                                    <ul className="space-y-1.5 pl-1">
+                                      {pt.formulaItems.map((form, fIdx) => (
+                                        <li
+                                          key={fIdx}
+                                          className="text-xs sm:text-sm text-slate-300 flex items-start gap-2 leading-relaxed"
+                                        >
+                                          <span className="text-amber-400 font-bold mt-0.5">•</span>
+                                          <span className="flex-1">{form}</span>
+                                        </li>
+                                      ))}
+                                    </ul>
+                                  </div>
+                                )}
+                              </div>
+                            ) : (
+                              pt.subItems && (
+                                <ul className="space-y-1.5 pl-1 pt-1">
+                                  {pt.subItems.map((sub, sIdx) => (
+                                    <li
+                                      key={sIdx}
+                                      className="text-xs sm:text-sm text-slate-300 flex items-start gap-2 leading-relaxed"
+                                    >
+                                      <span className="text-slate-400 font-bold mt-0.5">•</span>
+                                      <span className="flex-1">{sub}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              )
                             )}
 
                             {pt.pointCards && (
@@ -260,10 +285,10 @@ export default function JuknisPenilaianSection({ embedded = false }) {
                     </span>
                     <div>
                       <span className="font-bold text-base md:text-lg text-white block">
-                        B. GANGGUAN SISTEM DIGITAL DAN PROSEDUR BACKUP
+                        B. PROSEDUR BACKUP DAN MITIGASI GANGGUAN SISTEM E-PENILAIAN
                       </span>
                       <span className="text-xs text-slate-400 font-normal">
-                        6 Ketentuan Penanganan Gangguan & Prosedur Manual Cadangan
+                        3 Ketentuan Penanganan Gangguan & Prosedur Manual Cadangan
                       </span>
                     </div>
                   </div>

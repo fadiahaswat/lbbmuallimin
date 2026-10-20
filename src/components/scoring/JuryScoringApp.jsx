@@ -242,7 +242,7 @@ export default function JuryScoringApp() {
   penaltyDeduction += (penalties.kotakDantonCount || 0) * 50;
   penaltyDeduction += (penalties.yelYelCount || 0) * 50;
   penaltyDeduction += (penalties.rokokCount || 0) * 50;
-  if (penalties.basecampKotor) penaltyDeduction += 50;
+  if (penalties.basecampKotor) penaltyDeduction += 150;
   // Gerakan penyesuaian tidak dikenakan penalti poin (0 poin) sesuai Juknis Bab H.6 & Bab A.6
 
   const peletonCombinedScore = useMemo(() => {

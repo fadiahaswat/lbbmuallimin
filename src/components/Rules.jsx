@@ -577,7 +577,7 @@ export default function Rules({ embedded = false }) {
                         <div className="space-y-2 flex-1">
                           <strong className="text-slate-900 text-sm block">Alokasi Waktu Resmi per Peleton:</strong>
                           <p className="text-slate-700 text-xs sm:text-sm leading-relaxed">
-                            Setiap peleton memperoleh alokasi waktu tepat 15 – 18 menit, dengan rincian operasional:
+                            Setiap peleton memperoleh alokasi waktu tepat 13 – 17 menit, dengan rincian operasional:
                           </p>
                           <ul className="list-[lower-alpha] pl-5 space-y-1 text-xs text-slate-700">
                             <li>Waktu Efektif Uji Coba Arena (8 menit untuk SD/MI dan 12 menit untuk SMP/MTs): Digunakan sepenuhnya untuk orientasi medan, adaptasi, serta latihan pergerakan peleton di dalam arena perlombaan.</li>

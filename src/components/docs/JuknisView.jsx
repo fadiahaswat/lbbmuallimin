@@ -33,6 +33,7 @@ import { COMPETITION, DOWNLOADS, MATERIALS, PENALTIES, VENUE, VENUE_INDUK } from
 import { JUKNIS_PENILAIAN_CHAPTERS, JUKNIS_PENDAFTARAN_CHAPTERS, RUNDOWN_DATA } from '../../data/juknisDocsData.js';
 import SimpaskorSidebarLayout from '../navigation/SimpaskorSidebarLayout.jsx';
 import Rules from '../Rules.jsx';
+import SebaranNilaiTable from './SebaranNilaiTable.jsx';
 
 export default function JuknisView() {
   const { currentTeam } = useCompetition();
@@ -77,7 +78,7 @@ export default function JuknisView() {
       category = 'Perubahan Arah';
     } else if (lower.includes('maju jalan') || lower.includes('langkah tegap') || lower.includes('hormat kanan') || lower.includes('belok') || lower.includes('melintang') || lower.includes('haluan')) {
       category = 'Berjalan & Manuver';
-    } else if (lower.includes('istirahat') || lower.includes('periksa') || lower.includes('lencang') || lower.includes('hitung') || lower.includes('jalan di tempat') || lower.includes('bubar') || lower.includes('berbanjar kumpul')) {
+    } else if (lower.includes('istirahat') || lower.includes('periksa') || lower.includes('lencang') || lower.includes('hitung') || lower.includes('jalan di tempat') || lower.includes('bubar') || lower.includes('berkumpul') || lower.includes('berbanjar kumpul')) {
       category = 'Di Tempat';
     }
 
@@ -85,7 +86,7 @@ export default function JuknisView() {
       no: idx + 1,
       name,
       category,
-      isSubstitutionPoint: idx === 15 // Di antara Materi No. 16 (Bubar) dan 17 (Berbanjar Kumpul)
+      isSubstitutionPoint: idx === 15 // Di antara Materi No. 16 (Bubar) dan 17 (Berkumpul(Berbanjar))
     };
   });
 
@@ -131,6 +132,15 @@ export default function JuknisView() {
 
         {/* Top Header Card */}
         <div className="bg-gradient-to-r from-blue-950 via-slate-900 to-indigo-950 text-white rounded-3xl p-6 sm:p-8 shadow-xl border border-blue-900/40 relative overflow-hidden">
+          {/* Ornamental Milad Graphic Illustration Watermark (Matching Juknis Cover) */}
+          <div className="absolute -right-12 -bottom-16 w-72 sm:w-88 pointer-events-none opacity-20 select-none z-0">
+            <img
+              src="/logo-milad.svg"
+              alt=""
+              className="w-full h-auto object-contain"
+              loading="lazy"
+            />
+          </div>
           <div className="absolute -right-8 -bottom-8 w-60 h-60 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
 
           <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -147,7 +157,7 @@ export default function JuknisView() {
               </p>
               <div className="pt-1 flex flex-wrap gap-2.5">
                 <a
-                  href={DOWNLOADS[0]?.url || "https://docs.google.com/document/d/1BN1RuwDcEiuibVvoBG4-5R7Rq8neV5st3nAZoISVQi0/edit?usp=sharing"}
+                  href={DOWNLOADS[0]?.url || "https://drive.google.com/file/d/1wxLlEIRVEzeMi2Qr0OAJCpqoKZXz-4vh/view?usp=sharing"}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-all shadow-md active:scale-95 cursor-pointer"
@@ -309,12 +319,30 @@ export default function JuknisView() {
                             {pt.content}
                           </p>
 
-                          {pt.subItems && (
-                            <ul className="list-disc pl-5 space-y-1.5 text-xs text-slate-700 pt-1">
-                              {pt.subItems.map((sub, sIdx) => (
-                                <li key={sIdx} className="leading-relaxed">{sub}</li>
-                              ))}
-                            </ul>
+                          {pt.hasSebaranTable ? (
+                            <div className="space-y-4 pt-2">
+                              <SebaranNilaiTable showSectionHeader={false} />
+                              {pt.formulaItems && (
+                                <div className="pt-2 space-y-1.5">
+                                  <strong className="text-xs sm:text-sm font-bold text-slate-900 block">
+                                    c. Formula Nilai Murni &amp; Nilai Akhir (Akumulasi 3 Dewan Juri):
+                                  </strong>
+                                  <ul className="list-disc pl-5 space-y-1 text-xs text-slate-700">
+                                    {pt.formulaItems.map((form, fIdx) => (
+                                      <li key={fIdx}>{form}</li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              )}
+                            </div>
+                          ) : (
+                            pt.subItems && (
+                              <ul className="list-disc pl-5 space-y-1.5 text-xs text-slate-700 pt-1">
+                                {pt.subItems.map((sub, sIdx) => (
+                                  <li key={sIdx} className="leading-relaxed">{sub}</li>
+                                ))}
+                              </ul>
+                            )
                           )}
 
                           {pt.pointCards && (
@@ -362,9 +390,9 @@ export default function JuknisView() {
                   </span>
                   <div>
                     <h3 className="font-black text-base sm:text-lg text-slate-900 uppercase">
-                      B. Gangguan Sistem Digital dan Prosedur Backup
+                      B. Prosedur Backup dan Mitigasi Gangguan Sistem E-Penilaian
                     </h3>
-                    <span className="text-xs text-slate-500 font-medium">6 Ketentuan Penanganan Gangguan & Prosedur Manual Cadangan</span>
+                    <span className="text-xs text-slate-500 font-medium">3 Ketentuan Penanganan Gangguan & Prosedur Manual Cadangan</span>
                   </div>
                 </div>
                 <ChevronDown className={`w-5 h-5 text-slate-400 transition-transform ${openPenilaianSections['bab-b'] ? 'rotate-180 text-blue-600' : ''}`} />
