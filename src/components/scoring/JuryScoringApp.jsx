@@ -9,7 +9,9 @@ import {
   ShieldCheck,
   Camera,
   Lock,
-  Clock
+  Clock,
+  UserCheck,
+  AlertTriangle
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
 import {
@@ -17,6 +19,11 @@ import {
   JURY_POSTS,
   DANTON_CRITERIA
 } from '../../config.js';
+import {
+  calculatePenalties,
+  calculateDantonScoreFromRubric,
+  calculatePeletonScoreFromRubric
+} from '../../context/scoringActions.js';
 import OfficialScoreRecapModal from './OfficialScoreRecapModal.jsx';
 import SimpaskorSidebarLayout from '../navigation/SimpaskorSidebarLayout.jsx';
 
@@ -29,7 +36,7 @@ import ScrutineeringActionsBar from './components/ScrutineeringActionsBar.jsx';
 import TeamSelectorModal from './components/TeamSelectorModal.jsx';
 import LeaderboardView from './components/LeaderboardView.jsx';
 
-// Helper membuat initial rubrik state untuk materi tertentu
+// Helper membuat initial rubrik state untuk materi peleton
 function getInitialRubricScores(materialsList) {
   const initial = {};
   materialsList.forEach((_m, idx) => {
@@ -38,7 +45,7 @@ function getInitialRubricScores(materialsList) {
   return initial;
 }
 
-// Helper initial danton rubrik
+// Helper initial rubrik danton (4 aspek resmi)
 function getInitialDantonRubric() {
   const initial = {};
   DANTON_CRITERIA.forEach(c => {
@@ -64,6 +71,9 @@ export default function JuryScoringApp() {
   const hasAccess = currentUser && [
     'juri',
     'penginput',
+    'verifikator',
+    'finalisator',
+    'admin',
     'superadmin'
   ].includes(currentUser.role);
 
@@ -82,7 +92,7 @@ export default function JuryScoringApp() {
               Portal E-Scoring & Scrutineering
             </h2>
             <p className="text-xs text-slate-500 mt-2 leading-relaxed">
-              Halaman ini diperuntukkan bagi 3 Petugas Resmi: Petugas Penginput Nilai Kertas, Verifikator, dan Finalisator (Ketua Dewan Juri).
+              Halaman ini diperuntukkan bagi Petugas Penginput Nilai Kertas, Verifikator, dan Finalisator (Ketua Dewan Juri) LBB Mu'allimin 2027.
             </p>
           </div>
 
@@ -107,6 +117,7 @@ export default function JuryScoringApp() {
 
   const [activeTab, setActiveTab] = useState('scoring'); // 'scoring' | 'leaderboard'
   const [activeJuryPost, setActiveJuryPost] = useState('pos1'); // 'pos1' | 'pos2' | 'pos3' | 'penalti' | 'evidence'
+  const [juryAspectTab, setJuryAspectTab] = useState('peleton'); // 'peleton' | 'danton'
   const [isRecapModalOpen, setIsRecapModalOpen] = useState(false);
   const [isTeamModalOpen, setIsTeamModalOpen] = useState(false);
   const [sidebarJenjang, setSidebarJenjang] = useState('ALL'); // 'ALL' | 'SD' | 'SMP'
@@ -120,27 +131,24 @@ export default function JuryScoringApp() {
   const selectedTeam = teams.find(t => t.id === selectedTeamId) || null;
   const existingScore = selectedTeam ? scores[selectedTeam.id] : null;
 
-  // Active materials list for selected team
+  // Active materials list for selected team (SD: 26 gerakan, SMP: 28 gerakan)
   const materialsList = selectedTeam && selectedTeam.jenjang === 'SD' ? MATERIALS.SD : MATERIALS.SMP;
 
-  // Jury Form State
-  const [, setJuryName] = useState(JURY_POSTS.pos1.defaultName);
-  const [, setJuryRole] = useState(JURY_POSTS.pos1.title);
+  // State Nilai 3 Dewan Juri (Peleton & Danton)
+  const [j1PbbRubric, setJ1PbbRubric] = useState(() => getInitialRubricScores(materialsList));
+  const [j1DantonRubric, setJ1DantonRubric] = useState(getInitialDantonRubric);
 
-  // Rubrik Juri 1: Kebenaran Teknik PBB
-  const [pbb1RubricScores, setPbb1RubricScores] = useState(() => getInitialRubricScores(materialsList));
+  const [j2PbbRubric, setJ2PbbRubric] = useState(() => getInitialRubricScores(materialsList));
+  const [j2DantonRubric, setJ2DantonRubric] = useState(getInitialDantonRubric);
 
-  // Rubrik Juri 2: Kekompakan Peleton
-  const [pbb2RubricScores, setPbb2RubricScores] = useState(() => getInitialRubricScores(materialsList));
-
-  // Rubrik Juri 3: Komandan Peleton (Danton)
-  const [dantonRubricScores, setDantonRubricScores] = useState(getInitialDantonRubric);
+  const [j3PbbRubric, setJ3PbbRubric] = useState(() => getInitialRubricScores(materialsList));
+  const [j3DantonRubric, setJ3DantonRubric] = useState(getInitialDantonRubric);
 
   // Upload Foto Lembar Fisik Kertas Juri
   const [paperEvidenceUrl, setPaperEvidenceUrl] = useState('');
   const [verificationNoteInput, setVerificationNoteInput] = useState('');
 
-  // Penalties (Hakim Garis & Timer)
+  // Penalties (Hakim Garis, Timer & Panitia)
   const [penalties, setPenalties] = useState({
     upacara: false,
     upacaraTerlambatBlocks: 0,
@@ -158,7 +166,7 @@ export default function JuryScoringApp() {
   const [juryNotes, setJuryNotes] = useState('');
   const [saveSuccessMsg, setSaveSuccessMsg] = useState('');
 
-  // Update rubrik jika tim berubah atau jenjang berbeda
+  // Sinkronisasi data saat memilih tim
   function handleSelectTeam(teamId) {
     setSelectedTeamId(teamId);
     const targetTeam = teams.find(t => t.id === teamId);
@@ -167,100 +175,100 @@ export default function JuryScoringApp() {
     const juries = score?.juries || {};
 
     if (score) {
-      if (activeJuryPost !== 'all') {
-        setJuryName(juries[activeJuryPost]?.juryName || JURY_POSTS[activeJuryPost]?.defaultName || 'Dewan Juri LBB');
-        setJuryRole(juries[activeJuryPost]?.juryRole || JURY_POSTS[activeJuryPost]?.title || 'Dewan Juri');
-      } else {
-        setJuryName(score.juryName || 'Dewan Juri Utama LBB');
-        setJuryRole(score.juryRole || 'Dewan Juri Utama');
-      }
+      // Juri 1
+      setJ1PbbRubric(juries.pos1?.rubricScores || score.pbb?.rubricScores || getInitialRubricScores(mList));
+      setJ1DantonRubric(juries.pos1?.dantonRubricScores || getInitialDantonRubric());
 
-      // Load rubrik PBB Juri 1 (Teknik)
-      if (juries.pos1?.rubricScores) {
-        setPbb1RubricScores(juries.pos1.rubricScores);
-      } else if (score.pbb?.rubricScores) {
-        setPbb1RubricScores(score.pbb.rubricScores);
-      } else {
-        setPbb1RubricScores(getInitialRubricScores(mList));
-      }
+      // Juri 2
+      setJ2PbbRubric(juries.pos2?.rubricScores || score.kekompakan?.rubricScores || getInitialRubricScores(mList));
+      setJ2DantonRubric(juries.pos2?.dantonRubricScores || getInitialDantonRubric());
 
-      // Load rubrik PBB Juri 2 (Kekompakan)
-      if (juries.pos2?.rubricScores) {
-        setPbb2RubricScores(juries.pos2.rubricScores);
-      } else if (score.kekompakan?.rubricScores) {
-        setPbb2RubricScores(score.kekompakan.rubricScores);
-      } else {
-        setPbb2RubricScores(getInitialRubricScores(mList));
-      }
-
-      // Load rubrik Danton Juri 3
-      if (juries.pos3?.rubricScores) {
-        setDantonRubricScores(juries.pos3.rubricScores);
-      } else if (score.danton?.rubricScores) {
-        setDantonRubricScores(score.danton.rubricScores);
-      } else {
-        setDantonRubricScores(getInitialDantonRubric());
-      }
+      // Juri 3
+      setJ3PbbRubric(juries.pos3?.rubricScores || getInitialRubricScores(mList));
+      setJ3DantonRubric(juries.pos3?.dantonRubricScores || score.danton?.rubricScores || getInitialDantonRubric());
 
       setPaperEvidenceUrl(score.paperEvidenceUrl || '');
       setVerificationNoteInput(score.verificationNotes || '');
-      setPenalties(score.penalties || { upacara: false, upacaraTerlambatBlocks: 0, dp1: false, personelKurang: false, overTimeBlocks: 0, injakGarisCount: 0, kotakDantonCount: 0, penyesuaianCount: 0, yelYelCount: 0, rokokCount: 0, basecampKotor: false });
+      setPenalties(score.penalties || {
+        upacara: false,
+        upacaraTerlambatBlocks: 0,
+        dp1: false,
+        personelKurang: false,
+        overTimeBlocks: 0,
+        injakGarisCount: 0,
+        kotakDantonCount: 0,
+        penyesuaianCount: 0,
+        yelYelCount: 0,
+        rokokCount: 0,
+        basecampKotor: false,
+      });
       setJuryNotes(score.notes || '');
     } else {
-      setPbb1RubricScores(getInitialRubricScores(mList));
-      setPbb2RubricScores(getInitialRubricScores(mList));
-      setDantonRubricScores(getInitialDantonRubric());
+      setJ1PbbRubric(getInitialRubricScores(mList));
+      setJ1DantonRubric(getInitialDantonRubric());
+      setJ2PbbRubric(getInitialRubricScores(mList));
+      setJ2DantonRubric(getInitialDantonRubric());
+      setJ3PbbRubric(getInitialRubricScores(mList));
+      setJ3DantonRubric(getInitialDantonRubric());
       setPaperEvidenceUrl('');
       setVerificationNoteInput('');
-      setPenalties({ upacara: false, upacaraTerlambatBlocks: 0, dp1: false, personelKurang: false, overTimeBlocks: 0, injakGarisCount: 0, kotakDantonCount: 0, penyesuaianCount: 0, yelYelCount: 0, rokokCount: 0, basecampKotor: false });
+      setPenalties({
+        upacara: false,
+        upacaraTerlambatBlocks: 0,
+        dp1: false,
+        personelKurang: false,
+        overTimeBlocks: 0,
+        injakGarisCount: 0,
+        kotakDantonCount: 0,
+        penyesuaianCount: 0,
+        yelYelCount: 0,
+        rokokCount: 0,
+        basecampKotor: false,
+      });
       setJuryNotes('');
     }
   }
 
-  // Hitung total skor PBB Juri 1 (Teknik)
-  const pbb1Total = useMemo(() => {
-    return Object.values(pbb1RubricScores).reduce((acc, curr) => acc + (Number(curr) || 0), 0);
-  }, [pbb1RubricScores]);
+  // Hitung Skor Peleton per Juri
+  const j1PeletonTotal = useMemo(() => calculatePeletonScoreFromRubric(j1PbbRubric), [j1PbbRubric]);
+  const j2PeletonTotal = useMemo(() => calculatePeletonScoreFromRubric(j2PbbRubric), [j2PbbRubric]);
+  const j3PeletonTotal = useMemo(() => calculatePeletonScoreFromRubric(j3PbbRubric), [j3PbbRubric]);
 
-  // Hitung total skor PBB Juri 2 (Kekompakan)
-  const pbb2Total = useMemo(() => {
-    return Object.values(pbb2RubricScores).reduce((acc, curr) => acc + (Number(curr) || 0), 0);
-  }, [pbb2RubricScores]);
+  // Hitung Skor Danton per Juri (Bobot: Materi 35%, Vokal 25%, Sikap 20%, Lapangan 20%)
+  const j1DantonTotal = useMemo(() => calculateDantonScoreFromRubric(j1DantonRubric), [j1DantonRubric]);
+  const j2DantonTotal = useMemo(() => calculateDantonScoreFromRubric(j2DantonRubric), [j2DantonRubric]);
+  const j3DantonTotal = useMemo(() => calculateDantonScoreFromRubric(j3DantonRubric), [j3DantonRubric]);
 
-  // Hitung total skor Danton Juri 3
-  const dantonTotal = useMemo(() => {
-    return Object.values(dantonRubricScores).reduce((acc, curr) => acc + (Number(curr) || 0), 0);
-  }, [dantonRubricScores]);
+  // Kalkulasi Penalti Resmi (Peleton vs Danton)
+  const penaltyCalc = useMemo(() => calculatePenalties(penalties), [penalties]);
+  const peletonPenalty = penaltyCalc.peletonPenalty;
+  const dantonPenalty = penaltyCalc.dantonPenalty;
+  const totalCombinedPenalty = penaltyCalc.totalPenalty;
 
-  let penaltyDeduction = 0;
-  if (penalties.upacara) penaltyDeduction += 150;
-  penaltyDeduction += (penalties.upacaraTerlambatBlocks || 0) * 50;
-  if (penalties.dp1) penaltyDeduction += 100;
-  if (penalties.personelKurang) penaltyDeduction += 75;
-  penaltyDeduction += (penalties.overTimeBlocks || 0) * 50;
-  penaltyDeduction += (penalties.injakGarisCount || 0) * 50;
-  penaltyDeduction += (penalties.kotakDantonCount || 0) * 50;
-  penaltyDeduction += (penalties.yelYelCount || 0) * 50;
-  penaltyDeduction += (penalties.rokokCount || 0) * 50;
-  if (penalties.basecampKotor) penaltyDeduction += 150;
-  // Gerakan penyesuaian tidak dikenakan penalti poin (0 poin) sesuai Juknis Bab H.6 & Bab A.6
+  // Nilai Murni & Nilai Akhir Peleton (Bab A.3.c Juknis)
+  const nilaiMurniPeleton = useMemo(() => {
+    return j1PeletonTotal + j2PeletonTotal + j3PeletonTotal;
+  }, [j1PeletonTotal, j2PeletonTotal, j3PeletonTotal]);
 
-  const peletonCombinedScore = useMemo(() => {
-    if (pbb1Total > 0 && pbb2Total > 0) {
-      // Juknis Bab F.2.b: Perbandingan Kebenaran Teknik (1) dan Kekompakan (1) adalah 1:1
-      return parseFloat(((pbb1Total + pbb2Total) / 2).toFixed(2));
-    }
-    return pbb1Total || pbb2Total || 0;
-  }, [pbb1Total, pbb2Total]);
+  const nilaiAkhirPeleton = useMemo(() => {
+    return Math.max(0, parseFloat((nilaiMurniPeleton - peletonPenalty).toFixed(2)));
+  }, [nilaiMurniPeleton, peletonPenalty]);
 
-  const totalCalculatedScore = useMemo(() => {
-    if (activeJuryPost === 'pos1') return Math.max(0, pbb1Total - penaltyDeduction);
-    if (activeJuryPost === 'pos2') return Math.max(0, pbb2Total - penaltyDeduction);
-    if (activeJuryPost === 'pos3') return Math.max(0, dantonTotal - penaltyDeduction);
-    return parseFloat(Math.max(0, peletonCombinedScore + dantonTotal - penaltyDeduction).toFixed(2));
-  }, [activeJuryPost, pbb1Total, pbb2Total, dantonTotal, peletonCombinedScore, penaltyDeduction]);
+  // Nilai Murni & Nilai Akhir Danton (Bab A.3.c Juknis)
+  const nilaiMurniDanton = useMemo(() => {
+    return parseFloat((j1DantonTotal + j2DantonTotal + j3DantonTotal).toFixed(2));
+  }, [j1DantonTotal, j2DantonTotal, j3DantonTotal]);
 
-  // Handler Upload Foto Lembar Kertas Fisik Juri
+  const nilaiAkhirDanton = useMemo(() => {
+    return Math.max(0, parseFloat((nilaiMurniDanton - dantonPenalty).toFixed(2)));
+  }, [nilaiMurniDanton, dantonPenalty]);
+
+  // Total Skor Gabungan (Peleton + Danton)
+  const totalCombinedScore = useMemo(() => {
+    return parseFloat((nilaiAkhirPeleton + nilaiAkhirDanton).toFixed(2));
+  }, [nilaiAkhirPeleton, nilaiAkhirDanton]);
+
+  // Upload Foto Lembar Kertas Fisik Juri
   function handlePaperEvidenceUpload(e) {
     const file = e.target.files?.[0];
     if (file) {
@@ -278,15 +286,30 @@ export default function JuryScoringApp() {
     if (!selectedTeam) return;
 
     saveDraftScore(selectedTeam.id, {
-      pbb: { total: pbb1Total, rubricScores: pbb1RubricScores },
-      kekompakan: { total: pbb2Total, rubricScores: pbb2RubricScores },
-      danton: { total: dantonTotal, rubricScores: dantonRubricScores },
       juries: {
-        pos1: { total: pbb1Total, rubricScores: pbb1RubricScores, title: 'Juri 1: Kebenaran Teknik PBB' },
-        pos2: { total: pbb2Total, rubricScores: pbb2RubricScores, title: 'Juri 2: Kekompakan Peleton' },
-        pos3: { total: dantonTotal, rubricScores: dantonRubricScores, title: 'Juri 3: Komandan Peleton (Danton)' },
+        pos1: {
+          title: 'Dewan Juri 1',
+          peletonTotal: j1PeletonTotal,
+          dantonTotal: j1DantonTotal,
+          rubricScores: j1PbbRubric,
+          dantonRubricScores: j1DantonRubric,
+        },
+        pos2: {
+          title: 'Dewan Juri 2',
+          peletonTotal: j2PeletonTotal,
+          dantonTotal: j2DantonTotal,
+          rubricScores: j2PbbRubric,
+          dantonRubricScores: j2DantonRubric,
+        },
+        pos3: {
+          title: 'Dewan Juri 3',
+          peletonTotal: j3PeletonTotal,
+          dantonTotal: j3DantonTotal,
+          rubricScores: j3PbbRubric,
+          dantonRubricScores: j3DantonRubric,
+        },
       },
-      penalties: { ...penalties, totalPenalty: penaltyDeduction },
+      penalties: penaltyCalc,
       paperEvidenceUrl,
       paperEvidenceName: `Lembar_Juri_${selectedTeam.regCode}.jpg`,
       notes: juryNotes,
@@ -316,14 +339,10 @@ export default function JuryScoringApp() {
     setTimeout(() => setSaveSuccessMsg(''), 4000);
   }
 
-  // Helper: apakah tim sudah check-in
   const isTeamCheckedIn = (teamId) => {
-    const s = staging[teamId];
-    if (!s) return false;
-    return !!(s.basecampLogistics?.checkInTime || (s.stage && s.stage !== 'waiting'));
+    return Boolean(staging[teamId]?.basecampCheckedIn || staging[teamId]?.status === 'arena' || staging[teamId]?.status === 'completed' || staging[teamId]?.status === 'checkout' || staging[teamId]?.status === 'dp1' || staging[teamId]?.status === 'dp2' || staging[teamId]?.status === 'dp3');
   };
 
-  // Teams eligible for scoring
   const verifiedTeams = useMemo(() => {
     return teams
       .filter(t => (t.status === 'verified' || t.status === 'drawn') && isTeamCheckedIn(t.id))
@@ -360,7 +379,7 @@ export default function JuryScoringApp() {
     <SimpaskorSidebarLayout
       activeMenu="penjurian"
       title="E-Scoring & Penjurian"
-      subtitle="Input Nilai PBB, Kekompakan, Danton & Bukti Blangko Fisik"
+      subtitle="Penilaian Objektif 3 Dewan Juri (Peleton & Danton), Penalti & Bukti Blangko"
       rightActions={
         <div className="flex items-center gap-2">
           {(currentUser?.role === 'finalisator' || currentUser?.role === 'admin' || currentUser?.role === 'superadmin') && (
@@ -389,9 +408,9 @@ export default function JuryScoringApp() {
               <div>
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="text-[10px] font-black uppercase tracking-widest text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
-                    E-SCORING DEWAN JURI
+                    DEWAN JURI LBB MU'ALLIMIN 2027
                   </span>
-                  <span className="text-xs text-slate-500 font-medium">LBB Mu'allimin 2027 • 1 Pos Arena</span>
+                  <span className="text-xs text-slate-500 font-medium">Petunjuk Teknis Bab A (Sistem 3 Dewan Juri Simultan)</span>
                   {currentUser && (
                     <span className="text-[10px] font-bold px-2 py-0.5 rounded-full border bg-slate-50 text-slate-700 border-slate-200 flex items-center gap-1">
                       <span className={`w-1.5 h-1.5 rounded-full ${
@@ -405,7 +424,7 @@ export default function JuryScoringApp() {
                   )}
                 </div>
                 <h1 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-slate-900 mt-1">
-                  E-Scoring & Rekap Nilai
+                  E-Scoring & Lembar Penilaian Terpadu
                 </h1>
               </div>
             </div>
@@ -423,67 +442,67 @@ export default function JuryScoringApp() {
                 className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 active:scale-95 text-slate-950 text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 shadow-sm cursor-pointer"
               >
                 <Trophy className="w-4 h-4" />
-                <span>{activeTab === 'scoring' ? 'Lihat Klasemen Juara' : 'Input Nilai Juri'}</span>
+                <span>{activeTab === 'scoring' ? 'Lihat Klasemen Juara' : 'Input Lembar Juri'}</span>
               </button>
             </div>
           </div>
         </div>
 
-        {/* Tab Navigasi Kategori Penilaian Bersih Bergaya Simpaskor */}
+        {/* Tab Navigasi Utama Penilaian Dewan Juri */}
         {activeTab === 'scoring' && (
-          <div className="bg-white border border-slate-200 rounded-2xl p-2 shadow-sm flex items-center justify-between gap-3 flex-wrap">
+          <div className="bg-white border border-slate-200 rounded-2xl p-2.5 shadow-sm flex items-center justify-between gap-3 flex-wrap">
             <div className="flex items-center gap-1.5 flex-wrap">
-              {/* Tab 1: PBB Teknik */}
+              {/* Pos 1: Dewan Juri 1 */}
               <button
                 type="button"
                 onClick={() => setActiveJuryPost('pos1')}
                 className={`px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer flex items-center gap-2 ${
                   activeJuryPost === 'pos1'
-                    ? 'bg-blue-600 text-white shadow-sm ring-2 ring-blue-400'
+                    ? 'bg-slate-900 text-white shadow-sm ring-2 ring-slate-400'
                     : 'bg-slate-100 text-slate-600 hover:text-slate-900 hover:bg-slate-200'
                 }`}
               >
-                <span>PBB TEKNIK</span>
+                <span>JURI 1 (TNI)</span>
                 <span className={`px-2 py-0.5 rounded-md text-[10px] font-mono ${
-                  activeJuryPost === 'pos1' ? 'bg-blue-800 text-white' : 'bg-white text-blue-600 border border-slate-200'
+                  activeJuryPost === 'pos1' ? 'bg-slate-800 text-white' : 'bg-white text-slate-700 border border-slate-200'
                 }`}>
-                  {materialsList.length}
+                  {j1PeletonTotal + j1DantonTotal > 0 ? (j1PeletonTotal + j1DantonTotal).toFixed(1) : '-'}
                 </span>
               </button>
 
-              {/* Tab 2: Juri 2 - Kekompakan Peleton */}
+              {/* Pos 2: Dewan Juri 2 */}
               <button
                 type="button"
                 onClick={() => setActiveJuryPost('pos2')}
                 className={`px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer flex items-center gap-2 ${
                   activeJuryPost === 'pos2'
-                    ? 'bg-purple-600 text-white shadow-sm ring-2 ring-purple-400'
+                    ? 'bg-slate-900 text-white shadow-sm ring-2 ring-slate-400'
                     : 'bg-slate-100 text-slate-600 hover:text-slate-900 hover:bg-slate-200'
                 }`}
               >
-                <span>KEKOMPAKAN</span>
+                <span>JURI 2 (POLRI)</span>
                 <span className={`px-2 py-0.5 rounded-md text-[10px] font-mono ${
-                  activeJuryPost === 'pos2' ? 'bg-purple-800 text-white' : 'bg-white text-purple-600 border border-slate-200'
+                  activeJuryPost === 'pos2' ? 'bg-slate-800 text-white' : 'bg-white text-slate-700 border border-slate-200'
                 }`}>
-                  {materialsList.length}
+                  {j2PeletonTotal + j2DantonTotal > 0 ? (j2PeletonTotal + j2DantonTotal).toFixed(1) : '-'}
                 </span>
               </button>
 
-              {/* Tab 3: Juri 3 - Komandan Peleton (Danton) */}
+              {/* Pos 3: Dewan Juri 3 */}
               <button
                 type="button"
                 onClick={() => setActiveJuryPost('pos3')}
                 className={`px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer flex items-center gap-2 ${
                   activeJuryPost === 'pos3'
-                    ? 'bg-red-600 text-white shadow-sm ring-2 ring-red-400'
+                    ? 'bg-slate-900 text-white shadow-sm ring-2 ring-slate-400'
                     : 'bg-slate-100 text-slate-600 hover:text-slate-900 hover:bg-slate-200'
                 }`}
               >
-                <span>DANTON</span>
+                <span>JURI 3 (PROFESIONAL)</span>
                 <span className={`px-2 py-0.5 rounded-md text-[10px] font-mono ${
-                  activeJuryPost === 'pos3' ? 'bg-red-800 text-white' : 'bg-white text-red-600 border border-slate-200'
+                  activeJuryPost === 'pos3' ? 'bg-slate-800 text-white' : 'bg-white text-slate-700 border border-slate-200'
                 }`}>
-                  {DANTON_CRITERIA.length}
+                  {j3PeletonTotal + j3DantonTotal > 0 ? (j3PeletonTotal + j3DantonTotal).toFixed(1) : '-'}
                 </span>
               </button>
 
@@ -498,9 +517,9 @@ export default function JuryScoringApp() {
                 }`}
               >
                 <span>PENALTI</span>
-                {penaltyDeduction > 0 ? (
+                {totalCombinedPenalty > 0 ? (
                   <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-rose-100 text-rose-700 border border-rose-200">
-                    -{penaltyDeduction}
+                    -{totalCombinedPenalty}
                   </span>
                 ) : (
                   <span className="px-2 py-0.5 rounded-md text-[10px] font-mono bg-white text-slate-500 border border-slate-200">
@@ -527,20 +546,20 @@ export default function JuryScoringApp() {
               </button>
             </div>
 
-            {/* Tombol Pemilih Peleton Cepat & Status */}
+            {/* Tombol Pemilih Peleton Cepat */}
             <div className="flex items-center gap-2 text-xs">
               <button
                 type="button"
                 onClick={() => setIsTeamModalOpen(true)}
                 className="flex items-center gap-2.5 px-3.5 py-2 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-xl text-slate-800 transition-all shadow-xs group cursor-pointer"
-                title="Klik untuk memilih atau mengganti peleton yang dinilai"
+                title="Pilih peleton yang dinilai"
               >
                 <div className="w-6 h-6 rounded-lg bg-emerald-600 text-white flex items-center justify-center font-bold text-xs">
                   <Users className="w-3.5 h-3.5" />
                 </div>
                 <div className="text-left">
                   <div className="text-[9px] uppercase font-bold text-emerald-800 leading-none">
-                    Peleton Dinilai:
+                    Peleton Tampil:
                   </div>
                   <div className="font-black text-xs text-slate-900 flex items-center gap-1.5 mt-0.5">
                     <span className="truncate max-w-[180px] sm:max-w-[240px]">
@@ -572,9 +591,9 @@ export default function JuryScoringApp() {
             {selectedTeam ? (
               <form onSubmit={handleSaveDraft} className="space-y-6">
                 
-                {/* Active Platoon Hero Card */}
-                <div className="relative overflow-hidden bg-white text-slate-900 rounded-3xl p-6 border border-slate-200 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-5">
-                  <div className="relative space-y-1.5">
+                {/* Active Platoon Hero Card & Breakdown Realtime Resmi Juknis */}
+                <div className="relative overflow-hidden bg-white text-slate-900 rounded-3xl p-6 border border-slate-200 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-5">
+                  <div className="relative space-y-2 flex-1">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="font-mono font-black text-xs text-amber-800 bg-amber-50 border border-amber-200 px-2.5 py-0.5 rounded-md">
                         {selectedTeam.regCode}
@@ -622,29 +641,43 @@ export default function JuryScoringApp() {
                       {selectedTeam.platoonName} • Komandan: <strong className="text-slate-800">{selectedTeam.roster?.danton?.name || selectedTeam.dantonName || '-'}</strong>
                     </p>
 
-                    {/* Realtime Breakdown Badges for 3 Juries */}
-                    <div className="flex items-center gap-2 pt-1.5 flex-wrap text-xs font-mono">
-                      <span className="px-2 py-0.5 rounded-lg bg-blue-50 border border-blue-200 text-blue-800">
-                        J1 (Teknik): <strong className="text-slate-900">{existingScore ? pbb1Total : '-'}</strong>
-                      </span>
-                      <span className="px-2 py-0.5 rounded-lg bg-purple-50 border border-purple-200 text-purple-800">
-                        J2 (Kekompakan): <strong className="text-slate-900">{existingScore ? pbb2Total : '-'}</strong>
-                      </span>
-                      <span className="px-2 py-0.5 rounded-lg bg-red-50 border border-red-200 text-red-800">
-                        J3 (Danton): <strong className="text-slate-900">{existingScore ? dantonTotal : '-'}</strong>
-                      </span>
-                      <span className="px-2 py-0.5 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800">
-                        Peleton (70:30): <strong className="text-slate-900">{existingScore ? peletonCombinedScore : '-'}</strong>
-                      </span>
-                      {penaltyDeduction > 0 && (
-                        <span className="px-2 py-0.5 rounded-lg bg-rose-50 border border-rose-200 text-rose-800 font-bold">
-                          Penalti: -{penaltyDeduction}
-                        </span>
-                      )}
+                    {/* Breakdown 2 Pilar Resmi: Peleton & Danton (Bab A.3.c Juknis) */}
+                    <div className="grid sm:grid-cols-2 gap-3 pt-2 text-xs">
+                      {/* Pilar 1: Peleton */}
+                      <div className="bg-slate-50 border border-slate-200 rounded-2xl p-3 space-y-1 font-mono">
+                        <div className="flex items-center justify-between text-[11px] font-bold text-slate-700">
+                          <span>A. PERFORMA PELETON (J1+J2+J3)</span>
+                          <span className="text-slate-900 font-black">{nilaiMurniPeleton}</span>
+                        </div>
+                        <div className="flex items-center justify-between text-[10px] text-slate-500">
+                          <span>J1:{j1PeletonTotal} • J2:{j2PeletonTotal} • J3:{j3PeletonTotal}</span>
+                          <span className="text-rose-600 font-bold">Penalti: -{peletonPenalty}</span>
+                        </div>
+                        <div className="flex items-center justify-between text-xs font-black text-blue-700 pt-1 border-t border-slate-200">
+                          <span>NILAI AKHIR PELETON:</span>
+                          <span>{nilaiAkhirPeleton}</span>
+                        </div>
+                      </div>
+
+                      {/* Pilar 2: Komandan (Danton) */}
+                      <div className="bg-slate-50 border border-slate-200 rounded-2xl p-3 space-y-1 font-mono">
+                        <div className="flex items-center justify-between text-[11px] font-bold text-slate-700">
+                          <span>B. KOMANDAN PELETON (J1+J2+J3)</span>
+                          <span className="text-slate-900 font-black">{nilaiMurniDanton}</span>
+                        </div>
+                        <div className="flex items-center justify-between text-[10px] text-slate-500">
+                          <span>J1:{j1DantonTotal} • J2:{j2DantonTotal} • J3:{j3DantonTotal}</span>
+                          <span className="text-rose-600 font-bold">Penalti: -{dantonPenalty}</span>
+                        </div>
+                        <div className="flex items-center justify-between text-xs font-black text-red-700 pt-1 border-t border-slate-200">
+                          <span>NILAI AKHIR DANTON:</span>
+                          <span>{nilaiAkhirDanton}</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
-                  {/* Total Running Score Badge & Ganti Peleton Trigger */}
+                  {/* Total Running Score Badge */}
                   <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-3 shrink-0">
                     <button
                       type="button"
@@ -656,69 +689,128 @@ export default function JuryScoringApp() {
                       <ChevronDown className="w-3.5 h-3.5 opacity-70" />
                     </button>
 
-                    <div className="relative bg-slate-50 rounded-2xl p-3.5 text-right border border-slate-200 shadow-xs min-w-[130px]">
+                    <div className="relative bg-slate-50 rounded-2xl p-3.5 text-right border border-slate-200 shadow-xs min-w-[140px]">
                       <span className="text-[10px] uppercase font-black tracking-wider text-slate-500 block">
-                        {activeJuryPost === 'all' ? 'Total Skor Akhir' : 'Subtotal Juri Aktif'}
+                        Total Skor Akhir
                       </span>
-                      {existingScore ? (
-                        <span className="text-2xl sm:text-3xl font-black text-emerald-700 font-mono tracking-tight block">
-                          {totalCalculatedScore}
-                        </span>
-                      ) : (
-                        <span className="text-xl sm:text-2xl font-black text-slate-400 font-mono tracking-tight block">
-                          -
-                        </span>
-                      )}
+                      <span className="text-2xl sm:text-3xl font-black text-emerald-700 font-mono tracking-tight block">
+                        {totalCombinedScore}
+                      </span>
                       <span className="text-[10px] text-slate-400 block font-bold">
-                        {existingScore ? 'Poin Lapangan' : 'Belum Diinput'}
+                        Akumulasi 3 Juri - Penalti
                       </span>
                     </div>
                   </div>
                 </div>
 
-                {/* TAB 1: Penilaian Gerakan Materi PBB Pasukan (Juri 1 - Teknik) */}
-                {activeJuryPost === 'pos1' && (
+                {/* Sub-Toggle: Materi Peleton vs Danton (hanya aktif jika sedang di tab pos1, pos2, atau pos3) */}
+                {['pos1', 'pos2', 'pos3'].includes(activeJuryPost) && (
+                  <div className="flex items-center justify-between bg-slate-100 p-1.5 rounded-2xl border border-slate-200">
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setJuryAspectTab('peleton')}
+                        className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
+                          juryAspectTab === 'peleton'
+                            ? 'bg-white text-slate-900 shadow-sm'
+                            : 'text-slate-600 hover:text-slate-900'
+                        }`}
+                      >
+                        1. Materi Gerakan Peleton ({materialsList.length} Gerakan)
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setJuryAspectTab('danton')}
+                        className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
+                          juryAspectTab === 'danton'
+                            ? 'bg-white text-slate-900 shadow-sm'
+                            : 'text-slate-600 hover:text-slate-900'
+                        }`}
+                      >
+                        2. Komandan Peleton (4 Aspek Berbobot)
+                      </button>
+                    </div>
+
+                    <div className="text-[11px] font-mono font-bold text-slate-600 pr-3 hidden sm:block">
+                      {activeJuryPost === 'pos1' && 'Lembar Dewan Juri 1 (Unsur TNI)'}
+                      {activeJuryPost === 'pos2' && 'Lembar Dewan Juri 2 (Unsur POLRI)'}
+                      {activeJuryPost === 'pos3' && 'Lembar Dewan Juri 3 (Unsur Profesional)'}
+                    </div>
+                  </div>
+                )}
+
+                {/* JURI 1: MATERI PELETON & DANTON */}
+                {activeJuryPost === 'pos1' && juryAspectTab === 'peleton' && (
                   <PbbScoringTable
                     materialsList={materialsList}
-                    rubricScores={pbb1RubricScores}
-                    setRubricScores={setPbb1RubricScores}
+                    rubricScores={j1PbbRubric}
+                    setRubricScores={setJ1PbbRubric}
                     isInputDisabled={isInputDisabled}
                     juryPost="pos1"
+                    juryLabel="Dewan Juri 1 (TNI)"
+                  />
+                )}
+                {activeJuryPost === 'pos1' && juryAspectTab === 'danton' && (
+                  <DantonScoringTable
+                    dantonRubricScores={j1DantonRubric}
+                    setDantonRubricScores={setJ1DantonRubric}
+                    isInputDisabled={isInputDisabled}
+                    dantonTotal={j1DantonTotal}
                   />
                 )}
 
-                {/* TAB 2: Penilaian Kekompakan Peleton (Juri 2 - Kekompakan) */}
-                {activeJuryPost === 'pos2' && (
+                {/* JURI 2: MATERI PELETON & DANTON */}
+                {activeJuryPost === 'pos2' && juryAspectTab === 'peleton' && (
                   <PbbScoringTable
                     materialsList={materialsList}
-                    rubricScores={pbb2RubricScores}
-                    setRubricScores={setPbb2RubricScores}
+                    rubricScores={j2PbbRubric}
+                    setRubricScores={setJ2PbbRubric}
                     isInputDisabled={isInputDisabled}
                     juryPost="pos2"
+                    juryLabel="Dewan Juri 2 (POLRI)"
                   />
                 )}
-
-                {/* TAB 3: Penilaian Komandan Peleton (Juri 3 - Danton) */}
-                {activeJuryPost === 'pos3' && (
+                {activeJuryPost === 'pos2' && juryAspectTab === 'danton' && (
                   <DantonScoringTable
-                    dantonRubricScores={dantonRubricScores}
-                    setDantonRubricScores={setDantonRubricScores}
+                    dantonRubricScores={j2DantonRubric}
+                    setDantonRubricScores={setJ2DantonRubric}
                     isInputDisabled={isInputDisabled}
-                    dantonTotal={dantonTotal}
+                    dantonTotal={j2DantonTotal}
                   />
                 )}
 
-                {/* TAB 4: Pengurangan Nilai (Hakim Garis & Timer) */}
+                {/* JURI 3: MATERI PELETON & DANTON */}
+                {activeJuryPost === 'pos3' && juryAspectTab === 'peleton' && (
+                  <PbbScoringTable
+                    materialsList={materialsList}
+                    rubricScores={j3PbbRubric}
+                    setRubricScores={setJ3PbbRubric}
+                    isInputDisabled={isInputDisabled}
+                    juryPost="pos3"
+                    juryLabel="Dewan Juri 3 (Profesional)"
+                  />
+                )}
+                {activeJuryPost === 'pos3' && juryAspectTab === 'danton' && (
+                  <DantonScoringTable
+                    dantonRubricScores={j3DantonRubric}
+                    setDantonRubricScores={setJ3DantonRubric}
+                    isInputDisabled={isInputDisabled}
+                    dantonTotal={j3DantonTotal}
+                  />
+                )}
+
+                {/* TAB 4: PENALTI LAPANGAN */}
                 {activeJuryPost === 'penalti' && (
                   <PenaltiesSection
                     penalties={penalties}
                     setPenalties={setPenalties}
                     selectedTeam={selectedTeam}
-                    penaltyDeduction={penaltyDeduction}
+                    peletonPenalty={peletonPenalty}
+                    dantonPenalty={dantonPenalty}
                   />
                 )}
 
-                {/* TAB 5: BUKTI FISIK BLANGKO KERTAS JURI */}
+                {/* TAB 5: BUKTI BLANGKO FISIK */}
                 {activeJuryPost === 'evidence' && (
                   <EvidenceSection
                     paperEvidenceUrl={paperEvidenceUrl}
@@ -730,7 +822,7 @@ export default function JuryScoringApp() {
                   />
                 )}
 
-                {/* 4. Catatan Evaluasi & Pengesahan Juri (Progressive Step UX) */}
+                {/* Scrutineering Actions Bar */}
                 <ScrutineeringActionsBar
                   existingScore={existingScore}
                   currentUser={currentUser}
@@ -751,7 +843,7 @@ export default function JuryScoringApp() {
                 <div>
                   <h4 className="text-base font-black text-slate-900 uppercase">Belum Ada Peleton Dipilih</h4>
                   <p className="text-xs text-slate-500 max-w-sm mx-auto mt-1">
-                    Pilih peleton yang siap dinilai untuk membuka formulir lembar penilaian juri secara penuh.
+                    Pilih peleton yang siap dinilai untuk membuka formulir lembar penilaian dewan juri secara penuh.
                   </p>
                 </div>
                 <button

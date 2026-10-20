@@ -13,10 +13,10 @@ export default function LeaderboardView({
           <div>
             <h3 className="font-black text-xl text-slate-900 uppercase tracking-tight flex items-center gap-2">
               <Trophy className="w-5 h-5 text-amber-500" />
-              <span>Rekapitulasi Nilai & Klasemen Dewan Juri</span>
+              <span>Klasemen & Rekapitulasi Nilai 3 Dewan Juri</span>
             </h3>
             <p className="text-xs text-slate-500 mt-1">
-              Urutan peringkat resmi berdasarkan akumulasi nilai Danton dan Rerata PBB setelah pemotongan penalti.
+              Peringkat resmi berdasarkan Nilai Akhir Peleton & Komandan sesuai Petunjuk Teknis LBB Mu'allimin 2027 (Bab A).
             </p>
           </div>
 
@@ -95,11 +95,8 @@ export default function LeaderboardView({
                                 )}
                               </div>
                               <div className="text-[11px] text-slate-500 mt-0.5 font-mono">
-                                Rerata PBB: <span className="text-slate-800 font-bold">{team.scoreData.pbb?.total ?? 0}</span>
-                                {team.scoreData.pbb?.j1 !== undefined && team.scoreData.pbb?.j2 !== undefined ? (
-                                  <span className="text-slate-400 text-[10px]"> (J1:{team.scoreData.pbb.j1} J2:{team.scoreData.pbb.j2})</span>
-                                ) : ''}
-                                {' • '}Danton: <span className="text-slate-800 font-bold">{team.scoreData.danton?.total ?? 0}</span>
+                                Peleton: <span className="text-slate-800 font-bold">{team.scoreData.nilaiAkhirPeleton ?? team.scoreData.pbb?.total ?? 0}</span>
+                                {' • '}Danton: <span className="text-slate-800 font-bold">{team.scoreData.nilaiAkhirDanton ?? team.scoreData.danton?.total ?? 0}</span>
                                 {team.scoreData.penalties?.totalPenalty > 0 && (
                                   <span className="text-rose-600 font-bold"> • Penalti: -{team.scoreData.penalties.totalPenalty}</span>
                                 )}

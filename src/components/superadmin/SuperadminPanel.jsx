@@ -31,6 +31,62 @@ import { useCompetition } from '../../context/CompetitionContext.jsx';
 import { EVENT } from '../../config.js';
 import SimpaskorSidebarLayout from '../navigation/SimpaskorSidebarLayout.jsx';
 
+const INDO_MONTHS = [
+  'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+  'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+];
+
+function toDatetimeLocal(isoStr, fallback = '') {
+  if (!isoStr) return fallback;
+  const m = String(isoStr).match(/^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2})/);
+  return m ? m[1] : fallback;
+}
+
+function toDateOnly(str, fallback = '') {
+  if (!str) return fallback;
+  const m = String(str).match(/(\d{4}-\d{2}-\d{2})/);
+  if (m) return m[1];
+  const m2 = String(str).match(/(\d{1,2})\s+([A-Za-z]+)\s+(\d{4})/);
+  if (m2) {
+    const d = m2[1].padStart(2, '0');
+    const mi = INDO_MONTHS.findIndex(x => x.toLowerCase() === m2[2].toLowerCase());
+    if (mi !== -1) {
+      return `${m2[3]}-${String(mi + 1).padStart(2, '0')}-${d}`;
+    }
+  }
+  return fallback;
+}
+
+function formatIndoDate(dateStr, withDay = false, preferAhad = false) {
+  if (!dateStr) return '';
+  const parts = dateStr.split('-').map(Number);
+  if (parts.length !== 3 || !parts[0] || !parts[1] || !parts[2]) return dateStr;
+  const [y, m, d] = parts;
+  const dateObj = new Date(y, m - 1, d);
+  const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+  let day = days[dateObj.getDay()];
+  if (preferAhad && day === 'Minggu') day = 'Ahad';
+  const month = INDO_MONTHS[m - 1] || '';
+  return withDay ? `${day}, ${d} ${month} ${y}` : `${d} ${month} ${y}`;
+}
+
+function formatIndoRange(date1, date2) {
+  if (!date1 && !date2) return '';
+  const d1 = date1 ? date1.slice(0, 10) : '';
+  const d2 = date2 ? date2.slice(0, 10) : '';
+  if (!d1) return formatIndoDate(d2);
+  if (!d2) return formatIndoDate(d1);
+  const [y1, m1, day1] = d1.split('-').map(Number);
+  const [y2, m2, day2] = d2.split('-').map(Number);
+  if (y1 === y2 && m1 === m2) {
+    return `${day1} – ${day2} ${INDO_MONTHS[m1 - 1]} ${y1}`;
+  }
+  if (y1 === y2) {
+    return `${day1} ${INDO_MONTHS[m1 - 1]} – ${day2} ${INDO_MONTHS[m2 - 1]} ${y1}`;
+  }
+  return `${day1} ${INDO_MONTHS[m1 - 1]} ${y1} – ${day2} ${INDO_MONTHS[m2 - 1]} ${y2}`;
+}
+
 export default function SuperadminPanel() {
   const {
     teams,
@@ -108,6 +164,59 @@ export default function SuperadminPanel() {
 
   function handleDateChange(field, value) {
     setDateForm(prev => ({ ...prev, [field]: value }));
+  }
+
+  function handleRegStartChange(val) {
+    const iso = val ? `${val}:00+07:00` : '';
+    const endD = dateForm.registrationDeadline ? dateForm.registrationDeadline.slice(0, 10) : '';
+    const startD = val ? val.slice(0, 10) : '';
+    const rangeText = (startD && endD) ? formatIndoRange(startD, endD) : dateForm.registrationRangeText;
+    setDateForm(prev => ({
+      ...prev,
+      registrationStart: iso,
+      registrationRangeText: rangeText || prev.registrationRangeText,
+    }));
+  }
+
+  function handleRegDeadlineChange(val) {
+    const iso = val ? `${val}:59+07:00` : '';
+    const startD = dateForm.registrationStart ? dateForm.registrationStart.slice(0, 10) : '';
+    const endD = val ? val.slice(0, 10) : '';
+    const rangeText = (startD && endD) ? formatIndoRange(startD, endD) : dateForm.registrationRangeText;
+    setDateForm(prev => ({
+      ...prev,
+      registrationDeadline: iso,
+      registrationRangeText: rangeText || prev.registrationRangeText,
+    }));
+  }
+
+  function handleTmDateChange(val) {
+    const shortDate = formatIndoDate(val, false);
+    const fullDate = formatIndoDate(val, true);
+    setDateForm(prev => ({
+      ...prev,
+      technicalMeetingDate: shortDate,
+      technicalMeetingFullDate: fullDate,
+    }));
+  }
+
+  function handleTrialDateChange(val) {
+    const shortDate = formatIndoDate(val, false);
+    const fullDate = formatIndoDate(val, true);
+    setDateForm(prev => ({
+      ...prev,
+      fieldTrialDate: shortDate,
+      fieldTrialFullDate: fullDate,
+    }));
+  }
+
+  function handleCompDateChange(val) {
+    const isAhad = String(dateForm.competitionDate || '').toLowerCase().includes('ahad');
+    const fullDate = formatIndoDate(val, true, isAhad);
+    setDateForm(prev => ({
+      ...prev,
+      competitionDate: fullDate,
+    }));
   }
 
   function handleSaveDates(e) {
@@ -654,14 +763,13 @@ export default function SuperadminPanel() {
                 </div>
                 <div>
                   <label className="block text-[11px] font-bold text-slate-600 mb-1">
-                    ISO Waktu Mulai (untuk Countdown Timer):
+                    Waktu Mulai Buka (Tanggal & Jam):
                   </label>
                   <input
-                    type="text"
-                    value={dateForm.registrationStart}
-                    onChange={e => handleDateChange('registrationStart', e.target.value)}
-                    className="w-full px-3 py-2 text-xs font-mono bg-white border border-slate-200 rounded-lg focus:border-purple-600 outline-none"
-                    placeholder="2026-10-01T00:00:00+07:00"
+                    type="datetime-local"
+                    value={toDatetimeLocal(dateForm.registrationStart, '2026-10-26T00:00')}
+                    onChange={e => handleRegStartChange(e.target.value)}
+                    className="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-lg focus:border-purple-600 outline-none"
                   />
                 </div>
                 <div>
@@ -673,7 +781,7 @@ export default function SuperadminPanel() {
                     value={dateForm.registrationRangeText}
                     onChange={e => handleDateChange('registrationRangeText', e.target.value)}
                     className="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-lg focus:border-purple-600 outline-none"
-                    placeholder="1 – 31 Oktober 2026"
+                    placeholder="26 Oktober – 22 November 2026"
                   />
                 </div>
               </div>
@@ -691,14 +799,13 @@ export default function SuperadminPanel() {
                 </div>
                 <div>
                   <label className="block text-[11px] font-bold text-slate-600 mb-1">
-                    ISO Deadline Akhir (Target Countdown):
+                    Deadline Akhir Pendaftaran (Tanggal & Jam):
                   </label>
                   <input
-                    type="text"
-                    value={dateForm.registrationDeadline}
-                    onChange={e => handleDateChange('registrationDeadline', e.target.value)}
-                    className="w-full px-3 py-2 text-xs font-mono bg-white border border-slate-200 rounded-lg focus:border-purple-600 outline-none"
-                    placeholder="2026-10-31T23:59:59+07:00"
+                    type="datetime-local"
+                    value={toDatetimeLocal(dateForm.registrationDeadline, '2026-11-22T23:59')}
+                    onChange={e => handleRegDeadlineChange(e.target.value)}
+                    className="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-lg focus:border-purple-600 outline-none"
                   />
                 </div>
                 <p className="text-[11px] text-slate-500">
@@ -716,15 +823,24 @@ export default function SuperadminPanel() {
                   <span className="text-[10px] font-bold text-slate-400">Tahap 2</span>
                 </div>
                 <div>
-                  <label className="block text-[11px] font-bold text-slate-600 mb-1">
-                    Teks Rentang Tanggal Verifikasi:
-                  </label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="text-[11px] font-bold text-slate-600">
+                      Teks Rentang Tanggal Verifikasi:
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => handleDateChange('verificationRangeText', dateForm.registrationRangeText)}
+                      className="text-[10px] text-blue-600 hover:underline font-semibold cursor-pointer"
+                    >
+                      Samakan pendaftaran
+                    </button>
+                  </div>
                   <input
                     type="text"
                     value={dateForm.verificationRangeText}
                     onChange={e => handleDateChange('verificationRangeText', e.target.value)}
                     className="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-lg focus:border-purple-600 outline-none"
-                    placeholder="2 – 8 November 2026"
+                    placeholder="26 Oktober – 22 November 2026"
                   />
                 </div>
               </div>
@@ -740,13 +856,12 @@ export default function SuperadminPanel() {
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="block text-[11px] font-bold text-slate-600 mb-1">Tanggal TM:</label>
+                    <label className="block text-[11px] font-bold text-slate-600 mb-1">Pilih Tanggal TM:</label>
                     <input
-                      type="text"
-                      value={dateForm.technicalMeetingDate}
-                      onChange={e => handleDateChange('technicalMeetingDate', e.target.value)}
+                      type="date"
+                      value={toDateOnly(dateForm.technicalMeetingDate, '2027-01-09')}
+                      onChange={e => handleTmDateChange(e.target.value)}
                       className="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-lg focus:border-purple-600 outline-none"
-                      placeholder="9 Januari 2027"
                     />
                   </div>
                   <div>
@@ -756,7 +871,7 @@ export default function SuperadminPanel() {
                       value={dateForm.technicalMeetingTime}
                       onChange={e => handleDateChange('technicalMeetingTime', e.target.value)}
                       className="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-lg focus:border-purple-600 outline-none"
-                      placeholder="13.00 WIB - Selesai"
+                      placeholder="13.00 - 16.30 WIB"
                     />
                   </div>
                 </div>
@@ -767,7 +882,7 @@ export default function SuperadminPanel() {
                     value={dateForm.technicalMeetingFullDate}
                     onChange={e => handleDateChange('technicalMeetingFullDate', e.target.value)}
                     className="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-lg focus:border-purple-600 outline-none"
-                    placeholder="Jumat, 9 Januari 2027"
+                    placeholder="Sabtu, 9 Januari 2027"
                   />
                 </div>
               </div>
@@ -783,13 +898,12 @@ export default function SuperadminPanel() {
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="block text-[11px] font-bold text-slate-600 mb-1">Tanggal Uji Coba:</label>
+                    <label className="block text-[11px] font-bold text-slate-600 mb-1">Pilih Tanggal Uji Coba:</label>
                     <input
-                      type="text"
-                      value={dateForm.fieldTrialDate}
-                      onChange={e => handleDateChange('fieldTrialDate', e.target.value)}
+                      type="date"
+                      value={toDateOnly(dateForm.fieldTrialDate, '2027-01-16')}
+                      onChange={e => handleTrialDateChange(e.target.value)}
                       className="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-lg focus:border-purple-600 outline-none"
-                      placeholder="16 Januari 2027"
                     />
                   </div>
                   <div>
@@ -799,7 +913,7 @@ export default function SuperadminPanel() {
                       value={dateForm.fieldTrialTime}
                       onChange={e => handleDateChange('fieldTrialTime', e.target.value)}
                       className="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-lg focus:border-purple-600 outline-none"
-                      placeholder="08.00 – 13.30 WIB"
+                      placeholder="07.00 – 13.00 WIB"
                     />
                   </div>
                 </div>
@@ -826,15 +940,26 @@ export default function SuperadminPanel() {
                     Hari H
                   </span>
                 </div>
-                <div>
-                  <label className="block text-[11px] font-bold text-slate-600 mb-1">Hari & Tanggal Lomba:</label>
-                  <input
-                    type="text"
-                    value={dateForm.competitionDate}
-                    onChange={e => handleDateChange('competitionDate', e.target.value)}
-                    className="w-full px-3 py-2 text-xs font-bold text-slate-900 bg-white border border-slate-200 rounded-lg focus:border-purple-600 outline-none"
-                    placeholder="Ahad, 24 Januari 2027"
-                  />
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-600 mb-1">Pilih Tanggal Lomba:</label>
+                    <input
+                      type="date"
+                      value={toDateOnly(dateForm.competitionDate, '2027-01-24')}
+                      onChange={e => handleCompDateChange(e.target.value)}
+                      className="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-lg focus:border-purple-600 outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-600 mb-1">Hari & Tanggal Lomba:</label>
+                    <input
+                      type="text"
+                      value={dateForm.competitionDate}
+                      onChange={e => handleDateChange('competitionDate', e.target.value)}
+                      className="w-full px-3 py-2 text-xs font-bold text-slate-900 bg-white border border-slate-200 rounded-lg focus:border-purple-600 outline-none"
+                      placeholder="Ahad, 24 Januari 2027"
+                    />
+                  </div>
                 </div>
                 <div>
                   <label className="block text-[11px] font-bold text-slate-600 mb-1">Rentang Waktu Hari-H:</label>

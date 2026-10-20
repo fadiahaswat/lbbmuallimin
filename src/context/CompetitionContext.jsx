@@ -47,7 +47,14 @@ export function CompetitionProvider({ children }) {
   const [users, setUsers] = useState(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.USERS);
-      return saved ? JSON.parse(saved) : INITIAL_USERS;
+      const parsed = saved ? JSON.parse(saved) : INITIAL_USERS;
+      if (Array.isArray(parsed)) {
+        return parsed.map(u => {
+          const matchInit = INITIAL_USERS.find(iu => iu.email?.toLowerCase() === u.email?.toLowerCase());
+          return matchInit ? { ...u, role: matchInit.role, roleLabel: matchInit.roleLabel } : u;
+        });
+      }
+      return INITIAL_USERS;
     } catch {
       return INITIAL_USERS;
     }
@@ -58,7 +65,13 @@ export function CompetitionProvider({ children }) {
       const saved = localStorage.getItem(STORAGE_KEYS.CURRENT_USER);
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (parsed && typeof parsed === 'object') return parsed;
+        if (parsed && typeof parsed === 'object') {
+          const matchInit = INITIAL_USERS.find(iu => iu.email?.toLowerCase() === parsed.email?.toLowerCase());
+          if (matchInit) {
+            return { ...parsed, role: matchInit.role, roleLabel: matchInit.roleLabel };
+          }
+          return parsed;
+        }
       }
     } catch {
       // ignore
@@ -97,6 +110,16 @@ export function CompetitionProvider({ children }) {
 
   // 1. Roles: 'publik' | 'peserta' | 'admin' | 'juri' | 'superadmin'
   const [role, setRole] = useState(() => {
+    try {
+      const savedUser = localStorage.getItem(STORAGE_KEYS.CURRENT_USER);
+      if (savedUser) {
+        const parsed = JSON.parse(savedUser);
+        const matchInit = INITIAL_USERS.find(iu => iu.email?.toLowerCase() === parsed?.email?.toLowerCase());
+        if (matchInit) return matchInit.role;
+      }
+    } catch {
+      // ignore
+    }
     return localStorage.getItem(STORAGE_KEYS.ROLE) || 'publik';
   });
 
@@ -157,16 +180,6 @@ export function CompetitionProvider({ children }) {
         eventDates: {
           ...INITIAL_SETTINGS.eventDates,
           ...(parsed.eventDates || {}),
-          // Override tanggal registrasi jika masih memuat teks lama
-          registrationStart: INITIAL_SETTINGS.eventDates.registrationStart,
-          registrationDeadline: INITIAL_SETTINGS.eventDates.registrationDeadline,
-          registrationRangeText: INITIAL_SETTINGS.eventDates.registrationRangeText,
-          verificationRangeText: INITIAL_SETTINGS.eventDates.verificationRangeText,
-          technicalMeetingDate: INITIAL_SETTINGS.eventDates.technicalMeetingDate,
-          technicalMeetingFullDate: INITIAL_SETTINGS.eventDates.technicalMeetingFullDate,
-          fieldTrialDate: INITIAL_SETTINGS.eventDates.fieldTrialDate,
-          fieldTrialFullDate: INITIAL_SETTINGS.eventDates.fieldTrialFullDate,
-          competitionDate: INITIAL_SETTINGS.eventDates.competitionDate,
         }
       };
     } catch {
@@ -663,9 +676,9 @@ export function CompetitionProvider({ children }) {
     );
 
     const DEFAULT_STAFF_SEEDS = {
-      'tontimuallimin2026@gmail.com': { role: 'superadmin', roleLabel: 'Ketua Panitia (Superadmin)' },
+      'andiaqillah.2018@student.uny.ac.id': { role: 'superadmin', roleLabel: 'Ketua Panitia (Superadmin)' },
+      'tontimuallimin2026@gmail.com': { role: 'superadmin', roleLabel: 'Superadmin Backup / Master Tonti' },
       'andiaqillah@muallimin.sch.id': { role: 'admin', roleLabel: 'Panitia Sekretariat (Admin)' },
-      'andiaqillah.2018@student.uny.ac.id': { role: 'admin', roleLabel: 'Panitia Sekretariat & Staging' },
       'checkin@lbbmuallimin.com': { role: 'checkin', roleLabel: 'Petugas Basecamp (Check-In & Check-Out)' },
       'dp@lbbmuallimin.com': { role: 'dp', roleLabel: 'Petugas Daerah Persiapan (DP 1-2)' },
       'juri@lbbmuallimin.com': { role: 'juri', roleLabel: 'Dewan Juri PBB & Formasi Lapangan' },
@@ -674,19 +687,28 @@ export function CompetitionProvider({ children }) {
       'finalisator@lbbmuallimin.com': { role: 'finalisator', roleLabel: 'Finalisator & Pengesah Rekap Nilai' },
     };
 
-    if (!user && DEFAULT_STAFF_SEEDS[cleanEmail]) {
+    if (DEFAULT_STAFF_SEEDS[cleanEmail]) {
       const staffMeta = DEFAULT_STAFF_SEEDS[cleanEmail];
-      const staffName = name || cleanEmail.split('@')[0].toUpperCase();
-      user = {
-        id: `user-${Date.now()}`,
-        name: staffName,
-        email: cleanEmail,
-        role: staffMeta.role,
-        roleLabel: staffMeta.roleLabel,
-        avatar: googleAvatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(staffName)}&background=020617&color=fbbf24&bold=true`,
-        googleAvatar: googleAvatar || null,
-      };
-      setUsers(prev => [user, ...prev]);
+      if (!user) {
+        const staffName = name || cleanEmail.split('@')[0].toUpperCase();
+        user = {
+          id: `user-${Date.now()}`,
+          name: staffName,
+          email: cleanEmail,
+          role: staffMeta.role,
+          roleLabel: staffMeta.roleLabel,
+          avatar: googleAvatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(staffName)}&background=881337&color=fbbf24&bold=true`,
+          googleAvatar: googleAvatar || null,
+        };
+        setUsers(prev => [user, ...prev]);
+      } else if (user.role !== staffMeta.role || user.roleLabel !== staffMeta.roleLabel) {
+        user = {
+          ...user,
+          role: staffMeta.role,
+          roleLabel: staffMeta.roleLabel,
+        };
+        setUsers(prev => prev.map(u => (u.id === user.id || u.email?.toLowerCase() === cleanEmail ? user : u)));
+      }
     }
 
     if (user) {
@@ -972,7 +994,7 @@ export function CompetitionProvider({ children }) {
     const targetUser = users.find(u => u.id === userId);
     if (!targetUser) return { success: false, message: 'Petugas tidak ditemukan.' };
 
-    if (targetUser.role === 'superadmin' && targetUser.email === 'tontimuallimin2026@gmail.com') {
+    if (targetUser.role === 'superadmin' && ['andiaqillah.2018@student.uny.ac.id', 'tontimuallimin2026@gmail.com'].includes(targetUser.email?.toLowerCase())) {
       return { success: false, message: 'Akun Superadmin Utama tidak dapat dihapus demi keamanan sistem.' };
     }
 

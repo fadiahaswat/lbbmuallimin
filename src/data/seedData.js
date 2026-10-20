@@ -39,12 +39,20 @@ export const INITIAL_SETTINGS = {
 // 5. Finalisator (Ketua Dewan Juri / Pengesah & Kunci Nilai Akhir)
 export const INITIAL_USERS = [
   {
+    id: 'user-super-andi-uny',
+    name: 'Andi Aqillah (Superadmin)',
+    email: 'andiaqillah.2018@student.uny.ac.id',
+    role: 'superadmin',
+    avatar: 'https://ui-avatars.com/api/?name=Andi+Aqillah&background=881337&color=fbbf24&bold=true',
+    roleLabel: 'Ketua Panitia (Superadmin)',
+  },
+  {
     id: 'user-super-tonti',
     name: 'Tonti Muallimin 2026',
     email: 'tontimuallimin2026@gmail.com',
     role: 'superadmin',
-    avatar: 'https://ui-avatars.com/api/?name=Tonti+Muallimin&background=881337&color=fbbf24&bold=true',
-    roleLabel: 'Ketua Panitia (Superadmin)',
+    avatar: 'https://ui-avatars.com/api/?name=Tonti+Muallimin&background=0f172a&color=fbbf24&bold=true',
+    roleLabel: 'Superadmin Backup / Master Tonti',
   },
   {
     id: 'user-admin-andi',
@@ -53,14 +61,6 @@ export const INITIAL_USERS = [
     role: 'admin',
     avatar: 'https://ui-avatars.com/api/?name=Andi+Aqillah&background=0f172a&color=38bdf8&bold=true',
     roleLabel: 'Panitia Sekretariat (Admin)',
-  },
-  {
-    id: 'user-staff-uny',
-    name: 'Andi Aqillah (UNY)',
-    email: 'andiaqillah.2018@student.uny.ac.id',
-    role: 'admin',
-    avatar: 'https://ui-avatars.com/api/?name=Andi+Aqillah&background=047857&color=ffffff&bold=true',
-    roleLabel: 'Panitia Sekretariat & Staging',
   },
   {
     id: 'user-checkin-1',

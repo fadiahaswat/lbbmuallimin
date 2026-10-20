@@ -1,5 +1,56 @@
 import { saveRecordToSheet } from '../services/sheetService.js';
 
+export function calculatePenalties(penalties = {}) {
+  let peletonPenalty = 0;
+  let dantonPenalty = 0;
+
+  // Peleton Penalties (Bab A.3.c & Bab H)
+  if (penalties.upacara) peletonPenalty += 150;
+  peletonPenalty += (penalties.upacaraTerlambatBlocks || 0) * 50;
+  if (penalties.dp1) peletonPenalty += 100;
+  if (penalties.personelKurang) peletonPenalty += 75;
+  peletonPenalty += (penalties.overTimeBlocks || 0) * 50;
+  peletonPenalty += (penalties.injakGarisCount || 0) * 50;
+  if (penalties.basecampKotor) peletonPenalty += 150;
+  peletonPenalty += (penalties.rokokCount || 0) * 50;
+
+  // Danton Penalties (Bab A.3.c & Bab H)
+  dantonPenalty += (penalties.kotakDantonCount || 0) * 50;
+
+  // Yel-Yel Pelanggaran ke-3 dst: Potong Peleton & Danton (Bab C.10 & Bab H.12)
+  const yelYelDeduction = (penalties.yelYelCount || 0) * 50;
+  peletonPenalty += yelYelDeduction;
+  dantonPenalty += yelYelDeduction;
+
+  const totalPenalty = peletonPenalty + dantonPenalty;
+
+  return {
+    ...penalties,
+    peletonPenalty,
+    dantonPenalty,
+    totalPenalty,
+  };
+}
+
+export function calculateDantonScoreFromRubric(dantonRubricScores = {}) {
+  const materi = Number(dantonRubricScores.materi || 0);
+  const vokal = Number(dantonRubricScores.vokal || 0);
+  const sikap = Number(dantonRubricScores.sikap || 0);
+  const lapangan = Number(dantonRubricScores.lapangan || 0);
+
+  // Jika rubrik belum diisi secara terpisah, fallback ke total yang tersimpan
+  if (!materi && !vokal && !sikap && !lapangan) {
+    return 0;
+  }
+
+  const rawScore = (materi * 0.35) + (vokal * 0.25) + (sikap * 0.20) + (lapangan * 0.20);
+  return parseFloat(rawScore.toFixed(2));
+}
+
+export function calculatePeletonScoreFromRubric(rubricScores = {}) {
+  return Object.values(rubricScores || {}).reduce((acc, curr) => acc + (Number(curr) || 0), 0);
+}
+
 export function createScoringActions({ setScores, currentUser }) {
   function recordAuditLog(teamId, action, prevScore, newScore, actor, reason = '') {
     const auditEntry = {
@@ -32,20 +83,26 @@ export function createScoringActions({ setScores, currentUser }) {
       }
       previousRecord = existing;
 
-      const pbb1Val = Number(scoreData.juries?.pos1?.total ?? scoreData.pbb1?.total ?? scoreData.pbb?.total ?? 0);
-      const pbb2Val = Number(scoreData.juries?.pos2?.total ?? scoreData.pbb2?.total ?? 0);
-      
-      let pbbAvg = 0;
-      if (pbb1Val > 0 && pbb2Val > 0) {
-        pbbAvg = (pbb1Val + pbb2Val) / 2;
-      } else {
-        pbbAvg = pbb1Val || pbb2Val || 0;
-      }
+      const mergedPenalties = calculatePenalties(scoreData.penalties || {});
+      const peletonPenalty = mergedPenalties.peletonPenalty;
+      const dantonPenalty = mergedPenalties.dantonPenalty;
 
-      const dantonVal = Number(scoreData.danton?.total || scoreData.juries?.pos3?.total || 0);
-      const penaltyVal = Number(scoreData.penalties?.totalPenalty || 0);
+      // Akumulasi 3 Dewan Juri (Bab A.3.c Juknis)
+      const j1Peleton = Number(scoreData.juries?.pos1?.peletonTotal ?? scoreData.juries?.pos1?.total ?? scoreData.pbb1?.total ?? 0);
+      const j2Peleton = Number(scoreData.juries?.pos2?.peletonTotal ?? scoreData.juries?.pos2?.total ?? scoreData.pbb2?.total ?? 0);
+      const j3Peleton = Number(scoreData.juries?.pos3?.peletonTotal ?? scoreData.juries?.pos3?.total ?? 0);
 
-      const finalScore = Math.max(0, parseFloat((pbbAvg + dantonVal - penaltyVal).toFixed(2)));
+      const nilaiMurniPeleton = j1Peleton + j2Peleton + j3Peleton;
+      const nilaiAkhirPeleton = Math.max(0, parseFloat((nilaiMurniPeleton - peletonPenalty).toFixed(2)));
+
+      const j1Danton = Number(scoreData.juries?.pos1?.dantonTotal ?? 0);
+      const j2Danton = Number(scoreData.juries?.pos2?.dantonTotal ?? 0);
+      const j3Danton = Number(scoreData.juries?.pos3?.dantonTotal ?? scoreData.danton?.total ?? 0);
+
+      const nilaiMurniDanton = parseFloat((j1Danton + j2Danton + j3Danton).toFixed(2));
+      const nilaiAkhirDanton = Math.max(0, parseFloat((nilaiMurniDanton - dantonPenalty).toFixed(2)));
+
+      const finalScore = parseFloat((nilaiAkhirPeleton + nilaiAkhirDanton).toFixed(2));
 
       const record = {
         teamId,
@@ -53,14 +110,29 @@ export function createScoringActions({ setScores, currentUser }) {
         juryRole: scoreData.juryRole || currentUser?.roleLabel || 'Juri Lapangan',
         scoredAt: new Date().toISOString(),
         juries: scoreData.juries || {},
-        danton: scoreData.danton,
+        danton: {
+          total: nilaiMurniDanton,
+          nilaiMurni: nilaiMurniDanton,
+          nilaiAkhir: nilaiAkhirDanton,
+          j1: j1Danton,
+          j2: j2Danton,
+          j3: j3Danton,
+          rubricScores: scoreData.danton?.rubricScores || {},
+        },
         pbb: {
-          total: parseFloat(pbbAvg.toFixed(2)),
-          j1: pbb1Val,
-          j2: pbb2Val,
+          total: nilaiMurniPeleton,
+          nilaiMurni: nilaiMurniPeleton,
+          nilaiAkhir: nilaiAkhirPeleton,
+          j1: j1Peleton,
+          j2: j2Peleton,
+          j3: j3Peleton,
           rubricScores: scoreData.pbb?.rubricScores || {},
         },
-        penalties: scoreData.penalties,
+        penalties: mergedPenalties,
+        nilaiMurniPeleton,
+        nilaiAkhirPeleton,
+        nilaiMurniDanton,
+        nilaiAkhirDanton,
         finalScore,
         notes: scoreData.notes || '',
         isLocked: existing?.isLocked || false,
@@ -107,7 +179,6 @@ export function createScoringActions({ setScores, currentUser }) {
           overTimeBlocks: 0,
           injakGarisCount: 0,
           kotakDantonCount: 0,
-          penyesuaianCount: 0,
           yelYelCount: 0,
           rokokCount: 0,
           basecampKotor: false,
@@ -124,48 +195,25 @@ export function createScoringActions({ setScores, currentUser }) {
         },
       };
 
-      const incomingPen = postScoreData.penalties || currentTeamScore.penalties || {};
-      let totalPenalty = 0;
-      if (incomingPen.upacara) totalPenalty += 150;
-      totalPenalty += (incomingPen.upacaraTerlambatBlocks || 0) * 50;
-      if (incomingPen.dp1) totalPenalty += 100;
-      if (incomingPen.personelKurang) totalPenalty += 75;
-      totalPenalty += (incomingPen.overTimeBlocks || 0) * 50;
-      totalPenalty += (incomingPen.injakGarisCount || 0) * 50;
-      totalPenalty += (incomingPen.kotakDantonCount || 0) * 50;
-      totalPenalty += (incomingPen.yelYelCount || 0) * 50;
-      totalPenalty += (incomingPen.rokokCount || 0) * 50;
-      if (incomingPen.basecampKotor) totalPenalty += 150;
-      // Gerakan penyesuaian: 0 poin penalti (Bab H.6 & Bab A.6)
-      const mergedPenalties = {
-        ...incomingPen,
-        totalPenalty,
-      };
+      const mergedPenalties = calculatePenalties(postScoreData.penalties || currentTeamScore.penalties || {});
+      const peletonPenalty = mergedPenalties.peletonPenalty;
+      const dantonPenalty = mergedPenalties.dantonPenalty;
 
-      const juri1Total = updatedJuries.pos1?.total !== undefined
-        ? Number(updatedJuries.pos1.total)
-        : (currentTeamScore.juries?.pos1?.total !== undefined ? Number(currentTeamScore.juries.pos1.total) : null);
+      const j1Peleton = Number(updatedJuries.pos1?.peletonTotal ?? updatedJuries.pos1?.total ?? 0);
+      const j2Peleton = Number(updatedJuries.pos2?.peletonTotal ?? updatedJuries.pos2?.total ?? 0);
+      const j3Peleton = Number(updatedJuries.pos3?.peletonTotal ?? updatedJuries.pos3?.total ?? 0);
 
-      const juri2Total = updatedJuries.pos2?.total !== undefined
-        ? Number(updatedJuries.pos2.total)
-        : (currentTeamScore.juries?.pos2?.total !== undefined ? Number(currentTeamScore.juries.pos2.total) : null);
+      const nilaiMurniPeleton = j1Peleton + j2Peleton + j3Peleton;
+      const nilaiAkhirPeleton = Math.max(0, parseFloat((nilaiMurniPeleton - peletonPenalty).toFixed(2)));
 
-      let pbbAvg = 0;
-      if (juri1Total !== null && juri2Total !== null) {
-        pbbAvg = (juri1Total + juri2Total) / 2;
-      } else if (juri1Total !== null) {
-        pbbAvg = juri1Total;
-      } else if (juri2Total !== null) {
-        pbbAvg = juri2Total;
-      } else if (currentTeamScore.pbb?.total !== undefined) {
-        pbbAvg = Number(currentTeamScore.pbb.total);
-      }
+      const j1Danton = Number(updatedJuries.pos1?.dantonTotal ?? 0);
+      const j2Danton = Number(updatedJuries.pos2?.dantonTotal ?? 0);
+      const j3Danton = Number(updatedJuries.pos3?.dantonTotal ?? updatedJuries.pos3?.total ?? 0);
 
-      const dantonTotal = updatedJuries.pos3?.total !== undefined
-        ? Number(updatedJuries.pos3.total)
-        : (currentTeamScore.danton?.total !== undefined ? Number(currentTeamScore.danton.total) : 0);
+      const nilaiMurniDanton = parseFloat((j1Danton + j2Danton + j3Danton).toFixed(2));
+      const nilaiAkhirDanton = Math.max(0, parseFloat((nilaiMurniDanton - dantonPenalty).toFixed(2)));
 
-      const finalScore = Math.max(0, parseFloat((pbbAvg + dantonTotal - totalPenalty).toFixed(2)));
+      const finalScore = parseFloat((nilaiAkhirPeleton + nilaiAkhirDanton).toFixed(2));
 
       updatedRecord = {
         ...currentTeamScore,
@@ -174,12 +222,25 @@ export function createScoringActions({ setScores, currentUser }) {
         juries: updatedJuries,
         penalties: mergedPenalties,
         pbb: {
-          total: parseFloat(pbbAvg.toFixed(2)),
-          j1: juri1Total,
-          j2: juri2Total,
-          rubricScores: updatedJuries.pos1?.rubricScores || updatedJuries.pos2?.rubricScores || currentTeamScore.pbb?.rubricScores || {},
+          total: nilaiMurniPeleton,
+          nilaiMurni: nilaiMurniPeleton,
+          nilaiAkhir: nilaiAkhirPeleton,
+          j1: j1Peleton,
+          j2: j2Peleton,
+          j3: j3Peleton,
         },
-        danton: updatedJuries.pos3 ? { ...updatedJuries.pos3, total: dantonTotal } : (currentTeamScore.danton || { total: dantonTotal }),
+        danton: {
+          total: nilaiMurniDanton,
+          nilaiMurni: nilaiMurniDanton,
+          nilaiAkhir: nilaiAkhirDanton,
+          j1: j1Danton,
+          j2: j2Danton,
+          j3: j3Danton,
+        },
+        nilaiMurniPeleton,
+        nilaiAkhirPeleton,
+        nilaiMurniDanton,
+        nilaiAkhirDanton,
         finalScore,
         scoredAt: new Date().toISOString(),
         lastUpdatedBy: postScoreData.juryName || 'Dewan Juri',
@@ -216,20 +277,26 @@ export function createScoringActions({ setScores, currentUser }) {
       }
       prevDraftRecord = existing;
 
-      const pbb1Val = Number(draftData.pbb1?.total ?? draftData.juries?.pos1?.total ?? draftData.pbb?.total ?? 0);
-      const pbb2Val = Number(draftData.pbb2?.total ?? draftData.juries?.pos2?.total ?? draftData.kekompakan?.total ?? 0);
-      
-      let pbbVal = 0;
-      if (pbb1Val > 0 && pbb2Val > 0) {
-        pbbVal = parseFloat(((pbb1Val + pbb2Val) / 2).toFixed(2));
-      } else {
-        pbbVal = pbb1Val || pbb2Val || Number(draftData.pbb?.total ?? 0);
-      }
+      const mergedPenalties = calculatePenalties(draftData.penalties || {});
+      const peletonPenalty = mergedPenalties.peletonPenalty;
+      const dantonPenalty = mergedPenalties.dantonPenalty;
 
-      const dantonVal = Number(draftData.danton?.total ?? draftData.juries?.pos3?.total ?? 0);
-      const penaltyVal = Number(draftData.penalties?.totalPenalty ?? 0);
+      // Ambil nilai per juri
+      const j1Peleton = Number(draftData.juries?.pos1?.peletonTotal ?? draftData.j1Peleton ?? draftData.pbb1?.total ?? draftData.juries?.pos1?.total ?? 0);
+      const j2Peleton = Number(draftData.juries?.pos2?.peletonTotal ?? draftData.j2Peleton ?? draftData.pbb2?.total ?? draftData.juries?.pos2?.total ?? 0);
+      const j3Peleton = Number(draftData.juries?.pos3?.peletonTotal ?? draftData.j3Peleton ?? draftData.juries?.pos3?.total ?? 0);
 
-      const calculatedFinal = Math.max(0, parseFloat((pbbVal + dantonVal - penaltyVal).toFixed(2)));
+      const nilaiMurniPeleton = j1Peleton + j2Peleton + j3Peleton;
+      const nilaiAkhirPeleton = Math.max(0, parseFloat((nilaiMurniPeleton - peletonPenalty).toFixed(2)));
+
+      const j1Danton = Number(draftData.juries?.pos1?.dantonTotal ?? draftData.j1Danton ?? 0);
+      const j2Danton = Number(draftData.juries?.pos2?.dantonTotal ?? draftData.j2Danton ?? 0);
+      const j3Danton = Number(draftData.juries?.pos3?.dantonTotal ?? draftData.j3Danton ?? draftData.danton?.total ?? 0);
+
+      const nilaiMurniDanton = parseFloat((j1Danton + j2Danton + j3Danton).toFixed(2));
+      const nilaiAkhirDanton = Math.max(0, parseFloat((nilaiMurniDanton - dantonPenalty).toFixed(2)));
+
+      const calculatedFinal = parseFloat((nilaiAkhirPeleton + nilaiAkhirDanton).toFixed(2));
 
       const record = {
         teamId,
@@ -240,30 +307,53 @@ export function createScoringActions({ setScores, currentUser }) {
         paperEvidenceName: draftData.paperEvidenceName || 'Lembar_Kertas_Juri.jpg',
         juries: {
           pos1: {
-            title: 'Juri 1: Kebenaran Teknik PBB',
-            total: pbb1Val,
-            rubricScores: draftData.pbb1?.rubricScores || draftData.juries?.pos1?.rubricScores || draftData.pbb?.rubricScores || {},
+            title: 'Dewan Juri 1',
+            peletonTotal: j1Peleton,
+            dantonTotal: j1Danton,
+            total: j1Peleton,
+            rubricScores: draftData.juries?.pos1?.rubricScores || draftData.pbb1?.rubricScores || {},
+            dantonRubricScores: draftData.juries?.pos1?.dantonRubricScores || {},
           },
           pos2: {
-            title: 'Juri 2: Kekompakan Peleton',
-            total: pbb2Val,
-            rubricScores: draftData.pbb2?.rubricScores || draftData.juries?.pos2?.rubricScores || draftData.kekompakan?.rubricScores || {},
+            title: 'Dewan Juri 2',
+            peletonTotal: j2Peleton,
+            dantonTotal: j2Danton,
+            total: j2Peleton,
+            rubricScores: draftData.juries?.pos2?.rubricScores || draftData.pbb2?.rubricScores || {},
+            dantonRubricScores: draftData.juries?.pos2?.dantonRubricScores || {},
           },
           pos3: {
-            title: 'Juri 3: Komandan Peleton (Danton)',
-            total: dantonVal,
-            rubricScores: draftData.danton?.rubricScores || draftData.juries?.pos3?.rubricScores || {},
+            title: 'Dewan Juri 3',
+            peletonTotal: j3Peleton,
+            dantonTotal: j3Danton,
+            total: j3Peleton,
+            rubricScores: draftData.juries?.pos3?.rubricScores || {},
+            dantonRubricScores: draftData.juries?.pos3?.dantonRubricScores || draftData.danton?.rubricScores || {},
           },
         },
         pbb: {
-          total: pbbVal,
-          j1: pbb1Val,
-          j2: pbb2Val,
+          total: nilaiMurniPeleton,
+          nilaiMurni: nilaiMurniPeleton,
+          nilaiAkhir: nilaiAkhirPeleton,
+          j1: j1Peleton,
+          j2: j2Peleton,
+          j3: j3Peleton,
           rubricScores: draftData.pbb?.rubricScores || draftData.pbb1?.rubricScores || {},
         },
-        danton: { total: dantonVal, rubricScores: draftData.danton?.rubricScores || {} },
-        penalties: draftData.penalties || { totalPenalty: 0 },
-        fieldTimerData: draftData.fieldTimerData || {},
+        danton: {
+          total: nilaiMurniDanton,
+          nilaiMurni: nilaiMurniDanton,
+          nilaiAkhir: nilaiAkhirDanton,
+          j1: j1Danton,
+          j2: j2Danton,
+          j3: j3Danton,
+          rubricScores: draftData.danton?.rubricScores || {},
+        },
+        penalties: mergedPenalties,
+        nilaiMurniPeleton,
+        nilaiAkhirPeleton,
+        nilaiMurniDanton,
+        nilaiAkhirDanton,
         finalScore: calculatedFinal,
         notes: draftData.notes || '',
         verificationNotes: '',

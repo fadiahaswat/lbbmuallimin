@@ -491,97 +491,131 @@ export const RUBRIC_GRADES = [
  * - Berjalan Dinamis / Kompleks (12-29): [12, 15, 18, 21, 24, 27, 29]
  * - Parade Kerapian Khusus (12-30): [12, 15, 18, 21, 24, 27, 30]
  */
+/**
+ * Sebaran Nilai Standar Juknis Penilaian LBB Mu'allimin 2027 (Bab A Angka 3.a)
+ * Sistem Coret 5 Predikat Baku: KS (50), K (3 opsi), C (3 opsi), B (3 opsi), BS (1 opsi)
+ * Sederhana (50 - 80), Menengah (50 - 85), Kompleks (50 - 90)
+ */
 export const RUBRIC_SCALE_TEMPLATES = {
+    SEDERHANA: [
+        { grade: 'KS', val: 50 },
+        { grade: 'K', val: 53 }, { grade: 'K', val: 56 }, { grade: 'K', val: 59 },
+        { grade: 'C', val: 62 }, { grade: 'C', val: 65 }, { grade: 'C', val: 68 },
+        { grade: 'B', val: 71 }, { grade: 'B', val: 74 }, { grade: 'B', val: 77 },
+        { grade: 'BS', val: 80 }
+    ],
+    MENENGAH: [
+        { grade: 'KS', val: 50 },
+        { grade: 'K', val: 53 }, { grade: 'K', val: 57 }, { grade: 'K', val: 60 },
+        { grade: 'C', val: 64 }, { grade: 'C', val: 67 }, { grade: 'C', val: 71 },
+        { grade: 'B', val: 74 }, { grade: 'B', val: 78 }, { grade: 'B', val: 81 },
+        { grade: 'BS', val: 85 }
+    ],
+    KOMPLEKS: [
+        { grade: 'KS', val: 50 },
+        { grade: 'K', val: 54 }, { grade: 'K', val: 58 }, { grade: 'K', val: 62 },
+        { grade: 'C', val: 66 }, { grade: 'C', val: 70 }, { grade: 'C', val: 74 },
+        { grade: 'B', val: 78 }, { grade: 'B', val: 82 }, { grade: 'B', val: 86 },
+        { grade: 'BS', val: 90 }
+    ],
+    // Aliases for compatibility
     DITEMPAT: [
-        { grade: 'K', val: 4 }, { grade: 'K', val: 5 },
-        { grade: 'C', val: 6 }, { grade: 'C', val: 7 },
-        { grade: 'B', val: 8 }, { grade: 'B', val: 9 },
-        { grade: 'BS', val: 10 }
+        { grade: 'KS', val: 50 },
+        { grade: 'K', val: 53 }, { grade: 'K', val: 56 }, { grade: 'K', val: 59 },
+        { grade: 'C', val: 62 }, { grade: 'C', val: 65 }, { grade: 'C', val: 68 },
+        { grade: 'B', val: 71 }, { grade: 'B', val: 74 }, { grade: 'B', val: 77 },
+        { grade: 'BS', val: 80 }
     ],
     BERPINDAH: [
-        { grade: 'K', val: 8 }, { grade: 'K', val: 10 },
-        { grade: 'C', val: 12 }, { grade: 'C', val: 14 },
-        { grade: 'B', val: 16 }, { grade: 'B', val: 18 },
-        { grade: 'BS', val: 19 }
+        { grade: 'KS', val: 50 },
+        { grade: 'K', val: 53 }, { grade: 'K', val: 57 }, { grade: 'K', val: 60 },
+        { grade: 'C', val: 64 }, { grade: 'C', val: 67 }, { grade: 'C', val: 71 },
+        { grade: 'B', val: 74 }, { grade: 'B', val: 78 }, { grade: 'B', val: 81 },
+        { grade: 'BS', val: 85 }
     ],
     BERJALAN: [
-        { grade: 'K', val: 10 }, { grade: 'K', val: 13 },
-        { grade: 'C', val: 16 }, { grade: 'C', val: 19 },
-        { grade: 'B', val: 22 }, { grade: 'B', val: 25 },
-        { grade: 'BS', val: 27 }
+        { grade: 'KS', val: 50 },
+        { grade: 'K', val: 54 }, { grade: 'K', val: 58 }, { grade: 'K', val: 62 },
+        { grade: 'C', val: 66 }, { grade: 'C', val: 70 }, { grade: 'C', val: 74 },
+        { grade: 'B', val: 78 }, { grade: 'B', val: 82 }, { grade: 'B', val: 86 },
+        { grade: 'BS', val: 90 }
     ],
     BERJALAN_KOMPLEKS: [
-        { grade: 'K', val: 12 }, { grade: 'K', val: 15 },
-        { grade: 'C', val: 18 }, { grade: 'C', val: 21 },
-        { grade: 'B', val: 24 }, { grade: 'B', val: 27 },
-        { grade: 'BS', val: 29 }
+        { grade: 'KS', val: 50 },
+        { grade: 'K', val: 54 }, { grade: 'K', val: 58 }, { grade: 'K', val: 62 },
+        { grade: 'C', val: 66 }, { grade: 'C', val: 70 }, { grade: 'C', val: 74 },
+        { grade: 'B', val: 78 }, { grade: 'B', val: 82 }, { grade: 'B', val: 86 },
+        { grade: 'BS', val: 90 }
     ],
     KERAPIAN_PARADE: [
-        { grade: 'K', val: 12 }, { grade: 'K', val: 15 },
-        { grade: 'C', val: 18 }, { grade: 'C', val: 21 },
-        { grade: 'B', val: 24 }, { grade: 'B', val: 27 },
-        { grade: 'BS', val: 30 }
+        { grade: 'KS', val: 50 },
+        { grade: 'K', val: 54 }, { grade: 'K', val: 58 }, { grade: 'K', val: 62 },
+        { grade: 'C', val: 66 }, { grade: 'C', val: 70 }, { grade: 'C', val: 74 },
+        { grade: 'B', val: 78 }, { grade: 'B', val: 82 }, { grade: 'B', val: 86 },
+        { grade: 'BS', val: 90 }
     ],
     BUBAR_BERKUMPUL: [
-        { grade: 'K', val: 13 }, { grade: 'K', val: 15 },
-        { grade: 'C', val: 17 }, { grade: 'C', val: 19 },
-        { grade: 'B', val: 21 }, { grade: 'B', val: 23 },
-        { grade: 'BS', val: 24 }
+        { grade: 'KS', val: 50 },
+        { grade: 'K', val: 53 }, { grade: 'K', val: 57 }, { grade: 'K', val: 60 },
+        { grade: 'C', val: 64 }, { grade: 'C', val: 67 }, { grade: 'C', val: 71 },
+        { grade: 'B', val: 74 }, { grade: 'B', val: 78 }, { grade: 'B', val: 81 },
+        { grade: 'BS', val: 85 }
     ],
     DANTON_UMUM: [
-        { grade: 'K', val: 8 }, { grade: 'K', val: 10 },
-        { grade: 'C', val: 12 }, { grade: 'C', val: 14 },
-        { grade: 'B', val: 16 }, { grade: 'B', val: 18 },
-        { grade: 'BS', val: 19 }
-    ],
-    DANTON_IKIT: [
-        { grade: 'K', val: 16 }, { grade: 'K', val: 18 },
-        { grade: 'C', val: 21 }, { grade: 'C', val: 23 },
-        { grade: 'B', val: 26 }, { grade: 'B', val: 27 },
-        { grade: 'BS', val: 28 }
+        { grade: 'KS', val: 50 },
+        { grade: 'K', val: 54 }, { grade: 'K', val: 58 }, { grade: 'K', val: 62 },
+        { grade: 'C', val: 66 }, { grade: 'C', val: 70 }, { grade: 'C', val: 74 },
+        { grade: 'B', val: 78 }, { grade: 'B', val: 82 }, { grade: 'B', val: 86 },
+        { grade: 'BS', val: 90 }
     ],
 };
 
-/** Kriteria Penilaian Komandan Pasukan (Danton) Gaya Baratasetra */
+/** Kriteria Penilaian Komandan Pasukan (Danton) Resmi (Bab A Angka 3.b Juknis) */
 export const DANTON_CRITERIA = [
-    { id: 'sikap', name: 'Sikap Tampang & Sikap Sempurna', template: 'DANTON_UMUM', defaultScore: 16 },
-    { id: 'penguasaanMateri', name: 'Penguasaan Materi Gerakan', template: 'DANTON_UMUM', defaultScore: 16 },
-    { id: 'penguasaanLapangan', name: 'Penguasaan & Penempatan Lapangan', template: 'DANTON_UMUM', defaultScore: 16 },
-    { id: 'ikit', name: 'IKIT (Intonasi, Ketepatan Irama & Tempo)', template: 'DANTON_IKIT', defaultScore: 26 },
-    { id: 'volumeSuara', name: 'Volume & Artikulasi Suara', template: 'DANTON_UMUM', defaultScore: 16 },
+    { id: 'materi', name: 'Penguasaan Materi Lomba', weight: 0.35, weightPercent: '35%', defaultScore: 78 },
+    { id: 'vokal', name: 'Kualitas Suara / Vokal', weight: 0.25, weightPercent: '25%', defaultScore: 78 },
+    { id: 'sikap', name: 'Sikap & Pelaporan', weight: 0.20, weightPercent: '20%', defaultScore: 78 },
+    { id: 'lapangan', name: 'Penguasaan Lapangan', weight: 0.20, weightPercent: '20%', defaultScore: 78 },
 ];
 
-/** Helper untuk menentukan template skala gerakan berdasarkan teks materi */
+export const DANTON_SCALE = [
+    { grade: 'KS', val: 50 },
+    { grade: 'K', val: 54 }, { grade: 'K', val: 58 }, { grade: 'K', val: 62 },
+    { grade: 'C', val: 66 }, { grade: 'C', val: 70 }, { grade: 'C', val: 74 },
+    { grade: 'B', val: 78 }, { grade: 'B', val: 82 }, { grade: 'B', val: 86 },
+    { grade: 'BS', val: 90 }
+];
+
+/** Helper untuk menentukan tingkat kesulitan gerakan (Sederhana / Menengah / Kompleks) */
 export function getScaleTemplateForMaterial(materiText) {
     const lower = (materiText || '').toLowerCase();
-    if (lower.includes('periksa kerapian') || lower.includes('periksa kerapihan')) {
-        return 'KERAPIAN_PARADE';
-    }
-    if (lower.includes('bubar') || lower.includes('berkumpul') || lower.includes('berhimpun')) {
-        return 'BUBAR_BERKUMPUL';
-    }
-    if (lower.includes('langkah ke') || lower.includes('langkah ke kanan') || lower.includes('langkah ke kiri') || lower.includes('langkah ke depan') || lower.includes('langkah ke belakang')) {
-        return 'BERPINDAH';
-    }
     if (
-        lower.includes('maju') ||
+        lower.includes('periksa kerapian') ||
         lower.includes('langkah tegap') ||
         lower.includes('hormat kanan') ||
-        lower.includes('belok kanan') ||
-        lower.includes('belok kiri') ||
         lower.includes('melintang') ||
         lower.includes('haluan') ||
+        lower.includes('2x belok') ||
         lower.includes('lari') ||
-        lower.includes('ganti langkah') ||
-        lower.includes('langkah perlahan') ||
-        lower.includes('langkah biasa')
+        lower.includes('ganti langkah')
     ) {
-        if (lower.includes('lari') || lower.includes('2x belok') || lower.includes('hormat kanan') || lower.includes('melintang') || lower.includes('haluan')) {
-            return 'BERJALAN_KOMPLEKS';
-        }
-        return 'BERJALAN';
+        return 'KOMPLEKS';
     }
-    return 'DITEMPAT';
+    if (
+        lower.includes('langkah biasa') ||
+        lower.includes('langkah ke') ||
+        lower.includes('buka barisan') ||
+        lower.includes('tutup barisan') ||
+        lower.includes('bubar') ||
+        lower.includes('berkumpul') ||
+        lower.includes('berhimpun') ||
+        lower.includes('langkah perlahan') ||
+        lower.includes('– hadap') ||
+        lower.includes('– balik')
+    ) {
+        return 'MENENGAH';
+    }
+    return 'SEDERHANA';
 }
 
 
@@ -736,7 +770,7 @@ export const MATERIALS = {
         'Langkah Perlahan(Dari Langkah Biasa) \u2013 Henti',
         'Hadap Kiri \u2013 Bubar',
         'Berhimpun** \u2013 Selesai',
-        'Berkumpul Bersaf \u2013 Sikap Sempurna',
+        'Berkumpul(Berbanjar) \u2013 Sikap Sempurna',
         'Setengah Lengan Lencang Kanan \u2013 Balik Kanan',
         'Lencang Kiri \u2013 Hitung',
         'Hadap Serong Kiri \u2013 3 Langkah Ke Depan',
@@ -760,86 +794,97 @@ export const GOOGLE_AUTH = {
 };
 
 // ---------------------------------------------------------------------------
-// JURY_POSTS – Konfigurasi Dewan Juri Resmi LBB Mu'allimin 2027
-// 2 Pos Lapangan: Pos SD/MI dan Pos SMP/MTs
-// 3 Dewan Juri per Pos:
-// 1. Juri Kebenaran Teknik Gerakan PBB (Rasio 1:1 / Bobot 50% Peleton)
-// 2. Juri Kekompakan Gerakan Peleton (Rasio 1:1 / Bobot 50% Peleton)
-// 3. Juri Komandan Peleton / Danton (Bobot 100% Danton: 35% Materi, 25% Suara, 20% Sikap, 20% Lapangan)
+// JURY_POSTS – Konfigurasi Dewan Juri Resmi LBB Mu'allimin 2027 (Bab A.1)
+// 6 Dewan Juri (TNI, POLRI, & Profesional):
+// - 3 Dewan Juri di Arena 1 (Tingkat SD/MI)
+// - 3 Dewan Juri di Arena 2 (Tingkat SMP/MTs)
+// Setiap Dewan Juri menilai performa materi PBB Peleton dan Komandan (Danton) secara simultan.
 // ---------------------------------------------------------------------------
 export const JURY_ROLES = {
+    juri1: {
+        id: 'juri1',
+        roleKey: 'dewan_juri_1',
+        title: 'Dewan Juri 1',
+        shortTitle: 'Juri 1',
+        badge: 'Dewan Juri 1 (Unsur TNI)',
+        description: 'Menilai materi PBB Peleton (Sistem 5 Predikat Baku) dan Komandan Peleton secara simultan.',
+        defaultNameSD: 'Mayor (Mar) Bambang S., S.E.',
+        defaultNameSMP: 'Mayor Inf. Supriyadi, M.M.',
+    },
+    juri2: {
+        id: 'juri2',
+        roleKey: 'dewan_juri_2',
+        title: 'Dewan Juri 2',
+        shortTitle: 'Juri 2',
+        badge: 'Dewan Juri 2 (Unsur POLRI)',
+        description: 'Menilai materi PBB Peleton (Sistem 5 Predikat Baku) dan Komandan Peleton secara simultan.',
+        defaultNameSD: 'AKP Tri Wibowo, S.H.',
+        defaultNameSMP: 'AKP Danang Kusuma, S.I.K.',
+    },
+    juri3: {
+        id: 'juri3',
+        roleKey: 'dewan_juri_3',
+        title: 'Dewan Juri 3',
+        shortTitle: 'Juri 3',
+        badge: 'Dewan Juri 3 (Unsur Profesional Purna)',
+        description: 'Menilai materi PBB Peleton (Sistem 5 Predikat Baku) dan Komandan Peleton secara simultan.',
+        defaultNameSD: 'Kapten Kav. Hendra Wijaya',
+        defaultNameSMP: 'Kapten Arh. Agus Prasetyo',
+    },
+    // Aliases for backwards compatibility
     teknik: {
-        id: 'teknik',
-        roleKey: 'juri_teknik',
-        title: 'Juri 1: Kebenaran Teknik PBB',
-        shortTitle: 'Juri 1 (Teknik PBB)',
-        badge: 'Kebenaran Teknik PBB',
-        weightPct: 50,
-        description: 'Menilai presisi, ketepatan urutan aba-aba & gerakan PBB berpedoman pada Perpang TNI No. 57 & 58 Th 2018 (Rasio 1:1 Peleton / Bobot 50%, nilai 50 s.d. 90 genap).',
+        id: 'juri1',
+        roleKey: 'dewan_juri_1',
+        title: 'Dewan Juri 1',
+        shortTitle: 'Juri 1',
+        badge: 'Dewan Juri 1',
         defaultNameSD: 'Mayor (Mar) Bambang S., S.E.',
         defaultNameSMP: 'Mayor Inf. Supriyadi, M.M.',
     },
     kekompakan: {
-        id: 'kekompakan',
-        roleKey: 'juri_kekompakan',
-        title: 'Juri 2: Kekompakan Peleton',
-        shortTitle: 'Juri 2 (Kekompakan)',
-        badge: 'Kekompakan Peleton',
-        weightPct: 50,
-        description: 'Menilai keseragaman langkah, kelurusan saf/banjar, irama, tempo, serta harmonisasi gerakan peleton (Rasio 1:1 Peleton / Bobot 50%, nilai 50 s.d. 90 genap).',
-        defaultNameSD: 'Kapten Kav. Hendra Wijaya',
-        defaultNameSMP: 'Kapten Arh. Agus Prasetyo',
-    },
-    komandan: {
-        id: 'komandan',
-        roleKey: 'juri_komandan',
-        title: 'Juri 3: Komandan Peleton (Danton)',
-        shortTitle: 'Juri 3 (Danton)',
-        badge: 'Komandan Peleton',
-        weightPct: 100,
-        description: 'Menilai penguasaan materi (35%), kualitas & intonasi vokal IKIT (25%), sikap & pelaporan (20%), serta penguasaan medan (20%).',
+        id: 'juri2',
+        roleKey: 'dewan_juri_2',
+        title: 'Dewan Juri 2',
+        shortTitle: 'Juri 2',
+        badge: 'Dewan Juri 2',
         defaultNameSD: 'AKP Tri Wibowo, S.H.',
         defaultNameSMP: 'AKP Danang Kusuma, S.I.K.',
+    },
+    komandan: {
+        id: 'juri3',
+        roleKey: 'dewan_juri_3',
+        title: 'Dewan Juri 3',
+        shortTitle: 'Juri 3',
+        badge: 'Dewan Juri 3',
+        defaultNameSD: 'Kapten Kav. Hendra Wijaya',
+        defaultNameSMP: 'Kapten Arh. Agus Prasetyo',
     }
 };
 
 export const JURY_POSTS = {
     pos1: {
         id: 'pos1',
-        title: 'Juri 1: Kebenaran Teknik Gerakan PBB',
-        shortTitle: 'Juri 1 (Teknik PBB)',
-        badge: 'Kebenaran Teknik',
+        title: 'Dewan Juri 1',
+        shortTitle: 'Juri 1',
+        badge: 'Dewan Juri 1 (TNI)',
         defaultName: 'Mayor (Mar) Bambang S., S.E.',
-        type: 'teknik',
-        aspects: [
-            { id: 'materi', label: 'Rubrik Kebenaran Teknik Gerakan PBB (Rasio 1:1)', weight: 50 },
-        ],
+        type: 'juri1',
     },
     pos2: {
         id: 'pos2',
-        title: 'Juri 2: Kekompakan Gerakan Peleton',
-        shortTitle: 'Juri 2 (Kekompakan)',
-        badge: 'Kekompakan Peleton',
-        defaultName: 'Kapten Kav. Hendra Wijaya',
-        type: 'kekompakan',
-        aspects: [
-            { id: 'keseragaman', label: 'Keseragaman Langkah & Kelurusan Saf/Banjar', weight: 25 },
-            { id: 'iramaTempo', label: 'Irama, Tempo, & Harmonisasi Pasukan', weight: 25 },
-        ],
+        title: 'Dewan Juri 2',
+        shortTitle: 'Juri 2',
+        badge: 'Dewan Juri 2 (POLRI)',
+        defaultName: 'AKP Tri Wibowo, S.H.',
+        type: 'juri2',
     },
     pos3: {
         id: 'pos3',
-        title: 'Juri 3: Komandan Peleton (Danton)',
-        shortTitle: 'Juri 3 (Danton)',
-        badge: 'Dewan Juri Danton',
-        defaultName: 'AKP Tri Wibowo, S.H.',
-        type: 'danton',
-        aspects: [
-            { id: 'penguasaanMateri', label: 'Penguasaan Materi Aba-Aba (35%)', weight: 35 },
-            { id: 'kualitasSuara', label: 'Kualitas & Artikulasi Suara IKIT (25%)', weight: 25 },
-            { id: 'sikapPelaporan', label: 'Sikap Tampang & Pelaporan (20%)', weight: 20 },
-            { id: 'penguasaanMedan', label: 'Penguasaan Medan Lomba (20%)', weight: 20 },
-        ],
+        title: 'Dewan Juri 3',
+        shortTitle: 'Juri 3',
+        badge: 'Dewan Juri 3 (Profesional)',
+        defaultName: 'Kapten Kav. Hendra Wijaya',
+        type: 'juri3',
     },
 };
 
