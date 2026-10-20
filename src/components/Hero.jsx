@@ -122,9 +122,9 @@ export default function Hero() {
         {/* Ornamental Milad Graphic Motif di Latar Belakang Kanan Atas (Khusus Desktop lg ke Atas) */}
         <div className="hidden lg:block absolute -top-14 lg:-top-24 -right-14 lg:-right-24 w-[560px] lg:w-[680px] pointer-events-none select-none">
           <img
-            src="/logo-milad.svg"
+            src="/logo-milad-red.svg"
             alt=""
-            className="w-full h-auto object-contain opacity-20 filter drop-shadow-md"
+            className="w-full h-auto object-contain opacity-10 filter drop-shadow-md"
             loading="eager"
             decoding="async"
           />
@@ -268,9 +268,9 @@ export default function Hero() {
               aria-hidden="true"
             >
               <img
-                src="/logo-milad.svg"
+                src="/logo-milad-red.svg"
                 alt=""
-                className="w-full h-auto object-contain opacity-25 filter drop-shadow-md"
+                className="w-full h-auto object-contain opacity-10 filter drop-shadow-md"
                 loading="eager"
                 decoding="async"
               />
