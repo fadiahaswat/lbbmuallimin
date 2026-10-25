@@ -1,150 +1,130 @@
-// Offline synth: military snare cadence + electronic cinematic beat + SFX, synced to timeline.js
+// v2 audio: dry acoustic marching snare cadence + minimal sub-bass pulse + tactile UI SFX.
+// Fully synced to timeline.js. No pads, brass, lasers or big cinematic hits.
 import fs from 'fs';
 const T = (await import('./timeline.js')).default;
 const SR = 44100, N = Math.floor(T.dur * SR);
 const mk = () => new Float32Array(N);
-const bus = { drums: [mk(), mk()], bass: [mk(), mk()], music: [mk(), mk()], fx: [mk(), mk()], send: mk() };
-let seed = 12345;
+const bus = { snare: [mk(), mk()], sub: [mk(), mk()], fx: [mk(), mk()] };
+let seed = 2027;
 const rnd = () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
 const nz = () => rnd() * 2 - 1;
-const lpCoef = fc => 1 - Math.exp(-2 * Math.PI * fc / SR);
-const note = n => 440 * Math.pow(2, (n - 69) / 12);
 
-function put(b, start, s, gain = 1, pan = 0, send = 0) {
+function put(b, start, s, gain = 1, pan = 0) {
   const i0 = Math.floor(start * SR), gl = gain * Math.cos((pan + 1) * Math.PI / 4), gr = gain * Math.sin((pan + 1) * Math.PI / 4);
-  for (let i = 0; i < s.length; i++) { const k = i0 + i; if (k < 0 || k >= N) continue; b[0][k] += s[i] * gl; b[1][k] += s[i] * gr; if (send) bus.send[k] += s[i] * send * gain; }
+  for (let i = 0; i < s.length; i++) { const k = i0 + i; if (k < 0 || k >= N) continue; b[0][k] += s[i] * gl; b[1][k] += s[i] * gr; }
 }
 const gen = (dur, fn) => { const n = Math.floor(dur * SR), o = new Float32Array(n); for (let i = 0; i < n; i++) o[i] = fn(i / SR, i); return o; };
-
-const kick = () => { let ph = 0; return gen(.45, (t) => { ph += 2 * Math.PI * (42 + 120 * Math.exp(-t * 28)) / SR; return Math.tanh(1.6 * Math.sin(ph)) * Math.exp(-t * 7) + (t < .004 ? nz() * .5 : 0); }); };
-const snare = (v = 1) => { let p = 0, p2 = 0; return gen(.22, (t) => { const x = nz(), hp = x - p; p = x; const hp2 = hp - p2; p2 = hp; return (hp * .55 * Math.exp(-t * 22) + hp2 * .25 * Math.exp(-t * 11) + Math.sin(2 * Math.PI * 190 * t) * .45 * Math.exp(-t * 32)) * v; }); };
-const rim = (v = 1) => gen(.06, t => (Math.sin(2 * Math.PI * 1700 * t) * .3 + nz() * .3) * Math.exp(-t * 90) * v);
-const clap = (v = 1) => { let p = 0; return gen(.3, t => { const x = nz(), hp = x - p; p = x; const e = Math.exp(-t * 14) * (1 + .8 * Math.sin(t * 190) * Math.exp(-t * 60)); return hp * .5 * e * v; }); };
-const hat = (open, v = 1) => { let p = 0, p2 = 0; return gen(open ? .25 : .05, t => { const x = nz(), hp = x - p; p = x; const h2 = hp - p2; p2 = hp; return h2 * .5 * Math.exp(-t * (open ? 16 : 70)) * v; }); };
-const crash = (dur = 1.6, v = 1) => { let p = 0, p2 = 0; return gen(dur, t => { const x = nz(), hp = x - p; p = x; const h2 = hp - p2; p2 = hp; return h2 * .5 * Math.exp(-t * 2.8) * v; }); };
-const impact = () => { let ph = 0; return gen(1.4, t => { ph += 2 * Math.PI * (34 + 40 * Math.exp(-t * 6)) / SR; return Math.sin(ph) * Math.exp(-t * 2.8) * .9; }); };
-const tick = (f, v = 1) => gen(.05, t => (Math.sin(2 * Math.PI * f * t) + .4 * Math.sin(2 * Math.PI * f * 2.01 * t)) * Math.exp(-t * 90) * v);
-const bell = (f, v = 1, d = .9) => gen(d, t => (Math.sin(2 * Math.PI * f * t) + .5 * Math.sin(2 * Math.PI * f * 2.76 * t) + .3 * Math.sin(2 * Math.PI * f * 5.4 * t)) * Math.exp(-t * (5 / d * 1.4)) * v * .5);
-function whoosh(dur, up, v = 1) {
-  let lo = 0, bd = 0; const n = Math.floor(dur * SR), o = new Float32Array(n);
-  for (let i = 0; i < n; i++) {
-    const p = i / n, q = up ? p : 1 - p, fc = 220 * Math.pow(26, q), f = 2 * Math.sin(Math.PI * Math.min(fc, 9000) / SR);
-    const x = nz(), hi = x - lo - .35 * bd; bd += f * hi; lo += f * bd;
-    const env = up ? Math.pow(p, 1.6) : Math.pow(1 - p, 1.6); o[i] = bd * env * v * 1.4;
-  } return o;
-}
-function riser(dur, v = 1) { let ph = 0; const w = whoosh(dur, true, v * .6); for (let i = 0; i < w.length; i++) { const p = i / w.length; ph += 2 * Math.PI * (180 + 900 * p * p) / SR; w[i] += Math.sin(ph) * p * p * .12 * v; } return w; }
-function brass(freqs, dur, v = 1) {
-  const n = Math.floor((dur + .25) * SR), o = new Float32Array(n);
-  freqs.forEach(f => [-.006, 0, .006].forEach(dt => {
-    const ff = f * (1 + dt); let y1 = 0, y2 = 0, ph = Math.random();
-    for (let i = 0; i < n; i++) {
-      const t = i / SR, att = Math.min(1, t / .035), rel = t > dur ? Math.exp(-(t - dur) * 14) : 1, ex = Math.exp(-t * 2.2) * .5 + .5;
-      const fc = 500 + 3200 * Math.exp(-t * 7) + 600, a = lpCoef(fc); ph += ff / SR; ph -= Math.floor(ph);
-      const x = (ph * 2 - 1) + .3 * Math.sin(2 * Math.PI * ph * 2); y1 += a * (x - y1); y2 += a * (y1 - y2);
-      o[i] += y2 * att * rel * ex * .11 * v / Math.sqrt(freqs.length);
-    }
-  })); return o;
-}
-function pad(freqs, dur, v = 1) {
-  const n = Math.floor(dur * SR), o = new Float32Array(n);
-  freqs.forEach(f => { let y = 0, ph = 0; for (let i = 0; i < n; i++) { const t = i / SR; ph += f * (1 + .002 * Math.sin(t * 4)) / SR; ph -= Math.floor(ph); y += lpCoef(900) * ((ph * 2 - 1) - y); o[i] += y * Math.min(1, t / .3) * Math.min(1, (dur - t) / .3) * .07 * v; } }); return o;
-}
-function bassNote(f, dur, v = 1) {
-  let y = 0, ph = 0, ph2 = 0; return gen(dur, (t) => { ph += f / SR; ph -= Math.floor(ph); ph2 += f / 2 / SR; y += lpCoef(320 + 700 * Math.exp(-t * 14)) * ((ph * 2 - 1) - y); return (y * .7 + Math.sin(2 * Math.PI * ph2) * .5) * Math.min(1, t / .005) * Math.exp(-t * 3) * v * .8; });
-}
-function pluck(f, v = 1) { let y = 0, ph = 0; return gen(.22, t => { ph += f / SR; ph -= Math.floor(ph); y += lpCoef(300 + 5000 * Math.exp(-t * 24)) * ((ph * 2 - 1) - y); return y * Math.exp(-t * 14) * v * .5; }); }
-function laser(a, b, up) {
-  let ph = 0; return gen(b - a, (t) => { const p = t / (b - a), q = up ? 1 - p : p, f = 900 + 2600 * q + 60 * Math.sin(t * 60); ph += 2 * Math.PI * f / SR; return (Math.sin(ph + 1.5 * Math.sin(ph * 2.01)) * .5) * Math.min(1, t / .02) * Math.min(1, (b - a - t) / .05); });
+// RBJ biquad
+function biquad(type, f, Q = 0.707) {
+  const w = 2 * Math.PI * f / SR, a = Math.sin(w) / (2 * Q), c = Math.cos(w); let b0, b1, b2, a0, a1, a2;
+  if (type === 'lp') { b0 = (1 - c) / 2; b1 = 1 - c; b2 = b0; }
+  if (type === 'hp') { b0 = (1 + c) / 2; b1 = -(1 + c); b2 = b0; }
+  if (type === 'bp') { b0 = a; b1 = 0; b2 = -a; }
+  a0 = 1 + a; a1 = -2 * c; a2 = 1 - a;
+  let x1 = 0, x2 = 0, y1 = 0, y2 = 0;
+  return x => { const y = (b0 * x + b1 * x1 + b2 * x2 - a1 * y1 - a2 * y2) / a0; x2 = x1; x1 = x; y2 = y1; y1 = y; return y; };
 }
 
-const bar = 2, chords = [[62, 65, 69], [58, 62, 65], [65, 69, 72], [60, 64, 67]], roots = [38, 34, 41, 36];
-const chordAt = t => Math.floor(t / bar) % 4;
-const duck = [];
-const kickTimes = []; for (let t = 0; t < T.dur - .4; t += T.beat) kickTimes.push(t);
-const K = kick(); kickTimes.forEach(t => put(bus.drums, t, K, .95, 0));
+/* ---------- instruments ---------- */
+// dry acoustic field snare: tuned shell + wire buzz + stick transient
+function snare(v = 1) {
+  const hp = biquad('hp', 1800), bp = biquad('bp', 5200, 0.6), lp = biquad('lp', 11000);
+  let p1 = 0, p2 = 0; const tone = 0.9 + 0.2 * rnd();
+  return gen(0.32, t => {
+    const f1 = (185 + 70 * Math.exp(-t * 90)) * tone; p1 += 2 * Math.PI * f1 / SR; p2 += 2 * Math.PI * 332 * tone / SR;
+    const body = Math.sin(p1) * Math.exp(-t * 26) * 0.55 + Math.sin(p2) * Math.exp(-t * 40) * 0.22;
+    const n = nz(), wires = lp(bp(hp(n)) * 1.6 + hp(n) * 0.25) * Math.exp(-t * (13 + (1 - v) * 10));
+    const stick = t < 0.0025 ? nz() * 0.9 : 0;
+    return (body * (0.6 + 0.4 * v) + wires * 1.1 + stick * v) * v;
+  });
+}
+const SN = []; for (let i = 0; i < 24; i++) SN.push(snare(1));   // pre-rendered variations (velocity by gain)
+const snareAt = (t, v, pan = 0) => put(bus.snare, t, SN[Math.floor(rnd() * SN.length)], v * (0.85 + 0.15 * rnd()), pan + (rnd() - .5) * .1);
+const ghostAt = (t, v) => put(bus.snare, t, snare(Math.max(.15, v)), v * .7, (rnd() - .5) * .2);
+function hitAt(t, v = 1, flam = true) { if (flam) ghostAt(t - 0.018, .3 * v); snareAt(t, v); }
+function rollTo(tb, dur = 0.5, v0 = .2, v1 = .85) {
+  const n = Math.round(dur / 0.03125); for (let i = 0; i < n; i++) { const p = i / n; ghostAt(tb - dur + i * 0.03125 + (rnd() - .5) * .003, v0 + (v1 - v0) * p * p); }
+}
+// sub-bass pulse
+function sub(v = 1, len = 0.7) { let ph = 0; return gen(len, t => { ph += 2 * Math.PI * (44 + 16 * Math.exp(-t * 30)) / SR; return Math.sin(ph) * Math.min(1, t / 0.006) * Math.exp(-t * 5.2) * v; }); }
+const subAt = (t, v = 1, len) => put(bus.sub, t, sub(1, len), v);
+// tactile UI
+function shutter(v = 1) {
+  const hpA = biquad('hp', 2500), hpB = biquad('hp', 3200); let ph = 0;
+  return gen(0.12, t => {
+    let s = 0;
+    if (t < 0.008) s += hpA(nz()) * Math.exp(-t * 500) * 1.1;
+    if (t > 0.046 && t < 0.056) s += hpB(nz()) * Math.exp(-(t - 0.046) * 600) * 0.8;
+    ph += 2 * Math.PI * 140 / SR; s += Math.sin(ph) * Math.exp(-t * 90) * 0.35 * (t < 0.04 ? 1 : 0);
+    return s * v;
+  });
+}
+function paper(dur = 0.24, v = 1) { const bp = biquad('bp', 2600, 0.7), lp = biquad('lp', 6000); return gen(dur, t => { const p = t / dur; return lp(bp(nz())) * Math.pow(Math.sin(Math.PI * p), 1.5) * (1 - p * .4) * v * 2.2; }); }
+function tick(f = 2300, v = 1) { return gen(0.03, t => (Math.sin(2 * Math.PI * f * t) * .8 + Math.sin(2 * Math.PI * f * 2.02 * t) * .2) * Math.exp(-t * 260) * v); }
 
-// hook: ticking rim ramp + riser + snare roll into 2.0
-put(bus.fx, 0, riser(2.0, 1), .5, 0, .1);
-for (let t = 0; t < 1.5; t += .25) put(bus.drums, t, rim(.5 + t * .3), .5, (t * 4 % 2 ? .3 : -.3));
-for (let i = 0; i < 24; i++) { const t = 1.5 + i * (.5 / 24); put(bus.drums, t, snare(.35 + .65 * i / 24), .7, 0, .05); }
-
-// grooves from the first cut
-const cad = [.9, 0, .4, .5, .8, 0, .4, .5, .9, 0, .4, .5, .8, .4, .6, .7];
-for (let b = 1; b < T.dur / bar; b++) {
-  const t0 = b * bar, ci = chordAt(t0);
+/* ---------- arrangement ---------- */
+// HOOK (0–2.5): word hits with sub, roll into the first mask cut
+T.hook.words.forEach((t, i) => { hitAt(t, .85 + i * .05); subAt(t, .8); });
+snareAt(T.hook.dot, .45);
+rollTo(2.5, 0.5, .15, .8);
+// IDENT (2.5–5): sparse — accent on the cut, sub on each beat 1 & 3, light ghosts
+hitAt(2.5, 1); subAt(2.5, 1, 1.0);
+[3.5, 4.0].forEach(t => subAt(t, .45));
+[3.0, 3.5, 4.0].forEach(t => ghostAt(t + .25, .22));
+rollTo(5.0, 0.5, .15, .8);
+// MAIN CADENCE (5–35): 2-bar street beat at 120 BPM, 16ths
+const PAT = [1, 0, .28, .28, .7, 0, .3, 0, .9, 0, .28, .28, .7, .3, .5, .3];
+const FILL = [.8, .3, .5, .3, .9, .4, .6, .4, 1, .45, .65, .45, .8, .5, .7, .55];
+for (let bar = 0; bar < 15; bar++) {
+  const t0 = 5 + bar * 2, nextCut = T.cuts.find(c => c > t0 && c <= t0 + 2.0001);
   for (let s = 0; s < 16; s++) {
-    const t = t0 + s * .125; if (t >= T.dur - .4) break;
-    if (cad[s]) put(bus.drums, t, snare(cad[s] * .8), .6, (s % 2 ? .25 : -.25), .08);
-    if (s % 4 === 2) put(bus.drums, t, hat(true, .5), .35, .3);
-    else put(bus.drums, t, hat(false, .35 + (s % 2) * .2), .3, -.2);
-    if (s === 4 || s === 12) put(bus.drums, t, clap(.8), .5, 0, .15);
-    if (s % 2 === 0) put(bus.bass, t, bassNote(note(roots[ci] + (s % 8 === 6 ? 12 : 0)), .22, s % 4 === 0 ? 1 : .75), .8, 0);
-    if (t0 >= 5 && s % 2 === 1) { const ch = chords[ci], nn = ch[(s >> 1) % 3] + 24 + ((s >> 3) % 2 ? 12 : 0); put(bus.music, t, pluck(note(nn), .8), .22, (s % 4 === 1 ? -.5 : .5), .2); }
+    const t = t0 + s * 0.125;
+    if (nextCut && t >= nextCut - 0.5) continue;                 // leave room for the pre-cut roll
+    const v = (bar % 4 === 3 && s >= 8 ? FILL : PAT)[s]; if (!v) continue;
+    if (s === 0 || s === 8) hitAt(t, v, true); else if (v >= .6) snareAt(t, v, s % 2 ? .15 : -.15); else ghostAt(t, v);
   }
-  put(bus.music, t0, pad(chords[ci].map(n => note(n)), bar + .1, 1), 1, 0, .2);
+  for (let b = 0; b < 4; b += 2) subAt(t0 + b * 0.5, T.cuts.includes(t0 + b * .5) ? 1 : .6);
+  if (nextCut) rollTo(nextCut, 0.5, .18, .85);
 }
-// pre-wipe snare rolls and risers + whoosh sweeps
-T.wipes.forEach(tb => {
-  for (let i = 0; i < 16; i++) { const t = tb - .5 + i * (.5 / 16) - .02; put(bus.drums, t, snare(.3 + .7 * i / 16), .6, 0, .05); }
-  put(bus.fx, tb - .45, whoosh(.5, true, 1), .55, -.2, .15); put(bus.fx, tb, whoosh(.45, false, .8), .45, .3, .15);
-  put(bus.fx, tb - .02, crash(1.0, .8), .3, 0, .1);
-});
-// accent hits: boom + brass stab + short whoosh
-T.hits.forEach(([t, s]) => {
-  const ci = chordAt(t), ch = chords[ci], big = s >= 3;
-  put(bus.fx, t, impact(), .35 + .2 * s, 0, .1);
-  put(bus.music, t, brass(ch.map(n => note(n)).concat(big ? ch.map(n => note(n + 12)) : []), big ? .9 : (s === 2 ? .3 : .18), .6 + s * .25), .8, 0, .25);
-  if (big) put(bus.fx, t, crash(2.2, 1), .45, 0, .2);
-  if (!T.cuts.includes(t) && t >= .3) put(bus.fx, t - .28, whoosh(.3, true, .8), .4, (Math.round(t * 10) % 2 ? .5 : -.5));
-});
-// counters / ticks
-T.tickTimes(T.Q36.n, T.Q36.t0, T.Q36.d).forEach(({ t, v }) => put(bus.fx, t, tick(900 + v * 28, .9), .3, 0, .05));
-T.tickTimes(T.Q18.n, T.Q18.t0, T.Q18.d).forEach(({ t, v }) => put(bus.fx, t, tick(1500 + v * 40, .8), .26, 0, .05));
-T.tickTimes(T.J100.n, T.J100.t0, T.J100.d).forEach(({ t, v }) => { if (v % 2 === 0) put(bus.fx, t, tick(1800 + v * 8, .7), .2, 0, .05); });
-for (let i = 0; i < 22; i++) put(bus.fx, T.sq.inti0 + i * T.sq.step + T.sq.land * .9, tick(700 + i * 55, .9), .25, (i % 3 - 1) * .4, .05);
-T.sq.cad.forEach(t => put(bus.fx, t + T.sq.land * .9, tick(520, 1), .3, 0, .1));
-put(bus.fx, T.sq.danton + T.sq.land * .9, bell(1568, .8, .6), .3, 0, .3);
-// judging bleeps
-const pent = [74, 77, 79, 81, 84, 86];
-for (let t = 16.4, i = 0; t < 19; t += .125, i++) put(bus.fx, t, tick(note(pent[Math.floor(R(i) * 6)] + 12), .6), .12, (i % 2 ? .6 : -.6), .3);
-function R(i) { const s = Math.sin(i * 127.1 + 311.7) * 43758.5453; return s - Math.floor(s); }
-// trophy sparkle + fanfare
-[86, 89, 93, 98].forEach((n, i) => put(bus.fx, 19.4 + i * .08, bell(note(n), .8, 1.2), .3, (i - 1.5) * .4, .5));
-[[62, 0], [65, .14], [69, .28], [74, .42]].forEach(([n, d]) => put(bus.music, 24.9 + d, brass([note(n), note(n + 12)], n === 74 ? 1.0 : .13, 1), .9, 0, .3));
-put(bus.fx, 25.4, crash(2, 1), .35, 0, .2);
-// price dings
-[26.3, 27.1].forEach(t => { put(bus.fx, t + .05, bell(2093, .9, .7), .35, 0, .3); put(bus.fx, t + .1, bell(3136, .6, .5), .3, 0, .3); });
-[0, .1, .2].forEach((d, i) => put(bus.fx, T.stamp + d, bell(note(81 + i * 4), 1, 1.4), .35, 0, .5));
-// laser scans
-T.scan.passes.forEach(([a, b], i) => put(bus.fx, a, laser(a, b, i % 2 === 1), .22, i % 2 ? .4 : -.4, .25));
-[0, .1, .2, .3].forEach((d, i) => put(bus.fx, T.scan.lock + d, bell(note(74 + [0, 4, 7, 12][i]), 1, 1.8), .35, (i - 1.5) * .4, .6));
-put(bus.music, T.scan.lock, brass([note(50), note(57), note(62), note(65), note(69), note(74)], 1.6, 1.1), .9, 0, .35);
+T.cuts.slice(1).forEach(c => hitAt(c, 1));
+// CTA (35–40): cadence drops out — accent, then sub pulse and a single closing rimshot
+subAt(35, 1.1, 1.2);
+[36, 37, 38].forEach(t => subAt(t, .4));
+ghostAt(37.5, .25); ghostAt(38.5, .25);
+hitAt(39.0, .9); subAt(39.0, .9, 1.0);
 
-// reverb on send bus (stereo comb/allpass)
-function reverb(src, delays, fb) {
-  const out = new Float32Array(N);
-  delays.forEach(d => { const buf = new Float32Array(d); let idx = 0, damp = 0; for (let i = 0; i < N; i++) { const y = buf[idx]; damp += .4 * (y - damp); buf[idx] = src[i] + damp * fb; out[i] += y; idx = (idx + 1) % d; } });
-  [225, 556].forEach(d => { const buf = new Float32Array(d); let idx = 0; for (let i = 0; i < N; i++) { const y = buf[idx], x = out[i] - .5 * y; buf[idx] = x; out[i] = y + .5 * x; idx = (idx + 1) % d; } });
-  return out;
-}
-const revL = reverb(bus.send, [1557, 1617, 1491, 1422, 1277, 1356], .84), revR = reverb(bus.send, [1580, 1640, 1514, 1445, 1300, 1379], .84);
+/* ---------- tactile SFX ---------- */
+T.shutters.forEach((t, i) => put(bus.fx, t - 0.005, shutter(i === T.shutters.length - 1 ? 1 : .8), .55, (i % 2 ? .25 : -.25)));
+T.slides.forEach((t, i) => put(bus.fx, t - 0.04, paper(0.26, 1), .35, (i % 2 ? .3 : -.3)));
+// odometer ticks
+T.tickTimes(36, T.quota.Q36.t0, T.quota.Q36.d).forEach(({ t, v }) => put(bus.fx, t, tick(2000 + v * 12, .8), .16, 0));
+T.tickTimes(18, T.quota.Q18.t0, T.quota.Q18.d).forEach(({ t, v }) => { put(bus.fx, t, tick(2200, .7), .12, -.3); put(bus.fx, t + .01, tick(2250, .7), .12, .3); });
+T.tickTimes(100, T.juri.pct.t0, T.juri.pct.d).forEach(({ t, v }) => { if (v % 4 === 0) put(bus.fx, t, tick(2600, .6), .1, 0); });
+// formation snaps (muted digital ticks, panned by column)
+T.snaps.forEach((t, i) => put(bus.fx, t, tick(i === 0 ? 1500 : 1900 + (i % 3) * 120, 1), .22, i === 0 ? 0 : ((i - 1) % 3 - 1) * .45));
+T.cadSnaps.forEach((t, i) => put(bus.fx, t, tick(1300, 1), .2, (i - 1) * .45));
+T.cellTicks.forEach((t, i) => put(bus.fx, t, tick(2400 + (i % 4) * 100, .8), .14, ((i % 4) - 1.5) * .25));
+T.rowTicks.forEach((t, i) => put(bus.fx, t, tick(1700, .8), .15, (i % 2 ? .2 : -.2)));
+for (let r = 0; r < 10; r++) put(bus.fx, T.cta.qr[0] + r * (T.cta.qr[1] - T.cta.qr[0]) / 10, tick(2100 + r * 30, .7), .12, 0);
 
-// sidechain duck on bass+music, then master
-const L = new Float32Array(N), Rr = new Float32Array(N);
-const duckEnv = new Float32Array(N).fill(1);
-kickTimes.forEach(t => { const i0 = Math.floor(t * SR); for (let i = 0; i < SR * .35 && i0 + i < N; i++) duckEnv[i0 + i] = Math.min(duckEnv[i0 + i], 1 - .55 * Math.exp(-i / SR * 9)); });
+/* ---------- mix ---------- */
+// tiny dry room on the snare bus only (early reflections)
+const ER = [[0.0113, .16], [0.0171, .12], [0.0237, .09], [0.0311, .06]];
+const room = [mk(), mk()];
+for (let ch = 0; ch < 2; ch++) { const lp = biquad('lp', 5000); for (let i = 0; i < N; i++) { let s = 0; ER.forEach(([d, g], k) => { const j = i - Math.floor((d + (ch ? .0013 * k : 0)) * SR); if (j >= 0) s += bus.snare[ch][j] * g; }); room[ch][i] = lp(s); } }
+const subLP = [biquad('lp', 120), biquad('lp', 120)];
+const out = [mk(), mk()];
 for (let i = 0; i < N; i++) {
-  const t = i / SR;
-  let l = bus.drums[0][i] + bus.fx[0][i] + (bus.bass[0][i] * 1.1 + bus.music[0][i]) * duckEnv[i] + revL[i] * .35;
-  let r = bus.drums[1][i] + bus.fx[1][i] + (bus.bass[1][i] * 1.1 + bus.music[1][i]) * duckEnv[i] + revR[i] * .35;
-  const fade = Math.min(1, Math.max(0, (T.dur - t) / .6)), fin = Math.min(1, t / .02);
-  L[i] = Math.tanh(l * .75) * fade * fin; Rr[i] = Math.tanh(r * .75) * fade * fin;
+  const t = i / SR, fade = Math.min(1, Math.max(0, (T.dur - t) / 0.5)), fin = Math.min(1, t / 0.01);
+  for (let ch = 0; ch < 2; ch++) {
+    const x = bus.snare[ch][i] * .9 + room[ch][i] + subLP[ch](bus.sub[ch][i]) * 1.25 + bus.fx[ch][i];
+    out[ch][i] = Math.tanh(x * .4) * fade * fin;
+  }
 }
-let peak = 0; for (let i = 0; i < N; i++) peak = Math.max(peak, Math.abs(L[i]), Math.abs(Rr[i]));
+let peak = 0; for (let i = 0; i < N; i++) peak = Math.max(peak, Math.abs(out[0][i]), Math.abs(out[1][i]));
 const g = .89 / peak, buf = Buffer.alloc(44 + N * 4);
 buf.write('RIFF', 0); buf.writeUInt32LE(36 + N * 4, 4); buf.write('WAVEfmt ', 8); buf.writeUInt32LE(16, 16); buf.writeUInt16LE(1, 20); buf.writeUInt16LE(2, 22);
 buf.writeUInt32LE(SR, 24); buf.writeUInt32LE(SR * 4, 28); buf.writeUInt16LE(4, 32); buf.writeUInt16LE(16, 34); buf.write('data', 36); buf.writeUInt32LE(N * 4, 40);
-for (let i = 0; i < N; i++) { buf.writeInt16LE(Math.round(L[i] * g * 32767), 44 + i * 4); buf.writeInt16LE(Math.round(Rr[i] * g * 32767), 46 + i * 4); }
+for (let i = 0; i < N; i++) { buf.writeInt16LE(Math.round(out[0][i] * g * 32767), 44 + i * 4); buf.writeInt16LE(Math.round(out[1][i] * g * 32767), 46 + i * 4); }
 fs.writeFileSync(new URL('./audio.wav', import.meta.url), buf);
-console.log('audio.wav written, peak before norm', peak.toFixed(2));
+console.log('audio.wav written:', T.dur + 's', 'peak before norm', peak.toFixed(2));

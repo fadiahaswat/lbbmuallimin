@@ -43,3 +43,11 @@ if (preview) {
   ff.stdin.end(); await new Promise(r => ff.on('close', r));
 }
 await browser.close();
+
+// mux video + audio.wav -> final deliverable
+if (!preview && fs.existsSync(path.join(dir, 'audio.wav'))) {
+  const final = path.join(dir, 'LBB_Muallimin_2027_Promo_v2.mp4');
+  const mx = spawn(ffmpegPath, ['-y', '-i', path.join(dir, 'video_silent.mp4'), '-i', path.join(dir, 'audio.wav'), '-c:v', 'copy', '-c:a', 'aac', '-b:a', '192k', '-shortest', '-movflags', '+faststart', final], { stdio: 'inherit' });
+  await new Promise(r => mx.on('close', r));
+  console.log('wrote', final);
+}
