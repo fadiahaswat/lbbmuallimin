@@ -99,7 +99,7 @@ export function calculateDynamicTrialSchedule(allTeams = [], masterSchedule = {}
 export const STORAGE_KEYS = {
   TEAMS: 'lbb_muallimin_teams_v5',
   SCORES: 'lbb_muallimin_scores_v5',
-  SETTINGS: 'lbb_muallimin_settings_v9',
+  SETTINGS: 'lbb_muallimin_settings_v10',
   ROLE: 'lbb_muallimin_active_role_v3',
   ACTIVE_VIEW: 'lbb_muallimin_active_view_v1',
   CURRENT_TEAM_ID: 'lbb_muallimin_current_team_id_v5',

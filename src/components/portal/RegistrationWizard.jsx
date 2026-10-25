@@ -10,7 +10,7 @@ import {
   Clock
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
-import { PAYMENT, CONTACT, EVENT } from '../../config.js';
+import { PAYMENT, CONTACT, EVENT, DOWNLOADS } from '../../config.js';
 import logoImg from '../../assets/logo-tonti.png';
 import titleLogoImg from '../../assets/title-logo.png';
 
@@ -670,7 +670,7 @@ export default function RegistrationWizard({ isOpen, onClose }) {
                 Kembali ke Beranda
               </button>
               <a
-                href="https://drive.google.com/file/d/1wxLlEIRVEzeMi2Qr0OAJCpqoKZXz-4vh/view?usp=sharing"
+                href={DOWNLOADS?.[0]?.url || "https://drive.google.com/file/d/1OUJP3WBU_xr4KGQ2yVGv0npCvfuLlDWP/view?usp=sharing"}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white hover:bg-slate-100 border border-slate-300 text-slate-800 font-bold text-xs uppercase tracking-wider transition-all cursor-pointer"

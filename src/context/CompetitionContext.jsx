@@ -27,8 +27,10 @@ import {
   normalizeTeamData,
   isLocalhostEnvironment,
   isRegistrationDateReached,
-  canFillRegistrationForm
+  canFillRegistrationForm,
+  getChestNumberByLot
 } from './competitionHelpers.js';
+import { generate36DummyTeams } from '../data/dummyTestingData.js';
 import { useFieldTimer } from './useFieldTimer.js';
 import { createScoringActions } from './scoringActions.js';
 import { createStagingActions } from './stagingActions.js';
@@ -150,10 +152,19 @@ export function CompetitionProvider({ children }) {
   const [teams, setTeams] = useState(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.TEAMS);
-      const list = saved ? JSON.parse(saved) : INITIAL_TEAMS;
+      const list = saved ? JSON.parse(saved) : null;
+      if (Array.isArray(list) && list.length >= 36) {
+        return list.map(normalizeTeamData);
+      }
+      // Khusus Localhost: Otomatis sediakan 36 peleton dummy lengkap (18 SD + 18 SMP) jika belum lengkap
+      if (isLocalhostEnvironment()) {
+        const dummy36 = generate36DummyTeams();
+        safeSetItem(STORAGE_KEYS.TEAMS, JSON.stringify(dummy36));
+        return dummy36.map(normalizeTeamData);
+      }
       return Array.isArray(list) ? list.map(normalizeTeamData) : INITIAL_TEAMS;
     } catch {
-      return INITIAL_TEAMS;
+      return isLocalhostEnvironment() ? generate36DummyTeams().map(normalizeTeamData) : INITIAL_TEAMS;
     }
   });
 
@@ -178,8 +189,8 @@ export function CompetitionProvider({ children }) {
         ...parsed,
         // Selalu pastikan jadwal master resmi mengacu ke INITIAL_SETTINGS / EVENT resmi
         eventDates: {
-          ...INITIAL_SETTINGS.eventDates,
           ...(parsed.eventDates || {}),
+          ...INITIAL_SETTINGS.eventDates,
         }
       };
     } catch {
@@ -307,7 +318,8 @@ export function CompetitionProvider({ children }) {
     saveJuryPostScore,
     saveDraftScore,
     verifyScore,
-    finalizeScore
+    finalizeScore,
+    unlockScore,
   } = useMemo(() => createScoringActions({ setScores, currentUser }), [currentUser]);
 
   function getAggregatedScore(teamId) {
@@ -386,7 +398,9 @@ export function CompetitionProvider({ children }) {
       const { teams: sheetTeams, scores: sheetScores, settings: sheetSettings, staging: sheetStaging } = res.data;
 
       if (Array.isArray(sheetTeams)) {
-        if (sheetTeams.length === 0) {
+        if (isLocalhostEnvironment()) {
+          console.info('[CompetitionContext] Localhost Mode: Data asli Google Sheet tidak dimuat ke localhost agar terisolasi.');
+        } else if (sheetTeams.length === 0) {
           setTeams([]);
         } else {
           setTeams(prev => {
@@ -1243,6 +1257,96 @@ export function CompetitionProvider({ children }) {
     localStorage.removeItem(STORAGE_KEYS.CURRENT_TEAM_ID);
   }
 
+  // Khusus Localhost & Testing Superadmin: Muat 36 Peleton Dummy Lengkap (18 SD + 18 SMP)
+  function loadDummyTestingTeams() {
+    const fresh36 = generate36DummyTeams();
+    const normalized = fresh36.map(normalizeTeamData);
+    setTeams(normalized);
+    safeSetItem(STORAGE_KEYS.TEAMS, JSON.stringify(normalized));
+    setScores({});
+    setStaging({});
+    localStorage.removeItem(STORAGE_KEYS.SCORES);
+    localStorage.removeItem(STORAGE_KEYS.STAGING);
+    return { success: true, count: fresh36.length };
+  }
+
+  // Khusus Testing TM: Undi otomatis acak semua nomor dada 18 SD & 18 SMP
+  function randomizeAllLotNumbers() {
+    const shuffle = arr => [...arr].sort(() => Math.random() - 0.5);
+    const sdLots = shuffle(Array.from({ length: 18 }, (_, i) => i + 1));
+    const smpLots = shuffle(Array.from({ length: 18 }, (_, i) => i + 1));
+
+    let sdIdx = 0;
+    let smpIdx = 0;
+    const nowIso = new Date().toISOString();
+
+    setTeams(prev =>
+      prev.map(team => {
+        const lot = team.jenjang === 'SD' ? sdLots[sdIdx++] : smpLots[smpIdx++];
+        const chest = lot ? getChestNumberByLot(team.jenjang, lot) : '';
+        return {
+          ...team,
+          lotNumber: lot || null,
+          chestNumber: chest || '',
+          status: lot ? 'drawn' : team.status,
+          drawTime: nowIso,
+        };
+      })
+    );
+  }
+
+  // Undi acak hanya untuk jenjang tertentu ('SD' atau 'SMP')
+  function randomizeJenjangLotNumbers(targetJenjang) {
+    const shuffle = arr => [...arr].sort(() => Math.random() - 0.5);
+    const lots = shuffle(Array.from({ length: 18 }, (_, i) => i + 1));
+    let lotIdx = 0;
+    const nowIso = new Date().toISOString();
+
+    setTeams(prev =>
+      prev.map(team => {
+        if (team.jenjang !== targetJenjang) return team;
+        const lot = lots[lotIdx++];
+        const chest = lot ? getChestNumberByLot(team.jenjang, lot) : '';
+        return {
+          ...team,
+          lotNumber: lot || null,
+          chestNumber: chest || '',
+          status: lot ? 'drawn' : team.status,
+          drawTime: nowIso,
+        };
+      })
+    );
+  }
+
+  // Reset undian hanya untuk jenjang tertentu ('SD' atau 'SMP')
+  function clearJenjangLotNumbers(targetJenjang) {
+    setTeams(prev =>
+      prev.map(team => {
+        if (team.jenjang !== targetJenjang) return team;
+        return {
+          ...team,
+          lotNumber: null,
+          chestNumber: '',
+          status: 'verified',
+          drawTime: null,
+        };
+      })
+    );
+  }
+
+  // Khusus Testing TM: Reset semua undian nomor dada ke belum diundi
+  function clearAllLotNumbers() {
+    setTeams(prev =>
+      prev.map(team => ({
+        ...team,
+        lotNumber: null,
+        chestNumber: '',
+        status: 'verified',
+        drawTime: null,
+      }))
+    );
+  }
+
   function openModal(modalName, data = null) {
     setModalData(data);
     if (modalName === 'regWizard') {
@@ -1374,6 +1478,7 @@ export function CompetitionProvider({ children }) {
       saveDraftScore,
       verifyScore,
       finalizeScore,
+      unlockScore,
       getAggregatedScore,
 
       staging,
@@ -1391,6 +1496,11 @@ export function CompetitionProvider({ children }) {
 
       updateSettings,
       resetToSeedData,
+      loadDummyTestingTeams,
+      randomizeAllLotNumbers,
+      randomizeJenjangLotNumbers,
+      clearJenjangLotNumbers,
+      clearAllLotNumbers,
       exportTeamsCSV,
 
       isGoogleSheetConfigured: isGoogleSheetConfigured(),
@@ -1416,6 +1526,9 @@ export function CompetitionProvider({ children }) {
         return results;
       },
       pullFromGoogleSheet: async () => {
+        if (isLocalhostEnvironment()) {
+          return { success: false, reason: 'localhost_protection', message: 'Mode Localhost Aktif: Penarikan data asli dicegah demi keamanan & isolasi data dummy.' };
+        }
         const isStaffOrJury = ['admin', 'juri', 'superadmin', 'penginput', 'verifikator', 'finalisator'].includes(role);
         const allowScoresSync = isStaffOrJury || Boolean(settings.announcementPublished);
         const res = await fetchAllDataFromSheet(allowScoresSync);

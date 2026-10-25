@@ -47,28 +47,30 @@ export default function TeamSelectorModal({
               type="button"
               onClick={() => setSidebarJenjang('ALL')}
               className={`flex-1 py-2 rounded-lg font-bold transition-all cursor-pointer ${
-                sidebarJenjang === 'ALL' ? 'bg-emerald-600 text-white font-black shadow-xs' : 'text-slate-600 hover:text-slate-900'
+                sidebarJenjang === 'ALL' ? 'bg-slate-900 text-white font-black shadow-xs' : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               Semua ({allTeamsCount})
             </button>
             <button
               type="button"
-              onClick={() => setSidebarJenjang('SMP')}
-              className={`flex-1 py-2 rounded-lg font-bold transition-all cursor-pointer ${
-                sidebarJenjang === 'SMP' ? 'bg-emerald-600 text-white font-black shadow-xs' : 'text-slate-600 hover:text-slate-900'
+              onClick={() => setSidebarJenjang('SD')}
+              className={`flex-1 py-2 rounded-lg font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                sidebarJenjang === 'SD' ? 'bg-red-600 text-white font-black shadow-xs' : 'text-slate-600 hover:text-red-700 hover:bg-red-50'
               }`}
             >
-              SMP/MTs ({smpTeamsCount})
+              <span className={`w-2 h-2 rounded-full ${sidebarJenjang === 'SD' ? 'bg-white' : 'bg-red-500'}`} />
+              <span>SD / MI ({sdTeamsCount})</span>
             </button>
             <button
               type="button"
-              onClick={() => setSidebarJenjang('SD')}
-              className={`flex-1 py-2 rounded-lg font-bold transition-all cursor-pointer ${
-                sidebarJenjang === 'SD' ? 'bg-emerald-600 text-white font-black shadow-xs' : 'text-slate-600 hover:text-slate-900'
+              onClick={() => setSidebarJenjang('SMP')}
+              className={`flex-1 py-2 rounded-lg font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                sidebarJenjang === 'SMP' ? 'bg-blue-600 text-white font-black shadow-xs' : 'text-slate-600 hover:text-blue-700 hover:bg-blue-50'
               }`}
             >
-              SD/MI ({sdTeamsCount})
+              <span className={`w-2 h-2 rounded-full ${sidebarJenjang === 'SMP' ? 'bg-white' : 'bg-blue-500'}`} />
+              <span>SMP / MTs ({smpTeamsCount})</span>
             </button>
           </div>
 
@@ -124,10 +126,14 @@ export default function TeamSelectorModal({
                     {/* Nomor Dada Badge */}
                     <div className={`w-12 h-12 rounded-xl font-mono font-black text-sm flex flex-col items-center justify-center shrink-0 border ${
                       isSelected
-                        ? 'bg-emerald-600 text-white border-emerald-400 shadow-xs'
-                        : 'bg-slate-100 text-slate-900 border-slate-200'
+                        ? team.jenjang === 'SD'
+                          ? 'bg-red-600 text-white border-red-500 shadow-xs'
+                          : 'bg-blue-600 text-white border-blue-500 shadow-xs'
+                        : team.jenjang === 'SD'
+                          ? 'bg-red-50 text-red-900 border-red-200'
+                          : 'bg-blue-50 text-blue-900 border-blue-200'
                     }`}>
-                      <span className="text-[8px] text-slate-500 font-sans font-bold leading-none">DADA</span>
+                      <span className="text-[8px] opacity-70 font-sans font-bold leading-none">DADA</span>
                       <span className="leading-tight text-base">{team.chestNumber ? String(team.chestNumber).padStart(2, '0') : '-'}</span>
                     </div>
 
@@ -137,33 +143,40 @@ export default function TeamSelectorModal({
                         <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200 shrink-0">
                           Undi: #{team.lotNumber ? String(team.lotNumber).padStart(2, '0') : '-'}
                         </span>
+                        <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-md border shrink-0 ${
+                          team.jenjang === 'SD'
+                            ? 'bg-red-50 text-red-700 border-red-200'
+                            : 'bg-blue-50 text-blue-700 border-blue-200'
+                        }`}>
+                          {team.jenjang === 'SD' ? 'SD / MI' : 'SMP / MTs'}
+                        </span>
                       </div>
                       <span className="text-xs text-slate-500 truncate block mt-0.5">
-                        {team.platoonName} • Jenjang: <strong className="text-slate-700">{team.jenjang}</strong> • Danton: <span className="text-slate-800 font-semibold">{team.roster?.danton?.name || team.dantonName || '-'}</span>
+                        Danton: <span className="text-slate-800 font-semibold">{team.roster?.danton?.name || team.dantonName || '-'}</span>
                       </span>
                       
                       {/* Live Juri Status Badges */}
                       <div className="flex items-center gap-1.5 mt-2">
                         <span
                           className={`text-[10px] font-bold px-2 py-0.5 rounded flex items-center gap-1 ${
-                            hasJuri1 ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'bg-slate-100 text-slate-400 border border-slate-200'
+                            hasJuri1 ? 'bg-slate-900 text-white border border-slate-900' : 'bg-slate-100 text-slate-400 border border-slate-200'
                           }`}
                         >
-                          J1 Teknik {hasJuri1 ? '✓' : '•'}
+                          Juri 1 {team.jenjang} {hasJuri1 ? '✓' : '•'}
                         </span>
                         <span
                           className={`text-[10px] font-bold px-2 py-0.5 rounded flex items-center gap-1 ${
-                            hasJuri2 ? 'bg-purple-50 text-purple-700 border border-purple-200' : 'bg-slate-100 text-slate-400 border border-slate-200'
+                            hasJuri2 ? 'bg-slate-900 text-white border border-slate-900' : 'bg-slate-100 text-slate-400 border border-slate-200'
                           }`}
                         >
-                          J2 Kekompakan {hasJuri2 ? '✓' : '•'}
+                          Juri 2 {team.jenjang} {hasJuri2 ? '✓' : '•'}
                         </span>
                         <span
                           className={`text-[10px] font-bold px-2 py-0.5 rounded flex items-center gap-1 ${
-                            hasJuri3 ? 'bg-red-50 text-red-700 border border-red-200' : 'bg-slate-100 text-slate-400 border border-slate-200'
+                            hasJuri3 ? 'bg-slate-900 text-white border border-slate-900' : 'bg-slate-100 text-slate-400 border border-slate-200'
                           }`}
                         >
-                          J3 Danton {hasJuri3 ? '✓' : '•'}
+                          Juri 3 {team.jenjang} {hasJuri3 ? '✓' : '•'}
                         </span>
                       </div>
                     </div>

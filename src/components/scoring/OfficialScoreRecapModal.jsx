@@ -555,38 +555,50 @@ export default function OfficialScoreRecapModal({ isOpen, onClose, initialJenjan
             Sesuai Petunjuk Teknis Penilaian LBB Mu'allimin 2027 Bab A Angka 3, 4, 5, dan 6: Nilai Murni merupakan akumulasi total skor dari 3 Dewan Juri sebelum dikurangi penalti lapangan. Penentuan Juara Peleton didasarkan pada perolehan Nilai Akhir Peleton tertinggi, sedangkan Juara Komandan didasarkan pada Nilai Akhir Komandan tertinggi. Keputusan Dewan Juri bersifat mutlak dan tidak dapat diganggu gugat.
           </div>
 
-          {/* Official Signatures Grid: 3 Dewan Juri (TNI, POLRI, Profesional) */}
+          {/* Official Signatures Grid: 3 Dewan Juri Resmi */}
           <div className="grid grid-cols-3 gap-6 text-center text-xs pt-4 print:pt-2 border-t border-slate-200">
             {/* Juri 1 */}
             <div className="flex flex-col items-center justify-between h-36">
               <div>
-                <p className="font-bold text-slate-800">Dewan Juri 1</p>
-                <p className="text-[11px] text-slate-500">Unsur TNI / Militer</p>
+                <p className="font-bold text-slate-800">
+                  {selectedJenjang === 'SMP' ? 'Juri 1 SMP' : selectedJenjang === 'SD' ? 'Juri 1 SD' : 'Dewan Juri 1'}
+                </p>
+                <p className="text-[11px] text-slate-500">Dewan Juri Penilai</p>
               </div>
               <div className="w-40 border-b border-slate-900 pb-1">
-                <span className="font-bold text-slate-900">{JURY_POSTS.pos1.defaultName}</span>
+                <span className="font-bold text-slate-900">
+                  {selectedJenjang === 'SMP' ? 'Juri 1 SMP' : selectedJenjang === 'SD' ? 'Juri 1 SD' : 'Juri 1'}
+                </span>
               </div>
             </div>
 
             {/* Juri 2 */}
             <div className="flex flex-col items-center justify-between h-36">
               <div>
-                <p className="font-bold text-slate-800">Dewan Juri 2</p>
-                <p className="text-[11px] text-slate-500">Unsur POLRI / Kepolisian</p>
+                <p className="font-bold text-slate-800">
+                  {selectedJenjang === 'SMP' ? 'Juri 2 SMP' : selectedJenjang === 'SD' ? 'Juri 2 SD' : 'Dewan Juri 2'}
+                </p>
+                <p className="text-[11px] text-slate-500">Dewan Juri Penilai</p>
               </div>
               <div className="w-40 border-b border-slate-900 pb-1">
-                <span className="font-bold text-slate-900">{JURY_POSTS.pos2.defaultName}</span>
+                <span className="font-bold text-slate-900">
+                  {selectedJenjang === 'SMP' ? 'Juri 2 SMP' : selectedJenjang === 'SD' ? 'Juri 2 SD' : 'Juri 2'}
+                </span>
               </div>
             </div>
 
             {/* Juri 3 */}
             <div className="flex flex-col items-center justify-between h-36">
               <div>
-                <p className="font-bold text-slate-800">Dewan Juri 3</p>
-                <p className="text-[11px] text-slate-500">Unsur Profesional Purna</p>
+                <p className="font-bold text-slate-800">
+                  {selectedJenjang === 'SMP' ? 'Juri 3 SMP' : selectedJenjang === 'SD' ? 'Juri 3 SD' : 'Dewan Juri 3'}
+                </p>
+                <p className="text-[11px] text-slate-500">Dewan Juri Penilai</p>
               </div>
               <div className="w-40 border-b border-slate-900 pb-1">
-                <span className="font-bold text-slate-900">{JURY_POSTS.pos3.defaultName}</span>
+                <span className="font-bold text-slate-900">
+                  {selectedJenjang === 'SMP' ? 'Juri 3 SMP' : selectedJenjang === 'SD' ? 'Juri 3 SD' : 'Juri 3'}
+                </span>
               </div>
             </div>
           </div>
@@ -603,7 +615,7 @@ export default function OfficialScoreRecapModal({ isOpen, onClose, initialJenjan
             <div className="flex flex-col items-center justify-between h-32">
               <p className="font-bold text-slate-800">Menyetujui,<br />Koordinator Dewan Juri</p>
               <div className="w-48 border-b border-slate-900 pb-1">
-                <span className="font-bold text-slate-900">{JURY_POSTS.pos1.defaultName}</span>
+                <span className="font-bold text-slate-900">Koordinator Dewan Juri</span>
               </div>
             </div>
           </div>

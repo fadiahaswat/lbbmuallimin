@@ -45,6 +45,7 @@ export default function SimpaskorSidebarLayout({
   rightActions = null,
   onSelectMenu = null,
   hideHeader = false,
+  fullWidth = false,
   children
 }) {
   const {
@@ -675,8 +676,8 @@ export default function SimpaskorSidebarLayout({
         </div>
 
         {/* Content Body */}
-        <main className={`p-3 sm:p-6 lg:p-8 w-full mx-auto transition-all duration-300 ${
-          isCollapsed ? 'max-w-[1700px]' : 'max-w-7xl'
+        <main className={`p-3 sm:p-5 lg:p-6 w-full mx-auto transition-all duration-300 ${
+          fullWidth ? 'max-w-none' : (isCollapsed ? 'max-w-[1700px]' : 'max-w-7xl')
         }`}>
           {children}
         </main>

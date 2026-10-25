@@ -1,5 +1,5 @@
 import React from 'react';
-import { Lock, Printer, Save, CheckCircle2 } from 'lucide-react';
+import { Lock, Unlock, Printer, Save, CheckCircle2 } from 'lucide-react';
 
 export default function ScrutineeringActionsBar({
   existingScore,
@@ -9,8 +9,11 @@ export default function ScrutineeringActionsBar({
   handleSaveDraft,
   handleVerifyScoreAction,
   handleFinalizeScoreAction,
+  handleUnlockScoreAction,
   setIsRecapModalOpen
 }) {
+  const isSuperadmin = currentUser?.role === 'superadmin';
+
   return (
     <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-5">
       {/* Header & Status Stepper Visual */}
@@ -82,17 +85,42 @@ export default function ScrutineeringActionsBar({
                 </div>
                 <p className="text-[11px] text-slate-600">
                   Disahkan oleh {existingScore.finalizedBy || 'Ketua Dewan Juri'}. Nilai masuk ke rekapitulasi resmi.
+                  {isSuperadmin && <span className="font-bold text-amber-700 ml-1">(Otoritas Superadmin: Anda dapat membuka kunci kembali)</span>}
                 </p>
               </div>
             </div>
-            <button
-              type="button"
-              onClick={() => setIsRecapModalOpen(true)}
-              className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-xs cursor-pointer"
-            >
-              <Printer className="w-4 h-4" />
-              <span>Lihat Berita Acara</span>
-            </button>
+            <div className="flex items-center gap-2">
+              {isSuperadmin && (
+                <>
+                  <button
+                    type="button"
+                    onClick={handleUnlockScoreAction}
+                    className="px-3.5 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-xs cursor-pointer"
+                    title="Buka kembali kunci nilai agar dapat diedit atau diperbaiki"
+                  >
+                    <Unlock className="w-4 h-4" />
+                    <span>Buka Kunci Nilai</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleSaveDraft}
+                    className="px-3.5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-xs cursor-pointer"
+                    title="Simpan perubahan langsung dengan hak Superadmin"
+                  >
+                    <Save className="w-4 h-4" />
+                    <span>Simpan Perubahan</span>
+                  </button>
+                </>
+              )}
+              <button
+                type="button"
+                onClick={() => setIsRecapModalOpen(true)}
+                className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-xs cursor-pointer"
+              >
+                <Printer className="w-4 h-4" />
+                <span>Lihat Berita Acara</span>
+              </button>
+            </div>
           </div>
         ) : (
           /* KONDISI 2: BELUM DIKUNCI - TAMPILKAN LANGKAH SESUAI STATUS */

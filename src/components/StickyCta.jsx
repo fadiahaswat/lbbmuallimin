@@ -1,7 +1,7 @@
 import React from 'react';
 import { FileText, ArrowRight, MessageCircle } from 'lucide-react';
 import { useCompetition } from '../context/CompetitionContext.jsx';
-import { CONTACT } from '../config.js';
+import { CONTACT, DOWNLOADS } from '../config.js';
 
 export default function StickyCta({ isVisible }) {
   const { openModal, canAccessRegistration } = useCompetition();
@@ -35,7 +35,7 @@ export default function StickyCta({ isVisible }) {
 
       {/* Tombol Juknis */}
       <a
-        href="https://drive.google.com/file/d/1wxLlEIRVEzeMi2Qr0OAJCpqoKZXz-4vh/view?usp=sharing"
+        href={DOWNLOADS[0]?.url || "https://drive.google.com/file/d/1OUJP3WBU_xr4KGQ2yVGv0npCvfuLlDWP/view?usp=sharing"}
         target="_blank"
         rel="noopener noreferrer"
         className="flex-1 min-w-0 flex items-center justify-center gap-1.5 h-10 px-3 text-xs sm:text-sm font-bold text-slate-700 bg-slate-100 hover:bg-slate-200/80 active:bg-slate-200 border border-slate-200/80 rounded-xl active:scale-95 transition-all whitespace-nowrap text-center"

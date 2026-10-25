@@ -94,6 +94,10 @@ export default function SuperadminPanel() {
     settings,
     updateSettings,
     resetToSeedData,
+    loadDummyTestingTeams,
+    randomizeAllLotNumbers,
+    clearAllLotNumbers,
+    isLocalhost,
     exportTeamsCSV,
     setActiveView,
     isGoogleSheetConfigured,
@@ -1116,6 +1120,98 @@ export default function SuperadminPanel() {
             </button>
           </div>
         </div>
+
+        {/* PANEL TESTING KHUSUS LOCALHOST & SUPERADMIN */}
+        {isLocalhost && (
+          <div className="bg-gradient-to-br from-emerald-950 via-slate-900 to-teal-950 rounded-3xl p-6 sm:p-7 text-white shadow-xl border border-emerald-500/30 space-y-5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-emerald-800/60 pb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 flex items-center justify-center font-bold">
+                  <Database className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-black uppercase tracking-wider text-emerald-400">
+                      Khusus Localhost & Superadmin
+                    </span>
+                    <span className="text-[10px] bg-emerald-500/20 text-emerald-200 border border-emerald-400/40 px-2 py-0.5 rounded-full font-mono font-bold">
+                      Isolasi Data Aman
+                    </span>
+                  </div>
+                  <h3 className="text-lg font-black text-white uppercase tracking-tight mt-0.5">
+                    Generator Data Dummy Testing (18 SD + 18 SMP)
+                  </h3>
+                </div>
+              </div>
+              <div className="text-xs text-slate-300 bg-black/40 px-3.5 py-1.5 rounded-xl border border-white/10 font-mono">
+                {teams.filter(t => t.jenjang === 'SD').length} SD • {teams.filter(t => t.jenjang === 'SMP').length} SMP (Total {teams.length} Peleton)
+              </div>
+            </div>
+
+            <p className="text-xs text-slate-300 leading-relaxed">
+              Data pendaftar asli dari Google Sheet <strong>diblokir secara otomatis di localhost</strong> untuk menjaga kerahasiaan data riil. Anda dapat menggunakan tombol di bawah untuk menguji simulasi alur <strong>Technical Meeting (Undian Nomor Dada)</strong>, <strong>Jadwal Uji Coba Lapangan</strong>, dan <strong>Penjurian (E-Scoring)</strong>.
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+              <button
+                type="button"
+                onClick={() => {
+                  if (confirm('Muat ulang 36 tim dummy (18 SD + 18 SMP) lengkap dengan Danton, 21 Pasukan, berkas sah, dan siap diuji?')) {
+                    const res = loadDummyTestingTeams();
+                    showToast(`Berhasil memuat ${res.count} tim dummy (18 SD + 18 SMP) lengkap!`);
+                  }
+                }}
+                className="p-4 bg-emerald-600/30 hover:bg-emerald-600/50 border border-emerald-400/40 rounded-2xl text-left transition-all active:scale-95 cursor-pointer group"
+              >
+                <RefreshCw className="w-5 h-5 text-emerald-400 mb-2 group-hover:rotate-180 transition-transform" />
+                <span className="font-black text-xs uppercase tracking-wider text-white block">
+                  1. Muat Ulang 36 Tim Dummy
+                </span>
+                <span className="text-[11px] text-slate-300 mt-1 block">
+                  18 SD + 18 SMP lengkap biodata, danton, pasukan, dan berkas sah (belum diundi).
+                </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  if (confirm('Acak dan tetapkan nomor undian (1-18) serta nomor dada otomatis untuk semua 36 tim? (Simulasi TM selesai)')) {
+                    randomizeAllLotNumbers();
+                    showToast('Semua 36 peleton berhasil diundi nomor dada secara otomatis!');
+                  }
+                }}
+                className="p-4 bg-blue-600/30 hover:bg-blue-600/50 border border-blue-400/40 rounded-2xl text-left transition-all active:scale-95 cursor-pointer group"
+              >
+                <Award className="w-5 h-5 text-blue-400 mb-2 group-hover:scale-110 transition-transform" />
+                <span className="font-black text-xs uppercase tracking-wider text-white block">
+                  2. Undi Acak Semua No. Dada
+                </span>
+                <span className="text-[11px] text-slate-300 mt-1 block">
+                  Simulasikan hasil undian TM selesai seketika agar siap dinilai di E-Scoring.
+                </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  if (confirm('Kosongkan kembali nomor undian semua tim agar bisa ditest undian satu per satu di menu Technical Meeting?')) {
+                    clearAllLotNumbers();
+                    showToast('Nomor undian direset ke kosong (siap diundi di Technical Meeting)!');
+                  }
+                }}
+                className="p-4 bg-amber-600/30 hover:bg-amber-600/50 border border-amber-400/40 rounded-2xl text-left transition-all active:scale-95 cursor-pointer group"
+              >
+                <RotateCcw className="w-5 h-5 text-amber-400 mb-2 group-hover:-rotate-90 transition-transform" />
+                <span className="font-black text-xs uppercase tracking-wider text-white block">
+                  3. Reset Nomor Undian TM
+                </span>
+                <span className="text-[11px] text-slate-300 mt-1 block">
+                  Kembalikan ke status "Belum Diundi" untuk menguji proses undian manual di TM.
+                </span>
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Audit Log / Metrics Overview */}
         <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs space-y-3">

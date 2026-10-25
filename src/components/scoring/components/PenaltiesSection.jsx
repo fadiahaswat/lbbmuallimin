@@ -89,7 +89,7 @@ export default function PenaltiesSection({
                 <span className="text-[10px] text-slate-500">Tiap 30 dtk melebih kuota ({selectedTeam?.jenjang === 'SD' ? '8' : '12'} mnt)</span>
               </div>
               <span className="text-[10px] font-bold text-rose-700 bg-rose-50 px-2 py-0.5 rounded-md border border-rose-200 shrink-0">
-                -50 / 30 dtk
+                -20 / 30 dtk
               </span>
             </div>
             <div className="flex items-center gap-2 mt-3">
@@ -229,7 +229,7 @@ export default function PenaltiesSection({
                 <span className="text-[10px] text-slate-500">Setelah peringatan resmi panitia</span>
               </div>
               <span className="text-[10px] font-bold text-rose-700 bg-rose-50 px-2 py-0.5 rounded-md border border-rose-200 shrink-0">
-                -50 / kejadian
+                -75 / kejadian
               </span>
             </div>
             <div className="flex items-center gap-2 mt-3">

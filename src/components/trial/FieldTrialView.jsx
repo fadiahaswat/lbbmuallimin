@@ -1,57 +1,158 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   Compass,
-  Calendar,
   Clock,
   MapPin,
   ExternalLink,
-  ShieldCheck,
-  Users,
   CheckCircle2,
-  AlertTriangle,
-  Info,
-  Flag,
-  Swords,
-  Trophy,
-  ArrowRight,
-  Maximize2,
-  Timer
+  X,
+  Zap,
+  Unlock,
+  FileCheck,
+  AlertCircle
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
 import { EVENT, VENUE } from '../../config.js';
-import { RUNDOWN_DATA } from '../../data/juknisDocsData.js';
+import { formatImageUrl } from '../../services/sheetService.js';
 import SimpaskorSidebarLayout from '../navigation/SimpaskorSidebarLayout.jsx';
+import {
+  generateSmartTrialPlan,
+  TRIAL_TIME_SLOTS,
+  normalizeSchoolName,
+  isTeamWillingToTrial
+} from './trialPlanGenerator.js';
 
 export default function FieldTrialView() {
-  const { teams, currentUser, role, setActiveView } = useCompetition();
-  const [selectedJenjang, setSelectedJenjang] = useState('ALL');
-  const [showParallelTable, setShowParallelTable] = useState(true);
+  const { teams, settings, updateSettings, role, currentUser } = useCompetition();
 
-  // Teams eligible for field trial: registered, verified, drawn
-  const trialTeams = teams.filter(t => ['registered', 'verified', 'drawn'].includes(t.status));
-  const sdTeams = trialTeams.filter(t => t.jenjang === 'SD');
-  const smpTeams = trialTeams.filter(t => t.jenjang === 'SMP');
+  // Role permissions
+  const isStaff = ['admin', 'superadmin'].includes(role) || ['admin', 'superadmin'].includes(currentUser?.role);
+  const isPublished = Boolean(settings?.trialSchedulePublished);
 
-  const filteredTeams = selectedJenjang === 'ALL'
-    ? trialTeams
-    : trialTeams.filter(t => t.jenjang === selectedJenjang);
+  // Interactive Swap & Team Assign state for Panitia
+  const [swapSource, setSwapSource] = useState(null); // { jenjang: 'SD'|'SMP', slotIdx: number, teamId: string }
+  const [teamPickerTarget, setTeamPickerTarget] = useState(null); // { jenjang: 'SD'|'SMP', slotIdx: number }
+  const [showConfirmPublishModal, setShowConfirmPublishModal] = useState(false);
+  const [toastMsg, setToastMsg] = useState('');
 
-  // Generate official schedule slot for each team according to Section B Juknis:
-  // 15 minutes per peleton, running parallel in Arena 1 & Arena 2 starting at 07.00 WIB
-  const getTrialSlot = (team, index) => {
-    const isSD = team.jenjang === 'SD';
-    const teamIndex = isSD ? sdTeams.findIndex(t => t.id === team.id) : smpTeams.findIndex(t => t.id === team.id);
-    const safeIndex = teamIndex >= 0 ? teamIndex : index;
+  const showToast = (msg, duration = 3000) => {
+    setToastMsg(msg);
+    setTimeout(() => setToastMsg(''), duration);
+  };
 
-    const baseMinutes = 7 * 60; // 07.00 WIB start
-    const startMinutes = baseMinutes + (safeIndex % 18) * 15;
-    const startH = String(Math.floor(startMinutes / 60)).padStart(2, '0');
-    const startM = String(startMinutes % 60).padStart(2, '0');
-    const endMinutes = startMinutes + 15;
-    const endH = String(Math.floor(endMinutes / 60)).padStart(2, '0');
-    const endM = String(endMinutes % 60).padStart(2, '0');
+  // Helper map: teamId -> team object
+  const teamsMap = useMemo(() => {
+    const map = new Map();
+    teams.forEach(t => map.set(t.id, t));
+    return map;
+  }, [teams]);
 
-    return `${startH}.${startM} – ${endH}.${endM} WIB`;
+  // Current active plan: MUST ALWAYS BE POPULATED (Never empty 18 nulls by default)
+  const currentPlan = useMemo(() => {
+    const hasValidSd = settings?.trialPlan?.SD?.slots?.some(Boolean);
+    const hasValidSmp = settings?.trialPlan?.SMP?.slots?.some(Boolean);
+
+    if (hasValidSd || hasValidSmp) {
+      return settings.trialPlan;
+    }
+    // Auto-generate plan according to 3 Priorities
+    return generateSmartTrialPlan(teams);
+  }, [settings?.trialPlan, teams]);
+
+  // Priority 1: Declined teams
+  const declinedTeams = useMemo(() => {
+    return teams.filter(t => !isTeamWillingToTrial(t));
+  }, [teams]);
+
+  // Action: Auto Generate Plan based on 3 priorities
+  const handleAutoGeneratePlan = () => {
+    const newPlan = generateSmartTrialPlan(teams);
+    updateSettings({ trialPlan: newPlan });
+    setSwapSource(null);
+    setTeamPickerTarget(null);
+    showToast('⚡ Rencana jadwal berhasil disusun otomatis!');
+  };
+
+  // Action: Confirm Publish
+  const handlePublishSchedule = () => {
+    updateSettings({
+      trialPlan: currentPlan,
+      trialSchedulePublished: true
+    });
+    setShowConfirmPublishModal(false);
+    showToast('📜 Jadwal Uji Coba Lapangan RESMI disahkan!');
+  };
+
+  // Action: Unpublish / Reopen
+  const handleUnpublishSchedule = () => {
+    if (window.confirm('Buka kunci jadwal untuk kembali ke mode DRAFT dan mengedit rencana?')) {
+      updateSettings({ trialSchedulePublished: false });
+      showToast('Jadwal kembali ke status DRAFT.');
+    }
+  };
+
+  // Action: Swap slots
+  const handleSlotClick = (jenjang, slotIdx, currentTeamId) => {
+    if (!isStaff || isPublished) return;
+
+    if (swapSource) {
+      if (swapSource.jenjang === jenjang) {
+        if (swapSource.slotIdx === slotIdx) {
+          setSwapSource(null);
+          return;
+        }
+
+        const nextPlan = JSON.parse(JSON.stringify(currentPlan));
+        const temp = nextPlan[jenjang].slots[slotIdx];
+        nextPlan[jenjang].slots[slotIdx] = nextPlan[jenjang].slots[swapSource.slotIdx];
+        nextPlan[jenjang].slots[swapSource.slotIdx] = temp;
+
+        updateSettings({ trialPlan: nextPlan });
+        setSwapSource(null);
+        showToast(`✓ Berhasil menukar posisi Slot #${swapSource.slotIdx + 1} dengan Slot #${slotIdx + 1}`);
+        return;
+      } else {
+        setSwapSource({ jenjang, slotIdx, teamId: currentTeamId });
+        return;
+      }
+    }
+
+    if (!currentTeamId) {
+      setTeamPickerTarget({ jenjang, slotIdx });
+    } else {
+      setSwapSource({ jenjang, slotIdx, teamId: currentTeamId });
+    }
+  };
+
+  // Action: Remove team from slot
+  const handleRemoveFromSlot = (e, jenjang, slotIdx) => {
+    e.stopPropagation();
+    if (!isStaff || isPublished) return;
+
+    const nextPlan = JSON.parse(JSON.stringify(currentPlan));
+    nextPlan[jenjang].slots[slotIdx] = null;
+    updateSettings({ trialPlan: nextPlan });
+    setSwapSource(null);
+    showToast(`Peleton dicopot dari Slot #${slotIdx + 1}.`);
+  };
+
+  // Action: Assign team to empty slot
+  const handleAssignTeamToSlot = (teamId) => {
+    if (!teamPickerTarget) return;
+    const { jenjang, slotIdx } = teamPickerTarget;
+
+    const nextPlan = JSON.parse(JSON.stringify(currentPlan));
+    nextPlan[jenjang].slots = nextPlan[jenjang].slots.map(id => id === teamId ? null : id);
+    nextPlan[jenjang].slots[slotIdx] = teamId;
+
+    updateSettings({ trialPlan: nextPlan });
+    setTeamPickerTarget(null);
+    showToast(`✓ Peleton berhasil ditempatkan di Slot #${slotIdx + 1}!`);
+  };
+
+  const getUnassignedTeams = (jenjang) => {
+    const assignedIds = new Set(currentPlan[jenjang]?.slots?.filter(Boolean) || []);
+    return teams.filter(t => t.jenjang === jenjang && !assignedIds.has(t.id));
   };
 
   return (
@@ -60,351 +161,583 @@ export default function FieldTrialView() {
       title="Uji Coba Lapangan"
       subtitle="Jadwal gladi adaptasi kontur arena, alur lintasan, & orientasi lapangan LBB 2027"
       rightActions={
-        <a
-          href={VENUE.MAPS_URL || "https://maps.app.goo.gl/fVMgg5xZcwRQ4kN78"}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-md shadow-emerald-950/20 cursor-pointer"
-        >
-          <MapPin className="w-4 h-4" />
-          <span className="hidden sm:inline">Rute Lokasi Arena</span>
-          <ExternalLink className="w-3.5 h-3.5 opacity-80" />
-        </a>
+        <div className="flex items-center gap-2">
+          <a
+            href={VENUE.MAPS_URL || "https://maps.app.goo.gl/fVMgg5xZcwRQ4kN78"}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-xs cursor-pointer"
+          >
+            <MapPin className="w-3.5 h-3.5 text-emerald-400" />
+            <span className="hidden sm:inline">Rute Maps</span>
+            <ExternalLink className="w-3 h-3 opacity-80" />
+          </a>
+        </div>
       }
     >
-      <div className="space-y-6">
+      <div className="space-y-4">
 
-        {/* Hero Banner Uji Coba Lapangan */}
-        <div className="bg-gradient-to-r from-emerald-950 via-slate-900 to-teal-950 text-white rounded-3xl p-6 sm:p-8 shadow-xl border border-emerald-900/40 relative overflow-hidden">
-          <div className="absolute -right-10 -bottom-10 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
-          
-          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div className="space-y-2">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 text-xs font-black uppercase tracking-wider">
-                <Compass className="w-3.5 h-3.5" />
-                <span>Tahap Orientasi & Simulasi Lapangan</span>
-              </div>
-              <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-white">
-                Uji Coba Lapangan & Orientasi Kontur
-              </h1>
-              <p className="text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed">
-                Fasilitas gladi resmi bagi seluruh peleton terdaftar untuk beradaptasi dengan kontur, angin, batas arena, dan akustik aba-aba komandan peleton di Kampus Terpadu Sedayu.
-              </p>
-            </div>
-
-            <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-4 sm:p-5 shrink-0 space-y-2.5">
-              <div className="flex items-center gap-2 text-xs font-bold text-emerald-300">
-                <Calendar className="w-4 h-4" />
-                <span>{EVENT.FIELD_TRIAL_FULL_DATE || 'Sabtu, 16 Januari 2027'}</span>
-              </div>
-              <div className="flex items-center gap-2 text-xs text-slate-200">
-                <Clock className="w-4 h-4 text-emerald-400" />
-                <span>{EVENT.FIELD_TRIAL_TIME_RANGE || '06.30 – 12.00 WIB'}</span>
-              </div>
-              <div className="flex items-center gap-2 text-xs text-slate-300">
-                <MapPin className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span className="truncate max-w-[200px]">{VENUE.NAME}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* 3 Metric Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-slate-100 border border-slate-200 text-slate-700 flex items-center justify-center font-black shrink-0">
-              <Timer className="w-6 h-6" />
-            </div>
-            <div>
-              <span className="text-[11px] font-bold text-slate-500 uppercase block">Durasi Efektif Arena</span>
-              <span className="text-xl font-black text-slate-900 font-mono">15 Menit/Tim</span>
-              <p className="text-[10px] text-slate-400 mt-0.5">8 mnt SD, 12 mnt SMP (+ 5 mnt transisi)</p>
-            </div>
-          </div>
-
-          <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-slate-100 border border-slate-200 text-slate-700 flex items-center justify-center font-black shrink-0">
-              <Swords className="w-6 h-6" />
-            </div>
-            <div>
-              <span className="text-[11px] font-bold text-slate-500 uppercase block">Arena 1 (SD/MI)</span>
-              <span className="text-2xl font-black text-slate-900 font-mono">{sdTeams.length} Tim</span>
-              <p className="text-[10px] text-slate-400 mt-0.5">Lapangan Basket Outdoor (07.00 – 11.30)</p>
-            </div>
-          </div>
-
-          <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-slate-100 border border-slate-200 text-slate-700 flex items-center justify-center font-black shrink-0">
-              <Trophy className="w-6 h-6" />
-            </div>
-            <div>
-              <span className="text-[11px] font-bold text-slate-500 uppercase block">Arena 2 (SMP/MTs)</span>
-              <span className="text-2xl font-black text-slate-900 font-mono">{smpTeams.length} Tim</span>
-              <p className="text-[10px] text-slate-400 mt-0.5">Pelataran Embung (07.00 – 11.30)</p>
-            </div>
-          </div>
-        </div>
-
-        {/* SOP & Ketentuan Gladi Lapangan */}
-        <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
+        {/* ======================================================== */}
+        {/* HEADER TERPADU: JUDUL + STATUS + KONTROL PANITIA         */}
+        {/* ======================================================== */}
+        <div className="bg-white rounded-2xl p-4 border border-slate-200/90 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-amber-50 border border-amber-200 text-amber-700 flex items-center justify-center">
-              <Info className="w-5 h-5" />
+            <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold shrink-0 shadow-2xs text-white ${
+              isPublished ? 'bg-emerald-600' : 'bg-amber-500'
+            }`}>
+              <Compass className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-base font-black text-slate-900 uppercase">
-                Protokol & Ketentuan Orientasi Lapangan
-              </h3>
-              <p className="text-xs text-slate-500">
-                Harap ditaati oleh seluruh pembina, pelatih, komandan peleton, dan anggota pasukan
+              <div className="flex items-center gap-2 flex-wrap">
+                <h1 className="text-base sm:text-lg font-black text-slate-900 uppercase tracking-tight">
+                  Uji Coba Lapangan (UCL)
+                </h1>
+                {/* Status Badge Ringkas */}
+                {isPublished ? (
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-emerald-100 text-emerald-900 border border-emerald-300">
+                    <CheckCircle2 className="w-3 h-3 text-emerald-700" />
+                    <span>Jadwal Resmi Sah</span>
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-amber-100 text-amber-900 border border-amber-300">
+                    <Clock className="w-3 h-3 text-amber-700" />
+                    <span>Rencana (Draft)</span>
+                  </span>
+                )}
+              </div>
+              <p className="text-[11px] text-slate-500 mt-0.5">
+                <span className="font-semibold text-slate-700">{EVENT.FIELD_TRIAL_FULL_DATE || 'Sabtu, 16 Jan 2027'}</span>
+                <span className="mx-1.5">•</span>
+                <span>06.30 – 12.00 WIB</span>
+                <span className="mx-1.5">•</span>
+                <span>{VENUE.NAME}</span>
+                <span className="mx-1.5">•</span>
+                <span className="font-bold text-slate-700">15 Mnt / Tim</span>
               </p>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
-            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-start gap-3">
-              <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
-              <div>
-                <strong className="text-xs font-bold text-slate-900 block">Pakaian Seragam Latihan</strong>
-                <p className="text-[11px] text-slate-600 mt-0.5">
-                  Peserta tidak wajib memakai seragam lomba resmi. Diperkenankan menggunakan seragam olahraga sekolah / pakaian training kontingen yang rapi dan sopan.
-                </p>
-              </div>
-            </div>
+          {/* Tombol Kontrol Panitia Ringkas */}
+          {isStaff && (
+            <div className="flex items-center gap-1.5 self-start sm:self-center shrink-0">
+              {!isPublished ? (
+                <>
+                  <button
+                    type="button"
+                    onClick={handleAutoGeneratePlan}
+                    className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer"
+                    title="Susun ulang rencana otomatis berdasarkan 3 Prioritas (Survei, 1 Sekolah Berdampingan, Hasil TM)"
+                  >
+                    <Zap className="w-3.5 h-3.5 text-amber-600" />
+                    <span>Susun Ulang</span>
+                  </button>
 
-            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-start gap-3">
-              <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
-              <div>
-                <strong className="text-xs font-bold text-slate-900 block">Waktu Kedatangan Kontingen</strong>
-                <p className="text-[11px] text-slate-600 mt-0.5">
-                  Peleton wajib tiba di area Kampus Terpadu Sedayu paling lambat 20 menit sebelum jadwal estimasi sesi uji coba masing-masing dimulai.
-                </p>
-              </div>
-            </div>
-
-            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-start gap-3">
-              <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
-              <div>
-                <strong className="text-xs font-bold text-slate-900 block">Simulasi Masuk & Keluar Arena</strong>
-                <p className="text-[11px] text-slate-600 mt-0.5">
-                  Manfaatkan waktu efektif uji coba (8 menit SD / 12 menit SMP) untuk mengenali titik DP (Daerah Persiapan), jalur lintas langkah tegap masuk arena, dan arah hadap peleton terhadap meja dewan juri.
-                </p>
-              </div>
-            </div>
-
-            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-start gap-3">
-              <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
-              <div>
-                <strong className="text-xs font-bold text-slate-900 block">Kebersihan Ruang Transit Gladi</strong>
-                <p className="text-[11px] text-slate-600 mt-0.5">
-                  Setiap kontingen bertanggung jawab penuh atas kebersihan area istirahat / selasar tunggu yang digunakan selama pelaksanaan uji coba berlangsung.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Rundown Resmi Uji Coba: 2 Arena Paralel (Section B Juknis) */}
-        <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="px-2 py-0.5 rounded-md bg-teal-50 text-teal-800 border border-teal-200 text-[10px] font-black uppercase tracking-wider">
-                  Bagian B Juknis
-                </span>
-                <h3 className="text-base font-black text-slate-900 uppercase">
-                  Rundown Uji Coba Lapangan (2 Arena Paralel)
-                </h3>
-              </div>
-              <p className="text-xs text-slate-500 mt-0.5">
-                Sabtu, 16 Januari 2027 • 18 Slot 15 Menit/Peleton di Kampus Terpadu Sedayu
-              </p>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => setShowParallelTable(!showParallelTable)}
-                className="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
-              >
-                <span>{showParallelTable ? 'Tutup Matriks' : 'Buka Matriks Paralel'}</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveView('rundown')}
-                className="px-3.5 py-1.5 rounded-xl bg-teal-700 hover:bg-teal-600 text-white text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
-              >
-                <span>Rundown Lengkap</span>
-                <ExternalLink className="w-3 h-3" />
-              </button>
-            </div>
-          </div>
-
-          {showParallelTable && (
-            <div className="rounded-2xl border border-slate-200 overflow-x-auto">
-              <table className="w-full text-left text-xs">
-                <thead className="bg-slate-900 text-white uppercase text-[10px] tracking-wider">
-                  <tr>
-                    <th className="py-2.5 px-3 text-center w-12">No</th>
-                    <th className="py-2.5 px-4 w-36">Waktu (WIB)</th>
-                    <th className="py-2.5 px-4 bg-red-950/80 text-red-100 border-r border-slate-800">
-                      Arena 1 (SD/MI - Lapangan Basket)
-                    </th>
-                    <th className="py-2.5 px-4 bg-blue-950/80 text-blue-100">
-                      Arena 2 (SMP/MTs - Pelataran Embung)
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 font-sans">
-                  {RUNDOWN_DATA.trial.slots.map((slot, idx) => {
-                    const isSpecial = idx === 0 || idx === RUNDOWN_DATA.trial.slots.length - 1;
-                    return (
-                      <tr key={idx} className={`${isSpecial ? 'bg-slate-50 font-bold' : 'hover:bg-slate-50'} transition-colors`}>
-                        <td className="py-2.5 px-3 text-center font-mono text-slate-400">
-                          {idx === 0 ? '-' : idx === RUNDOWN_DATA.trial.slots.length - 1 ? '-' : idx}
-                        </td>
-                        <td className="py-2.5 px-4 font-bold font-mono text-slate-900 whitespace-nowrap">{slot.time} WIB</td>
-                        <td className="py-2.5 px-4 border-r border-slate-100 text-red-700 font-semibold">{slot.arena1}</td>
-                        <td className="py-2.5 px-4 text-blue-700 font-semibold">{slot.arena2}</td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPublishModal(true)}
+                    className="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black flex items-center gap-1.5 transition-all shadow-xs cursor-pointer"
+                    title="Sahkan rencana jadwal ini dan bagikan ke peserta"
+                  >
+                    <FileCheck className="w-3.5 h-3.5" />
+                    <span>Sahkan Jadwal</span>
+                  </button>
+                </>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleUnpublishSchedule}
+                  className="px-3 py-1.5 rounded-xl bg-white hover:bg-amber-50 text-amber-800 text-xs font-bold border border-amber-300 transition-all flex items-center gap-1.5 shadow-2xs cursor-pointer"
+                  title="Buka kunci kembali untuk merevisi jadwal"
+                >
+                  <Unlock className="w-3.5 h-3.5 text-amber-600" />
+                  <span>Buka Kunci (Revisi)</span>
+                </button>
+              )}
             </div>
           )}
         </div>
 
-        {/* Jadwal Antrean Uji Coba per Peleton */}
-        <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-5">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div>
-              <h3 className="text-base font-black text-slate-900 uppercase">
-                Estimasi Jadwal Sesi Gladi Peleton
-              </h3>
-              <p className="text-xs text-slate-500">
-                Slot waktu alokasi orientasi lapangan per sekolah terverifikasi
-              </p>
-            </div>
+        {/* Hint Swap Sedang Aktif */}
+        {swapSource && (
+          <div className="bg-amber-100 border border-amber-300 p-2.5 rounded-xl flex items-center justify-between text-xs font-bold text-amber-900 shadow-2xs">
+            <span>
+              ⚡ Klik slot lain di tabel untuk menukar posisi <strong>Slot #{swapSource.slotIdx + 1} ({swapSource.jenjang})</strong>.
+            </span>
+            <button
+              type="button"
+              onClick={() => setSwapSource(null)}
+              className="px-2 py-0.5 rounded-lg bg-amber-200 hover:bg-amber-300 text-amber-950 font-bold text-[11px] cursor-pointer"
+            >
+              Batal
+            </button>
+          </div>
+        )}
 
-            {/* Filter Jenjang */}
-            <div className="flex items-center gap-1.5 p-1 bg-slate-100 rounded-xl">
-              {[
-                { id: 'ALL', label: 'Semua Peleton' },
-                { id: 'SD', label: 'SD / MI' },
-                { id: 'SMP', label: 'SMP / MTs' },
-              ].map(f => (
-                <button
-                  key={f.id}
-                  onClick={() => setSelectedJenjang(f.id)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                    selectedJenjang === f.id
-                      ? 'bg-white text-slate-950 shadow-xs'
-                      : 'text-slate-500 hover:text-slate-900'
-                  }`}
-                >
-                  {f.label}
-                </button>
+        {/* Pesan untuk Peserta Saat Status Masih Draft */}
+        {!isStaff && !isPublished && (
+          <div className="bg-amber-50 border border-amber-200 p-3.5 rounded-xl flex items-center gap-2.5 text-xs text-amber-900">
+            <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
+            <span>
+              Rencana jadwal Uji Coba Lapangan sedang disusun oleh panitia. Jadwal resmi akan berlaku setelah disahkan panitia.
+            </span>
+          </div>
+        )}
+
+        {/* ======================================================== */}
+        {/* MATRIKS JADWAL 2 ARENA PARALEL                           */}
+        {/* ======================================================== */}
+        <div className="bg-white rounded-2xl p-4 border border-slate-200 shadow-xs space-y-3">
+          <div className="flex items-center justify-between pb-2 border-b border-slate-100 flex-wrap gap-2">
+            <span className="text-xs font-black uppercase text-slate-800 tracking-tight">
+              Matriks Jadwal 2 Arena Paralel (07.00 – 11.30 WIB)
+            </span>
+            {isStaff && !isPublished && (
+              <span className="text-[11px] text-slate-400 italic">
+                Tip: Klik nama tim untuk menukar posisi slot
+              </span>
+            )}
+          </div>
+
+          {/* Tabel Matriks */}
+          <div className="rounded-xl border border-slate-200 overflow-x-auto">
+            <table className="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr className="uppercase text-[10px] tracking-wider font-black">
+                  <th className="py-2.5 px-3 text-center w-12 bg-slate-900 text-white">Slot</th>
+                  <th className="py-2.5 px-3 w-40 bg-slate-900 text-white">Waktu (WIB) • In / Out</th>
+                  <th className="py-2.5 px-3 bg-red-700 text-white border-r border-red-800">
+                    Arena 1: SD / MI (Lapangan Basket)
+                  </th>
+                  <th className="py-2.5 px-3 bg-blue-700 text-white">
+                    Arena 2: SMP / MTs (Pelataran Embung)
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {TRIAL_TIME_SLOTS.map((slotInfo, slotIdx) => {
+                  const sdTeamId = currentPlan.SD?.slots?.[slotIdx];
+                  const smpTeamId = currentPlan.SMP?.slots?.[slotIdx];
+                  const sdTeam = sdTeamId ? teamsMap.get(sdTeamId) : null;
+                  const smpTeam = smpTeamId ? teamsMap.get(smpTeamId) : null;
+
+                  // Priority 2: Detect twin neighbor from the same school
+                  const isSdTwin = sdTeam && (
+                    (slotIdx > 0 && normalizeSchoolName(teamsMap.get(currentPlan.SD?.slots?.[slotIdx - 1])?.schoolName) === normalizeSchoolName(sdTeam.schoolName)) ||
+                    (slotIdx < 17 && normalizeSchoolName(teamsMap.get(currentPlan.SD?.slots?.[slotIdx + 1])?.schoolName) === normalizeSchoolName(sdTeam.schoolName))
+                  );
+
+                  const isSmpTwin = smpTeam && (
+                    (slotIdx > 0 && normalizeSchoolName(teamsMap.get(currentPlan.SMP?.slots?.[slotIdx - 1])?.schoolName) === normalizeSchoolName(smpTeam.schoolName)) ||
+                    (slotIdx < 17 && normalizeSchoolName(teamsMap.get(currentPlan.SMP?.slots?.[slotIdx + 1])?.schoolName) === normalizeSchoolName(smpTeam.schoolName))
+                  );
+
+                  const isSdSwapSelected = swapSource?.jenjang === 'SD' && swapSource?.slotIdx === slotIdx;
+                  const isSmpSwapSelected = swapSource?.jenjang === 'SMP' && swapSource?.slotIdx === slotIdx;
+
+                  return (
+                    <tr key={slotInfo.index} className="hover:bg-slate-50/70 transition-colors divide-x divide-slate-100">
+                      {/* Slot # */}
+                      <td className="py-2.5 px-3 text-center font-mono font-black text-slate-500 text-xs">
+                        #{String(slotInfo.index).padStart(2, '0')}
+                      </td>
+
+                      {/* Waktu (WIB): Jam Gladi, Check-In Kedatangan, & Check-Out */}
+                      <td className="py-2.5 px-3 whitespace-nowrap">
+                        <div className="font-mono font-black text-slate-900 text-xs">
+                          {slotInfo.time}
+                        </div>
+                        <div className="flex flex-col gap-0.5 mt-1 font-mono text-[9.5px]">
+                          <div className="inline-flex items-center gap-1 text-emerald-800 bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200/80 w-fit">
+                            <span className="text-[8.5px] uppercase font-black text-emerald-600">In / Tiba:</span>
+                            <span className="font-bold">{slotInfo.checkIn || slotInfo.arrival}</span>
+                          </div>
+                          <div className="inline-flex items-center gap-1 text-slate-600 bg-slate-100 px-1.5 py-0.2 rounded border border-slate-200/60 w-fit">
+                            <span className="text-[8.5px] uppercase font-black text-slate-500">Out / Keluar:</span>
+                            <span className="font-bold">{slotInfo.checkOut || '15 Mnt'}</span>
+                          </div>
+                        </div>
+                      </td>
+
+                      {/* Kolom Arena 1 (SD) */}
+                      <td className={`py-1.5 px-2.5 transition-colors ${
+                        isSdSwapSelected ? 'bg-amber-100 ring-2 ring-amber-400' : 'bg-red-50/10'
+                      }`}>
+                        {sdTeam ? (
+                          <div
+                            onClick={() => handleSlotClick('SD', slotIdx, sdTeam.id)}
+                            className={`p-2.5 bg-white rounded-xl border flex items-center justify-between gap-3 shadow-2xs group transition-all ${
+                              isSdSwapSelected
+                                ? 'border-amber-400 ring-2 ring-amber-400 bg-amber-50/50'
+                                : 'border-red-200 hover:border-red-300'
+                            } ${isStaff && !isPublished ? 'cursor-pointer hover:shadow-xs' : ''}`}
+                            title={isStaff && !isPublished ? 'Klik untuk menukar posisi slot' : undefined}
+                          >
+                            <div className="flex items-center gap-3 min-w-0 flex-1">
+                              {/* 1. LOGO SEKOLAH (MENONJOL) */}
+                              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-white border border-slate-200/90 p-1 flex items-center justify-center shrink-0 overflow-hidden shadow-xs">
+                                <img
+                                  src={
+                                    (sdTeam.files?.schoolLogo?.url || sdTeam.file_logo_sekolah || sdTeam.logoUrl)
+                                      ? formatImageUrl(sdTeam.files?.schoolLogo?.url || sdTeam.file_logo_sekolah || sdTeam.logoUrl)
+                                      : `https://ui-avatars.com/api/?name=${encodeURIComponent(sdTeam.schoolName)}&background=dc2626&color=fff&bold=true`
+                                  }
+                                  alt={sdTeam.schoolName}
+                                  className="w-full h-full object-contain"
+                                  onError={(e) => {
+                                    e.target.onerror = null;
+                                    e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(sdTeam.schoolName)}&background=dc2626&color=fff&bold=true`;
+                                  }}
+                                />
+                              </div>
+
+                              {/* 2. NAMA PELETON & NAMA DANTON (MENONJOL) */}
+                              <div className="min-w-0 flex-1">
+                                <div className="flex items-center gap-1.5 flex-wrap">
+                                  <h4 className="font-black text-xs sm:text-[13.5px] text-slate-900 truncate leading-snug" title={sdTeam.schoolName}>
+                                    {sdTeam.schoolName}
+                                  </h4>
+                                  {sdTeam.platoonName && 
+                                   sdTeam.platoonName.trim().toLowerCase() !== sdTeam.schoolName.trim().toLowerCase() && 
+                                   !sdTeam.platoonName.trim().toLowerCase().startsWith(`pleton ${sdTeam.schoolName.trim().toLowerCase()}`) && (
+                                    <span className="text-[11px] font-bold text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded shrink-0">
+                                      {sdTeam.platoonName}
+                                    </span>
+                                  )}
+                                  {sdTeam.lotNumber && (
+                                    <span className="px-1.5 py-0.2 rounded font-mono font-black text-[9px] bg-red-100 text-red-900 border border-red-300 shrink-0">
+                                      TM #{String(sdTeam.lotNumber).padStart(2, '0')}
+                                    </span>
+                                  )}
+                                  {isSdTwin && (
+                                    <span className="px-1.5 py-0.2 rounded text-[9px] font-black bg-blue-100 text-blue-900 border border-blue-200 shrink-0">
+                                      ★ 1 Sekolah
+                                    </span>
+                                  )}
+                                </div>
+
+                                <div className="mt-1 flex items-center">
+                                  <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-bold bg-red-50 text-red-800 border border-red-200/80 truncate max-w-full">
+                                    <span className="text-[9.5px] font-bold uppercase tracking-wider text-red-600 shrink-0">Danton:</span>
+                                    <span className="font-black text-slate-900 truncate">{sdTeam.dantonName || sdTeam.roster?.danton?.name || '-'}</span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            {isStaff && !isPublished && (
+                              <button
+                                type="button"
+                                onClick={(e) => handleRemoveFromSlot(e, 'SD', slotIdx)}
+                                className="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors shrink-0"
+                                title="Copot dari slot"
+                              >
+                                <X className="w-3.5 h-3.5" />
+                              </button>
+                            )}
+                          </div>
+                        ) : (
+                          <div
+                            onClick={() => handleSlotClick('SD', slotIdx, null)}
+                            className={`py-2 px-3 rounded-xl border border-dashed text-center text-slate-400 transition-colors ${
+                              isStaff && !isPublished ? 'cursor-pointer hover:border-red-400 hover:text-red-700 hover:bg-red-50/30' : ''
+                            }`}
+                          >
+                            <span className="text-[11px] font-bold">
+                              {isStaff && !isPublished ? '+ Isi Peleton SD' : '- Kosong -'}
+                            </span>
+                          </div>
+                        )}
+                      </td>
+
+                      {/* Kolom Arena 2 (SMP) */}
+                      <td className={`py-1.5 px-2.5 transition-colors ${
+                        isSmpSwapSelected ? 'bg-amber-100 ring-2 ring-amber-400' : 'bg-blue-50/10'
+                      }`}>
+                        {smpTeam ? (
+                          <div
+                            onClick={() => handleSlotClick('SMP', slotIdx, smpTeam.id)}
+                            className={`p-2.5 bg-white rounded-xl border flex items-center justify-between gap-3 shadow-2xs group transition-all ${
+                              isSmpSwapSelected
+                                ? 'border-amber-400 ring-2 ring-amber-400 bg-amber-50/50'
+                                : 'border-blue-200 hover:border-blue-300'
+                            } ${isStaff && !isPublished ? 'cursor-pointer hover:shadow-xs' : ''}`}
+                            title={isStaff && !isPublished ? 'Klik untuk menukar posisi slot' : undefined}
+                          >
+                            <div className="flex items-center gap-3 min-w-0 flex-1">
+                              {/* 1. LOGO SEKOLAH (MENONJOL) */}
+                              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-white border border-slate-200/90 p-1 flex items-center justify-center shrink-0 overflow-hidden shadow-xs">
+                                <img
+                                  src={
+                                    (smpTeam.files?.schoolLogo?.url || smpTeam.file_logo_sekolah || smpTeam.logoUrl)
+                                      ? formatImageUrl(smpTeam.files?.schoolLogo?.url || smpTeam.file_logo_sekolah || smpTeam.logoUrl)
+                                      : `https://ui-avatars.com/api/?name=${encodeURIComponent(smpTeam.schoolName)}&background=2563eb&color=fff&bold=true`
+                                  }
+                                  alt={smpTeam.schoolName}
+                                  className="w-full h-full object-contain"
+                                  onError={(e) => {
+                                    e.target.onerror = null;
+                                    e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(smpTeam.schoolName)}&background=2563eb&color=fff&bold=true`;
+                                  }}
+                                />
+                              </div>
+
+                              {/* 2. NAMA PELETON & NAMA DANTON (MENONJOL) */}
+                              <div className="min-w-0 flex-1">
+                                <div className="flex items-center gap-1.5 flex-wrap">
+                                  <h4 className="font-black text-xs sm:text-[13.5px] text-slate-900 truncate leading-snug" title={smpTeam.schoolName}>
+                                    {smpTeam.schoolName}
+                                  </h4>
+                                  {smpTeam.platoonName && 
+                                   smpTeam.platoonName.trim().toLowerCase() !== smpTeam.schoolName.trim().toLowerCase() && 
+                                   !smpTeam.platoonName.trim().toLowerCase().startsWith(`pleton ${smpTeam.schoolName.trim().toLowerCase()}`) && (
+                                    <span className="text-[11px] font-bold text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded shrink-0">
+                                      {smpTeam.platoonName}
+                                    </span>
+                                  )}
+                                  {smpTeam.lotNumber && (
+                                    <span className="px-1.5 py-0.2 rounded font-mono font-black text-[9px] bg-blue-100 text-blue-900 border border-blue-300 shrink-0">
+                                      TM #{String(smpTeam.lotNumber).padStart(2, '0')}
+                                    </span>
+                                  )}
+                                  {isSmpTwin && (
+                                    <span className="px-1.5 py-0.2 rounded text-[9px] font-black bg-blue-100 text-blue-900 border border-blue-200 shrink-0">
+                                      ★ 1 Sekolah
+                                    </span>
+                                  )}
+                                </div>
+
+                                <div className="mt-1 flex items-center">
+                                  <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-bold bg-blue-50 text-blue-800 border border-blue-200/80 truncate max-w-full">
+                                    <span className="text-[9.5px] font-bold uppercase tracking-wider text-blue-600 shrink-0">Danton:</span>
+                                    <span className="font-black text-slate-900 truncate">{smpTeam.dantonName || smpTeam.roster?.danton?.name || '-'}</span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            {isStaff && !isPublished && (
+                              <button
+                                type="button"
+                                onClick={(e) => handleRemoveFromSlot(e, 'SMP', slotIdx)}
+                                className="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors shrink-0"
+                                title="Copot dari slot"
+                              >
+                                <X className="w-3.5 h-3.5" />
+                              </button>
+                            )}
+                          </div>
+                        ) : (
+                          <div
+                            onClick={() => handleSlotClick('SMP', slotIdx, null)}
+                            className={`py-2 px-3 rounded-xl border border-dashed text-center text-slate-400 transition-colors ${
+                              isStaff && !isPublished ? 'cursor-pointer hover:border-blue-400 hover:text-blue-700 hover:bg-blue-50/30' : ''
+                            }`}
+                          >
+                            <span className="text-[11px] font-bold">
+                              {isStaff && !isPublished ? '+ Isi Peleton SMP' : '- Kosong -'}
+                            </span>
+                          </div>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Tim Tidak Mengikuti UCL (Hanya jika ada yang konfirmasi tidak hadir) */}
+        {declinedTeams.length > 0 && (
+          <div className="bg-white rounded-2xl p-4 border border-slate-200 shadow-xs space-y-2">
+            <h4 className="text-xs font-black uppercase text-slate-700 tracking-wider">
+              Peleton Konfirmasi Tidak Hadir Uji Coba Lapangan ({declinedTeams.length})
+            </h4>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+              {declinedTeams.map(t => (
+                <div key={t.id} className="p-2.5 bg-slate-50 rounded-xl border border-slate-200 text-xs flex items-center justify-between">
+                  <span className="font-bold text-slate-800 truncate">{t.schoolName}</span>
+                  <span className="text-[10px] font-black uppercase px-1.5 py-0.2 rounded bg-rose-100 text-rose-800 shrink-0">
+                    {t.jenjang}
+                  </span>
+                </div>
               ))}
             </div>
           </div>
-
-          {filteredTeams.length === 0 ? (
-            <div className="text-center py-12 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
-              <Compass className="w-10 h-10 text-slate-300 mx-auto mb-2" />
-              <p className="text-sm font-bold text-slate-600">Belum ada tim yang terverifikasi</p>
-              <p className="text-xs text-slate-400 mt-1">Peleton akan otomatis terjadwal setelah lolos verifikasi berkas</p>
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs">
-                <thead>
-                  <tr className="border-b border-slate-200 text-slate-400 font-bold uppercase text-[10px] tracking-wider">
-                    <th className="py-3 px-3">No</th>
-                    <th className="py-3 px-3">Slot Waktu</th>
-                    <th className="py-3 px-3">Peleton / Sekolah</th>
-                    <th className="py-3 px-3">Jenjang & Arena</th>
-                    <th className="py-3 px-3">Danton & Pembina</th>
-                    <th className="py-3 px-3">Status Berkas</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {filteredTeams.map((team, idx) => {
-                    const slot = getTrialSlot(team, idx);
-                    const isSD = team.jenjang === 'SD';
-
-                    return (
-                      <tr key={team.id} className="hover:bg-slate-50/80 transition-colors">
-                        <td className="py-3.5 px-3 font-mono font-bold text-slate-400">
-                          {String(idx + 1).padStart(2, '0')}
-                        </td>
-                        <td className="py-3.5 px-3">
-                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200 font-mono font-bold text-[11px]">
-                            <Clock className="w-3 h-3 text-emerald-600" />
-                            {slot}
-                          </span>
-                        </td>
-                        <td className="py-3.5 px-3">
-                          <div className="font-bold text-slate-900">{team.schoolName}</div>
-                          <div className="text-[10px] text-slate-400 font-mono">{team.regCode}</div>
-                        </td>
-                        <td className="py-3.5 px-3">
-                          <span className="inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-slate-100 text-slate-700 border border-slate-200">
-                            {team.jenjang} • {isSD ? 'Arena Basket' : 'Pelataran Embung'}
-                          </span>
-                        </td>
-                        <td className="py-3.5 px-3 text-slate-600">
-                          <div className="font-semibold text-slate-800">{team.dantonName || '-'}</div>
-                          <div className="text-[10px] text-slate-400">Pembina: {team.coachName || '-'}</div>
-                        </td>
-                        <td className="py-3.5 px-3">
-                          <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                            <CheckCircle2 className="w-3 h-3" />
-                            Siap Gladi
-                          </span>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
-
-        {/* Lokasi & Embed Maps Kampus Terpadu Sedayu */}
-        <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div>
-              <h3 className="text-base font-black text-slate-900 uppercase">
-                Lokasi Gladi: Kampus Terpadu Sedayu
-              </h3>
-              <p className="text-xs text-slate-500">{VENUE.ADDRESS}</p>
-            </div>
-            <a
-              href={VENUE.MAPS_URL || "https://maps.app.goo.gl/fVMgg5xZcwRQ4kN78"}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-xl transition-all shadow-xs cursor-pointer active:scale-95"
-            >
-              <MapPin className="w-3.5 h-3.5 text-emerald-400" />
-              <span>Petunjuk Arah Google Maps</span>
-              <ExternalLink className="w-3.5 h-3.5 opacity-70" />
-            </a>
-          </div>
-
-          <div className="rounded-2xl overflow-hidden border border-slate-200 aspect-[16/7] w-full bg-slate-100 relative">
-            <iframe
-              title="Google Maps Lokasi Kampus Terpadu Sedayu"
-              src={VENUE.MAPS_EMBED_URL || "https://maps.google.com/maps?q=-7.806784,110.2683762&hl=id&z=15&output=embed"}
-              className="w-full h-full border-0"
-              allowFullScreen=""
-              loading="lazy"
-            />
-          </div>
-        </div>
+        )}
 
       </div>
+
+      {/* ======================================================== */}
+      {/* MODAL: SAHKAN JADWAL RESMI                               */}
+      {/* ======================================================== */}
+      {showConfirmPublishModal && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 animate-in fade-in">
+          <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl w-full max-w-md overflow-hidden flex flex-col">
+            <div className="p-4 bg-emerald-700 text-white flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <FileCheck className="w-5 h-5 text-emerald-200" />
+                <h3 className="font-black text-sm uppercase tracking-tight">
+                  Sahkan Jadwal Uji Coba Lapangan
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowConfirmPublishModal(false)}
+                className="p-1 rounded-xl bg-white/10 hover:bg-white/20 text-white cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="p-4 space-y-2 text-xs text-slate-700">
+              <p className="font-semibold text-slate-900">
+                Sahkan rencana ini dan bagikan jadwal resmi ke seluruh peserta?
+              </p>
+              <p className="text-slate-500 leading-relaxed">
+                Jadwal jam masuk arena akan langsung tayang resmi di portal masing-masing peleton. Anda tetap dapat membuka kunci (revisi) kapan saja jika diperlukan.
+              </p>
+            </div>
+
+            <div className="p-3 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setShowConfirmPublishModal(false)}
+                className="px-3.5 py-1.5 rounded-xl bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 font-bold text-xs cursor-pointer"
+              >
+                Batal
+              </button>
+              <button
+                type="button"
+                onClick={handlePublishSchedule}
+                className="px-4 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs shadow-xs cursor-pointer"
+              >
+                Ya, Sahkan & Bagikan
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ======================================================== */}
+      {/* MODAL: PILIH PELETON UNTUK SLOT KOSONG                   */}
+      {/* ======================================================== */}
+      {teamPickerTarget && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 animate-in fade-in">
+          <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl w-full max-w-lg overflow-hidden flex flex-col max-h-[85vh]">
+            <div className={`p-4 text-white flex items-center justify-between ${
+              teamPickerTarget.jenjang === 'SD' ? 'bg-red-700' : 'bg-blue-700'
+            }`}>
+              <div>
+                <h3 className="font-black text-sm uppercase tracking-tight">
+                  Pilih Peleton: Slot #{teamPickerTarget.slotIdx + 1} ({teamPickerTarget.jenjang})
+                </h3>
+                <p className="text-xs text-white/90 font-mono">
+                  {TRIAL_TIME_SLOTS[teamPickerTarget.slotIdx]?.time}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setTeamPickerTarget(null)}
+                className="p-1 rounded-xl bg-white/10 hover:bg-white/20 text-white cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="p-4 overflow-y-auto space-y-2 flex-1">
+              {getUnassignedTeams(teamPickerTarget.jenjang).length === 0 ? (
+                <div className="text-center py-8 text-xs text-slate-400">
+                  Seluruh peleton {teamPickerTarget.jenjang} sudah terjadwal.
+                </div>
+              ) : (
+                getUnassignedTeams(teamPickerTarget.jenjang).map(team => (
+                  <div
+                    key={team.id}
+                    onClick={() => handleAssignTeamToSlot(team.id)}
+                    className="p-2.5 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between gap-3 cursor-pointer shadow-2xs group transition-all"
+                  >
+                    <div className="flex items-center gap-3 min-w-0 flex-1">
+                      {/* Logo */}
+                      <div className="w-10 h-10 rounded-xl bg-white border border-slate-200 p-0.5 flex items-center justify-center shrink-0 overflow-hidden shadow-2xs">
+                        <img
+                          src={
+                            (team.files?.schoolLogo?.url || team.file_logo_sekolah || team.logoUrl)
+                              ? formatImageUrl(team.files?.schoolLogo?.url || team.file_logo_sekolah || team.logoUrl)
+                              : `https://ui-avatars.com/api/?name=${encodeURIComponent(team.schoolName)}&background=${teamPickerTarget.jenjang === 'SD' ? 'dc2626' : '2563eb'}&color=fff&bold=true`
+                          }
+                          alt={team.schoolName}
+                          className="w-full h-full object-contain"
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(team.schoolName)}&background=${teamPickerTarget.jenjang === 'SD' ? 'dc2626' : '2563eb'}&color=fff&bold=true`;
+                          }}
+                        />
+                      </div>
+
+                      {/* Info Tim & Danton */}
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <span className="font-black text-xs sm:text-[13px] text-slate-900 truncate">
+                            {team.schoolName}
+                          </span>
+                          {team.lotNumber && (
+                            <span className="px-1.5 py-0.2 rounded font-mono font-bold text-[9px] bg-slate-100 text-slate-800 border border-slate-200 shrink-0">
+                              TM #{String(team.lotNumber).padStart(2, '0')}
+                            </span>
+                          )}
+                        </div>
+                        <div className="text-[11px] font-bold text-slate-600 mt-0.5">
+                          Danton: <span className="font-black text-slate-900">{team.dantonName || team.roster?.danton?.name || '-'}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      className="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-[11px] font-bold shrink-0 shadow-xs"
+                    >
+                      Pilih
+                    </button>
+                  </div>
+                ))
+              )}
+            </div>
+
+            <div className="p-3 bg-slate-50 border-t border-slate-200 flex justify-end">
+              <button
+                type="button"
+                onClick={() => setTeamPickerTarget(null)}
+                className="px-3.5 py-1.5 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold text-xs cursor-pointer"
+              >
+                Batal
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ======================================================== */}
+      {/* FLOATING TOAST NOTIFICATION                              */}
+      {/* ======================================================== */}
+      {toastMsg && (
+        <div className="fixed bottom-6 right-6 z-50 max-w-sm pointer-events-auto transition-all transform animate-in fade-in slide-in-from-bottom-4 duration-200">
+          <div className="bg-slate-900/95 backdrop-blur-md text-white px-4 py-3 rounded-2xl text-xs font-bold flex items-center gap-3 shadow-2xl border border-slate-700/80">
+            <div className="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 border border-emerald-500/30">
+              <CheckCircle2 className="w-4 h-4" />
+            </div>
+            <span className="flex-1 leading-snug">{toastMsg}</span>
+            <button
+              type="button"
+              onClick={() => setToastMsg('')}
+              className="text-slate-400 hover:text-white p-0.5 rounded-lg transition-colors cursor-pointer"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </div>
+      )}
+
     </SimpaskorSidebarLayout>
   );
 }

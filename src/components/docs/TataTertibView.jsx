@@ -71,10 +71,10 @@ export default function TataTertibView() {
     },
     {
       violation: 'Kelebihan Durasi Waktu Tampil di Arena (SD > 8 Mnt, SMP > 12 Mnt)',
-      points: 50,
-      pointsDisplay: '-50 Poin / rentang 1–30 dtk',
+      points: 20,
+      pointsDisplay: '-20 Poin / rentang 1–30 dtk',
       rule: 'Bab C.3 Juknis Penilaian',
-      desc: 'Peleton wajib menyelesaikan materi lomba dalam durasi maksimal 8 menit untuk SD dan 12 menit untuk SMP. Kelebihan durasi dikenai penalti sebesar -50 poin untuk setiap rentang 1 s.d. 30 detik dan kelipatannya. Penalti diberlakukan terhadap Nilai Peleton.',
+      desc: 'Peleton wajib menyelesaikan materi lomba dalam durasi maksimal 8 menit untuk SD dan 12 menit untuk SMP. Kelebihan durasi dikenai penalti sebesar -20 poin untuk setiap rentang 1 s.d. 30 detik dan kelipatannya. Penalti diberlakukan terhadap Nilai Peleton.',
       type: 'Waktu Tampil',
     },
     {
@@ -127,10 +127,10 @@ export default function TataTertibView() {
     },
     {
       violation: 'Pelanggaran Kawasan Tanpa Rokok & Vape di Lingkungan Madrasah',
-      points: 50,
-      pointsDisplay: '-50 Poin (Nilai Peleton)',
+      points: 75,
+      pointsDisplay: '-75 Poin (Nilai Peleton)',
       rule: 'Bab C.9 Juknis Penilaian / Pasal 9.6 Tatib',
-      desc: 'Pelanggaran terang-terangan di ruang basecamp atau yang melibatkan personel kontingen berseragam setelah diberikan teguran resmi dikenai penalti sebesar -50 poin terhadap Nilai Peleton.',
+      desc: 'Pelanggaran terang-terangan di ruang basecamp atau yang melibatkan personel kontingen berseragam setelah diberikan teguran dikenai penalti sebesar -75 poin terhadap nilai Peleton sesuai Pasal 9 Tata Tertib Peserta.',
       type: 'Disiplin & Ketertiban',
     },
     {

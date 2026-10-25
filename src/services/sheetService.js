@@ -14,6 +14,15 @@ import { BACKEND_CONFIG } from '../config.js';
 const APPS_SCRIPT_URL = import.meta.env?.VITE_APPS_SCRIPT_URL || BACKEND_CONFIG?.DEFAULT_APPS_SCRIPT_URL || '';
 
 /**
+ * Cek apakah sedang berjalan di localhost
+ */
+export function isLocalhost() {
+  if (typeof window === 'undefined') return true;
+  const h = window.location.hostname || '';
+  return h === 'localhost' || h === '127.0.0.1' || h === '::1';
+}
+
+/**
  * Cek apakah konfigurasi URL Google Apps Script sudah disetel
  */
 export function isGoogleSheetConfigured() {
@@ -75,6 +84,10 @@ export function getFallbackImageUrl(url) {
  * @param {object} data - Objek data yang ingin disimpan
  */
 export async function saveRecordToSheet(table, data) {
+  if (isLocalhost()) {
+    // Di localhost: mode simulasi/testing, tidak mengirim ke spreadsheet produksi
+    return { success: true, localOnly: true };
+  }
   if (!isGoogleSheetConfigured()) {
     return { success: false, reason: 'unconfigured' };
   }
@@ -114,6 +127,9 @@ export async function saveRecordToSheet(table, data) {
  * @param {Array<object>} items - Array data yang ingin disinkronkan
  */
 export async function bulkSyncToSheet(table, items) {
+  if (isLocalhost()) {
+    return { success: true, count: items?.length || 0, localOnly: true };
+  }
   if (!isGoogleSheetConfigured()) {
     return { success: false, reason: 'unconfigured' };
   }
@@ -204,6 +220,10 @@ export async function searchRecordsFromSheet(table, keyword) {
  * @param {boolean} includeSecretScores - Apakah menyertakan lembar skor rahasia (hanya untuk staff/juri)
  */
 export async function fetchAllDataFromSheet(includeSecretScores = false) {
+  if (isLocalhost()) {
+    // Di localhost: data asli live tidak dimuat agar terisolasi dengan data dummy testing
+    return { success: true, data: { teams: null, scores: null, settings: null, staging: null }, localOnly: true };
+  }
   if (!isGoogleSheetConfigured()) {
     return { success: false, reason: 'unconfigured' };
   }
@@ -239,6 +259,9 @@ export async function fetchAllDataFromSheet(includeSecretScores = false) {
  * @param {string} id - ID record
  */
 export async function deleteRecordFromSheet(table, id) {
+  if (isLocalhost()) {
+    return { success: true, localOnly: true };
+  }
   if (!isGoogleSheetConfigured()) {
     return { success: false, reason: 'unconfigured' };
   }

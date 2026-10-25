@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowRight, Download, ChevronsDown, ExternalLink } from 'lucide-react';
-import { HERO, EVENT, VENUE } from '../config.js';
+import { HERO, EVENT, VENUE, DOWNLOADS } from '../config.js';
 import { useCompetition } from '../context/CompetitionContext.jsx';
 import logoImg from '../assets/logo-tonti.png';
 import logoTonti from '../assets/logo-tonti-muallimin.png';
@@ -231,7 +231,7 @@ export default function Hero() {
               </button>
 
               <a
-                href="https://drive.google.com/file/d/1wxLlEIRVEzeMi2Qr0OAJCpqoKZXz-4vh/view?usp=sharing"
+                href={DOWNLOADS[0]?.url || "https://drive.google.com/file/d/1OUJP3WBU_xr4KGQ2yVGv0npCvfuLlDWP/view?usp=sharing"}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group px-7 py-3.5 bg-white/10 hover:bg-white/15 border border-white/15 hover:border-white/25 text-white rounded-xl shadow-sm hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2 text-xs sm:text-sm font-semibold tracking-wider uppercase cursor-pointer active:scale-95"

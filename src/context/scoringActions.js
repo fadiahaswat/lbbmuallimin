@@ -9,10 +9,10 @@ export function calculatePenalties(penalties = {}) {
   peletonPenalty += (penalties.upacaraTerlambatBlocks || 0) * 50;
   if (penalties.dp1) peletonPenalty += 100;
   if (penalties.personelKurang) peletonPenalty += 75;
-  peletonPenalty += (penalties.overTimeBlocks || 0) * 50;
+  peletonPenalty += (penalties.overTimeBlocks || 0) * 20;
   peletonPenalty += (penalties.injakGarisCount || 0) * 50;
   if (penalties.basecampKotor) peletonPenalty += 150;
-  peletonPenalty += (penalties.rokokCount || 0) * 50;
+  peletonPenalty += (penalties.rokokCount || 0) * 75;
 
   // Danton Penalties (Bab A.3.c & Bab H)
   dantonPenalty += (penalties.kotakDantonCount || 0) * 50;
@@ -460,11 +460,47 @@ export function createScoringActions({ setScores, currentUser }) {
     }
   }
 
+  // 5. Buka Kunci Nilai (Unlock) oleh Superadmin
+  function unlockScore(teamId) {
+    let prevRecord = null;
+    let nextRecord = null;
+
+    setScores(prev => {
+      const existing = prev[teamId];
+      if (!existing) return prev;
+      prevRecord = existing;
+
+      const updated = {
+        ...existing,
+        id: teamId,
+        teamId,
+        status: 'draft',
+        isLocked: false,
+        unlockedBy: currentUser?.name || 'Superadmin',
+        unlockedAt: new Date().toISOString(),
+      };
+      nextRecord = updated;
+
+      return {
+        ...prev,
+        [teamId]: updated,
+      };
+    });
+
+    if (nextRecord) {
+      saveRecordToSheet('scores', { id: teamId, ...nextRecord }).catch(err =>
+        console.warn('[CompetitionContext] Sync unlockScore to sheet failed:', err)
+      );
+      recordAuditLog(teamId, 'unlockScore', prevRecord, nextRecord, currentUser, `Buka kunci nilai peleton oleh ${currentUser?.name || 'Superadmin'}`);
+    }
+  }
+
   return {
     saveScore,
     saveJuryPostScore,
     saveDraftScore,
     verifyScore,
-    finalizeScore
+    finalizeScore,
+    unlockScore,
   };
 }

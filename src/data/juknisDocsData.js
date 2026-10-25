@@ -181,7 +181,7 @@ export const JUKNIS_PENILAIAN_CHAPTERS = [
       {
         number: 4,
         title: 'Kelebihan Durasi Waktu',
-        content: 'Peleton dan Komandan Peleton wajib menyelesaikan materi lomba dalam durasi maksimal 8 menit untuk SD dan 12 menit untuk SMP. Kelebihan durasi dikenai penalti sebesar -50 poin untuk setiap rentang 1 s.d. 30 detik dan kelipatannya. Penalti diberlakukan terhadap nilai Peleton.'
+        content: 'Peleton dan Komandan Peleton wajib menyelesaikan materi lomba dalam durasi maksimal 8 menit untuk SD dan 12 menit untuk SMP. Kelebihan durasi dikenai penalti sebesar -20 poin untuk setiap rentang 1 s.d. 30 detik dan kelipatannya. Penalti diberlakukan terhadap nilai Peleton.'
       },
       {
         number: 5,
@@ -215,7 +215,7 @@ export const JUKNIS_PENILAIAN_CHAPTERS = [
       {
         number: 9,
         title: 'Pelanggaran Kawasan Tanpa Rokok & Vape',
-        content: 'Pelanggaran terang-terangan di ruang basecamp atau yang melibatkan personel kontingen berseragam setelah diberikan teguran dikenai penalti sebesar -50 poin terhadap nilai Peleton sesuai Pasal 9 Tata Tertib Peserta.'
+        content: 'Pelanggaran terang-terangan di ruang basecamp atau yang melibatkan personel kontingen berseragam setelah diberikan teguran dikenai penalti sebesar -75 poin terhadap nilai Peleton sesuai Pasal 9 Tata Tertib Peserta.'
       },
       {
         number: 10,

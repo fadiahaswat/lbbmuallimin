@@ -12,7 +12,7 @@ import {
   FileCheck2,
   FileBadge2
 } from 'lucide-react';
-import { SITE, EVENT, VENUE, COMPETITION, PAYMENT, MATERIALS, PENALTIES } from '../../config.js';
+import { SITE, EVENT, VENUE, COMPETITION, PAYMENT, MATERIALS, PENALTIES, DOWNLOADS } from '../../config.js';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
 
 export default function DocumentViewerModal({ isOpen, onClose }) {
@@ -168,14 +168,14 @@ export default function DocumentViewerModal({ isOpen, onClose }) {
                 <h4 className="font-black text-base uppercase text-amber-700">PETUNJUK TEKNIS PENILAIAN & KEJUARAAN</h4>
                 <p><strong>A. Sistem Penilaian, Sanggah & Penentuan Juara:</strong> Penilaian dilakukan oleh 6 Dewan Juri (unsur TNI, POLRI, dan Profesional/Sipil: 3 Juri Arena 1 SD & 3 Juri Arena 2 SMP). Nilai Peleton 1:1 (Kebenaran Gerak dan Kekompakan skala 50–90 poin). Nilai Danton = (Penguasaan Materi × 35%) + (Kualitas Suara/Vokal × 25%) + (Sikap & Pelaporan × 20%) + (Penguasaan Lapangan × 20%). Poin Juara Umum: Juara 1 Peleton (6), Juara 2 (5), Juara 3 (4), Harapan 1 (3), Harapan 2 (2), Harapan 3 (1). Juara 1 Danton (3), Juara 2 (2), Juara 3 (1). Tie-breaker Peleton: Nilai Murni Peleton &gt; Penalti Peleton Terkecil &gt; Nilai Murni Danton &gt; Musyawarah Sidang Pleno. Tie-breaker Danton: Nilai Murni Danton &gt; Penalti Danton Terkecil &gt; Nilai Penguasaan Materi (35%) &gt; Nilai Vokal (25%) &gt; Musyawarah Sidang Pleno. Tie-breaker Juara Umum: Nilai Murni Peleton Tertinggi &gt; Penalti Peleton Paling Sedikit &gt; Nilai Murni Danton Tertinggi &gt; Musyawarah Sidang Pleno. Transparansi e-rekapitulasi rolling release akun Gmail ±1 jam setelah tampil. Pengajuan sanggah tertulis ditutup pukul 15.00 WIB.</p>
                 <p><strong>B. Prosedur Backup & Mitigasi Gangguan Sistem Digital Penilaian:</strong> Form penilaian fisik manual rangkap, rekapitulasi paralel offline, dan verifikasi fisik ganda untuk menjamin kelancaran penilaian apabila sistem digital mengalami gangguan.</p>
-                <p><strong>C. Ketentuan Sanksi dan Penalti Pengurangan Nilai:</strong> Keterlambatan hadir di DP 1 setelah 3x pemanggilan (-100 poin & urutan akhir; tidak hadir = Diskualifikasi), jumlah personel &lt; 22 orang (-75 poin tetap pada Nilai Peleton), kelebihan durasi waktu (-50 poin / 1–30 detik pada Nilai Peleton), pelanggaran garis arena luar oleh anggota (-50 poin/kejadian pada Nilai Peleton), pelanggaran garis kotak danton 1,5×1,5 m (-50 poin/kejadian pada Nilai Komandan saja), gerakan terlewat di luar urutan (Nilai Minimal 50; tidak dilakukan = Nilai 0), gerakan berangkai terputus (Nilai Minimal 50 & potong Penguasaan Materi Danton), basecamp kotor/sampah tidak diserahkan (-150 poin pada Nilai Peleton; kerusakan sarpras ganti rugi penuh + denda Rp 500.000,-), pelanggaran kawasan tanpa rokok & vape (-50 poin pada Nilai Peleton), yel-yel mengganggu selama tim tampil (Peringatan 1-2 lisan, ke-3 dst -50 poin pada Nilai Peleton & Danton), gerakan penyesuaian (0 poin penalti / bebas kuota), atribut terjatuh (0 poin penalti).</p>
+                <p><strong>C. Ketentuan Sanksi dan Penalti Pengurangan Nilai:</strong> Keterlambatan hadir di DP 1 setelah 3x pemanggilan (-100 poin & urutan akhir; tidak hadir = Diskualifikasi), jumlah personel &lt; 22 orang (-75 poin tetap pada Nilai Peleton), kelebihan durasi waktu (-20 poin / 1–30 detik pada Nilai Peleton), pelanggaran garis arena luar oleh anggota (-50 poin/kejadian pada Nilai Peleton), pelanggaran garis kotak danton 1,5×1,5 m (-50 poin/kejadian pada Nilai Komandan saja), gerakan terlewat di luar urutan (Nilai Minimal 50; tidak dilakukan = Nilai 0), gerakan berangkai terputus (Nilai Minimal 50 & potong Penguasaan Materi Danton), basecamp kotor/sampah tidak diserahkan (-150 poin pada Nilai Peleton; kerusakan sarpras ganti rugi penuh + denda Rp 500.000,-), pelanggaran kawasan tanpa rokok & vape (-75 poin pada Nilai Peleton), yel-yel mengganggu selama tim tampil (Peringatan 1-2 lisan, ke-3 dst -50 poin pada Nilai Peleton & Danton), gerakan penyesuaian (0 poin penalti / bebas kuota), atribut terjatuh (0 poin penalti).</p>
                 <p><strong>D. Penutup:</strong> Menjadi pedoman operasional resmi bagi seluruh panitia, dewan juri, dan peserta LBB Mu'allimin Tahun 2027.</p>
               </div>
 
               <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg flex flex-wrap items-center justify-between gap-2 text-xs">
                 <span className="text-red-900 font-semibold">Tersedia dokumen resmi Petunjuk Teknis di Google Drive:</span>
                 <a
-                  href="https://drive.google.com/file/d/1wxLlEIRVEzeMi2Qr0OAJCpqoKZXz-4vh/view?usp=sharing"
+                  href={DOWNLOADS?.[0]?.url || "https://drive.google.com/file/d/1OUJP3WBU_xr4KGQ2yVGv0npCvfuLlDWP/view?usp=sharing"}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="px-3 py-1 bg-red-700 hover:bg-red-800 text-white font-bold rounded shadow transition-colors inline-flex items-center gap-1.5"

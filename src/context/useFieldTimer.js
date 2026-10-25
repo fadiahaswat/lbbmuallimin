@@ -104,11 +104,11 @@ export function useFieldTimer({ updateTeamStaging, setScores }) {
       totalPenalty += (pen.upacaraTerlambatBlocks || 0) * 50;
       if (pen.dp1) totalPenalty += 100;
       if (pen.personelKurang) totalPenalty += 75;
-      totalPenalty += (pen.overTimeBlocks || 0) * 50;
+      totalPenalty += (pen.overTimeBlocks || 0) * 20;
       totalPenalty += (pen.injakGarisCount || 0) * 50;
       totalPenalty += (pen.kotakDantonCount || 0) * 50;
       totalPenalty += (pen.yelYelCount || 0) * 50;
-      totalPenalty += (pen.rokokCount || 0) * 50;
+      totalPenalty += (pen.rokokCount || 0) * 75;
       if (pen.basecampKotor) totalPenalty += 150;
       // Gerakan penyesuaian: 0 poin penalti (Bab H.6 & Bab A.6)
       pen.totalPenalty = totalPenalty;

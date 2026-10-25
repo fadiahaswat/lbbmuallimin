@@ -305,7 +305,7 @@ export const DOWNLOADS = [
         description: 'Dokumen panduan teknis resmi pelaksanaan LBB Mu\'allimin 2027 yang memuat ketentuan lomba, alur kronologis arena, materi urutan PBB baku murni sesuai Perpang TNI No. 57 & 58 Tahun 2018.',
         size: 'Google Drive / PDF',
         type: 'DOKUMEN RESMI (PDF)',
-        url: 'https://drive.google.com/file/d/1wxLlEIRVEzeMi2Qr0OAJCpqoKZXz-4vh/view?usp=sharing',
+        url: 'https://drive.google.com/file/d/1OUJP3WBU_xr4KGQ2yVGv0npCvfuLlDWP/view?usp=sharing',
         badge: 'Wajib Unduh',
         featured: true,
         icon: 'BookOpen',
@@ -317,7 +317,7 @@ export const DOWNLOADS = [
         description: 'Regulasi baku Dewan Juri 1:1, kriteria Danton (4 aspek), akumulasi Juara Umum & tie-breaker 7 tingkat, transparansi rolling release Gmail, serta tabel penalti resmi.',
         size: 'Google Drive / PDF',
         type: 'REGULASI JURI',
-        url: 'https://drive.google.com/file/d/1wxLlEIRVEzeMi2Qr0OAJCpqoKZXz-4vh/view?usp=sharing',
+        url: 'https://drive.google.com/file/d/1OUJP3WBU_xr4KGQ2yVGv0npCvfuLlDWP/view?usp=sharing',
         badge: 'Penilaian Resmi',
         featured: false,
         icon: 'Award',
@@ -645,8 +645,8 @@ export const PENALTIES = [
     },
     {
         label: 'Kelebihan Durasi Waktu Tampil (SD > 8 Menit, SMP > 12 Menit)',
-        value: '-50 Poin (Nilai Peleton)',
-        desc: '-50 Poin per rentang 1 s.d. 30 detik kelebihan waktu dan kelipatannya, diberlakukan terhadap Nilai Peleton.',
+        value: '-20 Poin (Nilai Peleton)',
+        desc: '-20 Poin per rentang 1 s.d. 30 detik kelebihan waktu dan kelipatannya, diberlakukan terhadap Nilai Peleton.',
     },
     {
         label: 'Pelanggaran Garis Batas Arena Luar oleh Anggota Peleton',
@@ -675,8 +675,8 @@ export const PENALTIES = [
     },
     {
         label: 'Pelanggaran Kawasan Tanpa Rokok & Vape di Lingkungan Madrasah',
-        value: '-50 Poin (Nilai Peleton)',
-        desc: '-50 Poin diberlakukan terhadap Nilai Peleton bagi sekolah/kontingen yang melanggar setelah diberikan teguran resmi (Pasal 9 Tatib & Bab C.9).',
+        value: '-75 Poin (Nilai Peleton)',
+        desc: 'Pelanggaran terang-terangan di ruang basecamp atau yang melibatkan personel kontingen berseragam setelah diberikan teguran dikenai penalti sebesar -75 poin terhadap nilai Peleton sesuai Pasal 9 Tata Tertib Peserta.',
     },
     {
         label: 'Yel-Yel / Teriakan yang Mengganggu Jalannya Perlombaan',
@@ -795,95 +795,95 @@ export const GOOGLE_AUTH = {
 
 // ---------------------------------------------------------------------------
 // JURY_POSTS – Konfigurasi Dewan Juri Resmi LBB Mu'allimin 2027 (Bab A.1)
-// 6 Dewan Juri (TNI, POLRI, & Profesional):
-// - 3 Dewan Juri di Arena 1 (Tingkat SD/MI)
-// - 3 Dewan Juri di Arena 2 (Tingkat SMP/MTs)
-// Setiap Dewan Juri menilai performa materi PBB Peleton dan Komandan (Danton) secara simultan.
+// 6 Dewan Juri:
+// - Arena 1 (Tingkat SD/MI): Juri 1 SD, Juri 2 SD, Juri 3 SD
+// - Arena 2 (Tingkat SMP/MTs): Juri 1 SMP, Juri 2 SMP, Juri 3 SMP
+// Setiap Dewan Juri menilai materi PBB Peleton dan Komandan (Danton) secara simultan.
 // ---------------------------------------------------------------------------
 export const JURY_ROLES = {
     juri1: {
         id: 'juri1',
         roleKey: 'dewan_juri_1',
-        title: 'Dewan Juri 1',
+        title: 'Juri 1',
         shortTitle: 'Juri 1',
-        badge: 'Dewan Juri 1 (Unsur TNI)',
+        badge: 'Dewan Juri 1',
         description: 'Menilai materi PBB Peleton (Sistem 5 Predikat Baku) dan Komandan Peleton secara simultan.',
-        defaultNameSD: 'Mayor (Mar) Bambang S., S.E.',
-        defaultNameSMP: 'Mayor Inf. Supriyadi, M.M.',
+        defaultNameSD: 'Juri 1 SD',
+        defaultNameSMP: 'Juri 1 SMP',
     },
     juri2: {
         id: 'juri2',
         roleKey: 'dewan_juri_2',
-        title: 'Dewan Juri 2',
+        title: 'Juri 2',
         shortTitle: 'Juri 2',
-        badge: 'Dewan Juri 2 (Unsur POLRI)',
+        badge: 'Dewan Juri 2',
         description: 'Menilai materi PBB Peleton (Sistem 5 Predikat Baku) dan Komandan Peleton secara simultan.',
-        defaultNameSD: 'AKP Tri Wibowo, S.H.',
-        defaultNameSMP: 'AKP Danang Kusuma, S.I.K.',
+        defaultNameSD: 'Juri 2 SD',
+        defaultNameSMP: 'Juri 2 SMP',
     },
     juri3: {
         id: 'juri3',
         roleKey: 'dewan_juri_3',
-        title: 'Dewan Juri 3',
+        title: 'Juri 3',
         shortTitle: 'Juri 3',
-        badge: 'Dewan Juri 3 (Unsur Profesional Purna)',
+        badge: 'Dewan Juri 3',
         description: 'Menilai materi PBB Peleton (Sistem 5 Predikat Baku) dan Komandan Peleton secara simultan.',
-        defaultNameSD: 'Kapten Kav. Hendra Wijaya',
-        defaultNameSMP: 'Kapten Arh. Agus Prasetyo',
+        defaultNameSD: 'Juri 3 SD',
+        defaultNameSMP: 'Juri 3 SMP',
     },
     // Aliases for backwards compatibility
     teknik: {
         id: 'juri1',
         roleKey: 'dewan_juri_1',
-        title: 'Dewan Juri 1',
+        title: 'Juri 1',
         shortTitle: 'Juri 1',
         badge: 'Dewan Juri 1',
-        defaultNameSD: 'Mayor (Mar) Bambang S., S.E.',
-        defaultNameSMP: 'Mayor Inf. Supriyadi, M.M.',
+        defaultNameSD: 'Juri 1 SD',
+        defaultNameSMP: 'Juri 1 SMP',
     },
     kekompakan: {
         id: 'juri2',
         roleKey: 'dewan_juri_2',
-        title: 'Dewan Juri 2',
+        title: 'Juri 2',
         shortTitle: 'Juri 2',
         badge: 'Dewan Juri 2',
-        defaultNameSD: 'AKP Tri Wibowo, S.H.',
-        defaultNameSMP: 'AKP Danang Kusuma, S.I.K.',
+        defaultNameSD: 'Juri 2 SD',
+        defaultNameSMP: 'Juri 2 SMP',
     },
     komandan: {
         id: 'juri3',
         roleKey: 'dewan_juri_3',
-        title: 'Dewan Juri 3',
+        title: 'Juri 3',
         shortTitle: 'Juri 3',
         badge: 'Dewan Juri 3',
-        defaultNameSD: 'Kapten Kav. Hendra Wijaya',
-        defaultNameSMP: 'Kapten Arh. Agus Prasetyo',
+        defaultNameSD: 'Juri 3 SD',
+        defaultNameSMP: 'Juri 3 SMP',
     }
 };
 
 export const JURY_POSTS = {
     pos1: {
         id: 'pos1',
-        title: 'Dewan Juri 1',
+        title: 'Juri 1',
         shortTitle: 'Juri 1',
-        badge: 'Dewan Juri 1 (TNI)',
-        defaultName: 'Mayor (Mar) Bambang S., S.E.',
+        badge: 'Dewan Juri 1',
+        defaultName: 'Juri 1',
         type: 'juri1',
     },
     pos2: {
         id: 'pos2',
-        title: 'Dewan Juri 2',
+        title: 'Juri 2',
         shortTitle: 'Juri 2',
-        badge: 'Dewan Juri 2 (POLRI)',
-        defaultName: 'AKP Tri Wibowo, S.H.',
+        badge: 'Dewan Juri 2',
+        defaultName: 'Juri 2',
         type: 'juri2',
     },
     pos3: {
         id: 'pos3',
-        title: 'Dewan Juri 3',
+        title: 'Juri 3',
         shortTitle: 'Juri 3',
-        badge: 'Dewan Juri 3 (Profesional)',
-        defaultName: 'Kapten Kav. Hendra Wijaya',
+        badge: 'Dewan Juri 3',
+        defaultName: 'Juri 3',
         type: 'juri3',
     },
 };

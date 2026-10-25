@@ -51,6 +51,8 @@ export default function OverviewTab({
     : autoTrialSchedule?.enterArena || null;
   const displayTrialTime = currentTeam.vehicleSurveys?.trialAttendance?.status === 'declined'
     ? 'Berhalangan'
+    : !settings?.trialSchedulePublished
+    ? 'Menunggu Pengesahan'
     : (currentTeam.trialSpecificTime || trialArenaTime || (currentTeam.lotNumber ? '16 Jan 2027' : null));
 
   const [surveySaveToast, setSurveySaveToast] = useState('');
@@ -522,24 +524,57 @@ export default function OverviewTab({
                       </span>
                     </div>
 
-                    {autoTrialSchedule ? (
-                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs">
-                        <div className="p-2.5 rounded-lg bg-slate-800/80 border border-slate-700/60">
-                          <span className="text-[10px] text-slate-400 block">Tiba Kampus</span>
-                          <span className="text-sm text-white font-mono font-bold mt-0.5 block">{autoTrialSchedule.arrival}</span>
+                    {!settings?.trialSchedulePublished ? (
+                      <div className="p-3.5 rounded-lg bg-slate-800/80 border border-slate-700/60 text-center space-y-1">
+                        <span className="text-amber-300 font-bold text-xs block">
+                          📝 Rencana Jadwal Sedang Disusun Panitia
+                        </span>
+                        <p className="text-[11px] text-slate-400">
+                          Jadwal resmi jam masuk arena akan segera diterbitkan setelah disahkan panitia berdasarkan survei kesediaan kontingen dan hasil TM.
+                        </p>
+                      </div>
+                    ) : autoTrialSchedule ? (
+                      <div className="space-y-2.5">
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs">
+                          <div className="p-2.5 rounded-lg bg-slate-800/80 border border-slate-700/60">
+                            <span className="text-[10px] text-slate-400 block">Check-In Tiba</span>
+                            <span className="text-sm text-emerald-400 font-mono font-bold mt-0.5 block">{autoTrialSchedule.arrival}</span>
+                          </div>
+                          <div className="p-2.5 rounded-lg bg-slate-800/80 border border-slate-700/60">
+                            <span className="text-[10px] text-slate-400 block">Panggilan DP</span>
+                            <span className="text-sm text-white font-mono font-bold mt-0.5 block">{autoTrialSchedule.callDP}</span>
+                          </div>
+                          <div className="p-2.5 rounded-lg bg-slate-800/80 border border-slate-700/60">
+                            <span className="text-[10px] text-slate-400 block">Masuk Arena</span>
+                            <span className="text-sm text-amber-300 font-mono font-bold mt-0.5 block">{autoTrialSchedule.enterArena}</span>
+                          </div>
+                          <div className="p-2.5 rounded-lg bg-slate-800/80 border border-slate-700/60">
+                            <span className="text-[10px] text-slate-400 block">Check-Out Arena</span>
+                            <span className="text-sm text-white font-mono font-bold mt-0.5 block">{autoTrialSchedule.checkOut || autoTrialSchedule.finishArena || '15 Menit'}</span>
+                          </div>
                         </div>
-                        <div className="p-2.5 rounded-lg bg-slate-800/80 border border-slate-700/60">
-                          <span className="text-[10px] text-slate-400 block">Panggilan DP</span>
-                          <span className="text-sm text-white font-mono font-bold mt-0.5 block">{autoTrialSchedule.callDP}</span>
-                        </div>
-                        <div className="p-2.5 rounded-lg bg-slate-800/80 border border-slate-700/60">
-                          <span className="text-[10px] text-slate-400 block">Masuk Arena</span>
-                          <span className="text-sm text-amber-300 font-mono font-bold mt-0.5 block">{autoTrialSchedule.enterArena}</span>
-                        </div>
-                        <div className="p-2.5 rounded-lg bg-slate-800/80 border border-slate-700/60">
-                          <span className="text-[10px] text-slate-400 block">Durasi Arena</span>
-                          <span className="text-sm text-white font-mono font-bold mt-0.5 block">{autoTrialSchedule.allocation}</span>
-                        </div>
+
+                        {/* Live Status Hari H UCL */}
+                        {settings?.trialOps?.[currentTeam.id] && (
+                          <div className="p-2.5 rounded-lg bg-slate-800 border border-slate-700 text-xs flex items-center justify-between gap-2 flex-wrap">
+                            <span className="text-slate-300">Status Kehadiran Hari H UCL:</span>
+                            {settings.trialOps[currentTeam.id].status === 'checked_in' && (
+                              <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/40">
+                                ✓ Sudah Check-In (Pukul {settings.trialOps[currentTeam.id].checkedInAt})
+                              </span>
+                            )}
+                            {settings.trialOps[currentTeam.id].status === 'in_arena' && (
+                              <span className="px-2 py-0.5 rounded bg-red-500/20 text-red-300 font-bold border border-red-500/40 animate-pulse">
+                                🔴 Sedang Uji Coba di Arena
+                              </span>
+                            )}
+                            {settings.trialOps[currentTeam.id].status === 'completed' && (
+                              <span className="px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 font-bold border border-blue-500/40">
+                                ✓ Selesai UCL (Check-Out {settings.trialOps[currentTeam.id].completedAt})
+                              </span>
+                            )}
+                          </div>
+                        )}
                       </div>
                     ) : (
                       <div className="p-3 text-center text-xs text-slate-400">
@@ -956,7 +991,7 @@ export default function OverviewTab({
               </div>
             </div>
             <a
-              href={DOWNLOADS?.[0]?.url || "https://drive.google.com/file/d/1wxLlEIRVEzeMi2Qr0OAJCpqoKZXz-4vh/view?usp=sharing"}
+              href={DOWNLOADS?.[0]?.url || "https://drive.google.com/file/d/1OUJP3WBU_xr4KGQ2yVGv0npCvfuLlDWP/view?usp=sharing"}
               target="_blank"
               rel="noopener noreferrer"
               className="px-3.5 py-2 bg-slate-900 hover:bg-slate-800 active:scale-95 text-white text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 shrink-0 shadow-xs cursor-pointer"
