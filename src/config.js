@@ -772,7 +772,7 @@ export const MATERIALS = {
         'Langkah Perlahan(Dari Langkah Biasa) \u2013 Henti',
         'Hadap Kiri \u2013 Bubar',
         'Berhimpun** \u2013 Selesai',
-        'Berkumpul(Berbanjar) \u2013 Sikap Sempurna',
+        'Berkumpul(Bersaf) \u2013 Sikap Sempurna',
         'Setengah Lengan Lencang Kanan \u2013 Balik Kanan',
         'Lencang Kiri \u2013 Hitung',
         'Hadap Serong Kiri \u2013 3 Langkah Ke Depan',
