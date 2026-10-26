@@ -38,12 +38,12 @@ $files = Get-ChildItem "D:\BERKAS LBB MU'ALLIMIN 2027" -File
 foreach ($f in $files) {
     if ($f.Extension -eq ".docx") {
         $txt = Read-Docx $f.FullName
-        $outPath = "scripts\dump_" + $f.BaseName + ".txt"
+        $outPath = "scripts\dumps\dump_" + $f.BaseName + ".txt"
         $txt | Out-File -FilePath $outPath -Encoding utf8
         Write-Host "Wrote $outPath"
     } elseif ($f.Extension -eq ".xlsx") {
         $txt = Read-Xlsx $f.FullName
-        $outPath = "scripts\dump_" + $f.BaseName + ".txt"
+        $outPath = "scripts\dumps\dump_" + $f.BaseName + ".txt"
         $txt | Out-File -FilePath $outPath -Encoding utf8
         Write-Host "Wrote $outPath"
     }

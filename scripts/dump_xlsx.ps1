@@ -36,5 +36,5 @@ function Dump-Xlsx($path, $outTxt) {
     Write-Host "Wrote $outTxt"
 }
 
-Dump-Xlsx "D:\BERKAS LBB MU'ALLIMIN 2027\RAB LBB MU'ALLIMIN 2027.xlsx" "scripts\dump_RAB_cells.txt"
-Dump-Xlsx "D:\BERKAS LBB MU'ALLIMIN 2027\TIMELINE LBB MU'ALLIMIN 2027.xlsx" "scripts\dump_TIMELINE_cells.txt"
+Dump-Xlsx "D:\BERKAS LBB MU'ALLIMIN 2027\RAB LBB MU'ALLIMIN 2027.xlsx" "scripts\dumps\dump_RAB_cells.txt"
+Dump-Xlsx "D:\BERKAS LBB MU'ALLIMIN 2027\TIMELINE LBB MU'ALLIMIN 2027.xlsx" "scripts\dumps\dump_TIMELINE_cells.txt"

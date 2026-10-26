@@ -91,9 +91,6 @@ async function generateQR() {
     .toFile(outputPath);
 
   console.log(`QR Code generated successfully at: ${outputPath}`);
-
-  fs.copyFileSync(outputPath, path.resolve('qr-lbb-muallimin.png'));
-  console.log('Copy created at qr-lbb-muallimin.png');
 }
 
 generateQR().catch(err => {
