@@ -23,13 +23,13 @@ export default function MateriLomba() {
     });
     text += `\nKETERANGAN:\n`;
     if (isSD) {
-      text += `a. **Materi Istirahat di Tempat (Perhatian) Komandan Peleton memberi arahan dengan tema LBB Mu’allimin 2027\n`;
+      text += `a. **Untuk Perhatian, Istirahat di Tempat Komandan Peleton memberi arahan dengan tema LBB Mu’allimin 2027;\n`;
     } else {
-      text += `a. **Materi Berhimpun Komandan Peleton memberi arahan dengan tema LBB Mu’allimin 2027\n`;
+      text += `a. **Materi Berhimpun Komandan Peleton memberi arahan dengan tema LBB Mu’allimin 2027;\n`;
     }
     text += `b. Gerakan materi dilaksanakan secara berurutan sesuai nomor;\n`;
     text += `c. Materi gerakan berantai bertanda strip ( – ) wajib dilaksanakan satu rangkaian tanpa gerakan tambahan;\n`;
-    text += `d. Materi gerakan lomba sudah dibuat runtut. Komandan Peleton diperbolehkan melakukan gerakan penyesuaian tanpa pembatasan jumlah kuota, namun penggunaannya berpengaruh langsung terhadap penilaian aspek Penguasaan Lapangan Komandan Peleton;\n`;
+    text += `d. Materi gerakan lomba sudah dibuat runtut. Komandan Peleton diperbolehkan melakukan gerakan penyesuaian tanpa pembatasan jumlah, namun penggunaannya berpengaruh langsung terhadap penilaian aspek Penguasaan Lapangan Komandan Peleton;\n`;
     text += `e. Kebenaran teknik gerakan berpedoman pada Perpang TNI No. 58 dan 57 Tahun 2018, khusus pelaksanaan Hormat Kanan berpedoman pada Perpang TNI No. 45 Tahun 2014.\n`;
     text += `========================================================\n`;
     return text;
@@ -89,10 +89,10 @@ export default function MateriLomba() {
         <div class="rules">
           <strong>Keterangan:</strong>
           <ol type="a" class="ket">
-            ${isSD ? `<li>**Materi Istirahat di Tempat (Perhatian) Komandan Peleton memberi arahan dengan tema LBB Mu’allimin 2027</li>` : `<li>**Materi Berhimpun Komandan Peleton memberi arahan dengan tema LBB Mu’allimin 2027</li>`}
+            ${isSD ? `<li>**Untuk Perhatian, Istirahat di Tempat Komandan Peleton memberi arahan dengan tema LBB Mu’allimin 2027;</li>` : `<li>**Materi Berhimpun Komandan Peleton memberi arahan dengan tema LBB Mu’allimin 2027;</li>`}
             <li>Gerakan materi dilaksanakan secara berurutan sesuai nomor;</li>
             <li>Materi gerakan berantai bertanda strip ( – ) wajib dilaksanakan satu rangkaian tanpa gerakan tambahan;</li>
-            <li>Materi gerakan lomba sudah dibuat runtut. Komandan Peleton diperbolehkan melakukan gerakan penyesuaian tanpa pembatasan jumlah kuota, namun penggunaannya berpengaruh langsung terhadap penilaian aspek Penguasaan Lapangan Komandan Peleton;</li>
+            <li>Materi gerakan lomba sudah dibuat runtut. Komandan Peleton diperbolehkan melakukan gerakan penyesuaian tanpa pembatasan jumlah, namun penggunaannya berpengaruh langsung terhadap penilaian aspek Penguasaan Lapangan Komandan Peleton;</li>
             <li>Kebenaran teknik gerakan berpedoman pada Perpang TNI No. 58 dan 57 Tahun 2018, khusus pelaksanaan Hormat Kanan berpedoman pada Perpang TNI No. 45 Tahun 2014.</li>
           </ol>
         </div>
@@ -190,10 +190,10 @@ export default function MateriLomba() {
                 <div className="mt-8 pt-5 border-t border-slate-200">
                   <h4 className="text-xs font-bold text-slate-900 uppercase mb-2">Keterangan:</h4>
                   <ul className="space-y-1.5 list-[lower-alpha] list-outside pl-6 text-xs text-slate-600">
-                    <li>**Materi Istirahat di Tempat (Perhatian) Komandan Peleton memberi arahan dengan tema LBB Mu’allimin 2027;</li>
+                    <li>**Untuk Perhatian, Istirahat di Tempat Komandan Peleton memberi arahan dengan tema LBB Mu’allimin 2027;</li>
                     <li>Gerakan materi dilaksanakan secara berurutan sesuai nomor;</li>
                     <li>Materi gerakan berantai bertanda strip ( – ) wajib dilaksanakan satu rangkaian tanpa gerakan tambahan;</li>
-                    <li>Materi gerakan lomba sudah dibuat runtut. Komandan Peleton diperbolehkan melakukan gerakan penyesuaian tanpa pembatasan jumlah kuota, namun penggunaannya berpengaruh langsung terhadap penilaian aspek Penguasaan Lapangan Komandan Peleton;</li>
+                    <li>Materi gerakan lomba sudah dibuat runtut. Komandan Peleton diperbolehkan melakukan gerakan penyesuaian tanpa pembatasan jumlah, namun penggunaannya berpengaruh langsung terhadap penilaian aspek Penguasaan Lapangan Komandan Peleton;</li>
                     <li>Kebenaran teknik gerakan berpedoman pada Perpang TNI No. 58 dan 57 Tahun 2018, khusus pelaksanaan Hormat Kanan berpedoman pada Perpang TNI No. 45 Tahun 2014.</li>
                   </ul>
                 </div>
@@ -268,7 +268,7 @@ export default function MateriLomba() {
                     <li>**Materi Berhimpun Komandan Peleton memberi arahan dengan tema LBB Mu’allimin 2027;</li>
                     <li>Gerakan materi dilaksanakan secara berurutan sesuai nomor;</li>
                     <li>Materi gerakan berantai bertanda strip ( – ) wajib dilaksanakan satu rangkaian tanpa gerakan tambahan;</li>
-                    <li>Materi gerakan lomba sudah dibuat runtut. Komandan Peleton diperbolehkan melakukan gerakan penyesuaian tanpa pembatasan jumlah kuota, namun penggunaannya berpengaruh langsung terhadap penilaian aspek Penguasaan Lapangan Komandan Peleton;</li>
+                    <li>Materi gerakan lomba sudah dibuat runtut. Komandan Peleton diperbolehkan melakukan gerakan penyesuaian tanpa pembatasan jumlah, namun penggunaannya berpengaruh langsung terhadap penilaian aspek Penguasaan Lapangan Komandan Peleton;</li>
                     <li>Kebenaran teknik gerakan berpedoman pada Perpang TNI No. 58 dan 57 Tahun 2018, khusus pelaksanaan Hormat Kanan berpedoman pada Perpang TNI No. 45 Tahun 2014.</li>
                   </ul>
                 </div>

@@ -153,7 +153,7 @@ export default function JuknisView() {
                 Petunjuk Teknis & Regulasi Kejuaraan
               </h1>
               <p className="text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed">
-                Dokumen regulasi resmi terbagi dalam 3 naskah baku mandiri: <strong>Petunjuk Teknis Penilaian & Kejuaraan</strong> (sistem 1:1, Danton, Juara Umum, sanggah), <strong>Petunjuk Teknis Lapangan</strong> (kronologis pra s.d. pasca lomba & penalti), serta <strong>Petunjuk Teknis Pendaftaran</strong>.
+                Dokumen regulasi resmi terbagi dalam 3 naskah baku mandiri: <strong>Petunjuk Teknis Penilaian & Kejuaraan</strong> (sistem coret 5 predikat KS/K/C/B/BS, Danton, Juara Umum, sanggah), <strong>Petunjuk Teknis Lapangan</strong> (kronologis pra s.d. pasca lomba & penalti), serta <strong>Petunjuk Teknis Pendaftaran</strong>.
               </p>
               <div className="pt-1 flex flex-wrap gap-2.5">
                 <a
@@ -170,9 +170,9 @@ export default function JuknisView() {
             </div>
 
             <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-4 text-center min-w-[170px] shrink-0 self-start md:self-center">
-              <span className="text-[10px] uppercase font-bold text-amber-300 block">Juri 1:1 • 6 Dewan Juri</span>
-              <span className="text-2xl font-black text-white font-mono">1 : 1</span>
-              <span className="text-[10px] text-slate-300 block mt-0.5">Teknik 50% • Kompak 50%</span>
+              <span className="text-[10px] uppercase font-bold text-amber-300 block">6 Dewan Juri Independen</span>
+              <span className="text-xl font-black text-white font-mono">KS • K • C • B • BS</span>
+              <span className="text-[10px] text-slate-300 block mt-0.5">Paduan Teknik & Kekompakan</span>
             </div>
           </div>
         </div>
@@ -253,7 +253,7 @@ export default function JuknisView() {
 
           <div className="text-[11px] text-slate-500 font-semibold px-2 flex items-center justify-between">
             <span>
-              {activeTab === 'penilaian' && 'Menampilkan naskah utuh: Sistem Penilaian 1:1, Danton, Penentuan Juara Umum & Tie-Breaker, Sanggah, Backup Digital & Sanksi Penalti.'}
+              {activeTab === 'penilaian' && 'Menampilkan naskah utuh: Sistem Penilaian 5 Predikat Baku, Danton, Penentuan Juara Umum & Tie-Breaker, Sanggah, Backup Digital & Sanksi Penalti.'}
               {activeTab === 'lapangan' && 'Menampilkan Petunjuk Teknis Lapangan runtut dari alur pra-lomba (TM & Uji Coba), hari-H, hingga force majeure.'}
               {activeTab === 'pendaftaran' && 'Menampilkan Petunjuk Teknis Pendaftaran: Kuota 36 Peleton, Timeline, Rekening BSI, Alur Digital & Berkas Fisik TM.'}
               {activeTab === 'materials' && 'Menampilkan daftar 26 gerakan SD / 28 gerakan SMP, slot pergantian pemain, dan denah pos visual.'}
@@ -278,7 +278,7 @@ export default function JuknisView() {
                 PETUNJUK TEKNIS PENILAIAN DAN KEJUARAAN
               </h2>
               <p className="text-xs sm:text-sm text-slate-700 leading-relaxed max-w-3xl">
-                Regulasi baku proses penjurian, rasio penilaian 1:1, rubrik Komandan Peleton (4 aspek), rumus akumulasi Juara Umum dan 7 kriteria tie-breaker, transparansi rolling release melalui akun Gmail terdaftar, prosedur pengajuan sanggah resmi, SOP penanganan gangguan digital, serta tabel sanksi penalti pengurangan nilai.
+                Regulasi baku proses penjurian oleh 6 Dewan Juri (unsur TNI, POLRI, dan Profesional), metode coret 5 predikat (KS, K, C, B, BS), rubrik Komandan Peleton (4 aspek), rumus akumulasi Juara Umum dan kriteria tie-breaker resmi, transparansi rolling release melalui akun Gmail terdaftar, prosedur pengajuan sanggah resmi, SOP penanganan gangguan digital, serta ketentuan sanksi penalti pengurangan nilai.
               </p>
             </div>
 
@@ -438,9 +438,32 @@ export default function JuknisView() {
 
               {openPenilaianSections['bab-c'] && (
                 <div className="p-5 sm:p-7 space-y-4">
-                  <p className="text-xs sm:text-sm text-slate-600 font-medium">
-                    Pelanggaran terhadap regulasi teknis lapangan dikenakan sanksi pemotongan nilai secara kumulatif pada lembar rekapitulasi nilai akhir:
+                  <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">
+                    {JUKNIS_PENILAIAN_CHAPTERS[2].tableNote}
                   </p>
+
+                  {/* 10 Butir Verbatim Bab C */}
+                  <div className="space-y-3">
+                    {JUKNIS_PENILAIAN_CHAPTERS[2].points.slice(0, 10).map(pt => (
+                      <div key={pt.number} className="p-4 rounded-2xl bg-slate-50/70 border border-slate-200/90 flex items-start gap-3">
+                        <span className="w-6 h-6 rounded-lg bg-red-600 text-white font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
+                          {pt.number}
+                        </span>
+                        <div className="space-y-1 flex-1">
+                          <strong className="text-xs sm:text-sm font-bold text-slate-900 block">{pt.title}:</strong>
+                          <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">{pt.content}</p>
+                          {pt.subItems && (
+                            <ul className="space-y-1 pt-1 text-xs text-slate-700 pl-3">
+                              {pt.subItems.map((sub, sIdx) => (
+                                <li key={sIdx} className="leading-relaxed">{sub}</li>
+                              ))}
+                            </ul>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
                   <div className="overflow-x-auto rounded-2xl border border-slate-200 shadow-xs">
                     <table className="w-full text-xs text-left">
                       <thead className="bg-slate-100 text-slate-800 uppercase font-black tracking-wider text-[11px]">
@@ -472,7 +495,7 @@ export default function JuknisView() {
                   <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 flex items-start gap-3">
                     <div className="w-2 h-2 rounded-full bg-slate-400 mt-1.5 shrink-0"></div>
                     <p className="text-xs text-slate-700 leading-relaxed">
-                      <strong className="text-slate-900 font-bold">Pencatatan Penalti:</strong> Seluruh sanksi pengurangan nilai dicatat secara langsung dan transparan oleh Hakim Garis, Timekeeper, dan Koordinator Lapangan ke dalam Berita Acara Pelanggaran Resmi serta disahkan oleh Perwakilan Dewan Juri.
+                      {JUKNIS_PENILAIAN_CHAPTERS[2].closingNote}
                     </p>
                   </div>
                 </div>
@@ -503,7 +526,7 @@ export default function JuknisView() {
               {openPenilaianSections['bab-d'] && (
                 <div className="p-5 sm:p-7 space-y-4">
                   <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 text-xs sm:text-sm text-slate-700 leading-relaxed">
-                    Petunjuk Teknis Penilaian dan Kejuaraan ini menjadi acuan baku dan mengikat dalam proses evaluasi hasil, penetapan peringkat, dan penegakan keadilan kompetisi LBB Mu'allimin Tahun 2027. Seluruh ketentuan yang telah ditetapkan berlaku mutlak bagi seluruh kontingen peserta dan perangkat perlombaan.
+                    {JUKNIS_PENILAIAN_CHAPTERS[3].content}
                   </div>
                 </div>
               )}
@@ -553,7 +576,7 @@ export default function JuknisView() {
                     <h3 className="font-black text-base sm:text-lg text-slate-900 uppercase">
                       A. Ketentuan Umum dan Alur Teknis Pendaftaran
                     </h3>
-                    <span className="text-xs text-slate-500 font-medium">10 Butir Baku Regulasi Administratif & Verifikasi</span>
+                    <span className="text-xs text-slate-500 font-medium">11 Butir Baku Regulasi Administratif & Verifikasi</span>
                   </div>
                 </div>
                 <ChevronDown className={`w-5 h-5 text-slate-400 transition-transform ${openPendaftaranSections['reg-a'] ? 'rotate-180 text-blue-600' : ''}`} />
@@ -569,7 +592,7 @@ export default function JuknisView() {
                         </span>
                         <div className="flex-1 space-y-1.5">
                           <strong className="text-sm font-black text-slate-900 block">{item.title}:</strong>
-                          <ul className="list-[lower-alpha] pl-5 space-y-1.5 text-xs text-slate-700 leading-relaxed">
+                          <ul className="space-y-1.5 text-xs text-slate-700 leading-relaxed whitespace-pre-line">
                             {item.sub.map((s, sIdx) => (
                               <li key={sIdx}>{s}</li>
                             ))}
@@ -606,7 +629,7 @@ export default function JuknisView() {
               {openPendaftaranSections['reg-b'] && (
                 <div className="p-5 sm:p-7 space-y-4">
                   <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 text-xs sm:text-sm text-slate-700 leading-relaxed">
-                    Petunjuk Teknis Pendaftaran ini disusun sebagai pedoman baku dan mengikat dalam rangka menjamin tertib administrasi, kepastian hukum, transparansi, serta kelancaran operasional pendaftaran Lomba Baris-Berbaris Mu’allimin Tahun 2027.
+                    {JUKNIS_PENDAFTARAN_CHAPTERS[1].content}
                   </div>
                 </div>
               )}
@@ -754,7 +777,7 @@ export default function JuknisView() {
           </div>
         </div>
 
-        {/* Rubrik Penilaian Khusus: Juri 1:1 & Danton */}
+        {/* Rubrik Penilaian Khusus: Juri & Danton */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-3">
             <h3 className="text-sm font-black text-slate-900 uppercase flex items-center gap-2">
@@ -764,19 +787,19 @@ export default function JuknisView() {
             <ul className="text-xs text-slate-600 space-y-2">
               <li className="flex items-start gap-2">
                 <CheckCircle2 className="w-3.5 h-3.5 text-amber-600 shrink-0 mt-0.5" />
-                <span><strong>Penguasaan Materi Aba-Aba (35%):</strong> Kebenaran urutan aba-aba petunjuk, peringatan, dan pelaksanaan sesuai juknis.</span>
+                <span><strong>Penguasaan Materi Lomba (Bobot 35%):</strong> Kebenaran urutan aba-aba petunjuk, peringatan, dan pelaksanaan sesuai lembar materi lomba.</span>
               </li>
               <li className="flex items-start gap-2">
                 <CheckCircle2 className="w-3.5 h-3.5 text-amber-600 shrink-0 mt-0.5" />
-                <span><strong>Kualitas Suara (25%):</strong> Kejelasan artikulasi, intonasi, tempo, ritme, dan kekuatan vokal (IKIT).</span>
+                <span><strong>Kualitas Suara / Vokal (Bobot 25%):</strong> Kejelasan artikulasi, intonasi, tempo, ritme, dan kekuatan vokal.</span>
               </li>
               <li className="flex items-start gap-2">
                 <CheckCircle2 className="w-3.5 h-3.5 text-amber-600 shrink-0 mt-0.5" />
-                <span><strong>Sikap Tampang & Keberanian (20%):</strong> Ketenangan, ketegasan pandangan mata, wibawa kepemimpinan, dan kerapian.</span>
+                <span><strong>Sikap & Pelaporan (Bobot 20%):</strong> Ketenangan, ketegasan sikap sempurna, wibawa kepemimpinan, dan pelaporan pembuka/penutup.</span>
               </li>
               <li className="flex items-start gap-2">
                 <CheckCircle2 className="w-3.5 h-3.5 text-amber-600 shrink-0 mt-0.5" />
-                <span><strong>Penguasaan Lapangan (20%):</strong> Penempatan posisi relatif terhadap pasukan dan dewan juri serta efektivitas kotak Danton (1,5 × 1,5 m).</span>
+                <span><strong>Penguasaan Lapangan (Bobot 20%):</strong> Penempatan posisi relatif terhadap pasukan dan dewan juri, efektivitas gerakan penyesuaian, serta kepatuhan Kotak Danton (1,5 × 1,5 m).</span>
               </li>
             </ul>
           </div>
@@ -784,20 +807,20 @@ export default function JuknisView() {
           <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-3">
             <h3 className="text-sm font-black text-slate-900 uppercase flex items-center gap-2">
               <Users className="w-4 h-4 text-blue-600" />
-              <span>Sistem Penilaian Peleton 1:1 (Rentang 50 s.d. 90 Genap)</span>
+              <span>Sistem Penilaian Peleton (5 Predikat Baku KS, K, C, B, BS)</span>
             </h3>
             <ul className="text-xs text-slate-600 space-y-2">
               <li className="flex items-start gap-2">
                 <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 shrink-0 mt-0.5" />
-                <span><strong>Kebenaran Gerak (Bobot 50%):</strong> Kesesuaian teknik gerak dengan Perpang TNI 58 & 57 Tahun 2018 (serta No. 45 Tahun 2014).</span>
+                <span><strong>Paduan Kebenaran Teknik & Kekompakan:</strong> KS = 1 opsi angka minimal (50), K = Teknik Salah & Tidak Kompak, C = Teknik Salah & Kompak, B = Teknik Benar & Tidak Kompak, BS = Teknik Benar & Kompak.</span>
               </li>
               <li className="flex items-start gap-2">
                 <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 shrink-0 mt-0.5" />
-                <span><strong>Kekompakan (Bobot 50%):</strong> Keselarasan tempo, irama hentakan kaki, kesamaan sudut ayunan tangan, dan kelurusan saf/banjar.</span>
+                <span><strong>Sebaran Nilai Materi Peleton:</strong> Sederhana (50–80), Menengah (50–85), dan Kompleks (50–90). Gerakan yang terlewat atau tidak dilaksanakan sama sekali diberi nilai 0 (nol).</span>
               </li>
               <li className="flex items-start gap-2">
                 <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 shrink-0 mt-0.5" />
-                <span><strong>Skala Nilai:</strong> Diberikan dalam rentang 50 s.d. 90 poin (bilangan genap) oleh 6 Dewan Juri Independen (TNI, POLRI, Profesional/Sipil).</span>
+                <span><strong>6 Dewan Juri Independen:</strong> Unsur TNI, POLRI, dan Profesional (3 Juri Arena 1 SD & 3 Juri Arena 2 SMP) menilai secara simultan dalam satu lembar penilaian terpadu.</span>
               </li>
               <li className="flex items-start gap-2">
                 <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 shrink-0 mt-0.5" />

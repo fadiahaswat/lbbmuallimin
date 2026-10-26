@@ -62,10 +62,15 @@ export default function OfficialScoreRecapModal({ isOpen, onClose, initialJenjan
       ? Number(s.finalScore)
       : parseFloat((nilaiAkhirPeleton + nilaiAkhirDanton).toFixed(2));
 
-    // Nilai aspek Danton untuk tie-breaker (Materi 35% & Vokal 25%)
-    const dantonRubric = juries.pos3?.dantonRubricScores || s?.danton?.rubricScores || {};
-    const dantonMateri = Number(dantonRubric.materi || 0);
-    const dantonVokal = Number(dantonRubric.vokal || 0);
+    // Nilai aspek Danton untuk tie-breaker (Materi 35% & Vokal 25%) akumulasi 3 Dewan Juri
+    const dantonMateri =
+      Number(juries.pos1?.dantonRubricScores?.materi ?? 0) +
+      Number(juries.pos2?.dantonRubricScores?.materi ?? 0) +
+      Number(juries.pos3?.dantonRubricScores?.materi ?? s?.danton?.rubricScores?.materi ?? 0);
+    const dantonVokal =
+      Number(juries.pos1?.dantonRubricScores?.vokal ?? 0) +
+      Number(juries.pos2?.dantonRubricScores?.vokal ?? 0) +
+      Number(juries.pos3?.dantonRubricScores?.vokal ?? s?.danton?.rubricScores?.vokal ?? 0);
 
     return {
       team,
@@ -143,71 +148,107 @@ export default function OfficialScoreRecapModal({ isOpen, onClose, initialJenjan
     return null;
   }
 
-  // Hitung Akumulasi Poin Juara Umum Sekolah (Bab A.7)
+  // Hitung Akumulasi Poin Juara Umum Sekolah (Bab A.7 & Bab A.8) per Jenjang
   const schoolPointsMap = {};
   targetTeams.forEach(t => {
-    if (!schoolPointsMap[t.schoolName]) {
-      schoolPointsMap[t.schoolName] = {
+    const key = `${t.jenjang}__${t.schoolName}`;
+    if (!schoolPointsMap[key]) {
+      schoolPointsMap[key] = {
         schoolName: t.schoolName,
         jenjang: t.jenjang,
         peletonPoints: 0,
         dantonPoints: 0,
         totalPoints: 0,
+        bestMurniPeleton: 0,
+        peletonPenaltySum: 0,
+        bestMurniDanton: 0,
         achievements: [],
       };
     }
   });
 
-  // Poin Peleton
-  const peletonRanked = [...computedTeams].sort((a, b) => {
-    if (b.nilaiAkhirPeleton !== a.nilaiAkhirPeleton) return b.nilaiAkhirPeleton - a.nilaiAkhirPeleton;
-    if (b.nilaiMurniPeleton !== a.nilaiMurniPeleton) return b.nilaiMurniPeleton - a.nilaiMurniPeleton;
-    return a.peletonPenalty - b.peletonPenalty;
-  });
-
-  peletonRanked.forEach((item, idx) => {
-    const rank = idx + 1;
-    const school = schoolPointsMap[item.team.schoolName];
+  computedTeams.forEach(item => {
+    const key = `${item.team.jenjang}__${item.team.schoolName}`;
+    const school = schoolPointsMap[key];
     if (!school) return;
-    let pts = 0;
-    if (rank === 1) pts = 6;
-    else if (rank === 2) pts = 5;
-    else if (rank === 3) pts = 4;
-    else if (rank === 4) pts = 3;
-    else if (rank === 5) pts = 2;
-    else if (rank === 6) pts = 1;
-
-    if (pts > 0) {
-      school.peletonPoints += pts;
-      school.totalPoints += pts;
-      school.achievements.push(`${getPeletonAwardTitle(rank)} (${pts} Poin)`);
+    if (item.nilaiMurniPeleton > school.bestMurniPeleton) {
+      school.bestMurniPeleton = item.nilaiMurniPeleton;
+    }
+    school.peletonPenaltySum += item.peletonPenalty;
+    if (item.nilaiMurniDanton > school.bestMurniDanton) {
+      school.bestMurniDanton = item.nilaiMurniDanton;
     }
   });
 
-  // Poin Danton
-  const dantonRanked = [...computedTeams].sort((a, b) => {
-    if (b.nilaiAkhirDanton !== a.nilaiAkhirDanton) return b.nilaiAkhirDanton - a.nilaiAkhirDanton;
-    if (b.nilaiMurniDanton !== a.nilaiMurniDanton) return b.nilaiMurniDanton - a.nilaiMurniDanton;
-    return a.dantonPenalty - b.dantonPenalty;
+  ['SD', 'SMP'].forEach(jenjangGroup => {
+    const groupTeams = computedTeams.filter(item => item.team.jenjang === jenjangGroup && item.scored);
+
+    // Poin Peleton per jenjang (Bab A.5 & A.7)
+    const peletonRanked = [...groupTeams].sort((a, b) => {
+      if (b.nilaiAkhirPeleton !== a.nilaiAkhirPeleton) return b.nilaiAkhirPeleton - a.nilaiAkhirPeleton;
+      if (b.nilaiMurniPeleton !== a.nilaiMurniPeleton) return b.nilaiMurniPeleton - a.nilaiMurniPeleton;
+      if (a.peletonPenalty !== b.peletonPenalty) return a.peletonPenalty - b.peletonPenalty;
+      return b.nilaiMurniDanton - a.nilaiMurniDanton;
+    });
+
+    peletonRanked.forEach((item, idx) => {
+      const rank = idx + 1;
+      const key = `${item.team.jenjang}__${item.team.schoolName}`;
+      const school = schoolPointsMap[key];
+      if (!school) return;
+      let pts = 0;
+      if (rank === 1) pts = 6;
+      else if (rank === 2) pts = 5;
+      else if (rank === 3) pts = 4;
+      else if (rank === 4) pts = 3;
+      else if (rank === 5) pts = 2;
+      else if (rank === 6) pts = 1;
+
+      if (pts > 0) {
+        school.peletonPoints += pts;
+        school.totalPoints += pts;
+        school.achievements.push(`${getPeletonAwardTitle(rank)} (${pts} Poin)`);
+      }
+    });
+
+    // Poin Danton per jenjang (Bab A.6 & A.7)
+    const dantonRanked = [...groupTeams].sort((a, b) => {
+      if (b.nilaiAkhirDanton !== a.nilaiAkhirDanton) return b.nilaiAkhirDanton - a.nilaiAkhirDanton;
+      if (b.nilaiMurniDanton !== a.nilaiMurniDanton) return b.nilaiMurniDanton - a.nilaiMurniDanton;
+      if (a.dantonPenalty !== b.dantonPenalty) return a.dantonPenalty - b.dantonPenalty;
+      if (b.dantonMateri !== a.dantonMateri) return b.dantonMateri - a.dantonMateri;
+      return b.dantonVokal - a.dantonVokal;
+    });
+
+    dantonRanked.forEach((item, idx) => {
+      const rank = idx + 1;
+      const key = `${item.team.jenjang}__${item.team.schoolName}`;
+      const school = schoolPointsMap[key];
+      if (!school) return;
+      let pts = 0;
+      if (rank === 1) pts = 3;
+      else if (rank === 2) pts = 2;
+      else if (rank === 3) pts = 1;
+
+      if (pts > 0) {
+        school.dantonPoints += pts;
+        school.totalPoints += pts;
+        school.achievements.push(`${getDantonAwardTitle(rank)} (${pts} Poin)`);
+      }
+    });
   });
 
-  dantonRanked.forEach((item, idx) => {
-    const rank = idx + 1;
-    const school = schoolPointsMap[item.team.schoolName];
-    if (!school) return;
-    let pts = 0;
-    if (rank === 1) pts = 3;
-    else if (rank === 2) pts = 2;
-    else if (rank === 3) pts = 1;
-
-    if (pts > 0) {
-      school.dantonPoints += pts;
-      school.totalPoints += pts;
-      school.achievements.push(`${getDantonAwardTitle(rank)} (${pts} Poin)`);
-    }
+  // Tie-Breaker Juara Umum (Bab A.8):
+  // 1. Total Poin Prestasi tertinggi
+  // 2. Perolehan Nilai Murni Peleton tertinggi dari salah satu peleton terbaik milik sekolah
+  // 3. Akumulasi pengurangan poin penalti peleton paling sedikit
+  // 4. Perolehan Nilai Murni Komandan tertinggi
+  const rankedSchools = Object.values(schoolPointsMap).sort((a, b) => {
+    if (b.totalPoints !== a.totalPoints) return b.totalPoints - a.totalPoints;
+    if (b.bestMurniPeleton !== a.bestMurniPeleton) return b.bestMurniPeleton - a.bestMurniPeleton;
+    if (a.peletonPenaltySum !== b.peletonPenaltySum) return a.peletonPenaltySum - b.peletonPenaltySum;
+    return b.bestMurniDanton - a.bestMurniDanton;
   });
-
-  const rankedSchools = Object.values(schoolPointsMap).sort((a, b) => b.totalPoints - a.totalPoints);
 
   function handlePrint() {
     window.print();

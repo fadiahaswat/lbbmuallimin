@@ -835,12 +835,25 @@ export default function Registration() {
                         Foto 3×4
                       </span>
                     </div>
-                    <h5 className="font-black text-white text-xs mb-1">Pasfoto Personel</h5>
+                    <h5 className="font-black text-white text-xs mb-1">Pasfoto Personel (25 Anggota)</h5>
                     <p className="text-[11px] text-slate-400 leading-relaxed">
-                      Latar <span className="text-red-400 font-bold">Merah (SD)</span> atau <span className="text-blue-400 font-bold">Biru (SMP)</span>. Diunggah per nama di menu portal peserta.
+                      Latar belakang <span className="text-red-400 font-bold">MERAH (SD/MI)</span> atau <span className="text-blue-400 font-bold">BIRU (SMP/MTs)</span> (maks. 2 MB per foto). Diinput pada menu Kelola Personel di Dashboard Peserta paling lambat sebelum pelaksanaan Technical Meeting.
                     </p>
                   </div>
-                  <span className="text-[10px] text-slate-500 mt-2 block">Diinput di Menu Personel</span>
+                  <span className="text-[10px] text-slate-500 mt-2 block">Diinput di Menu Personel (Maks. 2 MB/foto)</span>
+                </div>
+
+                {/* Berkas Fisik TM */}
+                <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/25 transition-all flex flex-col justify-between sm:col-span-2">
+                  <div>
+                    <span className="text-[10px] font-black uppercase tracking-wider text-amber-300 block mb-1">
+                      Berkas Fisik Wajib Dibawa Saat Technical Meeting (TM)
+                    </span>
+                    <ul className="text-[11px] text-slate-300 space-y-1 list-decimal list-inside leading-relaxed">
+                      <li>Surat Rekomendasi Kepala Sekolah/Madrasah asli berstempel basah;</li>
+                      <li>Cetakan (Print-out) Pakta Integritas fisik yang telah ditandatangani basah oleh Official bersangkutan.</li>
+                    </ul>
+                  </div>
                 </div>
 
               </div>
@@ -871,7 +884,7 @@ export default function Registration() {
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0 mt-1.5"></span>
-                  <span><strong className="text-white">Perubahan Data Personel:</strong> Diperbolehkan sampai sebelum Technical Meeting (TM), wajib dilaporkan dan disesuaikan dengan Surat Tugas/Rekomendasi resmi Kepala Sekolah.</span>
+                  <span><strong className="text-white">Perubahan Data Personel:</strong> Pergantian personel yang telah diinput hanya diperbolehkan paling lambat sebelum pelaksanaan Pertemuan Teknis (Technical Meeting). Setiap perubahan susunan wajib segera diperbarui melalui portal dan disesuaikan dengan berkas fisik yang dibawa saat TM.</span>
                 </li>
               </ul>
             </div>

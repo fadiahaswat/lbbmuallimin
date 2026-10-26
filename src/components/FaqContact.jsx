@@ -107,14 +107,14 @@ const FAQ_DATA = [
     category: 'Teknis',
     icon: 'Calendar',
     q: 'Apa acuan baku peraturan baris-berbaris yang digunakan dewan juri?',
-    a: 'Unsur penilaian materi lomba mengacu pada Peraturan Panglima TNI No. 58 & 57 Tahun 2018 (serta No. 45 Tahun 2014 khusus untuk Hormat Kanan/Kiri). Rasio penilaian peleton adalah 1:1 antara Kebenaran Teknik (50%) dan Kekompakan (50%) dengan rentang 50 s.d. 90 poin.',
+    a: 'Unsur penilaian materi lomba mengacu pada Peraturan Panglima TNI No. 58 & 57 Tahun 2018 (serta No. 45 Tahun 2014 khusus untuk Hormat Kanan). Penilaian setiap gerakan PBB memadukan unsur Kebenaran Teknik Gerakan dan Kekompakan secara proporsional menggunakan sistem coret 5 predikat nilai baku (KS, K, C, B, BS) dalam rentang 50 s.d. 80 / 85 / 90 poin sesuai tingkat kesulitan gerakan (Sederhana, Menengah, Kompleks).',
   },
   {
     id: 13,
     category: 'Teknis',
     icon: 'Calendar',
     q: 'Siapa saja dewan juri yang bertugas menilai?',
-    a: 'Penilaian dilakukan secara objektif dan independen oleh 6 Dewan Juri berkompeten dari unsur TNI, POLRI, dan Profesional/Sipil (3 Juri Arena 1 untuk SD/MI dan 3 Juri Arena 2 untuk SMP/MTs).',
+    a: 'Penilaian dilakukan secara objektif dan independen oleh 6 Dewan Juri berkompeten dari unsur TNI, POLRI, dan Profesional (3 Juri Arena 1 untuk SD/MI dan 3 Juri Arena 2 untuk SMP/MTs).',
   },
 
   // --- KATEGORI 4: JADWAL & LOKASI ---

@@ -202,14 +202,14 @@ export const COMPETITION = {
     PERFORMANCE_TIME_LIMIT_MINUTES: '8 (SD/MI) / 12 (SMP/MTs)',
 
     /** Deskripsi unsur dewan juri */
-    JURY_MEMBERS: '6 Dewan Juri Independen (unsur TNI, POLRI, dan Profesional/Sipil: 3 Juri SD & 3 Juri SMP)',
+    JURY_MEMBERS: '6 Dewan Juri Independen (unsur TNI, POLRI, dan Profesional: 3 Juri Arena 1 (SD) & 3 Juri Arena 2 (SMP))',
 
     /** Proporsi penilaian peleton & danton */
     SCORING_PROPORTIONS: {
         PBB_TEKNIK: 50,
         PBB_KEKOMPAKAN: 50,
-        RATIO_LABEL: 'Perbandingan 1:1 (Kebenaran Gerak 1 : Kekompakan 1)',
-        SCORE_RANGE: 'Rentang Nilai: 50 s.d. 90 Poin (Bilangan Genap)',
+        RATIO_LABEL: 'Sistem Coret 5 Predikat Baku (Paduan Kebenaran Teknik & Kekompakan)',
+        SCORE_RANGE: 'Rentang Nilai: 50 s.d. 80 / 85 / 90 Poin (Sesuai Tingkat Kesulitan)',
         DANTON: {
             MATERI: 35,
             SUARA: 25,
@@ -314,7 +314,7 @@ export const DOWNLOADS = [
     {
         id: 'juknis-penilaian',
         title: 'Petunjuk Teknis Penilaian & Kejuaraan',
-        description: 'Regulasi baku Dewan Juri 1:1, kriteria Danton (4 aspek), akumulasi Juara Umum & tie-breaker 7 tingkat, transparansi rolling release Gmail, serta tabel penalti resmi.',
+        description: 'Regulasi baku Dewan Juri (Sistem 5 Predikat Baku KS, K, C, B, BS), kriteria Danton (4 aspek), akumulasi Juara Umum & tie-breaker resmi, transparansi rolling release Gmail, serta tabel penalti resmi.',
         size: 'Google Drive / PDF',
         type: 'REGULASI JURI',
         url: 'https://drive.google.com/file/d/1OUJP3WBU_xr4KGQ2yVGv0npCvfuLlDWP/view?usp=sharing',
@@ -422,13 +422,13 @@ export const CLIPBOARD = {
 export const SCORING = {
     PLATOON_TECHNIQUE_PCT: 50,
     PLATOON_COHESION_PCT: 50,
-    PLATOON_RATIO: '1:1 (Kebenaran Gerak 1 : Kekompakan 1)',
-    SCORE_RANGE_PELETON: '50 s.d. 90 Poin (Bilangan Genap)',
+    PLATOON_RATIO: 'Sistem Coret 5 Predikat Baku (Paduan Kebenaran Teknik & Kekompakan)',
+    SCORE_RANGE_PELETON: '50 s.d. 80 / 85 / 90 Poin (Sesuai Tingkat Kesulitan)',
     DANTON_MASTERY_PCT: 35,
     DANTON_VOICE_PCT: 25,
     DANTON_ATTITUDE_PCT: 20,
     DANTON_FIELD_PCT: 20,
-    SCORE_RANGE_LABEL: 'Rubrik Skala K / C / B / BS Berjenjang',
+    SCORE_RANGE_LABEL: 'Rubrik Skala KS / K / C / B / BS Berjenjang',
 };
 
 /** Kategori Predikat Mutu Sesuai Tampilan Standar Simpaskor / LKBB */
@@ -492,98 +492,100 @@ export const RUBRIC_GRADES = [
  * - Parade Kerapian Khusus (12-30): [12, 15, 18, 21, 24, 27, 30]
  */
 /**
- * Sebaran Nilai Standar Juknis Penilaian LBB Mu'allimin 2027 (Bab A Angka 3.a)
- * Sistem Coret 5 Predikat Baku: KS (50), K (3 opsi), C (3 opsi), B (3 opsi), BS (1 opsi)
- * Sederhana (50 - 80), Menengah (50 - 85), Kompleks (50 - 90)
+ * Sebaran Nilai Standar Juknis Penilaian LBB Mu'allimin 2027 (Bab A Angka 3.a & 3.b)
+ * Sistem Coret 5 Predikat Baku: KS (3 opsi), K (3 opsi), C (3 opsi), B (3 opsi), BS (3 opsi)
+ * - Gerakan Sederhana (50 s.d. 80 Poin): KS (50 - 55 - 60) | K (62 - 64 - 66) | C (68 - 70 - 72) | B (74 - 75 - 76) | BS (78 - 79 - 80)
+ * - Gerakan Menengah (50 s.d. 85 Poin): KS (50 - 55 - 60) | K (63 - 65 - 67) | C (70 - 72 - 74) | B (76 - 78 - 80) | BS (82 - 84 - 85)
+ * - Gerakan Kompleks (50 s.d. 90 Poin): KS (50 - 55 - 60) | K (64 - 66 - 68) | C (72 - 74 - 76) | B (79 - 81 - 83) | BS (86 - 88 - 90)
  */
 export const RUBRIC_SCALE_TEMPLATES = {
     SEDERHANA: [
-        { grade: 'KS', val: 50 },
-        { grade: 'K', val: 53 }, { grade: 'K', val: 56 }, { grade: 'K', val: 59 },
-        { grade: 'C', val: 62 }, { grade: 'C', val: 65 }, { grade: 'C', val: 68 },
-        { grade: 'B', val: 71 }, { grade: 'B', val: 74 }, { grade: 'B', val: 77 },
-        { grade: 'BS', val: 80 }
+        { grade: 'KS', val: 50 }, { grade: 'KS', val: 55 }, { grade: 'KS', val: 60 },
+        { grade: 'K', val: 62 }, { grade: 'K', val: 64 }, { grade: 'K', val: 66 },
+        { grade: 'C', val: 68 }, { grade: 'C', val: 70 }, { grade: 'C', val: 72 },
+        { grade: 'B', val: 74 }, { grade: 'B', val: 75 }, { grade: 'B', val: 76 },
+        { grade: 'BS', val: 78 }, { grade: 'BS', val: 79 }, { grade: 'BS', val: 80 }
     ],
     MENENGAH: [
-        { grade: 'KS', val: 50 },
-        { grade: 'K', val: 53 }, { grade: 'K', val: 57 }, { grade: 'K', val: 60 },
-        { grade: 'C', val: 64 }, { grade: 'C', val: 67 }, { grade: 'C', val: 71 },
-        { grade: 'B', val: 74 }, { grade: 'B', val: 78 }, { grade: 'B', val: 81 },
-        { grade: 'BS', val: 85 }
+        { grade: 'KS', val: 50 }, { grade: 'KS', val: 55 }, { grade: 'KS', val: 60 },
+        { grade: 'K', val: 63 }, { grade: 'K', val: 65 }, { grade: 'K', val: 67 },
+        { grade: 'C', val: 70 }, { grade: 'C', val: 72 }, { grade: 'C', val: 74 },
+        { grade: 'B', val: 76 }, { grade: 'B', val: 78 }, { grade: 'B', val: 80 },
+        { grade: 'BS', val: 82 }, { grade: 'BS', val: 84 }, { grade: 'BS', val: 85 }
     ],
     KOMPLEKS: [
-        { grade: 'KS', val: 50 },
-        { grade: 'K', val: 54 }, { grade: 'K', val: 58 }, { grade: 'K', val: 62 },
-        { grade: 'C', val: 66 }, { grade: 'C', val: 70 }, { grade: 'C', val: 74 },
-        { grade: 'B', val: 78 }, { grade: 'B', val: 82 }, { grade: 'B', val: 86 },
-        { grade: 'BS', val: 90 }
+        { grade: 'KS', val: 50 }, { grade: 'KS', val: 55 }, { grade: 'KS', val: 60 },
+        { grade: 'K', val: 64 }, { grade: 'K', val: 66 }, { grade: 'K', val: 68 },
+        { grade: 'C', val: 72 }, { grade: 'C', val: 74 }, { grade: 'C', val: 76 },
+        { grade: 'B', val: 79 }, { grade: 'B', val: 81 }, { grade: 'B', val: 83 },
+        { grade: 'BS', val: 86 }, { grade: 'BS', val: 88 }, { grade: 'BS', val: 90 }
     ],
     // Aliases for compatibility
     DITEMPAT: [
-        { grade: 'KS', val: 50 },
-        { grade: 'K', val: 53 }, { grade: 'K', val: 56 }, { grade: 'K', val: 59 },
-        { grade: 'C', val: 62 }, { grade: 'C', val: 65 }, { grade: 'C', val: 68 },
-        { grade: 'B', val: 71 }, { grade: 'B', val: 74 }, { grade: 'B', val: 77 },
-        { grade: 'BS', val: 80 }
+        { grade: 'KS', val: 50 }, { grade: 'KS', val: 55 }, { grade: 'KS', val: 60 },
+        { grade: 'K', val: 62 }, { grade: 'K', val: 64 }, { grade: 'K', val: 66 },
+        { grade: 'C', val: 68 }, { grade: 'C', val: 70 }, { grade: 'C', val: 72 },
+        { grade: 'B', val: 74 }, { grade: 'B', val: 75 }, { grade: 'B', val: 76 },
+        { grade: 'BS', val: 78 }, { grade: 'BS', val: 79 }, { grade: 'BS', val: 80 }
     ],
     BERPINDAH: [
-        { grade: 'KS', val: 50 },
-        { grade: 'K', val: 53 }, { grade: 'K', val: 57 }, { grade: 'K', val: 60 },
-        { grade: 'C', val: 64 }, { grade: 'C', val: 67 }, { grade: 'C', val: 71 },
-        { grade: 'B', val: 74 }, { grade: 'B', val: 78 }, { grade: 'B', val: 81 },
-        { grade: 'BS', val: 85 }
+        { grade: 'KS', val: 50 }, { grade: 'KS', val: 55 }, { grade: 'KS', val: 60 },
+        { grade: 'K', val: 63 }, { grade: 'K', val: 65 }, { grade: 'K', val: 67 },
+        { grade: 'C', val: 70 }, { grade: 'C', val: 72 }, { grade: 'C', val: 74 },
+        { grade: 'B', val: 76 }, { grade: 'B', val: 78 }, { grade: 'B', val: 80 },
+        { grade: 'BS', val: 82 }, { grade: 'BS', val: 84 }, { grade: 'BS', val: 85 }
     ],
     BERJALAN: [
-        { grade: 'KS', val: 50 },
-        { grade: 'K', val: 54 }, { grade: 'K', val: 58 }, { grade: 'K', val: 62 },
-        { grade: 'C', val: 66 }, { grade: 'C', val: 70 }, { grade: 'C', val: 74 },
-        { grade: 'B', val: 78 }, { grade: 'B', val: 82 }, { grade: 'B', val: 86 },
-        { grade: 'BS', val: 90 }
+        { grade: 'KS', val: 50 }, { grade: 'KS', val: 55 }, { grade: 'KS', val: 60 },
+        { grade: 'K', val: 64 }, { grade: 'K', val: 66 }, { grade: 'K', val: 68 },
+        { grade: 'C', val: 72 }, { grade: 'C', val: 74 }, { grade: 'C', val: 76 },
+        { grade: 'B', val: 79 }, { grade: 'B', val: 81 }, { grade: 'B', val: 83 },
+        { grade: 'BS', val: 86 }, { grade: 'BS', val: 88 }, { grade: 'BS', val: 90 }
     ],
     BERJALAN_KOMPLEKS: [
-        { grade: 'KS', val: 50 },
-        { grade: 'K', val: 54 }, { grade: 'K', val: 58 }, { grade: 'K', val: 62 },
-        { grade: 'C', val: 66 }, { grade: 'C', val: 70 }, { grade: 'C', val: 74 },
-        { grade: 'B', val: 78 }, { grade: 'B', val: 82 }, { grade: 'B', val: 86 },
-        { grade: 'BS', val: 90 }
+        { grade: 'KS', val: 50 }, { grade: 'KS', val: 55 }, { grade: 'KS', val: 60 },
+        { grade: 'K', val: 64 }, { grade: 'K', val: 66 }, { grade: 'K', val: 68 },
+        { grade: 'C', val: 72 }, { grade: 'C', val: 74 }, { grade: 'C', val: 76 },
+        { grade: 'B', val: 79 }, { grade: 'B', val: 81 }, { grade: 'B', val: 83 },
+        { grade: 'BS', val: 86 }, { grade: 'BS', val: 88 }, { grade: 'BS', val: 90 }
     ],
     KERAPIAN_PARADE: [
-        { grade: 'KS', val: 50 },
-        { grade: 'K', val: 54 }, { grade: 'K', val: 58 }, { grade: 'K', val: 62 },
-        { grade: 'C', val: 66 }, { grade: 'C', val: 70 }, { grade: 'C', val: 74 },
-        { grade: 'B', val: 78 }, { grade: 'B', val: 82 }, { grade: 'B', val: 86 },
-        { grade: 'BS', val: 90 }
+        { grade: 'KS', val: 50 }, { grade: 'KS', val: 55 }, { grade: 'KS', val: 60 },
+        { grade: 'K', val: 64 }, { grade: 'K', val: 66 }, { grade: 'K', val: 68 },
+        { grade: 'C', val: 72 }, { grade: 'C', val: 74 }, { grade: 'C', val: 76 },
+        { grade: 'B', val: 79 }, { grade: 'B', val: 81 }, { grade: 'B', val: 83 },
+        { grade: 'BS', val: 86 }, { grade: 'BS', val: 88 }, { grade: 'BS', val: 90 }
     ],
     BUBAR_BERKUMPUL: [
-        { grade: 'KS', val: 50 },
-        { grade: 'K', val: 53 }, { grade: 'K', val: 57 }, { grade: 'K', val: 60 },
-        { grade: 'C', val: 64 }, { grade: 'C', val: 67 }, { grade: 'C', val: 71 },
-        { grade: 'B', val: 74 }, { grade: 'B', val: 78 }, { grade: 'B', val: 81 },
-        { grade: 'BS', val: 85 }
+        { grade: 'KS', val: 50 }, { grade: 'KS', val: 55 }, { grade: 'KS', val: 60 },
+        { grade: 'K', val: 63 }, { grade: 'K', val: 65 }, { grade: 'K', val: 67 },
+        { grade: 'C', val: 70 }, { grade: 'C', val: 72 }, { grade: 'C', val: 74 },
+        { grade: 'B', val: 76 }, { grade: 'B', val: 78 }, { grade: 'B', val: 80 },
+        { grade: 'BS', val: 82 }, { grade: 'BS', val: 84 }, { grade: 'BS', val: 85 }
     ],
     DANTON_UMUM: [
-        { grade: 'KS', val: 50 },
-        { grade: 'K', val: 54 }, { grade: 'K', val: 58 }, { grade: 'K', val: 62 },
-        { grade: 'C', val: 66 }, { grade: 'C', val: 70 }, { grade: 'C', val: 74 },
-        { grade: 'B', val: 78 }, { grade: 'B', val: 82 }, { grade: 'B', val: 86 },
-        { grade: 'BS', val: 90 }
+        { grade: 'KS', val: 50 }, { grade: 'KS', val: 55 }, { grade: 'KS', val: 60 },
+        { grade: 'K', val: 64 }, { grade: 'K', val: 66 }, { grade: 'K', val: 68 },
+        { grade: 'C', val: 72 }, { grade: 'C', val: 74 }, { grade: 'C', val: 76 },
+        { grade: 'B', val: 79 }, { grade: 'B', val: 81 }, { grade: 'B', val: 83 },
+        { grade: 'BS', val: 86 }, { grade: 'BS', val: 88 }, { grade: 'BS', val: 90 }
     ],
 };
 
 /** Kriteria Penilaian Komandan Pasukan (Danton) Resmi (Bab A Angka 3.b Juknis) */
 export const DANTON_CRITERIA = [
-    { id: 'materi', name: 'Penguasaan Materi Lomba', weight: 0.35, weightPercent: '35%', defaultScore: 78 },
-    { id: 'vokal', name: 'Kualitas Suara / Vokal', weight: 0.25, weightPercent: '25%', defaultScore: 78 },
-    { id: 'sikap', name: 'Sikap & Pelaporan', weight: 0.20, weightPercent: '20%', defaultScore: 78 },
-    { id: 'lapangan', name: 'Penguasaan Lapangan', weight: 0.20, weightPercent: '20%', defaultScore: 78 },
+    { id: 'materi', name: 'Penguasaan Materi Lomba', weight: 0.35, weightPercent: '35%', defaultScore: 79 },
+    { id: 'vokal', name: 'Kualitas Suara / Vokal', weight: 0.25, weightPercent: '25%', defaultScore: 79 },
+    { id: 'sikap', name: 'Sikap & Pelaporan', weight: 0.20, weightPercent: '20%', defaultScore: 79 },
+    { id: 'lapangan', name: 'Penguasaan Lapangan', weight: 0.20, weightPercent: '20%', defaultScore: 79 },
 ];
 
 export const DANTON_SCALE = [
-    { grade: 'KS', val: 50 },
-    { grade: 'K', val: 54 }, { grade: 'K', val: 58 }, { grade: 'K', val: 62 },
-    { grade: 'C', val: 66 }, { grade: 'C', val: 70 }, { grade: 'C', val: 74 },
-    { grade: 'B', val: 78 }, { grade: 'B', val: 82 }, { grade: 'B', val: 86 },
-    { grade: 'BS', val: 90 }
+    { grade: 'KS', val: 50 }, { grade: 'KS', val: 55 }, { grade: 'KS', val: 60 },
+    { grade: 'K', val: 64 }, { grade: 'K', val: 66 }, { grade: 'K', val: 68 },
+    { grade: 'C', val: 72 }, { grade: 'C', val: 74 }, { grade: 'C', val: 76 },
+    { grade: 'B', val: 79 }, { grade: 'B', val: 81 }, { grade: 'B', val: 83 },
+    { grade: 'BS', val: 86 }, { grade: 'BS', val: 88 }, { grade: 'BS', val: 90 }
 ];
 
 /** Helper untuk menentukan tingkat kesulitan gerakan (Sederhana / Menengah / Kompleks) */
@@ -641,7 +643,7 @@ export const PENALTIES = [
     {
         label: 'Jumlah Personel Kurang dari Ketentuan Minimal (< 22 Orang Tampil)',
         value: '-75 Poin Tetap (Nilai Peleton)',
-        desc: 'Peleton memasuki arena dengan jumlah personel kurang dari 22 orang (1 Komandan Peleton dan 21 Anggota Inti), diberlakukan terhadap Nilai Peleton.',
+        desc: 'Peleton memasuki arena dengan jumlah personel kurang dari 22 orang (1 Komandan Peleton dan 21 Anggota Inti), diberlakukan terhadap Nilai Peleton. Anggota yang dievakuasi medis saat penampilan berlangsung tidak dikenai penalti pengurangan personel.',
     },
     {
         label: 'Kelebihan Durasi Waktu Tampil (SD > 8 Menit, SMP > 12 Menit)',
@@ -676,12 +678,12 @@ export const PENALTIES = [
     {
         label: 'Pelanggaran Kawasan Tanpa Rokok & Vape di Lingkungan Madrasah',
         value: '-75 Poin (Nilai Peleton)',
-        desc: 'Pelanggaran terang-terangan di ruang basecamp atau yang melibatkan personel kontingen berseragam setelah diberikan teguran dikenai penalti sebesar -75 poin terhadap nilai Peleton sesuai Pasal 9 Tata Tertib Peserta.',
+        desc: 'Pelanggaran terang-terangan di ruang basecamp atau yang melibatkan personel kontingen setelah diberikan teguran dikenai penalti sebesar -75 poin terhadap nilai Peleton sesuai Pasal 9 Tata Tertib Peserta.',
     },
     {
         label: 'Yel-Yel / Teriakan yang Mengganggu Jalannya Perlombaan',
-        value: 'Peringatan 1-2 & -50 Poin ke-3 dst (Nilai Peleton & Danton)',
-        desc: 'Peringatan 1 dan 2 secara lisan; pelanggaran ke-3 dan seterusnya dikenai penalti -50 Poin per kejadian terhadap Nilai Peleton dan Nilai Danton (Pasal 8 Tatib & Bab C.10).',
+        value: 'Peringatan 1-2 & -50 Poin ke-3 dst (Nilai Peleton)',
+        desc: 'Pelanggaran ke-1 dan ke-2 diberikan Peringatan Lisan oleh Panitia Lapangan; pelanggaran ketiga dan setiap pelanggaran berikutnya dikenai penalti -50 poin terhadap Nilai Peleton untuk setiap kejadian. Pelanggaran sengaja, berulang, atau berat dapat langsung dikenai penalti tanpa peringatan awal. Penalti akibat kegaduhan suporter dibebankan terhadap Nilai Peleton (Pasal 8 Tatib & Bab C.10).',
     },
     {
         label: 'Penggunaan Gerakan Penyesuaian',
@@ -742,11 +744,11 @@ export const MATERIALS = {
         'Langkah Biasa(Dari Posisi Berhenti)',
         'Tiap-tiap Banjar 2X Belok Kiri',
         'Langkah Tegap(Dari Posisi Langkah Biasa)',
-        'Hormat Kanan \u2013 Tegak \u2013 Jalan Di Tempat \u2013 Henti',
+        'Hormat Kanan \u2013 Jalan Di Tempat \u2013 Henti',
         'Tiap-tiap Banjar 2X Belok Kanan(Dari Posisi Berhenti)',
         'Melintang Kanan(Berjalan ke Berjalan) \u2013 Maju Jalan \u2013 Henti',
         'Balik Kanan Maju \u2013 Haluan Kanan(Berjalan ke Berhenti) \u2013 Henti',
-        'Istirahat di Tempat**(Perhatian) \u2013 Sikap Sempurna',
+        'Untuk Perhatian, Istirahat di Tempat** \u2013 Sikap Sempurna',
         'Laporan Penutup \u2013 Penghormatan Dewan Juri(Aba-aba Pelaksanaan Waktu Berakhir)',
     ],
     SMP: [
@@ -915,7 +917,7 @@ export const STAGING_CONFIG = {
         YELLOW_REMAINING: 60, // sisa 1 menit (sinyal peluit 1 kali panjang di menit ke-7/ke-11)
         RED_REMAINING: 0, // waktu habis (sinyal peluit 2 kali panjang di menit ke-8/ke-12)
     },
-    PENALTY_OVERTIME_PER_30_SEC: 50,
+    PENALTY_OVERTIME_PER_30_SEC: 20,
 };
 
 // ---------------------------------------------------------------------------

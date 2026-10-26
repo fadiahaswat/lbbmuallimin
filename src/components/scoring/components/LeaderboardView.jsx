@@ -80,21 +80,21 @@ export default function LeaderboardView({
         <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 text-xs text-slate-700 space-y-1.5">
           <div className="flex items-center gap-2 font-bold text-slate-900">
             <Info className="w-4 h-4 text-amber-600 shrink-0" />
-            <span>Dasar Penentuan Juara (Juknis LBB Mu'allimin 2027 Bab A.3):</span>
+            <span>Dasar Penentuan Juara (Juknis LBB Mu'allimin 2027 Bab A.5 – A.8):</span>
           </div>
           {standingType === 'umum' && (
             <p className="text-[11px] text-slate-600 leading-relaxed pl-6">
-              <strong>Juara Umum (Piala Bergilir)</strong> ditentukan dari <strong>Total Skor Akhir</strong> (Akumulasi Nilai Akhir Peleton + Nilai Akhir Danton dari 3 Dewan Juri setelah dikurangi penalti lapangan).
+              <strong>Juara Umum (Piala Bergilir)</strong> ditentukan dari <strong>Akumulasi Poin Prestasi Sekolah</strong> tertinggi pada masing-masing jenjang melalui skema konversi peringkat kejuaraan (Juara 1–3 & Harapan 1–3 Peleton: <strong>6, 5, 4, 3, 2, 1 Poin</strong> + Juara 1–3 Komandan Terbaik: <strong>3, 2, 1 Poin</strong>). Tie-breaker Bab A.8: Nilai Murni Peleton tertinggi salah satu peleton terbaik sekolah → Penalti Peleton terkecil → Nilai Murni Komandan tertinggi.
             </p>
           )}
           {standingType === 'peleton' && (
             <p className="text-[11px] text-slate-600 leading-relaxed pl-6">
-              <strong>Juara Peleton (Juara 1, 2, 3 & Harapan 1, 2, 3)</strong> ditentukan murni dari <strong>Nilai Akhir Peleton</strong> (Skor PBB 3 Dewan Juri – Penalti Peleton), tanpa digabung dengan nilai Danton.
+              <strong>Juara Peleton (Juara 1, 2, 3 & Harapan 1, 2, 3)</strong> ditentukan murni dari <strong>Nilai Akhir Peleton</strong> (Nilai Murni Peleton 3 Dewan Juri – Penalti Peleton), tanpa digabung dengan nilai Danton. Tie-breaker Bab A.5: Nilai Murni Peleton tertinggi → Penalti Peleton terkecil → Nilai Murni Danton tertinggi.
             </p>
           )}
           {standingType === 'danton' && (
             <p className="text-[11px] text-slate-600 leading-relaxed pl-6">
-              <strong>Komandan Terbaik (Juara 1, 2, 3 Danton)</strong> ditentukan murni dari <strong>Nilai Akhir Danton</strong> (Materi 35% + Suara 25% + Sikap 20% + Lapangan 20% dari 3 Dewan Juri – Penalti Danton).
+              <strong>Komandan Terbaik (Juara 1, 2, 3 Danton)</strong> ditentukan murni dari <strong>Nilai Akhir Danton</strong> (Materi 35% + Vokal 25% + Sikap 20% + Lapangan 20% dari 3 Dewan Juri – Penalti Danton). Tie-breaker Bab A.6: Nilai Murni Danton tertinggi → Penalti Danton terkecil → Aspek Materi (35%) → Aspek Vokal (25%).
             </p>
           )}
         </div>
@@ -106,27 +106,121 @@ export default function LeaderboardView({
               .filter(t => t.jenjang === jenjang && scores[t.id])
               .map(t => {
                 const s = scores[t.id] || {};
-                const peletonScore = Number(s.nilaiAkhirPeleton ?? s.pbb?.total ?? 0);
-                const dantonScore = Number(s.nilaiAkhirDanton ?? s.danton?.total ?? 0);
+                const juries = s.juries || {};
+                const nilaiMurniPeleton = Number(
+                  s.nilaiMurniPeleton ??
+                  ((Number(juries.pos1?.peletonTotal ?? 0) + Number(juries.pos2?.peletonTotal ?? 0) + Number(juries.pos3?.peletonTotal ?? 0)) || Number(s.pbb?.total ?? 0))
+                );
+                const nilaiMurniDanton = Number(
+                  s.nilaiMurniDanton ??
+                  ((Number(juries.pos1?.dantonTotal ?? 0) + Number(juries.pos2?.dantonTotal ?? 0) + Number(juries.pos3?.dantonTotal ?? 0)) || Number(s.danton?.total ?? 0))
+                );
+                const peletonPenalty = Number(s.penalties?.peletonPenalty ?? s.penalties?.totalPenalty ?? 0);
+                const dantonPenalty = Number(s.penalties?.dantonPenalty ?? 0);
+                const peletonScore = Number(s.nilaiAkhirPeleton ?? Math.max(0, nilaiMurniPeleton - peletonPenalty));
+                const dantonScore = Number(s.nilaiAkhirDanton ?? Math.max(0, nilaiMurniDanton - dantonPenalty));
                 const totalScore = Number(s.finalScore ?? (peletonScore + dantonScore));
                 const dantonName = t.roster?.danton?.name || t.dantonName || '-';
+                const dantonMateri =
+                  Number(juries.pos1?.dantonRubricScores?.materi ?? 0) +
+                  Number(juries.pos2?.dantonRubricScores?.materi ?? 0) +
+                  Number(juries.pos3?.dantonRubricScores?.materi ?? s.danton?.rubricScores?.materi ?? 0);
+                const dantonVokal =
+                  Number(juries.pos1?.dantonRubricScores?.vokal ?? 0) +
+                  Number(juries.pos2?.dantonRubricScores?.vokal ?? 0) +
+                  Number(juries.pos3?.dantonRubricScores?.vokal ?? s.danton?.rubricScores?.vokal ?? 0);
 
                 return {
                   ...t,
                   dantonName,
                   scoreData: s,
+                  nilaiMurniPeleton,
+                  nilaiMurniDanton,
+                  peletonPenalty,
+                  dantonPenalty,
                   peletonScore,
                   dantonScore,
+                  dantonMateri,
+                  dantonVokal,
                   totalScore,
                 };
               });
 
-            // Sorting berdasarkan kategori yang aktif
-            const rankedTeams = [...rawTeams].sort((a, b) => {
-              if (standingType === 'peleton') return b.peletonScore - a.peletonScore;
-              if (standingType === 'danton') return b.dantonScore - a.dantonScore;
-              return b.totalScore - a.totalScore;
+            // Hitung Peringkat Peleton (Bab A.5) & Danton (Bab A.6)
+            const peletonSorted = [...rawTeams].sort((a, b) => {
+              if (b.peletonScore !== a.peletonScore) return b.peletonScore - a.peletonScore;
+              if (b.nilaiMurniPeleton !== a.nilaiMurniPeleton) return b.nilaiMurniPeleton - a.nilaiMurniPeleton;
+              if (a.peletonPenalty !== b.peletonPenalty) return a.peletonPenalty - b.peletonPenalty;
+              return b.nilaiMurniDanton - a.nilaiMurniDanton;
             });
+
+            const dantonSorted = [...rawTeams].sort((a, b) => {
+              if (b.dantonScore !== a.dantonScore) return b.dantonScore - a.dantonScore;
+              if (b.nilaiMurniDanton !== a.nilaiMurniDanton) return b.nilaiMurniDanton - a.nilaiMurniDanton;
+              if (a.dantonPenalty !== b.dantonPenalty) return a.dantonPenalty - b.dantonPenalty;
+              if (b.dantonMateri !== a.dantonMateri) return b.dantonMateri - a.dantonMateri;
+              return b.dantonVokal - a.dantonVokal;
+            });
+
+            // Hitung Poin Prestasi Sekolah (Bab A.7 & A.8) untuk tab 'umum'
+            const schoolMap = {};
+            rawTeams.forEach(t => {
+              if (!schoolMap[t.schoolName]) {
+                schoolMap[t.schoolName] = {
+                  id: `school-${jenjang}-${t.schoolName}`,
+                  schoolName: t.schoolName,
+                  jenjang,
+                  peletonPoints: 0,
+                  dantonPoints: 0,
+                  totalPoints: 0,
+                  bestMurniPeleton: 0,
+                  peletonPenalty: 0,
+                  bestMurniDanton: 0,
+                  peletonScore: 0,
+                  dantonScore: 0,
+                  dantonName: t.dantonName,
+                  chestNumber: t.chestNumber,
+                  scoreData: t.scoreData,
+                  achievements: [],
+                };
+              }
+              const sc = schoolMap[t.schoolName];
+              if (t.nilaiMurniPeleton > sc.bestMurniPeleton) sc.bestMurniPeleton = t.nilaiMurniPeleton;
+              sc.peletonPenalty += t.peletonPenalty;
+              if (t.nilaiMurniDanton > sc.bestMurniDanton) sc.bestMurniDanton = t.nilaiMurniDanton;
+              if (t.peletonScore > sc.peletonScore) sc.peletonScore = t.peletonScore;
+              if (t.dantonScore > sc.dantonScore) sc.dantonScore = t.dantonScore;
+            });
+
+            peletonSorted.forEach((t, idx) => {
+              const pts = [6, 5, 4, 3, 2, 1][idx] || 0;
+              if (pts > 0 && schoolMap[t.schoolName]) {
+                schoolMap[t.schoolName].peletonPoints += pts;
+                schoolMap[t.schoolName].totalPoints += pts;
+              }
+            });
+
+            dantonSorted.forEach((t, idx) => {
+              const pts = [3, 2, 1][idx] || 0;
+              if (pts > 0 && schoolMap[t.schoolName]) {
+                schoolMap[t.schoolName].dantonPoints += pts;
+                schoolMap[t.schoolName].totalPoints += pts;
+              }
+            });
+
+            const umumSorted = Object.values(schoolMap).sort((a, b) => {
+              if (b.totalPoints !== a.totalPoints) return b.totalPoints - a.totalPoints;
+              if (b.bestMurniPeleton !== a.bestMurniPeleton) return b.bestMurniPeleton - a.bestMurniPeleton;
+              if (a.peletonPenalty !== b.peletonPenalty) return a.peletonPenalty - b.peletonPenalty;
+              return b.bestMurniDanton - a.bestMurniDanton;
+            });
+
+            const rankedTeams =
+              standingType === 'peleton'
+                ? peletonSorted
+                : standingType === 'danton'
+                ? dantonSorted
+                : umumSorted;
 
             return (
               <div key={jenjang} className={`rounded-2xl p-5 border space-y-4 ${
@@ -178,7 +272,7 @@ export default function LeaderboardView({
                           ? team.peletonScore
                           : standingType === 'danton'
                           ? team.dantonScore
-                          : team.totalScore;
+                          : `${team.totalPoints} Poin`;
 
                       return (
                         <div
@@ -222,13 +316,25 @@ export default function LeaderboardView({
                                 )}
                               </div>
                               <div className="text-[11px] text-slate-500 mt-1 font-mono truncate">
-                                <span>Danton: <strong className="text-slate-800">{team.dantonName}</strong></span>
-                                {' • '}
-                                <span>Peleton: <strong className="text-slate-800">{team.peletonScore}</strong></span>
-                                {' • '}
-                                <span>Danton: <strong className="text-slate-800">{team.dantonScore}</strong></span>
-                                {team.scoreData.penalties?.totalPenalty > 0 && (
-                                  <span className="text-rose-600 font-bold"> • Penalti: -{team.scoreData.penalties.totalPenalty}</span>
+                                {standingType === 'umum' ? (
+                                  <>
+                                    <span>Poin Peleton: <strong className="text-slate-800">{team.peletonPoints}</strong></span>
+                                    {' • '}
+                                    <span>Poin Danton: <strong className="text-slate-800">{team.dantonPoints}</strong></span>
+                                    {' • '}
+                                    <span>Murni Peleton Terbaik: <strong className="text-slate-800">{team.bestMurniPeleton}</strong></span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <span>Danton: <strong className="text-slate-800">{team.dantonName}</strong></span>
+                                    {' • '}
+                                    <span>Peleton: <strong className="text-slate-800">{team.peletonScore}</strong></span>
+                                    {' • '}
+                                    <span>Danton: <strong className="text-slate-800">{team.dantonScore}</strong></span>
+                                    {team.scoreData?.penalties?.totalPenalty > 0 && (
+                                      <span className="text-rose-600 font-bold"> • Penalti: -{team.scoreData.penalties.totalPenalty}</span>
+                                    )}
+                                  </>
                                 )}
                               </div>
                             </div>
@@ -239,7 +345,7 @@ export default function LeaderboardView({
                               {primaryScore}
                             </span>
                             <span className="text-[10px] text-slate-500 font-mono font-bold uppercase">
-                              {standingType === 'peleton' ? 'Nilai Peleton' : standingType === 'danton' ? 'Nilai Danton' : 'Total Akhir'}
+                              {standingType === 'peleton' ? 'Nilai Peleton' : standingType === 'danton' ? 'Nilai Danton' : 'Poin Prestasi'}
                             </span>
                           </div>
                         </div>

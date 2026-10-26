@@ -61,7 +61,7 @@ export default function JuknisPenilaianSection({ embedded = false }) {
       };
     }
 
-    const babAText = `sistem penilaian sanggah penentuan juara dewan juri tni polri profesional sipil rasio 1:1 kebenaran gerak kekompakan formula danton 35 25 20 20 akumulasi juara umum tie breaker rolling release gmail 15.00 wib sanggahan checkout basecamp`.toLowerCase();
+    const babAText = `sistem penilaian sanggah penentuan juara dewan juri tni polri profesional sistem coret 5 predikat ks k c b bs kebenaran teknik kekompakan formula danton 35 25 20 20 akumulasi juara umum tie breaker rolling release gmail 15.00 wib sanggahan checkout basecamp`.toLowerCase();
     const babBText = `gangguan sistem digital prosedur backup manual cadangan website upload login formulir pemulihan data`.toLowerCase();
     const babCText = `sanksi penalti pengurangan nilai pemotongan kumulatif denda garis bendera atribut kotak danton diskualifikasi upacara`.toLowerCase();
     const babDText = `penutup asas kepastian hukum mengikat evaluasi hasil penetapan peringkat`.toLowerCase();
@@ -99,7 +99,7 @@ export default function JuknisPenilaianSection({ embedded = false }) {
             </h2>
             <div className="w-16 h-1 bg-red-700 mx-auto rounded-full mb-4"></div>
             <p className="text-slate-300 max-w-2xl mx-auto text-base sm:text-lg font-normal leading-relaxed">
-              Standar baku evaluasi dewan juri rasio 1:1, rubrik Komandan Peleton, formula akumulasi Juara Umum dan 7 kriteria tie-breaker, transparansi lembar nilai, serta tabel sanksi penalti.
+              Standar baku evaluasi 6 dewan juri dengan sistem coret 5 predikat baku (KS, K, C, B, BS), rubrik Komandan Peleton, formula akumulasi Juara Umum dan kriteria tie-breaker, transparansi lembar nilai, serta ketentuan sanksi penalti.
             </p>
           </div>
         )}
@@ -351,8 +351,35 @@ export default function JuknisPenilaianSection({ embedded = false }) {
                 {openAccordions['bab-c'] && (
                   <div className="p-5 sm:p-7 space-y-4 border-t border-slate-800 bg-slate-900/40 animate-fade">
                     <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                      Pelanggaran terhadap regulasi teknis lapangan dikenakan sanksi pemotongan nilai secara kumulatif pada lembar rekapitulasi nilai akhir:
+                      {JUKNIS_PENILAIAN_CHAPTERS[2]?.intro || 'Pelanggaran terhadap regulasi teknis lapangan dikenakan sanksi pemotongan nilai secara kumulatif pada lembar rekapitulasi nilai akhir:'}
                     </p>
+                    {JUKNIS_PENILAIAN_CHAPTERS[2]?.points && (
+                      <div className="space-y-3">
+                        {JUKNIS_PENILAIAN_CHAPTERS[2].points.map(pt => (
+                          <div key={pt.number} className="p-4 rounded-2xl bg-slate-800/50 border border-slate-700/70 space-y-1.5">
+                            <div className="flex items-start gap-3">
+                              <span className="w-6 h-6 rounded-lg bg-slate-800 border border-slate-700 text-slate-300 font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
+                                {pt.number}
+                              </span>
+                              <div className="flex-1 space-y-1.5">
+                                <strong className="text-xs sm:text-sm font-bold text-white block">{pt.title}:</strong>
+                                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">{pt.content}</p>
+                                {pt.subItems && (
+                                  <ul className="space-y-1 pl-1 pt-1">
+                                    {pt.subItems.map((sub, sIdx) => (
+                                      <li key={sIdx} className="text-xs text-slate-300 flex items-start gap-2 leading-relaxed">
+                                        <span className="text-amber-400 font-bold mt-0.5">•</span>
+                                        <span className="flex-1">{sub}</span>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                     <div className="overflow-x-auto rounded-2xl border border-slate-700">
                       <table className="w-full text-xs text-left">
                         <thead className="bg-slate-800 text-slate-200 uppercase font-black tracking-wider text-[11px] border-b border-slate-700">
@@ -384,7 +411,7 @@ export default function JuknisPenilaianSection({ embedded = false }) {
                     <div className="p-4 bg-slate-800/60 rounded-2xl border border-slate-700 flex items-start gap-3">
                       <div className="w-2 h-2 rounded-full bg-amber-400 mt-1.5 shrink-0"></div>
                       <p className="text-xs text-slate-300 leading-relaxed">
-                        <strong className="text-white font-bold">Pencatatan Penalti:</strong> Seluruh sanksi pengurangan nilai dicatat secara langsung dan transparan oleh Hakim Garis, Timekeeper, dan Koordinator Lapangan ke dalam Berita Acara Pelanggaran Resmi serta disahkan oleh Perwakilan Dewan Juri.
+                        {JUKNIS_PENILAIAN_CHAPTERS[2]?.closingNote || 'Seluruh sanksi pengurangan nilai dicatat secara langsung dan transparan oleh Hakim Garis, Timekeeper, dan Koordinator Lapangan ke dalam Berita Acara Pelanggaran Resmi serta disahkan oleh Perwakilan Dewan Juri.'}
                       </p>
                     </div>
                   </div>

@@ -41,25 +41,47 @@ export default function ScoresTab({ teamScore }) {
           <div className="grid sm:grid-cols-3 gap-4">
             <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4">
               <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-1">
-                Nilai Danton
+                Nilai Akhir Peleton
               </span>
-              <span className="text-2xl font-black text-slate-900 font-mono">{teamScore.danton.total}</span>
+              <span className="text-2xl font-black text-slate-900 font-mono">
+                {teamScore.nilaiAkhirPeleton ?? teamScore.pbb?.total ?? 0}
+              </span>
               <div className="text-[11px] text-slate-600 mt-2 space-y-0.5 border-t border-slate-200 pt-2">
-                <div className="flex justify-between"><span>Penguasaan:</span><strong>{teamScore.danton.penguasaan}</strong></div>
-                <div className="flex justify-between"><span>Vokal:</span><strong>{teamScore.danton.vokal}</strong></div>
-                <div className="flex justify-between"><span>Sikap:</span><strong>{teamScore.danton.sikap}</strong></div>
-                <div className="flex justify-between"><span>Lapangan:</span><strong>{teamScore.danton.lapangan}</strong></div>
+                <div className="flex justify-between">
+                  <span>Nilai Murni (3 Juri):</span>
+                  <strong>{teamScore.nilaiMurniPeleton ?? teamScore.pbb?.total ?? 0}</strong>
+                </div>
+                <div className="flex justify-between">
+                  <span>Juri 1 / 2 / 3:</span>
+                  <strong>
+                    {teamScore.juries?.pos1?.peletonTotal ?? teamScore.pbb?.j1 ?? '-'} /{' '}
+                    {teamScore.juries?.pos2?.peletonTotal ?? teamScore.pbb?.j2 ?? '-'} /{' '}
+                    {teamScore.juries?.pos3?.peletonTotal ?? teamScore.pbb?.j3 ?? '-'}
+                  </strong>
+                </div>
               </div>
             </div>
 
             <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4">
               <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-1">
-                Nilai Pasukan PBB
+                Nilai Akhir Komandan (Danton)
               </span>
-              <span className="text-2xl font-black text-slate-900 font-mono">{teamScore.pbb.total}</span>
+              <span className="text-2xl font-black text-slate-900 font-mono">
+                {teamScore.nilaiAkhirDanton ?? teamScore.danton?.total ?? 0}
+              </span>
               <div className="text-[11px] text-slate-600 mt-2 space-y-0.5 border-t border-slate-200 pt-2">
-                <div className="flex justify-between"><span>Kebenaran Gerak (1):</span><strong>{teamScore.pbb.teknik || teamScore.pbb.j1 || '-'}</strong></div>
-                <div className="flex justify-between"><span>Kekompakan (1):</span><strong>{teamScore.pbb.kekompakan || teamScore.pbb.j2 || '-'}</strong></div>
+                <div className="flex justify-between">
+                  <span>Nilai Murni (3 Juri):</span>
+                  <strong>{teamScore.nilaiMurniDanton ?? teamScore.danton?.total ?? 0}</strong>
+                </div>
+                <div className="flex justify-between">
+                  <span>Juri 1 / 2 / 3:</span>
+                  <strong>
+                    {teamScore.juries?.pos1?.dantonTotal ?? '-'} /{' '}
+                    {teamScore.juries?.pos2?.dantonTotal ?? '-'} /{' '}
+                    {teamScore.juries?.pos3?.dantonTotal ?? teamScore.danton?.total ?? '-'}
+                  </strong>
+                </div>
               </div>
             </div>
 
@@ -67,12 +89,18 @@ export default function ScoresTab({ teamScore }) {
               <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-1">
                 Pengurangan Nilai (Penalti)
               </span>
-              <span className={`text-2xl font-black font-mono ${teamScore.penalties.totalPenalty > 0 ? 'text-red-700' : 'text-emerald-700'}`}>
-                -{teamScore.penalties.totalPenalty}
+              <span className={`text-2xl font-black font-mono ${(teamScore.penalties?.totalPenalty || 0) > 0 ? 'text-red-700' : 'text-emerald-700'}`}>
+                -{teamScore.penalties?.totalPenalty || 0}
               </span>
               <div className="text-[11px] text-slate-600 mt-2 space-y-0.5 border-t border-slate-200 pt-2">
-                <div className="flex justify-between"><span>Injak Garis:</span><strong>{teamScore.penalties.injakGarisCount}x</strong></div>
-                <div className="flex justify-between"><span>Over Time:</span><strong>{teamScore.penalties.overTimeBlocks} block</strong></div>
+                <div className="flex justify-between">
+                  <span>Penalti Peleton:</span>
+                  <strong>-{teamScore.penalties?.peletonPenalty ?? teamScore.penalties?.totalPenalty ?? 0}</strong>
+                </div>
+                <div className="flex justify-between">
+                  <span>Penalti Danton:</span>
+                  <strong>-{teamScore.penalties?.dantonPenalty ?? 0}</strong>
+                </div>
               </div>
             </div>
           </div>

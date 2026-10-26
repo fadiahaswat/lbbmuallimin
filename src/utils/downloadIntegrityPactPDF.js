@@ -163,13 +163,8 @@ export async function downloadIntegrityPactPDF(team) {
                 <p style="font-size: 13.5px; margin: 0 0 2px 0;">Yogyakarta, 9 Januari 2027</p>
                 <p style="font-weight: bold; margin: 0 0 4px 0;">Official / Pelatih Pendamping</p>
                 
-                <!-- Ruang tanda tangan yang seimbang & Materai digeser ke kiri -->
-                <div style="height: 60px; position: relative; width: 100%;">
-                  <div style="position: absolute; left: -10px; top: 6px; width: 95px; height: 48px; border: 1px dashed #64748b; text-align: center; padding-top: 7px; box-sizing: border-box;">
-                    <div style="font-size: 10px; font-weight: bold; color: #475569; letter-spacing: 0.5px;">MATERAI</div>
-                    <div style="font-size: 9px; color: #475569;">Rp 10.000</div>
-                  </div>
-                </div>
+                <!-- Ruang tanda tangan basah yang seimbang -->
+                <div style="height: 60px;"></div>
 
                 <p style="font-weight: bold; text-transform: uppercase; margin: 0; font-size: 14.5px;">
                   ${officialName}

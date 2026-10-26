@@ -21,7 +21,7 @@ export default function PenaltiesSection({
             Kalkulator Pengurangan Nilai (Penalti Lapangan & Tata Tertib)
           </h4>
           <p className="text-xs text-slate-500 mt-0.5">
-            Berpedoman resmi pada Petunjuk Teknis Bab A.3.c & Bab H
+            Berpedoman resmi pada Petunjuk Teknis Penilaian & Kejuaraan Bab A.3.c & Bab C
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -86,7 +86,7 @@ export default function PenaltiesSection({
             <div className="flex justify-between items-start mb-1">
               <div>
                 <span className="font-bold text-slate-900 text-xs block">Kelebihan Durasi Tampil</span>
-                <span className="text-[10px] text-slate-500">Tiap 30 dtk melebih kuota ({selectedTeam?.jenjang === 'SD' ? '8' : '12'} mnt)</span>
+                <span className="text-[10px] text-slate-500">Tiap 1–30 dtk melebihi batas ({selectedTeam?.jenjang === 'SD' ? '8' : '12'} mnt)</span>
               </div>
               <span className="text-[10px] font-bold text-rose-700 bg-rose-50 px-2 py-0.5 rounded-md border border-rose-200 shrink-0">
                 -20 / 30 dtk
@@ -112,7 +112,7 @@ export default function PenaltiesSection({
             <div className="flex justify-between items-start mb-1">
               <div>
                 <span className="font-bold text-slate-900 text-xs block">Personel Kurang</span>
-                <span className="text-[10px] text-slate-500">Tampil kurang dari 22 orang</span>
+                <span className="text-[10px] text-slate-500">Tampil &lt; 22 orang (kecuali evakuasi medis)</span>
               </div>
               <span className="text-[10px] font-bold text-rose-700 bg-rose-50 px-2 py-0.5 rounded-md border border-rose-200 shrink-0">
                 -75 Poin
@@ -226,7 +226,7 @@ export default function PenaltiesSection({
             <div className="flex justify-between items-start mb-1">
               <div>
                 <span className="font-bold text-slate-900 text-xs block">Rokok / Vape Kontingen</span>
-                <span className="text-[10px] text-slate-500">Setelah peringatan resmi panitia</span>
+                <span className="text-[10px] text-slate-500">Setelah teguran panitia (Bab C.9 & Pasal 9)</span>
               </div>
               <span className="text-[10px] font-bold text-rose-700 bg-rose-50 px-2 py-0.5 rounded-md border border-rose-200 shrink-0">
                 -75 / kejadian
@@ -246,10 +246,36 @@ export default function PenaltiesSection({
               >+</button>
             </div>
           </div>
+
+          {/* Yel-Yel Selama Tampil (Kena Nilai Peleton sesuai Bab C.10.b & d) */}
+          <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 flex flex-col justify-between">
+            <div className="flex justify-between items-start mb-1">
+              <div>
+                <span className="font-bold text-slate-900 text-xs block">Yel-Yel Mengganggu Penampilan</span>
+                <span className="text-[10px] text-slate-500">Pelanggaran ke-3 dst: potong Nilai Peleton (Bab C.10)</span>
+              </div>
+              <span className="text-[10px] font-bold text-rose-700 bg-rose-50 px-2 py-0.5 rounded-md border border-rose-200 shrink-0">
+                -50 / kejadian
+              </span>
+            </div>
+            <div className="flex items-center gap-2 mt-3">
+              <button
+                type="button"
+                onClick={() => setPenalties(p => ({ ...p, yelYelCount: Math.max(0, (p.yelYelCount || 0) - 1) }))}
+                className="w-8 h-8 bg-white hover:bg-slate-100 text-slate-800 rounded-xl font-black text-sm flex items-center justify-center transition-all cursor-pointer border border-slate-300 shadow-xs"
+              >-</button>
+              <span className="font-mono font-black text-base w-10 text-center text-slate-900">{penalties.yelYelCount || 0}</span>
+              <button
+                type="button"
+                onClick={() => setPenalties(p => ({ ...p, yelYelCount: (p.yelYelCount || 0) + 1 }))}
+                className="w-8 h-8 bg-rose-600 hover:bg-rose-500 text-white rounded-xl font-black text-sm flex items-center justify-center transition-all cursor-pointer shadow-xs"
+              >+</button>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Bagian 2: PENALTI KOMANDAN PELETON (DANTON) & GABUNGAN */}
+      {/* Bagian 2: PENALTI KOMANDAN PELETON (DANTON) */}
       <div className="space-y-3 pt-2 border-t border-slate-100">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -285,32 +311,6 @@ export default function PenaltiesSection({
               <button
                 type="button"
                 onClick={() => setPenalties(p => ({ ...p, kotakDantonCount: (p.kotakDantonCount || 0) + 1 }))}
-                className="w-8 h-8 bg-rose-600 hover:bg-rose-500 text-white rounded-xl font-black text-sm flex items-center justify-center transition-all cursor-pointer shadow-xs"
-              >+</button>
-            </div>
-          </div>
-
-          {/* Yel-Yel Selama Tampil (Kena Peleton dan Danton sesuai Bab C.10) */}
-          <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 flex flex-col justify-between">
-            <div className="flex justify-between items-start mb-1">
-              <div>
-                <span className="font-bold text-slate-900 text-xs block">Yel-Yel Mengganggu Penampilan</span>
-                <span className="text-[10px] text-slate-500">Pelanggaran ke-3 dst: potong Nilai Peleton & Danton</span>
-              </div>
-              <span className="text-[10px] font-bold text-rose-700 bg-rose-50 px-2 py-0.5 rounded-md border border-rose-200 shrink-0">
-                -50 / kejadian
-              </span>
-            </div>
-            <div className="flex items-center gap-2 mt-3">
-              <button
-                type="button"
-                onClick={() => setPenalties(p => ({ ...p, yelYelCount: Math.max(0, (p.yelYelCount || 0) - 1) }))}
-                className="w-8 h-8 bg-white hover:bg-slate-100 text-slate-800 rounded-xl font-black text-sm flex items-center justify-center transition-all cursor-pointer border border-slate-300 shadow-xs"
-              >-</button>
-              <span className="font-mono font-black text-base w-10 text-center text-slate-900">{penalties.yelYelCount || 0}</span>
-              <button
-                type="button"
-                onClick={() => setPenalties(p => ({ ...p, yelYelCount: (p.yelYelCount || 0) + 1 }))}
                 className="w-8 h-8 bg-rose-600 hover:bg-rose-500 text-white rounded-xl font-black text-sm flex items-center justify-center transition-all cursor-pointer shadow-xs"
               >+</button>
             </div>

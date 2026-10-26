@@ -16,18 +16,18 @@ export const JUKNIS_PENILAIAN_CHAPTERS = [
       {
         number: 1,
         title: 'Mekanisme dan Aspek Penilaian Dewan Juri',
-        content: `Penilaian dilakukan secara objektif dan independen oleh 6 Dewan Juri (unsur TNI, POLRI, dan Profesional/Sipil: 3 Juri Arena 1 (SD) & 3 Juri Arena 2 (SMP)). Dewan Juri menilai performa materi PBB Peleton dan performa Komandan Peleton (Danton) secara simultan dalam satu lembar penilaian terpadu. Keputusan Dewan Juri mengenai mutu gerak bersifat mutlak dan tidak dapat diganggu gugat.`
+        content: `Penilaian dilakukan secara objektif dan independen oleh 6 Dewan Juri (unsur TNI, POLRI, dan Profesional: 3 Juri Arena 1 (SD) & 3 Juri Arena 2 (SMP)). Dewan Juri menilai performa materi PBB Peleton dan Komandan Peleton (Danton) secara simultan dalam satu lembar penilaian terpadu. Keputusan Dewan Juri mengenai mutu gerakan bersifat mutlak dan tidak dapat diganggu gugat.`
       },
       {
         number: 2,
-        title: 'Metode Penilaian (Sistem Coret 5 Predikat Baku)',
-        content: `Penilaian menggunakan sistem coret nominal angka langsung pada lembar juri (tanpa pembobotan desimal di lapangan). Angka yang dicoret mencerminkan paduan Kebenaran Teknik dan Kekompakan:`,
+        title: 'Metode Penilaian',
+        content: `Penilaian menggunakan sistem coret nominal angka langsung pada lembar juri. Angka yang dicoret mencerminkan paduan Kebenaran Teknik dan Kekompakan:`,
         subItems: [
-          `a. KS (Kurang Sekali) : 1 opsi angka pasti (50).`,
+          `a. KS (Kurang Sekali) : 1 opsi angka minimal (50).`,
           `b. K (Kurang) : 3 opsi angka (Teknik Salah & Tidak Kompak).`,
           `c. C (Cukup) : 3 opsi angka (Teknik Salah & Kompak).`,
           `d. B (Baik) : 3 opsi angka (Teknik Benar & Tidak Kompak).`,
-          `e. BS (Baik Sekali) : 1 opsi angka maksimal (Teknik Benar & Kompak Sempurna).`
+          `e. BS (Baik Sekali) : 1 opsi angka maksimal (Teknik Benar & Kompak).`
         ]
       },
       {
@@ -45,8 +45,8 @@ export const JUKNIS_PENILAIAN_CHAPTERS = [
         subItems: [
           `a. Sebaran Nilai Materi Peleton:`,
           `• Sederhana (50 – 80): KS = 50 | K = 53, 56, 59 | C = 62, 65, 68 | B = 71, 74, 77 | BS = 80`,
-          `• Sedang / Menengah (50 – 85): KS = 50 | K = 53, 57, 60 | C = 64, 67, 71 | B = 74, 78, 81 | BS = 85`,
-          `• Sulit / Kompleks (50 – 90): KS = 50 | K = 54, 58, 62 | C = 66, 70, 74 | B = 78, 82, 86 | BS = 90`,
+          `• Menengah (50 – 85): KS = 50 | K = 53, 57, 60 | C = 64, 67, 71 | B = 74, 78, 81 | BS = 85`,
+          `• Kompleks (50 – 90): KS = 50 | K = 54, 58, 62 | C = 66, 70, 74 | B = 78, 82, 86 | BS = 90`,
           `Gerakan yang terlewat atau tidak dilaksanakan sama sekali diberi nilai 0 (nol).`,
           `b. Sebaran Nilai Komandan Peleton (Danton): Dinilai pada 4 aspek dengan sebaran nilai skala maksimal 90 (KS=50 | K=54, 58, 62 | C=66, 70, 74 | B=78, 82, 86 | BS=90):`,
           `1) Penguasaan Materi Lomba (Bobot 35%)`,
@@ -176,7 +176,7 @@ export const JUKNIS_PENILAIAN_CHAPTERS = [
       {
         number: 3,
         title: 'Jumlah Personel Kurang',
-        content: 'Peleton yang memasuki arena dengan jumlah personel kurang dari 22 orang, terdiri atas 1 Komandan Peleton dan 21 anggota, dikenai penalti tetap sebesar -75 poin. Penalti berlaku terhadap nilai Peleton.'
+        content: 'Peleton yang memasuki arena dengan jumlah personel kurang dari 22 orang, terdiri atas 1 Komandan Peleton dan 21 anggota, dikenai penalti tetap sebesar -75 poin. Penalti berlaku terhadap nilai Peleton. Anggota yang dievakuasi medis saat penampilan berlangsung tidak dikenai penalti pengurangan personel.'
       },
       {
         number: 4,
@@ -215,7 +215,7 @@ export const JUKNIS_PENILAIAN_CHAPTERS = [
       {
         number: 9,
         title: 'Pelanggaran Kawasan Tanpa Rokok & Vape',
-        content: 'Pelanggaran terang-terangan di ruang basecamp atau yang melibatkan personel kontingen berseragam setelah diberikan teguran dikenai penalti sebesar -75 poin terhadap nilai Peleton sesuai Pasal 9 Tata Tertib Peserta.'
+        content: 'Pelanggaran terang-terangan di ruang basecamp atau yang melibatkan personel kontingen setelah diberikan teguran dikenai penalti sebesar -75 poin terhadap nilai Peleton sesuai Pasal 9 Tata Tertib Peserta.'
       },
       {
         number: 10,
@@ -223,7 +223,7 @@ export const JUKNIS_PENILAIAN_CHAPTERS = [
         content: 'Peserta, Official, atau pihak yang menjadi bagian dari tim dilarang meneriakkan yel-yel, memberikan aba-aba, atau memberikan bentuk dukungan suara yang dapat memengaruhi jalannya penampilan selama Peleton sedang tampil.',
         subItems: [
           'a. Pelanggaran ke-1 dan ke-2 diberikan Peringatan Lisan oleh Panitia Lapangan.',
-          'b. Pelanggaran ketiga dan setiap pelanggaran berikutnya dikenai penalti -50 poin terhadap Nilai Peleton dan Nilai Komandan Peleton untuk setiap kejadian.',
+          'b. Pelanggaran ketiga dan setiap pelanggaran berikutnya dikenai penalti -50 poin terhadap Nilai Peleton untuk setiap kejadian.',
           'c. Pelanggaran sengaja, berulang, atau berat dapat langsung dikenai penalti tanpa peringatan awal.',
           'd. Penalti akibat kegaduhan suporter dibebankan terhadap Nilai Peleton.'
         ]
@@ -254,101 +254,101 @@ export const JUKNIS_PENDAFTARAN_CHAPTERS = [
         number: 1,
         title: 'Sistem dan Mekanisme Pendaftaran',
         sub: [
-          `a. Pendaftaran administratif awal LBB Mu’allimin 2027 dilaksanakan secara daring melalui Portal Resmi Sistem Informasi LBB Mu’allimin pada laman https://lbb.tontimuallimin.com/ , dengan verifikasi dokumen fisik yang dilaksanakan pada saat Technical Meeting (TM).`,
-          `b. Panitia tidak melayani pendaftaran manual secara luring/offline di tempat maupun pendaftaran susulan setelah kuota resmi terpenuhi.`,
-          `c. Sistem pendaftaran menerapkan prinsip first-come, first-served, di mana tim yang menyelesaikan pengisian formulir, melengkapi berkas unggahan, dan memverifikasi setoran pembayaran terlebih dahulu yang berhak mengamankan slot kuota resmi.`
+          `a. Pendaftaran administratif awal Lomba Baris-Berbaris (LBB) Mu’allimin 2027 diselenggarakan secara daring melalui Portal Resmi Sistem Informasi LBB Mu’allimin pada laman https://lbb.tontimuallimin.com, yang dilanjutkan dengan verifikasi berkas fisik pada saat Pertemuan Teknis (Technical Meeting/TM).`,
+          `b. Panitia tidak melayani pendaftaran manual secara luring (offline) di tempat ataupun pendaftaran susulan setelah kuota resmi terpenuhi.`,
+          `c. Sistem pendaftaran menerapkan asas siapa cepat, dia dapat (first-come, first-served). Tim yang menyelesaikan pengisian formulir, melengkapi berkas unggahan, dan memverifikasi setoran pembayaran terlebih dahululah yang berhak mengamankan kuota resmi peserta.`
         ]
       },
       {
         number: 2,
         title: 'Alokasi Kuota Peserta',
         sub: [
-          `a. Batas total kuota peserta adalah 36 Peleton se-Daerah Istimewa Yogyakarta, dengan alokasi berimbang:\n1) Tingkat SD/MI Sederajat: Kuota 18 Peleton (Arena 1 - Lapangan Basket).\n2) Tingkat SMP/MTs Sederajat: Kuota 18 Peleton (Arena 2 - Pelataran Embung).`,
-          `b. Setiap sekolah/madrasah diperkenankan mengirimkan maksimal 2 (dua) peleton (dapat berupa peleton putra, peleton putri, maupun peleton campuran).`
+          `a. Kuota total peserta dibatasi sebanyak 36 peleton se-Daerah Istimewa Yogyakarta dengan pembagian berimbang:\n1) Tingkat SD/MI Sederajat: Kuota 18 Peleton.\n2) Tingkat SMP/MTs Sederajat: Kuota 18 Peleton.`,
+          `b. Setiap sekolah/madrasah diperkenankan mengirimkan paling banyak 2 (dua) peleton (dapat berupa peleton putra, peleton putri, maupun peleton campuran).`
         ]
       },
       {
         number: 3,
         title: 'Jadwal dan Lini Masa Pendaftaran',
         sub: [
-          `a. Periode Pendaftaran Daring: Dibuka mulai Senin, 26 Oktober 2026 pukul 00.00 WIB s.d. Ahad, 22 November 2026 pukul 23.59 WIB (pendaftaran otomatis ditutup lebih awal apabila total kuota 36 peleton telah terpenuhi).`,
-          `b. Technical Meeting & Verifikasi Dokumen Fisik: Sabtu, 9 Januari 2027 pukul 13.00 - 16.30 WIB di Aula Kampus Induk Madrasah Mu’allimin Wirobrajan.`,
+          `a. Dibuka mulai hari Senin, 26 Oktober 2026 pukul 00.00 WIB sampai dengan Ahad, 22 November 2026 pukul 23.59 WIB. Pendaftaran otomatis ditutup lebih awal apabila kuota 36 peleton telah terpenuhi.`,
+          `b. Pertemuan Teknis (Technical Meeting) & Verifikasi Berkas Fisik: Sabtu, 9 Januari 2027 pukul 13.00–16.30 WIB di Aula Kampus Induk Madrasah Mu’allimin Wirobrajan.`,
           `c. Uji Coba Lapangan: Sabtu, 16 Januari 2027 pukul 07.00 – 13.00 WIB di Kampus Terpadu Sedayu.`,
-          `d. Hari Pelaksanaan Lomba & Daftar Ulang: Ahad, 24 Januari 2027 mulai pukul 06.00 WIB di Kampus Terpadu Sedayu.`
+          `d. Hari Pelaksanaan Lomba & Registrasi Ulang: Ahad, 24 Januari 2027 mulai pukul 06.00 WIB di Kampus Terpadu Sedayu.`
         ]
       },
       {
         number: 4,
         title: 'Biaya Pendaftaran dan Tata Cara Pembayaran',
         sub: [
-          `a. Biaya pendaftaran per peleton terbagi ke dalam 2 (dua) gelombang berjenjang (bersifat Non-Refundable / tidak dapat ditarik kembali apabila peleton mengundurkan diri):\n1) Gelombang 1 (26 Oktober – 8 November 2026): Rp 350.000,- / peleton.\n2) Gelombang 2 (9 November – 22 November 2026/Kuota Penuh): Rp 400.000,- / peleton.\n3) Gelombang 2 hanya dibuka jika sisa kuota masih ada.\n4) Keterangan: Setiap pembayaran wajib menggunakan kode unik 108 pada nominal transfer.`,
-          `b. Pembayaran disetorkan via transfer perbankan ke rekening resmi panitia:\n1) Bank Tujuan: BSI (Bank Syariah Indonesia)\n2) Nomor Rekening: 2600051817\n3) Atas Nama: Kepala Urusan Admisi, Humas, dan Kerja Sama\n4) Format Berita Transfer Wajib: NAMA SEKOLAH_JUMLAH PELETON (Contoh: MTS MU’ALLIMIN YK_1).`,
-          `c. Ketentuan Nominal Pembayaran:\n1) 1 (satu) peleton Gelombang 1: Rp350.108,-\n2) 2 (dua) peleton Gelombang 1: Rp700.108,-\n3) 1 (satu) peleton Gelombang 2: Rp400.108,-\n4) 2 (dua) peleton Gelombang 2: Rp800.108,-`,
-          `d. Bukti transfer asli (struk ATM/teller atau tangkapan layar m-banking yang jelas) wajib diunggah pada formulir digital pendaftaran.`,
-          `e. Setiap peleton terdaftar berhak mendapatkan fasilitas: ruang kelas basecamp, 1 (satu) dus Air Minum Kemasan (botol) per peleton saat registrasi ulang, 3 buah ID Card resmi (1 Official & 2 Pendukung Resmi), Nomor Dada Peleton, 2 kantong sampah terpilah, akses kantong parkir, dan E-Sertifikat resmi.`
+          `a. Biaya pendaftaran per peleton terbagi ke dalam 2 (dua) gelombang berjenjang (bersifat tidak dapat ditarik kembali/non-refundable apabila tim mengundurkan diri sepihak):\n1) Gelombang 1 (26 Oktober – 8 November 2026): Rp 350.000,00 per peleton.\n2) Gelombang 2 (9 November – 22 November 2026/Kuota Penuh): Rp 400.000 per peleton (hanya dibuka jika sisa kuota masih tersedia).\n3) Setiap pembayaran wajib menambahkan kode unik transfer 108 pada tiga digit terakhir nominal pembayaran.`,
+          `b. Pembayaran disetorkan melalui transfer perbankan ke rekening resmi panitia:\n1) Bank Tujuan: Bank Syariah Indonesia (BSI)\n2) Nomor Rekening: 2600051817\n3) Atas Nama: Kepala Urusan Admisi, Humas, dan Kerja Sama\n4) Format Berita Transfer (Wajib): NAMA SEKOLAH_JUMLAH PELETON (Contoh: MTS MUALLIMIN YK_1).`,
+          `c. Ketentuan Nominal Pembayaran:\n1) 1 (satu) peleton Gelombang 1: Rp350.108,00\n2) 2 (dua) peleton Gelombang 1: Rp700.108,00\n3) 1 (satu) peleton Gelombang 2: Rp400.108,00\n4) 2 (dua) peleton Gelombang 2: Rp800.108,00`,
+          `d. Bukti transfer asli (struk ATM/teller atau tangkapan layar m-banking yang terbaca jelas) wajib diunggah pada formulir pendaftaran daring.`,
+          `e. Setiap peleton terdaftar berhak memperoleh fasilitas berupa: ruang kelas transit (basecamp), 1 (satu) dus air minum dalam kemasan (botol) saat registrasi ulang, 3 (tiga) buah Tanda Pengenal (ID Card) resmi (untuk 1 Official dan 2 Pendukung Resmi), Nomor Dada Peleton, 2 (dua) kantong sampah terpilah, akses area parkir, serta sertifikat elektronik resmi bagi pemenang.`
         ]
       },
       {
         number: 5,
         title: 'Alur Prosedur Pendaftaran Digital (5 Langkah)',
         sub: [
-          `a. Langkah 1 (Akses Formulir): Perwakilan sekolah/peleton membuka portal resmi https://lbb.tontimuallimin.com/ lalu meng-klik tombol "Daftar Peleton" untuk masuk ke formulir pendaftaran.`,
-          `b. Langkah 2 (Data Sekolah & Akun Tim): Memilih jenjang perlombaan (SD/MI atau SMP/MTs), mendaftarkan email Google aktif (digunakan untuk login Dashboard Tim), mengisi biodata sekolah, mengunggah logo sekolah, dan memilih kategori peleton (Putra/Putri/Campuran).`,
-          `c. Langkah 3 (Data Danton & Official): Meng-input identitas lengkap Komandan Peleton beserta unggahan scan Kartu Pelajar sah, serta mengisi identitas Official/Pelatih pendamping lengkap dengan nomor WhatsApp aktif.`,
-          `d. Langkah 4 (Pembayaran & Pakta Integritas): Mengunggah bukti transfer biaya pendaftaran yang valid dan membubuhkan tanda tangan digital pada kanvas Pakta Integritas Online.`,
-          `e. Langkah 5 (Konfirmasi & Aktivasi Dashboard Tim): Tim menerima Kode Registrasi unik resmi. Panitia melakukan verifikasi dalam 1x24 jam. Setelah diverifikasi, tim dapat login ke Dashboard Peserta untuk melengkapi susunan identitas peleton.`
+          `a. Langkah 1 (Akses Formulir): Perwakilan sekolah/madrasah mengakses portal resmi https://lbb.tontimuallimin.com lalu mengeklik tombol "Daftar Peleton" untuk membuka formulir pendaftaran.`,
+          `b. Langkah 2 (Data Sekolah & Akun Tim): Memilih jenjang perlombaan (SD/MI atau SMP/MTs), mendaftarkan alamat pos-el (email) Google aktif (yang akan digunakan untuk masuk ke Dasbor Tim), mengisi identitas sekolah/madrasah, mengunggah logo sekolah/madrasah, serta memilih kategori peleton (Putra/Putri/Campuran).`,
+          `c. Langkah 3 (Data Danton & Official): Mengisi identitas lengkap Komandan Peleton (Danton) beserta unggahan pindaian (scan) Kartu Pelajar yang sah, serta melengkapi identitas Official (Pelatih/Pembina) disertai nomor WhatsApp aktif.`,
+          `d. Langkah 4 (Pembayaran & Pakta Integritas): Mengunggah bukti transfer biaya pendaftaran yang sah dan membubuhkan tanda tangan elektronik pada kanvas Pakta Integritas Daring.`,
+          `e. Langkah 5 (Konfirmasi & Aktivasi Dashboard Tim): Tim akan memperoleh Kode Registrasi unik resmi. Panitia akan melakukan verifikasi maksimal dalam waktu 1x24 jam. Setelah terverifikasi, tim dapat masuk (login) ke Dasbor Peserta untuk melengkapi daftar susunan personel peleton.`
         ]
       },
       {
         number: 6,
         title: 'Dokumen Persyaratan yang Wajib Diunggah (Digital)',
         sub: [
-          `a. Surat Tugas / Rekomendasi Resmi dari Kepala Sekolah/Madrasah asli bertanda tangan dan berstempel basah (format PDF/JPG, maks. 2 MB).`,
-          `b. Bukti transfer biaya pendaftaran sesuai biaya pendaftaran gelombang berjalan (format JPG/PNG, maks. 2 MB).`,
-          `c. Scan/Foto Kartu Pelajar sah Komandan Peleton (Danton) pangkalan bersangkutan (format Foto/PDF, maks. 3 MB).`,
-          `d. Logo peleton atau sekolah/madrasah beresolusi tinggi format PNG transparan`,
-          `e. Pasfoto resmi seluruh personel peleton ukuran 3x4 (latar belakang Merah untuk jenjang SD/MI dan latar belakang Biru untuk jenjang SMP/MTs) diunggah melalui menu Identitas Personel di portal peserta.`,
-          `f. Data identitas seluruh personel peleton berupa Nama Lengkap sesuai ijazah terakhir atau dokumen resmi (digunakan untuk penerbitan sertifikat), NISN, Tempat dan Tanggal Lahir, serta Kelas. Data diisi melalui portal peserta sesuai format yang telah disediakan.`
+          `a. Surat Tugas atau Surat Rekomendasi Resmi dari Kepala Sekolah/Madrasah asli yang telah ditandatangani dan dibubuhi stempel basah (format PDF/JPG, ukuran maks. 2 MB).`,
+          `b. Bukti transfer biaya pendaftaran sesuai dengan gelombang pendaftaran yang berlaku (format JPG/PNG, ukuran maks. 2 MB).`,
+          `c. Pindaian (scan) atau foto Kartu Pelajar yang sah milik Komandan Peleton (Danton) dari pangkalan sekolah/madrasah yang bersangkutan (format Foto/PDF, ukuran maks. 3 MB).`,
+          `d. Logo peleton atau sekolah/madrasah beresolusi tinggi dengan format PNG berlatar belakang transparan`,
+          `e. Pasfoto resmi seluruh personel peleton berukuran 3x4 (latar belakang MERAH untuk jenjang SD/MI dan latar belakang BIRU untuk jenjang SMP/MTs), yang diunggah melalui menu Identitas Personel pada portal peserta.`,
+          `f. Data identitas seluruh personel peleton yang meliputi: Nama Lengkap (sesuai ijazah terakhir atau dokumen resmi sebagai dasar penerbitan sertifikat), NISN, Tempat dan Tanggal Lahir, serta Kelas. Seluruh data tersebut diisikan melalui portal peserta sesuai dengan format yang tersedia.`
         ]
       },
       {
         number: 7,
         title: 'Regulasi Komposisi Personel Peleton',
         sub: [
-          `a. Komposisi resmi peleton berjumlah maksimal 25 personel, terdiri atas: 1 Komandan Peleton (Danton), 21 Anggota Inti (3 saf x 7 banjar), dan 3 Orang Cadangan.`,
-          `b. Didampingi maksimal 3 orang pendamping peleton: 1 Official (Pelatih/Pembina) dan 2 Pendukung Resmi (Medis/Dokumentasi) yang akan mengenakan ID Card resmi panitia.`,
-          `c. Batas minimal personel tampil di arena adalah 22 orang (1 Danton + 21 Anggota Inti). Penggantian pemain inti dengan cadangan hanya diperkenankan saat transisi resmi yang diatur dalam materi juknis.`
+          `a. Komposisi resmi setiap peleton berjumlah paling banyak 25 personel, yang terdiri atas: 1 Komandan Peleton (Danton), 21 Anggota Inti (formasi 3 saf x 7 banjar), serta maksimal 3 Anggota Cadangan.`,
+          `b. Setiap peleton didampingi oleh maksimal 3 orang pendamping, yang terdiri atas: 1 Official (Pelatih/Pembina) dan 2 Pendukung Resmi (Medis/Dokumentasi) yang wajib mengenakan Tanda Pengenal (ID Card) resmi dari panitia.`,
+          `c. Jumlah minimal personel yang tampil di arena perlombaan adalah 22 orang (1 Danton dan 21 Anggota Inti). Penggantian anggota inti oleh anggota cadangan hanya diperkenankan pada saat jeda transisi resmi sebagaimana diatur dalam petunjuk teknis materi lomba.`
         ]
       },
       {
         number: 8,
         title: 'Kewajiban Penyerahan Berkas Fisik Asli saat Technical Meeting',
         sub: [
-          `a. Meskipun proses pendaftaran awal diselenggarakan secara digital, delegasi resmi sekolah/madrasah (maksimal 2 orang perwakilan per SEKOLAH/MADRASAH, baik yang mengirimkan 1 maupun 2 peleton) WAJIB membawa dan menyerahkan berkas fisik asli pada saat registrasi Technical Meeting (Sabtu, 9 Januari 2027 pukul 12.30 - 13.00 WIB di Aula Kampus Induk Mu’allimin Wirobrajan). Bagi sekolah yang mengirimkan 2 (dua) peleton, delegasi yang hadir berhak mewakili proses verifikasi kedua peleton tersebut sekaligus.`,
-          `b. Berkas fisik asli yang diserahkan meliputi:\n1) Surat Tugas / Rekomendasi Kepala Sekolah asli berstempel basah yang memuat daftar nama lengkap seluruh peleton (1 Danton, 21 Inti, 3 Cadangan, 1 Official, 2 Pendukung Resmi).\n2) Pakta Integritas fisik bermaterai Rp 10.000 yang telah ditandatangani basah oleh Official bersangkutan.`
+          `a. Meskipun pendaftaran awal dilakukan secara daring, utusan resmi sekolah/madrasah (maksimal 2 orang perwakilan untuk setiap sekolah/madrasah, baik yang mengirimkan 1 maupun 2 peleton) WAJIB membawa dan menyerahkan berkas fisik asli pada saat registrasi Pertemuan Teknis (Technical Meeting) pada hari Sabtu, 9 Januari 2027 pukul 12.30–13.00 WIB di Aula Kampus Induk Madrasah Mu’allimin Wirobrajan. Bagi sekolah/madrasah yang mengirimkan 2 (dua) peleton, utusan yang hadir dapat mewakili proses verifikasi untuk kedua peleton tersebut sekaligus.`,
+          `b. Berkas fisik asli yang wajib diserahkan meliputi:\n1) Surat Tugas atau Surat Rekomendasi Kepala Sekolah/Madrasah asli berstempel basah yang memuat daftar nama lengkap seluruh unsur peleton (1 Danton, 21 Anggota Inti, hingga 3 anggota Cadangan, 1 Official, serta 2 Pendukung Resmi).\n2) Pakta Integritas fisik yang telah ditandatangani basah oleh Official bersangkutan.`
         ]
       },
       {
         number: 9,
         title: 'Ketentuan Diskualifikasi & Sanksi Administrasi',
         sub: [
-          `a. Diskualifikasi Mutlak: Diberikan kepada peleton yang memanipulasi data identitas siswa, memalsukan stempel/tanda tangan surat rekomendasi kepala sekolah, atau menyertakan siswa dari luar pangkalan sekolah yang bersangkutan.`,
-          `b. Ketentuan Pembatalan (Non-Refundable): Uang pendaftaran yang telah dibayarkan tidak dapat ditarik kembali apabila peleton membatalkan keikutsertaan secara sepihak.`,
-          `c. Pergantian Personel: Perubahan data personel, termasuk nama, susunan, posisi, foto, maupun pergantian individu, diperbolehkan sampai dengan sebelum pelaksanaan Technical Meeting (TM). Setiap perubahan wajib dilaporkan dan disesuaikan dengan Surat Tugas/Rekomendasi resmi dari Kepala Sekolah/Madrasah. Perubahan yang tidak tercantum atau tidak sesuai dengan Surat Tugas/Rekomendasi resmi dinyatakan tidak sah.`
+          `a. Diskualifikasi Mutlak: Dijatuhkan kepada peleton yang terbukti memanipulasi data identitas siswa, memalsukan tanda tangan atau stempel pada surat rekomendasi kepala sekolah/madrasah, dan/atau mengikutsertakan peserta yang bukan berasal dari pangkalan sekolah/madrasah yang bersangkutan.`,
+          `b. Ketentuan Pembatalan (Non-Refundable): Biaya pendaftaran yang telah disetorkan tidak dapat ditarik kembali dengan alasan apa pun apabila peleton mengundurkan diri atau membatalkan keikutsertaan secara sepihak.`,
+          `c. Pergantian Personel: Perubahan data personel—meliputi nama, susunan formasi, posisi, pasfoto, maupun pergantian individu—masih diperkenankan hingga batas waktu sebelum pelaksanaan Pertemuan Teknis (Technical Meeting/TM). Setiap perubahan wajib dilaporkan kepada panitia dan disesuaikan dengan Surat Tugas/Rekomendasi resmi dari Kepala Sekolah/Madrasah. Segala bentuk perubahan yang tidak tercantum atau tidak sesuai dengan Surat Tugas/Rekomendasi resmi dinyatakan tidak sah.`
         ]
       },
       {
         number: 10,
         title: 'Pusat Layanan dan Narahubung Resmi',
         sub: [
-          `a. Seluruh komunikasi, koordinasi, dan konfirmasi resmi pendaftaran dilayani melalui saluran:\n1) Website Portal Pendaftaran: https://lbb.tontimuallimin.com/\n2) WhatsApp Helpdesk Resmi: https://wa.me/6281947491505 (Admin)\n3) Email Resmi: lbb@tontimuallimin.com\n4) Instagram Resmi: @lbbmuin | @mualliminjogja | TikTok: @tontimuallimin`
+          `a. Seluruh komunikasi, koordinasi, dan konfirmasi resmi terkait pendaftaran hanya dilayani melalui kanal resmi berikut:\n1) Laman Portal Pendaftaran: https://lbb.tontimuallimin.com\n2) Layanan Bantuan (Helpdesk) WhatsApp Resmi: https://wa.me/6281947491505 (Admin)\n3) Pos-el (Email) Resmi: lbb@tontimuallimin.com\n4) Media Sosial Resmi: Instagram @lbbmuin & @mualliminjogja | TikTok: @tontimuallimin`
         ]
       },
       {
         number: 11,
         title: 'Mitigasi Gangguan Sistem Digital Pendaftaran',
         sub: [
-          `Apabila peserta mengalami kendala teknis login atau gagal unggah dokumen akibat gangguan server/portal resmi, panitia menyediakan mekanisme verifikasi dan pengumpulan dokumen secara manual/darurat melalui koordinasi Helpdesk Resmi WhatsApp. Kendala akibat kelalaian peserta melewati batas waktu tidak termasuk dalam ketentuan ini.`
+          `Apabila peserta mengalami kendala teknis saat masuk (login) ke akun atau gagal mengunggah dokumen akibat gangguan pada peladen (server) portal resmi, panitia menyediakan mekanisme verifikasi dan pengumpulan dokumen darurat secara manual melalui koordinasi dengan Layanan Bantuan (Helpdesk) WhatsApp Resmi. Adapun kendala atau keterlambatan yang disebabkan oleh kelalaian peserta hingga melewati batas waktu pendaftaran tidak termasuk dalam ketentuan mitigasi ini.`
         ]
       }
     ]
@@ -357,27 +357,27 @@ export const JUKNIS_PENDAFTARAN_CHAPTERS = [
     id: 'reg-b',
     letter: 'B',
     title: 'PENUTUP',
-    content: `Petunjuk Teknis Pendaftaran ini menjadi pedoman operasional resmi bagi seluruh panitia, dewan juri, dan peserta LBB Mu'allimin Tahun 2027. Seluruh hal teknis tambahan yang disepakati bersama dalam forum Technical Meeting mengikat secara sah dan menjadi bagian tak terpisahkan dari juknis ini.`
+    content: `Petunjuk Teknis Pendaftaran ini disusun sebagai pedoman resmi yang mengikat bagi seluruh panitia penyelenggara dan calon peserta Lomba Baris-Berbaris (LBB) Mu’allimin Tahun 2027. Segala ketentuan teknis tambahan yang disepakati bersama dalam forum Pertemuan Teknis (Technical Meeting) dinyatakan sah serta menjadi bagian yang tidak terpisahkan dari petunjuk teknis ini.`
   }
 ];
 
 export const RUNDOWN_DATA = {
   tm: {
-    title: 'Rundown Technical Meeting (TM) Peserta',
+    title: 'A. RUNDOWN TECHNICAL MEETING (TM) PESERTA',
     date: 'Sabtu, 9 Januari 2027',
     venue: 'Aula Kampus Induk Madrasah Mu’allimin Wirobrajan (Jl. Letjen S. Parman No. 68, Yogyakarta)',
     items: [
-      { time: '12.30 – 13.00', duration: "30'", agenda: 'Registrasi & Verifikasi Dokumen Fisik Asli', desc: 'Delegasi resmi sekolah (maksimal 2 orang) melakukan presensi dan menyerahkan berkas fisik: Surat Rekomendasi/Tugas Kepala Sekolah asli berstempel basah & Pakta Integritas bermaterai Rp 10.000. (Divisi Kesekretariatan)' },
+      { time: '12.30 – 13.00', duration: "30'", agenda: 'Registrasi & Verifikasi Dokumen Fisik Asli', desc: 'Delegasi resmi sekolah (maksimal 2 orang) melakukan presensi dan menyerahkan berkas fisik: Surat Rekomendasi/Tugas Kepala Sekolah asli berstempel basah & Pakta Integritas. (Divisi Kesekretariatan)' },
       { time: '13.00 – 13.15', duration: "15'", agenda: 'Pembukaan Technical Meeting', desc: 'Pembukaan forum TM oleh MC, pembacaan kalam ilahi, menyanyikan lagu Indonesia Raya & Mars Sang Surya. (Divisi Acara)' },
       { time: '13.15 – 13.30', duration: "15'", agenda: 'Sambutan Panitia & Pimpinan', desc: 'Sambutan Perwakilan Direksi Madrasah Mu\'allimin Muhammadiyah Yogyakarta.' },
       { time: '13.30 – 14.30', duration: "60'", agenda: 'Pemaparan Materi Teknis & Juknis Lomba', desc: 'Pemaparan regulasi PBB Perpang TNI 58 & 57/2018 (Hormat Kanan Perpang 45/2014), ketentuan arena, alur DP 1 & DP 2, sistem e-penilaian, dan tata tertib madrasah/basecamp. (Divisi Acara & Dewan Juri)' },
-      { time: '14.30 – 15.15', duration: "45'", agenda: 'Sesi Tanya Jawab Teknis', desc: 'Diskusi interaktif, klarifikasi materi teknis perlombaan, dan penandatanganan Berita Acara / Notulen Resmi TM yang mengikat secara sah.' },
+      { time: '14.30 – 15.15', duration: "45'", agenda: 'Sesi Tanya Jawab Teknis', desc: 'Diskusi interaktif, klarifikasi materi teknis perlombaan, dan ditulis dalam Berita Acara / Notulen Resmi TM yang mengikat secara sah.' },
       { time: '15.15 – 16.00', duration: "45'", agenda: 'Pengundian Terbuka (Lotting) Nomor Urut Tampil', desc: 'Lotting resmi nomor dada: SD (SD-111 s.d. SD-175) dan SMP (SMP-222 s.d. SMP-286). Pencatatan resmi daftar urutan tampil. (Divisi Acara)' },
       { time: '16.00 – 16.30', duration: "30'", agenda: 'Konfirmasi Uji Coba Lapangan & Penutup', desc: 'Penjelasan teknis orientasi medan/uji coba lapangan, pengisian survei kesediaan melalui portal digital, doa bersama, dan penutupan.' }
     ]
   },
   trial: {
-    title: 'Rundown Uji Coba Lapangan (Orientasi Medan)',
+    title: 'B. RUNDOWN UJI COBA LAPANGAN',
     date: 'Sabtu, 16 Januari 2027',
     venue: 'Kampus Terpadu Madrasah Mu’allimin Sedayu, Bantul',
     notes: 'Berjalan paralel di 2 arena (Arena 1 Lapangan Basket untuk SD/MI; Arena 2 Pelataran Embung untuk SMP/MTs). Setiap peleton dialokasikan waktu total 15 menit (orientasi bersih sesuai durasi lomba + 5 menit transisi).',
@@ -405,7 +405,7 @@ export const RUNDOWN_DATA = {
     ]
   },
   competition: {
-    title: 'Rundown Hari-H Perlombaan',
+    title: 'C. RUNDOWN HARI-H PERLOMBAAN',
     date: 'Ahad, 24 Januari 2027',
     venue: 'Kampus Terpadu Madrasah Mu’allimin Sedayu, Bantul',
     items: [
@@ -414,13 +414,13 @@ export const RUNDOWN_DATA = {
       { time: '07.00 – 07.45', duration: "45'", agenda: 'Upacara Pembukaan Resmi LBB Mu\'allimin 2027', desc: 'Upacara resmi pembukaan dipimpin Direktur Madrasah Mu\'allimin. Laporan ketua panitia, prosesi simbolis pembukaan, dan doa.', location: 'Lapangan Mini Soccer' },
       { time: '07.45 – 08.00', duration: "15'", agenda: 'Jeda Kesiapan Peserta, Mobilisasi Pos Juri & Pemanggilan DP 1', desc: 'Transisi peleton awal. Dewan Juri menempati meja penilaian di Arena 1 & 2. Peleton urutan 1 (SD-111 & SMP-222) dipanggil resmi ke DP 1 pukul 07.45 WIB.', location: 'Pos DP 1 & Meja Dewan Juri' },
       { time: '08.00 – 11.30', duration: "210'", agenda: 'Pelaksanaan Lomba Sesi I (Pagi) (Urutan Tampil 1 s.d. 14)', desc: 'Dilaksanakan secara simultan/paralel: • Arena 1 (Basket): SD-111 s.d. SD-157 (14 Peleton) • Arena 2 (Embung): SMP-222 s.d. SMP-268 (14 Peleton). Estimasi rolling release e-nilai ±1 jam setelah tampil.', location: '• Arena 1 (Lap. Basket) • Arena 2 (Pelataran Embung)' },
-      { time: '11.30 – 12.30', duration: "60'", agenda: 'ISHOMA (Istirahat, Salat Dhuhur Berjamaah, & Makan Siang)', desc: 'Penghentian sementara seluruh aktivitas arena lomba. Salat Dhuhur berjamaah di Masjid Kampus Terpadu.', location: 'Masjid Kampus Terpadu Sedayu & 1918 Foodcourt' },
+      { time: '11.30 – 12.30', duration: "60'", agenda: 'ISHOMA (Istirahat, Salat Dhuhur Berjamaah, & Makan Siang)', desc: 'Penghentian sementara seluruh aktivitas arena lomba. Salat Dhuhur berjamaah di Masjid Kampus Terpadu.', location: 'Masjid Kampus Terpadu Sedayu' },
       { time: '12.30 – 13.30', duration: "60'", agenda: 'Pelaksanaan Lomba Sesi II (Siang) (Urutan Tampil 15 s.d. 18)', desc: 'Lanjutan penampilan 4 peleton terakhir: • Arena 1 (Basket): SD-159 s.d. SD-175 (4 Peleton) • Arena 2 (Embung): SMP-280 s.d. SMP-286 (4 Peleton). Seluruh penampilan tuntas pukul 13.30 WIB.', location: '• Arena 1 (Lap. Basket) • Arena 2 (Pelataran Embung)' },
-      { time: '13.30 – 15.00', duration: "90'", agenda: 'Sidang Pleno Dewan Juri, Masa Sanggah & Checkout Basecamp', desc: '• Sidang Pleno: Rekapitulasi final, pengesahan nilai murni, pemotongan penalti, dan penandatanganan SK Juara Umum/Peleton oleh Dewan Juri. • Masa Sanggah Administrasi: Ditutup tepat pukul 15.00 WIB. • Checkout Basecamp: Pembersihan kelas, penyerahan 2 trash bag sampah ke pos checkout, inspeksi LO, dan penukaran kartu identitas jaminan KTP/SIM.', location: '• Ruang VIP Pleno Juri • Ruang Informasi Sanggah • Ruang Kelas Basecamp' },
-      { time: '15.00 – 15.45', duration: "45'", agenda: 'Istirahat Sore, Salat Ashar Berjamaah & Pembagian Kudapan', desc: 'Pelaksanaan salat Ashar berjamaah di Masjid Kampus Terpadu.', location: 'Masjid Kampus Terpadu & 1918 Foodcourt' },
+      { time: '13.30 – 15.00', duration: "90'", agenda: 'Sidang Pleno Dewan Juri, Masa Sanggah & Checkout Basecamp', desc: '• Masa Sanggah Administrasi: Ditutup tepat pukul 15.00 WIB. • Checkout Basecamp: Pembersihan kelas, penyerahan 2 trash bag sampah ke pos checkout, inspeksi LO, dan penukaran kartu identitas jaminan KTP/SIM. • Sidang Pleno: Rekapitulasi final, pengesahan nilai murni, pemotongan penalti, dan penandatanganan SK Juara Umum/Peleton oleh Dewan Juri.', location: '• Ruang VIP Pleno Juri • Ruang Informasi Sanggah • Ruang Kelas Basecamp' },
+      { time: '15.00 – 15.45', duration: "45'", agenda: 'Istirahat Sore, Salat Ashar Berjamaah', desc: 'Pelaksanaan salat Ashar berjamaah di Masjid Kampus Terpadu.', location: 'Masjid Kampus Terpadu' },
       { time: '15.45 – 16.00', duration: "15'", agenda: 'Standby & Pengecekan Barisan Apel Penutupan', desc: 'Seluruh perwakilan kontingen (1 Danton + 4 Anggota berseragam lengkap) wajib telah berbaris rapi di Lapangan Mini Soccer. Pengecekan kehadiran oleh protokol panitia.', location: 'Lapangan Mini Soccer' },
       { time: '16.00 – 16.30', duration: "30'", agenda: 'Upacara / Apel Penutupan Resmi', desc: 'Upacara penutupan resmi dipimpin Pimpinan Madrasah Mu\'allimin Muhammadiyah Yogyakarta dan amanat penutup.', location: 'Lapangan Mini Soccer' },
-      { time: '16.30 – 17.15', duration: "45'", agenda: 'Pengumuman Kejuaraan & Penganugerahan Hadiah', desc: 'Pembacaan SK Kejuaraan oleh Koordinator Juri. Penyerahan Piala Bergilir Juara Umum SD & SMP, Trophy Tetap, Piagam Penghargaan, dan Uang Pembinaan secara simbolis.', location: 'Panggung Kehormatan Lapangan Mini Soccer' },
+      { time: '16.30 – 17.15', duration: "45'", agenda: 'Pengumuman Kejuaraan & Penganugerahan Hadiah', desc: 'Pembacaan SK Kejuaraan. Penyerahan Piala Bergilir Juara Umum SD & SMP, Trophy Tetap, Piagam Penghargaan, dan Uang Pembinaan secara simbolis.', location: 'Panggung Kehormatan Lapangan Mini Soccer' },
       { time: '17.15 – Selesai', duration: "-", agenda: 'Pembubaran Kontingen & Kepulangan Peserta', desc: 'Pelepasan kepulangan armada peleton secara tertib meninggalkan kawasan kampus melalui koordinasi petugas keamanan dan parkir.', location: 'Gerbang Utama Kampus Terpadu Sedayu' }
     ]
   }

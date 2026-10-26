@@ -71,10 +71,10 @@ export default function PhysicalIntegrityPactModal({
             </div>
             <div>
               <span className="text-[10px] font-black uppercase tracking-wider text-amber-400 block">
-                Lembar Cetak Dokumen Fisik A4 (Bab A.8 / Pasal 2)
+                Lembar Cetak Dokumen Fisik A4 (Bab A.7.b / Pasal 2)
               </span>
               <h3 className="text-xs sm:text-sm font-black text-white uppercase truncate">
-                Pakta Integritas Bermaterai Rp 10.000
+                Pakta Integritas Peserta (Tanda Tangan Basah)
               </h3>
             </div>
           </div>
@@ -220,16 +220,11 @@ export default function PhysicalIntegrityPactModal({
                     <p className="font-bold text-black uppercase text-[11.5px]">{dantonName}</p>
                   </div>
 
-                  {/* Kolom Official + Materai */}
+                  {/* Kolom Official */}
                   <div className="text-center space-y-1">
                     <p className="text-[11px] text-black">Yogyakarta, 9 Januari 2027</p>
                     <p className="font-bold text-black">Official / Pelatih Pendamping</p>
-                    <div className="h-16 flex items-center justify-center relative">
-                      {/* Box Materai Polos Standar Dokumen Hukum - Geser ke kiri */}
-                      <div className="w-24 h-11 border border-dashed border-slate-500 flex flex-col items-center justify-center text-center absolute -left-2 top-2">
-                        <span className="text-[8.5px] font-semibold text-slate-600 tracking-wider">MATERAI</span>
-                        <span className="text-[8px] text-slate-600">Rp 10.000</span>
-                      </div>
+                    <div className="h-16 flex items-end justify-center">
                     </div>
                     <p className="font-bold text-black uppercase text-[11.5px]">{officialName}</p>
                   </div>

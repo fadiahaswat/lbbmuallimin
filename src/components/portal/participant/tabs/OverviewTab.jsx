@@ -298,10 +298,10 @@ export default function OverviewTab({
                 <div className="space-y-1">
                   <div className="flex items-center gap-1.5 text-slate-900 font-bold text-xs uppercase tracking-wider">
                     <Shield className="w-4 h-4 text-red-600" />
-                    <span>Pakta Integritas Bermaterai (Wajib TM)</span>
+                    <span>Pakta Integritas Fisik (Wajib TM)</span>
                   </div>
                   <p className="text-[11px] text-slate-600 leading-relaxed max-w-lg">
-                    Official wajib membawa lembar fisik Pakta Integritas bertanda tangan basah dan bermaterai <strong>Rp 10.000,-</strong> saat registrasi TM di Kampus Induk Mu'allimin Wirobrajan.
+                    Official wajib membawa cetakan (print-out) Pakta Integritas fisik yang telah ditandatangani basah oleh Official bersangkutan saat registrasi TM di Kampus Induk Mu'allimin Wirobrajan.
                   </p>
                 </div>
                 {onOpenPactModal && (
@@ -426,7 +426,7 @@ export default function OverviewTab({
                       Sabtu, 16 Januari 2027
                     </span>
                     <span className="text-[10px] font-bold text-emerald-950 bg-emerald-100 px-2 py-0.5 rounded">
-                      08.00 WIB s.d. 13.30 WIB
+                      07.00 WIB s.d. 13.00 WIB
                     </span>
                   </div>
                   <h5 className="font-black text-base text-slate-900 mt-1">

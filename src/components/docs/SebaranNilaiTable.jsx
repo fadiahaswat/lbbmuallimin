@@ -65,10 +65,10 @@ export default function SebaranNilaiTable({ className = '', showSectionHeader = 
                 <td className="py-2.5 px-2 bg-[#deebf7]">80</td>
               </tr>
 
-              {/* Sedang / Menengah (50 - 85, Alternating Step +3 / +4) */}
+              {/* Menengah (50 - 85, Alternating Step +3 / +4) */}
               <tr className="border-b border-black">
                 <td className="py-2.5 px-3 text-left font-semibold border-r border-black bg-white">
-                  Sedang (Menengah)
+                  Menengah
                 </td>
                 <td className="py-2.5 px-2 border-r border-black bg-[#d9d9d9]">50</td>
                 <td className="py-2.5 px-2 border-r border-black bg-[#fce4d6]">53</td>
@@ -83,10 +83,10 @@ export default function SebaranNilaiTable({ className = '', showSectionHeader = 
                 <td className="py-2.5 px-2 bg-[#deebf7]">85</td>
               </tr>
 
-              {/* Sulit / Kompleks (50 - 90, Step +4) */}
+              {/* Kompleks (50 - 90, Step +4) */}
               <tr>
                 <td className="py-2.5 px-3 text-left font-semibold border-r border-black bg-white">
-                  Sulit (Kompleks)
+                  Kompleks
                 </td>
                 <td className="py-2.5 px-2 border-r border-black bg-[#d9d9d9]">50</td>
                 <td className="py-2.5 px-2 border-r border-black bg-[#fce4d6]">54</td>

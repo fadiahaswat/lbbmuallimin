@@ -41,27 +41,51 @@ export default function LiveLeaderboard() {
     return matchJenjang && matchSearch;
   });
 
-  // Calculate official ranked teams with tie-breaker criteria (FinalScore -> PBB -> Danton -> Least Penalty)
+  // Calculate official ranked teams with tie-breaker criteria (Bab A.5: Nilai Akhir Peleton -> Nilai Murni Peleton -> Penalti Peleton -> Nilai Murni Danton)
   const rankedOfficialTeams = [...filteredTeams].map(team => {
     const s = scores[team.id];
-    const finalScore = s?.finalScore || 0;
-    const pbbScore = Number(s?.pbb?.total || 0);
-    const dantonScore = Number(s?.danton?.total || 0);
-    const penaltyTotal = Number(s?.penalties?.totalPenalty || 0);
+    const juries = s?.juries || {};
+    const j1Peleton = Number(juries.pos1?.peletonTotal ?? juries.pos1?.total ?? s?.pbb?.j1 ?? 0);
+    const j2Peleton = Number(juries.pos2?.peletonTotal ?? juries.pos2?.total ?? s?.pbb?.j2 ?? 0);
+    const j3Peleton = Number(juries.pos3?.peletonTotal ?? s?.pbb?.j3 ?? 0);
+    const nilaiMurniPeleton = Number(s?.nilaiMurniPeleton ?? ((j1Peleton + j2Peleton + j3Peleton) || Number(s?.pbb?.total || 0)));
+
+    const j1Danton = Number(juries.pos1?.dantonTotal ?? 0);
+    const j2Danton = Number(juries.pos2?.dantonTotal ?? 0);
+    const j3Danton = Number(juries.pos3?.dantonTotal ?? juries.pos3?.total ?? s?.danton?.total ?? 0);
+    const nilaiMurniDanton = Number(s?.nilaiMurniDanton ?? parseFloat((j1Danton + j2Danton + j3Danton).toFixed(2)));
+
+    const peletonPenalty = Number(s?.penalties?.peletonPenalty ?? s?.penalties?.totalPenalty ?? 0);
+    const dantonPenalty = Number(s?.penalties?.dantonPenalty ?? 0);
+    const penaltyTotal = Number(s?.penalties?.totalPenalty ?? (peletonPenalty + dantonPenalty));
+
+    const nilaiAkhirPeleton = Number(s?.nilaiAkhirPeleton ?? Math.max(0, parseFloat((nilaiMurniPeleton - peletonPenalty).toFixed(2))));
+    const nilaiAkhirDanton = Number(s?.nilaiAkhirDanton ?? Math.max(0, parseFloat((nilaiMurniDanton - dantonPenalty).toFixed(2))));
+    const finalScore = Number(s?.finalScore ?? parseFloat((nilaiAkhirPeleton + nilaiAkhirDanton).toFixed(2)));
+
     return {
       team,
       scoreData: s,
+      j1Peleton,
+      j2Peleton,
+      j3Peleton,
+      nilaiMurniPeleton,
+      nilaiAkhirPeleton,
+      nilaiMurniDanton,
+      nilaiAkhirDanton,
+      peletonPenalty,
+      dantonPenalty,
       finalScore,
-      pbbScore,
-      dantonScore,
+      pbbScore: nilaiAkhirPeleton,
+      dantonScore: nilaiAkhirDanton,
       penaltyTotal,
       hasScore: Boolean(s),
     };
   }).sort((a, b) => {
-    if (b.finalScore !== a.finalScore) return b.finalScore - a.finalScore;
-    if (b.pbbScore !== a.pbbScore) return b.pbbScore - a.pbbScore;
-    if (b.dantonScore !== a.dantonScore) return b.dantonScore - a.dantonScore;
-    return a.penaltyTotal - b.penaltyTotal;
+    if (b.nilaiAkhirPeleton !== a.nilaiAkhirPeleton) return b.nilaiAkhirPeleton - a.nilaiAkhirPeleton;
+    if (b.nilaiMurniPeleton !== a.nilaiMurniPeleton) return b.nilaiMurniPeleton - a.nilaiMurniPeleton;
+    if (a.peletonPenalty !== b.peletonPenalty) return a.peletonPenalty - b.peletonPenalty;
+    return b.nilaiMurniDanton - a.nilaiMurniDanton;
   });
 
   // Toggle fullscreen mode
@@ -272,12 +296,12 @@ export default function LiveLeaderboard() {
                 <th className="py-4 px-3 text-center w-20">Jenjang</th>
                 {isOfficialScoreVisible ? (
                   <>
-                    <th className="py-4 px-3 text-center w-24">Juri 1 (PBB)</th>
-                    <th className="py-4 px-3 text-center w-24">Juri 2 (PBB)</th>
-                    <th className="py-4 px-3 text-center w-24 bg-blue-500/10 text-blue-400">Rerata PBB</th>
-                    <th className="py-4 px-3 text-center w-24">Juri 3 (Danton)</th>
+                    <th className="py-4 px-3 text-center w-20">Juri 1</th>
+                    <th className="py-4 px-3 text-center w-20">Juri 2</th>
+                    <th className="py-4 px-3 text-center w-20">Juri 3</th>
+                    <th className="py-4 px-3 text-center w-24 bg-blue-500/10 text-blue-400">Akhir Peleton</th>
+                    <th className="py-4 px-3 text-center w-24">Akhir Danton</th>
                     <th className="py-4 px-3 text-center w-20 text-red-400">Penalti</th>
-                    <th className="py-4 px-4 text-right w-28 bg-amber-500/20 text-amber-400">Skor Akhir</th>
                   </>
                 ) : (
                   <th className="py-4 px-4 text-center w-36">Status Tampil</th>
@@ -295,20 +319,12 @@ export default function LiveLeaderboard() {
                 rankedOfficialTeams.map((item, idx) => {
                   const rank = idx + 1;
                   const isTop3 = isOfficialScoreVisible && rank <= 3;
-                  const s = item.scoreData;
-                  const juries = s?.juries || {};
-
-                  const juri1 = juries.pos1?.total !== undefined
-                    ? Number(juries.pos1.total)
-                    : (s?.pbb?.j1 !== undefined && s?.pbb?.j1 !== null ? Number(s.pbb.j1) : (s?.pbb?.total !== undefined ? Number(s.pbb.total) : '-'));
-
-                  const juri2 = juries.pos2?.total !== undefined
-                    ? Number(juries.pos2.total)
-                    : (s?.pbb?.j2 !== undefined && s?.pbb?.j2 !== null ? Number(s.pbb.j2) : '-');
-
-                  const pbbAvg = s?.pbb?.total !== undefined ? Number(s.pbb.total) : '-';
-                  const juri3 = juries.pos3?.total || s?.danton?.total || '-';
-                  const penalty = s?.penalties?.totalPenalty || 0;
+                  const juri1 = item.j1Peleton > 0 ? item.j1Peleton : '-';
+                  const juri2 = item.j2Peleton > 0 ? item.j2Peleton : '-';
+                  const juri3 = item.j3Peleton > 0 ? item.j3Peleton : '-';
+                  const akhirPeleton = item.nilaiAkhirPeleton > 0 ? item.nilaiAkhirPeleton : '-';
+                  const akhirDanton = item.nilaiAkhirDanton > 0 ? item.nilaiAkhirDanton : '-';
+                  const penalty = item.penaltyTotal || 0;
 
                   return (
                     <tr
@@ -343,13 +359,11 @@ export default function LiveLeaderboard() {
                         <>
                           <td className="py-4 px-3 text-center font-mono text-slate-700 dark:text-slate-300">{juri1}</td>
                           <td className="py-4 px-3 text-center font-mono text-slate-700 dark:text-slate-300">{juri2}</td>
-                          <td className="py-4 px-3 text-center font-mono font-bold text-blue-600 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-950/20">{pbbAvg}</td>
                           <td className="py-4 px-3 text-center font-mono text-slate-700 dark:text-slate-300">{juri3}</td>
+                          <td className="py-4 px-3 text-center font-mono font-black text-blue-600 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-950/20">{akhirPeleton}</td>
+                          <td className="py-4 px-3 text-center font-mono font-bold text-amber-600 dark:text-amber-400">{akhirDanton}</td>
                           <td className="py-4 px-3 text-center font-mono text-rose-600 font-bold">
                             {penalty > 0 ? `-${penalty}` : '0'}
-                          </td>
-                          <td className="py-4 px-4 text-right font-mono font-black text-base text-amber-500">
-                            {item.finalScore.toFixed(2)}
                           </td>
                         </>
                       ) : (

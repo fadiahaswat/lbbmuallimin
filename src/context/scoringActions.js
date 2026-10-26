@@ -17,10 +17,9 @@ export function calculatePenalties(penalties = {}) {
   // Danton Penalties (Bab A.3.c & Bab H)
   dantonPenalty += (penalties.kotakDantonCount || 0) * 50;
 
-  // Yel-Yel Pelanggaran ke-3 dst: Potong Peleton & Danton (Bab C.10 & Bab H.12)
+  // Yel-Yel Pelanggaran ke-3 dst: Potong Nilai Peleton (Bab C.10.b & d)
   const yelYelDeduction = (penalties.yelYelCount || 0) * 50;
   peletonPenalty += yelYelDeduction;
-  dantonPenalty += yelYelDeduction;
 
   const totalPenalty = peletonPenalty + dantonPenalty;
 

@@ -86,7 +86,7 @@ export default function DocumentsTab({ currentTeam, triggerFileUpload, setActive
           onUpload={() => triggerFileUpload('dantonCard')}
         />
 
-        {/* 6. Pakta Integritas Bermaterai Rp 10.000 (Cetak Fisik untuk TM) */}
+        {/* 6. Pakta Integritas Fisik (Cetak Fisik untuk TM) */}
         <div className="sm:col-span-2 bg-gradient-to-r from-red-50/80 via-white to-amber-50/80 border border-red-200 rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
@@ -94,11 +94,11 @@ export default function DocumentsTab({ currentTeam, triggerFileUpload, setActive
                 <Shield className="w-4 h-4" />
               </span>
               <span className="font-black text-xs uppercase tracking-wider text-slate-900">
-                Pakta Integritas Fisik Bermaterai Rp 10.000 (Bab A.8 / Pasal 2)
+                Pakta Integritas Fisik (Bab A.7.b / Pasal 2)
               </span>
             </div>
             <p className="text-xs text-slate-600 leading-relaxed max-w-xl">
-              Selain tanda tangan digital saat pendaftaran online, Official <strong>wajib mencetak dokumen fisik</strong> ini, menempelkan materai Rp 10.000, menandatangani basah, dan menyerahkannya di meja registrasi TM (9 Jan 2027).
+              Selain tanda tangan digital saat pendaftaran online, Official <strong>wajib mencetak dokumen fisik</strong> ini, menandatangani basah, dan menyerahkannya di meja registrasi TM (9 Jan 2027).
             </p>
           </div>
           {onOpenPactModal && (

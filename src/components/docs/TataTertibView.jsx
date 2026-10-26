@@ -66,38 +66,38 @@ export default function TataTertibView() {
       points: 75,
       pointsDisplay: '-75 Poin Tetap',
       rule: 'Bab C.3 Juknis Penilaian',
-      desc: 'Peleton yang memasuki arena dengan jumlah personel kurang dari 22 orang, terdiri atas 1 Komandan Peleton dan 21 anggota, dikenai penalti tetap sebesar -75 poin. Penalti berlaku terhadap nilai Peleton.',
+      desc: 'Peleton yang memasuki arena dengan jumlah personel kurang dari 22 orang, terdiri atas 1 Komandan Peleton dan 21 anggota, dikenai penalti tetap sebesar -75 poin. Penalti berlaku terhadap nilai Peleton. Anggota yang dievakuasi medis saat penampilan berlangsung tidak dikenai penalti pengurangan personel.',
       type: 'Komposisi Personel',
     },
     {
       violation: 'Kelebihan Durasi Waktu Tampil di Arena (SD > 8 Mnt, SMP > 12 Mnt)',
       points: 20,
       pointsDisplay: '-20 Poin / rentang 1–30 dtk',
-      rule: 'Bab C.3 Juknis Penilaian',
-      desc: 'Peleton wajib menyelesaikan materi lomba dalam durasi maksimal 8 menit untuk SD dan 12 menit untuk SMP. Kelebihan durasi dikenai penalti sebesar -20 poin untuk setiap rentang 1 s.d. 30 detik dan kelipatannya. Penalti diberlakukan terhadap Nilai Peleton.',
+      rule: 'Bab C.4 Juknis Penilaian',
+      desc: 'Peleton dan Komandan Peleton wajib menyelesaikan materi lomba dalam durasi maksimal 8 menit untuk SD dan 12 menit untuk SMP. Kelebihan durasi dikenai penalti sebesar -20 poin untuk setiap rentang 1 s.d. 30 detik dan kelipatannya. Penalti diberlakukan terhadap nilai Peleton.',
       type: 'Waktu Tampil',
     },
     {
       violation: 'Pelanggaran Garis Arena Luar oleh Anggota Peleton',
       points: 50,
       pointsDisplay: '-50 Poin / kejadian',
-      rule: 'Bab C.4 Juknis Penilaian / Bab A.4 Juknis Lapangan',
-      desc: 'Anggota Peleton yang menginjak atau keluar dari garis batas arena luar dikenai penalti -50 poin per kejadian, diberlakukan terhadap Nilai Peleton.',
+      rule: 'Bab C.5.a Juknis Penilaian / Bab A.4 Juknis Lapangan',
+      desc: 'Anggota Peleton yang menginjak atau keluar dari garis arena dikenai penalti -50 poin untuk setiap kejadian terhadap nilai Peleton.',
       type: 'Arena & Garis',
     },
     {
       violation: 'Pelanggaran Garis Kotak Danton 1,5 × 1,5 Meter oleh Komandan',
       points: 50,
       pointsDisplay: '-50 Poin / kejadian',
-      rule: 'Bab C.5 Juknis Penilaian / Bab A.3 Juknis Lapangan',
-      desc: 'Komandan Peleton yang menginjak atau keluar garis kotak selama memimpin materi dikenai penalti -50 poin per kejadian, diberlakukan terhadap Nilai Komandan Peleton.',
+      rule: 'Bab C.5.b Juknis Penilaian / Bab A.3 Juknis Lapangan',
+      desc: 'Komandan Peleton yang menginjak atau keluar dari Kotak Danton berukuran 1,5 × 1,5 meter dikenai penalti -50 poin untuk setiap kejadian terhadap nilai Komandan Peleton.',
       type: 'Arena & Garis',
     },
     {
       violation: 'Gerakan Penyesuaian (Tidak Dibatasi / Tanpa Penalti Poin)',
       points: 0,
       pointsDisplay: '0 Poin (Bebas Kuota)',
-      rule: 'Bab C.11 Juknis Penilaian / Bab A.6 Juknis Lapangan',
+      rule: 'Bab A.6 Juknis Lapangan',
       desc: 'Penggunaan Gerakan Penyesuaian tidak dibatasi kuota (0 Poin / Bebas Penalti), namun efektivitas dan kepatutannya dinilai secara kualitatif pada aspek Penguasaan Lapangan Komandan Peleton.',
       type: 'Teknik Gerakan',
     },
@@ -106,7 +106,7 @@ export default function TataTertibView() {
       points: 0,
       pointsDisplay: 'Nilai Minimal (50) / Nilai 0',
       rule: 'Bab C.6 Juknis Penilaian',
-      desc: 'Gerakan yang terlewat namun dilakukan kemudian = Nilai Minimal (50); tidak dilakukan sama sekali = Nilai 0. Mengurangi akumulasi nilai Penguasaan Materi Danton.',
+      desc: 'Gerakan yang terlewat tetapi kemudian dilaksanakan di luar urutan diberikan nilai minimal (50) pada gerakan tersebut. Gerakan yang terlewat dan tidak dilaksanakan sama sekali diberikan nilai 0 (nol). Kesalahan gerakan terlewat/tidak urut diperhitungkan dalam penilaian Penguasaan Materi Komandan Peleton.',
       type: 'Teknis Materi',
     },
     {
@@ -114,7 +114,7 @@ export default function TataTertibView() {
       points: 0,
       pointsDisplay: 'Nilai Minimal (50) & Potong Materi Danton',
       rule: 'Bab C.7 Juknis Penilaian',
-      desc: 'Rangkaian gerakan yang ditandai tanda garis penghubung (-) wajib dilaksanakan berkesinambungan. Apabila diselingi jeda/gerakan tambahan diberi Nilai Minimal (50) untuk materi bersangkutan dan memotong nilai Penguasaan Materi Danton.',
+      desc: 'Rangkaian gerakan yang ditandai dengan tanda "-" wajib dilaksanakan secara berkesinambungan. Apabila rangkaian tersebut diselingi jeda atau gerakan tambahan yang tidak diperintahkan, diberikan nilai minimal (50) pada penilaian Kebenaran Teknik Peleton dan diperhitungkan dalam penilaian Penguasaan Materi Komandan Peleton.',
       type: 'Teknik Gerakan',
     },
     {
@@ -122,7 +122,7 @@ export default function TataTertibView() {
       points: 150,
       pointsDisplay: '-150 Poin',
       rule: 'Bab C.8 Juknis Penilaian / Pasal 14.4 Tatib',
-      desc: '-150 Poin diberlakukan terhadap Nilai Peleton jika basecamp ditinggalkan kotor atau sampah tidak diserahkan ke Pos Checkout. Kerusakan fisik sarpras wajib diganti rugi penuh + denda perbaikan Rp 500.000,-.',
+      desc: 'Meninggalkan ruang basecamp dalam keadaan kotor atau berantakan dikenai penalti -150 poin pada rekapitulasi nilai akhir peleton sesuai ketentuan Pasal 14 Tata Tertib Peserta.',
       type: 'Kebersihan & Lingkungan',
     },
     {
@@ -130,15 +130,15 @@ export default function TataTertibView() {
       points: 75,
       pointsDisplay: '-75 Poin (Nilai Peleton)',
       rule: 'Bab C.9 Juknis Penilaian / Pasal 9.6 Tatib',
-      desc: 'Pelanggaran terang-terangan di ruang basecamp atau yang melibatkan personel kontingen berseragam setelah diberikan teguran dikenai penalti sebesar -75 poin terhadap nilai Peleton sesuai Pasal 9 Tata Tertib Peserta.',
+      desc: 'Pelanggaran terang-terangan di ruang basecamp atau yang melibatkan personel kontingen setelah diberikan teguran dikenai penalti sebesar -75 poin terhadap nilai Peleton sesuai Pasal 9 Tata Tertib Peserta.',
       type: 'Disiplin & Ketertiban',
     },
     {
-      violation: 'Yel-Yel / Teriakan yang Mengganggu Jalannya Perlombaan',
+      violation: 'Yel-Yel Selama Penampilan',
       points: 50,
-      pointsDisplay: '-50 Poin (Peringatan 1-2, Ke-3 dst)',
-      rule: 'Bab C.10 Juknis Penilaian / Pasal 8.3 Tatib',
-      desc: 'Peringatan 1 dan 2 secara lisan; pelanggaran ke-3 dan seterusnya dikenai penalti -50 Poin per kejadian terhadap Nilai Peleton dan Nilai Danton. Teriakan/aba-aba mengganggu yang disengaja dapat langsung dikenai penalti.',
+      pointsDisplay: '-50 Poin (Peringatan 1-2, Ke-3 dst Nilai Peleton)',
+      rule: 'Bab C.10 Juknis Penilaian / Pasal 9.2 Tatib',
+      desc: 'Pelanggaran ke-1 dan ke-2 diberikan Peringatan Lisan oleh Panitia Lapangan. Pelanggaran ketiga dan setiap pelanggaran berikutnya dikenai penalti -50 poin terhadap Nilai Peleton untuk setiap kejadian. Pelanggaran sengaja, berulang, atau berat dapat langsung dikenai penalti tanpa peringatan awal. Penalti akibat kegaduhan suporter dibebankan terhadap Nilai Peleton.',
       type: 'Etika & Suporter',
     },
     {
@@ -190,7 +190,7 @@ export default function TataTertibView() {
     <SimpaskorSidebarLayout
       activeMenu="tatib"
       title="Tata Tertib & Sanksi Penalti"
-      subtitle="Regulasi kepatuhan kontingen 15 Pasal, kewajiban suporter, matriks sanksi penalti Perpang TNI, & mekanisme sanggah 60 menit"
+      subtitle="Regulasi kepatuhan kontingen 15 Pasal, kewajiban suporter, matriks sanksi penalti Perpang TNI, & batas sanggah pukul 15.00 WIB"
       hideHeader={true}
     >
       <div className="space-y-6">
@@ -234,9 +234,9 @@ export default function TataTertibView() {
             </div>
 
             <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-4 text-center min-w-[140px] shrink-0 self-start md:self-center">
-              <span className="text-[10px] uppercase font-bold text-red-300 block">Sanggah Resmi</span>
-              <span className="text-2xl font-black text-white font-mono">60 Menit</span>
-              <span className="text-[10px] text-slate-300 block mt-0.5">Setelah Pengumuman</span>
+              <span className="text-[10px] uppercase font-bold text-red-300 block">Batas Sanggah Resmi</span>
+              <span className="text-2xl font-black text-white font-mono">15.00 WIB</span>
+              <span className="text-[10px] text-slate-300 block mt-0.5">Ditutup Serentak</span>
             </div>
           </div>
         </div>

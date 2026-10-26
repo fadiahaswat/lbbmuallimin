@@ -8,11 +8,11 @@ export default function DantonScoringTable({
   dantonTotal = 0,
   juryLabel = 'Dewan Juri',
 }) {
-  const ksItem = DANTON_SCALE.find(t => t.grade === 'KS');
+  const ksItems = DANTON_SCALE.filter(t => t.grade === 'KS');
   const kItems = DANTON_SCALE.filter(t => t.grade === 'K');
   const cItems = DANTON_SCALE.filter(t => t.grade === 'C');
   const bItems = DANTON_SCALE.filter(t => t.grade === 'B');
-  const bsItem = DANTON_SCALE.find(t => t.grade === 'BS');
+  const bsItems = DANTON_SCALE.filter(t => t.grade === 'BS');
 
   const filledCount = Object.values(dantonRubricScores).filter(v => v !== null && v !== undefined).length;
   const isComplete = filledCount === DANTON_CRITERIA.length;
@@ -60,11 +60,11 @@ export default function DantonScoringTable({
               <th rowSpan={2} className="py-3 px-3 text-center w-24 bg-slate-100 text-slate-900 font-black text-sm">Nilai Mentah</th>
             </tr>
             <tr className="text-[11px] font-mono border-b border-slate-200 text-center">
-              <th className="py-1 px-2 bg-slate-50 text-slate-700 border-r border-slate-200 font-semibold">KS (50)</th>
-              <th className="py-1 px-2 bg-red-50 text-red-700 border-r border-slate-200 font-semibold">Taraf K</th>
-              <th className="py-1 px-2 bg-amber-50 text-amber-800 border-r border-slate-200 font-semibold">Taraf C</th>
-              <th className="py-1 px-2 bg-emerald-50 text-emerald-800 border-r border-slate-200 font-semibold">Taraf B</th>
-              <th className="py-1 px-2 bg-blue-50 text-blue-800 border-r border-slate-200 font-semibold">BS (90)</th>
+              <th className="py-1 px-2 bg-slate-50 text-slate-700 border-r border-slate-200 font-semibold">Taraf KS (50-55-60)</th>
+              <th className="py-1 px-2 bg-red-50 text-red-700 border-r border-slate-200 font-semibold">Taraf K (64-66-68)</th>
+              <th className="py-1 px-2 bg-amber-50 text-amber-800 border-r border-slate-200 font-semibold">Taraf C (72-74-76)</th>
+              <th className="py-1 px-2 bg-emerald-50 text-emerald-800 border-r border-slate-200 font-semibold">Taraf B (79-81-83)</th>
+              <th className="py-1 px-2 bg-blue-50 text-blue-800 border-r border-slate-200 font-semibold">Taraf BS (86-88-90)</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-200 bg-white">
@@ -81,24 +81,27 @@ export default function DantonScoringTable({
                     {crit.weightPercent}
                   </td>
 
-                  {/* KURANG SEKALI (KS: 50) */}
+                  {/* KURANG SEKALI (KS: 50, 55, 60) */}
                   <td className="py-2.5 px-2 text-center bg-slate-50/50 border-r border-slate-200">
-                    {ksItem && (
-                      <button
-                        type="button"
-                        disabled={isInputDisabled}
-                        onClick={() => setDantonRubricScores(prev => ({ ...(prev || {}), [crit.id]: ksItem.val }))}
-                        className={`min-w-[44px] sm:min-w-[48px] h-10 sm:h-11 py-1 px-2.5 rounded-xl text-sm sm:text-base font-mono font-black transition-all ${
-                          isInputDisabled ? 'cursor-default' : 'cursor-pointer'
-                        } ${
-                          selectedVal === ksItem.val
-                            ? 'bg-slate-800 text-white shadow-md ring-2 ring-slate-400 scale-105'
-                            : 'bg-white text-slate-700 hover:bg-slate-700 hover:text-white border-2 border-slate-300 shadow-2xs'
-                        }`}
-                      >
-                        {ksItem.val}
-                      </button>
-                    )}
+                    <div className="flex items-center justify-center gap-1.5">
+                      {ksItems.map((opt, oIdx) => (
+                        <button
+                          key={oIdx}
+                          type="button"
+                          disabled={isInputDisabled}
+                          onClick={() => setDantonRubricScores(prev => ({ ...(prev || {}), [crit.id]: opt.val }))}
+                          className={`min-w-[42px] sm:min-w-[46px] h-10 sm:h-11 py-1 px-2 rounded-xl text-sm sm:text-base font-mono font-black transition-all ${
+                            isInputDisabled ? 'cursor-default' : 'cursor-pointer'
+                          } ${
+                            selectedVal === opt.val
+                              ? 'bg-slate-800 text-white shadow-md ring-2 ring-slate-400 scale-105'
+                              : 'bg-white text-slate-700 hover:bg-slate-700 hover:text-white border-2 border-slate-300 shadow-2xs'
+                          }`}
+                        >
+                          {opt.val}
+                        </button>
+                      ))}
+                    </div>
                   </td>
 
                   {/* KURANG (K: 54, 58, 62) */}
@@ -170,24 +173,27 @@ export default function DantonScoringTable({
                     </div>
                   </td>
 
-                  {/* BAIK SEKALI (BS: 90) */}
+                  {/* BAIK SEKALI (BS: 86, 88, 90) */}
                   <td className="py-2.5 px-2 text-center bg-blue-50/30 border-r border-slate-200">
-                    {bsItem && (
-                      <button
-                        type="button"
-                        disabled={isInputDisabled}
-                        onClick={() => setDantonRubricScores(prev => ({ ...(prev || {}), [crit.id]: bsItem.val }))}
-                        className={`min-w-[44px] sm:min-w-[48px] h-10 sm:h-11 py-1 px-2.5 rounded-xl text-sm sm:text-base font-mono font-black transition-all ${
-                          isInputDisabled ? 'cursor-default' : 'cursor-pointer'
-                        } ${
-                          selectedVal === bsItem.val
-                            ? 'bg-blue-600 text-white shadow-md ring-2 ring-blue-400 scale-105'
-                            : 'bg-white text-blue-800 hover:bg-blue-600 hover:text-white border-2 border-blue-200 shadow-2xs'
-                        }`}
-                      >
-                        {bsItem.val}
-                      </button>
-                    )}
+                    <div className="flex items-center justify-center gap-1.5">
+                      {bsItems.map((opt, oIdx) => (
+                        <button
+                          key={oIdx}
+                          type="button"
+                          disabled={isInputDisabled}
+                          onClick={() => setDantonRubricScores(prev => ({ ...(prev || {}), [crit.id]: opt.val }))}
+                          className={`min-w-[42px] sm:min-w-[46px] h-10 sm:h-11 py-1 px-2 rounded-xl text-sm sm:text-base font-mono font-black transition-all ${
+                            isInputDisabled ? 'cursor-default' : 'cursor-pointer'
+                          } ${
+                            selectedVal === opt.val
+                              ? 'bg-blue-600 text-white shadow-md ring-2 ring-blue-400 scale-105'
+                              : 'bg-white text-blue-800 hover:bg-blue-600 hover:text-white border-2 border-blue-200 shadow-2xs'
+                          }`}
+                        >
+                          {opt.val}
+                        </button>
+                      ))}
+                    </div>
                   </td>
 
                   {/* Skor Mentah Terpilih */}

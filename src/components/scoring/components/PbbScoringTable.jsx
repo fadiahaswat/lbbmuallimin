@@ -51,7 +51,7 @@ export default function PbbScoringTable({
             </tr>
             {/* Baris 2: Sub-info predikat */}
             <tr className="text-[11px] font-mono border-b border-slate-200 text-center">
-              <th className="py-1 px-2 bg-slate-50 text-slate-700 border-r border-slate-200 font-semibold">KS (50)</th>
+              <th className="py-1 px-2 bg-slate-50 text-slate-700 border-r border-slate-200 font-semibold">Taraf KS (50-55-60)</th>
               <th className="py-1 px-2 bg-red-50 text-red-700 border-r border-slate-200 font-semibold">Taraf K</th>
               <th className="py-1 px-2 bg-amber-50 text-amber-800 border-r border-slate-200 font-semibold">Taraf C</th>
               <th className="py-1 px-2 bg-emerald-50 text-emerald-800 border-r border-slate-200 font-semibold">Taraf B</th>
@@ -64,11 +64,11 @@ export default function PbbScoringTable({
               const template = RUBRIC_SCALE_TEMPLATES[templateKey] || RUBRIC_SCALE_TEMPLATES.SEDERHANA;
               const selectedVal = rubricScores[idx];
 
-              const ksItem = template.find(t => t.grade === 'KS');
+              const ksItems = template.filter(t => t.grade === 'KS');
               const kItems = template.filter(t => t.grade === 'K');
               const cItems = template.filter(t => t.grade === 'C');
               const bItems = template.filter(t => t.grade === 'B');
-              const bsItem = template.find(t => t.grade === 'BS');
+              const bsItems = template.filter(t => t.grade === 'BS');
 
               const isZero = selectedVal === 0;
 
@@ -98,24 +98,30 @@ export default function PbbScoringTable({
                     </button>
                   </td>
 
-                  {/* KURANG SEKALI (KS: 50) */}
+                  {/* KURANG SEKALI (KS: 50, 55, 60) */}
                   <td className="py-2 px-2 text-center bg-slate-50/50 border-r border-slate-200">
-                    {ksItem && (
-                      <button
-                        type="button"
-                        disabled={isInputDisabled}
-                        onClick={() => setRubricScores(prev => ({ ...(prev || {}), [idx]: ksItem.val }))}
-                        className={`min-w-[44px] sm:min-w-[48px] h-10 sm:h-11 py-1 px-2.5 rounded-xl text-sm sm:text-base font-mono font-black transition-all ${
-                          isInputDisabled ? 'cursor-default' : 'cursor-pointer'
-                        } ${
-                          selectedVal === ksItem.val
-                            ? 'bg-slate-800 text-white shadow-md ring-2 ring-slate-400 scale-105'
-                            : 'bg-white text-slate-700 hover:bg-slate-700 hover:text-white border-2 border-slate-300 shadow-2xs'
-                        }`}
-                      >
-                        {ksItem.val}
-                      </button>
-                    )}
+                    <div className="flex items-center justify-center gap-1.5">
+                      {ksItems.map((opt, oIdx) => {
+                        const isChosen = selectedVal === opt.val;
+                        return (
+                          <button
+                            key={oIdx}
+                            type="button"
+                            disabled={isInputDisabled}
+                            onClick={() => setRubricScores(prev => ({ ...(prev || {}), [idx]: opt.val }))}
+                            className={`min-w-[42px] sm:min-w-[46px] h-10 sm:h-11 py-1 px-2 rounded-xl text-sm sm:text-base font-mono font-black transition-all ${
+                              isInputDisabled ? 'cursor-default' : 'cursor-pointer'
+                            } ${
+                              isChosen
+                                ? 'bg-slate-800 text-white shadow-md ring-2 ring-slate-400 scale-105'
+                                : 'bg-white text-slate-700 hover:bg-slate-700 hover:text-white border-2 border-slate-300 shadow-2xs'
+                            }`}
+                          >
+                            {opt.val}
+                          </button>
+                        );
+                      })}
+                    </div>
                   </td>
 
                   {/* Kolom KURANG (Merah) */}
@@ -198,22 +204,28 @@ export default function PbbScoringTable({
 
                   {/* Kolom BAIK SEKALI (Biru) */}
                   <td className="py-2 px-2 text-center bg-blue-50/30 border-r border-slate-200">
-                    {bsItem && (
-                      <button
-                        type="button"
-                        disabled={isInputDisabled}
-                        onClick={() => setRubricScores(prev => ({ ...(prev || {}), [idx]: bsItem.val }))}
-                        className={`min-w-[44px] sm:min-w-[48px] h-10 sm:h-11 py-1 px-2.5 rounded-xl text-sm sm:text-base font-mono font-black transition-all ${
-                          isInputDisabled ? 'cursor-default' : 'cursor-pointer'
-                        } ${
-                          selectedVal === bsItem.val
-                            ? 'bg-blue-600 text-white shadow-md ring-2 ring-blue-400 scale-105'
-                            : 'bg-white text-blue-800 hover:bg-blue-600 hover:text-white border-2 border-blue-200 shadow-2xs'
-                        }`}
-                      >
-                        {bsItem.val}
-                      </button>
-                    )}
+                    <div className="flex items-center justify-center gap-1.5">
+                      {bsItems.map((opt, oIdx) => {
+                        const isChosen = selectedVal === opt.val;
+                        return (
+                          <button
+                            key={oIdx}
+                            type="button"
+                            disabled={isInputDisabled}
+                            onClick={() => setRubricScores(prev => ({ ...(prev || {}), [idx]: opt.val }))}
+                            className={`min-w-[42px] sm:min-w-[46px] h-10 sm:h-11 py-1 px-2 rounded-xl text-sm sm:text-base font-mono font-black transition-all ${
+                              isInputDisabled ? 'cursor-default' : 'cursor-pointer'
+                            } ${
+                              isChosen
+                                ? 'bg-blue-600 text-white shadow-md ring-2 ring-blue-400 scale-105'
+                                : 'bg-white text-blue-800 hover:bg-blue-600 hover:text-white border-2 border-blue-200 shadow-2xs'
+                            }`}
+                          >
+                            {opt.val}
+                          </button>
+                        );
+                      })}
+                    </div>
                   </td>
 
                   {/* Nilai Terpilih */}

@@ -341,13 +341,13 @@ export default function RundownView() {
                   <strong>Peleton Wajib Upacara Pembukaan:</strong> Peleton dengan nomor urut tampil <strong>6 s.d. 10</strong> (SD-131 s.d. SD-139 dan SMP-242 s.d. SMP-260) wajib berada di Lapangan Mini Soccer pukul <strong>06.45 WIB</strong> dengan seragam lomba lengkap. Peleton yang tidak hadir dikenai penalti <strong>-150 poin</strong>.
                 </li>
                 <li>
-                  <strong>Simultan 2 Arena Paralel:</strong> Perlombaan berjalan serentak di <strong>Arena 1</strong> (Lapangan Basket, SD/MI) dan <strong>Arena 2</strong> (Pelataran Embung, SMP/MTs). Sesi I bergulir pukul 08.00–11.30 WIB dan Sesi II pukul 12.30–14.15 WIB.
+                  <strong>Simultan 2 Arena Paralel:</strong> Perlombaan berjalan serentak di <strong>Arena 1</strong> (Lapangan Basket, SD/MI) dan <strong>Arena 2</strong> (Pelataran Embung, SMP/MTs). Sesi I bergulir pukul 08.00–11.30 WIB dan Sesi II pukul 12.30–13.30 WIB.
                 </li>
                 <li>
-                  <strong>Sidang Pleno & Masa Sanggah:</strong> Rekapitulasi dewan juri dan batas waktu sanggah administratif berlangsung pukul <strong>13.30–15.00 WIB</strong> di Sekretariat Lomba.
+                  <strong>Sidang Pleno, Masa Sanggah & Checkout:</strong> Masa sanggah administratif, checkout basecamp, dan sidang pleno dewan juri berlangsung pukul <strong>13.30–15.00 WIB</strong>.
                 </li>
                 <li>
-                  <strong>Apel Penutupan & Penganugerahan:</strong> Dimulai pukul <strong>15.00 WIB</strong>, wajib dihadiri oleh <strong>1 Danton + 4 Anggota</strong> per peleton dengan seragam perlombaan lengkap.
+                  <strong>Standby & Apel Penutupan:</strong> Standby barisan dimulai pukul <strong>15.45 WIB</strong> dan Apel Penutupan pukul <strong>16.00 WIB</strong>, wajib dihadiri oleh <strong>1 Danton + 4 Anggota</strong> per peleton dengan seragam perlombaan lengkap.
                 </li>
               </ul>
             </div>
@@ -451,7 +451,7 @@ export default function RundownView() {
                   Setiap sekolah/madrasah wajib mengirimkan perwakilan resmi (maksimal 2 orang: Pelatih/Official/Danton).
                 </li>
                 <li>
-                  Wajib membawa dan menyerahkan berkas fisik asli: <strong>Surat Rekomendasi/Tugas Kepala Sekolah asli</strong> (berstempel basah) dan <strong>Pakta Integritas bermaterai Rp 10.000</strong> kepada Divisi Kesekretariatan.
+                  Wajib membawa dan menyerahkan berkas fisik asli: <strong>Surat Rekomendasi/Tugas Kepala Sekolah asli</strong> (berstempel basah) dan <strong>Pakta Integritas</strong> kepada Divisi Kesekretariatan.
                 </li>
                 <li>
                   Agenda mencakup lotting pengundian nomor urut tampil, penjelasan teknis dewan juri, tata tertib basecamp, dan pembagian ID card resmi kontingen.

@@ -107,6 +107,10 @@ export default function Prizes() {
               </div>
             </div>
 
+            <div className="mt-4 p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs text-slate-300 leading-relaxed">
+              <strong className="text-amber-300 font-bold">Ketentuan Piala Bergilir (Pasal 11 Ayat 1.a.3):</strong> Penerima Piala Bergilir berkewajiban untuk merawat dan menjaga piala tersebut dengan baik, serta siap mengembalikannya kepada panitia apabila diminta kembali untuk penyelenggaraan kejuaraan selanjutnya.
+            </div>
+
           </div>
         </div>
 
@@ -235,17 +239,17 @@ export default function Prizes() {
                 <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5 text-center">
                   <span className="text-[10px] font-bold text-slate-400 uppercase block mb-1">Harapan I</span>
                   <span className="text-xs font-black text-white block">Piala Tetap</span>
-                  <span className="text-[10px] text-slate-400">+ Piagam</span>
+                  <span className="text-[10px] text-amber-300 font-semibold block">+ Uang Pembinaan & Piagam</span>
                 </div>
                 <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5 text-center">
                   <span className="text-[10px] font-bold text-slate-400 uppercase block mb-1">Harapan II</span>
                   <span className="text-xs font-black text-white block">Piala Tetap</span>
-                  <span className="text-[10px] text-slate-400">+ Piagam</span>
+                  <span className="text-[10px] text-amber-300 font-semibold block">+ Uang Pembinaan & Piagam</span>
                 </div>
                 <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5 text-center">
                   <span className="text-[10px] font-bold text-slate-400 uppercase block mb-1">Harapan III</span>
                   <span className="text-xs font-black text-white block">Piala Tetap</span>
-                  <span className="text-[10px] text-slate-400">+ Piagam</span>
+                  <span className="text-[10px] text-amber-300 font-semibold block">+ Uang Pembinaan & Piagam</span>
                 </div>
               </div>
             </div>
@@ -371,17 +375,17 @@ export default function Prizes() {
                 <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5 text-center">
                   <span className="text-[10px] font-bold text-slate-400 uppercase block mb-1">Harapan I</span>
                   <span className="text-xs font-black text-white block">Piala Tetap</span>
-                  <span className="text-[10px] text-slate-400">+ Piagam</span>
+                  <span className="text-[10px] text-amber-300 font-semibold block">+ Uang Pembinaan & Piagam</span>
                 </div>
                 <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5 text-center">
                   <span className="text-[10px] font-bold text-slate-400 uppercase block mb-1">Harapan II</span>
                   <span className="text-xs font-black text-white block">Piala Tetap</span>
-                  <span className="text-[10px] text-slate-400">+ Piagam</span>
+                  <span className="text-[10px] text-amber-300 font-semibold block">+ Uang Pembinaan & Piagam</span>
                 </div>
                 <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5 text-center">
                   <span className="text-[10px] font-bold text-slate-400 uppercase block mb-1">Harapan III</span>
                   <span className="text-xs font-black text-white block">Piala Tetap</span>
-                  <span className="text-[10px] text-slate-400">+ Piagam</span>
+                  <span className="text-[10px] text-amber-300 font-semibold block">+ Uang Pembinaan & Piagam</span>
                 </div>
               </div>
             </div>
@@ -432,11 +436,11 @@ export default function Prizes() {
                       <span className="w-6 h-6 rounded-md bg-slate-400 text-slate-950 font-black text-xs flex items-center justify-center shrink-0">2</span>
                       <div className="min-w-0">
                         <span className="text-xs font-bold text-white block">Danton Terbaik II</span>
-                        <span className="text-[11px] text-slate-300 font-medium block sm:hidden">Piala Tetap + Piagam</span>
+                        <span className="text-[11px] text-amber-300 font-semibold block sm:hidden">Piala Tetap + Uang Pembinaan</span>
                       </div>
                     </div>
-                    <span className="hidden sm:inline-block text-[11px] font-bold text-slate-300 bg-white/5 px-2 py-0.5 rounded shrink-0 whitespace-nowrap">
-                      Piala Tetap + Piagam
+                    <span className="hidden sm:inline-block text-[11px] font-black text-amber-300 bg-amber-500/20 px-2 py-0.5 rounded border border-amber-500/30 shrink-0 whitespace-nowrap">
+                      Piala + Uang Pembinaan
                     </span>
                   </div>
 
@@ -445,11 +449,11 @@ export default function Prizes() {
                       <span className="w-6 h-6 rounded-md bg-amber-700 text-white font-black text-xs flex items-center justify-center shrink-0">3</span>
                       <div className="min-w-0">
                         <span className="text-xs font-bold text-white block">Danton Terbaik III</span>
-                        <span className="text-[11px] text-slate-300 font-medium block sm:hidden">Piala Tetap + Piagam</span>
+                        <span className="text-[11px] text-amber-300 font-semibold block sm:hidden">Piala Tetap + Uang Pembinaan</span>
                       </div>
                     </div>
-                    <span className="hidden sm:inline-block text-[11px] font-bold text-slate-300 bg-white/5 px-2 py-0.5 rounded shrink-0 whitespace-nowrap">
-                      Piala Tetap + Piagam
+                    <span className="hidden sm:inline-block text-[11px] font-black text-amber-300 bg-amber-500/20 px-2 py-0.5 rounded border border-amber-500/30 shrink-0 whitespace-nowrap">
+                      Piala + Uang Pembinaan
                     </span>
                   </div>
                 </div>
@@ -483,11 +487,11 @@ export default function Prizes() {
                       <span className="w-6 h-6 rounded-md bg-slate-400 text-slate-950 font-black text-xs flex items-center justify-center shrink-0">2</span>
                       <div className="min-w-0">
                         <span className="text-xs font-bold text-white block">Danton Terbaik II</span>
-                        <span className="text-[11px] text-slate-300 font-medium block sm:hidden">Piala Tetap + Piagam</span>
+                        <span className="text-[11px] text-amber-300 font-semibold block sm:hidden">Piala Tetap + Uang Pembinaan</span>
                       </div>
                     </div>
-                    <span className="hidden sm:inline-block text-[11px] font-bold text-slate-300 bg-white/5 px-2 py-0.5 rounded shrink-0 whitespace-nowrap">
-                      Piala Tetap + Piagam
+                    <span className="hidden sm:inline-block text-[11px] font-black text-amber-300 bg-amber-500/20 px-2 py-0.5 rounded border border-amber-500/30 shrink-0 whitespace-nowrap">
+                      Piala + Uang Pembinaan
                     </span>
                   </div>
 
@@ -496,11 +500,11 @@ export default function Prizes() {
                       <span className="w-6 h-6 rounded-md bg-amber-700 text-white font-black text-xs flex items-center justify-center shrink-0">3</span>
                       <div className="min-w-0">
                         <span className="text-xs font-bold text-white block">Danton Terbaik III</span>
-                        <span className="text-[11px] text-slate-300 font-medium block sm:hidden">Piala Tetap + Piagam</span>
+                        <span className="text-[11px] text-amber-300 font-semibold block sm:hidden">Piala Tetap + Uang Pembinaan</span>
                       </div>
                     </div>
-                    <span className="hidden sm:inline-block text-[11px] font-bold text-slate-300 bg-white/5 px-2 py-0.5 rounded shrink-0 whitespace-nowrap">
-                      Piala Tetap + Piagam
+                    <span className="hidden sm:inline-block text-[11px] font-black text-amber-300 bg-amber-500/20 px-2 py-0.5 rounded border border-amber-500/30 shrink-0 whitespace-nowrap">
+                      Piala + Uang Pembinaan
                     </span>
                   </div>
                 </div>

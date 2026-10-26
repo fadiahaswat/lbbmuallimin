@@ -194,10 +194,9 @@ export default function ProposalView() {
               </div>
               <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-700">
                 <li>• <strong>Piala Bergilir Juara Umum SD/MI</strong> & <strong>SMP/MTs</strong></li>
-                <li>• <strong>Juara I, II, III Peleton</strong> SD/MI & SMP/MTs (Piala Tetap + Uang Pembinaan)</li>
-                <li>• <strong>Juara Harapan I, II, III Peleton</strong> SD/MI & SMP/MTs (Piala Tetap)</li>
-                <li>• <strong>Juara I Komandan Peleton Terbaik</strong> SD & SMP (Piala Tetap + Uang Pembinaan)</li>
-                <li>• <strong>Juara II & III Komandan Peleton</strong> SD & SMP (Piala Tetap)</li>
+                <li>• <strong>Juara I, II, III Peleton</strong> SD/MI & SMP/MTs (Piala Tetap + Uang Pembinaan + Piagam)</li>
+                <li>• <strong>Juara Harapan I, II, III Peleton</strong> SD/MI & SMP/MTs (Piala Tetap + Uang Pembinaan + Piagam)</li>
+                <li>• <strong>Juara I, II, III Komandan Terbaik</strong> SD/MI & SMP/MTs (Piala Tetap + Uang Pembinaan + Piagam)</li>
                 <li>• <strong>E-Sertifikat Piagam Penghargaan</strong> untuk seluruh pemenang resmi</li>
               </ul>
             </div>

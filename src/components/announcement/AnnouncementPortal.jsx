@@ -53,31 +53,60 @@ export default function AnnouncementPortal() {
     );
   }
 
-  // Comparator Resmi Penentuan Juara (Aturan Tie-Breaker Juknis LBB 2027):
-  // 1. Skor Akhir Tertinggi
-  // 2. Nilai Rerata Teknik PBB Tertinggi
-  // 3. Nilai Komandan Peleton (Danton) Tertinggi
-  // 4. Jumlah Poin Penalti Pelanggaran Terendah
+  // Comparator Resmi Penentuan Juara Peleton (Aturan Tie-Breaker Juknis LBB 2027 Bab A.5):
+  // 1. Nilai Akhir Peleton tertinggi
+  // 2. Nilai Murni Peleton tertinggi (sebelum dikurangi penalti)
+  // 3. Akumulasi pengurangan poin penalti peleton paling sedikit
+  // 4. Perolehan Nilai Murni Komandan tertinggi
   const compareTeamsTieBreaker = (a, b) => {
-    if (b.finalScore !== a.finalScore) return b.finalScore - a.finalScore;
     if (b.pbbScore !== a.pbbScore) return b.pbbScore - a.pbbScore;
-    if (b.dantonScore !== a.dantonScore) return b.dantonScore - a.dantonScore;
-    return (a.penaltyTotal || 0) - (b.penaltyTotal || 0);
+    if (b.nilaiMurniPeleton !== a.nilaiMurniPeleton) return b.nilaiMurniPeleton - a.nilaiMurniPeleton;
+    if (a.peletonPenalty !== b.peletonPenalty) return a.peletonPenalty - b.peletonPenalty;
+    return b.nilaiMurniDanton - a.nilaiMurniDanton;
   };
 
   // Calculate ranks per jenjang
   const calculateRanking = jenjang => {
     return teams
-      .filter(t => t.jenjang === jenjang && scores[t.id] && scores[t.id].finalScore !== undefined)
+      .filter(t => t.jenjang === jenjang && scores[t.id])
       .map(t => {
         const sc = scores[t.id];
+        const juries = sc.juries || {};
+        const nilaiMurniPeleton = Number(
+          sc.nilaiMurniPeleton ??
+          ((Number(juries.pos1?.peletonTotal ?? 0) + Number(juries.pos2?.peletonTotal ?? 0) + Number(juries.pos3?.peletonTotal ?? 0)) || Number(sc.pbb?.total ?? 0))
+        );
+        const nilaiMurniDanton = Number(
+          sc.nilaiMurniDanton ??
+          ((Number(juries.pos1?.dantonTotal ?? 0) + Number(juries.pos2?.dantonTotal ?? 0) + Number(juries.pos3?.dantonTotal ?? 0)) || Number(sc.danton?.total ?? 0))
+        );
+        const peletonPenalty = Number(sc.penalties?.peletonPenalty ?? sc.penalties?.totalPenalty ?? 0);
+        const dantonPenalty = Number(sc.penalties?.dantonPenalty ?? 0);
+        const pbbScore = Number(sc.nilaiAkhirPeleton ?? Math.max(0, nilaiMurniPeleton - peletonPenalty));
+        const dantonScore = Number(sc.nilaiAkhirDanton ?? Math.max(0, nilaiMurniDanton - dantonPenalty));
+        const finalScore = Number(sc.finalScore ?? (pbbScore + dantonScore));
+        const dantonMateri =
+          Number(juries.pos1?.dantonRubricScores?.materi ?? 0) +
+          Number(juries.pos2?.dantonRubricScores?.materi ?? 0) +
+          Number(juries.pos3?.dantonRubricScores?.materi ?? sc.danton?.rubricScores?.materi ?? 0);
+        const dantonVokal =
+          Number(juries.pos1?.dantonRubricScores?.vokal ?? 0) +
+          Number(juries.pos2?.dantonRubricScores?.vokal ?? 0) +
+          Number(juries.pos3?.dantonRubricScores?.vokal ?? sc.danton?.rubricScores?.vokal ?? 0);
+
         return {
           ...t,
           scoreData: sc,
-          finalScore: Number(sc.finalScore || 0),
-          dantonScore: Number(sc.danton?.total || sc.juries?.pos3?.total || 0),
-          pbbScore: Number(sc.pbb?.total || 0),
-          penaltyTotal: Number(sc.penalties?.totalPenalty || 0),
+          finalScore,
+          dantonScore,
+          pbbScore,
+          nilaiMurniPeleton,
+          nilaiMurniDanton,
+          peletonPenalty,
+          dantonPenalty,
+          dantonMateri,
+          dantonVokal,
+          penaltyTotal: Number(sc.penalties?.totalPenalty ?? (peletonPenalty + dantonPenalty)),
           isFinalized: Boolean(sc.status === 'finalized' || sc.isLocked),
         };
       })
@@ -88,21 +117,65 @@ export default function AnnouncementPortal() {
   const rankedSMP = calculateRanking('SMP');
   const currentRanked = activeJenjang === 'SD' ? rankedSD : rankedSMP;
 
-  // Best Danton (Tie-breaker: Danton Score -> Final Score)
+  // Best Danton (Tie-breaker Bab A.6: Nilai Akhir Danton -> Nilai Murni Danton -> Penalti Danton -> Aspek Materi -> Aspek Vokal)
   const bestDanton = [...currentRanked].sort((a, b) => {
     if (b.dantonScore !== a.dantonScore) return b.dantonScore - a.dantonScore;
-    return b.finalScore - a.finalScore;
+    if (b.nilaiMurniDanton !== a.nilaiMurniDanton) return b.nilaiMurniDanton - a.nilaiMurniDanton;
+    if (a.dantonPenalty !== b.dantonPenalty) return a.dantonPenalty - b.dantonPenalty;
+    if (b.dantonMateri !== a.dantonMateri) return b.dantonMateri - a.dantonMateri;
+    return b.dantonVokal - a.dantonVokal;
   })[0] || null;
 
-  // Best Pasukan (Tie-breaker: PBB Score -> Final Score)
-  const bestPasukan = [...currentRanked].sort((a, b) => {
-    if (b.pbbScore !== a.pbbScore) return b.pbbScore - a.pbbScore;
-    return b.finalScore - a.finalScore;
-  })[0] || null;
+  // Best Pasukan (Juara 1 Peleton Bab A.5)
+  const bestPasukan = currentRanked[0] || null;
 
-  // Juara Umum: Peleton dengan performa terbaik lintas jenjang menggunakan tie-breaker resmi
-  const allRanked = [...rankedSD, ...rankedSMP].sort(compareTeamsTieBreaker);
-  const grandChampion = allRanked[0] || null;
+  // Juara Umum per jenjang berdasarkan Poin Prestasi Sekolah (Bab A.7 & A.8)
+  const computeGrandChampionForJenjang = list => {
+    if (!list.length) return null;
+    const schoolMap = {};
+    list.forEach(t => {
+      if (!schoolMap[t.schoolName]) {
+        schoolMap[t.schoolName] = {
+          ...t,
+          totalPoints: 0,
+          bestMurniPeleton: 0,
+          peletonPenaltySum: 0,
+          bestMurniDanton: 0,
+        };
+      }
+      const sc = schoolMap[t.schoolName];
+      if (t.nilaiMurniPeleton > sc.bestMurniPeleton) sc.bestMurniPeleton = t.nilaiMurniPeleton;
+      sc.peletonPenaltySum += t.peletonPenalty;
+      if (t.nilaiMurniDanton > sc.bestMurniDanton) sc.bestMurniDanton = t.nilaiMurniDanton;
+    });
+
+    list.forEach((t, idx) => {
+      const pts = [6, 5, 4, 3, 2, 1][idx] || 0;
+      if (pts > 0 && schoolMap[t.schoolName]) schoolMap[t.schoolName].totalPoints += pts;
+    });
+
+    const dantonRankedList = [...list].sort((a, b) => {
+      if (b.dantonScore !== a.dantonScore) return b.dantonScore - a.dantonScore;
+      if (b.nilaiMurniDanton !== a.nilaiMurniDanton) return b.nilaiMurniDanton - a.nilaiMurniDanton;
+      if (a.dantonPenalty !== b.dantonPenalty) return a.dantonPenalty - b.dantonPenalty;
+      if (b.dantonMateri !== a.dantonMateri) return b.dantonMateri - a.dantonMateri;
+      return b.dantonVokal - a.dantonVokal;
+    });
+
+    dantonRankedList.forEach((t, idx) => {
+      const pts = [3, 2, 1][idx] || 0;
+      if (pts > 0 && schoolMap[t.schoolName]) schoolMap[t.schoolName].totalPoints += pts;
+    });
+
+    return Object.values(schoolMap).sort((a, b) => {
+      if (b.totalPoints !== a.totalPoints) return b.totalPoints - a.totalPoints;
+      if (b.bestMurniPeleton !== a.bestMurniPeleton) return b.bestMurniPeleton - a.bestMurniPeleton;
+      if (a.peletonPenaltySum !== b.peletonPenaltySum) return a.peletonPenaltySum - b.peletonPenaltySum;
+      return b.bestMurniDanton - a.bestMurniDanton;
+    })[0] || null;
+  };
+
+  const grandChampion = computeGrandChampionForJenjang(currentRanked);
 
   return (
     <div className="min-h-screen bg-slate-100 py-8 px-4 sm:px-6 lg:px-8 font-sans text-slate-900">
@@ -167,24 +240,24 @@ export default function AnnouncementPortal() {
                 <div>
                   <span className="text-xs font-black uppercase tracking-widest text-amber-400 flex items-center gap-1.5">
                     <Sparkles className="w-4 h-4" />
-                    {PRIZES.ROLLING_TROPHY_TITLE} • PIALA GUBERNUR DIY
+                    {activeJenjang === 'SMP' ? PRIZES.ROLLING_TROPHY_SMP : PRIZES.ROLLING_TROPHY_SD}
                   </span>
                   <h3 className="text-2xl sm:text-3xl font-black text-white uppercase tracking-tight mt-1">
                     {grandChampion.schoolName}
                   </h3>
                   <p className="text-sm text-yellow-200/90 font-semibold mt-0.5">
-                    {grandChampion.platoonName} • Jenjang {grandChampion.jenjang}
+                    Juara Umum Tingkat {grandChampion.jenjang}
                   </p>
                   <p className="text-xs text-slate-400 mt-1">
-                    Danton: <strong className="text-white">{grandChampion.roster?.danton?.name || grandChampion.dantonName || '-'}</strong> • Nilai Akhir: <strong className="text-yellow-400 font-mono text-sm">{grandChampion.finalScore} Poin</strong>
+                    Akumulasi Poin Prestasi: <strong className="text-yellow-400 font-mono text-sm">{grandChampion.totalPoints} Poin</strong> • Murni Peleton Terbaik: <strong className="text-white font-mono">{grandChampion.bestMurniPeleton}</strong>
                   </p>
                 </div>
               </div>
 
               <div className="bg-white/10 rounded-2xl p-4 text-center shrink-0 border border-white/10">
-                <span className="text-[10px] uppercase font-bold text-yellow-300 block">Piala Bergilir 2026</span>
-                <span className="text-2xl font-black text-white font-mono">{grandChampion.finalScore}</span>
-                <span className="text-[10px] text-slate-300 block">Poin Sempurna</span>
+                <span className="text-[10px] uppercase font-bold text-yellow-300 block">Piala Bergilir 2027</span>
+                <span className="text-2xl font-black text-white font-mono">{grandChampion.totalPoints}</span>
+                <span className="text-[10px] text-slate-300 block">Poin Prestasi</span>
               </div>
             </div>
           </div>
