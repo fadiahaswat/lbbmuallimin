@@ -749,6 +749,7 @@ export default function ParticipantDashboard() {
           <OverviewTab
             currentTeam={currentTeam}
             allTeams={teams}
+            settings={settings}
             scheduleTab={scheduleTab}
             setScheduleTab={setScheduleTab}
             tmDate={tmDate}

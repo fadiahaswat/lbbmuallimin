@@ -8,6 +8,7 @@ import BasecampCheckoutTracker from '../components/BasecampCheckoutTracker.jsx';
 export default function OverviewTab({
   currentTeam,
   allTeams = [],
+  settings = {},
   scheduleTab,
   setScheduleTab,
   tmDate,
