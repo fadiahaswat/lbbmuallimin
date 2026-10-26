@@ -43,70 +43,6 @@ export default function MateriLomba() {
     setTimeout(() => setCopiedLevel(null), 2500);
   }
 
-  // Handler Unduh PDF Materi Lomba
-  function handleDownloadPdf(level) {
-    const isSD = level === 'SD';
-    const title = isSD ? 'MATERI LOMBA TINGKAT SD/MI SEDERAJAT' : 'MATERI LOMBA TINGKAT SMP/MTS SEDERAJAT';
-    const spec = isSD ? COMPETITION.SD.ARENA_SPEC_LABEL : COMPETITION.SMP.ARENA_SPEC_LABEL;
-    const list = isSD ? MATERIALS.SD : MATERIALS.SMP;
-
-    const primaryColor = isSD ? '#991b1b' : '#1d4ed8';
-
-    const printWindow = window.open('', '_blank');
-    if (!printWindow) return;
-
-    printWindow.document.write(`
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <meta charset="utf-8">
-        <title>${title} - LBB Mu'allimin 2027</title>
-        <style>
-          @page { size: A4 portrait; margin: 18mm 15mm; }
-          body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11pt; line-height: 1.5; color: #0f172a; margin: 0; padding: 10px; }
-          .kop { text-align: center; border-bottom: 3px double ${primaryColor}; padding-bottom: 12px; margin-bottom: 20px; }
-          .title { font-size: 16pt; font-weight: 900; color: ${primaryColor}; text-transform: uppercase; letter-spacing: 0.5px; }
-          .sub { font-size: 11pt; font-weight: bold; color: #334155; margin-top: 4px; }
-          .spec { display: inline-block; font-size: 10pt; font-weight: bold; color: #1e293b; background: #f1f5f9; border: 1px solid #cbd5e1; padding: 4px 12px; border-radius: 6px; margin-top: 8px; }
-          h4 { margin: 16px 0 8px 0; font-size: 11pt; text-transform: uppercase; color: #1e293b; }
-          ol.materi { margin: 0; padding-left: 24px; }
-          ol.materi li { margin-bottom: 6px; font-weight: 500; font-size: 10.5pt; }
-          .rules { margin-top: 24px; border-top: 1px solid #cbd5e1; padding-top: 12px; font-size: 9.5pt; color: #475569; page-break-inside: avoid; }
-          ol.ket { margin: 6px 0 0 0; padding-left: 20px; }
-          ol.ket li { margin-bottom: 4px; }
-        </style>
-      </head>
-      <body>
-        <div class="kop">
-          <div class="title">${title}</div>
-          <div class="sub">LOMBA BARIS – BERBARIS MU'ALLIMIN TAHUN 2027</div>
-          <div class="spec">${spec}</div>
-        </div>
-        <h4>Urutan Gerakan Materi Wajib:</h4>
-        <ol class="materi">
-          ${list.map(item => `<li>${item}</li>`).join('')}
-        </ol>
-        <div class="rules">
-          <strong>Keterangan:</strong>
-          <ol type="a" class="ket">
-            ${isSD ? `<li>**Untuk Perhatian, Istirahat di Tempat Komandan Peleton memberi arahan dengan tema LBB Mu’allimin 2027;</li>` : `<li>**Materi Berhimpun Komandan Peleton memberi arahan dengan tema LBB Mu’allimin 2027;</li>`}
-            <li>Gerakan materi dilaksanakan secara berurutan sesuai nomor;</li>
-            <li>Materi gerakan berantai bertanda strip ( – ) wajib dilaksanakan satu rangkaian tanpa gerakan tambahan;</li>
-            <li>Materi gerakan lomba sudah dibuat runtut. Komandan Peleton diperbolehkan melakukan gerakan penyesuaian tanpa pembatasan jumlah, namun penggunaannya berpengaruh langsung terhadap penilaian aspek Penguasaan Lapangan Komandan Peleton;</li>
-            <li>Kebenaran teknik gerakan berpedoman pada Perpang TNI No. 58 dan 57 Tahun 2018, khusus pelaksanaan Hormat Kanan berpedoman pada Perpang TNI No. 45 Tahun 2014.</li>
-          </ol>
-        </div>
-        <script>
-          window.onload = function() {
-            window.focus();
-            window.print();
-          };
-        </script>
-      </body>
-      </html>
-    `);
-    printWindow.document.close();
-  }
   return (
     <section id="materi-lomba" className="py-24 lg:py-32 bg-slate-50 relative overflow-hidden font-sans border-t border-slate-200">
       <div className="absolute inset-0 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:16px_16px] opacity-60 pointer-events-none"></div>
@@ -167,15 +103,16 @@ export default function MateriLomba() {
                       )}
                     </button>
 
-                    <button
-                      type="button"
-                      onClick={() => handleDownloadPdf('SD')}
-                      className="px-3.5 py-1.5 rounded-lg bg-red-700 hover:bg-red-800 text-white text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer shadow-sm active:scale-95"
-                      title="Unduh / Cetak Materi Lomba SD (PDF)"
+                    <a
+                      href={COMPETITION.SD.MATERI_URL || "https://drive.google.com/file/d/10ok02901aIjpoHAvWdanzMK5aW9cx3Js/view?usp=sharing"}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-3.5 py-1.5 rounded-lg bg-red-700 hover:bg-red-800 text-white text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer shadow-sm active:scale-95 no-underline"
+                      title="Unduh Materi Lomba SD (PDF Resmi Google Drive)"
                     >
                       <FileDown className="w-3.5 h-3.5 text-white" />
                       <span>Unduh PDF</span>
-                    </button>
+                    </a>
                   </div>
                 </div>
               </div>
@@ -242,15 +179,16 @@ export default function MateriLomba() {
                       )}
                     </button>
 
-                    <button
-                      type="button"
-                      onClick={() => handleDownloadPdf('SMP')}
-                      className="px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer shadow-sm active:scale-95"
-                      title="Unduh / Cetak Materi Lomba SMP (PDF)"
+                    <a
+                      href={COMPETITION.SMP.MATERI_URL || "https://drive.google.com/file/d/1YLVhlAGhLN2L0iwgkq5bM6WqJsgdrbjV/view?usp=sharing"}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer shadow-sm active:scale-95 no-underline"
+                      title="Unduh Materi Lomba SMP (PDF Resmi Google Drive)"
                     >
                       <FileDown className="w-3.5 h-3.5 text-white" />
                       <span>Unduh PDF</span>
-                    </button>
+                    </a>
                   </div>
                 </div>
               </div>

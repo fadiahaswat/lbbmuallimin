@@ -35,7 +35,7 @@ export default function StickyCta({ isVisible }) {
 
       {/* Tombol Juknis */}
       <a
-        href={DOWNLOADS[0]?.url || "https://drive.google.com/file/d/1NBBLuF3gSgjZasEy9zwe2MTchKjh4-r5/view?usp=sharing"}
+        href={DOWNLOADS[0]?.url || "https://drive.google.com/file/d/1owEDyb680TNB3TkFvZGVfjD_OCbagffQ/view?usp=sharing"}
         target="_blank"
         rel="noopener noreferrer"
         className="flex-1 min-w-0 flex items-center justify-center gap-1.5 h-10 px-3 text-xs sm:text-sm font-bold text-slate-700 bg-slate-100 hover:bg-slate-200/80 active:bg-slate-200 border border-slate-200/80 rounded-xl active:scale-95 transition-all whitespace-nowrap text-center"

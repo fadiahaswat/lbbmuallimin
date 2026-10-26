@@ -175,7 +175,7 @@ export default function DocumentViewerModal({ isOpen, onClose }) {
               <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg flex flex-wrap items-center justify-between gap-2 text-xs">
                 <span className="text-red-900 font-semibold">Tersedia dokumen resmi Petunjuk Teknis di Google Drive:</span>
                 <a
-                  href={DOWNLOADS?.[0]?.url || "https://drive.google.com/file/d/1NBBLuF3gSgjZasEy9zwe2MTchKjh4-r5/view?usp=sharing"}
+                  href={DOWNLOADS?.[0]?.url || "https://drive.google.com/file/d/1owEDyb680TNB3TkFvZGVfjD_OCbagffQ/view?usp=sharing"}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="px-3 py-1 bg-red-700 hover:bg-red-800 text-white font-bold rounded shadow transition-colors inline-flex items-center gap-1.5"

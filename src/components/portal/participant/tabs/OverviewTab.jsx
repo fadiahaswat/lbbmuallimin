@@ -992,7 +992,7 @@ export default function OverviewTab({
               </div>
             </div>
             <a
-              href={DOWNLOADS?.[0]?.url || "https://drive.google.com/file/d/1NBBLuF3gSgjZasEy9zwe2MTchKjh4-r5/view?usp=sharing"}
+              href={DOWNLOADS?.[0]?.url || "https://drive.google.com/file/d/1owEDyb680TNB3TkFvZGVfjD_OCbagffQ/view?usp=sharing"}
               target="_blank"
               rel="noopener noreferrer"
               className="px-3.5 py-2 bg-slate-900 hover:bg-slate-800 active:scale-95 text-white text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 shrink-0 shadow-xs cursor-pointer"
