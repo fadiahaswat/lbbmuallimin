@@ -157,7 +157,7 @@ export default function JuknisView() {
               </p>
               <div className="pt-1 flex flex-wrap gap-2.5">
                 <a
-                  href={DOWNLOADS[0]?.url || "https://drive.google.com/file/d/1OUJP3WBU_xr4KGQ2yVGv0npCvfuLlDWP/view?usp=sharing"}
+                  href={DOWNLOADS[0]?.url || "https://drive.google.com/file/d/1NBBLuF3gSgjZasEy9zwe2MTchKjh4-r5/view?usp=sharing"}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-all shadow-md active:scale-95 cursor-pointer"
