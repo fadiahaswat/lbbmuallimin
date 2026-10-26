@@ -130,6 +130,18 @@ export default function ParticipantDashboard() {
     setLogoLoadFailed(false);
   }, [rawLogoUrl]);
 
+  // Autosave roster draft to localStorage whenever rosterDraft changes during editing
+  useEffect(() => {
+    if (!isEditingRoster || !rosterDraft || !currentTeam?.id) return;
+    try {
+      const draftKey = `lbb_roster_draft_${currentTeam.id}`;
+      // Clean clone without giant base64 if needed, but standard photos are fine
+      localStorage.setItem(draftKey, JSON.stringify(rosterDraft));
+    } catch (e) {
+      console.warn('Failed saving roster draft:', e);
+    }
+  }, [rosterDraft, isEditingRoster, currentTeam?.id]);
+
   if (!currentTeam) {
     return (
       <div className="min-h-[70vh] flex flex-col items-center justify-center p-6 text-center">
@@ -288,18 +300,6 @@ export default function ParticipantDashboard() {
     setRosterDraft({ danton, pasukan, cadangan, officials });
     setIsEditingRoster(true);
   }
-
-  // Autosave roster draft to localStorage whenever rosterDraft changes during editing
-  useEffect(() => {
-    if (!isEditingRoster || !rosterDraft || !currentTeam?.id) return;
-    try {
-      const draftKey = `lbb_roster_draft_${currentTeam.id}`;
-      // Clean clone without giant base64 if needed, but standard photos are fine
-      localStorage.setItem(draftKey, JSON.stringify(rosterDraft));
-    } catch (e) {
-      console.warn('Failed saving roster draft:', e);
-    }
-  }, [rosterDraft, isEditingRoster, currentTeam?.id]);
 
   function handleSaveRoster() {
     if (!rosterDraft) return;
