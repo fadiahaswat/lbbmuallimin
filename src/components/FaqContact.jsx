@@ -70,7 +70,7 @@ const FAQ_DATA = [
     category: 'Biaya',
     icon: 'CreditCard',
     q: 'Ke rekening mana pembayaran pendaftaran ditransfer?',
-    a: `Pembayaran dilakukan melalui transfer perbankan ke rekening resmi panitia: Bank BSI (Bank Syariah Indonesia), No. Rekening: 2600051817, a.n. Kepala Urusan Admisi, Humas, dan Kerja Sama. Format Berita Transfer Wajib: NAMA SEKOLAH_JUMLAH PELETON (Contoh: MTS MU’ALLIMIN YK_1).`,
+    a: `Pembayaran dilakukan melalui transfer perbankan ke rekening resmi panitia: Bank BSI (Bank Syariah Indonesia), No. Rekening: 2600051817, a.n. ADMISI HUMAS DAN KERJA SAMA. Format Berita Transfer Wajib: NAMA SEKOLAH_JUMLAH PELETON (Contoh: MTS MU’ALLIMIN YK_1).`,
   },
   {
     id: 8,

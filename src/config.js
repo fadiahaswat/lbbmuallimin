@@ -272,8 +272,8 @@ export const PAYMENT = {
     /** Nomor rekening – dipakai copy to clipboard & FAQ */
     ACCOUNT_NUMBER: '2600051817',
 
-    ACCOUNT_NAME: 'Kepala Urusan Admisi, Humas, dan Kerja Sama',
-    ACCOUNT_HOLDER: 'Kepala Urusan Admisi, Humas, dan Kerja Sama',
+    ACCOUNT_NAME: 'ADMISI HUMAS DAN KERJA SAMA',
+    ACCOUNT_HOLDER: 'ADMISI HUMAS DAN KERJA SAMA',
     BANK_NAME: 'BSI (Bank Syariah Indonesia)',
 
     /** Teks biaya yang tampil di UI (tanpa "Rp") */

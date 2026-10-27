@@ -657,7 +657,7 @@ export default function RegistrationWizard({ isOpen, onClose }) {
                 <li>Surat Tugas / Rekomendasi Resmi Kepala Sekolah (Asli berstempel basah, format PDF/JPG maks 2 MB)</li>
                 <li>Scan/Foto Kartu Pelajar sah Komandan Peleton (Danton)</li>
                 <li>Logo Sekolah / Peleton resolusi tinggi (PNG transparan)</li>
-                <li>Setoran biaya pendaftaran sesuai kode unik 108 ke BSI No. Rek. 2600051817 a.n. Kepala Urusan Admisi, Humas, dan Kerja Sama</li>
+                <li>Setoran biaya pendaftaran sesuai kode unik 108 ke BSI No. Rek. 2600051817 a.n. ADMISI HUMAS DAN KERJA SAMA</li>
               </ul>
             </div>
 
