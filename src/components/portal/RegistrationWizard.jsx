@@ -10,6 +10,7 @@ import {
   Clock
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
+import { findTeamByEmail } from '../../context/competitionHelpers.js';
 import { PAYMENT, CONTACT, EVENT, DOWNLOADS } from '../../config.js';
 import logoImg from '../../assets/logo-tonti.png';
 import titleLogoImg from '../../assets/title-logo.png';
@@ -430,7 +431,15 @@ export default function RegistrationWizard({ isOpen, onClose }) {
       return false;
     }
     if (!formData.email.trim() || !formData.email.includes('@')) {
-      triggerValidationError('Silakan pilih dan hubungkan Akun Google terlebih dahulu.');
+      triggerValidationError('Silakan pilih dan hubungkan Akun Google terlebih dahulu.', 'button[type="button"]');
+      return false;
+    }
+    const duplicateTeam = findTeamByEmail(formData.email, teams);
+    if (duplicateTeam) {
+      triggerValidationError(
+        `Email "${formData.email}" sudah terdaftar untuk peleton "${duplicateTeam.schoolName || duplicateTeam.platoonName}". 1 peleton 1 Gmail, tidak bisa 1 email 2 peleton. Silakan isi email yang lain.`,
+        'button[type="button"]'
+      );
       return false;
     }
     if (!formData.jenjang) {
@@ -529,6 +538,15 @@ export default function RegistrationWizard({ isOpen, onClose }) {
   function handleSubmit(e) {
     e.preventDefault();
     if (!validateStep3()) return;
+
+    const duplicateTeam = findTeamByEmail(formData.email, teams);
+    if (duplicateTeam) {
+      triggerValidationError(
+        `Email "${formData.email}" sudah terdaftar untuk peleton "${duplicateTeam.schoolName || duplicateTeam.platoonName}". 1 peleton 1 Gmail, tidak bisa 1 email 2 peleton. Silakan kembali ke Langkah 1 dan isi email yang lain.`
+      );
+      setStep(1);
+      return;
+    }
 
     const isWave2 = Date.now() > new Date('2026-11-08T23:59:59+07:00').getTime();
     const activeTier = isWave2 ? PAYMENT.FEE_TIERS[1] : PAYMENT.FEE_TIERS[0];
@@ -752,14 +770,14 @@ export default function RegistrationWizard({ isOpen, onClose }) {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-red-600"></span>
               </span>
-              Juknis Resmi & Registrasi 2027
+              Registrasi Peserta LBB 2027
             </div>
 
             <h1 className="text-2xl sm:text-4xl font-black uppercase tracking-tight text-slate-900 select-none leading-tight py-1">
               Formulir Pendaftaran
             </h1>
             <p className="text-xs sm:text-sm text-slate-600 mt-1.5 leading-relaxed">
-              Lengkapi data dan berkas persyaratan peleton secara lengkap dan sah melalui formulir pendaftaran resmi LBB Mu'allimin 2027.
+              Lengkapi data dan berkas persyaratan peleton untuk pendaftaran LBB Mu'allimin 2027.
             </p>
           </div>
         )}
@@ -772,9 +790,9 @@ export default function RegistrationWizard({ isOpen, onClose }) {
                 <FileText className="w-4 h-4" />
               </div>
               <div>
-                <p className="font-bold">Draft Formulir Terdeteksi & Dipulihkan Otomatis</p>
+                <p className="font-bold">Draft Formulir Dimuat Kembali</p>
                 <p className="text-[11px] text-amber-700">
-                  Data formulir pendaftaran yang sebelumnya Anda ketik telah dimuat kembali.
+                  Data formulir pendaftaran yang sebelumnya Anda ketik telah dimuat kembali secara otomatis.
                 </p>
               </div>
             </div>
@@ -804,6 +822,7 @@ export default function RegistrationWizard({ isOpen, onClose }) {
             isSMPFull={isSMPFull}
             getFullSchoolName={getFullSchoolName}
             handleNext={handleNext}
+            teams={teams}
           />
         )}
 

@@ -395,3 +395,38 @@ export function canFillRegistrationForm(regStartStr) {
   if (isLocalhostEnvironment()) return true;
   return isRegistrationDateReached(regStartStr);
 }
+
+/**
+ * Normalisasi alamat Gmail untuk mendeteksi alias bertitik (.) atau (+)
+ * Contoh: 'user.name+1@gmail.com' -> 'username@gmail.com'
+ */
+export function normalizeGmail(email) {
+  const parts = String(email || '').trim().toLowerCase().split('@');
+  if (parts.length !== 2) return String(email || '').trim().toLowerCase();
+  if (parts[1] === 'gmail.com' || parts[1] === 'googlemail.com') {
+    const username = parts[0].replace(/\./g, '').split('+')[0];
+    return `${username}@gmail.com`;
+  }
+  return `${parts[0]}@${parts[1]}`;
+}
+
+/**
+ * Memeriksa apakah suatu email sudah terdaftar pada peleton lain.
+ * 1 Peleton 1 Akun Gmail (tidak bisa 1 email 2 peleton).
+ * @param {string} email - Email yang dicek
+ * @param {Array} teams - Daftar peleton yang ada
+ * @param {string} excludeTeamId - ID peleton yang dikecualikan (misal saat peleton update berkas sendiri)
+ * @returns {object|null} Tim yang cocok jika sudah terdaftar, atau null jika belum ada
+ */
+export function findTeamByEmail(email, teams = [], excludeTeamId = null) {
+  if (!email || !Array.isArray(teams)) return null;
+  const cleanEmail = String(email).trim().toLowerCase();
+
+  return teams.find(t => {
+    if (excludeTeamId && t.id === excludeTeamId) return false;
+    if (!t.email) return false;
+    const tClean = String(t.email).trim().toLowerCase();
+    return tClean === cleanEmail;
+  }) || null;
+}
+

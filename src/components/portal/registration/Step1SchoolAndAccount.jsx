@@ -12,9 +12,13 @@ import {
   Loader2,
   Users,
   UserCheck,
-  ArrowRight
+  ArrowRight,
+  AlertCircle,
+  AlertTriangle
 } from 'lucide-react';
 import { GOOGLE_AUTH } from '../../../config.js';
+import { findTeamByEmail } from '../../../context/competitionHelpers.js';
+import { checkEmailAvailability } from '../../../services/sheetService.js';
 
 export default function Step1SchoolAndAccount({
   formData,
@@ -28,12 +32,16 @@ export default function Step1SchoolAndAccount({
   isSDFull,
   isSMPFull,
   getFullSchoolName,
-  handleNext
+  handleNext,
+  teams = []
 }) {
   const [isConnectingGoogle, setIsConnectingGoogle] = useState(false);
   const [googleConnectError, setGoogleConnectError] = useState('');
 
   const clientId = GOOGLE_AUTH.CLIENT_ID;
+
+  // Cek apakah email saat ini sudah terdaftar di peleton lain
+  const duplicateTeam = formData.email ? findTeamByEmail(formData.email, teams) : null;
 
   const handleConnectGoogle = () => {
     setGoogleConnectError('');
@@ -73,8 +81,32 @@ export default function Step1SchoolAndAccount({
               return;
             }
 
-            const cleanEmail = googleProfile.email.toLowerCase();
+            const cleanEmail = googleProfile.email.toLowerCase().trim();
+            let existingTeam = findTeamByEmail(cleanEmail, teams);
+
+            // Jika belum ada di state lokal dan terkoneksi ke Google Sheet live, cek ke database sheet
+            if (!existingTeam) {
+              try {
+                const remoteCheck = await checkEmailAvailability(cleanEmail);
+                if (remoteCheck && remoteCheck.isRegistered && remoteCheck.team) {
+                  existingTeam = remoteCheck.team;
+                }
+              } catch (e) {
+                // Abaikan error jaringan remote, validasi lokal tetap bekerja
+              }
+            }
+
+            if (existingTeam) {
+              setIsConnectingGoogle(false);
+              setFormData(prev => ({ ...prev, email: '' }));
+              setGoogleConnectError(
+                `Email (${cleanEmail}) sudah terdaftar untuk peleton "${existingTeam.schoolName || existingTeam.platoonName || 'peleton lain'}". 1 peleton 1 Gmail, tidak bisa 1 email 2 peleton. Silakan isi email yang lain.`
+              );
+              return;
+            }
+
             setFormData(prev => ({ ...prev, email: cleanEmail }));
+            setGoogleConnectError('');
             setIsConnectingGoogle(false);
           } catch (apiErr) {
             setIsConnectingGoogle(false);
@@ -101,7 +133,7 @@ export default function Step1SchoolAndAccount({
             1. Identitas Sekolah, Akun & Tipe Pasukan
           </h2>
           <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">
-            Lengkapi data dasar sekolah, email aktif untuk akses login calon peserta, dan tipe peleton.
+            Lengkapi data sekolah, akun Google untuk akses login peleton, dan tipe pasukan.
           </p>
         </div>
       </div>
@@ -112,32 +144,43 @@ export default function Step1SchoolAndAccount({
           <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5 flex items-center gap-1.5">
             <Mail className="w-3.5 h-3.5 text-red-600" />
             <span>
-              1. Email Aktif untuk Akun Portal <span className="text-red-600 font-bold">*</span>
+              1. Akun Google Peleton <span className="text-red-600 font-bold">*</span>
             </span>
           </label>
 
           {formData.email ? (
             <div className="flex items-center gap-2">
-              <div className="flex-1 flex items-center gap-2.5 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-900 overflow-hidden">
-                <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
-                  <path
-                    fill="#4285F4"
-                    d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"
-                  />
-                  <path
-                    fill="#34A853"
-                    d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"
-                  />
-                  <path
-                    fill="#FBBC05"
-                    d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.98 0 12s.45 3.82 1.25 5.42l4.03-3.15z"
-                  />
-                  <path
-                    fill="#EA4335"
-                    d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"
-                  />
-                </svg>
-                <span className="truncate">{formData.email}</span>
+              <div className={`flex-1 flex items-center justify-between gap-2.5 px-4 py-3 rounded-xl text-sm font-medium overflow-hidden border ${
+                duplicateTeam
+                  ? 'bg-red-50/70 border-red-300 text-red-900'
+                  : 'bg-slate-50 border-slate-200 text-slate-900'
+              }`}>
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
+                    <path
+                      fill="#4285F4"
+                      d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"
+                    />
+                    <path
+                      fill="#34A853"
+                      d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"
+                    />
+                    <path
+                      fill="#FBBC05"
+                      d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.98 0 12s.45 3.82 1.25 5.42l4.03-3.15z"
+                    />
+                    <path
+                      fill="#EA4335"
+                      d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"
+                    />
+                  </svg>
+                  <span className="truncate">{formData.email}</span>
+                </div>
+                {duplicateTeam && (
+                  <span className="px-2 py-0.5 rounded-full bg-red-100 text-red-700 font-bold text-[10px] tracking-wider uppercase shrink-0 border border-red-200">
+                    Sudah Terpakai
+                  </span>
+                )}
               </div>
               <button
                 type="button"
@@ -186,16 +229,34 @@ export default function Step1SchoolAndAccount({
             </button>
           )}
 
-          {googleConnectError && (
-            <p className="mt-1 text-xs text-red-600">{googleConnectError}</p>
+          {/* Alert jika email yang dipilih/draft sudah terdaftar di peleton lain */}
+          {duplicateTeam && (
+            <div className="mt-2.5 p-3.5 rounded-2xl bg-red-50 border-2 border-red-300 text-red-900 text-xs flex items-start gap-2.5 animate-in fade-in">
+              <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+              <div className="space-y-1">
+                <p className="font-bold text-red-800">
+                  Email Sudah Digunakan
+                </p>
+                <p className="text-red-700 leading-relaxed text-[11px]">
+                  Email <strong className="font-mono text-slate-900 font-semibold">{formData.email}</strong> sudah terdaftar untuk peleton{' '}
+                  <strong className="text-red-950 font-bold">{duplicateTeam.schoolName || duplicateTeam.platoonName}</strong>.
+                </p>
+                <p className="text-red-800 font-medium leading-relaxed text-[11px] bg-red-100/60 p-2 rounded-lg border border-red-200/80">
+                  1 peleton 1 Gmail, tidak bisa 1 email 2 peleton. Silakan klik tombol "Ganti Akun" di atas dan isi email yang lain.
+                </p>
+              </div>
+            </div>
           )}
 
-          <div className="mt-2 p-2.5 rounded-xl bg-amber-50/80 border border-amber-200/80 flex items-start gap-2">
-            <Lock className="w-3.5 h-3.5 text-amber-700 shrink-0 mt-0.5" />
-            <span className="text-[11px] text-amber-800 leading-relaxed">
-              Wajib menggunakan Akun Google. Akses masuk ke portal akun resmi hanya dapat dilakukan melalui Akun Google yang terhubung setelah pendaftaran di-ACC oleh Admin.
-            </span>
-          </div>
+          {googleConnectError && (
+            <div className="mt-2.5 p-3.5 rounded-2xl bg-red-50 border border-red-200 text-xs text-red-800 flex items-start gap-2.5 animate-in fade-in">
+              <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
+              <div className="space-y-1">
+                <p className="font-bold text-red-800">Email Tidak Dapat Digunakan</p>
+                <p className="text-[11px] text-red-700 leading-relaxed">{googleConnectError}</p>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* 2. Jenjang Sekolah */}
@@ -307,7 +368,7 @@ export default function Step1SchoolAndAccount({
           {formData.schoolName.trim() && (
             <div className="flex items-center gap-2 px-3.5 py-2 bg-red-50/80 border border-red-100 rounded-xl text-xs text-slate-700 animate-fade">
               <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 bg-red-700 text-white rounded-md shrink-0">
-                Format Terdaftar:
+                Nama Peleton Terdaftar:
               </span>
               <span className="font-bold text-red-950 truncate">
                 {getFullSchoolName()}
@@ -359,7 +420,7 @@ export default function Step1SchoolAndAccount({
           <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5 flex items-center gap-1.5">
             <ImageIcon className="w-3.5 h-3.5 text-red-600" />
             <span>
-              4. Upload Logo Sekolah (Format Gambar) <span className="text-red-600 font-bold">*</span>
+              4. Logo Sekolah <span className="text-red-600 font-bold">*</span>
             </span>
           </label>
           <div className="p-4 bg-slate-50/70 border-2 border-dashed border-slate-200 hover:border-red-400 rounded-2xl transition-all text-center group">
@@ -373,9 +434,9 @@ export default function Step1SchoolAndAccount({
                   />
                   <div className="text-left">
                     <p className="text-xs font-bold text-slate-900 truncate max-w-xs">{files.schoolLogo.name}</p>
-                    <span className="text-[10px] text-emerald-600 font-semibold flex items-center gap-1 mt-0.5">
+                    <span className="text-[11px] text-emerald-600 font-semibold flex items-center gap-1 mt-0.5">
                       <Check className="w-3 h-3 text-emerald-600 stroke-[3]" />
-                      <span>Siap diunggah ({files.schoolLogo.size})</span>
+                      <span>Logo siap diunggah ({files.schoolLogo.size})</span>
                     </span>
                   </div>
                 </div>
@@ -394,8 +455,8 @@ export default function Step1SchoolAndAccount({
                 <div className="w-11 h-11 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center text-red-700 mb-2 group-hover:scale-105 transition-transform">
                   <UploadCloud className="w-5 h-5 text-red-700" />
                 </div>
-                <span className="text-xs font-bold text-slate-800">Klik untuk memilih file Logo Sekolah</span>
-                <span className="text-[11px] text-slate-500 mt-1">Disarankan format PNG transparan (Maks. 3 MB)</span>
+                <span className="text-xs font-bold text-slate-800">Pilih File Logo Sekolah</span>
+                <span className="text-[11px] text-slate-500 mt-1">Format PNG transparan atau JPG (maks. 3 MB)</span>
                 <input
                   type="file"
                   accept="image/png,image/jpeg,image/jpg"

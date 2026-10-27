@@ -59,13 +59,13 @@ export default function Step4Confirmation({
 
       <div>
         <span className="text-xs font-black uppercase tracking-widest text-amber-800 bg-amber-100 border border-amber-200 px-3.5 py-1 rounded-full">
-          Status: Menunggu ACC Admin
+          Status: Menunggu Verifikasi Panitia
         </span>
         <h2 className="text-2xl sm:text-3xl font-black text-slate-900 uppercase tracking-tight mt-3">
           Pendaftaran Berhasil Dikirim!
         </h2>
         <p className="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed">
-          Data peleton <strong className="text-slate-900">{createdTeam.schoolName}</strong> beserta seluruh berkas dan Pakta Integritas Online telah masuk ke antrean verifikasi Sekretariat LBB Mu'allimin 2027.
+          Data peleton <strong className="text-slate-900">{createdTeam.schoolName}</strong> beserta seluruh berkas pendaftaran telah masuk ke antrean verifikasi panitia LBB Mu'allimin 2027.
         </p>
       </div>
 
@@ -76,14 +76,14 @@ export default function Step4Confirmation({
           <span className="font-mono font-black text-red-700 text-sm">{createdTeam.regCode}</span>
         </div>
         <div className="flex justify-between items-center border-b border-slate-200 pb-2.5 mb-2.5 text-xs">
-          <span className="text-slate-500 font-medium">Email Akun Portal:</span>
+          <span className="text-slate-500 font-medium">Email Akun Peleton:</span>
           <span className="font-mono font-bold text-slate-900">{createdTeam.email}</span>
         </div>
         <div className="flex justify-between items-center border-b border-slate-200 pb-2.5 mb-2.5 text-xs">
           <span className="text-slate-500 font-medium">Pakta Integritas:</span>
           <span className="text-emerald-700 font-bold flex items-center gap-1">
             <Check className="w-3.5 h-3.5 stroke-[3]" />
-            <span>Ditandatangani Digital Online</span>
+            <span>Sudah Ditandatangani Digital</span>
           </span>
         </div>
         <div className="flex justify-between items-center text-xs">
@@ -98,10 +98,10 @@ export default function Step4Confirmation({
       <div className="bg-gradient-to-b from-slate-50 to-white border border-slate-200 rounded-3xl p-5 sm:p-6 text-center space-y-3">
         <div className="flex items-center justify-center gap-2 text-slate-800">
           <QrCode className="w-5 h-5 text-red-700" />
-          <h3 className="text-sm font-black uppercase tracking-tight">QR Code Registrasi Peleton Anda</h3>
+          <h3 className="text-sm font-black uppercase tracking-tight">QR Code Pendaftaran Peleton</h3>
         </div>
         <p className="text-[11px] text-slate-600 max-w-md mx-auto leading-relaxed">
-          Simpan atau unduh QR code ini. Setiap kali di-scan, QR code ini akan menampilkan status verifikasi ACC panitia secara *real-time* dan otomatis membuka portal peserta setelah di-ACC.
+          Simpan atau unduh QR code ini untuk memantau status verifikasi panitia dan langsung membuka portal peleton setelah diverifikasi.
         </p>
 
         <div className="bg-white p-3.5 rounded-2xl border border-slate-200 inline-block shadow-sm">
@@ -138,12 +138,12 @@ export default function Step4Confirmation({
       <div className="p-4 sm:p-5 bg-amber-50/80 border border-amber-200 rounded-2xl text-left text-xs text-slate-700 leading-relaxed space-y-2">
         <p className="font-black flex items-center gap-1.5 text-amber-900 uppercase tracking-wider text-[11px]">
           <Lock className="w-4 h-4 text-amber-700" />
-          <span>Petunjuk Akses Masuk Portal Calon Peserta:</span>
+          <span>Petunjuk Akses Masuk Portal Peleton:</span>
         </p>
         <ul className="list-disc pl-5 space-y-1 text-slate-600 text-[11px]">
-          <li>Admin panitia akan memeriksa kelengkapan berkas administrasi dan tanda tangan pakta integritas online Anda.</li>
-          <li>Setelah Admin memberikan <strong className="text-slate-900">persetujuan (ACC)</strong>, akun Anda resmi aktif sebagai calon peserta.</li>
-          <li>Masuk akun dilakukan <strong className="text-red-700">hanya lewat Google</strong> menggunakan email <strong className="text-slate-900">{createdTeam.email}</strong> pada menu <strong className="text-slate-900">Daftar/Masuk</strong>.</li>
+          <li>Panitia akan memverifikasi data dan bukti pembayaran pendaftaran Anda.</li>
+          <li>Setelah diverifikasi oleh panitia, akun peleton resmi aktif.</li>
+          <li>Akses login ke portal peleton menggunakan Akun Google <strong className="text-slate-900">{createdTeam.email}</strong> melalui tombol <strong className="text-slate-900">Daftar / Masuk</strong>.</li>
         </ul>
       </div>
 
@@ -155,13 +155,13 @@ export default function Step4Confirmation({
           </div>
           <div className="flex-1 min-w-0">
             <span className="text-[10px] font-black uppercase tracking-wider text-emerald-700 block">
-              Konfirmasi Panitia (Opsional)
+              Konfirmasi WhatsApp (Opsional)
             </span>
             <h4 className="text-sm font-black text-slate-900 leading-tight">
-              Kirim Konfirmasi Pendaftaran ke Panitia
+              Konfirmasi Pendaftaran ke Panitia
             </h4>
             <p className="text-xs text-slate-600 mt-1">
-              Beri tahu panitia via WhatsApp resmi jika ingin konfirmasi langsung agar berkas dan verifikasi dapat dicek lebih awal.
+              Beri tahu panitia via WhatsApp jika ingin konfirmasi langsung agar berkas pendaftaran dicek lebih cepat.
             </p>
           </div>
         </div>
@@ -174,7 +174,7 @@ export default function Step4Confirmation({
           className="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-black rounded-xl text-xs uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2"
         >
           <MessageCircle className="w-4 h-4 fill-white/20" />
-          <span>Kirim WhatsApp Konfirmasi Panitia (0819-4749-1505)</span>
+          <span>Konfirmasi via WhatsApp Panitia (0819-4749-1505)</span>
           <ExternalLink className="w-3.5 h-3.5" />
         </a>
       </div>

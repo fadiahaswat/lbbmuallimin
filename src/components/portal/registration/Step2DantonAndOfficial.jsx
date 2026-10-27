@@ -30,7 +30,7 @@ export default function Step2DantonAndOfficial({
             2. Komandan Peleton & Official Pelatih
           </h2>
           <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">
-            Lengkapi identitas komandan peleton beserta kartu pelajar, serta nomor kontak WhatsApp resmi official/pelatih pendamping.
+            Lengkapi data komandan peleton (Danton) beserta kartu pelajar, serta nomor WhatsApp official/pelatih pendamping.
           </p>
         </div>
       </div>
@@ -46,12 +46,12 @@ export default function Step2DantonAndOfficial({
           {/* 6. Nama Komandan */}
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
-              6. Nama Komandan Peleton (Danton) <span className="text-red-600 font-bold">*</span>
+              6. Nama Lengkap Komandan Peleton (Danton) <span className="text-red-600 font-bold">*</span>
             </label>
             <input
               type="text"
               required
-              placeholder="NAMA LENGKAP KOMANDAN SISWA"
+              placeholder="NAMA LENGKAP KOMANDAN (DANTON)"
               value={formData.dantonName}
               onChange={e => setFormData({ ...formData, dantonName: e.target.value.toUpperCase() })}
               className="w-full px-4 py-3 bg-white border border-slate-200 focus:border-red-600 focus:ring-2 focus:ring-red-600/10 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 transition-all outline-none uppercase font-medium"
@@ -63,7 +63,7 @@ export default function Step2DantonAndOfficial({
             <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5 flex items-center gap-1.5">
               <FileUp className="w-3.5 h-3.5 text-red-600" />
               <span>
-                7. Upload Kartu Pelajar Komandan (Foto / PDF) <span className="text-red-600 font-bold">*</span>
+                7. Kartu Pelajar Komandan (Foto / PDF) <span className="text-red-600 font-bold">*</span>
               </span>
             </label>
             <div className="p-3.5 bg-white border-2 border-dashed border-slate-200 hover:border-red-400 rounded-2xl transition-all">
@@ -104,7 +104,7 @@ export default function Step2DantonAndOfficial({
               ) : (
                 <label className="cursor-pointer flex items-center justify-center gap-2 py-3.5 text-xs font-bold text-slate-700 hover:text-red-700 transition-colors">
                   <UploadCloud className="w-4 h-4 text-red-600" />
-                  <span>Pilih Foto / PDF Kartu Pelajar Danton</span>
+                  <span>Pilih Foto / Scan Kartu Pelajar Danton</span>
                   <input
                     type="file"
                     accept="image/*,.pdf"
@@ -132,7 +132,7 @@ export default function Step2DantonAndOfficial({
             <input
               type="text"
               required
-              placeholder="NAMA LENGKAP OFFICIAL / GURU PENDAMPING"
+              placeholder="NAMA LENGKAP OFFICIAL / PELATIH"
               value={formData.officialName}
               onChange={e => setFormData({ ...formData, officialName: e.target.value.toUpperCase() })}
               className="w-full px-4 py-3 bg-white border border-slate-200 focus:border-red-600 focus:ring-2 focus:ring-red-600/10 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 transition-all outline-none uppercase font-medium"
@@ -143,9 +143,9 @@ export default function Step2DantonAndOfficial({
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5 flex items-center justify-between">
               <span>
-                Nomor WhatsApp Official / Pelatih (Aktif) <span className="text-red-600 font-bold">*</span>
+                9. Nomor WhatsApp Official / Pelatih (Aktif) <span className="text-red-600 font-bold">*</span>
               </span>
-              <span className="text-[10px] text-slate-400 font-normal lowercase">wajib untuk koordinasi</span>
+              <span className="text-[10px] text-slate-400 font-normal lowercase">aktif untuk koordinasi</span>
             </label>
             <input
               type="tel"
@@ -174,7 +174,7 @@ export default function Step2DantonAndOfficial({
           onClick={handleNext}
           className="px-7 py-3 bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 hover:from-yellow-300 hover:to-amber-400 text-slate-950 font-black rounded-xl shadow-md text-xs sm:text-sm uppercase tracking-wider flex items-center gap-2 active:scale-95 transition-all"
         >
-          <span>Lanjut ke Berkas & Pakta Online</span>
+          <span>Lanjut ke Pembayaran & Pakta Integritas</span>
           <ArrowRight className="w-4 h-4" />
         </button>
       </div>

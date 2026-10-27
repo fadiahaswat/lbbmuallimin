@@ -316,3 +316,24 @@ export async function pingSheetDatabase() {
     return { connected: false, message: error.message };
   }
 }
+
+/**
+ * Mengecek ketersediaan email peleton ke Google Apps Script secara langsung.
+ * 1 Peleton hanya boleh 1 Gmail.
+ * @param {string} email - Alamat email yang ingin dicek
+ */
+export async function checkEmailAvailability(email) {
+  if (isLocalhost() || !isGoogleSheetConfigured() || !email) {
+    return { success: true, isRegistered: false };
+  }
+
+  try {
+    const url = `${APPS_SCRIPT_URL}?action=checkEmail&email=${encodeURIComponent(email)}&t=${Date.now()}`;
+    const response = await fetch(url, { method: 'GET', mode: 'cors' });
+    if (!response.ok) return { success: false, error: `HTTP ${response.status}` };
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+}

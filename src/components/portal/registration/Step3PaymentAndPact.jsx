@@ -74,11 +74,11 @@ export default function Step3PaymentAndPact({
                 />
                 <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wider uppercase bg-amber-400/15 border border-amber-400/30 text-amber-300">
                   <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
-                  Rekening Resmi Bendahara LBB Mu'allimin 2027
+                  Rekening Resmi Panitia LBB Mu'allimin 2027
                 </span>
               </div>
               <p className="text-xs text-slate-400">
-                Lakukan transfer perbankan / mobile banking resmi ke rekening di bawah ini:
+                Lakukan transfer bank / mobile banking ke rekening resmi di bawah ini:
               </p>
             </div>
 
@@ -141,7 +141,7 @@ export default function Step3PaymentAndPact({
             <div className="md:col-span-5 bg-white/5 border border-white/10 rounded-xl p-3.5 space-y-2">
               <div>
                 <span className="text-[10px] font-bold uppercase tracking-wider text-amber-300 block">
-                  Berita Transfer Anda (Otomatis)
+                  Berita Transfer (Otomatis)
                 </span>
               </div>
               <div className="flex items-center justify-between gap-2 bg-slate-950/90 border border-amber-400/30 px-3 py-2 rounded-lg">
@@ -172,7 +172,7 @@ export default function Step3PaymentAndPact({
                 </button>
               </div>
               <p className="text-[10px] text-slate-400 leading-tight">
-                Format resmi: <span className="text-slate-300 font-mono">NAMA SEKOLAH_JUMLAH PELETON</span>
+                Format: <span className="text-slate-300 font-mono">NAMA SEKOLAH_JUMLAH PELETON</span>
               </p>
             </div>
           </div>
@@ -185,7 +185,7 @@ export default function Step3PaymentAndPact({
           <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5 flex items-center gap-1.5">
             <CreditCard className="w-3.5 h-3.5 text-red-600" />
             <span>
-              10. Upload Bukti Transfer Pembayaran <span className="text-red-600 font-bold">*</span>
+              10. Bukti Transfer Pembayaran <span className="text-red-600 font-bold">*</span>
             </span>
           </label>
           <div className="p-4 bg-slate-50 border-2 border-dashed border-slate-200 hover:border-red-400 rounded-2xl transition-all">
@@ -245,17 +245,16 @@ export default function Step3PaymentAndPact({
             <label className="text-xs font-bold uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
               <PenTool className="w-4 h-4 text-red-700" />
               <span>
-                11. Pakta Integritas Resmi (Tanda Tangan Online) <span className="text-red-600 font-bold">*</span>
+                11. Pakta Integritas (Tanda Tangan Digital) <span className="text-red-600 font-bold">*</span>
               </span>
             </label>
             <span className="text-[10px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-800 border border-emerald-300 px-2.5 py-0.5 rounded-full">
-              Online E-Signature
+              Tanda Tangan Online
             </span>
           </div>
 
           <p className="text-[11px] text-slate-600 leading-relaxed">
-            Tidak perlu mencetak dan memindai kertas. Anda dapat membaca 5 butir pernyataan integritas dan membubuhkan{' '}
-            <strong className="text-slate-900">Tanda Tangan Digital Resmi</strong> secara langsung online di bawah ini.
+            Tidak perlu dicetak. Anda dapat membaca butir pernyataan integritas dan menandatanganinya langsung secara digital di layar perangkat Anda.
           </p>
 
           {files.integrityPact ? (
@@ -274,7 +273,7 @@ export default function Step3PaymentAndPact({
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-black text-slate-900">Pakta Integritas Ditandatangani Online</span>
+                    <span className="text-xs font-black text-slate-900">Pakta Integritas Sudah Ditandatangani</span>
                     <span className="text-[9px] bg-emerald-600 text-white font-black px-1.5 py-0.5 rounded">
                       SAH
                     </span>
@@ -303,7 +302,7 @@ export default function Step3PaymentAndPact({
               className="w-full py-3.5 bg-red-700 hover:bg-red-800 text-white font-black rounded-xl text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2.5 transition-all shadow-sm active:scale-[0.99]"
             >
               <PenTool className="w-4 h-4 text-white" />
-              <span>Buka & Tanda Tangani Pakta Integritas Online Sekarang</span>
+              <span>Tanda Tangani Pakta Integritas Online</span>
             </button>
           )}
         </div>
@@ -319,7 +318,7 @@ export default function Step3PaymentAndPact({
             />
             <span className="text-xs text-slate-700 leading-relaxed">
               Saya menyetujui seluruh ketentuan dalam{' '}
-              <strong className="text-slate-900">Petunjuk Teknis (Juknis) Resmi LBB Mu'allimin 2027</strong> dan bersedia mematuhi seluruh keputusan dewan juri yang bersifat mutlak serta tidak dapat diganggu gugat.
+              <strong className="text-slate-900">Petunjuk Teknis LBB Mu'allimin 2027</strong> dan mematuhi seluruh keputusan dewan juri.
             </span>
           </label>
         </div>

@@ -87,6 +87,31 @@ function doGet(e) {
       });
     }
 
+    if (action === 'checkEmail') {
+      var emailToCheck = String(params.email || '').trim().toLowerCase();
+      var teamsSheet = getOrCreateSheet(ss, 'teams');
+      var allTeams = readSheetData(teamsSheet);
+      var matchedTeam = null;
+      for (var emIdx = 0; emIdx < allTeams.length; emIdx++) {
+        var tItem = allTeams[emIdx];
+        var rowEm = String(tItem.email || '').trim().toLowerCase();
+        if (rowEm && rowEm === emailToCheck) {
+          matchedTeam = {
+            id: tItem.id,
+            schoolName: tItem.schoolName || tItem.platoonName || 'Peleton Lain',
+            jenjang: tItem.jenjang
+          };
+          break;
+        }
+      }
+      return jsonResponse({
+        success: true,
+        isRegistered: Boolean(matchedTeam),
+        team: matchedTeam,
+        timestamp: new Date().toISOString()
+      });
+    }
+
     if (action === 'getAll') {
       var sheets = ss.getSheets();
       var allData = {};
@@ -260,6 +285,27 @@ function doPost(e) {
         // Pendaftaran mandiri dari publik dipaksa ke status pending & unverified
         item.status = 'pending';
         item.paymentStatus = 'unverified';
+      }
+
+      // KEAMANAN 4: Validasi 1 Peleton 1 Akun Gmail (Mencegah 1 email digunakan 2 peleton)
+      if (tableName === 'teams' && item.email) {
+        var cleanEmail = String(item.email).trim().toLowerCase();
+        var existingTeams = readSheetData(sheet);
+        var targetTeamId = String(item.id || '');
+        for (var tIdx = 0; tIdx < existingTeams.length; tIdx++) {
+          var tRow = existingTeams[tIdx];
+          var existingTeamId = String(tRow.id || '');
+          if (targetTeamId && existingTeamId === targetTeamId) {
+            continue; // Diizinkan jika mengupdate peleton miliknya sendiri
+          }
+          var rowEmail = String(tRow.email || '').trim().toLowerCase();
+          if (rowEmail && rowEmail === cleanEmail) {
+            return jsonResponse({
+              success: false,
+              error: 'Email ' + cleanEmail + ' sudah terdaftar untuk peleton ' + (tRow.schoolName || 'lain') + '. 1 peleton 1 Gmail, tidak bisa 1 email 2 peleton. Silakan isi email yang lain.'
+            });
+          }
+        }
       }
       
       // 1. OTOMATIS UPLOAD BASE64 KE GOOGLE DRIVE
@@ -847,4 +893,17 @@ function jsonResponse(data) {
   return ContentService
     .createTextOutput(JSON.stringify(data))
     .setMimeType(ContentService.MimeType.JSON);
+}
+
+/**
+ * Normalisasi alamat Gmail untuk deteksi variasi titik (.) dan plus (+)
+ */
+function normalizeGmailAddress(email) {
+  var parts = String(email || '').trim().toLowerCase().split('@');
+  if (parts.length !== 2) return String(email || '').trim().toLowerCase();
+  if (parts[1] === 'gmail.com' || parts[1] === 'googlemail.com') {
+    var username = parts[0].replace(/\./g, '').split('+')[0];
+    return username + '@gmail.com';
+  }
+  return parts[0] + '@' + parts[1];
 }

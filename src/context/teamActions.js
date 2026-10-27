@@ -1,6 +1,6 @@
 import { saveRecordToSheet, bulkSyncToSheet, deleteRecordFromSheet } from '../services/sheetService.js';
 import { generatePersonnels } from '../data/seedData.js';
-import { checkTeamVerificationEligibility, getChestNumberByLot, canFillRegistrationForm } from './competitionHelpers.js';
+import { checkTeamVerificationEligibility, getChestNumberByLot, canFillRegistrationForm, findTeamByEmail } from './competitionHelpers.js';
 import { EVENT } from '../config.js';
 
 export function createTeamActions({ teams, setTeams, scores, setScores, setStaging, setCurrentUser, setUsers }) {
@@ -8,6 +8,19 @@ export function createTeamActions({ teams, setTeams, scores, setScores, setStagi
     if (!canFillRegistrationForm(EVENT.REGISTRATION_START)) {
       throw new Error('Pendaftaran daring baru dibuka resmi pada 26 Oktober 2026 pukul 00.00 WIB.');
     }
+
+    const cleanEmail = (newTeamData.email || '').trim().toLowerCase();
+    if (!cleanEmail) {
+      throw new Error('Email akun peleton wajib dihubungkan melalui Google Sign-In.');
+    }
+
+    const duplicateTeam = findTeamByEmail(cleanEmail, teams);
+    if (duplicateTeam) {
+      throw new Error(
+        `Email "${cleanEmail}" sudah digunakan oleh "${duplicateTeam.schoolName || 'peleton lain'}". 1 peleton 1 Gmail, tidak bisa 1 email 2 peleton. Silakan isi email yang lain.`
+      );
+    }
+
     const jenjang = (newTeamData.jenjang || 'SMP').toUpperCase();
     
     // Generate kode pendaftaran unik 8 karakter (2 blok x 4 karakter):
