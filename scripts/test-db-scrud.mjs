@@ -117,7 +117,7 @@ async function runTests() {
       nama: rosterRows[0].nama,
       peran: rosterRows[0].peran,
       posisi: rosterRows[0].posisi,
-      ukuranBaju: rosterRows[0].ukuranBaju
+      kelas: rosterRows[0].kelas
     });
     console.log('✅ Tab relasional "team_roster" berhasil otomatis membagi personel per baris!\n');
   } else {

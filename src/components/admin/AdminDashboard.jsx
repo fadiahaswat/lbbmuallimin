@@ -126,7 +126,7 @@ export default function AdminDashboard() {
     const matchesSearch =
       team.schoolName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       team.regCode.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      team.coachName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (team.officialName || team.coachName || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
       (team.platoonName && team.platoonName.toLowerCase().includes(searchQuery.toLowerCase()));
     return matchesJenjang && matchesStatus && matchesSearch;
   });

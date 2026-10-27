@@ -186,7 +186,7 @@ export default function FaqContact() {
       <div className="absolute top-1/4 right-0 w-[550px] h-[550px] bg-red-100/40 rounded-full blur-[140px] pointer-events-none"></div>
       <div className="absolute bottom-10 left-0 w-[550px] h-[550px] bg-amber-100/40 rounded-full blur-[140px] pointer-events-none"></div>
 
-      <div className="container mx-auto px-6 relative z-10">
+      <div className="container mx-auto px-4 sm:px-6 relative z-10">
         {/* Section Header */}
         <div className="text-center mb-14 md:mb-16 max-w-3xl mx-auto">
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-slate-200/80 border border-slate-300 text-slate-700 text-xs font-semibold uppercase tracking-wider mb-4">
@@ -203,7 +203,7 @@ export default function FaqContact() {
           </p>
 
           {/* Quick Search Input */}
-          <div className="mt-7 max-w-xl mx-auto relative">
+          <div className="mt-7 max-w-xl mx-auto relative w-full">
             <div className="relative flex items-center">
               <Search className="w-4 h-4 text-slate-400 absolute left-4 pointer-events-none" />
               <input
@@ -226,11 +226,11 @@ export default function FaqContact() {
           </div>
         </div>
 
-        <div className="grid lg:grid-cols-12 gap-10 lg:gap-14 items-start">
+        <div className="grid lg:grid-cols-12 gap-8 lg:gap-14 items-start w-full min-w-0">
           {/* FAQ Column (Left - 8 Cols) */}
-          <div className="lg:col-span-8 space-y-6">
+          <div className="lg:col-span-8 w-full min-w-0 space-y-6">
             {/* Category Filter Pills */}
-            <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1 pb-2.5 sm:flex-wrap border-b border-slate-200 -mx-4 px-4 sm:mx-0 sm:px-0">
+            <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1 pb-2.5 sm:flex-wrap border-b border-slate-200 w-full min-w-0">
               {categories.map(cat => (
                 <button
                   key={cat.label}
@@ -263,13 +263,13 @@ export default function FaqContact() {
                 </p>
               </div>
             ) : (
-              <div className="space-y-3.5">
+              <div className="space-y-3.5 w-full min-w-0">
                 {filteredFaqs.map(faq => {
                   const isOpen = !!openIds[faq.id];
                   return (
                     <div
                       key={faq.id}
-                      className={`rounded-xl border transition-all duration-200 overflow-hidden ${
+                      className={`rounded-xl border transition-all duration-200 overflow-hidden w-full ${
                         isOpen
                           ? 'bg-white border-slate-300 shadow-sm'
                           : 'bg-white border-slate-200 hover:border-slate-300'
@@ -278,9 +278,9 @@ export default function FaqContact() {
                       <button
                         type="button"
                         onClick={() => toggleFaq(faq.id)}
-                        className="w-full flex items-start justify-between gap-4 p-4 sm:p-5 text-left cursor-pointer group"
+                        className="w-full flex items-start justify-between gap-3 sm:gap-4 p-4 sm:p-5 text-left cursor-pointer group"
                       >
-                        <div className="flex items-start gap-3">
+                        <div className="flex items-start gap-3 flex-1 min-w-0">
                           <span
                             className={`w-6 h-6 rounded-md text-xs font-bold flex items-center justify-center shrink-0 mt-0.5 transition-colors ${
                               isOpen
@@ -291,7 +291,7 @@ export default function FaqContact() {
                             Q
                           </span>
                           <span
-                            className={`font-semibold text-sm sm:text-base leading-snug transition-colors ${
+                            className={`font-semibold text-sm sm:text-base leading-snug transition-colors break-words flex-1 min-w-0 ${
                               isOpen ? 'text-slate-950 font-bold' : 'text-slate-800 group-hover:text-slate-950'
                             }`}
                           >
@@ -310,12 +310,12 @@ export default function FaqContact() {
                       </button>
 
                       {isOpen && (
-                        <div className="px-5 pb-5 pt-1 text-slate-700 text-xs sm:text-sm leading-relaxed border-t border-slate-100 bg-slate-50/60">
+                        <div className="px-4 sm:px-5 pb-5 pt-1 text-slate-700 text-xs sm:text-sm leading-relaxed border-t border-slate-100 bg-slate-50/60">
                           <div className="flex gap-3 items-start pt-3">
                             <span className="w-6 h-6 rounded-md bg-slate-200 text-slate-800 text-xs font-bold flex items-center justify-center shrink-0">
                               A
                             </span>
-                            <div className="space-y-2 text-slate-700">
+                            <div className="space-y-2 text-slate-700 flex-1 min-w-0 break-words">
                               <p>{faq.a}</p>
                             </div>
                           </div>
@@ -329,7 +329,7 @@ export default function FaqContact() {
           </div>
 
           {/* Right Column: Interactive Panitia & Quick Action Cards (4 Cols) */}
-          <div className="lg:col-span-4 space-y-6">
+          <div className="lg:col-span-4 w-full min-w-0 space-y-6">
             {/* Direct Contact Card */}
             <div className="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200 shadow-xl relative overflow-hidden">
               <div className="flex items-center gap-3 mb-4 relative z-10">
@@ -357,21 +357,21 @@ export default function FaqContact() {
                     href={person.WA_URL}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/50 transition-all duration-300 shadow-sm cursor-pointer"
+                    className="group flex items-center justify-between p-3.5 sm:p-4 rounded-2xl bg-slate-50 border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/50 transition-all duration-300 shadow-sm cursor-pointer"
                   >
-                    <div className="flex items-center gap-3.5">
-                      <div className="w-11 h-11 rounded-xl bg-emerald-100 border border-emerald-200 text-emerald-700 flex items-center justify-center group-hover:scale-105 transition-transform">
+                    <div className="flex items-center gap-3 min-w-0 flex-1">
+                      <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-emerald-100 border border-emerald-200 text-emerald-700 flex items-center justify-center group-hover:scale-105 transition-transform shrink-0">
                         <MessageCircle className="w-5 h-5" />
                       </div>
-                      <div>
-                        <h4 className="font-bold text-slate-900 text-sm group-hover:text-emerald-700 transition-colors flex items-center gap-1.5">
-                          <span>{person.NAME}</span>
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                      <div className="min-w-0 flex-1">
+                        <h4 className="font-bold text-slate-900 text-sm group-hover:text-emerald-700 transition-colors flex items-center gap-1.5 truncate">
+                          <span className="truncate">{person.NAME}</span>
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
                         </h4>
-                        <p className="text-[11px] text-slate-500 font-mono mt-0.5">{person.PHONE_DISPLAY}</p>
+                        <p className="text-[11px] text-slate-500 font-mono mt-0.5 truncate">{person.PHONE_DISPLAY}</p>
                       </div>
                     </div>
-                    <span className="px-3 py-1.5 rounded-xl bg-emerald-600 text-white font-bold text-xs flex items-center gap-1 group-hover:bg-emerald-700 transition-colors shadow-sm">
+                    <span className="px-3 py-1.5 rounded-xl bg-emerald-600 text-white font-bold text-xs flex items-center gap-1 group-hover:bg-emerald-700 transition-colors shadow-sm shrink-0 ml-2">
                       <span>Chat</span>
                       <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
                     </span>

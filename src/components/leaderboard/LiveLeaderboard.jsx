@@ -36,8 +36,8 @@ export default function LiveLeaderboard() {
   const filteredTeams = verifiedTeams.filter(t => {
     const matchJenjang = selectedJenjang === 'ALL' || t.jenjang === selectedJenjang;
     const matchSearch =
-      t.schoolName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      t.platoonName.toLowerCase().includes(searchQuery.toLowerCase());
+      (t.schoolName || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (t.platoonName || '').toLowerCase().includes(searchQuery.toLowerCase());
     return matchJenjang && matchSearch;
   });
 

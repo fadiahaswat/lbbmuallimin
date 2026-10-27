@@ -397,6 +397,21 @@ function doPost(e) {
         error: 'Akses Ditolak: Aksi clearTable telah dinonaktifkan permanen demi perlindungan ketersediaan dan integritas data lomba.'
       });
     }
+    else if (action === 'cleanupDeadColumns') {
+      if (!isAuthorized) {
+        return jsonResponse({
+          success: false,
+          error: 'Akses Ditolak: Operasi pembersihan kolom memerlukan token otorisasi resmi superadmin.'
+        });
+      }
+      var cleanReport = executeDatabaseCleanup();
+      return jsonResponse({
+        success: true,
+        action: 'cleanupDeadColumns',
+        report: cleanReport,
+        timestamp: new Date().toISOString()
+      });
+    }
     else {
       return jsonResponse({
         success: false,
@@ -446,9 +461,7 @@ function syncTeamRosterToSeparateSheet(ss, team) {
       posisi: 'Komandan Peleton',
       nama: d.name || '',
       nisn: d.nisn || '',
-      kelas: d.class || '',
-      ukuranBaju: d.uniformSize || '',
-      ukuranSepatu: d.shoeSize || ''
+      kelas: d.class || ''
     });
   }
 
@@ -464,9 +477,7 @@ function syncTeamRosterToSeparateSheet(ss, team) {
         posisi: 'Saf ' + (p.safNumber || Math.ceil((idx + 1) / 7)) + ' Banjar ' + (p.banjarNumber || (((idx) % 7) + 1)),
         nama: p.name || '',
         nisn: p.nisn || '',
-        kelas: p.class || '',
-        ukuranBaju: p.uniformSize || '',
-        ukuranSepatu: p.shoeSize || ''
+        kelas: p.class || ''
       });
     });
   }
@@ -483,9 +494,7 @@ function syncTeamRosterToSeparateSheet(ss, team) {
         posisi: 'Cadangan ' + (idx + 1),
         nama: c.name || '',
         nisn: c.nisn || '',
-        kelas: c.class || '',
-        ukuranBaju: '',
-        ukuranSepatu: ''
+        kelas: c.class || ''
       });
     });
   }
@@ -502,9 +511,7 @@ function syncTeamRosterToSeparateSheet(ss, team) {
         posisi: o.role || ('Official ' + (idx + 1)),
         nama: o.name || '',
         nisn: o.phone || '',
-        kelas: 'No HP: ' + (o.phone || ''),
-        ukuranBaju: '',
-        ukuranSepatu: ''
+        kelas: 'No HP: ' + (o.phone || '')
       });
     });
   }
@@ -673,7 +680,6 @@ function prepareRecordForSpreadsheet(record) {
       flat['file_kartu_danton'] = val.dantonCard?.url || '';
       flat['file_ktp_official'] = val.officialKtp?.url || '';
       flat['file_bukti_bayar'] = val.paymentProof?.url || '';
-      flat['file_selfie'] = val.selfie?.url || '';
       flat['file_pakta_integritas'] = val.integrityPact?.url || '';
       flat['file_surat_rekomendasi'] = val.recommendationLetter?.url || '';
       // Simpan metadata ringkas di 'files' (tanpa Base64)
@@ -906,4 +912,64 @@ function normalizeGmailAddress(email) {
     return username + '@gmail.com';
   }
   return parts[0] + '@' + parts[1];
+}
+
+/**
+ * ============================================================================
+ * UTILITAS PEMBERSIHAN KOLOM MATI (DEAD COLUMNS CLEANUP)
+ * Menghapus kolom-kolom usang/mati dari spreadsheet secara aman (dari kanan ke kiri)
+ * Dapat dijalankan langsung dari script editor Apps Script atau via API.
+ * ============================================================================
+ */
+function executeDatabaseCleanup() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var logResults = {};
+
+  // 1. Tab 'teams': Hapus kolom customPeletonMotto, file_selfie, dan coachName (duplikasi officialName)
+  var teamsSheet = ss.getSheetByName('teams');
+  if (teamsSheet) {
+    logResults['teams'] = cleanupDeadColumnsInSheet(teamsSheet, [
+      'customPeletonMotto',
+      'file_selfie',
+      'coachName'
+    ]);
+  }
+
+  // 2. Tab 'scores': Hapus kolom variasi
+  var scoresSheet = ss.getSheetByName('scores');
+  if (scoresSheet) {
+    logResults['scores'] = cleanupDeadColumnsInSheet(scoresSheet, [
+      'variasi'
+    ]);
+  }
+
+  // 3. Tab 'team_roster': Hapus kolom ukuranBaju dan ukuranSepatu
+  var rosterSheet = ss.getSheetByName('team_roster');
+  if (rosterSheet) {
+    logResults['team_roster'] = cleanupDeadColumnsInSheet(rosterSheet, [
+      'ukuranBaju',
+      'ukuranSepatu'
+    ]);
+  }
+
+  Logger.log('Hasil Pembersihan Kolom Mati: ' + JSON.stringify(logResults));
+  return logResults;
+}
+
+function cleanupDeadColumnsInSheet(sheet, deadColumnNames) {
+  if (!sheet) return [];
+  var lastCol = sheet.getLastColumn();
+  if (lastCol < 1) return [];
+  var headers = sheet.getRange(CONFIG.HEADER_ROW, 1, 1, lastCol).getValues()[0];
+  var removed = [];
+
+  // Loop dari kanan ke kiri agar index kolom tidak bergeser saat baris kolom dihapus
+  for (var c = headers.length - 1; c >= 0; c--) {
+    var headerName = headers[c];
+    if (headerName && deadColumnNames.indexOf(headerName) > -1) {
+      sheet.deleteColumn(c + 1);
+      removed.push(headerName);
+    }
+  }
+  return removed;
 }

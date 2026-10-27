@@ -43,7 +43,6 @@ export function createTeamActions({ teams, setTeams, scores, setScores, setStagi
       platoonName: newTeamData.platoonName || `Peleton ${newTeamData.schoolName}`,
       dantonName: newTeamData.dantonName || '',
       officialName: newTeamData.officialName || '',
-      coachName: newTeamData.officialName || '',
       waNumber: newTeamData.waNumber || '',
       email: (newTeamData.email || '').trim().toLowerCase(),
       address: newTeamData.address || '',

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowRight, Download, ChevronsDown, ExternalLink } from 'lucide-react';
+import { ArrowRight, Download, ChevronsDown, ExternalLink, Calendar } from 'lucide-react';
 import { HERO, EVENT, VENUE, DOWNLOADS } from '../config.js';
 import { useCompetition } from '../context/CompetitionContext.jsx';
 import logoImg from '../assets/logo-tonti.png';
@@ -45,6 +45,16 @@ export default function Hero() {
   const { openModal, setActiveView, settings, canAccessRegistration } = useCompetition();
   const [activeCadetIndex, setActiveCadetIndex] = useState(0);
   const [scheduleIndex, setScheduleIndex] = useState(0);
+  const [isDesktop, setIsDesktop] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth >= 1024;
+    }
+    return false;
+  });
+
+  const availableCadets = isDesktop
+    ? CADET_FIGURES.filter(c => !c.isLandscape)
+    : CADET_FIGURES;
 
   const regRangeText = settings?.eventDates?.registrationRangeText || EVENT.REGISTRATION_RANGE;
 
@@ -52,72 +62,69 @@ export default function Hero() {
   const schedules = [
     {
       label: 'Perlombaan',
-      date: EVENT.COMPETITION_DATE, // "Sabtu, 24 Januari 2027"
-      dotColor: 'bg-yellow-400',
-      pingColor: 'bg-yellow-400',
-      textColor: 'text-yellow-300',
+      date: EVENT.COMPETITION_DATE,
     },
     {
       label: 'Pendaftaran',
-      date: regRangeText, // "26 Oktober – 22 November 2026"
-      dotColor: 'bg-amber-500',
-      pingColor: 'bg-amber-400',
-      textColor: 'text-amber-300',
+      date: regRangeText,
     },
     {
       label: 'TM Peserta',
-      date: EVENT.TECHNICAL_MEETING_FULL_DATE || EVENT.TECHNICAL_MEETING_DATE, // "Sabtu, 9 Januari 2027"
-      dotColor: 'bg-blue-400',
-      pingColor: 'bg-blue-400',
-      textColor: 'text-blue-300',
+      date: EVENT.TECHNICAL_MEETING_FULL_DATE || EVENT.TECHNICAL_MEETING_DATE,
     },
     {
       label: 'Uji Coba Lapangan',
-      date: EVENT.FIELD_TRIAL_FULL_DATE || EVENT.FIELD_TRIAL_DATE, // "Sabtu, 16 Januari 2027"
-      dotColor: 'bg-emerald-400',
-      pingColor: 'bg-emerald-400',
-      textColor: 'text-emerald-300',
+      date: EVENT.FIELD_TRIAL_FULL_DATE || EVENT.FIELD_TRIAL_DATE,
     },
   ];
 
-  // Preload remaining slides and auto-rotate cadet illustration every 6 seconds
+  // Preload slides and auto-rotate cadet illustration every 6 seconds
   useEffect(() => {
-    CADET_FIGURES.forEach(cadet => {
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth >= 1024);
+    };
+    window.addEventListener('resize', handleResize, { passive: true });
+
+    availableCadets.forEach(cadet => {
       const img = new Image();
       img.src = cadet.src;
     });
 
     const timer = setInterval(() => {
-      setActiveCadetIndex(prev => (prev + 1) % CADET_FIGURES.length);
+      setActiveCadetIndex(prev => (prev + 1) % availableCadets.length);
     }, 6000);
 
-    // Rotasi jadwal badge setiap 3 detik
+    // Rotasi jadwal badge setiap 3.2 detik
     const scheduleTimer = setInterval(() => {
       setScheduleIndex(prev => (prev + 1) % 4);
     }, 3200);
 
     return () => {
+      window.removeEventListener('resize', handleResize);
       clearInterval(timer);
       clearInterval(scheduleTimer);
     };
-  }, []);
+  }, [availableCadets.length]);
 
   function scrollToAbout() {
     const el = document.getElementById('about');
     if (el) el.scrollIntoView({ behavior: 'smooth' });
   }
 
-  const currentCadet = CADET_FIGURES[activeCadetIndex];
+  const currentCadet = availableCadets[activeCadetIndex % availableCadets.length];
   const isLandscape = currentCadet.isLandscape;
 
   return (
     <section
       id="home"
-      className="relative w-full min-h-screen supports-[height:100svh]:min-h-[100svh] flex flex-col items-center justify-center bg-gradient-to-b from-[#3a0505] via-[#6d0a0a] to-[#200202] text-white pt-20 sm:pt-22 pb-14 overflow-hidden"
+      className="relative w-full min-h-screen supports-[height:100svh]:min-h-[100svh] flex flex-col items-center justify-center bg-gradient-to-b from-[#3a0505] via-[#600808] to-slate-950 text-white pt-20 sm:pt-22 pb-10 lg:pb-0 overflow-hidden"
     >
       {/* Atmospheric Background & Lighting (Latar Paling Belakang di Atas BG Merah) */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden select-none" aria-hidden="true">
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/15 to-black/60"></div>
+
+        {/* Deep Black Floor Transition to Slate-950 of Next Section */}
+        <div className="absolute inset-x-0 bottom-0 h-64 sm:h-80 lg:h-[420px] bg-gradient-to-t from-slate-950 via-slate-950/85 via-40% to-transparent pointer-events-none z-0" />
 
         {/* Ornamental Milad Graphic Motif di Latar Belakang Kanan Atas (Khusus Desktop lg ke Atas) */}
         <div className="hidden lg:block absolute -top-14 lg:-top-24 -right-14 lg:-right-24 w-[560px] lg:w-[680px] pointer-events-none select-none">
@@ -132,10 +139,10 @@ export default function Hero() {
       </div>
 
       <div className="container mx-auto px-4 sm:px-6 relative z-10 flex flex-col justify-center h-full my-auto -mt-2 sm:-mt-3 lg:-mt-4">
-        <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-center w-full max-w-7xl mx-auto">
+        <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-center lg:items-end w-full max-w-7xl mx-auto">
 
           {/* Left Columns: Text Content & Actions */}
-          <div className="lg:col-span-7 flex flex-col items-center lg:items-start text-center lg:text-left space-y-4 sm:space-y-5">
+          <div className="lg:col-span-7 flex flex-col items-center lg:items-start text-center lg:text-left space-y-4 sm:space-y-5 lg:self-center -translate-y-3 sm:-translate-y-5 lg:-translate-y-8 xl:-translate-y-10">
             
             {/* Logo Group in Hero Section: Logo LBB - Garis - Logo Tonti Mu'allimin - Logo Mu'allimin */}
             <div className="flex items-center gap-3.5 sm:gap-6">
@@ -180,11 +187,9 @@ export default function Hero() {
               const currentSchedule = schedules[scheduleIndex];
               return (
                 <div
-                  className="relative inline-flex items-center gap-2.5 px-4 py-1.5 bg-black/40 border border-white/15 rounded-full shadow-sm cursor-default"
+                  className="relative inline-flex items-center gap-2 px-3.5 py-1.5 bg-black/40 border border-white/15 rounded-full shadow-sm cursor-default"
                 >
-                  <span className="relative flex h-2 w-2">
-                    <span className={`inline-flex rounded-full h-2 w-2 ${currentSchedule.dotColor} shadow-[0_0_8px_currentColor]`}></span>
-                  </span>
+                  <Calendar className="w-3.5 h-3.5 text-amber-400 shrink-0" />
                   <span className="text-[10px] sm:text-xs font-bold tracking-wider uppercase text-slate-200">
                     <span className="text-white font-bold mr-1">{currentSchedule.label}:</span>
                     <span>{currentSchedule.date}</span>
@@ -257,7 +262,7 @@ export default function Hero() {
           </div>
 
           {/* Right Columns: Adapted Paskibra Cadet Illustration with Fixed Stable Container */}
-          <div className="lg:col-span-5 flex flex-col items-center justify-end relative mt-6 lg:mt-0 h-[440px] sm:h-[520px] lg:h-[580px] w-full select-none">
+          <div className="lg:col-span-5 flex flex-col items-center justify-end relative mt-6 lg:mt-0 h-[460px] sm:h-[540px] lg:h-[620px] xl:h-[680px] w-full select-none lg:self-end">
             
             {/* Authentic Simpaskor Breathing Halo (.hero-foto-cahaya) */}
             <span aria-hidden="true" className="hero-foto-cahaya" />
@@ -276,6 +281,9 @@ export default function Hero() {
               />
             </div>
 
+            {/* Soft Ambient Floor Shadow behind Cadet base */}
+            <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-4/5 h-28 bg-slate-950/95 blur-2xl rounded-full pointer-events-none z-0" aria-hidden="true" />
+
             {/* Stable Stage Container (Prevents Any Shifting of Neighboring Elements) */}
             <div className="relative w-full h-full flex items-end justify-center overflow-visible pointer-events-none">
               {/* Stable Cadet Illustration (Fully Opaque Solid Uniform, z-10) */}
@@ -292,9 +300,15 @@ export default function Hero() {
                 decoding="async"
                 className={`hero-foto hero-foto-smooth max-w-none pointer-events-auto relative z-10 ${
                   isLandscape
-                    ? 'w-[125%] sm:w-[135%] lg:w-[150%] max-h-[85%] object-contain object-bottom'
+                    ? 'w-[120%] sm:w-[130%] lg:w-[140%] max-h-[82%] object-contain object-bottom mb-5 sm:mb-7 lg:mb-9'
                     : 'w-auto max-w-[85%] sm:max-w-[80%] h-auto max-h-[96%] object-contain object-bottom'
                 }`}
+              />
+
+              {/* Dedicated Bottom Feathering / Black Blend Gradient Overlay */}
+              <div
+                className="absolute inset-x-0 bottom-0 h-32 sm:h-40 lg:h-48 bg-gradient-to-t from-slate-950 via-slate-950/65 to-transparent pointer-events-none z-20"
+                aria-hidden="true"
               />
             </div>
 
@@ -305,7 +319,7 @@ export default function Hero() {
 
       {/* Scroll Down Indicator (Tablet & Desktop: Tetap di bagian paling bawah layar Hero) */}
       <div
-        className="hidden sm:block absolute bottom-5 left-1/2 -translate-x-1/2 z-20 cursor-pointer"
+        className="hidden sm:block absolute bottom-5 left-1/2 -translate-x-1/2 z-30 cursor-pointer"
         onClick={scrollToAbout}
       >
         <div className="flex flex-col items-center justify-center gap-1.5 opacity-70 hover:opacity-100 transition-opacity animate-bounce select-none">

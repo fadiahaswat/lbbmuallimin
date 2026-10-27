@@ -542,7 +542,7 @@ export default function Registration() {
                   />
                 </div>
 
-                <div className="flex items-center justify-between gap-2 bg-slate-950 border border-white/10 p-3 rounded-xl mb-2.5">
+                <div className="flex items-center justify-between gap-2 bg-slate-950 border border-white/10 p-3 rounded-xl mb-3">
                   <span className="font-mono text-base sm:text-lg font-black text-white tracking-wider truncate">
                     {PAYMENT.ACCOUNT_NUMBER}
                   </span>
@@ -560,9 +560,15 @@ export default function Registration() {
                   </button>
                 </div>
 
-                <div className="space-y-1 text-xs text-slate-300">
-                  <p>A.n: <strong className="text-white">{PAYMENT.ACCOUNT_NAME}</strong></p>
-                  <p>Berita: <span className="text-amber-400 font-mono font-bold">{PAYMENT.TRANSFER_NOTE_FORMAT}</span></p>
+                <div className="space-y-1.5 text-xs text-slate-300">
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-slate-400 w-12 shrink-0">A.n:</span>
+                    <strong className="text-white font-semibold">{PAYMENT.ACCOUNT_NAME}</strong>
+                  </div>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-slate-400 w-12 shrink-0">Berita:</span>
+                    <span className="text-amber-400 font-mono font-bold">{PAYMENT.TRANSFER_NOTE_FORMAT}</span>
+                  </div>
                 </div>
 
                 {copied && (
