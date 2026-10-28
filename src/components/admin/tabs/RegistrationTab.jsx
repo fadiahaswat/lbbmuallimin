@@ -7,7 +7,11 @@ import {
   AlertTriangle,
   Eye,
   Check,
-  Trash2
+  Trash2,
+  CreditCard,
+  IdCard,
+  Image as ImageIcon,
+  FileSignature
 } from 'lucide-react';
 import { formatImageUrl, getFallbackImageUrl } from '../../../services/sheetService.js';
 
@@ -210,40 +214,72 @@ export default function RegistrationTab({
                   </td>
 
                   <td className="p-3.5 align-middle">
-                    <div className="flex flex-col gap-1">
-                      <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10.5px] font-medium border w-fit ${
-                        team.files?.paymentProof 
-                          ? 'bg-emerald-50 text-emerald-800 border-emerald-200' 
-                          : 'bg-rose-50 text-rose-700 border-rose-200'
-                      }`}>
-                        <span className={`w-1.5 h-1.5 rounded-full ${team.files?.paymentProof ? 'bg-emerald-500' : 'bg-rose-500'}`}></span>
-                        <span>Transfer BSI</span>
-                      </div>
-                      <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10.5px] font-medium border w-fit ${
-                        team.files?.dantonCard 
-                          ? 'bg-emerald-50 text-emerald-800 border-emerald-200' 
-                          : 'bg-rose-50 text-rose-700 border-rose-200'
-                      }`}>
-                        <span className={`w-1.5 h-1.5 rounded-full ${team.files?.dantonCard ? 'bg-emerald-500' : 'bg-rose-500'}`}></span>
-                        <span>Kartu Danton</span>
-                      </div>
-                      <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10.5px] font-medium border w-fit ${
-                        team.files?.schoolLogo 
-                          ? 'bg-emerald-50 text-emerald-800 border-emerald-200' 
-                          : 'bg-rose-50 text-rose-700 border-rose-200'
-                      }`}>
-                        <span className={`w-1.5 h-1.5 rounded-full ${team.files?.schoolLogo ? 'bg-emerald-500' : 'bg-rose-500'}`}></span>
-                        <span>Logo Sekolah</span>
-                      </div>
-                      <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10.5px] font-medium border w-fit ${
-                        team.files?.integrityPact 
-                          ? 'bg-emerald-50 text-emerald-800 border-emerald-200' 
-                          : 'bg-rose-50 text-rose-700 border-rose-200'
-                      }`}>
-                        <span className={`w-1.5 h-1.5 rounded-full ${team.files?.integrityPact ? 'bg-emerald-500' : 'bg-rose-500'}`}></span>
-                        <span>Pakta Integritas</span>
-                      </div>
-                    </div>
+                    {(() => {
+                      const fileItems = [
+                        {
+                          id: 'paymentProof',
+                          label: 'Transfer BSI',
+                          icon: CreditCard,
+                          hasFile: Boolean(team.files?.paymentProof?.url ? team.files.paymentProof.url !== '#' : team.files?.paymentProof),
+                        },
+                        {
+                          id: 'dantonCard',
+                          label: 'Kartu Danton',
+                          icon: IdCard,
+                          hasFile: Boolean(team.files?.dantonCard?.url ? team.files.dantonCard.url !== '#' : team.files?.dantonCard),
+                        },
+                        {
+                          id: 'schoolLogo',
+                          label: 'Logo Sekolah',
+                          icon: ImageIcon,
+                          hasFile: Boolean(team.files?.schoolLogo?.url ? team.files.schoolLogo.url !== '#' : team.files?.schoolLogo),
+                        },
+                        {
+                          id: 'integrityPact',
+                          label: 'Pakta Integritas',
+                          icon: FileSignature,
+                          hasFile: Boolean(team.files?.integrityPact?.url || team.files?.integrityPact?.signatureUrl ? (team.files.integrityPact.url !== '#' || team.files.integrityPact.signatureUrl !== '#') : team.files?.integrityPact),
+                        },
+                      ];
+                      const uploadedCount = fileItems.filter(f => f.hasFile).length;
+
+                      return (
+                        <div className="space-y-1.5">
+                          <div className="flex items-center gap-1.5">
+                            {fileItems.map((item) => {
+                              const IconComponent = item.icon;
+                              return (
+                                <div
+                                  key={item.id}
+                                  title={`${item.label}: ${item.hasFile ? 'Sudah Diunggah' : 'Belum Diunggah'}`}
+                                  className={`group relative inline-flex items-center justify-center w-8 h-8 rounded-full border transition-all cursor-pointer ${
+                                    item.hasFile
+                                      ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100 hover:border-emerald-300 shadow-2xs hover:scale-105'
+                                      : 'bg-rose-50 text-rose-500 border-rose-200 hover:bg-rose-100 hover:border-rose-300 hover:scale-105'
+                                  }`}
+                                  onClick={() => {
+                                    setInspectingTeam(team);
+                                    setInspectingStage('registration');
+                                  }}
+                                >
+                                  <IconComponent className="w-4 h-4" />
+
+                                  {/* Tooltip Hover */}
+                                  <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 z-30 whitespace-nowrap rounded-md bg-slate-900 px-2 py-0.5 text-[10px] font-semibold text-white opacity-0 shadow-md transition-opacity group-hover:opacity-100">
+                                    {item.label}: {item.hasFile ? 'Lengkap' : 'Belum'}
+                                  </span>
+                                </div>
+                              );
+                            })}
+                          </div>
+
+                          <div className="flex items-center gap-1 text-[10.5px] font-medium text-slate-500">
+                            <span className={`w-1.5 h-1.5 rounded-full ${uploadedCount === 4 ? 'bg-emerald-500' : uploadedCount > 0 ? 'bg-amber-500' : 'bg-rose-500'}`} />
+                            <span>{uploadedCount}/4 Berkas</span>
+                          </div>
+                        </div>
+                      );
+                    })()}
                   </td>
 
                   <td className="p-3.5 align-middle">
