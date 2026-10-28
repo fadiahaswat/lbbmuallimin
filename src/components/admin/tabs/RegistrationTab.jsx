@@ -241,42 +241,34 @@ export default function RegistrationTab({
                           hasFile: Boolean(team.files?.integrityPact?.url || team.files?.integrityPact?.signatureUrl ? (team.files.integrityPact.url !== '#' || team.files.integrityPact.signatureUrl !== '#') : team.files?.integrityPact),
                         },
                       ];
-                      const uploadedCount = fileItems.filter(f => f.hasFile).length;
 
                       return (
-                        <div className="space-y-1.5">
-                          <div className="flex items-center gap-1.5">
-                            {fileItems.map((item) => {
-                              const IconComponent = item.icon;
-                              return (
-                                <div
-                                  key={item.id}
-                                  title={`${item.label}: ${item.hasFile ? 'Sudah Diunggah' : 'Belum Diunggah'}`}
-                                  className={`group relative inline-flex items-center justify-center w-8 h-8 rounded-full border transition-all cursor-pointer ${
-                                    item.hasFile
-                                      ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100 hover:border-emerald-300 shadow-2xs hover:scale-105'
-                                      : 'bg-rose-50 text-rose-500 border-rose-200 hover:bg-rose-100 hover:border-rose-300 hover:scale-105'
-                                  }`}
-                                  onClick={() => {
-                                    setInspectingTeam(team);
-                                    setInspectingStage('registration');
-                                  }}
-                                >
-                                  <IconComponent className="w-4 h-4" />
+                        <div className="flex items-center gap-1.5">
+                          {fileItems.map((item) => {
+                            const IconComponent = item.icon;
+                            return (
+                              <div
+                                key={item.id}
+                                title={`${item.label}: ${item.hasFile ? 'Sudah Diunggah' : 'Belum Diunggah'}`}
+                                className={`group relative inline-flex items-center justify-center w-8 h-8 rounded-full border transition-all cursor-pointer ${
+                                  item.hasFile
+                                    ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100 hover:border-emerald-300 shadow-2xs hover:scale-105'
+                                    : 'bg-rose-50 text-rose-500 border-rose-200 hover:bg-rose-100 hover:border-rose-300 hover:scale-105'
+                                }`}
+                                onClick={() => {
+                                  setInspectingTeam(team);
+                                  setInspectingStage('registration');
+                                }}
+                              >
+                                <IconComponent className="w-4 h-4" />
 
-                                  {/* Tooltip Hover */}
-                                  <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 z-30 whitespace-nowrap rounded-md bg-slate-900 px-2 py-0.5 text-[10px] font-semibold text-white opacity-0 shadow-md transition-opacity group-hover:opacity-100">
-                                    {item.label}: {item.hasFile ? 'Lengkap' : 'Belum'}
-                                  </span>
-                                </div>
-                              );
-                            })}
-                          </div>
-
-                          <div className="flex items-center gap-1 text-[10.5px] font-medium text-slate-500">
-                            <span className={`w-1.5 h-1.5 rounded-full ${uploadedCount === 4 ? 'bg-emerald-500' : uploadedCount > 0 ? 'bg-amber-500' : 'bg-rose-500'}`} />
-                            <span>{uploadedCount}/4 Berkas</span>
-                          </div>
+                                {/* Tooltip Hover */}
+                                <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 z-30 whitespace-nowrap rounded-md bg-slate-900 px-2 py-0.5 text-[10px] font-semibold text-white opacity-0 shadow-md transition-opacity group-hover:opacity-100">
+                                  {item.label}: {item.hasFile ? 'Lengkap' : 'Belum'}
+                                </span>
+                              </div>
+                            );
+                          })}
                         </div>
                       );
                     })()}
