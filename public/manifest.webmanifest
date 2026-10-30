@@ -1,0 +1,50 @@
+{
+  "name": "LBB Mu'allimin 2027",
+  "short_name": "LBB Mu'allimin",
+  "description": "Website Resmi Lomba Baris-Berbaris Mu'allimin 2027 Tingkat SD/MI & SMP/MTs Se-DIY",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#3a0505",
+  "orientation": "portrait",
+  "lang": "id",
+  "icons": [
+    {
+      "src": "/pwa-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Formulir Pendaftaran",
+      "short_name": "Daftar",
+      "description": "Pendaftaran Peleton LBB Mu'allimin 2027",
+      "url": "/#registration",
+      "icons": [{ "src": "/pwa-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Petunjuk Teknis & Aturan",
+      "short_name": "Juknis",
+      "description": "Juknis dan Aturan Lomba LBB Mu'allimin 2027",
+      "url": "/#rules",
+      "icons": [{ "src": "/pwa-192x192.png", "sizes": "192x192" }]
+    }
+  ],
+  "categories": ["education", "sports", "events"]
+}

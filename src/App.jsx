@@ -17,6 +17,7 @@ import FaqContact from './components/FaqContact.jsx';
 import Footer from './components/Footer.jsx';
 import FabWhatsApp from './components/FabWhatsApp.jsx';
 import StickyCta from './components/StickyCta.jsx';
+import PwaInstallPrompt from './components/PwaInstallPrompt.jsx';
 
 // Dedicated Full Pages & Views (Lazy loaded for optimal initial bundle performance)
 const RegistrationWizard = React.lazy(() => import('./components/portal/RegistrationWizard.jsx'));
@@ -179,6 +180,9 @@ function MainApp() {
         {activeView === 'rundown' && <RundownView />}
       </React.Suspense>
       )}
+
+      {/* Progressive Web App (PWA) Install & Update Banner */}
+      <PwaInstallPrompt />
     </div>
   );
 }
