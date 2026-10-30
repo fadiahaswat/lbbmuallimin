@@ -109,7 +109,8 @@ export default function SuperadminPanel() {
     updateStaffUser,
     deleteStaffUser,
     currentUser,
-    role
+    role,
+    openAuthModal
   } = useCompetition();
 
   const userRole = currentUser?.role || role;
@@ -131,12 +132,29 @@ export default function SuperadminPanel() {
               Halaman ini memiliki kewenangan tertinggi dan hanya dapat diakses oleh Akun Resmi Ketua Panitia / IT Master (Superadmin).
             </p>
           </div>
-          <button
-            onClick={() => setActiveView('landing')}
-            className="w-full py-3 bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all cursor-pointer"
-          >
-            Kembali ke Beranda
-          </button>
+          <div className="space-y-2.5 pt-2 w-full">
+            <button
+              type="button"
+              onClick={() => {
+                try {
+                  localStorage.setItem('lbb_muallimin_active_view_v1', 'landing');
+                } catch {}
+                setActiveView('landing');
+              }}
+              className="w-full py-3 bg-slate-800 hover:bg-slate-700 active:scale-95 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all cursor-pointer shadow-sm"
+            >
+              Kembali ke Beranda
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                if (openAuthModal) openAuthModal();
+              }}
+              className="w-full py-3 bg-red-600 hover:bg-red-500 active:scale-95 text-white font-black text-xs uppercase tracking-wider rounded-xl transition-all cursor-pointer shadow-md shadow-red-950/40"
+            >
+              Masuk Akun Superadmin
+            </button>
+          </div>
         </div>
       </div>
     );

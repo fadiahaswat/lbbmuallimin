@@ -20,6 +20,81 @@ import {
 import { useCompetition } from '../../context/CompetitionContext.jsx';
 import { VENUE } from '../../config.js';
 import SimpaskorSidebarLayout from '../navigation/SimpaskorSidebarLayout.jsx';
+import { formatImageUrl } from '../../services/sheetService.js';
+import { getChestNumberByLot } from '../../context/competitionHelpers.js';
+
+// Komponen Badge Logo Sekolah dengan Fallback Monogram Inisial
+function SchoolLogo({ team, schoolName, size = 'table', className = '', isDark = false }) {
+  const [hasError, setHasError] = useState(false);
+
+  const rawLogo =
+    team?.files?.schoolLogo?.url ||
+    team?.file_logo_sekolah ||
+    team?.logoUrl ||
+    team?.schoolLogo?.url ||
+    (typeof team?.schoolLogo === 'string' ? team.schoolLogo : null) ||
+    team?.logo ||
+    team?.avatar;
+
+  const name = schoolName || team?.schoolName || 'Sekolah';
+  const validUrl = !hasError && rawLogo && rawLogo !== '#' && !rawLogo.startsWith('#');
+  const logoUrl = validUrl ? formatImageUrl(rawLogo) : null;
+
+  const initials = useMemo(() => {
+    if (!name) return 'LK';
+    const clean = name
+      .replace(/\b(sd|mi|smp|mts|sma|smk|negeri|swasta|dan|kabupaten|kota)\b/gi, '')
+      .trim();
+    const words = clean.split(/\s+/).filter(Boolean);
+    if (words.length >= 2) {
+      return (words[0][0] + words[1][0]).toUpperCase();
+    }
+    if (words.length === 1 && words[0].length >= 2) {
+      return words[0].slice(0, 2).toUpperCase();
+    }
+    return name.slice(0, 2).toUpperCase();
+  }, [name]);
+
+  let sizeClasses = '';
+  let fontClasses = '';
+
+  if (size === 'podium-lg') {
+    sizeClasses = 'w-20 h-20 sm:w-24 sm:h-24';
+    fontClasses = `text-2xl font-black ${isDark ? 'text-amber-300' : 'text-amber-900'}`;
+  } else if (size === 'podium-md') {
+    sizeClasses = 'w-16 h-16 sm:w-18 sm:h-18';
+    fontClasses = `text-xl font-black ${isDark ? 'text-slate-300' : 'text-slate-700'}`;
+  } else {
+    // table
+    sizeClasses = 'w-9 h-9';
+    fontClasses = `text-xs font-black ${isDark ? 'text-slate-300' : 'text-slate-700'}`;
+  }
+
+  if (logoUrl) {
+    return (
+      <img
+        src={logoUrl}
+        alt={name}
+        loading="lazy"
+        decoding="async"
+        onError={() => setHasError(true)}
+        className={`${sizeClasses} object-contain filter drop-shadow-sm select-none shrink-0 ${className}`}
+        title={name}
+      />
+    );
+  }
+
+  return (
+    <div
+      className={`${sizeClasses} rounded-xl shrink-0 flex items-center justify-center font-mono select-none ${
+        isDark ? 'bg-slate-800 text-slate-200' : 'bg-slate-100 text-slate-700'
+      } ${className}`}
+      title={name}
+    >
+      <span className={fontClasses}>{initials}</span>
+    </div>
+  );
+}
 
 // Poin Juara Umum Berdasarkan Juknis Bab A Poin 7
 const PELETON_POINTS = {
@@ -260,6 +335,7 @@ export default function LiveLeaderboard() {
         schoolMap.set(schoolKey, {
           schoolName: item.team.schoolName,
           jenjang: item.team.jenjang,
+          team: item.team,
           teams: [],
           totalPeletonPoints: 0,
           totalDantonPoints: 0,
@@ -386,6 +462,8 @@ export default function LiveLeaderboard() {
       return finalFilteredPeleton.slice(0, 3).map(item => ({
         rank: item.rank,
         title: item.title,
+        team: item.team,
+        schoolName: item.team.schoolName,
         mainTitle: item.team.schoolName,
         subTitle: item.team.platoonName || 'Peleton PBB',
         score: item.nilaiAkhirPeleton,
@@ -398,6 +476,8 @@ export default function LiveLeaderboard() {
       return finalFilteredDanton.slice(0, 3).map(item => ({
         rank: item.rank,
         title: item.title,
+        team: item.team,
+        schoolName: item.team.schoolName,
         mainTitle: item.team.dantonName || 'Komandan Peleton',
         subTitle: item.team.schoolName,
         score: item.nilaiAkhirDanton,
@@ -410,8 +490,10 @@ export default function LiveLeaderboard() {
       return finalFilteredJuaraUmum.slice(0, 3).map(item => ({
         rank: item.rank,
         title: item.title,
+        team: item.team || item.teams?.[0]?.team,
+        schoolName: item.schoolName,
         mainTitle: item.schoolName,
-        subTitle: `Jenjang ${item.jenjang}`,
+        subTitle: 'Akumulasi Prestasi Sekolah',
         score: item.totalPoints,
         scoreLabel: 'Poin Prestasi',
         subScore: `Peleton: ${item.totalPeletonPoints} Poin | Danton: ${item.totalDantonPoints} Poin`,
@@ -510,8 +592,8 @@ export default function LiveLeaderboard() {
           }`}
         >
           <div className="flex items-center gap-2 pb-2.5 border-b border-amber-500/20">
-            <Award className="w-5 h-5 text-amber-600 dark:text-amber-400" />
-            <h3 className="text-sm font-black uppercase tracking-wide text-amber-800 dark:text-amber-300">
+            <Award className={`w-5 h-5 ${effectiveDark ? 'text-amber-400' : 'text-amber-600'}`} />
+            <h3 className={`text-sm font-black uppercase tracking-wide ${effectiveDark ? 'text-amber-300' : 'text-amber-800'}`}>
               Rujukan Resmi: Petunjuk Teknis Penilaian & Kejuaraan LBB Mu'allimin 2027
             </h3>
           </div>
@@ -525,11 +607,11 @@ export default function LiveLeaderboard() {
                   : 'bg-white border-amber-200/80 shadow-2xs'
               }`}
             >
-              <div className="font-bold text-amber-700 dark:text-amber-400 flex items-center gap-1.5">
-                <Shield className="w-4 h-4 text-red-600 dark:text-red-400" />
+              <div className={`font-bold flex items-center gap-1.5 ${effectiveDark ? 'text-amber-400' : 'text-amber-700'}`}>
+                <Shield className={`w-4 h-4 ${effectiveDark ? 'text-red-400' : 'text-red-600'}`} />
                 <span>1. Kejuaraan Peleton (Bab A.5)</span>
               </div>
-              <p className="text-[11px] leading-relaxed text-slate-600 dark:text-slate-300">
+              <p className={`text-[11px] leading-relaxed ${effectiveDark ? 'text-slate-300' : 'text-slate-600'}`}>
                 Diurutkan berdasarkan <strong>Nilai Akhir Peleton</strong> (Nilai Murni 3 Juri dikurangi Penalti Peleton).
               </p>
               <div
@@ -555,11 +637,11 @@ export default function LiveLeaderboard() {
                   : 'bg-white border-amber-200/80 shadow-2xs'
               }`}
             >
-              <div className="font-bold text-amber-700 dark:text-amber-400 flex items-center gap-1.5">
-                <Medal className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+              <div className={`font-bold flex items-center gap-1.5 ${effectiveDark ? 'text-amber-400' : 'text-amber-700'}`}>
+                <Medal className={`w-4 h-4 ${effectiveDark ? 'text-amber-400' : 'text-amber-600'}`} />
                 <span>2. Komandan Terbaik (Bab A.6)</span>
               </div>
-              <p className="text-[11px] leading-relaxed text-slate-600 dark:text-slate-300">
+              <p className={`text-[11px] leading-relaxed ${effectiveDark ? 'text-slate-300' : 'text-slate-600'}`}>
                 Diurutkan berdasarkan <strong>Nilai Akhir Danton</strong> (Nilai Murni 3 Juri dikurangi Penalti Danton).
               </p>
               <div
@@ -585,11 +667,11 @@ export default function LiveLeaderboard() {
                   : 'bg-white border-amber-200/80 shadow-2xs'
               }`}
             >
-              <div className="font-bold text-amber-700 dark:text-amber-400 flex items-center gap-1.5">
+              <div className={`font-bold flex items-center gap-1.5 ${effectiveDark ? 'text-amber-400' : 'text-amber-700'}`}>
                 <Crown className="w-4 h-4 text-amber-500" />
                 <span>3. Piala Bergilir Juara Umum (Bab A.7 & 8)</span>
               </div>
-              <p className="text-[11px] leading-relaxed text-slate-600 dark:text-slate-300">
+              <p className={`text-[11px] leading-relaxed ${effectiveDark ? 'text-slate-300' : 'text-slate-600'}`}>
                 Dihitung dari akumulasi poin prestasi per sekolah pada jenjang terkait:
               </p>
               <div
@@ -599,7 +681,7 @@ export default function LiveLeaderboard() {
               >
                 <div><strong>Peleton:</strong> Juara 1=6 pt, 2=5 pt, 3=4 pt, H1=3 pt, H2=2 pt, H3=1 pt.</div>
                 <div><strong>Danton:</strong> Juara 1=3 pt, 2=2 pt, 3=1 pt.</div>
-                <div className="font-bold text-amber-700 dark:text-amber-400">Total Poin = Poin Peleton + Poin Danton.</div>
+                <div className={`font-bold ${effectiveDark ? 'text-amber-400' : 'text-amber-700'}`}>Total Poin = Poin Peleton + Poin Danton.</div>
               </div>
             </div>
           </div>
@@ -743,13 +825,19 @@ export default function LiveLeaderboard() {
             <Lock className="w-7 h-7" />
           </div>
           <div className="max-w-xl mx-auto space-y-1.5">
-            <span className="text-[10px] font-black uppercase tracking-widest text-amber-600 dark:text-amber-400 bg-amber-500/15 px-3 py-1 rounded-full border border-amber-500/30">
+            <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full border border-amber-500/30 ${
+              effectiveDark ? 'text-amber-400 bg-amber-500/15' : 'text-amber-800 bg-amber-100'
+            }`}>
               Kerahasiaan Penjurian Resmi LBB 2027
             </span>
-            <h3 className="text-lg sm:text-xl font-black uppercase tracking-tight text-slate-900 dark:text-white">
+            <h3 className={`text-lg sm:text-xl font-black uppercase tracking-tight ${
+              effectiveDark ? 'text-white' : 'text-slate-900'
+            }`}>
               Hasil Klasemen & Skor Sementara Sedang Direkap
             </h3>
-            <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+            <p className={`text-xs leading-relaxed ${
+              effectiveDark ? 'text-slate-300' : 'text-slate-600'
+            }`}>
               Sesuai Juknis Bab A.9 & A.10, perolehan nilai sedang diverifikasi dalam Sidang Pleno Dewan Juri. Skor resmi akan ditampilkan secara transparan setelah penandatanganan Berita Acara Kejuaraan.
             </p>
           </div>
@@ -767,34 +855,44 @@ export default function LiveLeaderboard() {
                 : 'bg-white border-slate-200/90 shadow-xs text-slate-900'
             }`}
           >
-            <div
-              className={`w-12 h-12 rounded-2xl font-black text-lg flex items-center justify-center shadow-inner mb-3 ${
-                effectiveDark ? 'bg-slate-800 text-slate-200' : 'bg-slate-100 text-slate-700'
-              }`}
-            >
-              #2
+            <div className="flex flex-col items-center w-full">
+              {/* Integrated Hero Avatar with Medal Badge */}
+              <div className="relative mb-3 inline-flex items-center justify-center">
+                <SchoolLogo
+                  team={currentPodiumData[1].team}
+                  schoolName={currentPodiumData[1].schoolName}
+                  size="podium-md"
+                />
+                <div className="absolute -top-1.5 -right-1.5 w-6 h-6 rounded-full bg-gradient-to-br from-slate-200 to-slate-400 text-slate-900 font-black text-xs flex items-center justify-center shadow-md border border-white">
+                  2
+                </div>
+              </div>
+
+              <span
+                className={`text-[10px] uppercase font-black tracking-wider px-2.5 py-0.5 rounded-full border mb-2 ${
+                  effectiveDark
+                    ? 'bg-slate-800 text-slate-300 border-slate-700'
+                    : 'bg-slate-100 text-slate-700 border-slate-200'
+                }`}
+              >
+                {currentPodiumData[1].title}
+              </span>
+
+              <h3
+                className={`font-black text-base sm:text-lg leading-snug line-clamp-2 ${
+                  effectiveDark ? 'text-white' : 'text-slate-900'
+                }`}
+              >
+                {currentPodiumData[1].mainTitle}
+              </h3>
+              <p
+                className={`text-xs font-medium mt-1 ${
+                  effectiveDark ? 'text-slate-400' : 'text-slate-500'
+                }`}
+              >
+                {currentPodiumData[1].subTitle}
+              </p>
             </div>
-            <span
-              className={`text-[11px] uppercase font-black tracking-wider ${
-                effectiveDark ? 'text-slate-400' : 'text-slate-500'
-              }`}
-            >
-              {currentPodiumData[1].title}
-            </span>
-            <h3
-              className={`font-black text-lg mt-1.5 leading-snug ${
-                effectiveDark ? 'text-white' : 'text-slate-900'
-              }`}
-            >
-              {currentPodiumData[1].mainTitle}
-            </h3>
-            <p
-              className={`text-xs font-medium mt-0.5 ${
-                effectiveDark ? 'text-slate-400' : 'text-slate-500'
-              }`}
-            >
-              {currentPodiumData[1].subTitle}
-            </p>
             <div
               className={`mt-4 pt-3 border-t w-full ${
                 effectiveDark ? 'border-slate-800' : 'border-slate-100'
@@ -824,38 +922,52 @@ export default function LiveLeaderboard() {
                 : 'bg-gradient-to-b from-amber-50/90 via-yellow-50/40 to-white border-amber-300 shadow-md text-slate-900'
             }`}
           >
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-yellow-300 to-amber-500 text-slate-950 font-black text-2xl flex items-center justify-center shadow-md mb-3">
-              <Crown className="w-8 h-8 fill-current" />
+            <div className="flex flex-col items-center w-full">
+              {/* Integrated Hero Avatar with Crown Medal */}
+              <div className="relative mb-3 inline-flex items-center justify-center">
+                <SchoolLogo
+                  team={currentPodiumData[0].team}
+                  schoolName={currentPodiumData[0].schoolName}
+                  size="podium-lg"
+                />
+                <div className="absolute -top-1.5 -right-1.5 w-7 h-7 rounded-full bg-gradient-to-br from-yellow-300 to-amber-500 text-slate-950 flex items-center justify-center shadow-md border-2 border-white ring-2 ring-amber-400/50">
+                  <Crown className="w-3.5 h-3.5 fill-current" />
+                </div>
+              </div>
+
+              <span
+                className={`text-xs uppercase font-black tracking-widest px-3 py-1 rounded-full border mb-2 ${
+                  effectiveDark
+                    ? 'bg-amber-500/20 text-amber-300 border-amber-400/40'
+                    : 'bg-amber-100 text-amber-900 border-amber-300'
+                }`}
+              >
+                {currentPodiumData[0].title}
+              </span>
+
+              <h3
+                className={`font-black text-lg sm:text-xl leading-snug line-clamp-2 ${
+                  effectiveDark ? 'text-white' : 'text-slate-900'
+                }`}
+              >
+                {currentPodiumData[0].mainTitle}
+              </h3>
+              <p
+                className={`text-xs font-semibold mt-1 ${
+                  effectiveDark ? 'text-amber-300' : 'text-amber-800'
+                }`}
+              >
+                {currentPodiumData[0].subTitle}
+              </p>
             </div>
-            <span
-              className={`text-xs uppercase font-black tracking-widest px-3 py-1 rounded-full border ${
-                effectiveDark
-                  ? 'bg-amber-500/20 text-amber-300 border-amber-400/40'
-                  : 'bg-amber-100 text-amber-900 border-amber-300'
-              }`}
-            >
-              {currentPodiumData[0].title}
-            </span>
-            <h3
-              className={`font-black text-xl mt-2 leading-snug ${
-                effectiveDark ? 'text-white' : 'text-slate-900'
-              }`}
-            >
-              {currentPodiumData[0].mainTitle}
-            </h3>
-            <p
-              className={`text-xs font-semibold mt-0.5 ${
-                effectiveDark ? 'text-amber-300' : 'text-amber-800'
-              }`}
-            >
-              {currentPodiumData[0].subTitle}
-            </p>
             <div
               className={`mt-4 pt-3 border-t w-full ${
                 effectiveDark ? 'border-amber-900/40' : 'border-amber-200/80'
               }`}
             >
-              <div className="font-mono font-black text-3xl text-amber-600 dark:text-amber-400">
+              <div className={`font-mono font-black text-3xl ${
+                effectiveDark ? 'text-amber-400' : 'text-amber-600'
+              }`}>
                 {currentPodiumData[0].score}{' '}
                 <span className="text-xs font-normal text-slate-500">
                   {currentPodiumData[0].scoreLabel}
@@ -875,34 +987,44 @@ export default function LiveLeaderboard() {
                 : 'bg-white border-slate-200/90 shadow-xs text-slate-900'
             }`}
           >
-            <div
-              className={`w-12 h-12 rounded-2xl font-black text-lg flex items-center justify-center shadow-inner mb-3 ${
-                effectiveDark ? 'bg-orange-950/40 text-orange-300' : 'bg-orange-50 text-orange-800'
-              }`}
-            >
-              #3
+            <div className="flex flex-col items-center w-full">
+              {/* Integrated Hero Avatar with Medal Badge */}
+              <div className="relative mb-3 inline-flex items-center justify-center">
+                <SchoolLogo
+                  team={currentPodiumData[2].team}
+                  schoolName={currentPodiumData[2].schoolName}
+                  size="podium-md"
+                />
+                <div className="absolute -top-1.5 -right-1.5 w-6 h-6 rounded-full bg-gradient-to-br from-amber-700 to-amber-900 text-white font-black text-xs flex items-center justify-center shadow-md border border-white">
+                  3
+                </div>
+              </div>
+
+              <span
+                className={`text-[10px] uppercase font-black tracking-wider px-2.5 py-0.5 rounded-full border mb-2 ${
+                  effectiveDark
+                    ? 'bg-orange-950/40 text-orange-400 border-orange-800/40'
+                    : 'bg-orange-50 text-orange-800 border-orange-200'
+                }`}
+              >
+                {currentPodiumData[2].title}
+              </span>
+
+              <h3
+                className={`font-black text-base sm:text-lg leading-snug line-clamp-2 ${
+                  effectiveDark ? 'text-white' : 'text-slate-900'
+                }`}
+              >
+                {currentPodiumData[2].mainTitle}
+              </h3>
+              <p
+                className={`text-xs font-medium mt-1 ${
+                  effectiveDark ? 'text-slate-400' : 'text-slate-500'
+                }`}
+              >
+                {currentPodiumData[2].subTitle}
+              </p>
             </div>
-            <span
-              className={`text-[11px] uppercase font-black tracking-wider ${
-                effectiveDark ? 'text-orange-400' : 'text-orange-800'
-              }`}
-            >
-              {currentPodiumData[2].title}
-            </span>
-            <h3
-              className={`font-black text-lg mt-1.5 leading-snug ${
-                effectiveDark ? 'text-white' : 'text-slate-900'
-              }`}
-            >
-              {currentPodiumData[2].mainTitle}
-            </h3>
-            <p
-              className={`text-xs font-medium mt-0.5 ${
-                effectiveDark ? 'text-slate-400' : 'text-slate-500'
-              }`}
-            >
-              {currentPodiumData[2].subTitle}
-            </p>
             <div
               className={`mt-4 pt-3 border-t w-full ${
                 effectiveDark ? 'border-slate-800' : 'border-slate-100'
@@ -972,9 +1094,8 @@ export default function LiveLeaderboard() {
                   }`}
                 >
                   {isOfficialScoreVisible && <th className="py-3.5 px-4 text-center w-28">Peringkat & Gelar</th>}
-                  <th className="py-3.5 px-3 text-center w-16">No. Undi</th>
+                  <th className="py-3.5 px-3 text-center w-20">No. Dada</th>
                   <th className="py-3.5 px-4">Peleton & Pangkalan Sekolah</th>
-                  <th className="py-3.5 px-3 text-center w-20">Jenjang</th>
                   {isOfficialScoreVisible ? (
                     <>
                       <th className="py-3.5 px-3 text-center w-16">Juri 1</th>
@@ -987,7 +1108,9 @@ export default function LiveLeaderboard() {
                       >
                         Nilai Murni
                       </th>
-                      <th className="py-3.5 px-3 text-center w-20 text-rose-600 dark:text-rose-400">Penalti</th>
+                      <th className={`py-3.5 px-3 text-center w-20 font-bold ${
+                        effectiveDark ? 'text-rose-400' : 'text-rose-600'
+                      }`}>Penalti</th>
                       <th
                         className={`py-3.5 px-3 text-center w-28 ${
                           effectiveDark
@@ -1010,7 +1133,7 @@ export default function LiveLeaderboard() {
               >
                 {finalFilteredPeleton.length === 0 ? (
                   <tr>
-                    <td colSpan={isOfficialScoreVisible ? 10 : 4} className="py-8 text-center text-slate-400">
+                    <td colSpan={isOfficialScoreVisible ? 9 : 3} className="py-8 text-center text-slate-400">
                       Belum ada peleton pada filter ini.
                     </td>
                   </tr>
@@ -1023,6 +1146,7 @@ export default function LiveLeaderboard() {
                     const murni = item.nilaiMurniPeleton > 0 ? item.nilaiMurniPeleton : '-';
                     const akhir = item.nilaiAkhirPeleton > 0 ? item.nilaiAkhirPeleton : '-';
                     const penalty = item.peletonPenalty || 0;
+                    const chestNumber = item.team.chestNumber || (item.team.lotNumber ? getChestNumberByLot(item.team.jenjang, item.team.lotNumber) : '') || '--';
 
                     return (
                       <tr
@@ -1044,7 +1168,9 @@ export default function LiveLeaderboard() {
                                 <span className="w-6 h-6 rounded-full bg-amber-400 text-slate-950 font-black text-xs inline-flex items-center justify-center shadow-xs">
                                   1
                                 </span>
-                                <span className="text-[10px] font-black text-amber-700 dark:text-amber-400 mt-0.5 whitespace-nowrap">
+                                <span className={`text-[10px] font-black mt-0.5 whitespace-nowrap ${
+                                  effectiveDark ? 'text-amber-400' : 'text-amber-700'
+                                }`}>
                                   {item.shortTitle}
                                 </span>
                               </div>
@@ -1054,7 +1180,9 @@ export default function LiveLeaderboard() {
                                 <span className="w-6 h-6 rounded-full bg-slate-300 text-slate-900 font-black text-xs inline-flex items-center justify-center shadow-xs">
                                   2
                                 </span>
-                                <span className="text-[10px] font-bold text-slate-600 dark:text-slate-300 mt-0.5 whitespace-nowrap">
+                                <span className={`text-[10px] font-bold mt-0.5 whitespace-nowrap ${
+                                  effectiveDark ? 'text-slate-200' : 'text-slate-800'
+                                }`}>
                                   {item.shortTitle}
                                 </span>
                               </div>
@@ -1064,25 +1192,36 @@ export default function LiveLeaderboard() {
                                 <span className="w-6 h-6 rounded-full bg-amber-700 text-white font-black text-xs inline-flex items-center justify-center shadow-xs">
                                   3
                                 </span>
-                                <span className="text-[10px] font-bold text-amber-800 dark:text-amber-400 mt-0.5 whitespace-nowrap">
+                                <span className={`text-[10px] font-bold mt-0.5 whitespace-nowrap ${
+                                  effectiveDark ? 'text-amber-400' : 'text-amber-800'
+                                }`}>
                                   {item.shortTitle}
                                 </span>
                               </div>
                             )}
-                            {item.rank > 3 && item.shortTitle && (
-                              <div className="inline-flex flex-col items-center">
-                                <span className="font-mono font-bold text-xs text-slate-700 dark:text-slate-300">
+                            {item.rank > 3 && (
+                              item.shortTitle ? (
+                                <div className="inline-flex flex-col items-center">
+                                  <span className={`w-5 h-5 rounded-full font-bold text-[11px] inline-flex items-center justify-center ${
+                                    effectiveDark
+                                      ? 'bg-emerald-950/80 text-emerald-300 border border-emerald-800/60'
+                                      : 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                                  }`}>
+                                    {item.rank}
+                                  </span>
+                                  <span className={`text-[9px] font-bold mt-0.5 whitespace-nowrap ${
+                                    effectiveDark ? 'text-emerald-400' : 'text-emerald-800'
+                                  }`}>
+                                    {item.shortTitle}
+                                  </span>
+                                </div>
+                              ) : (
+                                <span className={`font-mono font-bold text-xs ${
+                                  effectiveDark ? 'text-slate-500' : 'text-slate-400'
+                                }`}>
                                   {item.rank}
                                 </span>
-                                <span className="text-[9px] font-semibold text-emerald-700 dark:text-emerald-400 whitespace-nowrap">
-                                  {item.shortTitle}
-                                </span>
-                              </div>
-                            )}
-                            {item.rank > 6 && (
-                              <span className="font-mono font-bold text-xs text-slate-400 dark:text-slate-500">
-                                {item.rank}
-                              </span>
+                              )
                             )}
                           </td>
                         )}
@@ -1091,34 +1230,32 @@ export default function LiveLeaderboard() {
                             effectiveDark ? 'text-slate-300' : 'text-slate-700'
                           }`}
                         >
-                          {item.team.lotNumber ? String(item.team.lotNumber).padStart(2, '0') : '--'}
+                          {chestNumber}
                         </td>
-                        <td className="py-3.5 px-4">
-                          <div
-                            className={`font-bold text-sm ${
-                              effectiveDark ? 'text-white' : 'text-slate-900'
-                            }`}
-                          >
-                            {item.team.schoolName}
+                        <td className="py-3 px-4">
+                          <div className="flex items-center gap-3">
+                            <SchoolLogo
+                              team={item.team}
+                              schoolName={item.team.schoolName}
+                              size="table"
+                            />
+                            <div className="min-w-0">
+                              <div
+                                className={`font-bold text-sm ${
+                                  effectiveDark ? 'text-white' : 'text-slate-900'
+                                }`}
+                              >
+                                {item.team.schoolName}
+                              </div>
+                              <div
+                                className={`text-[11px] font-medium ${
+                                  effectiveDark ? 'text-slate-400' : 'text-slate-500'
+                                }`}
+                              >
+                                {item.team.platoonName || 'Peleton'} (Danton: {item.team.dantonName || '-'})
+                              </div>
+                            </div>
                           </div>
-                          <div
-                            className={`text-[11px] font-medium ${
-                              effectiveDark ? 'text-slate-400' : 'text-slate-500'
-                            }`}
-                          >
-                            {item.team.platoonName || 'Peleton'} (Danton: {item.team.dantonName || '-'})
-                          </div>
-                        </td>
-                        <td className="py-3.5 px-3 text-center">
-                          <span
-                            className={`font-bold text-xs px-2 py-0.5 rounded border ${
-                              effectiveDark
-                                ? 'bg-slate-800 text-slate-300 border-slate-700'
-                                : 'bg-slate-100 text-slate-700 border-slate-200'
-                            }`}
-                          >
-                            {item.team.jenjang}
-                          </span>
                         </td>
                         {isOfficialScoreVisible ? (
                           <>
@@ -1152,7 +1289,9 @@ export default function LiveLeaderboard() {
                             >
                               {murni}
                             </td>
-                            <td className="py-3.5 px-3 text-center font-mono text-rose-600 dark:text-rose-400 font-bold">
+                            <td className={`py-3.5 px-3 text-center font-mono font-bold ${
+                              effectiveDark ? 'text-rose-400' : 'text-rose-600'
+                            }`}>
                               {penalty > 0 ? `-${penalty}` : '0'}
                             </td>
                             <td
@@ -1200,10 +1339,9 @@ export default function LiveLeaderboard() {
                   }`}
                 >
                   {isOfficialScoreVisible && <th className="py-3.5 px-4 text-center w-28">Peringkat & Gelar</th>}
-                  <th className="py-3.5 px-3 text-center w-16">No. Undi</th>
+                  <th className="py-3.5 px-3 text-center w-20">No. Dada</th>
                   <th className="py-3.5 px-4">Nama Komandan (Danton)</th>
                   <th className="py-3.5 px-4">Pangkalan Sekolah</th>
-                  <th className="py-3.5 px-3 text-center w-20">Jenjang</th>
                   {isOfficialScoreVisible ? (
                     <>
                       <th className="py-3.5 px-3 text-center w-16">Juri 1</th>
@@ -1216,7 +1354,9 @@ export default function LiveLeaderboard() {
                       >
                         Nilai Murni
                       </th>
-                      <th className="py-3.5 px-3 text-center w-20 text-rose-600 dark:text-rose-400">Penalti</th>
+                      <th className={`py-3.5 px-3 text-center w-20 font-bold ${
+                        effectiveDark ? 'text-rose-400' : 'text-rose-600'
+                      }`}>Penalti</th>
                       <th
                         className={`py-3.5 px-3 text-center w-28 ${
                           effectiveDark
@@ -1239,7 +1379,7 @@ export default function LiveLeaderboard() {
               >
                 {finalFilteredDanton.length === 0 ? (
                   <tr>
-                    <td colSpan={isOfficialScoreVisible ? 11 : 5} className="py-8 text-center text-slate-400">
+                    <td colSpan={isOfficialScoreVisible ? 10 : 4} className="py-8 text-center text-slate-400">
                       Belum ada data danton pada filter ini.
                     </td>
                   </tr>
@@ -1252,6 +1392,7 @@ export default function LiveLeaderboard() {
                     const murni = item.nilaiMurniDanton > 0 ? item.nilaiMurniDanton : '-';
                     const akhir = item.nilaiAkhirDanton > 0 ? item.nilaiAkhirDanton : '-';
                     const penalty = item.dantonPenalty || 0;
+                    const chestNumber = item.team.chestNumber || (item.team.lotNumber ? getChestNumberByLot(item.team.jenjang, item.team.lotNumber) : '') || '--';
 
                     return (
                       <tr
@@ -1273,7 +1414,9 @@ export default function LiveLeaderboard() {
                                 <span className="w-6 h-6 rounded-full bg-amber-400 text-slate-950 font-black text-xs inline-flex items-center justify-center shadow-xs">
                                   1
                                 </span>
-                                <span className="text-[10px] font-black text-amber-700 dark:text-amber-400 mt-0.5 whitespace-nowrap">
+                                <span className={`text-[10px] font-black mt-0.5 whitespace-nowrap ${
+                                  effectiveDark ? 'text-amber-400' : 'text-amber-700'
+                                }`}>
                                   {item.shortTitle}
                                 </span>
                               </div>
@@ -1283,7 +1426,9 @@ export default function LiveLeaderboard() {
                                 <span className="w-6 h-6 rounded-full bg-slate-300 text-slate-900 font-black text-xs inline-flex items-center justify-center shadow-xs">
                                   2
                                 </span>
-                                <span className="text-[10px] font-bold text-slate-600 dark:text-slate-300 mt-0.5 whitespace-nowrap">
+                                <span className={`text-[10px] font-bold mt-0.5 whitespace-nowrap ${
+                                  effectiveDark ? 'text-slate-200' : 'text-slate-800'
+                                }`}>
                                   {item.shortTitle}
                                 </span>
                               </div>
@@ -1293,25 +1438,36 @@ export default function LiveLeaderboard() {
                                 <span className="w-6 h-6 rounded-full bg-amber-700 text-white font-black text-xs inline-flex items-center justify-center shadow-xs">
                                   3
                                 </span>
-                                <span className="text-[10px] font-bold text-amber-800 dark:text-amber-400 mt-0.5 whitespace-nowrap">
+                                <span className={`text-[10px] font-bold mt-0.5 whitespace-nowrap ${
+                                  effectiveDark ? 'text-amber-400' : 'text-amber-800'
+                                }`}>
                                   {item.shortTitle}
                                 </span>
                               </div>
                             )}
-                            {item.rank > 3 && item.shortTitle && (
-                              <div className="inline-flex flex-col items-center">
-                                <span className="font-mono font-bold text-xs text-slate-700 dark:text-slate-300">
+                            {item.rank > 3 && (
+                              item.shortTitle ? (
+                                <div className="inline-flex flex-col items-center">
+                                  <span className={`w-5 h-5 rounded-full font-bold text-[11px] inline-flex items-center justify-center ${
+                                    effectiveDark
+                                      ? 'bg-emerald-950/80 text-emerald-300 border border-emerald-800/60'
+                                      : 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                                  }`}>
+                                    {item.rank}
+                                  </span>
+                                  <span className={`text-[9px] font-bold mt-0.5 whitespace-nowrap ${
+                                    effectiveDark ? 'text-emerald-400' : 'text-emerald-800'
+                                  }`}>
+                                    {item.shortTitle}
+                                  </span>
+                                </div>
+                              ) : (
+                                <span className={`font-mono font-bold text-xs ${
+                                  effectiveDark ? 'text-slate-500' : 'text-slate-400'
+                                }`}>
                                   {item.rank}
                                 </span>
-                                <span className="text-[9px] font-semibold text-emerald-700 dark:text-emerald-400 whitespace-nowrap">
-                                  {item.shortTitle}
-                                </span>
-                              </div>
-                            )}
-                            {item.rank > 6 && (
-                              <span className="font-mono font-bold text-xs text-slate-400 dark:text-slate-500">
-                                {item.rank}
-                              </span>
+                              )
                             )}
                           </td>
                         )}
@@ -1320,7 +1476,7 @@ export default function LiveLeaderboard() {
                             effectiveDark ? 'text-slate-300' : 'text-slate-700'
                           }`}
                         >
-                          {item.team.lotNumber ? String(item.team.lotNumber).padStart(2, '0') : '--'}
+                          {chestNumber}
                         </td>
                         <td className="py-3.5 px-4">
                           <div
@@ -1338,23 +1494,21 @@ export default function LiveLeaderboard() {
                             {item.team.platoonName || 'Peleton'}
                           </div>
                         </td>
-                        <td
-                          className={`py-3.5 px-4 font-semibold ${
-                            effectiveDark ? 'text-slate-200' : 'text-slate-800'
-                          }`}
-                        >
-                          {item.team.schoolName}
-                        </td>
-                        <td className="py-3.5 px-3 text-center">
-                          <span
-                            className={`font-bold text-xs px-2 py-0.5 rounded border ${
-                              effectiveDark
-                                ? 'bg-slate-800 text-slate-300 border-slate-700'
-                                : 'bg-slate-100 text-slate-700 border-slate-200'
-                            }`}
-                          >
-                            {item.team.jenjang}
-                          </span>
+                        <td className="py-3 px-4">
+                          <div className="flex items-center gap-2.5">
+                            <SchoolLogo
+                              team={item.team}
+                              schoolName={item.team.schoolName}
+                              size="table"
+                            />
+                            <span
+                              className={`font-semibold ${
+                                effectiveDark ? 'text-slate-200' : 'text-slate-800'
+                              }`}
+                            >
+                              {item.team.schoolName}
+                            </span>
+                          </div>
                         </td>
                         {isOfficialScoreVisible ? (
                           <>
@@ -1388,7 +1542,9 @@ export default function LiveLeaderboard() {
                             >
                               {murni}
                             </td>
-                            <td className="py-3.5 px-3 text-center font-mono text-rose-600 dark:text-rose-400 font-bold">
+                            <td className={`py-3.5 px-3 text-center font-mono font-bold ${
+                              effectiveDark ? 'text-rose-400' : 'text-rose-600'
+                            }`}>
                               {penalty > 0 ? `-${penalty}` : '0'}
                             </td>
                             <td
@@ -1437,7 +1593,6 @@ export default function LiveLeaderboard() {
                 >
                   <th className="py-3.5 px-4 text-center w-28">Peringkat & Gelar</th>
                   <th className="py-3.5 px-4">Pangkalan Sekolah</th>
-                  <th className="py-3.5 px-3 text-center w-20">Jenjang</th>
                   <th className="py-3.5 px-4">Prestasi Peleton (Poin Juknis)</th>
                   <th className="py-3.5 px-4">Prestasi Danton (Poin Juknis)</th>
                   <th
@@ -1465,7 +1620,7 @@ export default function LiveLeaderboard() {
               >
                 {finalFilteredJuaraUmum.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="py-8 text-center text-slate-400">
+                    <td colSpan={6} className="py-8 text-center text-slate-400">
                       Belum ada data akumulasi poin sekolah.
                     </td>
                   </tr>
@@ -1492,7 +1647,9 @@ export default function LiveLeaderboard() {
                               <span className="w-6 h-6 rounded-full bg-amber-400 text-slate-950 font-black text-xs inline-flex items-center justify-center shadow-xs">
                                 1
                               </span>
-                              <span className="text-[10px] font-black text-amber-700 dark:text-amber-400 mt-0.5 whitespace-nowrap">
+                              <span className={`text-[10px] font-black mt-0.5 whitespace-nowrap ${
+                                effectiveDark ? 'text-amber-400' : 'text-amber-700'
+                              }`}>
                                 Juara Umum
                               </span>
                             </div>
@@ -1502,7 +1659,9 @@ export default function LiveLeaderboard() {
                               <span className="w-6 h-6 rounded-full bg-slate-300 text-slate-900 font-black text-xs inline-flex items-center justify-center shadow-xs">
                                 2
                               </span>
-                              <span className="text-[10px] font-bold text-slate-600 dark:text-slate-300 mt-0.5 whitespace-nowrap">
+                              <span className={`text-[10px] font-bold mt-0.5 whitespace-nowrap ${
+                                effectiveDark ? 'text-slate-200' : 'text-slate-800'
+                              }`}>
                                 Runner-Up 1
                               </span>
                             </div>
@@ -1512,44 +1671,45 @@ export default function LiveLeaderboard() {
                               <span className="w-6 h-6 rounded-full bg-amber-700 text-white font-black text-xs inline-flex items-center justify-center shadow-xs">
                                 3
                               </span>
-                              <span className="text-[10px] font-bold text-amber-800 dark:text-amber-400 mt-0.5 whitespace-nowrap">
+                              <span className={`text-[10px] font-bold mt-0.5 whitespace-nowrap ${
+                                effectiveDark ? 'text-amber-400' : 'text-amber-800'
+                              }`}>
                                 Runner-Up 2
                               </span>
                             </div>
                           )}
                           {sch.rank > 3 && (
-                            <span className="font-mono font-bold text-xs text-slate-400 dark:text-slate-500">
+                            <span className={`font-mono font-bold text-xs ${
+                              effectiveDark ? 'text-slate-500' : 'text-slate-400'
+                            }`}>
                               {sch.rank}
                             </span>
                           )}
                         </td>
-                        <td className="py-3.5 px-4">
-                          <div
-                            className={`font-bold text-sm flex items-center gap-1.5 ${
-                              effectiveDark ? 'text-white' : 'text-slate-900'
-                            }`}
-                          >
-                            <Building2 className="w-4 h-4 text-amber-500 shrink-0" />
-                            <span>{sch.schoolName}</span>
+                        <td className="py-3 px-4">
+                          <div className="flex items-center gap-3">
+                            <SchoolLogo
+                              team={sch.team || sch.teams?.[0]?.team}
+                              schoolName={sch.schoolName}
+                              size="table"
+                            />
+                            <div className="min-w-0">
+                              <div
+                                className={`font-bold text-sm ${
+                                  effectiveDark ? 'text-white' : 'text-slate-900'
+                                }`}
+                              >
+                                {sch.schoolName}
+                              </div>
+                              <div
+                                className={`text-[11px] font-normal ${
+                                  effectiveDark ? 'text-slate-400' : 'text-slate-500'
+                                }`}
+                              >
+                                Perwakilan: {sch.teams.length} Peleton
+                              </div>
+                            </div>
                           </div>
-                          <div
-                            className={`text-[11px] font-normal ${
-                              effectiveDark ? 'text-slate-400' : 'text-slate-500'
-                            }`}
-                          >
-                            Perwakilan: {sch.teams.length} Peleton
-                          </div>
-                        </td>
-                        <td className="py-3.5 px-3 text-center">
-                          <span
-                            className={`font-bold text-xs px-2 py-0.5 rounded border ${
-                              effectiveDark
-                                ? 'bg-slate-800 text-slate-300 border-slate-700'
-                                : 'bg-slate-100 text-slate-700 border-slate-200'
-                            }`}
-                          >
-                            {sch.jenjang}
-                          </span>
                         </td>
                         <td className="py-2.5 px-4">
                           {sch.peletonAchievements.length > 0 ? (
@@ -1557,17 +1717,18 @@ export default function LiveLeaderboard() {
                               {sch.peletonAchievements.map((ach, i) => (
                                 <span
                                   key={i}
-                                  className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium border ${
+                                  className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold border whitespace-nowrap ${
                                     effectiveDark
-                                      ? 'bg-slate-800/80 border-slate-700 text-slate-200'
-                                      : 'bg-slate-50 border-slate-200/90 text-slate-800'
+                                      ? 'bg-slate-800/90 border-slate-700 text-slate-200'
+                                      : 'bg-white border-slate-200 shadow-2xs text-slate-800'
                                   }`}
                                 >
-                                  <Shield className="w-3.5 h-3.5 text-red-600 dark:text-red-400 shrink-0" />
-                                  <span className="font-semibold">{ach.platoonName}</span>
-                                  <span className="text-slate-400">·</span>
-                                  <span className="text-slate-600 dark:text-slate-300">{ach.shortTitle}</span>
-                                  <span className="font-black text-amber-600 dark:text-amber-400 bg-amber-500/10 px-1.5 py-0.5 rounded text-[10px]">
+                                  <Shield className={`w-3.5 h-3.5 shrink-0 ${effectiveDark ? 'text-red-400' : 'text-red-600'}`} />
+                                  <span className="font-bold">{ach.platoonName}</span>
+                                  <span className={`font-medium ${effectiveDark ? 'text-slate-400' : 'text-slate-500'}`}>({ach.shortTitle})</span>
+                                  <span className={`font-mono font-black text-[10px] px-1.5 py-0.5 rounded border ${
+                                    effectiveDark ? 'text-amber-300 bg-amber-400/20 border-amber-400/30' : 'text-amber-800 bg-amber-100 border-amber-300'
+                                  }`}>
                                     +{ach.points} pt
                                   </span>
                                 </span>
@@ -1583,17 +1744,18 @@ export default function LiveLeaderboard() {
                               {sch.dantonAchievements.map((ach, i) => (
                                 <span
                                   key={i}
-                                  className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium border ${
+                                  className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold border whitespace-nowrap ${
                                     effectiveDark
-                                      ? 'bg-slate-800/80 border-slate-700 text-slate-200'
-                                      : 'bg-slate-50 border-slate-200/90 text-slate-800'
+                                      ? 'bg-slate-800/90 border-slate-700 text-slate-200'
+                                      : 'bg-white border-slate-200 shadow-2xs text-slate-800'
                                   }`}
                                 >
                                   <Medal className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-                                  <span className="font-semibold">{ach.dantonName}</span>
-                                  <span className="text-slate-400">·</span>
-                                  <span className="text-slate-600 dark:text-slate-300">{ach.shortTitle}</span>
-                                  <span className="font-black text-amber-600 dark:text-amber-400 bg-amber-500/10 px-1.5 py-0.5 rounded text-[10px]">
+                                  <span className="font-bold">{ach.dantonName}</span>
+                                  <span className={`font-medium ${effectiveDark ? 'text-slate-400' : 'text-slate-500'}`}>({ach.shortTitle})</span>
+                                  <span className={`font-mono font-black text-[10px] px-1.5 py-0.5 rounded border ${
+                                    effectiveDark ? 'text-amber-300 bg-amber-400/20 border-amber-400/30' : 'text-amber-800 bg-amber-100 border-amber-300'
+                                  }`}>
                                     +{ach.points} pt
                                   </span>
                                 </span>

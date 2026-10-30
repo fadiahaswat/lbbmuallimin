@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lbb-muallimin-v1';
+const CACHE_NAME = 'lbb-muallimin-v2';
 const PRECACHE_ASSETS = [
   '/',
   '/index.html',
