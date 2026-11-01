@@ -35,38 +35,38 @@ export default function RegistrationTab({
   deleteTeam
 }) {
   return (
-    <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs space-y-5">
+    <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-slate-200 shadow-xs space-y-5">
       {/* Header Info Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] font-black uppercase tracking-wider text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3.5 border-b border-slate-100">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+            <span className="shrink-0 whitespace-nowrap text-[10px] font-black uppercase tracking-wider text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
               Tahap 1
             </span>
-            <h3 className="font-extrabold text-base text-slate-900 tracking-tight">
+            <h3 className="font-extrabold text-sm sm:text-base text-slate-900 tracking-tight leading-snug">
               Pemeriksaan Berkas Pendaftaran Awal
             </h3>
           </div>
-          <p className="text-xs text-slate-500 mt-1">
+          <p className="text-[11px] sm:text-xs text-slate-500 leading-relaxed">
             Verifikasi transfer bank BSI, kartu pelajar danton, logo sekolah, dan pakta integritas.
           </p>
         </div>
 
         {/* Counter Badges & Refresh */}
-        <div className="flex items-center gap-2 flex-wrap">
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-50 border border-amber-200 text-amber-800 text-xs font-bold">
-            <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+        <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap pt-0.5 sm:pt-0">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-50 border border-amber-200 text-amber-800 text-[11px] sm:text-xs font-bold whitespace-nowrap">
+            <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse shrink-0" />
             <span>{stage1PendingCount} Perlu Dicek</span>
           </div>
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-blue-50 border border-blue-200 text-blue-800 text-xs font-bold">
-            <CheckCircle2 className="w-3.5 h-3.5 text-blue-600" />
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-blue-50 border border-blue-200 text-blue-800 text-[11px] sm:text-xs font-bold whitespace-nowrap">
+            <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 shrink-0" />
             <span>{stage1AccCount} Terdaftar</span>
           </div>
           <button
             type="button"
             onClick={handleRefreshData}
             disabled={isRefreshing}
-            className="p-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-900 text-xs transition-all shadow-2xs active:scale-95 disabled:opacity-50"
+            className="p-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-900 text-xs transition-all shadow-2xs active:scale-95 disabled:opacity-50 shrink-0 ml-auto sm:ml-0"
             title="Segarkan data terbaru"
           >
             <RefreshCw className={`w-3.5 h-3.5 text-blue-600 ${isRefreshing ? 'animate-spin' : ''}`} />
@@ -74,45 +74,81 @@ export default function RegistrationTab({
         </div>
       </div>
 
-      {/* Clean Toolbar: Search & Select Filter */}
-      <div className="grid grid-cols-1 sm:grid-cols-12 gap-2.5 pt-1">
+      {/* Clean Toolbar: Search & Interactive Filter Pills */}
+      <div className="space-y-3 pt-1">
         {/* Search Input */}
-        <div className="sm:col-span-6 relative">
+        <div className="relative">
           <input
             type="text"
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             placeholder="Cari nama sekolah, kode, atau pembina..."
-            className="w-full pl-9 pr-3 py-2 bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all shadow-2xs"
+            className="w-full pl-9 pr-3 py-2 sm:py-2.5 bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all shadow-2xs"
           />
-          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5 sm:top-3" />
         </div>
 
-        {/* Filter Jenjang Dropdown */}
-        <div className="sm:col-span-3">
-          <select
-            value={selectedJenjang}
-            onChange={e => setSelectedJenjang(e.target.value)}
-            className="w-full px-3 py-2 bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all cursor-pointer shadow-2xs"
-          >
-            <option value="ALL">Semua Tingkat (SD & SMP)</option>
-            <option value="SD">Khusus SD / MI</option>
-            <option value="SMP">Khusus SMP / MTs</option>
-          </select>
-        </div>
+        {/* Filter Badges / Pills Row */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+          {/* Jenjang Pills */}
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
+            <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mr-1 shrink-0">
+              Jenjang:
+            </span>
+            {[
+              { id: 'ALL', label: 'Semua' },
+              { id: 'SD', label: 'SD / MI', activeClass: 'bg-rose-600 text-white shadow-rose-500/25 border-rose-600' },
+              { id: 'SMP', label: 'SMP / MTs', activeClass: 'bg-blue-600 text-white shadow-blue-500/25 border-blue-600' },
+            ].map(j => {
+              const isActive = selectedJenjang === j.id;
+              return (
+                <button
+                  key={j.id}
+                  type="button"
+                  onClick={() => setSelectedJenjang(j.id)}
+                  className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all shrink-0 cursor-pointer border ${
+                    isActive
+                      ? (j.activeClass || 'bg-slate-900 text-white border-slate-900 shadow-sm')
+                      : 'bg-slate-50 hover:bg-white text-slate-600 border-slate-200 hover:border-slate-300'
+                  }`}
+                >
+                  {j.label}
+                </button>
+              );
+            })}
+          </div>
 
-        {/* Filter Status Dropdown */}
-        <div className="sm:col-span-3">
-          <select
-            value={selectedStatus}
-            onChange={e => setSelectedStatus(e.target.value)}
-            className="w-full px-3 py-2 bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all cursor-pointer shadow-2xs"
-          >
-            <option value="ALL">Semua Status Berkas</option>
-            <option value="pending">Perlu Dicek (Pending)</option>
-            <option value="registered">ACC Terdaftar (Lolos)</option>
-            <option value="revision">Perlu Revisi Berkas</option>
-          </select>
+          {/* Status Pills */}
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
+            <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mr-1 shrink-0">
+              Status:
+            </span>
+            {[
+              { id: 'ALL', label: 'Semua Status' },
+              { id: 'pending', label: 'Perlu Dicek', dot: 'bg-amber-500', activeClass: 'bg-amber-500 text-white border-amber-500 shadow-amber-500/20' },
+              { id: 'registered', label: 'ACC Terdaftar', activeClass: 'bg-blue-600 text-white border-blue-600 shadow-blue-500/20' },
+              { id: 'revision', label: 'Perlu Revisi', activeClass: 'bg-rose-600 text-white border-rose-600 shadow-rose-500/20' },
+            ].map(st => {
+              const isActive = selectedStatus === st.id;
+              return (
+                <button
+                  key={st.id}
+                  type="button"
+                  onClick={() => setSelectedStatus(st.id)}
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all shrink-0 cursor-pointer border ${
+                    isActive
+                      ? (st.activeClass || 'bg-slate-900 text-white border-slate-900 shadow-sm')
+                      : 'bg-slate-50 hover:bg-white text-slate-600 border-slate-200 hover:border-slate-300'
+                  }`}
+                >
+                  {st.dot && !isActive && (
+                    <span className={`w-1.5 h-1.5 rounded-full ${st.dot} shrink-0`} />
+                  )}
+                  <span>{st.label}</span>
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
 

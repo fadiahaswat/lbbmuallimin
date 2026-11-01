@@ -465,7 +465,7 @@ export default function LiveLeaderboard() {
         team: item.team,
         schoolName: item.team.schoolName,
         mainTitle: item.team.schoolName,
-        subTitle: item.team.platoonName || 'Peleton PBB',
+        subTitle: item.team.dantonName ? `Danton: ${item.team.dantonName}` : (item.team.platoonName || 'Peleton PBB'),
         score: item.nilaiAkhirPeleton,
         scoreLabel: 'Nilai Akhir',
         subScore: `Murni: ${item.nilaiMurniPeleton} | Penalti: ${item.peletonPenalty}`,
@@ -862,8 +862,9 @@ export default function LiveLeaderboard() {
                   team={currentPodiumData[1].team}
                   schoolName={currentPodiumData[1].schoolName}
                   size="podium-md"
+                  isDark={effectiveDark}
                 />
-                <div className="absolute -top-1.5 -right-1.5 w-6 h-6 rounded-full bg-gradient-to-br from-slate-200 to-slate-400 text-slate-900 font-black text-xs flex items-center justify-center shadow-md border border-white">
+                <div className="absolute -top-1.5 -right-1.5 w-6 h-6 rounded-full bg-slate-300 text-slate-900 font-black text-xs flex items-center justify-center shadow-xs border border-white">
                   2
                 </div>
               </div>
@@ -929,9 +930,10 @@ export default function LiveLeaderboard() {
                   team={currentPodiumData[0].team}
                   schoolName={currentPodiumData[0].schoolName}
                   size="podium-lg"
+                  isDark={effectiveDark}
                 />
-                <div className="absolute -top-1.5 -right-1.5 w-7 h-7 rounded-full bg-gradient-to-br from-yellow-300 to-amber-500 text-slate-950 flex items-center justify-center shadow-md border-2 border-white ring-2 ring-amber-400/50">
-                  <Crown className="w-3.5 h-3.5 fill-current" />
+                <div className="absolute -top-1.5 -right-1.5 w-6 h-6 rounded-full bg-amber-400 text-slate-950 font-black text-xs flex items-center justify-center shadow-xs border border-white">
+                  1
                 </div>
               </div>
 
@@ -994,8 +996,9 @@ export default function LiveLeaderboard() {
                   team={currentPodiumData[2].team}
                   schoolName={currentPodiumData[2].schoolName}
                   size="podium-md"
+                  isDark={effectiveDark}
                 />
-                <div className="absolute -top-1.5 -right-1.5 w-6 h-6 rounded-full bg-gradient-to-br from-amber-700 to-amber-900 text-white font-black text-xs flex items-center justify-center shadow-md border border-white">
+                <div className="absolute -top-1.5 -right-1.5 w-6 h-6 rounded-full bg-amber-700 text-white font-black text-xs flex items-center justify-center shadow-xs border border-white">
                   3
                 </div>
               </div>
@@ -1238,6 +1241,7 @@ export default function LiveLeaderboard() {
                               team={item.team}
                               schoolName={item.team.schoolName}
                               size="table"
+                              isDark={effectiveDark}
                             />
                             <div className="min-w-0">
                               <div
@@ -1252,7 +1256,7 @@ export default function LiveLeaderboard() {
                                   effectiveDark ? 'text-slate-400' : 'text-slate-500'
                                 }`}
                               >
-                                {item.team.platoonName || 'Peleton'} (Danton: {item.team.dantonName || '-'})
+                                Danton: {item.team.dantonName || '-'}
                               </div>
                             </div>
                           </div>
@@ -1500,6 +1504,7 @@ export default function LiveLeaderboard() {
                               team={item.team}
                               schoolName={item.team.schoolName}
                               size="table"
+                              isDark={effectiveDark}
                             />
                             <span
                               className={`font-semibold ${
@@ -1692,6 +1697,7 @@ export default function LiveLeaderboard() {
                               team={sch.team || sch.teams?.[0]?.team}
                               schoolName={sch.schoolName}
                               size="table"
+                              isDark={effectiveDark}
                             />
                             <div className="min-w-0">
                               <div

@@ -212,18 +212,18 @@ export default function AdminDashboard() {
       <div className="space-y-6">
 
         {/* Page Title & Subtitle banner */}
-        <div className="bg-slate-900 text-white rounded-2xl p-6 shadow-sm border border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <div className="w-11 h-11 rounded-xl bg-white/[0.08] border border-white/10 text-slate-300 flex items-center justify-center shrink-0">
+        <div className="bg-slate-900 text-white rounded-2xl p-4 sm:p-6 shadow-sm border border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4">
+          <div className="flex items-center gap-3 sm:gap-4">
+            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-white/[0.08] border border-white/10 text-slate-300 flex items-center justify-center shrink-0">
               <Shield className="w-5 h-5 text-amber-400" />
             </div>
-            <div>
+            <div className="min-w-0">
               <div className="flex items-center gap-2">
-                <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-300 bg-white/[0.06] px-2 py-0.5 rounded border border-white/10">
+                <span className="text-[9px] sm:text-[10px] font-semibold uppercase tracking-wider text-slate-300 bg-white/[0.06] px-2 py-0.5 rounded border border-white/10">
                   Panel Sekretariat
                 </span>
               </div>
-              <h1 className="text-xl sm:text-2xl font-bold uppercase tracking-tight text-white mt-1">
+              <h1 className="text-base sm:text-xl md:text-2xl font-black uppercase tracking-tight text-white mt-1 leading-snug">
                 Dashboard Manajemen & Rekapitulasi
               </h1>
             </div>
@@ -231,16 +231,20 @@ export default function AdminDashboard() {
         </div>
 
         {/* Quota & Key Metrics Grid (Compact & Professional) */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3">
           {/* SD Quota */}
-          <div className="bg-white p-3.5 rounded-xl border border-slate-200/90 shadow-xs flex flex-col justify-between">
-            <div className="flex justify-between items-center mb-1">
-              <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wide">Kuota SD / MI</span>
-              <span className="text-[10px] font-black text-red-700 bg-red-50 border border-red-200/60 px-1.5 py-0.2 rounded">Target 18</span>
+          <div className="bg-white p-3 sm:p-3.5 rounded-xl border border-slate-200/90 shadow-xs flex flex-col justify-between">
+            <div className="flex justify-between items-center gap-1 mb-1">
+              <span className="text-[10px] sm:text-[11px] font-bold text-slate-500 uppercase tracking-wide truncate">
+                Kuota SD/MI
+              </span>
+              <span className="shrink-0 whitespace-nowrap text-[9px] sm:text-[10px] font-black text-red-700 bg-red-50 border border-red-200/60 px-1.5 py-0.5 rounded">
+                Target 18
+              </span>
             </div>
-            <div className="flex items-baseline gap-1.5 my-0.5">
+            <div className="flex items-baseline gap-1 sm:gap-1.5 my-0.5">
               <span className="text-xl sm:text-2xl font-black font-mono text-slate-900 leading-none">{countSD}</span>
-              <span className="text-[11px] text-slate-400 font-bold">/ 18 Peleton</span>
+              <span className="text-[10px] sm:text-[11px] text-slate-400 font-bold whitespace-nowrap">/ 18 Peleton</span>
             </div>
             <div className="w-full bg-slate-100 h-1.5 rounded-full mt-1.5 overflow-hidden">
               <div
@@ -251,14 +255,18 @@ export default function AdminDashboard() {
           </div>
 
           {/* SMP Quota */}
-          <div className="bg-white p-3.5 rounded-xl border border-slate-200/90 shadow-xs flex flex-col justify-between">
-            <div className="flex justify-between items-center mb-1">
-              <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wide">Kuota SMP / MTs</span>
-              <span className="text-[10px] font-black text-blue-700 bg-blue-50 border border-blue-200/60 px-1.5 py-0.2 rounded">Target 18</span>
+          <div className="bg-white p-3 sm:p-3.5 rounded-xl border border-slate-200/90 shadow-xs flex flex-col justify-between">
+            <div className="flex justify-between items-center gap-1 mb-1">
+              <span className="text-[10px] sm:text-[11px] font-bold text-slate-500 uppercase tracking-wide truncate">
+                Kuota SMP/MTs
+              </span>
+              <span className="shrink-0 whitespace-nowrap text-[9px] sm:text-[10px] font-black text-blue-700 bg-blue-50 border border-blue-200/60 px-1.5 py-0.5 rounded">
+                Target 18
+              </span>
             </div>
-            <div className="flex items-baseline gap-1.5 my-0.5">
+            <div className="flex items-baseline gap-1 sm:gap-1.5 my-0.5">
               <span className="text-xl sm:text-2xl font-black font-mono text-slate-900 leading-none">{countSMP}</span>
-              <span className="text-[11px] text-slate-400 font-bold">/ 18 Peleton</span>
+              <span className="text-[10px] sm:text-[11px] text-slate-400 font-bold whitespace-nowrap">/ 18 Peleton</span>
             </div>
             <div className="w-full bg-slate-100 h-1.5 rounded-full mt-1.5 overflow-hidden">
               <div
@@ -269,47 +277,53 @@ export default function AdminDashboard() {
           </div>
 
           {/* Pending Verifications */}
-          <div className="bg-white p-3.5 rounded-xl border border-slate-200/90 shadow-xs flex flex-col justify-between">
-            <div className="flex justify-between items-center mb-1">
-              <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wide">Perlu Tindakan</span>
+          <div className="bg-white p-3 sm:p-3.5 rounded-xl border border-slate-200/90 shadow-xs flex flex-col justify-between">
+            <div className="flex justify-between items-center gap-1 mb-1">
+              <span className="text-[10px] sm:text-[11px] font-bold text-slate-500 uppercase tracking-wide truncate">
+                Perlu Tindakan
+              </span>
               {stage1PendingCount + stage2PendingCount > 0 ? (
-                <span className="text-[10px] font-black text-amber-700 bg-amber-50 border border-amber-200/60 px-1.5 py-0.2 rounded animate-pulse">
+                <span className="shrink-0 whitespace-nowrap text-[9px] sm:text-[10px] font-black text-amber-700 bg-amber-50 border border-amber-200/60 px-1.5 py-0.5 rounded animate-pulse">
                   {stage1PendingCount + stage2PendingCount} Antrean
                 </span>
               ) : (
-                <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.2 rounded">
+                <span className="shrink-0 whitespace-nowrap text-[9px] sm:text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded">
                   Bersih
                 </span>
               )}
             </div>
-            <div className="flex items-baseline gap-1.5 my-0.5">
+            <div className="flex items-baseline gap-1 sm:gap-1.5 my-0.5">
               <span className="text-xl sm:text-2xl font-black font-mono text-amber-600 leading-none">
                 {stage1PendingCount + stage2PendingCount}
               </span>
-              <span className="text-[11px] text-slate-400 font-medium">Berkas Masuk</span>
+              <span className="text-[10px] sm:text-[11px] text-slate-400 font-medium whitespace-nowrap">
+                Berkas Masuk
+              </span>
             </div>
-            <p className="text-[10px] text-slate-400 mt-1 truncate">
-              {stage1PendingCount} pendaftaran • {stage2PendingCount} verifikasi
+            <p className="text-[9px] sm:text-[10px] text-slate-400 mt-1 truncate">
+              {stage1PendingCount} daftar • {stage2PendingCount} verifikasi
             </p>
           </div>
 
           {/* Total Dana Masuk */}
-          <div className="bg-white p-3.5 rounded-xl border border-slate-200/90 shadow-xs flex flex-col justify-between">
-            <div className="flex justify-between items-center mb-1">
-              <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wide">Penerimaan Dana</span>
+          <div className="bg-white p-3 sm:p-3.5 rounded-xl border border-slate-200/90 shadow-xs flex flex-col justify-between">
+            <div className="flex justify-between items-center gap-1 mb-1">
+              <span className="text-[10px] sm:text-[11px] font-bold text-slate-500 uppercase tracking-wide truncate">
+                Penerimaan Dana
+              </span>
             </div>
             <div className="text-xl sm:text-2xl font-black font-mono text-emerald-700 leading-none my-0.5">
               Rp{(totalRevenue / 1000).toLocaleString('id-ID')}k
             </div>
-            <p className="text-[10px] text-slate-400 mt-1 truncate">
-              Akumulasi gelombang 1 & 2
+            <p className="text-[9px] sm:text-[10px] text-slate-400 mt-1 truncate">
+              Akumulasi gel. 1 & 2
             </p>
           </div>
         </div>
 
-        {/* Tab Selection: Khusus Tahap 1 Pendaftaran & Verifikasi Berkas */}
-        <div className="bg-white rounded-3xl p-3 sm:p-4 border border-slate-200/90 shadow-md">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+        {/* Tab Selection: Khusus Tahap 1 Pendaftaran & Tahap 2 Verifikasi Berkas */}
+        <div className="bg-white rounded-2xl sm:rounded-3xl p-2.5 sm:p-3 border border-slate-200/90 shadow-sm">
+          <div className="grid grid-cols-2 gap-2 sm:gap-3">
             {[
               {
                 id: 'registration',
@@ -322,7 +336,6 @@ export default function AdminDashboard() {
                 activeRing: 'ring-blue-500/30',
                 stepBadge: 'bg-blue-500/20 text-blue-200 border-blue-400/30',
                 idleBadge: 'bg-blue-50 text-blue-700 border-blue-200',
-                isExternal: false,
               },
               {
                 id: 'verification',
@@ -335,35 +348,6 @@ export default function AdminDashboard() {
                 activeRing: 'ring-emerald-500/30',
                 stepBadge: 'bg-emerald-500/20 text-emerald-200 border-emerald-400/30',
                 idleBadge: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-                isExternal: false,
-              },
-              {
-                id: 'tm_link',
-                step: '03',
-                title: 'Technical Meeting',
-                subtitle: 'Menu Khusus TM ➔',
-                icon: Shuffle,
-                badge: '1 Fitur 1 Menu',
-                activeGradient: 'from-purple-600 via-purple-700 to-violet-800 text-white shadow-purple-500/25',
-                activeRing: 'ring-purple-500/30',
-                stepBadge: 'bg-purple-500/20 text-purple-200 border-purple-400/30',
-                idleBadge: 'bg-purple-50 text-purple-700 border-purple-200',
-                isExternal: true,
-                targetView: 'tm',
-              },
-              {
-                id: 'recap_link',
-                step: '04',
-                title: 'Rekap Nilai',
-                subtitle: 'Menu Khusus Rekap ➔',
-                icon: Trophy,
-                badge: '1 Fitur 1 Menu',
-                activeGradient: 'from-amber-500 via-amber-600 to-orange-700 text-white shadow-amber-500/25',
-                activeRing: 'ring-amber-500/30',
-                stepBadge: 'bg-amber-500/20 text-amber-100 border-amber-300/30',
-                idleBadge: 'bg-amber-50 text-amber-700 border-amber-200',
-                isExternal: true,
-                targetView: 'rekap_nilai',
               },
             ].map((tab) => {
               const isActive = activeTab === tab.id;
@@ -373,35 +357,29 @@ export default function AdminDashboard() {
                 <button
                   key={tab.id}
                   onClick={() => {
-                    if (tab.isExternal && tab.targetView) {
-                      setActiveView(tab.targetView);
-                    } else {
-                      setActiveTab(tab.id);
-                      setSelectedStatus('ALL');
-                    }
+                    setActiveTab(tab.id);
+                    setSelectedStatus('ALL');
                   }}
-                  className={`group relative p-3 sm:p-3.5 rounded-2xl transition-all duration-200 text-left cursor-pointer border overflow-hidden ${
+                  className={`group relative p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl transition-all duration-200 text-left cursor-pointer border overflow-hidden ${
                     isActive
-                      ? `bg-gradient-to-r ${tab.activeGradient} shadow-lg ring-2 ${tab.activeRing} border-transparent translate-y-[-1px]`
+                      ? `bg-gradient-to-r ${tab.activeGradient} shadow-md sm:shadow-lg ring-2 ${tab.activeRing} border-transparent`
                       : 'bg-slate-50/70 hover:bg-white border-slate-200/80 hover:border-slate-300 hover:shadow-xs'
                   }`}
                 >
-                  <div className="flex items-center justify-between gap-2 mb-2">
-                    <div className="flex items-center gap-2">
-                      <span
-                        className={`text-[11px] font-mono font-black px-2 py-0.5 rounded-lg border uppercase tracking-wider ${
-                          isActive
-                            ? tab.stepBadge
-                            : 'bg-white text-slate-500 border-slate-200'
-                        }`}
-                      >
-                        Tahap {tab.step}
-                      </span>
-                    </div>
+                  <div className="flex items-center justify-between gap-1.5 mb-1.5 sm:mb-2">
+                    <span
+                      className={`text-[9px] sm:text-[11px] font-mono font-black px-1.5 sm:px-2 py-0.5 rounded-md sm:rounded-lg border uppercase tracking-wider ${
+                        isActive
+                          ? tab.stepBadge
+                          : 'bg-white text-slate-500 border-slate-200'
+                      }`}
+                    >
+                      Tahap {tab.step}
+                    </span>
 
                     {tab.badge && (
                       <span
-                        className={`text-[10px] font-black px-2 py-0.5 rounded-full border uppercase tracking-tight shadow-xs ${
+                        className={`text-[9px] sm:text-[10px] font-black px-1.5 sm:px-2 py-0.5 rounded-full border uppercase tracking-tight shadow-xs whitespace-nowrap ${
                           isActive
                             ? 'bg-white/20 text-white border-white/30 backdrop-blur-xs'
                             : tab.idleBadge
@@ -412,27 +390,27 @@ export default function AdminDashboard() {
                     )}
                   </div>
 
-                  <div className="flex items-center gap-2.5">
+                  <div className="flex items-center gap-2 sm:gap-2.5">
                     <div
-                      className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-105 shadow-inner ${
+                      className={`w-8 h-8 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-105 shadow-inner ${
                         isActive
                           ? 'bg-white/15 text-white backdrop-blur-xs'
                           : 'bg-white text-slate-700 border border-slate-200/80'
                       }`}
                     >
-                      <TabIcon className="w-4 h-4" />
+                      <TabIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                     </div>
 
                     <div className="min-w-0 flex-1">
                       <h4
-                        className={`font-black text-sm uppercase tracking-tight leading-tight truncate ${
+                        className={`font-black text-xs sm:text-sm uppercase tracking-tight leading-tight truncate ${
                           isActive ? 'text-white' : 'text-slate-900 group-hover:text-slate-950'
                         }`}
                       >
                         {tab.title}
                       </h4>
                       <p
-                        className={`text-[11px] truncate leading-tight mt-0.5 ${
+                        className={`text-[10px] sm:text-[11px] truncate leading-tight mt-0.5 ${
                           isActive ? 'text-white/80' : 'text-slate-500'
                         }`}
                       >
@@ -443,7 +421,7 @@ export default function AdminDashboard() {
 
                   {/* Active bottom subtle glow line */}
                   {isActive && (
-                    <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/40 rounded-full mx-4" />
+                    <div className="absolute bottom-0 left-0 right-0 h-0.5 sm:h-1 bg-white/40 rounded-full mx-3 sm:mx-4" />
                   )}
                 </button>
               );

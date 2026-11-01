@@ -356,21 +356,23 @@ export default function TechnicalMeetingView() {
           </div>
 
           {/* Division Selector & Live Drawing Telemetry */}
-          <div className="p-4 sm:p-5 flex flex-col lg:flex-row lg:items-center justify-between gap-5">
+          <div className="p-3.5 sm:p-5 flex flex-col lg:flex-row lg:items-center justify-between gap-3.5 sm:gap-5">
             {/* Division Tabs: SD vs SMP */}
-            <div className="flex items-center gap-2 bg-slate-100/90 p-1 rounded-xl border border-slate-200/80 w-fit">
+            <div className="grid grid-cols-2 gap-1.5 sm:gap-2 bg-slate-100/90 p-1 rounded-xl border border-slate-200/80 w-full lg:w-fit">
               <button
                 type="button"
                 onClick={() => setSelectedJenjang('SD')}
-                className={`relative px-4 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all flex items-center gap-2.5 cursor-pointer ${
+                className={`relative px-2.5 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all flex items-center justify-between sm:justify-start gap-1.5 sm:gap-2.5 cursor-pointer ${
                   selectedJenjang === 'SD'
                     ? 'bg-white text-slate-900 shadow-sm border border-slate-200/60 font-black'
                     : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
                 }`}
               >
-                <span className={`w-2 h-2 rounded-full ${selectedJenjang === 'SD' ? 'bg-rose-600 ring-4 ring-rose-100' : 'bg-slate-400'}`} />
-                <span>Tingkat SD / MI</span>
-                <span className={`px-2 py-0.5 rounded-md text-[11px] font-mono font-bold ${
+                <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
+                  <span className={`w-2 h-2 rounded-full shrink-0 ${selectedJenjang === 'SD' ? 'bg-rose-600 ring-4 ring-rose-100' : 'bg-slate-400'}`} />
+                  <span className="whitespace-nowrap truncate">SD / MI</span>
+                </div>
+                <span className={`px-1.5 sm:px-2 py-0.5 rounded-md text-[10px] sm:text-[11px] font-mono font-bold shrink-0 whitespace-nowrap ${
                   selectedJenjang === 'SD' ? 'bg-rose-50 text-rose-800 border border-rose-200/80' : 'bg-slate-200/80 text-slate-600'
                 }`}>
                   {eligibleTeams.filter(t => t.jenjang === 'SD').length} Peleton
@@ -380,15 +382,17 @@ export default function TechnicalMeetingView() {
               <button
                 type="button"
                 onClick={() => setSelectedJenjang('SMP')}
-                className={`relative px-4 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all flex items-center gap-2.5 cursor-pointer ${
+                className={`relative px-2.5 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all flex items-center justify-between sm:justify-start gap-1.5 sm:gap-2.5 cursor-pointer ${
                   selectedJenjang === 'SMP'
                     ? 'bg-white text-slate-900 shadow-sm border border-slate-200/60 font-black'
                     : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
                 }`}
               >
-                <span className={`w-2 h-2 rounded-full ${selectedJenjang === 'SMP' ? 'bg-blue-600 ring-4 ring-blue-100' : 'bg-slate-400'}`} />
-                <span>Tingkat SMP / MTs</span>
-                <span className={`px-2 py-0.5 rounded-md text-[11px] font-mono font-bold ${
+                <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
+                  <span className={`w-2 h-2 rounded-full shrink-0 ${selectedJenjang === 'SMP' ? 'bg-blue-600 ring-4 ring-blue-100' : 'bg-slate-400'}`} />
+                  <span className="whitespace-nowrap truncate">SMP / MTs</span>
+                </div>
+                <span className={`px-1.5 sm:px-2 py-0.5 rounded-md text-[10px] sm:text-[11px] font-mono font-bold shrink-0 whitespace-nowrap ${
                   selectedJenjang === 'SMP' ? 'bg-blue-50 text-blue-800 border border-blue-200/80' : 'bg-slate-200/80 text-slate-600'
                 }`}>
                   {eligibleTeams.filter(t => t.jenjang === 'SMP').length} Peleton
@@ -397,18 +401,18 @@ export default function TechnicalMeetingView() {
             </div>
 
             {/* Drawing Telemetry & Progress */}
-            <div className="flex items-center gap-5 sm:gap-6 bg-slate-50 border border-slate-200/80 rounded-xl px-4 py-2.5">
-              <div className="space-y-1">
-                <div className="flex items-center justify-between gap-4">
-                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+            <div className="flex items-center justify-between gap-3 sm:gap-6 bg-slate-50 border border-slate-200/80 rounded-xl px-3 sm:px-4 py-2.5 w-full lg:w-auto">
+              <div className="space-y-1.5 flex-1 min-w-0">
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider truncate">
                     Status Pengundian
                   </span>
-                  <span className="text-xs font-mono font-bold text-slate-900">
+                  <span className="text-xs font-mono font-bold text-slate-900 shrink-0 whitespace-nowrap">
                     <strong className="font-black text-slate-950">{drawnCount}</strong> / {totalSlotsCount} Peleton
                   </span>
                 </div>
-                {/* Micro Progress Bar */}
-                <div className="w-48 sm:w-56 h-2 bg-slate-200/80 rounded-full overflow-hidden">
+                {/* Micro Progress Bar (100% width on mobile) */}
+                <div className="w-full sm:w-56 h-2 bg-slate-200/80 rounded-full overflow-hidden">
                   <div
                     className={`h-full transition-all duration-300 rounded-full ${
                       percentComplete === 100
@@ -422,7 +426,7 @@ export default function TechnicalMeetingView() {
 
               {/* Status Chip */}
               <div className="shrink-0">
-                <span className={`inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-mono font-black border ${
+                <span className={`inline-flex items-center px-2 sm:px-2.5 py-1 rounded-lg text-xs font-mono font-black border ${
                   percentComplete === 100
                     ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
                     : 'bg-white text-slate-800 border-slate-200/90 shadow-2xs'
@@ -579,10 +583,10 @@ export default function TechnicalMeetingView() {
                       } ${canManageLottery ? 'cursor-grab active:cursor-grabbing' : 'cursor-default'}`}
                     >
                       {/* Left: Drag Handle, Registration Index, School Logo & Info */}
-                      <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                      <div className="flex items-center gap-2 sm:gap-2.5 min-w-0 flex-1">
                         {canManageLottery && (
                           <div
-                            className="text-slate-300 hover:text-slate-600 cursor-grab active:cursor-grabbing shrink-0"
+                            className="hidden sm:block text-slate-300 hover:text-slate-600 cursor-grab active:cursor-grabbing shrink-0"
                             title="Tarik peleton ke slot urutan di sisi kanan"
                           >
                             <GripVertical className="w-3.5 h-3.5" />
@@ -590,12 +594,12 @@ export default function TechnicalMeetingView() {
                         )}
 
                         {/* Order Index Monospace */}
-                        <span className="font-mono text-[10px] font-bold text-slate-400 w-5 text-right shrink-0">
+                        <span className="font-mono text-[10px] font-bold text-slate-400 w-4 sm:w-5 text-right shrink-0">
                           #{String(regIndex).padStart(2, '0')}
                         </span>
 
                         {/* Logo / Monogram */}
-                        <div className="w-10 h-10 rounded-lg bg-slate-50 border border-slate-200/80 p-1 flex items-center justify-center shrink-0 overflow-hidden shadow-2xs">
+                        <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-slate-50 border border-slate-200/80 p-1 flex items-center justify-center shrink-0 overflow-hidden shadow-2xs">
                           {logoSrc ? (
                             <img
                               src={logoSrc}
@@ -614,15 +618,15 @@ export default function TechnicalMeetingView() {
 
                         {/* Team Details */}
                         <div className="min-w-0 flex-1">
-                          <h3 className="text-xs sm:text-sm font-bold text-slate-900 leading-snug break-words" title={team.schoolName}>
+                          <h3 className="text-xs sm:text-sm font-bold text-slate-900 leading-snug break-normal line-clamp-2" title={team.schoolName}>
                             {team.schoolName}
                           </h3>
-                          <div className="mt-1 flex items-center gap-2 text-[11px] text-slate-500 flex-wrap">
-                            <span className="inline-flex items-center gap-1 font-medium text-slate-700">
+                          <div className="mt-0.5 flex flex-col sm:flex-row sm:items-center gap-0.5 sm:gap-2 text-[11px] text-slate-500">
+                            <span className="inline-flex items-center gap-1 font-medium text-slate-700 truncate max-w-[150px] sm:max-w-none">
                               <UserCheck className="w-3 h-3 text-slate-400 shrink-0" />
-                              <span>{team.dantonName || 'Belum diisi'}</span>
+                              <span className="truncate">{team.dantonName || 'Belum diisi'}</span>
                             </span>
-                            <span className="text-slate-300">•</span>
+                            <span className="hidden sm:inline text-slate-300">•</span>
                             <span className="font-mono text-[10px] text-slate-400">
                               {team.regCode}
                             </span>
@@ -631,18 +635,18 @@ export default function TechnicalMeetingView() {
                       </div>
 
                       {/* Right: Slot Status or Pick Button */}
-                      <div className="shrink-0 flex items-center gap-2">
+                      <div className="shrink-0 flex items-center gap-1.5 sm:gap-2">
                         {isDrawn ? (
                           <div className="flex items-center gap-1.5">
-                            <span className="inline-flex items-center gap-1 text-[11px] font-mono font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
-                              <Check className="w-3 h-3 text-emerald-600" />
+                            <span className="inline-flex items-center gap-1 text-[11px] font-mono font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200 whitespace-nowrap">
+                              <Check className="w-3 h-3 text-emerald-600 shrink-0" />
                               <span>#{String(team.lotNumber).padStart(2, '0')}</span>
                             </span>
                             {canManageLottery && (
                               <button
                                 type="button"
                                 onClick={() => handleUnpairTeam(team.id)}
-                                className="p-1 rounded text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                                className="p-1 rounded text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer shrink-0"
                                 title="Lepas peleton dari urutan tampil"
                               >
                                 <X className="w-3.5 h-3.5" />
@@ -656,11 +660,11 @@ export default function TechnicalMeetingView() {
                             <button
                               type="button"
                               onClick={() => setActiveSlotPickerTeam(team)}
-                              className="px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-900 hover:bg-slate-800 text-white transition-all flex items-center gap-1 cursor-pointer shadow-2xs active:scale-95"
+                              className="px-2 sm:px-2.5 py-1 rounded-lg text-[11px] sm:text-xs font-bold bg-slate-900 hover:bg-slate-800 text-white transition-all flex items-center gap-1 cursor-pointer shadow-2xs active:scale-95 whitespace-nowrap shrink-0"
                               title="Pilih nomor urut tampil peleton"
                             >
                               <span>Pilih Slot</span>
-                              <ChevronRight className="w-3 h-3" />
+                              <ChevronRight className="w-3 h-3 shrink-0" />
                             </button>
                           )
                         )}
@@ -677,13 +681,13 @@ export default function TechnicalMeetingView() {
           {/* -------------------------------------------------------- */}
           <div className="lg:col-span-7 bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-[0_1px_3px_rgba(0,0,0,0.04)] space-y-4">
             {/* Header & Arena Info */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-3 border-b border-slate-100">
               <div>
-                <div className="flex items-center gap-2">
-                  <h2 className="text-sm font-black text-slate-900 uppercase tracking-tight">
-                    Papan Urutan Tampil Resmi ({selectedJenjang})
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h2 className="text-xs sm:text-sm font-black text-slate-900 uppercase tracking-tight">
+                    Papan Urutan Tampil ({selectedJenjang})
                   </h2>
-                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md border ${
+                  <span className={`shrink-0 whitespace-nowrap text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-md border ${
                     isSD
                       ? 'bg-rose-50 text-rose-800 border-rose-200/80'
                       : 'bg-blue-50 text-blue-800 border-blue-200/80'
@@ -691,13 +695,13 @@ export default function TechnicalMeetingView() {
                     {isSD ? 'Arena 1 (Basket)' : 'Arena 2 (Embung)'}
                   </span>
                 </div>
-                <p className="text-[11px] text-slate-500 mt-0.5">
+                <p className="text-[10px] sm:text-[11px] text-slate-500 mt-0.5 leading-relaxed">
                   Tarik peleton dari kolom kiri atau klik slot untuk menentukan urutan tampil
                 </p>
               </div>
 
               {/* Ceremony Badge Info */}
-              <div className="flex items-center gap-1.5 text-[11px] font-medium text-amber-900 bg-amber-50/80 border border-amber-200/80 px-2.5 py-1 rounded-lg">
+              <div className="self-start sm:self-auto flex items-center gap-1.5 text-[10px] sm:text-[11px] font-medium text-amber-900 bg-amber-50/80 border border-amber-200/80 px-2.5 py-1 rounded-lg shrink-0 whitespace-nowrap">
                 <Award className="w-3.5 h-3.5 text-amber-600 shrink-0" />
                 <span>Slot #06 – #10: Pasukan Upacara</span>
               </div>
@@ -736,7 +740,7 @@ export default function TechnicalMeetingView() {
                     onDragOver={(e) => onDragOverSlot(e, slot.lotNumber)}
                     onDragLeave={onDragLeaveSlot}
                     onDrop={(e) => onDropOnSlot(e, slot.lotNumber)}
-                    className={`rounded-xl border transition-all duration-150 p-2.5 sm:p-3 flex items-center gap-3 ${
+                    className={`rounded-xl border transition-all duration-150 p-2.5 sm:p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 ${
                       isHovered
                         ? 'bg-slate-100/90 border-slate-400 ring-2 ring-slate-400/30'
                         : assignedTeam
@@ -744,26 +748,28 @@ export default function TechnicalMeetingView() {
                         : 'bg-slate-50/40 border-slate-200 hover:border-slate-300'
                     }`}
                   >
-                    {/* 1. Urutan Tampil & Chest Bib Unit (Integrated Sports Bib) */}
-                    <div className="flex items-center gap-2 shrink-0">
-                      {/* Lot Draw Order */}
-                      <div className="w-9 h-9 rounded-lg bg-slate-900 text-white flex items-center justify-center font-mono font-black text-xs sm:text-sm shrink-0 shadow-2xs">
-                        #{String(slot.lotNumber).padStart(2, '0')}
+                    {/* Top Section on mobile, Left Side on sm+ */}
+                    <div className="flex items-center gap-2 sm:gap-2.5 min-w-0 flex-1 w-full sm:w-auto">
+                      {/* 1. Urutan Tampil & Chest Bib Unit (Integrated Sports Bib) */}
+                      <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+                        {/* Lot Draw Order */}
+                        <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-slate-900 text-white flex items-center justify-center font-mono font-black text-xs sm:text-sm shrink-0 shadow-2xs">
+                          #{String(slot.lotNumber).padStart(2, '0')}
+                        </div>
+
+                        {/* Chest Bib Number Badge */}
+                        <div className="flex flex-col items-center justify-center px-1.5 sm:px-2 py-0.5 rounded-lg bg-white border border-slate-200/90 shadow-2xs shrink-0 min-w-[46px] sm:min-w-[54px]">
+                          <span className="text-[7px] sm:text-[8px] font-bold text-slate-400 font-mono tracking-wider leading-none">
+                            BIB
+                          </span>
+                          <span className="text-xs sm:text-sm font-mono font-black text-slate-900 leading-tight">
+                            {slot.chestNumber}
+                          </span>
+                        </div>
                       </div>
 
-                      {/* Chest Bib Number Badge */}
-                      <div className="flex flex-col items-center justify-center px-2 py-0.5 rounded-lg bg-white border border-slate-200/90 shadow-2xs shrink-0 min-w-[54px]">
-                        <span className="text-[8px] font-bold text-slate-400 font-mono tracking-wider leading-none">
-                          BIB
-                        </span>
-                        <span className="text-xs sm:text-sm font-mono font-black text-slate-900 leading-tight">
-                          {slot.chestNumber}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* 2. Middle: Team Receptacle (Filled or Clean Empty Receptacle) */}
-                    <div className="flex-1 min-w-0">
+                      {/* 2. Middle: Team Receptacle (Filled or Clean Empty Receptacle) */}
+                      <div className="flex-1 min-w-0">
                       {assignedTeam ? (
                         <div
                           draggable={canManageLottery}
@@ -796,20 +802,20 @@ export default function TechnicalMeetingView() {
 
                             {/* School & Danton */}
                             <div className="min-w-0 flex-1">
-                              <div className="flex items-center gap-2 flex-wrap">
-                                <h3 className="font-bold text-xs sm:text-sm text-slate-900 leading-snug break-words" title={assignedTeam.schoolName}>
+                              <div className="flex items-center gap-1.5 flex-wrap">
+                                <h3 className="font-bold text-xs sm:text-sm text-slate-900 leading-snug break-normal line-clamp-1" title={assignedTeam.schoolName}>
                                   {assignedTeam.schoolName}
                                 </h3>
                                 {isCeremonySlot && (
-                                  <span className="text-[9px] font-bold text-amber-800 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200/80 shrink-0" title="Wajib Mengikuti Upacara Pembukaan">
+                                  <span className="text-[8px] sm:text-[9px] font-bold text-amber-800 bg-amber-50 px-1.5 py-0.2 rounded border border-amber-200/80 shrink-0 whitespace-nowrap" title="Wajib Mengikuti Upacara Pembukaan">
                                     ★ Upacara
                                   </span>
                                 )}
                               </div>
-                              <p className="text-[11px] text-slate-500 flex items-center gap-2 mt-0.5 flex-wrap">
-                                <span className="font-medium text-slate-700">Danton: {assignedTeam.dantonName || '-'}</span>
-                                <span className="text-slate-300">•</span>
-                                <span className="font-mono text-[10px] text-slate-400">{assignedTeam.regCode}</span>
+                              <p className="text-[10px] sm:text-[11px] text-slate-500 flex items-center gap-1.5 mt-0.5 flex-wrap">
+                                <span className="font-medium text-slate-700 truncate max-w-[130px] sm:max-w-none">Danton: {assignedTeam.dantonName || '-'}</span>
+                                <span className="hidden sm:inline text-slate-300">•</span>
+                                <span className="font-mono text-[9px] sm:text-[10px] text-slate-400 shrink-0">{assignedTeam.regCode}</span>
                               </p>
                             </div>
                           </div>
@@ -821,47 +827,50 @@ export default function TechnicalMeetingView() {
                               setActiveTeamPickerSlot(slot);
                             }
                           }}
-                          className={`py-2 px-3 rounded-lg border border-dashed transition-all cursor-pointer flex items-center justify-between gap-2 ${
+                          className={`py-1.5 sm:py-2 px-2 sm:px-3 rounded-lg border border-dashed transition-all cursor-pointer flex items-center justify-between gap-1.5 ${
                             isHovered
                               ? 'border-slate-500 bg-slate-100 text-slate-900 font-bold'
                               : 'border-slate-300/80 hover:border-slate-400 bg-white/60 hover:bg-white text-slate-500'
                           }`}
                           title={canManageLottery ? "Klik untuk memilih peleton atau seret peleton ke sini" : undefined}
                         >
-                          <div className="flex items-center gap-1.5 text-xs truncate">
+                          <div className="flex items-center gap-1.5 text-xs truncate min-w-0">
                             <ArrowDownToLine className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                            <span className="truncate">
-                              {isHovered ? 'Lepaskan Peleton di Sini' : 'Slot Kosong — Pasangkan Peleton'}
+                            <span className="truncate text-[10px] sm:text-xs">
+                              {isHovered ? 'Lepaskan Peleton' : 'Slot Kosong'}
                             </span>
                           </div>
 
                           {isCeremonySlot && (
-                            <span className="text-[9px] font-bold text-amber-800 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200/70 shrink-0">
-                              ★ Pasukan Upacara
+                            <span className="text-[8px] sm:text-[9px] font-bold text-amber-800 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200/70 shrink-0 whitespace-nowrap">
+                              ★ Upacara
                             </span>
                           )}
                         </div>
                       )}
                     </div>
+                  </div>
 
+                  {/* Bottom Section on mobile, Right Side on sm+ */}
+                  <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0 pt-1.5 sm:pt-0 border-t sm:border-t-0 border-slate-100 pl-16 sm:pl-0 w-full sm:w-auto">
                     {/* 3. Schedule Time (WIB) */}
-                    <div className="text-right shrink-0 whitespace-nowrap min-w-[68px] sm:min-w-[76px]">
-                      <span className="text-[9px] uppercase font-bold text-slate-400 block leading-none">
+                    <div className="text-left sm:text-right shrink-0 whitespace-nowrap">
+                      <span className="text-[8px] sm:text-[9px] uppercase font-bold text-slate-400 block leading-none">
                         Mulai Tampil
                       </span>
-                      <span className="font-mono font-bold text-xs text-slate-900 mt-0.5 block">
+                      <span className="font-mono font-bold text-[11px] sm:text-xs text-slate-900 mt-0.5 block">
                         {slot.startTampil}
                       </span>
                     </div>
 
                     {/* 4. Action Button */}
-                    <div className="shrink-0 flex items-center justify-end min-w-[50px]">
+                    <div className="shrink-0 flex items-center justify-end">
                       {assignedTeam ? (
                         canManageLottery && (
                           <button
                             type="button"
                             onClick={() => handleUnpairTeam(assignedTeam.id)}
-                            className="px-2 py-1 rounded text-[11px] font-semibold text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                            className="px-2.5 py-1 rounded text-[11px] font-semibold text-rose-600 sm:text-slate-400 hover:text-rose-600 bg-rose-50 sm:bg-transparent hover:bg-rose-50 transition-colors cursor-pointer shrink-0"
                             title="Lepas peleton dari slot ini"
                           >
                             Lepas
@@ -872,7 +881,7 @@ export default function TechnicalMeetingView() {
                           <button
                             type="button"
                             onClick={() => setActiveTeamPickerSlot(slot)}
-                            className="px-2.5 py-1 rounded-md text-[11px] font-bold bg-white hover:bg-slate-50 text-slate-700 border border-slate-200/90 shadow-2xs hover:border-slate-300 transition-all cursor-pointer active:scale-95"
+                            className="px-2.5 py-1 rounded-md text-[11px] font-bold bg-white hover:bg-slate-50 text-slate-700 border border-slate-200/90 shadow-2xs hover:border-slate-300 transition-all cursor-pointer active:scale-95 shrink-0 whitespace-nowrap"
                             title="Pilih peleton untuk slot ini"
                           >
                             + Pasang
@@ -882,6 +891,7 @@ export default function TechnicalMeetingView() {
                         )
                       )}
                     </div>
+                  </div>
                   </div>
                 );
               })}

@@ -8,19 +8,19 @@ export default function LotteryTab({
   updateTeamDraw
 }) {
   return (
-    <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
+    <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-8 border border-slate-200 shadow-xs space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
         <div>
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] font-black uppercase tracking-wider text-purple-700 bg-purple-50 px-2.5 py-0.5 rounded border border-purple-200">
+          <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+            <span className="shrink-0 whitespace-nowrap text-[10px] font-black uppercase tracking-wider text-purple-700 bg-purple-50 px-2.5 py-0.5 rounded border border-purple-200">
               Tahap 3 Undian Lapangan (TM)
             </span>
             <span className="text-xs text-slate-400">• Hanya Peleton Berstatus Sah & Lengkap</span>
           </div>
-          <h3 className="font-black text-xl text-slate-900 uppercase mt-1">
+          <h3 className="font-black text-base sm:text-xl text-slate-900 uppercase mt-1 leading-snug">
             3. Undian (Nomor Urut Tampil & Nomor Dada Lapangan)
           </h3>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <p className="text-[11px] sm:text-xs text-slate-500 mt-1 leading-relaxed">
             Pengundian nomor urut tampil dilakukan resmi saat Technical Meeting (Sabtu, 9 Januari 2027). Masukkan <strong>Nomor Urut Tampil</strong> dan <strong>Nomor Dada</strong> peleton yang diperoleh.
           </p>
         </div>

@@ -11,19 +11,19 @@ export default function RecapTab({
   setActiveView
 }) {
   return (
-    <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
+    <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-8 border border-slate-200 shadow-xs space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
         <div>
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] font-black uppercase tracking-wider text-amber-700 bg-amber-50 px-2.5 py-0.5 rounded border border-amber-200">
+          <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+            <span className="shrink-0 whitespace-nowrap text-[10px] font-black uppercase tracking-wider text-amber-700 bg-amber-50 px-2.5 py-0.5 rounded border border-amber-200">
               Tahap 4 Hasil Perlombaan
             </span>
             <span className="text-xs text-slate-400">• Rekapitulasi Dewan Juri Resmi</span>
           </div>
-          <h3 className="font-black text-xl text-slate-900 uppercase mt-1">
+          <h3 className="font-black text-base sm:text-xl text-slate-900 uppercase mt-1 leading-snug">
             4. Rekap Nilai & Pengumuman Juara LBB
           </h3>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <p className="text-[11px] sm:text-xs text-slate-500 mt-1 leading-relaxed">
             Rekapitulasi nilai akumulasi Danton, PBB Peleton (Teknik & Kekompakan), serta Pengurangan Nilai (Penalti) dari sistem penjurian.
           </p>
         </div>
