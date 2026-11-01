@@ -20,7 +20,9 @@ import {
   Trophy,
   ShieldCheck,
   ChevronDown,
-  ChevronRight
+  ChevronRight,
+  Crown,
+  ArrowLeft
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
 import { COMPETITION, PAYMENT, OFFICIAL_RAB } from '../../config.js';
@@ -31,8 +33,42 @@ export default function RabFinanceView() {
     teams,
     currentUser,
     role,
-    settings
+    settings,
+    setActiveView
   } = useCompetition();
+
+  const userRole = currentUser?.role || role;
+  if (userRole !== 'superadmin') {
+    return (
+      <div className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center p-6 text-center">
+        <div className="max-w-md w-full bg-slate-900 border border-slate-800 rounded-3xl p-8 space-y-5 shadow-2xl">
+          <div className="w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center mx-auto">
+            <Coins className="w-8 h-8" />
+          </div>
+          <div className="space-y-2">
+            <span className="text-[10px] font-black uppercase tracking-widest text-amber-400 bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/20">
+              Dokumen Keuangan Konfidensial
+            </span>
+            <h2 className="text-xl font-black uppercase tracking-tight text-white">
+              Akses RAB Khusus Superadmin
+            </h2>
+            <p className="text-xs text-slate-400 leading-relaxed">
+              Rencana Anggaran Biaya (RAB) dan rincian alokasi keuangan lomba hanya dapat dibuka oleh Akun Resmi Superadmin (Master Authority).
+            </p>
+          </div>
+          <div className="space-y-2.5 pt-2 w-full">
+            <button
+              type="button"
+              onClick={() => setActiveView('landing')}
+              className="w-full py-3 bg-slate-800 hover:bg-slate-700 active:scale-95 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all cursor-pointer shadow-sm"
+            >
+              Kembali ke Beranda
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const [activeTab, setActiveTab] = useState('pengeluaran'); // 'pengeluaran' | 'pemasukan'
   const [expandedDiv, setExpandedDiv] = useState(null);
@@ -70,6 +106,15 @@ export default function RabFinanceView() {
       rightActions={
         <div className="flex items-center gap-2">
           <button
+            type="button"
+            onClick={() => setActiveView('superadmin')}
+            className="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm cursor-pointer"
+            title="Kembali ke Panel Master System"
+          >
+            <Crown className="w-4 h-4 text-rose-400" />
+            <span className="hidden sm:inline">Kembali ke Master System</span>
+          </button>
+          <button
             onClick={handleExportCSV}
             className="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm cursor-pointer"
             title="Ekspor Laporan RAB ke CSV"
@@ -79,7 +124,7 @@ export default function RabFinanceView() {
           </button>
           <button
             onClick={handlePrintRAB}
-            className="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm cursor-pointer"
+            className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm cursor-pointer"
             title="Cetak Rencana Anggaran Biaya"
           >
             <Printer className="w-4 h-4" />

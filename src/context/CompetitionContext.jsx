@@ -30,7 +30,13 @@ import {
   canFillRegistrationForm,
   getChestNumberByLot
 } from './competitionHelpers.js';
-import { generate36DummyTeams } from '../data/dummyTestingData.js';
+import {
+  generate36DummyTeams,
+  generateDummyTestingSuite,
+  generateDummyStaging,
+  generateDummyScores,
+  generateDummyTrialPlan
+} from '../data/dummyTestingData.js';
 import { useFieldTimer } from './useFieldTimer.js';
 import { createScoringActions } from './scoringActions.js';
 import { createStagingActions } from './stagingActions.js';
@@ -156,15 +162,15 @@ export function CompetitionProvider({ children }) {
       if (Array.isArray(list) && list.length >= 36) {
         return list.map(normalizeTeamData);
       }
-      // Khusus Localhost: Otomatis sediakan 36 peleton dummy lengkap (18 SD + 18 SMP) jika belum lengkap
+      // Khusus Localhost: Otomatis sediakan 36 peleton dummy lengkap (18 SD + 18 SMP)
       if (isLocalhostEnvironment()) {
-        const dummy36 = generate36DummyTeams();
+        const dummy36 = generate36DummyTeams({ realisticWorkflow: true });
         safeSetItem(STORAGE_KEYS.TEAMS, JSON.stringify(dummy36));
         return dummy36.map(normalizeTeamData);
       }
       return Array.isArray(list) ? list.map(normalizeTeamData) : INITIAL_TEAMS;
     } catch {
-      return isLocalhostEnvironment() ? generate36DummyTeams().map(normalizeTeamData) : INITIAL_TEAMS;
+      return isLocalhostEnvironment() ? generate36DummyTeams({ realisticWorkflow: true }).map(normalizeTeamData) : INITIAL_TEAMS;
     }
   });
 
@@ -172,9 +178,20 @@ export function CompetitionProvider({ children }) {
   const [scores, setScores] = useState(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.SCORES);
-      return saved ? JSON.parse(saved) : INITIAL_SCORES;
-    } catch {
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed === 'object' && Object.keys(parsed).length > 0) {
+          return parsed;
+        }
+      }
+      if (isLocalhostEnvironment()) {
+        const dummyScores = generateDummyScores(teams);
+        safeSetItem(STORAGE_KEYS.SCORES, JSON.stringify(dummyScores));
+        return dummyScores;
+      }
       return INITIAL_SCORES;
+    } catch {
+      return isLocalhostEnvironment() ? generateDummyScores(teams) : INITIAL_SCORES;
     }
   });
 
@@ -182,9 +199,8 @@ export function CompetitionProvider({ children }) {
   const [settings, setSettings] = useState(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.SETTINGS);
-      if (!saved) return INITIAL_SETTINGS;
-      const parsed = JSON.parse(saved);
-      return {
+      const parsed = saved ? JSON.parse(saved) : {};
+      const base = {
         ...INITIAL_SETTINGS,
         ...parsed,
         // Selalu pastikan jadwal master resmi mengacu ke INITIAL_SETTINGS / EVENT resmi
@@ -193,6 +209,14 @@ export function CompetitionProvider({ children }) {
           ...INITIAL_SETTINGS.eventDates,
         }
       };
+      if (isLocalhostEnvironment()) {
+        if (!base.trialPlan || !base.trialPlan.SD?.slots?.some(Boolean)) {
+          base.trialPlan = generateDummyTrialPlan(teams);
+        }
+        base.trialSchedulePublished = true;
+        base.announcementPublished = true;
+      }
+      return base;
     } catch {
       return INITIAL_SETTINGS;
     }
@@ -211,9 +235,20 @@ export function CompetitionProvider({ children }) {
   const [staging, setStaging] = useState(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.STAGING);
-      return saved ? JSON.parse(saved) : INITIAL_STAGING;
-    } catch {
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed === 'object' && Object.keys(parsed).length > 0) {
+          return parsed;
+        }
+      }
+      if (isLocalhostEnvironment()) {
+        const dummyStaging = generateDummyStaging(teams);
+        safeSetItem(STORAGE_KEYS.STAGING, JSON.stringify(dummyStaging));
+        return dummyStaging;
+      }
       return INITIAL_STAGING;
+    } catch {
+      return isLocalhostEnvironment() ? generateDummyStaging(teams) : INITIAL_STAGING;
     }
   });
 
@@ -1257,17 +1292,42 @@ export function CompetitionProvider({ children }) {
     localStorage.removeItem(STORAGE_KEYS.CURRENT_TEAM_ID);
   }
 
-  // Khusus Localhost & Testing Superadmin: Muat 36 Peleton Dummy Lengkap (18 SD + 18 SMP)
+  // Khusus Localhost & Testing Superadmin: Muat 36 Peleton Dummy Lengkap di Seluruh 8 Menu
   function loadDummyTestingTeams() {
-    const fresh36 = generate36DummyTeams();
-    const normalized = fresh36.map(normalizeTeamData);
+    return loadFullLocalhostDummySuite();
+  }
+
+  // Khusus Localhost: Muat Seluruh Skenario Dummy Lengkap 8 Menu (Pendaftaran, TM, Uji Coba, Basecamp, DP, Juri, Rekap, Klasemen)
+  function loadFullLocalhostDummySuite() {
+    if (!isLocalhostEnvironment()) return { success: false, message: 'Fitur testing ini hanya aktif di lingkungan localhost.' };
+    const suite = generateDummyTestingSuite();
+    const normalized = suite.teams.map(normalizeTeamData);
     setTeams(normalized);
+    setStaging(suite.staging);
+    setScores(suite.scores);
+    setSettings(prev => ({
+      ...prev,
+      trialPlan: suite.trialPlan,
+      trialSchedulePublished: true,
+      announcementPublished: true,
+    }));
     safeSetItem(STORAGE_KEYS.TEAMS, JSON.stringify(normalized));
-    setScores({});
+    safeSetItem(STORAGE_KEYS.STAGING, JSON.stringify(suite.staging));
+    safeSetItem(STORAGE_KEYS.SCORES, JSON.stringify(suite.scores));
+    return { success: true, count: normalized.length };
+  }
+
+  // Khusus Localhost: Kosongkan Seluruh Data untuk Pengujian Alur Baru dari Nol
+  function clearAllLocalhostData() {
+    if (!isLocalhostEnvironment()) return { success: false, message: 'Fitur testing ini hanya aktif di lingkungan localhost.' };
+    setTeams([]);
     setStaging({});
-    localStorage.removeItem(STORAGE_KEYS.SCORES);
+    setScores({});
+    setSettings(INITIAL_SETTINGS);
+    localStorage.removeItem(STORAGE_KEYS.TEAMS);
     localStorage.removeItem(STORAGE_KEYS.STAGING);
-    return { success: true, count: fresh36.length };
+    localStorage.removeItem(STORAGE_KEYS.SCORES);
+    return { success: true };
   }
 
   // Khusus Testing TM: Undi otomatis acak semua nomor dada 18 SD & 18 SMP
@@ -1497,6 +1557,8 @@ export function CompetitionProvider({ children }) {
       updateSettings,
       resetToSeedData,
       loadDummyTestingTeams,
+      loadFullLocalhostDummySuite,
+      clearAllLocalhostData,
       randomizeAllLotNumbers,
       randomizeJenjangLotNumbers,
       clearJenjangLotNumbers,

@@ -22,32 +22,15 @@ import SimpaskorSidebarLayout from '../navigation/SimpaskorSidebarLayout.jsx';
 import logoLbb from '../../assets/logo-tonti.png';
 import logoMuallimin from '../../assets/logo-muallimin.png';
 
-export default function ProposalView() {
+export default function ProposalView({ embedded = false }) {
   const { setActiveView } = useCompetition();
 
   const handlePrintProposal = () => {
     window.print();
   };
 
-  return (
-    <SimpaskorSidebarLayout
-      activeMenu="proposal"
-      title="Proposal Resmi Kegiatan LBB 2027"
-      subtitle="Dokumen legalitas, tema Semangat Sebagai Ksatria Berjuang Dengan Gembira, landasan Perpang TNI, & skema kejuaraan"
-      rightActions={
-        <div className="flex items-center gap-2">
-          <button
-            onClick={handlePrintProposal}
-            className="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm cursor-pointer"
-            title="Cetak Proposal Resmi"
-          >
-            <Printer className="w-4 h-4" />
-            <span className="hidden sm:inline">Cetak Dokumen Proposal</span>
-          </button>
-        </div>
-      }
-    >
-      <div className="space-y-6 max-w-5xl mx-auto">
+  const mainContent = (
+    <div className="space-y-6 max-w-5xl mx-auto">
 
         {/* Paper Document Layout */}
         <div className="bg-white rounded-3xl p-6 sm:p-12 border border-slate-200 shadow-lg space-y-8 text-slate-800">
@@ -231,6 +214,31 @@ export default function ProposalView() {
         </div>
 
       </div>
+  );
+
+  if (embedded) {
+    return mainContent;
+  }
+
+  return (
+    <SimpaskorSidebarLayout
+      activeMenu="dokumen"
+      title="Proposal Resmi Kegiatan LBB 2027"
+      subtitle="Dokumen legalitas, tema Semangat Sebagai Ksatria Berjuang Dengan Gembira, landasan Perpang TNI, & skema kejuaraan"
+      rightActions={
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handlePrintProposal}
+            className="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm cursor-pointer"
+            title="Cetak Proposal Resmi"
+          >
+            <Printer className="w-4 h-4" />
+            <span className="hidden sm:inline">Cetak Dokumen Proposal</span>
+          </button>
+        </div>
+      }
+    >
+      {mainContent}
     </SimpaskorSidebarLayout>
   );
 }

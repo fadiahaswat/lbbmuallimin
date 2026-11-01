@@ -25,7 +25,7 @@ import { UJI_COBA_SCHEDULE, HARI_H_SCHEDULE } from '../../data/scheduleMatrices.
 import { RUNDOWN_DATA } from '../../data/juknisDocsData.js';
 import SimpaskorSidebarLayout from '../navigation/SimpaskorSidebarLayout.jsx';
 
-export default function TimelinePanitiaView() {
+export default function TimelinePanitiaView({ embedded = false }) {
   const { settings, currentUser } = useCompetition();
   const [activeTab, setActiveTab] = useState('roadmap'); // 'roadmap' | 'hari-h' | 'uji-coba' | 'rundown'
   const [matrixJenjang, setMatrixJenjang] = useState('SD');
@@ -85,25 +85,8 @@ export default function TimelinePanitiaView() {
     window.print();
   };
 
-  return (
-    <SimpaskorSidebarLayout
-      activeMenu="timeline"
-      title="Timeline & Agenda Kerja Panitia"
-      subtitle="Roadmap kronologis 37 tahapan operasional dari Fase A s.d. I (September 2026 – Februari 2027)"
-      rightActions={
-        <div className="flex items-center gap-2">
-          <button
-            onClick={handlePrint}
-            className="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm cursor-pointer"
-            title="Cetak Agenda Kerja Panitia"
-          >
-            <Printer className="w-4 h-4" />
-            <span className="hidden sm:inline">Cetak Agenda</span>
-          </button>
-        </div>
-      }
-    >
-      <div className="space-y-6">
+  const mainContent = (
+    <div className="space-y-6">
 
         {/* Banner Ringkasan Agenda Panitia */}
         <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-indigo-950 border border-slate-800 rounded-3xl p-6 sm:p-8 text-white relative overflow-hidden shadow-xl">
@@ -599,6 +582,31 @@ export default function TimelinePanitiaView() {
           </div>
         )}
       </div>
+  );
+
+  if (embedded) {
+    return mainContent;
+  }
+
+  return (
+    <SimpaskorSidebarLayout
+      activeMenu="dokumen"
+      title="Timeline & Agenda Kerja Panitia"
+      subtitle="Roadmap kronologis 37 tahapan operasional dari Fase A s.d. I (September 2026 – Februari 2027)"
+      rightActions={
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handlePrint}
+            className="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm cursor-pointer"
+            title="Cetak Agenda Kerja Panitia"
+          >
+            <Printer className="w-4 h-4" />
+            <span className="hidden sm:inline">Cetak Agenda</span>
+          </button>
+        </div>
+      }
+    >
+      {mainContent}
     </SimpaskorSidebarLayout>
   );
 }

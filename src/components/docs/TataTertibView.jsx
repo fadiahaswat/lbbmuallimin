@@ -22,7 +22,7 @@ import { DOWNLOADS, EVENT, VENUE } from '../../config.js';
 import { TATA_TERTIB_ARTICLES } from '../../data/tataTertibArticles.js';
 import SimpaskorSidebarLayout from '../navigation/SimpaskorSidebarLayout.jsx';
 
-export default function TataTertibView() {
+export default function TataTertibView({ embedded = false }) {
   const [activeTab, setActiveTab] = useState('articles'); // 'articles' | 'penalties'
   const [searchArticle, setSearchArticle] = useState('');
   const [searchPenalty, setSearchPenalty] = useState('');
@@ -186,14 +186,8 @@ export default function TataTertibView() {
     window.print();
   };
 
-  return (
-    <SimpaskorSidebarLayout
-      activeMenu="tatib"
-      title="Tata Tertib & Sanksi Penalti"
-      subtitle="Regulasi kepatuhan kontingen 15 Pasal, kewajiban suporter, matriks sanksi penalti Perpang TNI, & batas sanggah pukul 15.00 WIB"
-      hideHeader={true}
-    >
-      <div className="space-y-6">
+  const mainContent = (
+    <div className="space-y-6">
 
         {/* Top Header Card */}
         <div className="bg-gradient-to-r from-red-950 via-slate-900 to-rose-950 text-white rounded-3xl p-6 sm:p-8 shadow-xl border border-red-900/40 relative overflow-hidden">
@@ -612,6 +606,20 @@ export default function TataTertibView() {
         )}
 
       </div>
+  );
+
+  if (embedded) {
+    return mainContent;
+  }
+
+  return (
+    <SimpaskorSidebarLayout
+      activeMenu="dokumen"
+      title="Tata Tertib & Sanksi Penalti"
+      subtitle="Regulasi kepatuhan kontingen 15 Pasal, kewajiban suporter, matriks sanksi penalti Perpang TNI, & batas sanggah pukul 15.00 WIB"
+      hideHeader={true}
+    >
+      {mainContent}
     </SimpaskorSidebarLayout>
   );
 }

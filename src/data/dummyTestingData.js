@@ -2,7 +2,8 @@
  * src/data/dummyTestingData.js
  * Master Dataset Dummy Testing Lengkap untuk Lingkungan Localhost & Superadmin
  * Berisi 18 Peleton SD/MI dan 18 Peleton SMP/MTs (Total 36 Peleton)
- * Lengkap dengan Danton, 21 Pasukan Inti, 3 Cadangan, 3 Official, Berkas Sah, dan Siap Diuji.
+ * Lengkap dengan Danton, 21 Pasukan Inti, 3 Cadangan, 3 Official, Berkas Sah, dan Siap Diuji
+ * Menghubungkan seluruh alur: Pendaftaran, TM, Uji Coba, Basecamp, DP, Penjurian, Rekap, dan Klasemen!
  */
 
 const SD_SCHOOL_PROFILES = [
@@ -167,19 +168,36 @@ function createFullRoster(schoolName, jenjang, dantonName, officialName) {
 
 /**
  * Generate 36 Peleton Dummy Lengkap (18 SD + 18 SMP)
- * Seluruh berkas verified, belum diundi (lotNumber: null) agar siap ditest Technical Meeting
+ * Terkoneksi dengan status undian TM, status verifikasi berkas, dan profil peleton
  */
-export function generate36DummyTeams() {
+export function generate36DummyTeams({ realisticWorkflow = true } = {}) {
   const dummyTeams = [];
-  const nowIso = new Date().toISOString();
 
   // 18 Tim SD
   SD_SCHOOL_PROFILES.forEach((p, idx) => {
     const numStr = String(idx + 1).padStart(2, '0');
     const id = `dummy-team-sd-${numStr}`;
     const regCode = `LBB27-SD-${numStr}-${p.name.substring(0, 4).toUpperCase().replace(/[^A-Z]/g, '')}`;
-
     const regDateIso = new Date(2026, 9, 1, 8, idx * 35).toISOString();
+
+    // Skenario realistis: 14 tim sudah undi nomor (1-14), 4 tim belum undi (15-18) untuk test TM
+    let lotNumber = null;
+    let drawTime = null;
+    let status = 'verified';
+    let revisionNote = '';
+
+    if (realisticWorkflow) {
+      if (idx < 14) {
+        lotNumber = idx + 1;
+        drawTime = '2027-01-09T14:15:00+07:00';
+      }
+      if (idx === 15 || idx === 16) {
+        status = 'pending'; // Siap diuji fungsi verifikasi Admin
+      } else if (idx === 17) {
+        status = 'revision';
+        revisionNote = 'Surat rekomendasi kepala sekolah dan foto roster pasukan belum diunggah.';
+      }
+    }
 
     dummyTeams.push({
       id,
@@ -197,9 +215,9 @@ export function generate36DummyTeams() {
       waNumber: `0812${String(10000000 + idx * 8371).slice(-8)}`,
       email: `official.sd${numStr}@lbbmuallimin.com`,
       address: 'Daerah Istimewa Yogyakarta',
-      status: 'verified', // Terverifikasi sah, siap untuk diundi di TM!
-      lotNumber: null, // Belum diundi, siap ditest proses lotting
-      drawTime: null,
+      status,
+      lotNumber,
+      drawTime,
       registeredAt: regDateIso,
       createdAt: regDateIso,
       updatedAt: regDateIso,
@@ -232,10 +250,10 @@ export function generate36DummyTeams() {
           url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100',
         },
       },
-      revisionNote: '',
+      revisionNote,
       fieldTrial: {
         interested: true,
-        chosenSlotId: null,
+        chosenSlotId: idx + 1,
       },
       roster: createFullRoster(p.name, 'SD', p.danton, p.official),
     });
@@ -246,8 +264,25 @@ export function generate36DummyTeams() {
     const numStr = String(idx + 1).padStart(2, '0');
     const id = `dummy-team-smp-${numStr}`;
     const regCode = `LBB27-SMP-${numStr}-${p.name.substring(0, 4).toUpperCase().replace(/[^A-Z]/g, '')}`;
-
     const regDateIso = new Date(2026, 9, 1, 9, idx * 30).toISOString();
+
+    let lotNumber = null;
+    let drawTime = null;
+    let status = 'verified';
+    let revisionNote = '';
+
+    if (realisticWorkflow) {
+      if (idx < 14) {
+        lotNumber = idx + 1;
+        drawTime = '2027-01-09T14:45:00+07:00';
+      }
+      if (idx === 15 || idx === 16) {
+        status = 'pending';
+      } else if (idx === 17) {
+        status = 'revision';
+        revisionNote = 'Berkas formulir A.1 dan KTP Pembina belum dibubuhi stempel resmi.';
+      }
+    }
 
     dummyTeams.push({
       id,
@@ -265,9 +300,9 @@ export function generate36DummyTeams() {
       waNumber: `0813${String(20000000 + idx * 7241).slice(-8)}`,
       email: `official.smp${numStr}@lbbmuallimin.com`,
       address: 'Daerah Istimewa Yogyakarta',
-      status: 'verified', // Terverifikasi sah, siap untuk diundi di TM!
-      lotNumber: null, // Belum diundi, siap ditest proses lotting
-      drawTime: null,
+      status,
+      lotNumber,
+      drawTime,
       registeredAt: regDateIso,
       createdAt: regDateIso,
       updatedAt: regDateIso,
@@ -300,14 +335,386 @@ export function generate36DummyTeams() {
           url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100',
         },
       },
-      revisionNote: '',
+      revisionNote,
       fieldTrial: {
         interested: true,
-        chosenSlotId: null,
+        chosenSlotId: idx + 1,
       },
       roster: createFullRoster(p.name, 'SMP', p.danton, p.official),
     });
   });
 
   return dummyTeams;
+}
+
+/**
+ * Generate Data Alur Staging Lapangan Lengkap (Pos Basecamp, DP 1, DP 2, Arena, Selesai)
+ */
+export function generateDummyStaging(teams = []) {
+  const staging = {};
+
+  teams.forEach(team => {
+    const isSD = team.jenjang === 'SD';
+    const num = parseInt(team.id.replace(/[^0-9]/g, ''), 10) || 1;
+
+    // Skenario Distribusi Alur Realistis
+    if (num === 1) {
+      // Sedang di DP 1 (Pemeriksaan Berkas & Seragam)
+      staging[team.id] = {
+        id: team.id,
+        teamId: team.id,
+        stage: 'dp1',
+        basecamp: {
+          roomName: isSD ? 'Ruang A.101' : 'Ruang B.201',
+          ktpDeposited: true,
+          ktpOfficialName: team.officialName,
+          ktpHolderName: team.officialName,
+          ktpType: 'KTP Fisik',
+          ktpNumber: `347101${String(1000000000 + num * 4821).slice(-10)}`,
+          waterBoxGiven: true,
+          chestNumberGiven: true,
+          cocardGiven: true,
+          trashBagGiven: true,
+          checkInTime: '2027-01-24T06:15:00+07:00',
+          checkedInAt: '06.15 WIB',
+          checkedInBy: 'Panitia Basecamp & Barak',
+          checkedOut: false,
+        },
+        dp1: {
+          personnelChecked: true,
+          personnelCount: 22,
+          uniformChecked: true,
+          cocardChecked: true,
+          enteredDP1At: '2027-01-24T07:15:00+07:00',
+          passedBy: 'Petugas Pos DP 1',
+        },
+        checklist: {
+          basecampCheckIn: true,
+          dp1Verification: true,
+        },
+        durationSeconds: 0,
+        overtimePenaltyBlocks: 0,
+        notes: 'Peleton lengkap 1 Danton + 21 Pasukan, siap maju ke DP 2',
+        updatedAt: new Date().toISOString(),
+      };
+    } else if (num === 2) {
+      // Sedang di DP 2 (Gladi Bersih & Pemanasan 10 Menit)
+      staging[team.id] = {
+        id: team.id,
+        teamId: team.id,
+        stage: 'dp2',
+        basecamp: {
+          roomName: isSD ? 'Ruang A.102' : 'Ruang B.202',
+          ktpDeposited: true,
+          ktpOfficialName: team.officialName,
+          ktpHolderName: team.officialName,
+          ktpType: 'KTP Fisik',
+          ktpNumber: `347101${String(1000000000 + num * 4821).slice(-10)}`,
+          waterBoxGiven: true,
+          chestNumberGiven: true,
+          cocardGiven: true,
+          trashBagGiven: true,
+          checkInTime: '2027-01-24T06:25:00+07:00',
+          checkedInAt: '06.25 WIB',
+          checkedInBy: 'Panitia Basecamp & Barak',
+          checkedOut: false,
+        },
+        dp1: {
+          personnelChecked: true,
+          personnelCount: 22,
+          uniformChecked: true,
+          cocardChecked: true,
+          enteredDP1At: '2027-01-24T07:00:00+07:00',
+          passedBy: 'Petugas Pos DP 1',
+        },
+        dp2: {
+          warmingUpStartedAt: '2027-01-24T07:20:00+07:00',
+          readyForArena: true,
+        },
+        checklist: {
+          basecampCheckIn: true,
+          dp1Verification: true,
+          dp2Warmup: true,
+        },
+        durationSeconds: 480,
+        overtimePenaltyBlocks: 0,
+        notes: 'Gladi pemanasan selesai, siap memasuki arena perlombaan',
+        updatedAt: new Date().toISOString(),
+      };
+    } else if (num === 3) {
+      // Sedang Tampil di Arena Perlombaan
+      staging[team.id] = {
+        id: team.id,
+        teamId: team.id,
+        stage: 'arena',
+        basecamp: {
+          roomName: isSD ? 'Ruang A.103' : 'Ruang B.203',
+          ktpDeposited: true,
+          ktpOfficialName: team.officialName,
+          ktpHolderName: team.officialName,
+          ktpType: 'KTP Fisik',
+          waterBoxGiven: true,
+          chestNumberGiven: true,
+          cocardGiven: true,
+          trashBagGiven: true,
+          checkInTime: '2027-01-24T06:35:00+07:00',
+          checkedInAt: '06.35 WIB',
+          checkedInBy: 'Panitia Basecamp & Barak',
+          checkedOut: false,
+        },
+        enteredArenaAt: '2027-01-24T07:35:00+07:00',
+        checklist: {
+          basecampCheckIn: true,
+          dp1Verification: true,
+          dp2Warmup: true,
+          arenaEntered: true,
+        },
+        durationSeconds: 360,
+        overtimePenaltyBlocks: 0,
+        notes: 'Sedang melaksanakan materi PBB di depan 3 Dewan Juri',
+        updatedAt: new Date().toISOString(),
+      };
+    } else if (num === 4) {
+      // Sudah Selesai & Sudah Check-Out (Kliring Barak Selesai)
+      staging[team.id] = {
+        id: team.id,
+        teamId: team.id,
+        stage: 'finished',
+        basecamp: {
+          roomName: isSD ? 'Ruang A.104' : 'Ruang B.204',
+          ktpDeposited: true,
+          ktpOfficialName: team.officialName,
+          ktpHolderName: team.officialName,
+          ktpType: 'KTP Fisik',
+          waterBoxGiven: true,
+          chestNumberGiven: true,
+          cocardGiven: true,
+          trashBagGiven: true,
+          checkInTime: '2027-01-24T06:45:00+07:00',
+          checkedInAt: '06.45 WIB',
+          checkedInBy: 'Panitia Basecamp & Barak',
+          checkedOut: true,
+          checkOutTime: '2027-01-24T14:30:00+07:00',
+          checkedOutAt: '14.30 WIB',
+          checkedOutBy: 'Petugas Inspeksi Barak',
+          cleanlinessVerified: true,
+          trashBagsReturned: true,
+          ktpReturned: true,
+          notes: 'Ruang kelas rapi dan bersih, sampah terpilah lengkap',
+        },
+        checklist: {
+          basecampCheckIn: true,
+          dp1Verification: true,
+          dp2Warmup: true,
+          arenaEntered: true,
+          performanceFinished: true,
+          basecampCheckOut: true,
+        },
+        finishedAt: '2027-01-24T08:00:00+07:00',
+        durationSeconds: 580,
+        overtimePenaltyBlocks: 0,
+        notes: 'Peleton telah selesai tampil dan menyelesaikan kliring',
+        updatedAt: new Date().toISOString(),
+      };
+    } else if (num >= 5 && num <= 8) {
+      // Sudah Check-In di Basecamp (Menunggu Panggilan DP 1)
+      staging[team.id] = {
+        id: team.id,
+        teamId: team.id,
+        stage: 'basecamp',
+        basecamp: {
+          roomName: isSD ? `Ruang A.10${num}` : `Ruang B.20${num}`,
+          ktpDeposited: true,
+          ktpOfficialName: team.officialName,
+          ktpHolderName: team.officialName,
+          ktpType: 'KTP Fisik',
+          waterBoxGiven: true,
+          chestNumberGiven: true,
+          cocardGiven: true,
+          trashBagGiven: true,
+          checkInTime: `2027-01-24T07:${String(num * 7).padStart(2, '0')}:00+07:00`,
+          checkedInAt: `07.${String(num * 7).padStart(2, '0')} WIB`,
+          checkedInBy: 'Panitia Basecamp & Barak',
+          checkedOut: false,
+        },
+        checklist: {
+          basecampCheckIn: true,
+        },
+        durationSeconds: 0,
+        overtimePenaltyBlocks: 0,
+        notes: 'Peleton standby di ruang kelas transit',
+        updatedAt: new Date().toISOString(),
+      };
+    } else {
+      // Belum Tiba (Siap ditest scan QR / input check-in)
+      staging[team.id] = {
+        id: team.id,
+        teamId: team.id,
+        stage: 'waiting',
+        checklist: {},
+        durationSeconds: 0,
+        overtimePenaltyBlocks: 0,
+        notes: '',
+        updatedAt: new Date().toISOString(),
+      };
+    }
+  });
+
+  return staging;
+}
+
+/**
+ * Generate Skor Penjurian & Rekapitulasi Nilai Realistis (Klasemen & Rekap)
+ */
+export function generateDummyScores(teams = []) {
+  const scores = {};
+
+  // Tim yang sudah selesai tampil dan memiliki nilai (Nomor 3 s.d. 14 SD & SMP)
+  teams.forEach(team => {
+    const num = parseInt(team.id.replace(/[^0-9]/g, ''), 10) || 1;
+    const isSD = team.jenjang === 'SD';
+
+    if (num >= 3 && num <= 14) {
+      // Skema Nilai Berjenjang Realistis
+      // SD: 26 Gerakan (~ 1800 - 2000 total)
+      // SMP: 28 Gerakan (~ 1900 - 2100 total)
+      const basePbb = isSD ? 1860 : 1940;
+      const rankBonus = (15 - num) * 18; // Tim nomor 3 lebih tinggi dari nomor 14
+      const pbbTotal = basePbb + rankBonus;
+      const dantonTotal = parseFloat((86.0 + ((15 - num) * 0.95)).toFixed(2));
+
+      const pbb1 = Math.round(pbbTotal * 0.334);
+      const pbb2 = Math.round(pbbTotal * 0.333);
+      const pbb3 = pbbTotal - pbb1 - pbb2;
+
+      const danton1 = parseFloat((dantonTotal * 0.333).toFixed(2));
+      const danton2 = parseFloat((dantonTotal * 0.333).toFixed(2));
+      const danton3 = parseFloat((dantonTotal - danton1 - danton2).toFixed(2));
+
+      // Contoh 1 tim kena penalti injak garis (-50 poin) untuk simulasi
+      let peletonPenalty = 0;
+      let injakGarisCount = 0;
+      if (num === 6) {
+        peletonPenalty = 50;
+        injakGarisCount = 1;
+      }
+
+      const nilaiAkhirPeleton = Math.max(0, pbbTotal - peletonPenalty);
+      const nilaiAkhirDanton = dantonTotal;
+      const finalScore = parseFloat((nilaiAkhirPeleton + nilaiAkhirDanton).toFixed(2));
+
+      let status = 'finalized';
+      let isLocked = true;
+      if (num === 13) {
+        status = 'verified';
+        isLocked = false;
+      } else if (num === 14) {
+        status = 'draft';
+        isLocked = false;
+      }
+
+      // Rubrik Danton Resmi (Bab A.6 Juknis)
+      const dantonMateri = Math.min(100, Math.round(84 + ((15 - num) * 1.1)));
+      const dantonVokal = Math.min(100, Math.round(85 + ((15 - num) * 1.0)));
+      const dantonSikap = Math.min(100, Math.round(88 + ((15 - num) * 0.9)));
+      const dantonLapangan = Math.min(100, Math.round(86 + ((15 - num) * 1.0)));
+
+      scores[team.id] = {
+        teamId: team.id,
+        juryName: 'Dewan Juri Resmi LBB Muallimin 2027',
+        juryRole: 'Juri 1 (Unsur TNI/Korem)',
+        scoredAt: '2027-01-24T09:30:00+07:00',
+        juries: {
+          pos1: { peletonTotal: pbb1, dantonTotal: danton1, total: parseFloat((pbb1 + danton1).toFixed(2)) },
+          pos2: { peletonTotal: pbb2, dantonTotal: danton2, total: parseFloat((pbb2 + danton2).toFixed(2)) },
+          pos3: { peletonTotal: pbb3, dantonTotal: danton3, total: parseFloat((pbb3 + danton3).toFixed(2)) },
+        },
+        pbb: {
+          total: pbbTotal,
+          nilaiMurni: pbbTotal,
+          nilaiAkhir: nilaiAkhirPeleton,
+          j1: pbb1,
+          j2: pbb2,
+          j3: pbb3,
+          rubricScores: {},
+        },
+        danton: {
+          total: dantonTotal,
+          nilaiMurni: dantonTotal,
+          nilaiAkhir: nilaiAkhirDanton,
+          j1: danton1,
+          j2: danton2,
+          j3: danton3,
+          rubricScores: {
+            materi: dantonMateri,
+            vokal: dantonVokal,
+            sikap: dantonSikap,
+            lapangan: dantonLapangan,
+          },
+        },
+        penalties: {
+          peletonPenalty,
+          dantonPenalty: 0,
+          totalPenalty: peletonPenalty,
+          injakGarisCount,
+        },
+        nilaiMurniPeleton: pbbTotal,
+        nilaiAkhirPeleton,
+        nilaiMurniDanton: dantonTotal,
+        nilaiAkhirDanton,
+        pbbTotal,
+        dantonTotal,
+        penaltiesTotal: peletonPenalty,
+        finalScore,
+        notes: num === 6 ? 'Terjadi 1x pelanggaran injak garis batas arena (-50 poin)' : 'Penampilan sangat rapi, sinkronisasi tinggi, formasi presisi.',
+        status,
+        isLocked,
+        verifiedBy: 'Andi Aqillah (Superadmin)',
+        finalizedBy: status === 'finalized' ? 'Mayor Inf. Bambang (Ketua Dewan Juri)' : null,
+      };
+    }
+  });
+
+  return scores;
+}
+
+/**
+ * Generate Smart Plan Uji Coba Lapangan (16 Januari 2027)
+ */
+export function generateDummyTrialPlan(teams = []) {
+  const sdTeams = teams.filter(t => t.jenjang === 'SD');
+  const smpTeams = teams.filter(t => t.jenjang === 'SMP');
+
+  const sdSlots = new Array(18).fill(null);
+  const smpSlots = new Array(18).fill(null);
+
+  sdTeams.forEach((t, i) => {
+    if (i < 18) sdSlots[i] = t.id;
+  });
+
+  smpTeams.forEach((t, i) => {
+    if (i < 18) smpSlots[i] = t.id;
+  });
+
+  return {
+    SD: { slots: sdSlots },
+    SMP: { slots: smpSlots },
+  };
+}
+
+/**
+ * Master Generator: Menghasilkan seluruh ekosistem data dummy 8 menu untuk localhost
+ */
+export function generateDummyTestingSuite() {
+  const teams = generate36DummyTeams({ realisticWorkflow: true });
+  const staging = generateDummyStaging(teams);
+  const scores = generateDummyScores(teams);
+  const trialPlan = generateDummyTrialPlan(teams);
+
+  return {
+    teams,
+    staging,
+    scores,
+    trialPlan,
+  };
 }

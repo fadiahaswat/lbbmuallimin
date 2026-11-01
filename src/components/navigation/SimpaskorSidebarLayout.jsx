@@ -150,14 +150,9 @@ export default function SimpaskorSidebarLayout({
       return [];
     }
 
-    // Untuk Admin, Panitia, dan Superadmin: Tampilkan semua dokumen SaaS
+    // Untuk Admin, Panitia, dan Superadmin: 1 Menu Tunggal Terpadu (Pusat Dokumen & Regulasi)
     return [
-      { id: 'proposal', label: 'Proposal Resmi', icon: FileText, view: 'proposal' },
-      { id: 'juknis', label: 'Juknis & Materi PBB', icon: BookOpen, view: 'juknis' },
-      { id: 'tatib', label: 'Tata Tertib & Sanksi', icon: ShieldAlert, view: 'tatib' },
-      { id: 'rundown', label: 'Rundown Acara', icon: Clock, view: 'rundown' },
-      { id: 'rab', label: 'RAB & Keuangan LBB', icon: Coins, view: 'rab' },
-      { id: 'timeline', label: 'Timeline Panitia', icon: Calendar, view: 'timeline' },
+      { id: 'dokumen', label: 'Pusat Regulasi & Dokumen', icon: BookOpen, view: 'dokumen' },
     ];
   }, [userRole]);
 
@@ -319,7 +314,9 @@ export default function SimpaskorSidebarLayout({
                 <div className="space-y-1">
                   {saasDocItems.map(item => {
                     const Icon = item.icon;
-                    const isActive = activeMenu === item.id;
+                    const isActive = item.id === 'dokumen'
+                      ? ['dokumen', 'juknis', 'tatib', 'rundown', 'proposal', 'timeline'].includes(activeMenu)
+                      : activeMenu === item.id;
 
                     return (
                       <button
@@ -536,7 +533,9 @@ export default function SimpaskorSidebarLayout({
                     </div>
                     {saasDocItems.map(item => {
                       const Icon = item.icon;
-                      const isActive = activeMenu === item.id;
+                      const isActive = item.id === 'dokumen'
+                        ? ['dokumen', 'juknis', 'tatib', 'rundown', 'proposal', 'timeline'].includes(activeMenu)
+                        : activeMenu === item.id;
 
                       return (
                         <button
@@ -618,13 +617,32 @@ export default function SimpaskorSidebarLayout({
                   </div>
                 </div>
               </div>
-              <button
-                onClick={handleLogout}
-                className="w-full flex items-center justify-center gap-2 p-2.5 rounded-xl bg-slate-100 hover:bg-red-50 text-slate-700 hover:text-red-700 text-xs font-bold transition-colors cursor-pointer"
-              >
-                <LogOut className="w-4 h-4" />
-                <span>{userRole === 'peserta' ? 'Keluar Akun' : 'Ke Beranda Depan'}</span>
-              </button>
+              {/* Tombol Navigasi Beranda Depan & Logout */}
+              <div className="space-y-1.5 pt-1">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    setActiveView('landing');
+                  }}
+                  className="w-full flex items-center justify-center gap-2 p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition-all cursor-pointer active:scale-98"
+                >
+                  <Home className="w-4 h-4 text-slate-600" />
+                  <span>Ke Beranda Depan</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    handleLogout();
+                  }}
+                  className="w-full flex items-center justify-center gap-2 p-2 rounded-xl text-red-600 hover:bg-red-50 text-xs font-bold transition-all cursor-pointer active:scale-98"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                  <span>Keluar Akun (Logout)</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>

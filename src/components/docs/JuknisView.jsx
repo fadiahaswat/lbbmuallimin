@@ -35,7 +35,7 @@ import SimpaskorSidebarLayout from '../navigation/SimpaskorSidebarLayout.jsx';
 import Rules from '../Rules.jsx';
 import SebaranNilaiTable from './SebaranNilaiTable.jsx';
 
-export default function JuknisView() {
+export default function JuknisView({ embedded = false }) {
   const { currentTeam } = useCompetition();
 
   // Tab switch: 'penilaian' | 'lapangan' | 'pendaftaran' | 'materials' | 'rundown'
@@ -121,14 +121,8 @@ export default function JuknisView() {
     m.category.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  return (
-    <SimpaskorSidebarLayout
-      activeMenu="juknis"
-      title="Petunjuk Teknis (Juknis) & Regulasi LBB"
-      subtitle="Pedoman baku resmi: Juknis Penilaian & Kejuaraan, Juknis Lapangan, Juknis Pendaftaran, dan Materi PBB 2027"
-      hideHeader={true}
-    >
-      <div className="space-y-6">
+  const mainContent = (
+    <div className="space-y-6">
 
         {/* Top Header Card */}
         <div className="bg-gradient-to-r from-blue-950 via-slate-900 to-indigo-950 text-white rounded-3xl p-6 sm:p-8 shadow-xl border border-blue-900/40 relative overflow-hidden">
@@ -1108,6 +1102,20 @@ export default function JuknisView() {
         )}
 
       </div>
+  );
+
+  if (embedded) {
+    return mainContent;
+  }
+
+  return (
+    <SimpaskorSidebarLayout
+      activeMenu="dokumen"
+      title="Petunjuk Teknis (Juknis) & Regulasi LBB"
+      subtitle="Pedoman baku resmi: Juknis Penilaian & Kejuaraan, Juknis Lapangan, Juknis Pendaftaran, dan Materi PBB 2027"
+      hideHeader={true}
+    >
+      {mainContent}
     </SimpaskorSidebarLayout>
   );
 }

@@ -18,6 +18,7 @@ import Footer from './components/Footer.jsx';
 import FabWhatsApp from './components/FabWhatsApp.jsx';
 import StickyCta from './components/StickyCta.jsx';
 import PwaInstallPrompt from './components/PwaInstallPrompt.jsx';
+import LocalhostTestingBar from './components/common/LocalhostTestingBar.jsx';
 
 // Dedicated Full Pages & Views (Lazy loaded for optimal initial bundle performance)
 const RegistrationWizard = React.lazy(() => import('./components/portal/RegistrationWizard.jsx'));
@@ -44,7 +45,8 @@ const DaerahPersiapanView = React.lazy(() => import('./components/staging/Daerah
 const RekapNilaiView = React.lazy(() => import('./components/recap/RekapNilaiView.jsx'));
 const BasecampCheckOutView = React.lazy(() => import('./components/staging/BasecampCheckOutView.jsx'));
 
-// Full SaaS Modules: RAB, Proposal, Juknis, Tata Tertib, Timeline Panitia
+// Full SaaS Modules: RAB, Pusat Dokumen & Regulasi Terpadu
+const DokumenRegulasiPortal = React.lazy(() => import('./components/docs/DokumenRegulasiPortal.jsx'));
 const RabFinanceView = React.lazy(() => import('./components/finance/RabFinanceView.jsx'));
 const ProposalView = React.lazy(() => import('./components/docs/ProposalView.jsx'));
 const JuknisView = React.lazy(() => import('./components/docs/JuknisView.jsx'));
@@ -173,13 +175,17 @@ function MainApp() {
         {activeView === 'rekap_nilai' && <RekapNilaiView />}
         {activeView === 'checkout' && <BasecampCheckOutView />}
         {activeView === 'rab' && <RabFinanceView />}
-        {activeView === 'proposal' && <ProposalView />}
-        {activeView === 'juknis' && <JuknisView />}
-        {activeView === 'tatib' && <TataTertibView />}
-        {activeView === 'timeline' && <TimelinePanitiaView />}
-        {activeView === 'rundown' && <RundownView />}
+        {activeView === 'dokumen' && <DokumenRegulasiPortal initialTab="juknis" />}
+        {activeView === 'juknis' && <DokumenRegulasiPortal initialTab="juknis" />}
+        {activeView === 'tatib' && <DokumenRegulasiPortal initialTab="tatib" />}
+        {activeView === 'rundown' && <DokumenRegulasiPortal initialTab="rundown" />}
+        {activeView === 'proposal' && <DokumenRegulasiPortal initialTab="proposal" />}
+        {activeView === 'timeline' && <DokumenRegulasiPortal initialTab="timeline" />}
       </React.Suspense>
       )}
+
+      {/* Localhost Testing Assistant (HANYA AKTIF DI LOCALHOST) */}
+      <LocalhostTestingBar />
 
       {/* Progressive Web App (PWA) Install & Update Banner */}
       <PwaInstallPrompt />

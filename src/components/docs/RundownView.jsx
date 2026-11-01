@@ -27,7 +27,7 @@ import { SITE, EVENT, VENUE, VENUE_INDUK, DOWNLOADS } from '../../config.js';
 import { RUNDOWN_DATA } from '../../data/juknisDocsData.js';
 import SimpaskorSidebarLayout from '../navigation/SimpaskorSidebarLayout.jsx';
 
-export default function RundownView() {
+export default function RundownView({ embedded = false }) {
   const { setActiveView } = useCompetition();
 
   // Tab: 'competition' (Hari-H) | 'tm' (Technical Meeting) | 'trial' (Uji Coba Lapangan)
@@ -88,36 +88,8 @@ export default function RundownView() {
     });
   }, [searchQuery]);
 
-  return (
-    <SimpaskorSidebarLayout
-      activeMenu="rundown"
-      title="Rundown Resmi Kegiatan LBB Mu'allimin 2027"
-      subtitle="Jadwal definitif kronologis: Hari-H Perlombaan (24 Jan), Technical Meeting (9 Jan), dan Uji Coba Lapangan 2 Arena (16 Jan)"
-      rightActions={
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={handlePrint}
-            className="px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 transition-all shadow-xs cursor-pointer active:scale-95"
-            title="Cetak atau Simpan sebagai PDF"
-          >
-            <Printer className="w-3.5 h-3.5" />
-            <span>Cetak / PDF</span>
-          </button>
-          <a
-            href={DOWNLOADS[0]?.url || "https://docs.google.com/document/d/1BN1RuwDcEiuibVvoBG4-5R7Rq8neV5st3nAZoISVQi0/edit?usp=sharing"}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-3.5 py-2 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold rounded-xl border border-slate-200 transition-all flex items-center gap-1.5 shadow-2xs"
-          >
-            <FileText className="w-3.5 h-3.5 text-red-600" />
-            <span className="hidden sm:inline">Google Docs</span>
-            <ExternalLink className="w-3 h-3 text-slate-400" />
-          </a>
-        </div>
-      }
-    >
-      <div className="space-y-6">
+  const mainContent = (
+    <div className="space-y-6">
 
         {/* PRINT ONLY: KOP SURAT RESMI */}
         <div className="hidden print:block border-b-4 border-double border-slate-900 pb-4 mb-6 text-center">
@@ -602,6 +574,42 @@ export default function RundownView() {
         </div>
 
       </div>
+  );
+
+  if (embedded) {
+    return mainContent;
+  }
+
+  return (
+    <SimpaskorSidebarLayout
+      activeMenu="dokumen"
+      title="Rundown Resmi Kegiatan LBB Mu'allimin 2027"
+      subtitle="Jadwal definitif kronologis: Hari-H Perlombaan (24 Jan), Technical Meeting (9 Jan), dan Uji Coba Lapangan 2 Arena (16 Jan)"
+      rightActions={
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={handlePrint}
+            className="px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 transition-all shadow-xs cursor-pointer active:scale-95"
+            title="Cetak atau Simpan sebagai PDF"
+          >
+            <Printer className="w-3.5 h-3.5" />
+            <span>Cetak / PDF</span>
+          </button>
+          <a
+            href={DOWNLOADS[0]?.url || "https://docs.google.com/document/d/1BN1RuwDcEiuibVvoBG4-5R7Rq8neV5st3nAZoISVQi0/edit?usp=sharing"}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-3.5 py-2 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold rounded-xl border border-slate-200 transition-all flex items-center gap-1.5 shadow-2xs"
+          >
+            <FileText className="w-3.5 h-3.5 text-red-600" />
+            <span className="hidden sm:inline">Google Docs</span>
+            <ExternalLink className="w-3 h-3 text-slate-400" />
+          </a>
+        </div>
+      }
+    >
+      {mainContent}
     </SimpaskorSidebarLayout>
   );
 }

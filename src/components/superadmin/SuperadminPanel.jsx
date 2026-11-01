@@ -25,10 +25,11 @@ import {
   Edit2,
   Check,
   X,
-  Lock
+  Lock,
+  Coins
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
-import { EVENT } from '../../config.js';
+import { EVENT, OFFICIAL_RAB } from '../../config.js';
 import SimpaskorSidebarLayout from '../navigation/SimpaskorSidebarLayout.jsx';
 
 const INDO_MONTHS = [
@@ -440,6 +441,50 @@ export default function SuperadminPanel() {
               >
                 {settings.announcementPublished ? <ToggleRight className="w-5 h-5" /> : <ToggleLeft className="w-5 h-5" />}
                 <span>{settings.announcementPublished ? 'Status: Dipublikasi' : 'Status: Draf / Rahasia'}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* SEKSI SUPERADMIN: KONTROL RAB & KEUANGAN LBB (EKSLUSIF SUPERADMIN) */}
+        <div className="bg-gradient-to-br from-emerald-950 via-slate-900 to-teal-950 text-white rounded-3xl p-6 sm:p-8 shadow-xl border border-emerald-900/50 relative overflow-hidden">
+          <div className="absolute right-0 top-0 bottom-0 w-80 bg-emerald-500/10 blur-3xl pointer-events-none" />
+          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div className="space-y-3">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 text-xs font-black uppercase tracking-wider">
+                <Coins className="w-3.5 h-3.5" />
+                <span>Otoritas Finansial Tertutup (Eksklusif Superadmin)</span>
+              </div>
+              <h3 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-white">
+                Rencana Anggaran Biaya (RAB) & Keuangan LBB
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed">
+                Struktur neraca anggaran 12 divisi operasional (Total Rp 63.711.450) telah dipusatkan secara eksklusif ke dalam Master System agar tidak dapat diakses oleh panitia umum.
+              </p>
+              <div className="flex flex-wrap gap-2.5 pt-1">
+                <div className="px-3 py-1.5 rounded-xl bg-white/10 border border-white/10 text-xs">
+                  <span className="text-slate-400 block text-[10px] uppercase font-bold">Total Anggaran:</span>
+                  <span className="font-mono font-bold text-emerald-400">Rp {OFFICIAL_RAB?.TOTAL_EXPENSE?.toLocaleString('id-ID') || '63.711.450'}</span>
+                </div>
+                <div className="px-3 py-1.5 rounded-xl bg-white/10 border border-white/10 text-xs">
+                  <span className="text-slate-400 block text-[10px] uppercase font-bold">Cakupan Divisi:</span>
+                  <span className="font-mono font-bold text-white">12 Pos Divisi</span>
+                </div>
+                <div className="px-3 py-1.5 rounded-xl bg-white/10 border border-white/10 text-xs">
+                  <span className="text-slate-400 block text-[10px] uppercase font-bold">Status Neraca:</span>
+                  <span className="font-mono font-bold text-teal-300">Berimbang (Rp 0)</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="shrink-0">
+              <button
+                type="button"
+                onClick={() => setActiveView('rab')}
+                className="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-slate-950 font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-lg shadow-emerald-950/50 cursor-pointer"
+              >
+                <Coins className="w-4 h-4" />
+                <span>Buka Panel RAB & Keuangan</span>
               </button>
             </div>
           </div>
