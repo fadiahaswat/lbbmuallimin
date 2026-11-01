@@ -507,74 +507,75 @@ export default function LiveLeaderboard() {
     <div className={`space-y-6 ${effectiveDark ? 'text-slate-100' : 'text-slate-800'}`}>
       {/* 1. Header Banner */}
       <div
-        className={`rounded-3xl p-6 sm:p-8 border shadow-lg flex flex-col md:flex-row md:items-center justify-between gap-6 transition-all ${
+        className={`rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 border shadow-lg flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6 transition-all ${
           effectiveDark
             ? 'bg-gradient-to-r from-slate-900 via-slate-950 to-red-950/80 border-slate-800 text-white'
             : 'bg-gradient-to-r from-[#8B0000] via-[#780606] to-[#540404] border-red-950/20 text-white'
         }`}
       >
-        <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-2xl bg-white/10 border border-white/20 text-amber-300 flex items-center justify-center shadow-inner shrink-0">
-            <Trophy className="w-9 h-9" />
+        <div className="flex items-center gap-3 sm:gap-4">
+          <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-white/10 border border-white/20 text-amber-300 flex items-center justify-center shadow-inner shrink-0">
+            <Trophy className="w-6 h-6 sm:w-9 sm:h-9" />
           </div>
-          <div>
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="text-[10px] font-black uppercase tracking-widest text-amber-300 bg-amber-400/20 px-2.5 py-0.5 rounded border border-amber-300/30">
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+              <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-amber-300 bg-amber-400/20 px-2 py-0.5 rounded border border-amber-300/30">
                 Live Scoreboard Resmi
               </span>
-              <span className="text-xs text-white/80 font-medium">{VENUE.NAME}</span>
+              <span className="text-[11px] sm:text-xs text-white/80 font-medium truncate">{VENUE.NAME}</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-white mt-1">
+            <h1 className="text-lg sm:text-2xl md:text-3xl font-black uppercase tracking-tight text-white mt-0.5 sm:mt-1 leading-tight">
               Papan Klasemen & Hasil Lomba
             </h1>
-            <p className="text-xs text-white/80 mt-1 max-w-2xl leading-relaxed">
+            <p className="text-[11px] sm:text-xs text-white/80 mt-0.5 sm:mt-1 max-w-2xl leading-relaxed line-clamp-2 sm:line-clamp-none">
               Sistem penetapan Juara Utama, Harapan, Danton Terbaik & Juara Umum mengacu pada Petunjuk Teknis Penilaian & Kejuaraan LBB Mu'allimin 2027 (Bab A).
             </p>
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2.5">
-          {/* Tombol Toggle Dark / Light Mode */}
+        <div className="flex flex-wrap items-center gap-2 pt-0.5 md:pt-0">
+          {/* Tombol Mode Layar Panggung */}
           <button
             type="button"
-            onClick={toggleDarkMode}
-            className="px-3.5 py-2.5 bg-white/15 hover:bg-white/25 active:scale-95 text-white text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
-            title={effectiveDark ? 'Beralih ke Mode Terang (Light Mode)' : 'Beralih ke Mode Gelap (Dark Mode)'}
+            onClick={toggleStageMode}
+            className={`px-3 py-1.5 sm:px-4 sm:py-2.5 rounded-xl font-black text-xs uppercase tracking-wider flex items-center gap-1.5 sm:gap-2 transition-all shadow-xs cursor-pointer active:scale-95 ${
+              isStageMode
+                ? 'bg-amber-400 text-slate-950 hover:bg-amber-300'
+                : 'bg-white/15 hover:bg-white/25 border border-white/15 text-white'
+            }`}
           >
-            {effectiveDark ? <Sun className="w-4 h-4 text-amber-300" /> : <Moon className="w-4 h-4 text-slate-100" />}
-            <span>{effectiveDark ? 'Mode Terang' : 'Mode Gelap'}</span>
+            {isStageMode ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
+            <span>{isStageMode ? 'Keluar' : 'Layar Panggung'}</span>
           </button>
 
           {/* Tombol Regulasi Juknis */}
           <button
             type="button"
             onClick={() => setShowJuknisInfo(!showJuknisInfo)}
-            className="px-3.5 py-2.5 bg-white/15 hover:bg-white/25 active:scale-95 text-white text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
+            className="px-3 py-1.5 sm:px-3.5 sm:py-2.5 bg-white/15 hover:bg-white/25 border border-white/15 active:scale-95 text-white text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
           >
-            <Info className="w-4 h-4 text-amber-300" />
-            <span>Regulasi Juknis</span>
+            <Info className="w-3.5 h-3.5 text-amber-300" />
+            <span>Juknis</span>
             {showJuknisInfo ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
           </button>
 
-          {/* Tombol Mode Layar Panggung */}
+          {/* Tombol Toggle Dark / Light Mode */}
           <button
             type="button"
-            onClick={toggleStageMode}
-            className={`px-4 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider flex items-center gap-2 transition-all shadow-md cursor-pointer active:scale-95 ${
-              isStageMode
-                ? 'bg-amber-400 text-slate-950 hover:bg-amber-300'
-                : 'bg-white/15 hover:bg-white/25 text-white'
-            }`}
+            onClick={toggleDarkMode}
+            className="px-3 py-1.5 sm:px-3.5 sm:py-2.5 bg-white/15 hover:bg-white/25 border border-white/15 active:scale-95 text-white text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
+            title={effectiveDark ? 'Beralih ke Mode Terang (Light Mode)' : 'Beralih ke Mode Gelap (Dark Mode)'}
           >
-            {isStageMode ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
-            <span>{isStageMode ? 'Keluar Layar' : 'Layar Panggung'}</span>
+            {effectiveDark ? <Sun className="w-3.5 h-3.5 text-amber-300" /> : <Moon className="w-3.5 h-3.5 text-slate-100" />}
+            <span className="hidden sm:inline">{effectiveDark ? 'Mode Terang' : 'Mode Gelap'}</span>
+            <span className="sm:hidden">{effectiveDark ? 'Terang' : 'Gelap'}</span>
           </button>
 
           {!isStageMode && (
             <button
               type="button"
               onClick={() => setActiveView('landing')}
-              className="px-4 py-2.5 bg-white/15 hover:bg-white/25 text-white text-xs font-bold rounded-xl transition-all cursor-pointer active:scale-95"
+              className="hidden md:inline-flex px-4 py-2.5 bg-white/15 hover:bg-white/25 border border-white/15 text-white text-xs font-bold rounded-xl transition-all cursor-pointer active:scale-95"
             >
               Beranda
             </button>

@@ -468,17 +468,19 @@ export default function TechnicalMeetingView() {
           {/* -------------------------------------------------------- */}
           <div className="lg:col-span-5 bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-[0_1px_3px_rgba(0,0,0,0.04)] space-y-4 sticky lg:top-4">
             {/* Panel Title & Count */}
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <div>
+            <div className="flex items-center justify-between gap-2 pb-3 border-b border-slate-100">
+              <div className="min-w-0 flex-1">
                 <h2 className="text-sm font-black text-slate-900 uppercase tracking-tight flex items-center gap-2">
                   <span>Daftar Peleton ({selectedJenjang})</span>
                 </h2>
-                <p className="text-[11px] text-slate-500 mt-0.5">
-                  Diurutkan berdasarkan validasi berkas awal (#1 – #{totalCount})
+                <p className="text-[11px] text-slate-500 mt-0.5 truncate">
+                  Urutan validasi berkas awal (#1 – #{totalCount})
                 </p>
               </div>
-              <span className="text-[11px] font-mono font-bold px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 border border-slate-200">
-                {unassignedTeams.length} Belum Diundi
+              <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 border border-slate-200 whitespace-nowrap shrink-0">
+                <strong className="text-slate-900 font-black">{unassignedTeams.length}</strong>{' '}
+                <span className="hidden sm:inline">Belum Diundi</span>
+                <span className="sm:hidden">Sisa</span>
               </span>
             </div>
 
@@ -487,35 +489,40 @@ export default function TechnicalMeetingView() {
               <button
                 type="button"
                 onClick={() => setTeamFilterTab('unassigned')}
-                className={`flex-1 py-1.5 rounded-lg transition-all cursor-pointer text-center text-xs ${
+                className={`flex-1 py-1.5 px-1.5 rounded-lg transition-all cursor-pointer text-center text-xs whitespace-nowrap ${
                   teamFilterTab === 'unassigned'
                     ? 'bg-white text-slate-900 font-bold shadow-2xs'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                Belum Diundi ({unassignedTeams.length})
+                <span>Belum </span>
+                <span className="hidden sm:inline">Diundi </span>
+                <span className="text-[11px] font-mono font-bold">({unassignedTeams.length})</span>
               </button>
               <button
                 type="button"
                 onClick={() => setTeamFilterTab('all')}
-                className={`flex-1 py-1.5 rounded-lg transition-all cursor-pointer text-center text-xs ${
+                className={`flex-1 py-1.5 px-1.5 rounded-lg transition-all cursor-pointer text-center text-xs whitespace-nowrap ${
                   teamFilterTab === 'all'
                     ? 'bg-white text-slate-900 font-bold shadow-2xs'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                Semua ({totalCount})
+                <span>Semua </span>
+                <span className="text-[11px] font-mono font-bold">({totalCount})</span>
               </button>
               <button
                 type="button"
                 onClick={() => setTeamFilterTab('drawn')}
-                className={`flex-1 py-1.5 rounded-lg transition-all cursor-pointer text-center text-xs ${
+                className={`flex-1 py-1.5 px-1.5 rounded-lg transition-all cursor-pointer text-center text-xs whitespace-nowrap ${
                   teamFilterTab === 'drawn'
                     ? 'bg-white text-slate-900 font-bold shadow-2xs'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                Sudah ({drawnCount})
+                <span>Sudah </span>
+                <span className="hidden sm:inline">Diundi </span>
+                <span className="text-[11px] font-mono font-bold">({drawnCount})</span>
               </button>
             </div>
 
