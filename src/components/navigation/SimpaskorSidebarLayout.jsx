@@ -24,6 +24,7 @@ import {
   CalendarCheck,
   Compass,
   LogIn,
+  Building2,
   BookOpen,
   ShieldAlert,
   Coins,
@@ -129,12 +130,11 @@ export default function SimpaskorSidebarLayout({
       { id: 'pendaftaran', label: 'Pendaftaran', icon: ClipboardList, stage: 'pendaftaran' },
       { id: 'tm', label: 'Technical Meeting', icon: CalendarCheck, stage: 'tm' },
       { id: 'uji_coba', label: 'Uji Coba Lapangan', icon: Compass, stage: 'uji_coba' },
-      { id: 'checkin', label: 'Check-In', icon: LogIn, stage: 'checkin' },
+      { id: 'checkin', label: 'Pos Basecamp', icon: Building2, stage: 'checkin' },
       { id: 'dp', label: 'Daerah Persiapan', icon: Clock, stage: 'dp' },
       { id: 'penjurian', label: 'Penjurian', icon: Award, stage: 'penjurian' },
       { id: 'rekap_nilai', label: 'Rekap Nilai', icon: FileSpreadsheet, stage: 'rekap_nilai' },
       { id: 'klasemen', label: 'Klasemen', icon: Trophy, stage: 'klasemen' },
-      { id: 'checkout', label: 'Check-Out', icon: LogOut, stage: 'checkout' },
     ];
 
     if (canAccessStage) {
@@ -165,6 +165,7 @@ export default function SimpaskorSidebarLayout({
 
   const isItemActive = (item) => {
     if (activeMenu === item.id) return true;
+    if ((activeMenu === 'checkin' || activeMenu === 'checkout') && item.id === 'checkin') return true;
     if (userRole === 'peserta') return false;
 
     // Map legacy / contextual activeMenu
@@ -634,43 +635,48 @@ export default function SimpaskorSidebarLayout({
         isCollapsed ? 'lg:pl-20' : 'lg:pl-72'
       }`}>
         {/* Mobile-only Header Bar (Branding & Menu Toggle) */}
-        <div className="lg:hidden px-4 py-3 bg-white/90 backdrop-blur-md border-b border-slate-200/70 flex items-center justify-between sticky top-0 z-20">
-          {/* Mobile Branding: logo lbb + logo title di kiri */}
-          <div 
-            onClick={() => setActiveView('landing')}
-            className="flex items-center gap-2 cursor-pointer min-w-0"
-            title="Ke Beranda Utama"
-          >
-            <img
-              src={logoLbb}
-              alt="Logo LBB"
-              className="h-8 w-auto object-contain shrink-0"
-            />
-            <img
-              src={titleLogoImg}
-              alt="LBB Mu'allimin"
-              className="h-6 w-auto object-contain max-w-[125px]"
-            />
-          </div>
-
-          {/* Menu Strip 3 Paling Kanan */}
-          <div className="flex items-center gap-2 shrink-0">
-            <button
-              onClick={() => setActiveView('landing')}
-              className="p-2 rounded-xl text-slate-500 hover:bg-slate-100 active:scale-95 transition-all flex items-center justify-center border border-slate-200/70 bg-slate-50/80"
-              title="Ke Beranda"
-              aria-label="Ke Beranda"
-            >
-              <Home className="w-4 h-4 text-slate-700" />
-            </button>
+        <div className="lg:hidden px-3 sm:px-4 py-2.5 sm:py-3 bg-white/90 backdrop-blur-md border-b border-slate-200/70 flex items-center justify-between sticky top-0 z-20">
+          {/* Sisi Kiri: Tombol Menu Garis Tiga (Hamburger) + Logo Branding */}
+          <div className="flex items-center gap-2.5 min-w-0">
             <button
               type="button"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="p-2 rounded-xl text-slate-700 hover:bg-slate-100 active:scale-95 transition-all flex items-center justify-center border border-slate-200/70 bg-slate-50/80"
+              className="p-2 rounded-xl text-slate-700 hover:bg-slate-100 active:scale-95 transition-all flex items-center justify-center border border-slate-200/70 bg-slate-50/80 shrink-0 cursor-pointer"
               aria-label="Buka Menu"
               title="Buka Menu"
             >
               <Menu className="w-5 h-5 text-slate-800" />
+            </button>
+
+            {/* Mobile Branding: logo lbb + logo title */}
+            <div 
+              onClick={() => setActiveView('landing')}
+              className="flex items-center gap-2 cursor-pointer min-w-0"
+              title="Ke Beranda Utama"
+            >
+              <img
+                src={logoLbb}
+                alt="Logo LBB"
+                className="h-8 w-auto object-contain shrink-0"
+              />
+              <img
+                src={titleLogoImg}
+                alt="LBB Mu'allimin"
+                className="h-6 w-auto object-contain max-w-[125px]"
+              />
+            </div>
+          </div>
+
+          {/* Sisi Kanan: Tombol Logout */}
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="p-2 rounded-xl text-slate-500 hover:text-red-600 hover:bg-red-50 active:scale-95 transition-all flex items-center justify-center border border-slate-200/70 bg-slate-50/80 cursor-pointer"
+              title="Keluar (Logout)"
+              aria-label="Keluar (Logout)"
+            >
+              <LogOut className="w-4 h-4 text-slate-600 hover:text-red-600" />
             </button>
           </div>
         </div>

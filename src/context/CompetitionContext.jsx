@@ -692,7 +692,7 @@ export function CompetitionProvider({ children }) {
     const DEFAULT_STAFF_SEEDS = {
       'andiaqillah.2018@student.uny.ac.id': { role: 'superadmin', roleLabel: 'Ketua Panitia (Superadmin)' },
       'tontimuallimin2026@gmail.com': { role: 'superadmin', roleLabel: 'Superadmin Backup / Master Tonti' },
-      'andiaqillah@muallimin.sch.id': { role: 'admin', roleLabel: 'Panitia Sekretariat (Admin)' },
+      'andiaqillah@muallimin.sch.id': { role: 'superadmin', roleLabel: 'Superadmin & Panitia Inti' },
       'checkin@lbbmuallimin.com': { role: 'checkin', roleLabel: 'Petugas Basecamp (Check-In & Check-Out)' },
       'dp@lbbmuallimin.com': { role: 'dp', roleLabel: 'Petugas Daerah Persiapan (DP 1-2)' },
       'juri@lbbmuallimin.com': { role: 'juri', roleLabel: 'Dewan Juri PBB & Formasi Lapangan' },

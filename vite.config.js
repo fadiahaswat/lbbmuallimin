@@ -38,6 +38,9 @@ export default defineConfig({
     },
     chunkSizeWarningLimit: 700,
   },
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'lucide-react', 'html5-qrcode'],
+  },
   server: {
     host: true,
     port: 5173,

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lbb-muallimin-v2';
+const CACHE_NAME = 'lbb-muallimin-v3';
 const PRECACHE_ASSETS = [
   '/',
   '/index.html',
@@ -45,8 +45,23 @@ self.addEventListener('fetch', (event) => {
   if (request.method !== 'GET') return;
   if (!request.url.startsWith('http://') && !request.url.startsWith('https://')) return;
 
-  // Don't intercept Google Auth or external dynamic APIs with caching
   const url = new URL(request.url);
+
+  // Jangan sentuh localhost / mode development Vite HMR & node_modules
+  if (
+    url.hostname === 'localhost' ||
+    url.hostname === '127.0.0.1' ||
+    url.hostname.startsWith('192.168.') ||
+    url.hostname.startsWith('172.') ||
+    url.pathname.startsWith('/node_modules/') ||
+    url.pathname.startsWith('/@vite/') ||
+    url.pathname.startsWith('/src/') ||
+    url.pathname.includes('/.vite/')
+  ) {
+    return;
+  }
+
+  // Don't intercept Google Auth or external dynamic APIs with caching
   if (
     url.hostname.includes('accounts.google.com') ||
     url.hostname.includes('script.google.com') ||

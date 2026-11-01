@@ -13,6 +13,7 @@ import {
   Video,
   X,
   LogIn,
+  Building2,
   LogOut,
   LayoutDashboard,
   Heart,
@@ -216,15 +217,15 @@ export default function MobileMenu({ isOpen, onClose }) {
           </span>
           {currentUser ? (
             <div className="space-y-3">
-              {/* User Profile Header Card */}
-              <div className="p-3.5 bg-gradient-to-r from-slate-900 via-slate-900 to-slate-950 rounded-2xl border border-white/10 flex items-center justify-between shadow-lg">
-                <div className="flex items-center gap-3 min-w-0">
+              {/* User Profile Header Card - Sleek & Compact */}
+              <div className="p-3 bg-white/[0.04] rounded-2xl border border-white/10 flex items-center justify-between shadow-sm">
+                <div className="flex items-center gap-2.5 min-w-0">
                   <div className="relative shrink-0">
                     <img
                       src={avatarUrl}
                       alt={currentUser.name}
-                      className={`w-11 h-11 rounded-xl shadow-md ${
-                        isSchoolLogo ? 'object-contain bg-white p-0.5' : 'object-cover ring-2 ring-yellow-400/40'
+                      className={`w-9 h-9 rounded-xl shadow-md ${
+                        isSchoolLogo ? 'object-contain bg-white p-0.5' : 'object-cover ring-1 ring-white/20'
                       }`}
                       onError={(e) => {
                         if (currentUser.googleAvatar) {
@@ -236,13 +237,18 @@ export default function MobileMenu({ isOpen, onClose }) {
                     />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-black text-white leading-tight truncate">
-                      {currentUser.role === 'peserta' ? (currentUser.schoolName || currentUser.name) : currentUser.name}
-                    </p>
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <p className="text-xs sm:text-sm font-bold text-white leading-tight truncate">
+                        {currentUser.role === 'peserta' ? (currentUser.schoolName || currentUser.name) : currentUser.name}
+                      </p>
+                      <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-amber-400/10 text-amber-300 border border-amber-400/20 shrink-0">
+                        {currentUser.role}
+                      </span>
+                    </div>
                     {currentUser.role === 'peserta' && currentUser.name && currentUser.name !== currentUser.schoolName ? (
                       <p className="text-[11px] text-slate-400 truncate mt-0.5">Official: {currentUser.name}</p>
                     ) : (
-                      <p className="text-[11px] text-slate-400 truncate mt-0.5 font-mono">{currentUser.email}</p>
+                      <p className="text-[10px] text-slate-400 truncate mt-0.5 font-mono">{currentUser.email}</p>
                     )}
                   </div>
                 </div>
@@ -253,15 +259,15 @@ export default function MobileMenu({ isOpen, onClose }) {
                     onClose();
                     logoutUser();
                   }}
-                  className="w-9 h-9 rounded-xl bg-red-950/40 hover:bg-red-900/60 text-red-400 hover:text-white border border-red-500/20 flex items-center justify-center transition-all cursor-pointer shrink-0 ml-2 active:scale-95"
+                  className="w-8 h-8 rounded-xl bg-white/5 hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 border border-white/10 flex items-center justify-center transition-all cursor-pointer shrink-0 ml-2 active:scale-95"
                   title="Keluar"
                 >
-                  <LogOut className="w-4 h-4" />
+                  <LogOut className="w-3.5 h-3.5" />
                 </button>
               </div>
 
-              {/* Role-Authorized Quick Actions List */}
-              <div className="space-y-2">
+              {/* Role-Authorized Quick Actions - Decluttered & Compact */}
+              <div className="space-y-2 pt-0.5">
                 {/* 1. PESERTA */}
                 {currentUser.role === 'peserta' && (
                   <button
@@ -270,10 +276,10 @@ export default function MobileMenu({ isOpen, onClose }) {
                       onClose();
                       setActiveView('peserta_dashboard');
                     }}
-                    className="w-full flex items-center justify-between p-3.5 rounded-2xl bg-slate-900/90 border border-amber-500/30 hover:border-amber-400 text-left transition-all font-bold text-white cursor-pointer group shadow-md"
+                    className="w-full flex items-center justify-between p-3 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-left transition-all font-bold text-white cursor-pointer group active:scale-98"
                   >
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-7 h-7 rounded-lg bg-amber-500/15 text-amber-400 flex items-center justify-center shrink-0">
                         <LayoutDashboard className="w-4 h-4" />
                       </div>
                       <div>
@@ -281,100 +287,66 @@ export default function MobileMenu({ isOpen, onClose }) {
                         <span className="text-[10px] text-slate-400 block font-normal">Dashboard peserta resmi</span>
                       </div>
                     </div>
-                    <ArrowRight className="w-4 h-4 text-slate-500 group-hover:text-amber-400 group-hover:translate-x-1 transition-all" />
+                    <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-amber-400 group-hover:translate-x-0.5 transition-all shrink-0" />
                   </button>
                 )}
 
                 {/* 2. ADMIN (SEKRETARIAT & PENDAFTARAN) */}
                 {currentUser.role === 'admin' && (
-                  <>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        onClose();
-                        setActiveView('admin');
-                      }}
-                      className="w-full flex items-center justify-between p-3 rounded-2xl bg-white/[0.03] hover:bg-white/[0.07] border border-white/10 hover:border-blue-500/40 text-left transition-all font-bold text-white cursor-pointer group"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-blue-600/15 border border-blue-500/30 flex items-center justify-center text-blue-400">
-                          <ClipboardList className="w-4 h-4" />
-                        </div>
-                        <span className="text-xs">Verifikasi Berkas & Pendaftaran</span>
-                      </div>
-                      <ArrowRight className="w-4 h-4 text-slate-500 group-hover:text-blue-400 group-hover:translate-x-0.5 transition-all" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        onClose();
-                        setActiveView('tm');
-                      }}
-                      className="w-full flex items-center justify-between p-3 rounded-2xl bg-white/[0.03] hover:bg-white/[0.07] border border-white/10 hover:border-amber-500/40 text-left transition-all font-bold text-slate-200 hover:text-white cursor-pointer group"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400">
-                          <CalendarCheck className="w-4 h-4" />
-                        </div>
-                        <span className="text-xs">Undian TM & Jadwal Tampil</span>
-                      </div>
-                      <ArrowRight className="w-4 h-4 text-slate-500 group-hover:text-amber-400 group-hover:translate-x-0.5 transition-all" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        onClose();
-                        setActiveView('field_trial');
-                      }}
-                      className="w-full flex items-center justify-between p-3 rounded-2xl bg-white/[0.03] hover:bg-white/[0.07] border border-white/10 hover:border-emerald-500/40 text-left transition-all font-bold text-slate-200 hover:text-white cursor-pointer group"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
-                          <Compass className="w-4 h-4" />
-                        </div>
-                        <span className="text-xs">Jadwal Uji Coba Lapangan</span>
-                      </div>
-                      <ArrowRight className="w-4 h-4 text-slate-500 group-hover:text-emerald-400 group-hover:translate-x-0.5 transition-all" />
-                    </button>
-                  </>
+                  <div className="space-y-1.5">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block px-1">
+                      Menu Administrasi:
+                    </span>
+                    <div className="grid grid-cols-1 gap-1.5">
+                      {[
+                        { view: 'admin', label: 'Verifikasi Berkas & Pendaftaran', icon: ClipboardList, color: 'text-blue-400' },
+                        { view: 'tm', label: 'Undian TM & Jadwal Tampil', icon: CalendarCheck, color: 'text-amber-400' },
+                        { view: 'field_trial', label: 'Jadwal Uji Coba Lapangan', icon: Compass, color: 'text-emerald-400' },
+                      ].map(item => {
+                        const Icon = item.icon;
+                        return (
+                          <button
+                            key={item.view}
+                            type="button"
+                            onClick={() => {
+                              onClose();
+                              setActiveView(item.view);
+                            }}
+                            className="flex items-center justify-between p-2.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/5 hover:border-white/10 text-left transition-all cursor-pointer group active:scale-98"
+                          >
+                            <div className="flex items-center gap-2.5">
+                              <Icon className={`w-4 h-4 ${item.color} shrink-0`} />
+                              <span className="text-xs font-semibold text-slate-200 group-hover:text-white">
+                                {item.label}
+                              </span>
+                            </div>
+                            <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-white group-hover:translate-x-0.5 transition-all shrink-0" />
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
                 )}
 
                 {/* 3. CHECK-IN / BASECAMP OFFICER */}
                 {currentUser.role === 'checkin' && (
-                  <div className="space-y-2">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        onClose();
-                        setActiveView('checkin');
-                      }}
-                      className="w-full flex items-center justify-between p-3.5 rounded-2xl bg-white/[0.03] hover:bg-white/[0.07] border border-white/10 hover:border-cyan-500/40 text-left transition-all font-bold text-white cursor-pointer group"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-cyan-600/15 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
-                          <LogIn className="w-4 h-4" />
-                        </div>
-                        <span className="text-xs">Meja Registrasi Check-In Hari-H</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onClose();
+                      setActiveView('checkin');
+                    }}
+                    className="w-full flex items-center justify-between p-3 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-left transition-all font-semibold text-slate-200 hover:text-white cursor-pointer group active:scale-98"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <Building2 className="w-4 h-4 text-teal-400 shrink-0" />
+                      <div>
+                        <span className="text-xs font-bold block text-white">Pos Basecamp & Barak Transit</span>
+                        <span className="text-[10px] text-slate-400 block font-normal">Check-In kedatangan & Check-Out kepulangan</span>
                       </div>
-                      <ArrowRight className="w-4 h-4 text-slate-500 group-hover:text-cyan-400 group-hover:translate-x-0.5 transition-all" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        onClose();
-                        setActiveView('checkout');
-                      }}
-                      className="w-full flex items-center justify-between p-3.5 rounded-2xl bg-white/[0.03] hover:bg-white/[0.07] border border-white/10 hover:border-teal-500/40 text-left transition-all font-bold text-slate-200 hover:text-white cursor-pointer group"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-teal-600/15 border border-teal-500/30 flex items-center justify-center text-teal-400">
-                          <LogOut className="w-4 h-4" />
-                        </div>
-                        <span className="text-xs">Inspeksi Barak & Check-Out</span>
-                      </div>
-                      <ArrowRight className="w-4 h-4 text-slate-500 group-hover:text-teal-400 group-hover:translate-x-0.5 transition-all" />
-                    </button>
-                  </div>
+                    </div>
+                    <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-teal-400 group-hover:translate-x-0.5 transition-all" />
+                  </button>
                 )}
 
                 {/* 4. DAERAH PERSIAPAN (DP 1-2) OFFICER */}
@@ -385,15 +357,13 @@ export default function MobileMenu({ isOpen, onClose }) {
                       onClose();
                       setActiveView('dp');
                     }}
-                    className="w-full flex items-center justify-between p-3.5 rounded-2xl bg-white/[0.03] hover:bg-white/[0.07] border border-white/10 hover:border-orange-500/40 text-left transition-all font-bold text-white cursor-pointer group"
+                    className="w-full flex items-center justify-between p-3 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-left transition-all font-semibold text-slate-200 hover:text-white cursor-pointer group active:scale-98"
                   >
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-orange-600/15 border border-orange-500/30 flex items-center justify-center text-orange-400">
-                        <Clock className="w-4 h-4" />
-                      </div>
-                      <span className="text-xs">Panel Daerah Persiapan (DP 1-2)</span>
+                    <div className="flex items-center gap-2.5">
+                      <Clock className="w-4 h-4 text-orange-400 shrink-0" />
+                      <span className="text-xs font-semibold">Panel Daerah Persiapan (DP 1-2)</span>
                     </div>
-                    <ArrowRight className="w-4 h-4 text-slate-500 group-hover:text-orange-400 group-hover:translate-x-0.5 transition-all" />
+                    <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-orange-400 group-hover:translate-x-0.5 transition-all" />
                   </button>
                 )}
 
@@ -405,36 +375,31 @@ export default function MobileMenu({ isOpen, onClose }) {
                       onClose();
                       setActiveView('juri');
                     }}
-                    className="w-full flex items-center justify-between p-3.5 rounded-2xl bg-white/[0.03] hover:bg-white/[0.07] border border-white/10 hover:border-emerald-500/40 text-left transition-all font-bold text-white cursor-pointer group"
+                    className="w-full flex items-center justify-between p-3 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-left transition-all font-semibold text-slate-200 hover:text-white cursor-pointer group active:scale-98"
                   >
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-emerald-600/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
-                        <Award className="w-4 h-4" />
-                      </div>
-                      <span className="text-xs">Lembar E-Scoring Juri LBB</span>
+                    <div className="flex items-center gap-2.5">
+                      <Award className="w-4 h-4 text-emerald-400 shrink-0" />
+                      <span className="text-xs font-semibold">Lembar E-Scoring Juri LBB</span>
                     </div>
-                    <ArrowRight className="w-4 h-4 text-slate-500 group-hover:text-emerald-400 group-hover:translate-x-0.5 transition-all" />
+                    <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-emerald-400 group-hover:translate-x-0.5 transition-all" />
                   </button>
                 )}
 
                 {/* 6. OPERATOR PENGINPUT NILAI */}
                 {currentUser.role === 'penginput' && (
-                  <div className="space-y-2">
+                  <div className="grid grid-cols-2 gap-1.5">
                     <button
                       type="button"
                       onClick={() => {
                         onClose();
                         setActiveView('juri');
                       }}
-                      className="w-full flex items-center justify-between p-3.5 rounded-2xl bg-white/[0.03] hover:bg-white/[0.07] border border-white/10 hover:border-indigo-500/40 text-left transition-all font-bold text-white cursor-pointer group"
+                      className="flex items-center gap-2 p-2.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/5 text-left transition-all cursor-pointer group active:scale-98"
                     >
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-indigo-600/15 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
-                          <Award className="w-4 h-4" />
-                        </div>
-                        <span className="text-xs">Input Nilai Fisik & Foto Blangko</span>
-                      </div>
-                      <ArrowRight className="w-4 h-4 text-slate-500 group-hover:text-indigo-400 group-hover:translate-x-0.5 transition-all" />
+                      <Award className="w-4 h-4 text-indigo-400 shrink-0" />
+                      <span className="text-xs font-semibold text-slate-200 group-hover:text-white truncate">
+                        Input Fisik Skor
+                      </span>
                     </button>
                     <button
                       type="button"
@@ -442,15 +407,12 @@ export default function MobileMenu({ isOpen, onClose }) {
                         onClose();
                         setActiveView('rekap_nilai');
                       }}
-                      className="w-full flex items-center justify-between p-3.5 rounded-2xl bg-white/[0.03] hover:bg-white/[0.07] border border-white/10 hover:border-indigo-500/40 text-left transition-all font-bold text-slate-200 hover:text-white cursor-pointer group"
+                      className="flex items-center gap-2 p-2.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/5 text-left transition-all cursor-pointer group active:scale-98"
                     >
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-indigo-600/15 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
-                          <FileSpreadsheet className="w-4 h-4" />
-                        </div>
-                        <span className="text-xs">Monitoring Status Draft Nilai</span>
-                      </div>
-                      <ArrowRight className="w-4 h-4 text-slate-500 group-hover:text-indigo-400 group-hover:translate-x-0.5 transition-all" />
+                      <FileSpreadsheet className="w-4 h-4 text-indigo-400 shrink-0" />
+                      <span className="text-xs font-semibold text-slate-200 group-hover:text-white truncate">
+                        Monitoring Draft
+                      </span>
                     </button>
                   </div>
                 )}
@@ -463,15 +425,13 @@ export default function MobileMenu({ isOpen, onClose }) {
                       onClose();
                       setActiveView('rekap_nilai');
                     }}
-                    className="w-full flex items-center justify-between p-3.5 rounded-2xl bg-white/[0.03] hover:bg-white/[0.07] border border-white/10 hover:border-teal-500/40 text-left transition-all font-bold text-white cursor-pointer group"
+                    className="w-full flex items-center justify-between p-3 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-left transition-all font-semibold text-slate-200 hover:text-white cursor-pointer group active:scale-98"
                   >
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-teal-600/15 border border-teal-500/30 flex items-center justify-center text-teal-400">
-                        <CheckCircle2 className="w-4 h-4" />
-                      </div>
-                      <span className="text-xs">Panel Verifikasi & Validasi Blangko</span>
+                    <div className="flex items-center gap-2.5">
+                      <CheckCircle2 className="w-4 h-4 text-teal-400 shrink-0" />
+                      <span className="text-xs font-semibold">Panel Verifikasi & Validasi Blangko</span>
                     </div>
-                    <ArrowRight className="w-4 h-4 text-slate-500 group-hover:text-teal-400 group-hover:translate-x-0.5 transition-all" />
+                    <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-teal-400 group-hover:translate-x-0.5 transition-all" />
                   </button>
                 )}
 
@@ -483,85 +443,77 @@ export default function MobileMenu({ isOpen, onClose }) {
                       onClose();
                       setActiveView('rekap_nilai');
                     }}
-                    className="w-full flex items-center justify-between p-3.5 rounded-2xl bg-white/[0.03] hover:bg-white/[0.07] border border-white/10 hover:border-amber-500/40 text-left transition-all font-bold text-white cursor-pointer group"
+                    className="w-full flex items-center justify-between p-3 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-left transition-all font-semibold text-slate-200 hover:text-white cursor-pointer group active:scale-98"
                   >
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-amber-600/15 border border-amber-500/30 flex items-center justify-center text-amber-400">
-                        <Trophy className="w-4 h-4" />
-                      </div>
-                      <span className="text-xs">Penguncian Skor & Berita Acara</span>
+                    <div className="flex items-center gap-2.5">
+                      <Trophy className="w-4 h-4 text-amber-400 shrink-0" />
+                      <span className="text-xs font-semibold">Penguncian Skor & Berita Acara</span>
                     </div>
-                    <ArrowRight className="w-4 h-4 text-slate-500 group-hover:text-amber-400 group-hover:translate-x-0.5 transition-all" />
+                    <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-amber-400 group-hover:translate-x-0.5 transition-all" />
                   </button>
                 )}
 
                 {/* 9. SUPERADMIN (KETUA PELAKSANA / IT MASTER) */}
                 {currentUser.role === 'superadmin' && (
-                  <div className="space-y-2">
+                  <div className="space-y-2.5">
+                    {/* Primary Highlight Master Button */}
                     <button
                       type="button"
                       onClick={() => {
                         onClose();
                         setActiveView('superadmin');
                       }}
-                      className="w-full flex items-center justify-between p-3.5 rounded-2xl bg-gradient-to-r from-rose-950/40 to-slate-900 border border-rose-500/30 hover:border-rose-400 text-left transition-all text-rose-300 font-bold cursor-pointer group shadow-sm"
+                      className="w-full flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-rose-950/40 via-slate-900 to-slate-900 border border-rose-500/30 hover:border-rose-400/60 text-left transition-all cursor-pointer group active:scale-98 shadow-sm"
                     >
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-rose-500/20 border border-rose-500/30 flex items-center justify-center text-rose-400">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-7 h-7 rounded-lg bg-rose-500/20 text-rose-400 flex items-center justify-center shrink-0">
                           <Crown className="w-4 h-4" />
                         </div>
-                        <span className="text-xs font-black">Superadmin Master Authority</span>
-                      </div>
-                      <ArrowRight className="w-4 h-4 text-rose-400 group-hover:translate-x-0.5 transition-transform" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        onClose();
-                        setActiveView('admin');
-                      }}
-                      className="w-full flex items-center justify-between p-3.5 rounded-2xl bg-white/[0.03] hover:bg-white/[0.07] border border-white/10 hover:border-blue-500/40 text-left transition-all font-bold text-slate-200 hover:text-white cursor-pointer group"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-blue-600/15 border border-blue-500/30 flex items-center justify-center text-blue-400">
-                          <ClipboardList className="w-4 h-4" />
+                        <div>
+                          <span className="text-xs font-bold block text-rose-200">Superadmin Master Authority</span>
+                          <span className="text-[10px] text-rose-400/80 block font-normal">Pusat kendali & konfigurasi sistem</span>
                         </div>
-                        <span className="text-xs">Dashboard Admin Sekretariat</span>
                       </div>
-                      <ArrowRight className="w-4 h-4 text-slate-500 group-hover:text-blue-400 group-hover:translate-x-0.5 transition-all" />
+                      <ArrowRight className="w-3.5 h-3.5 text-rose-400 group-hover:translate-x-0.5 transition-transform shrink-0" />
                     </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        onClose();
-                        setActiveView('dp');
-                      }}
-                      className="w-full flex items-center justify-between p-3.5 rounded-2xl bg-white/[0.03] hover:bg-white/[0.07] border border-white/10 hover:border-orange-500/40 text-left transition-all font-bold text-slate-200 hover:text-white cursor-pointer group"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-orange-600/15 border border-orange-500/30 flex items-center justify-center text-orange-400">
-                          <Clock className="w-4 h-4" />
-                        </div>
-                        <span className="text-xs">Panel DP (Daerah Persiapan)</span>
+
+                    {/* Compact 2-Column Grid of Panitia Tools (Calm & Organized) */}
+                    <div className="space-y-1.5 pt-0.5">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block px-1">
+                        Akses Cepat Modul:
+                      </span>
+                      <div className="grid grid-cols-2 gap-1.5">
+                        {[
+                          { view: 'admin', label: 'Verifikasi Berkas', icon: ClipboardList, color: 'text-blue-400' },
+                          { view: 'tm', label: 'Undian TM', icon: CalendarCheck, color: 'text-amber-400' },
+                          { view: 'field_trial', label: 'Uji Lapangan', icon: Compass, color: 'text-emerald-400' },
+                          { view: 'checkin', label: 'Pos Basecamp', icon: Building2, color: 'text-teal-400' },
+                          { view: 'dp', label: 'Daerah Persiapan', icon: Clock, color: 'text-orange-400' },
+                          { view: 'juri', label: 'Scoring Juri', icon: Award, color: 'text-purple-400' },
+                          { view: 'rekap_nilai', label: 'Rekap Nilai', icon: FileSpreadsheet, color: 'text-indigo-400' },
+                        ].map(tool => {
+                          const Icon = tool.icon;
+                          return (
+                            <button
+                              key={tool.view}
+                              type="button"
+                              onClick={() => {
+                                onClose();
+                                setActiveView(tool.view);
+                              }}
+                              className="flex items-center gap-2 p-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] active:bg-white/[0.12] border border-white/5 hover:border-white/10 text-left transition-all active:scale-95 group cursor-pointer"
+                            >
+                              <div className="w-6 h-6 rounded-lg bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-white/10 transition-colors">
+                                <Icon className={`w-3.5 h-3.5 ${tool.color}`} />
+                              </div>
+                              <span className="text-[11px] font-semibold text-slate-300 group-hover:text-white truncate">
+                                {tool.label}
+                              </span>
+                            </button>
+                          );
+                        })}
                       </div>
-                      <ArrowRight className="w-4 h-4 text-slate-500 group-hover:text-orange-400 group-hover:translate-x-0.5 transition-all" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        onClose();
-                        setActiveView('rekap_nilai');
-                      }}
-                      className="w-full flex items-center justify-between p-3.5 rounded-2xl bg-white/[0.03] hover:bg-white/[0.07] border border-white/10 hover:border-amber-500/40 text-left transition-all font-bold text-slate-200 hover:text-white cursor-pointer group"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-amber-600/15 border border-amber-500/30 flex items-center justify-center text-amber-400">
-                          <Award className="w-4 h-4" />
-                        </div>
-                        <span className="text-xs">Rekap & Penguncian Nilai</span>
-                      </div>
-                      <ArrowRight className="w-4 h-4 text-slate-500 group-hover:text-amber-400 group-hover:translate-x-0.5 transition-all" />
-                    </button>
+                    </div>
                   </div>
                 )}
               </div>

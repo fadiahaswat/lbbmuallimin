@@ -58,9 +58,9 @@ export const INITIAL_USERS = [
     id: 'user-admin-andi',
     name: 'Andi Aqillah',
     email: 'andiaqillah@muallimin.sch.id',
-    role: 'admin',
-    avatar: 'https://ui-avatars.com/api/?name=Andi+Aqillah&background=0f172a&color=38bdf8&bold=true',
-    roleLabel: 'Panitia Sekretariat (Admin)',
+    role: 'superadmin',
+    avatar: 'https://ui-avatars.com/api/?name=Andi+Aqillah&background=881337&color=fbbf24&bold=true',
+    roleLabel: 'Superadmin & Panitia Inti',
   },
   {
     id: 'user-checkin-1',

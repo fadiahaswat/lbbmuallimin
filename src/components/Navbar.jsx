@@ -3,6 +3,7 @@ import {
   ArrowRight,
   Menu,
   LogIn,
+  Building2,
   LogOut,
   ChevronDown,
   LayoutDashboard,
@@ -264,7 +265,7 @@ export default function Navbar({ onOpenMobileMenu }) {
               </button>
 
               {isUserDropdownOpen && (
-                <div className="absolute right-0 mt-2.5 w-72 bg-slate-950/95 backdrop-blur-2xl border border-slate-800/80 rounded-2xl p-2.5 shadow-2xl z-50 text-white text-xs animate-in fade-in zoom-in-95 duration-150 space-y-1.5 ring-1 ring-white/10">
+                <div className="absolute right-0 mt-2.5 w-72 max-h-[85vh] overflow-y-auto bg-slate-950/95 backdrop-blur-2xl border border-slate-800/80 rounded-2xl p-2.5 shadow-2xl z-50 text-white text-xs animate-in fade-in zoom-in-95 duration-150 space-y-1.5 ring-1 ring-white/10">
                   {/* User Profile Header Card */}
                   <div className="px-3 py-2.5 bg-slate-900/80 border border-slate-800 rounded-xl flex items-center gap-3">
                     <div className="relative shrink-0 flex items-center justify-center">
@@ -498,16 +499,16 @@ export default function Navbar({ onOpenMobileMenu }) {
                       </button>
                     )}
 
-                    {/* 9. SUPERADMIN (KETUA PELAKSANA / IT MASTER) */}
+                    {/* 9. SUPERADMIN (KETUA PELAKSANA / IT MASTER) - AKSES LENGKAP SEMUA ROLE */}
                     {currentUser.role === 'superadmin' && (
-                      <>
+                      <div className="space-y-0.5">
                         <button
                           type="button"
                           onClick={() => {
                             setIsUserDropdownOpen(false);
                             setActiveView('superadmin');
                           }}
-                          className="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-rose-500/20 text-left transition-colors text-rose-300 hover:text-rose-200 cursor-pointer font-black group"
+                          className="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/30 text-left transition-colors text-rose-300 hover:text-rose-200 cursor-pointer font-black group"
                         >
                           <div className="flex items-center gap-2.5">
                             <Crown className="w-4 h-4 text-rose-400 shrink-0" />
@@ -521,15 +522,113 @@ export default function Navbar({ onOpenMobileMenu }) {
                             setIsUserDropdownOpen(false);
                             setActiveView('admin');
                           }}
-                          className="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-white/10 text-left transition-colors font-bold text-slate-200 hover:text-white cursor-pointer group"
+                          className="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-blue-500/15 text-left transition-colors font-bold text-slate-200 hover:text-white cursor-pointer group"
                         >
                           <div className="flex items-center gap-2.5">
-                            <LayoutDashboard className="w-4 h-4 text-yellow-400 shrink-0" />
-                            <span>Dashboard Administrasi</span>
+                            <ClipboardList className="w-4 h-4 text-blue-400 shrink-0" />
+                            <span>Verifikasi Berkas & Pendaftaran</span>
                           </div>
-                          <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-yellow-400 transition-colors" />
+                          <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-blue-400 transition-colors" />
                         </button>
-                      </>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsUserDropdownOpen(false);
+                            setActiveView('tm');
+                          }}
+                          className="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-amber-500/15 text-left transition-colors font-bold text-slate-200 hover:text-white cursor-pointer group"
+                        >
+                          <div className="flex items-center gap-2.5">
+                            <CalendarCheck className="w-4 h-4 text-amber-400 shrink-0" />
+                            <span>Undian TM & Jadwal Tampil</span>
+                          </div>
+                          <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-amber-400 transition-colors" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsUserDropdownOpen(false);
+                            setActiveView('field_trial');
+                          }}
+                          className="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-emerald-500/15 text-left transition-colors font-bold text-slate-200 hover:text-white cursor-pointer group"
+                        >
+                          <div className="flex items-center gap-2.5">
+                            <Compass className="w-4 h-4 text-emerald-400 shrink-0" />
+                            <span>Jadwal Uji Coba Lapangan</span>
+                          </div>
+                          <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-emerald-400 transition-colors" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsUserDropdownOpen(false);
+                            setActiveView('checkin');
+                          }}
+                          className="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-cyan-500/15 text-left transition-colors font-bold text-slate-200 hover:text-white cursor-pointer group"
+                        >
+                          <div className="flex items-center gap-2.5">
+                            <LogIn className="w-4 h-4 text-cyan-400 shrink-0" />
+                            <span>Meja Registrasi Check-In</span>
+                          </div>
+                          <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-cyan-400 transition-colors" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsUserDropdownOpen(false);
+                            setActiveView('checkout');
+                          }}
+                          className="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-teal-500/15 text-left transition-colors font-bold text-slate-200 hover:text-white cursor-pointer group"
+                        >
+                          <div className="flex items-center gap-2.5">
+                            <LogOut className="w-4 h-4 text-teal-400 shrink-0" />
+                            <span>Inspeksi Barak & Check-Out</span>
+                          </div>
+                          <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-teal-400 transition-colors" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsUserDropdownOpen(false);
+                            setActiveView('dp');
+                          }}
+                          className="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-orange-500/15 text-left transition-colors font-bold text-slate-200 hover:text-white cursor-pointer group"
+                        >
+                          <div className="flex items-center gap-2.5">
+                            <Clock className="w-4 h-4 text-orange-400 shrink-0" />
+                            <span>Panel Daerah Persiapan (DP 1-2)</span>
+                          </div>
+                          <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-orange-400 transition-colors" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsUserDropdownOpen(false);
+                            setActiveView('juri');
+                          }}
+                          className="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-emerald-500/15 text-left transition-colors font-bold text-slate-200 hover:text-white cursor-pointer group"
+                        >
+                          <div className="flex items-center gap-2.5">
+                            <Award className="w-4 h-4 text-emerald-400 shrink-0" />
+                            <span>Lembar E-Scoring Juri LBB</span>
+                          </div>
+                          <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-emerald-400 transition-colors" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsUserDropdownOpen(false);
+                            setActiveView('rekap_nilai');
+                          }}
+                          className="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-indigo-500/15 text-left transition-colors font-bold text-slate-200 hover:text-white cursor-pointer group"
+                        >
+                          <div className="flex items-center gap-2.5">
+                            <FileSpreadsheet className="w-4 h-4 text-indigo-400 shrink-0" />
+                            <span>Rekap, Verifikasi & Kunci Skor</span>
+                          </div>
+                          <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-indigo-400 transition-colors" />
+                        </button>
+                      </div>
                     )}
 
                     {/* Shared Link: Live Leaderboard (terbuka untuk staf atau saat pengumuman dipublikasikan) */}

@@ -221,3 +221,50 @@ video::-webkit-media-controls-panel {
   }
 }
 
+/* QR Code Laser Scan Animation */
+@keyframes scan {
+  0%, 100% {
+    top: 6%;
+    opacity: 0.7;
+  }
+  50% {
+    top: 92%;
+    opacity: 1;
+  }
+}
+
+/* Fullscreen Immersive QR Scanner */
+#qr-camera-viewport {
+  width: 100% !important;
+  height: 100% !important;
+  position: absolute !important;
+  inset: 0 !important;
+  overflow: hidden !important;
+  background-color: #000 !important;
+}
+
+#qr-camera-viewport video {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  position: absolute !important;
+  inset: 0 !important;
+}
+
+/* Hide Html5Qrcode internal ugly shaded overlays and canvas borders so our custom viewfinder is the only frame */
+#qr-camera-viewport #qr-shaded-region,
+#qr-camera-viewport #qr-shaded-region *,
+#qr-camera-viewport div[style*="rgba(0, 0, 0"],
+#qr-camera-viewport div[style*="rgba(255, 255, 255"] {
+  display: none !important;
+  opacity: 0 !important;
+  border: none !important;
+  pointer-events: none !important;
+}
+
+#qr-camera-viewport canvas {
+  display: none !important;
+}
+
+
+
