@@ -204,37 +204,34 @@ export default function RekapNilaiView() {
     >
       <div className="space-y-6">
 
-        {/* Top Header Card */}
-        <div className="bg-gradient-to-r from-amber-950 via-slate-900 to-orange-950 text-white rounded-3xl p-6 sm:p-8 shadow-xl border border-amber-900/40 relative overflow-hidden">
+        {/* Scrutineering Progress & Telemetry */}
+        <div className="bg-gradient-to-r from-amber-950 via-slate-900 to-orange-950 text-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-xl border border-amber-900/40 relative overflow-hidden">
           <div className="absolute -right-8 -bottom-8 w-60 h-60 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
 
-          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div className="space-y-2">
+          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6">
+            <div className="space-y-1.5">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/20 border border-amber-400/30 text-amber-300 text-xs font-black uppercase tracking-wider">
                 <FileSpreadsheet className="w-3.5 h-3.5" />
                 <span>Tahap 7: Scrutineering & Berita Acara</span>
               </div>
-              <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-white">
-                Rekapitulasi Nilai & Penetapan Juara
-              </h1>
               <p className="text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed">
                 Alur pengesahan nilai 3 pintu: Penginputan skor blangko fisik kertas, verifikasi silang foto autentik oleh Verifikator, serta penguncian nilai mutlak oleh Finalisator Dewan Juri.
               </p>
             </div>
 
             {/* Scrutineer Progress Counters */}
-            <div className="flex items-center gap-3 shrink-0">
-              <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-4 text-center min-w-[95px]">
-                <span className="text-[10px] uppercase font-bold text-amber-300 block">1. Terinput</span>
-                <span className="text-2xl font-black text-white font-mono">{scoredCount}</span>
+            <div className="grid grid-cols-3 gap-2 sm:flex sm:items-center sm:gap-3 shrink-0">
+              <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-xl sm:rounded-2xl p-2.5 sm:p-4 text-center min-w-0 sm:min-w-[95px]">
+                <span className="text-[9px] sm:text-[10px] uppercase font-bold text-amber-300 block truncate">1. Terinput</span>
+                <span className="text-xl sm:text-2xl font-black text-white font-mono">{scoredCount}</span>
               </div>
-              <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-4 text-center min-w-[95px]">
-                <span className="text-[10px] uppercase font-bold text-blue-300 block">2. Terverifikasi</span>
-                <span className="text-2xl font-black text-blue-300 font-mono">{verifiedCount}</span>
+              <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-xl sm:rounded-2xl p-2.5 sm:p-4 text-center min-w-0 sm:min-w-[95px]">
+                <span className="text-[9px] sm:text-[10px] uppercase font-bold text-blue-300 block truncate">2. Terverifikasi</span>
+                <span className="text-xl sm:text-2xl font-black text-blue-300 font-mono">{verifiedCount}</span>
               </div>
-              <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-4 text-center min-w-[95px]">
-                <span className="text-[10px] uppercase font-bold text-emerald-300 block">3. Terkunci</span>
-                <span className="text-2xl font-black text-emerald-300 font-mono">{finalizedCount}</span>
+              <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-xl sm:rounded-2xl p-2.5 sm:p-4 text-center min-w-0 sm:min-w-[95px]">
+                <span className="text-[9px] sm:text-[10px] uppercase font-bold text-emerald-300 block truncate">3. Terkunci</span>
+                <span className="text-xl sm:text-2xl font-black text-emerald-300 font-mono">{finalizedCount}</span>
               </div>
             </div>
           </div>

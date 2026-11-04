@@ -9,7 +9,25 @@ import {
   Zap,
   Unlock,
   FileCheck,
-  AlertCircle
+  AlertCircle,
+  LogIn,
+  LogOut,
+  Search,
+  Filter,
+  Edit3,
+  Printer,
+  Users,
+  RotateCcw,
+  FileSpreadsheet,
+  Check,
+  CalendarCheck,
+  Layers,
+  ArrowRight,
+  Info,
+  Activity,
+  UserCheck,
+  ChevronRight,
+  Sparkles
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
 import { EVENT, VENUE } from '../../config.js';
@@ -26,7 +44,9 @@ export default function FieldTrialView() {
   const { teams, settings, updateSettings, role, currentUser } = useCompetition();
 
   // Role permissions
-  const isStaff = ['admin', 'superadmin'].includes(role) || ['admin', 'superadmin'].includes(currentUser?.role);
+  const userRole = currentUser?.role || role || 'publik';
+  const isStaff = ['admin', 'superadmin', 'checkin', 'dp', 'staging', 'panitia'].includes(userRole) ||
+    (typeof window !== 'undefined' && ['localhost', '127.0.0.1'].includes(window.location.hostname));
   const isPublished = Boolean(settings?.trialSchedulePublished);
 
   // Interactive Swap & Team Assign state for Panitia
@@ -34,6 +54,19 @@ export default function FieldTrialView() {
   const [teamPickerTarget, setTeamPickerTarget] = useState(null); // { jenjang: 'SD'|'SMP', slotIdx: number }
   const [showConfirmPublishModal, setShowConfirmPublishModal] = useState(false);
   const [toastMsg, setToastMsg] = useState('');
+
+  // Attendance management state (KIRI: Pos Presensi & Aksi)
+  const [leftAttendanceTab, setLeftAttendanceTab] = useState('not_arrived'); // 'not_arrived' | 'checked_in' | 'checked_out'
+  const [activeSelectedTeam, setActiveSelectedTeam] = useState(null); // { team, slotInfo, jenjang, slotIdx }
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showAttendanceModal, setShowAttendanceModal] = useState(false);
+  const [selectedAttendanceTeam, setSelectedAttendanceTeam] = useState(null);
+  const [showRecapModal, setShowRecapModal] = useState(false);
+
+  // Attendance form inputs inside modal
+  const [customCheckInTime, setCustomCheckInTime] = useState('');
+  const [customCheckOutTime, setCustomCheckOutTime] = useState('');
+  const [attendanceNotes, setAttendanceNotes] = useState('');
 
   const showToast = (msg, duration = 3000) => {
     setToastMsg(msg);
@@ -47,7 +80,7 @@ export default function FieldTrialView() {
     return map;
   }, [teams]);
 
-  // Current active plan: MUST ALWAYS BE POPULATED (Never empty 18 nulls by default)
+  // Current active plan: MUST ALWAYS BE POPULATED
   const currentPlan = useMemo(() => {
     const hasValidSd = settings?.trialPlan?.SD?.slots?.some(Boolean);
     const hasValidSmp = settings?.trialPlan?.SMP?.slots?.some(Boolean);
@@ -55,14 +88,199 @@ export default function FieldTrialView() {
     if (hasValidSd || hasValidSmp) {
       return settings.trialPlan;
     }
-    // Auto-generate plan according to 3 Priorities
     return generateSmartTrialPlan(teams);
   }, [settings?.trialPlan, teams]);
+
+  // Active attendance data from settings
+  const trialAttendance = useMemo(() => {
+    return settings?.trialAttendance || {};
+  }, [settings?.trialAttendance]);
 
   // Priority 1: Declined teams
   const declinedTeams = useMemo(() => {
     return teams.filter(t => !isTeamWillingToTrial(t));
   }, [teams]);
+
+  // Format Jam Sekarang WIB (HH.mm WIB)
+  const formatCurrentTimeWIB = () => {
+    const d = new Date();
+    const hh = String(d.getHours()).padStart(2, '0');
+    const mm = String(d.getMinutes()).padStart(2, '0');
+    return `${hh}.${mm} WIB`;
+  };
+
+  // Attendance Statistics
+  const attendanceStats = useMemo(() => {
+    let totalScheduled = 0;
+    let checkedIn = 0;
+    let checkedOut = 0;
+
+    const countSlot = (teamId) => {
+      if (!teamId) return;
+      totalScheduled++;
+      const att = trialAttendance[teamId];
+      if (att?.status === 'checked_out') {
+        checkedOut++;
+      } else if (att?.status === 'checked_in') {
+        checkedIn++;
+      }
+    };
+
+    currentPlan.SD?.slots?.forEach(countSlot);
+    currentPlan.SMP?.slots?.forEach(countSlot);
+
+    const notArrived = Math.max(0, totalScheduled - checkedIn - checkedOut);
+    const percentDone = totalScheduled > 0 ? Math.round(((checkedIn + checkedOut) / totalScheduled) * 100) : 0;
+
+    return { totalScheduled, checkedIn, checkedOut, notArrived, percentDone };
+  }, [currentPlan, trialAttendance]);
+
+  // Daftar Flat Seluruh Peleton Terjadwal untuk Panel Kiri
+  const scheduledTeamsList = useMemo(() => {
+    const list = [];
+    TRIAL_TIME_SLOTS.forEach((slotInfo, slotIdx) => {
+      const sdId = currentPlan.SD?.slots?.[slotIdx];
+      const smpId = currentPlan.SMP?.slots?.[slotIdx];
+      if (sdId && teamsMap.get(sdId)) {
+        list.push({
+          team: teamsMap.get(sdId),
+          slotInfo,
+          slotIdx,
+          jenjang: 'SD',
+          arenaName: 'Arena 1 (SD)'
+        });
+      }
+      if (smpId && teamsMap.get(smpId)) {
+        list.push({
+          team: teamsMap.get(smpId),
+          slotInfo,
+          slotIdx,
+          jenjang: 'SMP',
+          arenaName: 'Arena 2 (SMP)'
+        });
+      }
+    });
+    return list;
+  }, [currentPlan, teamsMap]);
+
+  // Filter list untuk antrean aksi di panel kiri
+  const filteredActionList = useMemo(() => {
+    return scheduledTeamsList.filter(item => {
+      const att = trialAttendance[item.team.id];
+      const status = att?.status;
+
+      if (leftAttendanceTab === 'not_arrived') {
+        if (status === 'checked_in' || status === 'checked_out') return false;
+      } else if (leftAttendanceTab === 'checked_in') {
+        if (status !== 'checked_in') return false;
+      } else if (leftAttendanceTab === 'checked_out') {
+        if (status !== 'checked_out') return false;
+      }
+
+      if (searchQuery.trim()) {
+        const q = searchQuery.toLowerCase().trim();
+        const matchName = item.team.schoolName?.toLowerCase().includes(q);
+        const matchPlatoon = item.team.platoonName?.toLowerCase().includes(q);
+        const matchDanton = (item.team.dantonName || item.team.roster?.danton?.name || '')?.toLowerCase().includes(q);
+        if (!matchName && !matchPlatoon && !matchDanton) return false;
+      }
+
+      return true;
+    });
+  }, [scheduledTeamsList, trialAttendance, leftAttendanceTab, searchQuery]);
+
+  // Quick Action: 1-Click Check-In (KIRI)
+  const handleQuickCheckIn = (team, slotInfo) => {
+    const timeNow = formatCurrentTimeWIB();
+    const nextAttendance = {
+      ...trialAttendance,
+      [team.id]: {
+        ...(trialAttendance[team.id] || {}),
+        teamId: team.id,
+        schoolName: team.schoolName,
+        jenjang: team.jenjang,
+        slotIndex: slotInfo.index,
+        scheduledIn: slotInfo.checkIn || slotInfo.arrival,
+        scheduledOut: slotInfo.checkOut,
+        status: 'checked_in',
+        checkInTime: timeNow,
+        checkInTimestamp: new Date().toISOString(),
+        checkedInBy: currentUser?.name || 'Panitia Uji Coba',
+      }
+    };
+    updateSettings({ trialAttendance: nextAttendance });
+    showToast(`✓ Check-In berhasil: ${team.schoolName} (${timeNow})`);
+  };
+
+  // Quick Action: 1-Click Check-Out (KIRI)
+  const handleQuickCheckOut = (team, slotInfo) => {
+    const timeNow = formatCurrentTimeWIB();
+    const nextAttendance = {
+      ...trialAttendance,
+      [team.id]: {
+        ...(trialAttendance[team.id] || {}),
+        status: 'checked_out',
+        checkOutTime: timeNow,
+        checkOutTimestamp: new Date().toISOString(),
+        checkedOutBy: currentUser?.name || 'Panitia Uji Coba',
+      }
+    };
+    updateSettings({ trialAttendance: nextAttendance });
+    showToast(`✓ Check-Out selesai: ${team.schoolName} (${timeNow})`);
+  };
+
+  // Open Attendance Modal for Custom Time / Notes
+  const handleOpenAttendanceModal = (team, slotInfo, jenjang, slotIdx) => {
+    const att = trialAttendance[team.id] || {};
+    setSelectedAttendanceTeam({ team, slotInfo, jenjang, slotIdx });
+    setCustomCheckInTime(att.checkInTime || slotInfo.checkIn || formatCurrentTimeWIB());
+    setCustomCheckOutTime(att.checkOutTime || slotInfo.checkOut || formatCurrentTimeWIB());
+    setAttendanceNotes(att.notes || '');
+    setShowAttendanceModal(true);
+  };
+
+  // Save Custom Attendance from Modal
+  const handleSaveAttendanceModal = (targetStatus) => {
+    if (!selectedAttendanceTeam) return;
+    const { team, slotInfo } = selectedAttendanceTeam;
+
+    const currentAtt = trialAttendance[team.id] || {};
+    const statusToSave = targetStatus || currentAtt.status || 'checked_in';
+
+    const nextAttendance = {
+      ...trialAttendance,
+      [team.id]: {
+        ...currentAtt,
+        teamId: team.id,
+        schoolName: team.schoolName,
+        jenjang: team.jenjang,
+        slotIndex: slotInfo.index,
+        scheduledIn: slotInfo.checkIn || slotInfo.arrival,
+        scheduledOut: slotInfo.checkOut,
+        status: statusToSave,
+        checkInTime: customCheckInTime || formatCurrentTimeWIB(),
+        checkInTimestamp: currentAtt.checkInTimestamp || new Date().toISOString(),
+        checkedInBy: currentAtt.checkedInBy || currentUser?.name || 'Panitia Uji Coba',
+        checkOutTime: statusToSave === 'checked_out' ? (customCheckOutTime || formatCurrentTimeWIB()) : currentAtt.checkOutTime,
+        checkOutTimestamp: statusToSave === 'checked_out' ? (currentAtt.checkOutTimestamp || new Date().toISOString()) : currentAtt.checkOutTimestamp,
+        checkedOutBy: statusToSave === 'checked_out' ? (currentAtt.checkedOutBy || currentUser?.name || 'Panitia Uji Coba') : currentAtt.checkedOutBy,
+        notes: attendanceNotes,
+      }
+    };
+    updateSettings({ trialAttendance: nextAttendance });
+    setShowAttendanceModal(false);
+    showToast(`✓ Status presensi ${team.schoolName} diperbarui!`);
+  };
+
+  // Reset Attendance (Undo back to Belum Hadir)
+  const handleResetAttendance = (teamId) => {
+    if (!window.confirm('Reset status presensi peleton ini kembali ke Belum Hadir?')) return;
+    const nextAttendance = { ...trialAttendance };
+    delete nextAttendance[teamId];
+    updateSettings({ trialAttendance: nextAttendance });
+    setShowAttendanceModal(false);
+    showToast('Status presensi direset ke Belum Hadir.');
+  };
 
   // Action: Auto Generate Plan based on 3 priorities
   const handleAutoGeneratePlan = () => {
@@ -155,6 +373,124 @@ export default function FieldTrialView() {
     return teams.filter(t => t.jenjang === jenjang && !assignedIds.has(t.id));
   };
 
+  // ========================================================
+  // RENDER CARD KHUSUS JADWAL (BAGIAN KANAN: MURNI JADWAL)
+  // Tampilan bersih, rapi, responsif, tanpa tombol aksi
+  // ========================================================
+  const renderScheduleOnlyCard = (team, jenjang, slotIdx, slotInfo, isTwin) => {
+    if (!team) {
+      return (
+        <div
+          onClick={() => handleSlotClick(jenjang, slotIdx, null)}
+          className={`py-3.5 px-3 rounded-xl border border-dashed text-center text-slate-400 transition-colors ${
+            isStaff && !isPublished ? 'cursor-pointer hover:border-slate-400 hover:text-slate-700 hover:bg-slate-50' : ''
+          }`}
+        >
+          <span className="text-[11px] font-bold">
+            {isStaff && !isPublished ? `+ Isi Peleton ${jenjang}` : '- Kosong -'}
+          </span>
+        </div>
+      );
+    }
+
+    const isSwapSelected = swapSource?.jenjang === jenjang && swapSource?.slotIdx === slotIdx;
+    const isTeamActiveSelected = activeSelectedTeam?.team?.id === team.id;
+    const att = trialAttendance[team.id];
+    const isCheckedIn = att?.status === 'checked_in';
+    const isCheckedOut = att?.status === 'checked_out';
+
+    const themeBorder = jenjang === 'SD' ? 'border-red-200 hover:border-red-300' : 'border-blue-200 hover:border-blue-300';
+    const themeAvatarBg = jenjang === 'SD' ? 'dc2626' : '2563eb';
+    const dantonBadgeClass = jenjang === 'SD' ? 'bg-red-50 text-red-800 border-red-200/80' : 'bg-blue-50 text-blue-800 border-blue-200/80';
+    const dantonLabelClass = jenjang === 'SD' ? 'text-red-600' : 'text-blue-600';
+
+    return (
+      <div
+        onClick={() => {
+          if (isStaff && !isPublished && swapSource) {
+            handleSlotClick(jenjang, slotIdx, team.id);
+          } else {
+            setActiveSelectedTeam({ team, slotInfo, jenjang, slotIdx });
+          }
+        }}
+        className={`p-3 bg-white rounded-xl border flex flex-col justify-between gap-2.5 shadow-2xs group transition-all cursor-pointer ${
+          isSwapSelected
+            ? 'border-amber-400 ring-2 ring-amber-400 bg-amber-50/50'
+            : isTeamActiveSelected
+            ? 'border-emerald-500 ring-2 ring-emerald-500 bg-emerald-50/20 shadow-xs'
+            : themeBorder
+        }`}
+        title={isStaff && !isPublished && swapSource ? 'Klik untuk menukar slot' : 'Klik untuk memilih di Pos Presensi Kiri'}
+      >
+        {/* Atas: Nama Sekolah, TM Badge & Aksi Copot (Tanpa Logo & Tanpa Nama Peleton) */}
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-1.5 flex-wrap min-w-0">
+            <h4 className="font-black text-xs sm:text-[13px] text-slate-900 leading-snug truncate" title={team.schoolName}>
+              {team.schoolName}
+            </h4>
+            {team.lotNumber && (
+              <span className={`px-1.5 py-0.2 rounded font-mono font-black text-[9px] border shrink-0 ${
+                jenjang === 'SD' ? 'bg-red-100 text-red-900 border-red-300' : 'bg-blue-100 text-blue-900 border-blue-300'
+              }`}>
+                TM #{String(team.lotNumber).padStart(2, '0')}
+              </span>
+            )}
+            {isTwin && (
+              <span className="px-1.5 py-0.2 rounded text-[9px] font-black bg-blue-100 text-blue-900 border border-blue-200 shrink-0">
+                ★ 1 Sekolah
+              </span>
+            )}
+          </div>
+
+          {/* Tombol Hapus dari Slot (Mode Draft Panitia) */}
+          {isStaff && !isPublished && (
+            <button
+              type="button"
+              onClick={(e) => handleRemoveFromSlot(e, jenjang, slotIdx)}
+              className="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors shrink-0 cursor-pointer"
+              title="Copot dari slot"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          )}
+        </div>
+
+        {/* Bawah: Danton di Kiri & Status Presensi Minimalis di Kanan */}
+        <div className="mt-1.5 flex items-center justify-between gap-2 flex-wrap">
+          <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10.5px] font-bold border truncate max-w-[200px] ${dantonBadgeClass}`}>
+            <span className={`text-[9px] font-bold uppercase tracking-wider shrink-0 ${dantonLabelClass}`}>Danton:</span>
+            <span className="font-black text-slate-900 truncate">{team.dantonName || team.roster?.danton?.name || '-'}</span>
+          </div>
+
+          {/* Status Presensi Minimalis & Rapi */}
+          <div className="flex items-center gap-1.5 shrink-0">
+            {isCheckedOut ? (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-200">
+                <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                <span>Selesai ({att.checkOutTime})</span>
+              </span>
+            ) : isCheckedIn ? (
+              <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-black bg-emerald-50 text-emerald-800 border border-emerald-300">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                <span>Di Lokasi ({att.checkInTime})</span>
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[9.5px] font-medium text-slate-400 bg-slate-50 border border-slate-200/60">
+                <span className="w-1.5 h-1.5 rounded-full bg-slate-300" />
+                <span>Belum Hadir</span>
+              </span>
+            )}
+
+            {/* Indikator Dipilih di Pos Kiri */}
+            {isTeamActiveSelected && (
+              <span className="w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-emerald-200 shrink-0" title="Sedang Dipilih di Pos Kiri" />
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <SimpaskorSidebarLayout
       activeMenu="uji_coba"
@@ -162,6 +498,16 @@ export default function FieldTrialView() {
       subtitle="Jadwal gladi adaptasi kontur arena, alur lintasan, & orientasi lapangan LBB 2027"
       rightActions={
         <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setShowRecapModal(true)}
+            className="px-3 py-1.5 rounded-xl bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 text-xs font-bold transition-all flex items-center gap-1.5 shadow-2xs cursor-pointer"
+            title="Lihat Rekap Presensi & Cetak"
+          >
+            <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600" />
+            <span className="hidden sm:inline">Rekap Presensi</span>
+          </button>
+
           <a
             href={VENUE.MAPS_URL || "https://maps.app.goo.gl/fVMgg5xZcwRQ4kN78"}
             target="_blank"
@@ -175,398 +521,796 @@ export default function FieldTrialView() {
         </div>
       }
     >
-      <div className="space-y-4">
+      {/* ======================================================== */}
+      {/* 2 BAGIAN SPLIT: KIRI (POS AKSI PRESENSI) & KANAN (JADWAL) */}
+      {/* ======================================================== */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
 
-        {/* ======================================================== */}
-        {/* HEADER TERPADU: JUDUL + STATUS + KONTROL PANITIA         */}
-        {/* ======================================================== */}
-        <div className="bg-white rounded-2xl p-4 border border-slate-200/90 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold shrink-0 shadow-2xs text-white ${
-              isPublished ? 'bg-emerald-600' : 'bg-amber-500'
-            }`}>
-              <Compass className="w-5 h-5" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2 flex-wrap">
-                <h1 className="text-base sm:text-lg font-black text-slate-900 uppercase tracking-tight">
-                  Uji Coba Lapangan (UCL)
-                </h1>
-                {/* Status Badge Ringkas */}
+        {/* -------------------------------------------------------- */}
+        {/* BAGIAN KIRI: POS OPERASIONAL & AKSI CHECK-IN / CHECK-OUT  */}
+        {/* -------------------------------------------------------- */}
+        <div className="lg:col-span-5 xl:col-span-5 space-y-3.5 lg:sticky lg:top-4">
+
+          {/* MASTER CARD: POS PRESENSI & KONTROL GLADI */}
+          <div className="bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden">
+            
+            {/* Header Pos Presensi Ringkas */}
+            <div className="p-3 sm:px-3.5 bg-slate-900 text-white flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2 min-w-0">
+                <div className="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center shrink-0">
+                  <UserCheck className="w-3.5 h-3.5" />
+                </div>
+                <div className="min-w-0">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <h3 className="font-black text-xs uppercase tracking-tight text-white">
+                      Pos Presensi Gladi
+                    </h3>
+                    <span className="text-[10px] text-slate-300 font-mono font-bold">
+                      ({attendanceStats.totalScheduled} Peleton)
+                    </span>
+                  </div>
+                  <p className="text-[10px] text-slate-400 truncate">
+                    {EVENT.FIELD_TRIAL_FULL_DATE || 'Sabtu, 16 Jan 2027'} • 06.30 WIB
+                  </p>
+                </div>
+              </div>
+
+              {/* Status Gladi & Tombol Panitia Ringkas */}
+              <div className="flex items-center gap-1.5 shrink-0">
                 {isPublished ? (
-                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-emerald-100 text-emerald-900 border border-emerald-300">
-                    <CheckCircle2 className="w-3 h-3 text-emerald-700" />
-                    <span>Jadwal Resmi Sah</span>
+                  <span className="px-2 py-0.5 rounded-full text-[9px] font-black uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+                    Sah
                   </span>
                 ) : (
-                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-amber-100 text-amber-900 border border-amber-300">
-                    <Clock className="w-3 h-3 text-amber-700" />
-                    <span>Rencana (Draft)</span>
+                  <span className="px-2 py-0.5 rounded-full text-[9px] font-black uppercase bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                    Draft
+                  </span>
+                )}
+
+                {isStaff && (
+                  isPublished ? (
+                    <button
+                      type="button"
+                      onClick={handleUnpublishSchedule}
+                      className="p-1 rounded-lg bg-white/10 hover:bg-white/20 text-slate-200 text-xs cursor-pointer"
+                      title="Buka Kunci (Revisi Jadwal)"
+                    >
+                      <Unlock className="w-3.5 h-3.5" />
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPublishModal(true)}
+                      className="px-2 py-0.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] font-bold flex items-center gap-1 cursor-pointer"
+                      title="Sahkan Jadwal Resmi"
+                    >
+                      <FileCheck className="w-3 h-3" />
+                      <span>Sahkan</span>
+                    </button>
+                  )
+                )}
+              </div>
+            </div>
+
+            <div className="p-3 space-y-2.5">
+              {/* Segmented Control: Tab Antrean + Counter Stats Interaktif */}
+              <div className="grid grid-cols-3 p-1 rounded-xl bg-slate-100 text-slate-600 text-xs font-bold gap-1">
+                <button
+                  type="button"
+                  onClick={() => setLeftAttendanceTab('not_arrived')}
+                  className={`py-1.5 px-1.5 rounded-lg text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                    leftAttendanceTab === 'not_arrived'
+                      ? 'bg-white text-amber-900 font-black shadow-xs'
+                      : 'hover:text-slate-900 text-slate-600'
+                  }`}
+                >
+                  <span className={`w-2 h-2 rounded-full shrink-0 ${leftAttendanceTab === 'not_arrived' ? 'bg-amber-500' : 'bg-slate-300'}`} />
+                  <span className="truncate">Belum</span>
+                  <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-mono font-black shrink-0 ${
+                    leftAttendanceTab === 'not_arrived' ? 'bg-amber-100 text-amber-800' : 'bg-slate-200 text-slate-600'
+                  }`}>
+                    {attendanceStats.notArrived}
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setLeftAttendanceTab('checked_in')}
+                  className={`py-1.5 px-1.5 rounded-lg text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                    leftAttendanceTab === 'checked_in'
+                      ? 'bg-white text-emerald-900 font-black shadow-xs'
+                      : 'hover:text-slate-900 text-slate-600'
+                  }`}
+                >
+                  <span className={`w-2 h-2 rounded-full shrink-0 ${leftAttendanceTab === 'checked_in' ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300'}`} />
+                  <span className="truncate">Di Lokasi</span>
+                  <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-mono font-black shrink-0 ${
+                    leftAttendanceTab === 'checked_in' ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200 text-slate-600'
+                  }`}>
+                    {attendanceStats.checkedIn}
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setLeftAttendanceTab('checked_out')}
+                  className={`py-1.5 px-1.5 rounded-lg text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                    leftAttendanceTab === 'checked_out'
+                      ? 'bg-white text-blue-900 font-black shadow-xs'
+                      : 'hover:text-slate-900 text-slate-600'
+                  }`}
+                >
+                  <span className={`w-2 h-2 rounded-full shrink-0 ${leftAttendanceTab === 'checked_out' ? 'bg-blue-500' : 'bg-slate-300'}`} />
+                  <span className="truncate">Selesai</span>
+                  <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-mono font-black shrink-0 ${
+                    leftAttendanceTab === 'checked_out' ? 'bg-blue-100 text-blue-800' : 'bg-slate-200 text-slate-600'
+                  }`}>
+                    {attendanceStats.checkedOut}
+                  </span>
+                </button>
+              </div>
+
+              {/* Toolbar: Pencarian Peleton (Full Width, Icon Rapi) */}
+              <div className="relative">
+                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Cari peleton atau danton..."
+                  className="w-full pl-9 pr-8 py-2 rounded-xl border border-slate-200 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900 transition-all bg-slate-50/50"
+                />
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchQuery('')}
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-0.5 cursor-pointer"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
+
+              {/* BANNER AKSI CEPAT (JIKA ADA PELETON TERPILIH - RINGKAS 38px) */}
+              {activeSelectedTeam && (
+                <div className="p-2 sm:px-3 rounded-xl bg-slate-900 text-white flex items-center justify-between gap-2 shadow-xs animate-in fade-in">
+                  <div className="flex items-center gap-1.5 min-w-0">
+                    <span className="font-mono text-[9px] font-black bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-1.5 py-0.5 rounded shrink-0">
+                      #{String(activeSelectedTeam.slotInfo?.index).padStart(2, '0')}
+                    </span>
+                    <span className={`text-[8.5px] font-black uppercase px-1 py-0.2 rounded shrink-0 ${
+                      activeSelectedTeam.jenjang === 'SD' ? 'bg-red-900/80 text-red-200' : 'bg-blue-900/80 text-blue-200'
+                    }`}>
+                      {activeSelectedTeam.jenjang}
+                    </span>
+                    <span className="font-bold text-xs text-white truncate" title={activeSelectedTeam.team.schoolName}>
+                      {activeSelectedTeam.team.schoolName}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    {/* Jika Belum Hadir -> Check-In */}
+                    {(!trialAttendance[activeSelectedTeam.team.id]?.status || 
+                      trialAttendance[activeSelectedTeam.team.id]?.status === 'not_arrived') && (
+                      <button
+                        type="button"
+                        onClick={() => handleQuickCheckIn(activeSelectedTeam.team, activeSelectedTeam.slotInfo)}
+                        className="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs flex items-center gap-1 cursor-pointer transition-all active:scale-95 shadow-xs"
+                      >
+                        <LogIn className="w-3 h-3" />
+                        <span>Check-In</span>
+                      </button>
+                    )}
+
+                    {/* Jika Di Lokasi -> Check-Out */}
+                    {trialAttendance[activeSelectedTeam.team.id]?.status === 'checked_in' && (
+                      <button
+                        type="button"
+                        onClick={() => handleQuickCheckOut(activeSelectedTeam.team, activeSelectedTeam.slotInfo)}
+                        className="px-2.5 py-1 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-black text-xs flex items-center gap-1 cursor-pointer transition-all active:scale-95 shadow-xs"
+                      >
+                        <LogOut className="w-3 h-3" />
+                        <span>Check-Out</span>
+                      </button>
+                    )}
+
+                    {/* Edit Modal */}
+                    <button
+                      type="button"
+                      onClick={() => handleOpenAttendanceModal(
+                        activeSelectedTeam.team,
+                        activeSelectedTeam.slotInfo,
+                        activeSelectedTeam.jenjang,
+                        activeSelectedTeam.slotIdx
+                      )}
+                      className="p-1 rounded-lg bg-white/10 hover:bg-white/20 text-slate-200 hover:text-white cursor-pointer"
+                      title="Edit Jam Manual / Catatan"
+                    >
+                      <Edit3 className="w-3 h-3" />
+                    </button>
+
+                    {/* Tutup Pilihan */}
+                    <button
+                      type="button"
+                      onClick={() => setActiveSelectedTeam(null)}
+                      className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 cursor-pointer"
+                      title="Tutup pilihan"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* DAFTAR PELETON 2 KOLOM (PROPORSI PROPORSIONAL, TIDAK LONJONG) */}
+              <div className="overflow-y-auto pr-1 max-h-[calc(100vh-250px)] min-h-[300px]">
+                {filteredActionList.length === 0 ? (
+                  <div className="py-12 text-center text-xs text-slate-400">
+                    Tidak ada peleton dalam antrean ini.
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 items-start content-start">
+                    {filteredActionList.map((item) => {
+                      const att = trialAttendance[item.team.id];
+                      const isItemActive = activeSelectedTeam?.team?.id === item.team.id;
+
+                      return (
+                        <div
+                          key={`${item.jenjang}-${item.slotIdx}`}
+                          onClick={() => setActiveSelectedTeam(item)}
+                          className={`p-3 rounded-xl border transition-all flex flex-col justify-between gap-2.5 cursor-pointer h-auto ${
+                            isItemActive
+                              ? 'bg-emerald-50/70 border-emerald-400 ring-2 ring-emerald-400/50 shadow-xs'
+                              : 'bg-white hover:bg-slate-50/80 hover:border-slate-300 border-slate-200 shadow-2xs'
+                          }`}
+                        >
+                          {/* Header Kotak: Slot & Jenjang & Waktu Target */}
+                          <div className="flex items-center justify-between gap-1.5">
+                            <div className="flex items-center gap-1.5 min-w-0">
+                              <span className="font-mono text-[9.5px] font-black text-slate-700 bg-slate-100 px-1.5 py-0.5 rounded">
+                                #{String(item.slotInfo.index).padStart(2, '0')}
+                              </span>
+                              <span className={`px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-tight ${
+                                item.jenjang === 'SD' ? 'bg-red-100 text-red-800 border border-red-200' : 'bg-blue-100 text-blue-800 border border-blue-200'
+                              }`}>
+                                {item.jenjang}
+                              </span>
+                            </div>
+
+                            <span className="font-mono font-bold text-[9px] text-emerald-800 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200 truncate shrink-0">
+                              {leftAttendanceTab === 'not_arrived'
+                                ? (item.slotInfo.checkIn || item.slotInfo.arrival)
+                                : leftAttendanceTab === 'checked_in'
+                                ? (att?.checkInTime || '-')
+                                : (att?.checkOutTime || '-')}
+                            </span>
+                          </div>
+
+                          {/* Body Kotak: Logo Sekolah + Nama Sekolah & Danton */}
+                          <div className="flex items-center gap-2.5 min-w-0 my-0.5">
+                            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-white border border-slate-200 p-0.5 flex items-center justify-center shrink-0 overflow-hidden shadow-2xs">
+                              <img
+                                src={
+                                  (item.team.files?.schoolLogo?.url || item.team.file_logo_sekolah || item.team.logoUrl)
+                                    ? formatImageUrl(item.team.files?.schoolLogo?.url || item.team.file_logo_sekolah || item.team.logoUrl)
+                                    : `https://ui-avatars.com/api/?name=${encodeURIComponent(item.team.schoolName)}&background=${item.jenjang === 'SD' ? 'b91c1c' : '1d4ed8'}&color=fff&bold=true`
+                                }
+                                alt={item.team.schoolName}
+                                className="w-full h-full object-contain"
+                                onError={(e) => {
+                                  e.target.onerror = null;
+                                  e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(item.team.schoolName)}&background=${item.jenjang === 'SD' ? 'b91c1c' : '1d4ed8'}&color=fff&bold=true`;
+                                }}
+                              />
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <h5 className="font-bold text-xs text-slate-900 leading-snug line-clamp-1" title={item.team.schoolName}>
+                                {item.team.schoolName}
+                              </h5>
+                              <p className="text-[10px] text-slate-500 mt-0.5 truncate">
+                                Danton: <span className="font-semibold text-slate-700">{item.team.dantonName || '-'}</span>
+                              </p>
+                            </div>
+                          </div>
+
+                          {/* Footer Kotak: Tombol Aksi di Bawah Kotak */}
+                          <div className="pt-2 border-t border-slate-100 flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
+                            {leftAttendanceTab === 'not_arrived' && (
+                              <button
+                                type="button"
+                                onClick={() => handleQuickCheckIn(item.team, item.slotInfo)}
+                                className="flex-1 py-1.5 px-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-black text-[11px] flex items-center justify-center gap-1.5 shadow-2xs transition-all cursor-pointer"
+                                title="Check-In Peleton"
+                              >
+                                <LogIn className="w-3.5 h-3.5" />
+                                <span>Check-In</span>
+                              </button>
+                            )}
+
+                            {leftAttendanceTab === 'checked_in' && (
+                              <button
+                                type="button"
+                                onClick={() => handleQuickCheckOut(item.team, item.slotInfo)}
+                                className="flex-1 py-1.5 px-2 rounded-lg bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-black text-[11px] flex items-center justify-center gap-1.5 shadow-2xs transition-all cursor-pointer"
+                                title="Check-Out Peleton"
+                              >
+                                <LogOut className="w-3.5 h-3.5" />
+                                <span>Check-Out</span>
+                              </button>
+                            )}
+
+                            {leftAttendanceTab === 'checked_out' && (
+                              <div className="flex-1 py-1.5 px-2 rounded-lg bg-slate-100 text-slate-700 font-bold text-[10.5px] flex items-center justify-center gap-1 truncate">
+                                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                                <span className="truncate">Selesai ({att?.checkOutTime})</span>
+                              </div>
+                            )}
+
+                            {/* Tombol Edit Jam Manual Langsung di Kartu */}
+                            <button
+                              type="button"
+                              onClick={() => handleOpenAttendanceModal(item.team, item.slotInfo, item.jenjang, item.slotIdx)}
+                              className="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 transition-colors cursor-pointer shrink-0"
+                              title="Edit Jam Manual / Catatan"
+                            >
+                              <Edit3 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            </div>
+
+          </div>
+
+          {/* PETUNJUK RINGKAS OPERASIONAL */}
+          <div className="p-3 rounded-2xl bg-slate-100/80 border border-slate-200/80 text-[11px] text-slate-600 space-y-1">
+            <div className="font-bold text-slate-800 flex items-center gap-1.5">
+              <Info className="w-3.5 h-3.5 text-slate-500" />
+              <span>Petunjuk Alur Gladi</span>
+            </div>
+            <p className="leading-relaxed text-slate-500">
+              Peleton check-in di pos gerbang 30 menit sebelum slot. Durasi gladi orientasi kontur lapangan maksimal 15 menit per peleton.
+            </p>
+          </div>
+
+        </div>
+
+        {/* -------------------------------------------------------- */}
+        {/* BAGIAN KANAN: KHUSUS MATRIKS JADWAL SAJA                 */}
+        {/* -------------------------------------------------------- */}
+        <div className="lg:col-span-7 xl:col-span-7 space-y-3.5">
+
+          {/* Hint Swap Sedang Aktif */}
+          {swapSource && (
+            <div className="bg-amber-100 border border-amber-300 p-3 rounded-2xl flex items-center justify-between text-xs font-bold text-amber-900 shadow-2xs">
+              <span>
+                ⚡ Mode Tukar: Klik slot lain di tabel untuk menukar posisi <strong>Slot #{swapSource.slotIdx + 1} ({swapSource.jenjang})</strong>.
+              </span>
+              <button
+                type="button"
+                onClick={() => setSwapSource(null)}
+                className="px-2.5 py-1 rounded-lg bg-amber-200 hover:bg-amber-300 text-amber-950 font-bold text-[11px] cursor-pointer"
+              >
+                Batal
+              </button>
+            </div>
+          )}
+
+          {/* MATRIKS JADWAL ARENA PARALEL (KHUSUS JADWAL SAJA) */}
+          <div className="bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden">
+            
+            {/* Header Matriks Jadwal (Sama Persis Gayanya dengan Header Kiri) */}
+            <div className="p-3 sm:px-3.5 bg-slate-900 text-white flex items-center justify-between gap-2 flex-wrap">
+              <div className="flex items-center gap-2 min-w-0">
+                <div className="w-7 h-7 rounded-lg bg-blue-500/20 text-blue-400 border border-blue-500/30 flex items-center justify-center shrink-0">
+                  <CalendarCheck className="w-3.5 h-3.5" />
+                </div>
+                <div className="min-w-0">
+                  <h3 className="font-black text-xs uppercase tracking-tight text-white truncate">
+                    Matriks Jadwal 2 Arena Paralel
+                  </h3>
+                  <p className="text-[10px] text-slate-400 truncate">
+                    {EVENT.FIELD_TRIAL_FULL_DATE || 'Sabtu, 16 Jan 2027'} • 07.00 – 11.30 WIB
+                  </p>
+                </div>
+              </div>
+
+              {/* Tag Info 2 Arena (Semua Arena) */}
+              <div className="flex items-center gap-1.5 shrink-0 text-[10px] font-black uppercase tracking-tight">
+                <span className="px-2 py-0.5 rounded-md bg-red-900/80 text-red-200 border border-red-700/60">
+                  Arena 1 (SD)
+                </span>
+                <span className="px-2 py-0.5 rounded-md bg-blue-900/80 text-blue-200 border border-blue-700/60">
+                  Arena 2 (SMP)
+                </span>
+              </div>
+            </div>
+
+            <div className="p-3 sm:p-4">
+              {/* Tabel Matriks */}
+            <div className="rounded-xl border border-slate-200 overflow-x-auto">
+              <table className="w-full text-left text-xs border-collapse min-w-[620px]">
+                <thead>
+                  <tr className="uppercase text-[10px] tracking-wider font-black">
+                    <th className="py-2.5 px-3 text-center w-12 bg-slate-900 text-white">Slot</th>
+                    <th className="py-2.5 px-3 w-36 bg-slate-900 text-white">Waktu • In / Out</th>
+                    <th className="py-2.5 px-3 bg-red-700 text-white border-r border-red-800">
+                      Arena 1: SD / MI (Lapangan Basket)
+                    </th>
+                    <th className="py-2.5 px-3 bg-blue-700 text-white">
+                      Arena 2: SMP / MTs (Pelataran Embung)
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {TRIAL_TIME_SLOTS.map((slotInfo, slotIdx) => {
+                    const sdTeamId = currentPlan.SD?.slots?.[slotIdx];
+                    const smpTeamId = currentPlan.SMP?.slots?.[slotIdx];
+                    const sdTeam = sdTeamId ? teamsMap.get(sdTeamId) : null;
+                    const smpTeam = smpTeamId ? teamsMap.get(smpTeamId) : null;
+
+                    // Priority 2: Detect twin neighbor from the same school
+                    const isSdTwin = sdTeam && (
+                      (slotIdx > 0 && normalizeSchoolName(teamsMap.get(currentPlan.SD?.slots?.[slotIdx - 1])?.schoolName) === normalizeSchoolName(sdTeam.schoolName)) ||
+                      (slotIdx < 17 && normalizeSchoolName(teamsMap.get(currentPlan.SD?.slots?.[slotIdx + 1])?.schoolName) === normalizeSchoolName(sdTeam.schoolName))
+                    );
+
+                    const isSmpTwin = smpTeam && (
+                      (slotIdx > 0 && normalizeSchoolName(teamsMap.get(currentPlan.SMP?.slots?.[slotIdx - 1])?.schoolName) === normalizeSchoolName(smpTeam.schoolName)) ||
+                      (slotIdx < 17 && normalizeSchoolName(teamsMap.get(currentPlan.SMP?.slots?.[slotIdx + 1])?.schoolName) === normalizeSchoolName(smpTeam.schoolName))
+                    );
+
+                    const isSdSwapSelected = swapSource?.jenjang === 'SD' && swapSource?.slotIdx === slotIdx;
+                    const isSmpSwapSelected = swapSource?.jenjang === 'SMP' && swapSource?.slotIdx === slotIdx;
+
+                    return (
+                      <tr key={slotInfo.index} className="hover:bg-slate-50/70 transition-colors divide-x divide-slate-100">
+                        {/* Slot # */}
+                        <td className="py-2.5 px-3 text-center font-mono font-black text-slate-500 text-xs">
+                          #{String(slotInfo.index).padStart(2, '0')}
+                        </td>
+
+                        {/* Waktu (WIB): Jam Gladi, In & Out */}
+                        <td className="py-2.5 px-3 whitespace-nowrap">
+                          <div className="font-mono font-black text-slate-900 text-xs">
+                            {slotInfo.time}
+                          </div>
+                          <div className="flex flex-col gap-0.5 mt-1 font-mono text-[9.5px]">
+                            <div className="inline-flex items-center gap-1 text-emerald-800 bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200/80 w-fit">
+                              <span className="text-[8.5px] uppercase font-black text-emerald-600">In:</span>
+                              <span className="font-bold">{slotInfo.checkIn || slotInfo.arrival}</span>
+                            </div>
+                            <div className="inline-flex items-center gap-1 text-slate-600 bg-slate-100 px-1.5 py-0.2 rounded border border-slate-200/60 w-fit">
+                              <span className="text-[8.5px] uppercase font-black text-slate-500">Out:</span>
+                              <span className="font-bold">{slotInfo.checkOut || '15 Mnt'}</span>
+                            </div>
+                          </div>
+                        </td>
+
+                        {/* Kolom Arena 1 (SD) */}
+                        <td className={`py-1.5 px-2.5 transition-colors ${
+                          isSdSwapSelected ? 'bg-amber-100 ring-2 ring-amber-400' : 'bg-red-50/10'
+                        }`}>
+                          {renderScheduleOnlyCard(sdTeam, 'SD', slotIdx, slotInfo, isSdTwin)}
+                        </td>
+
+                        {/* Kolom Arena 2 (SMP) */}
+                        <td className={`py-1.5 px-2.5 transition-colors ${
+                          isSmpSwapSelected ? 'bg-amber-100 ring-2 ring-amber-400' : 'bg-blue-50/10'
+                        }`}>
+                          {renderScheduleOnlyCard(smpTeam, 'SMP', slotIdx, slotInfo, isSmpTwin)}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        </div>
+
+      </div>
+
+      {/* ======================================================== */}
+      {/* MODAL: DETAIL / KONTROL PRESENSI (CHECK-IN & CHECK-OUT) */}
+      {/* ======================================================== */}
+      {showAttendanceModal && selectedAttendanceTeam && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 animate-in fade-in">
+          <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl w-full max-w-md overflow-hidden flex flex-col">
+            <div className={`p-4 text-white flex items-center justify-between ${
+              selectedAttendanceTeam.jenjang === 'SD' ? 'bg-red-700' : 'bg-blue-700'
+            }`}>
+              <div>
+                <span className="text-[10px] font-black uppercase tracking-wider bg-white/20 px-2 py-0.5 rounded-full inline-block mb-1">
+                  Presensi Uji Coba Lapangan • Slot #{selectedAttendanceTeam.slotInfo?.index}
+                </span>
+                <h3 className="font-black text-sm uppercase tracking-tight truncate max-w-xs">
+                  {selectedAttendanceTeam.team?.schoolName}
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowAttendanceModal(false)}
+                className="p-1 rounded-xl bg-white/10 hover:bg-white/20 text-white cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="p-4 space-y-3.5 text-xs">
+              {/* Ringkasan Peleton */}
+              <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
+                <div className="flex justify-between">
+                  <span className="text-slate-500">Peleton / Danton:</span>
+                  <span className="font-bold text-slate-800">
+                    {selectedAttendanceTeam.team?.platoonName || '-'} / {selectedAttendanceTeam.team?.dantonName || selectedAttendanceTeam.team?.roster?.danton?.name || '-'}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-500">Jadwal Gladi:</span>
+                  <span className="font-mono font-bold text-slate-800">{selectedAttendanceTeam.slotInfo?.time}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-500">Target Tiba:</span>
+                  <span className="font-mono font-bold text-emerald-700">{selectedAttendanceTeam.slotInfo?.checkIn || selectedAttendanceTeam.slotInfo?.arrival}</span>
+                </div>
+              </div>
+
+              {/* Status Saat Ini */}
+              <div className="flex items-center justify-between p-2 rounded-xl border border-slate-200 bg-white">
+                <span className="text-slate-600 font-bold">Status Presensi:</span>
+                {trialAttendance[selectedAttendanceTeam.team?.id]?.status === 'checked_out' ? (
+                  <span className="px-2 py-0.5 rounded-md font-black text-[10px] bg-slate-100 text-slate-800 border border-slate-200">
+                    Selesai (Check-Out)
+                  </span>
+                ) : trialAttendance[selectedAttendanceTeam.team?.id]?.status === 'checked_in' ? (
+                  <span className="px-2 py-0.5 rounded-md font-black text-[10px] bg-emerald-100 text-emerald-900 border border-emerald-300">
+                    Sudah Check-In (Di Lokasi)
+                  </span>
+                ) : (
+                  <span className="px-2 py-0.5 rounded-md font-black text-[10px] bg-amber-100 text-amber-900 border border-amber-300">
+                    Belum Hadir
                   </span>
                 )}
               </div>
-              <p className="text-[11px] text-slate-500 mt-0.5">
-                <span className="font-semibold text-slate-700">{EVENT.FIELD_TRIAL_FULL_DATE || 'Sabtu, 16 Jan 2027'}</span>
-                <span className="mx-1.5">•</span>
-                <span>06.30 – 12.00 WIB</span>
-                <span className="mx-1.5">•</span>
-                <span>{VENUE.NAME}</span>
-                <span className="mx-1.5">•</span>
-                <span className="font-bold text-slate-700">15 Mnt / Tim</span>
-              </p>
+
+              {/* Input Jam Check-In */}
+              <div className="space-y-1">
+                <label className="font-bold text-slate-700 flex justify-between">
+                  <span>Waktu Check-In (Kedatangan):</span>
+                  <button
+                    type="button"
+                    onClick={() => setCustomCheckInTime(formatCurrentTimeWIB())}
+                    className="text-[10px] text-emerald-600 hover:underline font-bold cursor-pointer"
+                  >
+                    Set Jam Sekarang
+                  </button>
+                </label>
+                <input
+                  type="text"
+                  value={customCheckInTime}
+                  onChange={(e) => setCustomCheckInTime(e.target.value)}
+                  placeholder="Contoh: 06.32 WIB"
+                  className="w-full px-3 py-1.5 rounded-xl border border-slate-300 font-mono text-xs focus:outline-none focus:ring-2 focus:ring-slate-900"
+                />
+              </div>
+
+              {/* Input Jam Check-Out */}
+              <div className="space-y-1">
+                <label className="font-bold text-slate-700 flex justify-between">
+                  <span>Waktu Check-Out (Selesai Gladi):</span>
+                  <button
+                    type="button"
+                    onClick={() => setCustomCheckOutTime(formatCurrentTimeWIB())}
+                    className="text-[10px] text-blue-600 hover:underline font-bold cursor-pointer"
+                  >
+                    Set Jam Sekarang
+                  </button>
+                </label>
+                <input
+                  type="text"
+                  value={customCheckOutTime}
+                  onChange={(e) => setCustomCheckOutTime(e.target.value)}
+                  placeholder="Contoh: 07.15 WIB"
+                  className="w-full px-3 py-1.5 rounded-xl border border-slate-300 font-mono text-xs focus:outline-none focus:ring-2 focus:ring-slate-900"
+                />
+              </div>
+
+              {/* Input Catatan Petugas */}
+              <div className="space-y-1">
+                <label className="font-bold text-slate-700">Catatan Petugas (Opsional):</label>
+                <textarea
+                  value={attendanceNotes}
+                  onChange={(e) => setAttendanceNotes(e.target.value)}
+                  placeholder="Catatan kedatangan, personil, atau official pendamping..."
+                  rows={2}
+                  className="w-full px-3 py-1.5 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-slate-900"
+                />
+              </div>
             </div>
-          </div>
 
-          {/* Tombol Kontrol Panitia Ringkas */}
-          {isStaff && (
-            <div className="flex items-center gap-1.5 self-start sm:self-center shrink-0">
-              {!isPublished ? (
-                <>
-                  <button
-                    type="button"
-                    onClick={handleAutoGeneratePlan}
-                    className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer"
-                    title="Susun ulang rencana otomatis berdasarkan 3 Prioritas (Survei, 1 Sekolah Berdampingan, Hasil TM)"
-                  >
-                    <Zap className="w-3.5 h-3.5 text-amber-600" />
-                    <span>Susun Ulang</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setShowConfirmPublishModal(true)}
-                    className="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black flex items-center gap-1.5 transition-all shadow-xs cursor-pointer"
-                    title="Sahkan rencana jadwal ini dan bagikan ke peserta"
-                  >
-                    <FileCheck className="w-3.5 h-3.5" />
-                    <span>Sahkan Jadwal</span>
-                  </button>
-                </>
-              ) : (
+            <div className="p-3 bg-slate-50 border-t border-slate-200 flex items-center justify-between gap-2 flex-wrap">
+              {/* Tombol Reset */}
+              {trialAttendance[selectedAttendanceTeam.team?.id] && (
                 <button
                   type="button"
-                  onClick={handleUnpublishSchedule}
-                  className="px-3 py-1.5 rounded-xl bg-white hover:bg-amber-50 text-amber-800 text-xs font-bold border border-amber-300 transition-all flex items-center gap-1.5 shadow-2xs cursor-pointer"
-                  title="Buka kunci kembali untuk merevisi jadwal"
+                  onClick={() => handleResetAttendance(selectedAttendanceTeam.team?.id)}
+                  className="px-2.5 py-1.5 rounded-xl text-rose-700 hover:bg-rose-50 text-[11px] font-bold flex items-center gap-1 cursor-pointer"
+                  title="Batalkan presensi dan kembalikan ke Belum Hadir"
                 >
-                  <Unlock className="w-3.5 h-3.5 text-amber-600" />
-                  <span>Buka Kunci (Revisi)</span>
+                  <RotateCcw className="w-3.5 h-3.5" />
+                  <span>Reset</span>
                 </button>
               )}
+
+              <div className="flex items-center gap-2 ml-auto">
+                <button
+                  type="button"
+                  onClick={() => handleSaveAttendanceModal('checked_in')}
+                  className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs flex items-center gap-1 shadow-xs cursor-pointer"
+                >
+                  <LogIn className="w-3.5 h-3.5" />
+                  <span>Simpan Check-In</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleSaveAttendanceModal('checked_out')}
+                  className="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-black text-xs flex items-center gap-1 shadow-xs cursor-pointer"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                  <span>Selesaikan Check-Out</span>
+                </button>
+              </div>
             </div>
-          )}
-        </div>
-
-        {/* Hint Swap Sedang Aktif */}
-        {swapSource && (
-          <div className="bg-amber-100 border border-amber-300 p-2.5 rounded-xl flex items-center justify-between text-xs font-bold text-amber-900 shadow-2xs">
-            <span>
-              ⚡ Klik slot lain di tabel untuk menukar posisi <strong>Slot #{swapSource.slotIdx + 1} ({swapSource.jenjang})</strong>.
-            </span>
-            <button
-              type="button"
-              onClick={() => setSwapSource(null)}
-              className="px-2 py-0.5 rounded-lg bg-amber-200 hover:bg-amber-300 text-amber-950 font-bold text-[11px] cursor-pointer"
-            >
-              Batal
-            </button>
-          </div>
-        )}
-
-        {/* Pesan untuk Peserta Saat Status Masih Draft */}
-        {!isStaff && !isPublished && (
-          <div className="bg-amber-50 border border-amber-200 p-3.5 rounded-xl flex items-center gap-2.5 text-xs text-amber-900">
-            <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
-            <span>
-              Rencana jadwal Uji Coba Lapangan sedang disusun oleh panitia. Jadwal resmi akan berlaku setelah disahkan panitia.
-            </span>
-          </div>
-        )}
-
-        {/* ======================================================== */}
-        {/* MATRIKS JADWAL 2 ARENA PARALEL                           */}
-        {/* ======================================================== */}
-        <div className="bg-white rounded-2xl p-4 border border-slate-200 shadow-xs space-y-3">
-          <div className="flex items-center justify-between pb-2 border-b border-slate-100 flex-wrap gap-2">
-            <span className="text-xs font-black uppercase text-slate-800 tracking-tight">
-              Matriks Jadwal 2 Arena Paralel (07.00 – 11.30 WIB)
-            </span>
-            {isStaff && !isPublished && (
-              <span className="text-[11px] text-slate-400 italic">
-                Tip: Klik nama tim untuk menukar posisi slot
-              </span>
-            )}
-          </div>
-
-          {/* Tabel Matriks */}
-          <div className="rounded-xl border border-slate-200 overflow-x-auto">
-            <table className="w-full text-left text-xs border-collapse">
-              <thead>
-                <tr className="uppercase text-[10px] tracking-wider font-black">
-                  <th className="py-2.5 px-3 text-center w-12 bg-slate-900 text-white">Slot</th>
-                  <th className="py-2.5 px-3 w-40 bg-slate-900 text-white">Waktu (WIB) • In / Out</th>
-                  <th className="py-2.5 px-3 bg-red-700 text-white border-r border-red-800">
-                    Arena 1: SD / MI (Lapangan Basket)
-                  </th>
-                  <th className="py-2.5 px-3 bg-blue-700 text-white">
-                    Arena 2: SMP / MTs (Pelataran Embung)
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {TRIAL_TIME_SLOTS.map((slotInfo, slotIdx) => {
-                  const sdTeamId = currentPlan.SD?.slots?.[slotIdx];
-                  const smpTeamId = currentPlan.SMP?.slots?.[slotIdx];
-                  const sdTeam = sdTeamId ? teamsMap.get(sdTeamId) : null;
-                  const smpTeam = smpTeamId ? teamsMap.get(smpTeamId) : null;
-
-                  // Priority 2: Detect twin neighbor from the same school
-                  const isSdTwin = sdTeam && (
-                    (slotIdx > 0 && normalizeSchoolName(teamsMap.get(currentPlan.SD?.slots?.[slotIdx - 1])?.schoolName) === normalizeSchoolName(sdTeam.schoolName)) ||
-                    (slotIdx < 17 && normalizeSchoolName(teamsMap.get(currentPlan.SD?.slots?.[slotIdx + 1])?.schoolName) === normalizeSchoolName(sdTeam.schoolName))
-                  );
-
-                  const isSmpTwin = smpTeam && (
-                    (slotIdx > 0 && normalizeSchoolName(teamsMap.get(currentPlan.SMP?.slots?.[slotIdx - 1])?.schoolName) === normalizeSchoolName(smpTeam.schoolName)) ||
-                    (slotIdx < 17 && normalizeSchoolName(teamsMap.get(currentPlan.SMP?.slots?.[slotIdx + 1])?.schoolName) === normalizeSchoolName(smpTeam.schoolName))
-                  );
-
-                  const isSdSwapSelected = swapSource?.jenjang === 'SD' && swapSource?.slotIdx === slotIdx;
-                  const isSmpSwapSelected = swapSource?.jenjang === 'SMP' && swapSource?.slotIdx === slotIdx;
-
-                  return (
-                    <tr key={slotInfo.index} className="hover:bg-slate-50/70 transition-colors divide-x divide-slate-100">
-                      {/* Slot # */}
-                      <td className="py-2.5 px-3 text-center font-mono font-black text-slate-500 text-xs">
-                        #{String(slotInfo.index).padStart(2, '0')}
-                      </td>
-
-                      {/* Waktu (WIB): Jam Gladi, Check-In Kedatangan, & Check-Out */}
-                      <td className="py-2.5 px-3 whitespace-nowrap">
-                        <div className="font-mono font-black text-slate-900 text-xs">
-                          {slotInfo.time}
-                        </div>
-                        <div className="flex flex-col gap-0.5 mt-1 font-mono text-[9.5px]">
-                          <div className="inline-flex items-center gap-1 text-emerald-800 bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200/80 w-fit">
-                            <span className="text-[8.5px] uppercase font-black text-emerald-600">In / Tiba:</span>
-                            <span className="font-bold">{slotInfo.checkIn || slotInfo.arrival}</span>
-                          </div>
-                          <div className="inline-flex items-center gap-1 text-slate-600 bg-slate-100 px-1.5 py-0.2 rounded border border-slate-200/60 w-fit">
-                            <span className="text-[8.5px] uppercase font-black text-slate-500">Out / Keluar:</span>
-                            <span className="font-bold">{slotInfo.checkOut || '15 Mnt'}</span>
-                          </div>
-                        </div>
-                      </td>
-
-                      {/* Kolom Arena 1 (SD) */}
-                      <td className={`py-1.5 px-2.5 transition-colors ${
-                        isSdSwapSelected ? 'bg-amber-100 ring-2 ring-amber-400' : 'bg-red-50/10'
-                      }`}>
-                        {sdTeam ? (
-                          <div
-                            onClick={() => handleSlotClick('SD', slotIdx, sdTeam.id)}
-                            className={`p-2.5 bg-white rounded-xl border flex items-center justify-between gap-3 shadow-2xs group transition-all ${
-                              isSdSwapSelected
-                                ? 'border-amber-400 ring-2 ring-amber-400 bg-amber-50/50'
-                                : 'border-red-200 hover:border-red-300'
-                            } ${isStaff && !isPublished ? 'cursor-pointer hover:shadow-xs' : ''}`}
-                            title={isStaff && !isPublished ? 'Klik untuk menukar posisi slot' : undefined}
-                          >
-                            <div className="flex items-center gap-3 min-w-0 flex-1">
-                              {/* 1. LOGO SEKOLAH (MENONJOL) */}
-                              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-white border border-slate-200/90 p-1 flex items-center justify-center shrink-0 overflow-hidden shadow-xs">
-                                <img
-                                  src={
-                                    (sdTeam.files?.schoolLogo?.url || sdTeam.file_logo_sekolah || sdTeam.logoUrl)
-                                      ? formatImageUrl(sdTeam.files?.schoolLogo?.url || sdTeam.file_logo_sekolah || sdTeam.logoUrl)
-                                      : `https://ui-avatars.com/api/?name=${encodeURIComponent(sdTeam.schoolName)}&background=dc2626&color=fff&bold=true`
-                                  }
-                                  alt={sdTeam.schoolName}
-                                  className="w-full h-full object-contain"
-                                  onError={(e) => {
-                                    e.target.onerror = null;
-                                    e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(sdTeam.schoolName)}&background=dc2626&color=fff&bold=true`;
-                                  }}
-                                />
-                              </div>
-
-                              {/* 2. NAMA PELETON & NAMA DANTON (MENONJOL) */}
-                              <div className="min-w-0 flex-1">
-                                <div className="flex items-center gap-1.5 flex-wrap">
-                                  <h4 className="font-black text-xs sm:text-[13.5px] text-slate-900 truncate leading-snug" title={sdTeam.schoolName}>
-                                    {sdTeam.schoolName}
-                                  </h4>
-                                  {sdTeam.platoonName && 
-                                   sdTeam.platoonName.trim().toLowerCase() !== sdTeam.schoolName.trim().toLowerCase() && 
-                                   !sdTeam.platoonName.trim().toLowerCase().startsWith(`pleton ${sdTeam.schoolName.trim().toLowerCase()}`) && (
-                                    <span className="text-[11px] font-bold text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded shrink-0">
-                                      {sdTeam.platoonName}
-                                    </span>
-                                  )}
-                                  {sdTeam.lotNumber && (
-                                    <span className="px-1.5 py-0.2 rounded font-mono font-black text-[9px] bg-red-100 text-red-900 border border-red-300 shrink-0">
-                                      TM #{String(sdTeam.lotNumber).padStart(2, '0')}
-                                    </span>
-                                  )}
-                                  {isSdTwin && (
-                                    <span className="px-1.5 py-0.2 rounded text-[9px] font-black bg-blue-100 text-blue-900 border border-blue-200 shrink-0">
-                                      ★ 1 Sekolah
-                                    </span>
-                                  )}
-                                </div>
-
-                                <div className="mt-1 flex items-center">
-                                  <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-bold bg-red-50 text-red-800 border border-red-200/80 truncate max-w-full">
-                                    <span className="text-[9.5px] font-bold uppercase tracking-wider text-red-600 shrink-0">Danton:</span>
-                                    <span className="font-black text-slate-900 truncate">{sdTeam.dantonName || sdTeam.roster?.danton?.name || '-'}</span>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-
-                            {isStaff && !isPublished && (
-                              <button
-                                type="button"
-                                onClick={(e) => handleRemoveFromSlot(e, 'SD', slotIdx)}
-                                className="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors shrink-0"
-                                title="Copot dari slot"
-                              >
-                                <X className="w-3.5 h-3.5" />
-                              </button>
-                            )}
-                          </div>
-                        ) : (
-                          <div
-                            onClick={() => handleSlotClick('SD', slotIdx, null)}
-                            className={`py-2 px-3 rounded-xl border border-dashed text-center text-slate-400 transition-colors ${
-                              isStaff && !isPublished ? 'cursor-pointer hover:border-red-400 hover:text-red-700 hover:bg-red-50/30' : ''
-                            }`}
-                          >
-                            <span className="text-[11px] font-bold">
-                              {isStaff && !isPublished ? '+ Isi Peleton SD' : '- Kosong -'}
-                            </span>
-                          </div>
-                        )}
-                      </td>
-
-                      {/* Kolom Arena 2 (SMP) */}
-                      <td className={`py-1.5 px-2.5 transition-colors ${
-                        isSmpSwapSelected ? 'bg-amber-100 ring-2 ring-amber-400' : 'bg-blue-50/10'
-                      }`}>
-                        {smpTeam ? (
-                          <div
-                            onClick={() => handleSlotClick('SMP', slotIdx, smpTeam.id)}
-                            className={`p-2.5 bg-white rounded-xl border flex items-center justify-between gap-3 shadow-2xs group transition-all ${
-                              isSmpSwapSelected
-                                ? 'border-amber-400 ring-2 ring-amber-400 bg-amber-50/50'
-                                : 'border-blue-200 hover:border-blue-300'
-                            } ${isStaff && !isPublished ? 'cursor-pointer hover:shadow-xs' : ''}`}
-                            title={isStaff && !isPublished ? 'Klik untuk menukar posisi slot' : undefined}
-                          >
-                            <div className="flex items-center gap-3 min-w-0 flex-1">
-                              {/* 1. LOGO SEKOLAH (MENONJOL) */}
-                              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-white border border-slate-200/90 p-1 flex items-center justify-center shrink-0 overflow-hidden shadow-xs">
-                                <img
-                                  src={
-                                    (smpTeam.files?.schoolLogo?.url || smpTeam.file_logo_sekolah || smpTeam.logoUrl)
-                                      ? formatImageUrl(smpTeam.files?.schoolLogo?.url || smpTeam.file_logo_sekolah || smpTeam.logoUrl)
-                                      : `https://ui-avatars.com/api/?name=${encodeURIComponent(smpTeam.schoolName)}&background=2563eb&color=fff&bold=true`
-                                  }
-                                  alt={smpTeam.schoolName}
-                                  className="w-full h-full object-contain"
-                                  onError={(e) => {
-                                    e.target.onerror = null;
-                                    e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(smpTeam.schoolName)}&background=2563eb&color=fff&bold=true`;
-                                  }}
-                                />
-                              </div>
-
-                              {/* 2. NAMA PELETON & NAMA DANTON (MENONJOL) */}
-                              <div className="min-w-0 flex-1">
-                                <div className="flex items-center gap-1.5 flex-wrap">
-                                  <h4 className="font-black text-xs sm:text-[13.5px] text-slate-900 truncate leading-snug" title={smpTeam.schoolName}>
-                                    {smpTeam.schoolName}
-                                  </h4>
-                                  {smpTeam.platoonName && 
-                                   smpTeam.platoonName.trim().toLowerCase() !== smpTeam.schoolName.trim().toLowerCase() && 
-                                   !smpTeam.platoonName.trim().toLowerCase().startsWith(`pleton ${smpTeam.schoolName.trim().toLowerCase()}`) && (
-                                    <span className="text-[11px] font-bold text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded shrink-0">
-                                      {smpTeam.platoonName}
-                                    </span>
-                                  )}
-                                  {smpTeam.lotNumber && (
-                                    <span className="px-1.5 py-0.2 rounded font-mono font-black text-[9px] bg-blue-100 text-blue-900 border border-blue-300 shrink-0">
-                                      TM #{String(smpTeam.lotNumber).padStart(2, '0')}
-                                    </span>
-                                  )}
-                                  {isSmpTwin && (
-                                    <span className="px-1.5 py-0.2 rounded text-[9px] font-black bg-blue-100 text-blue-900 border border-blue-200 shrink-0">
-                                      ★ 1 Sekolah
-                                    </span>
-                                  )}
-                                </div>
-
-                                <div className="mt-1 flex items-center">
-                                  <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-bold bg-blue-50 text-blue-800 border border-blue-200/80 truncate max-w-full">
-                                    <span className="text-[9.5px] font-bold uppercase tracking-wider text-blue-600 shrink-0">Danton:</span>
-                                    <span className="font-black text-slate-900 truncate">{smpTeam.dantonName || smpTeam.roster?.danton?.name || '-'}</span>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-
-                            {isStaff && !isPublished && (
-                              <button
-                                type="button"
-                                onClick={(e) => handleRemoveFromSlot(e, 'SMP', slotIdx)}
-                                className="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors shrink-0"
-                                title="Copot dari slot"
-                              >
-                                <X className="w-3.5 h-3.5" />
-                              </button>
-                            )}
-                          </div>
-                        ) : (
-                          <div
-                            onClick={() => handleSlotClick('SMP', slotIdx, null)}
-                            className={`py-2 px-3 rounded-xl border border-dashed text-center text-slate-400 transition-colors ${
-                              isStaff && !isPublished ? 'cursor-pointer hover:border-blue-400 hover:text-blue-700 hover:bg-blue-50/30' : ''
-                            }`}
-                          >
-                            <span className="text-[11px] font-bold">
-                              {isStaff && !isPublished ? '+ Isi Peleton SMP' : '- Kosong -'}
-                            </span>
-                          </div>
-                        )}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
           </div>
         </div>
+      )}
 
-        {/* Tim Tidak Mengikuti UCL (Hanya jika ada yang konfirmasi tidak hadir) */}
-        {declinedTeams.length > 0 && (
-          <div className="bg-white rounded-2xl p-4 border border-slate-200 shadow-xs space-y-2">
-            <h4 className="text-xs font-black uppercase text-slate-700 tracking-wider">
-              Peleton Konfirmasi Tidak Hadir Uji Coba Lapangan ({declinedTeams.length})
-            </h4>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
-              {declinedTeams.map(t => (
-                <div key={t.id} className="p-2.5 bg-slate-50 rounded-xl border border-slate-200 text-xs flex items-center justify-between">
-                  <span className="font-bold text-slate-800 truncate">{t.schoolName}</span>
-                  <span className="text-[10px] font-black uppercase px-1.5 py-0.2 rounded bg-rose-100 text-rose-800 shrink-0">
-                    {t.jenjang}
-                  </span>
+      {/* ======================================================== */}
+      {/* MODAL: REKAP PRESENSI UJI COBA (CETAK / PRINT VIEW)      */}
+      {/* ======================================================== */}
+      {showRecapModal && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 animate-in fade-in">
+          <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl w-full max-w-4xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="p-4 bg-slate-900 text-white flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <FileSpreadsheet className="w-5 h-5 text-emerald-400" />
+                <div>
+                  <h3 className="font-black text-sm uppercase tracking-tight">
+                    Rekapitulasi Presensi Uji Coba Lapangan
+                  </h3>
+                  <p className="text-[11px] text-slate-300">
+                    LBB Mu'allimin 2027 • Kampus Terpadu Madrasah Mu'allimin Muhammadiyah Yogyakarta
+                  </p>
                 </div>
-              ))}
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => window.print()}
+                  className="px-3 py-1 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-1.5 cursor-pointer"
+                >
+                  <Printer className="w-3.5 h-3.5" />
+                  <span>Cetak Presensi</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowRecapModal(false)}
+                  className="p-1 rounded-xl bg-white/10 hover:bg-white/20 text-white cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+
+            <div className="p-4 overflow-y-auto space-y-3 flex-1 text-xs">
+              <div className="grid grid-cols-4 gap-2 text-center p-2 rounded-xl bg-slate-50 border border-slate-200 font-mono">
+                <div>
+                  <span className="text-slate-500 text-[10px] uppercase font-bold block">Total</span>
+                  <span className="text-sm font-black text-slate-900">{attendanceStats.totalScheduled}</span>
+                </div>
+                <div>
+                  <span className="text-amber-600 text-[10px] uppercase font-bold block">Belum Hadir</span>
+                  <span className="text-sm font-black text-amber-800">{attendanceStats.notArrived}</span>
+                </div>
+                <div>
+                  <span className="text-emerald-600 text-[10px] uppercase font-bold block">Check-In</span>
+                  <span className="text-sm font-black text-emerald-800">{attendanceStats.checkedIn}</span>
+                </div>
+                <div>
+                  <span className="text-blue-600 text-[10px] uppercase font-bold block">Check-Out</span>
+                  <span className="text-sm font-black text-blue-800">{attendanceStats.checkedOut}</span>
+                </div>
+              </div>
+
+              <table className="w-full text-left border-collapse border border-slate-200">
+                <thead>
+                  <tr className="bg-slate-100 text-slate-700 text-[10px] font-black uppercase">
+                    <th className="p-2 border border-slate-200 text-center w-10">Slot</th>
+                    <th className="p-2 border border-slate-200 w-16">Arena</th>
+                    <th className="p-2 border border-slate-200">Nama Sekolah & Peleton</th>
+                    <th className="p-2 border border-slate-200 w-24">Target Tiba</th>
+                    <th className="p-2 border border-slate-200 w-24">Waktu Check-In</th>
+                    <th className="p-2 border border-slate-200 w-24">Waktu Check-Out</th>
+                    <th className="p-2 border border-slate-200 w-28 text-center">Status</th>
+                    <th className="p-2 border border-slate-200">Catatan</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 text-[11px]">
+                  {TRIAL_TIME_SLOTS.map((slotInfo, slotIdx) => {
+                    const sdTeam = currentPlan.SD?.slots?.[slotIdx] ? teamsMap.get(currentPlan.SD?.slots?.[slotIdx]) : null;
+                    const smpTeam = currentPlan.SMP?.slots?.[slotIdx] ? teamsMap.get(currentPlan.SMP?.slots?.[slotIdx]) : null;
+
+                    const renderRow = (team, arenaName, jenjang) => {
+                      if (!team) return null;
+                      const att = trialAttendance[team.id];
+                      return (
+                        <tr key={`${jenjang}-${slotIdx}`} className="hover:bg-slate-50">
+                          <td className="p-2 border border-slate-200 text-center font-mono font-bold">#{slotInfo.index}</td>
+                          <td className="p-2 border border-slate-200 font-bold">{arenaName}</td>
+                          <td className="p-2 border border-slate-200">
+                            <div className="font-bold text-slate-900">{team.schoolName}</div>
+                            <div className="text-[10px] text-slate-500">{team.platoonName || '-'} • Danton: {team.dantonName || '-'}</div>
+                          </td>
+                          <td className="p-2 border border-slate-200 font-mono text-slate-600">{slotInfo.checkIn || slotInfo.arrival}</td>
+                          <td className="p-2 border border-slate-200 font-mono font-bold text-emerald-800">
+                            {att?.checkInTime || '-'}
+                          </td>
+                          <td className="p-2 border border-slate-200 font-mono font-bold text-blue-800">
+                            {att?.checkOutTime || '-'}
+                          </td>
+                          <td className="p-2 border border-slate-200 text-center">
+                            {att?.status === 'checked_out' ? (
+                              <span className="px-1.5 py-0.5 rounded text-[9.5px] font-black bg-slate-100 text-slate-800 border border-slate-200">
+                                Selesai
+                              </span>
+                            ) : att?.status === 'checked_in' ? (
+                              <span className="px-1.5 py-0.5 rounded text-[9.5px] font-black bg-emerald-100 text-emerald-900 border border-emerald-300">
+                                Di Lokasi
+                              </span>
+                            ) : (
+                              <span className="px-1.5 py-0.5 rounded text-[9.5px] font-bold bg-amber-50 text-amber-800 border border-amber-200">
+                                Belum Hadir
+                              </span>
+                            )}
+                          </td>
+                          <td className="p-2 border border-slate-200 text-slate-500 text-[10px] italic">
+                            {att?.notes || '-'}
+                          </td>
+                        </tr>
+                      );
+                    };
+
+                    return (
+                      <React.Fragment key={slotIdx}>
+                        {renderRow(sdTeam, 'Arena 1 (SD)', 'SD')}
+                        {renderRow(smpTeam, 'Arena 2 (SMP)', 'SMP')}
+                      </React.Fragment>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="p-3 bg-slate-50 border-t border-slate-200 flex justify-end">
+              <button
+                type="button"
+                onClick={() => setShowRecapModal(false)}
+                className="px-4 py-1.5 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold text-xs cursor-pointer"
+              >
+                Tutup
+              </button>
             </div>
           </div>
-        )}
-
-      </div>
+        </div>
+      )}
 
       {/* ======================================================== */}
       {/* MODAL: SAHKAN JADWAL RESMI                               */}

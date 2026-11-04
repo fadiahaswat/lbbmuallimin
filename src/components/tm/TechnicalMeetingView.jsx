@@ -298,63 +298,39 @@ export default function TechnicalMeetingView() {
   };
 
   return (
-    <SimpaskorSidebarLayout activeMenu="tm" fullWidth>
+    <SimpaskorSidebarLayout
+      activeMenu="tm"
+      title="Pengundian Nomor Urut Tampil & Nomor Dada"
+      subtitle="Gladi pengundian nomor tampil 36 peleton & distribusi nomor dada peserta"
+      fullWidth
+      rightActions={
+        <div className="flex items-center gap-2">
+          {canManageLottery && (
+            <button
+              type="button"
+              onClick={handleClearCurrentJenjang}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-slate-200 hover:border-red-200 hover:bg-red-50 text-slate-700 hover:text-red-700 text-xs font-bold transition-all shadow-2xs active:scale-95 cursor-pointer"
+              title="Kosongkan seluruh nomor undian peleton"
+            >
+              <RotateCcw className="w-3.5 h-3.5 text-slate-500" />
+              <span className="hidden sm:inline">Reset</span>
+            </button>
+          )}
+
+          <button
+            type="button"
+            onClick={handleExportExcel}
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-bold transition-all shadow-sm active:scale-95 cursor-pointer"
+            title="Cetak dan unduh rekapitulasi hasil undian TM ke file Excel (.csv)"
+          >
+            <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-200" />
+            <span>Cetak Rekap Excel</span>
+          </button>
+        </div>
+      }
+    >
       <div className="space-y-5 w-full pb-12">
-
-        {/* ======================================================== */}
-        {/* EXECUTIVE COMMAND HEADER (NO AI SLOP, HIGH PRESTIGE)     */}
-        {/* ======================================================== */}
         <div className="bg-white rounded-2xl border border-slate-200/90 shadow-[0_1px_3px_rgba(0,0,0,0.04)] overflow-hidden">
-          {/* Top Metadata Bar */}
-          <div className="px-5 py-4 sm:px-6 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-50/50">
-            <div className="flex items-center gap-3 sm:gap-4 flex-wrap min-w-0">
-              {/* 1. Icon */}
-              <div className="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center shrink-0 font-bold shadow-sm">
-                <CalendarCheck className="w-5 h-5 text-amber-400" />
-              </div>
-
-              {/* 2. Logo Title */}
-              <img
-                src={titleLogoImg}
-                alt="LBB Mu'allimin 2027"
-                className="h-7 sm:h-8 w-auto object-contain shrink-0"
-              />
-
-              {/* Pemisah Halus */}
-              <div className="hidden sm:block h-6 w-px bg-slate-300/80 shrink-0" />
-
-              {/* 3. Baru Judulnya */}
-              <h1 className="text-base sm:text-lg font-black text-slate-900 tracking-tight leading-none">
-                Pengundian Nomor Urut Tampil & Nomor Dada
-              </h1>
-            </div>
-
-            {/* Quick Action Buttons */}
-            <div className="flex items-center gap-2 shrink-0 self-start md:self-center">
-              {canManageLottery && (
-                <button
-                  type="button"
-                  onClick={handleClearCurrentJenjang}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-slate-200 hover:border-red-200 hover:bg-red-50 text-slate-700 hover:text-red-700 text-xs font-bold transition-all shadow-2xs active:scale-95 cursor-pointer"
-                  title="Kosongkan seluruh nomor undian peleton"
-                >
-                  <RotateCcw className="w-3.5 h-3.5 text-slate-500" />
-                  <span className="hidden sm:inline">Reset</span>
-                </button>
-              )}
-
-              <button
-                type="button"
-                onClick={handleExportExcel}
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-bold transition-all shadow-sm active:scale-95 cursor-pointer"
-                title="Cetak dan unduh rekapitulasi hasil undian TM ke file Excel (.csv)"
-              >
-                <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-200" />
-                <span>Cetak Rekap Excel</span>
-              </button>
-            </div>
-          </div>
-
           {/* Division Selector & Live Drawing Telemetry */}
           <div className="p-3.5 sm:p-5 flex flex-col lg:flex-row lg:items-center justify-between gap-3.5 sm:gap-5">
             {/* Division Tabs: SD vs SMP */}

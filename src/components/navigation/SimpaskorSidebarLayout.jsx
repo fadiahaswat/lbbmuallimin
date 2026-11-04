@@ -144,6 +144,48 @@ export default function SimpaskorSidebarLayout({
     return baseNav;
   };
 
+  // Helper resolusi ikon modul untuk Standardized Header
+  const getModuleIcon = (menuId) => {
+    switch (menuId) {
+      case 'pendaftaran':
+      case 'admin':
+        return ClipboardList;
+      case 'tm':
+        return CalendarCheck;
+      case 'uji_coba':
+        return Compass;
+      case 'checkin':
+      case 'checkout':
+      case 'basecamp':
+        return Building2;
+      case 'dp':
+        return Clock;
+      case 'penjurian':
+      case 'juri':
+        return Award;
+      case 'rekap_nilai':
+      case 'recap':
+        return FileSpreadsheet;
+      case 'klasemen':
+      case 'leaderboard':
+        return Trophy;
+      case 'dokumen':
+      case 'juknis':
+      case 'tatib':
+      case 'rundown':
+      case 'proposal':
+      case 'timeline':
+        return BookOpen;
+      case 'superadmin':
+        return Crown;
+      case 'overview':
+      case 'dashboard':
+        return Home;
+      default:
+        return ShieldCheck;
+    }
+  };
+
   const saasDocItems = useMemo(() => {
     // Untuk peserta: Dokumen SaaS tidak perlu tampil di dasbor peserta
     if (userRole === 'peserta') {
@@ -200,277 +242,304 @@ export default function SimpaskorSidebarLayout({
 
   return (
     <div className="min-h-screen bg-[#F8F9FA] text-slate-800 flex font-sans">
-      {/* 1. DESKTOP SIDEBAR (Fixed Left, Full 100vh, Sleek & Professional with Collapse support) */}
-      <aside 
-        className={`hidden lg:flex flex-col bg-white border-r border-slate-200/90 fixed top-0 bottom-0 left-0 h-screen select-none shrink-0 z-30 justify-between shadow-[2px_0_20px_rgba(0,0,0,0.03)] transition-all duration-300 ${
-          isCollapsed ? 'w-20 px-2.5 py-4' : 'w-72 px-4 py-5'
+      {/* 1. DESKTOP SIDEBAR (Fixed Left, Clean SaaS Layout & Precision Aligned) */}
+      <aside
+        className={`hidden lg:flex flex-col bg-white border-r border-slate-200/80 fixed top-0 bottom-0 left-0 h-screen select-none shrink-0 z-30 shadow-[1px_0_12px_rgba(15,23,42,0.03)] transition-all duration-300 ${
+          isCollapsed ? 'w-[72px]' : 'w-72'
         }`}
       >
-        {/* Toggle Collapse Button (Posisi kanan atas sidebar) */}
-        <button
-          type="button"
-          onClick={toggleSidebarCollapse}
-          className="absolute -right-3.5 top-6 w-7 h-7 bg-white border border-slate-200/90 rounded-full shadow-md hover:shadow-lg flex items-center justify-center text-slate-500 hover:text-red-700 hover:scale-110 active:scale-95 transition-all z-40 cursor-pointer"
-          title={isCollapsed ? 'Perbesar Menu Samping' : 'Kecilkan Menu Samping (Collapse)'}
-          aria-label={isCollapsed ? 'Perbesar Menu' : 'Kecilkan Menu'}
+        {/* Brand Header + Integrated Collapse Toggle */}
+        <div
+          className={`flex items-center shrink-0 border-b border-slate-100 ${
+            isCollapsed ? 'flex-col gap-2 px-2 py-3 justify-center' : 'justify-between px-4 h-16'
+          }`}
         >
-          {isCollapsed ? (
-            <ChevronRight className="w-4 h-4 text-red-600" />
-          ) : (
-            <ChevronLeft className="w-4 h-4 text-slate-600" />
-          )}
-        </button>
-
-        <div className="flex flex-col min-h-0 flex-1 overflow-hidden">
-          {/* Brand Header: Logo LBB & title-logo tanpa wadah/bingkai */}
-          <div 
+          <div
             onClick={() => setActiveView('landing')}
-            className={`flex items-center cursor-pointer group transition-all duration-200 shrink-0 mb-5 ${
-              isCollapsed ? 'justify-center py-2 px-1' : 'justify-center py-2 px-2'
+            className={`flex items-center cursor-pointer group min-w-0 ${
+              isCollapsed ? 'justify-center' : 'gap-2.5'
             }`}
             title="Ke Beranda Utama LBB Mu'allimin"
           >
-            <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'}`}>
-              <img
-                src={logoLbb}
-                alt="Logo LBB Mu'allimin"
-                className={`w-auto object-contain filter drop-shadow-sm group-hover:scale-105 transition-transform shrink-0 ${
-                  isCollapsed ? 'h-9' : 'h-10'
-                }`}
-              />
-              {!isCollapsed && (
-                <img
-                  src={titleLogoImg}
-                  alt="LBB Mu'allimin"
-                  className="h-8.5 w-auto object-contain max-w-[155px] group-hover:opacity-90 transition-opacity"
-                />
-              )}
-            </div>
-          </div>
-
-          {/* Navigation Items (Scrollable jika layar pendek) */}
-          <div className="flex-1 space-y-1.5 overflow-y-auto pr-1 pb-2 custom-scrollbar">
+            <img
+              src={logoLbb}
+              alt="Logo LBB Mu'allimin"
+              className={`w-auto object-contain shrink-0 group-hover:scale-105 transition-transform ${
+                isCollapsed ? 'h-8' : 'h-9'
+              }`}
+            />
             {!isCollapsed && (
-              <div className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-3 pt-1 mb-2.5 flex items-center justify-between">
-                <span className="flex items-center gap-2">
-                  <span className="w-0.5 h-3 bg-red-600 rounded-full inline-block"></span>
-                  {userRole === 'peserta' ? 'Portal Peleton' : '9 Tahap Lomba'}
-                </span>
-                {userRole === 'peserta' && (
-                  <span className="text-[9px] font-black tracking-wide text-red-700 bg-red-100/70 border border-red-200/80 px-2 py-0.5 rounded-md shadow-2xs uppercase">
-                    Official
-                  </span>
-                )}
-              </div>
+              <img
+                src={titleLogoImg}
+                alt="LBB Mu'allimin 2027"
+                className="h-7 w-auto max-w-[148px] object-contain"
+              />
             )}
-            {navItems.map(item => {
-              const Icon = item.icon;
-              const isActive = isItemActive(item);
-
-              return (
-                <button
-                  key={item.id}
-                  type="button"
-                  onClick={() => handleNavClick(item)}
-                  title={item.label}
-                  className={`w-full flex items-center rounded-2xl text-xs font-bold transition-all duration-200 cursor-pointer relative group ${
-                    isCollapsed ? 'justify-center p-3' : 'justify-between px-3.5 py-3'
-                  } ${
-                    isActive
-                      ? 'bg-gradient-to-r from-red-700 via-red-600 to-rose-600 text-white shadow-lg shadow-red-700/25 ring-1 ring-red-500/30 font-black'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/90 hover:shadow-2xs'
-                  }`}
-                >
-                  <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-3.5'}`}>
-                    <div className={`w-8.5 h-8.5 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 ${
-                      isActive 
-                        ? 'bg-white/20 text-white shadow-inner shadow-black/10' 
-                        : 'bg-slate-100 group-hover:bg-red-50 text-slate-500 group-hover:text-red-700 group-hover:scale-105'
-                    }`}>
-                      <Icon className="w-4 h-4 transition-transform group-hover:scale-110" />
-                    </div>
-                    {!isCollapsed && (
-                      <span className="tracking-tight text-xs">{item.label}</span>
-                    )}
-                  </div>
-                  {!isCollapsed && isActive && (
-                    <div className="flex items-center gap-1.5 shrink-0">
-                      <div className="w-2 h-2 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.9)]" />
-                    </div>
-                  )}
-                </button>
-              );
-            })}
-
-            {/* Dokumen & Regulasi SaaS */}
-            {saasDocItems.length > 0 && (
-              <div className={`pt-4 mt-3 border-t border-slate-100 ${isCollapsed ? 'border-dashed' : ''}`}>
-                {!isCollapsed && (
-                  <div className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-3 mb-2 flex items-center justify-between">
-                    <span>Dokumen SaaS</span>
-                    <span className="text-[9px] bg-red-50 text-red-700 border border-red-200/50 px-2 py-0.5 rounded-full font-bold">Resmi</span>
-                  </div>
-                )}
-                <div className="space-y-1">
-                  {saasDocItems.map(item => {
-                    const Icon = item.icon;
-                    const isActive = item.id === 'dokumen'
-                      ? ['dokumen', 'juknis', 'tatib', 'rundown', 'proposal', 'timeline'].includes(activeMenu)
-                      : activeMenu === item.id;
-
-                    return (
-                      <button
-                        key={item.id}
-                        type="button"
-                        onClick={() => handleNavClick(item)}
-                        title={item.label}
-                        className={`w-full flex items-center rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                          isCollapsed ? 'justify-center p-2.5' : 'justify-between px-3.5 py-2.5'
-                        } ${
-                          isActive
-                            ? 'bg-slate-900 text-white shadow-xs'
-                            : 'text-slate-600 hover:text-slate-950 hover:bg-slate-100/80'
-                        }`}
-                      >
-                        <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'}`}>
-                          <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-slate-400'}`} />
-                          {!isCollapsed && <span>{item.label}</span>}
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-            {/* Master System (KHUSUS Superadmin Tertinggi: tontimuallimin2026@gmail.com) */}
-            {userRole === 'superadmin' && (
-              <div className={`pt-3 mt-3 border-t border-slate-100 ${isCollapsed ? 'border-dashed' : ''}`}>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsMobileMenuOpen(false);
-                    setActiveView('superadmin');
-                  }}
-                  title="Master System"
-                  className={`w-full flex items-center rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                    isCollapsed ? 'justify-center p-2.5' : 'justify-between px-3.5 py-2.5'
-                  } ${
-                    activeMenu === 'superadmin'
-                      ? 'bg-purple-600 text-white shadow-sm shadow-purple-600/30'
-                      : 'text-slate-500 hover:text-slate-950 hover:bg-slate-100/80'
-                  }`}
-                >
-                  <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'}`}>
-                    <Crown className={`w-4 h-4 shrink-0 ${activeMenu === 'superadmin' ? 'text-white' : 'text-purple-600'}`} />
-                    {!isCollapsed && <span>Master System</span>}
-                  </div>
-                </button>
-              </div>
-            )}
-
-            {/* Countdown Widget: Khusus Peserta / Official di Sidebar */}
-            {userRole === 'peserta' && !isCollapsed && (() => {
-              const now = new Date();
-              const tmTarget = new Date('2027-01-09T13:00:00+07:00');
-              const compTarget = new Date('2027-01-24T06:00:00+07:00');
-
-              const isPastTM = now >= tmTarget;
-              const isPastComp = now >= compTarget;
-
-              const activeTarget = isPastTM ? compTarget : tmTarget;
-              const titleLabel = isPastComp 
-                ? 'Lomba Selesai' 
-                : isPastTM 
-                ? 'Hari-H Lomba' 
-                : 'Technical Meeting';
-              const targetDateText = isPastTM ? '24 Jan 2027' : '9 Jan 2027';
-
-              const diffMs = Math.max(0, activeTarget.getTime() - now.getTime());
-              const daysLeft = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-              const hoursLeft = Math.floor((diffMs / (1000 * 60 * 60)) % 24);
-
-              return (
-                <div className="pt-3 mt-2 border-t border-slate-100">
-                  <div className="px-3 py-2.5 rounded-xl bg-slate-50/70 border border-slate-200/60 flex items-center justify-between">
-                    <div className="flex items-center gap-2 min-w-0">
-                      <div className="w-7 h-7 rounded-lg bg-red-100/80 text-red-700 flex items-center justify-center shrink-0">
-                        <Clock className="w-3.5 h-3.5" />
-                      </div>
-                      <div className="min-w-0">
-                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block leading-none">
-                          H-Min Menuju {titleLabel}
-                        </span>
-                        <span className="text-[11px] font-semibold text-slate-700 block truncate mt-0.5">
-                          {targetDateText}
-                        </span>
-                      </div>
-                    </div>
-                    {!isPastComp && (
-                      <div className="flex items-baseline gap-1 shrink-0 bg-white px-2 py-1 rounded-lg border border-slate-200/70 shadow-2xs">
-                        <span className="text-sm font-black text-slate-900 font-mono leading-none">
-                          {daysLeft}
-                        </span>
-                        <span className="text-[9px] font-bold text-slate-400 uppercase">
-                          Hari
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              );
-            })()}
           </div>
+
+          <button
+            type="button"
+            onClick={toggleSidebarCollapse}
+            className="w-7 h-7 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center transition-colors shrink-0 cursor-pointer"
+            title={isCollapsed ? 'Perbesar Menu Samping' : 'Kecilkan Menu Samping'}
+            aria-label={isCollapsed ? 'Perbesar Menu' : 'Kecilkan Menu'}
+          >
+            {isCollapsed ? (
+              <PanelLeftOpen className="w-4 h-4 text-slate-500" />
+            ) : (
+              <PanelLeftClose className="w-4 h-4" />
+            )}
+          </button>
         </div>
 
-        {/* User Card & Logout di Footer Sidebar (Paling Bawah) */}
-        <div className="pt-3 border-t border-slate-100 mt-auto shrink-0">
-          <div className={`bg-gradient-to-br from-slate-50 to-slate-100/80 border border-slate-200/90 rounded-2xl flex items-center justify-between shadow-xs hover:border-slate-300 transition-all ${
-            isCollapsed ? 'p-2 flex-col gap-2' : 'p-3 gap-3'
-          }`}>
-            <div className={`flex items-center min-w-0 ${isCollapsed ? 'justify-center' : 'gap-3'}`}>
-              <div className="relative shrink-0 flex items-center justify-center">
-                <img
-                  src={avatarUrl}
-                  alt={displayName}
-                  className={`rounded-xl shadow-xs transition-transform hover:scale-105 ${
-                    isCollapsed ? 'w-8 h-8' : 'w-10 h-10'
-                  } ${
-                    isSchoolLogo 
-                      ? 'object-contain bg-white p-1 border border-slate-200' 
-                      : 'object-cover ring-1 ring-slate-200 bg-slate-900 text-[10px]'
-                  }`}
-                  loading="lazy"
-                  decoding="async"
-                  onError={(e) => {
-                    if (currentUser?.googleAvatar && e.target.src !== currentUser.googleAvatar) {
-                      e.target.src = currentUser.googleAvatar;
-                    } else if (e.target.src !== fallbackInitialAvatar) {
-                      e.target.src = fallbackInitialAvatar;
-                    }
-                  }}
-                />
-                <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 rounded-full border-2 border-white shadow-xs" title="Akun Terhubung & Aktif" />
+        {/* Navigation Content (Consistent vertical rhythm, scrollable if viewport is short) */}
+        <div className={`flex-1 overflow-y-auto no-scrollbar py-3 flex flex-col gap-4 ${
+          isCollapsed ? 'px-2' : 'px-3'
+        }`}>
+          {/* Section 1: Tahapan Lomba / Portal Peleton */}
+          <div>
+            {!isCollapsed && (
+              <div className="px-2.5 mb-2 flex items-center justify-between">
+                <span className="flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
+                  <span className="w-1 h-3 bg-red-600 rounded-full inline-block" />
+                  {userRole === 'peserta' ? 'Portal Peleton' : 'Tahapan Lomba'}
+                </span>
+                <span className="text-[9px] font-bold tracking-wide text-slate-500 bg-slate-100 border border-slate-200/70 px-2 py-0.5 rounded-full">
+                  {userRole === 'peserta' ? 'Official' : `${navItems.length} Tahap`}
+                </span>
               </div>
+            )}
+
+            <div className="space-y-1">
+              {navItems.map((item, index) => {
+                const Icon = item.icon;
+                const isActive = isItemActive(item);
+                const stageNum = String(index + 1).padStart(2, '0');
+
+                return (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => handleNavClick(item)}
+                    title={item.label}
+                    className={`w-full flex items-center rounded-xl transition-all duration-150 cursor-pointer relative group ${
+                      isCollapsed ? 'justify-center p-2' : 'justify-between px-2.5 py-2'
+                    } ${
+                      isActive
+                        ? 'bg-gradient-to-r from-red-600 to-rose-600 text-white shadow-sm shadow-red-600/20 font-bold'
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80 font-semibold'
+                    }`}
+                  >
+                    <div className={`flex items-center min-w-0 ${isCollapsed ? 'justify-center' : 'gap-3'}`}>
+                      <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-all duration-150 ${
+                        isActive
+                          ? 'bg-white/20 text-white'
+                          : 'bg-slate-100 group-hover:bg-white group-hover:shadow-2xs text-slate-500 group-hover:text-red-600'
+                      }`}>
+                        <Icon className="w-4 h-4" />
+                      </div>
+                      {!isCollapsed && (
+                        <span className="text-[12.5px] tracking-tight truncate leading-snug">
+                          {item.label}
+                        </span>
+                      )}
+                    </div>
+
+                    {!isCollapsed && (
+                      <div className="flex items-center shrink-0 ml-2">
+                        {isActive ? (
+                          <span className="w-1.5 h-1.5 rounded-full bg-white shadow-[0_0_6px_rgba(255,255,255,0.9)]" />
+                        ) : (
+                          <span className="text-[10px] font-mono font-semibold tabular-nums text-slate-400 group-hover:text-slate-600 transition-colors">
+                            {stageNum}
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Section 2: Dokumen & Regulasi + Master System */}
+          {(saasDocItems.length > 0 || userRole === 'superadmin') && (
+            <div className={`pt-3 border-t border-slate-100 ${isCollapsed ? 'border-dashed' : ''}`}>
               {!isCollapsed && (
-                <div className="min-w-0 flex-1">
-                  <div className="text-xs font-black text-slate-900 leading-tight truncate" title={displayName}>
-                    {displayName}
-                  </div>
-                  <div className="text-[10px] text-slate-500 font-semibold leading-tight truncate mt-1 flex items-center gap-1" title={displaySubtitle}>
-                    <span className="w-1.5 h-1.5 rounded-full bg-red-600 inline-block"></span>
-                    {displaySubtitle}
-                  </div>
+                <div className="px-2.5 mb-2 flex items-center justify-between">
+                  <span className="flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
+                    <span className="w-1 h-3 bg-slate-400 rounded-full inline-block" />
+                    {userRole === 'superadmin' ? 'Regulasi & Sistem' : 'Dokumen & Regulasi'}
+                  </span>
                 </div>
               )}
+
+              <div className="space-y-1">
+                {saasDocItems.map(item => {
+                  const Icon = item.icon;
+                  const isActive = item.id === 'dokumen'
+                    ? ['dokumen', 'juknis', 'tatib', 'rundown', 'proposal', 'timeline'].includes(activeMenu)
+                    : activeMenu === item.id;
+
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => handleNavClick(item)}
+                      title={item.label}
+                      className={`w-full flex items-center rounded-xl transition-all duration-150 cursor-pointer group ${
+                        isCollapsed ? 'justify-center p-2' : 'justify-between px-2.5 py-2'
+                      } ${
+                        isActive
+                          ? 'bg-slate-900 text-white shadow-sm font-bold'
+                          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80 font-semibold'
+                      }`}
+                    >
+                      <div className={`flex items-center min-w-0 ${isCollapsed ? 'justify-center' : 'gap-3'}`}>
+                        <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-all ${
+                          isActive
+                            ? 'bg-white/15 text-white'
+                            : 'bg-slate-100 group-hover:bg-white group-hover:shadow-2xs text-slate-500 group-hover:text-slate-800'
+                        }`}>
+                          <Icon className="w-4 h-4" />
+                        </div>
+                        {!isCollapsed && (
+                          <span className="text-[12.5px] tracking-tight truncate leading-snug">
+                            {item.label}
+                          </span>
+                        )}
+                      </div>
+                    </button>
+                  );
+                })}
+
+                {/* Master System (KHUSUS Superadmin Tertinggi: tontimuallimin2026@gmail.com) */}
+                {userRole === 'superadmin' && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      setActiveView('superadmin');
+                    }}
+                    title="Master System"
+                    className={`w-full flex items-center rounded-xl transition-all duration-150 cursor-pointer group ${
+                      isCollapsed ? 'justify-center p-2' : 'justify-between px-2.5 py-2'
+                    } ${
+                      activeMenu === 'superadmin'
+                        ? 'bg-gradient-to-r from-purple-700 to-indigo-700 text-white shadow-sm shadow-purple-600/25 font-bold'
+                        : 'text-slate-600 hover:text-purple-900 hover:bg-purple-50/70 font-semibold'
+                    }`}
+                  >
+                    <div className={`flex items-center min-w-0 ${isCollapsed ? 'justify-center' : 'gap-3'}`}>
+                      <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-all ${
+                        activeMenu === 'superadmin'
+                          ? 'bg-white/20 text-white'
+                          : 'bg-purple-100/80 group-hover:bg-purple-100 text-purple-700'
+                      }`}>
+                        <Crown className="w-4 h-4" />
+                      </div>
+                      {!isCollapsed && (
+                        <span className="text-[12.5px] tracking-tight truncate leading-snug">
+                          Master System
+                        </span>
+                      )}
+                    </div>
+                  </button>
+                )}
+              </div>
             </div>
-            <button
-              onClick={handleLogout}
-              className="p-2 rounded-xl text-slate-400 hover:text-red-600 hover:bg-red-50 border border-transparent hover:border-red-100 transition-all shrink-0 cursor-pointer"
-              title="Keluar / Ganti Akun"
-            >
-              <LogOut className="w-4 h-4" />
-            </button>
+          )}
+        </div>
+
+        {/* User Card & Quick Actions Footer */}
+        <div className={`border-t border-slate-100 shrink-0 ${isCollapsed ? 'p-2' : 'p-3'}`}>
+          <div className={`bg-slate-50/90 border border-slate-200/80 rounded-xl transition-all ${
+            isCollapsed ? 'p-1.5 flex flex-col items-center gap-1.5' : 'p-2.5 flex items-center justify-between gap-2'
+          }`}>
+            {isCollapsed ? (
+              <>
+                <div className="relative flex items-center justify-center">
+                  <img
+                    src={avatarUrl}
+                    alt={displayName}
+                    className="w-8 h-8 rounded-lg object-cover ring-1 ring-slate-200 shadow-2xs"
+                    title={`${displayName} (${displaySubtitle})`}
+                  />
+                  <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-white" />
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setActiveView('landing')}
+                  className="w-7 h-7 flex items-center justify-center rounded-lg text-slate-500 hover:text-slate-900 hover:bg-white transition-all cursor-pointer"
+                  title="Ke Beranda Depan"
+                >
+                  <Home className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="w-7 h-7 flex items-center justify-center rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-all cursor-pointer"
+                  title="Keluar (Logout)"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                </button>
+              </>
+            ) : (
+              <>
+                {/* User Info Left */}
+                <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                  <div className="relative shrink-0">
+                    <img
+                      src={avatarUrl}
+                      alt={displayName}
+                      className={`w-9 h-9 rounded-xl shadow-2xs shrink-0 ${
+                        isSchoolLogo
+                          ? 'object-contain bg-white p-0.5 border border-slate-200'
+                          : 'object-cover ring-1 ring-slate-200/90 bg-slate-900 text-[10px]'
+                      }`}
+                      loading="lazy"
+                      decoding="async"
+                      onError={(e) => {
+                        if (currentUser?.googleAvatar && e.target.src !== currentUser.googleAvatar) {
+                          e.target.src = currentUser.googleAvatar;
+                        } else if (e.target.src !== fallbackInitialAvatar) {
+                          e.target.src = fallbackInitialAvatar;
+                        }
+                      }}
+                    />
+                    <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-white" title="Akun Aktif" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="text-xs font-bold text-slate-900 leading-snug truncate" title={displayName}>
+                      {displayName}
+                    </div>
+                    <div className="text-[10.5px] text-slate-500 truncate leading-tight mt-0.5" title={displaySubtitle}>
+                      {currentUser?.email || currentTeam?.email || (userRole === 'superadmin' ? 'Administrator' : userRole === 'peserta' ? 'Official Tim' : 'Panitia LBB')}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Quick Action Icons Right */}
+                <div className="flex items-center gap-1 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => setActiveView('landing')}
+                    className="w-7 h-7 flex items-center justify-center rounded-lg text-slate-500 hover:text-slate-900 hover:bg-white border border-transparent hover:border-slate-200/80 transition-all cursor-pointer active:scale-95"
+                    title="Kembali ke Beranda Utama"
+                  >
+                    <Home className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    className="w-7 h-7 flex items-center justify-center rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 border border-transparent hover:border-red-200/80 transition-all cursor-pointer active:scale-95"
+                    title="Keluar dari akun ini"
+                  >
+                    <LogOut className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </aside>
@@ -482,54 +551,83 @@ export default function SimpaskorSidebarLayout({
             onClick={() => setIsMobileMenuOpen(false)}
             className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs transition-opacity"
           />
-          <div className="relative w-72 max-w-[85vw] bg-white h-full shadow-2xl flex flex-col p-5 z-10 justify-between">
-            <div>
-              <div className="flex items-center justify-between pb-4 border-b border-slate-100 mb-4">
-                <div className="flex items-center gap-2.5 min-w-0">
-                  <img src={logoLbb} alt="Logo" className="h-8 w-auto object-contain shrink-0" />
-                  <img src={titleLogoImg} alt="LBB Mu'allimin" className="h-6 w-auto object-contain max-w-[120px]" />
+          <div className="relative w-80 max-w-[86vw] bg-white h-full shadow-2xl flex flex-col p-4 sm:p-5 z-10 justify-between">
+            <div className="flex flex-col min-h-0 flex-1 overflow-hidden">
+              <div className="flex items-center justify-between pb-3.5 border-b border-slate-100 mb-3 shrink-0">
+                <div 
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    setActiveView('landing');
+                  }}
+                  className="flex items-center gap-2 cursor-pointer min-w-0"
+                >
+                  <img src={logoLbb} alt="Logo LBB" className="h-7.5 w-auto object-contain shrink-0" />
+                  <div className="h-5 w-px bg-slate-200" />
+                  <img src={logoTonti} alt="Logo Tonti" className="h-6.5 w-auto object-contain shrink-0" />
+                  <img src={logoMuallimin} alt="Logo Mu'allimin" className="h-6.5 w-auto object-contain shrink-0" />
+                  <span className="text-[9px] font-black tracking-wider text-slate-800 uppercase font-mono ml-1">SIMPASKOR</span>
                 </div>
                 <button
+                  type="button"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="p-1.5 rounded-xl text-slate-400 hover:bg-slate-100 shrink-0"
+                  className="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 shrink-0 cursor-pointer"
+                  aria-label="Tutup Menu"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
-              <div className="space-y-1 overflow-y-auto max-h-[70vh]">
-                <div className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-3 mb-2">
-                  Menu Utama
+              <div className="space-y-1 overflow-y-auto no-scrollbar flex-1 pb-2">
+                <div className="text-[10px] font-black uppercase tracking-wider text-slate-400 px-3 pt-1 mb-2 flex items-center justify-between">
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-1 h-3.5 bg-red-600 rounded-full inline-block" />
+                    {userRole === 'peserta' ? 'Portal Peleton' : 'Tahapan Lomba'}
+                  </span>
+                  <span className="text-[9px] font-bold tracking-wider text-slate-500 bg-slate-100 border border-slate-200/60 px-2 py-0.5 rounded-full">
+                    {userRole === 'peserta' ? 'Official' : `${navItems.length} Tahap`}
+                  </span>
                 </div>
-                {navItems.map(item => {
+                {navItems.map((item, index) => {
                   const Icon = item.icon;
                   const isActive = isItemActive(item);
+                  const stageNum = String(index + 1).padStart(2, '0');
 
                   return (
                     <button
                       key={item.id}
                       type="button"
                       onClick={() => handleNavClick(item)}
-                      className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-bold transition-all cursor-pointer ${
+                      className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                         isActive
-                          ? 'bg-red-600 text-white shadow-lg shadow-red-600/30'
+                          ? 'bg-gradient-to-r from-red-600 to-rose-600 text-white shadow-md shadow-red-500/25 font-black'
                           : 'text-slate-600 hover:text-slate-950 hover:bg-slate-100'
                       }`}
                     >
-                      <div className="flex items-center gap-3">
-                        <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-slate-400'}`} />
-                        <span>{item.label}</span>
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
+                          isActive ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500'
+                        }`}>
+                          <Icon className="w-4 h-4" />
+                        </div>
+                        <span className="truncate">{item.label}</span>
                       </div>
+                      <span className={`text-[10px] font-mono shrink-0 ml-2 ${
+                        isActive ? 'text-white/90 font-bold' : 'text-slate-400'
+                      }`}>
+                        {stageNum}
+                      </span>
                     </button>
                   );
                 })}
 
-                {/* Dokumen & Regulasi SaaS Mobile */}
-                {saasDocItems.length > 0 && (
-                  <div className="pt-3 mt-2 border-t border-slate-100">
-                    <div className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-3 mb-1.5 flex items-center justify-between">
-                      <span>Dokumen SaaS</span>
-                      <span className="text-[9px] bg-red-100 text-red-700 px-1.5 py-0.5 rounded-full font-bold">Resmi</span>
+                {/* Dokumen & Regulasi + Master System Mobile */}
+                {(saasDocItems.length > 0 || userRole === 'superadmin') && (
+                  <div className="pt-3 mt-2 border-t border-slate-100 space-y-1">
+                    <div className="text-[10px] font-black uppercase tracking-wider text-slate-400 px-3 mb-1.5 flex items-center justify-between">
+                      <span className="flex items-center gap-1.5">
+                        <span className="w-1 h-3 bg-slate-400 rounded-full inline-block" />
+                        {userRole === 'superadmin' ? 'Regulasi & Sistem' : 'Dokumen & Regulasi'}
+                      </span>
                     </div>
                     {saasDocItems.map(item => {
                       const Icon = item.icon;
@@ -542,50 +640,57 @@ export default function SimpaskorSidebarLayout({
                           key={item.id}
                           type="button"
                           onClick={() => handleNavClick(item)}
-                          className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                          className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                             isActive
-                              ? 'bg-slate-900 text-white shadow-md'
+                              ? 'bg-slate-900 text-white shadow-md font-black'
                               : 'text-slate-600 hover:text-slate-950 hover:bg-slate-100'
                           }`}
                         >
-                          <div className="flex items-center gap-2.5">
-                            <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-slate-400'}`} />
-                            <span>{item.label}</span>
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
+                              isActive ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500'
+                            }`}>
+                              <Icon className="w-4 h-4" />
+                            </div>
+                            <span className="truncate">{item.label}</span>
                           </div>
                         </button>
                       );
                     })}
-                  </div>
-                )}
 
-                {/* Master System (KHUSUS Superadmin Tertinggi: tontimuallimin2026@gmail.com) */}
-                {userRole === 'superadmin' && (
-                  <div className="pt-2 mt-2 border-t border-slate-100">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setIsMobileMenuOpen(false);
-                        setActiveView('superadmin');
-                      }}
-                      className={`w-full flex items-center justify-between px-3.5 py-2 rounded-2xl text-xs font-bold transition-all cursor-pointer ${
-                        activeMenu === 'superadmin'
-                          ? 'bg-purple-600 text-white shadow-lg shadow-purple-600/30'
-                          : 'text-slate-500 hover:text-slate-950 hover:bg-slate-100'
-                      }`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <Crown className={`w-4 h-4 ${activeMenu === 'superadmin' ? 'text-white' : 'text-purple-600'}`} />
-                        <span>Master System</span>
-                      </div>
-                    </button>
+                    {/* Master System (KHUSUS Superadmin Tertinggi: tontimuallimin2026@gmail.com) */}
+                    {userRole === 'superadmin' && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsMobileMenuOpen(false);
+                          setActiveView('superadmin');
+                        }}
+                        className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                          activeMenu === 'superadmin'
+                            ? 'bg-gradient-to-r from-purple-700 to-indigo-700 text-white shadow-md shadow-purple-600/30 font-black'
+                            : 'text-slate-600 hover:text-purple-950 hover:bg-purple-50/70'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
+                            activeMenu === 'superadmin' ? 'bg-white/20 text-white' : 'bg-purple-100 text-purple-700'
+                          }`}>
+                            <Crown className="w-4 h-4" />
+                          </div>
+                          <span className="truncate">Master System</span>
+                        </div>
+                      </button>
+                    )}
                   </div>
                 )}
               </div>
             </div>
 
-            <div className="pt-3 border-t border-slate-100">
-              <div className="p-2.5 bg-slate-50 border border-slate-200/80 rounded-2xl flex items-center justify-between gap-2.5 mb-2.5">
-                <div className="flex items-center gap-2.5 min-w-0">
+            {/* Mobile Footer: User Card + Split Actions */}
+            <div className="pt-3 border-t border-slate-100 shrink-0">
+              <div className="p-2.5 bg-gradient-to-br from-slate-50 to-slate-100/90 border border-slate-200/90 rounded-2xl mb-2.5">
+                <div className="flex items-start gap-2.5 min-w-0">
                   <div className="relative shrink-0 flex items-center justify-center">
                     <img
                       src={avatarUrl}
@@ -605,52 +710,63 @@ export default function SimpaskorSidebarLayout({
                         }
                       }}
                     />
-                    <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-white" title="Online" />
+                    <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-white shadow-xs" title="Online" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <div className="text-xs font-black text-slate-900 leading-tight truncate">
-                      {displayName}
+                    <div className="flex items-center justify-between gap-1">
+                      <span className="text-xs font-black text-slate-900 leading-tight truncate">
+                        {displayName}
+                      </span>
+                      <span className={`text-[8px] font-black px-1.5 py-0.5 rounded-md uppercase tracking-wide shrink-0 ${
+                        userRole === 'superadmin'
+                          ? 'bg-purple-100 text-purple-700'
+                          : userRole === 'peserta'
+                          ? 'bg-red-100 text-red-700'
+                          : 'bg-blue-100 text-blue-700'
+                      }`}>
+                        {userRole === 'superadmin' ? 'Admin' : userRole === 'peserta' ? 'Official' : 'Panitia'}
+                      </span>
                     </div>
-                    <div className="text-[10px] text-slate-400 font-medium leading-tight truncate mt-0.5">
-                      {displaySubtitle}
+                    <div className="text-[10px] text-slate-400 font-mono truncate mt-0.5">
+                      {currentUser?.email || currentTeam?.email || displaySubtitle}
                     </div>
                   </div>
                 </div>
-              </div>
-              {/* Tombol Navigasi Beranda Depan & Logout */}
-              <div className="space-y-1.5 pt-1">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsMobileMenuOpen(false);
-                    setActiveView('landing');
-                  }}
-                  className="w-full flex items-center justify-center gap-2 p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition-all cursor-pointer active:scale-98"
-                >
-                  <Home className="w-4 h-4 text-slate-600" />
-                  <span>Ke Beranda Depan</span>
-                </button>
 
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsMobileMenuOpen(false);
-                    handleLogout();
-                  }}
-                  className="w-full flex items-center justify-center gap-2 p-2 rounded-xl text-red-600 hover:bg-red-50 text-xs font-bold transition-all cursor-pointer active:scale-98"
-                >
-                  <LogOut className="w-3.5 h-3.5" />
-                  <span>Keluar Akun (Logout)</span>
-                </button>
+                {/* Split Action Buttons: Beranda & Keluar */}
+                <div className="grid grid-cols-2 gap-1.5 pt-2 mt-2 border-t border-slate-200/60">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      setActiveView('landing');
+                    }}
+                    className="flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-xl bg-white hover:bg-slate-100 border border-slate-200/80 text-slate-700 text-[11px] font-bold transition-all cursor-pointer shadow-2xs active:scale-95"
+                  >
+                    <Home className="w-3.5 h-3.5 text-slate-500" />
+                    <span>Beranda</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      handleLogout();
+                    }}
+                    className="flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-xl bg-white hover:bg-red-50 border border-slate-200/80 hover:border-red-200 text-slate-600 hover:text-red-700 text-[11px] font-bold transition-all cursor-pointer shadow-2xs active:scale-95"
+                  >
+                    <LogOut className="w-3.5 h-3.5 text-slate-400" />
+                    <span>Keluar</span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* 3. MAIN CONTENT AREA (Offset dinamis: lg:pl-20 saat collapsed, lg:pl-72 saat expanded) */}
+      {/* 3. MAIN CONTENT AREA (Offset dinamis: lg:pl-[72px] saat collapsed, lg:pl-72 saat expanded) */}
       <div className={`flex-1 flex flex-col min-w-0 pb-20 lg:pb-8 transition-all duration-300 ${
-        isCollapsed ? 'lg:pl-20' : 'lg:pl-72'
+        isCollapsed ? 'lg:pl-[72px]' : 'lg:pl-72'
       }`}>
         {/* Mobile-only Header Bar (Branding & Menu Toggle) */}
         <div className="lg:hidden px-3 sm:px-4 py-2.5 sm:py-3 bg-white/90 backdrop-blur-md border-b border-slate-200/70 flex items-center justify-between sticky top-0 z-20">
@@ -703,6 +819,52 @@ export default function SimpaskorSidebarLayout({
         <main className={`p-3 sm:p-5 lg:p-6 w-full mx-auto transition-all duration-300 ${
           fullWidth ? 'max-w-none' : (isCollapsed ? 'max-w-[1700px]' : 'max-w-7xl')
         }`}>
+          {/* ======================================================== */}
+          {/* STANDARDIZED EXECUTIVE COMMAND HEADER (IDENTIK DI SEMUA HALAMAN) */}
+          {/* Grafis Resmi title-logo.png + Icon Modul + Judul + Aksi Cepat */}
+          {/* ======================================================== */}
+          {!hideHeader && (
+            <div className="bg-white rounded-2xl border border-slate-200/90 shadow-[0_1px_3px_rgba(0,0,0,0.04)] mb-4 sm:mb-6 overflow-hidden">
+              <div className="px-4 py-3 sm:px-6 sm:py-3.5 flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4 bg-slate-50/50">
+                <div className="flex items-center gap-3 sm:gap-4 flex-wrap min-w-0">
+                  {/* 1. Icon Modul */}
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center shrink-0 font-bold shadow-sm">
+                    {React.createElement(getModuleIcon(activeMenu), { className: "w-4 h-4 sm:w-5 sm:h-5 text-amber-400" })}
+                  </div>
+
+                  {/* 2. Logo Title Grafis Resmi (UI yang diminta user) */}
+                  <img
+                    src={titleLogoImg}
+                    alt="LBB Mu'allimin 2027"
+                    className="h-6 sm:h-8 w-auto object-contain shrink-0"
+                  />
+
+                  {/* 3. Pemisah Halus Vertikal */}
+                  <div className="hidden sm:block h-6 w-px bg-slate-300/80 shrink-0" />
+
+                  {/* 4. Judul & Subtitle Halaman */}
+                  <div className="min-w-0">
+                    <h1 className="text-sm sm:text-base md:text-lg font-black text-slate-900 tracking-tight leading-tight">
+                      {title}
+                    </h1>
+                    {subtitle && (
+                      <p className="text-[10px] sm:text-xs text-slate-500 font-medium truncate max-w-xl mt-0.5 sm:mt-1">
+                        {subtitle}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {/* 5. Quick Action Buttons (Sisi Kanan) */}
+                {rightActions && (
+                  <div className="flex items-center gap-2 shrink-0 self-start md:self-center">
+                    {rightActions}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
           {children}
         </main>
       </div>

@@ -1,0 +1,7 @@
+{
+  "name": "tonti-motion",
+  "version": "1.0.0",
+  "description": "Motion logo for Logo Tonti Mu'allimin",
+  "main": "index.js",
+  "type": "commonjs"
+}

@@ -211,25 +211,6 @@ export default function AdminDashboard() {
     >
       <div className="space-y-6">
 
-        {/* Page Title & Subtitle banner */}
-        <div className="bg-slate-900 text-white rounded-2xl p-4 sm:p-6 shadow-sm border border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4">
-          <div className="flex items-center gap-3 sm:gap-4">
-            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-white/[0.08] border border-white/10 text-slate-300 flex items-center justify-center shrink-0">
-              <Shield className="w-5 h-5 text-amber-400" />
-            </div>
-            <div className="min-w-0">
-              <div className="flex items-center gap-2">
-                <span className="text-[9px] sm:text-[10px] font-semibold uppercase tracking-wider text-slate-300 bg-white/[0.06] px-2 py-0.5 rounded border border-white/10">
-                  Panel Sekretariat
-                </span>
-              </div>
-              <h1 className="text-base sm:text-xl md:text-2xl font-black uppercase tracking-tight text-white mt-1 leading-snug">
-                Dashboard Manajemen & Rekapitulasi
-              </h1>
-            </div>
-          </div>
-        </div>
-
         {/* Quota & Key Metrics Grid (Compact & Professional) */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3">
           {/* SD Quota */}

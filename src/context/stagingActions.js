@@ -116,6 +116,18 @@ export function createStagingActions({ staging, setStaging, currentUser }) {
     return [idStr];
   }
 
+  const CANONICAL_PERSONNEL_KEYS = [
+    ['danton', 'p-danton'],
+    ...Array.from({ length: 21 }, (_, i) => [`p-${i + 1}`, `pasukan-${i + 1}`]),
+    ...Array.from({ length: 3 }, (_, i) => [`c-${i + 1}`, `cadangan-${i + 1}`]),
+  ];
+
+  function countVerifiedPersonnels(inspectionsObj = {}) {
+    return CANONICAL_PERSONNEL_KEYS.filter(aliases =>
+      aliases.some(k => inspectionsObj[k]?.verified === true)
+    ).length;
+  }
+
   function updateDP1PersonnelInspection(teamId, personIdOrList, isVerified, note = '') {
     let nextRecord = null;
     const nowIso = new Date().toISOString();
@@ -138,10 +150,33 @@ export function createStagingActions({ staging, setStaging, currentUser }) {
         });
       });
 
+      const verifiedTotal = countVerifiedPersonnels(updatedInspections);
+      const meetsMinRequirement = verifiedTotal >= 22;
+      const isPostDP = ['arena', 'finished', 'checkout'].includes(cur.stage);
+
+      const nextStage = isPostDP
+        ? cur.stage
+        : meetsMinRequirement
+        ? 'dp2'
+        : verifiedTotal > 0
+        ? 'dp1'
+        : (cur.checkedIn || cur.basecamp?.ktpDeposited ? 'basecamp' : 'dp1');
+
       const next = {
         ...cur,
         id: teamId,
         teamId,
+        stage: nextStage,
+        status: nextStage,
+        dp1Passed: isPostDP ? true : meetsMinRequirement,
+        readyForScoring: isPostDP ? true : meetsMinRequirement,
+        dp1PassedAt: meetsMinRequirement ? (cur.dp1PassedAt || nowIso) : null,
+        dp1PassedBy: meetsMinRequirement ? (cur.dp1PassedBy || currentUser?.name || 'Panitia DP 1') : null,
+        checklist: {
+          ...(cur.checklist || {}),
+          dp1Verification: isPostDP ? true : meetsMinRequirement,
+          dp2Warmup: isPostDP ? true : meetsMinRequirement,
+        },
         dp1Inspections: updatedInspections,
         updatedAt: nowIso,
       };
@@ -161,10 +196,17 @@ export function createStagingActions({ staging, setStaging, currentUser }) {
   }
 
   function passToDP2(teamId) {
+    const nowIso = new Date().toISOString();
     updateTeamStaging(teamId, 'dp2', {
+      status: 'dp2',
       dp1Passed: true,
-      dp1PassedAt: new Date().toISOString(),
+      readyForScoring: true,
+      dp1PassedAt: nowIso,
       dp1PassedBy: currentUser?.name || 'Panitia DP 1',
+      checklist: {
+        dp1Verification: true,
+        dp2Warmup: true,
+      },
     });
   }
 

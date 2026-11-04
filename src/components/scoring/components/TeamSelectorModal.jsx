@@ -1,5 +1,7 @@
 import React from 'react';
 import { X, Search } from 'lucide-react';
+import { formatImageUrl } from '../../../services/sheetService.js';
+import { getChestNumberByLot } from '../../../context/competitionHelpers.js';
 
 export default function TeamSelectorModal({
   isOpen,
@@ -123,18 +125,36 @@ export default function TeamSelectorModal({
                   }`}
                 >
                   <div className="flex items-center gap-3 min-w-0">
-                    {/* Nomor Dada Badge */}
-                    <div className={`w-12 h-12 rounded-xl font-mono font-black text-sm flex flex-col items-center justify-center shrink-0 border ${
-                      isSelected
-                        ? team.jenjang === 'SD'
-                          ? 'bg-red-600 text-white border-red-500 shadow-xs'
-                          : 'bg-blue-600 text-white border-blue-500 shadow-xs'
-                        : team.jenjang === 'SD'
-                          ? 'bg-red-50 text-red-900 border-red-200'
-                          : 'bg-blue-50 text-blue-900 border-blue-200'
-                    }`}>
-                      <span className="text-[8px] opacity-70 font-sans font-bold leading-none">DADA</span>
-                      <span className="leading-tight text-base">{team.chestNumber ? String(team.chestNumber).padStart(2, '0') : '-'}</span>
+                    {/* Logo Sekolah + Nomor Dada */}
+                    <div className="relative w-12 h-12 rounded-xl bg-white border border-slate-200 flex items-center justify-center shrink-0 overflow-hidden p-1 shadow-sm">
+                      {(() => {
+                        const rawLogo = team?.files?.schoolLogo?.url || team?.file_logo_sekolah || team?.logoUrl || team?.schoolLogo?.url || (typeof team?.schoolLogo === 'string' ? team.schoolLogo : null);
+                        const logoSrc = rawLogo && rawLogo !== '#' && !rawLogo.startsWith('#') ? formatImageUrl(rawLogo) : null;
+                        const chestVal = team.chestNumber || getChestNumberByLot(team.jenjang, team.lotNumber);
+                        return (
+                          <>
+                            {logoSrc ? (
+                              <img
+                                src={logoSrc}
+                                alt={team.schoolName}
+                                className="w-full h-full object-contain"
+                                onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                              />
+                            ) : (
+                              <span className={`font-mono font-black text-xs ${team.jenjang === 'SD' ? 'text-red-700' : 'text-blue-700'}`}>
+                                #{chestVal || '-'}
+                              </span>
+                            )}
+                            {chestVal && logoSrc && (
+                              <span className={`absolute -bottom-0.5 -right-0.5 px-1 py-0.5 text-[8px] font-mono font-black text-white rounded-tl-md leading-none ${
+                                team.jenjang === 'SD' ? 'bg-red-600' : 'bg-blue-600'
+                              }`}>
+                                #{chestVal}
+                              </span>
+                            )}
+                          </>
+                        );
+                      })()}
                     </div>
 
                     <div className="min-w-0">

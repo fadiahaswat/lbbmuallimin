@@ -18,7 +18,6 @@ import Footer from './components/Footer.jsx';
 import FabWhatsApp from './components/FabWhatsApp.jsx';
 import StickyCta from './components/StickyCta.jsx';
 import PwaInstallPrompt from './components/PwaInstallPrompt.jsx';
-import LocalhostTestingBar from './components/common/LocalhostTestingBar.jsx';
 
 // Dedicated Full Pages & Views (Lazy loaded for optimal initial bundle performance)
 const RegistrationWizard = React.lazy(() => import('./components/portal/RegistrationWizard.jsx'));
@@ -183,9 +182,6 @@ function MainApp() {
         {activeView === 'timeline' && <DokumenRegulasiPortal initialTab="timeline" />}
       </React.Suspense>
       )}
-
-      {/* Localhost Testing Assistant (HANYA AKTIF DI LOCALHOST) */}
-      <LocalhostTestingBar />
 
       {/* Progressive Web App (PWA) Install & Update Banner */}
       <PwaInstallPrompt />

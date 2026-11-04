@@ -6,10 +6,15 @@ import {
   X,
   Compass,
   ShieldAlert,
+  Building2,
+  Layers,
+  Sparkles
 } from 'lucide-react';
 import { VENUE } from '../config.js';
+import InteractiveBasecampMap from './staging/components/InteractiveBasecampMap.jsx';
 
 export default function DenahSection() {
+  const [activeTab, setActiveTab] = useState('basecamp'); // 'basecamp' | 'outdoor'
   const [isZoomOpen, setIsZoomOpen] = useState(false);
 
   return (
@@ -21,84 +26,131 @@ export default function DenahSection() {
 
       <div className="container mx-auto px-4 sm:px-6 relative z-10">
         {/* Section Header */}
-        <div className="mb-10 sm:mb-14 md:mb-16 text-center max-w-3xl mx-auto">
+        <div className="mb-8 sm:mb-12 text-center max-w-3xl mx-auto">
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-slate-100 border border-slate-200/80 text-slate-600 text-xs font-semibold uppercase tracking-wider mb-4">
             <Compass className="w-3.5 h-3.5 text-red-700" />
-            <span>Tata Ruang & Navigasi</span>
+            <span>Tata Ruang & Navigasi Terpadu</span>
           </div>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight leading-tight py-1 text-slate-900">
-            Denah Area <span className="text-red-700">Perlombaan</span>
+            Denah Resmi <span className="text-red-700">LBB Mu'allimin 2027</span>
           </h2>
           <div className="w-16 h-1 bg-red-700 mx-auto mt-4 rounded-full"></div>
           <p className="text-slate-600 text-base mt-4 leading-relaxed font-normal">
-            Tata letak resmi arena perlombaan LBB Mu'allimin 2027 di Kampus Terpadu Sedayu: jalur pergerakan peleton, Daerah Persiapan (DP), basecamp kontingen, dan pos juri.
+            Eksplorasi tata letak arena perlombaan terbuka dan peta interaktif gedung 4 lantai untuk alokasi basecamp peleton kontingen SD/MI & SMP/MTs.
           </p>
+
+          {/* Navigation Toggle Pills */}
+          <div className="flex items-center justify-center gap-2 mt-6 p-1.5 bg-slate-100 rounded-2xl max-w-md mx-auto border border-slate-200">
+            <button
+              type="button"
+              onClick={() => setActiveTab('basecamp')}
+              className={`flex-1 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-black transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                activeTab === 'basecamp'
+                  ? 'bg-teal-700 text-white shadow-md font-black'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-white/60 font-bold'
+              }`}
+            >
+              <Building2 className={`w-4 h-4 ${activeTab === 'basecamp' ? 'text-amber-300' : 'text-slate-400'}`} />
+              <span>Basecamp Interaktif (Lt. 1-4)</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveTab('outdoor')}
+              className={`flex-1 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-black transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                activeTab === 'outdoor'
+                  ? 'bg-teal-700 text-white shadow-md font-black'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-white/60 font-bold'
+              }`}
+            >
+              <Map className={`w-4 h-4 ${activeTab === 'outdoor' ? 'text-amber-300' : 'text-slate-400'}`} />
+              <span>Alur Lapangan & DP</span>
+            </button>
+          </div>
         </div>
 
-        {/* Main Denah Showcase Card */}
-        <div className="max-w-6xl mx-auto bg-slate-50 border border-slate-200/90 rounded-2xl p-4 sm:p-7 shadow-sm relative">
-          {/* Top Bar */}
-          <div className="flex items-center justify-between pb-4 sm:pb-5 border-b border-slate-200">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-slate-200/80 text-slate-800 flex items-center justify-center shrink-0">
-                <Map className="w-4 h-4" />
-              </div>
-              <div>
-                <h3 className="text-base font-bold text-slate-900 uppercase tracking-tight">
-                  Peta Tata Letak & Zona Lomba
-                </h3>
-                <p className="text-xs text-slate-500 font-normal">
-                  Kampus Terpadu Madrasah Mu'allimin Sedayu, Bantul, D.I. Yogyakarta
-                </p>
-              </div>
-            </div>
+        {/* Tab Content: Basecamp Interaktif */}
+        {activeTab === 'basecamp' && (
+          <div className="max-w-6xl mx-auto animate-in fade-in duration-300">
+            <InteractiveBasecampMap isPublicView={true} />
           </div>
+        )}
 
-          {/* Image Display Area */}
-          <div className="mt-5 space-y-5">
-            <div
-              onClick={() => setIsZoomOpen(true)}
-              className="relative rounded-xl bg-white p-2.5 sm:p-5 shadow-sm border border-slate-200/80 cursor-pointer group overflow-hidden transition-all hover:border-slate-300"
-              title="Klik untuk memperbesar denah layar penuh"
-            >
-              <div className="w-full flex items-center justify-center min-h-[260px] sm:min-h-[500px] lg:min-h-[700px] bg-white py-2">
-                <img
-                  src="/denah-perlombaan.png"
-                  alt="Denah Resmi Area Perlombaan LBB Mu'allimin 2027"
-                  className="w-full max-w-4xl max-h-[820px] object-contain mx-auto transition-transform duration-200 group-hover:scale-[1.005]"
-                  loading="lazy"
-                  decoding="async"
-                />
-              </div>
-            </div>
-
-            {/* Ketertiban Zona & Catatan Tambahan - Clean Neutral Notice */}
-            <div className="relative rounded-xl bg-white border border-slate-200 p-4 sm:p-5 shadow-sm">
-              <div className="flex items-start gap-3.5">
-                <div className="w-9 h-9 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center shrink-0">
-                  <ShieldAlert className="w-4 h-4" />
+        {/* Tab Content: Alur Lapangan & Kawasan Luar */}
+        {activeTab === 'outdoor' && (
+          <div className="max-w-6xl mx-auto bg-slate-50 border border-slate-200/90 rounded-2xl p-4 sm:p-7 shadow-sm relative animate-in fade-in duration-300">
+            {/* Top Bar */}
+            <div className="flex items-center justify-between pb-4 sm:pb-5 border-b border-slate-200">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-lg bg-slate-200/80 text-slate-800 flex items-center justify-center shrink-0">
+                  <Map className="w-4 h-4" />
                 </div>
-
-                <div className="flex-1 text-xs text-slate-800 leading-relaxed">
-                  <div className="flex flex-wrap items-center gap-2 mb-1">
-                    <span className="text-slate-950 font-bold text-xs uppercase tracking-wider">
-                      Ketertiban Zona & Keamanan Kampus
-                    </span>
-                    <span className="text-[10px] font-semibold uppercase px-2 py-0.5 rounded bg-amber-100 text-amber-900">
-                      Pemberitahuan
-                    </span>
-                  </div>
-                  <p className="text-slate-600 text-xs mt-1">
-                    Seluruh peserta, pembina, suporter, dan pengunjung <strong className="text-red-700 font-semibold">dilarang masuk ke area Asrama Santri</strong> demi menjaga ketertiban dan privasi santri. Detail alur pergerakan resmi akan dipaparkan saat Technical Meeting.
+                <div>
+                  <h3 className="text-base font-bold text-slate-900 uppercase tracking-tight">
+                    Peta Tata Letak & Zona Lomba Terbuka
+                  </h3>
+                  <p className="text-xs text-slate-500 font-normal">
+                    Kampus Terpadu Madrasah Mu'allimin Sedayu, Bantul, D.I. Yogyakarta
                   </p>
                 </div>
               </div>
+
+              <a
+                href="/denah-perlombaan.png"
+                download="DENAH-PERLOMBAAN-LBB-MUALLIMIN-2027.png"
+                className="px-3.5 py-1.5 rounded-xl bg-yellow-500 hover:bg-yellow-400 text-slate-950 font-bold text-xs flex items-center gap-1.5 transition-all shadow-xs"
+              >
+                <Download className="w-4 h-4" />
+                <span className="hidden sm:inline">Unduh HD</span>
+              </a>
+            </div>
+
+            {/* Image Display Area */}
+            <div className="mt-5 space-y-5">
+              <div
+                onClick={() => setIsZoomOpen(true)}
+                className="relative rounded-xl bg-white p-2.5 sm:p-5 shadow-sm border border-slate-200/80 cursor-pointer group overflow-hidden transition-all hover:border-slate-300"
+                title="Klik untuk memperbesar denah layar penuh"
+              >
+                <div className="w-full flex items-center justify-center min-h-[260px] sm:min-h-[500px] lg:min-h-[700px] bg-white py-2">
+                  <img
+                    src="/denah-perlombaan.png"
+                    alt="Denah Resmi Area Perlombaan LBB Mu'allimin 2027"
+                    className="w-full max-w-4xl max-h-[820px] object-contain mx-auto transition-transform duration-200 group-hover:scale-[1.005]"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
+              </div>
+
+              {/* Ketertiban Zona & Catatan Tambahan */}
+              <div className="relative rounded-xl bg-white border border-slate-200 p-4 sm:p-5 shadow-sm">
+                <div className="flex items-start gap-3.5">
+                  <div className="w-9 h-9 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center shrink-0">
+                    <ShieldAlert className="w-4 h-4" />
+                  </div>
+
+                  <div className="flex-1 text-xs text-slate-800 leading-relaxed">
+                    <div className="flex flex-wrap items-center gap-2 mb-1">
+                      <span className="text-slate-950 font-bold text-xs uppercase tracking-wider">
+                        Ketertiban Zona & Keamanan Kampus
+                      </span>
+                      <span className="text-[10px] font-semibold uppercase px-2 py-0.5 rounded bg-amber-100 text-amber-900">
+                        Pemberitahuan
+                      </span>
+                    </div>
+                    <p className="text-slate-600 text-xs mt-1">
+                      Seluruh peserta, pembina, suporter, dan pengunjung <strong className="text-red-700 font-semibold">dilarang masuk ke area Asrama Santri</strong> demi menjaga ketertiban dan privasi santri. Detail alur pergerakan resmi akan dipaparkan saat Technical Meeting.
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
 
-      {/* Lightbox / Fullscreen Zoom Modal */}
+      {/* Lightbox / Fullscreen Zoom Modal for Outdoor Map */}
       {isZoomOpen && (
         <div
           className="fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-md flex flex-col p-4 sm:p-6 animate-fade"

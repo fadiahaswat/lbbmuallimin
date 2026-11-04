@@ -17,3 +17,6 @@ dist/
 
 # Audit reports with potential metadata
 security-audit-report.json
+
+# Large media files (exceed GitHub 100MB limit)
+*.mov

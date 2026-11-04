@@ -351,26 +351,6 @@ export default function SuperadminPanel() {
           </div>
         )}
 
-        {/* Header */}
-        <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-rose-950 text-white rounded-3xl p-6 sm:p-8 shadow-xl border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-rose-600/30 border border-rose-400/40 text-rose-400 flex items-center justify-center shadow-inner">
-              <Crown className="w-8 h-8" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-[10px] font-black uppercase tracking-widest text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded border border-rose-400/20">
-                  Master Authority
-                </span>
-                <span className="text-xs text-slate-400">Ketua Panitia & Pengawas Sistem</span>
-              </div>
-              <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-white mt-0.5">
-                Pengaturan Sistem Kompetisi
-              </h1>
-            </div>
-          </div>
-        </div>
-
         {/* Master Toggles Grid */}
         <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
           <h3 className="font-black text-lg text-slate-900 uppercase border-b border-slate-200 pb-3">
