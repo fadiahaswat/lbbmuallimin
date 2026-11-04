@@ -61,7 +61,7 @@ export const FLOORS_CONFIG = [
           { id: 'L1-E-01', code: 'RB-1', name: 'Ruangan Baru (Utara)', category: 'class', categoryLabel: 'Ruang Serbaguna', isBasecampCandidate: true, lbbRole: 'Ruang Transit Official / Pendamping' },
           { id: 'L1-E-02', code: 'RKB-1', name: 'Ruang Kelas Baru 1', category: 'class', categoryLabel: 'Ruang Kelas Baru', isBasecampCandidate: true, lbbRole: 'Basecamp Peleton SD/MI' },
           { id: 'L1-E-03', code: 'RKB-2', name: 'Ruang Kelas Baru 2', category: 'class', categoryLabel: 'Ruang Kelas Baru', isBasecampCandidate: true, lbbRole: 'Basecamp Peleton SD/MI' },
-          { id: 'L1-E-04', code: 'RB-2', name: 'Ruangan Baru (Selatan)', category: 'class', categoryLabel: 'Ruang Serbaguna', isBasecampCandidate: true, lbbRole: 'Ruang Ganti & Istirahat Peleton' },
+          { id: 'L1-E-04', code: 'INFO-PANITIA', name: 'Ruang Informasi Panitia & Daftar Ulang', category: 'office', categoryLabel: 'Informasi & Registrasi', isBasecampCandidate: false, lbbRole: 'Pusat Informasi Panitia & Meja Daftar Ulang' },
         ]
       }
     ]
@@ -75,7 +75,7 @@ export const FLOORS_CONFIG = [
     stats: {
       classes: 3,
       international: 6,
-      facilities: 5,
+      facilities: 6,
       stairs: 3,
       gardens: 0,
     },
@@ -88,7 +88,8 @@ export const FLOORS_CONFIG = [
           { id: 'L2-N-01', code: 'KM-CS', name: 'Kamar Mandi & Cleaning Service Barat', category: 'facility', categoryLabel: 'Sanitasi & Kebersihan', lbbRole: 'Toilet Panitia & Tamu' },
           { id: 'L2-N-02', code: 'R-BK', name: 'Ruang Bimbingan Konseling (BK)', category: 'office', categoryLabel: 'Ruang BK', lbbRole: 'Posko Medis & Penanganan Khusus' },
           { id: 'L2-N-03', code: 'R-GURU', name: 'Ruang Guru Utama (Besar)', category: 'office', categoryLabel: 'Pusat Guru / Transit Utama', lbbRole: 'Ruang Transit Juri & Tamu VIP Undangan' },
-          { id: 'L2-N-04', code: 'R-PIKET', name: 'Ruang Piket Guru & Kamar Mandi', category: 'office', categoryLabel: 'Piket & Sanitasi', lbbRole: 'Posko Monitoring Lapangan' },
+          { id: 'L2-N-04', code: 'R-PIKET', name: 'Ruang Piket Guru', category: 'office', categoryLabel: 'Ruang Piket', lbbRole: 'Posko Piket & Monitoring Lapangan' },
+          { id: 'L2-N-05', code: 'KM-PIKET', name: 'Kamar Mandi Guru', category: 'facility', categoryLabel: 'Sanitasi & Toilet', lbbRole: 'Toilet Guru & Petugas' },
         ]
       },
       {
@@ -143,7 +144,8 @@ export const FLOORS_CONFIG = [
         wing: 'north',
         wingLabel: 'Koridor Utama (Utara)',
         rooms: [
-          { id: 'L3-N-01', code: 'KM-PKT', name: 'Kamar Mandi & Ruang Piket Guru Barat', category: 'facility', categoryLabel: 'Sanitasi & Piket', lbbRole: 'Pos Piket Lantai 3' },
+          { id: 'L3-N-01', code: 'KM-PKT', name: 'Kamar Mandi Barat', category: 'facility', categoryLabel: 'Sanitasi & Toilet', lbbRole: 'Toilet Lantai 3 Barat' },
+          { id: 'L3-N-01B', code: 'R-PKT', name: 'Ruang Piket Guru Barat', category: 'office', categoryLabel: 'Ruang Piket', lbbRole: 'Pos Piket Lantai 3' },
           { id: 'L3-N-02', code: '2F', name: 'Ruang Kelas 2F', category: 'class', categoryLabel: 'Ruang Kelas', isBasecampCandidate: true, lbbRole: 'Basecamp Peleton SMP/MTs' },
           { id: 'L3-N-03', code: '2G', name: 'Ruang Kelas 2G', category: 'class', categoryLabel: 'Ruang Kelas', isBasecampCandidate: true, lbbRole: 'Basecamp Peleton SMP/MTs' },
           { id: 'L3-N-04', code: '2H', name: 'Ruang Kelas 2H', category: 'class', categoryLabel: 'Ruang Kelas', isBasecampCandidate: true, lbbRole: 'Basecamp Peleton SMP/MTs' },

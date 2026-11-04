@@ -423,9 +423,9 @@ export default function FieldTrialView() {
         title={isStaff && !isPublished && swapSource ? 'Klik untuk menukar slot' : 'Klik untuk memilih di Pos Presensi Kiri'}
       >
         {/* Atas: Nama Sekolah, TM Badge & Aksi Copot (Tanpa Logo & Tanpa Nama Peleton) */}
-        <div className="flex items-center justify-between gap-2">
-          <div className="flex items-center gap-1.5 flex-wrap min-w-0">
-            <h4 className="font-black text-xs sm:text-[13px] text-slate-900 leading-snug truncate" title={team.schoolName}>
+        <div className="flex items-center justify-between gap-1.5 min-w-0">
+          <div className="flex items-center gap-1.5 min-w-0 flex-1">
+            <h4 className="font-bold text-xs sm:text-[12.5px] text-slate-900 leading-snug truncate" title={team.schoolName}>
               {team.schoolName}
             </h4>
             {team.lotNumber && (
@@ -456,8 +456,8 @@ export default function FieldTrialView() {
         </div>
 
         {/* Bawah: Danton di Kiri & Status Presensi Minimalis di Kanan */}
-        <div className="mt-1.5 flex items-center justify-between gap-2 flex-wrap">
-          <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10.5px] font-bold border truncate max-w-[200px] ${dantonBadgeClass}`}>
+        <div className="mt-1 flex items-center justify-between gap-1.5 min-w-0">
+          <div className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold border truncate min-w-0 flex-1 max-w-[170px] ${dantonBadgeClass}`}>
             <span className={`text-[9px] font-bold uppercase tracking-wider shrink-0 ${dantonLabelClass}`}>Danton:</span>
             <span className="font-black text-slate-900 truncate">{team.dantonName || team.roster?.danton?.name || '-'}</span>
           </div>
@@ -496,6 +496,7 @@ export default function FieldTrialView() {
       activeMenu="uji_coba"
       title="Uji Coba Lapangan"
       subtitle="Jadwal gladi adaptasi kontur arena, alur lintasan, & orientasi lapangan LBB 2027"
+      fullWidth={true}
       rightActions={
         <div className="flex items-center gap-2">
           <button
@@ -524,12 +525,12 @@ export default function FieldTrialView() {
       {/* ======================================================== */}
       {/* 2 BAGIAN SPLIT: KIRI (POS AKSI PRESENSI) & KANAN (JADWAL) */}
       {/* ======================================================== */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-3.5 sm:gap-4 items-start">
 
         {/* -------------------------------------------------------- */}
         {/* BAGIAN KIRI: POS OPERASIONAL & AKSI CHECK-IN / CHECK-OUT  */}
         {/* -------------------------------------------------------- */}
-        <div className="lg:col-span-5 xl:col-span-5 space-y-3.5 lg:sticky lg:top-4">
+        <div className="lg:col-span-4 xl:col-span-4 space-y-3.5 lg:sticky lg:top-4">
 
           {/* MASTER CARD: POS PRESENSI & KONTROL GLADI */}
           <div className="bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden">
@@ -749,7 +750,7 @@ export default function FieldTrialView() {
                     Tidak ada peleton dalam antrean ini.
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 items-start content-start">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-2 sm:gap-2.5 items-start content-start">
                     {filteredActionList.map((item) => {
                       const att = trialAttendance[item.team.id];
                       const isItemActive = activeSelectedTeam?.team?.id === item.team.id;
@@ -882,7 +883,7 @@ export default function FieldTrialView() {
         {/* -------------------------------------------------------- */}
         {/* BAGIAN KANAN: KHUSUS MATRIKS JADWAL SAJA                 */}
         {/* -------------------------------------------------------- */}
-        <div className="lg:col-span-7 xl:col-span-7 space-y-3.5">
+        <div className="lg:col-span-8 xl:col-span-8 space-y-3.5">
 
           {/* Hint Swap Sedang Aktif */}
           {swapSource && (
@@ -930,19 +931,34 @@ export default function FieldTrialView() {
               </div>
             </div>
 
-            <div className="p-3 sm:p-4">
+            <div className="p-2 sm:p-3">
               {/* Tabel Matriks */}
-            <div className="rounded-xl border border-slate-200 overflow-x-auto">
-              <table className="w-full text-left text-xs border-collapse min-w-[620px]">
+            <div className="rounded-xl border border-slate-200 overflow-hidden bg-white shadow-2xs">
+              <table className="w-full text-left text-xs border-collapse table-fixed">
+                <colgroup>
+                  <col className="w-9 sm:w-10" />
+                  <col className="w-20 sm:w-24" />
+                  <col className="w-[calc(50%-58px)] sm:w-[calc(50%-68px)]" />
+                  <col className="w-[calc(50%-58px)] sm:w-[calc(50%-68px)]" />
+                </colgroup>
                 <thead>
                   <tr className="uppercase text-[10px] tracking-wider font-black">
-                    <th className="py-2.5 px-3 text-center w-12 bg-slate-900 text-white">Slot</th>
-                    <th className="py-2.5 px-3 w-36 bg-slate-900 text-white">Waktu • In / Out</th>
-                    <th className="py-2.5 px-3 bg-red-700 text-white border-r border-red-800">
-                      Arena 1: SD / MI (Lapangan Basket)
+                    <th className="py-2.5 px-1 sm:px-1.5 text-center bg-slate-900 text-white">#</th>
+                    <th className="py-2.5 px-2 bg-slate-900 text-white">
+                      <div className="leading-tight">Waktu</div>
+                      <div className="text-[8.5px] font-normal text-slate-400">In • Out</div>
                     </th>
-                    <th className="py-2.5 px-3 bg-blue-700 text-white">
-                      Arena 2: SMP / MTs (Pelataran Embung)
+                    <th className="py-2.5 px-2.5 bg-red-700 text-white border-r border-red-800">
+                      <div className="flex items-center justify-between gap-1 min-w-0">
+                        <span className="truncate">Arena 1: SD / MI</span>
+                        <span className="text-[9px] font-normal opacity-85 shrink-0 hidden sm:inline">(Basket)</span>
+                      </div>
+                    </th>
+                    <th className="py-2.5 px-2.5 bg-blue-700 text-white">
+                      <div className="flex items-center justify-between gap-1 min-w-0">
+                        <span className="truncate">Arena 2: SMP / MTs</span>
+                        <span className="text-[9px] font-normal opacity-85 shrink-0 hidden sm:inline">(Embung)</span>
+                      </div>
                     </th>
                   </tr>
                 </thead>
@@ -970,36 +986,36 @@ export default function FieldTrialView() {
                     return (
                       <tr key={slotInfo.index} className="hover:bg-slate-50/70 transition-colors divide-x divide-slate-100">
                         {/* Slot # */}
-                        <td className="py-2.5 px-3 text-center font-mono font-black text-slate-500 text-xs">
+                        <td className="py-2 px-1 text-center font-mono font-black text-slate-500 text-[11px]">
                           #{String(slotInfo.index).padStart(2, '0')}
                         </td>
 
                         {/* Waktu (WIB): Jam Gladi, In & Out */}
-                        <td className="py-2.5 px-3 whitespace-nowrap">
-                          <div className="font-mono font-black text-slate-900 text-xs">
+                        <td className="py-2 px-1.5 sm:px-2">
+                          <div className="font-mono font-black text-slate-900 text-[11px] leading-tight whitespace-nowrap">
                             {slotInfo.time}
                           </div>
-                          <div className="flex flex-col gap-0.5 mt-1 font-mono text-[9.5px]">
-                            <div className="inline-flex items-center gap-1 text-emerald-800 bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200/80 w-fit">
-                              <span className="text-[8.5px] uppercase font-black text-emerald-600">In:</span>
+                          <div className="flex flex-col gap-0.5 mt-1 font-mono text-[9px]">
+                            <div className="inline-flex items-center gap-0.5 text-emerald-800 bg-emerald-50 px-1 py-0.2 rounded border border-emerald-200/80 w-fit whitespace-nowrap">
+                              <span className="text-[8px] uppercase font-black text-emerald-600">In:</span>
                               <span className="font-bold">{slotInfo.checkIn || slotInfo.arrival}</span>
                             </div>
-                            <div className="inline-flex items-center gap-1 text-slate-600 bg-slate-100 px-1.5 py-0.2 rounded border border-slate-200/60 w-fit">
-                              <span className="text-[8.5px] uppercase font-black text-slate-500">Out:</span>
+                            <div className="inline-flex items-center gap-0.5 text-slate-600 bg-slate-100 px-1 py-0.2 rounded border border-slate-200/60 w-fit whitespace-nowrap">
+                              <span className="text-[8px] uppercase font-black text-slate-500">Out:</span>
                               <span className="font-bold">{slotInfo.checkOut || '15 Mnt'}</span>
                             </div>
                           </div>
                         </td>
 
                         {/* Kolom Arena 1 (SD) */}
-                        <td className={`py-1.5 px-2.5 transition-colors ${
+                        <td className={`py-1.5 px-1.5 sm:px-2 overflow-hidden transition-colors ${
                           isSdSwapSelected ? 'bg-amber-100 ring-2 ring-amber-400' : 'bg-red-50/10'
                         }`}>
                           {renderScheduleOnlyCard(sdTeam, 'SD', slotIdx, slotInfo, isSdTwin)}
                         </td>
 
                         {/* Kolom Arena 2 (SMP) */}
-                        <td className={`py-1.5 px-2.5 transition-colors ${
+                        <td className={`py-1.5 px-1.5 sm:px-2 overflow-hidden transition-colors ${
                           isSmpSwapSelected ? 'bg-amber-100 ring-2 ring-amber-400' : 'bg-blue-50/10'
                         }`}>
                           {renderScheduleOnlyCard(smpTeam, 'SMP', slotIdx, slotInfo, isSmpTwin)}

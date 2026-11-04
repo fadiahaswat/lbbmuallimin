@@ -522,7 +522,7 @@ export default function BasecampCheckInView({ initialTab = 'checkin' }) {
               }`}
             >
               <ListFilter className={`w-3.5 h-3.5 ${mainViewMode === 'list' ? 'text-amber-300' : 'text-slate-400'}`} />
-              <span>Daftar Peleton ({competitionTeams.length})</span>
+              <span>Daftar Peleton</span>
             </button>
 
             <button
@@ -535,7 +535,7 @@ export default function BasecampCheckInView({ initialTab = 'checkin' }) {
               }`}
             >
               <Building2 className={`w-3.5 h-3.5 ${mainViewMode === 'map' ? 'text-amber-300' : 'text-slate-400'}`} />
-              <span>Peta Basecamp (Full Layar)</span>
+              <span>Peta Basecamp</span>
             </button>
           </div>
 

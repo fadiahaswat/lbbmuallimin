@@ -5,7 +5,6 @@ import {
   Clock,
   DoorOpen,
   X,
-  Compass,
   Search,
   Layers,
   TreeDeciduous,
@@ -330,11 +329,15 @@ export default function InteractiveBasecampMap({
         className={`relative ${isCompact ? 'p-2 rounded-xl' : 'p-3 rounded-2xl'} text-left transition-all duration-200 cursor-pointer flex flex-col justify-between overflow-hidden group select-none ${style.card} ${extraClasses}`}
         title={hasTeam ? `${roomMeta.team.schoolName} — ${room.name}` : `${room.name} (${room.categoryLabel || ''})`}
       >
-        {/* Top bar: Code & Status Badge (Menggunakan Icon Lucide, Tanpa Emoji) */}
+        {/* Top bar: Code & Status Badge (Badge Kode Ruangan Dikembalikan, Tanpa teks Lt.) */}
         <div className={`flex items-center justify-between w-full gap-1 ${isCompact ? 'mb-1' : 'mb-2'}`}>
-          <span className={`font-mono font-black ${isCompact ? 'text-[10px] px-2 py-0.5' : 'text-xs px-2.5 py-0.5'} rounded-lg leading-none ${style.badge}`}>
-            {room.code}
-          </span>
+          {room.code ? (
+            <span className={`font-mono font-black ${isCompact ? 'text-[10px] px-2 py-0.5' : 'text-xs px-2.5 py-0.5'} rounded-lg leading-none ${style.badge}`}>
+              {room.code}
+            </span>
+          ) : (
+            <span />
+          )}
 
           {room.isStairs ? (
             <span className="inline-flex items-center gap-1 text-[9px] font-black uppercase text-amber-800 bg-amber-100 px-2 py-0.5 rounded-md border border-amber-200">
@@ -361,18 +364,14 @@ export default function InteractiveBasecampMap({
               <Clock className="w-2.5 h-2.5" />
               <span>Standby</span>
             </span>
-          ) : (
-            <span className="inline-flex items-center text-[10px] font-mono text-slate-500 font-semibold opacity-85">
-              Lt.{room.floor}
-            </span>
-          )}
+          ) : null}
         </div>
 
-        {/* Primary Title (Nama Peserta / Nama Ruangan) - Wrap & Tidak Kepotong */}
+        {/* Primary Title (Nama Peserta / Nama Ruangan) - Utuh & Tidak Dipotong */}
         <div className={`${isCompact ? 'my-0.5' : 'my-1'} flex-1`}>
           <div className="flex items-start gap-1.5">
             <IconComponent className={`w-3.5 h-3.5 shrink-0 mt-0.5 ${isSelected ? 'text-white' : hasTeam ? 'text-teal-700' : 'text-slate-400'}`} />
-            <div className={`${isCompact ? 'text-[11px] leading-tight font-black' : 'text-xs sm:text-[13px] font-black tracking-tight leading-snug'} break-words line-clamp-2 ${style.title}`}>
+            <div className={`${isCompact ? 'text-[10px] leading-tight font-black' : 'text-[11.5px] sm:text-xs font-black tracking-tight leading-snug'} break-words ${style.title}`}>
               {primaryTitle}
             </div>
           </div>
@@ -449,91 +448,78 @@ export default function InteractiveBasecampMap({
       <div className="w-full">
         <div className="bg-slate-50/70 rounded-3xl p-5 sm:p-7 border border-slate-200/90 shadow-sm relative overflow-hidden text-slate-900">
           
-          {/* Header Canvas Denah: Judul di Kiri, Navigasi Lantai di KIRI Mata Angin */}
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between pb-4 mb-4 border-b border-slate-200 gap-3">
+          {/* Header Canvas Denah: Judul di Kiri, Navigasi Lantai di Kanan */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3.5 mb-4 border-b border-slate-200 gap-3">
             <div>
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-teal-600" />
-                <span className="text-xs sm:text-sm font-black uppercase tracking-wider text-teal-900">
+                <h4 className="text-xs sm:text-sm font-black uppercase tracking-wider text-teal-900">
                   Denah Gedung Terpadu Huruf E &bull; {currentFloor.title.toUpperCase()}
-                </span>
+                </h4>
               </div>
-              <div className="text-[11px] text-slate-500 mt-0.5">
+              <p className="text-[11px] text-slate-500 mt-0.5">
                 Pilih kotak ruangan untuk melihat rincian fasilitas dan penempatan kontingen.
-              </div>
+              </p>
             </div>
 
-            {/* SISI KANAN: Navigasi Lantai DI SEBELAH KIRI Mata Angin (Rapi & Selaras) */}
-            <div className="flex flex-wrap items-center gap-2.5 shrink-0 self-start lg:self-auto">
-              
-              {/* 5. Navigasi Lantai 1 - 4 di sebelah Kiri Mata Angin */}
-              <div className="inline-flex items-center gap-1 p-1 bg-white border border-slate-200 rounded-2xl shadow-xs">
-                {FLOORS_CONFIG.map(f => {
-                  const isActive = f.floor === selectedFloorNum;
-                  return (
-                    <button
-                      key={f.floor}
-                      type="button"
-                      onClick={() => {
-                        setSelectedFloorNum(f.floor);
-                        setSelectedRoom(null);
-                      }}
-                      className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer ${
-                        isActive
-                          ? 'bg-teal-700 text-white shadow-xs font-black'
-                          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-                      }`}
-                    >
-                      <Layers className={`w-3.5 h-3.5 ${isActive ? 'text-amber-300' : 'text-slate-400'}`} />
-                      <span>Lt. {f.floor}</span>
-                      <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-md ${isActive ? 'bg-teal-800 text-teal-100' : 'bg-slate-100 text-slate-500'}`}>
-                        {f.stats.classes} Kls
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* 1. Mata Angin / Kompas (Rapi & Bersih) */}
-              <div className="inline-flex items-center gap-2 bg-white border border-slate-200 rounded-2xl px-3 py-1.5 text-xs text-slate-700 shadow-xs">
-                <div className="w-5 h-5 rounded-full bg-rose-50 border border-rose-200 flex items-center justify-center">
-                  <Compass className="w-3.5 h-3.5 text-rose-600" />
-                </div>
-                <span className="font-black text-rose-600 tracking-wider">U</span>
-                <span className="text-slate-300 font-sans">|</span>
-                <span className="text-slate-500 font-semibold text-[11px] tracking-wide">B &bull; T</span>
-              </div>
-
+            {/* SISI KANAN: Navigasi Lantai 1 - 4 */}
+            <div className="inline-flex items-center gap-1 p-1 bg-white border border-slate-200 rounded-2xl shadow-xs self-start sm:self-auto shrink-0">
+              {FLOORS_CONFIG.map(f => {
+                const isActive = f.floor === selectedFloorNum;
+                return (
+                  <button
+                    key={f.floor}
+                    type="button"
+                    onClick={() => {
+                      setSelectedFloorNum(f.floor);
+                      setSelectedRoom(null);
+                    }}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer ${
+                      isActive
+                        ? 'bg-teal-700 text-white shadow-xs font-black'
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                    }`}
+                  >
+                    <Layers className={`w-3.5 h-3.5 ${isActive ? 'text-amber-300' : 'text-slate-400'}`} />
+                    <span>Lt. {f.floor}</span>
+                    <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-md ${isActive ? 'bg-teal-800 text-teal-100' : 'bg-slate-100 text-slate-500'}`}>
+                      {f.stats.classes} Kls
+                    </span>
+                  </button>
+                );
+              })}
             </div>
           </div>
 
-          {/* LEGENDA MODERN DENGAN IKON LUCIDE RESMI (LIGHT THEME) */}
-          <div className="flex flex-wrap items-center gap-3.5 p-3.5 mb-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs text-[11px] text-slate-600">
-            <span className="font-black text-slate-500 uppercase text-[10px] tracking-wider">Legenda:</span>
-            <div className="flex items-center gap-1.5">
+          {/* LEGENDA: PILLS BADGE */}
+          <div className="flex flex-wrap items-center gap-2 mb-4">
+            <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 mr-1 select-none">
+              Legenda:
+            </span>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white border border-slate-200 text-slate-700 shadow-2xs">
               <Building2 className="w-3.5 h-3.5 text-slate-400" />
               <span>Ruang Kelas (Siap)</span>
-            </div>
-            <div className="flex items-center gap-1.5">
+            </span>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-teal-50 border border-teal-200 text-teal-800 shadow-2xs">
               <CheckCircle2 className="w-3.5 h-3.5 text-teal-600" />
-              <span className="text-teal-800 font-bold">Basecamp Terisi</span>
-            </div>
-            <div className="flex items-center gap-1.5">
+              <span>Basecamp Terisi</span>
+            </span>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-50 border border-indigo-200 text-indigo-900 shadow-2xs">
               <Briefcase className="w-3.5 h-3.5 text-indigo-600" />
-              <span className="text-indigo-900 font-medium">Ruang Guru / Panitia</span>
-            </div>
-            <div className="flex items-center gap-1.5">
+              <span>Ruang Guru / Panitia</span>
+            </span>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-sky-50 border border-sky-200 text-sky-900 shadow-2xs">
               <FlaskConical className="w-3.5 h-3.5 text-sky-600" />
-              <span className="text-sky-900 font-medium">Laboratorium</span>
-            </div>
-            <div className="flex items-center gap-1.5">
+              <span>Laboratorium</span>
+            </span>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 border border-slate-200 text-slate-600 shadow-2xs">
               <Droplets className="w-3.5 h-3.5 text-slate-400" />
               <span>Kamar Mandi / Servis</span>
-            </div>
-            <div className="flex items-center gap-1.5">
+            </span>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-50 border border-amber-200 text-amber-800 shadow-2xs">
               <Lock className="w-3.5 h-3.5 text-amber-600" />
-              <span className="text-amber-800 font-bold">Kelas Internasional (Steril)</span>
-            </div>
+              <span>Kelas Internasional (Steril)</span>
+            </span>
           </div>
 
           {/* ============================================================== */}
@@ -563,7 +549,7 @@ export default function InteractiveBasecampMap({
                         )}
                         {/* Ruangan kelas & operasional lainnya dalam satu baris yang sama */}
                         {remainingRooms.map(room => (
-                          renderRoomBox(room, 'flex-1 min-w-[130px] sm:min-w-[145px] min-h-[132px]')
+                          renderRoomBox(room, 'flex-1 min-w-[150px] sm:min-w-[165px] min-h-[135px]')
                         ))}
                       </>
                     );
@@ -571,7 +557,7 @@ export default function InteractiveBasecampMap({
                 ) : (
                   /* Lantai 2, 3, 4: Seluruh Ruangan Satu Baris Flex */
                   currentFloor.zones.find(z => z.wing === 'north')?.rooms.map(room => (
-                    renderRoomBox(room, 'flex-1 min-w-[130px] sm:min-w-[145px] min-h-[115px]')
+                    renderRoomBox(room, 'flex-1 min-w-[150px] sm:min-w-[165px] min-h-[120px]')
                   ))
                 )}
               </div>
@@ -645,9 +631,15 @@ export default function InteractiveBasecampMap({
             {selectedRoom && (
               <div className="mt-5 p-4 sm:p-5 rounded-2xl bg-white border-2 border-teal-600 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4 animate-in fade-in">
                 <div className="flex items-start gap-3.5">
-                  <span className="font-mono font-black text-sm px-3 py-1.5 rounded-xl bg-teal-700 text-white shrink-0 shadow-xs">
-                    {selectedRoom.code}
-                  </span>
+                  {selectedRoom.code ? (
+                    <span className="font-mono font-black text-sm px-3 py-1.5 rounded-xl bg-teal-700 text-white shrink-0 shadow-xs">
+                      {selectedRoom.code}
+                    </span>
+                  ) : (
+                    <div className="w-10 h-10 rounded-xl bg-teal-50 border border-teal-200 text-teal-700 flex items-center justify-center shrink-0 shadow-2xs">
+                      <Building2 className="w-5 h-5" />
+                    </div>
+                  )}
                   <div>
                     {/* Primary Title: Nama Peserta jika ada, jika tidak nama ruangan */}
                     <h5 className="font-black text-slate-950 text-base sm:text-lg flex items-center gap-2">
