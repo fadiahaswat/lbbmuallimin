@@ -392,27 +392,27 @@ export default function BasecampCheckInView({ initialTab = 'checkin' }) {
               </p>
             </div>
 
-            <div className="flex items-center gap-3 shrink-0">
+            <div className="grid grid-cols-2 gap-2 sm:flex sm:items-center sm:gap-3 w-full sm:w-auto shrink-0 mt-2 sm:mt-0">
               {activeTab === 'checkin' ? (
                 <>
-                  <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-3 sm:p-4 text-center min-w-[110px]">
-                    <span className="text-[10px] uppercase font-bold text-teal-300 block">Tiba di Lokasi</span>
-                    <span className="text-xl sm:text-2xl font-black text-white font-mono">{checkedInTeams.length} Tim</span>
+                  <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-2.5 sm:p-4 text-center flex-1 min-w-0 sm:min-w-[110px]">
+                    <span className="text-[10px] uppercase font-bold text-teal-300 block truncate">Tiba di Lokasi</span>
+                    <span className="text-lg sm:text-2xl font-black text-white font-mono block mt-0.5">{checkedInTeams.length} Tim</span>
                   </div>
-                  <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-3 sm:p-4 text-center min-w-[110px]">
-                    <span className="text-[10px] uppercase font-bold text-amber-300 block">Belum Tiba</span>
-                    <span className="text-xl sm:text-2xl font-black text-amber-300 font-mono">{pendingTeams.length} Tim</span>
+                  <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-2.5 sm:p-4 text-center flex-1 min-w-0 sm:min-w-[110px]">
+                    <span className="text-[10px] uppercase font-bold text-amber-300 block truncate">Belum Tiba</span>
+                    <span className="text-lg sm:text-2xl font-black text-amber-300 font-mono block mt-0.5">{pendingTeams.length} Tim</span>
                   </div>
                 </>
               ) : (
                 <>
-                  <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-3 sm:p-4 text-center min-w-[110px]">
-                    <span className="text-[10px] uppercase font-bold text-amber-300 block">Masih di Lokasi</span>
-                    <span className="text-xl sm:text-2xl font-black text-amber-300 font-mono">{activeInVenueTeams.length} Tim</span>
+                  <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-2.5 sm:p-4 text-center flex-1 min-w-0 sm:min-w-[110px]">
+                    <span className="text-[10px] uppercase font-bold text-amber-300 block truncate">Masih di Lokasi</span>
+                    <span className="text-lg sm:text-2xl font-black text-amber-300 font-mono block mt-0.5">{activeInVenueTeams.length} Tim</span>
                   </div>
-                  <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-3 sm:p-4 text-center min-w-[110px]">
-                    <span className="text-[10px] uppercase font-bold text-emerald-300 block">Sudah Pulang</span>
-                    <span className="text-xl sm:text-2xl font-black text-white font-mono">{checkedOutTeams.length} Tim</span>
+                  <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-2.5 sm:p-4 text-center flex-1 min-w-0 sm:min-w-[110px]">
+                    <span className="text-[10px] uppercase font-bold text-emerald-300 block truncate">Sudah Pulang</span>
+                    <span className="text-lg sm:text-2xl font-black text-white font-mono block mt-0.5">{checkedOutTeams.length} Tim</span>
                   </div>
                 </>
               )}
@@ -510,12 +510,12 @@ export default function BasecampCheckInView({ initialTab = 'checkin' }) {
             </button>
           </div>
 
-          {/* Sisi Kanan: Tab Switcher (Daftar Peleton di KIRI, Peta di KANAN) */}
-          <div className="flex items-center gap-1.5 p-1 bg-slate-100 rounded-2xl self-start lg:self-center shrink-0 border border-slate-200">
+          {/* Sisi Kanan: Tab Switcher (Daftar Peleton di KIRI, Peta di KANAN - Full Width di Mobile) */}
+          <div className="flex items-center gap-1.5 p-1 bg-slate-100 rounded-2xl w-full sm:w-auto self-start lg:self-center shrink-0 border border-slate-200">
             <button
               type="button"
               onClick={() => setMainViewMode('list')}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
+              className={`flex-1 sm:flex-initial px-3 sm:px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
                 mainViewMode === 'list'
                   ? 'bg-teal-700 text-white shadow-xs font-black'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
@@ -528,7 +528,7 @@ export default function BasecampCheckInView({ initialTab = 'checkin' }) {
             <button
               type="button"
               onClick={() => setMainViewMode('map')}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
+              className={`flex-1 sm:flex-initial px-3 sm:px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
                 mainViewMode === 'map'
                   ? 'bg-teal-700 text-white shadow-xs font-black'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'

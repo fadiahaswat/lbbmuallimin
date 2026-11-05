@@ -560,17 +560,15 @@ export default function SimpaskorSidebarLayout({
                     setActiveView('landing');
                   }}
                   className="flex items-center gap-2 cursor-pointer min-w-0"
+                  title="Ke Beranda Utama"
                 >
-                  <img src={logoLbb} alt="Logo LBB" className="h-7.5 w-auto object-contain shrink-0" />
-                  <div className="h-5 w-px bg-slate-200" />
-                  <img src={logoTonti} alt="Logo Tonti" className="h-6.5 w-auto object-contain shrink-0" />
-                  <img src={logoMuallimin} alt="Logo Mu'allimin" className="h-6.5 w-auto object-contain shrink-0" />
-                  <span className="text-[9px] font-black tracking-wider text-slate-800 uppercase font-mono ml-1">SIMPASKOR</span>
+                  <img src={logoLbb} alt="Logo LBB" className="h-8 w-8 object-contain shrink-0" />
+                  <img src={titleLogoImg} alt="LBB Mu'allimin 2027" className="h-6 w-auto max-w-[130px] object-contain shrink-0" />
                 </div>
                 <button
                   type="button"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 shrink-0 cursor-pointer"
+                  className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 shrink-0 cursor-pointer transition-colors"
                   aria-label="Tutup Menu"
                 >
                   <X className="w-5 h-5" />
@@ -843,12 +841,12 @@ export default function SimpaskorSidebarLayout({
                   <div className="hidden sm:block h-6 w-px bg-slate-300/80 shrink-0" />
 
                   {/* 4. Judul & Subtitle Halaman */}
-                  <div className="min-w-0">
+                  <div className="min-w-0 flex-1">
                     <h1 className="text-sm sm:text-base md:text-lg font-black text-slate-900 tracking-tight leading-tight">
                       {title}
                     </h1>
                     {subtitle && (
-                      <p className="text-[10px] sm:text-xs text-slate-500 font-medium truncate max-w-xl mt-0.5 sm:mt-1">
+                      <p className="text-[10px] sm:text-xs text-slate-500 font-medium line-clamp-2 sm:truncate max-w-xl mt-0.5 sm:mt-1">
                         {subtitle}
                       </p>
                     )}
@@ -870,7 +868,7 @@ export default function SimpaskorSidebarLayout({
       </div>
 
       {/* 4. MOBILE BOTTOM NAVIGATION BAR (ala Simpaskor & Modern Apps) */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-t border-slate-200 p-2 z-40 flex items-center justify-around shadow-lg">
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-t border-slate-200 px-1 py-1.5 z-40 flex items-center justify-around shadow-lg safe-area-pb">
         {navItems.slice(0, 5).map(item => {
           const Icon = item.icon;
           const isActive = isItemActive(item);
@@ -878,12 +876,12 @@ export default function SimpaskorSidebarLayout({
             <button
               key={item.id}
               onClick={() => handleNavClick(item)}
-              className={`flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition-all ${
+              className={`flex flex-col items-center gap-0.5 px-1 sm:px-2.5 py-1 rounded-xl transition-all min-w-0 flex-1 ${
                 isActive ? 'text-red-600 font-black' : 'text-slate-400 hover:text-slate-700 font-medium'
               }`}
             >
-              <Icon className="w-5 h-5" />
-              <span className="text-[10px] leading-tight">{item.label}</span>
+              <Icon className="w-4.5 h-4.5 shrink-0" />
+              <span className="text-[9.5px] leading-tight truncate max-w-[62px] text-center">{item.label}</span>
             </button>
           );
         })}

@@ -462,8 +462,8 @@ export default function InteractiveBasecampMap({
               </p>
             </div>
 
-            {/* SISI KANAN: Navigasi Lantai 1 - 4 */}
-            <div className="inline-flex items-center gap-1 p-1 bg-white border border-slate-200 rounded-2xl shadow-xs self-start sm:self-auto shrink-0">
+            {/* SISI KANAN: Navigasi Lantai 1 - 4 (100% Fit di Semua Layar Mobile) */}
+            <div className="w-full sm:w-auto grid grid-cols-4 sm:inline-flex items-center gap-1 p-1 bg-white border border-slate-200 rounded-2xl shadow-xs shrink-0">
               {FLOORS_CONFIG.map(f => {
                 const isActive = f.floor === selectedFloorNum;
                 return (
@@ -474,15 +474,16 @@ export default function InteractiveBasecampMap({
                       setSelectedFloorNum(f.floor);
                       setSelectedRoom(null);
                     }}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer ${
+                    className={`py-1.5 px-1 sm:px-3 rounded-xl text-xs font-black transition-all flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1.5 cursor-pointer text-center ${
                       isActive
                         ? 'bg-teal-700 text-white shadow-xs font-black'
                         : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                     }`}
+                    title={`Lantai ${f.floor} - ${f.stats.classes} Ruang Kelas`}
                   >
-                    <Layers className={`w-3.5 h-3.5 ${isActive ? 'text-amber-300' : 'text-slate-400'}`} />
-                    <span>Lt. {f.floor}</span>
-                    <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-md ${isActive ? 'bg-teal-800 text-teal-100' : 'bg-slate-100 text-slate-500'}`}>
+                    <Layers className={`w-3 h-3 sm:w-3.5 sm:h-3.5 ${isActive ? 'text-amber-300' : 'text-slate-400'}`} />
+                    <span className="leading-none">Lt. {f.floor}</span>
+                    <span className={`text-[9px] sm:text-[10px] font-semibold px-1 sm:px-1.5 py-0.2 sm:py-0.5 rounded-md leading-tight ${isActive ? 'bg-teal-800 text-teal-100' : 'bg-slate-100 text-slate-500'}`}>
                       {f.stats.classes} Kls
                     </span>
                   </button>
@@ -491,33 +492,33 @@ export default function InteractiveBasecampMap({
             </div>
           </div>
 
-          {/* LEGENDA: PILLS BADGE */}
-          <div className="flex flex-wrap items-center gap-2 mb-4">
-            <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 mr-1 select-none">
+          {/* LEGENDA: PILLS BADGE (Horisontal Scrollable Hemat Ruang di Mobile) */}
+          <div className="flex flex-nowrap sm:flex-wrap items-center gap-1.5 sm:gap-2 mb-3 sm:mb-4 overflow-x-auto no-scrollbar py-0.5 -mx-1 px-1">
+            <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 mr-0.5 select-none shrink-0">
               Legenda:
             </span>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white border border-slate-200 text-slate-700 shadow-2xs">
-              <Building2 className="w-3.5 h-3.5 text-slate-400" />
+            <span className="inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1 rounded-full text-[10.5px] sm:text-xs font-semibold bg-white border border-slate-200 text-slate-700 shadow-2xs shrink-0 whitespace-nowrap">
+              <Building2 className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-slate-400" />
               <span>Ruang Kelas (Siap)</span>
             </span>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-teal-50 border border-teal-200 text-teal-800 shadow-2xs">
-              <CheckCircle2 className="w-3.5 h-3.5 text-teal-600" />
+            <span className="inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1 rounded-full text-[10.5px] sm:text-xs font-bold bg-teal-50 border border-teal-200 text-teal-800 shadow-2xs shrink-0 whitespace-nowrap">
+              <CheckCircle2 className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-teal-600" />
               <span>Basecamp Terisi</span>
             </span>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-50 border border-indigo-200 text-indigo-900 shadow-2xs">
-              <Briefcase className="w-3.5 h-3.5 text-indigo-600" />
+            <span className="inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1 rounded-full text-[10.5px] sm:text-xs font-semibold bg-indigo-50 border border-indigo-200 text-indigo-900 shadow-2xs shrink-0 whitespace-nowrap">
+              <Briefcase className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-indigo-600" />
               <span>Ruang Guru / Panitia</span>
             </span>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-sky-50 border border-sky-200 text-sky-900 shadow-2xs">
-              <FlaskConical className="w-3.5 h-3.5 text-sky-600" />
+            <span className="inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1 rounded-full text-[10.5px] sm:text-xs font-semibold bg-sky-50 border border-sky-200 text-sky-900 shadow-2xs shrink-0 whitespace-nowrap">
+              <FlaskConical className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-sky-600" />
               <span>Laboratorium</span>
             </span>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 border border-slate-200 text-slate-600 shadow-2xs">
-              <Droplets className="w-3.5 h-3.5 text-slate-400" />
+            <span className="inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1 rounded-full text-[10.5px] sm:text-xs font-semibold bg-slate-100 border border-slate-200 text-slate-600 shadow-2xs shrink-0 whitespace-nowrap">
+              <Droplets className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-slate-400" />
               <span>Kamar Mandi / Servis</span>
             </span>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-50 border border-amber-200 text-amber-800 shadow-2xs">
-              <Lock className="w-3.5 h-3.5 text-amber-600" />
+            <span className="inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1 rounded-full text-[10.5px] sm:text-xs font-bold bg-amber-50 border border-amber-200 text-amber-800 shadow-2xs shrink-0 whitespace-nowrap">
+              <Lock className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-600" />
               <span>Kelas Internasional (Steril)</span>
             </span>
           </div>
@@ -528,7 +529,11 @@ export default function InteractiveBasecampMap({
           <div className="space-y-4">
             
             {/* 1. KORIDOR UTARA (Horizontal Top Spine) - SATU BARIS PENUH TANPA WRAP */}
-            <div className="bg-white rounded-3xl p-3 sm:p-3.5 border border-slate-200/90 shadow-xs">
+            <div className="bg-white rounded-2xl sm:rounded-3xl p-3 sm:p-3.5 border border-slate-200/90 shadow-xs">
+              <div className="flex items-center justify-between text-[10px] text-slate-400 pb-1.5 sm:hidden px-0.5">
+                <span className="font-medium text-slate-500">Koridor Ruang Kelas & Servis</span>
+                <span>← Geser horizontal →</span>
+              </div>
               {/* Flex Container: Selalu Cuman SATU BARIS (flex-nowrap) */}
               <div className="flex flex-nowrap items-stretch gap-2.5 w-full overflow-x-auto pb-1 scrollbar-none">
                 {selectedFloorNum === 1 ? (
@@ -576,18 +581,20 @@ export default function InteractiveBasecampMap({
                 </div>
 
                 {/* --- KOLOM 2: TAMAN / RUANG TERBUKA 1 --- */}
-                <div className="md:col-span-1 bg-emerald-50/70 rounded-3xl border border-dashed border-emerald-300/80 p-4 flex flex-col items-center justify-center text-center my-4 min-h-[200px]">
-                  <div className="w-12 h-12 rounded-2xl bg-white border border-emerald-200 shadow-2xs flex items-center justify-center mb-2">
-                    <TreeDeciduous className="w-6 h-6 text-emerald-600" />
+                <div className="md:col-span-1 bg-emerald-50/70 rounded-2xl md:rounded-3xl border border-dashed border-emerald-300/80 p-2.5 md:p-4 flex flex-row md:flex-col items-center justify-center text-left md:text-center my-1.5 md:my-4 min-h-0 md:min-h-[200px] gap-2.5 md:gap-0">
+                  <div className="w-8 h-8 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-white border border-emerald-200 shadow-2xs flex items-center justify-center md:mb-2 shrink-0">
+                    <TreeDeciduous className="w-4 h-4 md:w-6 md:h-6 text-emerald-600" />
                   </div>
-                  <span className="font-mono font-black text-sm text-emerald-900 uppercase tracking-wider block">
-                    Taman
-                  </span>
-                  <span className="text-[11px] text-emerald-700 font-medium max-w-[140px] mt-1 leading-relaxed">
-                    {selectedFloorNum === 1
-                      ? 'Area Taman Hijau & Ruang Terbuka Barat'
-                      : 'Void Udara & Sirkulasi Terbuka'}
-                  </span>
+                  <div>
+                    <span className="font-mono font-black text-xs md:text-sm text-emerald-900 uppercase tracking-wider block">
+                      Taman Barat
+                    </span>
+                    <span className="text-[10px] md:text-[11px] text-emerald-700 font-medium max-w-[140px] md:mt-1 leading-tight block">
+                      {selectedFloorNum === 1
+                        ? 'Area Taman Hijau & Ruang Terbuka'
+                        : 'Void Udara & Sirkulasi'}
+                    </span>
+                  </div>
                 </div>
 
                 {/* --- KOLOM 3: SAYAP TENGAH (CENTRAL WING) --- */}
@@ -600,18 +607,20 @@ export default function InteractiveBasecampMap({
                 </div>
 
                 {/* --- KOLOM 4: TAMAN / RUANG TERBUKA 2 --- */}
-                <div className="md:col-span-1 bg-emerald-50/70 rounded-3xl border border-dashed border-emerald-300/80 p-4 flex flex-col items-center justify-center text-center my-4 min-h-[200px]">
-                  <div className="w-12 h-12 rounded-2xl bg-white border border-emerald-200 shadow-2xs flex items-center justify-center mb-2">
-                    <TreeDeciduous className="w-6 h-6 text-emerald-600" />
+                <div className="md:col-span-1 bg-emerald-50/70 rounded-2xl md:rounded-3xl border border-dashed border-emerald-300/80 p-2.5 md:p-4 flex flex-row md:flex-col items-center justify-center text-left md:text-center my-1.5 md:my-4 min-h-0 md:min-h-[200px] gap-2.5 md:gap-0">
+                  <div className="w-8 h-8 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-white border border-emerald-200 shadow-2xs flex items-center justify-center md:mb-2 shrink-0">
+                    <TreeDeciduous className="w-4 h-4 md:w-6 md:h-6 text-emerald-600" />
                   </div>
-                  <span className="font-mono font-black text-sm text-emerald-900 uppercase tracking-wider block">
-                    Taman
-                  </span>
-                  <span className="text-[11px] text-emerald-700 font-medium max-w-[140px] mt-1 leading-relaxed">
-                    {selectedFloorNum === 1
-                      ? 'Area Taman Hijau & Ruang Terbuka Timur'
-                      : 'Void Udara & Sirkulasi Terbuka'}
-                  </span>
+                  <div>
+                    <span className="font-mono font-black text-xs md:text-sm text-emerald-900 uppercase tracking-wider block">
+                      Taman Timur
+                    </span>
+                    <span className="text-[10px] md:text-[11px] text-emerald-700 font-medium max-w-[140px] md:mt-1 leading-tight block">
+                      {selectedFloorNum === 1
+                        ? 'Area Taman Hijau & Ruang Terbuka'
+                        : 'Void Udara & Sirkulasi'}
+                    </span>
+                  </div>
                 </div>
 
                 {/* --- KOLOM 5: SAYAP TIMUR (EAST WING) --- */}

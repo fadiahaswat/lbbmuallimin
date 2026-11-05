@@ -54,6 +54,7 @@ export default function FieldTrialView() {
   const [teamPickerTarget, setTeamPickerTarget] = useState(null); // { jenjang: 'SD'|'SMP', slotIdx: number }
   const [showConfirmPublishModal, setShowConfirmPublishModal] = useState(false);
   const [toastMsg, setToastMsg] = useState('');
+  const [mobileArenaFilter, setMobileArenaFilter] = useState('all'); // 'all' | 'SD' | 'SMP'
 
   // Attendance management state (KIRI: Pos Presensi & Aksi)
   const [leftAttendanceTab, setLeftAttendanceTab] = useState('not_arrived'); // 'not_arrived' | 'checked_in' | 'checked_out'
@@ -382,11 +383,11 @@ export default function FieldTrialView() {
       return (
         <div
           onClick={() => handleSlotClick(jenjang, slotIdx, null)}
-          className={`py-3.5 px-3 rounded-xl border border-dashed text-center text-slate-400 transition-colors ${
+          className={`py-2.5 sm:py-3.5 px-2 sm:px-3 rounded-xl border border-dashed text-center text-slate-400 transition-colors ${
             isStaff && !isPublished ? 'cursor-pointer hover:border-slate-400 hover:text-slate-700 hover:bg-slate-50' : ''
           }`}
         >
-          <span className="text-[11px] font-bold">
+          <span className="text-[10px] sm:text-[11px] font-bold leading-tight block">
             {isStaff && !isPublished ? `+ Isi Peleton ${jenjang}` : '- Kosong -'}
           </span>
         </div>
@@ -413,7 +414,7 @@ export default function FieldTrialView() {
             setActiveSelectedTeam({ team, slotInfo, jenjang, slotIdx });
           }
         }}
-        className={`p-3 bg-white rounded-xl border flex flex-col justify-between gap-2.5 shadow-2xs group transition-all cursor-pointer ${
+        className={`p-2 sm:p-2.5 md:p-3 bg-white rounded-xl border flex flex-col justify-between gap-1.5 sm:gap-2 shadow-2xs group transition-all cursor-pointer ${
           isSwapSelected
             ? 'border-amber-400 ring-2 ring-amber-400 bg-amber-50/50'
             : isTeamActiveSelected
@@ -422,24 +423,26 @@ export default function FieldTrialView() {
         }`}
         title={isStaff && !isPublished && swapSource ? 'Klik untuk menukar slot' : 'Klik untuk memilih di Pos Presensi Kiri'}
       >
-        {/* Atas: Nama Sekolah, TM Badge & Aksi Copot (Tanpa Logo & Tanpa Nama Peleton) */}
-        <div className="flex items-center justify-between gap-1.5 min-w-0">
-          <div className="flex items-center gap-1.5 min-w-0 flex-1">
-            <h4 className="font-bold text-xs sm:text-[12.5px] text-slate-900 leading-snug truncate" title={team.schoolName}>
+        {/* Atas: Nama Sekolah, TM Badge & Aksi Copot */}
+        <div className="flex items-start justify-between gap-1 min-w-0">
+          <div className="flex flex-col gap-1 min-w-0 flex-1">
+            <h4 className="font-bold text-xs sm:text-[12.5px] text-slate-900 leading-snug line-clamp-2 sm:truncate" title={team.schoolName}>
               {team.schoolName}
             </h4>
-            {team.lotNumber && (
-              <span className={`px-1.5 py-0.2 rounded font-mono font-black text-[9px] border shrink-0 ${
-                jenjang === 'SD' ? 'bg-red-100 text-red-900 border-red-300' : 'bg-blue-100 text-blue-900 border-blue-300'
-              }`}>
-                TM #{String(team.lotNumber).padStart(2, '0')}
-              </span>
-            )}
-            {isTwin && (
-              <span className="px-1.5 py-0.2 rounded text-[9px] font-black bg-blue-100 text-blue-900 border border-blue-200 shrink-0">
-                ★ 1 Sekolah
-              </span>
-            )}
+            <div className="flex items-center gap-1 flex-wrap">
+              {team.lotNumber && (
+                <span className={`px-1.5 py-0.2 rounded font-mono font-black text-[9px] border shrink-0 ${
+                  jenjang === 'SD' ? 'bg-red-100 text-red-900 border-red-300' : 'bg-blue-100 text-blue-900 border-blue-300'
+                }`}>
+                  TM #{String(team.lotNumber).padStart(2, '0')}
+                </span>
+              )}
+              {isTwin && (
+                <span className="px-1.5 py-0.2 rounded text-[9px] font-black bg-blue-100 text-blue-900 border border-blue-200 shrink-0">
+                  ★ 1 Sekolah
+                </span>
+              )}
+            </div>
           </div>
 
           {/* Tombol Hapus dari Slot (Mode Draft Panitia) */}
@@ -447,7 +450,7 @@ export default function FieldTrialView() {
             <button
               type="button"
               onClick={(e) => handleRemoveFromSlot(e, jenjang, slotIdx)}
-              className="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors shrink-0 cursor-pointer"
+              className="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors shrink-0 cursor-pointer -mt-0.5 -mr-0.5"
               title="Copot dari slot"
             >
               <X className="w-3.5 h-3.5" />
@@ -456,26 +459,26 @@ export default function FieldTrialView() {
         </div>
 
         {/* Bawah: Danton di Kiri & Status Presensi Minimalis di Kanan */}
-        <div className="mt-1 flex items-center justify-between gap-1.5 min-w-0">
-          <div className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold border truncate min-w-0 flex-1 max-w-[170px] ${dantonBadgeClass}`}>
-            <span className={`text-[9px] font-bold uppercase tracking-wider shrink-0 ${dantonLabelClass}`}>Danton:</span>
+        <div className="mt-1 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 min-w-0">
+          <div className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9.5px] font-bold border truncate min-w-0 max-w-full sm:max-w-[170px] ${dantonBadgeClass}`}>
+            <span className={`text-[8.5px] uppercase tracking-wider shrink-0 font-bold ${dantonLabelClass}`}>Danton:</span>
             <span className="font-black text-slate-900 truncate">{team.dantonName || team.roster?.danton?.name || '-'}</span>
           </div>
 
           {/* Status Presensi Minimalis & Rapi */}
-          <div className="flex items-center gap-1.5 shrink-0">
+          <div className="flex items-center gap-1 shrink-0 self-start sm:self-auto">
             {isCheckedOut ? (
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-200">
+              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[9px] sm:text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-200">
                 <CheckCircle2 className="w-3 h-3 text-emerald-600" />
                 <span>Selesai ({att.checkOutTime})</span>
               </span>
             ) : isCheckedIn ? (
-              <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-black bg-emerald-50 text-emerald-800 border border-emerald-300">
+              <span className="inline-flex items-center gap-1.5 px-1.5 py-0.5 rounded-md text-[9px] sm:text-[10px] font-black bg-emerald-50 text-emerald-800 border border-emerald-300">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                 <span>Di Lokasi ({att.checkInTime})</span>
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[9.5px] font-medium text-slate-400 bg-slate-50 border border-slate-200/60">
+              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[9px] font-medium text-slate-400 bg-slate-50 border border-slate-200/60">
                 <span className="w-1.5 h-1.5 rounded-full bg-slate-300" />
                 <span>Belum Hadir</span>
               </span>
@@ -920,26 +923,72 @@ export default function FieldTrialView() {
                 </div>
               </div>
 
-              {/* Tag Info 2 Arena (Semua Arena) */}
-              <div className="flex items-center gap-1.5 shrink-0 text-[10px] font-black uppercase tracking-tight">
-                <span className="px-2 py-0.5 rounded-md bg-red-900/80 text-red-200 border border-red-700/60">
-                  Arena 1 (SD)
-                </span>
-                <span className="px-2 py-0.5 rounded-md bg-blue-900/80 text-blue-200 border border-blue-700/60">
-                  Arena 2 (SMP)
-                </span>
+              {/* Filter Arena Tab Selector (Responsive Mobile & Desktop) */}
+              <div className="flex items-center gap-1 p-0.5 bg-slate-800/90 rounded-xl border border-slate-700/80 text-[10px] font-black uppercase tracking-tight">
+                <button
+                  type="button"
+                  onClick={() => setMobileArenaFilter('all')}
+                  className={`px-2 py-1 rounded-lg transition-all cursor-pointer ${
+                    mobileArenaFilter === 'all'
+                      ? 'bg-slate-700 text-white shadow-xs'
+                      : 'text-slate-400 hover:text-white'
+                  }`}
+                  title="Tampilkan Kedua Arena"
+                >
+                  Semua
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMobileArenaFilter('SD')}
+                  className={`px-2 py-1 rounded-lg transition-all cursor-pointer flex items-center gap-1 ${
+                    mobileArenaFilter === 'SD'
+                      ? 'bg-red-700 text-white shadow-xs'
+                      : 'text-red-300/80 hover:text-red-200'
+                  }`}
+                  title="Fokus Arena 1 (SD)"
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-red-400" />
+                  <span>Arena 1 (SD)</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMobileArenaFilter('SMP')}
+                  className={`px-2 py-1 rounded-lg transition-all cursor-pointer flex items-center gap-1 ${
+                    mobileArenaFilter === 'SMP'
+                      ? 'bg-blue-700 text-white shadow-xs'
+                      : 'text-blue-300/80 hover:text-blue-200'
+                  }`}
+                  title="Fokus Arena 2 (SMP)"
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-blue-400" />
+                  <span>Arena 2 (SMP)</span>
+                </button>
               </div>
             </div>
 
             <div className="p-2 sm:p-3">
+              {/* Petunjuk Geser jika di Mobile pada Mode Semua */}
+              {mobileArenaFilter === 'all' && (
+                <div className="flex items-center justify-between text-[10px] text-slate-500 pb-1.5 px-0.5 sm:hidden">
+                  <span className="font-medium">↔ Geser horizontal untuk melihat kedua arena</span>
+                  <span className="text-[9px] text-slate-400">atau pilih tab Arena 1 / 2 di atas</span>
+                </div>
+              )}
+
               {/* Tabel Matriks */}
-            <div className="rounded-xl border border-slate-200 overflow-hidden bg-white shadow-2xs">
-              <table className="w-full text-left text-xs border-collapse table-fixed">
+            <div className="rounded-xl border border-slate-200 overflow-x-auto bg-white shadow-2xs">
+              <table className={`w-full text-left text-xs border-collapse ${
+                mobileArenaFilter === 'all' ? 'min-w-[560px] md:min-w-0 table-fixed' : 'min-w-0 table-fixed'
+              }`}>
                 <colgroup>
                   <col className="w-9 sm:w-10" />
                   <col className="w-20 sm:w-24" />
-                  <col className="w-[calc(50%-58px)] sm:w-[calc(50%-68px)]" />
-                  <col className="w-[calc(50%-58px)] sm:w-[calc(50%-68px)]" />
+                  {(mobileArenaFilter === 'all' || mobileArenaFilter === 'SD') && (
+                    <col className={mobileArenaFilter === 'all' ? "w-[calc(50%-58px)] sm:w-[calc(50%-68px)]" : "w-auto"} />
+                  )}
+                  {(mobileArenaFilter === 'all' || mobileArenaFilter === 'SMP') && (
+                    <col className={mobileArenaFilter === 'all' ? "w-[calc(50%-58px)] sm:w-[calc(50%-68px)]" : "w-auto"} />
+                  )}
                 </colgroup>
                 <thead>
                   <tr className="uppercase text-[10px] tracking-wider font-black">
@@ -948,18 +997,22 @@ export default function FieldTrialView() {
                       <div className="leading-tight">Waktu</div>
                       <div className="text-[8.5px] font-normal text-slate-400">In • Out</div>
                     </th>
-                    <th className="py-2.5 px-2.5 bg-red-700 text-white border-r border-red-800">
-                      <div className="flex items-center justify-between gap-1 min-w-0">
-                        <span className="truncate">Arena 1: SD / MI</span>
-                        <span className="text-[9px] font-normal opacity-85 shrink-0 hidden sm:inline">(Basket)</span>
-                      </div>
-                    </th>
-                    <th className="py-2.5 px-2.5 bg-blue-700 text-white">
-                      <div className="flex items-center justify-between gap-1 min-w-0">
-                        <span className="truncate">Arena 2: SMP / MTs</span>
-                        <span className="text-[9px] font-normal opacity-85 shrink-0 hidden sm:inline">(Embung)</span>
-                      </div>
-                    </th>
+                    {(mobileArenaFilter === 'all' || mobileArenaFilter === 'SD') && (
+                      <th className="py-2.5 px-2 sm:px-2.5 bg-red-700 text-white border-r border-red-800">
+                        <div className="flex items-center justify-between gap-1 min-w-0">
+                          <span className="truncate">Arena 1: SD / MI</span>
+                          <span className="text-[9px] font-normal opacity-85 shrink-0 hidden sm:inline">(Basket)</span>
+                        </div>
+                      </th>
+                    )}
+                    {(mobileArenaFilter === 'all' || mobileArenaFilter === 'SMP') && (
+                      <th className="py-2.5 px-2 sm:px-2.5 bg-blue-700 text-white">
+                        <div className="flex items-center justify-between gap-1 min-w-0">
+                          <span className="truncate">Arena 2: SMP / MTs</span>
+                          <span className="text-[9px] font-normal opacity-85 shrink-0 hidden sm:inline">(Embung)</span>
+                        </div>
+                      </th>
+                    )}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -1008,18 +1061,22 @@ export default function FieldTrialView() {
                         </td>
 
                         {/* Kolom Arena 1 (SD) */}
-                        <td className={`py-1.5 px-1.5 sm:px-2 overflow-hidden transition-colors ${
-                          isSdSwapSelected ? 'bg-amber-100 ring-2 ring-amber-400' : 'bg-red-50/10'
-                        }`}>
-                          {renderScheduleOnlyCard(sdTeam, 'SD', slotIdx, slotInfo, isSdTwin)}
-                        </td>
+                        {(mobileArenaFilter === 'all' || mobileArenaFilter === 'SD') && (
+                          <td className={`py-1.5 px-1.5 sm:px-2 overflow-hidden transition-colors ${
+                            isSdSwapSelected ? 'bg-amber-100 ring-2 ring-amber-400' : 'bg-red-50/10'
+                          }`}>
+                            {renderScheduleOnlyCard(sdTeam, 'SD', slotIdx, slotInfo, isSdTwin)}
+                          </td>
+                        )}
 
                         {/* Kolom Arena 2 (SMP) */}
-                        <td className={`py-1.5 px-1.5 sm:px-2 overflow-hidden transition-colors ${
-                          isSmpSwapSelected ? 'bg-amber-100 ring-2 ring-amber-400' : 'bg-blue-50/10'
-                        }`}>
-                          {renderScheduleOnlyCard(smpTeam, 'SMP', slotIdx, slotInfo, isSmpTwin)}
-                        </td>
+                        {(mobileArenaFilter === 'all' || mobileArenaFilter === 'SMP') && (
+                          <td className={`py-1.5 px-1.5 sm:px-2 overflow-hidden transition-colors ${
+                            isSmpSwapSelected ? 'bg-amber-100 ring-2 ring-amber-400' : 'bg-blue-50/10'
+                          }`}>
+                            {renderScheduleOnlyCard(smpTeam, 'SMP', slotIdx, slotInfo, isSmpTwin)}
+                          </td>
+                        )}
                       </tr>
                     );
                   })}
