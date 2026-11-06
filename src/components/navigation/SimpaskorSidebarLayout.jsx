@@ -282,31 +282,91 @@ export default function SimpaskorSidebarLayout({
       case 'pendaftaran':
       case 'admin':
       case 'idcard':
-        return { iconColor: 'text-blue-400', badgeColor: 'bg-blue-50 text-blue-800' };
+        return { 
+          bg: 'bg-blue-50 border border-blue-200/90 text-blue-700 shadow-2xs', 
+          iconColor: 'text-blue-600', 
+          badgeColor: 'bg-blue-50 text-blue-800' 
+        };
       case 'tm':
-        return { iconColor: 'text-amber-400', badgeColor: 'bg-amber-50 text-amber-800' };
+        return { 
+          bg: 'bg-amber-50 border border-amber-200/90 text-amber-700 shadow-2xs', 
+          iconColor: 'text-amber-600', 
+          badgeColor: 'bg-amber-50 text-amber-800' 
+        };
       case 'uji_coba':
       case 'roster':
-        return { iconColor: 'text-emerald-400', badgeColor: 'bg-emerald-50 text-emerald-800' };
+        return { 
+          bg: 'bg-emerald-50 border border-emerald-200/90 text-emerald-700 shadow-2xs', 
+          iconColor: 'text-emerald-600', 
+          badgeColor: 'bg-emerald-50 text-emerald-800' 
+        };
       case 'checkin':
       case 'checkout':
       case 'basecamp':
-        return { iconColor: 'text-teal-400', badgeColor: 'bg-teal-50 text-teal-800' };
+        return { 
+          bg: 'bg-teal-50 border border-teal-200/90 text-teal-700 shadow-2xs', 
+          iconColor: 'text-teal-600', 
+          badgeColor: 'bg-teal-50 text-teal-800' 
+        };
       case 'dp':
-        return { iconColor: 'text-orange-400', badgeColor: 'bg-orange-50 text-orange-800' };
+        return { 
+          bg: 'bg-orange-50 border border-orange-200/90 text-orange-700 shadow-2xs', 
+          iconColor: 'text-orange-600', 
+          badgeColor: 'bg-orange-50 text-orange-800' 
+        };
       case 'penjurian':
       case 'juri':
       case 'documents':
-        return { iconColor: 'text-purple-400', badgeColor: 'bg-purple-50 text-purple-800' };
+        return { 
+          bg: 'bg-purple-50 border border-purple-200/90 text-purple-700 shadow-2xs', 
+          iconColor: 'text-purple-600', 
+          badgeColor: 'bg-purple-50 text-purple-800' 
+        };
       case 'rekap_nilai':
       case 'recap':
-        return { iconColor: 'text-indigo-400', badgeColor: 'bg-indigo-50 text-indigo-800' };
+        return { 
+          bg: 'bg-indigo-50 border border-indigo-200/90 text-indigo-700 shadow-2xs', 
+          iconColor: 'text-indigo-600', 
+          badgeColor: 'bg-indigo-50 text-indigo-800' 
+        };
       case 'klasemen':
       case 'leaderboard':
       case 'scores':
-        return { iconColor: 'text-rose-400', badgeColor: 'bg-rose-50 text-rose-800' };
+        return { 
+          bg: 'bg-rose-50 border border-rose-200/90 text-rose-700 shadow-2xs', 
+          iconColor: 'text-rose-600', 
+          badgeColor: 'bg-rose-50 text-rose-800' 
+        };
+      case 'dokumen':
+      case 'juknis':
+      case 'tatib':
+      case 'rundown':
+      case 'proposal':
+      case 'timeline':
+        return { 
+          bg: 'bg-sky-50 border border-sky-200/90 text-sky-700 shadow-2xs', 
+          iconColor: 'text-sky-600', 
+          badgeColor: 'bg-sky-50 text-sky-800' 
+        };
+      case 'superadmin':
+        return { 
+          bg: 'bg-amber-50 border border-amber-200/90 text-amber-700 shadow-2xs', 
+          iconColor: 'text-amber-600', 
+          badgeColor: 'bg-amber-50 text-amber-800' 
+        };
+      case 'overview':
+      case 'dashboard':
+        return { 
+          bg: 'bg-red-50 border border-red-200/90 text-red-700 shadow-2xs', 
+          iconColor: 'text-red-600', 
+          badgeColor: 'bg-red-50 text-red-800' 
+        };
       default:
-        return { iconColor: 'text-amber-400', badgeColor: 'bg-red-50 text-red-800' };
+        return { 
+          bg: 'bg-slate-100 border border-slate-200/90 text-slate-700 shadow-2xs', 
+          iconColor: 'text-slate-700', 
+          badgeColor: 'bg-slate-100 text-slate-800' 
+        };
     }
   };
 
@@ -949,8 +1009,8 @@ export default function SimpaskorSidebarLayout({
             <div className="bg-white rounded-2xl border border-slate-200/90 shadow-[0_1px_3px_rgba(0,0,0,0.04)] mb-4 sm:mb-6 overflow-hidden">
               <div className="px-3.5 py-3 sm:px-6 sm:py-3.5 flex flex-col md:flex-row md:items-center justify-between gap-2.5 sm:gap-4 bg-slate-50/50">
                 <div className="flex items-start sm:items-center gap-3 sm:gap-4 min-w-0 flex-1">
-                  {/* 1. Icon Modul */}
-                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center shrink-0 font-bold shadow-sm mt-0.5 sm:mt-0">
+                  {/* 1. Icon Modul (Light Mode Themed Badge) */}
+                  <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center shrink-0 font-bold mt-0.5 sm:mt-0 transition-all ${getModuleTheme(activeMenu).bg}`}>
                     {React.createElement(getModuleIcon(activeMenu), { className: `w-4.5 h-4.5 sm:w-5 sm:h-5 ${getModuleTheme(activeMenu).iconColor}` })}
                   </div>
 
