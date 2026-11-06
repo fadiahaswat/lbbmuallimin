@@ -205,31 +205,31 @@ export default function RekapNilaiView() {
       <div className="space-y-6">
 
         {/* Scrutineering Progress & Telemetry */}
-        <div className="bg-white text-slate-800 rounded-2xl sm:rounded-3xl p-5 sm:p-6 shadow-[0_1px_3px_rgba(0,0,0,0.04)] border border-slate-200/90 relative overflow-hidden">
-          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6">
-            <div className="space-y-1.5">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-800 text-xs font-black uppercase tracking-wider">
-                <FileSpreadsheet className="w-3.5 h-3.5" />
-                <span>Tahap 7: Scrutineering & Berita Acara</span>
+        <div className="bg-white text-slate-800 rounded-2xl p-4 sm:p-5 shadow-[0_1px_3px_rgba(0,0,0,0.04)] border border-slate-200/90 relative overflow-hidden">
+          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-5">
+            <div className="space-y-1 min-w-0">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-50 border border-amber-200 text-amber-800 text-[11px] font-black uppercase tracking-wider">
+                <FileSpreadsheet className="w-3.5 h-3.5 shrink-0" />
+                <span>Tahap 7: Scrutineering &amp; Berita Acara</span>
               </div>
-              <p className="text-xs sm:text-sm text-slate-500 max-w-2xl leading-relaxed">
+              <p className="text-xs text-slate-500 max-w-xl line-clamp-2 leading-relaxed">
                 Alur pengesahan nilai 3 pintu: Penginputan skor blangko fisik kertas, verifikasi silang foto autentik oleh Verifikator, serta penguncian nilai mutlak oleh Finalisator Dewan Juri.
               </p>
             </div>
 
             {/* Scrutineer Progress Counters */}
-            <div className="grid grid-cols-3 gap-2 sm:flex sm:items-center sm:gap-3 shrink-0">
-              <div className="bg-amber-50/70 border border-amber-200/80 rounded-xl sm:rounded-2xl p-2.5 sm:p-4 text-center min-w-0 sm:min-w-[105px]">
-                <span className="text-[9px] sm:text-[10px] uppercase font-black text-amber-800 block truncate">1. Terinput</span>
-                <span className="text-xl sm:text-2xl font-black text-amber-950 font-mono">{scoredCount}</span>
+            <div className="grid grid-cols-3 gap-2 sm:flex sm:items-center sm:gap-2.5 shrink-0 w-full sm:w-auto mt-1 sm:mt-0">
+              <div className="bg-amber-50/70 border border-amber-200/80 rounded-xl px-2.5 sm:px-3.5 py-2 text-center min-w-0 sm:min-w-[95px] flex-1 sm:flex-initial">
+                <span className="text-[10px] uppercase font-bold text-amber-800 block truncate">1. Input</span>
+                <span className="text-base sm:text-lg font-black text-amber-950 font-mono block mt-0.5">{scoredCount}</span>
               </div>
-              <div className="bg-blue-50/70 border border-blue-200/80 rounded-xl sm:rounded-2xl p-2.5 sm:p-4 text-center min-w-0 sm:min-w-[105px]">
-                <span className="text-[9px] sm:text-[10px] uppercase font-black text-blue-800 block truncate">2. Terverifikasi</span>
-                <span className="text-xl sm:text-2xl font-black text-blue-950 font-mono">{verifiedCount}</span>
+              <div className="bg-blue-50/70 border border-blue-200/80 rounded-xl px-2.5 sm:px-3.5 py-2 text-center min-w-0 sm:min-w-[95px] flex-1 sm:flex-initial">
+                <span className="text-[10px] uppercase font-bold text-blue-800 block truncate">2. Verif</span>
+                <span className="text-base sm:text-lg font-black text-blue-950 font-mono block mt-0.5">{verifiedCount}</span>
               </div>
-              <div className="bg-emerald-50/70 border border-emerald-200/80 rounded-xl sm:rounded-2xl p-2.5 sm:p-4 text-center min-w-0 sm:min-w-[105px]">
-                <span className="text-[9px] sm:text-[10px] uppercase font-black text-emerald-800 block truncate">3. Terkunci</span>
-                <span className="text-xl sm:text-2xl font-black text-emerald-950 font-mono">{finalizedCount}</span>
+              <div className="bg-emerald-50/70 border border-emerald-200/80 rounded-xl px-2.5 sm:px-3.5 py-2 text-center min-w-0 sm:min-w-[95px] flex-1 sm:flex-initial">
+                <span className="text-[10px] uppercase font-bold text-emerald-800 block truncate">3. Kunci</span>
+                <span className="text-base sm:text-lg font-black text-emerald-950 font-mono block mt-0.5">{finalizedCount}</span>
               </div>
             </div>
           </div>

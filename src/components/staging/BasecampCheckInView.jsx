@@ -304,25 +304,25 @@ export default function BasecampCheckInView({ initialTab = 'checkin' }) {
         {/* ============================================================== */}
         {/* 1. HERO HEADER: TAB CHECK-IN/OUT & STATISTIK KEDATANGAN       */}
         {/* ============================================================== */}
-        <div className="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-7 shadow-[0_1px_3px_rgba(0,0,0,0.04)] border border-slate-200/90 relative overflow-hidden transition-all duration-300">
+        <div className="bg-white rounded-2xl p-4 sm:p-5 shadow-[0_1px_3px_rgba(0,0,0,0.04)] border border-slate-200/90 relative overflow-hidden transition-all duration-300">
           {/* Top Row Switcher */}
-          <div className="relative z-10 flex flex-wrap items-center justify-between gap-3 pb-3 sm:pb-4 mb-3 sm:mb-4 border-b border-slate-100">
-            <div className="bg-slate-100 p-1 rounded-2xl flex items-center gap-1 border border-slate-200/80 w-full sm:w-auto">
+          <div className="relative z-10 flex flex-wrap items-center justify-between gap-2.5 pb-3 mb-3 border-b border-slate-100">
+            <div className="bg-slate-100 p-1 rounded-xl flex items-center gap-1 border border-slate-200/80 w-full sm:w-auto">
               <button
                 type="button"
                 onClick={() => {
                   setActiveTab('checkin');
                   setSelectedTeamId(null);
                 }}
-                className={`flex-1 sm:flex-initial flex items-center justify-center gap-2 py-2 px-4 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer active:scale-95 ${
+                className={`flex-1 sm:flex-initial flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer active:scale-95 whitespace-nowrap ${
                   activeTab === 'checkin'
-                    ? 'bg-white text-slate-900 shadow-sm border border-slate-200/70 font-black'
+                    ? 'bg-white text-slate-900 shadow-xs border border-slate-200/70 font-black'
                     : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
                 }`}
               >
-                <LogIn className={`w-4 h-4 shrink-0 ${activeTab === 'checkin' ? 'text-teal-600' : 'text-slate-400'}`} />
-                <span>Check-In Kedatangan</span>
-                <span className={`text-[10px] px-2 py-0.5 rounded-full font-mono font-bold ${
+                <LogIn className={`w-3.5 h-3.5 shrink-0 ${activeTab === 'checkin' ? 'text-teal-600' : 'text-slate-400'}`} />
+                <span>Check-In<span className="hidden md:inline"> Kedatangan</span></span>
+                <span className={`text-[10px] px-1.5 py-0.5 rounded-md font-mono font-bold ${
                   activeTab === 'checkin' ? 'bg-teal-50 text-teal-800 border border-teal-200/80' : 'bg-slate-200/70 text-slate-600'
                 }`}>
                   {checkedInTeams.length}/{competitionTeams.length}
@@ -335,15 +335,15 @@ export default function BasecampCheckInView({ initialTab = 'checkin' }) {
                   setActiveTab('checkout');
                   setSelectedTeamId(null);
                 }}
-                className={`flex-1 sm:flex-initial flex items-center justify-center gap-2 py-2 px-4 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer active:scale-95 ${
+                className={`flex-1 sm:flex-initial flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer active:scale-95 whitespace-nowrap ${
                   activeTab === 'checkout'
-                    ? 'bg-white text-slate-900 shadow-sm border border-slate-200/70 font-black'
+                    ? 'bg-white text-slate-900 shadow-xs border border-slate-200/70 font-black'
                     : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
                 }`}
               >
-                <LogOut className={`w-4 h-4 shrink-0 ${activeTab === 'checkout' ? 'text-rose-600' : 'text-slate-400'}`} />
-                <span>Check-Out Kepulangan</span>
-                <span className={`text-[10px] px-2 py-0.5 rounded-full font-mono font-bold ${
+                <LogOut className={`w-3.5 h-3.5 shrink-0 ${activeTab === 'checkout' ? 'text-rose-600' : 'text-slate-400'}`} />
+                <span>Check-Out<span className="hidden md:inline"> Kepulangan</span></span>
+                <span className={`text-[10px] px-1.5 py-0.5 rounded-md font-mono font-bold ${
                   activeTab === 'checkout' ? 'bg-rose-50 text-rose-800 border border-rose-200/80' : 'bg-slate-200/70 text-slate-600'
                 }`}>
                   {checkedOutTeams.length}/{competitionTeams.length}
@@ -351,19 +351,19 @@ export default function BasecampCheckInView({ initialTab = 'checkin' }) {
               </button>
             </div>
 
-            <div className={`hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider border ${
+            <div className={`hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider border ${
               activeTab === 'checkin'
                 ? 'bg-teal-50 border-teal-200/80 text-teal-800'
                 : 'bg-rose-50 border-rose-200/80 text-rose-800'
             }`}>
               {activeTab === 'checkin' ? (
                 <>
-                  <LogIn className="w-3.5 h-3.5" />
+                  <LogIn className="w-3 h-3" />
                   <span>Tahap 4: Pos Kedatangan Kontingen</span>
                 </>
               ) : (
                 <>
-                  <LogOut className="w-3.5 h-3.5" />
+                  <LogOut className="w-3 h-3" />
                   <span>Tahap 9: Pos Kepulangan & Kliring</span>
                 </>
               )}
@@ -371,39 +371,39 @@ export default function BasecampCheckInView({ initialTab = 'checkin' }) {
           </div>
 
           {/* Banner Title & Stats */}
-          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6">
-            <div className="space-y-1">
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-black uppercase tracking-tight text-slate-900 leading-tight">
+          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-5">
+            <div className="space-y-0.5 min-w-0">
+              <h1 className="text-base sm:text-lg font-black uppercase tracking-tight text-slate-900 leading-tight">
                 {activeTab === 'checkin' ? 'Check-In Basecamp & Logistik Lomba' : 'Check-Out Basecamp & Pengembalian Jaminan'}
               </h1>
-              <p className="text-xs sm:text-sm text-slate-500 max-w-2xl leading-relaxed">
+              <p className="text-xs text-slate-500 max-w-xl line-clamp-2 leading-relaxed">
                 {activeTab === 'checkin'
                   ? 'Pencatatan kedatangan resmi peleton, penyerahan KTP jaminan fasilitas transit, serta serah terima nomor dada & air mineral.'
                   : 'Pemeriksaan kebersihan ruang transit peleton, verifikasi pengembalian 2 kantong sampah terpilah, dan pengembalian KTP jaminan.'}
               </p>
             </div>
 
-            <div className="grid grid-cols-2 gap-2 sm:flex sm:items-center sm:gap-3 w-full sm:w-auto shrink-0 mt-2 sm:mt-0">
+            <div className="grid grid-cols-2 gap-2 sm:flex sm:items-center sm:gap-2.5 w-full sm:w-auto shrink-0 mt-1 sm:mt-0">
               {activeTab === 'checkin' ? (
                 <>
-                  <div className="bg-teal-50/70 border border-teal-200/80 rounded-2xl p-2.5 sm:p-4 text-center flex-1 min-w-0 sm:min-w-[120px]">
-                    <span className="text-[10px] uppercase font-black text-teal-800 block truncate">Tiba di Lokasi</span>
-                    <span className="text-lg sm:text-2xl font-black text-teal-950 font-mono block mt-0.5">{checkedInTeams.length} Tim</span>
+                  <div className="bg-teal-50/70 border border-teal-200/80 rounded-xl px-3 py-2 text-center flex-1 min-w-0 sm:min-w-[105px]">
+                    <span className="text-[10px] uppercase font-bold text-teal-800 block truncate">Tiba di Lokasi</span>
+                    <span className="text-base sm:text-lg font-black text-teal-950 font-mono block mt-0.5">{checkedInTeams.length} Tim</span>
                   </div>
-                  <div className="bg-amber-50/70 border border-amber-200/80 rounded-2xl p-2.5 sm:p-4 text-center flex-1 min-w-0 sm:min-w-[120px]">
-                    <span className="text-[10px] uppercase font-black text-amber-800 block truncate">Belum Tiba</span>
-                    <span className="text-lg sm:text-2xl font-black text-amber-950 font-mono block mt-0.5">{pendingTeams.length} Tim</span>
+                  <div className="bg-amber-50/70 border border-amber-200/80 rounded-xl px-3 py-2 text-center flex-1 min-w-0 sm:min-w-[105px]">
+                    <span className="text-[10px] uppercase font-bold text-amber-800 block truncate">Belum Tiba</span>
+                    <span className="text-base sm:text-lg font-black text-amber-950 font-mono block mt-0.5">{pendingTeams.length} Tim</span>
                   </div>
                 </>
               ) : (
                 <>
-                  <div className="bg-amber-50/70 border border-amber-200/80 rounded-2xl p-2.5 sm:p-4 text-center flex-1 min-w-0 sm:min-w-[120px]">
-                    <span className="text-[10px] uppercase font-black text-amber-800 block truncate">Masih di Lokasi</span>
-                    <span className="text-lg sm:text-2xl font-black text-amber-950 font-mono block mt-0.5">{activeInVenueTeams.length} Tim</span>
+                  <div className="bg-amber-50/70 border border-amber-200/80 rounded-xl px-3 py-2 text-center flex-1 min-w-0 sm:min-w-[105px]">
+                    <span className="text-[10px] uppercase font-bold text-amber-800 block truncate">Masih di Lokasi</span>
+                    <span className="text-base sm:text-lg font-black text-amber-950 font-mono block mt-0.5">{activeInVenueTeams.length} Tim</span>
                   </div>
-                  <div className="bg-emerald-50/70 border border-emerald-200/80 rounded-2xl p-2.5 sm:p-4 text-center flex-1 min-w-0 sm:min-w-[120px]">
-                    <span className="text-[10px] uppercase font-black text-emerald-800 block truncate">Sudah Pulang</span>
-                    <span className="text-lg sm:text-2xl font-black text-emerald-950 font-mono block mt-0.5">{checkedOutTeams.length} Tim</span>
+                  <div className="bg-emerald-50/70 border border-emerald-200/80 rounded-xl px-3 py-2 text-center flex-1 min-w-0 sm:min-w-[105px]">
+                    <span className="text-[10px] uppercase font-bold text-emerald-800 block truncate">Sudah Pulang</span>
+                    <span className="text-base sm:text-lg font-black text-emerald-950 font-mono block mt-0.5">{checkedOutTeams.length} Tim</span>
                   </div>
                 </>
               )}
