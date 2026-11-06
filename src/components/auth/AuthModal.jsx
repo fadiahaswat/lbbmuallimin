@@ -63,6 +63,7 @@ export default function AuthModal() {
             return;
           }
 
+          let googleProfile;
           try {
             const userInfoResponse = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
               headers: {
@@ -70,14 +71,25 @@ export default function AuthModal() {
               },
             });
 
-            const googleProfile = await userInfoResponse.json();
-
-            if (!googleProfile.email) {
-              setIsSigningIn(false);
-              setLoginError('Tidak dapat membaca alamat email dari akun Google Anda.');
-              return;
+            if (!userInfoResponse.ok) {
+              throw new Error(`HTTP ${userInfoResponse.status}`);
             }
 
+            googleProfile = await userInfoResponse.json();
+          } catch (apiErr) {
+            setIsSigningIn(false);
+            console.error('[AuthModal] Gagal mengambil profil Google:', apiErr);
+            setLoginError('Gagal mengambil data profil dari server Google. Pastikan koneksi internet stabil atau nonaktifkan ad-blocker.');
+            return;
+          }
+
+          if (!googleProfile?.email) {
+            setIsSigningIn(false);
+            setLoginError('Tidak dapat membaca alamat email dari akun Google Anda.');
+            return;
+          }
+
+          try {
             const cleanEmail = googleProfile.email.toLowerCase();
             const resLogin = await loginUser(cleanEmail, googleProfile.name, googleProfile.picture);
             setIsSigningIn(false);
@@ -86,9 +98,10 @@ export default function AuthModal() {
               setLoginError(resLogin?.message || 'Email Google Anda belum terdaftar atau belum di-ACC oleh Admin.');
               setErrorType(resLogin?.error || 'unknown');
             }
-          } catch (apiErr) {
+          } catch (loginErr) {
             setIsSigningIn(false);
-            setLoginError('Gagal mengambil data profil dari server Google.');
+            console.error('[AuthModal] Gagal memproses login user:', loginErr);
+            setLoginError('Terjadi kendala saat memproses verifikasi tim: ' + (loginErr?.message || 'Gagal verifikasi data.'));
           }
         },
       });

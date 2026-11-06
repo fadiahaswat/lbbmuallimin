@@ -786,7 +786,7 @@ export function CompetitionProvider({ children }) {
 
     let currentTeamsList = teams;
     let matchedTeam = currentTeamsList.find(t => t.email && (t.email.toLowerCase() === cleanEmail || normalizeGmail(t.email) === normEmail));
-    let existingUser = users.find(u => u.email && (u.email.toLowerCase() === cleanEmail || normalizeGmail(t.email) === normEmail));
+    let existingUser = users.find(u => u.email && (u.email.toLowerCase() === cleanEmail || normalizeGmail(u.email) === normEmail));
 
     if ((!matchedTeam || matchedTeam.status === 'pending') && isGoogleSheetConfigured()) {
       try {
