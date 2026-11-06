@@ -117,21 +117,21 @@ export default function SimpaskorSidebarLayout({
     // 1. Peserta
     if (userRole === 'peserta') {
       return [
-        { id: 'overview', label: 'Dashboard', icon: Home, view: 'peserta_dashboard' },
-        { id: 'idcard', label: 'ID Card & QR', icon: QrCode, view: 'peserta_dashboard' },
-        { id: 'roster', label: '25 Personel', icon: Users, view: 'peserta_dashboard' },
-        { id: 'documents', label: 'Berkas Tim', icon: FileText, view: 'peserta_dashboard' },
-        { id: 'scores', label: 'Hasil Nilai', icon: Trophy, view: 'peserta_dashboard' },
+        { id: 'overview', label: 'Beranda', icon: Home, view: 'peserta_dashboard' },
+        { id: 'idcard', label: 'ID Card', icon: QrCode, view: 'peserta_dashboard' },
+        { id: 'roster', label: 'Personel', icon: Users, view: 'peserta_dashboard' },
+        { id: 'documents', label: 'Berkas', icon: FileText, view: 'peserta_dashboard' },
+        { id: 'scores', label: 'Rekap', icon: Trophy, view: 'peserta_dashboard' },
       ];
     }
 
     // 2. Panitia: 9 Tahap Terpadu LBB Mu'allimin (Difilter ketat sesuai hak akses role akun)
     const baseNav = [
-      { id: 'pendaftaran', label: 'Pendaftaran', icon: ClipboardList, stage: 'pendaftaran' },
-      { id: 'tm', label: 'Technical Meeting', icon: CalendarCheck, stage: 'tm' },
-      { id: 'uji_coba', label: 'Uji Coba Lapangan', icon: Compass, stage: 'uji_coba' },
-      { id: 'checkin', label: 'Pos Basecamp', icon: Building2, stage: 'checkin' },
-      { id: 'dp', label: 'Daerah Persiapan', icon: Clock, stage: 'dp' },
+      { id: 'pendaftaran', label: 'Berkas', icon: ClipboardList, stage: 'pendaftaran' },
+      { id: 'tm', label: 'Tech-Meet', icon: CalendarCheck, stage: 'tm' },
+      { id: 'uji_coba', label: 'UCL', icon: Compass, stage: 'uji_coba' },
+      { id: 'checkin', label: 'Basecamp', icon: Building2, stage: 'checkin' },
+      { id: 'dp', label: 'DP', icon: Clock, stage: 'dp' },
       { id: 'penjurian', label: 'Penjurian', icon: Award, stage: 'penjurian' },
       { id: 'rekap_nilai', label: 'Rekap Nilai', icon: FileSpreadsheet, stage: 'rekap_nilai' },
       { id: 'klasemen', label: 'Klasemen', icon: Trophy, stage: 'klasemen' },
