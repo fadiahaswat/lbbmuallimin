@@ -426,7 +426,7 @@ export default function FieldTrialView() {
         {/* Atas: Nama Sekolah, TM Badge & Aksi Copot */}
         <div className="flex items-start justify-between gap-1 min-w-0">
           <div className="flex flex-col gap-1 min-w-0 flex-1">
-            <h4 className="font-bold text-xs sm:text-[12.5px] text-slate-900 leading-snug line-clamp-2 sm:truncate" title={team.schoolName}>
+            <h4 className="font-bold text-xs sm:text-[12.5px] text-slate-900 leading-snug line-clamp-2 break-words" title={team.schoolName}>
               {team.schoolName}
             </h4>
             <div className="flex items-center gap-1 flex-wrap">
@@ -539,21 +539,21 @@ export default function FieldTrialView() {
           <div className="bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden">
             
             {/* Header Pos Presensi Ringkas */}
-            <div className="p-3 sm:px-3.5 bg-slate-900 text-white flex items-center justify-between gap-2">
+            <div className="p-3 sm:px-4 bg-slate-50/80 border-b border-slate-200/80 text-slate-900 flex items-center justify-between gap-2">
               <div className="flex items-center gap-2 min-w-0">
-                <div className="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center shrink-0">
+                <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center justify-center shrink-0">
                   <UserCheck className="w-3.5 h-3.5" />
                 </div>
                 <div className="min-w-0">
                   <div className="flex items-center gap-1.5 flex-wrap">
-                    <h3 className="font-black text-xs uppercase tracking-tight text-white">
+                    <h3 className="font-black text-xs sm:text-sm uppercase tracking-tight text-slate-900">
                       Pos Presensi Gladi
                     </h3>
-                    <span className="text-[10px] text-slate-300 font-mono font-bold">
+                    <span className="text-[10px] text-slate-500 font-mono font-bold">
                       ({attendanceStats.totalScheduled} Peleton)
                     </span>
                   </div>
-                  <p className="text-[10px] text-slate-400 truncate">
+                  <p className="text-[10px] sm:text-[11px] text-slate-500 truncate">
                     {EVENT.FIELD_TRIAL_FULL_DATE || 'Sabtu, 16 Jan 2027'} • 06.30 WIB
                   </p>
                 </div>
@@ -908,13 +908,13 @@ export default function FieldTrialView() {
           <div className="bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden">
             
             {/* Header Matriks Jadwal (Sama Persis Gayanya dengan Header Kiri) */}
-            <div className="p-3 sm:px-3.5 bg-slate-900 text-white flex items-center justify-between gap-2 flex-wrap">
+            <div className="p-3 sm:px-4 bg-slate-50/80 border-b border-slate-200/80 text-slate-900 flex items-center justify-between gap-2 flex-wrap">
               <div className="flex items-center gap-2 min-w-0">
-                <div className="w-7 h-7 rounded-lg bg-blue-500/20 text-blue-400 border border-blue-500/30 flex items-center justify-center shrink-0">
+                <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-700 border border-blue-200 flex items-center justify-center shrink-0">
                   <CalendarCheck className="w-3.5 h-3.5" />
                 </div>
                 <div className="min-w-0">
-                  <h3 className="font-black text-xs uppercase tracking-tight text-white truncate">
+                  <h3 className="font-black text-xs sm:text-sm uppercase tracking-tight text-slate-900 truncate">
                     Matriks Jadwal 2 Arena Paralel
                   </h3>
                   <p className="text-[10px] text-slate-400 truncate">
@@ -924,14 +924,14 @@ export default function FieldTrialView() {
               </div>
 
               {/* Filter Arena Tab Selector (Responsive Mobile & Desktop) */}
-              <div className="flex items-center gap-1 p-0.5 bg-slate-800/90 rounded-xl border border-slate-700/80 text-[10px] font-black uppercase tracking-tight">
+              <div className="flex items-center gap-0.5 p-0.5 bg-slate-100 rounded-xl border border-slate-200/80 text-[10px] font-black uppercase tracking-tight">
                 <button
                   type="button"
                   onClick={() => setMobileArenaFilter('all')}
                   className={`px-2 py-1 rounded-lg transition-all cursor-pointer ${
                     mobileArenaFilter === 'all'
-                      ? 'bg-slate-700 text-white shadow-xs'
-                      : 'text-slate-400 hover:text-white'
+                      ? 'bg-white text-slate-900 shadow-xs border border-slate-200/70 font-black'
+                      : 'text-slate-500 hover:text-slate-900'
                   }`}
                   title="Tampilkan Kedua Arena"
                 >
@@ -942,8 +942,8 @@ export default function FieldTrialView() {
                   onClick={() => setMobileArenaFilter('SD')}
                   className={`px-2 py-1 rounded-lg transition-all cursor-pointer flex items-center gap-1 ${
                     mobileArenaFilter === 'SD'
-                      ? 'bg-red-700 text-white shadow-xs'
-                      : 'text-red-300/80 hover:text-red-200'
+                      ? 'bg-red-600 text-white shadow-xs font-black'
+                      : 'text-red-700 hover:bg-red-50'
                   }`}
                   title="Fokus Arena 1 (SD)"
                 >
@@ -955,8 +955,8 @@ export default function FieldTrialView() {
                   onClick={() => setMobileArenaFilter('SMP')}
                   className={`px-2 py-1 rounded-lg transition-all cursor-pointer flex items-center gap-1 ${
                     mobileArenaFilter === 'SMP'
-                      ? 'bg-blue-700 text-white shadow-xs'
-                      : 'text-blue-300/80 hover:text-blue-200'
+                      ? 'bg-blue-600 text-white shadow-xs font-black'
+                      : 'text-blue-700 hover:bg-blue-50'
                   }`}
                   title="Fokus Arena 2 (SMP)"
                 >
@@ -978,27 +978,27 @@ export default function FieldTrialView() {
               {/* Tabel Matriks */}
             <div className="rounded-xl border border-slate-200 overflow-x-auto bg-white shadow-2xs">
               <table className={`w-full text-left text-xs border-collapse ${
-                mobileArenaFilter === 'all' ? 'min-w-[560px] md:min-w-0 table-fixed' : 'min-w-0 table-fixed'
+                mobileArenaFilter === 'all' ? 'min-w-[620px] md:min-w-0 table-fixed' : 'min-w-0 table-fixed'
               }`}>
                 <colgroup>
-                  <col className="w-9 sm:w-10" />
-                  <col className="w-20 sm:w-24" />
+                  <col className="w-8 sm:w-10" />
+                  <col className="w-24 sm:w-28" />
                   {(mobileArenaFilter === 'all' || mobileArenaFilter === 'SD') && (
-                    <col className={mobileArenaFilter === 'all' ? "w-[calc(50%-58px)] sm:w-[calc(50%-68px)]" : "w-auto"} />
+                    <col className={mobileArenaFilter === 'all' ? "w-[260px] sm:w-[calc(50%-75px)]" : "w-auto"} />
                   )}
                   {(mobileArenaFilter === 'all' || mobileArenaFilter === 'SMP') && (
-                    <col className={mobileArenaFilter === 'all' ? "w-[calc(50%-58px)] sm:w-[calc(50%-68px)]" : "w-auto"} />
+                    <col className={mobileArenaFilter === 'all' ? "w-[260px] sm:w-[calc(50%-75px)]" : "w-auto"} />
                   )}
                 </colgroup>
                 <thead>
                   <tr className="uppercase text-[10px] tracking-wider font-black">
-                    <th className="py-2.5 px-1 sm:px-1.5 text-center bg-slate-900 text-white">#</th>
-                    <th className="py-2.5 px-2 bg-slate-900 text-white">
+                    <th className="py-2.5 px-1 sm:px-1.5 text-center bg-slate-100 text-slate-700 border-b border-r border-slate-200">#</th>
+                    <th className="py-2.5 px-2 bg-slate-100 text-slate-700 border-b border-r border-slate-200">
                       <div className="leading-tight">Waktu</div>
-                      <div className="text-[8.5px] font-normal text-slate-400">In • Out</div>
+                      <div className="text-[8.5px] font-normal text-slate-500">In • Out (WIB)</div>
                     </th>
                     {(mobileArenaFilter === 'all' || mobileArenaFilter === 'SD') && (
-                      <th className="py-2.5 px-2 sm:px-2.5 bg-red-700 text-white border-r border-red-800">
+                      <th className="py-2.5 px-2.5 sm:px-3 bg-red-600 text-white border-r border-red-700">
                         <div className="flex items-center justify-between gap-1 min-w-0">
                           <span className="truncate">Arena 1: SD / MI</span>
                           <span className="text-[9px] font-normal opacity-85 shrink-0 hidden sm:inline">(Basket)</span>
@@ -1006,7 +1006,7 @@ export default function FieldTrialView() {
                       </th>
                     )}
                     {(mobileArenaFilter === 'all' || mobileArenaFilter === 'SMP') && (
-                      <th className="py-2.5 px-2 sm:px-2.5 bg-blue-700 text-white">
+                      <th className="py-2.5 px-2.5 sm:px-3 bg-blue-600 text-white">
                         <div className="flex items-center justify-between gap-1 min-w-0">
                           <span className="truncate">Arena 2: SMP / MTs</span>
                           <span className="text-[9px] font-normal opacity-85 shrink-0 hidden sm:inline">(Embung)</span>
@@ -1046,7 +1046,7 @@ export default function FieldTrialView() {
                         {/* Waktu (WIB): Jam Gladi, In & Out */}
                         <td className="py-2 px-1.5 sm:px-2">
                           <div className="font-mono font-black text-slate-900 text-[11px] leading-tight whitespace-nowrap">
-                            {slotInfo.time}
+                            {slotInfo.time.replace(/\s*WIB/i, '')}
                           </div>
                           <div className="flex flex-col gap-0.5 mt-1 font-mono text-[9px]">
                             <div className="inline-flex items-center gap-0.5 text-emerald-800 bg-emerald-50 px-1 py-0.2 rounded border border-emerald-200/80 w-fit whitespace-nowrap">

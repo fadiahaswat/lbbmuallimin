@@ -104,11 +104,11 @@ export default function TeamInspectionPage({ team, inspectionStage = 'registrati
         </div>
 
         {/* Hero Banner Informasi Peleton */}
-        <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-blue-950 text-white rounded-3xl p-6 sm:p-8 shadow-xl border border-slate-800">
+        <div className="bg-white text-slate-800 rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/90">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
             <div className="flex items-start sm:items-center gap-4">
               {team.files?.schoolLogo?.url && team.files.schoolLogo.url !== '#' ? (
-                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white p-2 border border-white/20 shadow-lg shrink-0 flex items-center justify-center overflow-hidden">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-slate-50 p-2 border border-slate-200/80 shadow-xs shrink-0 flex items-center justify-center overflow-hidden">
                   <img
                     src={formatImageUrl(team.files.schoolLogo.url)}
                     alt="Logo Sekolah"
@@ -139,58 +139,58 @@ export default function TeamInspectionPage({ team, inspectionStage = 'registrati
               )}
               <div className="space-y-1">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="font-mono text-xs font-black text-yellow-400 bg-yellow-400/10 px-2.5 py-1 rounded-lg border border-yellow-400/20">
+                  <span className="font-mono text-xs font-black text-amber-800 bg-amber-50 px-2.5 py-1 rounded-lg border border-amber-200">
                     {team.regCode}
                   </span>
-                  <span className="text-xs bg-slate-800/80 text-slate-300 px-2.5 py-1 rounded-lg border border-slate-700">
+                  <span className="text-xs bg-slate-100 text-slate-700 px-2.5 py-1 rounded-lg border border-slate-200 font-medium">
                     {team.teamType || team.category || 'Homogen'} ({team.jenjang})
                   </span>
                   {team.lotNumber ? (
-                    <span className="text-xs bg-amber-400 text-slate-950 font-black px-2.5 py-1 rounded-lg">
+                    <span className="text-xs bg-red-600 text-white font-black px-2.5 py-1 rounded-lg shadow-2xs">
                       No. Undian #{String(team.lotNumber).padStart(2, '0')}
                     </span>
                   ) : (
-                    <span className="text-xs bg-slate-800 text-slate-400 px-2.5 py-1 rounded-lg">
+                    <span className="text-xs bg-slate-100 text-slate-500 px-2.5 py-1 rounded-lg border border-slate-200">
                       Belum Diundi
                     </span>
                   )}
                 </div>
-                <h1 className="font-black text-2xl sm:text-3xl text-white tracking-tight">
+                <h1 className="font-black text-2xl sm:text-3xl text-slate-900 tracking-tight">
                   {team.schoolName}
                 </h1>
-                <p className="text-sm text-slate-400">
+                <p className="text-sm text-slate-500 font-medium">
                   {team.platoonName}
                 </p>
               </div>
             </div>
 
             {/* Status & Quick Actions */}
-            <div className="flex flex-col sm:flex-row lg:flex-col items-start lg:items-end gap-3 shrink-0 pt-4 lg:pt-0 border-t lg:border-t-0 border-slate-800">
+            <div className="flex flex-col sm:flex-row lg:flex-col items-start lg:items-end gap-3 shrink-0 pt-4 lg:pt-0 border-t lg:border-t-0 border-slate-100">
               <div className="flex items-center gap-2">
-                <span className="text-xs text-slate-400">Status:</span>
+                <span className="text-xs text-slate-500 font-semibold">Status:</span>
                 {team.status === 'pending' && (
-                  <span className="inline-flex items-center gap-1.5 text-xs font-black text-amber-400 bg-amber-950/80 px-3 py-1.5 rounded-xl border border-amber-500/40">
-                    <Clock className="w-4 h-4 text-amber-400" /> 1. MENUNGGU VERIFIKASI AWAL (PENDING)
+                  <span className="inline-flex items-center gap-1.5 text-xs font-black text-amber-800 bg-amber-50 px-3 py-1.5 rounded-xl border border-amber-200">
+                    <Clock className="w-4 h-4 text-amber-600" /> 1. MENUNGGU VERIFIKASI AWAL (PENDING)
                   </span>
                 )}
                 {team.status === 'registered' && (
-                  <span className="inline-flex items-center gap-1.5 text-xs font-black text-blue-400 bg-blue-950/80 px-3 py-1.5 rounded-xl border border-blue-500/40">
-                    <CheckCircle2 className="w-4 h-4 text-blue-400" /> 2. TERDAFTAR (PENGISIAN PELETON)
+                  <span className="inline-flex items-center gap-1.5 text-xs font-black text-blue-800 bg-blue-50 px-3 py-1.5 rounded-xl border border-blue-200">
+                    <CheckCircle2 className="w-4 h-4 text-blue-600" /> 2. TERDAFTAR (PENGISIAN PELETON)
                   </span>
                 )}
                 {team.status === 'revision' && (
-                  <span className="inline-flex items-center gap-1.5 text-xs font-black text-rose-400 bg-rose-950/80 px-3 py-1.5 rounded-xl border border-rose-500/40">
-                    <AlertTriangle className="w-4 h-4 text-rose-400" /> PERLU REVISI BERKAS
+                  <span className="inline-flex items-center gap-1.5 text-xs font-black text-rose-800 bg-rose-50 px-3 py-1.5 rounded-xl border border-rose-200">
+                    <AlertTriangle className="w-4 h-4 text-rose-600" /> PERLU REVISI BERKAS
                   </span>
                 )}
                 {team.status === 'verified' && (
-                  <span className="inline-flex items-center gap-1.5 text-xs font-black text-emerald-400 bg-emerald-950/80 px-3 py-1.5 rounded-xl border border-emerald-500/40">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400" /> 3. TERVERIFIKASI SAH
+                  <span className="inline-flex items-center gap-1.5 text-xs font-black text-emerald-800 bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-200">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600" /> 3. TERVERIFIKASI SAH
                   </span>
                 )}
                 {team.status === 'drawn' && (
-                  <span className="inline-flex items-center gap-1.5 text-xs font-black text-purple-400 bg-purple-950/80 px-3 py-1.5 rounded-xl border border-purple-500/40">
-                    <Sparkles className="w-4 h-4 text-purple-400" /> 4. SIAP TAMPIL (TERUNDI)
+                  <span className="inline-flex items-center gap-1.5 text-xs font-black text-purple-800 bg-purple-50 px-3 py-1.5 rounded-xl border border-purple-200">
+                    <Sparkles className="w-4 h-4 text-purple-600" /> 4. SIAP TAMPIL (TERUNDI)
                   </span>
                 )}
               </div>
@@ -198,7 +198,7 @@ export default function TeamInspectionPage({ team, inspectionStage = 'registrati
               <div className="flex items-center gap-2 mt-1">
                 <button
                   onClick={() => setShowRevisionBox(!showRevisionBox)}
-                  className="px-4 py-2 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 hover:text-amber-200 border border-amber-500/40 text-xs font-bold rounded-xl transition-all"
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200/80 text-amber-800 border border-amber-300 text-xs font-bold rounded-xl transition-all"
                 >
                   Minta Revisi
                 </button>

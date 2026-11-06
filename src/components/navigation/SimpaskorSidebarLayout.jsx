@@ -112,29 +112,120 @@ export default function SimpaskorSidebarLayout({
 
   const avatarUrl = avatarMeta?.url || currentUser?.avatar || (isSchoolLogo ? currentTeam?.files?.schoolLogo?.url : null) || fallbackInitialAvatar;
 
-  // Menu items disesuaikan dengan role
+  // Menu items disesuaikan dengan role beserta tema warna khas masing-masing tahapan
   const getNavItems = () => {
     // 1. Peserta
     if (userRole === 'peserta') {
       return [
-        { id: 'overview', label: 'Beranda', icon: Home, view: 'peserta_dashboard' },
-        { id: 'idcard', label: 'ID Card', icon: QrCode, view: 'peserta_dashboard' },
-        { id: 'roster', label: 'Personel', icon: Users, view: 'peserta_dashboard' },
-        { id: 'documents', label: 'Berkas', icon: FileText, view: 'peserta_dashboard' },
-        { id: 'scores', label: 'Rekap', icon: Trophy, view: 'peserta_dashboard' },
+        { 
+          id: 'overview', 
+          label: 'Beranda', 
+          icon: Home, 
+          view: 'peserta_dashboard',
+          activeBg: 'bg-gradient-to-r from-red-600 to-rose-600',
+          activeShadow: 'shadow-red-600/30'
+        },
+        { 
+          id: 'idcard', 
+          label: 'ID Card', 
+          icon: QrCode, 
+          view: 'peserta_dashboard',
+          activeBg: 'bg-gradient-to-r from-blue-600 to-indigo-600',
+          activeShadow: 'shadow-blue-600/30'
+        },
+        { 
+          id: 'roster', 
+          label: 'Personel', 
+          icon: Users, 
+          view: 'peserta_dashboard',
+          activeBg: 'bg-gradient-to-r from-emerald-600 to-teal-600',
+          activeShadow: 'shadow-emerald-600/30'
+        },
+        { 
+          id: 'documents', 
+          label: 'Berkas', 
+          icon: FileText, 
+          view: 'peserta_dashboard',
+          activeBg: 'bg-gradient-to-r from-purple-600 to-violet-600',
+          activeShadow: 'shadow-purple-600/30'
+        },
+        { 
+          id: 'scores', 
+          label: 'Rekap', 
+          icon: Trophy, 
+          view: 'peserta_dashboard',
+          activeBg: 'bg-gradient-to-r from-amber-500 to-orange-500',
+          activeShadow: 'shadow-amber-500/30'
+        },
       ];
     }
 
-    // 2. Panitia: 9 Tahap Terpadu LBB Mu'allimin (Difilter ketat sesuai hak akses role akun)
+    // 2. Panitia: 8 Tahap Terpadu LBB Mu'allimin (Warna tematik khas per tahapan)
     const baseNav = [
-      { id: 'pendaftaran', label: 'Berkas', icon: ClipboardList, stage: 'pendaftaran' },
-      { id: 'tm', label: 'Tech-Meet', icon: CalendarCheck, stage: 'tm' },
-      { id: 'uji_coba', label: 'UCL', icon: Compass, stage: 'uji_coba' },
-      { id: 'checkin', label: 'Basecamp', icon: Building2, stage: 'checkin' },
-      { id: 'dp', label: 'DP', icon: Clock, stage: 'dp' },
-      { id: 'penjurian', label: 'Penjurian', icon: Award, stage: 'penjurian' },
-      { id: 'rekap_nilai', label: 'Rekap Nilai', icon: FileSpreadsheet, stage: 'rekap_nilai' },
-      { id: 'klasemen', label: 'Klasemen', icon: Trophy, stage: 'klasemen' },
+      { 
+        id: 'pendaftaran', 
+        label: 'Berkas', 
+        icon: ClipboardList, 
+        stage: 'pendaftaran',
+        activeBg: 'bg-gradient-to-r from-blue-600 to-indigo-600',
+        activeShadow: 'shadow-blue-600/30'
+      },
+      { 
+        id: 'tm', 
+        label: 'Tech-Meet', 
+        icon: CalendarCheck, 
+        stage: 'tm',
+        activeBg: 'bg-gradient-to-r from-amber-500 to-orange-500',
+        activeShadow: 'shadow-amber-500/30'
+      },
+      { 
+        id: 'uji_coba', 
+        label: 'UCL', 
+        icon: Compass, 
+        stage: 'uji_coba',
+        activeBg: 'bg-gradient-to-r from-emerald-600 to-teal-600',
+        activeShadow: 'shadow-emerald-600/30'
+      },
+      { 
+        id: 'checkin', 
+        label: 'Basecamp', 
+        icon: Building2, 
+        stage: 'checkin',
+        activeBg: 'bg-gradient-to-r from-teal-600 to-cyan-600',
+        activeShadow: 'shadow-teal-600/30'
+      },
+      { 
+        id: 'dp', 
+        label: 'DP', 
+        icon: Clock, 
+        stage: 'dp',
+        activeBg: 'bg-gradient-to-r from-orange-500 to-rose-500',
+        activeShadow: 'shadow-orange-500/30'
+      },
+      { 
+        id: 'penjurian', 
+        label: 'Penjurian', 
+        icon: Award, 
+        stage: 'penjurian',
+        activeBg: 'bg-gradient-to-r from-purple-600 to-indigo-600',
+        activeShadow: 'shadow-purple-600/30'
+      },
+      { 
+        id: 'rekap_nilai', 
+        label: 'Rekap Nilai', 
+        icon: FileSpreadsheet, 
+        stage: 'rekap_nilai',
+        activeBg: 'bg-gradient-to-r from-indigo-600 to-blue-600',
+        activeShadow: 'shadow-indigo-600/30'
+      },
+      { 
+        id: 'klasemen', 
+        label: 'Klasemen', 
+        icon: Trophy, 
+        stage: 'klasemen',
+        activeBg: 'bg-gradient-to-r from-rose-600 to-red-600',
+        activeShadow: 'shadow-rose-600/30'
+      },
     ];
 
     if (canAccessStage) {
@@ -183,6 +274,39 @@ export default function SimpaskorSidebarLayout({
         return Home;
       default:
         return ShieldCheck;
+    }
+  };
+
+  const getModuleTheme = (menuId) => {
+    switch (menuId) {
+      case 'pendaftaran':
+      case 'admin':
+      case 'idcard':
+        return { iconColor: 'text-blue-400', badgeColor: 'bg-blue-50 text-blue-800' };
+      case 'tm':
+        return { iconColor: 'text-amber-400', badgeColor: 'bg-amber-50 text-amber-800' };
+      case 'uji_coba':
+      case 'roster':
+        return { iconColor: 'text-emerald-400', badgeColor: 'bg-emerald-50 text-emerald-800' };
+      case 'checkin':
+      case 'checkout':
+      case 'basecamp':
+        return { iconColor: 'text-teal-400', badgeColor: 'bg-teal-50 text-teal-800' };
+      case 'dp':
+        return { iconColor: 'text-orange-400', badgeColor: 'bg-orange-50 text-orange-800' };
+      case 'penjurian':
+      case 'juri':
+      case 'documents':
+        return { iconColor: 'text-purple-400', badgeColor: 'bg-purple-50 text-purple-800' };
+      case 'rekap_nilai':
+      case 'recap':
+        return { iconColor: 'text-indigo-400', badgeColor: 'bg-indigo-50 text-indigo-800' };
+      case 'klasemen':
+      case 'leaderboard':
+      case 'scores':
+        return { iconColor: 'text-rose-400', badgeColor: 'bg-rose-50 text-rose-800' };
+      default:
+        return { iconColor: 'text-amber-400', badgeColor: 'bg-red-50 text-red-800' };
     }
   };
 
@@ -326,7 +450,7 @@ export default function SimpaskorSidebarLayout({
                       isCollapsed ? 'justify-center p-2' : 'justify-between px-2.5 py-2'
                     } ${
                       isActive
-                        ? 'bg-gradient-to-r from-red-600 to-rose-600 text-white shadow-sm shadow-red-600/20 font-bold'
+                        ? `${item.activeBg || 'bg-gradient-to-r from-red-600 to-rose-600'} text-white shadow-sm ${item.activeShadow || 'shadow-red-600/20'} font-bold`
                         : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80 font-semibold'
                     }`}
                   >
@@ -597,7 +721,7 @@ export default function SimpaskorSidebarLayout({
                       onClick={() => handleNavClick(item)}
                       className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                         isActive
-                          ? 'bg-gradient-to-r from-red-600 to-rose-600 text-white shadow-md shadow-red-500/25 font-black'
+                          ? `${item.activeBg || 'bg-gradient-to-r from-red-600 to-rose-600'} text-white shadow-md ${item.activeShadow || 'shadow-red-500/25'} font-black`
                           : 'text-slate-600 hover:text-slate-950 hover:bg-slate-100'
                       }`}
                     >
@@ -763,7 +887,7 @@ export default function SimpaskorSidebarLayout({
       )}
 
       {/* 3. MAIN CONTENT AREA (Offset dinamis: lg:pl-[72px] saat collapsed, lg:pl-72 saat expanded) */}
-      <div className={`flex-1 flex flex-col min-w-0 pb-20 lg:pb-8 transition-all duration-300 ${
+      <div className={`flex-1 flex flex-col min-w-0 pb-24 lg:pb-8 transition-all duration-300 ${
         isCollapsed ? 'lg:pl-[72px]' : 'lg:pl-72'
       }`}>
         {/* Mobile-only Header Bar (Branding & Menu Toggle) */}
@@ -823,18 +947,18 @@ export default function SimpaskorSidebarLayout({
           {/* ======================================================== */}
           {!hideHeader && (
             <div className="bg-white rounded-2xl border border-slate-200/90 shadow-[0_1px_3px_rgba(0,0,0,0.04)] mb-4 sm:mb-6 overflow-hidden">
-              <div className="px-4 py-3 sm:px-6 sm:py-3.5 flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4 bg-slate-50/50">
-                <div className="flex items-center gap-3 sm:gap-4 flex-wrap min-w-0">
+              <div className="px-3.5 py-3 sm:px-6 sm:py-3.5 flex flex-col md:flex-row md:items-center justify-between gap-2.5 sm:gap-4 bg-slate-50/50">
+                <div className="flex items-start sm:items-center gap-3 sm:gap-4 min-w-0 flex-1">
                   {/* 1. Icon Modul */}
-                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center shrink-0 font-bold shadow-sm">
-                    {React.createElement(getModuleIcon(activeMenu), { className: "w-4 h-4 sm:w-5 sm:h-5 text-amber-400" })}
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center shrink-0 font-bold shadow-sm mt-0.5 sm:mt-0">
+                    {React.createElement(getModuleIcon(activeMenu), { className: `w-4.5 h-4.5 sm:w-5 sm:h-5 ${getModuleTheme(activeMenu).iconColor}` })}
                   </div>
 
-                  {/* 2. Logo Title Grafis Resmi (UI yang diminta user) */}
+                  {/* 2. Logo Title Grafis Resmi (Disembunyikan di mobile agar rapi & tidak sempit) */}
                   <img
                     src={titleLogoImg}
                     alt="LBB Mu'allimin 2027"
-                    className="h-6 sm:h-8 w-auto object-contain shrink-0"
+                    className="hidden sm:block h-7 md:h-8 w-auto object-contain shrink-0"
                   />
 
                   {/* 3. Pemisah Halus Vertikal */}
@@ -846,7 +970,7 @@ export default function SimpaskorSidebarLayout({
                       {title}
                     </h1>
                     {subtitle && (
-                      <p className="text-[10px] sm:text-xs text-slate-500 font-medium line-clamp-2 sm:truncate max-w-xl mt-0.5 sm:mt-1">
+                      <p className="text-[11px] sm:text-xs text-slate-500 font-medium line-clamp-2 sm:truncate max-w-2xl mt-0.5 sm:mt-1">
                         {subtitle}
                       </p>
                     )}
@@ -855,7 +979,7 @@ export default function SimpaskorSidebarLayout({
 
                 {/* 5. Quick Action Buttons (Sisi Kanan) */}
                 {rightActions && (
-                  <div className="flex items-center gap-2 shrink-0 self-start md:self-center">
+                  <div className="flex items-center gap-2 shrink-0 self-start md:self-center flex-wrap sm:flex-nowrap pt-0.5 sm:pt-0">
                     {rightActions}
                   </div>
                 )}
@@ -867,25 +991,36 @@ export default function SimpaskorSidebarLayout({
         </main>
       </div>
 
-      {/* 4. MOBILE BOTTOM NAVIGATION BAR (ala Simpaskor & Modern Apps) */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-t border-slate-200 px-1 py-1.5 z-40 flex items-center justify-around shadow-lg safe-area-pb">
+      {/* 4. FLOATING PILL MOBILE BOTTOM NAVIGATION (Light Mode - ala Dynamic Island & Figma Design) */}
+      <nav
+        aria-label="Navigasi Menu Utama Mobile"
+        className="lg:hidden fixed bottom-3.5 left-1/2 -translate-x-1/2 z-40 bg-white/95 backdrop-blur-2xl border border-slate-200/90 rounded-full p-1.5 shadow-[0_12px_36px_rgba(15,23,42,0.12)] flex items-center justify-between gap-1 max-w-[92vw] sm:max-w-md transition-all duration-300"
+      >
         {navItems.slice(0, 5).map(item => {
           const Icon = item.icon;
           const isActive = isItemActive(item);
           return (
             <button
               key={item.id}
+              type="button"
               onClick={() => handleNavClick(item)}
-              className={`flex flex-col items-center gap-0.5 px-1 sm:px-2.5 py-1 rounded-xl transition-all min-w-0 flex-1 ${
-                isActive ? 'text-red-600 font-black' : 'text-slate-400 hover:text-slate-700 font-medium'
+              title={item.label}
+              className={`flex items-center gap-2 transition-all duration-300 cursor-pointer select-none active:scale-95 ${
+                isActive
+                  ? `${item.activeBg || 'bg-gradient-to-r from-red-600 to-rose-600'} text-white px-3.5 py-2 rounded-full shadow-md ${item.activeShadow || 'shadow-red-600/25'} font-bold text-xs`
+                  : 'text-slate-400 hover:text-slate-700 p-2.5 rounded-full hover:bg-slate-100/80'
               }`}
             >
               <Icon className="w-4.5 h-4.5 shrink-0" />
-              <span className="text-[9.5px] leading-tight truncate max-w-[62px] text-center">{item.label}</span>
+              {isActive && (
+                <span className="whitespace-nowrap tracking-tight animate-in fade-in duration-200 font-bold">
+                  {item.label}
+                </span>
+              )}
             </button>
           );
         })}
-      </div>
+      </nav>
     </div>
   );
 }

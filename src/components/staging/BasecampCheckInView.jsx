@@ -304,19 +304,10 @@ export default function BasecampCheckInView({ initialTab = 'checkin' }) {
         {/* ============================================================== */}
         {/* 1. HERO HEADER: TAB CHECK-IN/OUT & STATISTIK KEDATANGAN       */}
         {/* ============================================================== */}
-        <div className={`relative overflow-hidden text-white rounded-3xl p-5 sm:p-7 shadow-xl border transition-all duration-300 ${
-          activeTab === 'checkin'
-            ? 'bg-gradient-to-r from-teal-950 via-slate-900 to-emerald-950 border-teal-800/40'
-            : 'bg-gradient-to-r from-rose-950 via-slate-900 to-red-950 border-rose-800/40'
-        }`}>
-          {/* Ambient Glow */}
-          <div className={`absolute -right-8 -bottom-8 w-64 h-64 rounded-full blur-3xl pointer-events-none transition-colors duration-500 ${
-            activeTab === 'checkin' ? 'bg-teal-500/15' : 'bg-rose-500/15'
-          }`} />
-
+        <div className="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-7 shadow-[0_1px_3px_rgba(0,0,0,0.04)] border border-slate-200/90 relative overflow-hidden transition-all duration-300">
           {/* Top Row Switcher */}
-          <div className="relative z-10 flex flex-wrap items-center justify-between gap-3 pb-3 sm:pb-4 mb-3 sm:mb-4 border-b border-white/10">
-            <div className="bg-black/40 backdrop-blur-md p-1 rounded-2xl flex items-center gap-1 border border-white/10 w-full sm:w-auto">
+          <div className="relative z-10 flex flex-wrap items-center justify-between gap-3 pb-3 sm:pb-4 mb-3 sm:mb-4 border-b border-slate-100">
+            <div className="bg-slate-100 p-1 rounded-2xl flex items-center gap-1 border border-slate-200/80 w-full sm:w-auto">
               <button
                 type="button"
                 onClick={() => {
@@ -325,14 +316,14 @@ export default function BasecampCheckInView({ initialTab = 'checkin' }) {
                 }}
                 className={`flex-1 sm:flex-initial flex items-center justify-center gap-2 py-2 px-4 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer active:scale-95 ${
                   activeTab === 'checkin'
-                    ? 'bg-teal-600 text-white shadow-md'
-                    : 'text-slate-300 hover:text-white hover:bg-white/10'
+                    ? 'bg-white text-slate-900 shadow-sm border border-slate-200/70 font-black'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
                 }`}
               >
-                <LogIn className="w-4 h-4 shrink-0" />
+                <LogIn className={`w-4 h-4 shrink-0 ${activeTab === 'checkin' ? 'text-teal-600' : 'text-slate-400'}`} />
                 <span>Check-In Kedatangan</span>
                 <span className={`text-[10px] px-2 py-0.5 rounded-full font-mono font-bold ${
-                  activeTab === 'checkin' ? 'bg-teal-900/80 text-teal-200' : 'bg-white/15 text-slate-300'
+                  activeTab === 'checkin' ? 'bg-teal-50 text-teal-800 border border-teal-200/80' : 'bg-slate-200/70 text-slate-600'
                 }`}>
                   {checkedInTeams.length}/{competitionTeams.length}
                 </span>
@@ -346,14 +337,14 @@ export default function BasecampCheckInView({ initialTab = 'checkin' }) {
                 }}
                 className={`flex-1 sm:flex-initial flex items-center justify-center gap-2 py-2 px-4 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer active:scale-95 ${
                   activeTab === 'checkout'
-                    ? 'bg-rose-600 text-white shadow-md'
-                    : 'text-slate-300 hover:text-white hover:bg-white/10'
+                    ? 'bg-white text-slate-900 shadow-sm border border-slate-200/70 font-black'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
                 }`}
               >
-                <LogOut className="w-4 h-4 shrink-0" />
+                <LogOut className={`w-4 h-4 shrink-0 ${activeTab === 'checkout' ? 'text-rose-600' : 'text-slate-400'}`} />
                 <span>Check-Out Kepulangan</span>
                 <span className={`text-[10px] px-2 py-0.5 rounded-full font-mono font-bold ${
-                  activeTab === 'checkout' ? 'bg-rose-900/80 text-rose-200' : 'bg-white/15 text-slate-300'
+                  activeTab === 'checkout' ? 'bg-rose-50 text-rose-800 border border-rose-200/80' : 'bg-slate-200/70 text-slate-600'
                 }`}>
                   {checkedOutTeams.length}/{competitionTeams.length}
                 </span>
@@ -362,8 +353,8 @@ export default function BasecampCheckInView({ initialTab = 'checkin' }) {
 
             <div className={`hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider border ${
               activeTab === 'checkin'
-                ? 'bg-teal-500/20 border-teal-400/30 text-teal-300'
-                : 'bg-rose-500/20 border-rose-400/30 text-rose-300'
+                ? 'bg-teal-50 border-teal-200/80 text-teal-800'
+                : 'bg-rose-50 border-rose-200/80 text-rose-800'
             }`}>
               {activeTab === 'checkin' ? (
                 <>
@@ -382,10 +373,10 @@ export default function BasecampCheckInView({ initialTab = 'checkin' }) {
           {/* Banner Title & Stats */}
           <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6">
             <div className="space-y-1">
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-black uppercase tracking-tight text-white leading-tight">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-black uppercase tracking-tight text-slate-900 leading-tight">
                 {activeTab === 'checkin' ? 'Check-In Basecamp & Logistik Lomba' : 'Check-Out Basecamp & Pengembalian Jaminan'}
               </h1>
-              <p className="text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-500 max-w-2xl leading-relaxed">
                 {activeTab === 'checkin'
                   ? 'Pencatatan kedatangan resmi peleton, penyerahan KTP jaminan fasilitas transit, serta serah terima nomor dada & air mineral.'
                   : 'Pemeriksaan kebersihan ruang transit peleton, verifikasi pengembalian 2 kantong sampah terpilah, dan pengembalian KTP jaminan.'}
@@ -395,24 +386,24 @@ export default function BasecampCheckInView({ initialTab = 'checkin' }) {
             <div className="grid grid-cols-2 gap-2 sm:flex sm:items-center sm:gap-3 w-full sm:w-auto shrink-0 mt-2 sm:mt-0">
               {activeTab === 'checkin' ? (
                 <>
-                  <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-2.5 sm:p-4 text-center flex-1 min-w-0 sm:min-w-[110px]">
-                    <span className="text-[10px] uppercase font-bold text-teal-300 block truncate">Tiba di Lokasi</span>
-                    <span className="text-lg sm:text-2xl font-black text-white font-mono block mt-0.5">{checkedInTeams.length} Tim</span>
+                  <div className="bg-teal-50/70 border border-teal-200/80 rounded-2xl p-2.5 sm:p-4 text-center flex-1 min-w-0 sm:min-w-[120px]">
+                    <span className="text-[10px] uppercase font-black text-teal-800 block truncate">Tiba di Lokasi</span>
+                    <span className="text-lg sm:text-2xl font-black text-teal-950 font-mono block mt-0.5">{checkedInTeams.length} Tim</span>
                   </div>
-                  <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-2.5 sm:p-4 text-center flex-1 min-w-0 sm:min-w-[110px]">
-                    <span className="text-[10px] uppercase font-bold text-amber-300 block truncate">Belum Tiba</span>
-                    <span className="text-lg sm:text-2xl font-black text-amber-300 font-mono block mt-0.5">{pendingTeams.length} Tim</span>
+                  <div className="bg-amber-50/70 border border-amber-200/80 rounded-2xl p-2.5 sm:p-4 text-center flex-1 min-w-0 sm:min-w-[120px]">
+                    <span className="text-[10px] uppercase font-black text-amber-800 block truncate">Belum Tiba</span>
+                    <span className="text-lg sm:text-2xl font-black text-amber-950 font-mono block mt-0.5">{pendingTeams.length} Tim</span>
                   </div>
                 </>
               ) : (
                 <>
-                  <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-2.5 sm:p-4 text-center flex-1 min-w-0 sm:min-w-[110px]">
-                    <span className="text-[10px] uppercase font-bold text-amber-300 block truncate">Masih di Lokasi</span>
-                    <span className="text-lg sm:text-2xl font-black text-amber-300 font-mono block mt-0.5">{activeInVenueTeams.length} Tim</span>
+                  <div className="bg-amber-50/70 border border-amber-200/80 rounded-2xl p-2.5 sm:p-4 text-center flex-1 min-w-0 sm:min-w-[120px]">
+                    <span className="text-[10px] uppercase font-black text-amber-800 block truncate">Masih di Lokasi</span>
+                    <span className="text-lg sm:text-2xl font-black text-amber-950 font-mono block mt-0.5">{activeInVenueTeams.length} Tim</span>
                   </div>
-                  <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-2.5 sm:p-4 text-center flex-1 min-w-0 sm:min-w-[110px]">
-                    <span className="text-[10px] uppercase font-bold text-emerald-300 block truncate">Sudah Pulang</span>
-                    <span className="text-lg sm:text-2xl font-black text-white font-mono block mt-0.5">{checkedOutTeams.length} Tim</span>
+                  <div className="bg-emerald-50/70 border border-emerald-200/80 rounded-2xl p-2.5 sm:p-4 text-center flex-1 min-w-0 sm:min-w-[120px]">
+                    <span className="text-[10px] uppercase font-black text-emerald-800 block truncate">Sudah Pulang</span>
+                    <span className="text-lg sm:text-2xl font-black text-emerald-950 font-mono block mt-0.5">{checkedOutTeams.length} Tim</span>
                   </div>
                 </>
               )}
