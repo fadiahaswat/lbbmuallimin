@@ -283,58 +283,58 @@ export default function SimpaskorSidebarLayout({
       case 'admin':
       case 'idcard':
         return { 
-          bg: 'bg-blue-50 border border-blue-200/90 text-blue-700 shadow-2xs', 
-          iconColor: 'text-blue-600', 
+          bg: 'bg-gradient-to-br from-blue-600 to-indigo-600 text-white shadow-sm shadow-blue-500/25', 
+          iconColor: 'text-white', 
           badgeColor: 'bg-blue-50 text-blue-800' 
         };
       case 'tm':
         return { 
-          bg: 'bg-amber-50 border border-amber-200/90 text-amber-700 shadow-2xs', 
-          iconColor: 'text-amber-600', 
+          bg: 'bg-gradient-to-br from-amber-500 to-orange-500 text-white shadow-sm shadow-amber-500/25', 
+          iconColor: 'text-white', 
           badgeColor: 'bg-amber-50 text-amber-800' 
         };
       case 'uji_coba':
       case 'roster':
         return { 
-          bg: 'bg-emerald-50 border border-emerald-200/90 text-emerald-700 shadow-2xs', 
-          iconColor: 'text-emerald-600', 
+          bg: 'bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-sm shadow-emerald-500/25', 
+          iconColor: 'text-white', 
           badgeColor: 'bg-emerald-50 text-emerald-800' 
         };
       case 'checkin':
       case 'checkout':
       case 'basecamp':
         return { 
-          bg: 'bg-teal-50 border border-teal-200/90 text-teal-700 shadow-2xs', 
-          iconColor: 'text-teal-600', 
+          bg: 'bg-gradient-to-br from-teal-500 to-cyan-600 text-white shadow-sm shadow-teal-500/25', 
+          iconColor: 'text-white', 
           badgeColor: 'bg-teal-50 text-teal-800' 
         };
       case 'dp':
         return { 
-          bg: 'bg-orange-50 border border-orange-200/90 text-orange-700 shadow-2xs', 
-          iconColor: 'text-orange-600', 
+          bg: 'bg-gradient-to-br from-orange-500 to-amber-600 text-white shadow-sm shadow-orange-500/25', 
+          iconColor: 'text-white', 
           badgeColor: 'bg-orange-50 text-orange-800' 
         };
       case 'penjurian':
       case 'juri':
       case 'documents':
         return { 
-          bg: 'bg-purple-50 border border-purple-200/90 text-purple-700 shadow-2xs', 
-          iconColor: 'text-purple-600', 
+          bg: 'bg-gradient-to-br from-purple-600 to-violet-600 text-white shadow-sm shadow-purple-500/25', 
+          iconColor: 'text-white', 
           badgeColor: 'bg-purple-50 text-purple-800' 
         };
       case 'rekap_nilai':
       case 'recap':
         return { 
-          bg: 'bg-indigo-50 border border-indigo-200/90 text-indigo-700 shadow-2xs', 
-          iconColor: 'text-indigo-600', 
+          bg: 'bg-gradient-to-br from-indigo-600 to-blue-600 text-white shadow-sm shadow-indigo-500/25', 
+          iconColor: 'text-white', 
           badgeColor: 'bg-indigo-50 text-indigo-800' 
         };
       case 'klasemen':
       case 'leaderboard':
       case 'scores':
         return { 
-          bg: 'bg-rose-50 border border-rose-200/90 text-rose-700 shadow-2xs', 
-          iconColor: 'text-rose-600', 
+          bg: 'bg-gradient-to-br from-rose-600 to-pink-600 text-white shadow-sm shadow-rose-500/25', 
+          iconColor: 'text-white', 
           badgeColor: 'bg-rose-50 text-rose-800' 
         };
       case 'dokumen':
@@ -344,27 +344,27 @@ export default function SimpaskorSidebarLayout({
       case 'proposal':
       case 'timeline':
         return { 
-          bg: 'bg-sky-50 border border-sky-200/90 text-sky-700 shadow-2xs', 
-          iconColor: 'text-sky-600', 
+          bg: 'bg-gradient-to-br from-sky-500 to-blue-600 text-white shadow-sm shadow-sky-500/25', 
+          iconColor: 'text-white', 
           badgeColor: 'bg-sky-50 text-sky-800' 
         };
       case 'superadmin':
         return { 
-          bg: 'bg-amber-50 border border-amber-200/90 text-amber-700 shadow-2xs', 
-          iconColor: 'text-amber-600', 
+          bg: 'bg-gradient-to-br from-amber-500 to-yellow-600 text-white shadow-sm shadow-amber-500/25', 
+          iconColor: 'text-white', 
           badgeColor: 'bg-amber-50 text-amber-800' 
         };
       case 'overview':
       case 'dashboard':
         return { 
-          bg: 'bg-red-50 border border-red-200/90 text-red-700 shadow-2xs', 
-          iconColor: 'text-red-600', 
+          bg: 'bg-gradient-to-br from-red-600 to-rose-600 text-white shadow-sm shadow-red-500/25', 
+          iconColor: 'text-white', 
           badgeColor: 'bg-red-50 text-red-800' 
         };
       default:
         return { 
-          bg: 'bg-slate-100 border border-slate-200/90 text-slate-700 shadow-2xs', 
-          iconColor: 'text-slate-700', 
+          bg: 'bg-gradient-to-br from-slate-700 to-slate-800 text-white shadow-sm shadow-slate-500/25', 
+          iconColor: 'text-white', 
           badgeColor: 'bg-slate-100 text-slate-800' 
         };
     }
