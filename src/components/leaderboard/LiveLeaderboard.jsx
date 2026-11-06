@@ -503,113 +503,111 @@ export default function LiveLeaderboard() {
     }
   }, [activeCategory, finalFilteredPeleton, finalFilteredDanton, finalFilteredJuaraUmum]);
 
-  const content = (
-    <div className={`space-y-6 ${effectiveDark ? 'text-slate-100' : 'text-slate-800'}`}>
-      {/* 1. Header Banner */}
-      <div
-        className={`rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 border shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6 transition-all ${
-          effectiveDark
-            ? 'bg-slate-900 border-slate-800 text-white shadow-lg'
-            : 'bg-white border-slate-200/90 text-slate-900 shadow-[0_1px_3px_rgba(0,0,0,0.04)]'
-        }`}
+  const headerActions = (
+    <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+      {/* Tombol Mode Layar Panggung */}
+      <button
+        type="button"
+        onClick={toggleStageMode}
+        className="px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl font-bold text-xs bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white shadow-xs flex items-center gap-1.5 transition-all cursor-pointer active:scale-95 whitespace-nowrap"
       >
-        <div className="flex items-center gap-3 sm:gap-4">
-          <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl border flex items-center justify-center shrink-0 ${
-            effectiveDark
-              ? 'bg-white/10 border-white/20 text-amber-300 shadow-inner'
-              : 'bg-amber-50 border-amber-200 text-amber-600 shadow-xs'
-          }`}>
-            <Trophy className="w-6 h-6 sm:w-9 sm:h-9" />
-          </div>
-          <div className="min-w-0 flex-1">
-            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
-              <span className={`text-[9px] sm:text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded border ${
-                effectiveDark
-                  ? 'text-amber-300 bg-amber-400/20 border-amber-300/30'
-                  : 'text-amber-800 bg-amber-50 border-amber-200 font-bold'
-              }`}>
-                Live Scoreboard Resmi
-              </span>
-              <span className={`text-[11px] sm:text-xs font-medium truncate ${
-                effectiveDark ? 'text-white/80' : 'text-slate-500'
-              }`}>{VENUE.NAME}</span>
-            </div>
-            <h1 className={`text-lg sm:text-2xl md:text-3xl font-black uppercase tracking-tight mt-0.5 sm:mt-1 leading-tight ${
-              effectiveDark ? 'text-white' : 'text-slate-900'
-            }`}>
-              Papan Klasemen & Hasil Lomba
-            </h1>
-            <p className={`text-[11px] sm:text-xs mt-0.5 sm:mt-1 max-w-2xl leading-relaxed line-clamp-2 sm:line-clamp-none ${
-              effectiveDark ? 'text-slate-300' : 'text-slate-500'
-            }`}>
-              Sistem penetapan Juara Utama, Harapan, Danton Terbaik & Juara Umum mengacu pada Petunjuk Teknis Penilaian & Kejuaraan LBB Mu'allimin 2027 (Bab A).
-            </p>
-          </div>
+        <Maximize2 className="w-3.5 h-3.5" />
+        <span>Layar Panggung</span>
+      </button>
+
+      {/* Tombol Regulasi Juknis */}
+      <button
+        type="button"
+        onClick={() => setShowJuknisInfo(!showJuknisInfo)}
+        className="px-3 py-1.5 sm:px-3 sm:py-2 border active:scale-95 text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs bg-slate-100 hover:bg-slate-200/80 border-slate-200/80 text-slate-700 whitespace-nowrap"
+      >
+        <Info className="w-3.5 h-3.5 text-amber-600" />
+        <span>Juknis</span>
+        {showJuknisInfo ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+      </button>
+
+      {/* Tombol Toggle Dark / Light Mode */}
+      <button
+        type="button"
+        onClick={toggleDarkMode}
+        className="px-2.5 sm:px-3 py-1.5 sm:py-2 border active:scale-95 text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs bg-slate-100 hover:bg-slate-200/80 border-slate-200/80 text-slate-700 whitespace-nowrap"
+        title={effectiveDark ? 'Beralih ke Mode Terang (Light Mode)' : 'Beralih ke Mode Gelap (Dark Mode)'}
+      >
+        {effectiveDark ? <Sun className="w-3.5 h-3.5 text-amber-500" /> : <Moon className="w-3.5 h-3.5 text-slate-600" />}
+        <span className="hidden sm:inline">{effectiveDark ? 'Terang' : 'Gelap'}</span>
+      </button>
+    </div>
+  );
+
+  const stageHeaderBanner = (
+    <div
+      className={`rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 border shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6 transition-all ${
+        effectiveDark
+          ? 'bg-slate-900 border-slate-800 text-white shadow-lg'
+          : 'bg-white border-slate-200/90 text-slate-900 shadow-[0_1px_3px_rgba(0,0,0,0.04)]'
+      }`}
+    >
+      <div className="flex items-center gap-3 sm:gap-4">
+        <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl border flex items-center justify-center shrink-0 ${
+          effectiveDark
+            ? 'bg-white/10 border-white/20 text-amber-300 shadow-inner'
+            : 'bg-amber-50 border-amber-200 text-amber-600 shadow-xs'
+        }`}>
+          <Trophy className="w-6 h-6 sm:w-9 sm:h-9" />
         </div>
-
-        <div className="flex flex-wrap items-center gap-2 pt-0.5 md:pt-0">
-          {/* Tombol Mode Layar Panggung */}
-          <button
-            type="button"
-            onClick={toggleStageMode}
-            className={`px-3 py-1.5 sm:px-4 sm:py-2.5 rounded-xl font-black text-xs uppercase tracking-wider flex items-center gap-1.5 sm:gap-2 transition-all shadow-xs cursor-pointer active:scale-95 ${
-              isStageMode
-                ? 'bg-amber-400 text-slate-950 hover:bg-amber-300'
-                : effectiveDark
-                ? 'bg-white/15 hover:bg-white/25 border border-white/15 text-white'
-                : 'bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white shadow-sm'
-            }`}
-          >
-            {isStageMode ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
-            <span>{isStageMode ? 'Keluar' : 'Layar Panggung'}</span>
-          </button>
-
-          {/* Tombol Regulasi Juknis */}
-          <button
-            type="button"
-            onClick={() => setShowJuknisInfo(!showJuknisInfo)}
-            className={`px-3 py-1.5 sm:px-3.5 sm:py-2.5 border active:scale-95 text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 cursor-pointer shadow-xs ${
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+            <span className={`text-[9px] sm:text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded border ${
               effectiveDark
-                ? 'bg-white/15 hover:bg-white/25 border-white/15 text-white'
-                : 'bg-slate-100 hover:bg-slate-200/80 border-slate-200/80 text-slate-700'
-            }`}
-          >
-            <Info className={`w-3.5 h-3.5 ${effectiveDark ? 'text-amber-300' : 'text-amber-600'}`} />
-            <span>Juknis</span>
-            {showJuknisInfo ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
-          </button>
-
-          {/* Tombol Toggle Dark / Light Mode */}
-          <button
-            type="button"
-            onClick={toggleDarkMode}
-            className={`px-3 py-1.5 sm:px-3.5 sm:py-2.5 border active:scale-95 text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 cursor-pointer shadow-xs ${
-              effectiveDark
-                ? 'bg-white/15 hover:bg-white/25 border-white/15 text-white'
-                : 'bg-slate-100 hover:bg-slate-200/80 border-slate-200/80 text-slate-700'
-            }`}
-            title={effectiveDark ? 'Beralih ke Mode Terang (Light Mode)' : 'Beralih ke Mode Gelap (Dark Mode)'}
-          >
-            {effectiveDark ? <Sun className="w-3.5 h-3.5 text-amber-300" /> : <Moon className="w-3.5 h-3.5 text-slate-600" />}
-            <span className="hidden sm:inline">{effectiveDark ? 'Mode Terang' : 'Mode Gelap'}</span>
-            <span className="sm:hidden">{effectiveDark ? 'Terang' : 'Gelap'}</span>
-          </button>
-
-          {!isStageMode && (
-            <button
-              type="button"
-              onClick={() => setActiveView('landing')}
-              className={`hidden md:inline-flex px-4 py-2.5 border text-xs font-bold rounded-xl transition-all cursor-pointer active:scale-95 ${
-                effectiveDark
-                  ? 'bg-white/15 hover:bg-white/25 border-white/15 text-white'
-                  : 'bg-slate-100 hover:bg-slate-200/80 border-slate-200/80 text-slate-700'
-              }`}
-            >
-              Beranda
-            </button>
-          )}
+                ? 'text-amber-300 bg-amber-400/20 border-amber-300/30'
+                : 'text-amber-800 bg-amber-50 border-amber-200 font-bold'
+            }`}>
+              Live Scoreboard Resmi
+            </span>
+            <span className={`text-[11px] sm:text-xs font-medium truncate ${
+              effectiveDark ? 'text-white/80' : 'text-slate-500'
+            }`}>{VENUE.NAME}</span>
+          </div>
+          <h1 className={`text-lg sm:text-2xl md:text-3xl font-black uppercase tracking-tight mt-0.5 sm:mt-1 leading-tight ${
+            effectiveDark ? 'text-white' : 'text-slate-900'
+          }`}>
+            Papan Klasemen &amp; Hasil Lomba
+          </h1>
+          <p className={`text-[11px] sm:text-xs mt-0.5 sm:mt-1 max-w-2xl leading-relaxed line-clamp-2 sm:line-clamp-none ${
+            effectiveDark ? 'text-slate-300' : 'text-slate-500'
+          }`}>
+            Sistem penetapan Juara Utama, Harapan, Danton Terbaik &amp; Juara Umum mengacu pada Petunjuk Teknis Penilaian &amp; Kejuaraan LBB Mu'allimin 2027 (Bab A).
+          </p>
         </div>
       </div>
+
+      <div className="flex flex-wrap items-center gap-2 pt-0.5 md:pt-0">
+        <button
+          type="button"
+          onClick={toggleStageMode}
+          className="px-3 py-1.5 sm:px-4 sm:py-2.5 rounded-xl font-black text-xs uppercase tracking-wider flex items-center gap-1.5 sm:gap-2 transition-all shadow-xs cursor-pointer active:scale-95 bg-amber-400 text-slate-950 hover:bg-amber-300"
+        >
+          <Minimize2 className="w-3.5 h-3.5" />
+          <span>Keluar</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setShowJuknisInfo(!showJuknisInfo)}
+          className="px-3 py-1.5 sm:px-3.5 sm:py-2.5 border active:scale-95 text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 cursor-pointer shadow-xs bg-white/15 hover:bg-white/25 border-white/15 text-white"
+        >
+          <Info className="w-3.5 h-3.5 text-amber-300" />
+          <span>Juknis</span>
+          {showJuknisInfo ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+        </button>
+      </div>
+    </div>
+  );
+
+  const content = (
+    <div className={`space-y-4 sm:space-y-5 ${effectiveDark ? 'text-slate-100' : 'text-slate-800'}`}>
+      {/* 1. Header Banner Khusus Mode Layar Panggung Fullscreen */}
+      {isStageMode && stageHeaderBanner}
 
       {/* 2. Informasi Regulasi Resmi Juknis (Collapsible) */}
       {showJuknisInfo && (
@@ -1831,7 +1829,7 @@ export default function LiveLeaderboard() {
   // Jika Mode Layar Panggung (Fullscreen)
   if (isStageMode) {
     return (
-      <div className="min-h-screen bg-slate-950 text-white p-6 sm:p-12 font-sans">
+      <div className="min-h-screen bg-slate-950 text-white p-4 sm:p-8 lg:p-12 font-sans">
         <div className="max-w-7xl mx-auto">{content}</div>
       </div>
     );
@@ -1843,12 +1841,9 @@ export default function LiveLeaderboard() {
       activeMenu="klasemen"
       title="Klasemen & Hasil Live"
       subtitle="Papan Peringkat Resmi Dewan Juri Realtime"
+      rightActions={headerActions}
     >
-      <div
-        className={`rounded-3xl p-4 sm:p-6 transition-colors ${
-          effectiveDark ? 'bg-slate-950 text-slate-100' : 'bg-transparent text-slate-800'
-        }`}
-      >
+      <div className={effectiveDark ? 'bg-slate-950 text-slate-100 rounded-2xl p-4 sm:p-6 transition-colors' : ''}>
         {content}
       </div>
     </SimpaskorSidebarLayout>
