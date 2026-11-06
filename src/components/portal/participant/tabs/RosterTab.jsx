@@ -191,31 +191,34 @@ export default function RosterTab({
 
           {/* Top Grid: Danton (Kiri) & Pendamping Peleton (Kanan) */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-            {/* Danton Spotlight (lg:col-span-5) */}
-            <div className="lg:col-span-5 bg-gradient-to-br from-red-50/90 via-amber-50/50 to-white border-2 border-red-300 rounded-3xl p-5 shadow-xs flex flex-col justify-between relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/5 rounded-full blur-2xl pointer-events-none" />
+            {/* Danton Spotlight (lg:col-span-5) - Brand UI & Harmonized Ratio */}
+            <div className="lg:col-span-5 bg-white border border-red-200/90 rounded-3xl p-5 shadow-xs flex flex-col justify-between relative overflow-hidden">
+              <div className="h-1 w-full bg-gradient-to-r from-red-600 to-amber-500 absolute top-0 left-0 right-0" />
 
               {/* Danton Header Tag */}
-              <div className="flex items-center justify-between border-b border-red-200/80 pb-2.5 mb-3">
+              <div className="flex items-center justify-between border-b border-red-100 pb-2.5 mb-3">
                 <div className="flex items-center gap-2">
-                  <span className="p-1.5 rounded-xl bg-red-600 text-white shadow-xs">
+                  <span className="p-1.5 rounded-xl bg-red-50 border border-red-200 text-red-700 shadow-2xs">
                     <Award className="w-3.5 h-3.5" />
                   </span>
                   <div>
-                    <h5 className="font-black text-xs uppercase tracking-wider text-red-900 leading-tight">
+                    <h5 className="font-black text-xs uppercase tracking-wider text-slate-900 leading-tight">
                       Komandan Peleton (Danton)
                     </h5>
-                    <span className="text-[10px] text-red-600/90 font-medium">
+                    <span className="text-[10px] text-red-700 font-semibold">
                       Pemimpin Barisan & Aba-Aba
                     </span>
                   </div>
                 </div>
+                <span className="text-[10px] font-bold bg-red-50 text-red-700 border border-red-200 px-2 py-0.5 rounded-md">
+                  Pimpinan Peleton
+                </span>
               </div>
 
-              <div className="flex flex-col sm:flex-row items-center sm:items-start gap-3.5 flex-1">
-                {/* Danton Photo */}
+              <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 flex-1">
+                {/* Danton Photo - Harmonized 3:4 Ratio */}
                 <div className="relative group shrink-0">
-                  <div className="aspect-[3/4] w-20 sm:w-24 rounded-xl bg-gradient-to-br from-red-700 to-red-900 text-white font-black text-xs flex items-center justify-center shadow-xs overflow-hidden border border-red-300 relative">
+                  <div className="aspect-[3/4] w-28 sm:w-32 rounded-2xl bg-slate-100 text-white font-black text-xs flex items-center justify-center shadow-xs overflow-hidden border border-red-200 relative">
                     {(() => {
                       const photoUrl = isEditingRoster ? rosterDraft?.danton?.photo : currentTeam.roster?.danton?.photo;
                       const hasValidPhoto = photoUrl && typeof photoUrl === 'string' && photoUrl !== '#' && !photoUrl.startsWith('#') && !photoUrl.includes('drive.google.com/open?id=');
@@ -394,11 +397,13 @@ export default function RosterTab({
               </div>
             </div>
 
-            {/* 3 Pendamping Peleton (lg:col-span-7) */}
-            <div className="lg:col-span-7 bg-slate-50/90 border border-slate-200 rounded-3xl p-5 flex flex-col justify-between space-y-4 shadow-xs">
-              <div className="flex items-center justify-between border-b border-slate-200 pb-2.5">
+            {/* 3 Pendamping Peleton (lg:col-span-7) - Brand UI & Harmonized 3:4 Ratio */}
+            <div className="lg:col-span-7 bg-white border border-slate-200/90 rounded-3xl p-5 flex flex-col justify-between space-y-3 shadow-xs relative overflow-hidden">
+              <div className="h-1 w-full bg-gradient-to-r from-blue-600 to-teal-500 absolute top-0 left-0 right-0" />
+
+              <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
                 <div className="flex items-center gap-2">
-                  <span className="p-1.5 rounded-xl bg-blue-600 text-white shadow-xs">
+                  <span className="p-1.5 rounded-xl bg-blue-50 border border-blue-200 text-blue-700 shadow-2xs">
                     <Users className="w-3.5 h-3.5" />
                   </span>
                   <div>
@@ -406,10 +411,13 @@ export default function RosterTab({
                       3 Pendamping Peleton
                     </h5>
                     <p className="text-[10px] text-slate-500">
-                      1 Official Utama + 2 Pendukung (Medis/Dokum)
+                      1 Official Utama + 2 Pendukung Resmi (Medis & Logistik)
                     </p>
                   </div>
                 </div>
+                <span className="text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-200 px-2 py-0.5 rounded-md">
+                  Official Kontingen
+                </span>
               </div>
 
               {!isEditingRoster ? (
@@ -419,18 +427,37 @@ export default function RosterTab({
                       const isMainOfficial = i === 0 || off.category === 'official';
                       const defaultRoleTitle = isMainOfficial
                         ? 'Official (Pelatih / Pembina)'
-                        : `Pendukung ${i} (Medis / Dokum)`;
+                        : `Pendukung ${i} (${i === 1 ? 'Medis / Dokum' : 'Logistik / Lapangan'})`;
                       const displayRole = off.role && off.role !== '-' ? off.role : defaultRoleTitle;
                       const hasOPhoto = off.photo && typeof off.photo === 'string' && off.photo !== '#' && !off.photo.startsWith('#') && !off.photo.includes('drive.google.com/open?id=');
 
                       return (
                         <div
                           key={off.id || i}
-                          className={`group/off bg-white rounded-xl border shadow-2xs overflow-hidden flex flex-col justify-between ${
-                            isMainOfficial ? 'border-blue-300 ring-1 ring-blue-100' : 'border-slate-200'
+                          className={`group/off rounded-2xl border shadow-2xs hover:shadow-xs transition-all p-3 flex flex-col items-center text-center justify-between space-y-2 ${
+                            isMainOfficial
+                              ? 'border-blue-200 bg-gradient-to-b from-blue-50/50 via-white to-white ring-1 ring-blue-100'
+                              : 'border-slate-200/90 bg-slate-50/60 hover:bg-white'
                           }`}
                         >
-                          <div className="aspect-[4/3] sm:aspect-[1/1] w-full bg-slate-100 relative overflow-hidden flex items-center justify-center border-b border-slate-100">
+                          {/* Role Chip */}
+                          <div className="w-full flex justify-center">
+                            <span
+                              className={`px-2 py-0.5 rounded-md text-[9px] font-bold shadow-2xs truncate max-w-full ${
+                                isMainOfficial
+                                  ? 'bg-blue-600 text-white'
+                                  : i === 1
+                                  ? 'bg-teal-600 text-white'
+                                  : 'bg-slate-700 text-white'
+                              }`}
+                              title={displayRole}
+                            >
+                              {displayRole}
+                            </span>
+                          </div>
+
+                          {/* Uniform 3:4 Pasfoto Frame */}
+                          <div className="w-24 sm:w-26 aspect-[3/4] rounded-xl bg-slate-100 border border-slate-200 shadow-2xs relative overflow-hidden flex items-center justify-center my-1 shrink-0">
                             {hasOPhoto ? (
                               <img
                                 src={formatImageUrl(off.photo)}
@@ -451,21 +478,20 @@ export default function RosterTab({
                               />
                             ) : null}
                             <div
-                              className="w-full h-full flex flex-col items-center justify-center text-[8px] font-bold text-slate-400 bg-slate-100"
+                              className="w-full h-full flex flex-col items-center justify-center text-[8px] font-bold text-slate-400 bg-slate-100 p-1"
                               style={{ display: hasOPhoto ? 'none' : 'flex' }}
                             >
-                              <User className="w-5 h-5 opacity-40 mb-0.5" />
-                              <span>{isMainOfficial ? 'OFFICIAL' : `CREW ${i}`}</span>
+                              <User className="w-6 h-6 opacity-40 mb-0.5" />
+                              <span className="text-[8px] font-black uppercase tracking-wider text-slate-500">
+                                {isMainOfficial ? 'OFFICIAL' : `CREW ${i}`}
+                              </span>
+                              <span className="text-[7px] text-slate-400">(3×4)</span>
                             </div>
-                            <span className={`absolute top-1 right-1 px-1.5 py-0.5 rounded text-[8px] font-bold shadow-xs truncate max-w-[90%] ${
-                              isMainOfficial ? 'bg-blue-600 text-white' : 'bg-slate-700 text-white'
-                            }`} title={displayRole}>
-                              {displayRole}
-                            </span>
                           </div>
 
-                          <div className="p-2 text-left space-y-0.5">
-                            <span className="font-bold text-xs text-slate-900 block truncate" title={off.name}>
+                          {/* Name & Phone */}
+                          <div className="w-full space-y-0.5 pt-1 border-t border-slate-100">
+                            <span className="font-black text-xs text-slate-900 block truncate leading-tight" title={off.name}>
                               {off.name || '-'}
                             </span>
                             <span className="text-[10px] text-slate-500 font-mono block truncate">
@@ -483,99 +509,140 @@ export default function RosterTab({
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   {rosterDraft?.officials?.map((off, i) => {
                     const isMainOfficial = i === 0 || off.category === 'official';
+                    const hasOPhoto = off.photo && typeof off.photo === 'string' && off.photo !== '#' && !off.photo.startsWith('#') && !off.photo.includes('drive.google.com/open?id=');
 
                     return (
                       <div
                         key={off.id || i}
-                        className={`p-2.5 rounded-xl border space-y-1.5 ${
+                        className={`p-3 rounded-2xl border flex flex-col items-center justify-between space-y-2.5 transition-all shadow-2xs ${
                           isMainOfficial
-                            ? 'bg-blue-50/40 border-blue-200'
-                            : 'bg-white border-slate-200'
+                            ? 'bg-blue-50/40 border-blue-200/90 ring-1 ring-blue-100'
+                            : 'bg-white border-slate-200/90'
                         }`}
                       >
-                        <div className="flex items-center justify-between">
-                          <span className={`text-[9px] font-black uppercase px-1.5 py-0.5 rounded ${
-                            isMainOfficial ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-700'
+                        {/* Header Chip Peran Pendamping */}
+                        <div className="w-full flex items-center justify-between gap-1">
+                          <span className={`px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider shadow-2xs truncate max-w-full ${
+                            isMainOfficial ? 'bg-blue-600 text-white' : i === 1 ? 'bg-teal-600 text-white' : 'bg-slate-700 text-white'
                           }`}>
-                            {isMainOfficial ? '1. Official Utama' : `${i + 1}. Pendukung (${i === 1 ? 'Medis' : 'Dokum/Lainnya'})`}
+                            {isMainOfficial ? '1. Official Utama' : `${i + 1}. Pendukung (${i === 1 ? 'Medis' : 'Logistik/Dokum'})`}
                           </span>
                           <button
                             type="button"
                             onClick={() => triggerRosterPhotoUpload({ type: 'official', index: i })}
-                            className="px-2 py-0.5 bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 text-[9px] font-bold rounded flex items-center gap-1 transition-colors shadow-2xs cursor-pointer"
+                            className="px-2 py-0.5 bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 text-[9px] font-bold rounded-md flex items-center gap-1 transition-colors shadow-2xs cursor-pointer shrink-0"
+                            title="Unggah atau Ganti Pasfoto"
                           >
                             <Camera className="w-3 h-3 text-slate-500" />
-                            <span>{off.photo ? 'Ganti Foto' : 'Unggah Foto'}</span>
+                            <span>{off.photo ? 'Ganti' : 'Unggah'}</span>
                           </button>
                         </div>
-                        <div className="flex items-start gap-2">
+
+                        {/* Pasfoto Frame Seragam 3:4 (Sama persis dengan Preview & Danton) */}
+                        <div className="relative group shrink-0 my-0.5">
                           <div
                             onClick={() => triggerRosterPhotoUpload({ type: 'official', index: i })}
-                            className="w-8 h-10 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0 cursor-pointer overflow-hidden group hover:border-blue-500 relative"
-                            title="Klik untuk unggah pasfoto pendamping"
+                            className="w-24 sm:w-26 aspect-[3/4] rounded-xl bg-slate-100 border border-slate-200 shadow-2xs relative overflow-hidden flex items-center justify-center cursor-pointer group hover:border-blue-500 transition-colors"
+                            title="Klik untuk unggah/ganti pasfoto pendamping"
                           >
-                            {off.photo ? (
+                            {hasOPhoto ? (
                               <img
                                 src={formatImageUrl(off.photo)}
-                                alt={off.name}
-                                className="w-full h-full object-cover"
+                                alt={off.name || 'Pendamping'}
+                                referrerPolicy="no-referrer"
+                                className="w-full h-full object-cover object-top"
                                 onError={(e) => {
                                   const fallback = getFallbackImageUrl(off.photo);
                                   if (fallback && e.currentTarget.src !== fallback) {
                                     e.currentTarget.src = fallback;
                                   } else {
                                     e.currentTarget.style.display = 'none';
-                                    if (e.currentTarget.nextSibling) {
-                                      e.currentTarget.nextSibling.style.display = 'block';
+                                    if (e.currentTarget.nextElementSibling) {
+                                      e.currentTarget.nextElementSibling.style.display = 'flex';
                                     }
                                   }
                                 }}
                               />
                             ) : null}
-                            <User className={`w-3.5 h-3.5 text-slate-400 group-hover:text-blue-500 ${off.photo ? 'hidden' : ''}`} />
-                            <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                              <Camera className="w-3 h-3 text-white" />
+                            <div
+                              className="w-full h-full flex flex-col items-center justify-center text-[8px] font-bold text-slate-400 bg-slate-100 p-1"
+                              style={{ display: hasOPhoto ? 'none' : 'flex' }}
+                            >
+                              <User className="w-6 h-6 opacity-40 mb-0.5" />
+                              <span className="text-[8px] font-black uppercase tracking-wider text-slate-500">
+                                {isMainOfficial ? 'OFFICIAL' : `CREW ${i}`}
+                              </span>
+                              <span className="text-[7px] text-slate-400">(3×4)</span>
+                            </div>
+                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1 text-white text-[10px] font-bold">
+                              <Camera className="w-3.5 h-3.5" />
+                              <span>Ganti</span>
                             </div>
                           </div>
-                          <div className="flex-1 space-y-1 min-w-0">
+                          <button
+                            type="button"
+                            onClick={() => triggerRosterPhotoUpload({ type: 'official', index: i })}
+                            className="absolute -bottom-1 -right-1 p-1 rounded-lg bg-yellow-400 text-slate-950 shadow-xs hover:bg-yellow-300 transition-all cursor-pointer"
+                            title="Unggah Pasfoto"
+                          >
+                            <Upload className="w-3 h-3" />
+                          </button>
+                        </div>
+
+                        {/* Input Form Vertikal (Lebar Penuh, Tidak Berdesakan & Tidak Terpotong) */}
+                        <div className="w-full space-y-2 pt-2 border-t border-slate-100 text-left">
+                          <div>
+                            <label className="text-[9px] font-bold text-slate-400 uppercase block mb-0.5">
+                              Nama Lengkap
+                            </label>
                             <input
                               type="text"
-                              placeholder={isMainOfficial ? "Nama Official Utama / Pelatih" : "Nama Pendukung (Medis/Dokumentasi)"}
-                              value={off.name}
+                              placeholder={isMainOfficial ? "Nama Pelatih / Pembina" : "Nama Pendukung (Medis/Dokum)"}
+                              value={off.name || ''}
                               onChange={e => {
                                 const updated = rosterDraft.officials.map((item, idx) =>
                                   idx === i ? { ...item, name: e.target.value } : item
                                 );
                                 setRosterDraft({ ...rosterDraft, officials: updated });
                               }}
-                              className="w-full px-2 py-1 bg-white border border-slate-200 rounded text-xs font-semibold focus:border-blue-500"
+                              className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-bold text-slate-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 shadow-2xs"
                             />
-                            <div className="grid grid-cols-2 gap-1">
-                              <input
-                                type="text"
-                                placeholder="Nomor WA/Kontak"
-                                value={off.phone}
-                                onChange={e => {
-                                  const updated = rosterDraft.officials.map((item, idx) =>
-                                    idx === i ? { ...item, phone: e.target.value } : item
-                                  );
-                                  setRosterDraft({ ...rosterDraft, officials: updated });
-                                }}
-                                className="w-full px-2 py-0.5 bg-white border border-slate-200 rounded text-[10px] focus:border-blue-500"
-                              />
-                              <input
-                                type="text"
-                                placeholder={isMainOfficial ? "Official (Pelatih/Pembina)" : "Pendukung (Medis/Dokum)"}
-                                value={off.role}
-                                onChange={e => {
-                                  const updated = rosterDraft.officials.map((item, idx) =>
-                                    idx === i ? { ...item, role: e.target.value } : item
-                                  );
-                                  setRosterDraft({ ...rosterDraft, officials: updated });
-                                }}
-                                className="w-full px-2 py-0.5 bg-white border border-slate-200 rounded text-[10px] focus:border-blue-500"
-                              />
-                            </div>
+                          </div>
+
+                          <div>
+                            <label className="text-[9px] font-bold text-slate-400 uppercase block mb-0.5">
+                              Peran / Jabatan
+                            </label>
+                            <input
+                              type="text"
+                              placeholder={isMainOfficial ? "Official (Pelatih/Pembina)" : "Pendukung (Medis/Dokum)"}
+                              value={off.role || ''}
+                              onChange={e => {
+                                const updated = rosterDraft.officials.map((item, idx) =>
+                                  idx === i ? { ...item, role: e.target.value } : item
+                                );
+                                setRosterDraft({ ...rosterDraft, officials: updated });
+                              }}
+                              className="w-full px-2.5 py-1 bg-white border border-slate-200 rounded-lg text-[11px] font-medium text-slate-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="text-[9px] font-bold text-slate-400 uppercase block mb-0.5">
+                              No. WhatsApp / Kontak
+                            </label>
+                            <input
+                              type="text"
+                              placeholder="08xxxxxxxxxx"
+                              value={off.phone || ''}
+                              onChange={e => {
+                                const updated = rosterDraft.officials.map((item, idx) =>
+                                  idx === i ? { ...item, phone: e.target.value } : item
+                                );
+                                setRosterDraft({ ...rosterDraft, officials: updated });
+                              }}
+                              className="w-full px-2.5 py-1 bg-white border border-slate-200 rounded-lg text-[11px] font-mono text-slate-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                            />
                           </div>
                         </div>
                       </div>

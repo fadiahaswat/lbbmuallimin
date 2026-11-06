@@ -113,7 +113,7 @@ const DANTON_POINTS = {
 };
 
 export default function LiveLeaderboard() {
-  const { teams, scores, role, settings, setActiveView } = useCompetition();
+  const { teams, scores, role, currentUser, currentTeam, settings, setActiveView } = useCompetition();
 
   // Mode Tema (Light vs Dark)
   const [isDarkMode, setIsDarkMode] = useState(() => {
@@ -140,12 +140,15 @@ export default function LiveLeaderboard() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isStageMode, setIsStageMode] = useState(false);
   const [showJuknisInfo, setShowJuknisInfo] = useState(false);
+  const [viewMode, setViewMode] = useState('podium'); // 'podium' (Modern Visual) | 'table' (Matriks Juknis)
 
   // Status visual efektif (Stage Mode selalu menggunakan dark theme)
   const effectiveDark = isStageMode || isDarkMode;
 
   // Otoritas & Publikasi
-  const isStaffOrJury = ['admin', 'juri', 'superadmin', 'penginput', 'verifikator', 'finalisator'].includes(role);
+  const userRole = currentUser?.role || (currentTeam ? 'peserta' : (role || 'publik'));
+  const isPeserta = userRole === 'peserta';
+  const isStaffOrJury = !isPeserta && userRole !== 'publik' && ['admin', 'juri', 'superadmin', 'penginput', 'verifikator', 'finalisator'].includes(userRole);
   const isOfficialScoreVisible = isStaffOrJury || Boolean(settings?.announcementPublished);
 
   // Filter tim terverifikasi/terundi
@@ -456,10 +459,10 @@ export default function LiveLeaderboard() {
     }
   }
 
-  // Data podium sesuai tab yang aktif
-  const currentPodiumData = useMemo(() => {
+  // Unified Ranking List untuk Podium 3D & Kartu Skor
+  const currentRankingList = useMemo(() => {
     if (activeCategory === 'peleton') {
-      return finalFilteredPeleton.slice(0, 3).map(item => ({
+      return finalFilteredPeleton.map(item => ({
         rank: item.rank,
         title: item.title,
         team: item.team,
@@ -468,12 +471,10 @@ export default function LiveLeaderboard() {
         subTitle: item.team.dantonName ? `Danton: ${item.team.dantonName}` : (item.team.platoonName || 'Peleton PBB'),
         score: item.nilaiAkhirPeleton,
         scoreLabel: 'Nilai Akhir',
-        subScore: `Murni: ${item.nilaiMurniPeleton} | Penalti: ${item.peletonPenalty}`,
-        badgeColorLight: item.badgeColorLight,
-        badgeColorDark: item.badgeColorDark
+        subScore: `Murni: ${item.nilaiMurniPeleton} | Penalti: ${item.peletonPenalty}`
       }));
     } else if (activeCategory === 'danton') {
-      return finalFilteredDanton.slice(0, 3).map(item => ({
+      return finalFilteredDanton.map(item => ({
         rank: item.rank,
         title: item.title,
         team: item.team,
@@ -482,38 +483,44 @@ export default function LiveLeaderboard() {
         subTitle: item.team.schoolName,
         score: item.nilaiAkhirDanton,
         scoreLabel: 'Nilai Danton',
-        subScore: `Murni: ${item.nilaiMurniDanton} | Penalti: ${item.dantonPenalty}`,
-        badgeColorLight: item.badgeColorLight,
-        badgeColorDark: item.badgeColorDark
+        subScore: `Murni: ${item.nilaiMurniDanton} | Penalti: ${item.dantonPenalty}`
       }));
     } else {
-      return finalFilteredJuaraUmum.slice(0, 3).map(item => ({
-        rank: item.rank,
+      return finalFilteredJuaraUmum.map((item, idx) => ({
+        rank: item.rank || idx + 1,
         title: item.title,
         team: item.team || item.teams?.[0]?.team,
         schoolName: item.schoolName,
         mainTitle: item.schoolName,
-        subTitle: 'Akumulasi Prestasi Sekolah',
+        subTitle: `${item.teams?.length || 1} Peleton Kontingen`,
         score: item.totalPoints,
         scoreLabel: 'Poin Prestasi',
-        subScore: `Peleton: ${item.totalPeletonPoints} Poin | Danton: ${item.totalDantonPoints} Poin`,
-        badgeColorLight: item.badgeColorLight,
-        badgeColorDark: item.badgeColorDark
+        subScore: `Peleton: ${item.totalPeletonPoints} pt | Danton: ${item.totalDantonPoints} pt`
       }));
     }
   }, [activeCategory, finalFilteredPeleton, finalFilteredDanton, finalFilteredJuaraUmum]);
 
+  const currentPodiumData = useMemo(() => {
+    return currentRankingList.slice(0, 3);
+  }, [currentRankingList]);
+
+  const remainingRankingList = useMemo(() => {
+    return currentRankingList.slice(3);
+  }, [currentRankingList]);
+
   const headerActions = (
     <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
-      {/* Tombol Mode Layar Panggung */}
-      <button
-        type="button"
-        onClick={toggleStageMode}
-        className="px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl font-bold text-xs bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white shadow-xs flex items-center gap-1.5 transition-all cursor-pointer active:scale-95 whitespace-nowrap"
-      >
-        <Maximize2 className="w-3.5 h-3.5" />
-        <span>Layar Panggung</span>
-      </button>
+      {/* Tombol Mode Layar Panggung (Khusus Panitia & Juri) */}
+      {isStaffOrJury && (
+        <button
+          type="button"
+          onClick={toggleStageMode}
+          className="px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl font-bold text-xs bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white shadow-xs flex items-center gap-1.5 transition-all cursor-pointer active:scale-95 whitespace-nowrap"
+        >
+          <Maximize2 className="w-3.5 h-3.5" />
+          <span>Layar Panggung</span>
+        </button>
+      )}
 
       {/* Tombol Regulasi Juknis */}
       <button
@@ -821,6 +828,50 @@ export default function LiveLeaderboard() {
             </button>
           </div>
 
+          {/* View Mode Toggle: Podium 3D (Refrensi) vs Tabel Juknis */}
+          <div
+            className={`flex items-center gap-1 p-1 rounded-xl border ${
+              effectiveDark
+                ? 'bg-slate-800 border-slate-700'
+                : 'bg-slate-100 border-slate-200'
+            }`}
+          >
+            <button
+              type="button"
+              onClick={() => setViewMode('podium')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                viewMode === 'podium'
+                  ? effectiveDark
+                    ? 'bg-slate-950 text-white shadow-xs'
+                    : 'bg-white text-slate-900 shadow-xs'
+                  : effectiveDark
+                  ? 'text-slate-400 hover:text-white'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+              title="Tampilan Podium 3D & Kartu Skor"
+            >
+              <Trophy className="w-3.5 h-3.5 text-amber-500" />
+              <span>Podium 3D</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setViewMode('table')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                viewMode === 'table'
+                  ? effectiveDark
+                    ? 'bg-slate-950 text-white shadow-xs'
+                    : 'bg-white text-slate-900 shadow-xs'
+                  : effectiveDark
+                  ? 'text-slate-400 hover:text-white'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+              title="Tampilan Tabel Matriks Nilai Juknis"
+            >
+              <Award className="w-3.5 h-3.5 text-blue-500" />
+              <span>Tabel Juknis</span>
+            </button>
+          </div>
+
           {/* Search Box */}
           <div className="relative">
             <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
@@ -871,214 +922,296 @@ export default function LiveLeaderboard() {
         </div>
       )}
 
-      {/* 5. Podium Display for Top 3 */}
-      {isOfficialScoreVisible && currentPodiumData.length >= 3 && (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
-          {/* PODIUM #2 (Perak) */}
-          <div
-            className={`p-6 rounded-3xl border flex flex-col items-center justify-between text-center relative order-2 md:order-1 transition-all ${
-              effectiveDark
-                ? 'bg-slate-900 border-slate-800 shadow-md text-white'
-                : 'bg-white border-slate-200/90 shadow-xs text-slate-900'
-            }`}
-          >
-            <div className="flex flex-col items-center w-full">
-              {/* Integrated Hero Avatar with Medal Badge */}
-              <div className="relative mb-3 inline-flex items-center justify-center">
-                <SchoolLogo
-                  team={currentPodiumData[1].team}
-                  schoolName={currentPodiumData[1].schoolName}
-                  size="podium-md"
-                  isDark={effectiveDark}
-                />
-                <div className="absolute -top-1.5 -right-1.5 w-6 h-6 rounded-full bg-slate-300 text-slate-900 font-black text-xs flex items-center justify-center shadow-xs border border-white">
-                  2
+            {/* 5. PODIUM 3D ISOMETRIK (Sesuai Referensi Gambar dengan Logo Sekolah) */}
+      {isOfficialScoreVisible && currentPodiumData.length >= 3 && viewMode === 'podium' && (
+        <div className="space-y-6">
+          {/* STAGE PODIUM 3D */}
+          <div className={`relative w-full rounded-3xl border p-4 sm:p-8 overflow-hidden shadow-xs transition-colors ${
+            effectiveDark
+              ? 'bg-slate-900 border-slate-800'
+              : 'bg-gradient-to-b from-amber-50/40 via-white to-slate-50 border-slate-200/80'
+          }`}>
+            {/* Background Halo Rays */}
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-amber-200/20 via-transparent to-transparent pointer-events-none" />
+
+            {/* SVG Linear Gradients untuk Top Face Isometrik */}
+            <svg className="absolute w-0 h-0" aria-hidden="true">
+              <defs>
+                <linearGradient id="goldTopGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#fef08a" />
+                  <stop offset="50%" stopColor="#fde047" />
+                  <stop offset="100%" stopColor="#f59e0b" />
+                </linearGradient>
+                <linearGradient id="blueTopGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#eff6ff" />
+                  <stop offset="50%" stopColor="#bfdbfe" />
+                  <stop offset="100%" stopColor="#93c5fd" />
+                </linearGradient>
+                <linearGradient id="coralTopGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#fff1f2" />
+                  <stop offset="50%" stopColor="#fecdd3" />
+                  <stop offset="100%" stopColor="#fda4af" />
+                </linearGradient>
+              </defs>
+            </svg>
+
+            {/* 3 Pillar Podium Stage */}
+            <div className="flex items-end justify-center gap-2 sm:gap-4 max-w-2xl mx-auto pt-6 pb-2 relative z-10">
+              
+              {/* RANK 2 (Perak / Soft Blue) - Kiri */}
+              <div className="flex-1 max-w-[170px] flex flex-col items-center">
+                {/* Floating Squircle Logo & Info */}
+                <div className="flex flex-col items-center mb-2.5 text-center w-full">
+                  <div className="relative mb-2">
+                    <div className="w-14 h-14 sm:w-18 sm:h-18 rounded-2xl bg-white shadow-md border border-slate-200/90 p-2 flex items-center justify-center relative hover:scale-105 transition-transform">
+                      <SchoolLogo team={currentPodiumData[1].team} schoolName={currentPodiumData[1].schoolName} size="podium-md" />
+                    </div>
+                    <div className="absolute -top-2 -right-1 w-5 h-5 rounded-full bg-slate-300 text-slate-800 font-black text-[10px] shadow-xs flex items-center justify-center border-2 border-white">
+                      2
+                    </div>
+                  </div>
+
+                  <h4 className="font-bold text-xs sm:text-[13px] text-slate-900 truncate w-full px-1" title={currentPodiumData[1].mainTitle}>
+                    {currentPodiumData[1].mainTitle}
+                  </h4>
+                  <p className="text-[10px] text-slate-500 truncate w-full px-1 mt-0.5">
+                    {currentPodiumData[1].subTitle}
+                  </p>
+
+                  <div className="mt-1 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-blue-50 border border-blue-200 text-blue-800 text-[11px] font-black font-mono shadow-2xs">
+                    <span className="text-[10px]">💎</span>
+                    <span>{currentPodiumData[1].score}</span>
+                  </div>
+                </div>
+
+                {/* 3D Isometric Pillar 2 */}
+                <div className="w-full flex flex-col items-center">
+                  <svg viewBox="0 0 100 24" className="w-full h-5 sm:h-7 block -mb-0.5" preserveAspectRatio="none">
+                    <polygon points="12,0 88,0 100,24 0,24" fill="url(#blueTopGrad)" />
+                  </svg>
+                  <div className="w-full h-36 sm:h-44 bg-gradient-to-b from-blue-300 via-indigo-300 to-blue-400 rounded-b-2xl shadow-md border-x border-b border-blue-300/80 flex flex-col items-center justify-center text-white p-2">
+                    <span className="text-[10px] tracking-widest text-white/90 font-mono mb-0.5">★★</span>
+                    <div className="relative flex items-center justify-center">
+                      <svg viewBox="0 0 24 36" className="w-5 h-8 sm:w-6 sm:h-9 text-white/90 drop-shadow-sm" fill="currentColor">
+                        <path d="M12 2C9 7 5 13 3 20c2 1 5 0 7-3-2 5-1 9 1 13 2-3 4-8 4-13-1-3-2-6-4-17z" />
+                        <path d="M17 12c-2 4-5 8-7 12 2 1 4 0 5-2-1 3-1 6 1 9 1-2 3-5 3-8 0-2-1-4-2-11z" opacity="0.7" />
+                      </svg>
+                      <span className="text-3xl sm:text-4xl font-black font-sans tracking-tight text-white px-1 drop-shadow-md">
+                        2
+                      </span>
+                      <svg viewBox="0 0 24 36" className="w-5 h-8 sm:w-6 sm:h-9 text-white/90 drop-shadow-sm scale-x-[-1]" fill="currentColor">
+                        <path d="M12 2C9 7 5 13 3 20c2 1 5 0 7-3-2 5-1 9 1 13 2-3 4-8 4-13-1-3-2-6-4-17z" />
+                        <path d="M17 12c-2 4-5 8-7 12 2 1 4 0 5-2-1 3-1 6 1 9 1-2 3-5 3-8 0-2-1-4-2-11z" opacity="0.7" />
+                      </svg>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              <span
-                className={`text-[10px] uppercase font-black tracking-wider px-2.5 py-0.5 rounded-full border mb-2 ${
-                  effectiveDark
-                    ? 'bg-slate-800 text-slate-300 border-slate-700'
-                    : 'bg-slate-100 text-slate-700 border-slate-200'
-                }`}
-              >
-                {currentPodiumData[1].title}
-              </span>
+              {/* RANK 1 (Emas / Juara 1) - Tengah (Tertinggi) */}
+              <div className="flex-1 max-w-[210px] flex flex-col items-center">
+                {/* Floating Squircle Logo & Info */}
+                <div className="flex flex-col items-center mb-3 text-center w-full">
+                  <div className="relative mb-2">
+                    <div className="w-16 h-16 sm:w-22 sm:h-22 rounded-2xl bg-white shadow-xl border-2 border-amber-300 p-2 flex items-center justify-center relative hover:scale-105 transition-transform">
+                      <SchoolLogo team={currentPodiumData[0].team} schoolName={currentPodiumData[0].schoolName} size="podium-lg" />
+                    </div>
+                    <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full bg-amber-400 text-slate-950 font-black text-[10px] shadow-md flex items-center gap-1 border-2 border-white">
+                      <Crown className="w-3 h-3 text-slate-950" />
+                      <span>JUARA 1</span>
+                    </div>
+                  </div>
 
-              <h3
-                className={`font-black text-base sm:text-lg leading-snug line-clamp-2 ${
-                  effectiveDark ? 'text-white' : 'text-slate-900'
-                }`}
-              >
-                {currentPodiumData[1].mainTitle}
-              </h3>
-              <p
-                className={`text-xs font-medium mt-1 ${
-                  effectiveDark ? 'text-slate-400' : 'text-slate-500'
-                }`}
-              >
-                {currentPodiumData[1].subTitle}
-              </p>
+                  <h4 className="font-black text-sm sm:text-base text-slate-900 truncate w-full px-1" title={currentPodiumData[0].mainTitle}>
+                    {currentPodiumData[0].mainTitle}
+                  </h4>
+                  <p className="text-[10.5px] text-slate-500 font-medium truncate w-full px-1 mt-0.5">
+                    {currentPodiumData[0].subTitle}
+                  </p>
+
+                  <div className="mt-1.5 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-400 text-slate-950 text-xs sm:text-sm font-black font-mono shadow-sm border border-amber-300">
+                    <span>💎</span>
+                    <span>{currentPodiumData[0].score}</span>
+                  </div>
+                </div>
+
+                {/* 3D Isometric Pillar 1 */}
+                <div className="w-full flex flex-col items-center">
+                  <svg viewBox="0 0 100 24" className="w-full h-6 sm:h-8 block -mb-0.5" preserveAspectRatio="none">
+                    <polygon points="12,0 88,0 100,24 0,24" fill="url(#goldTopGrad)" />
+                  </svg>
+                  <div className="w-full h-48 sm:h-60 bg-gradient-to-b from-amber-400 via-yellow-500 to-amber-600 rounded-b-2xl shadow-xl border-x border-b border-amber-400/80 flex flex-col items-center justify-center text-white p-2">
+                    <span className="text-xs tracking-widest text-amber-100 font-mono mb-0.5">★★★</span>
+                    <div className="relative flex items-center justify-center">
+                      <svg viewBox="0 0 24 36" className="w-6 h-9 sm:w-7 sm:h-11 text-white/95 drop-shadow-sm" fill="currentColor">
+                        <path d="M12 2C9 7 5 13 3 20c2 1 5 0 7-3-2 5-1 9 1 13 2-3 4-8 4-13-1-3-2-6-4-17z" />
+                        <path d="M17 12c-2 4-5 8-7 12 2 1 4 0 5-2-1 3-1 6 1 9 1-2 3-5 3-8 0-2-1-4-2-11z" opacity="0.7" />
+                      </svg>
+                      <span className="text-4xl sm:text-5xl font-black font-sans tracking-tight text-white px-1 sm:px-2 drop-shadow-lg">
+                        1
+                      </span>
+                      <svg viewBox="0 0 24 36" className="w-6 h-9 sm:w-7 sm:h-11 text-white/95 drop-shadow-sm scale-x-[-1]" fill="currentColor">
+                        <path d="M12 2C9 7 5 13 3 20c2 1 5 0 7-3-2 5-1 9 1 13 2-3 4-8 4-13-1-3-2-6-4-17z" />
+                        <path d="M17 12c-2 4-5 8-7 12 2 1 4 0 5-2-1 3-1 6 1 9 1-2 3-5 3-8 0-2-1-4-2-11z" opacity="0.7" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* RANK 3 (Perunggu / Soft Coral) - Kanan */}
+              <div className="flex-1 max-w-[170px] flex flex-col items-center">
+                {/* Floating Squircle Logo & Info */}
+                <div className="flex flex-col items-center mb-2.5 text-center w-full">
+                  <div className="relative mb-2">
+                    <div className="w-14 h-14 sm:w-18 sm:h-18 rounded-2xl bg-white shadow-md border border-slate-200/90 p-2 flex items-center justify-center relative hover:scale-105 transition-transform">
+                      <SchoolLogo team={currentPodiumData[2].team} schoolName={currentPodiumData[2].schoolName} size="podium-md" />
+                    </div>
+                    <div className="absolute -top-2 -right-1 w-5 h-5 rounded-full bg-rose-400 text-white font-black text-[10px] shadow-xs flex items-center justify-center border-2 border-white">
+                      3
+                    </div>
+                  </div>
+
+                  <h4 className="font-bold text-xs sm:text-[13px] text-slate-900 truncate w-full px-1" title={currentPodiumData[2].mainTitle}>
+                    {currentPodiumData[2].mainTitle}
+                  </h4>
+                  <p className="text-[10px] text-slate-500 truncate w-full px-1 mt-0.5">
+                    {currentPodiumData[2].subTitle}
+                  </p>
+
+                  <div className="mt-1 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-rose-50 border border-rose-200 text-rose-800 text-[11px] font-black font-mono shadow-2xs">
+                    <span className="text-[10px]">💎</span>
+                    <span>{currentPodiumData[2].score}</span>
+                  </div>
+                </div>
+
+                {/* 3D Isometric Pillar 3 */}
+                <div className="w-full flex flex-col items-center">
+                  <svg viewBox="0 0 100 24" className="w-full h-4 sm:h-6 block -mb-0.5" preserveAspectRatio="none">
+                    <polygon points="12,0 88,0 100,24 0,24" fill="url(#coralTopGrad)" />
+                  </svg>
+                  <div className="w-full h-28 sm:h-36 bg-gradient-to-b from-orange-300 via-rose-300 to-amber-500 rounded-b-2xl shadow-md border-x border-b border-orange-300/80 flex flex-col items-center justify-center text-white p-2">
+                    <span className="text-[10px] tracking-widest text-white/90 font-mono mb-0.5">★</span>
+                    <div className="relative flex items-center justify-center">
+                      <svg viewBox="0 0 24 36" className="w-5 h-8 sm:w-6 sm:h-9 text-white/90 drop-shadow-sm" fill="currentColor">
+                        <path d="M12 2C9 7 5 13 3 20c2 1 5 0 7-3-2 5-1 9 1 13 2-3 4-8 4-13-1-3-2-6-4-17z" />
+                        <path d="M17 12c-2 4-5 8-7 12 2 1 4 0 5-2-1 3-1 6 1 9 1-2 3-5 3-8 0-2-1-4-2-11z" opacity="0.7" />
+                      </svg>
+                      <span className="text-3xl sm:text-4xl font-black font-sans tracking-tight text-white px-1 drop-shadow-md">
+                        3
+                      </span>
+                      <svg viewBox="0 0 24 36" className="w-5 h-8 sm:w-6 sm:h-9 text-white/90 drop-shadow-sm scale-x-[-1]" fill="currentColor">
+                        <path d="M12 2C9 7 5 13 3 20c2 1 5 0 7-3-2 5-1 9 1 13 2-3 4-8 4-13-1-3-2-6-4-17z" />
+                        <path d="M17 12c-2 4-5 8-7 12 2 1 4 0 5-2-1 3-1 6 1 9 1-2 3-5 3-8 0-2-1-4-2-11z" opacity="0.7" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
             </div>
-            <div
-              className={`mt-4 pt-3 border-t w-full ${
-                effectiveDark ? 'border-slate-800' : 'border-slate-100'
-              }`}
-            >
-              <div
-                className={`font-mono font-black text-2xl ${
-                  effectiveDark ? 'text-slate-100' : 'text-slate-900'
-                }`}
-              >
-                {currentPodiumData[1].score}{' '}
-                <span className="text-xs font-normal text-slate-500">
-                  {currentPodiumData[1].scoreLabel}
-                </span>
-              </div>
-              <div className="text-[10px] text-slate-500 font-mono mt-0.5">
-                {currentPodiumData[1].subScore}
-              </div>
+
+            {/* Status Timestamp Pill (persis Image 1) */}
+            <div className="flex items-center justify-center gap-1.5 text-[11px] text-slate-400 font-medium pt-3 border-t border-slate-100/80 mt-2">
+              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+              <span>Papan Klasemen Resmi • Rekapitulasi Berita Acara Dewan Juri Realtime</span>
             </div>
           </div>
 
-          {/* PODIUM #1 (Emas / Champion) */}
-          <div
-            className={`p-7 rounded-3xl border-2 flex flex-col items-center justify-between text-center relative order-1 md:order-2 transform md:-translate-y-2 transition-all ${
-              effectiveDark
-                ? 'bg-gradient-to-b from-amber-950/40 via-slate-900 to-slate-950 border-amber-400/90 text-white shadow-xl shadow-amber-950/30'
-                : 'bg-gradient-to-b from-amber-50/90 via-yellow-50/40 to-white border-amber-300 shadow-md text-slate-900'
-            }`}
-          >
-            <div className="flex flex-col items-center w-full">
-              {/* Integrated Hero Avatar with Crown Medal */}
-              <div className="relative mb-3 inline-flex items-center justify-center">
-                <SchoolLogo
-                  team={currentPodiumData[0].team}
-                  schoolName={currentPodiumData[0].schoolName}
-                  size="podium-lg"
-                  isDark={effectiveDark}
-                />
-                <div className="absolute -top-1.5 -right-1.5 w-6 h-6 rounded-full bg-amber-400 text-slate-950 font-black text-xs flex items-center justify-center shadow-xs border border-white">
-                  1
-                </div>
-              </div>
-
-              <span
-                className={`text-xs uppercase font-black tracking-widest px-3 py-1 rounded-full border mb-2 ${
-                  effectiveDark
-                    ? 'bg-amber-500/20 text-amber-300 border-amber-400/40'
-                    : 'bg-amber-100 text-amber-900 border-amber-300'
-                }`}
-              >
-                {currentPodiumData[0].title}
+          {/* LIST KARTU SKOR (RANK 4 KE BAWAH - SESUAI GAMBAR 1 & GAMBAR 2) */}
+          <div className="space-y-2.5 max-w-3xl mx-auto">
+            <div className="flex items-center justify-between px-2 text-xs text-slate-500 font-medium">
+              <span className="flex items-center gap-1.5 font-bold text-slate-700">
+                <Trophy className="w-4 h-4 text-amber-500" />
+                <span>Papan Peringkat Lengkap</span>
               </span>
-
-              <h3
-                className={`font-black text-lg sm:text-xl leading-snug line-clamp-2 ${
-                  effectiveDark ? 'text-white' : 'text-slate-900'
-                }`}
-              >
-                {currentPodiumData[0].mainTitle}
-              </h3>
-              <p
-                className={`text-xs font-semibold mt-1 ${
-                  effectiveDark ? 'text-amber-300' : 'text-amber-800'
-                }`}
-              >
-                {currentPodiumData[0].subTitle}
-              </p>
+              <span>{currentRankingList.length} Kontingen Terdata</span>
             </div>
-            <div
-              className={`mt-4 pt-3 border-t w-full ${
-                effectiveDark ? 'border-amber-900/40' : 'border-amber-200/80'
-              }`}
-            >
-              <div className={`font-mono font-black text-3xl ${
-                effectiveDark ? 'text-amber-400' : 'text-amber-600'
-              }`}>
-                {currentPodiumData[0].score}{' '}
-                <span className="text-xs font-normal text-slate-500">
-                  {currentPodiumData[0].scoreLabel}
-                </span>
-              </div>
-              <div className="text-[10px] text-slate-500 font-mono mt-0.5">
-                {currentPodiumData[0].subScore}
-              </div>
-            </div>
-          </div>
 
-          {/* PODIUM #3 (Perunggu) */}
-          <div
-            className={`p-6 rounded-3xl border flex flex-col items-center justify-between text-center relative order-3 transition-all ${
-              effectiveDark
-                ? 'bg-slate-900 border-slate-800 shadow-md text-white'
-                : 'bg-white border-slate-200/90 shadow-xs text-slate-900'
-            }`}
-          >
-            <div className="flex flex-col items-center w-full">
-              {/* Integrated Hero Avatar with Medal Badge */}
-              <div className="relative mb-3 inline-flex items-center justify-center">
-                <SchoolLogo
-                  team={currentPodiumData[2].team}
-                  schoolName={currentPodiumData[2].schoolName}
-                  size="podium-md"
-                  isDark={effectiveDark}
-                />
-                <div className="absolute -top-1.5 -right-1.5 w-6 h-6 rounded-full bg-amber-700 text-white font-black text-xs flex items-center justify-center shadow-xs border border-white">
-                  3
+            {currentRankingList.map((item) => {
+              const isMyTeam = (currentTeam?.id && item.team?.id === currentTeam.id) || (currentUser?.teamId && item.team?.id === currentUser.teamId);
+              const isTop3 = item.rank <= 3;
+
+              return (
+                <div
+                  key={item.team?.id || item.schoolName}
+                  className={`p-3 sm:p-3.5 rounded-2xl border transition-all flex items-center justify-between gap-3 shadow-2xs ${
+                    isMyTeam
+                      ? 'bg-emerald-50/80 border-emerald-400 ring-2 ring-emerald-400/50 shadow-xs'
+                      : item.rank === 1
+                      ? 'bg-gradient-to-r from-amber-50/70 via-yellow-50/40 to-white border-amber-300'
+                      : item.rank === 2
+                      ? 'bg-gradient-to-r from-blue-50/70 via-indigo-50/40 to-white border-blue-200'
+                      : item.rank === 3
+                      ? 'bg-gradient-to-r from-orange-50/70 via-rose-50/40 to-white border-orange-200'
+                      : 'bg-white border-slate-200/80 hover:bg-slate-50'
+                  }`}
+                >
+                  <div className="flex items-center gap-3 min-w-0 flex-1">
+                    {/* Rank Number Badge */}
+                    <div className={`w-8 h-8 rounded-xl flex items-center justify-center font-black text-xs shrink-0 ${
+                      item.rank === 1
+                        ? 'bg-amber-400 text-slate-950 shadow-2xs'
+                        : item.rank === 2
+                        ? 'bg-slate-300 text-slate-900 shadow-2xs'
+                        : item.rank === 3
+                        ? 'bg-amber-700 text-white shadow-2xs'
+                        : 'bg-slate-100 text-slate-700'
+                    }`}>
+                      {isTop3 ? (
+                        item.rank === 1 ? '🥇' : item.rank === 2 ? '🥈' : '🥉'
+                      ) : (
+                        item.rank
+                      )}
+                    </div>
+
+                    {/* School Logo Squircle (Menggantikan Memoji persis instruksi) */}
+                    <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-white border border-slate-200/90 shadow-2xs p-1 flex items-center justify-center shrink-0 overflow-hidden">
+                      <SchoolLogo team={item.team} schoolName={item.schoolName} size="table" />
+                    </div>
+
+                    {/* Info Tim & Sekolah */}
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <h4 className="font-black text-xs sm:text-sm text-slate-900 truncate">
+                          {item.mainTitle || item.team?.schoolName || item.schoolName}
+                        </h4>
+                        {isMyTeam && (
+                          <span className="px-1.5 py-0.2 rounded font-black text-[9px] bg-emerald-600 text-white shadow-xs shrink-0 uppercase tracking-wider">
+                            Peleton Anda
+                          </span>
+                        )}
+                        {item.team?.lotNumber && (
+                          <span className="px-1.5 py-0.2 rounded font-mono font-bold text-[9px] bg-slate-100 text-slate-700 border border-slate-200 shrink-0">
+                            TM #{String(item.team.lotNumber).padStart(2, '0')}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-[11px] text-slate-500 truncate mt-0.5">
+                        {item.subTitle}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Nilai Akhir / Poin di Sisi Kanan (Font Besar Sesuai Gambar 1 & 2) */}
+                  <div className="text-right shrink-0">
+                    <div className="flex items-center justify-end gap-1 font-mono font-black text-base sm:text-lg text-slate-900">
+                      <span className="text-amber-500 text-xs">💎</span>
+                      <span>{item.score}</span>
+                    </div>
+                    <div className="text-[10px] text-slate-400 font-mono">
+                      {item.subScore || item.scoreLabel}
+                    </div>
+                  </div>
                 </div>
-              </div>
-
-              <span
-                className={`text-[10px] uppercase font-black tracking-wider px-2.5 py-0.5 rounded-full border mb-2 ${
-                  effectiveDark
-                    ? 'bg-orange-950/40 text-orange-400 border-orange-800/40'
-                    : 'bg-orange-50 text-orange-800 border-orange-200'
-                }`}
-              >
-                {currentPodiumData[2].title}
-              </span>
-
-              <h3
-                className={`font-black text-base sm:text-lg leading-snug line-clamp-2 ${
-                  effectiveDark ? 'text-white' : 'text-slate-900'
-                }`}
-              >
-                {currentPodiumData[2].mainTitle}
-              </h3>
-              <p
-                className={`text-xs font-medium mt-1 ${
-                  effectiveDark ? 'text-slate-400' : 'text-slate-500'
-                }`}
-              >
-                {currentPodiumData[2].subTitle}
-              </p>
-            </div>
-            <div
-              className={`mt-4 pt-3 border-t w-full ${
-                effectiveDark ? 'border-slate-800' : 'border-slate-100'
-              }`}
-            >
-              <div
-                className={`font-mono font-black text-2xl ${
-                  effectiveDark ? 'text-orange-400' : 'text-amber-800'
-                }`}
-              >
-                {currentPodiumData[2].score}{' '}
-                <span className="text-xs font-normal text-slate-500">
-                  {currentPodiumData[2].scoreLabel}
-                </span>
-              </div>
-              <div className="text-[10px] text-slate-500 font-mono mt-0.5">
-                {currentPodiumData[2].subScore}
-              </div>
-            </div>
+              );
+            })}
           </div>
         </div>
       )}
 
-      {/* 6. TABEL HASIL & KLASEMEN RESMI */}
+      {/* 6. TABEL HASIL & KLASEMEN RESMI (Tampil saat viewMode === 'table') */}
+      {viewMode === 'table' && (
       <div
         className={`rounded-2xl border overflow-hidden shadow-xs transition-colors ${
           effectiveDark
@@ -1170,6 +1303,7 @@ export default function LiveLeaderboard() {
                 ) : (
                   finalFilteredPeleton.map(item => {
                     const isTop3 = isOfficialScoreVisible && item.rank <= 3;
+                    const isMyTeam = (currentTeam?.id && item.team.id === currentTeam.id) || (currentUser?.teamId && item.team.id === currentUser.teamId);
                     const j1 = item.j1Peleton > 0 ? item.j1Peleton : '-';
                     const j2 = item.j2Peleton > 0 ? item.j2Peleton : '-';
                     const j3 = item.j3Peleton > 0 ? item.j3Peleton : '-';
@@ -1182,7 +1316,11 @@ export default function LiveLeaderboard() {
                       <tr
                         key={item.team.id}
                         className={`transition-colors ${
-                          isTop3
+                          isMyTeam
+                            ? effectiveDark
+                              ? 'bg-emerald-950/40 ring-1 ring-emerald-500/50 hover:bg-emerald-950/50 font-bold'
+                              : 'bg-emerald-50/70 border-l-4 border-l-emerald-600 hover:bg-emerald-50 font-bold'
+                            : isTop3
                             ? effectiveDark
                               ? 'bg-amber-950/20 hover:bg-amber-950/30'
                               : 'bg-amber-50/50 hover:bg-amber-50/80 font-semibold'
@@ -1417,6 +1555,7 @@ export default function LiveLeaderboard() {
                 ) : (
                   finalFilteredDanton.map(item => {
                     const isTop3 = isOfficialScoreVisible && item.rank <= 3;
+                    const isMyTeam = (currentTeam?.id && item.team.id === currentTeam.id) || (currentUser?.teamId && item.team.id === currentUser.teamId);
                     const j1 = item.j1Danton > 0 ? item.j1Danton : '-';
                     const j2 = item.j2Danton > 0 ? item.j2Danton : '-';
                     const j3 = item.j3Danton > 0 ? item.j3Danton : '-';
@@ -1429,7 +1568,11 @@ export default function LiveLeaderboard() {
                       <tr
                         key={item.team.id}
                         className={`transition-colors ${
-                          isTop3
+                          isMyTeam
+                            ? effectiveDark
+                              ? 'bg-emerald-950/40 ring-1 ring-emerald-500/50 hover:bg-emerald-950/50 font-bold'
+                              : 'bg-emerald-50/70 border-l-4 border-l-emerald-600 hover:bg-emerald-50 font-bold'
+                            : isTop3
                             ? effectiveDark
                               ? 'bg-amber-950/20 hover:bg-amber-950/30'
                               : 'bg-amber-50/50 hover:bg-amber-50/80 font-semibold'
@@ -1659,12 +1802,17 @@ export default function LiveLeaderboard() {
                 ) : (
                   finalFilteredJuaraUmum.map(sch => {
                     const isChampion = sch.rank === 1;
+                    const isMySchool = currentTeam?.schoolName && sch.schoolName?.toLowerCase() === currentTeam.schoolName?.toLowerCase();
 
                     return (
                       <tr
                         key={`${sch.jenjang}_${sch.schoolName}`}
                         className={`transition-colors ${
-                          isChampion
+                          isMySchool
+                            ? effectiveDark
+                              ? 'bg-emerald-950/40 ring-1 ring-emerald-500/50 hover:bg-emerald-950/50 font-bold'
+                              : 'bg-emerald-50/70 border-l-4 border-l-emerald-600 hover:bg-emerald-50 font-bold'
+                            : isChampion
                             ? effectiveDark
                               ? 'bg-amber-950/30 hover:bg-amber-950/40 font-bold'
                               : 'bg-amber-50/70 hover:bg-amber-50 font-bold'
@@ -1823,6 +1971,7 @@ export default function LiveLeaderboard() {
           )}
         </div>
       </div>
+      )}
     </div>
   );
 

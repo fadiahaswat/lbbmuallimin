@@ -31,7 +31,8 @@ import {
   ChevronLeft,
   ChevronRight,
   PanelLeftClose,
-  PanelLeftOpen
+  PanelLeftOpen,
+  MoreVertical
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
 import logoLbb from '../../assets/logo-tonti.png';
@@ -64,6 +65,7 @@ export default function SimpaskorSidebarLayout({
     getUserAvatar
   } = useCompetition();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(() => {
     try {
       return localStorage.getItem('lbb_sidebar_collapsed') === 'true';
@@ -71,6 +73,17 @@ export default function SimpaskorSidebarLayout({
       return false;
     }
   });
+
+  React.useEffect(() => {
+    if (!showUserMenu) return;
+    const handleClickOutside = (e) => {
+      if (!e.target.closest('#user-profile-menu-container') && !e.target.closest('#mobile-user-profile-container')) {
+        setShowUserMenu(false);
+      }
+    };
+    window.addEventListener('click', handleClickOutside);
+    return () => window.removeEventListener('click', handleClickOutside);
+  }, [showUserMenu]);
 
   const toggleSidebarCollapse = () => {
     setIsCollapsed(prev => {
@@ -112,128 +125,102 @@ export default function SimpaskorSidebarLayout({
 
   const avatarUrl = avatarMeta?.url || currentUser?.avatar || (isSchoolLogo ? currentTeam?.files?.schoolLogo?.url : null) || fallbackInitialAvatar;
 
-  // Menu items disesuaikan dengan role beserta tema warna khas masing-masing tahapan
-  const getNavItems = () => {
+  // Navigasi Terstruktur SaaS Minimalist (Sesuai Referensi Simple & Clean dengan Brand UI)
+  const getNavSections = () => {
     // 1. Peserta
     if (userRole === 'peserta') {
+      const rosterCount = (currentTeam?.roster?.pasukan?.filter(p => p.name)?.length || 0) + (currentTeam?.roster?.danton?.name ? 1 : 0);
+      const docsCount = Object.values(currentTeam?.files || {}).filter(f => f?.url && f.url !== '#' && !f.url.startsWith('#')).length;
+
       return [
-        { 
-          id: 'overview', 
-          label: 'Beranda', 
-          icon: Home, 
-          view: 'peserta_dashboard',
-          activeBg: 'bg-gradient-to-r from-red-600 to-rose-600',
-          activeShadow: 'shadow-red-600/30'
+        {
+          id: 'peleton',
+          title: 'PORTAL PELETON',
+          tag: 'Official',
+          tagColor: 'text-slate-600 bg-slate-100 border-slate-200/80',
+          items: [
+            { id: 'overview', index: '01', label: 'Beranda', icon: Home, view: 'peserta_dashboard', activeGradient: 'from-rose-600 to-red-600' },
+            { id: 'idcard', index: '02', label: 'ID Card', icon: QrCode, view: 'peserta_dashboard', activeGradient: 'from-blue-600 to-indigo-600' },
+            { id: 'roster', index: '03', label: 'Personel', icon: Users, view: 'peserta_dashboard', badge: rosterCount > 0 ? rosterCount : null, activeGradient: 'from-teal-700 to-emerald-600' },
+            { id: 'documents', index: '04', label: 'Berkas', icon: FileText, view: 'peserta_dashboard', badge: docsCount > 0 ? docsCount : null, activeGradient: 'from-purple-600 to-violet-600' },
+          ]
         },
-        { 
-          id: 'idcard', 
-          label: 'ID Card', 
-          icon: QrCode, 
-          view: 'peserta_dashboard',
-          activeBg: 'bg-gradient-to-r from-blue-600 to-indigo-600',
-          activeShadow: 'shadow-blue-600/30'
-        },
-        { 
-          id: 'roster', 
-          label: 'Personel', 
-          icon: Users, 
-          view: 'peserta_dashboard',
-          activeBg: 'bg-gradient-to-r from-emerald-600 to-teal-600',
-          activeShadow: 'shadow-emerald-600/30'
-        },
-        { 
-          id: 'documents', 
-          label: 'Berkas', 
-          icon: FileText, 
-          view: 'peserta_dashboard',
-          activeBg: 'bg-gradient-to-r from-purple-600 to-violet-600',
-          activeShadow: 'shadow-purple-600/30'
-        },
-        { 
-          id: 'scores', 
-          label: 'Rekap', 
-          icon: Trophy, 
-          view: 'peserta_dashboard',
-          activeBg: 'bg-gradient-to-r from-amber-500 to-orange-500',
-          activeShadow: 'shadow-amber-500/30'
-        },
+        {
+          id: 'kompetisi',
+          title: 'KOMPETISI & ARENA',
+          tag: 'Arena',
+          tagColor: 'text-emerald-700 bg-emerald-50 border-emerald-200/80',
+          items: [
+            { id: 'uji_coba', index: '05', label: 'UCL', icon: Compass, view: 'field_trial', activeGradient: 'from-cyan-600 to-teal-600' },
+            { id: 'scores', index: '06', label: 'Rekap Nilai', icon: FileSpreadsheet, view: 'peserta_dashboard', activeGradient: 'from-amber-500 to-orange-500' },
+            { id: 'klasemen', index: '07', label: 'Klasemen', icon: Trophy, view: 'live_leaderboard', activeGradient: 'from-teal-700 via-emerald-600 to-teal-600' },
+          ]
+        }
       ];
     }
 
-    // 2. Panitia: 8 Tahap Terpadu LBB Mu'allimin (Warna tematik khas per tahapan)
-    const baseNav = [
-      { 
-        id: 'pendaftaran', 
-        label: 'Berkas', 
-        icon: ClipboardList, 
-        stage: 'pendaftaran',
-        activeBg: 'bg-gradient-to-r from-blue-600 to-indigo-600',
-        activeShadow: 'shadow-blue-600/30'
-      },
-      { 
-        id: 'tm', 
-        label: 'Tech-Meet', 
-        icon: CalendarCheck, 
-        stage: 'tm',
-        activeBg: 'bg-gradient-to-r from-amber-500 to-orange-500',
-        activeShadow: 'shadow-amber-500/30'
-      },
-      { 
-        id: 'uji_coba', 
-        label: 'UCL', 
-        icon: Compass, 
-        stage: 'uji_coba',
-        activeBg: 'bg-gradient-to-r from-emerald-600 to-teal-600',
-        activeShadow: 'shadow-emerald-600/30'
-      },
-      { 
-        id: 'checkin', 
-        label: 'Basecamp', 
-        icon: Building2, 
-        stage: 'checkin',
-        activeBg: 'bg-gradient-to-r from-teal-600 to-cyan-600',
-        activeShadow: 'shadow-teal-600/30'
-      },
-      { 
-        id: 'dp', 
-        label: 'DP', 
-        icon: Clock, 
-        stage: 'dp',
-        activeBg: 'bg-gradient-to-r from-orange-500 to-rose-500',
-        activeShadow: 'shadow-orange-500/30'
-      },
-      { 
-        id: 'penjurian', 
-        label: 'Penjurian', 
-        icon: Award, 
-        stage: 'penjurian',
-        activeBg: 'bg-gradient-to-r from-purple-600 to-indigo-600',
-        activeShadow: 'shadow-purple-600/30'
-      },
-      { 
-        id: 'rekap_nilai', 
-        label: 'Rekap Nilai', 
-        icon: FileSpreadsheet, 
-        stage: 'rekap_nilai',
-        activeBg: 'bg-gradient-to-r from-indigo-600 to-blue-600',
-        activeShadow: 'shadow-indigo-600/30'
-      },
-      { 
-        id: 'klasemen', 
-        label: 'Klasemen', 
-        icon: Trophy, 
-        stage: 'klasemen',
-        activeBg: 'bg-gradient-to-r from-rose-600 to-red-600',
-        activeShadow: 'shadow-rose-600/30'
-      },
+    // 2. Panitia / Staff
+    const baseTahapan = [
+      { id: 'pendaftaran', index: '01', label: 'Berkas Registrasi', icon: ClipboardList, stage: 'pendaftaran', activeGradient: 'from-blue-600 to-indigo-600' },
+      { id: 'tm', index: '02', label: 'Technical Meeting', icon: CalendarCheck, stage: 'tm', activeGradient: 'from-amber-500 to-orange-500' },
+      { id: 'uji_coba', index: '03', label: 'Uji Coba Lapangan', icon: Compass, stage: 'uji_coba', activeGradient: 'from-cyan-600 to-teal-600' },
+      { id: 'checkin', index: '04', label: 'Basecamp', icon: Building2, stage: 'checkin', activeGradient: 'from-emerald-600 to-teal-600' },
+      { id: 'dp', index: '05', label: 'Daerah Persiapan', icon: Clock, stage: 'dp', activeGradient: 'from-violet-600 to-purple-600' },
     ];
 
-    if (canAccessStage) {
-      return baseNav.filter(item => canAccessStage(item.stage, userRole));
+    const basePenilaian = [
+      { id: 'penjurian', index: '06', label: 'Penjurian Lapangan', icon: Award, stage: 'penjurian', activeGradient: 'from-rose-600 to-red-600' },
+      { id: 'rekap_nilai', index: '07', label: 'Rekap Nilai', icon: FileSpreadsheet, stage: 'rekap_nilai', activeGradient: 'from-amber-600 to-orange-600' },
+      { id: 'klasemen', index: '08', label: 'Klasemen', icon: Trophy, stage: 'klasemen', activeGradient: 'from-amber-500 via-yellow-500 to-amber-600' },
+    ];
+
+    const filterAccessible = (list) => {
+      if (!canAccessStage) return list;
+      return list.filter(item => canAccessStage(item.stage, userRole));
+    };
+
+    const sections = [];
+    const tahapan = filterAccessible(baseTahapan);
+    if (tahapan.length > 0) {
+      sections.push({ 
+        id: 'tahapan', 
+        title: 'TAHAPAN LOMBA', 
+        tag: 'Juknis',
+        tagColor: 'text-blue-700 bg-blue-50 border-blue-200/80',
+        items: tahapan 
+      });
     }
 
-    return baseNav;
+    const penilaian = filterAccessible(basePenilaian);
+    if (penilaian.length > 0) {
+      sections.push({ 
+        id: 'penilaian', 
+        title: 'PENILAIAN & REKAP', 
+        tag: 'Penjurian',
+        tagColor: 'text-amber-700 bg-amber-50 border-amber-200/80',
+        items: penilaian 
+      });
+    }
+
+    const regulasiItems = [
+      { id: 'dokumen', index: '09', label: 'Pusat Dokumen & Regulasi', icon: BookOpen, view: 'dokumen', activeGradient: 'from-slate-700 to-slate-900' },
+    ];
+    if (userRole === 'superadmin') {
+      regulasiItems.push({ id: 'superadmin', index: '10', label: 'Master System', icon: Crown, view: 'superadmin', activeGradient: 'from-purple-700 to-indigo-700' });
+    }
+    sections.push({ 
+      id: 'sistem', 
+      title: 'SISTEM & REGULASI', 
+      tag: 'Sistem',
+      tagColor: 'text-purple-700 bg-purple-50 border-purple-200/80',
+      items: regulasiItems 
+    });
+
+    return sections;
   };
+
+  const navSections = getNavSections();
+  const getNavItems = () => navSections.flatMap(s => s.items);
 
   // Helper resolusi ikon modul untuk Standardized Header
   const getModuleIcon = (menuId) => {
@@ -387,6 +374,8 @@ export default function SimpaskorSidebarLayout({
   const isItemActive = (item) => {
     if (activeMenu === item.id) return true;
     if ((activeMenu === 'checkin' || activeMenu === 'checkout') && item.id === 'checkin') return true;
+    if ((activeMenu === 'field_trial' || activeMenu === 'uji_coba') && (item.id === 'field_trial' || item.id === 'uji_coba')) return true;
+    if ((activeMenu === 'live_leaderboard' || activeMenu === 'leaderboard' || activeMenu === 'klasemen') && item.id === 'klasemen') return true;
     if (userRole === 'peserta') return false;
 
     // Map legacy / contextual activeMenu
@@ -408,9 +397,14 @@ export default function SimpaskorSidebarLayout({
 
   const handleNavClick = (item) => {
     setIsMobileMenuOpen(false);
-    if (onSelectMenu && userRole === 'peserta' && item.view === 'peserta_dashboard') {
-      onSelectMenu(item.id);
-      return;
+    if (userRole === 'peserta' && item.view === 'peserta_dashboard') {
+      try {
+        localStorage.setItem('lbb_participant_active_tab', item.id);
+      } catch {}
+      if (onSelectMenu) {
+        onSelectMenu(item.id);
+        return;
+      }
     }
     if (item.stage && navigateToStage) {
       navigateToStage(item.stage);
@@ -426,13 +420,13 @@ export default function SimpaskorSidebarLayout({
 
   return (
     <div className="min-h-screen bg-[#F8F9FA] text-slate-800 flex font-sans">
-      {/* 1. DESKTOP SIDEBAR (Fixed Left, Clean SaaS Layout & Precision Aligned) */}
+      {/* 1. DESKTOP SIDEBAR (Clean & Minimalist SaaS Sidebar Sesuai Referensi) */}
       <aside
-        className={`hidden lg:flex flex-col bg-white border-r border-slate-200/80 fixed top-0 bottom-0 left-0 h-screen select-none shrink-0 z-30 shadow-[1px_0_12px_rgba(15,23,42,0.03)] transition-all duration-300 ${
-          isCollapsed ? 'w-[72px]' : 'w-72'
+        className={`hidden lg:flex flex-col bg-white border-r border-slate-200/70 fixed top-0 bottom-0 left-0 h-screen select-none shrink-0 z-30 transition-all duration-300 ${
+          isCollapsed ? 'w-[72px]' : 'w-64'
         }`}
       >
-        {/* Brand Header + Integrated Collapse Toggle */}
+        {/* Brand Header + Collapse Toggle */}
         <div
           className={`flex items-center shrink-0 border-b border-slate-100 ${
             isCollapsed ? 'flex-col gap-2 px-2 py-3 justify-center' : 'justify-between px-4 h-16'
@@ -449,14 +443,14 @@ export default function SimpaskorSidebarLayout({
               src={logoLbb}
               alt="Logo LBB Mu'allimin"
               className={`w-auto object-contain shrink-0 group-hover:scale-105 transition-transform ${
-                isCollapsed ? 'h-8' : 'h-9'
+                isCollapsed ? 'h-7' : 'h-8'
               }`}
             />
             {!isCollapsed && (
               <img
                 src={titleLogoImg}
                 alt="LBB Mu'allimin 2027"
-                className="h-7 w-auto max-w-[148px] object-contain"
+                className="h-6 w-auto max-w-[130px] object-contain"
               />
             )}
           </div>
@@ -465,7 +459,7 @@ export default function SimpaskorSidebarLayout({
             type="button"
             onClick={toggleSidebarCollapse}
             className="w-7 h-7 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center transition-colors shrink-0 cursor-pointer"
-            title={isCollapsed ? 'Perbesar Menu Samping' : 'Kecilkan Menu Samping'}
+            title={isCollapsed ? 'Perbesar Menu' : 'Kecilkan Menu'}
             aria-label={isCollapsed ? 'Perbesar Menu' : 'Kecilkan Menu'}
           >
             {isCollapsed ? (
@@ -476,94 +470,32 @@ export default function SimpaskorSidebarLayout({
           </button>
         </div>
 
-        {/* Navigation Content (Consistent vertical rhythm, scrollable if viewport is short) */}
+        {/* Navigation Content (Elevated Brand UI & Structured) */}
         <div className={`flex-1 overflow-y-auto no-scrollbar py-3 flex flex-col gap-4 ${
           isCollapsed ? 'px-2' : 'px-3'
         }`}>
-          {/* Section 1: Tahapan Lomba / Portal Peleton */}
-          <div>
-            {!isCollapsed && (
-              <div className="px-2.5 mb-2 flex items-center justify-between">
-                <span className="flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
-                  <span className="w-1 h-3 bg-red-600 rounded-full inline-block" />
-                  {userRole === 'peserta' ? 'Portal Peleton' : 'Tahapan Lomba'}
-                </span>
-                <span className="text-[9px] font-bold tracking-wide text-slate-500 bg-slate-100 border border-slate-200/70 px-2 py-0.5 rounded-full">
-                  {userRole === 'peserta' ? 'Official' : `${navItems.length} Tahap`}
-                </span>
-              </div>
-            )}
-
-            <div className="space-y-1">
-              {navItems.map((item, index) => {
-                const Icon = item.icon;
-                const isActive = isItemActive(item);
-                const stageNum = String(index + 1).padStart(2, '0');
-
-                return (
-                  <button
-                    key={item.id}
-                    type="button"
-                    onClick={() => handleNavClick(item)}
-                    title={item.label}
-                    className={`w-full flex items-center rounded-xl transition-all duration-150 cursor-pointer relative group ${
-                      isCollapsed ? 'justify-center p-2' : 'justify-between px-2.5 py-2'
-                    } ${
-                      isActive
-                        ? `${item.activeBg || 'bg-gradient-to-r from-red-600 to-rose-600'} text-white shadow-sm ${item.activeShadow || 'shadow-red-600/20'} font-bold`
-                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80 font-semibold'
-                    }`}
-                  >
-                    <div className={`flex items-center min-w-0 ${isCollapsed ? 'justify-center' : 'gap-3'}`}>
-                      <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-all duration-150 ${
-                        isActive
-                          ? 'bg-white/20 text-white'
-                          : 'bg-slate-100 group-hover:bg-white group-hover:shadow-2xs text-slate-500 group-hover:text-red-600'
-                      }`}>
-                        <Icon className="w-4 h-4" />
-                      </div>
-                      {!isCollapsed && (
-                        <span className="text-[12.5px] tracking-tight truncate leading-snug">
-                          {item.label}
-                        </span>
-                      )}
-                    </div>
-
-                    {!isCollapsed && (
-                      <div className="flex items-center shrink-0 ml-2">
-                        {isActive ? (
-                          <span className="w-1.5 h-1.5 rounded-full bg-white shadow-[0_0_6px_rgba(255,255,255,0.9)]" />
-                        ) : (
-                          <span className="text-[10px] font-mono font-semibold tabular-nums text-slate-400 group-hover:text-slate-600 transition-colors">
-                            {stageNum}
-                          </span>
-                        )}
-                      </div>
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Section 2: Dokumen & Regulasi + Master System */}
-          {(saasDocItems.length > 0 || userRole === 'superadmin') && (
-            <div className={`pt-3 border-t border-slate-100 ${isCollapsed ? 'border-dashed' : ''}`}>
+          {navSections.map((section) => (
+            <div key={section.id} className="space-y-1">
               {!isCollapsed && (
-                <div className="px-2.5 mb-2 flex items-center justify-between">
-                  <span className="flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
-                    <span className="w-1 h-3 bg-slate-400 rounded-full inline-block" />
-                    {userRole === 'superadmin' ? 'Regulasi & Sistem' : 'Dokumen & Regulasi'}
-                  </span>
+                <div className="px-2 pt-1 pb-1 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="w-1.5 h-3.5 bg-red-600 rounded-full inline-block shrink-0" />
+                    <span className="text-[11px] font-black tracking-wider text-slate-500 uppercase">
+                      {section.title}
+                    </span>
+                  </div>
+                  {section.tag && (
+                    <span className={`text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border ${section.tagColor || 'text-slate-600 bg-slate-100 border-slate-200'}`}>
+                      {section.tag}
+                    </span>
+                  )}
                 </div>
               )}
 
               <div className="space-y-1">
-                {saasDocItems.map(item => {
+                {section.items.map((item) => {
                   const Icon = item.icon;
-                  const isActive = item.id === 'dokumen'
-                    ? ['dokumen', 'juknis', 'tatib', 'rundown', 'proposal', 'timeline'].includes(activeMenu)
-                    : activeMenu === item.id;
+                  const isActive = isItemActive(item);
 
                   return (
                     <button
@@ -571,115 +503,104 @@ export default function SimpaskorSidebarLayout({
                       type="button"
                       onClick={() => handleNavClick(item)}
                       title={item.label}
-                      className={`w-full flex items-center rounded-xl transition-all duration-150 cursor-pointer group ${
-                        isCollapsed ? 'justify-center p-2' : 'justify-between px-2.5 py-2'
+                      className={`w-full flex items-center transition-all duration-200 cursor-pointer group ${
+                        isCollapsed ? 'justify-center p-2 rounded-2xl' : 'justify-between px-2.5 py-2 rounded-2xl'
                       } ${
                         isActive
-                          ? 'bg-slate-900 text-white shadow-sm font-bold'
-                          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80 font-semibold'
+                          ? `bg-gradient-to-r ${item.activeGradient || 'from-teal-700 to-emerald-600'} text-white shadow-md shadow-emerald-950/20`
+                          : 'text-slate-700 hover:text-slate-900 hover:bg-slate-100/80 font-bold'
                       }`}
                     >
-                      <div className={`flex items-center min-w-0 ${isCollapsed ? 'justify-center' : 'gap-3'}`}>
-                        <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-all ${
+                      <div className={`flex items-center min-w-0 ${isCollapsed ? 'justify-center' : 'gap-2.5'}`}>
+                        {/* Squircle Icon Container */}
+                        <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 ${
                           isActive
-                            ? 'bg-white/15 text-white'
-                            : 'bg-slate-100 group-hover:bg-white group-hover:shadow-2xs text-slate-500 group-hover:text-slate-800'
+                            ? 'bg-white/20 text-white backdrop-blur-xs shadow-2xs'
+                            : 'bg-slate-100 text-slate-500 group-hover:bg-white group-hover:text-slate-900 group-hover:shadow-xs group-hover:scale-105'
                         }`}>
-                          <Icon className="w-4 h-4" />
+                          <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white stroke-[2.2]' : 'stroke-[1.9]'}`} />
                         </div>
+
                         {!isCollapsed && (
-                          <span className="text-[12.5px] tracking-tight truncate leading-snug">
+                          <span className={`text-[13px] font-bold truncate tracking-tight ${
+                            isActive ? 'text-white' : 'text-slate-700 group-hover:text-slate-900'
+                          }`}>
                             {item.label}
                           </span>
                         )}
                       </div>
+
+                      {!isCollapsed && (
+                        <div className="flex items-center gap-2 shrink-0 ml-2">
+                          {item.badge ? (
+                            <span className={`text-[11px] font-black px-2 py-0.5 rounded-full ${
+                              isActive
+                                ? 'bg-white text-slate-900 shadow-2xs'
+                                : 'bg-slate-100 text-slate-600 border border-slate-200/60'
+                            }`}>
+                              {item.badge}
+                            </span>
+                          ) : item.index ? (
+                            isActive ? null : (
+                              <span className="text-[11px] font-mono font-bold text-slate-400 group-hover:text-slate-600">
+                                {item.index}
+                              </span>
+                            )
+                          ) : null}
+
+                          {/* Active Glowing Dot Indicator */}
+                          {isActive && (
+                            <span className="w-2.5 h-2.5 rounded-full bg-white shadow-xs shrink-0" />
+                          )}
+                        </div>
+                      )}
                     </button>
                   );
                 })}
-
-                {/* Master System (KHUSUS Superadmin Tertinggi: tontimuallimin2026@gmail.com) */}
-                {userRole === 'superadmin' && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsMobileMenuOpen(false);
-                      setActiveView('superadmin');
-                    }}
-                    title="Master System"
-                    className={`w-full flex items-center rounded-xl transition-all duration-150 cursor-pointer group ${
-                      isCollapsed ? 'justify-center p-2' : 'justify-between px-2.5 py-2'
-                    } ${
-                      activeMenu === 'superadmin'
-                        ? 'bg-gradient-to-r from-purple-700 to-indigo-700 text-white shadow-sm shadow-purple-600/25 font-bold'
-                        : 'text-slate-600 hover:text-purple-900 hover:bg-purple-50/70 font-semibold'
-                    }`}
-                  >
-                    <div className={`flex items-center min-w-0 ${isCollapsed ? 'justify-center' : 'gap-3'}`}>
-                      <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-all ${
-                        activeMenu === 'superadmin'
-                          ? 'bg-white/20 text-white'
-                          : 'bg-purple-100/80 group-hover:bg-purple-100 text-purple-700'
-                      }`}>
-                        <Crown className="w-4 h-4" />
-                      </div>
-                      {!isCollapsed && (
-                        <span className="text-[12.5px] tracking-tight truncate leading-snug">
-                          Master System
-                        </span>
-                      )}
-                    </div>
-                  </button>
-                )}
               </div>
             </div>
-          )}
+          ))}
         </div>
 
-        {/* User Card & Quick Actions Footer */}
-        <div className={`border-t border-slate-100 shrink-0 ${isCollapsed ? 'p-2' : 'p-3'}`}>
-          <div className={`bg-slate-50/90 border border-slate-200/80 rounded-xl transition-all ${
-            isCollapsed ? 'p-1.5 flex flex-col items-center gap-1.5' : 'p-2.5 flex items-center justify-between gap-2'
-          }`}>
-            {isCollapsed ? (
-              <>
-                <div className="relative flex items-center justify-center">
-                  <img
-                    src={avatarUrl}
-                    alt={displayName}
-                    className="w-8 h-8 rounded-lg object-cover ring-1 ring-slate-200 shadow-2xs"
-                    title={`${displayName} (${displaySubtitle})`}
-                  />
-                  <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-white" />
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setActiveView('landing')}
-                  className="w-7 h-7 flex items-center justify-center rounded-lg text-slate-500 hover:text-slate-900 hover:bg-white transition-all cursor-pointer"
-                  title="Ke Beranda Depan"
-                >
-                  <Home className="w-3.5 h-3.5" />
-                </button>
-                <button
-                  type="button"
-                  onClick={handleLogout}
-                  className="w-7 h-7 flex items-center justify-center rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-all cursor-pointer"
-                  title="Keluar (Logout)"
-                >
-                  <LogOut className="w-3.5 h-3.5" />
-                </button>
-              </>
-            ) : (
-              <>
-                {/* User Info Left */}
+        {/* User Card Footer (Elevated SaaS Profile Card) */}
+        <div id="user-profile-menu-container" className={`border-t border-slate-100 shrink-0 relative ${isCollapsed ? 'p-2' : 'p-3'}`}>
+          {isCollapsed ? (
+            <div className="flex flex-col items-center gap-2.5">
+              <div className="relative flex items-center justify-center">
+                <img
+                  src={avatarUrl}
+                  alt={displayName}
+                  className="w-10 h-10 rounded-2xl object-cover ring-1 ring-slate-200/90 shadow-2xs shrink-0 cursor-pointer hover:ring-2 hover:ring-emerald-500 transition-all"
+                  title={`${displayName} (${displaySubtitle})`}
+                  onClick={() => setShowUserMenu(!showUserMenu)}
+                />
+                <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-white shadow-2xs" />
+              </div>
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="w-8 h-8 flex items-center justify-center rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                title="Keluar (Logout)"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
+            </div>
+          ) : (
+            <>
+              <div
+                onClick={() => setShowUserMenu(!showUserMenu)}
+                className="flex items-center justify-between p-2 rounded-2xl hover:bg-slate-100/80 transition-all cursor-pointer group border border-transparent hover:border-slate-200/80"
+                title="Klik untuk opsi akun"
+              >
                 <div className="flex items-center gap-2.5 min-w-0 flex-1">
                   <div className="relative shrink-0">
                     <img
                       src={avatarUrl}
                       alt={displayName}
-                      className={`w-9 h-9 rounded-xl shadow-2xs shrink-0 ${
+                      className={`w-10 h-10 rounded-2xl shrink-0 shadow-2xs ${
                         isSchoolLogo
-                          ? 'object-contain bg-white p-0.5 border border-slate-200'
-                          : 'object-cover ring-1 ring-slate-200/90 bg-slate-900 text-[10px]'
+                          ? 'object-contain bg-white p-1 border border-slate-200'
+                          : 'object-cover ring-1 ring-slate-200'
                       }`}
                       loading="lazy"
                       decoding="async"
@@ -691,40 +612,41 @@ export default function SimpaskorSidebarLayout({
                         }
                       }}
                     />
-                    <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-white" title="Akun Aktif" />
+                    <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-white shadow-2xs" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <div className="text-xs font-bold text-slate-900 leading-snug truncate" title={displayName}>
+                    <div className="text-xs font-bold text-slate-900 leading-tight truncate">
                       {displayName}
                     </div>
-                    <div className="text-[10.5px] text-slate-500 truncate leading-tight mt-0.5" title={displaySubtitle}>
+                    <div className="text-[11px] font-medium text-slate-400 truncate leading-tight mt-0.5">
                       {currentUser?.email || currentTeam?.email || (userRole === 'superadmin' ? 'Administrator' : userRole === 'peserta' ? 'Official Tim' : 'Panitia LBB')}
                     </div>
                   </div>
                 </div>
 
-                {/* Quick Action Icons Right */}
-                <div className="flex items-center gap-1 shrink-0">
+                <div className="p-1.5 rounded-xl text-slate-400 group-hover:text-slate-700 group-hover:bg-white transition-all shrink-0">
+                  <MoreVertical className="w-4 h-4" />
+                </div>
+              </div>
+
+              {/* Popover Dropdown Akun */}
+              {showUserMenu && (
+                <div className="absolute bottom-16 left-3 right-3 bg-white rounded-2xl border border-slate-200 shadow-xl p-1.5 z-50 animate-in fade-in slide-in-from-bottom-2">
                   <button
                     type="button"
-                    onClick={() => setActiveView('landing')}
-                    className="w-7 h-7 flex items-center justify-center rounded-lg text-slate-500 hover:text-slate-900 hover:bg-white border border-transparent hover:border-slate-200/80 transition-all cursor-pointer active:scale-95"
-                    title="Kembali ke Beranda Utama"
+                    onClick={() => {
+                      setShowUserMenu(false);
+                      handleLogout();
+                    }}
+                    className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-rose-600 hover:text-rose-700 hover:bg-rose-50 transition-colors text-left cursor-pointer"
                   >
-                    <Home className="w-3.5 h-3.5" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleLogout}
-                    className="w-7 h-7 flex items-center justify-center rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 border border-transparent hover:border-red-200/80 transition-all cursor-pointer active:scale-95"
-                    title="Keluar dari akun ini"
-                  >
-                    <LogOut className="w-3.5 h-3.5" />
+                    <LogOut className="w-4 h-4 text-rose-500" />
+                    <span>Keluar (Logout)</span>
                   </button>
                 </div>
-              </>
-            )}
-          </div>
+              )}
+            </>
+          )}
         </div>
       </aside>
 
@@ -759,113 +681,76 @@ export default function SimpaskorSidebarLayout({
                 </button>
               </div>
 
-              <div className="space-y-1 overflow-y-auto no-scrollbar flex-1 pb-2">
-                <div className="text-[10px] font-black uppercase tracking-wider text-slate-400 px-3 pt-1 mb-2 flex items-center justify-between">
-                  <span className="flex items-center gap-1.5">
-                    <span className="w-1 h-3.5 bg-red-600 rounded-full inline-block" />
-                    {userRole === 'peserta' ? 'Portal Peleton' : 'Tahapan Lomba'}
-                  </span>
-                  <span className="text-[9px] font-bold tracking-wider text-slate-500 bg-slate-100 border border-slate-200/60 px-2 py-0.5 rounded-full">
-                    {userRole === 'peserta' ? 'Official' : `${navItems.length} Tahap`}
-                  </span>
-                </div>
-                {navItems.map((item, index) => {
-                  const Icon = item.icon;
-                  const isActive = isItemActive(item);
-                  const stageNum = String(index + 1).padStart(2, '0');
-
-                  return (
-                    <button
-                      key={item.id}
-                      type="button"
-                      onClick={() => handleNavClick(item)}
-                      className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                        isActive
-                          ? `${item.activeBg || 'bg-gradient-to-r from-red-600 to-rose-600'} text-white shadow-md ${item.activeShadow || 'shadow-red-500/25'} font-black`
-                          : 'text-slate-600 hover:text-slate-950 hover:bg-slate-100'
-                      }`}
-                    >
-                      <div className="flex items-center gap-2.5 min-w-0">
-                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
-                          isActive ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500'
-                        }`}>
-                          <Icon className="w-4 h-4" />
-                        </div>
-                        <span className="truncate">{item.label}</span>
+              <div className="space-y-4 overflow-y-auto no-scrollbar flex-1 pb-2">
+                {navSections.map(section => (
+                  <div key={section.id} className="space-y-1">
+                    <div className="px-3 pt-1 pb-1 flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="w-1.5 h-3.5 bg-red-600 rounded-full inline-block shrink-0" />
+                        <span className="text-[11px] font-black tracking-wider text-slate-500 uppercase">
+                          {section.title}
+                        </span>
                       </div>
-                      <span className={`text-[10px] font-mono shrink-0 ml-2 ${
-                        isActive ? 'text-white/90 font-bold' : 'text-slate-400'
-                      }`}>
-                        {stageNum}
-                      </span>
-                    </button>
-                  );
-                })}
-
-                {/* Dokumen & Regulasi + Master System Mobile */}
-                {(saasDocItems.length > 0 || userRole === 'superadmin') && (
-                  <div className="pt-3 mt-2 border-t border-slate-100 space-y-1">
-                    <div className="text-[10px] font-black uppercase tracking-wider text-slate-400 px-3 mb-1.5 flex items-center justify-between">
-                      <span className="flex items-center gap-1.5">
-                        <span className="w-1 h-3 bg-slate-400 rounded-full inline-block" />
-                        {userRole === 'superadmin' ? 'Regulasi & Sistem' : 'Dokumen & Regulasi'}
-                      </span>
+                      {section.tag && (
+                        <span className={`text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border ${section.tagColor || 'text-slate-600 bg-slate-100 border-slate-200'}`}>
+                          {section.tag}
+                        </span>
+                      )}
                     </div>
-                    {saasDocItems.map(item => {
-                      const Icon = item.icon;
-                      const isActive = item.id === 'dokumen'
-                        ? ['dokumen', 'juknis', 'tatib', 'rundown', 'proposal', 'timeline'].includes(activeMenu)
-                        : activeMenu === item.id;
+                    <div className="space-y-1">
+                      {section.items.map(item => {
+                        const Icon = item.icon;
+                        const isActive = isItemActive(item);
 
-                      return (
-                        <button
-                          key={item.id}
-                          type="button"
-                          onClick={() => handleNavClick(item)}
-                          className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                            isActive
-                              ? 'bg-slate-900 text-white shadow-md font-black'
-                              : 'text-slate-600 hover:text-slate-950 hover:bg-slate-100'
-                          }`}
-                        >
-                          <div className="flex items-center gap-2.5 min-w-0">
-                            <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
-                              isActive ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500'
-                            }`}>
-                              <Icon className="w-4 h-4" />
+                        return (
+                          <button
+                            key={item.id}
+                            type="button"
+                            onClick={() => handleNavClick(item)}
+                            className={`w-full flex items-center justify-between px-2.5 py-2 rounded-2xl text-[13px] transition-all cursor-pointer ${
+                              isActive
+                                ? `bg-gradient-to-r ${item.activeGradient || 'from-teal-700 to-emerald-600'} text-white shadow-md shadow-emerald-950/20`
+                                : 'text-slate-700 hover:text-slate-900 hover:bg-slate-100/80 font-bold'
+                            }`}
+                          >
+                            <div className="flex items-center gap-2.5 min-w-0">
+                              <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-all ${
+                                isActive
+                                  ? 'bg-white/20 text-white backdrop-blur-xs shadow-2xs'
+                                  : 'bg-slate-100 text-slate-500'
+                              }`}>
+                                <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white stroke-[2.2]' : 'stroke-[1.9]'}`} />
+                              </div>
+                              <span className={`font-bold truncate tracking-tight ${isActive ? 'text-white' : 'text-slate-700'}`}>
+                                {item.label}
+                              </span>
                             </div>
-                            <span className="truncate">{item.label}</span>
-                          </div>
-                        </button>
-                      );
-                    })}
-
-                    {/* Master System (KHUSUS Superadmin Tertinggi: tontimuallimin2026@gmail.com) */}
-                    {userRole === 'superadmin' && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setIsMobileMenuOpen(false);
-                          setActiveView('superadmin');
-                        }}
-                        className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                          activeMenu === 'superadmin'
-                            ? 'bg-gradient-to-r from-purple-700 to-indigo-700 text-white shadow-md shadow-purple-600/30 font-black'
-                            : 'text-slate-600 hover:text-purple-950 hover:bg-purple-50/70'
-                        }`}
-                      >
-                        <div className="flex items-center gap-2.5 min-w-0">
-                          <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
-                            activeMenu === 'superadmin' ? 'bg-white/20 text-white' : 'bg-purple-100 text-purple-700'
-                          }`}>
-                            <Crown className="w-4 h-4" />
-                          </div>
-                          <span className="truncate">Master System</span>
-                        </div>
-                      </button>
-                    )}
+                            <div className="flex items-center gap-2 shrink-0 ml-2">
+                              {item.badge ? (
+                                <span className={`text-[11px] font-black px-2 py-0.5 rounded-full ${
+                                  isActive
+                                    ? 'bg-white text-slate-900 shadow-2xs'
+                                    : 'bg-slate-100 text-slate-600 border border-slate-200/60'
+                                }`}>
+                                  {item.badge}
+                                </span>
+                              ) : item.index ? (
+                                isActive ? null : (
+                                  <span className="text-[11px] font-mono font-bold text-slate-400">
+                                    {item.index}
+                                  </span>
+                                )
+                              ) : null}
+                              {isActive && (
+                                <span className="w-2.5 h-2.5 rounded-full bg-white shadow-xs shrink-0" />
+                              )}
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
-                )}
+                ))}
               </div>
             </div>
 
@@ -915,29 +800,18 @@ export default function SimpaskorSidebarLayout({
                   </div>
                 </div>
 
-                {/* Split Action Buttons: Beranda & Keluar */}
-                <div className="grid grid-cols-2 gap-1.5 pt-2 mt-2 border-t border-slate-200/60">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsMobileMenuOpen(false);
-                      setActiveView('landing');
-                    }}
-                    className="flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-xl bg-white hover:bg-slate-100 border border-slate-200/80 text-slate-700 text-[11px] font-bold transition-all cursor-pointer shadow-2xs active:scale-95"
-                  >
-                    <Home className="w-3.5 h-3.5 text-slate-500" />
-                    <span>Beranda</span>
-                  </button>
+                {/* Action Button: Keluar */}
+                <div className="pt-2 mt-2 border-t border-slate-200/60">
                   <button
                     type="button"
                     onClick={() => {
                       setIsMobileMenuOpen(false);
                       handleLogout();
                     }}
-                    className="flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-xl bg-white hover:bg-red-50 border border-slate-200/80 hover:border-red-200 text-slate-600 hover:text-red-700 text-[11px] font-bold transition-all cursor-pointer shadow-2xs active:scale-95"
+                    className="w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-white hover:bg-rose-50 border border-slate-200/80 hover:border-rose-200 text-slate-600 hover:text-rose-700 text-xs font-semibold transition-all cursor-pointer shadow-2xs active:scale-95"
                   >
-                    <LogOut className="w-3.5 h-3.5 text-slate-400" />
-                    <span>Keluar</span>
+                    <LogOut className="w-3.5 h-3.5 text-rose-500" />
+                    <span>Keluar (Logout)</span>
                   </button>
                 </div>
               </div>
@@ -948,7 +822,7 @@ export default function SimpaskorSidebarLayout({
 
       {/* 3. MAIN CONTENT AREA (Offset dinamis: lg:pl-[72px] saat collapsed, lg:pl-72 saat expanded) */}
       <div className={`flex-1 flex flex-col min-w-0 pb-24 lg:pb-8 transition-all duration-300 ${
-        isCollapsed ? 'lg:pl-[72px]' : 'lg:pl-72'
+        isCollapsed ? 'lg:pl-[72px]' : 'lg:pl-64'
       }`}>
         {/* Mobile-only Header Bar (Branding & Menu Toggle) */}
         <div className="lg:hidden px-3 sm:px-4 py-2.5 sm:py-3 bg-white/90 backdrop-blur-md border-b border-slate-200/70 flex items-center justify-between sticky top-0 z-20">
@@ -1056,7 +930,7 @@ export default function SimpaskorSidebarLayout({
         aria-label="Navigasi Menu Utama Mobile"
         className="lg:hidden fixed bottom-3.5 left-1/2 -translate-x-1/2 z-40 bg-white/95 backdrop-blur-2xl border border-slate-200/90 rounded-full p-1.5 shadow-[0_12px_36px_rgba(15,23,42,0.12)] flex items-center justify-between gap-1 max-w-[92vw] sm:max-w-md transition-all duration-300"
       >
-        {navItems.slice(0, 5).map(item => {
+        {navItems.map(item => {
           const Icon = item.icon;
           const isActive = isItemActive(item);
           return (

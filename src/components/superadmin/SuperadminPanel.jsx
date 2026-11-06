@@ -111,7 +111,8 @@ export default function SuperadminPanel() {
     deleteStaffUser,
     currentUser,
     role,
-    openAuthModal
+    openAuthModal,
+    loginUser
   } = useCompetition();
 
   const userRole = currentUser?.role || role;
@@ -1195,7 +1196,7 @@ export default function SuperadminPanel() {
               Data pendaftar asli dari Google Sheet <strong>diblokir secara otomatis di localhost</strong> untuk menjaga kerahasiaan data riil. Anda dapat menggunakan tombol di bawah untuk menguji simulasi alur <strong>Technical Meeting (Undian Nomor Dada)</strong>, <strong>Jadwal Uji Coba Lapangan</strong>, dan <strong>Penjurian (E-Scoring)</strong>.
             </p>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-1">
               <button
                 type="button"
                 onClick={() => {
@@ -1250,6 +1251,26 @@ export default function SuperadminPanel() {
                 </span>
                 <span className="text-[11px] text-slate-300 mt-1 block">
                   Kembalikan ke status "Belum Diundi" untuk menguji proses undian manual di TM.
+                </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={async () => {
+                  const targetTeam = teams.find(t => t.jenjang === 'SD' && t.status !== 'pending') || teams[0];
+                  if (targetTeam?.email) {
+                    await loginUser(targetTeam.email);
+                    setActiveView('peserta_dashboard');
+                  }
+                }}
+                className="p-4 bg-purple-600/30 hover:bg-purple-600/50 border border-purple-400/40 rounded-2xl text-left transition-all active:scale-95 cursor-pointer group"
+              >
+                <Users className="w-5 h-5 text-purple-400 mb-2 group-hover:scale-110 transition-transform" />
+                <span className="font-black text-xs uppercase tracking-wider text-white block">
+                  4. Masuk Dashboard Peserta
+                </span>
+                <span className="text-[11px] text-slate-300 mt-1 block">
+                  Langsung buka simulasi portal peleton SD Sapen (#01) & floating pill nav.
                 </span>
               </button>
             </div>

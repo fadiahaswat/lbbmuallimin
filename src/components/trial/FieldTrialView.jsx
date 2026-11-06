@@ -41,12 +41,12 @@ import {
 } from './trialPlanGenerator.js';
 
 export default function FieldTrialView() {
-  const { teams, settings, updateSettings, role, currentUser } = useCompetition();
+  const { teams, settings, updateSettings, role, currentUser, currentTeam } = useCompetition();
 
   // Role permissions
-  const userRole = currentUser?.role || role || 'publik';
-  const isStaff = ['admin', 'superadmin', 'checkin', 'dp', 'staging', 'panitia'].includes(userRole) ||
-    (typeof window !== 'undefined' && ['localhost', '127.0.0.1'].includes(window.location.hostname));
+  const userRole = currentUser?.role || (currentTeam ? 'peserta' : (role || 'publik'));
+  const isPeserta = userRole === 'peserta';
+  const isStaff = !isPeserta && userRole !== 'publik' && ['admin', 'superadmin', 'checkin', 'dp', 'staging', 'panitia'].includes(userRole);
   const isPublished = Boolean(settings?.trialSchedulePublished);
 
   // Interactive Swap & Team Assign state for Panitia
@@ -96,6 +96,34 @@ export default function FieldTrialView() {
   const trialAttendance = useMemo(() => {
     return settings?.trialAttendance || {};
   }, [settings?.trialAttendance]);
+
+  // Slot Peleton Anda (Khusus Role Peserta)
+  const myTeamTrialSlot = useMemo(() => {
+    if (!currentTeam?.id) return null;
+    const sdSlots = currentPlan?.SD?.slots || [];
+    const smpSlots = currentPlan?.SMP?.slots || [];
+    for (let i = 0; i < sdSlots.length; i++) {
+      if (sdSlots[i] === currentTeam.id) {
+        return {
+          jenjang: 'SD',
+          slotIdx: i,
+          slotInfo: TRIAL_TIME_SLOTS[i] || { slotNumber: i + 1, timeRange: '-' },
+          attendance: trialAttendance[currentTeam.id] || null
+        };
+      }
+    }
+    for (let i = 0; i < smpSlots.length; i++) {
+      if (smpSlots[i] === currentTeam.id) {
+        return {
+          jenjang: 'SMP',
+          slotIdx: i,
+          slotInfo: TRIAL_TIME_SLOTS[i] || { slotNumber: i + 1, timeRange: '-' },
+          attendance: trialAttendance[currentTeam.id] || null
+        };
+      }
+    }
+    return null;
+  }, [currentTeam?.id, currentPlan, trialAttendance]);
 
   // Priority 1: Declined teams
   const declinedTeams = useMemo(() => {
@@ -382,9 +410,9 @@ export default function FieldTrialView() {
     if (!team) {
       return (
         <div
-          onClick={() => handleSlotClick(jenjang, slotIdx, null)}
+          onClick={() => isStaff && !isPublished && handleSlotClick(jenjang, slotIdx, null)}
           className={`py-2.5 sm:py-3.5 px-2 sm:px-3 rounded-xl border border-dashed text-center text-slate-400 transition-colors ${
-            isStaff && !isPublished ? 'cursor-pointer hover:border-slate-400 hover:text-slate-700 hover:bg-slate-50' : ''
+            isStaff && !isPublished ? 'cursor-pointer hover:border-slate-400 hover:text-slate-700 hover:bg-slate-50' : 'bg-slate-50/50 border-slate-200'
           }`}
         >
           <span className="text-[10px] sm:text-[11px] font-bold leading-tight block">
@@ -396,6 +424,7 @@ export default function FieldTrialView() {
 
     const isSwapSelected = swapSource?.jenjang === jenjang && swapSource?.slotIdx === slotIdx;
     const isTeamActiveSelected = activeSelectedTeam?.team?.id === team.id;
+    const isMyTeam = (currentTeam?.id && team.id === currentTeam.id) || (currentUser?.teamId && team.id === currentUser.teamId);
     const att = trialAttendance[team.id];
     const isCheckedIn = att?.status === 'checked_in';
     const isCheckedOut = att?.status === 'checked_out';
@@ -408,20 +437,25 @@ export default function FieldTrialView() {
     return (
       <div
         onClick={() => {
-          if (isStaff && !isPublished && swapSource) {
+          if (!isStaff) return;
+          if (!isPublished && swapSource) {
             handleSlotClick(jenjang, slotIdx, team.id);
           } else {
             setActiveSelectedTeam({ team, slotInfo, jenjang, slotIdx });
           }
         }}
-        className={`p-2 sm:p-2.5 md:p-3 bg-white rounded-xl border flex flex-col justify-between gap-1.5 sm:gap-2 shadow-2xs group transition-all cursor-pointer ${
+        className={`p-2 sm:p-2.5 md:p-3 bg-white rounded-xl border flex flex-col justify-between gap-1.5 sm:gap-2 shadow-2xs group transition-all ${
+          isStaff ? 'cursor-pointer' : ''
+        } ${
           isSwapSelected
             ? 'border-amber-400 ring-2 ring-amber-400 bg-amber-50/50'
             : isTeamActiveSelected
             ? 'border-emerald-500 ring-2 ring-emerald-500 bg-emerald-50/20 shadow-xs'
+            : isMyTeam
+            ? 'border-emerald-500 ring-2 ring-emerald-500/70 bg-emerald-50/30 shadow-sm'
             : themeBorder
         }`}
-        title={isStaff && !isPublished && swapSource ? 'Klik untuk menukar slot' : 'Klik untuk memilih di Pos Presensi Kiri'}
+        title={isStaff && !isPublished && swapSource ? 'Klik untuk menukar slot' : isStaff ? 'Klik untuk memilih di Pos Presensi Kiri' : team.schoolName}
       >
         {/* Atas: Nama Sekolah, TM Badge & Aksi Copot */}
         <div className="flex items-start justify-between gap-1 min-w-0">
@@ -430,6 +464,11 @@ export default function FieldTrialView() {
               {team.schoolName}
             </h4>
             <div className="flex items-center gap-1 flex-wrap">
+              {isMyTeam && (
+                <span className="px-1.5 py-0.2 rounded font-black text-[9px] bg-emerald-600 text-white shadow-xs shrink-0 uppercase tracking-wider">
+                  Peleton Anda
+                </span>
+              )}
               {team.lotNumber && (
                 <span className={`px-1.5 py-0.2 rounded font-mono font-black text-[9px] border shrink-0 ${
                   jenjang === 'SD' ? 'bg-red-100 text-red-900 border-red-300' : 'bg-blue-100 text-blue-900 border-blue-300'
@@ -502,15 +541,17 @@ export default function FieldTrialView() {
       fullWidth={true}
       rightActions={
         <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => setShowRecapModal(true)}
-            className="px-3 py-1.5 rounded-xl bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 text-xs font-bold transition-all flex items-center gap-1.5 shadow-2xs cursor-pointer"
-            title="Lihat Rekap Presensi & Cetak"
-          >
-            <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600" />
-            <span className="hidden sm:inline">Rekap Presensi</span>
-          </button>
+          {isStaff && (
+            <button
+              type="button"
+              onClick={() => setShowRecapModal(true)}
+              className="px-3 py-1.5 rounded-xl bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 text-xs font-bold transition-all flex items-center gap-1.5 shadow-2xs cursor-pointer"
+              title="Lihat Rekap Presensi & Cetak"
+            >
+              <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600" />
+              <span className="hidden sm:inline">Rekap Presensi</span>
+            </button>
+          )}
 
           <a
             href={VENUE.MAPS_URL || "https://maps.app.goo.gl/fVMgg5xZcwRQ4kN78"}
@@ -528,12 +569,14 @@ export default function FieldTrialView() {
       {/* ======================================================== */}
       {/* 2 BAGIAN SPLIT: KIRI (POS AKSI PRESENSI) & KANAN (JADWAL) */}
       {/* ======================================================== */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-3.5 sm:gap-4 items-start">
+      <div className={`grid grid-cols-1 ${isStaff ? 'lg:grid-cols-12' : ''} gap-3.5 sm:gap-4 items-start`}>
 
         {/* -------------------------------------------------------- */}
         {/* BAGIAN KIRI: POS OPERASIONAL & AKSI CHECK-IN / CHECK-OUT  */}
+        {/* KHUSUS ROLE STAFF / PANITIA (TIDAK TAMPIL UNTUK PESERTA) */}
         {/* -------------------------------------------------------- */}
-        <div className="lg:col-span-4 xl:col-span-4 space-y-3.5 lg:sticky lg:top-4">
+        {isStaff && (
+          <div className="lg:col-span-4 xl:col-span-4 space-y-3.5 lg:sticky lg:top-4">
 
           {/* MASTER CARD: POS PRESENSI & KONTROL GLADI */}
           <div className="bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden">
@@ -881,12 +924,100 @@ export default function FieldTrialView() {
             </p>
           </div>
 
-        </div>
+          </div>
+        )}
 
         {/* -------------------------------------------------------- */}
         {/* BAGIAN KANAN: KHUSUS MATRIKS JADWAL SAJA                 */}
         {/* -------------------------------------------------------- */}
-        <div className="lg:col-span-8 xl:col-span-8 space-y-3.5">
+        <div className={`${isStaff ? 'lg:col-span-8 xl:col-span-8' : 'w-full'} space-y-3.5`}>
+
+          {/* BANNER JADWAL PELETON ANDA (KHUSUS ROLE PESERTA) */}
+          {isPeserta && currentTeam && (
+            <div className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 shadow-xs space-y-3.5">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-teal-50 border border-teal-200 text-teal-700 flex items-center justify-center shrink-0">
+                    <Compass className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-teal-100 text-teal-800 border border-teal-200">
+                        Peleton Anda
+                      </span>
+                      {currentTeam.jenjang && (
+                        <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full ${
+                          currentTeam.jenjang === 'SD' ? 'bg-red-50 text-red-700 border border-red-200' : 'bg-blue-50 text-blue-700 border border-blue-200'
+                        }`}>
+                          Jenjang {currentTeam.jenjang}
+                        </span>
+                      )}
+                    </div>
+                    <h3 className="text-base sm:text-lg font-black text-slate-900 mt-0.5">
+                      {currentTeam.schoolName}
+                    </h3>
+                  </div>
+                </div>
+
+                {/* Status Presensi Peleton */}
+                <div className="flex items-center gap-2 self-start sm:self-auto">
+                  {myTeamTrialSlot?.attendance?.status === 'checked_out' ? (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-700 border border-slate-200">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                      Gladi Selesai ({myTeamTrialSlot.attendance.checkOutTime})
+                    </span>
+                  ) : myTeamTrialSlot?.attendance?.status === 'checked_in' ? (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black bg-emerald-50 text-emerald-800 border border-emerald-300">
+                      <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                      Standby di Lokasi ({myTeamTrialSlot.attendance.checkInTime})
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200">
+                      <Clock className="w-3.5 h-3.5 text-amber-600" />
+                      Belum Tiba (Standby 30 mnt sebelumnya)
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Detail Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
+                  <span className="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">
+                    Arena Lapangan
+                  </span>
+                  <p className="text-xs sm:text-sm font-black text-slate-800 mt-0.5">
+                    {myTeamTrialSlot ? `Arena ${myTeamTrialSlot.jenjang} (Lapangan Utama)` : (isTeamWillingToTrial(currentTeam) ? 'Sedang Dijadwalkan' : 'Menolak Gladi')}
+                  </p>
+                </div>
+
+                <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
+                  <span className="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">
+                    Waktu / Slot Giliran
+                  </span>
+                  <p className="text-xs sm:text-sm font-black text-slate-800 mt-0.5">
+                    {myTeamTrialSlot ? `${myTeamTrialSlot.slotInfo.timeRange} WIB (Slot #${myTeamTrialSlot.slotInfo.slotNumber})` : '-'}
+                  </p>
+                </div>
+
+                <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
+                  <span className="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">
+                    Tanggal Pelaksanaan
+                  </span>
+                  <p className="text-xs sm:text-sm font-black text-slate-800 mt-0.5">
+                    {EVENT.FIELD_TRIAL_FULL_DATE || 'Sabtu, 16 Jan 2027'}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between text-xs text-slate-500 pt-0.5">
+                <span>
+                  💡 Orientasi kontur lapangan maksimal 15 menit. Danton & pendamping wajib melapor ke Pos Presensi kedatangan saat tiba di lokasi.
+                </span>
+              </div>
+            </div>
+          )}
+
 
           {/* Hint Swap Sedang Aktif */}
           {swapSource && (
@@ -1249,7 +1380,7 @@ export default function FieldTrialView() {
       {/* ======================================================== */}
       {/* MODAL: REKAP PRESENSI UJI COBA (CETAK / PRINT VIEW)      */}
       {/* ======================================================== */}
-      {showRecapModal && (
+      {isStaff && showRecapModal && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 animate-in fade-in">
           <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl w-full max-w-4xl overflow-hidden flex flex-col max-h-[90vh]">
             <div className="p-4 bg-slate-900 text-white flex items-center justify-between">
@@ -1388,7 +1519,7 @@ export default function FieldTrialView() {
       {/* ======================================================== */}
       {/* MODAL: SAHKAN JADWAL RESMI                               */}
       {/* ======================================================== */}
-      {showConfirmPublishModal && (
+      {isStaff && showConfirmPublishModal && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 animate-in fade-in">
           <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl w-full max-w-md overflow-hidden flex flex-col">
             <div className="p-4 bg-emerald-700 text-white flex items-center justify-between">
@@ -1439,7 +1570,7 @@ export default function FieldTrialView() {
       {/* ======================================================== */}
       {/* MODAL: PILIH PELETON UNTUK SLOT KOSONG                   */}
       {/* ======================================================== */}
-      {teamPickerTarget && (
+      {isStaff && teamPickerTarget && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 animate-in fade-in">
           <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl w-full max-w-lg overflow-hidden flex flex-col max-h-[85vh]">
             <div className={`p-4 text-white flex items-center justify-between ${

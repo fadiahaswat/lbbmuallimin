@@ -87,26 +87,31 @@ export default function DocumentsTab({ currentTeam, triggerFileUpload, setActive
         />
 
         {/* 6. Pakta Integritas Fisik (Cetak Fisik untuk TM) */}
-        <div className="sm:col-span-2 bg-gradient-to-r from-red-50/80 via-white to-amber-50/80 border border-red-200 rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <span className="p-1.5 rounded-lg bg-red-100 text-red-700">
-                <Shield className="w-4 h-4" />
-              </span>
-              <span className="font-black text-xs uppercase tracking-wider text-slate-900">
-                Pakta Integritas Fisik (Bab A.7.b / Pasal 2)
-              </span>
+        <div className="sm:col-span-2 bg-white border border-slate-200/90 rounded-2xl p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs hover:border-slate-300 transition-all">
+          <div className="flex items-start gap-3.5 max-w-xl">
+            <div className="w-10 h-10 rounded-xl bg-red-50 border border-red-200 text-red-700 flex items-center justify-center shrink-0 mt-0.5">
+              <Shield className="w-5 h-5" />
             </div>
-            <p className="text-xs text-slate-600 leading-relaxed max-w-xl">
-              Selain tanda tangan digital saat pendaftaran online, Official <strong>wajib mencetak dokumen fisik</strong> ini, menandatangani basah, dan menyerahkannya di meja registrasi TM (9 Jan 2027).
-            </p>
+            <div className="space-y-1">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="font-black text-xs sm:text-sm uppercase tracking-tight text-slate-900">
+                  Pakta Integritas Fisik (Bab A.7.b / Pasal 2)
+                </span>
+                <span className="text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200 px-2 py-0.5 rounded-md">
+                  Wajib TM
+                </span>
+              </div>
+              <p className="text-xs text-slate-600 leading-relaxed">
+                Selain tanda tangan digital saat pendaftaran online, Official <strong>wajib mencetak dokumen fisik</strong> ini, menandatangani basah, dan menyerahkannya di meja registrasi TM (9 Jan 2027).
+              </p>
+            </div>
           </div>
           {onOpenPactModal && (
             <button
               type="button"
               onClick={onOpenPactModal}
               disabled={isDownloadingPact}
-              className="px-4 py-2.5 bg-red-700 hover:bg-red-800 disabled:bg-slate-400 text-white text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 transition-all shadow-xs shrink-0 cursor-pointer active:scale-95"
+              className="px-4 py-2.5 bg-red-700 hover:bg-red-800 disabled:bg-slate-300 text-white text-xs font-bold rounded-xl flex items-center justify-center gap-2 transition-all shadow-xs shrink-0 cursor-pointer active:scale-95 w-full sm:w-auto"
             >
               {isDownloadingPact ? (
                 <>

@@ -22,11 +22,39 @@ export default function AuthModal() {
     goBack,
     activeView,
     setActiveView,
+    isLocalhost,
+    teams,
   } = useCompetition();
 
   const [isSigningIn, setIsSigningIn] = useState(false);
   const [loginError, setLoginError] = useState('');
   const [errorType, setErrorType] = useState('');
+  const [selectedDevEmail, setSelectedDevEmail] = useState('');
+
+  React.useEffect(() => {
+    if (!selectedDevEmail && teams && teams.length > 0) {
+      const valid = teams.find(t => t.status !== 'pending' && t.email);
+      if (valid) setSelectedDevEmail(valid.email);
+    }
+  }, [teams, selectedDevEmail]);
+
+  const handleDevLogin = async (emailToLogin) => {
+    if (!emailToLogin) return;
+    setIsSigningIn(true);
+    setLoginError('');
+    setErrorType('');
+    try {
+      const res = await loginUser(emailToLogin);
+      setIsSigningIn(false);
+      if (!res?.success) {
+        setLoginError(res?.message || 'Gagal login developer.');
+        setErrorType(res?.error || 'unknown');
+      }
+    } catch (err) {
+      setIsSigningIn(false);
+      setLoginError('Error dev login: ' + err.message);
+    }
+  };
 
   const clientId = GOOGLE_AUTH.CLIENT_ID;
 
@@ -334,6 +362,90 @@ export default function AuthModal() {
                   </>
                 )}
               </button>
+
+              {/* DEV TESTING BYPASS (KHUSUS LOCALHOST) */}
+              {isLocalhost && (
+                <div className="mt-5 p-4 rounded-2xl bg-amber-50/80 border border-amber-300 shadow-xs space-y-3">
+                  <div className="flex items-center justify-between gap-2 border-b border-amber-200/80 pb-2">
+                    <div className="flex items-center gap-2">
+                      <span className="flex h-2 w-2 rounded-full bg-amber-500 animate-pulse" />
+                      <span className="text-[11px] font-black uppercase tracking-wider text-amber-900 bg-amber-200/70 px-2 py-0.5 rounded-md">
+                        🛠️ Khusus Localhost: Bypass Login Peserta
+                      </span>
+                    </div>
+                    <span className="text-[10px] text-amber-700 font-mono font-bold">
+                      Tanpa OAuth
+                    </span>
+                  </div>
+
+                  <p className="text-[11px] text-amber-900 leading-relaxed">
+                    Pilih peleton dummy di bawah ini untuk langsung masuk ke <strong>Dashboard Peserta</strong> secara instan:
+                  </p>
+
+                  {/* Preset 1-Click Buttons */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => handleDevLogin('official.sd01@lbbmuallimin.com')}
+                      disabled={isSigningIn}
+                      className="p-2.5 bg-white hover:bg-amber-100/70 border border-amber-300 rounded-xl text-left text-xs font-bold text-slate-800 transition-all flex items-center gap-2 shadow-xs cursor-pointer group active:scale-95"
+                    >
+                      <span className="w-6 h-6 rounded-lg bg-red-100 text-red-700 flex items-center justify-center text-[10px] font-black shrink-0">
+                        SD
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <div className="truncate font-black text-slate-900 group-hover:text-red-700">SD Muhammadiyah Sapen</div>
+                        <div className="text-[10px] text-slate-500 truncate font-mono">official.sd01@...</div>
+                      </div>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => handleDevLogin('official.smp01@lbbmuallimin.com')}
+                      disabled={isSigningIn}
+                      className="p-2.5 bg-white hover:bg-amber-100/70 border border-amber-300 rounded-xl text-left text-xs font-bold text-slate-800 transition-all flex items-center gap-2 shadow-xs cursor-pointer group active:scale-95"
+                    >
+                      <span className="w-6 h-6 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center text-[10px] font-black shrink-0">
+                        SMP
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <div className="truncate font-black text-slate-900 group-hover:text-blue-700">MTs Mu'allimin Mhk</div>
+                        <div className="text-[10px] text-slate-500 truncate font-mono">official.smp01@...</div>
+                      </div>
+                    </button>
+                  </div>
+
+                  {/* Dropdown for all 36 teams */}
+                  <div className="space-y-1.5 pt-1">
+                    <label className="text-[10px] font-bold text-slate-700 block">
+                      Atau Pilih dari 36 Tim Dummy Lainnya:
+                    </label>
+                    <div className="flex gap-2">
+                      <select
+                        value={selectedDevEmail}
+                        onChange={(e) => setSelectedDevEmail(e.target.value)}
+                        className="flex-1 bg-white border border-amber-300 text-slate-800 text-xs rounded-xl px-2.5 py-2 font-medium focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                      >
+                        {teams
+                          ?.filter((t) => t.status !== 'pending' && t.email)
+                          .map((t) => (
+                            <option key={t.id} value={t.email}>
+                              [{t.jenjang}] {t.schoolName} ({t.email})
+                            </option>
+                          ))}
+                      </select>
+                      <button
+                        type="button"
+                        onClick={() => handleDevLogin(selectedDevEmail)}
+                        disabled={isSigningIn || !selectedDevEmail}
+                        className="px-3.5 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs rounded-xl shadow-xs transition-colors shrink-0 cursor-pointer active:scale-95"
+                      >
+                        Masuk →
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               <div className="text-center pt-2">
                 <button

@@ -83,7 +83,20 @@ export default function ParticipantDashboard() {
   const compDate = eventDates.competitionDate || EVENT.COMPETITION_DATE;
   const compTime = eventDates.competitionTimeRange || EVENT.COMPETITION_TIME_RANGE;
 
-  const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'idcard' | 'roster' | 'documents' | 'scores'
+  const [activeTab, setActiveTab] = useState(() => {
+    try {
+      return localStorage.getItem('lbb_participant_active_tab') || 'overview';
+    } catch {
+      return 'overview';
+    }
+  });
+
+  const handleSelectTab = (tabId) => {
+    setActiveTab(tabId);
+    try {
+      localStorage.setItem('lbb_participant_active_tab', tabId);
+    } catch {}
+  };
   const [scheduleTab, setScheduleTab] = useState('tm'); // 'tm' | 'trial' | 'competition'
   const [uploadToast, setUploadToast] = useState('');
 

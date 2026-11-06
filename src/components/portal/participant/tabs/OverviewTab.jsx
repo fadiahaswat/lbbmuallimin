@@ -260,22 +260,22 @@ export default function OverviewTab({
               </div>
 
               {/* Status Hasil Undian TM untuk Tim Ini */}
-              <div className="p-3.5 rounded-2xl bg-slate-900 text-white border border-purple-500/30 flex items-center justify-between gap-3 flex-wrap">
+              <div className="p-3.5 rounded-2xl bg-purple-50/70 text-slate-900 border border-purple-200 flex items-center justify-between gap-3 flex-wrap shadow-2xs">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-xl bg-purple-500/20 border border-purple-400/30 flex items-center justify-center font-black text-purple-300 text-sm">
+                  <div className="w-9 h-9 rounded-xl bg-purple-100 border border-purple-200 flex items-center justify-center font-black text-purple-700 text-sm shadow-2xs">
                     {currentTeam.lotNumber ? `#${String(currentTeam.lotNumber).padStart(2, '0')}` : '?'}
                   </div>
                   <div>
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                    <span className="text-[10px] font-bold text-purple-900/80 uppercase tracking-wider block">
                       Hasil Undian Nomor Urut Tampil Peleton
                     </span>
-                    <strong className="text-xs sm:text-sm text-white">
+                    <strong className="text-xs sm:text-sm text-slate-900">
                       {currentTeam.lotNumber ? `Urutan #${String(currentTeam.lotNumber).padStart(2, '0')} (Tingkat ${currentTeam.jenjang})` : 'Belum Melakukan Undian TM'}
                     </strong>
                   </div>
                 </div>
                 {currentTeam.chestNumber && (
-                  <span className="font-mono text-xs font-black bg-amber-400 text-slate-950 px-2.5 py-1 rounded-lg shadow-sm">
+                  <span className="font-mono text-xs font-black bg-amber-400 text-slate-950 px-2.5 py-1 rounded-lg shadow-xs">
                     No. Dada: {currentTeam.chestNumber}
                   </span>
                 )}
@@ -310,7 +310,7 @@ export default function OverviewTab({
                     type="button"
                     onClick={onOpenPactModal}
                     disabled={isDownloadingPact}
-                    className="px-3.5 py-2 bg-slate-900 hover:bg-slate-800 disabled:bg-slate-300 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-2xs shrink-0 cursor-pointer active:scale-95"
+                    className="px-3.5 py-2 bg-red-700 hover:bg-red-800 disabled:bg-slate-300 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-2xs shrink-0 cursor-pointer active:scale-95"
                   >
                     {isDownloadingPact ? (
                       <>
@@ -509,68 +509,68 @@ export default function OverviewTab({
               {/* JADWAL UCL & SURVEI KENDARAAN */}
               {currentTeam.vehicleSurveys?.trialAttendance?.status === 'confirmed' && (
                 <div className="space-y-4">
-                  {/* Rincian Waktu Uji Coba */}
-                  <div className="p-4 rounded-xl bg-slate-900 text-white space-y-3">
-                    <div className="flex items-center justify-between border-b border-slate-800 pb-2.5 flex-wrap gap-2 text-xs">
+                  {/* Rincian Waktu Uji Coba (Brand UI) */}
+                  <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-xs space-y-3">
+                    <div className="flex items-center justify-between border-b border-slate-100 pb-2.5 flex-wrap gap-2 text-xs">
                       <div className="flex items-center gap-2">
-                        <span className="font-bold text-white">Jadwal Uji Coba Lapangan</span>
+                        <span className="font-black text-slate-900">Jadwal Uji Coba Lapangan</span>
                         {teamDynamicTrial?.isAdvanced && (
-                          <span className="text-[10px] text-amber-300 bg-amber-400/10 border border-amber-400/30 px-1.5 py-0.5 rounded font-mono">
+                          <span className="text-[10px] text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-md font-mono font-bold">
                             Urutan Ke-{teamDynamicTrial.slotIndex + 1}
                           </span>
                         )}
                       </div>
-                      <span className="text-slate-400 font-mono text-[11px]">
+                      <span className="text-slate-500 font-mono text-[11px] font-bold">
                         {autoTrialSchedule?.session || '-'}
                       </span>
                     </div>
 
                     {!settings?.trialSchedulePublished ? (
-                      <div className="p-3.5 rounded-lg bg-slate-800/80 border border-slate-700/60 text-center space-y-1">
-                        <span className="text-amber-300 font-bold text-xs block">
+                      <div className="p-3.5 rounded-xl bg-amber-50/80 border border-amber-200 text-center space-y-1">
+                        <span className="text-amber-900 font-black text-xs block">
                           📝 Rencana Jadwal Sedang Disusun Panitia
                         </span>
-                        <p className="text-[11px] text-slate-400">
+                        <p className="text-[11px] text-amber-800 leading-relaxed">
                           Jadwal resmi jam masuk arena akan segera diterbitkan setelah disahkan panitia berdasarkan survei kesediaan kontingen dan hasil TM.
                         </p>
                       </div>
                     ) : autoTrialSchedule ? (
                       <div className="space-y-2.5">
                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs">
-                          <div className="p-2.5 rounded-lg bg-slate-800/80 border border-slate-700/60">
-                            <span className="text-[10px] text-slate-400 block">Check-In Tiba</span>
-                            <span className="text-sm text-emerald-400 font-mono font-bold mt-0.5 block">{autoTrialSchedule.arrival}</span>
+                          <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                            <span className="text-[10px] text-slate-500 font-bold uppercase block">Check-In Tiba</span>
+                            <span className="text-sm text-emerald-700 font-mono font-black mt-0.5 block">{autoTrialSchedule.arrival}</span>
                           </div>
-                          <div className="p-2.5 rounded-lg bg-slate-800/80 border border-slate-700/60">
-                            <span className="text-[10px] text-slate-400 block">Panggilan DP</span>
-                            <span className="text-sm text-white font-mono font-bold mt-0.5 block">{autoTrialSchedule.callDP}</span>
+                          <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                            <span className="text-[10px] text-slate-500 font-bold uppercase block">Panggilan DP</span>
+                            <span className="text-sm text-slate-900 font-mono font-black mt-0.5 block">{autoTrialSchedule.callDP}</span>
                           </div>
-                          <div className="p-2.5 rounded-lg bg-slate-800/80 border border-slate-700/60">
-                            <span className="text-[10px] text-slate-400 block">Masuk Arena</span>
-                            <span className="text-sm text-amber-300 font-mono font-bold mt-0.5 block">{autoTrialSchedule.enterArena}</span>
+                          <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                            <span className="text-[10px] text-slate-500 font-bold uppercase block">Masuk Arena</span>
+                            <span className="text-sm text-amber-700 font-mono font-black mt-0.5 block">{autoTrialSchedule.enterArena}</span>
                           </div>
-                          <div className="p-2.5 rounded-lg bg-slate-800/80 border border-slate-700/60">
-                            <span className="text-[10px] text-slate-400 block">Check-Out Arena</span>
-                            <span className="text-sm text-white font-mono font-bold mt-0.5 block">{autoTrialSchedule.checkOut || autoTrialSchedule.finishArena || '15 Menit'}</span>
+                          <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                            <span className="text-[10px] text-slate-500 font-bold uppercase block">Check-Out Arena</span>
+                            <span className="text-sm text-slate-900 font-mono font-black mt-0.5 block">{autoTrialSchedule.checkOut || autoTrialSchedule.finishArena || '15 Menit'}</span>
                           </div>
                         </div>
 
                         {/* Live Status Hari H UCL */}
                         {settings?.trialOps?.[currentTeam.id] && (
-                          <div className="p-2.5 rounded-lg bg-slate-800 border border-slate-700 text-xs flex items-center justify-between gap-2 flex-wrap">
-                            <span className="text-slate-300">Status Kehadiran Hari H UCL:</span>
+                          <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs flex items-center justify-between gap-2 flex-wrap">
+                            <span className="text-slate-600 font-medium">Status Kehadiran Hari H UCL:</span>
                             {settings.trialOps[currentTeam.id].status === 'checked_in' && (
-                              <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/40">
+                              <span className="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 font-bold border border-emerald-200">
                                 ✓ Sudah Check-In (Pukul {settings.trialOps[currentTeam.id].checkedInAt})
                               </span>
                             )}
                             {settings.trialOps[currentTeam.id].status === 'in_arena' && (
-                              <span className="px-2 py-0.5 rounded bg-red-500/20 text-red-300 font-bold border border-red-500/40 animate-pulse">
+                              <span className="px-2.5 py-1 rounded-lg bg-red-50 text-red-700 font-bold border border-red-200 animate-pulse">
                                 🔴 Sedang Uji Coba di Arena
                               </span>
                             )}
                             {settings.trialOps[currentTeam.id].status === 'completed' && (
-                              <span className="px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 font-bold border border-blue-500/40">
+                              <span className="px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 font-bold border border-blue-200">
                                 ✓ Selesai UCL (Check-Out {settings.trialOps[currentTeam.id].completedAt})
                               </span>
                             )}
@@ -578,7 +578,7 @@ export default function OverviewTab({
                         )}
                       </div>
                     ) : (
-                      <div className="p-3 text-center text-xs text-slate-400">
+                      <div className="p-3 text-center text-xs text-slate-500">
                         Jadwal resmi akan tampil setelah nomor undian TM ditetapkan.
                       </div>
                     )}
@@ -1002,32 +1002,32 @@ export default function OverviewTab({
             </a>
           </div>
 
-          {/* Bantuan Panitia dengan Maskot Danton */}
-          <div className="bg-slate-900 text-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-slate-800 space-y-3 relative overflow-hidden">
+          {/* Bantuan Panitia dengan Maskot Danton (Brand UI) */}
+          <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-slate-200/90 shadow-xs space-y-3 relative overflow-hidden">
             <div className="flex items-center gap-3">
               <img
                 src="/manganperpunk.png"
                 alt="Maskot Komandan Peleton"
-                className="w-10 h-10 sm:w-12 sm:h-12 object-contain filter drop-shadow-md shrink-0"
+                className="w-10 h-10 sm:w-12 sm:h-12 object-contain filter drop-shadow-xs shrink-0"
               />
               <div className="min-w-0">
-                <div className="flex items-center gap-1.5 text-amber-400">
-                  <HelpCircle className="w-3.5 h-3.5 shrink-0" />
-                  <h4 className="font-black text-xs uppercase tracking-wider">Bantuan Panitia</h4>
+                <div className="flex items-center gap-1.5 text-slate-900">
+                  <HelpCircle className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                  <h4 className="font-black text-xs uppercase tracking-wider text-slate-900">Bantuan Panitia</h4>
                 </div>
-                <p className="text-[10px] sm:text-[11px] text-slate-300 mt-0.5 truncate">
+                <p className="text-[10px] sm:text-[11px] text-slate-500 mt-0.5 truncate">
                   Siap pandu pengunggahan berkas & teknis tim!
                 </p>
               </div>
             </div>
-            <p className="text-[11px] sm:text-xs text-slate-300 leading-relaxed">
+            <p className="text-[11px] sm:text-xs text-slate-600 leading-relaxed">
               Jika terdapat kendala pengunggahan berkas atau revisi nama personel, silakan hubungi narahubung:
             </p>
             <a
               href="https://wa.me/6281947491505"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-3.5 py-2 sm:py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] sm:text-xs font-black rounded-xl transition-all w-full justify-center tracking-wider shadow-sm active:scale-95"
+              className="inline-flex items-center gap-2 px-3.5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] sm:text-xs font-bold rounded-xl transition-all w-full justify-center tracking-wide shadow-xs active:scale-95 cursor-pointer"
             >
               <Phone className="w-3.5 h-3.5" />
               <span>WhatsApp Admin (0819-4749-1505)</span>
