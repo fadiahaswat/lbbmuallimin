@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Printer, Download, QrCode, Shield, CheckCircle2 } from 'lucide-react';
+import { Download, QrCode, Shield, CheckCircle2 } from 'lucide-react';
 import { EVENT } from '../../../../config.js';
 import { generateParticipantQRCode, downloadDataUrl, OFFICIAL_BASE_URL } from '../../../../utils/qrGenerator.js';
 import logoLbb from '../../../../assets/logo-tonti.png';
@@ -33,10 +33,6 @@ export default function IdCardTab({ currentTeam }) {
     );
   };
 
-  const handlePrint = () => {
-    setTimeout(() => window.print(), 50);
-  };
-
   return (
     <section className="rounded-[26px] border border-slate-200/80 bg-white p-5 shadow-[0_18px_46px_rgba(15,23,42,0.06)] sm:p-7 space-y-6">
       {/* Panel Header */}
@@ -58,14 +54,6 @@ export default function IdCardTab({ currentTeam }) {
         </div>
 
         <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={handlePrint}
-            className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-[11px] font-black text-slate-700 transition hover:bg-slate-50 hover:border-slate-300 shadow-2xs cursor-pointer active:scale-95"
-          >
-            <Printer className="w-3.5 h-3.5" />
-            <span>Cetak Badge</span>
-          </button>
           <button
             type="button"
             onClick={handleDownloadQR}
