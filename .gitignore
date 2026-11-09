@@ -18,5 +18,51 @@ dist/
 # Audit reports with potential metadata
 security-audit-report.json
 
-# Large media files (exceed GitHub 100MB limit)
+# Local Media Production Folders (Large renders, raw assets, project files)
+promo-video/
+video-tutorial/
+tonti-motion/
+tiktok-follow/
+assets-raw/
+Contoh UI dan UX Portal Peserta/
+ParticipantPortal.tsx
+
+# Large Media & Binary Files
+*.mp4
 *.mov
+*.avi
+*.mkv
+*.webm
+*.wmv
+*.flv
+*.wav
+*.mp3
+*.m4a
+*.aac
+*.flac
+*.ogg
+*.zip
+*.tar
+*.tar.gz
+*.7z
+*.rar
+*.iso
+*.dmg
+*.psd
+*.ai
+*.prproj
+*.aep
+*.blend
+
+# Allow web assets in public
+!public/**/*.svg
+!public/**/*.png
+!public/**/*.jpg
+!public/**/*.jpeg
+!public/**/*.webp
+!public/**/*.ico
+!public/**/*.pdf
+!public/**/*.json
+!public/**/*.html
+!public/**/*.js
+!public/**/*.css
