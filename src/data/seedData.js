@@ -10,6 +10,8 @@ export const INITIAL_SETTINGS = {
   registrationOpen: true,
   scoringOpen: true,
   announcementPublished: false, // Skor bersifat RAHASIA sampai dibuka resmi oleh Superadmin
+  trialSchedulePublished: false, // Jadwal UCL bersifat DRAFT sampai disahkan (ACC) oleh Panitia
+  trialScheduleRatifiedAt: null,
   activeAcademicYear: '2027',
   quotaSD: 18,
   quotaSMP: 18,

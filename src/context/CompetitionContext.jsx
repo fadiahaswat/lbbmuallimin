@@ -218,7 +218,10 @@ export function CompetitionProvider({ children }) {
         if (!base.trialPlan || !base.trialPlan.SD?.slots?.some(Boolean)) {
           base.trialPlan = generateDummyTrialPlan(teams);
         }
-        base.trialSchedulePublished = true;
+        // Jangan publikasikan jadwal UCL secara otomatis di localhost
+        // Hanya tayang jika sudah disahkan (ACC) dan tercatat trialScheduleRatifiedAt
+        base.trialSchedulePublished = Boolean(parsed.trialSchedulePublished && parsed.trialScheduleRatifiedAt);
+        base.trialScheduleRatifiedAt = parsed.trialScheduleRatifiedAt || null;
         base.announcementPublished = true;
       }
       return base;

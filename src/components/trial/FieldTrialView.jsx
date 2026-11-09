@@ -49,7 +49,7 @@ export default function FieldTrialView() {
   const userRole = currentUser?.role || (currentTeam ? 'peserta' : (role || 'publik'));
   const isPeserta = userRole === 'peserta';
   const isStaff = !isPeserta && userRole !== 'publik' && ['admin', 'superadmin', 'checkin', 'dp', 'staging', 'panitia'].includes(userRole);
-  const isPublished = Boolean(settings?.trialSchedulePublished);
+  const isPublished = Boolean(settings?.trialSchedulePublished && settings?.trialScheduleRatifiedAt);
 
   // Interactive Swap & Team Assign state for Panitia
   const [swapSource, setSwapSource] = useState(null); // { jenjang: 'SD'|'SMP', slotIdx: number, teamId: string }
@@ -326,17 +326,21 @@ export default function FieldTrialView() {
   const handlePublishSchedule = () => {
     updateSettings({
       trialPlan: currentPlan,
-      trialSchedulePublished: true
+      trialSchedulePublished: true,
+      trialScheduleRatifiedAt: new Date().toISOString()
     });
     setShowConfirmPublishModal(false);
-    showToast('📜 Jadwal Uji Coba Lapangan RESMI disahkan!');
+    showToast('📜 Jadwal Uji Coba Lapangan RESMI disahkan & ditayangkan ke peserta!');
   };
 
   // Action: Unpublish / Reopen
   const handleUnpublishSchedule = () => {
-    if (window.confirm('Buka kunci jadwal untuk kembali ke mode DRAFT dan mengedit rencana?')) {
-      updateSettings({ trialSchedulePublished: false });
-      showToast('Jadwal kembali ke status DRAFT.');
+    if (window.confirm('Buka kunci jadwal untuk kembali ke mode DRAFT dan menyembunyikan jadwal dari peserta?')) {
+      updateSettings({
+        trialSchedulePublished: false,
+        trialScheduleRatifiedAt: null
+      });
+      showToast('Jadwal kembali ke status DRAFT (disembunyikan dari peserta).');
     }
   };
 
@@ -947,8 +951,134 @@ export default function FieldTrialView() {
         {/* -------------------------------------------------------- */}
         <div className={`${isStaff ? 'lg:col-span-8 xl:col-span-8' : 'w-full'} space-y-3.5`}>
 
-          {/* BANNER JADWAL PELETON ANDA (KHUSUS ROLE PESERTA) */}
-          {isPeserta && currentTeam && (() => {
+          {/* TAMPILAN KHUSUS JIKA JADWAL BELUM DI-ACC / BELUM DISAHKAN PANITIA (UNTUK PESERTA & PUBLIK) */}
+          {!isPublished && !isStaff ? (
+            <div className="overflow-hidden rounded-[28px] border border-amber-200/90 bg-white shadow-[0_16px_38px_rgba(15,23,42,0.06)]">
+              {/* Header Banner Pending */}
+              <div className="p-6 sm:p-8 bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-transparent border-b border-amber-100 flex flex-col items-center text-center">
+                <div className="w-14 h-14 rounded-2xl bg-amber-500/15 border border-amber-500/30 text-amber-700 flex items-center justify-center shadow-xs mb-4">
+                  <Clock className="w-7 h-7 text-amber-600 animate-pulse" />
+                </div>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-100 text-amber-900 border border-amber-200 mb-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-ping" />
+                  Menunggu Pengesahan Panitia
+                </span>
+                <h3 className="text-lg sm:text-xl md:text-2xl font-black text-slate-900 tracking-tight">
+                  Jadwal Uji Coba Lapangan (UCL) Belum Disahkan
+                </h3>
+                <p className="mt-2 text-xs sm:text-sm text-slate-600 max-w-xl leading-relaxed">
+                  Matriks alokasi slot waktu dan arena gladi adaptasi kontur lapangan sedang dalam proses penyusunan & verifikasi teknis oleh Panitia Pelaksana. Jadwal resmi per peleton akan otomatis ditampilkan di sini setelah <strong>disahkan (ACC)</strong> oleh panitia.
+                </p>
+              </div>
+
+              {/* Detail Informasi Pelaksanaan Gladi */}
+              <div className="p-5 sm:p-8 space-y-6">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+                  <div className="p-4 rounded-2xl bg-slate-50/80 border border-slate-200/80">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-7 h-7 rounded-lg bg-red-50 text-red-700 border border-red-100 flex items-center justify-center">
+                        <Calendar className="w-3.5 h-3.5" />
+                      </div>
+                      <span className="text-[9px] uppercase font-black tracking-wider text-slate-400">
+                        Hari & Tanggal
+                      </span>
+                    </div>
+                    <p className="text-xs sm:text-sm font-black text-slate-900">
+                      {EVENT.FIELD_TRIAL_FULL_DATE || 'Sabtu, 16 Januari 2027'}
+                    </p>
+                    <p className="text-[10px] text-slate-500 mt-0.5 font-mono">
+                      07.00 – 11.30 WIB
+                    </p>
+                  </div>
+
+                  <div className="p-4 rounded-2xl bg-slate-50/80 border border-slate-200/80">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-7 h-7 rounded-lg bg-blue-50 text-blue-700 border border-blue-100 flex items-center justify-center">
+                        <MapPin className="w-3.5 h-3.5" />
+                      </div>
+                      <span className="text-[9px] uppercase font-black tracking-wider text-slate-400">
+                        Lokasi Arena
+                      </span>
+                    </div>
+                    <p className="text-xs sm:text-sm font-black text-slate-900">
+                      Kampus Terpadu Sedayu
+                    </p>
+                    <p className="text-[10px] text-slate-500 mt-0.5">
+                      2 Arena: Basket (SD) & Embung (SMP)
+                    </p>
+                  </div>
+
+                  <div className="p-4 rounded-2xl bg-slate-50/80 border border-slate-200/80">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-7 h-7 rounded-lg bg-amber-50 text-amber-700 border border-amber-100 flex items-center justify-center">
+                        <Clock className="w-3.5 h-3.5" />
+                      </div>
+                      <span className="text-[9px] uppercase font-black tracking-wider text-slate-400">
+                        Durasi Gladi
+                      </span>
+                    </div>
+                    <p className="text-xs sm:text-sm font-black text-slate-900">
+                      15 Menit / Peleton
+                    </p>
+                    <p className="text-[10px] text-slate-500 mt-0.5">
+                      10 mnt adaptasi, 5 mnt transisi
+                    </p>
+                  </div>
+                </div>
+
+                {/* Catatan Alur untuk Peleton */}
+                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex items-start gap-3 text-xs text-slate-600">
+                  <Info className="w-4 h-4 text-slate-500 shrink-0 mt-0.5" />
+                  <div className="space-y-1 leading-relaxed text-[11.5px]">
+                    <p className="font-bold text-slate-800">
+                      Petunjuk untuk Kontingen & Danton:
+                    </p>
+                    <ul className="list-disc pl-4 space-y-0.5 text-slate-600">
+                      <li>Pastikan telah mengisi survei konfirmasi kehadiran UCL di menu Beranda (RSVP).</li>
+                      <li>Slot giliran diatur sesuai efisiensi waktu, kesiapan, dan koordinasi resmi panitia.</li>
+                      <li>Saat jadwal telah disahkan panitia, nomor slot dan jam kedatangan peleton Anda akan langsung muncul di halaman ini.</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <>
+              {/* Alert Mode Draft untuk Staff / Panitia */}
+              {isStaff && !isPublished && (
+                <div className="p-3.5 sm:p-4 rounded-2xl bg-amber-50 border border-amber-300 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shadow-2xs">
+                  <div className="flex items-start sm:items-center gap-3">
+                    <div className="w-8 h-8 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center shrink-0 border border-amber-200">
+                      <AlertCircle className="w-4 h-4 text-amber-700" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[9.5px] font-black uppercase tracking-wider bg-amber-200 text-amber-950 px-2 py-0.5 rounded-full">
+                          Status: DRAFT
+                        </span>
+                        <span className="text-xs font-bold text-slate-900">
+                          Jadwal UCL Belum Disahkan (Disembunyikan dari Peserta)
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-slate-600 mt-0.5">
+                        Peserta belum dapat melihat jadwal ini. Silakan atur/tukar slot dan klik "Sahkan & Terbitkan" jika sudah final.
+                      </p>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPublishModal(true)}
+                    className="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs flex items-center justify-center gap-1.5 shadow-xs cursor-pointer shrink-0 transition-all"
+                  >
+                    <FileCheck className="w-4 h-4" />
+                    <span>Sahkan & Terbitkan</span>
+                  </button>
+                </div>
+              )}
+
+              {/* BANNER JADWAL PELETON ANDA (KHUSUS ROLE PESERTA JIKA SUDAH SAH) */}
+              {isPeserta && currentTeam && (() => {
             const mySlotTime = myTeamTrialSlot?.slotInfo?.time ? myTeamTrialSlot.slotInfo.time.replace(/\s*WIB/i, '') : '-';
             const mySlotIndex = myTeamTrialSlot?.slotInfo?.index || (myTeamTrialSlot ? myTeamTrialSlot.slotIdx + 1 : '-');
             const myCheckInTime = myTeamTrialSlot?.slotInfo?.checkIn || myTeamTrialSlot?.slotInfo?.arrival || '06.30 WIB';
@@ -1281,6 +1411,8 @@ export default function FieldTrialView() {
             </div>
           </div>
         </div>
+        </>
+      )}
 
         </div>
 

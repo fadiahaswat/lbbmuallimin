@@ -358,7 +358,7 @@ export default function SuperadminPanel() {
             Saklar Operasional Lomba
           </h3>
 
-          <div className="grid sm:grid-cols-3 gap-4">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Toggle 1: Pendaftaran */}
             <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl flex flex-col justify-between">
               <div>
@@ -403,7 +403,34 @@ export default function SuperadminPanel() {
               </button>
             </div>
 
-            {/* Toggle 3: Publikasi Hasil Lomba */}
+            {/* Toggle 3: Pengesahan & Publikasi Jadwal UCL */}
+            <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl flex flex-col justify-between">
+              <div>
+                <span className="text-xs font-black uppercase text-slate-800 block mb-1">Pengesahan Jadwal UCL</span>
+                <p className="text-xs text-slate-500">Mengesahkan (ACC) dan menampilkan jadwal gladi lapangan ke peserta.</p>
+              </div>
+              <button
+                onClick={() => {
+                  const isCurrentlyPublished = Boolean(settings.trialSchedulePublished && settings.trialScheduleRatifiedAt);
+                  const nextState = !isCurrentlyPublished;
+                  updateSettings({
+                    trialSchedulePublished: nextState,
+                    trialScheduleRatifiedAt: nextState ? new Date().toISOString() : null
+                  });
+                  showToast(`Jadwal Uji Coba Lapangan (UCL) ${nextState ? 'RESMI DISAHKAN & DITAYANGKAN KE PESERTA' : 'KEMBALI KE DRAFT (DISEMBUNYIKAN)'}!`);
+                }}
+                className={`mt-4 w-full py-2 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all ${
+                  Boolean(settings.trialSchedulePublished && settings.trialScheduleRatifiedAt)
+                    ? 'bg-emerald-600 text-white'
+                    : 'bg-slate-300 text-slate-700'
+                }`}
+              >
+                {Boolean(settings.trialSchedulePublished && settings.trialScheduleRatifiedAt) ? <ToggleRight className="w-5 h-5" /> : <ToggleLeft className="w-5 h-5" />}
+                <span>{Boolean(settings.trialSchedulePublished && settings.trialScheduleRatifiedAt) ? 'Status: Disahkan & Tayang' : 'Status: Draf (Belum ACC)'}</span>
+              </button>
+            </div>
+
+            {/* Toggle 4: Publikasi Hasil Lomba */}
             <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl flex flex-col justify-between">
               <div>
                 <span className="text-xs font-black uppercase text-slate-800 block mb-1">Publikasi Pengumuman Juara</span>
