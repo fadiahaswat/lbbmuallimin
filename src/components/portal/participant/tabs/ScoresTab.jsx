@@ -278,11 +278,14 @@ export default function ScoresTab({ teamScore }) {
           </div>
         </div>
       ) : (
-        <div className="p-8 sm:p-12 text-center rounded-3xl bg-slate-50 border-2 border-dashed border-slate-200 space-y-3">
+        <div className="p-8 sm:p-14 text-center rounded-3xl bg-slate-50 border-2 border-dashed border-slate-200 space-y-3">
           <div className="w-14 h-14 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mx-auto border border-amber-200">
             <Trophy className="w-7 h-7" />
           </div>
-          <div className="max-w-md mx-auto space-y-1">
+          <div className="max-w-md mx-auto space-y-1.5">
+            <span className="text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full border border-amber-500/30 text-amber-800 bg-amber-100 inline-block mb-0.5">
+              Kerahasiaan Penjurian Resmi LBB 2027
+            </span>
             <h4 className="font-black text-base text-slate-900 uppercase">
               Penilaian Belum Tersedia
             </h4>
