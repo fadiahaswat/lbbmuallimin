@@ -11,9 +11,37 @@ import {
   Award,
   Upload,
   Camera,
-  GripVertical
+  GripVertical,
+  Phone,
+  HeartPulse,
+  CheckCircle2
 } from 'lucide-react';
 import { formatImageUrl, getFallbackImageUrl } from '../../../../services/sheetService.js';
+
+// Format helper untuk label kelas agar tidak dobel "Kelas Kelas"
+const formatGradeDisplay = (cls, prefix = 'Kelas') => {
+  if (!cls) return '-';
+  const clean = String(cls).replace(/^(kelas|kls)\s*/i, '').trim();
+  return clean ? `${prefix} ${clean}` : '-';
+};
+
+// Helper untuk ekstrak inisial nama yang rapi (mengabaikan gelar seperti Drs., Ust., dsb)
+const getPersonInitials = (name) => {
+  if (!name || typeof name !== 'string') return '?';
+  const clean = name.replace(/^(Drs\.|Dr\.|Ir\.|H\.|Hj\.|Ust\.|Ustz\.|M\.)\s*/gi, '').trim();
+  const parts = clean.split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return '?';
+  if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+  return (parts[0][0] + parts[1][0]).toUpperCase();
+};
+
+// Deteksi apakah foto masih berupa URL placeholder / ui-avatars default
+const isPlaceholderAvatar = (url) => {
+  if (!url || typeof url !== 'string') return true;
+  if (url === '#' || url.startsWith('#')) return true;
+  if (url.includes('ui-avatars.com')) return true;
+  return false;
+};
 
 export default function RosterTab({
   currentTeam,
@@ -96,24 +124,31 @@ export default function RosterTab({
       ) : (
         <>
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3 sm:pb-4">
-            <div>
-              <div className="flex items-center gap-2">
-                <h4 className="font-black text-base sm:text-xl text-slate-900 uppercase">
-                  Susunan Kontingen Peleton
+            <div className="flex items-start sm:items-center gap-3 sm:gap-3.5 min-w-0">
+              <span className="relative flex h-10 w-10 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-2xl bg-slate-950 text-white shadow-md mt-0.5 sm:mt-0">
+                <Users className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400" />
+                <span className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full border-2 border-white bg-red-600" />
+              </span>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center justify-between sm:justify-start gap-2 flex-wrap">
+                  <p className="section-kicker">PORTAL KONTINGEN</p>
+                  {isRosterLocked ? (
+                    <span className="text-[9px] sm:text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-300 px-2 py-0.5 rounded-md shrink-0">
+                      Terkunci H-TM
+                    </span>
+                  ) : hasSavedLocalDraft && !isEditingRoster ? (
+                    <span className="text-[9px] sm:text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300 px-2 py-0.5 rounded-md shrink-0">
+                      Ada Draft
+                    </span>
+                  ) : null}
+                </div>
+                <h4 className="font-black text-sm sm:text-lg md:text-xl text-slate-900 uppercase tracking-tight leading-snug mt-0.5">
+                  Susunan Personel Peleton
                 </h4>
-                {isRosterLocked ? (
-                  <span className="text-[9px] sm:text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-300 px-2 py-0.5 rounded-md">
-                    Terkunci H-TM
-                  </span>
-                ) : hasSavedLocalDraft && !isEditingRoster ? (
-                  <span className="text-[9px] sm:text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300 px-2 py-0.5 rounded-md">
-                    Ada Draft
-                  </span>
-                ) : null}
+                <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5 leading-snug">
+                  1 komandan, 21 pasukan inti (3 saf × 7 banjar), 3 cadangan, dan official pendamping.
+                </p>
               </div>
-              <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5">
-                1 Danton, 21 Pasukan Inti (3 Saf × 7 Banjar), 3 Cadangan, dan 3 Pendamping.
-              </p>
             </div>
             <div className="flex items-center gap-2 w-full sm:w-auto">
               {!isEditingRoster ? (
@@ -123,7 +158,7 @@ export default function RosterTab({
                   className={`flex-1 sm:flex-none justify-center px-3.5 py-2 sm:py-2.5 font-bold text-xs rounded-xl flex items-center gap-1.5 transition-all shadow-xs ${
                     isRosterLocked
                       ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
-                      : 'bg-blue-600 hover:bg-blue-700 text-white active:scale-95 cursor-pointer'
+                      : 'bg-red-700 hover:bg-red-800 text-white active:scale-95 cursor-pointer shadow-md'
                   }`}
                   title={isRosterLocked ? 'Data personel telah dikunci menjelang Technical Meeting (Bab A.9.c)' : 'Edit Susunan Personel'}
                 >
@@ -136,7 +171,7 @@ export default function RosterTab({
                     <button
                       type="button"
                       onClick={handleDiscardRosterDraft}
-                      className="px-3 py-2 bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-700 font-bold text-xs rounded-xl transition-all active:scale-95"
+                      className="px-3 py-2 bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-700 font-bold text-xs rounded-xl transition-all active:scale-95 cursor-pointer"
                       title="Hapus draft yang belum disimpan"
                     >
                       Batal Draft
@@ -148,13 +183,13 @@ export default function RosterTab({
                       setDraggedMember(null);
                       setDragOverTarget(null);
                     }}
-                    className="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition-all active:scale-95"
+                    className="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition-all active:scale-95 cursor-pointer"
                   >
                     Tutup
                   </button>
                   <button
                     onClick={handleSaveRoster}
-                    className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl flex items-center gap-1.5 transition-all shadow-md active:scale-95"
+                    className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl flex items-center gap-1.5 transition-all shadow-md active:scale-95 cursor-pointer"
                   >
                     <Save className="w-3.5 h-3.5" />
                     <span>Simpan</span>
@@ -169,6 +204,27 @@ export default function RosterTab({
                 <span>Cetak Biodata</span>
               </button>
             </div>
+          </div>
+
+          {/* 4-Item Summary Metric Strip (Figma Make Style) */}
+          <div className="grid grid-cols-2 gap-px overflow-hidden rounded-[20px] bg-slate-800 p-px shadow-[0_14px_32px_rgba(15,23,42,0.12)] sm:grid-cols-4">
+            {[
+              { val: '25', label: 'Personel Aktif', note: 'Lengkap' },
+              { val: '21', label: 'Pasukan Inti', note: '3 Saf' },
+              { val: '03', label: 'Cadangan', note: 'Siap Tugas' },
+              { val: '03', label: 'Official', note: 'Terverifikasi' },
+            ].map(m => (
+              <div key={m.label} className="bg-slate-950 px-4 py-3.5 text-white">
+                <div className="flex items-start justify-between gap-2">
+                  <p className="text-xl font-black tracking-tight font-mono">{m.val}</p>
+                  <span className="mt-1 h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                </div>
+                <p className="mt-1 text-[8px] font-black uppercase tracking-[0.12em] text-slate-400">
+                  {m.label}
+                </p>
+                <p className="mt-0.5 text-[8px] font-semibold text-emerald-400">{m.note}</p>
+              </div>
+            ))}
           </div>
 
           {isEditingRoster && (
@@ -192,40 +248,43 @@ export default function RosterTab({
           {/* Top Grid: Danton (Kiri) & Pendamping Peleton (Kanan) */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
             {/* Danton Spotlight (lg:col-span-5) - Brand UI & Harmonized Ratio */}
-            <div className="lg:col-span-5 bg-white border border-red-200/90 rounded-3xl p-5 shadow-xs flex flex-col justify-between relative overflow-hidden">
-              <div className="h-1 w-full bg-gradient-to-r from-red-600 to-amber-500 absolute top-0 left-0 right-0" />
+            <div className="lg:col-span-5 bg-gradient-to-br from-red-800 via-red-900 to-stone-950 text-white rounded-3xl p-5 shadow-[0_14px_30px_rgba(153,27,27,0.25)] flex flex-col justify-between relative overflow-hidden border border-red-700/40">
+              <div className="absolute -right-10 -top-12 h-36 w-36 rounded-full border-[20px] border-white/[0.05] pointer-events-none" />
+              <div className="absolute -left-12 -bottom-12 h-32 w-32 rounded-full bg-red-600/10 blur-xl pointer-events-none" />
 
               {/* Danton Header Tag */}
-              <div className="flex items-center justify-between border-b border-red-100 pb-2.5 mb-3">
+              <div className="flex items-center justify-between border-b border-white/10 pb-2.5 mb-3 relative z-10">
                 <div className="flex items-center gap-2">
-                  <span className="p-1.5 rounded-xl bg-red-50 border border-red-200 text-red-700 shadow-2xs">
-                    <Award className="w-3.5 h-3.5" />
+                  <span className="p-1.5 rounded-xl bg-white/10 text-white shadow-2xs border border-white/10">
+                    <Award className="w-3.5 h-3.5 text-amber-300" />
                   </span>
                   <div>
-                    <h5 className="font-black text-xs uppercase tracking-wider text-slate-900 leading-tight">
-                      Komandan Peleton (Danton)
+                    <h5 className="font-black text-xs uppercase tracking-wider text-white leading-tight">
+                      Komandan Peleton
                     </h5>
-                    <span className="text-[10px] text-red-700 font-semibold">
+                    <span className="text-[10px] text-red-200 font-semibold">
                       Pemimpin Barisan & Aba-Aba
                     </span>
                   </div>
                 </div>
-                <span className="text-[10px] font-bold bg-red-50 text-red-700 border border-red-200 px-2 py-0.5 rounded-md">
-                  Pimpinan Peleton
+                <span className="text-[9px] font-black uppercase tracking-wider bg-amber-400/20 text-amber-300 border border-amber-300/30 px-2.5 py-0.5 rounded-md shadow-xs">
+                  DANTON INTI
                 </span>
               </div>
 
-              <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 flex-1">
+              <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 flex-1 relative z-10">
                 {/* Danton Photo - Harmonized 3:4 Ratio */}
                 <div className="relative group shrink-0">
-                  <div className="aspect-[3/4] w-28 sm:w-32 rounded-2xl bg-slate-100 text-white font-black text-xs flex items-center justify-center shadow-xs overflow-hidden border border-red-200 relative">
+                  <div className="aspect-[3/4] w-28 sm:w-32 rounded-2xl bg-white/10 backdrop-blur-xs border border-white/20 shadow-md overflow-hidden flex flex-col items-center justify-center relative">
                     {(() => {
                       const photoUrl = isEditingRoster ? rosterDraft?.danton?.photo : currentTeam.roster?.danton?.photo;
-                      const hasValidPhoto = photoUrl && typeof photoUrl === 'string' && photoUrl !== '#' && !photoUrl.startsWith('#') && !photoUrl.includes('drive.google.com/open?id=');
-                      return hasValidPhoto ? (
+                      const hasRealPhoto = !isPlaceholderAvatar(photoUrl);
+                      const dantonName = isEditingRoster ? rosterDraft?.danton?.name : currentTeam.roster?.danton?.name || currentTeam.dantonName;
+
+                      return hasRealPhoto ? (
                         <img
                           src={formatImageUrl(photoUrl)}
-                          alt={isEditingRoster ? rosterDraft?.danton?.name || 'Danton' : currentTeam.roster?.danton?.name || 'Danton'}
+                          alt={dantonName || 'Danton'}
                           className="w-full h-full object-cover"
                           onError={(e) => {
                             e.currentTarget.style.display = 'none';
@@ -234,30 +293,25 @@ export default function RosterTab({
                             }
                           }}
                         />
-                      ) : null;
+                      ) : (
+                        <div className="w-full h-full flex flex-col items-center justify-center text-center p-2">
+                          <div className="w-13 h-13 rounded-full bg-gradient-to-br from-amber-400 to-red-600 text-white font-black text-base flex items-center justify-center shadow-lg ring-2 ring-white/30 mb-2">
+                            {getPersonInitials(dantonName)}
+                          </div>
+                          <span className="text-[9px] font-black uppercase tracking-widest text-amber-200 block">DANTON</span>
+                          <span className="text-[7.5px] text-red-200/80 block font-semibold">PASFOTO 3×4</span>
+                        </div>
+                      );
                     })()}
-                    <div
-                      className="w-full h-full flex flex-col items-center justify-center text-center p-1.5"
-                      style={{
-                        display: (() => {
-                          const photoUrl = isEditingRoster ? rosterDraft?.danton?.photo : currentTeam.roster?.danton?.photo;
-                          return photoUrl && typeof photoUrl === 'string' && photoUrl !== '#' && !photoUrl.startsWith('#') && !photoUrl.includes('drive.google.com/open?id=') ? 'none' : 'flex';
-                        })()
-                      }}
-                    >
-                      <User className="w-6 h-6 mx-auto mb-0.5 opacity-70" />
-                      <span className="text-[8px] font-black uppercase tracking-widest block opacity-90">FOTO DANTON</span>
-                      <span className="text-[7px] text-red-200 block font-normal">(3×4)</span>
-                    </div>
                   </div>
                   {isEditingRoster && (
                     <button
                       type="button"
                       onClick={() => triggerRosterPhotoUpload({ type: 'danton' })}
-                      className="absolute -bottom-1 -right-1 p-1 rounded-lg bg-yellow-400 text-slate-950 shadow-xs hover:bg-yellow-300 transition-all cursor-pointer"
+                      className="absolute -bottom-1 -right-1 p-1.5 rounded-xl bg-amber-400 text-slate-950 shadow-md hover:bg-amber-300 transition-all cursor-pointer"
                       title="Unggah Pasfoto Danton"
                     >
-                      <Upload className="w-3 h-3" />
+                      <Upload className="w-3.5 h-3.5" />
                     </button>
                   )}
                 </div>
@@ -265,50 +319,55 @@ export default function RosterTab({
                 {/* Danton Info / Form */}
                 <div className="flex-1 w-full min-w-0">
                   {!isEditingRoster ? (
-                    <div className="space-y-1.5">
+                    <div className="space-y-2">
                       <div>
-                        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
-                          Nama Lengkap
+                        <span className="text-[8px] font-black uppercase tracking-[0.14em] text-red-200/90 block">
+                          PEMIMPIN UTAMA
                         </span>
-                        <h5 className="font-black text-sm sm:text-base text-slate-900 leading-snug break-words" title={currentTeam.roster?.danton?.name || currentTeam.dantonName}>
+                        <h5 className="font-black text-sm sm:text-base text-white leading-snug break-words mt-0.5" title={currentTeam.roster?.danton?.name || currentTeam.dantonName}>
                           {currentTeam.roster?.danton?.name || currentTeam.dantonName || '-'}
                         </h5>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-1.5 pt-1 border-t border-red-100 text-xs">
-                        <div className="bg-white/80 p-1.5 rounded-lg border border-red-100">
-                          <span className="text-[9px] font-bold text-slate-400 uppercase block">Kelas</span>
-                          <strong className="text-slate-800 text-xs">
-                            {currentTeam.roster?.danton?.class ? `Kelas ${currentTeam.roster.danton.class}` : '-'}
+                      <div className="grid grid-cols-2 gap-2 pt-0.5 text-xs">
+                        <div className="bg-white/10 backdrop-blur-xs p-2.5 rounded-xl border border-white/15 hover:bg-white/[0.14] transition-colors">
+                          <span className="text-[8px] font-black uppercase tracking-wider text-red-200 block mb-0.5">Kelas</span>
+                          <strong className="text-white text-xs font-bold block">
+                            {formatGradeDisplay(currentTeam.roster?.danton?.class, 'Kelas')}
                           </strong>
                         </div>
-                        <div className="bg-white/80 p-1.5 rounded-lg border border-red-100">
-                          <span className="text-[9px] font-bold text-slate-400 uppercase block">NISN</span>
-                          <strong className="text-slate-800 font-mono text-xs">
+                        <div className="bg-white/10 backdrop-blur-xs p-2.5 rounded-xl border border-white/15 hover:bg-white/[0.14] transition-colors">
+                          <span className="text-[8px] font-black uppercase tracking-wider text-red-200 block mb-0.5">NISN</span>
+                          <strong className="text-white font-mono text-xs font-bold tracking-wider block">
                             {currentTeam.roster?.danton?.nisn || '-'}
                           </strong>
                         </div>
                       </div>
 
-                      <div className="bg-white/80 p-1.5 rounded-lg border border-red-100 text-xs">
-                        <span className="text-[9px] font-bold text-slate-400 uppercase block">Tempat, Tanggal Lahir</span>
-                        <strong className="text-slate-800 text-xs">
+                      <div className="bg-white/10 backdrop-blur-xs p-2.5 rounded-xl border border-white/15 hover:bg-white/[0.14] transition-colors text-xs">
+                        <span className="text-[8px] font-black uppercase tracking-wider text-red-200 block mb-0.5">Tempat, Tanggal Lahir</span>
+                        <strong className="text-white text-xs font-semibold block">
                           {currentTeam.roster?.danton?.birthPlace || '-'}{currentTeam.roster?.danton?.birthDate ? `, ${currentTeam.roster.danton.birthDate}` : ''}
                         </strong>
                       </div>
 
                       {/* Riwayat Sakit / Alergi (Opsional Medis) */}
-                      <div className="bg-white/80 p-1.5 rounded-lg border border-red-100 text-xs">
-                        <span className="text-[9px] font-bold text-slate-400 uppercase block">Riwayat Medis / Sakit (Opsional)</span>
-                        <span className={`text-[11px] ${currentTeam.roster?.danton?.medicalHistory ? 'text-rose-700 font-bold' : 'text-slate-500'}`}>
-                          {currentTeam.roster?.danton?.medicalHistory || 'Tidak ada catatan sakit (sehat)'}
+                      <div className="bg-white/10 backdrop-blur-xs p-2.5 rounded-xl border border-white/15 hover:bg-white/[0.14] transition-colors text-xs flex items-center justify-between gap-2">
+                        <div className="min-w-0">
+                          <span className="text-[8px] font-black uppercase tracking-wider text-red-200 block mb-0.5">Catatan Medis</span>
+                          <span className={`text-[11px] block truncate ${currentTeam.roster?.danton?.medicalHistory ? 'text-amber-300 font-bold' : 'text-emerald-300 font-medium'}`}>
+                            {currentTeam.roster?.danton?.medicalHistory || 'Tidak ada catatan sakit (sehat)'}
+                          </span>
+                        </div>
+                        <span className={`p-1 rounded-lg shrink-0 ${currentTeam.roster?.danton?.medicalHistory ? 'bg-amber-400/20 text-amber-300' : 'bg-emerald-400/20 text-emerald-300'}`}>
+                          <HeartPulse className="w-3.5 h-3.5" />
                         </span>
                       </div>
                     </div>
                   ) : (
                     <div className="space-y-2 w-full">
                       <div>
-                        <label className="text-[10px] font-bold text-slate-500 uppercase block mb-0.5">Nama Lengkap Danton</label>
+                        <label className="text-[10px] font-bold text-red-200 uppercase block mb-0.5">Nama Lengkap Danton</label>
                         <input
                           type="text"
                           placeholder="Nama Lengkap Danton"
@@ -317,12 +376,12 @@ export default function RosterTab({
                             ...rosterDraft,
                             danton: { ...rosterDraft.danton, name: e.target.value }
                           })}
-                          className="w-full px-2.5 py-1.5 bg-white border border-red-300 rounded-lg text-xs font-bold focus:ring-1 focus:ring-red-500"
+                          className="w-full px-2.5 py-1.5 bg-white text-slate-900 border border-red-300 rounded-lg text-xs font-bold focus:ring-2 focus:ring-red-400 shadow-xs"
                         />
                       </div>
                       <div className="grid grid-cols-2 gap-1.5">
                         <div>
-                          <label className="text-[10px] font-bold text-slate-500 uppercase block mb-0.5">NISN</label>
+                          <label className="text-[10px] font-bold text-red-200 uppercase block mb-0.5">NISN</label>
                           <input
                             type="text"
                             placeholder="NISN"
@@ -331,20 +390,20 @@ export default function RosterTab({
                               ...rosterDraft,
                               danton: { ...rosterDraft.danton, nisn: e.target.value }
                             })}
-                            className="w-full px-2 py-1 bg-white border border-red-300 rounded-lg text-xs font-mono focus:ring-1 focus:ring-red-500"
+                            className="w-full px-2 py-1 bg-white text-slate-900 border border-red-300 rounded-lg text-xs font-mono focus:ring-2 focus:ring-red-400 shadow-xs"
                           />
                         </div>
                         <div>
-                          <label className="text-[10px] font-bold text-slate-500 uppercase block mb-0.5">Kelas</label>
+                          <label className="text-[10px] font-bold text-red-200 uppercase block mb-0.5">Kelas</label>
                           <select
                             value={rosterDraft?.danton?.class || ''}
                             onChange={e => setRosterDraft({
                               ...rosterDraft,
                               danton: { ...rosterDraft.danton, class: e.target.value }
                             })}
-                            className="w-full px-2 py-1 bg-white border border-red-300 rounded-lg text-xs font-bold text-slate-800"
+                            className="w-full px-2 py-1 bg-white text-slate-900 border border-red-300 rounded-lg text-xs font-bold shadow-xs"
                           >
-                            <option value="">Kelas</option>
+                            <option value="">Pilih Kelas</option>
                             {availableClassOptions.map(cls => (
                               <option key={cls} value={cls}>Kelas {cls}</option>
                             ))}
@@ -353,7 +412,7 @@ export default function RosterTab({
                       </div>
                       <div className="grid grid-cols-2 gap-1.5">
                         <div>
-                          <label className="text-[10px] font-bold text-slate-500 uppercase block mb-0.5">Tempat Lahir</label>
+                          <label className="text-[10px] font-bold text-red-200 uppercase block mb-0.5">Tempat Lahir</label>
                           <input
                             type="text"
                             placeholder="Kota Kelahiran"
@@ -362,11 +421,11 @@ export default function RosterTab({
                               ...rosterDraft,
                               danton: { ...rosterDraft.danton, birthPlace: e.target.value }
                             })}
-                            className="w-full px-2 py-1 bg-white border border-red-300 rounded-lg text-xs"
+                            className="w-full px-2 py-1 bg-white text-slate-900 border border-red-300 rounded-lg text-xs shadow-xs"
                           />
                         </div>
                         <div>
-                          <label className="text-[10px] font-bold text-slate-500 uppercase block mb-0.5">Tgl Lahir</label>
+                          <label className="text-[10px] font-bold text-red-200 uppercase block mb-0.5">Tgl Lahir</label>
                           <input
                             type="date"
                             value={rosterDraft?.danton?.birthDate || ''}
@@ -374,21 +433,21 @@ export default function RosterTab({
                               ...rosterDraft,
                               danton: { ...rosterDraft.danton, birthDate: e.target.value }
                             })}
-                            className="w-full px-2 py-1 bg-white border border-red-300 rounded-lg text-xs"
+                            className="w-full px-2 py-1 bg-white text-slate-900 border border-red-300 rounded-lg text-xs shadow-xs"
                           />
                         </div>
                       </div>
                       <div>
-                        <label className="text-[10px] font-bold text-slate-500 uppercase block mb-0.5">Riwayat Sakit / Alergi (Opsional)</label>
+                        <label className="text-[10px] font-bold text-red-200 uppercase block mb-0.5">Riwayat Sakit / Alergi (Opsional)</label>
                         <input
                           type="text"
-                          placeholder="Contoh: Asma ringan, maag, alergi dingin (kosongkan jika tidak ada)"
+                          placeholder="Contoh: Asma ringan, alergi dingin (kosongkan jika sehat)"
                           value={rosterDraft?.danton?.medicalHistory || ''}
                           onChange={e => setRosterDraft({
                             ...rosterDraft,
                             danton: { ...rosterDraft.danton, medicalHistory: e.target.value }
                           })}
-                          className="w-full px-2 py-1 bg-white border border-red-300 rounded-lg text-[11px]"
+                          className="w-full px-2 py-1 bg-white text-slate-900 border border-red-300 rounded-lg text-[11px] shadow-xs"
                         />
                       </div>
                     </div>
@@ -399,23 +458,28 @@ export default function RosterTab({
 
             {/* 3 Pendamping Peleton (lg:col-span-7) - Brand UI & Harmonized 3:4 Ratio */}
             <div className="lg:col-span-7 bg-white border border-slate-200/90 rounded-3xl p-5 flex flex-col justify-between space-y-3 shadow-xs relative overflow-hidden">
-              <div className="h-1 w-full bg-gradient-to-r from-blue-600 to-teal-500 absolute top-0 left-0 right-0" />
+              <div className="h-1 w-full bg-gradient-to-r from-blue-600 via-teal-500 to-indigo-600 absolute top-0 left-0 right-0" />
 
-              <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
-                <div className="flex items-center gap-2">
-                  <span className="p-1.5 rounded-xl bg-blue-50 border border-blue-200 text-blue-700 shadow-2xs">
-                    <Users className="w-3.5 h-3.5" />
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <span className="p-1.5 rounded-xl bg-blue-50 border border-blue-200 text-blue-700 shadow-2xs shrink-0">
+                    <Users className="w-4 h-4" />
                   </span>
-                  <div>
-                    <h5 className="font-black text-xs uppercase tracking-wider text-slate-900 leading-tight">
-                      3 Pendamping Peleton
-                    </h5>
-                    <p className="text-[10px] text-slate-500">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+                      <h5 className="font-black text-xs sm:text-sm uppercase tracking-wider text-slate-900 leading-tight">
+                        3 Pendamping Peleton
+                      </h5>
+                      <span className="sm:hidden text-[9px] font-bold bg-slate-100 text-slate-700 border border-slate-200/80 px-2 py-0.5 rounded-md shrink-0 whitespace-nowrap">
+                        Official Kontingen
+                      </span>
+                    </div>
+                    <p className="text-[10px] text-slate-500 mt-0.5 leading-tight">
                       1 Official Utama + 2 Pendukung Resmi (Medis & Logistik)
                     </p>
                   </div>
                 </div>
-                <span className="text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-200 px-2 py-0.5 rounded-md">
+                <span className="hidden sm:inline-block text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-200 px-2.5 py-0.5 rounded-md shrink-0 whitespace-nowrap">
                   Official Kontingen
                 </span>
               </div>
@@ -425,40 +489,48 @@ export default function RosterTab({
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     {currentTeam.roster.officials.map((off, i) => {
                       const isMainOfficial = i === 0 || off.category === 'official';
-                      const defaultRoleTitle = isMainOfficial
-                        ? 'Official (Pelatih / Pembina)'
-                        : `Pendukung ${i} (${i === 1 ? 'Medis / Dokum' : 'Logistik / Lapangan'})`;
-                      const displayRole = off.role && off.role !== '-' ? off.role : defaultRoleTitle;
-                      const hasOPhoto = off.photo && typeof off.photo === 'string' && off.photo !== '#' && !off.photo.startsWith('#') && !off.photo.includes('drive.google.com/open?id=');
+                      const roleMainTitle = isMainOfficial
+                        ? 'Official Utama'
+                        : i === 1
+                        ? 'Pendukung 1'
+                        : 'Pendukung 2';
+                      const roleSubTitle = isMainOfficial
+                        ? 'Pelatih / Pembina'
+                        : i === 1
+                        ? 'Medis & Dokum'
+                        : 'Logistik & Lapangan';
+                      const hasRealPhoto = !isPlaceholderAvatar(off.photo);
 
                       return (
                         <div
                           key={off.id || i}
-                          className={`group/off rounded-2xl border shadow-2xs hover:shadow-xs transition-all p-3 flex flex-col items-center text-center justify-between space-y-2 ${
+                          className={`group/off rounded-2xl border shadow-2xs hover:shadow-xs transition-all p-3 flex flex-col items-center text-center justify-between space-y-2.5 ${
                             isMainOfficial
                               ? 'border-blue-200 bg-gradient-to-b from-blue-50/50 via-white to-white ring-1 ring-blue-100'
-                              : 'border-slate-200/90 bg-slate-50/60 hover:bg-white'
+                              : 'border-slate-200/90 bg-slate-50/50 hover:bg-white'
                           }`}
                         >
-                          {/* Role Chip */}
-                          <div className="w-full flex justify-center">
+                          {/* Role Header (2-tier, never truncated) */}
+                          <div className="w-full flex flex-col items-center gap-0.5">
                             <span
-                              className={`px-2 py-0.5 rounded-md text-[9px] font-bold shadow-2xs truncate max-w-full ${
+                              className={`px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider shadow-2xs ${
                                 isMainOfficial
                                   ? 'bg-blue-600 text-white'
                                   : i === 1
                                   ? 'bg-teal-600 text-white'
                                   : 'bg-slate-700 text-white'
                               }`}
-                              title={displayRole}
                             >
-                              {displayRole}
+                              {roleMainTitle}
+                            </span>
+                            <span className="text-[9px] text-slate-500 font-semibold leading-tight">
+                              {roleSubTitle}
                             </span>
                           </div>
 
                           {/* Uniform 3:4 Pasfoto Frame */}
-                          <div className="w-24 sm:w-26 aspect-[3/4] rounded-xl bg-slate-100 border border-slate-200 shadow-2xs relative overflow-hidden flex items-center justify-center my-1 shrink-0">
-                            {hasOPhoto ? (
+                          <div className="w-24 sm:w-26 aspect-[3/4] rounded-xl bg-slate-100 border border-slate-200 shadow-2xs relative overflow-hidden flex items-center justify-center my-0.5 shrink-0">
+                            {hasRealPhoto ? (
                               <img
                                 src={formatImageUrl(off.photo)}
                                 alt={off.name}
@@ -476,27 +548,38 @@ export default function RosterTab({
                                   }
                                 }}
                               />
-                            ) : null}
-                            <div
-                              className="w-full h-full flex flex-col items-center justify-center text-[8px] font-bold text-slate-400 bg-slate-100 p-1"
-                              style={{ display: hasOPhoto ? 'none' : 'flex' }}
-                            >
-                              <User className="w-6 h-6 opacity-40 mb-0.5" />
-                              <span className="text-[8px] font-black uppercase tracking-wider text-slate-500">
-                                {isMainOfficial ? 'OFFICIAL' : `CREW ${i}`}
-                              </span>
-                              <span className="text-[7px] text-slate-400">(3×4)</span>
-                            </div>
+                            ) : (
+                              <div className="w-full h-full flex flex-col items-center justify-center text-center p-1.5">
+                                <div
+                                  className={`w-12 h-12 rounded-full font-black text-sm flex items-center justify-center shadow-sm text-white mb-1.5 ${
+                                    isMainOfficial
+                                      ? 'bg-gradient-to-br from-blue-500 to-blue-700 ring-2 ring-blue-200'
+                                      : i === 1
+                                      ? 'bg-gradient-to-br from-teal-500 to-teal-700 ring-2 ring-teal-200'
+                                      : 'bg-gradient-to-br from-slate-600 to-slate-800 ring-2 ring-slate-200'
+                                  }`}
+                                >
+                                  {getPersonInitials(off.name)}
+                                </div>
+                                <span className="text-[7.5px] font-black uppercase tracking-wider text-slate-500">
+                                  PASFOTO 3×4
+                                </span>
+                              </div>
+                            )}
                           </div>
 
-                          {/* Name & Phone */}
-                          <div className="w-full space-y-0.5 pt-1 border-t border-slate-100">
-                            <span className="font-black text-xs text-slate-900 block truncate leading-tight" title={off.name}>
+                          {/* Name & Phone (Wrap onto 2 lines, no ellipsis truncation) */}
+                          <div className="w-full space-y-1.5 pt-1.5 border-t border-slate-100 flex flex-col items-center">
+                            <span
+                              className="font-black text-xs text-slate-900 leading-snug line-clamp-2 min-h-[2rem] flex items-center justify-center text-center px-1"
+                              title={off.name}
+                            >
                               {off.name || '-'}
                             </span>
-                            <span className="text-[10px] text-slate-500 font-mono block truncate">
-                              WA: {off.phone || '-'}
-                            </span>
+                            <div className="inline-flex items-center justify-center gap-1.5 text-[10px] text-slate-600 font-mono bg-slate-100/90 hover:bg-slate-200/70 px-2 py-0.5 rounded-md border border-slate-200/80 w-full max-w-[155px] truncate transition-colors">
+                              <Phone className="w-2.5 h-2.5 text-emerald-600 shrink-0" />
+                              <span className="truncate">{off.phone || '-'}</span>
+                            </div>
                           </div>
                         </div>
                       );
@@ -509,7 +592,7 @@ export default function RosterTab({
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   {rosterDraft?.officials?.map((off, i) => {
                     const isMainOfficial = i === 0 || off.category === 'official';
-                    const hasOPhoto = off.photo && typeof off.photo === 'string' && off.photo !== '#' && !off.photo.startsWith('#') && !off.photo.includes('drive.google.com/open?id=');
+                    const hasRealPhoto = !isPlaceholderAvatar(off.photo);
 
                     return (
                       <div
@@ -525,7 +608,7 @@ export default function RosterTab({
                           <span className={`px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider shadow-2xs truncate max-w-full ${
                             isMainOfficial ? 'bg-blue-600 text-white' : i === 1 ? 'bg-teal-600 text-white' : 'bg-slate-700 text-white'
                           }`}>
-                            {isMainOfficial ? '1. Official Utama' : `${i + 1}. Pendukung (${i === 1 ? 'Medis' : 'Logistik/Dokum'})`}
+                            {isMainOfficial ? 'Official Utama' : `Pendukung ${i} (${i === 1 ? 'Medis' : 'Logistik'})`}
                           </span>
                           <button
                             type="button"
@@ -538,14 +621,14 @@ export default function RosterTab({
                           </button>
                         </div>
 
-                        {/* Pasfoto Frame Seragam 3:4 (Sama persis dengan Preview & Danton) */}
+                        {/* Pasfoto Frame Seragam 3:4 */}
                         <div className="relative group shrink-0 my-0.5">
                           <div
                             onClick={() => triggerRosterPhotoUpload({ type: 'official', index: i })}
                             className="w-24 sm:w-26 aspect-[3/4] rounded-xl bg-slate-100 border border-slate-200 shadow-2xs relative overflow-hidden flex items-center justify-center cursor-pointer group hover:border-blue-500 transition-colors"
                             title="Klik untuk unggah/ganti pasfoto pendamping"
                           >
-                            {hasOPhoto ? (
+                            {hasRealPhoto ? (
                               <img
                                 src={formatImageUrl(off.photo)}
                                 alt={off.name || 'Pendamping'}
@@ -563,17 +646,24 @@ export default function RosterTab({
                                   }
                                 }}
                               />
-                            ) : null}
-                            <div
-                              className="w-full h-full flex flex-col items-center justify-center text-[8px] font-bold text-slate-400 bg-slate-100 p-1"
-                              style={{ display: hasOPhoto ? 'none' : 'flex' }}
-                            >
-                              <User className="w-6 h-6 opacity-40 mb-0.5" />
-                              <span className="text-[8px] font-black uppercase tracking-wider text-slate-500">
-                                {isMainOfficial ? 'OFFICIAL' : `CREW ${i}`}
-                              </span>
-                              <span className="text-[7px] text-slate-400">(3×4)</span>
-                            </div>
+                            ) : (
+                              <div className="w-full h-full flex flex-col items-center justify-center text-center p-1.5">
+                                <div
+                                  className={`w-12 h-12 rounded-full font-black text-sm flex items-center justify-center shadow-sm text-white mb-1.5 ${
+                                    isMainOfficial
+                                      ? 'bg-gradient-to-br from-blue-500 to-blue-700'
+                                      : i === 1
+                                      ? 'bg-gradient-to-br from-teal-500 to-teal-700'
+                                      : 'bg-gradient-to-br from-slate-600 to-slate-800'
+                                  }`}
+                                >
+                                  {getPersonInitials(off.name)}
+                                </div>
+                                <span className="text-[7.5px] font-black uppercase tracking-wider text-slate-500">
+                                  PASFOTO 3×4
+                                </span>
+                              </div>
+                            )}
                             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1 text-white text-[10px] font-bold">
                               <Camera className="w-3.5 h-3.5" />
                               <span>Ganti</span>
@@ -727,7 +817,7 @@ export default function RosterTab({
                                     {person.birthPlace ? `${person.birthPlace}${person.birthDate ? `, ${person.birthDate}` : ''}` : '-'}
                                   </div>
                                   <div className="text-[10px] text-slate-500 font-mono flex items-center justify-between border-t border-slate-100 pt-1">
-                                    <span>{person.class ? `Kls ${person.class}` : '-'}</span>
+                                    <span>{formatGradeDisplay(person.class, 'Kls')}</span>
                                     <span>NISN: {person.nisn || '-'}</span>
                                   </div>
                                   {person.medicalHistory && (
@@ -1008,7 +1098,7 @@ export default function RosterTab({
                               {c.birthPlace ? `${c.birthPlace}${c.birthDate ? `, ${c.birthDate}` : ''}` : '-'}
                             </div>
                             <div className="text-[10px] text-slate-500 font-mono flex items-center justify-between border-t border-slate-100 pt-1">
-                              <span>{c.class ? `Kls ${c.class}` : '-'}</span>
+                              <span>{formatGradeDisplay(c.class, 'Kls')}</span>
                               <span>NISN: {c.nisn || '-'}</span>
                             </div>
                             {c.medicalHistory && (

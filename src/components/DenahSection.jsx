@@ -14,7 +14,7 @@ import { VENUE } from '../config.js';
 import InteractiveBasecampMap from './staging/components/InteractiveBasecampMap.jsx';
 
 export default function DenahSection() {
-  const [activeTab, setActiveTab] = useState('basecamp'); // 'basecamp' | 'outdoor'
+  const [activeTab, setActiveTab] = useState('outdoor'); // 'outdoor' (Peta Kampus) | 'basecamp' (Denah Basecamp)
   const [isZoomOpen, setIsZoomOpen] = useState(false);
 
   return (
@@ -43,19 +43,6 @@ export default function DenahSection() {
           <div className="flex items-center justify-center gap-2 mt-6 p-1.5 bg-slate-100 rounded-2xl max-w-md mx-auto border border-slate-200">
             <button
               type="button"
-              onClick={() => setActiveTab('basecamp')}
-              className={`flex-1 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-black transition-all flex items-center justify-center gap-2 cursor-pointer ${
-                activeTab === 'basecamp'
-                  ? 'bg-teal-700 text-white shadow-md font-black'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-white/60 font-bold'
-              }`}
-            >
-              <Building2 className={`w-4 h-4 ${activeTab === 'basecamp' ? 'text-amber-300' : 'text-slate-400'}`} />
-              <span>Basecamp Interaktif (Lt. 1-4)</span>
-            </button>
-
-            <button
-              type="button"
               onClick={() => setActiveTab('outdoor')}
               className={`flex-1 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-black transition-all flex items-center justify-center gap-2 cursor-pointer ${
                 activeTab === 'outdoor'
@@ -64,7 +51,20 @@ export default function DenahSection() {
               }`}
             >
               <Map className={`w-4 h-4 ${activeTab === 'outdoor' ? 'text-amber-300' : 'text-slate-400'}`} />
-              <span>Alur Lapangan & DP</span>
+              <span>Peta Kampus</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveTab('basecamp')}
+              className={`flex-1 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-black transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                activeTab === 'basecamp'
+                  ? 'bg-teal-700 text-white shadow-md font-black'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-white/60 font-bold'
+              }`}
+            >
+              <Building2 className={`w-4 h-4 ${activeTab === 'basecamp' ? 'text-amber-300' : 'text-slate-400'}`} />
+              <span>Denah Basecamp</span>
             </button>
           </div>
         </div>

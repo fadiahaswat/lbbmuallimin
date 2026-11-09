@@ -178,18 +178,23 @@ export function CompetitionProvider({ children }) {
   const [scores, setScores] = useState(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.SCORES);
+      let parsed = null;
       if (saved) {
-        const parsed = JSON.parse(saved);
-        if (parsed && typeof parsed === 'object' && Object.keys(parsed).length > 0) {
-          return parsed;
-        }
+        parsed = JSON.parse(saved);
       }
       if (isLocalhostEnvironment()) {
         const dummyScores = generateDummyScores(teams);
-        safeSetItem(STORAGE_KEYS.SCORES, JSON.stringify(dummyScores));
-        return dummyScores;
+        // Selalu pastikan tim demo (team-sd-01 / Sapen) memiliki skor rekap yang keluar di localhost
+        if (!parsed || !parsed['team-sd-01'] || !parsed['team-sd-1']) {
+          const merged = { ...dummyScores, ...(parsed || {}) };
+          if (dummyScores['team-sd-01']) merged['team-sd-01'] = dummyScores['team-sd-01'];
+          if (dummyScores['team-sd-1']) merged['team-sd-1'] = dummyScores['team-sd-1'];
+          safeSetItem(STORAGE_KEYS.SCORES, JSON.stringify(merged));
+          return merged;
+        }
+        return parsed;
       }
-      return INITIAL_SCORES;
+      return parsed && typeof parsed === 'object' && Object.keys(parsed).length > 0 ? parsed : INITIAL_SCORES;
     } catch {
       return isLocalhostEnvironment() ? generateDummyScores(teams) : INITIAL_SCORES;
     }

@@ -403,47 +403,7 @@ export default function InteractiveBasecampMap({
     <div className="bg-white rounded-3xl p-4 sm:p-7 border border-slate-200/90 shadow-sm space-y-6 text-slate-900 font-sans">
       
       {/* ============================================================== */}
-      {/* 1. BAGIAN ATAS: INFORMASI DENAH & PENCARIAN CEPAT              */}
-      {/* ============================================================== */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between pb-5 border-b border-slate-200 gap-4">
-        
-        {/* SISI KIRI: Judul & Informasi Lantai */}
-        <div>
-          <h3 className="text-2xl sm:text-3xl font-black text-slate-950 uppercase tracking-tight leading-tight">
-            Denah Ruang <span className="text-teal-700">{currentFloor.shortTitle}</span>
-          </h3>
-          <p className="text-xs sm:text-sm text-slate-600 mt-0.5 leading-relaxed">
-            Kampus Terpadu Madrasah Mu'allimin Muhammadiyah Yogyakarta &bull; {currentFloor.description}
-          </p>
-        </div>
-
-        {/* SISI KANAN: Pencarian Cepat Ruangan / Kontingen */}
-        <div className="w-full md:w-80 shrink-0 self-start md:self-center">
-          <div className="relative w-full">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              placeholder="Cari ruang / kode / kontingen..."
-              className="w-full pl-10 pr-8 py-2.5 bg-slate-50 border border-slate-200 rounded-2xl text-xs outline-none focus:bg-white focus:border-teal-600 font-medium transition-all shadow-xs"
-            />
-            {searchQuery && (
-              <button
-                type="button"
-                onClick={() => setSearchQuery('')}
-                className="absolute right-3 top-3 text-slate-400 hover:text-slate-700 cursor-pointer"
-              >
-                <X className="w-3.5 h-3.5" />
-              </button>
-            )}
-          </div>
-        </div>
-
-      </div>
-
-      {/* ============================================================== */}
-      {/* 2. KANVAS DENAH INTERAKTIF (FULL WIDTH CANVAS) - CLEAN LIGHT   */}
+      {/* KANVAS DENAH INTERAKTIF (FULL WIDTH CANVAS) - CLEAN LIGHT      */}
       {/* ============================================================== */}
       <div className="w-full">
         <div className="bg-slate-50/70 rounded-3xl p-5 sm:p-7 border border-slate-200/90 shadow-sm relative overflow-hidden text-slate-900">

@@ -286,15 +286,15 @@ export default function Footer() {
 
       </div>
 
-      {/* Authentic Milad Illustration Motif Emerging from Bottom Center-Right (Tengah Agak ke Kanan, 100% Opacity, Di Depan Garis Border) */}
+      {/* Authentic Milad Illustration Motif Emerging from Bottom Center-Right (Tengah Agak ke Kanan, Biru Dongker / Navy Theme) */}
       <div 
         className="absolute bottom-0 left-[48%] sm:left-[52%] lg:left-[56%] -translate-x-1/2 pointer-events-none z-20 select-none overflow-hidden"
         aria-hidden="true"
       >
         <img
-          src="/logo-milad.svg"
+          src="/logo-milad-navy.svg"
           alt=""
-          className="w-[280px] sm:w-[360px] lg:w-[440px] h-auto object-contain translate-y-[58%] opacity-100 filter drop-shadow-2xl pointer-events-none select-none"
+          className="w-[280px] sm:w-[360px] lg:w-[440px] h-auto object-contain translate-y-[58%] opacity-60 filter drop-shadow-2xl pointer-events-none select-none"
           loading="lazy"
           decoding="async"
         />

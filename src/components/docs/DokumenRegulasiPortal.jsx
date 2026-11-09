@@ -11,6 +11,8 @@ import {
   Printer
 } from 'lucide-react';
 import SimpaskorSidebarLayout from '../navigation/SimpaskorSidebarLayout.jsx';
+import { useCompetition } from '../../context/CompetitionContext.jsx';
+import TeamProfileHeader from '../portal/participant/components/TeamProfileHeader.jsx';
 import JuknisView from './JuknisView.jsx';
 import TataTertibView from './TataTertibView.jsx';
 import RundownView from './RundownView.jsx';
@@ -57,6 +59,8 @@ const TABS = [
 ];
 
 export default function DokumenRegulasiPortal({ initialTab = 'juknis' }) {
+  const { currentUser, role, currentTeam } = useCompetition?.() || {};
+  const isPeserta = (currentUser?.role || role) === 'peserta' || Boolean(currentTeam);
   const [activeTab, setActiveTab] = useState(initialTab);
 
   // Sync if initialTab changes from parent/nav
@@ -74,7 +78,14 @@ export default function DokumenRegulasiPortal({ initialTab = 'juknis' }) {
       title="Pusat Dokumen & Regulasi"
       subtitle="Portal tunggal petunjuk teknis, tata tertib, jadwal rundown, proposal resmi, dan agenda kerja LBB Mu'allimin 2027"
     >
-      <div className="space-y-6">
+      {/* Wrapper Utama: Ketika role Peserta, ikat seluruh card ke max-w-6xl mx-auto agar serasi dengan Portal */}
+      <div className={isPeserta ? "max-w-6xl mx-auto space-y-4 sm:space-y-6" : "space-y-6"}>
+        {/* Banner Profil Peleton Resmi (Di mobile hanya tampil di beranda, desktop tetap tampil) */}
+        {isPeserta && currentTeam && (
+          <div className="hidden sm:block">
+            <TeamProfileHeader currentTeam={currentTeam} />
+          </div>
+        )}
 
         {/* Navigation Tabs Bar */}
         <div className="bg-white rounded-2xl p-2 border border-slate-200/90 shadow-xs">

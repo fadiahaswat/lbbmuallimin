@@ -4,7 +4,12 @@ import {
   Upload,
   CheckCircle2,
   Sparkles,
-  AlertTriangle
+  AlertTriangle,
+  Shield,
+  X,
+  ArrowRight,
+  Check,
+  LogOut
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
 import { EVENT } from '../../config.js';
@@ -97,6 +102,15 @@ export default function ParticipantDashboard() {
       localStorage.setItem('lbb_participant_active_tab', tabId);
     } catch {}
   };
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('lbb_participant_active_tab');
+      if (stored && ['overview', 'idcard', 'roster', 'documents', 'scores'].includes(stored)) {
+        setActiveTab(stored);
+      }
+    } catch {}
+  }, []);
   const [scheduleTab, setScheduleTab] = useState('tm'); // 'tm' | 'trial' | 'competition'
   const [uploadToast, setUploadToast] = useState('');
 
@@ -114,6 +128,8 @@ export default function ParticipantDashboard() {
 
   const [isPactModalOpen, setIsPactModalOpen] = useState(false);
   const [isDownloadingPact, setIsDownloadingPact] = useState(false);
+  const [showStatusModal, setShowStatusModal] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const handleDownloadPact = async () => {
     if (!currentTeam || isDownloadingPact) return;
@@ -192,7 +208,7 @@ export default function ParticipantDashboard() {
     );
   }
 
-  const teamScore = scores[currentTeam.id] || null;
+  const teamScore = (currentTeam?.id && scores[currentTeam.id]) || scores['team-sd-01'] || scores['team-sd-1'] || null;
 
   const availableClassOptions = currentTeam.jenjang === 'SD'
     ? ['1', '2', '3', '4', '5', '6']
@@ -640,18 +656,20 @@ export default function ParticipantDashboard() {
     <SimpaskorSidebarLayout
       activeMenu={activeTab}
       title={currentTeam.schoolName}
-      subtitle={`Portal Resmi Peleton • Tingkat ${currentTeam.jenjang} • Urutan: ${currentTeam.lotNumber ? `#${String(currentTeam.lotNumber).padStart(2, '0')}` : 'Belum TM'}${currentTeam.chestNumber ? ` • No. Dada: ${currentTeam.chestNumber}` : ''}`}
-      onSelectMenu={(menuId) => setActiveTab(menuId)}
+      onSelectMenu={(menuId) => handleSelectTab(menuId)}
       hideHeader={true}
+      onLogout={() => {
+        logoutTeam();
+      }}
       rightActions={
-        <div className="flex items-center gap-2">
-          <button
-            onClick={logoutTeam}
-            className="text-xs font-bold text-red-700 hover:text-red-800 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg border border-red-200 transition-colors cursor-pointer"
-          >
-            Ganti Akun Tim
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={() => setShowStatusModal(true)}
+          className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 bg-white text-slate-700 hover:border-emerald-200 hover:text-emerald-700 text-xs font-bold transition-all shadow-2xs cursor-pointer active:scale-95 shrink-0"
+        >
+          <Shield className="w-3.5 h-3.5 text-emerald-600" />
+          <span>Status Pendaftaran</span>
+        </button>
       }
     >
       <input
@@ -680,17 +698,19 @@ export default function ParticipantDashboard() {
           </div>
         )}
 
-        {/* Main Team Profile Banner - Paling Atas */}
-        <TeamProfileHeader
-          currentTeam={currentTeam}
-          hasLogo={hasLogo}
-          logoLoadFailed={logoLoadFailed}
-          logoFormattedUrl={logoFormattedUrl}
-          rawLogoUrl={rawLogoUrl}
-          setLogoLoadFailed={setLogoLoadFailed}
-          triggerFileUpload={triggerFileUpload}
-          updateTeamProfile={updateTeamProfile}
-        />
+        {/* Main Team Profile Banner - Paling Atas (Di mobile hanya tampil di Beranda/overview) */}
+        <div className={activeTab === 'overview' ? 'block' : 'hidden sm:block'}>
+          <TeamProfileHeader
+            currentTeam={currentTeam}
+            hasLogo={hasLogo}
+            logoLoadFailed={logoLoadFailed}
+            logoFormattedUrl={logoFormattedUrl}
+            rawLogoUrl={rawLogoUrl}
+            setLogoLoadFailed={setLogoLoadFailed}
+            triggerFileUpload={triggerFileUpload}
+            updateTeamProfile={updateTeamProfile}
+          />
+        </div>
 
 
 
@@ -832,6 +852,131 @@ export default function ParticipantDashboard() {
           onClose={() => setIsPactModalOpen(false)}
           team={currentTeam}
         />
+
+        {/* Modal Status Pendaftaran (Figma Make Style) */}
+        {showStatusModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 p-4 backdrop-blur-xs animate-in fade-in duration-200">
+            <div className="w-full max-w-lg rounded-3xl bg-white p-6 shadow-2xl sm:p-8 space-y-5">
+              <div className="flex items-start justify-between">
+                <div>
+                  <p className="section-kicker">STATUS PENDAFTARAN 2027</p>
+                  <h3 className="mt-1 text-xl sm:text-2xl font-black tracking-tight text-slate-950">
+                    Status Verifikasi Peleton
+                  </h3>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowStatusModal(false)}
+                  className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-colors cursor-pointer"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Status Banner */}
+              <div className="rounded-2xl border border-emerald-200 bg-emerald-50/80 p-4">
+                <div className="flex items-center gap-3">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-xs">
+                    <Check className="w-5 h-5 stroke-[3]" />
+                  </span>
+                  <div>
+                    <p className="text-xs sm:text-sm font-black text-emerald-950">
+                      {currentTeam.status === 'verified'
+                        ? 'ACC Panitia Sekretariat'
+                        : currentTeam.status === 'pending'
+                        ? 'Menunggu Validasi Dokumen'
+                        : currentTeam.status === 'revision'
+                        ? 'Perlu Revisi Dokumen'
+                        : 'Terdaftar di Sistem'}
+                    </p>
+                    <p className="text-[11px] text-emerald-700">
+                      {currentTeam.status === 'verified'
+                        ? 'Seluruh data utama kontingen telah lolos verifikasi resmi.'
+                        : 'Panitia sedang memproses verifikasi administrasi tim Anda.'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Step Checklist */}
+              <div className="space-y-3 pt-1">
+                {[
+                  { label: 'Pendaftaran formulir peleton diterima', done: true, note: 'Tahap 1 selesai' },
+                  { label: 'Administrasi bukti pembayaran tervalidasi', done: Boolean(currentTeam.files?.paymentProof?.url), note: 'Tahap 2 selesai' },
+                  { label: 'Data 25 personel peleton & pasfoto lengkap', done: Boolean(currentTeam.roster?.pasukan?.length >= 21), note: 'Tahap 3 (Formation Board)' },
+                  { label: 'Nomor dada & jadwal arena disahkan', done: Boolean(currentTeam.lotNumber), note: 'Tahap 4 (Technical Meeting)' },
+                ].map((step, idx) => (
+                  <div key={step.label} className="flex items-center gap-3">
+                    <span
+                      className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full ${
+                        step.done ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-400'
+                      }`}
+                    >
+                      <Check className="w-3.5 h-3.5 stroke-[3]" />
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs font-bold text-slate-800 leading-tight">{step.label}</p>
+                      <p className="text-[10px] text-slate-400 mt-0.5">{step.note}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setShowStatusModal(false)}
+                className="w-full justify-center py-2.5 px-4 rounded-xl bg-red-700 hover:bg-red-800 active:scale-95 text-white font-black text-xs uppercase tracking-wider transition-all cursor-pointer shadow-md"
+              >
+                Kembali ke Portal
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Modal Konfirmasi Ganti Akun / Logout */}
+        {showLogoutModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 p-4 backdrop-blur-xs animate-in fade-in duration-200">
+            <div className="w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl sm:p-7 space-y-5 animate-in zoom-in-95 duration-200">
+              <div className="flex items-start gap-3.5">
+                <div className="w-12 h-12 rounded-2xl bg-rose-50 border border-rose-200 text-rose-600 flex items-center justify-center shrink-0 shadow-xs">
+                  <LogOut className="w-6 h-6 stroke-[2.2]" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-[10px] font-black uppercase tracking-wider text-rose-600">
+                    Konfirmasi Sesi
+                  </p>
+                  <h3 className="text-lg sm:text-xl font-black text-slate-900 leading-tight mt-0.5">
+                    Yakin Ingin Ganti Akun?
+                  </h3>
+                  <p className="text-xs text-slate-500 mt-2 leading-relaxed">
+                    Sesi peleton <strong className="text-slate-800 font-bold">{currentTeam?.schoolName || 'Anda'}</strong> akan diakhiri di perangkat ini. Anda perlu memasukkan kode akses atau kredensial tim kembali untuk masuk ke portal.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => setShowLogoutModal(false)}
+                  className="px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-100 text-slate-700 font-bold text-xs transition-colors cursor-pointer"
+                >
+                  Batal
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowLogoutModal(false);
+                    logoutTeam();
+                  }}
+                  className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white font-bold text-xs shadow-md shadow-red-600/25 flex items-center gap-1.5 transition-all cursor-pointer active:scale-95"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                  <span>Ya, Ganti Akun</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </SimpaskorSidebarLayout>
   );

@@ -41,6 +41,16 @@ export default function RekapNilaiView() {
 
   const userRole = currentUser?.role || role || 'publik';
 
+  // Jika akun Peserta masuk ke view rekap_nilai, arahkan otomatis ke Dasbor Peserta tab Rekap Nilai resmi
+  React.useEffect(() => {
+    if (userRole === 'peserta') {
+      try {
+        localStorage.setItem('lbb_participant_active_tab', 'scores');
+      } catch {}
+      setActiveView('peserta_dashboard');
+    }
+  }, [userRole, setActiveView]);
+
   // Petugas Check-In dan Petugas DP TIDAK MEMILIKI AKSES ke Rekap Nilai!
   const isPenginput = userRole === 'penginput' || userRole === 'superadmin';
   const isVerifikator = userRole === 'verifikator' || userRole === 'superadmin';

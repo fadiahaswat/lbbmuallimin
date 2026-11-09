@@ -6,6 +6,7 @@ import {
   Clock,
   ShieldCheck,
   User,
+  Users,
   Shield,
   Phone,
   Sparkles,
@@ -16,47 +17,62 @@ import {
   Save,
   Loader2
 } from 'lucide-react';
-import { getFallbackImageUrl } from '../../../../services/sheetService.js';
+import { formatImageUrl, getFallbackImageUrl } from '../../../../services/sheetService.js';
 import { extractLogoTheme } from '../../../../utils/extractLogoColor.js';
+import { useCompetition } from '../../../../context/CompetitionContext.jsx';
 
 export default function TeamProfileHeader({
-  currentTeam,
-  hasLogo,
-  logoLoadFailed,
-  logoFormattedUrl,
-  rawLogoUrl,
-  setLogoLoadFailed,
+  currentTeam: propCurrentTeam,
+  hasLogo: propHasLogo,
+  logoLoadFailed: propLogoLoadFailed,
+  logoFormattedUrl: propLogoFormattedUrl,
+  rawLogoUrl: propRawLogoUrl,
+  setLogoLoadFailed: propSetLogoLoadFailed,
   triggerFileUpload,
   updateTeamProfile
 }) {
+  const compCtx = useCompetition?.() || {};
+  const currentTeam = propCurrentTeam || compCtx.currentTeam;
+  const activeUpdateTeamProfile = updateTeamProfile || compCtx.updateTeamProfile;
+
+  const [internalLogoLoadFailed, setInternalLogoLoadFailed] = useState(false);
+  const logoLoadFailed = propLogoLoadFailed !== undefined ? propLogoLoadFailed : internalLogoLoadFailed;
+  const setLogoLoadFailed = propSetLogoLoadFailed || setInternalLogoLoadFailed;
+
+  const rawLogoUrl = propRawLogoUrl !== undefined
+    ? propRawLogoUrl
+    : (currentTeam?.files?.schoolLogo?.url || currentTeam?.file_logo_sekolah || currentTeam?.logoUrl || '');
+  const hasLogo = propHasLogo !== undefined
+    ? propHasLogo
+    : Boolean(rawLogoUrl && rawLogoUrl !== '#' && !rawLogoUrl.startsWith('#'));
+  const logoFormattedUrl = propLogoFormattedUrl !== undefined
+    ? propLogoFormattedUrl
+    : (hasLogo ? formatImageUrl(rawLogoUrl) : '');
+
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [logoTheme, setLogoTheme] = useState(null);
 
-  // Dynamic School Logo Theme Extraction (Menyesuaikan wadah/kartu secara otomatis)
-  React.useEffect(() => {
-    let isCancelled = false;
-    const targetUrl = hasLogo && !logoLoadFailed ? logoFormattedUrl || rawLogoUrl : null;
-    extractLogoTheme(targetUrl, currentTeam?.schoolName).then((theme) => {
-      if (!isCancelled && theme) {
-        setLogoTheme(theme);
-      }
-    });
-    return () => {
-      isCancelled = true;
-    };
-  }, [hasLogo, logoLoadFailed, logoFormattedUrl, rawLogoUrl, currentTeam?.schoolName]);
+  const teamInitials = React.useMemo(() => {
+    if (!currentTeam?.schoolName) return 'LM';
+    const cleaned = currentTeam.schoolName.trim().replace(/^(SD|SMP|SMA|SMK|MTs|MI)\s+/i, '').trim();
+    const words = cleaned.split(/\s+/);
+    if (words.length === 0 || !words[0]) return 'LM';
+    if (words.length === 1) return words[0].slice(0, 2).toUpperCase();
+    return (words[0][0] + words[1][0]).toUpperCase();
+  }, [currentTeam?.schoolName]);
 
   // Form edit profil
   const [editForm, setEditForm] = useState({
-    city: currentTeam.city || '',
-    province: currentTeam.province || '',
-    platoonName: currentTeam.platoonName || '',
-    waNumber: currentTeam.waNumber || '',
-    officialName: currentTeam.roster?.officials?.[0]?.name || currentTeam.officialName || currentTeam.coachName || ''
+    city: currentTeam?.city || '',
+    province: currentTeam?.province || '',
+    platoonName: currentTeam?.platoonName || '',
+    waNumber: currentTeam?.waNumber || '',
+    officialName: currentTeam?.roster?.officials?.[0]?.name || currentTeam?.officialName || currentTeam?.coachName || ''
   });
 
   const handleOpenEdit = () => {
+    if (!currentTeam) return;
     setEditForm({
       city: currentTeam.city || '',
       province: currentTeam.province || '',
@@ -69,10 +85,10 @@ export default function TeamProfileHeader({
 
   const handleSaveProfile = async (e) => {
     e.preventDefault();
-    if (!updateTeamProfile || isSaving) return;
+    if (!activeUpdateTeamProfile || isSaving || !currentTeam?.id) return;
     setIsSaving(true);
     try {
-      await updateTeamProfile(currentTeam.id, {
+      await activeUpdateTeamProfile(currentTeam.id, {
         city: editForm.city.trim(),
         province: editForm.province.trim(),
         platoonName: editForm.platoonName.trim(),
@@ -107,6 +123,31 @@ export default function TeamProfileHeader({
   };
 
   const locationText = resolveKabKota();
+
+  const resolveAddress = () => {
+    if (currentTeam.schoolAddress && currentTeam.schoolAddress.trim()) {
+      return currentTeam.schoolRegion 
+        ? `${currentTeam.schoolAddress.trim()}, ${currentTeam.schoolRegion}`
+        : currentTeam.schoolAddress.trim();
+    }
+    if (currentTeam.address && currentTeam.address.trim() && currentTeam.address.trim() !== 'Daerah Istimewa Yogyakarta') {
+      return currentTeam.address.trim();
+    }
+    // Default address map by school name
+    if (currentTeam.schoolName?.includes('Sapen')) {
+      return 'Jl. Timoho No. 29, Demangan, Kec. Gondokusuman, Kota Yogyakarta';
+    }
+    if (currentTeam.schoolName?.includes('Sukonandi')) {
+      return 'Jl. Sukonandi No. 1, Semaki, Kec. Umbulharjo, Kota Yogyakarta';
+    }
+    if (currentTeam.schoolName?.includes("Mu'allimin")) {
+      return 'Jl. Letjen S. Parman No. 68, Patangpuluhan, Wirobrajan, Kota Yogyakarta';
+    }
+    if (currentTeam.city) {
+      return `${currentTeam.city}, D.I. Yogyakarta`;
+    }
+    return currentTeam.address || 'Kota Yogyakarta, Daerah Istimewa Yogyakarta';
+  };
 
   // Config status badge (Light Mode Brand UI)
   const statusConfig = {
@@ -146,51 +187,21 @@ export default function TeamProfileHeader({
     currentTeam.platoonName.trim().toLowerCase() !== `peleton ${currentTeam.schoolName?.trim().toLowerCase()}` &&
     currentTeam.platoonName.trim().toLowerCase() !== `pleton ${currentTeam.schoolName?.trim().toLowerCase()}`;
 
-  return (
-    <div
-      className="relative overflow-hidden rounded-2xl sm:rounded-3xl border shadow-xs transition-all duration-500"
-      style={{
-        background: logoTheme?.cardBackground || '#ffffff',
-        borderColor: logoTheme?.cardBorder || 'rgba(226, 232, 240, 0.9)',
-        boxShadow: logoTheme?.cardShadow || '0 10px 25px -5px rgba(0, 0, 0, 0.05)',
-      }}
-    >
-      {/* Dynamic Ambient Glow from Logo Color */}
-      {logoTheme?.ambientGlow && (
-        <div
-          className="absolute inset-0 pointer-events-none transition-opacity duration-700"
-          style={{ background: logoTheme.ambientGlow }}
-        />
-      )}
+  if (!currentTeam) return null;
 
-      {/* Brand Top Accent Stripe (Harmonized with School Logo Palette) */}
-      <div
-        className="h-1.5 w-full transition-all duration-500"
-        style={{
-          background: logoTheme?.accentStripe || 'linear-gradient(90deg, #8B0000 0%, #f59e0b 50%, #8B0000 100%)',
-        }}
-      />
+  return (
+    <div className="profile-banner">
+      <div className="profile-pattern" />
 
       {/* Main Content Card Container */}
-      <div className="relative z-10 p-4 sm:p-5 lg:p-6 space-y-3.5 sm:space-y-4">
-        
-        {/* Top Header: Identity & Actions */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
-          
-          {/* Sisi Kiri: Logo + Nama Sekolah + Badge Jenjang/Kategori/Daerah */}
-          <div className="flex items-center gap-3.5 sm:gap-4.5 min-w-0 flex-1">
-            {/* Logo Sekolah Avatar */}
-            <div className="relative shrink-0">
-              <div
-                className="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-2xl p-1.5 sm:p-2 flex items-center justify-center overflow-hidden shadow-xs ring-1 transition-all duration-500"
-                style={{
-                  backgroundColor: logoTheme?.avatarBg || '#f8fafc',
-                  borderColor: logoTheme?.avatarRing || '#e2e8f0',
-                  borderWidth: '1px',
-                  borderStyle: 'solid',
-                }}
-              >
-                {hasLogo && !logoLoadFailed ? (
+      <div className="relative z-10 p-5 sm:p-7 grid gap-5 lg:grid-cols-[minmax(0,1fr)_250px] lg:items-stretch">
+        {/* Sisi Kiri: Logo + Nama Sekolah + Badge Jenjang/Kategori/Daerah */}
+        <div className="flex min-w-0 flex-col justify-center gap-4">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-5">
+            {/* Logo Sekolah - Rata Kiri & Diperbesar */}
+            <div className="relative shrink-0 self-start w-fit flex items-center justify-start">
+              {hasLogo && !logoLoadFailed ? (
+                <div className="w-20 h-20 sm:w-24 sm:h-24 flex items-center justify-center">
                   <img
                     src={logoFormattedUrl}
                     alt="Logo Sekolah"
@@ -203,141 +214,135 @@ export default function TeamProfileHeader({
                         setLogoLoadFailed(true);
                       }
                     }}
-                    className="w-full h-full object-contain filter drop-shadow-xs"
+                    className="w-full h-full object-contain filter drop-shadow-md"
                   />
-                ) : (
-                  <div className="w-full h-full flex flex-col items-center justify-center text-center p-1">
-                    <School className="w-6 h-6 text-slate-400 mb-0.5" />
-                    <span className="text-[9px] uppercase font-black text-slate-500 tracking-wider">
-                      {currentTeam.jenjang || 'LBB'}
-                    </span>
-                  </div>
-                )}
-              </div>
+                </div>
+              ) : (
+                <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl sm:rounded-[24px] flex items-center justify-center overflow-hidden bg-gradient-to-br from-red-600 to-red-800 text-white font-black text-2xl sm:text-3xl shadow-[0_14px_28px_rgba(185,28,28,0.24)] ring-4 ring-white">
+                  <span>{teamInitials}</span>
+                </div>
+              )}
 
-              {/* Quick Upload Button */}
+              {/* Quick Upload Button (Sleek dark circular button) */}
               <button
-                onClick={() => triggerFileUpload('schoolLogo')}
-                className="absolute -bottom-1 -right-1 p-1 sm:p-1.5 rounded-lg sm:rounded-xl bg-amber-400 text-slate-950 shadow-xs hover:bg-amber-300 hover:scale-105 active:scale-95 transition-all cursor-pointer ring-2 ring-white"
+                type="button"
+                onClick={() => {
+                  if (triggerFileUpload) {
+                    triggerFileUpload('schoolLogo');
+                  } else {
+                    handleOpenEdit();
+                  }
+                }}
+                className="absolute -top-1 -right-1 p-1.5 rounded-full bg-slate-900/85 hover:bg-slate-950 text-white shadow-sm hover:scale-110 active:scale-95 transition-all cursor-pointer ring-2 ring-white"
                 title="Ganti Logo Sekolah"
               >
-                <Camera className="w-3 h-3" />
+                <Camera className="w-2.5 h-2.5" />
               </button>
             </div>
 
             {/* Nama Sekolah & Metadata */}
             <div className="min-w-0 flex-1">
-              {/* Badge Metadata */}
-              <div className="flex items-center gap-1.5 mb-1 flex-wrap">
-                <span className="text-xs font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200">
-                  Tingkat {currentTeam.jenjang}
-                </span>
-                <span className="text-xs font-bold text-red-700 bg-red-50 px-2 py-0.5 rounded-md border border-red-200">
-                  {currentTeam.category}
-                </span>
-
-                {/* Badge Asal Kota/Kabupaten */}
-                <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
-                  <MapPin className="w-3 h-3 text-emerald-600 shrink-0" />
-                  <span className="truncate max-w-[220px]">{locationText}</span>
-                </span>
+              <div className="flex items-center gap-2">
+                <span className="h-px w-5 bg-red-600 shrink-0" />
+                <p className="text-[9px] font-black uppercase tracking-[0.18em] text-red-700">
+                  {status.label === 'Terverifikasi Sah' ? 'Kontingen terverifikasi' : status.label}
+                </p>
               </div>
 
-              <h1 className="text-lg sm:text-xl lg:text-2xl font-black text-slate-900 uppercase tracking-tight leading-snug line-clamp-2">
+              <h2 className="mt-1.5 text-xl sm:text-2xl lg:text-[28px] font-black uppercase leading-[1.12] tracking-[-0.03em] text-slate-950 max-w-3xl">
                 {currentTeam.schoolName}
-              </h1>
+              </h2>
 
-              {showSubtitle && (
-                <p
-                  className="text-xs sm:text-sm font-black mt-0.5 truncate transition-colors duration-500 flex items-center gap-1.5"
-                  style={{ color: logoTheme?.accentText || '#b45309' }}
-                >
-                  <span
-                    className="w-1.5 h-1.5 rounded-full inline-block"
-                    style={{ backgroundColor: logoTheme?.accentText || '#b45309' }}
-                  />
-                  <span>{currentTeam.platoonName}</span>
-                </p>
-              )}
+              <p className="mt-1.5 flex items-center gap-1.5 text-xs font-medium text-slate-500">
+                <MapPin className="w-3.5 h-3.5 text-red-600 shrink-0" />
+                <span className="font-semibold text-slate-600 truncate max-w-2xl">
+                  {resolveAddress()}
+                </span>
+              </p>
+
+              {/* Badges Row */}
+              <div className="mt-3 flex flex-wrap items-center gap-2">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-[0.08em] text-slate-600">
+                  Jenjang {currentTeam.jenjang}
+                </span>
+                <span className="rounded-full border border-red-100 bg-red-50 px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-[0.08em] text-red-700">
+                  {currentTeam.category}
+                </span>
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-[0.08em] text-emerald-700">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shrink-0" />
+                  <span>{locationText}</span>
+                </span>
+              </div>
             </div>
           </div>
+        </div>
 
-          {/* Sisi Kanan: Status Badge & Tombol Edit Profil Peleton */}
-          <div className="shrink-0 flex items-center gap-2 sm:gap-2.5 justify-start sm:justify-end flex-wrap sm:flex-nowrap">
-            {/* Tombol Edit Profil */}
+        {/* Sisi Kanan: Kartu Registrasi Gelap (Figma Luxury Card) */}
+        <div className="relative flex min-h-[145px] flex-col justify-between overflow-hidden rounded-[20px] bg-slate-950 p-5 text-white shadow-[0_18px_38px_rgba(15,23,42,0.16)]">
+          <div className="absolute -right-10 -top-14 h-36 w-36 rounded-full border-[22px] border-white/[0.04] pointer-events-none" />
+          <div className="relative flex items-start justify-between">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-red-600 text-white shadow-md">
+              <Shield className="w-4 h-4" />
+            </span>
             <button
               type="button"
               onClick={handleOpenEdit}
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-950 border border-slate-200 text-[11px] sm:text-xs font-bold transition-all shadow-2xs cursor-pointer active:scale-95"
-              title="Edit Profil Peleton"
+              className="flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.06] px-2.5 py-1.5 text-[8px] font-black text-slate-300 transition hover:bg-white/10 hover:text-white cursor-pointer"
             >
-              <Edit3 className="w-3.5 h-3.5 text-slate-600" />
-              <span>Edit Profil</span>
+              <Edit3 className="w-3 h-3" />
+              <span>Edit profil</span>
             </button>
-
-            {/* Status Badge Mandiri */}
-            <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-[11px] sm:text-xs font-bold uppercase tracking-wider shadow-2xs ${status.theme}`}>
-              <StatusIcon className="w-3.5 h-3.5" />
-              <span>{status.label}</span>
-            </span>
           </div>
-
-        </div>
-
-        {/* Bottom Bar: Personel & Kontak (Data Table / Grid Elegan dengan Tint Logo) */}
-        <div
-          className="rounded-xl sm:rounded-2xl border p-2.5 sm:p-3 grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 divide-y sm:divide-y-0 sm:divide-x divide-slate-200/80 transition-all duration-500"
-          style={{
-            background: logoTheme?.subtleBoxBg || 'rgba(248, 250, 252, 0.8)',
-            borderColor: logoTheme?.subtleBoxBorder || 'rgba(226, 232, 240, 0.8)',
-          }}
-        >
-          {/* Danton */}
-          <div className="flex items-center gap-2.5 sm:px-2 pt-1 sm:pt-0">
-            <div className="w-8 h-8 rounded-lg bg-amber-100/80 border border-amber-200/80 flex items-center justify-center shrink-0">
-              <User className="w-4 h-4 text-amber-700" />
-            </div>
-            <div className="min-w-0 flex-1">
-              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block leading-tight">
-                Komandan Peleton
-              </span>
-              <span className="text-xs sm:text-sm font-black text-slate-900 truncate block">
-                {dantonName}
-              </span>
-            </div>
-          </div>
-
-          {/* Official */}
-          <div className="flex items-center gap-2.5 sm:px-2 pt-2 sm:pt-0">
-            <div className="w-8 h-8 rounded-lg bg-blue-100/80 border border-blue-200/80 flex items-center justify-center shrink-0">
-              <Shield className="w-4 h-4 text-blue-700" />
-            </div>
-            <div className="min-w-0 flex-1">
-              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block leading-tight">
-                Official / Pendamping
-              </span>
-              <span className="text-xs sm:text-sm font-black text-slate-900 truncate block">
-                {officialName}
-              </span>
-            </div>
-          </div>
-
-          {/* WhatsApp */}
-          <div className="flex items-center gap-2.5 sm:px-2 pt-2 sm:pt-0">
-            <div className="w-8 h-8 rounded-lg bg-emerald-100/80 border border-emerald-200/80 flex items-center justify-center shrink-0">
-              <Phone className="w-4 h-4 text-emerald-700" />
-            </div>
-            <div className="min-w-0 flex-1">
-              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block leading-tight">
-                No. WhatsApp Tim
-              </span>
-              <span className="text-xs sm:text-sm font-mono font-black text-emerald-700 truncate block">
-                {waNumber}
-              </span>
-            </div>
+          <div className="relative mt-2">
+            <p className="text-[8px] font-black uppercase tracking-[0.18em] text-slate-400">
+              Kode registrasi
+            </p>
+            <p className="mt-1 text-base font-black tracking-[0.08em] font-mono text-white">
+              {currentTeam.regCode || 'LBB27-SD-01-SDM'}
+            </p>
+            <p className="mt-1.5 flex items-center gap-1.5 text-[8px] font-bold text-emerald-400">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+              <span>Registrasi aktif</span>
+            </p>
           </div>
         </div>
+      </div>
 
+      {/* Bottom Bar: Personel & Kontak (3 Kolom Elegan Persis Referensi) */}
+      <div className="relative grid border-t border-slate-200/80 bg-slate-50/70 sm:grid-cols-3">
+        {[
+          { icon: Users, label: 'Komandan Peleton', value: dantonName },
+          { icon: Shield, label: 'Official / Pendamping', value: officialName },
+          { icon: Phone, label: 'WhatsApp Tim', value: waNumber, isPhone: true },
+        ].map((item, index) => {
+          const ItemIcon = item.icon;
+          if (!currentTeam) return null;
+
+  return (
+            <div
+              key={item.label}
+              className={`flex items-center gap-3 px-5 py-3.5 sm:px-6 ${
+                index < 2 ? 'border-b border-slate-200/80 sm:border-b-0 sm:border-r' : ''
+              }`}
+            >
+              <span className="icon-well">
+                <ItemIcon className="w-4 h-4" />
+              </span>
+              <div className="min-w-0">
+                <p className="text-[8px] font-black uppercase tracking-[0.12em] text-slate-400">
+                  {item.label}
+                </p>
+                <p
+                  className={`mt-0.5 truncate text-[11px] sm:text-xs font-black ${
+                    item.isPhone ? 'text-emerald-700 font-mono' : 'text-slate-900'
+                  }`}
+                >
+                  {item.value}
+                </p>
+              </div>
+            </div>
+          );
+        })}
       </div>
 
       {/* Modal Edit Profil Peleton */}

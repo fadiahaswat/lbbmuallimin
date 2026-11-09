@@ -15,11 +15,15 @@ import {
   ChevronUp,
   Building2,
   Sun,
-  Moon
+  Moon,
+  FileSpreadsheet,
+  ShieldCheck,
+  X
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
 import { VENUE } from '../../config.js';
 import SimpaskorSidebarLayout from '../navigation/SimpaskorSidebarLayout.jsx';
+import TeamProfileHeader from '../portal/participant/components/TeamProfileHeader.jsx';
 import { formatImageUrl } from '../../services/sheetService.js';
 import { getChestNumberByLot } from '../../context/competitionHelpers.js';
 
@@ -59,11 +63,11 @@ function SchoolLogo({ team, schoolName, size = 'table', className = '', isDark =
   let fontClasses = '';
 
   if (size === 'podium-lg') {
-    sizeClasses = 'w-20 h-20 sm:w-24 sm:h-24';
-    fontClasses = `text-2xl font-black ${isDark ? 'text-amber-300' : 'text-amber-900'}`;
+    sizeClasses = 'w-full h-full';
+    fontClasses = `text-lg sm:text-2xl font-black ${isDark ? 'text-amber-300' : 'text-amber-900'}`;
   } else if (size === 'podium-md') {
-    sizeClasses = 'w-16 h-16 sm:w-18 sm:h-18';
-    fontClasses = `text-xl font-black ${isDark ? 'text-slate-300' : 'text-slate-700'}`;
+    sizeClasses = 'w-full h-full';
+    fontClasses = `text-sm sm:text-xl font-black ${isDark ? 'text-slate-300' : 'text-slate-700'}`;
   } else {
     // table
     sizeClasses = 'w-9 h-9';
@@ -86,8 +90,10 @@ function SchoolLogo({ team, schoolName, size = 'table', className = '', isDark =
 
   return (
     <div
-      className={`${sizeClasses} rounded-xl shrink-0 flex items-center justify-center font-mono select-none ${
-        isDark ? 'bg-slate-800 text-slate-200' : 'bg-slate-100 text-slate-700'
+      className={`${sizeClasses} rounded-2xl shrink-0 flex items-center justify-center font-black select-none shadow-xs transition-all ${
+        isDark
+          ? 'bg-gradient-to-br from-slate-800 to-slate-950 text-amber-300 border border-slate-700/80 shadow-inner'
+          : 'bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 text-white border border-slate-200/50 shadow-sm'
       } ${className}`}
       title={name}
     >
@@ -504,9 +510,18 @@ export default function LiveLeaderboard() {
     return currentRankingList.slice(0, 3);
   }, [currentRankingList]);
 
+  const currentHarapanPodiumData = useMemo(() => {
+    // Podium Juara Harapan hanya berlaku untuk Kategori Peleton (PBB)
+    if (activeCategory !== 'peleton') return [];
+    return currentRankingList.slice(3, 6);
+  }, [currentRankingList, activeCategory]);
+
   const remainingRankingList = useMemo(() => {
+    if (viewMode === 'podium' && activeCategory === 'peleton' && currentRankingList.length >= 6 && !searchQuery) {
+      return currentRankingList.slice(6);
+    }
     return currentRankingList.slice(3);
-  }, [currentRankingList]);
+  }, [currentRankingList, viewMode, searchQuery, activeCategory]);
 
   const headerActions = (
     <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
@@ -724,168 +739,179 @@ export default function LiveLeaderboard() {
 
       {/* 3. Toolbar Filter: Jenjang & Kategori Kejuaraan */}
       <div
-        className={`p-3.5 rounded-2xl border flex flex-col lg:flex-row lg:items-center justify-between gap-3 shadow-xs transition-colors ${
+        className={`p-4 sm:p-5 rounded-[24px] border shadow-[0_12px_32px_rgba(15,23,42,0.04)] space-y-3.5 transition-colors ${
           effectiveDark
             ? 'bg-slate-900 border-slate-800'
             : 'bg-white border-slate-200/90'
         }`}
       >
-        {/* Kiri: Switch Kategori Kejuaraan */}
-        <div className="flex flex-wrap items-center gap-1.5">
-          <button
-            type="button"
-            onClick={() => setActiveCategory('peleton')}
-            className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
-              activeCategory === 'peleton'
-                ? effectiveDark
-                  ? 'bg-red-700 text-white shadow-sm'
-                  : 'bg-red-800 text-white shadow-xs'
-                : effectiveDark
-                ? 'bg-slate-800 text-slate-300 hover:bg-slate-700'
-                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-            }`}
-          >
-            <Shield className="w-4 h-4 text-amber-400" />
-            <span>Kategori Peleton (PBB)</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setActiveCategory('danton')}
-            className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
-              activeCategory === 'danton'
-                ? effectiveDark
-                  ? 'bg-amber-600 text-white shadow-sm'
-                  : 'bg-amber-600 text-white shadow-xs'
-                : effectiveDark
-                ? 'bg-slate-800 text-slate-300 hover:bg-slate-700'
-                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-            }`}
-          >
-            <Medal className="w-4 h-4 text-amber-300" />
-            <span>Danton Terbaik</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setActiveCategory('juara_umum')}
-            className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
-              activeCategory === 'juara_umum'
-                ? effectiveDark
-                  ? 'bg-amber-400 text-slate-950 font-black shadow-sm'
-                  : 'bg-slate-900 text-white shadow-xs'
-                : effectiveDark
-                ? 'bg-slate-800 text-slate-300 hover:bg-slate-700'
-                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-            }`}
-          >
-            <Crown className="w-4 h-4 text-amber-400" />
-            <span>Klasemen Juara Umum</span>
-          </button>
-        </div>
-
-        {/* Kanan: Switch Jenjang (SMP/MTs vs SD/MI tanpa pilihan 'Semua') & Search Box */}
-        <div className="flex flex-wrap items-center gap-2.5">
-          {/* Switch Jenjang Khusus: SMP/MTs & SD/MI Terpisah */}
-          <div
-            className={`flex items-center gap-1 p-1 rounded-xl border ${
-              effectiveDark
-                ? 'bg-slate-800 border-slate-700'
-                : 'bg-slate-100 border-slate-200'
-            }`}
-          >
+        <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-3.5">
+          {/* Kiri: Switch Kategori Kejuaraan (Peleton, Danton, Juara Umum) */}
+          <div className={`inline-flex p-1 rounded-2xl border gap-1 overflow-x-auto no-scrollbar [&::-webkit-scrollbar]:hidden [scrollbar-width:none] [-ms-overflow-style:none] max-w-full ${
+            effectiveDark ? 'bg-slate-800/90 border-slate-700' : 'bg-slate-100 border-slate-200/80'
+          }`}>
             <button
               type="button"
-              onClick={() => setSelectedJenjang('SD')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                selectedJenjang === 'SD'
-                  ? effectiveDark
-                    ? 'bg-slate-950 text-white shadow-xs'
-                    : 'bg-white text-slate-900 shadow-xs'
+              onClick={() => setActiveCategory('peleton')}
+              className={`px-3 sm:px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 sm:gap-2 cursor-pointer shrink-0 ${
+                activeCategory === 'peleton'
+                  ? 'bg-gradient-to-r from-red-600 to-red-700 text-white shadow-xs'
                   : effectiveDark
-                  ? 'text-slate-400 hover:text-white'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'text-slate-300 hover:text-white hover:bg-slate-700/60'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/70'
               }`}
             >
-              <span className={`w-1.5 h-1.5 rounded-full ${selectedJenjang === 'SD' ? 'bg-red-500' : 'bg-slate-400'}`} />
-              <span>SD/MI</span>
+              <Shield className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-300 shrink-0" />
+              <span>Kategori Peleton (PBB)</span>
             </button>
+
             <button
               type="button"
-              onClick={() => setSelectedJenjang('SMP')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                selectedJenjang === 'SMP'
-                  ? effectiveDark
-                    ? 'bg-slate-950 text-white shadow-xs'
-                    : 'bg-white text-slate-900 shadow-xs'
+              onClick={() => setActiveCategory('danton')}
+              className={`px-3 sm:px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 sm:gap-2 cursor-pointer shrink-0 ${
+                activeCategory === 'danton'
+                  ? 'bg-gradient-to-r from-amber-600 to-amber-700 text-white shadow-xs'
                   : effectiveDark
-                  ? 'text-slate-400 hover:text-white'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'text-slate-300 hover:text-white hover:bg-slate-700/60'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/70'
               }`}
             >
-              <span className={`w-1.5 h-1.5 rounded-full ${selectedJenjang === 'SMP' ? 'bg-blue-500' : 'bg-slate-400'}`} />
-              <span>SMP/MTs</span>
+              <Medal className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-300 shrink-0" />
+              <span>Danton Terbaik</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveCategory('juara_umum')}
+              className={`px-3 sm:px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 sm:gap-2 cursor-pointer shrink-0 ${
+                activeCategory === 'juara_umum'
+                  ? effectiveDark
+                    ? 'bg-amber-400 text-slate-950 font-black shadow-xs'
+                    : 'bg-slate-950 text-white shadow-xs'
+                  : effectiveDark
+                  ? 'text-slate-300 hover:text-white hover:bg-slate-700/60'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/70'
+              }`}
+            >
+              <Crown className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400 shrink-0" />
+              <span>Klasemen Juara Umum</span>
             </button>
           </div>
 
-          {/* View Mode Toggle: Podium 3D (Refrensi) vs Tabel Juknis */}
-          <div
-            className={`flex items-center gap-1 p-1 rounded-xl border ${
-              effectiveDark
-                ? 'bg-slate-800 border-slate-700'
-                : 'bg-slate-100 border-slate-200'
-            }`}
-          >
-            <button
-              type="button"
-              onClick={() => setViewMode('podium')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                viewMode === 'podium'
-                  ? effectiveDark
-                    ? 'bg-slate-950 text-white shadow-xs'
-                    : 'bg-white text-slate-900 shadow-xs'
-                  : effectiveDark
-                  ? 'text-slate-400 hover:text-white'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-              title="Tampilan Podium 3D & Kartu Skor"
-            >
-              <Trophy className="w-3.5 h-3.5 text-amber-500" />
-              <span>Podium 3D</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setViewMode('table')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                viewMode === 'table'
-                  ? effectiveDark
-                    ? 'bg-slate-950 text-white shadow-xs'
-                    : 'bg-white text-slate-900 shadow-xs'
-                  : effectiveDark
-                  ? 'text-slate-400 hover:text-white'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-              title="Tampilan Tabel Matriks Nilai Juknis"
-            >
-              <Award className="w-3.5 h-3.5 text-blue-500" />
-              <span>Tabel Juknis</span>
-            </button>
-          </div>
+          {/* Kanan: Switch Jenjang + View Mode + Search Box */}
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-2.5 w-full xl:w-auto">
+            <div className="grid grid-cols-2 sm:flex sm:items-center gap-2 w-full sm:w-auto">
+              {/* Switch Jenjang Khusus: SD/MI & SMP/MTs */}
+              <div
+                className={`flex items-center justify-center gap-1 p-1 rounded-xl border ${
+                  effectiveDark
+                    ? 'bg-slate-800 border-slate-700'
+                    : 'bg-slate-100 border-slate-200/80'
+                }`}
+              >
+                <button
+                  type="button"
+                  onClick={() => setSelectedJenjang('SD')}
+                  className={`flex-1 sm:flex-none justify-center px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+                    selectedJenjang === 'SD'
+                      ? effectiveDark
+                        ? 'bg-slate-950 text-white shadow-xs'
+                        : 'bg-white text-slate-900 shadow-xs'
+                      : effectiveDark
+                      ? 'text-slate-400 hover:text-white'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  <span className={`w-2 h-2 rounded-full shrink-0 ${selectedJenjang === 'SD' ? 'bg-red-600' : 'bg-slate-400'}`} />
+                  <span>SD</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedJenjang('SMP')}
+                  className={`flex-1 sm:flex-none justify-center px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+                    selectedJenjang === 'SMP'
+                      ? effectiveDark
+                        ? 'bg-slate-950 text-white shadow-xs'
+                        : 'bg-white text-slate-900 shadow-xs'
+                      : effectiveDark
+                      ? 'text-slate-400 hover:text-white'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  <span className={`w-2 h-2 rounded-full shrink-0 ${selectedJenjang === 'SMP' ? 'bg-blue-600' : 'bg-slate-400'}`} />
+                  <span>SMP</span>
+                </button>
+              </div>
 
-          {/* Search Box */}
-          <div className="relative">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
-            <input
-              type="text"
-              placeholder="Cari sekolah/peleton/danton..."
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              className={`pl-9 pr-4 py-1.5 text-xs rounded-xl border focus:outline-none focus:ring-2 focus:ring-amber-500 transition-colors ${
-                effectiveDark
-                  ? 'bg-slate-800 border-slate-700 text-white placeholder-slate-400'
-                  : 'bg-slate-50 border-slate-200 text-slate-900 placeholder-slate-400 focus:bg-white'
-              }`}
-            />
+              {/* View Mode Toggle: Podium Juara vs Tabel Juknis */}
+              <div
+                className={`flex items-center justify-center gap-1 p-1 rounded-xl border ${
+                  effectiveDark
+                    ? 'bg-slate-800 border-slate-700'
+                    : 'bg-slate-100 border-slate-200/80'
+                }`}
+              >
+                <button
+                  type="button"
+                  onClick={() => setViewMode('podium')}
+                  className={`flex-1 sm:flex-none justify-center px-2 sm:px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1 sm:gap-1.5 ${
+                    viewMode === 'podium'
+                      ? effectiveDark
+                        ? 'bg-slate-950 text-white shadow-xs'
+                        : 'bg-white text-slate-900 shadow-xs'
+                      : effectiveDark
+                      ? 'text-slate-400 hover:text-white'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                  title="Tampilan Podium Juara & Peringkat"
+                >
+                  <Trophy className="w-3.5 h-3.5 text-amber-500" />
+                  <span>Podium</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setViewMode('table')}
+                  className={`flex-1 sm:flex-none justify-center px-2 sm:px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1 sm:gap-1.5 ${
+                    viewMode === 'table'
+                      ? effectiveDark
+                        ? 'bg-slate-950 text-white shadow-xs'
+                        : 'bg-white text-slate-900 shadow-xs'
+                      : effectiveDark
+                      ? 'text-slate-400 hover:text-white'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                  title="Tampilan Tabel Juknis Lengkap"
+                >
+                  <FileSpreadsheet className="w-3.5 h-3.5 text-blue-600" />
+                  <span>Tabel</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Search Box */}
+            <div className="relative w-full sm:w-auto min-w-[200px] flex-1">
+              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+              <input
+                type="text"
+                placeholder="Cari sekolah / danton..."
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                className={`w-full pl-9 pr-8 py-1.5 text-xs rounded-xl border focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-colors ${
+                  effectiveDark
+                    ? 'bg-slate-800 border-slate-700 text-white placeholder-slate-400'
+                    : 'bg-slate-50 border-slate-200/90 text-slate-900 placeholder-slate-400 focus:bg-white'
+                }`}
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-2.5 top-2 text-slate-400 hover:text-slate-600 cursor-pointer"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -922,290 +948,452 @@ export default function LiveLeaderboard() {
         </div>
       )}
 
-            {/* 5. PODIUM 3D ISOMETRIK (Sesuai Referensi Gambar dengan Logo Sekolah) */}
+            {/* 5. GRAND CHAMPIONSHIP PODIUM STAGE */}
       {isOfficialScoreVisible && currentPodiumData.length >= 3 && viewMode === 'podium' && (
         <div className="space-y-6">
-          {/* STAGE PODIUM 3D */}
-          <div className={`relative w-full rounded-3xl border p-4 sm:p-8 overflow-hidden shadow-xs transition-colors ${
+          {/* STAGE PODIUM JUARA */}
+          <div className={`relative w-full rounded-[28px] border p-3 sm:p-7 md:p-9 overflow-hidden shadow-[0_20px_50px_rgba(15,23,42,0.06)] transition-all ${
             effectiveDark
-              ? 'bg-slate-900 border-slate-800'
-              : 'bg-gradient-to-b from-amber-50/40 via-white to-slate-50 border-slate-200/80'
+              ? 'bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 border-slate-800'
+              : 'bg-gradient-to-b from-amber-50/50 via-white to-slate-50 border-slate-200/90'
           }`}>
-            {/* Background Halo Rays */}
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-amber-200/20 via-transparent to-transparent pointer-events-none" />
+            {/* Radial ambient glow */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-56 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-amber-300/25 via-amber-100/10 to-transparent pointer-events-none" />
 
-            {/* SVG Linear Gradients untuk Top Face Isometrik */}
-            <svg className="absolute w-0 h-0" aria-hidden="true">
-              <defs>
-                <linearGradient id="goldTopGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stopColor="#fef08a" />
-                  <stop offset="50%" stopColor="#fde047" />
-                  <stop offset="100%" stopColor="#f59e0b" />
-                </linearGradient>
-                <linearGradient id="blueTopGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stopColor="#eff6ff" />
-                  <stop offset="50%" stopColor="#bfdbfe" />
-                  <stop offset="100%" stopColor="#93c5fd" />
-                </linearGradient>
-                <linearGradient id="coralTopGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stopColor="#fff1f2" />
-                  <stop offset="50%" stopColor="#fecdd3" />
-                  <stop offset="100%" stopColor="#fda4af" />
-                </linearGradient>
-              </defs>
-            </svg>
+            {/* Championship Kicker */}
+            <div className="text-center relative z-10 mb-4 sm:mb-8">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] sm:text-[10px] font-black uppercase tracking-[0.16em] sm:tracking-[0.2em] bg-amber-100/80 text-amber-900 border border-amber-300/80 shadow-2xs">
+                <Trophy className="w-3.5 h-3.5 text-amber-600" />
+                <span>PODIUM UTAMA KEJUARAAN • JENJANG {selectedJenjang}</span>
+              </span>
+              <h3 className={`mt-1.5 sm:mt-2 text-base sm:text-2xl font-black uppercase tracking-tight ${
+                effectiveDark ? 'text-white' : 'text-slate-950'
+              }`}>
+                {activeCategory === 'peleton' && 'Peleton Terbaik'}
+                {activeCategory === 'danton' && 'Komandan Peleton (Danton) Terbaik'}
+                {activeCategory === 'juara_umum' && 'Klasemen Juara Umum Bergilir'}
+              </h3>
+            </div>
 
-            {/* 3 Pillar Podium Stage */}
-            <div className="flex items-end justify-center gap-2 sm:gap-4 max-w-2xl mx-auto pt-6 pb-2 relative z-10">
-              
-              {/* RANK 2 (Perak / Soft Blue) - Kiri */}
-              <div className="flex-1 max-w-[170px] flex flex-col items-center">
-                {/* Floating Squircle Logo & Info */}
-                <div className="flex flex-col items-center mb-2.5 text-center w-full">
-                  <div className="relative mb-2">
-                    <div className="w-14 h-14 sm:w-18 sm:h-18 rounded-2xl bg-white shadow-md border border-slate-200/90 p-2 flex items-center justify-center relative hover:scale-105 transition-transform">
-                      <SchoolLogo team={currentPodiumData[1].team} schoolName={currentPodiumData[1].schoolName} size="podium-md" />
-                    </div>
-                    <div className="absolute -top-2 -right-1 w-5 h-5 rounded-full bg-slate-300 text-slate-800 font-black text-[10px] shadow-xs flex items-center justify-center border-2 border-white">
-                      2
-                    </div>
+            {/* 3 Pedestal Stage */}
+            <div className="grid grid-cols-3 gap-1.5 sm:gap-5 max-w-3xl mx-auto items-end pt-3 sm:pt-6 relative z-10">
+
+              {/* ========================================= */}
+              {/* RANK 2: PERAK / PLATINUM (KIRI)           */}
+              {/* ========================================= */}
+              <div className="flex flex-col items-center">
+                {/* Top Avatar & Identity */}
+                <div className="flex flex-col items-center mb-2.5 sm:mb-3 text-center w-full">
+                  <div className="w-14 h-14 sm:w-20 sm:h-20 mb-1.5 sm:mb-2 flex items-center justify-center hover:scale-105 transition-transform">
+                    <SchoolLogo team={currentPodiumData[1].team} schoolName={currentPodiumData[1].schoolName} size="podium-md" />
                   </div>
 
-                  <h4 className="font-bold text-xs sm:text-[13px] text-slate-900 truncate w-full px-1" title={currentPodiumData[1].mainTitle}>
+                  <h4 className={`font-black text-[11px] sm:text-xs md:text-sm line-clamp-2 min-h-[2.4em] leading-tight w-full px-0.5 break-words ${
+                    effectiveDark ? 'text-white' : 'text-slate-900'
+                  }`} title={currentPodiumData[1].mainTitle}>
                     {currentPodiumData[1].mainTitle}
                   </h4>
-                  <p className="text-[10px] text-slate-500 truncate w-full px-1 mt-0.5">
+                  <p className="text-[9.5px] sm:text-[11px] text-slate-500 line-clamp-1 truncate w-full px-0.5 mt-0.5">
                     {currentPodiumData[1].subTitle}
                   </p>
 
-                  <div className="mt-1 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-blue-50 border border-blue-200 text-blue-800 text-[11px] font-black font-mono shadow-2xs">
-                    <span className="text-[10px]">💎</span>
-                    <span>{currentPodiumData[1].score}</span>
+                  <div className="mt-1 sm:mt-1.5 inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full bg-slate-900 text-white shadow-xs border border-slate-400/30">
+                    <span className="text-[10.5px] sm:text-xs font-mono font-black text-slate-200">{currentPodiumData[1].score}</span>
+                    <span className="text-[7.5px] sm:text-[8.5px] font-bold uppercase tracking-wider text-slate-400">Poin</span>
                   </div>
                 </div>
 
-                {/* 3D Isometric Pillar 2 */}
-                <div className="w-full flex flex-col items-center">
-                  <svg viewBox="0 0 100 24" className="w-full h-5 sm:h-7 block -mb-0.5" preserveAspectRatio="none">
-                    <polygon points="12,0 88,0 100,24 0,24" fill="url(#blueTopGrad)" />
-                  </svg>
-                  <div className="w-full h-36 sm:h-44 bg-gradient-to-b from-blue-300 via-indigo-300 to-blue-400 rounded-b-2xl shadow-md border-x border-b border-blue-300/80 flex flex-col items-center justify-center text-white p-2">
-                    <span className="text-[10px] tracking-widest text-white/90 font-mono mb-0.5">★★</span>
-                    <div className="relative flex items-center justify-center">
-                      <svg viewBox="0 0 24 36" className="w-5 h-8 sm:w-6 sm:h-9 text-white/90 drop-shadow-sm" fill="currentColor">
-                        <path d="M12 2C9 7 5 13 3 20c2 1 5 0 7-3-2 5-1 9 1 13 2-3 4-8 4-13-1-3-2-6-4-17z" />
-                        <path d="M17 12c-2 4-5 8-7 12 2 1 4 0 5-2-1 3-1 6 1 9 1-2 3-5 3-8 0-2-1-4-2-11z" opacity="0.7" />
-                      </svg>
-                      <span className="text-3xl sm:text-4xl font-black font-sans tracking-tight text-white px-1 drop-shadow-md">
-                        2
-                      </span>
-                      <svg viewBox="0 0 24 36" className="w-5 h-8 sm:w-6 sm:h-9 text-white/90 drop-shadow-sm scale-x-[-1]" fill="currentColor">
-                        <path d="M12 2C9 7 5 13 3 20c2 1 5 0 7-3-2 5-1 9 1 13 2-3 4-8 4-13-1-3-2-6-4-17z" />
-                        <path d="M17 12c-2 4-5 8-7 12 2 1 4 0 5-2-1 3-1 6 1 9 1-2 3-5 3-8 0-2-1-4-2-11z" opacity="0.7" />
-                      </svg>
-                    </div>
+                {/* Architectural Pedestal #2 */}
+                <div className="w-full h-32 sm:h-48 rounded-t-2xl sm:rounded-t-3xl bg-gradient-to-b from-slate-200 via-slate-300 to-slate-400 border-t-4 border-white shadow-[0_16px_36px_rgba(148,163,184,0.35)] flex flex-col items-center justify-center gap-1 sm:gap-2 p-1.5 sm:p-3 relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
+                  <span className="text-[8px] sm:text-[10px] tracking-widest text-slate-600 font-black">★★</span>
+                  <div className="flex flex-col items-center">
+                    <span className="text-3xl sm:text-6xl font-black font-sans text-white tracking-tight drop-shadow-[0_2px_4px_rgba(71,85,105,0.4)]">
+                      2
+                    </span>
+                    <span className="text-[7.5px] sm:text-[10px] font-black uppercase tracking-wider text-slate-800 bg-white/90 px-1.5 sm:px-2.5 py-0.5 rounded-full mt-0.5 sm:mt-1 shadow-2xs whitespace-nowrap">
+                      JUARA 2
+                    </span>
                   </div>
                 </div>
               </div>
 
-              {/* RANK 1 (Emas / Juara 1) - Tengah (Tertinggi) */}
-              <div className="flex-1 max-w-[210px] flex flex-col items-center">
-                {/* Floating Squircle Logo & Info */}
-                <div className="flex flex-col items-center mb-3 text-center w-full">
-                  <div className="relative mb-2">
-                    <div className="w-16 h-16 sm:w-22 sm:h-22 rounded-2xl bg-white shadow-xl border-2 border-amber-300 p-2 flex items-center justify-center relative hover:scale-105 transition-transform">
-                      <SchoolLogo team={currentPodiumData[0].team} schoolName={currentPodiumData[0].schoolName} size="podium-lg" />
-                    </div>
-                    <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full bg-amber-400 text-slate-950 font-black text-[10px] shadow-md flex items-center gap-1 border-2 border-white">
-                      <Crown className="w-3 h-3 text-slate-950" />
-                      <span>JUARA 1</span>
-                    </div>
+              {/* ========================================= */}
+              {/* RANK 1: EMAS / GOLD CHAMPION (TENGAH)     */}
+              {/* ========================================= */}
+              <div className="flex flex-col items-center -mt-3 sm:-mt-6">
+                {/* Top Avatar & Identity */}
+                <div className="flex flex-col items-center mb-2.5 sm:mb-3 text-center w-full">
+                  <div className="w-18 h-18 sm:w-26 sm:h-26 mb-1.5 sm:mb-2 flex items-center justify-center hover:scale-105 transition-transform">
+                    <SchoolLogo team={currentPodiumData[0].team} schoolName={currentPodiumData[0].schoolName} size="podium-lg" />
                   </div>
 
-                  <h4 className="font-black text-sm sm:text-base text-slate-900 truncate w-full px-1" title={currentPodiumData[0].mainTitle}>
+                  <h4 className={`font-black text-xs sm:text-sm md:text-base line-clamp-2 min-h-[2.4em] leading-tight w-full px-0.5 break-words ${
+                    effectiveDark ? 'text-white' : 'text-slate-950'
+                  }`} title={currentPodiumData[0].mainTitle}>
                     {currentPodiumData[0].mainTitle}
                   </h4>
-                  <p className="text-[10.5px] text-slate-500 font-medium truncate w-full px-1 mt-0.5">
+                  <p className="text-[10px] sm:text-xs text-slate-500 font-medium line-clamp-1 truncate w-full px-0.5 mt-0.5">
                     {currentPodiumData[0].subTitle}
                   </p>
 
-                  <div className="mt-1.5 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-400 text-slate-950 text-xs sm:text-sm font-black font-mono shadow-sm border border-amber-300">
-                    <span>💎</span>
-                    <span>{currentPodiumData[0].score}</span>
+                  <div className="mt-1 sm:mt-1.5 inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3.5 py-0.5 sm:py-1 rounded-full bg-slate-950 text-white shadow-md border border-amber-400/50">
+                    <Trophy className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-400" />
+                    <span className="text-[11px] sm:text-sm font-mono font-black text-amber-300">{currentPodiumData[0].score}</span>
+                    <span className="text-[8px] sm:text-[9px] font-bold uppercase tracking-wider text-slate-300">Poin</span>
                   </div>
                 </div>
 
-                {/* 3D Isometric Pillar 1 */}
-                <div className="w-full flex flex-col items-center">
-                  <svg viewBox="0 0 100 24" className="w-full h-6 sm:h-8 block -mb-0.5" preserveAspectRatio="none">
-                    <polygon points="12,0 88,0 100,24 0,24" fill="url(#goldTopGrad)" />
-                  </svg>
-                  <div className="w-full h-48 sm:h-60 bg-gradient-to-b from-amber-400 via-yellow-500 to-amber-600 rounded-b-2xl shadow-xl border-x border-b border-amber-400/80 flex flex-col items-center justify-center text-white p-2">
-                    <span className="text-xs tracking-widest text-amber-100 font-mono mb-0.5">★★★</span>
-                    <div className="relative flex items-center justify-center">
-                      <svg viewBox="0 0 24 36" className="w-6 h-9 sm:w-7 sm:h-11 text-white/95 drop-shadow-sm" fill="currentColor">
-                        <path d="M12 2C9 7 5 13 3 20c2 1 5 0 7-3-2 5-1 9 1 13 2-3 4-8 4-13-1-3-2-6-4-17z" />
-                        <path d="M17 12c-2 4-5 8-7 12 2 1 4 0 5-2-1 3-1 6 1 9 1-2 3-5 3-8 0-2-1-4-2-11z" opacity="0.7" />
-                      </svg>
-                      <span className="text-4xl sm:text-5xl font-black font-sans tracking-tight text-white px-1 sm:px-2 drop-shadow-lg">
-                        1
-                      </span>
-                      <svg viewBox="0 0 24 36" className="w-6 h-9 sm:w-7 sm:h-11 text-white/95 drop-shadow-sm scale-x-[-1]" fill="currentColor">
-                        <path d="M12 2C9 7 5 13 3 20c2 1 5 0 7-3-2 5-1 9 1 13 2-3 4-8 4-13-1-3-2-6-4-17z" />
-                        <path d="M17 12c-2 4-5 8-7 12 2 1 4 0 5-2-1 3-1 6 1 9 1-2 3-5 3-8 0-2-1-4-2-11z" opacity="0.7" />
-                      </svg>
-                    </div>
+                {/* Architectural Pedestal #1 (Tertinggi) */}
+                <div className="w-full h-44 sm:h-64 rounded-t-2xl sm:rounded-t-3xl bg-gradient-to-b from-amber-300 via-amber-400 to-amber-500 border-t-4 border-amber-100 shadow-[0_20px_50px_rgba(245,158,11,0.4)] flex flex-col items-center justify-center gap-1.5 sm:gap-2.5 p-2 sm:p-4 relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent pointer-events-none" />
+                  <span className="text-[9px] sm:text-xs tracking-widest text-amber-950/80 font-black">★★★</span>
+                  <div className="flex flex-col items-center">
+                    <span className="text-4xl sm:text-7xl font-black font-sans text-white tracking-tight drop-shadow-[0_4px_8px_rgba(180,83,9,0.5)]">
+                      1
+                    </span>
+                    <span className="text-[8px] sm:text-[11px] font-black uppercase tracking-wider text-slate-950 bg-white/95 px-2 sm:px-3 py-0.5 rounded-full mt-0.5 sm:mt-1 shadow-xs whitespace-nowrap">
+                      JUARA 1 UTAMA
+                    </span>
                   </div>
                 </div>
               </div>
 
-              {/* RANK 3 (Perunggu / Soft Coral) - Kanan */}
-              <div className="flex-1 max-w-[170px] flex flex-col items-center">
-                {/* Floating Squircle Logo & Info */}
-                <div className="flex flex-col items-center mb-2.5 text-center w-full">
-                  <div className="relative mb-2">
-                    <div className="w-14 h-14 sm:w-18 sm:h-18 rounded-2xl bg-white shadow-md border border-slate-200/90 p-2 flex items-center justify-center relative hover:scale-105 transition-transform">
-                      <SchoolLogo team={currentPodiumData[2].team} schoolName={currentPodiumData[2].schoolName} size="podium-md" />
-                    </div>
-                    <div className="absolute -top-2 -right-1 w-5 h-5 rounded-full bg-rose-400 text-white font-black text-[10px] shadow-xs flex items-center justify-center border-2 border-white">
-                      3
-                    </div>
+              {/* ========================================= */}
+              {/* RANK 3: PERUNGGU / BRONZE (KANAN)         */}
+              {/* ========================================= */}
+              <div className="flex flex-col items-center">
+                {/* Top Avatar & Identity */}
+                <div className="flex flex-col items-center mb-2.5 sm:mb-3 text-center w-full">
+                  <div className="w-14 h-14 sm:w-20 sm:h-20 mb-1.5 sm:mb-2 flex items-center justify-center hover:scale-105 transition-transform">
+                    <SchoolLogo team={currentPodiumData[2].team} schoolName={currentPodiumData[2].schoolName} size="podium-md" />
                   </div>
 
-                  <h4 className="font-bold text-xs sm:text-[13px] text-slate-900 truncate w-full px-1" title={currentPodiumData[2].mainTitle}>
+                  <h4 className={`font-black text-[11px] sm:text-xs md:text-sm line-clamp-2 min-h-[2.4em] leading-tight w-full px-0.5 break-words ${
+                    effectiveDark ? 'text-white' : 'text-slate-900'
+                  }`} title={currentPodiumData[2].mainTitle}>
                     {currentPodiumData[2].mainTitle}
                   </h4>
-                  <p className="text-[10px] text-slate-500 truncate w-full px-1 mt-0.5">
+                  <p className="text-[9.5px] sm:text-[11px] text-slate-500 line-clamp-1 truncate w-full px-0.5 mt-0.5">
                     {currentPodiumData[2].subTitle}
                   </p>
 
-                  <div className="mt-1 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-rose-50 border border-rose-200 text-rose-800 text-[11px] font-black font-mono shadow-2xs">
-                    <span className="text-[10px]">💎</span>
-                    <span>{currentPodiumData[2].score}</span>
+                  <div className="mt-1 sm:mt-1.5 inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full bg-slate-900 text-white shadow-xs border border-amber-600/40">
+                    <span className="text-[10.5px] sm:text-xs font-mono font-black text-amber-300">{currentPodiumData[2].score}</span>
+                    <span className="text-[7.5px] sm:text-[8.5px] font-bold uppercase tracking-wider text-slate-400">Poin</span>
                   </div>
                 </div>
 
-                {/* 3D Isometric Pillar 3 */}
-                <div className="w-full flex flex-col items-center">
-                  <svg viewBox="0 0 100 24" className="w-full h-4 sm:h-6 block -mb-0.5" preserveAspectRatio="none">
-                    <polygon points="12,0 88,0 100,24 0,24" fill="url(#coralTopGrad)" />
-                  </svg>
-                  <div className="w-full h-28 sm:h-36 bg-gradient-to-b from-orange-300 via-rose-300 to-amber-500 rounded-b-2xl shadow-md border-x border-b border-orange-300/80 flex flex-col items-center justify-center text-white p-2">
-                    <span className="text-[10px] tracking-widest text-white/90 font-mono mb-0.5">★</span>
-                    <div className="relative flex items-center justify-center">
-                      <svg viewBox="0 0 24 36" className="w-5 h-8 sm:w-6 sm:h-9 text-white/90 drop-shadow-sm" fill="currentColor">
-                        <path d="M12 2C9 7 5 13 3 20c2 1 5 0 7-3-2 5-1 9 1 13 2-3 4-8 4-13-1-3-2-6-4-17z" />
-                        <path d="M17 12c-2 4-5 8-7 12 2 1 4 0 5-2-1 3-1 6 1 9 1-2 3-5 3-8 0-2-1-4-2-11z" opacity="0.7" />
-                      </svg>
-                      <span className="text-3xl sm:text-4xl font-black font-sans tracking-tight text-white px-1 drop-shadow-md">
-                        3
-                      </span>
-                      <svg viewBox="0 0 24 36" className="w-5 h-8 sm:w-6 sm:h-9 text-white/90 drop-shadow-sm scale-x-[-1]" fill="currentColor">
-                        <path d="M12 2C9 7 5 13 3 20c2 1 5 0 7-3-2 5-1 9 1 13 2-3 4-8 4-13-1-3-2-6-4-17z" />
-                        <path d="M17 12c-2 4-5 8-7 12 2 1 4 0 5-2-1 3-1 6 1 9 1-2 3-5 3-8 0-2-1-4-2-11z" opacity="0.7" />
-                      </svg>
-                    </div>
+                {/* Architectural Pedestal #3 */}
+                <div className="w-full h-28 sm:h-40 rounded-t-2xl sm:rounded-t-3xl bg-gradient-to-b from-amber-600 via-orange-500 to-amber-700 border-t-4 border-orange-300/90 shadow-[0_14px_35px_rgba(194,65,12,0.3)] flex flex-col items-center justify-center gap-1 sm:gap-2 p-1.5 sm:p-3 relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
+                  <span className="text-[8px] sm:text-[10px] tracking-widest text-amber-200 font-black">★</span>
+                  <div className="flex flex-col items-center">
+                    <span className="text-3xl sm:text-6xl font-black font-sans text-white tracking-tight drop-shadow-[0_2px_4px_rgba(154,52,18,0.4)]">
+                      3
+                    </span>
+                    <span className="text-[7.5px] sm:text-[10px] font-black uppercase tracking-wider text-amber-950 bg-amber-200 px-1.5 sm:px-2.5 py-0.5 rounded-full mt-0.5 sm:mt-1 shadow-2xs whitespace-nowrap">
+                      JUARA 3
+                    </span>
                   </div>
                 </div>
               </div>
 
             </div>
 
-            {/* Status Timestamp Pill (persis Image 1) */}
-            <div className="flex items-center justify-center gap-1.5 text-[11px] text-slate-400 font-medium pt-3 border-t border-slate-100/80 mt-2">
-              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-              <span>Papan Klasemen Resmi • Rekapitulasi Berita Acara Dewan Juri Realtime</span>
+            {/* Stage Base Plinth */}
+            <div className={`max-w-3xl mx-auto h-2.5 sm:h-3.5 rounded-b-xl sm:rounded-b-2xl shadow-xs border-t ${
+              effectiveDark
+                ? 'bg-gradient-to-r from-slate-800 via-slate-700 to-slate-800 border-slate-700/60'
+                : 'bg-gradient-to-r from-slate-200 via-slate-300 to-slate-200 border-slate-300/60'
+            }`} />
+
+            {/* Status Timestamp Footer Badge */}
+            <div className="flex items-center justify-center pt-4 sm:pt-5">
+              <div className={`inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 rounded-full text-[10px] sm:text-xs font-semibold border shadow-2xs transition-colors ${
+                effectiveDark
+                  ? 'bg-slate-900/80 text-slate-400 border-slate-800'
+                  : 'bg-white/80 text-slate-500 border-slate-200/80'
+              }`}>
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                <span className="text-center leading-tight">
+                  Papan Klasemen Sah Berdasarkan Berita Acara Rekapitulasi Dewan Juri LBB 2027
+                </span>
+              </div>
             </div>
           </div>
 
-          {/* LIST KARTU SKOR (RANK 4 KE BAWAH - SESUAI GAMBAR 1 & GAMBAR 2) */}
-          <div className="space-y-2.5 max-w-3xl mx-auto">
-            <div className="flex items-center justify-between px-2 text-xs text-slate-500 font-medium">
-              <span className="flex items-center gap-1.5 font-bold text-slate-700">
-                <Trophy className="w-4 h-4 text-amber-500" />
-                <span>Papan Peringkat Lengkap</span>
-              </span>
-              <span>{currentRankingList.length} Kontingen Terdata</span>
-            </div>
+          {/* ======================================================== */}
+          {/* STAGE PODIUM JUARA HARAPAN (HARAPAN 1, 2, 3 - RANK 4, 5, 6) */}
+          {/* ======================================================== */}
+          {isOfficialScoreVisible && currentHarapanPodiumData.length === 3 && viewMode === 'podium' && !searchQuery && (
+            <div className={`relative w-full rounded-[26px] border p-3.5 sm:p-6 md:p-8 overflow-hidden shadow-xs transition-all ${
+              effectiveDark
+                ? 'bg-gradient-to-b from-slate-900/90 via-slate-900 to-slate-950 border-slate-800'
+                : 'bg-gradient-to-b from-sky-50/40 via-white to-slate-50 border-slate-200/90'
+            }`}>
+              {/* Radial ambient glow */}
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-40 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-sky-400/15 via-blue-200/5 to-transparent pointer-events-none" />
 
-            {currentRankingList.map((item) => {
-              const isMyTeam = (currentTeam?.id && item.team?.id === currentTeam.id) || (currentUser?.teamId && item.team?.id === currentUser.teamId);
-              const isTop3 = item.rank <= 3;
+              {/* Championship Kicker */}
+              <div className="text-center relative z-10 mb-3 sm:mb-6">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] sm:text-[10px] font-black uppercase tracking-[0.16em] sm:tracking-[0.18em] bg-sky-100/90 text-sky-900 border border-sky-200 shadow-2xs">
+                  <Award className="w-3.5 h-3.5 text-sky-600" />
+                  <span>PODIUM JUARA HARAPAN • JENJANG {selectedJenjang}</span>
+                </span>
+                <h3 className={`mt-1.5 text-base sm:text-xl font-black uppercase tracking-tight ${
+                  effectiveDark ? 'text-white' : 'text-slate-950'
+                }`}>
+                  Juara Harapan 1, 2, & 3
+                </h3>
+              </div>
 
-              return (
-                <div
-                  key={item.team?.id || item.schoolName}
-                  className={`p-3 sm:p-3.5 rounded-2xl border transition-all flex items-center justify-between gap-3 shadow-2xs ${
-                    isMyTeam
-                      ? 'bg-emerald-50/80 border-emerald-400 ring-2 ring-emerald-400/50 shadow-xs'
-                      : item.rank === 1
-                      ? 'bg-gradient-to-r from-amber-50/70 via-yellow-50/40 to-white border-amber-300'
-                      : item.rank === 2
-                      ? 'bg-gradient-to-r from-blue-50/70 via-indigo-50/40 to-white border-blue-200'
-                      : item.rank === 3
-                      ? 'bg-gradient-to-r from-orange-50/70 via-rose-50/40 to-white border-orange-200'
-                      : 'bg-white border-slate-200/80 hover:bg-slate-50'
-                  }`}
-                >
-                  <div className="flex items-center gap-3 min-w-0 flex-1">
-                    {/* Rank Number Badge */}
-                    <div className={`w-8 h-8 rounded-xl flex items-center justify-center font-black text-xs shrink-0 ${
-                      item.rank === 1
-                        ? 'bg-amber-400 text-slate-950 shadow-2xs'
-                        : item.rank === 2
-                        ? 'bg-slate-300 text-slate-900 shadow-2xs'
-                        : item.rank === 3
-                        ? 'bg-amber-700 text-white shadow-2xs'
-                        : 'bg-slate-100 text-slate-700'
-                    }`}>
-                      {isTop3 ? (
-                        item.rank === 1 ? '🥇' : item.rank === 2 ? '🥈' : '🥉'
-                      ) : (
-                        item.rank
-                      )}
+              {/* 3 Pedestal Stage for Harapan */}
+              <div className="grid grid-cols-3 gap-1.5 sm:gap-4 max-w-2xl mx-auto items-end pt-2 sm:pt-4 relative z-10">
+                {/* HARAPAN 2 (#5) - KIRI */}
+                <div className="flex flex-col items-center">
+                  <div className="flex flex-col items-center mb-2 sm:mb-2.5 text-center w-full">
+                    <div className="w-12 h-12 sm:w-16 sm:h-16 mb-1 sm:mb-1.5 flex items-center justify-center hover:scale-105 transition-transform">
+                      <SchoolLogo team={currentHarapanPodiumData[1].team} schoolName={currentHarapanPodiumData[1].schoolName} size="table" isDark={effectiveDark} />
                     </div>
-
-                    {/* School Logo Squircle (Menggantikan Memoji persis instruksi) */}
-                    <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-white border border-slate-200/90 shadow-2xs p-1 flex items-center justify-center shrink-0 overflow-hidden">
-                      <SchoolLogo team={item.team} schoolName={item.schoolName} size="table" />
-                    </div>
-
-                    {/* Info Tim & Sekolah */}
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-1.5 flex-wrap">
-                        <h4 className="font-black text-xs sm:text-sm text-slate-900 truncate">
-                          {item.mainTitle || item.team?.schoolName || item.schoolName}
-                        </h4>
-                        {isMyTeam && (
-                          <span className="px-1.5 py-0.2 rounded font-black text-[9px] bg-emerald-600 text-white shadow-xs shrink-0 uppercase tracking-wider">
-                            Peleton Anda
-                          </span>
-                        )}
-                        {item.team?.lotNumber && (
-                          <span className="px-1.5 py-0.2 rounded font-mono font-bold text-[9px] bg-slate-100 text-slate-700 border border-slate-200 shrink-0">
-                            TM #{String(item.team.lotNumber).padStart(2, '0')}
-                          </span>
-                        )}
-                      </div>
-                      <p className="text-[11px] text-slate-500 truncate mt-0.5">
-                        {item.subTitle}
-                      </p>
+                    <h4 className={`font-black text-[10.5px] sm:text-xs line-clamp-2 min-h-[2.4em] leading-tight w-full px-0.5 break-words ${
+                      effectiveDark ? 'text-white' : 'text-slate-900'
+                    }`} title={currentHarapanPodiumData[1].mainTitle}>
+                      {currentHarapanPodiumData[1].mainTitle}
+                    </h4>
+                    <p className="text-[9px] sm:text-[10.5px] text-slate-500 line-clamp-1 truncate w-full px-0.5 mt-0.5 font-medium">
+                      {currentHarapanPodiumData[1].subTitle}
+                    </p>
+                    <div className="mt-1 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-slate-900 text-white shadow-2xs border border-slate-700">
+                      <span className="text-[10px] sm:text-[11px] font-mono font-black text-slate-200">{currentHarapanPodiumData[1].score}</span>
+                      <span className="text-[7px] sm:text-[8px] font-bold uppercase tracking-wider text-slate-400">Poin</span>
                     </div>
                   </div>
 
-                  {/* Nilai Akhir / Poin di Sisi Kanan (Font Besar Sesuai Gambar 1 & 2) */}
-                  <div className="text-right shrink-0">
-                    <div className="flex items-center justify-end gap-1 font-mono font-black text-base sm:text-lg text-slate-900">
-                      <span className="text-amber-500 text-xs">💎</span>
-                      <span>{item.score}</span>
-                    </div>
-                    <div className="text-[10px] text-slate-400 font-mono">
-                      {item.subScore || item.scoreLabel}
-                    </div>
+                  {/* Pedestal Harapan 2 (#5) */}
+                  <div className="w-full h-28 sm:h-38 rounded-t-xl sm:rounded-t-2xl bg-gradient-to-b from-slate-200 via-slate-300 to-slate-400 border-t-3 border-white shadow-xs flex flex-col items-center justify-center gap-1 sm:gap-1.5 p-1.5 sm:p-2.5 relative overflow-hidden">
+                    <span className="text-2xl sm:text-4xl font-black font-sans text-white tracking-tight drop-shadow-[0_2px_4px_rgba(71,85,105,0.4)]">
+                      5
+                    </span>
+                    <span className="text-[7.5px] sm:text-[9.5px] font-black uppercase tracking-wider text-slate-800 bg-white/95 px-2 py-0.5 rounded-full shadow-2xs whitespace-nowrap">
+                      HARAPAN 2
+                    </span>
                   </div>
                 </div>
-              );
-            })}
+
+                {/* HARAPAN 1 (#4) - TENGAH (Tertinggi di Harapan) */}
+                <div className="flex flex-col items-center -mt-2 sm:-mt-4">
+                  <div className="flex flex-col items-center mb-2 sm:mb-2.5 text-center w-full">
+                    <div className="w-14 h-14 sm:w-20 sm:h-20 mb-1 sm:mb-1.5 flex items-center justify-center hover:scale-105 transition-transform">
+                      <SchoolLogo team={currentHarapanPodiumData[0].team} schoolName={currentHarapanPodiumData[0].schoolName} size="podium-md" isDark={effectiveDark} />
+                    </div>
+                    <h4 className={`font-black text-[11px] sm:text-xs md:text-sm line-clamp-2 min-h-[2.4em] leading-tight w-full px-0.5 break-words ${
+                      effectiveDark ? 'text-white' : 'text-slate-950'
+                    }`} title={currentHarapanPodiumData[0].mainTitle}>
+                      {currentHarapanPodiumData[0].mainTitle}
+                    </h4>
+                    <p className="text-[9.5px] sm:text-[11px] text-slate-500 line-clamp-1 truncate w-full px-0.5 mt-0.5 font-medium">
+                      {currentHarapanPodiumData[0].subTitle}
+                    </p>
+                    <div className="mt-1 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-slate-950 text-white shadow-xs border border-sky-400/40">
+                      <Award className="w-3 h-3 text-sky-400" />
+                      <span className="text-[10.5px] sm:text-xs font-mono font-black text-sky-300">{currentHarapanPodiumData[0].score}</span>
+                      <span className="text-[7.5px] sm:text-[8.5px] font-bold uppercase tracking-wider text-slate-300">Poin</span>
+                    </div>
+                  </div>
+
+                  {/* Pedestal Harapan 1 (#4) */}
+                  <div className="w-full h-36 sm:h-48 rounded-t-xl sm:rounded-t-2xl bg-gradient-to-b from-sky-400 via-blue-500 to-indigo-600 border-t-4 border-sky-200 shadow-md flex flex-col items-center justify-center gap-1 sm:gap-2 p-1.5 sm:p-3 relative overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
+                    <span className="text-3xl sm:text-5xl font-black font-sans text-white tracking-tight drop-shadow-[0_2px_4px_rgba(30,58,138,0.5)]">
+                      4
+                    </span>
+                    <span className="text-[8px] sm:text-[10px] font-black uppercase tracking-wider text-indigo-950 bg-white/95 px-2.5 py-0.5 rounded-full shadow-xs whitespace-nowrap">
+                      HARAPAN 1
+                    </span>
+                  </div>
+                </div>
+
+                {/* HARAPAN 3 (#6) - KANAN */}
+                <div className="flex flex-col items-center">
+                  <div className="flex flex-col items-center mb-2 sm:mb-2.5 text-center w-full">
+                    <div className="w-12 h-12 sm:w-16 sm:h-16 mb-1 sm:mb-1.5 flex items-center justify-center hover:scale-105 transition-transform">
+                      <SchoolLogo team={currentHarapanPodiumData[2].team} schoolName={currentHarapanPodiumData[2].schoolName} size="table" isDark={effectiveDark} />
+                    </div>
+                    <h4 className={`font-black text-[10.5px] sm:text-xs line-clamp-2 min-h-[2.4em] leading-tight w-full px-0.5 break-words ${
+                      effectiveDark ? 'text-white' : 'text-slate-900'
+                    }`} title={currentHarapanPodiumData[2].mainTitle}>
+                      {currentHarapanPodiumData[2].mainTitle}
+                    </h4>
+                    <p className="text-[9px] sm:text-[10.5px] text-slate-500 line-clamp-1 truncate w-full px-0.5 mt-0.5 font-medium">
+                      {currentHarapanPodiumData[2].subTitle}
+                    </p>
+                    <div className="mt-1 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-slate-900 text-white shadow-2xs border border-slate-700">
+                      <span className="text-[10px] sm:text-[11px] font-mono font-black text-slate-200">{currentHarapanPodiumData[2].score}</span>
+                      <span className="text-[7px] sm:text-[8px] font-bold uppercase tracking-wider text-slate-400">Poin</span>
+                    </div>
+                  </div>
+
+                  {/* Pedestal Harapan 3 (#6) */}
+                  <div className="w-full h-25 sm:h-34 rounded-t-xl sm:rounded-t-2xl bg-gradient-to-b from-stone-300 via-stone-400 to-stone-500 border-t-3 border-stone-200 shadow-xs flex flex-col items-center justify-center gap-1 sm:gap-1.5 p-1.5 sm:p-2.5 relative overflow-hidden">
+                    <span className="text-2xl sm:text-4xl font-black font-sans text-white tracking-tight drop-shadow-[0_2px_4px_rgba(87,83,78,0.4)]">
+                      6
+                    </span>
+                    <span className="text-[7.5px] sm:text-[9.5px] font-black uppercase tracking-wider text-stone-900 bg-white/95 px-2 py-0.5 rounded-full shadow-2xs whitespace-nowrap">
+                      HARAPAN 3
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Base Deck for Harapan */}
+              <div className={`max-w-2xl mx-auto h-2 sm:h-3 rounded-b-xl shadow-xs border-t ${
+                effectiveDark
+                  ? 'bg-slate-800 border-slate-700'
+                  : 'bg-slate-200 border-slate-300'
+              }`} />
+            </div>
+          )}
+
+          {/* LIST KARTU SKOR (RANK SETELAH PODIUM ATAU HASIL PENCARIAN) */}
+          <div className="space-y-3 max-w-4xl mx-auto">
+            <div className="flex items-start sm:items-center justify-between gap-2.5 px-2 text-xs font-semibold">
+              <div className={`flex items-start sm:items-center gap-2 font-bold min-w-0 flex-1 ${
+                effectiveDark ? 'text-slate-300' : 'text-slate-700'
+              }`}>
+                <Trophy className="w-4 h-4 text-amber-500 shrink-0 mt-0.5 sm:mt-0" />
+                <div className="min-w-0 flex-1">
+                  <span className="block sm:inline font-bold leading-snug">
+                    {searchQuery
+                      ? `Hasil Pencarian`
+                      : (currentHarapanPodiumData.length === 3 && viewMode === 'podium')
+                      ? `Peringkat Kontingen Lainnya`
+                      : `Peringkat Harapan & Kontingen Lainnya`}
+                  </span>
+                  <span className="text-[10.5px] sm:text-xs font-normal text-slate-400 block sm:inline sm:ml-1.5">
+                    {searchQuery
+                      ? `(${currentRankingList.length} Kontingen)`
+                      : (currentHarapanPodiumData.length === 3 && viewMode === 'podium')
+                      ? `(#7 s.d. Selesai)`
+                      : `(#4 s.d. Selesai)`}
+                  </span>
+                </div>
+              </div>
+              <span className={`text-[10px] sm:text-[11px] font-bold font-mono shrink-0 whitespace-nowrap px-2.5 py-1 rounded-full border shadow-2xs ${
+                effectiveDark 
+                  ? 'bg-slate-800 text-slate-300 border-slate-700' 
+                  : 'bg-slate-100 text-slate-600 border-slate-200/80'
+              }`}>
+                {searchQuery ? currentRankingList.length : remainingRankingList.length} Kontingen
+              </span>
+            </div>
+
+            {(searchQuery ? currentRankingList : remainingRankingList).length === 0 ? (
+              <div className={`p-8 text-center rounded-2xl border ${
+                effectiveDark ? 'bg-slate-900 border-slate-800 text-slate-400' : 'bg-white border-slate-200 text-slate-500'
+              }`}>
+                Tidak ada kontingen yang cocok dengan kriteria filter atau pencarian.
+              </div>
+            ) : (
+              (searchQuery ? currentRankingList : remainingRankingList).map((item) => {
+                const isMyTeam = (currentTeam?.id && item.team?.id === currentTeam.id) || (currentUser?.teamId && item.team?.id === currentUser.teamId);
+
+                return (
+                  <div
+                    key={item.team?.id || item.schoolName}
+                    className={`p-3 sm:p-4 rounded-2xl border transition-all flex items-center justify-between gap-2.5 sm:gap-4 shadow-2xs hover:shadow-xs ${
+                      isMyTeam
+                        ? 'bg-emerald-50/90 border-emerald-400 ring-2 ring-emerald-400/40 shadow-xs'
+                        : effectiveDark
+                        ? 'bg-slate-900/90 border-slate-800 hover:bg-slate-800/80'
+                        : 'bg-white border-slate-200/90 hover:border-slate-300'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2 sm:gap-3.5 min-w-0 flex-1">
+                      {/* Rank Number Badge */}
+                      <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center font-mono font-black text-[11px] sm:text-sm shrink-0 shadow-2xs ${
+                        item.rank === 1
+                          ? 'bg-amber-400 text-slate-950'
+                          : item.rank === 2
+                          ? 'bg-slate-300 text-slate-900'
+                          : item.rank === 3
+                          ? 'bg-amber-600 text-white'
+                          : effectiveDark
+                          ? 'bg-slate-800 text-slate-300 border border-slate-700'
+                          : 'bg-slate-100 text-slate-700 border border-slate-200'
+                      }`}>
+                        #{String(item.rank).padStart(2, '0')}
+                      </div>
+
+                      {/* School Logo */}
+                      <div className={`w-9 h-9 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl border shadow-2xs p-1 flex items-center justify-center shrink-0 overflow-hidden ${
+                        effectiveDark ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200/90'
+                      }`}>
+                        <SchoolLogo team={item.team} schoolName={item.schoolName} size="table" isDark={effectiveDark} />
+                      </div>
+
+                      {/* Info Tim & Sekolah */}
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <h4 className={`font-black text-xs sm:text-sm leading-snug break-words ${
+                            effectiveDark ? 'text-white' : 'text-slate-950'
+                          }`}>
+                            {item.mainTitle || item.team?.schoolName || item.schoolName}
+                          </h4>
+                          {isMyTeam && (
+                            <span className="px-1.5 py-0.5 rounded-full font-black text-[8.5px] sm:text-[9px] bg-emerald-600 text-white shadow-2xs shrink-0 uppercase tracking-wider">
+                              Peleton Anda
+                            </span>
+                          )}
+                          {item.team?.lotNumber && (
+                            <span className="px-1.5 py-0.5 rounded-md font-mono font-bold text-[8.5px] sm:text-[9px] bg-slate-100 text-slate-700 border border-slate-200/80 shrink-0">
+                              TM #{String(item.team.lotNumber).padStart(2, '0')}
+                            </span>
+                          )}
+                        </div>
+                        {item.subTitle && (
+                          <p className="text-[10.5px] sm:text-[11px] text-slate-500 mt-0.5 font-medium leading-tight break-words">
+                            {item.subTitle}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Nilai Akhir / Poin di Sisi Kanan */}
+                    <div className="text-right shrink-0 flex flex-col justify-center items-end">
+                      <div className="flex items-baseline justify-end gap-1">
+                        <span className={`font-mono font-black text-sm sm:text-xl leading-none ${
+                          effectiveDark ? 'text-white' : 'text-slate-950'
+                        }`}>
+                          {item.score}
+                        </span>
+                        <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                          Poin
+                        </span>
+                      </div>
+                      {item.subScore ? (
+                        <div className="text-[9px] sm:text-[10px] text-slate-400 font-mono mt-1 flex flex-col sm:flex-row sm:items-center sm:justify-end sm:gap-1.5 leading-tight">
+                          {item.subScore.includes(' | ') ? (
+                            item.subScore.split(' | ').map((part, pIdx) => (
+                              <span key={pIdx} className="whitespace-nowrap">
+                                {part}
+                                {pIdx === 0 && <span className="hidden sm:inline text-slate-300 dark:text-slate-600 ml-1.5">|</span>}
+                              </span>
+                            ))
+                          ) : (
+                            <span className="whitespace-nowrap">{item.subScore}</span>
+                          )}
+                        </div>
+                      ) : item.scoreLabel ? (
+                        <div className="text-[9px] sm:text-[10px] text-slate-400 font-mono mt-0.5">
+                          {item.scoreLabel}
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+                );
+              })
+            )}
           </div>
         </div>
       )}
@@ -1992,8 +2180,17 @@ export default function LiveLeaderboard() {
       subtitle="Papan Peringkat Resmi Dewan Juri Realtime"
       rightActions={headerActions}
     >
-      <div className={effectiveDark ? 'bg-slate-950 text-slate-100 rounded-2xl p-4 sm:p-6 transition-colors' : ''}>
-        {content}
+      {/* Wrapper Utama: Ketika role Peserta, ikat seluruh card ke max-w-6xl mx-auto agar serasi dengan Portal */}
+      <div className={isPeserta ? "max-w-6xl mx-auto space-y-4 sm:space-y-6" : ""}>
+        {/* Banner Profil Peleton Resmi (Di mobile hanya tampil di beranda, desktop tetap tampil) */}
+        {isPeserta && currentTeam && (
+          <div className="hidden sm:block">
+            <TeamProfileHeader currentTeam={currentTeam} />
+          </div>
+        )}
+        <div className={effectiveDark ? 'bg-slate-950 text-slate-100 rounded-2xl p-4 sm:p-6 transition-colors' : ''}>
+          {content}
+        </div>
       </div>
     </SimpaskorSidebarLayout>
   );

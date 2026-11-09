@@ -809,7 +809,7 @@ export default function Registration() {
                     </div>
                     <h5 className="font-black text-white text-xs mb-1">Kartu Pelajar Komandan</h5>
                     <p className="text-[11px] text-slate-400 leading-relaxed">
-                      Scan/Foto Kartu Pelajar sah Komandan Peleton (Danton) pangkalan bersangkutan.
+                      Scan/Foto Kartu Pelajar sah Danton pangkalan bersangkutan (dapat diganti KIA atau Surat Keterangan).
                     </p>
                   </div>
                   <span className="text-[10px] text-slate-500 mt-2 block">Maks. 3 MB</span>

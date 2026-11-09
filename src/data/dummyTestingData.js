@@ -214,7 +214,9 @@ export function generate36DummyTeams({ realisticWorkflow = true } = {}) {
       coachName: p.official,
       waNumber: `0812${String(10000000 + idx * 8371).slice(-8)}`,
       email: `official.sd${numStr}@lbbmuallimin.com`,
-      address: 'Daerah Istimewa Yogyakarta',
+      address: p.address || (idx === 0 ? 'Jl. Timoho No. 29, Demangan, Kec. Gondokusuman, Kota Yogyakarta' : 'Daerah Istimewa Yogyakarta'),
+      schoolAddress: idx === 0 ? 'Jl. Timoho No. 29, Demangan, Kec. Gondokusuman' : 'Daerah Istimewa Yogyakarta',
+      schoolRegion: 'Kota Yogyakarta',
       status,
       lotNumber,
       drawTime,
@@ -569,17 +571,17 @@ export function generateDummyStaging(teams = []) {
 export function generateDummyScores(teams = []) {
   const scores = {};
 
-  // Tim yang sudah selesai tampil dan memiliki nilai (Nomor 3 s.d. 14 SD & SMP)
+  // Tim yang sudah selesai tampil dan memiliki nilai (Nomor 1 s.d. 14 SD & SMP)
   teams.forEach(team => {
     const num = parseInt(team.id.replace(/[^0-9]/g, ''), 10) || 1;
     const isSD = team.jenjang === 'SD';
 
-    if (num >= 3 && num <= 14) {
+    if (num >= 1 && num <= 14) {
       // Skema Nilai Berjenjang Realistis
-      // SD: 26 Gerakan (~ 1800 - 2000 total)
-      // SMP: 28 Gerakan (~ 1900 - 2100 total)
+      // SD: 26 Gerakan (~ 1800 - 2150 total)
+      // SMP: 28 Gerakan (~ 1900 - 2250 total)
       const basePbb = isSD ? 1860 : 1940;
-      const rankBonus = (15 - num) * 18; // Tim nomor 3 lebih tinggi dari nomor 14
+      const rankBonus = (15 - num) * 18; // Tim nomor 1 (Sapen) tertinggi: 2112
       const pbbTotal = basePbb + rankBonus;
       const dantonTotal = parseFloat((86.0 + ((15 - num) * 0.95)).toFixed(2));
 
@@ -591,7 +593,7 @@ export function generateDummyScores(teams = []) {
       const danton2 = parseFloat((dantonTotal * 0.333).toFixed(2));
       const danton3 = parseFloat((dantonTotal - danton1 - danton2).toFixed(2));
 
-      // Contoh 1 tim kena penalti injak garis (-50 poin) untuk simulasi
+      // Contoh tim nomor 6 kena penalti injak garis (-50 poin) untuk simulasi
       let peletonPenalty = 0;
       let injakGarisCount = 0;
       if (num === 6) {
@@ -619,11 +621,14 @@ export function generateDummyScores(teams = []) {
       const dantonSikap = Math.min(100, Math.round(88 + ((15 - num) * 0.9)));
       const dantonLapangan = Math.min(100, Math.round(86 + ((15 - num) * 1.0)));
 
-      scores[team.id] = {
+      const scoreEntry = {
         teamId: team.id,
         juryName: 'Dewan Juri Resmi LBB Muallimin 2027',
-        juryRole: 'Juri 1 (Unsur TNI/Korem)',
+        juryRole: 'Juri 1 (Unsur TNI/Korem 072 Pamungkas)',
         scoredAt: '2027-01-24T09:30:00+07:00',
+        rank: num,
+        categoryRank: num,
+        awardTitle: num === 1 ? `Juara 1 Peleton ${isSD ? 'SD' : 'SMP'}` : num === 2 ? `Juara 2 Peleton ${isSD ? 'SD' : 'SMP'}` : num === 3 ? `Juara 3 Peleton ${isSD ? 'SD' : 'SMP'}` : `Peringkat #${num}`,
         juries: {
           pos1: { peletonTotal: pbb1, dantonTotal: danton1, total: parseFloat((pbb1 + danton1).toFixed(2)) },
           pos2: { peletonTotal: pbb2, dantonTotal: danton2, total: parseFloat((pbb2 + danton2).toFixed(2)) },
@@ -666,12 +671,22 @@ export function generateDummyScores(teams = []) {
         dantonTotal,
         penaltiesTotal: peletonPenalty,
         finalScore,
-        notes: num === 6 ? 'Terjadi 1x pelanggaran injak garis batas arena (-50 poin)' : 'Penampilan sangat rapi, sinkronisasi tinggi, formasi presisi.',
+        evaluasiNote: num === 1
+          ? 'Penampilan luar biasa solid! Hentakan langkah kaki dan tempo barisan sangat seragam. Ketegasan aba-aba Komandan Peleton terdengar lantang dan berkarakter kuat.'
+          : (num === 6 ? 'Terjadi 1x pelanggaran injak garis batas arena (-50 poin). Tata barisan rapi.' : 'Penampilan sangat rapi, sinkronisasi tinggi, formasi presisi.'),
+        notes: num === 1
+          ? 'Penampilan luar biasa solid! Hentakan langkah kaki dan tempo barisan sangat seragam. Ketegasan aba-aba Komandan Peleton terdengar lantang dan berkarakter kuat.'
+          : (num === 6 ? 'Terjadi 1x pelanggaran injak garis batas arena (-50 poin)' : 'Penampilan sangat rapi, sinkronisasi tinggi, formasi presisi.'),
         status,
         isLocked,
         verifiedBy: 'Andi Aqillah (Superadmin)',
         finalizedBy: status === 'finalized' ? 'Mayor Inf. Bambang (Ketua Dewan Juri)' : null,
       };
+
+      scores[team.id] = scoreEntry;
+      if (team.id === 'team-sd-01') {
+        scores['team-sd-1'] = scoreEntry;
+      }
     }
   });
 

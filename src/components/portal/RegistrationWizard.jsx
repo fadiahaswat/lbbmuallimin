@@ -484,7 +484,7 @@ export default function RegistrationWizard({ isOpen, onClose }) {
       return false;
     }
     if (!files.dantonCard) {
-      triggerValidationError('Foto Kartu Pelajar Komandan wajib diunggah.');
+      triggerValidationError('Foto Kartu Pelajar / KIA / Surat Keterangan Komandan wajib diunggah.');
       return false;
     }
     if (!formData.officialName.trim()) {
@@ -673,7 +673,7 @@ export default function RegistrationWizard({ isOpen, onClose }) {
               <strong className="block font-bold">📋 Dokumen yang Dapat Dipersiapkan Terlebih Dahulu:</strong>
               <ul className="list-disc pl-5 space-y-0.5 text-amber-800">
                 <li>Surat Tugas / Rekomendasi Resmi Kepala Sekolah (Asli berstempel basah, format PDF/JPG maks 2 MB)</li>
-                <li>Scan/Foto Kartu Pelajar sah Komandan Peleton (Danton)</li>
+                <li>Scan/Foto Kartu Pelajar sah, KIA, atau Surat Keterangan Komandan Peleton (Danton)</li>
                 <li>Logo Sekolah / Peleton resolusi tinggi (PNG transparan)</li>
                 <li>Setoran biaya pendaftaran sesuai kode unik 108 ke BSI No. Rek. 2600051817 a.n. ADMISI HUMAS DAN KERJA SAMA</li>
               </ul>

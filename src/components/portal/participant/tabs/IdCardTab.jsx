@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Printer, Download, QrCode } from 'lucide-react';
+import { Printer, Download, QrCode, Shield, CheckCircle2 } from 'lucide-react';
 import { EVENT } from '../../../../config.js';
 import { generateParticipantQRCode, downloadDataUrl, OFFICIAL_BASE_URL } from '../../../../utils/qrGenerator.js';
+import logoLbb from '../../../../assets/logo-tonti.png';
+import titleLogoImg from '../../../../assets/title-logo.png';
 
 export default function IdCardTab({ currentTeam }) {
   const [qrDataUrl, setQrDataUrl] = useState('');
@@ -31,128 +33,155 @@ export default function IdCardTab({ currentTeam }) {
     );
   };
 
+  const handlePrint = () => {
+    setTimeout(() => window.print(), 50);
+  };
+
   return (
-    <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-8 border border-slate-200/90 shadow-xs space-y-4 sm:space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3 sm:pb-4">
-        <div>
-          <h4 className="font-black text-base sm:text-xl text-slate-900 uppercase">
-            ID Card & Tiket Registrasi (QR)
-          </h4>
-          <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5">
-            Tunjukkan barcode QR kepada Panitia saat tiba di Kampus Terpadu untuk Check-in & Basecamp.
-          </p>
+    <section className="rounded-[26px] border border-slate-200/80 bg-white p-5 shadow-[0_18px_46px_rgba(15,23,42,0.06)] sm:p-7 space-y-6">
+      {/* Panel Header */}
+      <div className="flex flex-col gap-4 border-b border-slate-100 pb-5 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-3.5">
+          <span className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-slate-950 text-white shadow-lg">
+            <QrCode className="w-5 h-5 text-amber-400" />
+            <span className="absolute -right-1 -top-1 h-3 w-3 rounded-full border-2 border-white bg-red-600" />
+          </span>
+          <div>
+            <p className="section-kicker">PORTAL KONTINGEN</p>
+            <h2 className="mt-0.5 text-lg font-black tracking-tight text-slate-950 sm:text-xl">
+              Credential & Tiket Registrasi
+            </h2>
+            <p className="mt-0.5 text-[10px] sm:text-xs text-slate-500">
+              Tunjukkan barcode QR kepada Panitia saat tiba di Kampus Terpadu untuk Check-in & Basecamp.
+            </p>
+          </div>
         </div>
 
-        <div className="flex items-center gap-2 w-full sm:w-auto">
+        <div className="flex items-center gap-2">
           <button
             type="button"
-            onClick={handleDownloadQR}
-            disabled={!qrDataUrl}
-            className="flex-1 sm:flex-none justify-center px-3.5 py-2 sm:py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl flex items-center gap-1.5 shadow-xs transition-all cursor-pointer disabled:opacity-50 active:scale-95"
-          >
-            <Download className="w-3.5 h-3.5 text-amber-400" />
-            <span>Unduh QR</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => window.print()}
-            className="flex-1 sm:flex-none justify-center px-3.5 py-2 sm:py-2.5 bg-red-700 hover:bg-red-800 text-white font-bold text-xs rounded-xl flex items-center gap-1.5 shadow-xs transition-all cursor-pointer active:scale-95"
+            onClick={handlePrint}
+            className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-[11px] font-black text-slate-700 transition hover:bg-slate-50 hover:border-slate-300 shadow-2xs cursor-pointer active:scale-95"
           >
             <Printer className="w-3.5 h-3.5" />
             <span>Cetak Badge</span>
           </button>
+          <button
+            type="button"
+            onClick={handleDownloadQR}
+            disabled={!qrDataUrl}
+            className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-red-700 px-3.5 py-2 text-[11px] font-black text-white shadow-md hover:bg-red-800 transition active:scale-95 cursor-pointer disabled:opacity-50"
+          >
+            <Download className="w-3.5 h-3.5 text-amber-300" />
+            <span>Unduh QR</span>
+          </button>
         </div>
       </div>
 
-      {/* Kartu Fisik / Badge Tiket Peleton (Printable) */}
-      <div className="max-w-xl mx-auto bg-slate-950 text-white rounded-3xl p-6 sm:p-8 shadow-2xl border border-amber-500/30 relative overflow-hidden">
-        {/* Header Badge */}
-        <div className="relative text-center border-b border-white/15 pb-3">
-          <span className="text-[9px] font-black tracking-widest uppercase text-amber-400 block">
-            LOMBA BARIS-BERBARIS MU'ALLIMIN 2027
-          </span>
-          <h3 className="text-lg sm:text-2xl font-black uppercase tracking-tight text-white mt-0.5">
-            TIKET IDENTITAS PELETON
-          </h3>
-          <p className="text-[11px] text-slate-300">
-            Kampus Terpadu Sedayu • {EVENT.COMPETITION_DATE}
-          </p>
-        </div>
+      {/* Luxury Stadium Credential Pass Layout in deep Navy / Slate-950 */}
+      <div className="mx-auto max-w-4xl" id="print-area-wrapper">
+        <div className="relative overflow-hidden rounded-[30px] bg-slate-950 text-white shadow-[0_24px_60px_rgba(15,23,42,0.24)] border border-slate-800">
+          {/* Subtle Ambient Glows */}
+          <div className="absolute -left-24 -top-24 h-72 w-72 rounded-full bg-red-700/15 blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-28 right-10 h-72 w-72 rounded-full bg-amber-400/10 blur-3xl pointer-events-none" />
 
-        {/* Body Badge: QR Code & Team Meta */}
-        <div className="relative py-4 flex flex-col items-center gap-4">
-          {/* QR Code Container */}
-          <div className="bg-white p-4 sm:p-5 rounded-3xl shadow-xl border border-slate-200 shrink-0 text-center w-full max-w-[320px] sm:max-w-[340px]">
-            {isGeneratingQr ? (
-              <div className="w-56 h-56 sm:w-64 sm:h-64 mx-auto flex items-center justify-center text-slate-400 font-mono text-xs">
-                Menyiapkan QR...
-              </div>
-            ) : (
+          {/* Top Bar Credential */}
+          <div className="relative flex items-center justify-between gap-2.5 border-b border-white/10 px-3.5 py-3 sm:px-7 sm:py-3.5">
+            <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
               <img
-                src={qrDataUrl}
-                alt={`QR Code ${currentTeam.regCode}`}
-                className="w-56 h-56 sm:w-64 sm:h-64 mx-auto block rounded-xl object-contain"
-                loading="eager"
+                src={logoLbb}
+                alt="Logo LBB"
+                className="h-7 sm:h-9 w-auto object-contain shrink-0 drop-shadow-md"
               />
-            )}
-            <span className="font-mono font-black text-sm sm:text-base text-slate-950 block mt-2.5 tracking-wider">
-              {currentTeam.regCode}
+              <img
+                src={titleLogoImg}
+                alt="LBB Mu'allimin 2027"
+                className="h-5 sm:h-7 w-auto object-contain max-w-[120px] sm:max-w-[170px]"
+              />
+            </div>
+            <span className="shrink-0 inline-flex items-center gap-1.5 rounded-full border border-emerald-400/25 bg-emerald-400/10 px-2.5 sm:px-3 py-1 sm:py-1.5 text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-emerald-400 whitespace-nowrap shadow-xs">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+              <span>Credential Aktif</span>
             </span>
-            <span className="text-[10px] sm:text-xs text-slate-500 font-bold uppercase block mt-0.5">Scan saat Check-in</span>
           </div>
 
-          {/* Team Details */}
-          <div className="w-full text-center space-y-3">
-            <div>
-              <span className="text-[9px] uppercase font-bold text-amber-400 tracking-wider">Sekolah / Instansi</span>
-              <h4 className="text-lg sm:text-xl font-black text-white leading-tight uppercase mt-0.5">
-                {currentTeam.schoolName}
-              </h4>
-              {currentTeam.platoonName &&
-                currentTeam.platoonName.trim().toLowerCase() !== currentTeam.schoolName.trim().toLowerCase() &&
-                currentTeam.platoonName.trim().toLowerCase() !== `peleton ${currentTeam.schoolName.trim().toLowerCase()}` &&
-                currentTeam.platoonName.trim().toLowerCase() !== `pleton ${currentTeam.schoolName.trim().toLowerCase()}` && (
-                  <p className="text-xs text-amber-300/90 font-semibold mt-0.5">
-                    {currentTeam.platoonName}
-                  </p>
-              )}
+          {/* Grid: Left Meta, Right White QR Card */}
+          <div className="relative grid lg:grid-cols-[minmax(0,1fr)_290px]">
+            {/* Sisi Kiri: Identitas Peleton & Specs */}
+            <div className="flex flex-col justify-between p-6 sm:p-8">
+              <div>
+                <p className="text-[9px] font-black uppercase tracking-[0.16em] text-slate-500">
+                  Identitas Peleton
+                </p>
+                <h3 className="mt-2.5 max-w-xl text-2xl sm:text-3xl font-black uppercase leading-[1.08] tracking-[-0.035em] text-white">
+                  {currentTeam.schoolName}
+                </h3>
+                <p className="mt-2.5 flex items-center gap-2 text-[10px] sm:text-xs font-bold text-slate-400">
+                  <span className="h-1.5 w-1.5 rounded-full bg-amber-400 inline-block" />
+                  <span>
+                    {currentTeam.platoonName || `Peleton ${currentTeam.schoolName}`} · Jenjang {currentTeam.jenjang}
+                  </span>
+                </p>
+              </div>
+
+              {/* 4-Cell Spec Grid */}
+              <div className="mt-8 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/10 sm:grid-cols-4">
+                {[
+                  { label: 'Kategori', value: currentTeam.category || 'Homogen Putra' },
+                  { label: 'Urutan Tampil', value: currentTeam.lotNumber ? `#${String(currentTeam.lotNumber).padStart(2, '0')}` : 'Belum TM' },
+                  { label: 'No. Dada', value: currentTeam.chestNumber || '—' },
+                  { label: 'Basecamp', value: currentTeam.basecampNumber || (currentTeam.lotNumber ? `Ruang ${String(currentTeam.lotNumber).padStart(2, '0')}` : '—') },
+                ].map(spec => (
+                  <div key={spec.label} className="bg-slate-950/80 p-3">
+                    <p className="text-[7px] font-black uppercase tracking-wider text-slate-500">
+                      {spec.label}
+                    </p>
+                    <p className="mt-1 truncate font-mono text-[10px] sm:text-[11px] font-black text-white">
+                      {spec.value}
+                    </p>
+                  </div>
+                ))}
+              </div>
+
+              {/* Validity Footer */}
+              <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-[8px] sm:text-[9px] font-black tracking-wider text-slate-500">
+                <span>VALIDITAS: 09–24 JANUARI 2027</span>
+                <span>LOKASI: KAMPUS TERPADU SEDAYU</span>
+              </div>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center bg-white/10 p-2.5 rounded-2xl border border-white/15 text-xs">
-              <div className="p-1">
-                <span className="text-[9px] uppercase text-slate-400 block font-bold">Jenjang</span>
-                <span className="font-bold text-white text-xs sm:text-sm">{currentTeam.jenjang}</span>
-              </div>
-              <div className="p-1">
-                <span className="text-[9px] uppercase text-slate-400 block font-bold">Urutan</span>
-                <span className="font-bold text-amber-400 font-mono text-xs sm:text-sm">
-                  {currentTeam.lotNumber ? `#${String(currentTeam.lotNumber).padStart(2, '0')}` : 'Belum TM'}
-                </span>
-              </div>
-              <div className="p-1">
-                <span className="text-[9px] uppercase text-slate-400 block font-bold">No. Dada</span>
-                <span className="font-bold text-emerald-400 font-mono text-xs sm:text-sm">{currentTeam.chestNumber || '-'}</span>
-              </div>
-              <div className="p-1">
-                <span className="text-[9px] uppercase text-slate-400 block font-bold">Basecamp</span>
-                <span className="font-bold text-amber-300 font-mono text-xs sm:text-sm">{currentTeam.basecampNumber ? `Ruang ${currentTeam.basecampNumber}` : '-'}</span>
-              </div>
-            </div>
+            {/* Sisi Kanan: White QR Box */}
+            <div className="border-t border-white/10 bg-white/[0.035] p-5 sm:p-6 lg:border-l lg:border-t-0 flex items-center justify-center">
+              <div className="w-full max-w-[240px] rounded-[22px] bg-white p-4 text-center shadow-2xl">
+                {/* QR Code */}
+                <div className="aspect-square w-full flex items-center justify-center overflow-hidden rounded-xl bg-white p-1">
+                  {isGeneratingQr ? (
+                    <div className="h-44 w-44 flex items-center justify-center text-slate-400 font-mono text-[10px]">
+                      Menyiapkan QR...
+                    </div>
+                  ) : (
+                    <img
+                      src={qrDataUrl}
+                      alt={`QR Code ${currentTeam.regCode}`}
+                      className="h-full w-full object-contain"
+                      loading="eager"
+                    />
+                  )}
+                </div>
 
-            <div className="text-[11px] text-slate-300 flex flex-wrap justify-center gap-x-4 gap-y-1">
-              <span>Danton: <strong className="text-white">{currentTeam.roster?.danton?.name || currentTeam.dantonName || '-'}</strong></span>
-              <span>Official: <strong className="text-white">{currentTeam.officialName || currentTeam.coachName || '-'}</strong></span>
+                <p className="mt-3 font-mono text-xs font-black tracking-[0.14em] text-slate-950">
+                  {currentTeam.regCode || 'LBB27-PENDING'}
+                </p>
+
+                <div className="mt-1.5 flex items-center justify-center gap-1.5 text-[8px] font-black uppercase tracking-wider text-emerald-700">
+                  <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                  <span>Scan untuk verifikasi</span>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-
-        {/* SOP Info Footer */}
-        <div className="relative border-t border-white/15 pt-3 text-[10px] sm:text-[11px] text-slate-400 space-y-1 text-left">
-          <div className="font-bold text-amber-400 uppercase text-[9px] tracking-wider">SOP Ringkas Hari-H:</div>
-          <p>• <strong>Check-in:</strong> Tunjukkan QR ini & serahkan KTP official untuk menerima air mineral, nomor dada, cocard, dan karung sampah.</p>
-          <p>• <strong>Check-out:</strong> Cek kebersihan basecamp & serahkan sampah terpilah untuk serah-terima kembali KTP.</p>
         </div>
       </div>
-    </div>
+    </section>
   );
 }

@@ -8,7 +8,8 @@ import {
   Check,
   ShieldCheck,
   ArrowLeft,
-  ArrowRight
+  ArrowRight,
+  Info
 } from 'lucide-react';
 
 export default function Step2DantonAndOfficial({
@@ -60,12 +61,18 @@ export default function Step2DantonAndOfficial({
 
           {/* 7. Upload Kartu Pelajar Komandan */}
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5 flex items-center gap-1.5">
-              <FileUp className="w-3.5 h-3.5 text-red-600" />
-              <span>
-                7. Kartu Pelajar Komandan (Foto / PDF) <span className="text-red-600 font-bold">*</span>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 mb-1.5">
+              <label className="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+                <FileUp className="w-3.5 h-3.5 text-red-600" />
+                <span>
+                  7. Kartu Pelajar Komandan (Foto / PDF) <span className="text-red-600 font-bold">*</span>
+                </span>
+              </label>
+              <span className="text-[11px] text-amber-800 bg-amber-50 border border-amber-200/80 px-2.5 py-0.5 rounded-md font-medium w-fit">
+                Bisa diganti KIA / Surat Keterangan
               </span>
-            </label>
+            </div>
+
             <div className="p-3.5 bg-white border-2 border-dashed border-slate-200 hover:border-red-400 rounded-2xl transition-all">
               {files.dantonCard ? (
                 <div className="flex items-center justify-between p-2.5 bg-slate-50/80 rounded-xl border border-slate-200">
@@ -73,7 +80,7 @@ export default function Step2DantonAndOfficial({
                     {files.dantonCard.url && files.dantonCard.url.startsWith('data:image') ? (
                       <img
                         src={files.dantonCard.url}
-                        alt="Preview Kartu Pelajar"
+                        alt="Preview Kartu Pelajar / KIA / Surat Keterangan"
                         className="w-12 h-12 sm:w-14 sm:h-14 object-cover rounded-lg border border-slate-200 shadow-xs shrink-0 bg-white"
                       />
                     ) : (
@@ -102,9 +109,14 @@ export default function Step2DantonAndOfficial({
                   </label>
                 </div>
               ) : (
-                <label className="cursor-pointer flex items-center justify-center gap-2 py-3.5 text-xs font-bold text-slate-700 hover:text-red-700 transition-colors">
-                  <UploadCloud className="w-4 h-4 text-red-600" />
-                  <span>Pilih Foto / Scan Kartu Pelajar Danton</span>
+                <label className="cursor-pointer flex flex-col items-center justify-center gap-1.5 py-3.5 text-xs font-bold text-slate-700 hover:text-red-700 transition-colors text-center">
+                  <div className="flex items-center gap-2">
+                    <UploadCloud className="w-4 h-4 text-red-600" />
+                    <span>Pilih Foto / Scan Kartu Pelajar Danton</span>
+                  </div>
+                  <span className="text-[11px] text-slate-400 font-normal">
+                    Format Foto (JPG/PNG) atau PDF (Maks. 3 MB)
+                  </span>
                   <input
                     type="file"
                     accept="image/*,.pdf"
@@ -113,6 +125,14 @@ export default function Step2DantonAndOfficial({
                   />
                 </label>
               )}
+            </div>
+
+            {/* Petunjuk Tambahan */}
+            <div className="mt-2 text-[11px] text-slate-600 bg-amber-50/70 border border-amber-200/80 rounded-xl px-3 py-2 flex items-start gap-2">
+              <Info className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+              <span className="leading-relaxed">
+                <strong>Petunjuk:</strong> Dapat diganti dengan <strong>KIA (Kartu Identitas Anak)</strong> atau <strong>Surat Keterangan Siswa Aktif</strong> dari sekolah apabila belum memiliki Kartu Pelajar.
+              </span>
             </div>
           </div>
         </div>
