@@ -14,7 +14,8 @@ import {
   ChevronRight,
   Info,
   ExternalLink,
-  Scale
+  Scale,
+  ArrowLeftRight
 } from 'lucide-react';
 import { COMPETITION, MATERIALS, DOWNLOADS } from '../../../../config.js';
 import BacaPerpangTab from './BacaPerpangTab.jsx';
@@ -349,16 +350,21 @@ export default function MateriTemaTab({ currentTeam, initialSubTab = 'materi' })
           const leftColumn = list.slice(0, halfCount);
           const rightColumn = list.slice(halfCount);
 
+          const subMovementNum = isSD ? 16 : 19;
+
           const renderCard = (materiText, num) => {
             const isBerantai = materiText.includes('–') || materiText.includes('-');
             const isThemeMovement = materiText.includes('**');
             const isStartEnd = num === 1 || num === list.length;
+            const isSubMovement = num === subMovementNum;
 
             return (
               <div
                 key={`${materiText}-${num}`}
                 className={`relative flex items-start gap-3 rounded-2xl border p-3 transition-all ${
-                  isThemeMovement
+                  isSubMovement
+                    ? 'border-emerald-400 bg-emerald-50/50 shadow-xs ring-2 ring-emerald-400/20'
+                    : isThemeMovement
                     ? 'border-amber-300 bg-amber-50/60 shadow-xs'
                     : isStartEnd
                     ? 'border-red-200 bg-red-50/40'
@@ -368,7 +374,9 @@ export default function MateriTemaTab({ currentTeam, initialSubTab = 'materi' })
                 {/* Nomor Urut */}
                 <span
                   className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-xl text-xs font-black shadow-2xs ${
-                    isThemeMovement
+                    isSubMovement
+                      ? 'bg-emerald-600 text-white'
+                      : isThemeMovement
                       ? 'bg-amber-500 text-white'
                       : isStartEnd
                       ? 'bg-red-700 text-white'
@@ -381,16 +389,22 @@ export default function MateriTemaTab({ currentTeam, initialSubTab = 'materi' })
                 {/* Deskripsi Gerakan */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5 flex-wrap">
-                    <p className="text-xs font-bold text-slate-900 leading-snug">
+                    <p className={`text-xs font-bold leading-snug ${isSubMovement ? 'text-emerald-950 font-black' : 'text-slate-900'}`}>
                       {materiText.replace(/\*\*/g, '')}
                     </p>
+                    {isSubMovement && (
+                      <span className="inline-flex items-center gap-1 text-[8.5px] font-black uppercase tracking-wider text-emerald-800 bg-emerald-100 border border-emerald-300 px-2 py-0.5 rounded-md shadow-2xs">
+                        <ArrowLeftRight className="w-2.5 h-2.5 text-emerald-700" />
+                        Titik Pergantian Pemain
+                      </span>
+                    )}
                     {isThemeMovement && (
                       <span className="inline-flex items-center gap-1 text-[8.5px] font-black uppercase tracking-wider text-amber-800 bg-amber-200/80 px-2 py-0.5 rounded-md">
                         <Sparkles className="w-2.5 h-2.5 text-amber-700" />
                         Amanat Tema
                       </span>
                     )}
-                    {isBerantai && !isThemeMovement && (
+                    {isBerantai && !isThemeMovement && !isSubMovement && (
                       <span className="text-[8.5px] font-bold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded-md">
                         Berangkai
                       </span>

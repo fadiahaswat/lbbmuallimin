@@ -145,42 +145,64 @@ export default function OverviewTab({
     window.location.hostname.includes('192.168.')
   );
   const loName = currentTeam?.loName || (isLocalhost ? 'Kak Rizky Fauzi (Panitia LBB)' : null);
-  const loPhone = currentTeam?.loPhone || (isLocalhost ? '081947491505' : null);
   const loRole = currentTeam?.loRole || (isLocalhost ? 'LO Pendamping Peleton' : null);
+  const loPhoto = currentTeam?.loPhoto || (isLocalhost ? 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=240&auto=format&fit=crop&q=80' : null);
   const isLoAssigned = Boolean(loName);
 
-  // Agenda Countdown Timer Logic (TM -> UCL -> Hari-H)
+  // Agenda Countdown Timer Logic (Deadline Identitas Peleton H-1 TM -> TM -> UCL -> Hari-H)
   const AGENDA_TARGETS = React.useMemo(() => [
     {
+      id: 'deadline',
+      label: 'Batas Kelengkapan Roster & Berkas (H-1 TM)',
+      shortLabel: 'H-1 TM (8 Jan)',
+      dateText: '08 Jan 2027 • 23.59 WIB',
+      location: 'Portal Online Peleton',
+      targetMs: new Date('2027-01-08T23:59:59+07:00').getTime(),
+      badgeClass: 'bg-amber-500/10 text-amber-300 border-amber-500/30',
+      accentColor: 'amber',
+      glowColor: 'from-amber-600/20',
+      indicatorColor: 'bg-amber-500',
+      isDeadline: true
+    },
+    {
       id: 'tm',
-      label: 'Technical Meeting',
+      label: 'Technical Meeting & Pengundian',
       shortLabel: 'TM (9 Jan)',
       dateText: '09 Jan 2027 • 13.00 WIB',
-      location: "Kampus Induk Mu'allimin (Wirobrajan)",
+      location: "Kampus Induk Mu'allimin",
       targetMs: new Date('2027-01-09T13:00:00+07:00').getTime(),
-      badgeClass: 'bg-purple-100 text-purple-700 border-purple-200'
+      badgeClass: 'bg-purple-500/10 text-purple-300 border-purple-500/30',
+      accentColor: 'purple',
+      glowColor: 'from-purple-600/20',
+      indicatorColor: 'bg-purple-500'
     },
     {
       id: 'trial',
       label: 'Uji Coba Lapangan (UCL)',
       shortLabel: 'UCL (16 Jan)',
       dateText: '16 Jan 2027 • 07.00 WIB',
-      location: 'Kampus Terpadu Sedayu (Bantul)',
+      location: 'Kampus Terpadu Sedayu',
       targetMs: new Date('2027-01-16T07:00:00+07:00').getTime(),
-      badgeClass: 'bg-emerald-100 text-emerald-700 border-emerald-200'
+      badgeClass: 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30',
+      accentColor: 'emerald',
+      glowColor: 'from-emerald-600/20',
+      indicatorColor: 'bg-emerald-500'
     },
     {
       id: 'competition',
-      label: 'Hari Perlombaan',
+      label: 'Hari Perlombaan (Hari-H)',
       shortLabel: 'Hari-H (24 Jan)',
       dateText: '24 Jan 2027 • 06.00 WIB',
-      location: 'Arena Lapangan Utama Sedayu',
+      location: 'Arena Sedayu',
       targetMs: new Date('2027-01-24T06:00:00+07:00').getTime(),
-      badgeClass: 'bg-red-100 text-red-700 border-red-200'
+      badgeClass: 'bg-red-500/10 text-red-300 border-red-500/30',
+      accentColor: 'red',
+      glowColor: 'from-red-600/20',
+      indicatorColor: 'bg-red-500'
     }
   ], []);
 
-  const [selectedCountdownId, setSelectedCountdownId] = useState('tm');
+  const [selectedCountdownId, setSelectedCountdownId] = useState('deadline');
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
   const activeTarget = AGENDA_TARGETS.find(a => a.id === selectedCountdownId) || AGENDA_TARGETS[0];
@@ -257,66 +279,68 @@ export default function OverviewTab({
         </div>
       )}
 
-      {/* 0. COUNTDOWN TIMER AGENDA RESMI */}
-      <section className="relative overflow-hidden rounded-[24px] border border-slate-200 bg-white p-5 shadow-[0_12px_32px_rgba(15,23,42,0.045)]">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-          {/* Info Agenda & Selector */}
-          <div className="space-y-2">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="flex h-6 items-center gap-1.5 rounded-full bg-red-50 border border-red-100 px-2.5 text-[8.5px] font-black uppercase tracking-wider text-red-700">
-                <span className="h-1.5 w-1.5 rounded-full bg-red-600 animate-pulse" />
-                <span>RACE COUNTDOWN 2027</span>
+      {/* 0. COUNTDOWN BATAS ROSTER & BERKAS (H-1 TM) - ULTRA COMPACT & CLEAN */}
+      <section className="relative overflow-hidden rounded-2xl border border-slate-800 bg-gradient-to-r from-slate-950 via-[#0a0f1d] to-slate-950 px-4 sm:px-5 py-3.5 text-white shadow-xs">
+        <div className="flex flex-col gap-3.5 md:flex-row md:items-center md:justify-between">
+          {/* Kiri: Judul, Jadwal, & Inline Progres */}
+          <div className="space-y-1 min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="flex h-2 w-2 rounded-full bg-amber-400 animate-pulse" />
+              <span className="text-[9.5px] font-black uppercase tracking-wider text-amber-300">
+                DEADLINE H-1 TECHNICAL MEETING
               </span>
-              <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[9px] font-bold ${activeTarget.badgeClass}`}>
-                {activeTarget.label}
+              <span className="text-slate-600">•</span>
+              <span className="text-xs text-slate-400 font-medium">
+                08 Jan 2027, 23.59 WIB
               </span>
             </div>
-            <div>
-              <h3 className="text-base sm:text-lg font-black tracking-tight text-slate-950">
-                Menuju {activeTarget.label}
-              </h3>
-              <p className="mt-0.5 text-xs text-slate-500 font-medium">
-                📍 {activeTarget.location} • <strong className="text-slate-800">{activeTarget.dateText}</strong>
-              </p>
-            </div>
-            {/* Quick Switcher Pills */}
-            <div className="flex flex-wrap items-center gap-1.5 pt-1">
-              {AGENDA_TARGETS.map(agenda => (
-                <button
-                  key={agenda.id}
-                  type="button"
-                  onClick={() => setSelectedCountdownId(agenda.id)}
-                  className={`rounded-xl px-2.5 py-1 text-[9.5px] font-black transition cursor-pointer ${
-                    selectedCountdownId === agenda.id
-                      ? 'bg-slate-900 text-white shadow-xs'
-                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200/80 hover:text-slate-900'
+
+            <h2 className="text-base sm:text-lg font-black tracking-tight text-white truncate">
+              Batas Melengkapi Roster & Berkas Peleton
+            </h2>
+
+            {/* Inline Progres Kelengkapan - 1 Baris Bersih */}
+            <div className="flex items-center gap-2.5 pt-0.5">
+              <div className="w-24 sm:w-28 h-1.5 rounded-full bg-slate-800 overflow-hidden shrink-0">
+                <div
+                  className={`h-full rounded-full transition-all duration-700 ${
+                    readinessPercent >= 100 ? 'bg-emerald-400' : 'bg-amber-400'
                   }`}
-                >
-                  {agenda.shortLabel}
-                </button>
-              ))}
+                  style={{ width: `${readinessPercent}%` }}
+                />
+              </div>
+              <span className="text-[11px] font-semibold text-slate-300">
+                Progres:{' '}
+                <strong className={readinessPercent >= 100 ? 'text-emerald-400' : 'text-amber-400'}>
+                  {readinessPercent}% ({completedItems}/{totalItems} Data Terisi)
+                </strong>
+              </span>
             </div>
           </div>
 
-          {/* Digital Timer Boxes */}
-          <div className="grid grid-cols-4 gap-2 sm:gap-3 self-stretch lg:self-auto shrink-0">
+          {/* Kanan: 4 Kotak Waktu Sederhana */}
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 self-start md:self-auto">
             {[
               { label: 'HARI', val: timeLeft.days },
               { label: 'JAM', val: timeLeft.hours },
               { label: 'MENIT', val: timeLeft.minutes },
               { label: 'DETIK', val: timeLeft.seconds }
-            ].map(unit => (
-              <div
-                key={unit.label}
-                className="flex min-w-[62px] sm:min-w-[76px] flex-col items-center justify-center rounded-2xl border border-slate-200/80 bg-slate-50/70 p-2.5 sm:p-3 text-center transition hover:border-slate-300 hover:bg-white"
-              >
-                <span className="font-mono text-xl sm:text-2xl font-black text-slate-950 tracking-tight">
-                  {String(unit.val).padStart(2, '0')}
-                </span>
-                <span className="mt-0.5 text-[7.5px] sm:text-[8px] font-black tracking-widest text-slate-400 uppercase">
-                  {unit.label}
-                </span>
-              </div>
+            ].map((unit, idx, arr) => (
+              <React.Fragment key={unit.label}>
+                <div className="flex min-w-[52px] sm:min-w-[60px] flex-col items-center justify-center rounded-xl border border-slate-800/80 bg-slate-900/90 py-1.5 sm:py-2 px-1.5 text-center">
+                  <span className="font-mono text-base sm:text-xl font-black text-white leading-tight">
+                    {String(unit.val).padStart(2, '0')}
+                  </span>
+                  <span className="text-[7px] sm:text-[7.5px] font-bold tracking-widest text-slate-400 uppercase mt-0.5">
+                    {unit.label}
+                  </span>
+                </div>
+                {idx < arr.length - 1 && (
+                  <span className="font-mono text-sm sm:text-base font-bold text-slate-600 animate-pulse select-none -mx-0.5">
+                    :
+                  </span>
+                )}
+              </React.Fragment>
             ))}
           </div>
         </div>
@@ -1324,50 +1348,62 @@ export default function OverviewTab({
             </div>
 
             <div className="p-4 sm:p-5 space-y-3">
-              {/* LIAISON OFFICER (LO PELETON) INNER CARD */}
-              <div className="relative overflow-hidden rounded-[20px] border border-emerald-200/90 bg-emerald-50/40 p-4 transition-all">
-                <div className="flex items-start justify-between gap-2">
-                  <div className="min-w-0 flex-1">
-                    <p className="text-[8.5px] font-black uppercase tracking-wider text-emerald-800">
-                      LIAISON OFFICER (LO PELETON)
-                    </p>
-                    <h5 className="mt-1 text-sm font-black text-slate-950 truncate">
-                      {isLoAssigned ? loName : 'Penetapan saat TM'}
-                    </h5>
-                    <p className="mt-1 text-[10px] leading-relaxed text-slate-600">
-                      {isLoAssigned 
-                        ? `Pendamping resmi kontingen ${currentTeam.schoolName || 'peleton Anda'}. Memandu mulai registrasi kedatangan, basecamp, hingga arena perlombaan.`
-                        : 'Setiap peleton didampingi 1 LO resmi panitia sejak registrasi kedatangan.'
-                      }
-                    </p>
-                  </div>
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-xs">
-                    <UserCheck className="w-4 h-4" />
-                  </span>
-                </div>
-
+              {/* LIAISON OFFICER (LO PELETON) - STREAMLINED & ELEGANT */}
+              <div className="relative overflow-hidden rounded-[20px] border border-emerald-200/90 bg-gradient-to-br from-emerald-50/70 via-white to-emerald-50/30 p-4 transition-all">
                 {isLoAssigned ? (
-                  <div className="mt-3.5 space-y-2">
-                    <div className="flex items-center gap-2 rounded-xl bg-white/95 border border-emerald-100 px-3 py-1.5 text-[9.5px] text-emerald-800 font-medium">
-                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                      <span>{loRole || 'LO Pendamping Peleton'} • Siaga di Kampus Sedayu</span>
+                  <div className="flex items-center gap-3.5">
+                    {/* Foto LO Besar */}
+                    <div className="relative shrink-0">
+                      <img
+                        src={loPhoto}
+                        alt={loName || 'Liaison Officer'}
+                        className="h-20 w-20 sm:h-22 sm:w-22 rounded-2xl object-cover object-top border-2 border-emerald-500 shadow-sm ring-4 ring-emerald-100/90"
+                        onError={(e) => {
+                          e.currentTarget.onerror = null;
+                          e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(loName || 'Rizky Fauzi')}&background=059669&color=fff&bold=true`;
+                        }}
+                      />
+                      <span className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-emerald-600 text-white border-2 border-white shadow-xs" title="LO Resmi Terverifikasi">
+                        <Check className="w-3 h-3 stroke-[3]" />
+                      </span>
                     </div>
-                    <a
-                      href={`https://wa.me/62${(loPhone || '081947491505').replace(/^0/, '')}?text=${encodeURIComponent(
-                        `Halo ${loName || 'Kak LO'}, saya dari kontingen ${currentTeam.schoolName || 'peleton'}.\nNo. Registrasi: ${currentTeam.regCode || '-'}\nMohon informasi dan koordinasi untuk agenda LBB Mu'allimin 2027. Terima kasih!`
-                      )}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold text-xs shadow-xs transition cursor-pointer"
-                    >
-                      <Phone className="w-3.5 h-3.5" />
-                      <span>Hubungi LO ({loName ? loName.split(' ')[0] + ' ' + (loName.split(' ')[1] || '') : 'Kak LO'})</span>
-                    </a>
+
+                    {/* Informasi LO: Bersih, Rapi & Ringkas */}
+                    <div className="min-w-0 flex-1 space-y-1">
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100/80 px-2.5 py-0.5 text-[8.5px] font-black uppercase tracking-wider text-emerald-800">
+                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-600 animate-pulse" />
+                        <span>LO Resmi Peleton</span>
+                      </span>
+
+                      <h5 className="text-sm sm:text-base font-black text-slate-950 leading-snug">
+                        {loName ? loName.replace(/\s*\(Panitia LBB\)/i, '') : 'Kak Rizky Fauzi'}
+                      </h5>
+
+                      <p className="text-[10px] text-slate-500 font-medium">
+                        Panitia LBB • Kampus Sedayu
+                      </p>
+
+                      <p className="text-[10px] text-emerald-800/90 font-medium leading-tight pt-0.5">
+                        Pendamping resmi kontingen peleton Anda.
+                      </p>
+                    </div>
                   </div>
                 ) : (
-                  <div className="mt-3 rounded-xl bg-white/90 border border-emerald-100 px-3 py-2 text-[9.5px] text-slate-600 flex items-center gap-2">
-                    <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
-                    <span>Kontak LO aktif setelah sesi pembagian di TM</span>
+                  <div className="flex items-center gap-3">
+                    <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-700">
+                      <UserCheck className="w-6 h-6" />
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <span className="text-[8.5px] font-black uppercase tracking-wider text-emerald-800">
+                        LIAISON OFFICER
+                      </span>
+                      <h5 className="text-sm font-black text-slate-950">
+                        Penetapan saat TM
+                      </h5>
+                      <p className="text-[10px] text-slate-500">
+                        Diperkenalkan langsung saat Technical Meeting.
+                      </p>
+                    </div>
                   </div>
                 )}
               </div>

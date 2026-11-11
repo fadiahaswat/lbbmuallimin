@@ -328,46 +328,46 @@ export default function ScoresTab({ teamScore, currentTeam }) {
           {/* Dual Executive Championship Scoreboard (Peleton & Komandan Terpisah Sesuai Juknis Bab A.3) */}
           <div className="grid gap-5 lg:grid-cols-2">
             {/* 1. KATEGORI PELETON */}
-            <div className="overflow-hidden rounded-3xl bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-5 sm:p-6 text-white relative shadow-xl border border-white/10 flex flex-col justify-between">
+            <div className="overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-4 sm:p-6 text-white relative shadow-xl border border-white/10 flex flex-col justify-between">
               <div className="absolute -right-12 -top-12 h-44 w-44 rounded-full bg-blue-500/10 blur-3xl pointer-events-none" />
               <div className="absolute -left-12 -bottom-12 h-44 w-44 rounded-full bg-teal-500/10 blur-3xl pointer-events-none" />
 
-              <div className="relative z-10 space-y-3.5">
-                <div className="flex items-center justify-between gap-2 border-b border-white/10 pb-2.5">
-                  <span className="text-[10px] font-black uppercase tracking-[0.14em] text-blue-400 bg-blue-400/10 px-2.5 py-0.5 rounded-md border border-blue-400/20">
+              <div className="relative z-10 space-y-2.5 sm:space-y-3.5">
+                <div className="flex items-center justify-between gap-2 border-b border-white/10 pb-2 sm:pb-2.5">
+                  <span className="text-[9.5px] sm:text-[10px] font-black uppercase tracking-[0.14em] text-blue-400 bg-blue-400/10 px-2 sm:px-2.5 py-0.5 rounded-md border border-blue-400/20">
                     NILAI AKHIR PELETON
                   </span>
-                  <span className="text-[11px] text-slate-400 font-semibold">
+                  <span className="text-[10px] sm:text-[11px] text-slate-400 font-semibold">
                     {materialsCount} Gerakan
                   </span>
                 </div>
 
-                <div className="flex items-center justify-between gap-4 pt-1">
-                  <div>
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-5xl sm:text-6xl font-black font-mono tracking-tight text-white drop-shadow-sm">
+                <div className="flex items-center justify-between gap-2.5 sm:gap-4 pt-0.5 sm:pt-1">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-baseline gap-1.5 sm:gap-2">
+                      <span className="text-4xl sm:text-5xl lg:text-6xl font-black font-mono tracking-tight text-white drop-shadow-sm leading-none">
                         {peletonFinalScore}
                       </span>
-                      <span className="text-sm font-black text-blue-400 uppercase tracking-widest">
+                      <span className="text-xs sm:text-sm font-black text-blue-400 uppercase tracking-widest shrink-0">
                         POIN
                       </span>
                     </div>
-                    {peletonPenaltyTotal > 0 && (
-                      <p className="text-xs text-rose-400 font-bold mt-1 font-mono">
+                    {peletonPenaltyTotal > 0 ? (
+                      <p className="text-[11px] sm:text-xs text-rose-400 font-bold mt-1 font-mono">
                         Penalti: -{peletonPenaltyTotal} Poin
                       </p>
-                    )}
+                    ) : null}
                   </div>
 
                   {teamScore.rank && (
-                    <div className="rounded-2xl p-3 sm:p-3.5 text-center shrink-0 backdrop-blur-md border border-amber-400/40 bg-gradient-to-b from-amber-400/20 to-amber-500/10 shadow-[0_8px_20px_rgba(251,191,36,0.12)] ring-1 ring-amber-300/30 min-w-[110px]">
-                      <div className="flex items-center justify-center gap-1 mb-1">
-                        <Trophy className="w-3.5 h-3.5 text-amber-300" />
-                        <p className="text-[9px] font-black uppercase tracking-wider text-amber-300">
+                    <div className="rounded-xl sm:rounded-2xl p-2 sm:p-3.5 text-center shrink-0 backdrop-blur-md border border-amber-400/40 bg-gradient-to-b from-amber-400/20 to-amber-500/10 shadow-[0_8px_20px_rgba(251,191,36,0.12)] ring-1 ring-amber-300/30 max-w-[115px] sm:max-w-[150px]">
+                      <div className="flex items-center justify-center gap-1 mb-0.5 sm:mb-1">
+                        <Trophy className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-300 shrink-0" />
+                        <p className="text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-amber-300 truncate max-w-[85px] sm:max-w-none">
                           {teamScore.awardTitle || (teamScore.rank === 1 ? 'JUARA 1' : `PERINGKAT`)}
                         </p>
                       </div>
-                      <p className="text-3xl sm:text-4xl font-black text-white font-mono tracking-tight leading-none">
+                      <p className="text-2xl sm:text-4xl font-black text-white font-mono tracking-tight leading-none">
                         #{teamScore.rank}
                       </p>
                     </div>
@@ -375,7 +375,7 @@ export default function ScoresTab({ teamScore, currentTeam }) {
                 </div>
               </div>
 
-              <div className="mt-4 pt-2.5 border-t border-white/10 flex items-center justify-between text-[11px] font-mono text-slate-300 relative z-10">
+              <div className="mt-3 sm:mt-4 pt-2 sm:pt-2.5 border-t border-white/10 flex items-center justify-between text-[10px] sm:text-[11px] font-mono text-slate-300 relative z-10 flex-wrap gap-1">
                 <div className="flex items-center gap-1.5">
                   <span className="text-slate-500 font-sans text-[10px]">Skor Juri:</span>
                   <span className="font-bold text-slate-200">{totalJ1} • {totalJ2} • {totalJ3}</span>
@@ -389,52 +389,52 @@ export default function ScoresTab({ teamScore, currentTeam }) {
             </div>
 
             {/* 2. KATEGORI KOMANDAN */}
-            <div className="overflow-hidden rounded-3xl bg-gradient-to-br from-slate-950 via-slate-900 to-stone-950 p-5 sm:p-6 text-white relative shadow-xl border border-white/10 flex flex-col justify-between">
+            <div className="overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-br from-slate-950 via-slate-900 to-stone-950 p-4 sm:p-6 text-white relative shadow-xl border border-white/10 flex flex-col justify-between">
               <div className="absolute -right-12 -top-12 h-44 w-44 rounded-full bg-amber-500/10 blur-3xl pointer-events-none" />
               <div className="absolute -left-12 -bottom-12 h-44 w-44 rounded-full bg-rose-500/10 blur-3xl pointer-events-none" />
 
-              <div className="relative z-10 space-y-3.5">
-                <div className="flex items-center justify-between gap-2 border-b border-white/10 pb-2.5">
-                  <span className="text-[10px] font-black uppercase tracking-[0.14em] text-amber-400 bg-amber-400/10 px-2.5 py-0.5 rounded-md border border-amber-400/20">
+              <div className="relative z-10 space-y-2.5 sm:space-y-3.5">
+                <div className="flex items-center justify-between gap-2 border-b border-white/10 pb-2 sm:pb-2.5">
+                  <span className="text-[9.5px] sm:text-[10px] font-black uppercase tracking-[0.14em] text-amber-400 bg-amber-400/10 px-2 sm:px-2.5 py-0.5 rounded-md border border-amber-400/20">
                     NILAI AKHIR KOMANDAN
                   </span>
-                  <span className="text-[11px] text-slate-400 font-semibold">
+                  <span className="text-[10px] sm:text-[11px] text-slate-400 font-semibold">
                     4 Aspek Rubrik
                   </span>
                 </div>
 
-                <div className="flex items-center justify-between gap-4 pt-1">
-                  <div>
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-5xl sm:text-6xl font-black font-mono tracking-tight text-white drop-shadow-sm">
+                <div className="flex items-center justify-between gap-2.5 sm:gap-4 pt-0.5 sm:pt-1">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-baseline gap-1.5 sm:gap-2">
+                      <span className="text-4xl sm:text-5xl lg:text-6xl font-black font-mono tracking-tight text-white drop-shadow-sm leading-none">
                         {dantonFinalScore}
                       </span>
-                      <span className="text-sm font-black text-amber-400 uppercase tracking-widest">
+                      <span className="text-xs sm:text-sm font-black text-amber-400 uppercase tracking-widest shrink-0">
                         POIN
                       </span>
                     </div>
-                    {dantonPenaltyTotal > 0 && (
-                      <p className="text-xs text-rose-400 font-bold mt-1 font-mono">
+                    {dantonPenaltyTotal > 0 ? (
+                      <p className="text-[11px] sm:text-xs text-rose-400 font-bold mt-1 font-mono">
                         Penalti: -{dantonPenaltyTotal} Poin
                       </p>
-                    )}
+                    ) : null}
                   </div>
 
-                  <div className="rounded-2xl p-3 sm:p-3.5 text-center shrink-0 backdrop-blur-md border border-amber-400/40 bg-gradient-to-b from-amber-400/20 to-amber-500/10 shadow-[0_8px_20px_rgba(251,191,36,0.12)] ring-1 ring-amber-300/30 min-w-[110px]">
-                    <div className="flex items-center justify-center gap-1 mb-1">
-                      <Award className="w-3.5 h-3.5 text-amber-300" />
-                      <p className="text-[9px] font-black uppercase tracking-wider text-amber-300">
+                  <div className="rounded-xl sm:rounded-2xl p-2 sm:p-3.5 text-center shrink-0 backdrop-blur-md border border-amber-400/40 bg-gradient-to-b from-amber-400/20 to-amber-500/10 shadow-[0_8px_20px_rgba(251,191,36,0.12)] ring-1 ring-amber-300/30 max-w-[115px] sm:max-w-[150px]">
+                    <div className="flex items-center justify-center gap-1 mb-0.5 sm:mb-1">
+                      <Award className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-300 shrink-0" />
+                      <p className="text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-amber-300 truncate max-w-[85px] sm:max-w-none">
                         DANTON TERBAIK
                       </p>
                     </div>
-                    <p className="text-3xl sm:text-4xl font-black text-white font-mono tracking-tight leading-none">
+                    <p className="text-2xl sm:text-4xl font-black text-white font-mono tracking-tight leading-none">
                       #1
                     </p>
                   </div>
                 </div>
               </div>
 
-              <div className="mt-4 pt-2.5 border-t border-white/10 flex items-center justify-between text-[11px] font-mono text-slate-300 relative z-10">
+              <div className="mt-3 sm:mt-4 pt-2 sm:pt-2.5 border-t border-white/10 flex items-center justify-between text-[10px] sm:text-[11px] font-mono text-slate-300 relative z-10 flex-wrap gap-1">
                 <div className="flex items-center gap-1.5">
                   <span className="text-slate-500 font-sans text-[10px]">Skor Juri:</span>
                   <span className="font-bold text-slate-200">{dantonData.t1} • {dantonData.t2} • {dantonData.t3}</span>
