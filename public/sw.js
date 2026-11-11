@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lbb-muallimin-v3';
+const CACHE_NAME = 'lbb-muallimin-v4';
 const PRECACHE_ASSETS = [
   '/',
   '/index.html',
@@ -61,11 +61,16 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Don't intercept Google Auth or external dynamic APIs with caching
+  // Don't intercept Google Auth, UserInfo, Google APIs, or external dynamic APIs with caching
   if (
     url.hostname.includes('accounts.google.com') ||
+    url.hostname.includes('googleapis.com') ||
+    url.hostname.includes('google.com') ||
+    url.hostname.includes('googleusercontent.com') ||
     url.hostname.includes('script.google.com') ||
-    url.hostname.includes('script.googleusercontent.com')
+    url.hostname.includes('script.googleusercontent.com') ||
+    request.headers.has('Authorization') ||
+    Boolean(request.headers.get('Authorization'))
   ) {
     return;
   }

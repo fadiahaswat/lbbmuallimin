@@ -42,7 +42,7 @@ export default function BasecampCheckoutTracker({ currentTeam, stagingInfo }) {
         <div className="flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-xl px-3 py-1.5 self-start sm:self-auto">
           <span className="text-[10px] font-bold text-amber-900 uppercase">Alokasi Kelas:</span>
           <strong className="text-xs sm:text-sm font-black text-amber-950 font-mono">
-            {displayBasecamp || 'Ditetapkan Saat TM'}
+            {displayBasecamp || 'Ditetapkan Setelah UCL'}
           </strong>
         </div>
       </div>

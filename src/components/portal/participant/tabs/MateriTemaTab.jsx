@@ -147,27 +147,29 @@ export default function MateriTemaTab({ currentTeam, initialSubTab = 'materi' })
         <button
           type="button"
           onClick={() => setActiveSubTab('materi')}
-          className={`flex-1 py-2.5 px-3 sm:px-4 rounded-xl text-xs sm:text-sm font-black transition-all flex items-center justify-center gap-2 cursor-pointer ${
+          className={`flex-1 py-2 sm:py-2.5 px-2 sm:px-4 rounded-xl text-xs sm:text-sm font-black transition-all flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer whitespace-nowrap ${
             activeSubTab === 'materi'
               ? 'bg-white text-slate-950 shadow-sm border border-slate-200/60'
               : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
           }`}
         >
-          <BookOpen className={`w-4 h-4 ${activeSubTab === 'materi' ? 'text-amber-500' : 'text-slate-400'}`} />
-          <span>Materi Gerakan & Tema 2027</span>
+          <BookOpen className={`w-4 h-4 shrink-0 ${activeSubTab === 'materi' ? 'text-amber-500' : 'text-slate-400'}`} />
+          <span className="hidden sm:inline">Materi Gerakan & Tema 2027</span>
+          <span className="sm:hidden">Materi & Tema</span>
         </button>
 
         <button
           type="button"
           onClick={() => setActiveSubTab('perpang')}
-          className={`flex-1 py-2.5 px-3 sm:px-4 rounded-xl text-xs sm:text-sm font-black transition-all flex items-center justify-center gap-2 cursor-pointer ${
+          className={`flex-1 py-2 sm:py-2.5 px-2 sm:px-4 rounded-xl text-xs sm:text-sm font-black transition-all flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer whitespace-nowrap ${
             activeSubTab === 'perpang'
               ? 'bg-white text-slate-950 shadow-sm border border-slate-200/60'
               : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
           }`}
         >
-          <Scale className={`w-4 h-4 ${activeSubTab === 'perpang' ? 'text-red-600' : 'text-slate-400'}`} />
-          <span>Baca Dokumen Perpang TNI</span>
+          <Scale className={`w-4 h-4 shrink-0 ${activeSubTab === 'perpang' ? 'text-red-600' : 'text-slate-400'}`} />
+          <span className="hidden sm:inline">Baca Dokumen Perpang TNI</span>
+          <span className="sm:hidden">Dokumen Perpang</span>
           <span className={`hidden sm:inline-block px-2 py-0.5 rounded-full text-[9px] font-bold ${activeSubTab === 'perpang' ? 'bg-red-100 text-red-700' : 'bg-slate-200 text-slate-600'}`}>
             3 PDF Resmi
           </span>
@@ -225,17 +227,17 @@ export default function MateriTemaTab({ currentTeam, initialSubTab = 'materi' })
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
         {hasTeamJenjang ? (
           /* Khusus Peserta: Hanya tampilkan jenjang timnya (SD tampil SD saja, SMP tampil SMP saja) */
-          <div className="flex items-center gap-2">
-            <span className={`inline-flex items-center gap-2.5 px-4 py-2.5 rounded-2xl text-white text-xs font-black shadow-sm ${
+          <div className="w-full sm:w-auto">
+            <div className={`w-full sm:w-auto inline-flex flex-wrap sm:flex-nowrap items-center justify-between sm:justify-start gap-2 sm:gap-2.5 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-2xl text-white text-xs font-black shadow-sm ${
               isSD ? 'bg-red-700' : 'bg-blue-700'
             }`}>
-              <span>Materi Lomba Tingkat {isSD ? 'SD / MI' : 'SMP / MTs'}</span>
-              <span className={`text-[10px] px-2 py-0.5 rounded-full ${
+              <span className="whitespace-nowrap">Materi Lomba Tingkat {isSD ? 'SD / MI' : 'SMP / MTs'}</span>
+              <span className={`text-[10px] px-2.5 py-0.5 rounded-full whitespace-nowrap shrink-0 ${
                 isSD ? 'bg-red-900/60' : 'bg-blue-900/60'
               }`}>
                 {isSD ? '26 Gerakan Wajib' : '28 Gerakan Wajib'}
               </span>
-            </span>
+            </div>
           </div>
         ) : (
           /* Fallback umum jika tidak terikat kontingen */
@@ -327,12 +329,12 @@ export default function MateriTemaTab({ currentTeam, initialSubTab = 'materi' })
 
       {/* 5. Daftar Materi Gerakan Wajib */}
       <div className="space-y-3">
-        <div className="flex items-center justify-between pb-1">
-          <div className="flex items-center gap-2">
-            <h4 className="text-sm font-black uppercase tracking-wider text-slate-900">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-1 gap-1.5 sm:gap-2">
+          <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+            <h4 className="text-xs sm:text-sm font-black uppercase tracking-wider text-slate-900">
               Urutan Gerakan Resmi ({list.length} Gerakan)
             </h4>
-            <span className="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">
+            <span className="text-[10px] font-bold text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-full whitespace-nowrap shrink-0">
               Wajib Berurutan
             </span>
           </div>

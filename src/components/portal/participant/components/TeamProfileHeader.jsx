@@ -23,7 +23,6 @@ import { formatImageUrl, getFallbackImageUrl } from '../../../../services/sheetS
 import { extractLogoTheme } from '../../../../utils/extractLogoColor.js';
 import { useCompetition } from '../../../../context/CompetitionContext.jsx';
 import { generateParticipantQRCode, downloadDataUrl, OFFICIAL_BASE_URL } from '../../../../utils/qrGenerator.js';
-import logoLbb from '../../../../assets/logo-tonti.png';
 
 export default function TeamProfileHeader({
   currentTeam: propCurrentTeam,
@@ -285,11 +284,8 @@ export default function TeamProfileHeader({
 
               {/* Badges Row + Tombol Edit Profil */}
               <div className="mt-3 flex flex-wrap items-center gap-2">
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-[0.08em] text-slate-600">
-                  Jenjang {currentTeam.jenjang}
-                </span>
                 <span className="rounded-full border border-red-100 bg-red-50 px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-[0.08em] text-red-700">
-                  {currentTeam.category}
+                  {currentTeam.jenjang || 'SD'} {String(currentTeam.category || 'Putra').replace(/homogen\s+/i, '')}
                 </span>
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-[0.08em] text-emerald-700">
                   <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shrink-0" />
@@ -309,89 +305,55 @@ export default function TeamProfileHeader({
           </div>
         </div>
 
-        {/* Sisi Kanan: Kartu Registrasi Gelap (Figma Luxury Card dengan QR Code Peleton) */}
-        <div className="relative flex min-h-[155px] flex-col justify-between overflow-hidden rounded-[22px] bg-slate-950 p-4 sm:p-5 text-white shadow-[0_18px_38px_rgba(15,23,42,0.16)]">
-          <div className="absolute -right-10 -top-14 h-36 w-36 rounded-full border-[22px] border-white/[0.04] pointer-events-none" />
-          
-          {/* Header Row: Logo LBB Resmi & Tombol Unduh QR */}
-          <div className="relative flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2.5">
-              <div className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl bg-white/10 p-1.5 shadow-sm border border-white/10 backdrop-blur-sm shrink-0">
-                <img
-                  src={logoLbb}
-                  alt="Logo LBB Mu'allimin"
-                  className="w-full h-full object-contain filter drop-shadow"
-                />
+        {/* Sisi Kanan: Kartu QR & Kode Registrasi Peleton (Clean & Fokus) */}
+        <div className="relative flex flex-col justify-center overflow-hidden rounded-[22px] bg-slate-950 p-4 sm:p-5 text-white shadow-[0_16px_36px_rgba(15,23,42,0.14)]">
+          <div className="flex items-center justify-between gap-4">
+            {/* Info Kode Registrasi & Tombol Unduh */}
+            <div className="min-w-0 flex-1 space-y-2.5">
+              <div>
+                <p className="text-[9px] font-black uppercase tracking-[0.16em] text-slate-400">
+                  Kode Registrasi
+                </p>
+                <p className="mt-0.5 text-base sm:text-lg font-black tracking-wider font-mono text-white truncate" title={currentTeam.regCode}>
+                  {currentTeam.regCode || 'LBB27-SD-01-SDM'}
+                </p>
               </div>
-              <div className="flex flex-col">
-                <span className="text-[7.5px] font-black uppercase tracking-[0.16em] text-amber-400">
-                  LBB Mu'allimin 2027
-                </span>
-                <span className="text-[10px] font-black uppercase tracking-wider text-slate-100">
-                  Credential Pass
-                </span>
-              </div>
-            </div>
 
-            <button
-              type="button"
-              onClick={handleDownloadQR}
-              className="flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.08] px-2.5 py-1.5 text-[8.5px] font-bold text-slate-300 hover:text-white hover:bg-white/15 transition cursor-pointer active:scale-95 shadow-2xs"
-              title="Unduh QR Code Tiket Peleton"
-            >
-              <Download className="w-3 h-3 text-amber-400" />
-              <span>Unduh QR</span>
-            </button>
-          </div>
-
-          {/* Body Row: Kode Registrasi di Kiri & QR Code Peleton Besar di Kanan */}
-          <div className="relative mt-3 flex items-center justify-between gap-3">
-            <div className="min-w-0 flex-1">
-              <p className="text-[8.5px] font-black uppercase tracking-[0.18em] text-slate-400">
-                Kode registrasi
-              </p>
-              <p className="mt-1 text-sm sm:text-base lg:text-lg font-black tracking-[0.06em] font-mono text-white truncate" title={currentTeam.regCode}>
-                {currentTeam.regCode || 'LBB27-SD-01-SDM'}
-              </p>
-              <div className="mt-2 flex items-center gap-1.5 text-[8.5px] font-bold text-emerald-400">
-                <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-                <span>Registrasi aktif</span>
-              </div>
-              <p className="mt-1.5 text-[7.5px] font-medium text-slate-400 leading-tight">
-                Scan saat verifikasi & absensi lomba
-              </p>
-            </div>
-
-            {/* QR Code Peleton di Sisi Kanan (Ukuran Proporsional & Rapi) */}
-            <div className="shrink-0 flex flex-col items-center w-[74px]">
               <button
                 type="button"
-                onClick={() => setIsQrModalOpen(true)}
-                style={{ width: '74px', height: '74px' }}
-                className="group relative w-[74px] h-[74px] p-1.5 rounded-xl bg-white border border-white/30 shadow-md cursor-pointer hover:scale-105 active:scale-95 transition-all flex items-center justify-center overflow-hidden shrink-0"
-                title="Klik untuk memperbesar / unduh QR Tiket Peleton"
+                onClick={handleDownloadQR}
+                className="inline-flex items-center gap-1.5 rounded-xl border border-white/15 bg-white/10 px-3 py-1.5 text-xs font-bold text-slate-200 hover:text-white hover:bg-white/20 transition cursor-pointer active:scale-95 shadow-2xs"
+                title="Unduh QR Code Peleton"
               >
-                {qrDataUrl ? (
-                  <img
-                    src={qrDataUrl}
-                    alt={`QR Code ${currentTeam.regCode}`}
-                    className="w-full h-full object-contain block aspect-square"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-slate-100 text-slate-400">
-                    <QrCode className="w-6 h-6 animate-pulse text-slate-500" />
-                  </div>
-                )}
-                {/* Overlay hover */}
-                <div className="absolute inset-0 bg-slate-950/80 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white gap-0.5">
-                  <QrCode className="w-4 h-4 text-amber-300" />
-                  <span className="text-[7px] font-bold text-amber-200">Perbesar</span>
-                </div>
+                <Download className="w-3.5 h-3.5 text-amber-400" />
+                <span>Unduh QR</span>
               </button>
-              <span className="mt-1 text-[7.5px] font-extrabold text-slate-400 uppercase tracking-widest">
-                QR Tiket
-              </span>
             </div>
+
+            {/* QR Code Peleton (Klik untuk Perbesar) */}
+            <button
+              type="button"
+              onClick={() => setIsQrModalOpen(true)}
+              style={{ width: '82px', height: '82px' }}
+              className="group relative w-[82px] h-[82px] p-1.5 rounded-2xl bg-white border border-white/20 shadow-md cursor-pointer hover:scale-105 active:scale-95 transition-all flex items-center justify-center overflow-hidden shrink-0"
+              title="Klik untuk memperbesar QR Code"
+            >
+              {qrDataUrl ? (
+                <img
+                  src={qrDataUrl}
+                  alt={`QR Code ${currentTeam.regCode}`}
+                  className="w-full h-full object-contain block aspect-square"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-slate-100 text-slate-400">
+                  <QrCode className="w-6 h-6 animate-pulse text-slate-500" />
+                </div>
+              )}
+              <div className="absolute inset-0 bg-slate-950/80 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white gap-0.5">
+                <QrCode className="w-4 h-4 text-amber-300" />
+                <span className="text-[7.5px] font-bold text-amber-200">Perbesar</span>
+              </div>
+            </button>
           </div>
         </div>
       </div>

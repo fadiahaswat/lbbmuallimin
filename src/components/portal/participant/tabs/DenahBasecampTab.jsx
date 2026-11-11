@@ -12,36 +12,54 @@ import {
   Info,
   Clock,
   Layers,
-  DoorOpen
+  DoorOpen,
+  Lock,
+  Calendar,
+  MapPin,
+  AlertTriangle
 } from 'lucide-react';
 import InteractiveBasecampMap from '../../../staging/components/InteractiveBasecampMap.jsx';
+import { useCompetition } from '../../../../context/CompetitionContext.jsx';
 
 export default function DenahBasecampTab({ currentTeam, allTeams = [], staging = {} }) {
   const [activeSubTab, setActiveSubTab] = useState('basecamp'); // 'basecamp' | 'outdoor'
   const [isZoomOpen, setIsZoomOpen] = useState(false);
+
+  const { settings, updateSettings, currentUser, role } = useCompetition?.() || {};
+  const userRole = currentUser?.role || role || 'peserta';
+  const isStaff = !currentTeam && ['admin', 'superadmin', 'checkin', 'dp', 'staging', 'panitia'].includes(userRole);
+  const isSuperadmin = userRole === 'superadmin';
+  const isRatified = Boolean(settings?.basecampPublished && settings?.basecampRatifiedAt);
 
   // Cek apakah ada alokasi basecamp untuk tim ini
   const teamStaging = staging?.[currentTeam?.id] || null;
   const assignedRoomCode = currentTeam?.basecampRoom || teamStaging?.room || teamStaging?.basecampRoom || null;
 
   return (
-    <section className="rounded-[28px] border border-slate-200/90 bg-white p-5 sm:p-7 shadow-[0_18px_46px_rgba(15,23,42,0.06)] space-y-5">
+    <section className="rounded-2xl sm:rounded-[28px] border border-slate-200/90 bg-white p-4 sm:p-7 shadow-[0_18px_46px_rgba(15,23,42,0.06)] space-y-5">
       {/* 1. Header Tab Terpadu & Ringkas */}
       <div className="flex flex-col gap-3.5 border-b border-slate-100 pb-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
           <span className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-600 to-teal-700 text-white shadow-md shadow-emerald-600/20">
             <Building2 className="w-5 h-5 text-white" />
-            <span className="absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full border-2 border-white bg-emerald-400" />
+            <span className={`absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full border-2 border-white ${isRatified ? 'bg-emerald-400' : 'bg-amber-400 animate-pulse'}`} />
           </span>
           <div>
             <div className="flex items-center gap-2 flex-wrap">
               <h2 className="text-base sm:text-lg font-black tracking-tight text-slate-950">
-                Denah Basecamp & Kawasan
+                Denah Basecamp &amp; Kawasan
               </h2>
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
-                <DoorOpen className="w-3 h-3 text-emerald-600" />
-                {assignedRoomCode ? `Ruang: Kelas ${assignedRoomCode}` : 'Alokasi Ruang: Saat TM (1 Kelas / 2 Peleton)'}
-              </span>
+              {isRatified ? (
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                  {assignedRoomCode ? `Ruang: Kelas ${assignedRoomCode}` : 'Alokasi Resmi Panitia'}
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-900 border border-amber-200">
+                  <Clock className="w-3 h-3 text-amber-600 animate-pulse" />
+                  Alokasi Ruang: Dirilis Setelah UCL (16 Jan 2027)
+                </span>
+              )}
             </div>
             <p className="text-[11px] text-slate-500 mt-0.5">
               Peta interaktif alokasi ruang transit kontingen &amp; rute kawasan kampus.
@@ -50,30 +68,30 @@ export default function DenahBasecampTab({ currentTeam, allTeams = [], staging =
         </div>
 
         {/* View Switcher Pills */}
-        <div className="flex items-center gap-1 p-1 bg-slate-100 rounded-xl border border-slate-200/80 shrink-0">
+        <div className="w-full sm:w-auto grid grid-cols-2 sm:flex items-center gap-1 p-1 bg-slate-100 rounded-xl border border-slate-200/80">
           <button
             type="button"
             onClick={() => setActiveSubTab('basecamp')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
+            className={`flex items-center justify-center gap-1.5 px-2.5 sm:px-3 py-2 sm:py-1.5 rounded-lg text-xs font-bold transition cursor-pointer whitespace-nowrap ${
               activeSubTab === 'basecamp'
                 ? 'bg-white text-slate-950 shadow-xs'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            <Building2 className="w-3.5 h-3.5 text-emerald-600" />
+            <Building2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
             <span>Denah Basecamp</span>
           </button>
           <button
             type="button"
             onClick={() => setActiveSubTab('outdoor')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
+            className={`flex items-center justify-center gap-1.5 px-2.5 sm:px-3 py-2 sm:py-1.5 rounded-lg text-xs font-bold transition cursor-pointer whitespace-nowrap ${
               activeSubTab === 'outdoor'
                 ? 'bg-white text-slate-950 shadow-xs'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            <Map className="w-3.5 h-3.5 text-blue-600" />
-            <span>Peta Kawasan &amp; Arena</span>
+            <Map className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+            <span>Peta Kawasan<span className="hidden min-[380px]:inline"> &amp; Arena</span></span>
           </button>
         </div>
       </div>
@@ -81,12 +99,106 @@ export default function DenahBasecampTab({ currentTeam, allTeams = [], staging =
       {/* 2. Konten Utama Sesuai Tab Aktif */}
       {activeSubTab === 'basecamp' ? (
         <div className="space-y-4">
-          <InteractiveBasecampMap
-            teams={allTeams}
-            staging={staging}
-            selectedTeamId={currentTeam?.id}
-            isPublicView={true}
-          />
+          {!isRatified && !isStaff ? (
+            /* TAMPILAN KHUSUS JIKA ALOKASI BASECAMP BELUM DISAHKAN PANITIA */
+            <div className="rounded-3xl border-2 border-dashed border-amber-300/80 bg-amber-50/40 p-6 sm:p-10 text-center space-y-4">
+              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-100 text-amber-700 border border-amber-200 shadow-xs">
+                <Clock className="w-7 h-7 text-amber-600 animate-pulse" />
+              </div>
+              <div className="max-w-xl mx-auto space-y-2">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-200/90 text-amber-950 border border-amber-300/60 shadow-2xs">
+                  <Lock className="w-3 h-3 text-amber-800" />
+                  Menunggu Pengesahan Panitia (Status: Belum Terbit)
+                </span>
+                <h3 className="text-lg sm:text-xl font-black text-slate-950 tracking-tight">
+                  Alokasi Ruang Basecamp Belum Disahkan
+                </h3>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Sesuai ketentuan Panitia LBB Mu'allimin 2027, alokasi dan pembagian nomor ruang kelas basecamp transit kontingen <strong>(1 ruang kelas untuk 2 peleton)</strong> saat ini sedang difinalisasi dan akan <strong>ditetapkan serta disahkan secara resmi setelah pelaksanaan Uji Coba Lapangan (UCL)</strong>.
+                </p>
+              </div>
+
+              {/* Info Box Pasca UCL */}
+              <div className="max-w-xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-3 text-left pt-2">
+                <div className="rounded-2xl border border-amber-200/80 bg-white p-3.5 shadow-2xs space-y-1">
+                  <div className="flex items-center gap-1.5 text-amber-800 font-bold text-[11px] uppercase tracking-wider">
+                    <Calendar className="w-3.5 h-3.5 text-amber-600" />
+                    <span>Jadwal Pengesahan Resmi</span>
+                  </div>
+                  <p className="text-xs font-black text-slate-900">Setelah Uji Coba Lapangan (UCL)</p>
+                  <p className="text-[11px] text-slate-500">Sabtu, 16 Januari 2027 (Pasca-UCL)</p>
+                </div>
+
+                <div className="rounded-2xl border border-amber-200/80 bg-white p-3.5 shadow-2xs space-y-1">
+                  <div className="flex items-center gap-1.5 text-amber-800 font-bold text-[11px] uppercase tracking-wider">
+                    <MapPin className="w-3.5 h-3.5 text-amber-600" />
+                    <span>Waktu Penggunaan Lomba</span>
+                  </div>
+                  <p className="text-xs font-black text-slate-900">Ahad, 24 Januari 2027</p>
+                  <p className="text-[11px] text-slate-500">Mulai Pukul 06.00 WIB (Hari Lomba)</p>
+                </div>
+              </div>
+
+              <div className="pt-2 flex flex-wrap items-center justify-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setActiveSubTab('outdoor')}
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition shadow-xs cursor-pointer active:scale-95"
+                >
+                  <Map className="w-4 h-4 text-amber-400" />
+                  <span>Lihat Peta Kawasan &amp; Rute Arena Perlombaan</span>
+                </button>
+              </div>
+            </div>
+          ) : (
+            <>
+              {/* Alert Mode Draf untuk Staff / Panitia jika belum disahkan */}
+              {isStaff && !isRatified && (
+                <div className="p-4 rounded-2xl bg-amber-50 border border-amber-300 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shadow-2xs">
+                  <div className="flex items-start sm:items-center gap-3">
+                    <div className="w-8 h-8 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center shrink-0 border border-amber-200">
+                      <AlertTriangle className="w-4 h-4 text-amber-700" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[9.5px] font-black uppercase tracking-wider bg-amber-200 text-amber-950 px-2 py-0.5 rounded-full font-bold">
+                          STATUS: DRAFT (PANITIA PREVIEW)
+                        </span>
+                        <span className="text-xs font-bold text-slate-900">
+                          Alokasi Basecamp Belum Disahkan (Disembunyikan dari Portal Peserta)
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-slate-600 mt-0.5">
+                        Peserta melihat informasi bahwa alokasi basecamp akan disahkan setelah pelaksanaan Uji Coba Lapangan (UCL).
+                      </p>
+                    </div>
+                  </div>
+
+                  {isSuperadmin && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        updateSettings({
+                          basecampPublished: true,
+                          basecampRatifiedAt: new Date().toISOString()
+                        });
+                      }}
+                      className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition shadow-xs shrink-0 cursor-pointer"
+                    >
+                      Sahkan &amp; Terbitkan Sekarang
+                    </button>
+                  )}
+                </div>
+              )}
+
+              <InteractiveBasecampMap
+                teams={allTeams}
+                staging={staging}
+                selectedTeamId={currentTeam?.id}
+                isPublicView={true}
+              />
+            </>
+          )}
         </div>
       ) : (
         <div className="space-y-4">

@@ -218,6 +218,10 @@ export function CompetitionProvider({ children }) {
       // Pastikan status pengesahan Juknis Penilaian & Kejuaraan valid (hanya tayang jika disahkan oleh Superadmin & ada timestamp)
       base.juknisPenilaianPublished = Boolean(parsed.juknisPenilaianPublished && parsed.juknisPenilaianRatifiedAt);
       base.juknisPenilaianRatifiedAt = parsed.juknisPenilaianRatifiedAt || null;
+
+      // Pastikan status pengesahan Alokasi Basecamp valid (hanya tayang jika disahkan oleh Panitia/Superadmin & ada timestamp)
+      base.basecampPublished = Boolean(parsed.basecampPublished && parsed.basecampRatifiedAt);
+      base.basecampRatifiedAt = parsed.basecampRatifiedAt || null;
       if (isLocalhostEnvironment()) {
         if (!base.trialPlan || !base.trialPlan.SD?.slots?.some(Boolean)) {
           base.trialPlan = generateDummyTrialPlan(teams);
@@ -785,6 +789,10 @@ export function CompetitionProvider({ children }) {
 
       setCurrentUser(user);
       setRole(user.role);
+      setCurrentTeamId(null);
+      safeSetItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(user));
+      safeSetItem(STORAGE_KEYS.ROLE, user.role);
+      try { localStorage.removeItem(STORAGE_KEYS.CURRENT_TEAM_ID); } catch(e) {}
       let targetView = 'landing';
       if (user.role === 'admin') targetView = 'admin';
       else if (user.role === 'superadmin') targetView = 'superadmin';
@@ -792,6 +800,7 @@ export function CompetitionProvider({ children }) {
       else if (user.role === 'dp') targetView = 'dp';
       else if (['juri', 'penginput'].includes(user.role)) targetView = 'juri';
       else if (['verifikator', 'finalisator'].includes(user.role)) targetView = 'rekap_nilai';
+      safeSetItem(STORAGE_KEYS.ACTIVE_VIEW, targetView);
       closeAuthModal(targetView);
       return { success: true, user };
     }
@@ -818,6 +827,10 @@ export function CompetitionProvider({ children }) {
               setUsers(prev => [staffUser, ...prev.filter(u => u.id !== staffUser.id && u.email?.toLowerCase() !== cleanEmail)]);
               setCurrentUser(staffUser);
               setRole(staffUser.role);
+              setCurrentTeamId(null);
+              safeSetItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(staffUser));
+              safeSetItem(STORAGE_KEYS.ROLE, staffUser.role);
+              try { localStorage.removeItem(STORAGE_KEYS.CURRENT_TEAM_ID); } catch(e) {}
               let targetView = 'landing';
               if (staffUser.role === 'admin') targetView = 'admin';
               else if (staffUser.role === 'superadmin') targetView = 'superadmin';
@@ -825,6 +838,7 @@ export function CompetitionProvider({ children }) {
               else if (staffUser.role === 'dp') targetView = 'dp';
               else if (['juri', 'penginput'].includes(staffUser.role)) targetView = 'juri';
               else if (['verifikator', 'finalisator'].includes(staffUser.role)) targetView = 'rekap_nilai';
+              safeSetItem(STORAGE_KEYS.ACTIVE_VIEW, targetView);
               closeAuthModal(targetView);
               return { success: true, user: staffUser };
             }
@@ -902,6 +916,10 @@ export function CompetitionProvider({ children }) {
       setCurrentUser(user);
       setRole('peserta');
       setCurrentTeamId(team.id);
+      safeSetItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(user));
+      safeSetItem(STORAGE_KEYS.ROLE, 'peserta');
+      safeSetItem(STORAGE_KEYS.CURRENT_TEAM_ID, team.id);
+      safeSetItem(STORAGE_KEYS.ACTIVE_VIEW, 'peserta_dashboard');
       closeAuthModal('peserta_dashboard');
       return { success: true, user };
     }
@@ -909,8 +927,17 @@ export function CompetitionProvider({ children }) {
     if (existingUser) {
       setCurrentUser(existingUser);
       setRole(existingUser.role);
-      if (existingUser.teamId) setCurrentTeamId(existingUser.teamId);
+      if (existingUser.teamId) {
+        setCurrentTeamId(existingUser.teamId);
+        safeSetItem(STORAGE_KEYS.CURRENT_TEAM_ID, existingUser.teamId);
+      } else {
+        setCurrentTeamId(null);
+        try { localStorage.removeItem(STORAGE_KEYS.CURRENT_TEAM_ID); } catch(e) {}
+      }
+      safeSetItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(existingUser));
+      safeSetItem(STORAGE_KEYS.ROLE, existingUser.role);
       const targetView = existingUser.role === 'peserta' ? 'peserta_dashboard' : existingUser.role;
+      safeSetItem(STORAGE_KEYS.ACTIVE_VIEW, targetView);
       closeAuthModal(targetView);
       return { success: true, user: existingUser };
     }
@@ -981,6 +1008,40 @@ export function CompetitionProvider({ children }) {
       localStorage.removeItem(STORAGE_KEYS.CURRENT_TEAM_ID);
       localStorage.removeItem(STORAGE_KEYS.ACTIVE_VIEW);
       localStorage.setItem(STORAGE_KEYS.ROLE, 'publik');
+      localStorage.removeItem('lbb_participant_active_tab');
+
+      // 1. Matikan GIS auto-select agar Google tidak otomatis memilih akun sebelumnya
+      if (typeof window !== 'undefined' && window.google?.accounts?.id?.disableAutoSelect) {
+        try {
+          window.google.accounts.id.disableAutoSelect();
+        } catch (e) {}
+      }
+
+      // 2. Revoke token Google sesi terakhir jika tersedia
+      try {
+        const lastToken = sessionStorage.getItem('lbb_last_google_token');
+        if (lastToken && window.google?.accounts?.oauth2?.revoke) {
+          window.google.accounts.oauth2.revoke(lastToken, () => {});
+        }
+        sessionStorage.removeItem('lbb_last_google_token');
+      } catch (e) {}
+
+      // 3. Purge cache profil Google dari CacheStorage PWA
+      if (typeof window !== 'undefined' && 'caches' in window) {
+        window.caches.keys().then(keys => {
+          keys.forEach(k => {
+            window.caches.open(k).then(cache => {
+              cache.keys().then(requests => {
+                requests.forEach(req => {
+                  if (req.url.includes('googleapis.com') || req.url.includes('userinfo')) {
+                    cache.delete(req);
+                  }
+                });
+              });
+            });
+          });
+        }).catch(() => {});
+      }
     } catch (e) {
       console.warn('Error clearing session storage:', e);
     }
@@ -1255,6 +1316,10 @@ export function CompetitionProvider({ children }) {
           : [teamUser, ...prev];
       });
       setCurrentUser(teamUser);
+      safeSetItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(teamUser));
+      safeSetItem(STORAGE_KEYS.CURRENT_TEAM_ID, found.id);
+      safeSetItem(STORAGE_KEYS.ROLE, 'peserta');
+      safeSetItem(STORAGE_KEYS.ACTIVE_VIEW, 'peserta_dashboard');
       setAuthModal({ isOpen: false, tab: 'login' });
       setActiveView('peserta_dashboard');
       return { success: true, team: found, user: teamUser };

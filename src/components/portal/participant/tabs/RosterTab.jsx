@@ -1,6 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   ShieldAlert,
+  ArrowLeftRight,
+  UserCheck,
+  RefreshCw,
+  X,
+  AlertCircle,
   Edit3,
   Save,
   Printer,
@@ -63,13 +68,259 @@ export default function RosterTab({
   triggerRosterPhotoUpload,
   availableClassOptions,
   isRosterLocked,
-  onOpenPactModal
+  onOpenPactModal,
+  updateTeamRoster,
+  setUploadToast
 }) {
+    // State & Handlers untuk Pergantian Personel Peleton (Substitusi)
+  const [isSubModalOpen, setIsSubModalOpen] = useState(false);
+  const [selectedCadanganIdx, setSelectedCadanganIdx] = useState(0);
+  const [selectedTargetType, setSelectedTargetType] = useState('pasukan'); // 'pasukan' | 'danton'
+  const [selectedTargetId, setSelectedTargetId] = useState('');
+  const [subReason, setSubReason] = useState('Cedera / Sakit');
+  const [subCustomReason, setSubCustomReason] = useState('');
+  const [localToast, setLocalToast] = useState('');
+
+  const activeRoster = isEditingRoster ? (rosterDraft || currentTeam.roster || {}) : (currentTeam.roster || {});
+  const cadanganList = Array.isArray(activeRoster.cadangan) ? activeRoster.cadangan : [];
+  const pasukanList = Array.isArray(activeRoster.pasukan) ? activeRoster.pasukan : [];
+  const dantonPerson = isEditingRoster ? (activeRoster.danton || {}) : (currentTeam.roster?.danton || { name: currentTeam.dantonName });
+
+  const currentSelectedCadangan = cadanganList[selectedCadanganIdx] || {};
+  const currentTargetPerson = selectedTargetType === 'danton'
+    ? dantonPerson
+    : pasukanList.find(p => p.id === (selectedTargetId || pasukanList[0]?.id)) || pasukanList[0] || {};
+
+  const currentTargetLabel = selectedTargetType === 'danton'
+    ? 'Komandan Peleton (Danton)'
+    : currentTargetPerson?.safNumber
+    ? `Saf ${currentTargetPerson.safNumber} (Banjar ${currentTargetPerson.banjarNumber})`
+    : 'Pasukan Inti';
+
+  const handleOpenSubstitutionModal = (cadIdx = 0) => {
+    setSelectedCadanganIdx(cadIdx);
+    if (!selectedTargetId && pasukanList.length > 0) {
+      setSelectedTargetType('pasukan');
+      setSelectedTargetId(pasukanList[0].id);
+    }
+    setIsSubModalOpen(true);
+  };
+
+  const handleConfirmSubstitution = () => {
+    const activeCadangan = cadanganList[selectedCadanganIdx];
+    if (!activeCadangan) return;
+
+    const currentPasukan = [...pasukanList];
+    const currentCadangan = [...cadanganList];
+    let currentDanton = { ...dantonPerson };
+
+    const cPersonal = {
+      name: activeCadangan.name || '',
+      nisn: activeCadangan.nisn || '',
+      class: activeCadangan.class || '',
+      birthPlace: activeCadangan.birthPlace || '',
+      birthDate: activeCadangan.birthDate || '',
+      photo: activeCadangan.photo || null,
+      medicalHistory: activeCadangan.medicalHistory || ''
+    };
+
+    let targetName = '';
+    let targetPosLabel = '';
+
+    if (selectedTargetType === 'danton') {
+      const dPersonal = {
+        name: currentDanton.name || '',
+        nisn: currentDanton.nisn || '',
+        class: currentDanton.class || '',
+        birthPlace: currentDanton.birthPlace || '',
+        birthDate: currentDanton.birthDate || '',
+        photo: currentDanton.photo || null,
+        medicalHistory: currentDanton.medicalHistory || ''
+      };
+      targetName = dPersonal.name || 'Danton';
+      targetPosLabel = 'Komandan Peleton (Danton)';
+
+      currentDanton = { ...currentDanton, ...cPersonal };
+      currentCadangan[selectedCadanganIdx] = { ...currentCadangan[selectedCadanganIdx], ...dPersonal };
+    } else {
+      const targetId = selectedTargetId || currentPasukan[0]?.id;
+      const pIdx = currentPasukan.findIndex(p => p.id === targetId);
+      if (pIdx === -1) return;
+
+      const pPersonal = {
+        name: currentPasukan[pIdx].name || '',
+        nisn: currentPasukan[pIdx].nisn || '',
+        class: currentPasukan[pIdx].class || '',
+        birthPlace: currentPasukan[pIdx].birthPlace || '',
+        birthDate: currentPasukan[pIdx].birthDate || '',
+        photo: currentPasukan[pIdx].photo || null,
+        medicalHistory: currentPasukan[pIdx].medicalHistory || ''
+      };
+      targetName = pPersonal.name || `Saf ${currentPasukan[pIdx].safNumber} B${currentPasukan[pIdx].banjarNumber}`;
+      targetPosLabel = `Saf ${currentPasukan[pIdx].safNumber} (Banjar ${currentPasukan[pIdx].banjarNumber})`;
+
+      currentPasukan[pIdx] = { ...currentPasukan[pIdx], ...cPersonal };
+      currentCadangan[selectedCadanganIdx] = { ...currentCadangan[selectedCadanganIdx], ...pPersonal };
+    }
+
+    const newSubRecord = {
+      id: `sub-${Date.now()}`,
+      timestamp: new Date().toISOString(),
+      inName: cPersonal.name || `Cadangan ${selectedCadanganIdx + 1}`,
+      inCode: `C${selectedCadanganIdx + 1}`,
+      outName: targetName,
+      outPosition: targetPosLabel,
+      reason: subReason === 'Lainnya' ? (subCustomReason || 'Penyesuaian Peleton') : subReason
+    };
+
+    const updatedSubstitutions = [newSubRecord, ...(activeRoster.substitutions || [])];
+
+    if (isEditingRoster) {
+      setRosterDraft({
+        ...rosterDraft,
+        danton: currentDanton,
+        pasukan: currentPasukan,
+        cadangan: currentCadangan,
+        substitutions: updatedSubstitutions
+      });
+    } else {
+      const updatedRoster = {
+        ...activeRoster,
+        danton: currentDanton,
+        pasukan: currentPasukan,
+        cadangan: currentCadangan,
+        substitutions: updatedSubstitutions
+      };
+      if (updateTeamRoster) {
+        updateTeamRoster(currentTeam.id, updatedRoster);
+      }
+      try {
+        localStorage.setItem(`lbb_roster_${currentTeam.id}`, JSON.stringify(updatedRoster));
+      } catch (e) {}
+    }
+
+    const toastMsg = `Pergantian berhasil: C${selectedCadanganIdx + 1} (${cPersonal.name || 'Cadangan'}) resmi masuk menggantikan ${targetPosLabel}!`;
+    if (setUploadToast) {
+      setUploadToast(toastMsg);
+    } else {
+      setLocalToast(toastMsg);
+      setTimeout(() => setLocalToast(''), 4500);
+    }
+
+    setIsSubModalOpen(false);
+  };
+
   const hasSavedLocalDraft = Boolean(
     typeof window !== 'undefined' &&
     currentTeam?.id &&
     localStorage.getItem(`lbb_roster_draft_${currentTeam.id}`)
   );
+
+  // Kalkulasi Progres Pengisian Roster Real-time
+  const rosterProgress = React.useMemo(() => {
+    const activeRoster = isEditingRoster ? (rosterDraft || {}) : (currentTeam?.roster || {});
+
+    const isFilled = (person) => {
+      if (!person) return false;
+      const name = typeof person.name === 'string' ? person.name.trim() : '';
+      return name.length > 0 && name !== '-' && name.toLowerCase() !== 'belum diisi';
+    };
+
+    const hasPhoto = (url) => {
+      if (!url || typeof url !== 'string') return false;
+      if (url === '#' || url.startsWith('#')) return false;
+      if (url.includes('ui-avatars.com')) return false;
+      if (url.includes('drive.google.com/open?id=')) return false;
+      return true;
+    };
+
+    // 1. Danton (1 orang)
+    const dantonName = isEditingRoster
+      ? (activeRoster?.danton?.name || '').trim()
+      : (activeRoster?.danton?.name || currentTeam?.dantonName || '').trim();
+    const dantonFilled = Boolean(dantonName && dantonName !== '-' && dantonName.toLowerCase() !== 'belum diisi');
+    const dantonPhoto = hasPhoto(activeRoster?.danton?.photo);
+
+    // 2. Pasukan Inti (21 orang)
+    const pasukanList = Array.isArray(activeRoster?.pasukan) ? activeRoster.pasukan : [];
+    const pasukanFilled = pasukanList.filter(isFilled).length;
+    const pasukanPhotos = pasukanList.filter(p => hasPhoto(p?.photo)).length;
+
+    // 3. Cadangan (3 orang)
+    const cadanganList = Array.isArray(activeRoster?.cadangan) ? activeRoster.cadangan : [];
+    const cadanganFilled = cadanganList.filter(isFilled).length;
+    const cadanganPhotos = cadanganList.filter(c => hasPhoto(c?.photo)).length;
+
+    // 4. Official (3 orang)
+    const officialsList = Array.isArray(activeRoster?.officials) ? activeRoster.officials : [];
+    const officialsFilled = officialsList.filter(isFilled).length;
+    const officialsPhotos = officialsList.filter(o => hasPhoto(o?.photo)).length;
+
+    // Total Personel Peleton (1 Danton + 21 Pasukan + 3 Cadangan = 25)
+    const totalFilled = (dantonFilled ? 1 : 0) + pasukanFilled + cadanganFilled;
+    const totalMax = 25;
+    const totalPct = Math.round((totalFilled / totalMax) * 100);
+    const totalPhotos = (dantonPhoto ? 1 : 0) + pasukanPhotos + cadanganPhotos;
+
+    return {
+      total: {
+        val: String(totalFilled).padStart(2, '0'),
+        max: '25',
+        filled: totalFilled,
+        target: 25,
+        pct: totalPct,
+        photos: totalPhotos,
+        label: 'Personel Aktif',
+        note: totalFilled === 25 ? 'Lengkap (25)' : totalFilled === 0 ? 'Belum Diisi' : `${25 - totalFilled} Belum Lengkap`,
+        isComplete: totalFilled === 25,
+        statusColor: totalFilled === 25 ? 'text-emerald-400' : totalFilled > 0 ? 'text-amber-400' : 'text-slate-400',
+        dotColor: totalFilled === 25 ? 'bg-emerald-400' : totalFilled > 0 ? 'bg-amber-400' : 'bg-slate-500',
+        barColor: totalFilled === 25 ? 'bg-emerald-400' : totalFilled >= 12 ? 'bg-amber-400' : 'bg-rose-500',
+      },
+      pasukan: {
+        val: String(pasukanFilled).padStart(2, '0'),
+        max: '21',
+        filled: pasukanFilled,
+        target: 21,
+        pct: Math.round((pasukanFilled / 21) * 100),
+        photos: pasukanPhotos,
+        label: 'Pasukan Inti',
+        note: pasukanFilled === 21 ? 'Lengkap (3 Saf)' : pasukanFilled === 0 ? 'Belum Diisi' : `${21 - pasukanFilled} Belum Lengkap`,
+        isComplete: pasukanFilled === 21,
+        statusColor: pasukanFilled === 21 ? 'text-emerald-400' : pasukanFilled > 0 ? 'text-amber-400' : 'text-slate-400',
+        dotColor: pasukanFilled === 21 ? 'bg-emerald-400' : pasukanFilled > 0 ? 'bg-amber-400' : 'bg-slate-500',
+        barColor: pasukanFilled === 21 ? 'bg-emerald-400' : pasukanFilled >= 10 ? 'bg-amber-400' : 'bg-rose-500',
+      },
+      cadangan: {
+        val: String(cadanganFilled).padStart(2, '0'),
+        max: '03',
+        filled: cadanganFilled,
+        target: 3,
+        pct: Math.round((cadanganFilled / 3) * 100),
+        photos: cadanganPhotos,
+        label: 'Cadangan',
+        note: cadanganFilled === 3 ? 'Siap Tugas (3)' : cadanganFilled === 0 ? 'Belum Diisi' : `${3 - cadanganFilled} Belum Diisi`,
+        isComplete: cadanganFilled === 3,
+        statusColor: cadanganFilled === 3 ? 'text-emerald-400' : cadanganFilled > 0 ? 'text-amber-400' : 'text-slate-400',
+        dotColor: cadanganFilled === 3 ? 'bg-emerald-400' : cadanganFilled > 0 ? 'bg-amber-400' : 'bg-slate-500',
+        barColor: cadanganFilled === 3 ? 'bg-emerald-400' : cadanganFilled > 0 ? 'bg-amber-400' : 'bg-slate-600',
+      },
+      officials: {
+        val: String(officialsFilled).padStart(2, '0'),
+        max: '03',
+        filled: officialsFilled,
+        target: 3,
+        pct: Math.round((officialsFilled / 3) * 100),
+        photos: officialsPhotos,
+        label: 'Official',
+        note: officialsFilled === 3 ? 'Terverifikasi (3)' : officialsFilled === 0 ? 'Belum Diisi' : `${3 - officialsFilled} Belum Diisi`,
+        isComplete: officialsFilled === 3,
+        statusColor: officialsFilled === 3 ? 'text-emerald-400' : officialsFilled > 0 ? 'text-amber-400' : 'text-slate-400',
+        dotColor: officialsFilled === 3 ? 'bg-emerald-400' : officialsFilled > 0 ? 'bg-amber-400' : 'bg-slate-500',
+        barColor: officialsFilled === 3 ? 'bg-emerald-400' : officialsFilled > 0 ? 'bg-amber-400' : 'bg-slate-600',
+      }
+    };
+  }, [isEditingRoster, rosterDraft, currentTeam?.roster, currentTeam?.dantonName]);
 
   return (
     <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-8 border border-slate-200/90 shadow-xs space-y-4 sm:space-y-6">
@@ -197,33 +448,43 @@ export default function RosterTab({
                   </button>
                 </>
               )}
-              <button
-                onClick={() => openModal('docViewer', { docId: 'form-b', team: currentTeam })}
-                className="flex-1 sm:flex-none justify-center px-3.5 py-2 sm:py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs rounded-xl flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer"
-              >
-                <Printer className="w-3.5 h-3.5" />
-                <span>Cetak Biodata</span>
-              </button>
             </div>
           </div>
 
-          {/* 4-Item Summary Metric Strip (Figma Make Style) */}
+          {/* 4-Item Summary Metric Strip (Figma Make Style - Realtime Dynamic Progress) */}
           <div className="grid grid-cols-2 gap-px overflow-hidden rounded-[20px] bg-slate-800 p-px shadow-[0_14px_32px_rgba(15,23,42,0.12)] sm:grid-cols-4">
             {[
-              { val: '25', label: 'Personel Aktif', note: 'Lengkap' },
-              { val: '21', label: 'Pasukan Inti', note: '3 Saf' },
-              { val: '03', label: 'Cadangan', note: 'Siap Tugas' },
-              { val: '03', label: 'Official', note: 'Terverifikasi' },
+              rosterProgress.total,
+              rosterProgress.pasukan,
+              rosterProgress.cadangan,
+              rosterProgress.officials,
             ].map(m => (
-              <div key={m.label} className="bg-slate-950 px-4 py-3.5 text-white">
-                <div className="flex items-start justify-between gap-2">
-                  <p className="text-xl font-black tracking-tight font-mono">{m.val}</p>
-                  <span className="mt-1 h-1.5 w-1.5 rounded-full bg-emerald-400" />
+              <div key={m.label} className="bg-slate-950 px-4 py-3.5 text-white flex flex-col justify-between">
+                <div>
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex items-baseline">
+                      <p className="text-xl sm:text-2xl font-black tracking-tight font-mono">{m.val}</p>
+                      <span className="text-[11px] font-mono font-bold text-slate-500 ml-1">/{m.max}</span>
+                    </div>
+                    <span className={`mt-1.5 h-1.5 w-1.5 rounded-full shrink-0 transition-colors ${m.dotColor}`} />
+                  </div>
+                  <p className="mt-1 text-[8px] sm:text-[9px] font-black uppercase tracking-[0.12em] text-slate-400">
+                    {m.label}
+                  </p>
                 </div>
-                <p className="mt-1 text-[8px] font-black uppercase tracking-[0.12em] text-slate-400">
-                  {m.label}
-                </p>
-                <p className="mt-0.5 text-[8px] font-semibold text-emerald-400">{m.note}</p>
+
+                <div className="mt-2.5">
+                  <div className="w-full bg-slate-800/90 rounded-full h-1 overflow-hidden">
+                    <div
+                      className={`h-full rounded-full transition-all duration-500 ${m.barColor}`}
+                      style={{ width: `${Math.min(100, Math.max(0, m.pct))}%` }}
+                    />
+                  </div>
+                  <div className="mt-1.5 flex items-center justify-between text-[8px] sm:text-[9px]">
+                    <span className={`font-semibold transition-colors ${m.statusColor}`}>{m.note}</span>
+                    <span className="text-slate-400 font-mono text-[8px] font-bold">{m.pct}%</span>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
@@ -248,12 +509,12 @@ export default function RosterTab({
 
           {/* Pimpinan & Pendamping Peleton (4 Personel) - Harmonized & Perfectly Balanced in 1 Clean Container */}
           <div className="bg-slate-50/80 border border-slate-200 rounded-3xl p-4 sm:p-5 space-y-3.5">
-            <div className="font-black text-xs uppercase tracking-wider text-slate-900 border-b border-slate-200 pb-2.5 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-red-600"></span>
+            <div className="font-black text-xs uppercase tracking-wider text-slate-900 border-b border-slate-200 pb-2.5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5 sm:gap-2">
+              <div className="flex items-center gap-2 min-w-0">
+                <span className="w-2.5 h-2.5 rounded-full bg-red-600 shrink-0"></span>
                 <span>Pimpinan & Pendamping Peleton</span>
               </div>
-              <span className="text-[10px] font-bold text-slate-500 bg-white border border-slate-200 px-2.5 py-0.5 rounded-full">
+              <span className="text-[10px] font-bold text-slate-500 bg-white border border-slate-200 px-2.5 py-0.5 rounded-full self-start sm:self-auto shrink-0 whitespace-nowrap">
                 4 Personel (1 Komandan + 3 Official)
               </span>
             </div>
@@ -271,9 +532,9 @@ export default function RosterTab({
               const officialsList = isEditingRoster ? (rosterDraft?.officials || []) : (currentTeam.roster?.officials || []);
 
               return !isEditingRoster ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 items-stretch">
+                <div className="flex flex-wrap justify-center gap-3 items-stretch">
                   {/* Card 1: Komandan Peleton (Danton) */}
-                  <div className="group/dcard bg-white rounded-2xl border border-slate-200 shadow-2xs hover:shadow-md hover:border-red-400/60 transition-all duration-300 overflow-hidden flex flex-col justify-between">
+                  <div className="w-[calc((100%-0.75rem)/2)] sm:w-[calc((100%-1.5rem)/3)] md:w-[calc((100%-2.25rem)/4)] lg:w-[calc((100%-4.5rem)/7)] shrink-0 group/dcard bg-white rounded-2xl border border-slate-200 shadow-2xs hover:shadow-md hover:border-red-400/60 transition-all duration-300 overflow-hidden flex flex-col justify-between">
                     {/* Pasfoto 3:4 Full Width */}
                     <div className="aspect-[3/4] w-full bg-slate-800 relative overflow-hidden flex items-center justify-center border-b border-slate-100">
                       {hasDantonPhoto ? (
@@ -299,7 +560,7 @@ export default function RosterTab({
                         className="w-full h-full flex flex-col items-center justify-center text-slate-300 bg-slate-800 p-2"
                         style={{ display: hasDantonPhoto ? 'none' : 'flex' }}
                       >
-                        <span className="text-3xl sm:text-4xl font-black tracking-wider text-slate-300 select-none">
+                        <span className="text-xl sm:text-2xl font-black tracking-wider text-slate-300 select-none">
                           {getPersonInitials(dantonName)}
                         </span>
                       </div>
@@ -310,8 +571,8 @@ export default function RosterTab({
                     </div>
 
                     {/* Identitas Danton */}
-                    <div className="p-3 text-left space-y-1">
-                      <span className="font-black text-xs text-slate-900 block leading-tight break-words uppercase min-h-[1.8rem] flex items-center group-hover/dcard:text-red-700 transition-colors">
+                    <div className="p-2.5 text-left space-y-1">
+                      <span className="font-black text-xs text-slate-900 block leading-tight break-words uppercase min-h-[1.8rem] flex items-center group-hover/dcard:text-red-700 transition-colors line-clamp-2">
                         {dantonName || '-'}
                       </span>
                       <div className="text-[10px] text-slate-600 leading-tight truncate">
@@ -319,7 +580,7 @@ export default function RosterTab({
                       </div>
                       <div className="text-[10px] text-slate-500 font-mono flex items-center justify-between border-t border-slate-100 pt-1">
                         <span>{formatGradeDisplay(dantonClass, 'Kls')}</span>
-                        <span>NISN: {dantonNisn || '-'}</span>
+                        <span className="truncate ml-1">NISN: {dantonNisn || '-'}</span>
                       </div>
                       {dantonMedical && (
                         <div className="text-[9px] text-rose-700 bg-rose-50 px-1.5 py-0.5 rounded border border-rose-200 truncate mt-0.5" title={`Catatan Medis: ${dantonMedical}`}>
@@ -344,7 +605,7 @@ export default function RosterTab({
                     return (
                       <div
                         key={off.id || i}
-                        className="group/offcard bg-white rounded-2xl border border-slate-200 shadow-2xs hover:shadow-md hover:border-blue-400/60 transition-all duration-300 overflow-hidden flex flex-col justify-between"
+                        className="w-[calc((100%-0.75rem)/2)] sm:w-[calc((100%-1.5rem)/3)] md:w-[calc((100%-2.25rem)/4)] lg:w-[calc((100%-4.5rem)/7)] shrink-0 group/offcard bg-white rounded-2xl border border-slate-200 shadow-2xs hover:shadow-md hover:border-blue-400/60 transition-all duration-300 overflow-hidden flex flex-col justify-between"
                       >
                         {/* Pasfoto 3:4 Full Width */}
                         <div className="aspect-[3/4] w-full bg-slate-800 relative overflow-hidden flex items-center justify-center border-b border-slate-100">
@@ -371,7 +632,7 @@ export default function RosterTab({
                             className="w-full h-full flex flex-col items-center justify-center text-slate-300 bg-slate-800 p-2"
                             style={{ display: hasPhoto ? 'none' : 'flex' }}
                           >
-                            <span className="text-3xl sm:text-4xl font-black tracking-wider text-slate-300 select-none">
+                            <span className="text-xl sm:text-2xl font-black tracking-wider text-slate-300 select-none">
                               {getPersonInitials(off.name)}
                             </span>
                           </div>
@@ -382,9 +643,9 @@ export default function RosterTab({
                         </div>
 
                         {/* Identitas Pendamping */}
-                        <div className="p-3 text-left space-y-1">
+                        <div className="p-2.5 text-left space-y-1">
                           <span
-                            className="font-black text-xs text-slate-900 block leading-tight break-words uppercase min-h-[1.8rem] flex items-center group-hover/offcard:text-blue-700 transition-colors"
+                            className="font-black text-xs text-slate-900 block leading-tight break-words uppercase min-h-[1.8rem] flex items-center group-hover/offcard:text-blue-700 transition-colors line-clamp-2"
                             title={off.name}
                           >
                             {off.name || '-'}
@@ -394,7 +655,7 @@ export default function RosterTab({
                           </div>
                           <div className="text-[10px] text-slate-500 font-mono flex items-center justify-between border-t border-slate-100 pt-1">
                             <span>No. WA</span>
-                            <span className="text-emerald-700 font-bold truncate">{off.phone || '-'}</span>
+                            <span className="text-emerald-700 font-bold truncate ml-1">{off.phone || '-'}</span>
                           </div>
                         </div>
                       </div>
@@ -626,12 +887,12 @@ export default function RosterTab({
 
           {/* 21 Pasukan Inti Grid */}
           <div className="space-y-4">
-            <div className="font-black text-xs uppercase tracking-wider text-slate-900 border-b border-slate-200 pb-2.5 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-red-600"></span>
+            <div className="font-black text-xs uppercase tracking-wider text-slate-900 border-b border-slate-200 pb-2.5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5 sm:gap-2">
+              <div className="flex items-center gap-2 min-w-0">
+                <span className="w-2.5 h-2.5 rounded-full bg-red-600 shrink-0"></span>
                 <span>21 Pasukan Inti (3 Saf × 7 Banjar)</span>
               </div>
-              <span className="text-[10px] font-bold text-slate-500 bg-white border border-slate-200 px-2.5 py-0.5 rounded-full">
+              <span className="text-[10px] font-bold text-slate-500 bg-white border border-slate-200 px-2.5 py-0.5 rounded-full self-start sm:self-auto shrink-0 whitespace-nowrap">
                 21 Personel (Saf 1 – 3)
               </span>
             </div>
@@ -640,22 +901,25 @@ export default function RosterTab({
                 <div className="space-y-6">
                   {[1, 2, 3].map(saf => (
                     <div key={saf} className="bg-slate-50/80 border border-slate-200 rounded-3xl p-4 sm:p-5 space-y-3.5">
-                      <div className="font-black text-xs uppercase tracking-wider text-slate-900 border-b border-slate-200 pb-2 flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <span className="w-2.5 h-2.5 rounded-full bg-red-600"></span>
+                      <div className="font-black text-xs uppercase tracking-wider text-slate-900 border-b border-slate-200 pb-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5 sm:gap-2">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <span className="w-2.5 h-2.5 rounded-full bg-red-600 shrink-0"></span>
                           <span>Saf {saf} ({saf === 1 ? 'Saf Depan' : saf === 2 ? 'Saf Tengah' : 'Saf Belakang'})</span>
                         </div>
-                        <span className="text-[10px] font-bold text-slate-500 bg-white border border-slate-200 px-2.5 py-0.5 rounded-full">
+                        <span className="text-[10px] font-bold text-slate-500 bg-white border border-slate-200 px-2.5 py-0.5 rounded-full self-start sm:self-auto shrink-0 whitespace-nowrap">
                           7 Personel (Banjar 1 – 7)
                         </span>
                       </div>
-                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3">
+                      <div className="flex flex-wrap justify-center gap-3 items-stretch">
                         {currentTeam.roster.pasukan
                           .filter(p => p.safNumber === saf)
                           .map((person) => {
                             const hasPhoto = person.photo && typeof person.photo === 'string' && person.photo !== '#' && !person.photo.startsWith('#') && !person.photo.includes('drive.google.com/open?id=');
                             return (
-                              <div key={person.id} className="group/pcard bg-white rounded-2xl border border-slate-200 shadow-2xs hover:shadow-md hover:border-red-400/60 transition-all duration-300 overflow-hidden flex flex-col justify-between">
+                              <div
+                                key={person.id}
+                                className="w-[calc((100%-0.75rem)/2)] sm:w-[calc((100%-1.5rem)/3)] md:w-[calc((100%-2.25rem)/4)] lg:w-[calc((100%-4.5rem)/7)] shrink-0 group/pcard bg-white rounded-2xl border border-slate-200 shadow-2xs hover:shadow-md hover:border-red-400/60 transition-all duration-300 overflow-hidden flex flex-col justify-between"
+                              >
                                 <div className="aspect-[3/4] w-full bg-slate-100 relative overflow-hidden flex items-center justify-center border-b border-slate-100">
                                   {hasPhoto ? (
                                     <img
@@ -685,7 +949,7 @@ export default function RosterTab({
                                 </div>
 
                                 <div className="p-2.5 text-left space-y-1">
-                                  <span className="font-black text-xs text-slate-900 block leading-tight break-words group-hover/pcard:text-red-700 transition-colors">
+                                  <span className="font-black text-xs text-slate-900 block leading-tight break-words uppercase min-h-[1.8rem] flex items-center group-hover/pcard:text-red-700 transition-colors line-clamp-2">
                                     {person.name || '-'}
                                   </span>
                                   <div className="text-[10px] text-slate-600 leading-tight">
@@ -916,22 +1180,36 @@ export default function RosterTab({
           {/* Cadangan Section */}
           <div className="pt-2">
             <div className="bg-amber-50/50 border border-amber-200/80 rounded-3xl p-4 sm:p-5 space-y-3.5">
-              <div className="font-black text-xs uppercase tracking-wider text-slate-900 border-b border-amber-200/70 pb-2.5 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+              <div className="font-black text-xs uppercase tracking-wider text-slate-900 border-b border-amber-200/70 pb-2.5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5 sm:gap-2">
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="w-2.5 h-2.5 rounded-full bg-amber-500 shrink-0"></span>
                   <span>3 Personel Cadangan Peleton</span>
                 </div>
-                <span className="text-[10px] font-bold text-slate-500 bg-white border border-amber-200 px-2.5 py-0.5 rounded-full">
-                  3 Personel (Cadangan 1 – 3)
-                </span>
+                <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+                  <span className="text-[10px] font-bold text-amber-800 bg-white border border-amber-200 px-2.5 py-0.5 rounded-full shrink-0 whitespace-nowrap">
+                    3 Personel (Cadangan 1 – 3)
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => handleOpenSubstitutionModal(0)}
+                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-600 hover:bg-amber-700 text-white text-[11px] font-bold shadow-xs transition-all cursor-pointer active:scale-95 shrink-0"
+                    title="Buka form pergantian pemain peleton"
+                  >
+                    <ArrowLeftRight className="w-3.5 h-3.5" />
+                    <span>Pergantian Pemain (Substitusi)</span>
+                  </button>
+                </div>
               </div>
               {!isEditingRoster ? (
                 Array.isArray(currentTeam.roster?.cadangan) && currentTeam.roster.cadangan.length > 0 ? (
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3">
+                  <div className="flex flex-wrap justify-center gap-3 items-stretch">
                     {currentTeam.roster.cadangan.map((c, i) => {
                       const hasCPhoto = c.photo && typeof c.photo === 'string' && c.photo !== '#' && !c.photo.startsWith('#') && !c.photo.includes('drive.google.com/open?id=');
                       return (
-                        <div key={c.id || i} className="group/cadangan bg-white rounded-2xl border border-slate-200 shadow-2xs hover:shadow-md hover:border-amber-400 transition-all duration-300 overflow-hidden flex flex-col justify-between">
+                        <div
+                          key={c.id || i}
+                          className="w-[calc((100%-0.75rem)/2)] sm:w-[calc((100%-1.5rem)/3)] md:w-[calc((100%-2.25rem)/4)] lg:w-[calc((100%-4.5rem)/7)] shrink-0 group/cadangan bg-white rounded-2xl border border-slate-200 shadow-2xs hover:shadow-md hover:border-amber-400 transition-all duration-300 overflow-hidden flex flex-col justify-between"
+                        >
                           <div className="aspect-[3/4] w-full bg-slate-100 relative overflow-hidden flex items-center justify-center border-b border-slate-100">
                             {hasCPhoto ? (
                               <img
@@ -960,7 +1238,7 @@ export default function RosterTab({
                           </div>
 
                           <div className="p-2.5 text-left space-y-1">
-                            <span className="font-black text-xs text-slate-900 block leading-tight break-words">
+                            <span className="font-black text-xs text-slate-900 block leading-tight break-words uppercase min-h-[1.8rem] flex items-center group-hover/cadangan:text-amber-700 transition-colors line-clamp-2">
                               {c.name || '-'}
                             </span>
                             <div className="text-[10px] text-slate-600 leading-tight">
@@ -1153,6 +1431,14 @@ export default function RosterTab({
                             }}
                             className="w-full px-2 py-0.5 bg-slate-50 border border-slate-200 rounded text-[10px] focus:outline-none focus:ring-1 focus:ring-rose-400 placeholder:text-slate-400"
                           />
+                          <button
+                            type="button"
+                            onClick={() => handleOpenSubstitutionModal(i)}
+                            className="w-full mt-2 py-1 px-2 bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 font-bold text-[10px] rounded-lg flex items-center justify-center gap-1.5 transition-all active:scale-95 cursor-pointer shadow-2xs"
+                          >
+                            <ArrowLeftRight className="w-3 h-3 text-amber-800" />
+                            <span>Ganti Posisi dengan Pasukan</span>
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -1160,8 +1446,269 @@ export default function RosterTab({
                 })}
               </div>
             )}
+
+            {/* Riwayat Pergantian Pemain Peleton */}
+            {Array.isArray(activeRoster?.substitutions) && activeRoster.substitutions.length > 0 && (
+              <div className="mt-3.5 p-3 sm:p-4 bg-white/95 border border-amber-200 rounded-2xl space-y-2 shadow-2xs">
+                <div className="flex items-center justify-between text-xs font-black text-amber-950 border-b border-amber-100 pb-1.5">
+                  <div className="flex items-center gap-2">
+                    <ArrowLeftRight className="w-4 h-4 text-amber-600" />
+                    <span>Riwayat Pergantian Pemain ({activeRoster.substitutions.length})</span>
+                  </div>
+                  <span className="text-[10px] text-slate-500 font-bold">Juknis Bab A.9.c</span>
+                </div>
+                <div className="space-y-1.5">
+                  {activeRoster.substitutions.map((sub, sIdx) => (
+                    <div key={sub.id || sIdx} className="text-[11px] bg-amber-50/70 p-2.5 rounded-xl flex items-center justify-between text-slate-700 flex-wrap gap-2 border border-amber-100">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="px-2 py-0.5 rounded-md bg-emerald-600 text-white font-mono font-black text-[9px] shadow-2xs">
+                          {sub.inCode} (MASUK)
+                        </span>
+                        <span className="font-black text-slate-900">{sub.inName}</span>
+                        <ArrowLeftRight className="w-3 h-3 text-amber-600 mx-1 shrink-0" />
+                        <span className="px-2 py-0.5 rounded-md bg-rose-600 text-white font-mono font-black text-[9px] shadow-2xs">
+                          {sub.outPosition} (KELUAR)
+                        </span>
+                        <span className="font-bold text-slate-700">{sub.outName}</span>
+                      </div>
+                      <span className="text-[10px] text-amber-900 bg-amber-200/80 px-2 py-0.5 rounded-full font-bold">
+                        Alasan: {sub.reason}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
+        {/* Toast Notifikasi Lokal */}
+        {localToast && (
+          <div className="fixed bottom-4 right-4 z-50 bg-emerald-700 text-white text-xs font-bold px-4 py-3 rounded-2xl shadow-xl flex items-center gap-2 animate-in fade-in slide-in-from-bottom-2">
+            <CheckCircle2 className="w-4 h-4 text-emerald-300" />
+            <span>{localToast}</span>
+          </div>
+        )}
+
+        {/* MODAL PERGANTIAN PEMAIN (SUBSTITUSI) */}
+        {isSubModalOpen && (
+          <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+            <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-2xl w-full p-5 sm:p-6 space-y-5 my-auto animate-in zoom-in-95 duration-200">
+              {/* Modal Header */}
+              <div className="flex items-start justify-between gap-3 border-b border-slate-100 pb-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-2xl bg-amber-500 text-slate-950 flex items-center justify-center font-black shrink-0 shadow-xs">
+                    <ArrowLeftRight className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="font-black text-base sm:text-lg text-slate-900 uppercase">
+                      Pergantian Personel Peleton (Substitusi)
+                    </h3>
+                    <p className="text-xs text-slate-500 mt-0.5">
+                      Pertukaran pemain cadangan masuk ke arena menggantikan pasukan inti / komandan.
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsSubModalOpen(false)}
+                  className="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Modal Body */}
+              <div className="space-y-4">
+                {/* Step 1: Pilih Cadangan (IN) */}
+                <div>
+                  <label className="text-xs font-black uppercase tracking-wider text-slate-700 block mb-2 flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                    <span>1. Pilih Personel Cadangan yang Masuk (IN)</span>
+                  </label>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                    {cadanganList.map((c, idx) => {
+                      const isSelected = selectedCadanganIdx === idx;
+                      return (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => setSelectedCadanganIdx(idx)}
+                          className={`p-3 rounded-2xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-2 ${
+                            isSelected
+                              ? 'border-emerald-500 bg-emerald-50/70 ring-2 ring-emerald-500/30 shadow-xs'
+                              : 'border-slate-200 bg-slate-50/50 hover:bg-slate-100 hover:border-slate-300'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className={`text-[10px] font-black px-2 py-0.5 rounded-md ${isSelected ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-700'}`}>
+                              C${idx + 1}
+                            </span>
+                            {isSelected && (
+                              <span className="text-[10px] font-bold text-emerald-700 flex items-center gap-1">
+                                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                                Terpilih
+                              </span>
+                            )}
+                          </div>
+                          <div>
+                            <span className="font-black text-xs text-slate-900 block truncate uppercase">
+                              {c.name || `Cadangan #${idx + 1}`}
+                            </span>
+                            <span className="text-[10px] text-slate-500 block truncate">
+                              {c.nisn ? `NISN: ${c.nisn}` : 'Siap Tugas'}
+                            </span>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Step 2: Pilih Personel yang Digantikan (OUT) */}
+                <div>
+                  <label className="text-xs font-black uppercase tracking-wider text-slate-700 block mb-2 flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-rose-500"></span>
+                    <span>2. Pilih Personel yang Digantikan (OUT)</span>
+                  </label>
+                  <div className="space-y-2">
+                    <select
+                      value={`${selectedTargetType}:${selectedTargetId || (selectedTargetType === 'danton' ? 'danton' : pasukanList[0]?.id)}`}
+                      onChange={(e) => {
+                        const [type, id] = e.target.value.split(':');
+                        setSelectedTargetType(type);
+                        setSelectedTargetId(id);
+                      }}
+                      className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-bold text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-amber-500 focus:bg-white transition-all cursor-pointer"
+                    >
+                      <optgroup label="KOMANDAN PELETON">
+                        <option value="danton:danton">
+                          Danton - {dantonPerson?.name || 'Komandan Peleton'}
+                        </option>
+                      </optgroup>
+                      <optgroup label="PASUKAN INTI: SAF 1 (DEPAN)">
+                        {pasukanList
+                          .filter(p => p.safNumber === 1)
+                          .map(p => (
+                            <option key={p.id} value={`pasukan:${p.id}`}>
+                              Saf 1, Banjar {p.banjarNumber} - {p.name || `Banjar ${p.banjarNumber}`}
+                            </option>
+                          ))}
+                      </optgroup>
+                      <optgroup label="PASUKAN INTI: SAF 2 (TENGAH)">
+                        {pasukanList
+                          .filter(p => p.safNumber === 2)
+                          .map(p => (
+                            <option key={p.id} value={`pasukan:${p.id}`}>
+                              Saf 2, Banjar {p.banjarNumber} - {p.name || `Banjar ${p.banjarNumber}`}
+                            </option>
+                          ))}
+                      </optgroup>
+                      <optgroup label="PASUKAN INTI: SAF 3 (BELAKANG)">
+                        {pasukanList
+                          .filter(p => p.safNumber === 3)
+                          .map(p => (
+                            <option key={p.id} value={`pasukan:${p.id}`}>
+                              Saf 3, Banjar {p.banjarNumber} - {p.name || `Banjar ${p.banjarNumber}`}
+                            </option>
+                          ))}
+                      </optgroup>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Step 3: Pratinjau Pertukaran Posisi */}
+                <div className="p-3.5 bg-slate-900 text-white rounded-2xl shadow-inner space-y-2.5">
+                  <div className="text-[10px] font-black uppercase tracking-wider text-slate-400">
+                    Pratinjau Pertukaran Posisi
+                  </div>
+                  <div className="flex items-center justify-between gap-2">
+                    {/* Kartu Masuk */}
+                    <div className="flex-1 bg-emerald-950/80 border border-emerald-500/50 rounded-xl p-2.5 text-left min-w-0">
+                      <span className="text-[9px] font-black uppercase tracking-wider text-emerald-400 bg-emerald-900/80 px-1.5 py-0.5 rounded">
+                        🟢 Masuk (IN)
+                      </span>
+                      <div className="font-black text-xs text-white truncate mt-1">
+                        {currentSelectedCadangan?.name || `Cadangan #${selectedCadanganIdx + 1}`}
+                      </div>
+                      <div className="text-[10px] text-emerald-300 font-mono">
+                        C${selectedCadanganIdx + 1}
+                      </div>
+                    </div>
+
+                    {/* Simbol Tukar */}
+                    <div className="w-8 h-8 rounded-full bg-amber-400 text-slate-950 flex items-center justify-center font-black shrink-0 shadow-md">
+                      <ArrowLeftRight className="w-4 h-4" />
+                    </div>
+
+                    {/* Kartu Keluar */}
+                    <div className="flex-1 bg-rose-950/80 border border-rose-500/50 rounded-xl p-2.5 text-left min-w-0">
+                      <span className="text-[9px] font-black uppercase tracking-wider text-rose-400 bg-rose-900/80 px-1.5 py-0.5 rounded">
+                        🔴 Keluar (OUT)
+                      </span>
+                      <div className="font-black text-xs text-white truncate mt-1">
+                        {currentTargetPerson?.name || 'Pemain Inti'}
+                      </div>
+                      <div className="text-[10px] text-rose-300 font-mono">
+                        {currentTargetLabel}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Step 4: Alasan Pergantian */}
+                <div>
+                  <label className="text-xs font-black uppercase tracking-wider text-slate-700 block mb-2">
+                    3. Alasan Pergantian Personel
+                  </label>
+                  <div className="flex flex-wrap gap-2 mb-2">
+                    {['Cedera / Sakit', 'Kondisi Fisik Menurun', 'Penyesuaian Taktis', 'Lainnya'].map((r) => (
+                      <button
+                        key={r}
+                        type="button"
+                        onClick={() => setSubReason(r)}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                          subReason === r
+                            ? 'bg-amber-600 text-white shadow-xs'
+                            : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                        }`}
+                      >
+                        {r}
+                      </button>
+                    ))}
+                  </div>
+                  {subReason === 'Lainnya' && (
+                    <input
+                      type="text"
+                      value={subCustomReason}
+                      onChange={(e) => setSubCustomReason(e.target.value)}
+                      placeholder="Tuliskan keterangan alasan pergantian..."
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-amber-500 focus:bg-white"
+                    />
+                  )}
+                </div>
+              </div>
+
+              {/* Modal Footer */}
+              <div className="flex items-center justify-end gap-2.5 border-t border-slate-100 pt-3">
+                <button
+                  type="button"
+                  onClick={() => setIsSubModalOpen(false)}
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition-all cursor-pointer"
+                >
+                  Batal
+                </button>
+                <button
+                  type="button"
+                  onClick={handleConfirmSubstitution}
+                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl flex items-center gap-1.5 shadow-md active:scale-95 transition-all cursor-pointer"
+                >
+                  <CheckCircle2 className="w-4 h-4" />
+                  <span>Konfirmasi & Masukkan Pemain</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
         </>
       )}
     </div>

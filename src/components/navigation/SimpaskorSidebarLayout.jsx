@@ -37,6 +37,7 @@ import {
   Download
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
+import { formatImageUrl, getFallbackImageUrl } from '../../services/sheetService.js';
 import logoLbb from '../../assets/logo-tonti.png';
 import logoTonti from '../../assets/logo-tonti-muallimin.png';
 import logoMuallimin from '../../assets/logo-muallimin.png';
@@ -46,6 +47,7 @@ export default function SimpaskorSidebarLayout({
   activeMenu = 'dashboard',
   title = 'Dashboard',
   subtitle = 'Ringkasan data dan informasi operasional lomba',
+  currentTeam: propCurrentTeam = null,
   rightActions = null,
   onSelectMenu = null,
   hideHeader = false,
@@ -55,7 +57,7 @@ export default function SimpaskorSidebarLayout({
 }) {
   const {
     currentUser,
-    currentTeam,
+    currentTeam: contextCurrentTeam,
     role,
     setActiveView,
     logoutUser,
@@ -67,6 +69,8 @@ export default function SimpaskorSidebarLayout({
     canAccessStage,
     getUserAvatar
   } = useCompetition();
+
+  const currentTeam = propCurrentTeam || contextCurrentTeam;
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showLogoutConfirmModal, setShowLogoutConfirmModal] = useState(false);
@@ -138,6 +142,10 @@ export default function SimpaskorSidebarLayout({
   }, [userRole, displayName]);
 
   const avatarUrl = avatarMeta?.url || currentUser?.avatar || (isSchoolLogo ? currentTeam?.files?.schoolLogo?.url : null) || fallbackInitialAvatar;
+
+  const rawSchoolLogo = currentTeam?.files?.schoolLogo?.url || currentTeam?.file_logo_sekolah || currentTeam?.logoUrl || (avatarMeta?.isSchoolLogo ? avatarMeta.url : '');
+  const hasSchoolLogo = Boolean(rawSchoolLogo && rawSchoolLogo !== '#' && !rawSchoolLogo.startsWith('#'));
+  const schoolLogoFormatted = hasSchoolLogo ? formatImageUrl(rawSchoolLogo) : '';
 
   // Navigasi Terstruktur SaaS Minimalist (Sesuai Referensi Simple & Clean dengan Brand UI)
   const getNavSections = () => {
@@ -557,7 +565,6 @@ export default function SimpaskorSidebarLayout({
     try {
       if (typeof onLogout === 'function') {
         onLogout();
-        return;
       }
       if (isPeserta) {
         if (typeof logoutTeam === 'function') logoutTeam();
@@ -1208,8 +1215,63 @@ export default function SimpaskorSidebarLayout({
                 />
               </div>
             </div>
-            {/* Sisi Kanan: Selalu tombol Keluar / Ganti Akun Tim yang konsisten di semua halaman */}
-            <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+            {/* Sisi Kanan: Nama Peleton & Pills -> Logo Sekolah -> Tombol Keluar (Paling Kanan) */}
+            <div className="flex items-center gap-2 sm:gap-3 shrink-0 min-w-0">
+              {currentTeam && (
+                <div className="hidden sm:flex items-center gap-2.5 md:gap-3 shrink-0 min-w-0">
+                  {/* Nama Sekolah / Peleton & Pills */}
+                  <div className="text-right min-w-0 max-w-[160px] md:max-w-xs">
+                    <span
+                      className="text-xs sm:text-sm font-black uppercase tracking-tight text-slate-900 leading-tight block truncate"
+                      title={currentTeam?.schoolName || displayName}
+                    >
+                      {currentTeam?.schoolName || displayName}
+                    </span>
+                    <div className="flex items-center justify-end gap-1.5 mt-0.5">
+                      {/* Pill: SD Putra / SMP Putra */}
+                      <span className="inline-flex items-center rounded-full border border-red-100 bg-red-50 px-2 sm:px-2.5 py-0.5 text-[8.5px] font-extrabold uppercase tracking-[0.08em] text-red-700 whitespace-nowrap">
+                        {currentTeam?.jenjang || 'SD'} {String(currentTeam?.category || 'Putra').replace(/homogen\s+/i, '')}
+                      </span>
+                      {/* Pill 3: Kota Yogyakarta dengan dot hijau */}
+                      <span className="hidden md:inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-0.5 text-[8.5px] font-extrabold uppercase tracking-[0.08em] text-emerald-700 whitespace-nowrap">
+                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shrink-0" />
+                        <span>{currentTeam?.city || 'Kota Yogyakarta'}</span>
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Logo Sekolah (Tanpa Wadah - Bersih & Rapi) */}
+                  {hasSchoolLogo && schoolLogoFormatted ? (
+                    <img
+                      src={schoolLogoFormatted}
+                      alt={currentTeam?.schoolName || 'Logo Sekolah'}
+                      referrerPolicy="no-referrer"
+                      className="h-8 sm:h-9 w-auto max-w-[38px] sm:max-w-[44px] object-contain shrink-0 drop-shadow-xs"
+                      onError={(e) => {
+                        const fallback = getFallbackImageUrl(rawSchoolLogo);
+                        if (fallback && e.currentTarget.src !== fallback) {
+                          e.currentTarget.src = fallback;
+                        } else {
+                          e.currentTarget.style.display = 'none';
+                          if (e.currentTarget.nextElementSibling) {
+                            e.currentTarget.nextElementSibling.style.display = 'flex';
+                          }
+                        }
+                      }}
+                    />
+                  ) : null}
+                  <div
+                    className="h-8 w-8 sm:h-9 sm:w-9 rounded-full bg-red-600 text-white font-black text-xs flex items-center justify-center shrink-0 shadow-xs"
+                    style={{ display: hasSchoolLogo && schoolLogoFormatted ? 'none' : 'flex' }}
+                  >
+                    {teamInitials}
+                  </div>
+
+                  <div className="h-7 w-px bg-slate-200 shrink-0" />
+                </div>
+              )}
+
+              {/* Tombol Keluar (Paling Kanan) */}
               <button
                 type="button"
                 onClick={handleLogout}
@@ -1289,7 +1351,7 @@ export default function SimpaskorSidebarLayout({
               <div className="absolute -top-16 -right-16 w-48 h-48 rounded-full bg-gradient-to-br from-amber-500/5 via-rose-500/5 to-transparent blur-2xl pointer-events-none" />
               <div className="absolute -bottom-16 -left-16 w-48 h-48 rounded-full bg-gradient-to-tr from-slate-100/60 to-transparent blur-2xl pointer-events-none" />
 
-              <div className="relative z-10 px-4 py-3.5 sm:px-6 sm:py-4 flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4 bg-gradient-to-r from-slate-50/70 via-white to-slate-50/40">
+              <div className="relative z-10 px-3.5 py-3 sm:px-6 sm:py-4 flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4 bg-gradient-to-r from-slate-50/70 via-white to-slate-50/40">
                 <div className="flex items-start sm:items-center gap-3.5 sm:gap-4 min-w-0 flex-1">
                   {/* 1. Icon Modul (Rich Gradient Themed Badge) */}
                   <div className="relative shrink-0">
@@ -1319,14 +1381,14 @@ export default function SimpaskorSidebarLayout({
 
                   {/* 3. Judul, Kicker & Subtitle Halaman */}
                   <div className="min-w-0 flex-1">
-                    <div className="flex flex-wrap items-center gap-2 mb-0.5 sm:mb-1">
+                    <div className="flex items-center gap-1.5 sm:gap-2 mb-0.5 sm:mb-1 flex-wrap sm:flex-nowrap">
                       <span className="h-1.5 w-1.5 rounded-full bg-red-600 shrink-0" />
-                      <span className="text-[9.5px] sm:text-[10px] font-black uppercase tracking-[0.16em] text-slate-500">
+                      <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.12em] sm:tracking-[0.16em] text-slate-500 truncate">
                         {getModuleTheme(activeMenu).kicker || 'SISTEM RESMI LBB MU\'ALLIMIN 2027'}
                       </span>
                       {(activeMenu === 'klasemen' || activeMenu === 'leaderboard' || activeMenu === 'live_leaderboard') && (
-                        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-200/80 shadow-2xs">
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                        <span className="inline-flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded-md text-[8.5px] sm:text-[9px] font-black uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-200/80 shadow-2xs whitespace-nowrap shrink-0">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
                           Live Realtime
                         </span>
                       )}
@@ -1343,7 +1405,7 @@ export default function SimpaskorSidebarLayout({
                 </div>
 
                 {/* 4. Quick Action Buttons (Sisi Kanan) */}
-                <div className="flex items-center gap-2 shrink-0 self-start md:self-center flex-wrap sm:flex-nowrap pt-0.5 sm:pt-0">
+                <div className="flex items-center gap-2 shrink-0 self-start md:self-center flex-wrap sm:flex-nowrap pt-2 sm:pt-0 border-t border-slate-100 sm:border-0 w-full sm:w-auto justify-start sm:justify-end">
                   {rightActions ? (
                     rightActions
                   ) : (

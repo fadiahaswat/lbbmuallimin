@@ -659,7 +659,8 @@ export default function ParticipantDashboard() {
   return (
     <SimpaskorSidebarLayout
       activeMenu={activeTab}
-      title={currentTeam.schoolName}
+      title={currentTeam?.schoolName}
+      currentTeam={currentTeam}
       onSelectMenu={(menuId) => handleSelectTab(menuId)}
       hideHeader={true}
       onLogout={() => {
@@ -802,6 +803,8 @@ export default function ParticipantDashboard() {
             stagingInfo={staging?.[currentTeam.id] || null}
             onOpenPactModal={handleDownloadPact}
             isDownloadingPact={isDownloadingPact}
+            updateTeamRoster={updateTeamRoster}
+            setUploadToast={setUploadToast}
           />
         )}
 

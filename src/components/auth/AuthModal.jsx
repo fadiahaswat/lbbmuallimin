@@ -93,7 +93,14 @@ export default function AuthModal() {
 
           let googleProfile;
           try {
-            const userInfoResponse = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+            try {
+              if (tokenResponse?.access_token) {
+                sessionStorage.setItem('lbb_last_google_token', tokenResponse.access_token);
+              }
+            } catch (e) {}
+
+            const userInfoResponse = await fetch(`https://www.googleapis.com/oauth2/v3/userinfo?_t=${Date.now()}`, {
+              cache: 'no-store',
               headers: {
                 Authorization: `Bearer ${tokenResponse.access_token}`,
               },

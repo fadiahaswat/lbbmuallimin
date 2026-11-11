@@ -67,21 +67,13 @@ export default function InteractiveBasecampMap({
       if (room.isBasecampCandidate) {
         assignedTeam = teams.find(t => {
           const st = getTeamStaging(t.id);
-          const rName = st?.basecamp?.roomName || st?.roomName || t.basecampNumber || '';
+          const rName = st?.basecamp?.roomName || st?.roomName || t.basecampRoom || t.basecampNumber || '';
           return rName && (
             rName.trim().toUpperCase() === room.code.toUpperCase() ||
             rName.trim().toUpperCase() === room.name.toUpperCase() ||
             rName.trim().toUpperCase().includes(room.code.toUpperCase())
           );
         });
-
-        if (!assignedTeam && teams.length > 0) {
-          if (room.floor === 1 && sdTeams[classBasecampIndex % Math.max(1, sdTeams.length)]) {
-            assignedTeam = sdTeams[classBasecampIndex % sdTeams.length];
-          } else if (room.floor >= 2 && smpTeams[(classBasecampIndex - sdTeams.length) >= 0 ? (classBasecampIndex - sdTeams.length) % Math.max(1, smpTeams.length) : 0]) {
-            assignedTeam = smpTeams[(classBasecampIndex - sdTeams.length) % Math.max(1, smpTeams.length)];
-          }
-        }
         classBasecampIndex++;
       }
 

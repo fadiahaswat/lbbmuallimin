@@ -457,7 +457,34 @@ export default function SuperadminPanel() {
               </button>
             </div>
 
-            {/* Toggle 5: Publikasi Hasil Lomba */}
+            {/* Toggle 5: Pengesahan & Publikasi Alokasi Basecamp Kontingen */}
+            <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl flex flex-col justify-between">
+              <div>
+                <span className="text-xs font-black uppercase text-slate-800 block mb-1">Pengesahan Alokasi Basecamp</span>
+                <p className="text-xs text-slate-500">Mengesahkan (ACC) dan menayangkan denah serta nomor ruang basecamp ke portal peserta.</p>
+              </div>
+              <button
+                onClick={() => {
+                  const isCurrentlyRatified = Boolean(settings.basecampPublished && settings.basecampRatifiedAt);
+                  const nextState = !isCurrentlyRatified;
+                  updateSettings({
+                    basecampPublished: nextState,
+                    basecampRatifiedAt: nextState ? new Date().toISOString() : null
+                  });
+                  showToast(`Alokasi Ruang Basecamp ${nextState ? 'RESMI DISAHKAN & DITAYANGKAN KE PESERTA' : 'KEMBALI KE DRAF (DISEMBUNYIKAN)'}!`);
+                }}
+                className={`mt-4 w-full py-2 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all ${
+                  Boolean(settings.basecampPublished && settings.basecampRatifiedAt)
+                    ? 'bg-emerald-600 text-white'
+                    : 'bg-slate-300 text-slate-700'
+                }`}
+              >
+                {Boolean(settings.basecampPublished && settings.basecampRatifiedAt) ? <ToggleRight className="w-5 h-5" /> : <ToggleLeft className="w-5 h-5" />}
+                <span>{Boolean(settings.basecampPublished && settings.basecampRatifiedAt) ? 'Status: Disahkan & Tayang' : 'Status: Draf (Belum ACC)'}</span>
+              </button>
+            </div>
+
+            {/* Toggle 6: Publikasi Hasil Lomba */}
             <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl flex flex-col justify-between">
               <div>
                 <span className="text-xs font-black uppercase text-slate-800 block mb-1">Publikasi Pengumuman Juara</span>

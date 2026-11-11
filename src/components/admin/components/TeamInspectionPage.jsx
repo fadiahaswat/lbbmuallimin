@@ -650,9 +650,9 @@ export default function TeamInspectionPage({ team, inspectionStage = 'registrati
 
             {/* 4 Kartu Pimpinan & Pendamping Peleton (1 Danton + 3 Pendamping) dalam 1 Container Rapi */}
             <div className="bg-slate-50/80 p-4 rounded-2xl border border-slate-200/90 space-y-3">
-              <div className="flex items-center justify-between border-b border-slate-200/80 pb-2">
-                <div className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-red-600"></span>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-slate-200/80 pb-2 gap-1.5 sm:gap-2">
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="w-2.5 h-2.5 rounded-full bg-red-600 shrink-0"></span>
                   <span className="font-black text-xs uppercase tracking-wider text-slate-900">
                     Pimpinan & Pendamping Peleton (4 Personel)
                   </span>
@@ -660,7 +660,7 @@ export default function TeamInspectionPage({ team, inspectionStage = 'registrati
                     • 1 Komandan Peleton + 1 Official + 2 Pendukung
                   </span>
                 </div>
-                <span className="text-[10px] font-bold text-slate-600 bg-white border border-slate-200 px-2.5 py-0.5 rounded-full">
+                <span className="text-[10px] font-bold text-slate-600 bg-white border border-slate-200 px-2.5 py-0.5 rounded-full self-start sm:self-auto shrink-0 whitespace-nowrap">
                   4 Cocard Khusus
                 </span>
               </div>

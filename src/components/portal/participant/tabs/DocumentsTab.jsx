@@ -85,7 +85,7 @@ export default function DocumentsTab({
   const actionRequired = totalFiles - completedFiles;
 
   return (
-    <section className="rounded-[26px] border border-slate-200/80 bg-white p-5 shadow-[0_18px_46px_rgba(15,23,42,0.06)] sm:p-7 space-y-6">
+    <section className="rounded-2xl sm:rounded-[26px] border border-slate-200/80 bg-white p-4 sm:p-7 shadow-[0_18px_46px_rgba(15,23,42,0.06)] space-y-6">
       {/* Panel Header */}
       <div className="flex flex-col gap-4 border-b border-slate-100 pb-5 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3.5">
@@ -111,24 +111,24 @@ export default function DocumentsTab({
         </div>
 
         {/* Sub-tab Switcher: Unggah Berkas vs Unduhan Resmi */}
-        <div className="flex items-center bg-slate-100 p-1 rounded-2xl border border-slate-200/80 shrink-0">
+        <div className="w-full sm:w-auto grid grid-cols-2 sm:flex items-center bg-slate-100 p-1 rounded-2xl border border-slate-200/80 shrink-0">
           <button
             type="button"
             onClick={() => setActiveSubTab('upload')}
-            className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+            className={`flex items-center justify-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
               activeSubTab === 'upload'
                 ? 'bg-white text-slate-950 shadow-xs'
                 : 'text-slate-600 hover:text-slate-950'
             }`}
           >
-            <Upload className="w-3.5 h-3.5" />
-            <span>Unggah Berkas</span>
+            <Upload className="w-3.5 h-3.5 shrink-0" />
+            <span>Unggah<span className="hidden min-[380px]:inline"> Berkas</span></span>
             {actionRequired > 0 ? (
-              <span className="px-1.5 py-0.5 text-[9px] font-black rounded-md bg-amber-100 text-amber-800">
+              <span className="px-1.5 py-0.5 text-[9px] font-black rounded-md bg-amber-100 text-amber-800 shrink-0">
                 {actionRequired} Belum
               </span>
             ) : (
-              <span className="px-1.5 py-0.5 text-[9px] font-black rounded-md bg-emerald-100 text-emerald-800">
+              <span className="px-1.5 py-0.5 text-[9px] font-black rounded-md bg-emerald-100 text-emerald-800 shrink-0">
                 Lengkap
               </span>
             )}
@@ -136,14 +136,14 @@ export default function DocumentsTab({
           <button
             type="button"
             onClick={() => setActiveSubTab('download')}
-            className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+            className={`flex items-center justify-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
               activeSubTab === 'download'
                 ? 'bg-blue-600 text-white shadow-xs'
                 : 'text-slate-600 hover:text-slate-950'
             }`}
           >
-            <Download className="w-3.5 h-3.5" />
-            <span>Unduhan Resmi</span>
+            <Download className="w-3.5 h-3.5 shrink-0" />
+            <span>Unduhan<span className="hidden min-[380px]:inline"> Resmi</span></span>
           </button>
         </div>
       </div>

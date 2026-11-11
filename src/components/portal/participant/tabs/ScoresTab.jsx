@@ -6,7 +6,6 @@ import {
   AlertCircle,
   CheckCircle2,
   Trophy,
-  Printer,
   ShieldCheck,
   Star,
   Sparkles,
@@ -319,15 +318,7 @@ export default function ScoresTab({ teamScore, currentTeam }) {
               <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
               <span>Nilai Sah &amp; Terverifikasi</span>
             </span>
-            <button
-              type="button"
-              onClick={() => window.print()}
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-950 text-xs font-bold transition-all shadow-2xs cursor-pointer active:scale-95"
-              title="Cetak Berita Acara & Lembar Nilai Resmi"
-            >
-              <Printer className="w-3.5 h-3.5 text-slate-500" />
-              <span>Cetak Nilai</span>
-            </button>
+            
           </div>
         )}
       </div>
@@ -337,26 +328,21 @@ export default function ScoresTab({ teamScore, currentTeam }) {
           {/* Dual Executive Championship Scoreboard (Peleton & Komandan Terpisah Sesuai Juknis Bab A.3) */}
           <div className="grid gap-5 lg:grid-cols-2">
             {/* 1. KATEGORI PELETON */}
-            <div className="overflow-hidden rounded-3xl bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-6 sm:p-7 text-white relative shadow-xl border border-white/10 flex flex-col justify-between">
+            <div className="overflow-hidden rounded-3xl bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-5 sm:p-6 text-white relative shadow-xl border border-white/10 flex flex-col justify-between">
               <div className="absolute -right-12 -top-12 h-44 w-44 rounded-full bg-blue-500/10 blur-3xl pointer-events-none" />
               <div className="absolute -left-12 -bottom-12 h-44 w-44 rounded-full bg-teal-500/10 blur-3xl pointer-events-none" />
 
-              <div className="relative z-10 space-y-4">
-                <div className="flex items-center justify-between gap-2 border-b border-white/10 pb-3">
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-black uppercase tracking-[0.16em] text-blue-400 bg-blue-400/10 px-2.5 py-0.5 rounded-md border border-blue-400/20">
-                      NILAI AKHIR PELETON (PBB)
-                    </span>
-                    <span className="text-[10px] text-slate-400 font-medium">
-                      {materialsCount} Gerakan
-                    </span>
-                  </div>
-                  <span className="text-[9.5px] font-bold text-slate-400 uppercase tracking-wider">
-                    Juknis Bab A.3.c
+              <div className="relative z-10 space-y-3.5">
+                <div className="flex items-center justify-between gap-2 border-b border-white/10 pb-2.5">
+                  <span className="text-[10px] font-black uppercase tracking-[0.14em] text-blue-400 bg-blue-400/10 px-2.5 py-0.5 rounded-md border border-blue-400/20">
+                    NILAI AKHIR PELETON
+                  </span>
+                  <span className="text-[11px] text-slate-400 font-semibold">
+                    {materialsCount} Gerakan
                   </span>
                 </div>
 
-                <div className="flex items-end justify-between gap-4">
+                <div className="flex items-center justify-between gap-4 pt-1">
                   <div>
                     <div className="flex items-baseline gap-2">
                       <span className="text-5xl sm:text-6xl font-black font-mono tracking-tight text-white drop-shadow-sm">
@@ -366,65 +352,58 @@ export default function ScoresTab({ teamScore, currentTeam }) {
                         POIN
                       </span>
                     </div>
-                    <p className="text-[10.5px] text-slate-400 font-mono mt-1">
-                      Formula: Nilai Murni ({peletonMurniTotal}) - Penalti ({peletonPenaltyTotal})
-                    </p>
+                    {peletonPenaltyTotal > 0 && (
+                      <p className="text-xs text-rose-400 font-bold mt-1 font-mono">
+                        Penalti: -{peletonPenaltyTotal} Poin
+                      </p>
+                    )}
                   </div>
 
                   {teamScore.rank && (
-                    <div className="rounded-2xl p-3 sm:p-4 text-center shrink-0 backdrop-blur-md border border-amber-400/40 bg-gradient-to-b from-amber-400/20 to-amber-500/10 shadow-[0_8px_20px_rgba(251,191,36,0.12)] ring-1 ring-amber-300/30 min-w-[120px]">
+                    <div className="rounded-2xl p-3 sm:p-3.5 text-center shrink-0 backdrop-blur-md border border-amber-400/40 bg-gradient-to-b from-amber-400/20 to-amber-500/10 shadow-[0_8px_20px_rgba(251,191,36,0.12)] ring-1 ring-amber-300/30 min-w-[110px]">
                       <div className="flex items-center justify-center gap-1 mb-1">
                         <Trophy className="w-3.5 h-3.5 text-amber-300" />
-                        <p className="text-[8.5px] font-black uppercase tracking-wider text-amber-300">
-                          {teamScore.awardTitle || (teamScore.rank === 1 ? 'JUARA 1 PELETON' : `PERINGKAT #${teamScore.rank}`)}
+                        <p className="text-[9px] font-black uppercase tracking-wider text-amber-300">
+                          {teamScore.awardTitle || (teamScore.rank === 1 ? 'JUARA 1' : `PERINGKAT`)}
                         </p>
                       </div>
                       <p className="text-3xl sm:text-4xl font-black text-white font-mono tracking-tight leading-none">
                         #{teamScore.rank}
                       </p>
-                      <span className="text-[8.5px] font-bold text-slate-300 block mt-1 uppercase tracking-wider">
-                        Klasemen Peleton {isSMP ? 'SMP' : 'SD'}
-                      </span>
                     </div>
                   )}
                 </div>
               </div>
 
-              <div className="mt-5 pt-3 border-t border-white/10 flex items-center justify-between text-[11px] font-mono text-slate-300 relative z-10">
-                <div className="flex items-center gap-2">
-                  <span className="text-slate-400 font-sans text-[10px]">Pos 1 / 2 / 3:</span>
-                  <span className="font-bold text-white">{totalJ1} / {totalJ2} / {totalJ3}</span>
-                </div>
+              <div className="mt-4 pt-2.5 border-t border-white/10 flex items-center justify-between text-[11px] font-mono text-slate-300 relative z-10">
                 <div className="flex items-center gap-1.5">
-                  <span className="text-slate-400 font-sans text-[10px]">Penalti:</span>
-                  <span className={`font-bold ${peletonPenaltyTotal > 0 ? 'text-red-400' : 'text-emerald-400'}`}>
-                    {peletonPenaltyTotal > 0 ? `-${peletonPenaltyTotal} Poin` : '0 Poin (Bersih)'}
-                  </span>
+                  <span className="text-slate-500 font-sans text-[10px]">Skor Juri:</span>
+                  <span className="font-bold text-slate-200">{totalJ1} • {totalJ2} • {totalJ3}</span>
                 </div>
+                {peletonPenaltyTotal > 0 ? (
+                  <span className="font-bold text-rose-400">-{peletonPenaltyTotal} Penalti</span>
+                ) : (
+                  <span className="text-[10px] font-sans font-semibold text-emerald-400">Bebas Penalti</span>
+                )}
               </div>
             </div>
 
             {/* 2. KATEGORI KOMANDAN */}
-            <div className="overflow-hidden rounded-3xl bg-gradient-to-br from-slate-950 via-slate-900 to-stone-950 p-6 sm:p-7 text-white relative shadow-xl border border-white/10 flex flex-col justify-between">
+            <div className="overflow-hidden rounded-3xl bg-gradient-to-br from-slate-950 via-slate-900 to-stone-950 p-5 sm:p-6 text-white relative shadow-xl border border-white/10 flex flex-col justify-between">
               <div className="absolute -right-12 -top-12 h-44 w-44 rounded-full bg-amber-500/10 blur-3xl pointer-events-none" />
               <div className="absolute -left-12 -bottom-12 h-44 w-44 rounded-full bg-rose-500/10 blur-3xl pointer-events-none" />
 
-              <div className="relative z-10 space-y-4">
-                <div className="flex items-center justify-between gap-2 border-b border-white/10 pb-3">
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-black uppercase tracking-[0.16em] text-amber-400 bg-amber-400/10 px-2.5 py-0.5 rounded-md border border-amber-400/20">
-                      NILAI AKHIR KOMANDAN
-                    </span>
-                    <span className="text-[10px] text-slate-400 font-medium">
-                      4 Aspek Rubrik
-                    </span>
-                  </div>
-                  <span className="text-[9.5px] font-bold text-slate-400 uppercase tracking-wider">
-                    Juknis Bab A.3.c
+              <div className="relative z-10 space-y-3.5">
+                <div className="flex items-center justify-between gap-2 border-b border-white/10 pb-2.5">
+                  <span className="text-[10px] font-black uppercase tracking-[0.14em] text-amber-400 bg-amber-400/10 px-2.5 py-0.5 rounded-md border border-amber-400/20">
+                    NILAI AKHIR KOMANDAN
+                  </span>
+                  <span className="text-[11px] text-slate-400 font-semibold">
+                    4 Aspek Rubrik
                   </span>
                 </div>
 
-                <div className="flex items-end justify-between gap-4">
+                <div className="flex items-center justify-between gap-4 pt-1">
                   <div>
                     <div className="flex items-baseline gap-2">
                       <span className="text-5xl sm:text-6xl font-black font-mono tracking-tight text-white drop-shadow-sm">
@@ -434,39 +413,37 @@ export default function ScoresTab({ teamScore, currentTeam }) {
                         POIN
                       </span>
                     </div>
-                    <p className="text-[10.5px] text-slate-400 font-mono mt-1">
-                      Formula: Nilai Murni ({dantonMurniTotal}) - Penalti ({dantonPenaltyTotal})
-                    </p>
+                    {dantonPenaltyTotal > 0 && (
+                      <p className="text-xs text-rose-400 font-bold mt-1 font-mono">
+                        Penalti: -{dantonPenaltyTotal} Poin
+                      </p>
+                    )}
                   </div>
 
-                  <div className="rounded-2xl p-3 sm:p-4 text-center shrink-0 backdrop-blur-md border border-amber-400/40 bg-gradient-to-b from-amber-400/20 to-amber-500/10 shadow-[0_8px_20px_rgba(251,191,36,0.12)] ring-1 ring-amber-300/30 min-w-[120px]">
+                  <div className="rounded-2xl p-3 sm:p-3.5 text-center shrink-0 backdrop-blur-md border border-amber-400/40 bg-gradient-to-b from-amber-400/20 to-amber-500/10 shadow-[0_8px_20px_rgba(251,191,36,0.12)] ring-1 ring-amber-300/30 min-w-[110px]">
                     <div className="flex items-center justify-center gap-1 mb-1">
                       <Award className="w-3.5 h-3.5 text-amber-300" />
-                      <p className="text-[8.5px] font-black uppercase tracking-wider text-amber-300">
+                      <p className="text-[9px] font-black uppercase tracking-wider text-amber-300">
                         DANTON TERBAIK
                       </p>
                     </div>
                     <p className="text-3xl sm:text-4xl font-black text-white font-mono tracking-tight leading-none">
                       #1
                     </p>
-                    <span className="text-[8.5px] font-bold text-slate-300 block mt-1 uppercase tracking-wider">
-                      Klasemen Danton {isSMP ? 'SMP' : 'SD'}
-                    </span>
                   </div>
                 </div>
               </div>
 
-              <div className="mt-5 pt-3 border-t border-white/10 flex items-center justify-between text-[11px] font-mono text-slate-300 relative z-10">
-                <div className="flex items-center gap-2">
-                  <span className="text-slate-400 font-sans text-[10px]">Pos 1 / 2 / 3:</span>
-                  <span className="font-bold text-white">{dantonData.t1} / {dantonData.t2} / {dantonData.t3}</span>
-                </div>
+              <div className="mt-4 pt-2.5 border-t border-white/10 flex items-center justify-between text-[11px] font-mono text-slate-300 relative z-10">
                 <div className="flex items-center gap-1.5">
-                  <span className="text-slate-400 font-sans text-[10px]">Penalti:</span>
-                  <span className={`font-bold ${dantonPenaltyTotal > 0 ? 'text-red-400' : 'text-emerald-400'}`}>
-                    {dantonPenaltyTotal > 0 ? `-${dantonPenaltyTotal} Poin` : '0 Poin (Bersih)'}
-                  </span>
+                  <span className="text-slate-500 font-sans text-[10px]">Skor Juri:</span>
+                  <span className="font-bold text-slate-200">{dantonData.t1} • {dantonData.t2} • {dantonData.t3}</span>
                 </div>
+                {dantonPenaltyTotal > 0 ? (
+                  <span className="font-bold text-rose-400">-{dantonPenaltyTotal} Penalti</span>
+                ) : (
+                  <span className="text-[10px] font-sans font-semibold text-emerald-400">Bebas Penalti</span>
+                )}
               </div>
             </div>
           </div>
@@ -474,48 +451,50 @@ export default function ScoresTab({ teamScore, currentTeam }) {
           {/* ============================================================== */}
           {/* SECTION 1: LEMBAR CATATAN WAKTU RESMI (OFFICIAL TIMEKEEPER)   */}
           {/* ============================================================== */}
-          <div className="bg-white rounded-3xl border border-slate-200/90 shadow-sm p-5 sm:p-6 space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3.5 border-b border-slate-100 gap-3">
-              <div className="flex items-center gap-3">
-                <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-500 text-slate-950 font-black shadow-xs shrink-0">
-                  <Timer className="w-5 h-5 text-slate-950" />
+          <div className="bg-white rounded-2xl sm:rounded-3xl border border-slate-200/90 shadow-2xs p-3.5 sm:p-4.5 space-y-2.5">
+            {/* Header: Compact One-Liner with Badge & Kuota */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-500 text-slate-950 font-black shadow-2xs shrink-0">
+                  <Timer className="w-4 h-4 text-slate-950" />
                 </span>
-                <div>
+                <div className="min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <h3 className="font-black text-xs sm:text-sm uppercase tracking-wide text-slate-900">
-                      LEMBAR CATATAN WAKTU ARENA (OFFICIAL TIMEKEEPER)
+                    <h3 className="font-black text-xs sm:text-sm uppercase tracking-wide text-slate-900 truncate">
+                      Catatan Waktu Arena
                     </h3>
-                    <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-md border ${
-                      isOvertime ? 'bg-red-50 text-red-700 border-red-200' : 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                    <span className="text-[10px] text-slate-400 font-bold hidden md:inline">• Official Timekeeper</span>
+                    <span className={`inline-flex items-center gap-1.5 text-[9.5px] font-bold px-2 py-0.5 rounded-full border shrink-0 ${
+                      isOvertime
+                        ? 'bg-red-50 text-red-700 border-red-200'
+                        : 'bg-emerald-50 text-emerald-800 border-emerald-200'
                     }`}>
-                      {isOvertime ? 'Overtime (Melebihi Batas)' : 'Waktu Sah (Aman)'}
+                      <span className={`w-1.5 h-1.5 rounded-full ${isOvertime ? 'bg-red-500 animate-ping' : 'bg-emerald-500'}`} />
+                      {isOvertime ? 'Overtime (+Pinalti)' : 'Waktu Sah (Aman)'}
                     </span>
                   </div>
-                  <p className="text-[11px] text-slate-500 mt-0.5">
-                    Dicatat langsung oleh Dewan Timekeeper dari aba-aba pelaksanaan Laporan Pembuka s.d. Laporan Penutup.
-                  </p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 shrink-0">
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">KUOTA RESMI:</span>
-                <span className="font-mono font-black text-xs text-slate-800 bg-slate-100 px-2.5 py-1 rounded-xl border border-slate-200">
-                  Maksimal {formatTime(maxTimeSeconds)} Menit ({isSMP ? 'SMP' : 'SD'})
+              <div className="flex items-center justify-between sm:justify-end gap-2 text-[10.5px] font-mono shrink-0">
+                <span className="text-[10px] text-slate-400 uppercase font-semibold">Batas Kuota:</span>
+                <span className="font-black text-slate-800 bg-slate-100 px-2 py-0.5 rounded-lg border border-slate-200 text-[10.5px]">
+                  Maks. {formatTime(maxTimeSeconds)} ({isSMP ? 'SMP' : 'SD'})
                 </span>
               </div>
             </div>
 
-            {/* Visual Progress Bar Timeline */}
-            <div className="bg-slate-50 rounded-2xl p-3 border border-slate-200/80 space-y-1.5">
-              <div className="flex items-center justify-between text-[10.5px] font-mono">
-                <span className="font-bold text-slate-700">
-                  Penggunaan Waktu Arena: <strong className="text-slate-950">{formatTime(elapsedSeconds)}</strong> / {formatTime(maxTimeSeconds)}
+            {/* Visual Progress Bar - Slim & High-Contrast */}
+            <div className="bg-slate-50/90 rounded-xl px-3 py-2 border border-slate-200/70 space-y-1">
+              <div className="flex items-center justify-between text-[11px] font-mono">
+                <span className="text-slate-600 font-semibold text-[10.5px]">
+                  Penggunaan Waktu: <strong className="text-slate-900 font-black font-mono">{formatTime(elapsedSeconds)}</strong> / {formatTime(maxTimeSeconds)}
                 </span>
-                <span className={`font-bold ${isOvertime ? 'text-red-700' : 'text-emerald-700'}`}>
-                  {isOvertime ? `Overtime +${formatTime(overtimeSeconds)}` : `Tersisa ${Math.max(0, maxTimeSeconds - elapsedSeconds)} detik aman`}
+                <span className={`font-bold text-[10.5px] ${isOvertime ? 'text-red-700' : 'text-emerald-700'}`}>
+                  {isOvertime ? `+${formatTime(overtimeSeconds)} Detik Melebihi Kuota` : `Tersisa ${Math.max(0, maxTimeSeconds - elapsedSeconds)} detik aman`}
                 </span>
               </div>
-              <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden flex">
+              <div className="w-full bg-slate-200/90 h-1.5 rounded-full overflow-hidden flex">
                 <div
                   className={`h-full transition-all duration-500 rounded-full ${
                     isOvertime ? 'bg-red-600' : 'bg-gradient-to-r from-teal-500 to-emerald-500'
@@ -525,58 +504,86 @@ export default function ScoresTab({ teamScore, currentTeam }) {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              <div className="p-3.5 rounded-2xl bg-slate-50/70 border border-slate-200/80">
-                <span className="text-[9.5px] font-bold text-slate-400 uppercase tracking-wider block">
+            {/* 4 Compact Dashboard HUD Metric Cards */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-2.5">
+              {/* Card 1: Durasi Tampil Bersih */}
+              <div className="p-2.5 sm:p-3 rounded-xl bg-slate-50/80 border border-slate-200/80 flex flex-col justify-between">
+                <span className="text-[9px] font-black text-slate-400 uppercase tracking-wider block">
                   DURASI TAMPIL BERSIH
                 </span>
-                <span className="text-2xl font-mono font-black text-slate-900 block mt-1">
-                  {formatTime(elapsedSeconds)} <span className="text-xs font-sans font-medium text-slate-500">mnt</span>
-                </span>
-                <span className="text-[10px] text-slate-400 font-mono mt-0.5 block">
-                  ({elapsedSeconds} Detik)
+                <div className="flex items-baseline gap-1 my-0.5">
+                  <span className="text-xl sm:text-2xl font-mono font-black text-slate-900 leading-none">
+                    {formatTime(elapsedSeconds)}
+                  </span>
+                  <span className="text-[10px] font-semibold text-slate-500">mnt</span>
+                </div>
+                <span className="text-[9.5px] text-slate-400 font-mono">
+                  {elapsedSeconds} Detik
                 </span>
               </div>
 
-              <div className="p-3.5 rounded-2xl bg-slate-50/70 border border-slate-200/80">
-                <span className="text-[9.5px] font-bold text-slate-400 uppercase tracking-wider block">
+              {/* Card 2: Batas Waktu Maksimal */}
+              <div className="p-2.5 sm:p-3 rounded-xl bg-slate-50/80 border border-slate-200/80 flex flex-col justify-between">
+                <span className="text-[9px] font-black text-slate-400 uppercase tracking-wider block">
                   BATAS WAKTU MAKSIMAL
                 </span>
-                <span className="text-2xl font-mono font-black text-slate-900 block mt-1">
-                  {formatTime(maxTimeSeconds)} <span className="text-xs font-sans font-medium text-slate-500">mnt</span>
-                </span>
-                <span className="text-[10px] text-slate-400 font-mono mt-0.5 block">
-                  ({maxTimeSeconds} Detik)
+                <div className="flex items-baseline gap-1 my-0.5">
+                  <span className="text-xl sm:text-2xl font-mono font-black text-slate-900 leading-none">
+                    {formatTime(maxTimeSeconds)}
+                  </span>
+                  <span className="text-[10px] font-semibold text-slate-500">mnt</span>
+                </div>
+                <span className="text-[9.5px] text-slate-400 font-mono">
+                  {maxTimeSeconds} Detik
                 </span>
               </div>
 
-              <div className="p-3.5 rounded-2xl bg-slate-50/70 border border-slate-200/80">
-                <span className="text-[9.5px] font-bold text-slate-400 uppercase tracking-wider block">
-                  SELISIH KELEBIHAN (OVERTIME)
+              {/* Card 3: Selisih Kelebihan (Overtime) */}
+              <div className={`p-2.5 sm:p-3 rounded-xl border flex flex-col justify-between ${
+                isOvertime ? 'bg-red-50/50 border-red-200' : 'bg-emerald-50/40 border-emerald-200/70'
+              }`}>
+                <span className={`text-[9px] font-black uppercase tracking-wider block ${
+                  isOvertime ? 'text-red-500' : 'text-emerald-700/70'
+                }`}>
+                  SELISIH OVERTIME
                 </span>
-                <span className={`text-2xl font-mono font-black block mt-1 ${isOvertime ? 'text-red-700' : 'text-emerald-700'}`}>
-                  {isOvertime ? `+${formatTime(overtimeSeconds)}` : '00:00'}
-                </span>
-                <span className={`text-[10px] font-semibold mt-0.5 block ${isOvertime ? 'text-red-600' : 'text-emerald-600'}`}>
+                <div className="flex items-baseline gap-1 my-0.5">
+                  <span className={`text-xl sm:text-2xl font-mono font-black leading-none ${
+                    isOvertime ? 'text-red-700' : 'text-emerald-700'
+                  }`}>
+                    {isOvertime ? `+${formatTime(overtimeSeconds)}` : '00:00'}
+                  </span>
+                </div>
+                <span className={`text-[9.5px] font-semibold truncate ${
+                  isOvertime ? 'text-red-600' : 'text-emerald-700'
+                }`}>
                   {isOvertime ? `${Math.ceil(overtimeSeconds / 30)} Blok × -20 Poin` : 'Tidak Ada Kelebihan'}
                 </span>
               </div>
 
-              <div className="p-3.5 rounded-2xl bg-slate-50/70 border border-slate-200/80">
-                <span className="text-[9.5px] font-bold text-slate-400 uppercase tracking-wider block">
-                  SANKSI PENALTI WAKTU
+              {/* Card 4: Sanksi Penalti Waktu */}
+              <div className={`p-2.5 sm:p-3 rounded-xl border flex flex-col justify-between ${
+                overTimeBlocks > 0 ? 'bg-red-50/50 border-red-200' : 'bg-emerald-50/40 border-emerald-200/70'
+              }`}>
+                <span className={`text-[9px] font-black uppercase tracking-wider block ${
+                  overTimeBlocks > 0 ? 'text-red-500' : 'text-emerald-700/70'
+                }`}>
+                  PENALTI WAKTU
                 </span>
-                <span className={`text-2xl font-mono font-black block mt-1 ${overTimeBlocks > 0 ? 'text-red-700' : 'text-emerald-700'}`}>
-                  {overTimeBlocks > 0 ? `-${overTimeBlocks * 20}` : '0 Poin'}
-                </span>
-                <span className="text-[10px] text-slate-400 font-semibold mt-0.5 block">
-                  Regulasi Bab A.3 &amp; Bab C
+                <div className="flex items-baseline gap-1 my-0.5">
+                  <span className={`text-xl sm:text-2xl font-mono font-black leading-none ${
+                    overTimeBlocks > 0 ? 'text-red-700' : 'text-emerald-700'
+                  }`}>
+                    {overTimeBlocks > 0 ? `-${overTimeBlocks * 20}` : '0 Poin'}
+                  </span>
+                </div>
+                <span className="text-[9.5px] text-slate-400 font-semibold truncate">
+                  Regulasi Bab A.3 &amp; C
                 </span>
               </div>
             </div>
           </div>
 
-          {/* ============================================================== */}
           {/* SECTION 2: LEMBAR PENILAIAN PELETON (FORMAT APLIKASI JURI)     */}
           {/* ============================================================== */}
           <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden space-y-4 p-4 sm:p-6">
@@ -715,23 +722,23 @@ export default function ScoresTab({ teamScore, currentTeam }) {
                   <thead className="sticky top-0 z-20 bg-slate-100 shadow-xs">
                     {/* Baris 1: Header Predikat Baku */}
                     <tr className="border-b border-slate-200 text-xs font-black uppercase text-center">
-                      <th rowSpan={2} className="py-3 px-3 w-12 text-center text-slate-600 bg-slate-100 border-r border-slate-200">No</th>
-                      <th rowSpan={2} className="py-3 px-3.5 text-left text-slate-800 bg-slate-100 border-r border-slate-200 min-w-[220px]">Materi Gerakan Perlombaan</th>
-                      <th rowSpan={2} className="py-3 px-2 bg-rose-100 text-rose-900 border-r border-slate-200 text-center w-16">0 / TL</th>
-                      <th className="py-2 px-3 bg-slate-700 text-white border-r border-slate-600 text-center tracking-wider text-xs">KURANG SEKALI</th>
-                      <th className="py-2 px-3 bg-red-600 text-white border-r border-red-500 text-center tracking-wider text-xs">KURANG</th>
-                      <th className="py-2 px-3 bg-amber-500 text-slate-950 font-black border-r border-amber-400 text-center tracking-wider text-xs">CUKUP</th>
-                      <th className="py-2 px-3 bg-emerald-600 text-white border-r border-emerald-500 text-center tracking-wider text-xs">BAIK</th>
-                      <th className="py-2 px-3 bg-blue-600 text-white border-r border-blue-500 text-center tracking-wider text-xs">BAIK SEKALI</th>
-                      <th rowSpan={2} className="py-3 px-3 text-center w-24 bg-slate-100 text-slate-900 font-black text-sm">Skor</th>
+                      <th rowSpan={2} className="py-3 px-3 w-8 text-center text-slate-600 bg-slate-100 border-r border-slate-200 text-xs">No</th>
+                      <th rowSpan={2} className="py-1.5 px-2 text-left text-slate-800 bg-slate-100 border-r border-slate-200 min-w-[130px] max-w-[190px]">Materi Gerakan Perlombaan</th>
+                      <th rowSpan={2} className="py-1.5 px-1 bg-rose-100 text-rose-900 border-r border-slate-200 text-center w-10">0/TL</th>
+                      <th className="py-1 px-1 text-[10px] sm:text-[11px] bg-slate-700 text-white border-r border-slate-600 text-center tracking-wider text-xs">KURANG SEKALI</th>
+                      <th className="py-1 px-1 text-[10px] sm:text-[11px] bg-red-600 text-white border-r border-red-500 text-center tracking-wider text-xs">KURANG</th>
+                      <th className="py-1 px-1 text-[10px] sm:text-[11px] bg-amber-500 text-slate-950 font-black border-r border-amber-400 text-center tracking-wider text-xs">CUKUP</th>
+                      <th className="py-1 px-1 text-[10px] sm:text-[11px] bg-emerald-600 text-white border-r border-emerald-500 text-center tracking-wider text-xs">BAIK</th>
+                      <th className="py-1 px-1 text-[10px] sm:text-[11px] bg-blue-600 text-white border-r border-blue-500 text-center tracking-wider text-xs">BAIK SEKALI</th>
+                      <th rowSpan={2} className="py-3 px-3 text-center w-14 sm:w-16 bg-slate-100 text-slate-900 font-black text-xs">Skor</th>
                     </tr>
                     {/* Baris 2: Sub-info predikat */}
                     <tr className="text-[11px] font-mono border-b border-slate-200 text-center">
-                      <th className="py-1 px-2 bg-slate-50 text-slate-700 border-r border-slate-200 font-semibold">Taraf KS (50-55-60)</th>
-                      <th className="py-1 px-2 bg-red-50 text-red-700 border-r border-slate-200 font-semibold">Taraf K</th>
-                      <th className="py-1 px-2 bg-amber-50 text-amber-800 border-r border-slate-200 font-semibold">Taraf C</th>
-                      <th className="py-1 px-2 bg-emerald-50 text-emerald-800 border-r border-slate-200 font-semibold">Taraf B</th>
-                      <th className="py-1 px-2 bg-blue-50 text-blue-800 border-r border-slate-200 font-semibold">Taraf BS</th>
+                      <th className="py-0.5 px-1 text-[9px] sm:text-[10px] bg-slate-50 text-slate-700 border-r border-slate-200 font-semibold">Taraf KS (50-60)</th>
+                      <th className="py-0.5 px-1 text-[9px] sm:text-[10px] bg-red-50 text-red-700 border-r border-slate-200 font-semibold">Taraf K</th>
+                      <th className="py-0.5 px-1 text-[9px] sm:text-[10px] bg-amber-50 text-amber-800 border-r border-slate-200 font-semibold">Taraf C</th>
+                      <th className="py-0.5 px-1 text-[9px] sm:text-[10px] bg-emerald-50 text-emerald-800 border-r border-slate-200 font-semibold">Taraf B</th>
+                      <th className="py-0.5 px-1 text-[9px] sm:text-[10px] bg-blue-50 text-blue-800 border-r border-slate-200 font-semibold">Taraf BS</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-200 bg-white">
@@ -748,19 +755,19 @@ export default function ScoresTab({ teamScore, currentTeam }) {
 
                       return (
                         <tr key={idx} className="hover:bg-slate-50/80 transition-colors">
-                          <td className="py-2.5 px-3 text-center font-bold text-slate-400 border-r border-slate-200 text-xs sm:text-sm">
+                          <td className="py-1 px-1 text-center font-bold text-slate-400 border-r border-slate-200 text-xs">
                             {row.index}
                           </td>
-                          <td className="py-2.5 px-3.5 font-semibold text-slate-800 border-r border-slate-200">
-                            <div className="text-xs sm:text-sm font-bold text-slate-900 leading-snug">{row.materiText}</div>
+                          <td className="py-1 px-2 font-semibold text-slate-800 border-r border-slate-200">
+                            <div className="text-xs font-bold text-slate-900 leading-tight">{row.materiText}</div>
                           </td>
 
                           {/* Tombol 0 (Terlewat) */}
-                          <td className="py-2 px-2 text-center bg-rose-50/30 border-r border-slate-200">
+                          <td className="py-1 px-1 text-center bg-rose-50/30 border-r border-slate-200">
                             <span
-                              className={`inline-flex items-center justify-center min-w-[36px] sm:min-w-[42px] h-8 sm:h-9 py-0.5 px-1.5 rounded-lg text-xs sm:text-sm font-mono font-black transition-all ${
+                              className={`inline-flex items-center justify-center min-w-[24px] sm:min-w-[28px] h-6 sm:h-7 px-0.5 rounded-md text-[10px] sm:text-[11px] font-mono font-bold transition-all ${
                                 isZero
-                                  ? 'bg-rose-700 text-white shadow-xs ring-2 ring-rose-400 scale-105'
+                                  ? 'bg-rose-700 text-white shadow-xs ring-2 ring-rose-400 scale-105 font-black'
                                   : 'bg-white text-slate-300 border border-slate-200 opacity-60'
                               }`}
                             >
@@ -769,16 +776,16 @@ export default function ScoresTab({ teamScore, currentTeam }) {
                           </td>
 
                           {/* KURANG SEKALI (KS: 50, 55, 60) */}
-                          <td className="py-2 px-2 text-center bg-slate-50/50 border-r border-slate-200">
-                            <div className="flex items-center justify-center gap-1 sm:gap-1.5">
+                          <td className="py-1 px-1 text-center bg-slate-50/50 border-r border-slate-200">
+                            <div className="flex items-center justify-center gap-0.5 sm:gap-1">
                               {ksItems.map((opt, oIdx) => {
                                 const isChosen = selectedVal === opt.val;
                                 return (
                                   <span
                                     key={oIdx}
-                                    className={`inline-flex items-center justify-center min-w-[34px] sm:min-w-[40px] h-8 sm:h-9 py-0.5 px-1 rounded-lg text-xs sm:text-sm font-mono font-black transition-all ${
+                                    className={`inline-flex items-center justify-center min-w-[24px] sm:min-w-[28px] h-6 sm:h-7 px-0.5 rounded-md text-[10px] sm:text-[11px] font-mono font-bold transition-all ${
                                       isChosen
-                                        ? 'bg-slate-800 text-white shadow-xs ring-2 ring-slate-400 scale-105'
+                                        ? 'bg-slate-800 text-white shadow-xs ring-2 ring-slate-400 scale-105 font-black'
                                         : 'bg-white text-slate-400 border border-slate-200/80'
                                     }`}
                                   >
@@ -790,16 +797,16 @@ export default function ScoresTab({ teamScore, currentTeam }) {
                           </td>
 
                           {/* KURANG (K: Merah) */}
-                          <td className="py-2 px-2 text-center bg-red-50/30 border-r border-slate-200">
-                            <div className="flex items-center justify-center gap-1 sm:gap-1.5">
+                          <td className="py-1 px-1 text-center bg-red-50/30 border-r border-slate-200">
+                            <div className="flex items-center justify-center gap-0.5 sm:gap-1">
                               {kItems.map((opt, oIdx) => {
                                 const isChosen = selectedVal === opt.val;
                                 return (
                                   <span
                                     key={oIdx}
-                                    className={`inline-flex items-center justify-center min-w-[34px] sm:min-w-[40px] h-8 sm:h-9 py-0.5 px-1 rounded-lg text-xs sm:text-sm font-mono font-black transition-all ${
+                                    className={`inline-flex items-center justify-center min-w-[24px] sm:min-w-[28px] h-6 sm:h-7 px-0.5 rounded-md text-[10px] sm:text-[11px] font-mono font-bold transition-all ${
                                       isChosen
-                                        ? 'bg-red-600 text-white shadow-xs ring-2 ring-red-400 scale-105'
+                                        ? 'bg-red-600 text-white shadow-xs ring-2 ring-red-400 scale-105 font-black'
                                         : 'bg-white text-slate-400 border border-slate-200/80'
                                     }`}
                                   >
@@ -811,16 +818,16 @@ export default function ScoresTab({ teamScore, currentTeam }) {
                           </td>
 
                           {/* CUKUP (C: Kuning) */}
-                          <td className="py-2 px-2 text-center bg-amber-50/30 border-r border-slate-200">
-                            <div className="flex items-center justify-center gap-1 sm:gap-1.5">
+                          <td className="py-1 px-1 text-center bg-amber-50/30 border-r border-slate-200">
+                            <div className="flex items-center justify-center gap-0.5 sm:gap-1">
                               {cItems.map((opt, oIdx) => {
                                 const isChosen = selectedVal === opt.val;
                                 return (
                                   <span
                                     key={oIdx}
-                                    className={`inline-flex items-center justify-center min-w-[34px] sm:min-w-[40px] h-8 sm:h-9 py-0.5 px-1 rounded-lg text-xs sm:text-sm font-mono font-black transition-all ${
+                                    className={`inline-flex items-center justify-center min-w-[24px] sm:min-w-[28px] h-6 sm:h-7 px-0.5 rounded-md text-[10px] sm:text-[11px] font-mono font-bold transition-all ${
                                       isChosen
-                                        ? 'bg-amber-500 text-slate-950 shadow-xs ring-2 ring-amber-300 scale-105'
+                                        ? 'bg-amber-500 text-slate-950 shadow-xs ring-2 ring-amber-300 scale-105 font-black'
                                         : 'bg-white text-slate-400 border border-slate-200/80'
                                     }`}
                                   >
@@ -832,16 +839,16 @@ export default function ScoresTab({ teamScore, currentTeam }) {
                           </td>
 
                           {/* BAIK (B: Hijau) */}
-                          <td className="py-2 px-2 text-center bg-emerald-50/30 border-r border-slate-200">
-                            <div className="flex items-center justify-center gap-1 sm:gap-1.5">
+                          <td className="py-1 px-1 text-center bg-emerald-50/30 border-r border-slate-200">
+                            <div className="flex items-center justify-center gap-0.5 sm:gap-1">
                               {bItems.map((opt, oIdx) => {
                                 const isChosen = selectedVal === opt.val;
                                 return (
                                   <span
                                     key={oIdx}
-                                    className={`inline-flex items-center justify-center min-w-[34px] sm:min-w-[40px] h-8 sm:h-9 py-0.5 px-1 rounded-lg text-xs sm:text-sm font-mono font-black transition-all ${
+                                    className={`inline-flex items-center justify-center min-w-[24px] sm:min-w-[28px] h-6 sm:h-7 px-0.5 rounded-md text-[10px] sm:text-[11px] font-mono font-bold transition-all ${
                                       isChosen
-                                        ? 'bg-emerald-600 text-white shadow-xs ring-2 ring-emerald-400 scale-105'
+                                        ? 'bg-emerald-600 text-white shadow-xs ring-2 ring-emerald-400 scale-105 font-black'
                                         : 'bg-white text-slate-400 border border-slate-200/80'
                                     }`}
                                   >
@@ -853,16 +860,16 @@ export default function ScoresTab({ teamScore, currentTeam }) {
                           </td>
 
                           {/* BAIK SEKALI (BS: Biru) */}
-                          <td className="py-2 px-2 text-center bg-blue-50/30 border-r border-slate-200">
-                            <div className="flex items-center justify-center gap-1 sm:gap-1.5">
+                          <td className="py-1 px-1 text-center bg-blue-50/30 border-r border-slate-200">
+                            <div className="flex items-center justify-center gap-0.5 sm:gap-1">
                               {bsItems.map((opt, oIdx) => {
                                 const isChosen = selectedVal === opt.val;
                                 return (
                                   <span
                                     key={oIdx}
-                                    className={`inline-flex items-center justify-center min-w-[34px] sm:min-w-[40px] h-8 sm:h-9 py-0.5 px-1 rounded-lg text-xs sm:text-sm font-mono font-black transition-all ${
+                                    className={`inline-flex items-center justify-center min-w-[24px] sm:min-w-[28px] h-6 sm:h-7 px-0.5 rounded-md text-[10px] sm:text-[11px] font-mono font-bold transition-all ${
                                       isChosen
-                                        ? 'bg-blue-600 text-white shadow-xs ring-2 ring-blue-400 scale-105'
+                                        ? 'bg-blue-600 text-white shadow-xs ring-2 ring-blue-400 scale-105 font-black'
                                         : 'bg-white text-slate-400 border border-slate-200/80'
                                     }`}
                                   >
@@ -874,7 +881,7 @@ export default function ScoresTab({ teamScore, currentTeam }) {
                           </td>
 
                           {/* Nilai Terpilih */}
-                          <td className={`py-2.5 px-3 text-center font-mono font-black text-base sm:text-lg border-l border-slate-200 ${
+                          <td className={`py-2.5 px-3 text-center font-mono font-black text-xs sm:text-sm border-l border-slate-200 ${
                             isZero ? 'text-rose-700 bg-rose-50/60' : 'text-slate-900 bg-slate-50'
                           }`}>
                             {selectedVal || '-'}
@@ -902,7 +909,7 @@ export default function ScoresTab({ teamScore, currentTeam }) {
                   <thead className="sticky top-0 z-20 bg-slate-100 text-slate-700 uppercase font-black text-[10px] tracking-wider border-b border-slate-200 shadow-xs">
                     <tr>
                       <th className="py-3 px-3 text-center w-12 border-r border-slate-200">No</th>
-                      <th className="py-3 px-3.5 min-w-[240px] border-r border-slate-200">Materi Gerakan Perlombaan</th>
+                      <th className="py-1.5 px-2 min-w-[240px] border-r border-slate-200">Materi Gerakan Perlombaan</th>
                       <th className="py-3 px-3 text-center w-24 border-r border-slate-200 bg-blue-50/80 text-blue-900">
                         Juri 1
                       </th>
@@ -1071,22 +1078,22 @@ export default function ScoresTab({ teamScore, currentTeam }) {
                 <table className="w-full text-xs text-left border-collapse">
                   <thead className="bg-slate-100 shadow-xs">
                     <tr className="border-b border-slate-200 text-xs font-black uppercase text-center">
-                      <th rowSpan={2} className="py-3 px-3 w-12 text-center text-slate-600 bg-slate-100 border-r border-slate-200">No</th>
-                      <th rowSpan={2} className="py-3 px-3.5 text-left text-slate-800 bg-slate-100 border-r border-slate-200 min-w-[200px]">Aspek Penilaian</th>
-                      <th rowSpan={2} className="py-3 px-2 text-center text-slate-700 bg-slate-100 border-r border-slate-200 w-16">Bobot</th>
-                      <th className="py-2 px-3 bg-slate-700 text-white border-r border-slate-600 text-center tracking-wider text-xs">KURANG SEKALI</th>
-                      <th className="py-2 px-3 bg-red-600 text-white border-r border-red-500 text-center tracking-wider text-xs">KURANG</th>
-                      <th className="py-2 px-3 bg-amber-500 text-slate-950 font-black border-r border-amber-400 text-center tracking-wider text-xs">CUKUP</th>
-                      <th className="py-2 px-3 bg-emerald-600 text-white border-r border-emerald-500 text-center tracking-wider text-xs">BAIK</th>
-                      <th className="py-2 px-3 bg-blue-600 text-white border-r border-blue-500 text-center tracking-wider text-xs">BAIK SEKALI</th>
-                      <th rowSpan={2} className="py-3 px-3 text-center w-24 bg-slate-100 text-slate-900 font-black text-sm">Nilai Mentah</th>
+                      <th rowSpan={2} className="py-3 px-3 w-8 text-center text-slate-600 bg-slate-100 border-r border-slate-200 text-xs">No</th>
+                      <th rowSpan={2} className="py-1.5 px-2 text-left text-slate-800 bg-slate-100 border-r border-slate-200 min-w-[120px] max-w-[170px]">Aspek Penilaian</th>
+                      <th rowSpan={2} className="py-1.5 px-1 text-center text-slate-700 bg-slate-100 border-r border-slate-200 w-16">Bobot</th>
+                      <th className="py-1 px-1 text-[10px] sm:text-[11px] bg-slate-700 text-white border-r border-slate-600 text-center tracking-wider text-xs">KURANG SEKALI</th>
+                      <th className="py-1 px-1 text-[10px] sm:text-[11px] bg-red-600 text-white border-r border-red-500 text-center tracking-wider text-xs">KURANG</th>
+                      <th className="py-1 px-1 text-[10px] sm:text-[11px] bg-amber-500 text-slate-950 font-black border-r border-amber-400 text-center tracking-wider text-xs">CUKUP</th>
+                      <th className="py-1 px-1 text-[10px] sm:text-[11px] bg-emerald-600 text-white border-r border-emerald-500 text-center tracking-wider text-xs">BAIK</th>
+                      <th className="py-1 px-1 text-[10px] sm:text-[11px] bg-blue-600 text-white border-r border-blue-500 text-center tracking-wider text-xs">BAIK SEKALI</th>
+                      <th rowSpan={2} className="py-3 px-3 text-center w-14 sm:w-16 bg-slate-100 text-slate-900 font-black text-xs">Nilai Mentah</th>
                     </tr>
                     <tr className="text-[11px] font-mono border-b border-slate-200 text-center">
-                      <th className="py-1 px-2 bg-slate-50 text-slate-700 border-r border-slate-200 font-semibold">Taraf KS (50-55-60)</th>
-                      <th className="py-1 px-2 bg-red-50 text-red-700 border-r border-slate-200 font-semibold">Taraf K (64-66-68)</th>
-                      <th className="py-1 px-2 bg-amber-50 text-amber-800 border-r border-slate-200 font-semibold">Taraf C (72-74-76)</th>
-                      <th className="py-1 px-2 bg-emerald-50 text-emerald-800 border-r border-slate-200 font-semibold">Taraf B (79-81-83)</th>
-                      <th className="py-1 px-2 bg-blue-50 text-blue-800 border-r border-slate-200 font-semibold">Taraf BS (86-88-90)</th>
+                      <th className="py-0.5 px-1 text-[9px] sm:text-[10px] bg-slate-50 text-slate-700 border-r border-slate-200 font-semibold">Taraf KS (50-60)</th>
+                      <th className="py-0.5 px-1 text-[9px] sm:text-[10px] bg-red-50 text-red-700 border-r border-slate-200 font-semibold">Taraf K (64-68)</th>
+                      <th className="py-0.5 px-1 text-[9px] sm:text-[10px] bg-amber-50 text-amber-800 border-r border-slate-200 font-semibold">Taraf C (72-76)</th>
+                      <th className="py-0.5 px-1 text-[9px] sm:text-[10px] bg-emerald-50 text-emerald-800 border-r border-slate-200 font-semibold">Taraf B (79-83)</th>
+                      <th className="py-0.5 px-1 text-[9px] sm:text-[10px] bg-blue-50 text-blue-800 border-r border-slate-200 font-semibold">Taraf BS (86-90)</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-200 bg-white">
@@ -1095,25 +1102,25 @@ export default function ScoresTab({ teamScore, currentTeam }) {
 
                       return (
                         <tr key={crit.id} className="hover:bg-slate-50/80 transition-colors">
-                          <td className="py-3 px-3 text-center font-bold text-slate-400 border-r border-slate-200 text-xs sm:text-sm">
+                          <td className="py-1 px-1 text-center font-bold text-slate-400 border-r border-slate-200 text-xs">
                             {idx + 1}
                           </td>
-                          <td className="py-3 px-3.5 font-semibold text-slate-900 border-r border-slate-200">
+                          <td className="py-1.5 px-2 font-semibold text-slate-900 border-r border-slate-200">
                             <div className="text-xs sm:text-sm font-bold">{crit.name}</div>
                           </td>
-                          <td className="py-3 px-2 text-center font-mono font-bold text-amber-800 border-r border-slate-200 bg-amber-50/30 text-xs sm:text-sm">
+                          <td className="py-1.5 px-1 text-center font-mono font-bold text-amber-800 border-r border-slate-200 bg-amber-50/30 text-xs sm:text-sm">
                             {crit.weightPercent}
                           </td>
 
                           {/* KS (50, 55, 60) */}
-                          <td className="py-2.5 px-2 text-center bg-slate-50/50 border-r border-slate-200">
-                            <div className="flex items-center justify-center gap-1.5">
+                          <td className="py-1 px-1 text-center bg-slate-50/50 border-r border-slate-200">
+                            <div className="flex items-center justify-center gap-0.5 sm:gap-1">
                               {dantonKsItems.map((opt, oIdx) => (
                                 <span
                                   key={oIdx}
-                                  className={`inline-flex items-center justify-center min-w-[36px] sm:min-w-[42px] h-8 sm:h-9 py-0.5 px-1 rounded-lg text-xs sm:text-sm font-mono font-black transition-all ${
+                                  className={`inline-flex items-center justify-center min-w-[24px] sm:min-w-[28px] h-6 sm:h-7 px-0.5 rounded-md text-[10px] sm:text-[11px] font-mono font-bold transition-all ${
                                     selectedVal === opt.val
-                                      ? 'bg-slate-800 text-white shadow-xs ring-2 ring-slate-400 scale-105'
+                                      ? 'bg-slate-800 text-white shadow-xs ring-2 ring-slate-400 scale-105 font-black'
                                       : 'bg-white text-slate-400 border border-slate-200/80'
                                   }`}
                                 >
@@ -1124,14 +1131,14 @@ export default function ScoresTab({ teamScore, currentTeam }) {
                           </td>
 
                           {/* K (64, 66, 68) */}
-                          <td className="py-2.5 px-2 text-center bg-red-50/30 border-r border-slate-200">
-                            <div className="flex items-center justify-center gap-1.5">
+                          <td className="py-1 px-1 text-center bg-red-50/30 border-r border-slate-200">
+                            <div className="flex items-center justify-center gap-0.5 sm:gap-1">
                               {dantonKItems.map((opt, oIdx) => (
                                 <span
                                   key={oIdx}
-                                  className={`inline-flex items-center justify-center min-w-[36px] sm:min-w-[42px] h-8 sm:h-9 py-0.5 px-1 rounded-lg text-xs sm:text-sm font-mono font-black transition-all ${
+                                  className={`inline-flex items-center justify-center min-w-[24px] sm:min-w-[28px] h-6 sm:h-7 px-0.5 rounded-md text-[10px] sm:text-[11px] font-mono font-bold transition-all ${
                                     selectedVal === opt.val
-                                      ? 'bg-red-600 text-white shadow-xs ring-2 ring-red-400 scale-105'
+                                      ? 'bg-red-600 text-white shadow-xs ring-2 ring-red-400 scale-105 font-black'
                                       : 'bg-white text-slate-400 border border-slate-200/80'
                                   }`}
                                 >
@@ -1142,14 +1149,14 @@ export default function ScoresTab({ teamScore, currentTeam }) {
                           </td>
 
                           {/* C (72, 74, 76) */}
-                          <td className="py-2.5 px-2 text-center bg-amber-50/30 border-r border-slate-200">
-                            <div className="flex items-center justify-center gap-1.5">
+                          <td className="py-1 px-1 text-center bg-amber-50/30 border-r border-slate-200">
+                            <div className="flex items-center justify-center gap-0.5 sm:gap-1">
                               {dantonCItems.map((opt, oIdx) => (
                                 <span
                                   key={oIdx}
-                                  className={`inline-flex items-center justify-center min-w-[36px] sm:min-w-[42px] h-8 sm:h-9 py-0.5 px-1 rounded-lg text-xs sm:text-sm font-mono font-black transition-all ${
+                                  className={`inline-flex items-center justify-center min-w-[24px] sm:min-w-[28px] h-6 sm:h-7 px-0.5 rounded-md text-[10px] sm:text-[11px] font-mono font-bold transition-all ${
                                     selectedVal === opt.val
-                                      ? 'bg-amber-500 text-slate-950 shadow-xs ring-2 ring-amber-300 scale-105'
+                                      ? 'bg-amber-500 text-slate-950 shadow-xs ring-2 ring-amber-300 scale-105 font-black'
                                       : 'bg-white text-slate-400 border border-slate-200/80'
                                   }`}
                                 >
@@ -1160,14 +1167,14 @@ export default function ScoresTab({ teamScore, currentTeam }) {
                           </td>
 
                           {/* B (79, 81, 83) */}
-                          <td className="py-2.5 px-2 text-center bg-emerald-50/30 border-r border-slate-200">
-                            <div className="flex items-center justify-center gap-1.5">
+                          <td className="py-1 px-1 text-center bg-emerald-50/30 border-r border-slate-200">
+                            <div className="flex items-center justify-center gap-0.5 sm:gap-1">
                               {dantonBItems.map((opt, oIdx) => (
                                 <span
                                   key={oIdx}
-                                  className={`inline-flex items-center justify-center min-w-[36px] sm:min-w-[42px] h-8 sm:h-9 py-0.5 px-1 rounded-lg text-xs sm:text-sm font-mono font-black transition-all ${
+                                  className={`inline-flex items-center justify-center min-w-[24px] sm:min-w-[28px] h-6 sm:h-7 px-0.5 rounded-md text-[10px] sm:text-[11px] font-mono font-bold transition-all ${
                                     selectedVal === opt.val
-                                      ? 'bg-emerald-600 text-white shadow-xs ring-2 ring-emerald-400 scale-105'
+                                      ? 'bg-emerald-600 text-white shadow-xs ring-2 ring-emerald-400 scale-105 font-black'
                                       : 'bg-white text-slate-400 border border-slate-200/80'
                                   }`}
                                 >
@@ -1178,14 +1185,14 @@ export default function ScoresTab({ teamScore, currentTeam }) {
                           </td>
 
                           {/* BS (86, 88, 90) */}
-                          <td className="py-2.5 px-2 text-center bg-blue-50/30 border-r border-slate-200">
-                            <div className="flex items-center justify-center gap-1.5">
+                          <td className="py-1 px-1 text-center bg-blue-50/30 border-r border-slate-200">
+                            <div className="flex items-center justify-center gap-0.5 sm:gap-1">
                               {dantonBsItems.map((opt, oIdx) => (
                                 <span
                                   key={oIdx}
-                                  className={`inline-flex items-center justify-center min-w-[36px] sm:min-w-[42px] h-8 sm:h-9 py-0.5 px-1 rounded-lg text-xs sm:text-sm font-mono font-black transition-all ${
+                                  className={`inline-flex items-center justify-center min-w-[24px] sm:min-w-[28px] h-6 sm:h-7 px-0.5 rounded-md text-[10px] sm:text-[11px] font-mono font-bold transition-all ${
                                     selectedVal === opt.val
-                                      ? 'bg-blue-600 text-white shadow-xs ring-2 ring-blue-400 scale-105'
+                                      ? 'bg-blue-600 text-white shadow-xs ring-2 ring-blue-400 scale-105 font-black'
                                       : 'bg-white text-slate-400 border border-slate-200/80'
                                   }`}
                                 >
@@ -1196,7 +1203,7 @@ export default function ScoresTab({ teamScore, currentTeam }) {
                           </td>
 
                           {/* Nilai Mentah */}
-                          <td className="py-3 px-3 text-center font-mono font-black text-base sm:text-lg text-slate-900 bg-slate-50 border-l border-slate-200">
+                          <td className="py-3 px-3 text-center font-mono font-black text-xs sm:text-sm text-slate-900 bg-slate-50 border-l border-slate-200">
                             {selectedVal}
                           </td>
                         </tr>
@@ -1222,8 +1229,8 @@ export default function ScoresTab({ teamScore, currentTeam }) {
                   <thead className="bg-slate-100 text-slate-700 uppercase font-black text-[10px] tracking-wider border-b border-slate-200">
                     <tr>
                       <th className="py-3 px-3 text-center w-12 border-r border-slate-200">No</th>
-                      <th className="py-3 px-3.5 min-w-[200px] border-r border-slate-200">Aspek Rubrik Komandan</th>
-                      <th className="py-3 px-2 text-center w-16 border-r border-slate-200">Bobot</th>
+                      <th className="py-1.5 px-2 min-w-[120px] max-w-[170px] border-r border-slate-200">Aspek Rubrik Komandan</th>
+                      <th className="py-1.5 px-1 text-center w-16 border-r border-slate-200">Bobot</th>
                       <th className="py-3 px-3 text-center w-24 border-r border-slate-200 bg-blue-50 text-blue-900">Juri 1</th>
                       <th className="py-3 px-3 text-center w-24 border-r border-slate-200 bg-sky-50 text-sky-900">Juri 2</th>
                       <th className="py-3 px-3 text-center w-24 border-r border-slate-200 bg-indigo-50 text-indigo-900">Juri 3</th>
@@ -1250,7 +1257,7 @@ export default function ScoresTab({ teamScore, currentTeam }) {
                           <td className="py-2.5 px-3.5 font-semibold text-slate-900 border-r border-slate-100">
                             {crit.name}
                           </td>
-                          <td className="py-2.5 px-2 text-center font-mono font-bold text-amber-800 border-r border-slate-100 bg-amber-50/30">
+                          <td className="py-1 px-1 text-center font-mono font-bold text-amber-800 border-r border-slate-100 bg-amber-50/30">
                             {crit.weightPercent}
                           </td>
                           <td className="py-2.5 px-3 text-center font-mono font-bold text-slate-900 border-r border-slate-100 bg-blue-50/20">

@@ -27,7 +27,13 @@ import {
   ArrowRight,
   UserCheck,
   Users,
-  ShieldCheck
+  ShieldCheck,
+  Megaphone,
+  Bell,
+  HeartPulse,
+  MessageCircle,
+  ShieldAlert,
+  Radio
 } from 'lucide-react';
 import { EVENT, VENUE, DOWNLOADS } from '../../../../config.js';
 import { HARI_H_SCHEDULE, UJI_COBA_SCHEDULE } from '../../../../data/scheduleMatrices.js';
@@ -132,6 +138,69 @@ export default function OverviewTab({
     setTimeout(() => setSurveySaveToast(''), 2500);
   };
 
+  // LO State & Fallback logic (terhubung dummy/localStorage, selalu tampil ditetapkan di localhost)
+  const isLocalhost = typeof window !== 'undefined' && (
+    window.location.hostname === 'localhost' ||
+    window.location.hostname === '127.0.0.1' ||
+    window.location.hostname.includes('192.168.')
+  );
+  const loName = currentTeam?.loName || (isLocalhost ? 'Kak Rizky Fauzi (Panitia LBB)' : null);
+  const loPhone = currentTeam?.loPhone || (isLocalhost ? '081947491505' : null);
+  const loRole = currentTeam?.loRole || (isLocalhost ? 'LO Pendamping Peleton' : null);
+  const isLoAssigned = Boolean(loName);
+
+  // Agenda Countdown Timer Logic (TM -> UCL -> Hari-H)
+  const AGENDA_TARGETS = React.useMemo(() => [
+    {
+      id: 'tm',
+      label: 'Technical Meeting',
+      shortLabel: 'TM (9 Jan)',
+      dateText: '09 Jan 2027 • 13.00 WIB',
+      location: "Kampus Induk Mu'allimin (Wirobrajan)",
+      targetMs: new Date('2027-01-09T13:00:00+07:00').getTime(),
+      badgeClass: 'bg-purple-100 text-purple-700 border-purple-200'
+    },
+    {
+      id: 'trial',
+      label: 'Uji Coba Lapangan (UCL)',
+      shortLabel: 'UCL (16 Jan)',
+      dateText: '16 Jan 2027 • 07.00 WIB',
+      location: 'Kampus Terpadu Sedayu (Bantul)',
+      targetMs: new Date('2027-01-16T07:00:00+07:00').getTime(),
+      badgeClass: 'bg-emerald-100 text-emerald-700 border-emerald-200'
+    },
+    {
+      id: 'competition',
+      label: 'Hari Perlombaan',
+      shortLabel: 'Hari-H (24 Jan)',
+      dateText: '24 Jan 2027 • 06.00 WIB',
+      location: 'Arena Lapangan Utama Sedayu',
+      targetMs: new Date('2027-01-24T06:00:00+07:00').getTime(),
+      badgeClass: 'bg-red-100 text-red-700 border-red-200'
+    }
+  ], []);
+
+  const [selectedCountdownId, setSelectedCountdownId] = useState('tm');
+  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+
+  const activeTarget = AGENDA_TARGETS.find(a => a.id === selectedCountdownId) || AGENDA_TARGETS[0];
+
+  React.useEffect(() => {
+    const updateCountdown = () => {
+      const now = Date.now();
+      const diff = Math.max(0, activeTarget.targetMs - now);
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((diff / (1000 * 60)) % 60);
+      const seconds = Math.floor((diff / 1000) % 60);
+      setTimeLeft({ days, hours, minutes, seconds });
+    };
+
+    updateCountdown();
+    const interval = setInterval(updateCountdown, 1000);
+    return () => clearInterval(interval);
+  }, [activeTarget]);
+
   const currentTab = scheduleTab || 'tm';
 
   const phaseConfig = {
@@ -187,6 +256,71 @@ export default function OverviewTab({
           <span>{surveySaveToast}</span>
         </div>
       )}
+
+      {/* 0. COUNTDOWN TIMER AGENDA RESMI */}
+      <section className="relative overflow-hidden rounded-[24px] border border-slate-200 bg-white p-5 shadow-[0_12px_32px_rgba(15,23,42,0.045)]">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          {/* Info Agenda & Selector */}
+          <div className="space-y-2">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="flex h-6 items-center gap-1.5 rounded-full bg-red-50 border border-red-100 px-2.5 text-[8.5px] font-black uppercase tracking-wider text-red-700">
+                <span className="h-1.5 w-1.5 rounded-full bg-red-600 animate-pulse" />
+                <span>RACE COUNTDOWN 2027</span>
+              </span>
+              <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[9px] font-bold ${activeTarget.badgeClass}`}>
+                {activeTarget.label}
+              </span>
+            </div>
+            <div>
+              <h3 className="text-base sm:text-lg font-black tracking-tight text-slate-950">
+                Menuju {activeTarget.label}
+              </h3>
+              <p className="mt-0.5 text-xs text-slate-500 font-medium">
+                📍 {activeTarget.location} • <strong className="text-slate-800">{activeTarget.dateText}</strong>
+              </p>
+            </div>
+            {/* Quick Switcher Pills */}
+            <div className="flex flex-wrap items-center gap-1.5 pt-1">
+              {AGENDA_TARGETS.map(agenda => (
+                <button
+                  key={agenda.id}
+                  type="button"
+                  onClick={() => setSelectedCountdownId(agenda.id)}
+                  className={`rounded-xl px-2.5 py-1 text-[9.5px] font-black transition cursor-pointer ${
+                    selectedCountdownId === agenda.id
+                      ? 'bg-slate-900 text-white shadow-xs'
+                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200/80 hover:text-slate-900'
+                  }`}
+                >
+                  {agenda.shortLabel}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Digital Timer Boxes */}
+          <div className="grid grid-cols-4 gap-2 sm:gap-3 self-stretch lg:self-auto shrink-0">
+            {[
+              { label: 'HARI', val: timeLeft.days },
+              { label: 'JAM', val: timeLeft.hours },
+              { label: 'MENIT', val: timeLeft.minutes },
+              { label: 'DETIK', val: timeLeft.seconds }
+            ].map(unit => (
+              <div
+                key={unit.label}
+                className="flex min-w-[62px] sm:min-w-[76px] flex-col items-center justify-center rounded-2xl border border-slate-200/80 bg-slate-50/70 p-2.5 sm:p-3 text-center transition hover:border-slate-300 hover:bg-white"
+              >
+                <span className="font-mono text-xl sm:text-2xl font-black text-slate-950 tracking-tight">
+                  {String(unit.val).padStart(2, '0')}
+                </span>
+                <span className="mt-0.5 text-[7.5px] sm:text-[8px] font-black tracking-widest text-slate-400 uppercase">
+                  {unit.label}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* 1. RACE CONTROL - STATUS KOMPETISI (Figma Make Signature Style) */}
       <section className="overflow-hidden rounded-[24px] border border-slate-200 bg-white shadow-[0_12px_32px_rgba(15,23,42,0.045)]">
@@ -292,6 +426,92 @@ export default function OverviewTab({
               </p>
             </div>
             <span className="absolute inset-x-5 bottom-0 h-0.5 origin-left scale-x-0 bg-red-600 transition-transform group-hover:scale-x-100" />
+          </div>
+        </div>
+      </section>
+
+      {/* 1.5 PAPAN PENGUMUMAN RESMI PANITIA */}
+      <section className="overflow-hidden rounded-[24px] border border-slate-200 bg-white shadow-[0_12px_32px_rgba(15,23,42,0.045)]">
+        <div className="flex flex-col gap-2 border-b border-slate-100 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+          <div className="flex items-center gap-3">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 to-red-600 text-white shadow-sm">
+              <Megaphone className="w-5 h-5" />
+            </span>
+            <div>
+              <p className="section-kicker">BROADCAST BOARD</p>
+              <h3 className="mt-0.5 text-base font-black tracking-tight text-slate-950">
+                Papan Pengumuman Resmi Panitia
+              </h3>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 self-start rounded-full bg-slate-100 px-3 py-1 text-[9px] font-black uppercase tracking-wider text-slate-600 border border-slate-200/70">
+            <Radio className="w-3 h-3 text-red-600 animate-pulse" />
+            <span>3 Arahan Operasional</span>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 divide-y divide-slate-100 lg:grid-cols-3 lg:divide-x lg:divide-y-0">
+          {/* Pengumuman 1 */}
+          <div className="p-5 flex flex-col justify-between space-y-3 transition hover:bg-slate-50/60">
+            <div>
+              <div className="flex items-center justify-between gap-2">
+                <span className="rounded-md bg-purple-100 px-2 py-0.5 text-[8px] font-black text-purple-700 uppercase tracking-wider">
+                  TM & Undian
+                </span>
+                <span className="text-[9px] font-medium text-slate-400">Sabtu, 9 Jan 2027</span>
+              </div>
+              <h4 className="mt-2 text-xs font-black text-slate-900 leading-snug">
+                Pengambilan Nomor Dada & Undian Tampil Peleton
+              </h4>
+              <p className="mt-1.5 text-[10.5px] leading-relaxed text-slate-600">
+                Pengundian nomor urut tampil peleton serta pembagian nomor dada resmi seragam dilaksanakan langsung saat sesi Technical Meeting di Kampus Induk Mu'allimin.
+              </p>
+            </div>
+            <div className="pt-2 border-t border-slate-100 text-[9.5px] font-bold text-purple-700 flex items-center gap-1">
+              <span>Wajib hadir: 1 Pembina & 1 Danton</span>
+            </div>
+          </div>
+
+          {/* Pengumuman 2 */}
+          <div className="p-5 flex flex-col justify-between space-y-3 transition hover:bg-slate-50/60">
+            <div>
+              <div className="flex items-center justify-between gap-2">
+                <span className="rounded-md bg-emerald-100 px-2 py-0.5 text-[8px] font-black text-emerald-700 uppercase tracking-wider">
+                  Administrasi
+                </span>
+                <span className="text-[9px] font-medium text-slate-400">Validasi Fisik</span>
+              </div>
+              <h4 className="mt-2 text-xs font-black text-slate-900 leading-snug">
+                Pemeriksaan Fisik Berkas & Surat Rekomendasi
+              </h4>
+              <p className="mt-1.5 text-[10.5px] leading-relaxed text-slate-600">
+                Harap membawa hardcopy Formulir A.1 (Roster Peleton) dan Surat Rekomendasi Kepala Sekolah berstempel basah saat registrasi ulang TM demi verifikasi keabsahan peserta.
+              </p>
+            </div>
+            <div className="pt-2 border-t border-slate-100 text-[9.5px] font-bold text-emerald-700 flex items-center gap-1">
+              <span>Bawa map snelhecter berstempel sekolah</span>
+            </div>
+          </div>
+
+          {/* Pengumuman 3 */}
+          <div className="p-5 flex flex-col justify-between space-y-3 transition hover:bg-slate-50/60">
+            <div>
+              <div className="flex items-center justify-between gap-2">
+                <span className="rounded-md bg-blue-100 px-2 py-0.5 text-[8px] font-black text-blue-700 uppercase tracking-wider">
+                  Fasilitas & LO
+                </span>
+                <span className="text-[9px] font-medium text-slate-400">Kampus Sedayu</span>
+              </div>
+              <h4 className="mt-2 text-xs font-black text-slate-900 leading-snug">
+                Alokasi Basecamp & Pendampingan LO Kontingen
+              </h4>
+              <p className="mt-1.5 text-[10.5px] leading-relaxed text-slate-600">
+                Tiap ruangan kelas difungsikan untuk 2 kontingen. LO resmi peleton ({loName ? loName.split(' ')[0] + ' ' + (loName.split(' ')[1] || '') : 'Kak LO'}) siap menyambut sejak gerbang kedatangan untuk briefing alur transit & gladi.
+              </p>
+            </div>
+            <div className="pt-2 border-t border-slate-100 text-[9.5px] font-bold text-blue-700 flex items-center gap-1">
+              <span>1 Peleton didampingi 1 LO Panitia</span>
+            </div>
           </div>
         </div>
       </section>
@@ -1078,62 +1298,144 @@ export default function OverviewTab({
             </div>
           </article>
 
-          {/* RESOURCE DOCK */}
-          <article className="overflow-hidden rounded-[24px] border border-slate-200 bg-white shadow-card">
-            <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
-              <div>
-                <p className="section-kicker">RESOURCE DOCK</p>
-                <h4 className="mt-0.5 text-xs font-black text-slate-950">Dokumen & Bantuan</h4>
+          {/* PENDAMPING PELETON - LO & POSKO BANTUAN */}
+          <article className="overflow-hidden rounded-[24px] border border-slate-200 bg-white shadow-[0_14px_34px_rgba(15,23,42,0.055)]">
+            {/* Header Card */}
+            <div className="flex items-center justify-between border-b border-slate-100 p-4 sm:px-5">
+              <div className="flex items-center gap-3">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-emerald-600 text-white shadow-sm">
+                  <UserCheck className="w-5 h-5" />
+                </span>
+                <div>
+                  <p className="text-[9px] font-black uppercase tracking-[0.15em] text-red-700">
+                    PENDAMPING PELETON
+                  </p>
+                  <h4 className="mt-0.5 text-sm font-black tracking-tight text-slate-950">
+                    LO & Posko Bantuan
+                  </h4>
+                </div>
               </div>
-              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-100 text-slate-500">
-                <BookOpen className="w-3.5 h-3.5" />
+              <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[9.5px] font-bold ${
+                isLoAssigned ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/80' : 'bg-slate-100 text-slate-600'
+              }`}>
+                <span className={`h-1.5 w-1.5 rounded-full ${isLoAssigned ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'}`} />
+                <span>{isLoAssigned ? 'Siaga Lomba' : 'Menunggu TM'}</span>
               </span>
             </div>
-            <div className="space-y-2 p-3">
-              {/* Juknis Link */}
-              <a
-                href={DOWNLOADS?.[0]?.url || "https://drive.google.com/file/d/1owEDyb680TNB3TkFvZGVfjD_OCbagffQ/view?usp=sharing"}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group flex w-full items-center gap-2.5 rounded-2xl bg-slate-950 p-3 text-left text-white transition hover:bg-slate-900 cursor-pointer"
-              >
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-300/10 text-amber-300">
-                  <FileText className="w-4 h-4" />
-                </span>
-                <span className="min-w-0 flex-1">
-                  <span className="block text-[7px] font-black uppercase tracking-wider text-amber-300">
-                    DOKUMEN RESMI · PDF
-                  </span>
-                  <span className="mt-0.5 block truncate text-[10px] font-black">
-                    Petunjuk Teknis LBB 2027
-                  </span>
-                </span>
-                <span className="text-slate-500 transition group-hover:translate-x-0.5 group-hover:text-white">
-                  <ChevronRight className="w-4 h-4" />
-                </span>
-              </a>
 
-              {/* WhatsApp Link */}
+            <div className="p-4 sm:p-5 space-y-3">
+              {/* LIAISON OFFICER (LO PELETON) INNER CARD */}
+              <div className="relative overflow-hidden rounded-[20px] border border-emerald-200/90 bg-emerald-50/40 p-4 transition-all">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[8.5px] font-black uppercase tracking-wider text-emerald-800">
+                      LIAISON OFFICER (LO PELETON)
+                    </p>
+                    <h5 className="mt-1 text-sm font-black text-slate-950 truncate">
+                      {isLoAssigned ? loName : 'Penetapan saat TM'}
+                    </h5>
+                    <p className="mt-1 text-[10px] leading-relaxed text-slate-600">
+                      {isLoAssigned 
+                        ? `Pendamping resmi kontingen ${currentTeam.schoolName || 'peleton Anda'}. Memandu mulai registrasi kedatangan, basecamp, hingga arena perlombaan.`
+                        : 'Setiap peleton didampingi 1 LO resmi panitia sejak registrasi kedatangan.'
+                      }
+                    </p>
+                  </div>
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-xs">
+                    <UserCheck className="w-4 h-4" />
+                  </span>
+                </div>
+
+                {isLoAssigned ? (
+                  <div className="mt-3.5 space-y-2">
+                    <div className="flex items-center gap-2 rounded-xl bg-white/95 border border-emerald-100 px-3 py-1.5 text-[9.5px] text-emerald-800 font-medium">
+                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                      <span>{loRole || 'LO Pendamping Peleton'} • Siaga di Kampus Sedayu</span>
+                    </div>
+                    <a
+                      href={`https://wa.me/62${(loPhone || '081947491505').replace(/^0/, '')}?text=${encodeURIComponent(
+                        `Halo ${loName || 'Kak LO'}, saya dari kontingen ${currentTeam.schoolName || 'peleton'}.\nNo. Registrasi: ${currentTeam.regCode || '-'}\nMohon informasi dan koordinasi untuk agenda LBB Mu'allimin 2027. Terima kasih!`
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold text-xs shadow-xs transition cursor-pointer"
+                    >
+                      <Phone className="w-3.5 h-3.5" />
+                      <span>Hubungi LO ({loName ? loName.split(' ')[0] + ' ' + (loName.split(' ')[1] || '') : 'Kak LO'})</span>
+                    </a>
+                  </div>
+                ) : (
+                  <div className="mt-3 rounded-xl bg-white/90 border border-emerald-100 px-3 py-2 text-[9.5px] text-slate-600 flex items-center gap-2">
+                    <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
+                    <span>Kontak LO aktif setelah sesi pembagian di TM</span>
+                  </div>
+                )}
+              </div>
+
+              {/* SEKRETARIAT & PENDAFTARAN */}
               <a
                 href="https://wa.me/6281947491505"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex items-center gap-2.5 rounded-2xl border border-emerald-100 bg-emerald-50/70 p-3 transition hover:border-emerald-200 hover:bg-emerald-50 cursor-pointer"
+                className="group flex items-center justify-between gap-3 rounded-[18px] border border-slate-200/80 bg-slate-50/70 p-3.5 transition hover:border-blue-200 hover:bg-blue-50/40 cursor-pointer"
               >
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-sm">
-                  <Phone className="w-4 h-4" />
+                <div className="flex items-center gap-3 min-w-0">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-100 text-blue-700">
+                    <Phone className="w-4 h-4" />
+                  </span>
+                  <div className="min-w-0">
+                    <p className="text-xs font-black text-slate-900 group-hover:text-blue-700 transition truncate">
+                      Sekretariat & Pendaftaran
+                    </p>
+                    <p className="text-[10px] text-slate-500 font-mono mt-0.5">
+                      0819-4749-1505 (Admin Tonti)
+                    </p>
+                  </div>
+                </div>
+                <ChevronRight className="w-4 h-4 shrink-0 text-slate-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition" />
+              </a>
+
+              {/* POSKO MEDIS & EVAKUASI */}
+              <div className="flex items-center justify-between gap-3 rounded-[18px] border border-slate-200/80 bg-slate-50/70 p-3.5">
+                <div className="flex items-center gap-3 min-w-0">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-red-100 text-red-700">
+                    <ShieldAlert className="w-4 h-4" />
+                  </span>
+                  <div className="min-w-0">
+                    <p className="text-xs font-black text-slate-900 truncate">
+                      Posko Medis & Evakuasi
+                    </p>
+                    <p className="text-[10px] text-slate-500 mt-0.5 truncate">
+                      PMR / KSR Siaga Ambulans
+                    </p>
+                  </div>
+                </div>
+                <span className="shrink-0 rounded-full bg-red-100 border border-red-200 px-2.5 py-0.5 text-[8.5px] font-black text-red-700">
+                  Arena Sedayu
+                </span>
+              </div>
+            </div>
+
+            {/* DOKUMEN RESMI - JUKNIS PDF */}
+            <div className="border-t border-slate-100 p-3.5 bg-slate-50/50">
+              <a
+                href={DOWNLOADS?.[0]?.url || "https://drive.google.com/file/d/1owEDyb680TNB3TkFvZGVfjD_OCbagffQ/view?usp=sharing"}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex w-full items-center gap-2.5 rounded-xl bg-slate-900 hover:bg-slate-950 p-2.5 text-left text-white transition cursor-pointer"
+              >
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-amber-400/20 text-amber-300">
+                  <FileText className="w-3.5 h-3.5" />
                 </span>
                 <span className="min-w-0 flex-1">
-                  <span className="block text-[7px] font-black uppercase tracking-wider text-emerald-700">
-                    WHATSAPP PANITIA
+                  <span className="block text-[7.5px] font-black uppercase tracking-wider text-amber-300">
+                    DOKUMEN RESMI · PDF
                   </span>
-                  <span className="mt-0.5 block text-[10px] font-black text-slate-900">
-                    Ada kendala? Hubungi admin
+                  <span className="block truncate text-[10px] font-black text-white">
+                    Petunjuk Teknis LBB 2027
                   </span>
                 </span>
-                <span className="text-emerald-700 transition group-hover:translate-x-0.5">
-                  <ChevronRight className="w-4 h-4" />
-                </span>
+                <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-0.5 group-hover:text-white transition" />
               </a>
             </div>
           </article>
