@@ -214,6 +214,10 @@ export function CompetitionProvider({ children }) {
           ...INITIAL_SETTINGS.eventDates,
         }
       };
+
+      // Pastikan status pengesahan Juknis Penilaian & Kejuaraan valid (hanya tayang jika disahkan oleh Superadmin & ada timestamp)
+      base.juknisPenilaianPublished = Boolean(parsed.juknisPenilaianPublished && parsed.juknisPenilaianRatifiedAt);
+      base.juknisPenilaianRatifiedAt = parsed.juknisPenilaianRatifiedAt || null;
       if (isLocalhostEnvironment()) {
         if (!base.trialPlan || !base.trialPlan.SD?.slots?.some(Boolean)) {
           base.trialPlan = generateDummyTrialPlan(teams);

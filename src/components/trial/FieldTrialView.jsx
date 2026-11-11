@@ -34,7 +34,6 @@ import { useCompetition } from '../../context/CompetitionContext.jsx';
 import { EVENT, VENUE } from '../../config.js';
 import { formatImageUrl } from '../../services/sheetService.js';
 import SimpaskorSidebarLayout from '../navigation/SimpaskorSidebarLayout.jsx';
-import TeamProfileHeader from '../portal/participant/components/TeamProfileHeader.jsx';
 import {
   generateSmartTrialPlan,
   TRIAL_TIME_SLOTS,
@@ -576,14 +575,8 @@ export default function FieldTrialView() {
         </div>
       }
     >
-      {/* Wrapper Utama: Ketika role Peserta, ikat seluruh card ke max-w-6xl mx-auto agar serasi dengan TeamProfileHeader */}
+      {/* Wrapper Utama */}
       <div className={isPeserta ? "max-w-6xl mx-auto space-y-4 sm:space-y-6" : ""}>
-        {/* Banner Profil Peleton Resmi (Di mobile hanya tampil di beranda, desktop tetap tampil) */}
-        {isPeserta && currentTeam && (
-          <div className="hidden sm:block">
-            <TeamProfileHeader currentTeam={currentTeam} />
-          </div>
-        )}
 
         {/* ======================================================== */}
         {/* 2 BAGIAN SPLIT: KIRI (POS AKSI PRESENSI) & KANAN (JADWAL) */}

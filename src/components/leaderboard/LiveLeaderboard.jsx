@@ -23,7 +23,6 @@ import {
 import { useCompetition } from '../../context/CompetitionContext.jsx';
 import { VENUE } from '../../config.js';
 import SimpaskorSidebarLayout from '../navigation/SimpaskorSidebarLayout.jsx';
-import TeamProfileHeader from '../portal/participant/components/TeamProfileHeader.jsx';
 import { formatImageUrl } from '../../services/sheetService.js';
 import { getChestNumberByLot } from '../../context/competitionHelpers.js';
 
@@ -525,6 +524,22 @@ export default function LiveLeaderboard() {
 
   const headerActions = (
     <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+      {/* Tombol Info Kriteria Juara Resmi (Bisa diakses oleh semua: Peserta, Publik & Panitia) */}
+      <button
+        type="button"
+        onClick={() => setShowJuknisInfo(!showJuknisInfo)}
+        className={`px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer active:scale-95 whitespace-nowrap shadow-2xs border ${
+          showJuknisInfo
+            ? 'bg-amber-500 text-white border-amber-600 shadow-amber-500/20'
+            : 'bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 border-slate-200/90'
+        }`}
+        title="Buka / Tutup Ringkasan Regulasi & Kriteria Juara Juknis 2027"
+      >
+        <Award className={`w-3.5 h-3.5 ${showJuknisInfo ? 'text-white' : 'text-amber-500'}`} />
+        <span>Kriteria Juara</span>
+        {showJuknisInfo ? <ChevronUp className="w-3 h-3 opacity-80" /> : <ChevronDown className="w-3 h-3 opacity-80" />}
+      </button>
+
       {/* Tombol Mode Layar Panggung (Khusus Panitia & Juri) */}
       {isStaffOrJury && (
         <button
@@ -536,28 +551,6 @@ export default function LiveLeaderboard() {
           <span>Layar Panggung</span>
         </button>
       )}
-
-      {/* Tombol Regulasi Juknis */}
-      <button
-        type="button"
-        onClick={() => setShowJuknisInfo(!showJuknisInfo)}
-        className="px-3 py-1.5 sm:px-3 sm:py-2 border active:scale-95 text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs bg-slate-100 hover:bg-slate-200/80 border-slate-200/80 text-slate-700 whitespace-nowrap"
-      >
-        <Info className="w-3.5 h-3.5 text-amber-600" />
-        <span>Juknis</span>
-        {showJuknisInfo ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
-      </button>
-
-      {/* Tombol Toggle Dark / Light Mode */}
-      <button
-        type="button"
-        onClick={toggleDarkMode}
-        className="px-2.5 sm:px-3 py-1.5 sm:py-2 border active:scale-95 text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs bg-slate-100 hover:bg-slate-200/80 border-slate-200/80 text-slate-700 whitespace-nowrap"
-        title={effectiveDark ? 'Beralih ke Mode Terang (Light Mode)' : 'Beralih ke Mode Gelap (Dark Mode)'}
-      >
-        {effectiveDark ? <Sun className="w-3.5 h-3.5 text-amber-500" /> : <Moon className="w-3.5 h-3.5 text-slate-600" />}
-        <span className="hidden sm:inline">{effectiveDark ? 'Terang' : 'Gelap'}</span>
-      </button>
     </div>
   );
 
@@ -2176,18 +2169,12 @@ export default function LiveLeaderboard() {
   return (
     <SimpaskorSidebarLayout
       activeMenu="klasemen"
-      title="Klasemen & Hasil Live"
-      subtitle="Papan Peringkat Resmi Dewan Juri Realtime"
+      title="Papan Klasemen & Hasil Lomba"
+      subtitle="Papan Peringkat Resmi Dewan Juri Realtime (Penentuan Juara Peleton, Danton & Juara Umum)"
       rightActions={headerActions}
     >
-      {/* Wrapper Utama: Ketika role Peserta, ikat seluruh card ke max-w-6xl mx-auto agar serasi dengan Portal */}
+      {/* Wrapper Utama */}
       <div className={isPeserta ? "max-w-6xl mx-auto space-y-4 sm:space-y-6" : ""}>
-        {/* Banner Profil Peleton Resmi (Di mobile hanya tampil di beranda, desktop tetap tampil) */}
-        {isPeserta && currentTeam && (
-          <div className="hidden sm:block">
-            <TeamProfileHeader currentTeam={currentTeam} />
-          </div>
-        )}
         <div className={effectiveDark ? 'bg-slate-950 text-slate-100 rounded-2xl p-4 sm:p-6 transition-colors' : ''}>
           {content}
         </div>

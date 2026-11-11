@@ -16,19 +16,12 @@ import {
 import { JUKNIS_PENILAIAN_CHAPTERS } from '../data/juknisDocsData.js';
 import { DOWNLOADS, PENALTIES } from '../config.js';
 import SebaranNilaiTable from './docs/SebaranNilaiTable.jsx';
+import { useCompetition } from '../context/CompetitionContext.jsx';
 
 export default function JuknisPenilaianSection({ embedded = false }) {
-  // Hanya tampil di localhost/dev, atau di production setelah H+1 TM Juri (TM Juri: 7 Nov 2026 -> rilis mulai 8 Nov 2026 00:00 WIB)
-  const isVisible = useMemo(() => {
-    if (typeof window === 'undefined') return true;
-    const hostname = window.location.hostname;
-    const isLocalhost = hostname === 'localhost' || hostname === '127.0.0.1' || hostname.startsWith('192.168.') || hostname.startsWith('10.');
-    if (isLocalhost) return true;
-
-    // TM Juri: Sabtu, 7 November 2026. H+1: Minggu, 8 November 2026 00:00:00 WIB (+07:00)
-    const releaseDate = new Date('2026-11-08T00:00:00+07:00');
-    return new Date() >= releaseDate;
-  }, []);
+  const { currentUser, role, settings, updateSettings } = useCompetition?.() || {};
+  const isSuperadmin = (currentUser?.role || role) === 'superadmin';
+  const isRatified = Boolean(settings?.juknisPenilaianPublished && settings?.juknisPenilaianRatifiedAt);
 
   const [searchQuery, setSearchQuery] = useState('');
   const [openAccordions, setOpenAccordions] = useState({
@@ -38,7 +31,10 @@ export default function JuknisPenilaianSection({ embedded = false }) {
     'bab-d': false,
   });
 
-  if (!isVisible) {
+  // Jika belum disahkan oleh superadmin:
+  // - Pengunjung publik & peserta: sembunyikan section sepenuhnya (return null)
+  // - Superadmin: tetap dapat melihat pratinjau dengan banner mode draf & aksi pengesahan
+  if (!isRatified && !isSuperadmin) {
     return null;
   }
 
@@ -101,6 +97,61 @@ export default function JuknisPenilaianSection({ embedded = false }) {
             <p className="text-slate-300 max-w-2xl mx-auto text-base sm:text-lg font-normal leading-relaxed">
               Standar baku evaluasi 6 dewan juri dengan sistem coret 5 predikat baku (KS, K, C, B, BS), rubrik Komandan Peleton, formula akumulasi Juara Umum dan kriteria tie-breaker, transparansi lembar nilai, serta ketentuan sanksi penalti.
             </p>
+          </div>
+        )}
+
+        {/* Banner Status Khusus Superadmin */}
+        {!isRatified && isSuperadmin && (
+          <div className="max-w-4xl mx-auto mb-8 p-4 sm:p-5 rounded-2xl bg-amber-500/15 border-2 border-amber-500/50 backdrop-blur-sm flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xl">
+            <div className="flex items-start sm:items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-amber-500/25 text-amber-300 flex items-center justify-center shrink-0 border border-amber-500/40">
+                <AlertTriangle className="w-5 h-5" />
+              </div>
+              <div>
+                <span className="text-xs font-black uppercase text-amber-300 tracking-wider block">
+                  Mode Draf Superadmin (Disembunyikan dari Publik)
+                </span>
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  Section Petunjuk Teknis Penilaian & Kejuaraan ini saat ini <strong>disembunyikan dari peserta & publik</strong> sampai Anda mengesahkannya.
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                updateSettings?.({
+                  juknisPenilaianPublished: true,
+                  juknisPenilaianRatifiedAt: new Date().toISOString()
+                });
+              }}
+              className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-emerald-950/40 transition-all flex items-center gap-2 shrink-0 cursor-pointer active:scale-95"
+            >
+              <CheckCircle2 className="w-4 h-4" />
+              <span>Sahkan & Tayangkan Sekarang</span>
+            </button>
+          </div>
+        )}
+
+        {isRatified && isSuperadmin && (
+          <div className="max-w-4xl mx-auto mb-8 p-3.5 sm:p-4 rounded-2xl bg-emerald-500/15 border border-emerald-500/40 backdrop-blur-sm flex flex-col sm:flex-row items-center justify-between gap-3 shadow-lg">
+            <div className="flex items-center gap-2.5">
+              <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+              <p className="text-xs text-emerald-200">
+                Dokumen telah <strong>disahkan oleh Superadmin</strong> dan aktif tayang ke publik ({new Date(settings.juknisPenilaianRatifiedAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}).
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                updateSettings?.({
+                  juknisPenilaianPublished: false,
+                  juknisPenilaianRatifiedAt: null
+                });
+              }}
+              className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-bold rounded-lg transition-colors shrink-0 cursor-pointer"
+            >
+              Kembalikan ke Draf
+            </button>
           </div>
         )}
 

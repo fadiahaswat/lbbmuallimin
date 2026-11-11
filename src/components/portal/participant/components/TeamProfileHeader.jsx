@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Camera,
   CheckCircle2,
@@ -15,11 +15,15 @@ import {
   Edit3,
   X,
   Save,
-  Loader2
+  Loader2,
+  QrCode,
+  Download
 } from 'lucide-react';
 import { formatImageUrl, getFallbackImageUrl } from '../../../../services/sheetService.js';
 import { extractLogoTheme } from '../../../../utils/extractLogoColor.js';
 import { useCompetition } from '../../../../context/CompetitionContext.jsx';
+import { generateParticipantQRCode, downloadDataUrl, OFFICIAL_BASE_URL } from '../../../../utils/qrGenerator.js';
+import logoLbb from '../../../../assets/logo-tonti.png';
 
 export default function TeamProfileHeader({
   currentTeam: propCurrentTeam,
@@ -52,6 +56,25 @@ export default function TeamProfileHeader({
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [logoTheme, setLogoTheme] = useState(null);
+  const [qrDataUrl, setQrDataUrl] = useState('');
+  const [isQrModalOpen, setIsQrModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (!currentTeam?.regCode) return;
+    const targetUrl = `${OFFICIAL_BASE_URL}/?reg=${encodeURIComponent(currentTeam.regCode)}`;
+    generateParticipantQRCode(targetUrl, { size: 600 })
+      .then(url => setQrDataUrl(url))
+      .catch(err => console.error('Error generating TeamProfileHeader QR:', err));
+  }, [currentTeam?.regCode]);
+
+  const handleDownloadQR = (e) => {
+    if (e) e.stopPropagation();
+    if (!qrDataUrl) return;
+    downloadDataUrl(
+      qrDataUrl,
+      `QR-${currentTeam.regCode}-${(currentTeam.schoolName || 'peleton').replace(/\s+/g, '_')}.png`
+    );
+  };
 
   const teamInitials = React.useMemo(() => {
     if (!currentTeam?.schoolName) return 'LM';
@@ -194,7 +217,7 @@ export default function TeamProfileHeader({
       <div className="profile-pattern" />
 
       {/* Main Content Card Container */}
-      <div className="relative z-10 p-5 sm:p-7 grid gap-5 lg:grid-cols-[minmax(0,1fr)_250px] lg:items-stretch">
+      <div className="relative z-10 p-5 sm:p-7 grid gap-5 lg:grid-cols-[minmax(0,1fr)_340px] lg:items-stretch">
         {/* Sisi Kiri: Logo + Nama Sekolah + Badge Jenjang/Kategori/Daerah */}
         <div className="flex min-w-0 flex-col justify-center gap-4">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-5">
@@ -260,7 +283,7 @@ export default function TeamProfileHeader({
                 </span>
               </p>
 
-              {/* Badges Row */}
+              {/* Badges Row + Tombol Edit Profil */}
               <div className="mt-3 flex flex-wrap items-center gap-2">
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-[0.08em] text-slate-600">
                   Jenjang {currentTeam.jenjang}
@@ -272,38 +295,103 @@ export default function TeamProfileHeader({
                   <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shrink-0" />
                   <span>{locationText}</span>
                 </span>
+                <button
+                  type="button"
+                  onClick={handleOpenEdit}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white hover:bg-slate-50 px-3 py-1 text-[9px] font-black text-slate-700 hover:text-red-700 transition shadow-2xs hover:border-slate-300 cursor-pointer active:scale-95"
+                  title="Edit data profil peleton & kontak"
+                >
+                  <Edit3 className="w-3 h-3 text-slate-500" />
+                  <span>Edit Profil</span>
+                </button>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Sisi Kanan: Kartu Registrasi Gelap (Figma Luxury Card) */}
-        <div className="relative flex min-h-[145px] flex-col justify-between overflow-hidden rounded-[20px] bg-slate-950 p-5 text-white shadow-[0_18px_38px_rgba(15,23,42,0.16)]">
+        {/* Sisi Kanan: Kartu Registrasi Gelap (Figma Luxury Card dengan QR Code Peleton) */}
+        <div className="relative flex min-h-[155px] flex-col justify-between overflow-hidden rounded-[22px] bg-slate-950 p-4 sm:p-5 text-white shadow-[0_18px_38px_rgba(15,23,42,0.16)]">
           <div className="absolute -right-10 -top-14 h-36 w-36 rounded-full border-[22px] border-white/[0.04] pointer-events-none" />
-          <div className="relative flex items-start justify-between">
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-red-600 text-white shadow-md">
-              <Shield className="w-4 h-4" />
-            </span>
+          
+          {/* Header Row: Logo LBB Resmi & Tombol Unduh QR */}
+          <div className="relative flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2.5">
+              <div className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl bg-white/10 p-1.5 shadow-sm border border-white/10 backdrop-blur-sm shrink-0">
+                <img
+                  src={logoLbb}
+                  alt="Logo LBB Mu'allimin"
+                  className="w-full h-full object-contain filter drop-shadow"
+                />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[7.5px] font-black uppercase tracking-[0.16em] text-amber-400">
+                  LBB Mu'allimin 2027
+                </span>
+                <span className="text-[10px] font-black uppercase tracking-wider text-slate-100">
+                  Credential Pass
+                </span>
+              </div>
+            </div>
+
             <button
               type="button"
-              onClick={handleOpenEdit}
-              className="flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.06] px-2.5 py-1.5 text-[8px] font-black text-slate-300 transition hover:bg-white/10 hover:text-white cursor-pointer"
+              onClick={handleDownloadQR}
+              className="flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.08] px-2.5 py-1.5 text-[8.5px] font-bold text-slate-300 hover:text-white hover:bg-white/15 transition cursor-pointer active:scale-95 shadow-2xs"
+              title="Unduh QR Code Tiket Peleton"
             >
-              <Edit3 className="w-3 h-3" />
-              <span>Edit profil</span>
+              <Download className="w-3 h-3 text-amber-400" />
+              <span>Unduh QR</span>
             </button>
           </div>
-          <div className="relative mt-2">
-            <p className="text-[8px] font-black uppercase tracking-[0.18em] text-slate-400">
-              Kode registrasi
-            </p>
-            <p className="mt-1 text-base font-black tracking-[0.08em] font-mono text-white">
-              {currentTeam.regCode || 'LBB27-SD-01-SDM'}
-            </p>
-            <p className="mt-1.5 flex items-center gap-1.5 text-[8px] font-bold text-emerald-400">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-              <span>Registrasi aktif</span>
-            </p>
+
+          {/* Body Row: Kode Registrasi di Kiri & QR Code Peleton Besar di Kanan */}
+          <div className="relative mt-3 flex items-center justify-between gap-3">
+            <div className="min-w-0 flex-1">
+              <p className="text-[8.5px] font-black uppercase tracking-[0.18em] text-slate-400">
+                Kode registrasi
+              </p>
+              <p className="mt-1 text-sm sm:text-base lg:text-lg font-black tracking-[0.06em] font-mono text-white truncate" title={currentTeam.regCode}>
+                {currentTeam.regCode || 'LBB27-SD-01-SDM'}
+              </p>
+              <div className="mt-2 flex items-center gap-1.5 text-[8.5px] font-bold text-emerald-400">
+                <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+                <span>Registrasi aktif</span>
+              </div>
+              <p className="mt-1.5 text-[7.5px] font-medium text-slate-400 leading-tight">
+                Scan saat verifikasi & absensi lomba
+              </p>
+            </div>
+
+            {/* QR Code Peleton di Sisi Kanan (Ukuran Proporsional & Rapi) */}
+            <div className="shrink-0 flex flex-col items-center w-[74px]">
+              <button
+                type="button"
+                onClick={() => setIsQrModalOpen(true)}
+                style={{ width: '74px', height: '74px' }}
+                className="group relative w-[74px] h-[74px] p-1.5 rounded-xl bg-white border border-white/30 shadow-md cursor-pointer hover:scale-105 active:scale-95 transition-all flex items-center justify-center overflow-hidden shrink-0"
+                title="Klik untuk memperbesar / unduh QR Tiket Peleton"
+              >
+                {qrDataUrl ? (
+                  <img
+                    src={qrDataUrl}
+                    alt={`QR Code ${currentTeam.regCode}`}
+                    className="w-full h-full object-contain block aspect-square"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-slate-100 text-slate-400">
+                    <QrCode className="w-6 h-6 animate-pulse text-slate-500" />
+                  </div>
+                )}
+                {/* Overlay hover */}
+                <div className="absolute inset-0 bg-slate-950/80 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white gap-0.5">
+                  <QrCode className="w-4 h-4 text-amber-300" />
+                  <span className="text-[7px] font-bold text-amber-200">Perbesar</span>
+                </div>
+              </button>
+              <span className="mt-1 text-[7.5px] font-extrabold text-slate-400 uppercase tracking-widest">
+                QR Tiket
+              </span>
+            </div>
           </div>
         </div>
       </div>
@@ -462,6 +550,55 @@ export default function TeamProfileHeader({
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal QR Code Besar / Preview & Unduh */}
+      {isQrModalOpen && qrDataUrl && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in">
+          <div className="relative w-full max-w-sm rounded-3xl bg-white p-6 shadow-2xl border border-slate-200 text-center space-y-4">
+            <button
+              type="button"
+              onClick={() => setIsQrModalOpen(false)}
+              className="absolute top-4 right-4 p-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 transition-colors cursor-pointer"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            <div className="flex items-center justify-center gap-2 text-slate-900 font-black text-sm uppercase">
+              <QrCode className="w-5 h-5 text-red-600" />
+              <span>QR Tiket Registrasi Peleton</span>
+            </div>
+
+            <div className="p-3.5 bg-white rounded-2xl border border-slate-200 shadow-inner w-fit mx-auto">
+              <img
+                src={qrDataUrl}
+                alt={`QR ${currentTeam.regCode}`}
+                className="w-52 h-52 sm:w-60 sm:h-60 object-contain"
+              />
+            </div>
+
+            <div className="space-y-1">
+              <p className="font-mono font-black text-base text-slate-900 tracking-wider">
+                {currentTeam.regCode}
+              </p>
+              <p className="text-xs text-slate-700 font-bold truncate">
+                {currentTeam.schoolName}
+              </p>
+              <p className="text-[11px] text-slate-400">
+                Tunjukkan QR ini ke petugas pos gerbang kedatangan & basecamp
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleDownloadQR}
+              className="w-full py-2.5 px-4 rounded-xl bg-red-600 hover:bg-red-700 text-white font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-md transition-all active:scale-95 cursor-pointer"
+            >
+              <Download className="w-4 h-4 text-amber-300" />
+              <span>Unduh Gambar QR</span>
+            </button>
           </div>
         </div>
       )}

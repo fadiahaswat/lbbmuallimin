@@ -16,7 +16,9 @@ import { SITE, EVENT, VENUE, COMPETITION, PAYMENT, MATERIALS, PENALTIES, DOWNLOA
 import { useCompetition } from '../../context/CompetitionContext.jsx';
 
 export default function DocumentViewerModal({ isOpen, onClose }) {
-  const { goBack } = useCompetition();
+  const { goBack, currentUser, role, settings } = useCompetition?.() || {};
+  const isSuperadmin = (currentUser?.role || role) === 'superadmin';
+  const isRatified = Boolean(settings?.juknisPenilaianPublished && settings?.juknisPenilaianRatifiedAt);
 
   if (isOpen === false) return null;
 
@@ -164,13 +166,23 @@ export default function DocumentViewerModal({ isOpen, onClose }) {
                 <p>Petunjuk Teknis Lapangan ini menjadi pedoman operasional resmi bagi seluruh panitia, dewan juri, dan peserta LBB Mu'allimin Tahun 2027. Seluruh hal teknis tambahan yang disepakati bersama dalam forum Technical Meeting mengikat secara sah dan menjadi bagian tak terpisahkan dari juknis ini.</p>
               </div>
 
-              <div className="space-y-3 pt-4 border-t border-slate-300">
-                <h4 className="font-black text-base uppercase text-amber-700">PETUNJUK TEKNIS PENILAIAN & KEJUARAAN</h4>
-                <p><strong>A. Sistem Penilaian, Sanggah & Penentuan Juara:</strong> Penilaian dilakukan oleh 6 Dewan Juri (unsur TNI, POLRI, dan Profesional: 3 Juri Arena 1 (SD) & 3 Juri Arena 2 (SMP)). Metode penilaian menggunakan sistem coret nominal angka langsung pada lembar juri (KS, K, C, B, BS) yang mencerminkan paduan Kebenaran Teknik dan Kekompakan (Sederhana 50–80, Menengah 50–85, Kompleks 50–90). Skor Danton Juri = (Materi × 35%) + (Vokal × 25%) + (Sikap × 20%) + (Lapangan × 20%). Poin Juara Umum: Juara 1 Peleton (6), Juara 2 (5), Juara 3 (4), Harapan 1 (3), Harapan 2 (2), Harapan 3 (1). Juara 1 Danton (3), Juara 2 (2), Juara 3 (1). Tie-breaker Peleton: Nilai Murni Peleton &gt; Penalti Peleton Terkecil &gt; Nilai Murni Danton &gt; Musyawarah Sidang Pleno. Tie-breaker Danton: Nilai Murni Danton &gt; Penalti Danton Terkecil &gt; Nilai Penguasaan Materi (35%) &gt; Nilai Vokal (25%) &gt; Musyawarah Sidang Pleno. Tie-breaker Juara Umum: Nilai Murni Peleton Tertinggi &gt; Penalti Peleton Paling Sedikit &gt; Nilai Murni Danton Tertinggi &gt; Musyawarah Sidang Pleno. Transparansi e-rekapitulasi rolling release akun Gmail ±1 jam setelah tampil. Pengajuan sanggah tertulis ditutup pukul 15.00 WIB.</p>
-                <p><strong>B. Prosedur Backup & Mitigasi Gangguan Sistem E-Penilaian:</strong> Apabila terjadi gangguan teknis atau koneksi pada sistem digital e-penilaian, Juri dan/atau Asisten Juri mencatat nilai secara manual pada formulir fisik yang disiapkan panitia sebagai dokumen otentik untuk verifikasi ulang saat sistem kembali normal.</p>
-                <p><strong>C. Ketentuan Sanksi dan Penalti Pengurangan Nilai:</strong> Absen upacara pembukaan urutan 6–10 (-150 poin pada Nilai Peleton; terlambat -50 poin / kelipatan 5 menit), keterlambatan hadir di DP 1 setelah 3x pemanggilan (-100 poin & urutan akhir; tidak hadir = Diskualifikasi), jumlah personel &lt; 22 orang (-75 poin tetap pada Nilai Peleton; anggota dievakuasi medis saat tampil tidak dikenai penalti), kelebihan durasi waktu (-20 poin / 1–30 detik pada Nilai Peleton), pelanggaran garis arena luar oleh anggota (-50 poin/kejadian pada Nilai Peleton), pelanggaran garis kotak danton 1,5×1,5 m (-50 poin/kejadian pada Nilai Komandan Peleton), gerakan terlewat di luar urutan (Nilai Minimal 50; tidak dilakukan = Nilai 0), gerakan berangkai terputus (Nilai Minimal 50 & potong Penguasaan Materi Danton), basecamp kotor/berantakan (-150 poin pada Nilai Peleton), pelanggaran kawasan tanpa rokok & vape setelah teguran (-75 poin pada Nilai Peleton), yel-yel mengganggu selama penampilan (Peringatan 1-2 lisan, ke-3 dst -50 poin terhadap Nilai Peleton), gerakan penyesuaian (0 poin penalti), atribut terjatuh (0 poin penalti).</p>
-                <p><strong>D. Penutup:</strong> Petunjuk Teknis Penilaian dan Kejuaraan ini menjadi pedoman operasional resmi bagi seluruh panitia, dewan juri, dan peserta LBB Mu'allimin Tahun 2027.</p>
-              </div>
+              {/* Petunjuk Teknis Penilaian & Kejuaraan (Hanya tampil jika telah disahkan atau diakses oleh Superadmin) */}
+              {(isRatified || isSuperadmin) && (
+                <div className="space-y-3 pt-4 border-t border-slate-300">
+                  <div className="flex items-center justify-between">
+                    <h4 className="font-black text-base uppercase text-amber-700">PETUNJUK TEKNIS PENILAIAN & KEJUARAAN</h4>
+                    {!isRatified && isSuperadmin && (
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-800 border border-amber-300 uppercase">
+                        Draf Superadmin
+                      </span>
+                    )}
+                  </div>
+                  <p><strong>A. Sistem Penilaian, Sanggah & Penentuan Juara:</strong> Penilaian dilakukan oleh 6 Dewan Juri (unsur TNI, POLRI, dan Profesional: 3 Juri Arena 1 (SD) & 3 Juri Arena 2 (SMP)). Metode penilaian menggunakan sistem coret nominal angka langsung pada lembar juri (KS, K, C, B, BS) yang mencerminkan paduan Kebenaran Teknik dan Kekompakan (Sederhana 50–80, Menengah 50–85, Kompleks 50–90). Skor Danton Juri = (Materi × 35%) + (Vokal × 25%) + (Sikap × 20%) + (Lapangan × 20%). Poin Juara Umum: Juara 1 Peleton (6), Juara 2 (5), Juara 3 (4), Harapan 1 (3), Harapan 2 (2), Harapan 3 (1). Juara 1 Danton (3), Juara 2 (2), Juara 3 (1). Tie-breaker Peleton: Nilai Murni Peleton &gt; Penalti Peleton Terkecil &gt; Nilai Murni Danton &gt; Musyawarah Sidang Pleno. Tie-breaker Danton: Nilai Murni Danton &gt; Penalti Danton Terkecil &gt; Nilai Penguasaan Materi (35%) &gt; Nilai Vokal (25%) &gt; Musyawarah Sidang Pleno. Tie-breaker Juara Umum: Nilai Murni Peleton Tertinggi &gt; Penalti Peleton Paling Sedikit &gt; Nilai Murni Danton Tertinggi &gt; Musyawarah Sidang Pleno. Transparansi e-rekapitulasi rolling release akun Gmail ±1 jam setelah tampil. Pengajuan sanggah tertulis ditutup pukul 15.00 WIB.</p>
+                  <p><strong>B. Prosedur Backup & Mitigasi Gangguan Sistem E-Penilaian:</strong> Apabila terjadi gangguan teknis atau koneksi pada sistem digital e-penilaian, Juri dan/atau Asisten Juri mencatat nilai secara manual pada formulir fisik yang disiapkan panitia sebagai dokumen otentik untuk verifikasi ulang saat sistem kembali normal.</p>
+                  <p><strong>C. Ketentuan Sanksi dan Penalti Pengurangan Nilai:</strong> Absen upacara pembukaan urutan 6–10 (-150 poin pada Nilai Peleton; terlambat -50 poin / kelipatan 5 menit), keterlambatan hadir di DP 1 setelah 3x pemanggilan (-100 poin & urutan akhir; tidak hadir = Diskualifikasi), jumlah personel &lt; 22 orang (-75 poin tetap pada Nilai Peleton; anggota dievakuasi medis saat tampil tidak dikenai penalti), kelebihan durasi waktu (-20 poin / 1–30 detik pada Nilai Peleton), pelanggaran garis arena luar oleh anggota (-50 poin/kejadian pada Nilai Peleton), pelanggaran garis kotak danton 1,5×1,5 m (-50 poin/kejadian pada Nilai Komandan Peleton), gerakan terlewat di luar urutan (Nilai Minimal 50; tidak dilakukan = Nilai 0), gerakan berangkai terputus (Nilai Minimal 50 & potong Penguasaan Materi Danton), basecamp kotor/berantakan (-150 poin pada Nilai Peleton), pelanggaran kawasan tanpa rokok & vape setelah teguran (-75 poin pada Nilai Peleton), yel-yel mengganggu selama penampilan (Peringatan 1-2 lisan, ke-3 dst -50 poin terhadap Nilai Peleton), gerakan penyesuaian (0 poin penalti), atribut terjatuh (0 poin penalti).</p>
+                  <p><strong>D. Penutup:</strong> Petunjuk Teknis Penilaian dan Kejuaraan ini menjadi pedoman operasional resmi bagi seluruh panitia, dewan juri, dan peserta LBB Mu'allimin Tahun 2027.</p>
+                </div>
+              )}
 
               <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg flex flex-wrap items-center justify-between gap-2 text-xs">
                 <span className="text-red-900 font-semibold">Tersedia dokumen resmi Petunjuk Teknis di Google Drive:</span>

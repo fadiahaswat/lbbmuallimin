@@ -400,88 +400,55 @@ export default function InteractiveBasecampMap({
   };
 
   return (
-    <div className="bg-white rounded-3xl p-4 sm:p-7 border border-slate-200/90 shadow-sm space-y-6 text-slate-900 font-sans">
-      
-      {/* ============================================================== */}
-      {/* KANVAS DENAH INTERAKTIF (FULL WIDTH CANVAS) - CLEAN LIGHT      */}
-      {/* ============================================================== */}
-      <div className="w-full">
-        <div className="bg-slate-50/70 rounded-3xl p-5 sm:p-7 border border-slate-200/90 shadow-sm relative overflow-hidden text-slate-900">
-          
-          {/* Header Canvas Denah: Judul di Kiri, Navigasi Lantai di Kanan */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3.5 mb-4 border-b border-slate-200 gap-3">
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-teal-600" />
-                <h4 className="text-xs sm:text-sm font-black uppercase tracking-wider text-teal-900">
-                  Denah Gedung Terpadu Huruf E &bull; {currentFloor.title.toUpperCase()}
-                </h4>
-              </div>
-              <p className="text-[11px] text-slate-500 mt-0.5">
-                Pilih kotak ruangan untuk melihat rincian fasilitas dan penempatan kontingen.
-              </p>
-            </div>
+    <div className={isPublicView ? "space-y-4 text-slate-900 font-sans" : "bg-white rounded-3xl p-4 sm:p-7 border border-slate-200/90 shadow-sm space-y-6 text-slate-900 font-sans"}>
+      {/* 1. Bar Navigasi Lantai & Indikator Status Terpadu */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/90 p-2 sm:p-2.5 rounded-2xl border border-slate-200/80">
+        {/* Tombol Tab Lantai 1 - 4 */}
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+          {FLOORS_CONFIG.map(f => {
+            const isActive = f.floor === selectedFloorNum;
+            return (
+              <button
+                key={f.floor}
+                type="button"
+                onClick={() => {
+                  setSelectedFloorNum(f.floor);
+                  setSelectedRoom(null);
+                }}
+                className={`py-2 px-3 sm:px-3.5 rounded-xl text-xs font-black transition-all flex items-center gap-2 cursor-pointer shrink-0 ${
+                  isActive
+                    ? 'bg-slate-900 text-white shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
+                }`}
+              >
+                <Layers className={`w-3.5 h-3.5 ${isActive ? 'text-amber-400' : 'text-slate-400'}`} />
+                <span>Lantai {f.floor}</span>
+                <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded-md ${
+                  isActive ? 'bg-white/20 text-white' : 'bg-slate-200/70 text-slate-600'
+                }`}>
+                  {f.stats.classes} Kls
+                </span>
+              </button>
+            );
+          })}
+        </div>
 
-            {/* SISI KANAN: Navigasi Lantai 1 - 4 (100% Fit di Semua Layar Mobile) */}
-            <div className="w-full sm:w-auto grid grid-cols-4 sm:inline-flex items-center gap-1 p-1 bg-white border border-slate-200 rounded-2xl shadow-xs shrink-0">
-              {FLOORS_CONFIG.map(f => {
-                const isActive = f.floor === selectedFloorNum;
-                return (
-                  <button
-                    key={f.floor}
-                    type="button"
-                    onClick={() => {
-                      setSelectedFloorNum(f.floor);
-                      setSelectedRoom(null);
-                    }}
-                    className={`py-1.5 px-1 sm:px-3 rounded-xl text-xs font-black transition-all flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1.5 cursor-pointer text-center ${
-                      isActive
-                        ? 'bg-teal-700 text-white shadow-xs font-black'
-                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-                    }`}
-                    title={`Lantai ${f.floor} - ${f.stats.classes} Ruang Kelas`}
-                  >
-                    <Layers className={`w-3 h-3 sm:w-3.5 sm:h-3.5 ${isActive ? 'text-amber-300' : 'text-slate-400'}`} />
-                    <span className="leading-none">Lt. {f.floor}</span>
-                    <span className={`text-[9px] sm:text-[10px] font-semibold px-1 sm:px-1.5 py-0.2 sm:py-0.5 rounded-md leading-tight ${isActive ? 'bg-teal-800 text-teal-100' : 'bg-slate-100 text-slate-500'}`}>
-                      {f.stats.classes} Kls
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* LEGENDA: PILLS BADGE (Horisontal Scrollable Hemat Ruang di Mobile) */}
-          <div className="flex flex-nowrap sm:flex-wrap items-center gap-1.5 sm:gap-2 mb-3 sm:mb-4 overflow-x-auto no-scrollbar py-0.5 -mx-1 px-1">
-            <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 mr-0.5 select-none shrink-0">
-              Legenda:
-            </span>
-            <span className="inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1 rounded-full text-[10.5px] sm:text-xs font-semibold bg-white border border-slate-200 text-slate-700 shadow-2xs shrink-0 whitespace-nowrap">
-              <Building2 className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-slate-400" />
-              <span>Ruang Kelas (Siap)</span>
-            </span>
-            <span className="inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1 rounded-full text-[10.5px] sm:text-xs font-bold bg-teal-50 border border-teal-200 text-teal-800 shadow-2xs shrink-0 whitespace-nowrap">
-              <CheckCircle2 className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-teal-600" />
-              <span>Basecamp Terisi</span>
-            </span>
-            <span className="inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1 rounded-full text-[10.5px] sm:text-xs font-semibold bg-indigo-50 border border-indigo-200 text-indigo-900 shadow-2xs shrink-0 whitespace-nowrap">
-              <Briefcase className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-indigo-600" />
-              <span>Ruang Guru / Panitia</span>
-            </span>
-            <span className="inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1 rounded-full text-[10.5px] sm:text-xs font-semibold bg-sky-50 border border-sky-200 text-sky-900 shadow-2xs shrink-0 whitespace-nowrap">
-              <FlaskConical className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-sky-600" />
-              <span>Laboratorium</span>
-            </span>
-            <span className="inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1 rounded-full text-[10.5px] sm:text-xs font-semibold bg-slate-100 border border-slate-200 text-slate-600 shadow-2xs shrink-0 whitespace-nowrap">
-              <Droplets className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-slate-400" />
-              <span>Kamar Mandi / Servis</span>
-            </span>
-            <span className="inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1 rounded-full text-[10.5px] sm:text-xs font-bold bg-amber-50 border border-amber-200 text-amber-800 shadow-2xs shrink-0 whitespace-nowrap">
-              <Lock className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-600" />
-              <span>Kelas Internasional (Steril)</span>
-            </span>
-          </div>
+        {/* Indikator Status Ruangan Kompak */}
+        <div className="flex items-center gap-3 px-2 text-[11px] text-slate-500 overflow-x-auto no-scrollbar shrink-0">
+          <span className="flex items-center gap-1.5 font-medium text-slate-700">
+            <span className="w-2.5 h-2.5 rounded-full bg-teal-500 shrink-0" />
+            <span>Terisi Peleton</span>
+          </span>
+          <span className="flex items-center gap-1.5 font-medium text-slate-700">
+            <span className="w-2.5 h-2.5 rounded-full bg-white border border-slate-300 shrink-0" />
+            <span>Kelas Standby</span>
+          </span>
+          <span className="flex items-center gap-1.5 font-medium text-slate-500">
+            <span className="w-2.5 h-2.5 rounded-full bg-slate-200 border border-dashed border-slate-400 shrink-0" />
+            <span>Steril</span>
+          </span>
+        </div>
+      </div>
 
           {/* ============================================================== */}
           {/* TATA LETAK DENAH KOTAK BERSIH SESUAI ARSITEKTUR ASLI           */}
@@ -669,8 +636,6 @@ export default function InteractiveBasecampMap({
               </div>
             )}
 
-          </div>
-        </div>
-      </div>
+    </div>
   );
 }

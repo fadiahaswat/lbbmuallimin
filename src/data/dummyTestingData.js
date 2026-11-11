@@ -583,15 +583,39 @@ export function generateDummyScores(teams = []) {
       const basePbb = isSD ? 1860 : 1940;
       const rankBonus = (15 - num) * 18; // Tim nomor 1 (Sapen) tertinggi: 2112
       const pbbTotal = basePbb + rankBonus;
-      const dantonTotal = parseFloat((86.0 + ((15 - num) * 0.95)).toFixed(2));
-
       const pbb1 = Math.round(pbbTotal * 0.334);
       const pbb2 = Math.round(pbbTotal * 0.333);
       const pbb3 = pbbTotal - pbb1 - pbb2;
 
-      const danton1 = parseFloat((dantonTotal * 0.333).toFixed(2));
-      const danton2 = parseFloat((dantonTotal * 0.333).toFixed(2));
-      const danton3 = parseFloat((dantonTotal - danton1 - danton2).toFixed(2));
+      // Rubrik Danton Resmi (Bab A.3.b Juknis: Skala Maksimal 90: KS=50, K=54/58/62, C=66/70/74, B=78/82/86, BS=90)
+      // Opsi Baku DANTON_SCALE: [50, 55, 60, 64, 66, 68, 72, 74, 76, 79, 81, 83, 86, 88, 90]
+      const bsOptions = [86, 88, 90];
+      const bOptions = [79, 81, 83];
+      const cOptions = [72, 74, 76];
+      const kOptions = [64, 66, 68];
+
+      const pool = num <= 3 ? bsOptions : num <= 8 ? bOptions : num <= 12 ? cOptions : kOptions;
+      const dantonMateri = pool[(num) % pool.length];
+      const dantonVokal = pool[(num + 1) % pool.length];
+      const dantonSikap = pool[(num + 2) % pool.length];
+      const dantonLapangan = pool[(num) % pool.length];
+
+      // Formula Juknis Bab A.3.c: (Materi 35%) + (Vokal 25%) + (Sikap 20%) + (Lapangan 20%)
+      const calcDantonJury = (m, v, s, l) => parseFloat(((m * 0.35) + (v * 0.25) + (s * 0.20) + (l * 0.20)).toFixed(2));
+      const danton1 = calcDantonJury(dantonMateri, dantonVokal, dantonSikap, dantonLapangan);
+      const danton2 = calcDantonJury(
+        pool[(num + 1) % pool.length],
+        pool[(num) % pool.length],
+        pool[(num + 1) % pool.length],
+        pool[(num + 2) % pool.length]
+      );
+      const danton3 = calcDantonJury(
+        pool[(num + 2) % pool.length],
+        pool[(num + 2) % pool.length],
+        pool[(num) % pool.length],
+        pool[(num + 1) % pool.length]
+      );
+      const dantonTotal = parseFloat((danton1 + danton2 + danton3).toFixed(2));
 
       // Contoh tim nomor 6 kena penalti injak garis (-50 poin) untuk simulasi
       let peletonPenalty = 0;
@@ -615,16 +639,10 @@ export function generateDummyScores(teams = []) {
         isLocked = false;
       }
 
-      // Rubrik Danton Resmi (Bab A.6 Juknis)
-      const dantonMateri = Math.min(100, Math.round(84 + ((15 - num) * 1.1)));
-      const dantonVokal = Math.min(100, Math.round(85 + ((15 - num) * 1.0)));
-      const dantonSikap = Math.min(100, Math.round(88 + ((15 - num) * 0.9)));
-      const dantonLapangan = Math.min(100, Math.round(86 + ((15 - num) * 1.0)));
-
       const scoreEntry = {
         teamId: team.id,
         juryName: 'Dewan Juri Resmi LBB Muallimin 2027',
-        juryRole: 'Juri 1 (Unsur TNI/Korem 072 Pamungkas)',
+        juryRole: 'Juri Lapangan LBB Muallimin 2027',
         scoredAt: '2027-01-24T09:30:00+07:00',
         rank: num,
         categoryRank: num,

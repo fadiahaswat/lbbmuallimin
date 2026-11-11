@@ -32,7 +32,9 @@ import {
   ChevronRight,
   PanelLeftClose,
   PanelLeftOpen,
-  MoreVertical
+  MoreVertical,
+  Scale,
+  Download
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
 import logoLbb from '../../assets/logo-tonti.png';
@@ -140,9 +142,6 @@ export default function SimpaskorSidebarLayout({
   const getNavSections = () => {
     // 1. Peserta
     if (userRole === 'peserta') {
-      const rosterCount = (currentTeam?.roster?.pasukan?.filter(p => p.name)?.length || 0) + (currentTeam?.roster?.danton?.name ? 1 : 0);
-      const docsCount = Object.values(currentTeam?.files || {}).filter(f => f?.url && f.url !== '#' && !f.url.startsWith('#')).length;
-
       return [
         {
           id: 'peleton',
@@ -151,20 +150,29 @@ export default function SimpaskorSidebarLayout({
           tagColor: 'text-slate-600 bg-slate-100 border-slate-200/80',
           items: [
             { id: 'overview', index: '01', label: 'Beranda', icon: Home, view: 'peserta_dashboard', activeGradient: 'from-rose-600 to-red-600' },
-            { id: 'idcard', index: '02', label: 'ID Card', icon: QrCode, view: 'peserta_dashboard', activeGradient: 'from-blue-600 to-indigo-600' },
-            { id: 'roster', index: '03', label: 'Personel', icon: Users, view: 'peserta_dashboard', badge: rosterCount > 0 ? rosterCount : null, activeGradient: 'from-teal-700 to-emerald-600' },
-            { id: 'documents', index: '04', label: 'Berkas', icon: FileText, view: 'peserta_dashboard', badge: docsCount > 0 ? docsCount : null, activeGradient: 'from-purple-600 to-violet-600' },
+            { id: 'roster', index: '02', label: 'Personel', icon: Users, view: 'peserta_dashboard', activeGradient: 'from-teal-700 to-emerald-600' },
+            { id: 'documents', index: '03', label: 'Berkas', icon: FileText, view: 'peserta_dashboard', activeGradient: 'from-purple-600 to-violet-600' },
           ]
         },
         {
-          id: 'kompetisi',
-          title: 'KOMPETISI & ARENA',
+          id: 'arena',
+          title: 'PERSIAPAN & ARENA',
           tag: 'Arena',
           tagColor: 'text-emerald-700 bg-emerald-50 border-emerald-200/80',
           items: [
-            { id: 'uji_coba', index: '05', label: 'UCL', icon: Compass, view: 'field_trial', activeGradient: 'from-cyan-600 to-teal-600' },
-            { id: 'scores', index: '06', label: 'Rekap Nilai', icon: FileSpreadsheet, view: 'peserta_dashboard', activeGradient: 'from-amber-500 to-orange-500' },
-            { id: 'klasemen', index: '07', label: 'Klasemen', icon: Trophy, view: 'live_leaderboard', activeGradient: 'from-teal-700 via-emerald-600 to-teal-600' },
+            { id: 'uji_coba', index: '04', label: 'UCL', icon: Compass, view: 'field_trial', activeGradient: 'from-cyan-600 to-teal-600' },
+            { id: 'materi_tema', index: '05', label: 'Materi & Tema Lomba', icon: BookOpen, view: 'peserta_dashboard', activeGradient: 'from-amber-500 to-orange-500' },
+            { id: 'denah_basecamp', index: '06', label: 'Denah Basecamp', icon: Building2, view: 'peserta_dashboard', activeGradient: 'from-teal-600 to-emerald-600' },
+          ]
+        },
+        {
+          id: 'penilaian',
+          title: 'HASIL & KLASEMEN',
+          tag: 'Hasil',
+          tagColor: 'text-amber-700 bg-amber-50 border-amber-200/80',
+          items: [
+            { id: 'scores', index: '07', label: 'Rekap Nilai', icon: FileSpreadsheet, view: 'peserta_dashboard', activeGradient: 'from-amber-500 to-orange-500' },
+            { id: 'klasemen', index: '08', label: 'Klasemen', icon: Trophy, view: 'live_leaderboard', activeGradient: 'from-teal-700 via-emerald-600 to-teal-600' },
           ]
         }
       ];
@@ -246,6 +254,7 @@ export default function SimpaskorSidebarLayout({
       case 'checkin':
       case 'checkout':
       case 'basecamp':
+      case 'denah_basecamp':
         return Building2;
       case 'dp':
         return Clock;
@@ -258,7 +267,12 @@ export default function SimpaskorSidebarLayout({
       case 'klasemen':
       case 'leaderboard':
         return Trophy;
+      case 'baca_perpang':
+        return Scale;
+      case 'unduhan':
+        return Download;
       case 'dokumen':
+      case 'materi_tema':
       case 'juknis':
       case 'tatib':
       case 'rundown':
@@ -280,90 +294,148 @@ export default function SimpaskorSidebarLayout({
       case 'pendaftaran':
       case 'admin':
       case 'idcard':
+      case 'unduhan':
         return { 
-          bg: 'bg-gradient-to-br from-blue-600 to-indigo-600 text-white shadow-sm shadow-blue-500/25', 
+          bg: 'bg-gradient-to-br from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20 ring-1 ring-white/20', 
           iconColor: 'text-white', 
-          badgeColor: 'bg-blue-50 text-blue-800' 
+          badgeColor: 'bg-blue-50 text-blue-800',
+          kicker: 'PUSAT DOKUMEN & UNDUHAN RESMI',
+          accentGradient: 'from-blue-600 via-indigo-500 to-cyan-500'
+        };
+      case 'baca_perpang':
+        return { 
+          bg: 'bg-gradient-to-br from-red-600 to-rose-600 text-white shadow-md shadow-red-500/20 ring-1 ring-white/20', 
+          iconColor: 'text-white', 
+          badgeColor: 'bg-red-50 text-red-800',
+          kicker: 'REGULASI RESMI PERPANG TNI',
+          accentGradient: 'from-red-600 via-rose-500 to-red-800'
         };
       case 'tm':
         return { 
-          bg: 'bg-gradient-to-br from-amber-500 to-orange-500 text-white shadow-sm shadow-amber-500/25', 
+          bg: 'bg-gradient-to-br from-amber-500 to-orange-500 text-white shadow-md shadow-amber-500/20 ring-1 ring-white/20', 
           iconColor: 'text-white', 
-          badgeColor: 'bg-amber-50 text-amber-800' 
+          badgeColor: 'bg-amber-50 text-amber-800',
+          kicker: 'TECHNICAL MEETING & UNDIAN',
+          accentGradient: 'from-amber-500 via-orange-500 to-yellow-500'
         };
       case 'uji_coba':
+      case 'field_trial':
+        return { 
+          bg: 'bg-gradient-to-br from-cyan-600 to-teal-600 text-white shadow-md shadow-cyan-500/20 ring-1 ring-white/20', 
+          iconColor: 'text-white', 
+          badgeColor: 'bg-teal-50 text-teal-800',
+          kicker: 'JADWAL UJI COBA LAPANGAN (UCL)',
+          accentGradient: 'from-cyan-600 via-teal-500 to-emerald-500'
+        };
       case 'roster':
         return { 
-          bg: 'bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-sm shadow-emerald-500/25', 
+          bg: 'bg-gradient-to-br from-teal-700 to-emerald-600 text-white shadow-md shadow-teal-500/20 ring-1 ring-white/20', 
           iconColor: 'text-white', 
-          badgeColor: 'bg-emerald-50 text-emerald-800' 
+          badgeColor: 'bg-teal-50 text-teal-800',
+          kicker: 'STRUKTUR PERSONEL PELETON',
+          accentGradient: 'from-teal-600 via-emerald-500 to-teal-800'
+        };
+      case 'documents':
+        return { 
+          bg: 'bg-gradient-to-br from-purple-600 to-violet-600 text-white shadow-md shadow-purple-500/20 ring-1 ring-white/20', 
+          iconColor: 'text-white', 
+          badgeColor: 'bg-purple-50 text-purple-800',
+          kicker: 'BERKAS ADMINISTRASI PELETON',
+          accentGradient: 'from-purple-600 via-violet-500 to-indigo-600'
         };
       case 'checkin':
       case 'checkout':
       case 'basecamp':
+      case 'denah_basecamp':
         return { 
-          bg: 'bg-gradient-to-br from-teal-500 to-cyan-600 text-white shadow-sm shadow-teal-500/25', 
+          bg: 'bg-gradient-to-br from-teal-600 to-emerald-600 text-white shadow-md shadow-teal-500/20 ring-1 ring-white/20', 
           iconColor: 'text-white', 
-          badgeColor: 'bg-teal-50 text-teal-800' 
+          badgeColor: 'bg-teal-50 text-teal-800',
+          kicker: 'LOKASI & AKOMODASI BASECAMP',
+          accentGradient: 'from-teal-600 via-emerald-500 to-cyan-600'
         };
       case 'dp':
         return { 
-          bg: 'bg-gradient-to-br from-orange-500 to-amber-600 text-white shadow-sm shadow-orange-500/25', 
+          bg: 'bg-gradient-to-br from-orange-500 to-amber-600 text-white shadow-md shadow-orange-500/20 ring-1 ring-white/20', 
           iconColor: 'text-white', 
-          badgeColor: 'bg-orange-50 text-orange-800' 
+          badgeColor: 'bg-orange-50 text-orange-800',
+          kicker: 'DAERAH PERSIAPAN (DP)',
+          accentGradient: 'from-orange-500 via-amber-500 to-yellow-500'
         };
       case 'penjurian':
       case 'juri':
-      case 'documents':
         return { 
-          bg: 'bg-gradient-to-br from-purple-600 to-violet-600 text-white shadow-sm shadow-purple-500/25', 
+          bg: 'bg-gradient-to-br from-rose-600 to-red-600 text-white shadow-md shadow-rose-500/20 ring-1 ring-white/20', 
           iconColor: 'text-white', 
-          badgeColor: 'bg-purple-50 text-purple-800' 
+          badgeColor: 'bg-rose-50 text-rose-800',
+          kicker: 'PENJURIAN RESMI LAPANGAN',
+          accentGradient: 'from-rose-600 via-red-600 to-amber-600'
         };
       case 'rekap_nilai':
       case 'recap':
         return { 
-          bg: 'bg-gradient-to-br from-indigo-600 to-blue-600 text-white shadow-sm shadow-indigo-500/25', 
+          bg: 'bg-gradient-to-br from-indigo-600 to-blue-600 text-white shadow-md shadow-indigo-500/20 ring-1 ring-white/20', 
           iconColor: 'text-white', 
-          badgeColor: 'bg-indigo-50 text-indigo-800' 
+          badgeColor: 'bg-indigo-50 text-indigo-800',
+          kicker: 'REKAPITULASI HASIL PENILAIAN',
+          accentGradient: 'from-indigo-600 via-blue-500 to-indigo-800'
+        };
+      case 'scores':
+        return { 
+          bg: 'bg-gradient-to-br from-amber-500 to-orange-600 text-white shadow-md shadow-amber-500/20 ring-1 ring-white/20', 
+          iconColor: 'text-white', 
+          badgeColor: 'bg-amber-50 text-amber-800',
+          kicker: 'REKAP NILAI PELETON',
+          accentGradient: 'from-amber-500 via-orange-500 to-amber-700'
         };
       case 'klasemen':
       case 'leaderboard':
-      case 'scores':
+      case 'live_leaderboard':
         return { 
-          bg: 'bg-gradient-to-br from-rose-600 to-pink-600 text-white shadow-sm shadow-rose-500/25', 
+          bg: 'bg-gradient-to-br from-amber-500 via-orange-500 to-red-600 text-white shadow-md shadow-amber-500/25 ring-1 ring-white/20', 
           iconColor: 'text-white', 
-          badgeColor: 'bg-rose-50 text-rose-800' 
+          badgeColor: 'bg-amber-50 text-amber-800',
+          kicker: 'PAPAN PERINGKAT RESMI DEWAN JURI',
+          accentGradient: 'from-red-600 via-amber-500 to-rose-600'
         };
       case 'dokumen':
+      case 'materi_tema':
       case 'juknis':
       case 'tatib':
       case 'rundown':
       case 'proposal':
       case 'timeline':
         return { 
-          bg: 'bg-gradient-to-br from-sky-500 to-blue-600 text-white shadow-sm shadow-sky-500/25', 
+          bg: 'bg-gradient-to-br from-amber-500 to-orange-600 text-white shadow-md shadow-amber-500/20 ring-1 ring-white/20', 
           iconColor: 'text-white', 
-          badgeColor: 'bg-sky-50 text-sky-800' 
+          badgeColor: 'bg-amber-50 text-amber-800',
+          kicker: 'REGULASI & MATERI LOMBA',
+          accentGradient: 'from-amber-500 via-orange-500 to-red-600'
         };
       case 'superadmin':
         return { 
-          bg: 'bg-gradient-to-br from-amber-500 to-yellow-600 text-white shadow-sm shadow-amber-500/25', 
+          bg: 'bg-gradient-to-br from-purple-700 to-indigo-700 text-white shadow-md shadow-purple-500/20 ring-1 ring-white/20', 
           iconColor: 'text-white', 
-          badgeColor: 'bg-amber-50 text-amber-800' 
+          badgeColor: 'bg-purple-50 text-purple-800',
+          kicker: 'SISTEM KONTROL PUSAT SUPERADMIN',
+          accentGradient: 'from-purple-700 via-indigo-600 to-violet-700'
         };
       case 'overview':
       case 'dashboard':
         return { 
-          bg: 'bg-gradient-to-br from-red-600 to-rose-600 text-white shadow-sm shadow-red-500/25', 
+          bg: 'bg-gradient-to-br from-red-600 to-rose-700 text-white shadow-md shadow-red-600/20 ring-1 ring-white/20', 
           iconColor: 'text-white', 
-          badgeColor: 'bg-red-50 text-red-800' 
+          badgeColor: 'bg-red-50 text-red-800',
+          kicker: 'PORTAL RESMI PELETON',
+          accentGradient: 'from-red-600 via-rose-600 to-red-800'
         };
       default:
         return { 
-          bg: 'bg-gradient-to-br from-slate-700 to-slate-800 text-white shadow-sm shadow-slate-500/25', 
+          bg: 'bg-gradient-to-br from-slate-700 to-slate-900 text-white shadow-md shadow-slate-500/20 ring-1 ring-white/20', 
           iconColor: 'text-white', 
-          badgeColor: 'bg-slate-100 text-slate-800' 
+          badgeColor: 'bg-slate-100 text-slate-800',
+          kicker: 'SIMPASKOR OFFICIAL 2027',
+          accentGradient: 'from-red-600 via-slate-600 to-red-800'
         };
     }
   };
@@ -392,14 +464,6 @@ export default function SimpaskorSidebarLayout({
       activeShadow: 'shadow-red-600/30'
     },
     { 
-      id: 'idcard', 
-      label: 'ID Card', 
-      icon: QrCode, 
-      view: 'peserta_dashboard',
-      activeBg: 'bg-gradient-to-r from-blue-600 to-indigo-600',
-      activeShadow: 'shadow-blue-600/30'
-    },
-    { 
       id: 'roster', 
       label: 'Personel', 
       icon: Users, 
@@ -416,6 +480,14 @@ export default function SimpaskorSidebarLayout({
       activeShadow: 'shadow-purple-600/30'
     },
     { 
+      id: 'materi_tema', 
+      label: 'Materi', 
+      icon: BookOpen, 
+      view: 'peserta_dashboard',
+      activeBg: 'bg-gradient-to-r from-amber-500 to-orange-500',
+      activeShadow: 'shadow-amber-500/30'
+    },
+    { 
       id: 'scores', 
       label: 'Rekap', 
       icon: Trophy, 
@@ -429,6 +501,8 @@ export default function SimpaskorSidebarLayout({
 
   const isItemActive = (item) => {
     if (activeMenu === item.id) return true;
+    if (userRole === 'peserta' && activeMenu === 'unduhan' && item.id === 'documents') return true;
+    if (userRole === 'peserta' && activeMenu === 'baca_perpang' && item.id === 'materi_tema') return true;
     if ((activeMenu === 'checkin' || activeMenu === 'checkout') && item.id === 'checkin') return true;
     if ((activeMenu === 'field_trial' || activeMenu === 'uji_coba') && (item.id === 'field_trial' || item.id === 'uji_coba')) return true;
     if ((activeMenu === 'live_leaderboard' || activeMenu === 'leaderboard' || activeMenu === 'klasemen') && item.id === 'klasemen') return true;
@@ -563,17 +637,17 @@ export default function SimpaskorSidebarLayout({
             </div>
 
             {/* Scrollable Nav Area */}
-            <div className={`sidebar-scroll flex-1 overflow-y-auto ${isCollapsed ? 'px-2 py-4' : 'px-4 py-5'}`}>
+            <div className={`sidebar-scroll flex-1 overflow-y-auto ${isCollapsed ? 'px-2 py-3' : 'px-3.5 py-4'}`}>
               {navSections.map((section, idx) => (
-                <div key={section.id} className={idx > 0 ? (isCollapsed ? 'mt-4' : 'mt-7') : ''}>
+                <div key={section.id} className={idx > 0 ? (isCollapsed ? 'mt-3' : 'mt-5') : ''}>
                   {!isCollapsed ? (
-                    <p className="flex items-center gap-2 px-3 text-[9px] font-extrabold tracking-[.18em] text-slate-500 uppercase">
+                    <p className="flex items-center gap-2 px-2.5 text-[9px] font-extrabold tracking-[.18em] text-slate-500 uppercase">
                       <span className="h-3.5 w-1 rounded-full bg-red-600 shrink-0" /> {section.title}
                     </p>
                   ) : (
-                    idx > 0 && <div className="my-2 border-t border-white/[0.08]" title={section.title} />
+                    idx > 0 && <div className="my-1.5 border-t border-white/[0.08]" title={section.title} />
                   )}
-                  <nav className="mt-2.5 space-y-1">
+                  <nav className="mt-1.5 space-y-1">
                     {section.items.map((item) => {
                       const Icon = item.icon;
                       const active = isItemActive(item);
@@ -591,7 +665,13 @@ export default function SimpaskorSidebarLayout({
                           <Icon className="w-4 h-4 shrink-0" />
                           {!isCollapsed && <span className="truncate">{item.label}</span>}
                           {!isCollapsed && item.badge && (
-                            <span className="ml-auto rounded-full bg-white/10 px-1.5 py-0.5 text-[9px] font-black text-white/90">
+                            <span
+                              className={`ml-auto rounded-full px-2 py-0.5 text-[9px] font-black transition-colors ${
+                                active
+                                  ? 'bg-red-500/20 text-red-200 border border-red-500/30'
+                                  : 'bg-white/10 text-slate-400'
+                              }`}
+                            >
                               {item.badge}
                             </span>
                           )}
@@ -1183,44 +1263,83 @@ export default function SimpaskorSidebarLayout({
           {/* STANDARDIZED EXECUTIVE COMMAND HEADER (IDENTIK DI SEMUA HALAMAN) */}
           {/* Grafis Resmi title-logo.png + Icon Modul + Judul + Aksi Cepat */}
           {/* ======================================================== */}
-          {!hideHeader && !isPeserta && (
-            <div className="bg-white rounded-2xl border border-slate-200/90 shadow-[0_1px_3px_rgba(0,0,0,0.04)] mb-4 sm:mb-6 overflow-hidden">
-              <div className="px-3.5 py-3 sm:px-6 sm:py-3.5 flex flex-col md:flex-row md:items-center justify-between gap-2.5 sm:gap-4 bg-slate-50/50">
-                <div className="flex items-start sm:items-center gap-3 sm:gap-4 min-w-0 flex-1">
-                  {/* 1. Icon Modul (Light Mode Themed Badge) */}
-                  <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center shrink-0 font-bold mt-0.5 sm:mt-0 transition-all ${getModuleTheme(activeMenu).bg}`}>
-                    {React.createElement(getModuleIcon(activeMenu), { className: `w-4.5 h-4.5 sm:w-5 sm:h-5 ${getModuleTheme(activeMenu).iconColor}` })}
+          {!hideHeader && (
+            <div className={`relative overflow-hidden rounded-[20px] sm:rounded-2xl border border-slate-200/90 bg-white shadow-[0_4px_20px_rgba(15,23,42,0.04)] mb-4 sm:mb-6 transition-all ${
+              isPeserta ? 'max-w-6xl mx-auto' : ''
+            }`}>
+              {/* 1. Sleek Top Ambient Accent Line (Senada dengan tema modul) */}
+              <div className={`h-[3px] w-full bg-gradient-to-r ${getModuleTheme(activeMenu).accentGradient || 'from-red-600 via-amber-500 to-rose-600'}`} />
+
+              {/* 2. Soft Ambient Background Glow (subtle & non-intrusive) */}
+              <div className="absolute -top-16 -right-16 w-48 h-48 rounded-full bg-gradient-to-br from-amber-500/5 via-rose-500/5 to-transparent blur-2xl pointer-events-none" />
+              <div className="absolute -bottom-16 -left-16 w-48 h-48 rounded-full bg-gradient-to-tr from-slate-100/60 to-transparent blur-2xl pointer-events-none" />
+
+              <div className="relative z-10 px-4 py-3.5 sm:px-6 sm:py-4 flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4 bg-gradient-to-r from-slate-50/70 via-white to-slate-50/40">
+                <div className="flex items-start sm:items-center gap-3.5 sm:gap-4 min-w-0 flex-1">
+                  {/* 1. Icon Modul (Rich Gradient Themed Badge) */}
+                  <div className="relative shrink-0">
+                    <div className={`w-10 h-10 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl flex items-center justify-center font-bold transition-all shadow-md ${getModuleTheme(activeMenu).bg}`}>
+                      {React.createElement(getModuleIcon(activeMenu), { className: `w-5 h-5 sm:w-5.5 sm:h-5.5 ${getModuleTheme(activeMenu).iconColor}` })}
+                    </div>
+                    {/* Live Pulse Dot for Realtime Scoreboard */}
+                    {(activeMenu === 'klasemen' || activeMenu === 'leaderboard' || activeMenu === 'live_leaderboard') && (
+                      <span className="absolute -bottom-0.5 -right-0.5 flex h-3 w-3" title="Live Realtime Terkoneksi">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500 ring-2 ring-white"></span>
+                      </span>
+                    )}
                   </div>
 
-                  {/* 2. Logo Title Grafis Resmi (Disembunyikan di mobile agar rapi & tidak sempit) */}
-                  <img
-                    src={titleLogoImg}
-                    alt="LBB Mu'allimin 2027"
-                    className="hidden sm:block h-7 md:h-8 w-auto object-contain shrink-0"
-                  />
+                  {/* 2. Logo Title Grafis Resmi (Hanya tampil jika belum ada di top sticky navbar) */}
+                  {!isPeserta && (
+                    <>
+                      <img
+                        src={titleLogoImg}
+                        alt="LBB Mu'allimin 2027"
+                        className="hidden sm:block h-7 md:h-8 w-auto object-contain shrink-0"
+                      />
+                      <div className="hidden sm:block h-7 w-px bg-slate-200 shrink-0" />
+                    </>
+                  )}
 
-                  {/* 3. Pemisah Halus Vertikal */}
-                  <div className="hidden sm:block h-6 w-px bg-slate-300/80 shrink-0" />
-
-                  {/* 4. Judul & Subtitle Halaman */}
+                  {/* 3. Judul, Kicker & Subtitle Halaman */}
                   <div className="min-w-0 flex-1">
-                    <h1 className="text-sm sm:text-base md:text-lg font-black text-slate-900 tracking-tight leading-tight">
+                    <div className="flex flex-wrap items-center gap-2 mb-0.5 sm:mb-1">
+                      <span className="h-1.5 w-1.5 rounded-full bg-red-600 shrink-0" />
+                      <span className="text-[9.5px] sm:text-[10px] font-black uppercase tracking-[0.16em] text-slate-500">
+                        {getModuleTheme(activeMenu).kicker || 'SISTEM RESMI LBB MU\'ALLIMIN 2027'}
+                      </span>
+                      {(activeMenu === 'klasemen' || activeMenu === 'leaderboard' || activeMenu === 'live_leaderboard') && (
+                        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-200/80 shadow-2xs">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                          Live Realtime
+                        </span>
+                      )}
+                    </div>
+                    <h1 className="text-sm sm:text-base md:text-lg font-black text-slate-950 tracking-tight leading-tight">
                       {title}
                     </h1>
                     {subtitle && (
-                      <p className="text-[11px] sm:text-xs text-slate-500 font-medium line-clamp-2 sm:truncate max-w-2xl mt-0.5 sm:mt-1">
+                      <p className="text-[11px] sm:text-xs text-slate-500 font-medium line-clamp-2 sm:truncate max-w-2xl mt-0.5 sm:mt-1 leading-relaxed">
                         {subtitle}
                       </p>
                     )}
                   </div>
                 </div>
 
-                {/* 5. Quick Action Buttons (Sisi Kanan) */}
-                {rightActions && (
-                  <div className="flex items-center gap-2 shrink-0 self-start md:self-center flex-wrap sm:flex-nowrap pt-0.5 sm:pt-0">
-                    {rightActions}
-                  </div>
-                )}
+                {/* 4. Quick Action Buttons (Sisi Kanan) */}
+                <div className="flex items-center gap-2 shrink-0 self-start md:self-center flex-wrap sm:flex-nowrap pt-0.5 sm:pt-0">
+                  {rightActions ? (
+                    rightActions
+                  ) : (
+                    (activeMenu === 'klasemen' || activeMenu === 'leaderboard' || activeMenu === 'live_leaderboard') ? (
+                      <div className="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200/80 text-[11px] font-bold text-slate-600 shadow-2xs">
+                        <Trophy className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                        <span>Jenjang SD &amp; SMP</span>
+                      </div>
+                    ) : null
+                  )}
+                </div>
               </div>
             </div>
           )}

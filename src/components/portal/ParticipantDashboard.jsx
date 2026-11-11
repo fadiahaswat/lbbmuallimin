@@ -21,6 +21,10 @@ import IdCardTab from './participant/tabs/IdCardTab.jsx';
 import RosterTab from './participant/tabs/RosterTab.jsx';
 import DocumentsTab from './participant/tabs/DocumentsTab.jsx';
 import ScoresTab from './participant/tabs/ScoresTab.jsx';
+import MateriTemaTab from './participant/tabs/MateriTemaTab.jsx';
+import DenahBasecampTab from './participant/tabs/DenahBasecampTab.jsx';
+import BacaPerpangTab from './participant/tabs/BacaPerpangTab.jsx';
+import UnduhanTab from './participant/tabs/UnduhanTab.jsx';
 import TeamProfileHeader from './participant/components/TeamProfileHeader.jsx';
 import PhysicalIntegrityPactModal from './participant/components/PhysicalIntegrityPactModal.jsx';
 import { downloadIntegrityPactPDF } from '../../utils/downloadIntegrityPactPDF.js';
@@ -106,7 +110,7 @@ export default function ParticipantDashboard() {
   useEffect(() => {
     try {
       const stored = localStorage.getItem('lbb_participant_active_tab');
-      if (stored && ['overview', 'idcard', 'roster', 'documents', 'scores'].includes(stored)) {
+      if (stored && ['overview', 'roster', 'documents', 'materi_tema', 'denah_basecamp', 'baca_perpang', 'unduhan', 'scores'].includes(stored)) {
         setActiveTab(stored);
       }
     } catch {}
@@ -698,19 +702,21 @@ export default function ParticipantDashboard() {
           </div>
         )}
 
-        {/* Main Team Profile Banner - Paling Atas (Di mobile hanya tampil di Beranda/overview) */}
-        <div className={activeTab === 'overview' ? 'block' : 'hidden sm:block'}>
-          <TeamProfileHeader
-            currentTeam={currentTeam}
-            hasLogo={hasLogo}
-            logoLoadFailed={logoLoadFailed}
-            logoFormattedUrl={logoFormattedUrl}
-            rawLogoUrl={rawLogoUrl}
-            setLogoLoadFailed={setLogoLoadFailed}
-            triggerFileUpload={triggerFileUpload}
-            updateTeamProfile={updateTeamProfile}
-          />
-        </div>
+        {/* Main Team Profile Banner - Hanya muncul di kelompok halaman PORTAL PELETON (Beranda, Personel, Berkas, Unduhan) */}
+        {['overview', 'roster', 'documents', 'unduhan'].includes(activeTab) && (
+          <div className={activeTab === 'overview' ? 'block' : 'hidden sm:block'}>
+            <TeamProfileHeader
+              currentTeam={currentTeam}
+              hasLogo={hasLogo}
+              logoLoadFailed={logoLoadFailed}
+              logoFormattedUrl={logoFormattedUrl}
+              rawLogoUrl={rawLogoUrl}
+              setLogoLoadFailed={setLogoLoadFailed}
+              triggerFileUpload={triggerFileUpload}
+              updateTeamProfile={updateTeamProfile}
+            />
+          </div>
+        )}
 
 
 
@@ -843,7 +849,38 @@ export default function ParticipantDashboard() {
 
         {/* TAB 5: SCORES */}
         {activeTab === 'scores' && (
-          <ScoresTab teamScore={teamScore} />
+          <ScoresTab teamScore={teamScore} currentTeam={currentTeam} />
+        )}
+
+        {/* TAB 6: MATERI & TEMA LOMBA */}
+        {activeTab === 'materi_tema' && (
+          <MateriTemaTab currentTeam={currentTeam} />
+        )}
+
+        {/* TAB 7: DENAH BASECAMP */}
+        {activeTab === 'denah_basecamp' && (
+          <DenahBasecampTab
+            currentTeam={currentTeam}
+            allTeams={teams}
+            staging={staging}
+          />
+        )}
+
+        {/* TAB 8: BACA PERPANG (Telah menyatu ke dalam tab Materi & Tema Lomba) */}
+        {activeTab === 'baca_perpang' && (
+          <MateriTemaTab currentTeam={currentTeam} initialSubTab="perpang" />
+        )}
+
+        {/* TAB 9: UNDUHAN (Dialihkan menyatu ke dalam tab Berkas dengan sub-tab Unduhan) */}
+        {activeTab === 'unduhan' && (
+          <DocumentsTab
+            currentTeam={currentTeam}
+            triggerFileUpload={triggerFileUpload}
+            setActiveTab={setActiveTab}
+            onOpenPactModal={handleDownloadPact}
+            isDownloadingPact={isDownloadingPact}
+            initialSubTab="download"
+          />
         )}
 
         {/* Modal Cetak Fisik Pakta Integritas Bermaterai Rp 10.000 */}

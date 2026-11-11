@@ -358,7 +358,7 @@ export default function SuperadminPanel() {
             Saklar Operasional Lomba
           </h3>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
             {/* Toggle 1: Pendaftaran */}
             <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl flex flex-col justify-between">
               <div>
@@ -430,7 +430,34 @@ export default function SuperadminPanel() {
               </button>
             </div>
 
-            {/* Toggle 4: Publikasi Hasil Lomba */}
+            {/* Toggle 4: Pengesahan & Publikasi Juknis Penilaian & Kejuaraan */}
+            <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl flex flex-col justify-between">
+              <div>
+                <span className="text-xs font-black uppercase text-slate-800 block mb-1">Pengesahan Juknis Penilaian</span>
+                <p className="text-xs text-slate-500">Mengesahkan (ACC) dan menayangkan Petunjuk Teknis Penilaian & Kejuaraan ke peserta & publik.</p>
+              </div>
+              <button
+                onClick={() => {
+                  const isCurrentlyRatified = Boolean(settings.juknisPenilaianPublished && settings.juknisPenilaianRatifiedAt);
+                  const nextState = !isCurrentlyRatified;
+                  updateSettings({
+                    juknisPenilaianPublished: nextState,
+                    juknisPenilaianRatifiedAt: nextState ? new Date().toISOString() : null
+                  });
+                  showToast(`Petunjuk Teknis Penilaian & Kejuaraan ${nextState ? 'RESMI DISAHKAN & DITAYANGKAN KE PUBLIK' : 'DISEMBUNYIKAN (KEMBALI KE DRAF)'}!`);
+                }}
+                className={`mt-4 w-full py-2 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all ${
+                  Boolean(settings.juknisPenilaianPublished && settings.juknisPenilaianRatifiedAt)
+                    ? 'bg-emerald-600 text-white'
+                    : 'bg-slate-300 text-slate-700'
+                }`}
+              >
+                {Boolean(settings.juknisPenilaianPublished && settings.juknisPenilaianRatifiedAt) ? <ToggleRight className="w-5 h-5" /> : <ToggleLeft className="w-5 h-5" />}
+                <span>{Boolean(settings.juknisPenilaianPublished && settings.juknisPenilaianRatifiedAt) ? 'Status: Disahkan & Tayang' : 'Status: Draf (Disembunyikan)'}</span>
+              </button>
+            </div>
+
+            {/* Toggle 5: Publikasi Hasil Lomba */}
             <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl flex flex-col justify-between">
               <div>
                 <span className="text-xs font-black uppercase text-slate-800 block mb-1">Publikasi Pengumuman Juara</span>

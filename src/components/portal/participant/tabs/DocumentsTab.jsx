@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   FileText,
   Users,
@@ -12,19 +12,29 @@ import {
   Check,
   Eye,
   ExternalLink,
-  X
+  X,
+  FileCheck2
 } from 'lucide-react';
 import { formatImageUrl, getFallbackImageUrl } from '../../../../services/sheetService.js';
+import UnduhanTab from './UnduhanTab.jsx';
 
 export default function DocumentsTab({
   currentTeam,
   triggerFileUpload,
   setActiveTab,
   onOpenPactModal,
-  isDownloadingPact
+  isDownloadingPact,
+  initialSubTab = 'upload'
 }) {
+  const [activeSubTab, setActiveSubTab] = useState(initialSubTab || 'upload');
   const [previewDoc, setPreviewDoc] = useState(null);
   const [imgErrors, setImgErrors] = useState({});
+
+  useEffect(() => {
+    if (initialSubTab) {
+      setActiveSubTab(initialSubTab);
+    }
+  }, [initialSubTab]);
 
   const docList = [
     {
@@ -80,23 +90,74 @@ export default function DocumentsTab({
       <div className="flex flex-col gap-4 border-b border-slate-100 pb-5 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3.5">
           <span className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-slate-950 text-white shadow-lg">
-            <FileText className="w-5 h-5 text-amber-400" />
+            {activeSubTab === 'upload' ? (
+              <FileText className="w-5 h-5 text-amber-400" />
+            ) : (
+              <Download className="w-5 h-5 text-blue-400" />
+            )}
             <span className="absolute -right-1 -top-1 h-3 w-3 rounded-full border-2 border-white bg-red-600" />
           </span>
           <div>
             <p className="section-kicker">PORTAL KONTINGEN</p>
             <h2 className="mt-0.5 text-lg font-black tracking-tight text-slate-950 sm:text-xl">
-              Pusat Berkas Digital
+              {activeSubTab === 'upload' ? 'Pusat Berkas & Administrasi' : 'Pusat Unduhan Berkas Resmi'}
             </h2>
             <p className="mt-0.5 text-[10px] sm:text-xs text-slate-500">
-              Unggah atau perbarui berkas yang diminta oleh panitia verifikator administrasi.
+              {activeSubTab === 'upload'
+                ? 'Unggah atau perbarui berkas yang diminta oleh panitia verifikator administrasi.'
+                : 'Unduh petunjuk teknis, regulasi juri, materi gerakan PBB, dan format resmi lomba.'}
             </p>
           </div>
         </div>
+
+        {/* Sub-tab Switcher: Unggah Berkas vs Unduhan Resmi */}
+        <div className="flex items-center bg-slate-100 p-1 rounded-2xl border border-slate-200/80 shrink-0">
+          <button
+            type="button"
+            onClick={() => setActiveSubTab('upload')}
+            className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+              activeSubTab === 'upload'
+                ? 'bg-white text-slate-950 shadow-xs'
+                : 'text-slate-600 hover:text-slate-950'
+            }`}
+          >
+            <Upload className="w-3.5 h-3.5" />
+            <span>Unggah Berkas</span>
+            {actionRequired > 0 ? (
+              <span className="px-1.5 py-0.5 text-[9px] font-black rounded-md bg-amber-100 text-amber-800">
+                {actionRequired} Belum
+              </span>
+            ) : (
+              <span className="px-1.5 py-0.5 text-[9px] font-black rounded-md bg-emerald-100 text-emerald-800">
+                Lengkap
+              </span>
+            )}
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveSubTab('download')}
+            className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+              activeSubTab === 'download'
+                ? 'bg-blue-600 text-white shadow-xs'
+                : 'text-slate-600 hover:text-slate-950'
+            }`}
+          >
+            <Download className="w-3.5 h-3.5" />
+            <span>Unduhan Resmi</span>
+          </button>
+        </div>
       </div>
 
-      {/* Verification Progress Hero Card (Figma Make Style) */}
-      <div className="overflow-hidden rounded-[22px] bg-slate-950 text-white shadow-[0_16px_34px_rgba(15,23,42,0.16)]">
+      {activeSubTab === 'download' ? (
+        <UnduhanTab
+          currentTeam={currentTeam}
+          onOpenPactModal={onOpenPactModal}
+          isEmbedded={true}
+        />
+      ) : (
+        <>
+          {/* Verification Progress Hero Card (Figma Make Style) */}
+          <div className="overflow-hidden rounded-[22px] bg-slate-950 text-white shadow-[0_16px_34px_rgba(15,23,42,0.16)]">
         <div className="grid sm:grid-cols-[1fr_auto]">
           <div className="p-5 sm:p-6">
             <div className="flex items-center gap-2">
@@ -481,6 +542,8 @@ export default function DocumentsTab({
           </div>
         </article>
       </div>
+        </>
+      )}
     </section>
   );
 }

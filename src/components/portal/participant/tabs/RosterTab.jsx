@@ -14,7 +14,8 @@ import {
   GripVertical,
   Phone,
   HeartPulse,
-  CheckCircle2
+  CheckCircle2,
+  ShieldCheck
 } from 'lucide-react';
 import { formatImageUrl, getFallbackImageUrl } from '../../../../services/sheetService.js';
 
@@ -245,129 +246,207 @@ export default function RosterTab({
             </div>
           )}
 
-          {/* Top Grid: Danton (Kiri) & Pendamping Peleton (Kanan) */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-            {/* Danton Spotlight (lg:col-span-5) - Brand UI & Harmonized Ratio */}
-            <div className="lg:col-span-5 bg-gradient-to-br from-red-800 via-red-900 to-stone-950 text-white rounded-3xl p-5 shadow-[0_14px_30px_rgba(153,27,27,0.25)] flex flex-col justify-between relative overflow-hidden border border-red-700/40">
-              <div className="absolute -right-10 -top-12 h-36 w-36 rounded-full border-[20px] border-white/[0.05] pointer-events-none" />
-              <div className="absolute -left-12 -bottom-12 h-32 w-32 rounded-full bg-red-600/10 blur-xl pointer-events-none" />
-
-              {/* Danton Header Tag */}
-              <div className="flex items-center justify-between border-b border-white/10 pb-2.5 mb-3 relative z-10">
-                <div className="flex items-center gap-2">
-                  <span className="p-1.5 rounded-xl bg-white/10 text-white shadow-2xs border border-white/10">
-                    <Award className="w-3.5 h-3.5 text-amber-300" />
-                  </span>
-                  <div>
-                    <h5 className="font-black text-xs uppercase tracking-wider text-white leading-tight">
-                      Komandan Peleton
-                    </h5>
-                    <span className="text-[10px] text-red-200 font-semibold">
-                      Pemimpin Barisan & Aba-Aba
-                    </span>
-                  </div>
-                </div>
-                <span className="text-[9px] font-black uppercase tracking-wider bg-amber-400/20 text-amber-300 border border-amber-300/30 px-2.5 py-0.5 rounded-md shadow-xs">
-                  DANTON INTI
-                </span>
+          {/* Pimpinan & Pendamping Peleton (4 Personel) - Harmonized & Perfectly Balanced in 1 Clean Container */}
+          <div className="bg-slate-50/80 border border-slate-200 rounded-3xl p-4 sm:p-5 space-y-3.5">
+            <div className="font-black text-xs uppercase tracking-wider text-slate-900 border-b border-slate-200 pb-2.5 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-red-600"></span>
+                <span>Pimpinan & Pendamping Peleton</span>
               </div>
+              <span className="text-[10px] font-bold text-slate-500 bg-white border border-slate-200 px-2.5 py-0.5 rounded-full">
+                4 Personel (1 Komandan + 3 Official)
+              </span>
+            </div>
 
-              <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 flex-1 relative z-10">
-                {/* Danton Photo - Harmonized 3:4 Ratio */}
-                <div className="relative group shrink-0">
-                  <div className="aspect-[3/4] w-28 sm:w-32 rounded-2xl bg-white/10 backdrop-blur-xs border border-white/20 shadow-md overflow-hidden flex flex-col items-center justify-center relative">
-                    {(() => {
-                      const photoUrl = isEditingRoster ? rosterDraft?.danton?.photo : currentTeam.roster?.danton?.photo;
-                      const hasRealPhoto = !isPlaceholderAvatar(photoUrl);
-                      const dantonName = isEditingRoster ? rosterDraft?.danton?.name : currentTeam.roster?.danton?.name || currentTeam.dantonName;
+            {(() => {
+              const dantonPhotoUrl = isEditingRoster ? rosterDraft?.danton?.photo : currentTeam.roster?.danton?.photo;
+              const hasDantonPhoto = dantonPhotoUrl && typeof dantonPhotoUrl === 'string' && dantonPhotoUrl !== '#' && !dantonPhotoUrl.startsWith('#') && !dantonPhotoUrl.includes('drive.google.com/open?id=');
+              const dantonName = isEditingRoster ? rosterDraft?.danton?.name : currentTeam.roster?.danton?.name || currentTeam.dantonName;
+              const dantonBirthPlace = isEditingRoster ? rosterDraft?.danton?.birthPlace : currentTeam.roster?.danton?.birthPlace;
+              const dantonBirthDate = isEditingRoster ? rosterDraft?.danton?.birthDate : currentTeam.roster?.danton?.birthDate;
+              const dantonClass = isEditingRoster ? rosterDraft?.danton?.class : currentTeam.roster?.danton?.class;
+              const dantonNisn = isEditingRoster ? rosterDraft?.danton?.nisn : currentTeam.roster?.danton?.nisn;
+              const dantonMedical = isEditingRoster ? rosterDraft?.danton?.medicalHistory : currentTeam.roster?.danton?.medicalHistory;
 
-                      return hasRealPhoto ? (
+              const officialsList = isEditingRoster ? (rosterDraft?.officials || []) : (currentTeam.roster?.officials || []);
+
+              return !isEditingRoster ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 items-stretch">
+                  {/* Card 1: Komandan Peleton (Danton) */}
+                  <div className="group/dcard bg-white rounded-2xl border border-slate-200 shadow-2xs hover:shadow-md hover:border-red-400/60 transition-all duration-300 overflow-hidden flex flex-col justify-between">
+                    {/* Pasfoto 3:4 Full Width */}
+                    <div className="aspect-[3/4] w-full bg-slate-800 relative overflow-hidden flex items-center justify-center border-b border-slate-100">
+                      {hasDantonPhoto ? (
                         <img
-                          src={formatImageUrl(photoUrl)}
+                          src={formatImageUrl(dantonPhotoUrl)}
                           alt={dantonName || 'Danton'}
-                          className="w-full h-full object-cover"
+                          referrerPolicy="no-referrer"
+                          className="w-full h-full object-cover object-top transition-transform duration-300 group-hover/dcard:scale-105"
                           onError={(e) => {
-                            e.currentTarget.style.display = 'none';
-                            if (e.currentTarget.nextElementSibling) {
-                              e.currentTarget.nextElementSibling.style.display = 'flex';
+                            const fallback = getFallbackImageUrl(dantonPhotoUrl);
+                            if (fallback && e.currentTarget.src !== fallback) {
+                              e.currentTarget.src = fallback;
+                            } else {
+                              e.currentTarget.style.display = 'none';
+                              if (e.currentTarget.nextElementSibling) {
+                                e.currentTarget.nextElementSibling.style.display = 'flex';
+                              }
                             }
                           }}
                         />
-                      ) : (
-                        <div className="w-full h-full flex flex-col items-center justify-center text-center p-2">
-                          <div className="w-13 h-13 rounded-full bg-gradient-to-br from-amber-400 to-red-600 text-white font-black text-base flex items-center justify-center shadow-lg ring-2 ring-white/30 mb-2">
-                            {getPersonInitials(dantonName)}
-                          </div>
-                          <span className="text-[9px] font-black uppercase tracking-widest text-amber-200 block">DANTON</span>
-                          <span className="text-[7.5px] text-red-200/80 block font-semibold">PASFOTO 3×4</span>
-                        </div>
-                      );
-                    })()}
-                  </div>
-                  {isEditingRoster && (
-                    <button
-                      type="button"
-                      onClick={() => triggerRosterPhotoUpload({ type: 'danton' })}
-                      className="absolute -bottom-1 -right-1 p-1.5 rounded-xl bg-amber-400 text-slate-950 shadow-md hover:bg-amber-300 transition-all cursor-pointer"
-                      title="Unggah Pasfoto Danton"
-                    >
-                      <Upload className="w-3.5 h-3.5" />
-                    </button>
-                  )}
-                </div>
-
-                {/* Danton Info / Form */}
-                <div className="flex-1 w-full min-w-0">
-                  {!isEditingRoster ? (
-                    <div className="space-y-2">
-                      <div>
-                        <span className="text-[8px] font-black uppercase tracking-[0.14em] text-red-200/90 block">
-                          PEMIMPIN UTAMA
+                      ) : null}
+                      <div
+                        className="w-full h-full flex flex-col items-center justify-center text-slate-300 bg-slate-800 p-2"
+                        style={{ display: hasDantonPhoto ? 'none' : 'flex' }}
+                      >
+                        <span className="text-3xl sm:text-4xl font-black tracking-wider text-slate-300 select-none">
+                          {getPersonInitials(dantonName)}
                         </span>
-                        <h5 className="font-black text-sm sm:text-base text-white leading-snug break-words mt-0.5" title={currentTeam.roster?.danton?.name || currentTeam.dantonName}>
-                          {currentTeam.roster?.danton?.name || currentTeam.dantonName || '-'}
-                        </h5>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-2 pt-0.5 text-xs">
-                        <div className="bg-white/10 backdrop-blur-xs p-2.5 rounded-xl border border-white/15 hover:bg-white/[0.14] transition-colors">
-                          <span className="text-[8px] font-black uppercase tracking-wider text-red-200 block mb-0.5">Kelas</span>
-                          <strong className="text-white text-xs font-bold block">
-                            {formatGradeDisplay(currentTeam.roster?.danton?.class, 'Kelas')}
-                          </strong>
+                      <span className="absolute top-1.5 right-1.5 px-2 py-0.5 rounded-md bg-red-600 text-white text-[10px] font-bold shadow-xs uppercase tracking-wider">
+                        Danton
+                      </span>
+                    </div>
+
+                    {/* Identitas Danton */}
+                    <div className="p-3 text-left space-y-1">
+                      <span className="font-black text-xs text-slate-900 block leading-tight break-words uppercase min-h-[1.8rem] flex items-center group-hover/dcard:text-red-700 transition-colors">
+                        {dantonName || '-'}
+                      </span>
+                      <div className="text-[10px] text-slate-600 leading-tight truncate">
+                        {dantonBirthPlace ? `${dantonBirthPlace}${dantonBirthDate ? `, ${dantonBirthDate}` : ''}` : 'Pemimpin Barisan'}
+                      </div>
+                      <div className="text-[10px] text-slate-500 font-mono flex items-center justify-between border-t border-slate-100 pt-1">
+                        <span>{formatGradeDisplay(dantonClass, 'Kls')}</span>
+                        <span>NISN: {dantonNisn || '-'}</span>
+                      </div>
+                      {dantonMedical && (
+                        <div className="text-[9px] text-rose-700 bg-rose-50 px-1.5 py-0.5 rounded border border-rose-200 truncate mt-0.5" title={`Catatan Medis: ${dantonMedical}`}>
+                          🩺 {dantonMedical}
                         </div>
-                        <div className="bg-white/10 backdrop-blur-xs p-2.5 rounded-xl border border-white/15 hover:bg-white/[0.14] transition-colors">
-                          <span className="text-[8px] font-black uppercase tracking-wider text-red-200 block mb-0.5">NISN</span>
-                          <strong className="text-white font-mono text-xs font-bold tracking-wider block">
-                            {currentTeam.roster?.danton?.nisn || '-'}
-                          </strong>
-                        </div>
-                      </div>
+                      )}
+                    </div>
+                  </div>
 
-                      <div className="bg-white/10 backdrop-blur-xs p-2.5 rounded-xl border border-white/15 hover:bg-white/[0.14] transition-colors text-xs">
-                        <span className="text-[8px] font-black uppercase tracking-wider text-red-200 block mb-0.5">Tempat, Tanggal Lahir</span>
-                        <strong className="text-white text-xs font-semibold block">
-                          {currentTeam.roster?.danton?.birthPlace || '-'}{currentTeam.roster?.danton?.birthDate ? `, ${currentTeam.roster.danton.birthDate}` : ''}
-                        </strong>
-                      </div>
+                  {/* Cards 2, 3, 4: 3 Pendamping Peleton */}
+                  {Array.isArray(officialsList) && officialsList.map((off, i) => {
+                    const isMainOfficial = i === 0 || off.category === 'official';
+                    const badgeLabel = isMainOfficial ? 'Official' : i === 1 ? 'Medis' : 'Logistik';
+                    const roleSubTitle = isMainOfficial
+                      ? 'Pelatih / Pembina'
+                      : i === 1
+                      ? 'Medis & Dokumentasi'
+                      : 'Logistik & Lapangan';
+                    const hasPhoto = off.photo && typeof off.photo === 'string' && off.photo !== '#' && !off.photo.startsWith('#') && !off.photo.includes('drive.google.com/open?id=');
+                    const badgeBg = isMainOfficial ? 'bg-blue-600' : i === 1 ? 'bg-emerald-600' : 'bg-slate-700';
 
-                      {/* Riwayat Sakit / Alergi (Opsional Medis) */}
-                      <div className="bg-white/10 backdrop-blur-xs p-2.5 rounded-xl border border-white/15 hover:bg-white/[0.14] transition-colors text-xs flex items-center justify-between gap-2">
-                        <div className="min-w-0">
-                          <span className="text-[8px] font-black uppercase tracking-wider text-red-200 block mb-0.5">Catatan Medis</span>
-                          <span className={`text-[11px] block truncate ${currentTeam.roster?.danton?.medicalHistory ? 'text-amber-300 font-bold' : 'text-emerald-300 font-medium'}`}>
-                            {currentTeam.roster?.danton?.medicalHistory || 'Tidak ada catatan sakit (sehat)'}
+                    return (
+                      <div
+                        key={off.id || i}
+                        className="group/offcard bg-white rounded-2xl border border-slate-200 shadow-2xs hover:shadow-md hover:border-blue-400/60 transition-all duration-300 overflow-hidden flex flex-col justify-between"
+                      >
+                        {/* Pasfoto 3:4 Full Width */}
+                        <div className="aspect-[3/4] w-full bg-slate-800 relative overflow-hidden flex items-center justify-center border-b border-slate-100">
+                          {hasPhoto ? (
+                            <img
+                              src={formatImageUrl(off.photo)}
+                              alt={off.name}
+                              referrerPolicy="no-referrer"
+                              className="w-full h-full object-cover object-top transition-transform duration-300 group-hover/offcard:scale-105"
+                              onError={(e) => {
+                                const fallback = getFallbackImageUrl(off.photo);
+                                if (fallback && e.currentTarget.src !== fallback) {
+                                  e.currentTarget.src = fallback;
+                                } else {
+                                  e.currentTarget.style.display = 'none';
+                                  if (e.currentTarget.nextElementSibling) {
+                                    e.currentTarget.nextElementSibling.style.display = 'flex';
+                                  }
+                                }
+                              }}
+                            />
+                          ) : null}
+                          <div
+                            className="w-full h-full flex flex-col items-center justify-center text-slate-300 bg-slate-800 p-2"
+                            style={{ display: hasPhoto ? 'none' : 'flex' }}
+                          >
+                            <span className="text-3xl sm:text-4xl font-black tracking-wider text-slate-300 select-none">
+                              {getPersonInitials(off.name)}
+                            </span>
+                          </div>
+
+                          <span className={`absolute top-1.5 right-1.5 px-2 py-0.5 rounded-md ${badgeBg} text-white text-[10px] font-bold shadow-xs uppercase tracking-wider`}>
+                            {badgeLabel}
                           </span>
                         </div>
-                        <span className={`p-1 rounded-lg shrink-0 ${currentTeam.roster?.danton?.medicalHistory ? 'bg-amber-400/20 text-amber-300' : 'bg-emerald-400/20 text-emerald-300'}`}>
-                          <HeartPulse className="w-3.5 h-3.5" />
-                        </span>
+
+                        {/* Identitas Pendamping */}
+                        <div className="p-3 text-left space-y-1">
+                          <span
+                            className="font-black text-xs text-slate-900 block leading-tight break-words uppercase min-h-[1.8rem] flex items-center group-hover/offcard:text-blue-700 transition-colors"
+                            title={off.name}
+                          >
+                            {off.name || '-'}
+                          </span>
+                          <div className="text-[10px] text-slate-600 leading-tight truncate">
+                            {off.role || roleSubTitle}
+                          </div>
+                          <div className="text-[10px] text-slate-500 font-mono flex items-center justify-between border-t border-slate-100 pt-1">
+                            <span>No. WA</span>
+                            <span className="text-emerald-700 font-bold truncate">{off.phone || '-'}</span>
+                          </div>
+                        </div>
                       </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                /* Mode Edit Roster: 4 Cards dalam Grid yang Sama */
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 items-stretch">
+                  {/* Edit Card 1: Danton */}
+                  <div className="bg-white rounded-2xl border border-slate-200 shadow-2xs p-3 space-y-2.5 flex flex-col justify-between">
+                    <div className="relative group shrink-0">
+                      <div
+                        onClick={() => triggerRosterPhotoUpload({ type: 'danton' })}
+                        className="aspect-[3/4] w-full rounded-xl bg-slate-800 border border-slate-200 shadow-inner relative overflow-hidden flex items-center justify-center cursor-pointer group hover:border-red-500 transition-colors"
+                        title="Klik untuk unggah pasfoto Danton"
+                      >
+                        {hasDantonPhoto ? (
+                          <img
+                            src={formatImageUrl(dantonPhotoUrl)}
+                            alt={dantonName || 'Danton'}
+                            referrerPolicy="no-referrer"
+                            className="w-full h-full object-cover object-top"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex flex-col items-center justify-center text-slate-300 bg-slate-800 p-2">
+                            <span className="text-3xl font-black text-slate-300">
+                              {getPersonInitials(dantonName)}
+                            </span>
+                          </div>
+                        )}
+                        <span className="absolute top-1.5 right-1.5 px-2 py-0.5 rounded-md bg-red-600 text-white text-[10px] font-bold shadow-xs uppercase tracking-wider">
+                          Danton
+                        </span>
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1 text-white text-[10px] font-bold">
+                          <Camera className="w-3.5 h-3.5" />
+                          <span>Ganti Foto</span>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => triggerRosterPhotoUpload({ type: 'danton' })}
+                        className="absolute -bottom-1 -right-1 p-1.5 rounded-lg bg-amber-400 text-slate-950 shadow-xs hover:bg-amber-300 transition-all cursor-pointer"
+                        title="Unggah Pasfoto Danton"
+                      >
+                        <Upload className="w-3 h-3" />
+                      </button>
                     </div>
-                  ) : (
-                    <div className="space-y-2 w-full">
+
+                    <div className="space-y-1.5 text-left pt-1">
                       <div>
-                        <label className="text-[10px] font-bold text-red-200 uppercase block mb-0.5">Nama Lengkap Danton</label>
+                        <label className="text-[9px] font-bold text-slate-400 uppercase block mb-0.5">Nama Danton</label>
                         <input
                           type="text"
                           placeholder="Nama Lengkap Danton"
@@ -376,318 +455,124 @@ export default function RosterTab({
                             ...rosterDraft,
                             danton: { ...rosterDraft.danton, name: e.target.value }
                           })}
-                          className="w-full px-2.5 py-1.5 bg-white text-slate-900 border border-red-300 rounded-lg text-xs font-bold focus:ring-2 focus:ring-red-400 shadow-xs"
+                          className="w-full px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold text-slate-900 focus:outline-none focus:ring-1 focus:ring-red-500"
                         />
                       </div>
                       <div className="grid grid-cols-2 gap-1.5">
-                        <div>
-                          <label className="text-[10px] font-bold text-red-200 uppercase block mb-0.5">NISN</label>
-                          <input
-                            type="text"
-                            placeholder="NISN"
-                            value={rosterDraft?.danton?.nisn || ''}
-                            onChange={e => setRosterDraft({
-                              ...rosterDraft,
-                              danton: { ...rosterDraft.danton, nisn: e.target.value }
-                            })}
-                            className="w-full px-2 py-1 bg-white text-slate-900 border border-red-300 rounded-lg text-xs font-mono focus:ring-2 focus:ring-red-400 shadow-xs"
-                          />
-                        </div>
-                        <div>
-                          <label className="text-[10px] font-bold text-red-200 uppercase block mb-0.5">Kelas</label>
-                          <select
-                            value={rosterDraft?.danton?.class || ''}
-                            onChange={e => setRosterDraft({
-                              ...rosterDraft,
-                              danton: { ...rosterDraft.danton, class: e.target.value }
-                            })}
-                            className="w-full px-2 py-1 bg-white text-slate-900 border border-red-300 rounded-lg text-xs font-bold shadow-xs"
-                          >
-                            <option value="">Pilih Kelas</option>
-                            {availableClassOptions.map(cls => (
-                              <option key={cls} value={cls}>Kelas {cls}</option>
-                            ))}
-                          </select>
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-2 gap-1.5">
-                        <div>
-                          <label className="text-[10px] font-bold text-red-200 uppercase block mb-0.5">Tempat Lahir</label>
-                          <input
-                            type="text"
-                            placeholder="Kota Kelahiran"
-                            value={rosterDraft?.danton?.birthPlace || ''}
-                            onChange={e => setRosterDraft({
-                              ...rosterDraft,
-                              danton: { ...rosterDraft.danton, birthPlace: e.target.value }
-                            })}
-                            className="w-full px-2 py-1 bg-white text-slate-900 border border-red-300 rounded-lg text-xs shadow-xs"
-                          />
-                        </div>
-                        <div>
-                          <label className="text-[10px] font-bold text-red-200 uppercase block mb-0.5">Tgl Lahir</label>
-                          <input
-                            type="date"
-                            value={rosterDraft?.danton?.birthDate || ''}
-                            onChange={e => setRosterDraft({
-                              ...rosterDraft,
-                              danton: { ...rosterDraft.danton, birthDate: e.target.value }
-                            })}
-                            className="w-full px-2 py-1 bg-white text-slate-900 border border-red-300 rounded-lg text-xs shadow-xs"
-                          />
-                        </div>
-                      </div>
-                      <div>
-                        <label className="text-[10px] font-bold text-red-200 uppercase block mb-0.5">Riwayat Sakit / Alergi (Opsional)</label>
                         <input
                           type="text"
-                          placeholder="Contoh: Asma ringan, alergi dingin (kosongkan jika sehat)"
-                          value={rosterDraft?.danton?.medicalHistory || ''}
+                          placeholder="NISN"
+                          value={rosterDraft?.danton?.nisn || ''}
                           onChange={e => setRosterDraft({
                             ...rosterDraft,
-                            danton: { ...rosterDraft.danton, medicalHistory: e.target.value }
+                            danton: { ...rosterDraft.danton, nisn: e.target.value }
                           })}
-                          className="w-full px-2 py-1 bg-white text-slate-900 border border-red-300 rounded-lg text-[11px] shadow-xs"
+                          className="w-full px-2 py-1 bg-slate-50 border border-slate-200 rounded-lg text-[11px] font-mono focus:outline-none focus:ring-1 focus:ring-red-500"
+                        />
+                        <select
+                          value={rosterDraft?.danton?.class || ''}
+                          onChange={e => setRosterDraft({
+                            ...rosterDraft,
+                            danton: { ...rosterDraft.danton, class: e.target.value }
+                          })}
+                          className="w-full px-2 py-1 bg-slate-50 border border-slate-200 rounded-lg text-[11px] font-bold focus:outline-none focus:ring-1 focus:ring-red-500"
+                        >
+                          <option value="">Kelas</option>
+                          {availableClassOptions.map(cls => (
+                            <option key={cls} value={cls}>Kelas {cls}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="grid grid-cols-2 gap-1.5">
+                        <input
+                          type="text"
+                          placeholder="Kota Lahir"
+                          value={rosterDraft?.danton?.birthPlace || ''}
+                          onChange={e => setRosterDraft({
+                            ...rosterDraft,
+                            danton: { ...rosterDraft.danton, birthPlace: e.target.value }
+                          })}
+                          className="w-full px-2 py-1 bg-slate-50 border border-slate-200 rounded-lg text-[11px] focus:outline-none focus:ring-1 focus:ring-red-500"
+                        />
+                        <input
+                          type="date"
+                          value={rosterDraft?.danton?.birthDate || ''}
+                          onChange={e => setRosterDraft({
+                            ...rosterDraft,
+                            danton: { ...rosterDraft.danton, birthDate: e.target.value }
+                          })}
+                          className="w-full px-2 py-1 bg-slate-50 border border-slate-200 rounded-lg text-[11px] focus:outline-none focus:ring-1 focus:ring-red-500"
                         />
                       </div>
+                      <input
+                        type="text"
+                        placeholder="Catatan Medis (Opsional)"
+                        value={rosterDraft?.danton?.medicalHistory || ''}
+                        onChange={e => setRosterDraft({
+                          ...rosterDraft,
+                          danton: { ...rosterDraft.danton, medicalHistory: e.target.value }
+                        })}
+                        className="w-full px-2 py-0.5 bg-slate-50 border border-slate-200 rounded text-[10px] focus:outline-none focus:ring-1 focus:ring-red-500 placeholder:text-slate-400"
+                      />
                     </div>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* 3 Pendamping Peleton (lg:col-span-7) - Brand UI & Harmonized 3:4 Ratio */}
-            <div className="lg:col-span-7 bg-white border border-slate-200/90 rounded-3xl p-5 flex flex-col justify-between space-y-3 shadow-xs relative overflow-hidden">
-              <div className="h-1 w-full bg-gradient-to-r from-blue-600 via-teal-500 to-indigo-600 absolute top-0 left-0 right-0" />
-
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
-                <div className="flex items-center gap-2.5 min-w-0">
-                  <span className="p-1.5 rounded-xl bg-blue-50 border border-blue-200 text-blue-700 shadow-2xs shrink-0">
-                    <Users className="w-4 h-4" />
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
-                      <h5 className="font-black text-xs sm:text-sm uppercase tracking-wider text-slate-900 leading-tight">
-                        3 Pendamping Peleton
-                      </h5>
-                      <span className="sm:hidden text-[9px] font-bold bg-slate-100 text-slate-700 border border-slate-200/80 px-2 py-0.5 rounded-md shrink-0 whitespace-nowrap">
-                        Official Kontingen
-                      </span>
-                    </div>
-                    <p className="text-[10px] text-slate-500 mt-0.5 leading-tight">
-                      1 Official Utama + 2 Pendukung Resmi (Medis & Logistik)
-                    </p>
                   </div>
-                </div>
-                <span className="hidden sm:inline-block text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-200 px-2.5 py-0.5 rounded-md shrink-0 whitespace-nowrap">
-                  Official Kontingen
-                </span>
-              </div>
 
-              {!isEditingRoster ? (
-                Array.isArray(currentTeam.roster?.officials) && currentTeam.roster.officials.length > 0 ? (
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    {currentTeam.roster.officials.map((off, i) => {
-                      const isMainOfficial = i === 0 || off.category === 'official';
-                      const roleMainTitle = isMainOfficial
-                        ? 'Official Utama'
-                        : i === 1
-                        ? 'Pendukung 1'
-                        : 'Pendukung 2';
-                      const roleSubTitle = isMainOfficial
-                        ? 'Pelatih / Pembina'
-                        : i === 1
-                        ? 'Medis & Dokum'
-                        : 'Logistik & Lapangan';
-                      const hasRealPhoto = !isPlaceholderAvatar(off.photo);
-
-                      return (
-                        <div
-                          key={off.id || i}
-                          className={`group/off rounded-2xl border shadow-2xs hover:shadow-xs transition-all p-3 flex flex-col items-center text-center justify-between space-y-2.5 ${
-                            isMainOfficial
-                              ? 'border-blue-200 bg-gradient-to-b from-blue-50/50 via-white to-white ring-1 ring-blue-100'
-                              : 'border-slate-200/90 bg-slate-50/50 hover:bg-white'
-                          }`}
-                        >
-                          {/* Role Header (2-tier, never truncated) */}
-                          <div className="w-full flex flex-col items-center gap-0.5">
-                            <span
-                              className={`px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider shadow-2xs ${
-                                isMainOfficial
-                                  ? 'bg-blue-600 text-white'
-                                  : i === 1
-                                  ? 'bg-teal-600 text-white'
-                                  : 'bg-slate-700 text-white'
-                              }`}
-                            >
-                              {roleMainTitle}
-                            </span>
-                            <span className="text-[9px] text-slate-500 font-semibold leading-tight">
-                              {roleSubTitle}
-                            </span>
-                          </div>
-
-                          {/* Uniform 3:4 Pasfoto Frame */}
-                          <div className="w-24 sm:w-26 aspect-[3/4] rounded-xl bg-slate-100 border border-slate-200 shadow-2xs relative overflow-hidden flex items-center justify-center my-0.5 shrink-0">
-                            {hasRealPhoto ? (
-                              <img
-                                src={formatImageUrl(off.photo)}
-                                alt={off.name}
-                                referrerPolicy="no-referrer"
-                                className="w-full h-full object-cover object-top transition-transform duration-300 group-hover/off:scale-105"
-                                onError={(e) => {
-                                  const fallback = getFallbackImageUrl(off.photo);
-                                  if (fallback && e.currentTarget.src !== fallback) {
-                                    e.currentTarget.src = fallback;
-                                  } else {
-                                    e.currentTarget.style.display = 'none';
-                                    if (e.currentTarget.nextElementSibling) {
-                                      e.currentTarget.nextElementSibling.style.display = 'flex';
-                                    }
-                                  }
-                                }}
-                              />
-                            ) : (
-                              <div className="w-full h-full flex flex-col items-center justify-center text-center p-1.5">
-                                <div
-                                  className={`w-12 h-12 rounded-full font-black text-sm flex items-center justify-center shadow-sm text-white mb-1.5 ${
-                                    isMainOfficial
-                                      ? 'bg-gradient-to-br from-blue-500 to-blue-700 ring-2 ring-blue-200'
-                                      : i === 1
-                                      ? 'bg-gradient-to-br from-teal-500 to-teal-700 ring-2 ring-teal-200'
-                                      : 'bg-gradient-to-br from-slate-600 to-slate-800 ring-2 ring-slate-200'
-                                  }`}
-                                >
-                                  {getPersonInitials(off.name)}
-                                </div>
-                                <span className="text-[7.5px] font-black uppercase tracking-wider text-slate-500">
-                                  PASFOTO 3×4
-                                </span>
-                              </div>
-                            )}
-                          </div>
-
-                          {/* Name & Phone (Wrap onto 2 lines, no ellipsis truncation) */}
-                          <div className="w-full space-y-1.5 pt-1.5 border-t border-slate-100 flex flex-col items-center">
-                            <span
-                              className="font-black text-xs text-slate-900 leading-snug line-clamp-2 min-h-[2rem] flex items-center justify-center text-center px-1"
-                              title={off.name}
-                            >
-                              {off.name || '-'}
-                            </span>
-                            <div className="inline-flex items-center justify-center gap-1.5 text-[10px] text-slate-600 font-mono bg-slate-100/90 hover:bg-slate-200/70 px-2 py-0.5 rounded-md border border-slate-200/80 w-full max-w-[155px] truncate transition-colors">
-                              <Phone className="w-2.5 h-2.5 text-emerald-600 shrink-0" />
-                              <span className="truncate">{off.phone || '-'}</span>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                ) : (
-                  <div className="text-xs text-slate-400">Belum ada data pendamping</div>
-                )
-              ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  {/* Edit Cards 2, 3, 4: Officials */}
                   {rosterDraft?.officials?.map((off, i) => {
                     const isMainOfficial = i === 0 || off.category === 'official';
-                    const hasRealPhoto = !isPlaceholderAvatar(off.photo);
+                    const hasPhoto = off.photo && typeof off.photo === 'string' && off.photo !== '#' && !off.photo.startsWith('#') && !off.photo.includes('drive.google.com/open?id=');
+                    const badgeLabel = isMainOfficial ? 'Official' : i === 1 ? 'Medis' : 'Logistik';
+                    const badgeBg = isMainOfficial ? 'bg-blue-600' : i === 1 ? 'bg-emerald-600' : 'bg-slate-700';
 
                     return (
                       <div
                         key={off.id || i}
-                        className={`p-3 rounded-2xl border flex flex-col items-center justify-between space-y-2.5 transition-all shadow-2xs ${
-                          isMainOfficial
-                            ? 'bg-blue-50/40 border-blue-200/90 ring-1 ring-blue-100'
-                            : 'bg-white border-slate-200/90'
-                        }`}
+                        className="p-3 rounded-2xl bg-white border border-slate-200 flex flex-col justify-between space-y-2.5 shadow-2xs"
                       >
-                        {/* Header Chip Peran Pendamping */}
-                        <div className="w-full flex items-center justify-between gap-1">
-                          <span className={`px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider shadow-2xs truncate max-w-full ${
-                            isMainOfficial ? 'bg-blue-600 text-white' : i === 1 ? 'bg-teal-600 text-white' : 'bg-slate-700 text-white'
-                          }`}>
-                            {isMainOfficial ? 'Official Utama' : `Pendukung ${i} (${i === 1 ? 'Medis' : 'Logistik'})`}
-                          </span>
-                          <button
-                            type="button"
-                            onClick={() => triggerRosterPhotoUpload({ type: 'official', index: i })}
-                            className="px-2 py-0.5 bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 text-[9px] font-bold rounded-md flex items-center gap-1 transition-colors shadow-2xs cursor-pointer shrink-0"
-                            title="Unggah atau Ganti Pasfoto"
-                          >
-                            <Camera className="w-3 h-3 text-slate-500" />
-                            <span>{off.photo ? 'Ganti' : 'Unggah'}</span>
-                          </button>
-                        </div>
-
-                        {/* Pasfoto Frame Seragam 3:4 */}
-                        <div className="relative group shrink-0 my-0.5">
+                        <div className="relative group shrink-0">
                           <div
                             onClick={() => triggerRosterPhotoUpload({ type: 'official', index: i })}
-                            className="w-24 sm:w-26 aspect-[3/4] rounded-xl bg-slate-100 border border-slate-200 shadow-2xs relative overflow-hidden flex items-center justify-center cursor-pointer group hover:border-blue-500 transition-colors"
-                            title="Klik untuk unggah/ganti pasfoto pendamping"
+                            className="aspect-[3/4] w-full rounded-xl bg-slate-800 border border-slate-200 shadow-inner relative overflow-hidden flex items-center justify-center cursor-pointer group hover:border-blue-500 transition-colors"
+                            title="Klik untuk unggah pasfoto pendamping"
                           >
-                            {hasRealPhoto ? (
+                            {hasPhoto ? (
                               <img
                                 src={formatImageUrl(off.photo)}
                                 alt={off.name || 'Pendamping'}
                                 referrerPolicy="no-referrer"
                                 className="w-full h-full object-cover object-top"
-                                onError={(e) => {
-                                  const fallback = getFallbackImageUrl(off.photo);
-                                  if (fallback && e.currentTarget.src !== fallback) {
-                                    e.currentTarget.src = fallback;
-                                  } else {
-                                    e.currentTarget.style.display = 'none';
-                                    if (e.currentTarget.nextElementSibling) {
-                                      e.currentTarget.nextElementSibling.style.display = 'flex';
-                                    }
-                                  }
-                                }}
                               />
                             ) : (
-                              <div className="w-full h-full flex flex-col items-center justify-center text-center p-1.5">
-                                <div
-                                  className={`w-12 h-12 rounded-full font-black text-sm flex items-center justify-center shadow-sm text-white mb-1.5 ${
-                                    isMainOfficial
-                                      ? 'bg-gradient-to-br from-blue-500 to-blue-700'
-                                      : i === 1
-                                      ? 'bg-gradient-to-br from-teal-500 to-teal-700'
-                                      : 'bg-gradient-to-br from-slate-600 to-slate-800'
-                                  }`}
-                                >
+                              <div className="w-full h-full flex flex-col items-center justify-center text-slate-300 bg-slate-800 p-2">
+                                <span className="text-3xl font-black text-slate-300">
                                   {getPersonInitials(off.name)}
-                                </div>
-                                <span className="text-[7.5px] font-black uppercase tracking-wider text-slate-500">
-                                  PASFOTO 3×4
                                 </span>
                               </div>
                             )}
+                            <span className={`absolute top-1.5 right-1.5 px-2 py-0.5 rounded-md ${badgeBg} text-white text-[10px] font-bold shadow-xs uppercase tracking-wider`}>
+                              {badgeLabel}
+                            </span>
                             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1 text-white text-[10px] font-bold">
                               <Camera className="w-3.5 h-3.5" />
-                              <span>Ganti</span>
+                              <span>Ganti Foto</span>
                             </div>
                           </div>
                           <button
                             type="button"
                             onClick={() => triggerRosterPhotoUpload({ type: 'official', index: i })}
-                            className="absolute -bottom-1 -right-1 p-1 rounded-lg bg-yellow-400 text-slate-950 shadow-xs hover:bg-yellow-300 transition-all cursor-pointer"
+                            className="absolute -bottom-1 -right-1 p-1.5 rounded-lg bg-yellow-400 text-slate-950 shadow-xs hover:bg-yellow-300 transition-all cursor-pointer"
                             title="Unggah Pasfoto"
                           >
                             <Upload className="w-3 h-3" />
                           </button>
                         </div>
 
-                        {/* Input Form Vertikal (Lebar Penuh, Tidak Berdesakan & Tidak Terpotong) */}
-                        <div className="w-full space-y-2 pt-2 border-t border-slate-100 text-left">
+                        <div className="w-full space-y-1.5 pt-1 text-left">
                           <div>
-                            <label className="text-[9px] font-bold text-slate-400 uppercase block mb-0.5">
-                              Nama Lengkap
-                            </label>
+                            <label className="text-[9px] font-bold text-slate-400 uppercase block mb-0.5">Nama</label>
                             <input
                               type="text"
-                              placeholder={isMainOfficial ? "Nama Pelatih / Pembina" : "Nama Pendukung (Medis/Dokum)"}
+                              placeholder={isMainOfficial ? "Nama Official" : "Nama Pendukung"}
                               value={off.name || ''}
                               onChange={e => {
                                 const updated = rosterDraft.officials.map((item, idx) =>
@@ -695,17 +580,15 @@ export default function RosterTab({
                                 );
                                 setRosterDraft({ ...rosterDraft, officials: updated });
                               }}
-                              className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-bold text-slate-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 shadow-2xs"
+                              className="w-full px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold text-slate-900 focus:outline-none focus:ring-1 focus:ring-blue-500"
                             />
                           </div>
 
                           <div>
-                            <label className="text-[9px] font-bold text-slate-400 uppercase block mb-0.5">
-                              Peran / Jabatan
-                            </label>
+                            <label className="text-[9px] font-bold text-slate-400 uppercase block mb-0.5">Peran</label>
                             <input
                               type="text"
-                              placeholder={isMainOfficial ? "Official (Pelatih/Pembina)" : "Pendukung (Medis/Dokum)"}
+                              placeholder="Peran / Jabatan"
                               value={off.role || ''}
                               onChange={e => {
                                 const updated = rosterDraft.officials.map((item, idx) =>
@@ -713,14 +596,12 @@ export default function RosterTab({
                                 );
                                 setRosterDraft({ ...rosterDraft, officials: updated });
                               }}
-                              className="w-full px-2.5 py-1 bg-white border border-slate-200 rounded-lg text-[11px] font-medium text-slate-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                              className="w-full px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-lg text-[11px] text-slate-700 focus:outline-none focus:ring-1 focus:ring-blue-500"
                             />
                           </div>
 
                           <div>
-                            <label className="text-[9px] font-bold text-slate-400 uppercase block mb-0.5">
-                              No. WhatsApp / Kontak
-                            </label>
+                            <label className="text-[9px] font-bold text-slate-400 uppercase block mb-0.5">No. WhatsApp</label>
                             <input
                               type="text"
                               placeholder="08xxxxxxxxxx"
@@ -731,7 +612,7 @@ export default function RosterTab({
                                 );
                                 setRosterDraft({ ...rosterDraft, officials: updated });
                               }}
-                              className="w-full px-2.5 py-1 bg-white border border-slate-200 rounded-lg text-[11px] font-mono text-slate-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                              className="w-full px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-lg text-[11px] font-mono text-slate-700 focus:outline-none focus:ring-1 focus:ring-blue-500"
                             />
                           </div>
                         </div>
@@ -739,26 +620,20 @@ export default function RosterTab({
                     );
                   })}
                 </div>
-              )}
-            </div>
+              );
+            })()}
           </div>
 
           {/* 21 Pasukan Inti Grid */}
           <div className="space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-200 pb-2">
+            <div className="font-black text-xs uppercase tracking-wider text-slate-900 border-b border-slate-200 pb-2.5 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <span className="p-1.5 rounded-xl bg-slate-900 text-white shadow-xs">
-                  <Shield className="w-3.5 h-3.5" />
-                </span>
-                <div>
-                  <h5 className="font-black text-xs uppercase tracking-wider text-slate-900">
-                    21 Pasukan Inti (3 Saf × 7 Banjar)
-                  </h5>
-                  <p className="text-[10px] text-slate-500">
-                    Saf 1 (Depan), Saf 2 (Tengah), Saf 3 (Belakang)
-                  </p>
-                </div>
+                <span className="w-2.5 h-2.5 rounded-full bg-red-600"></span>
+                <span>21 Pasukan Inti (3 Saf × 7 Banjar)</span>
               </div>
+              <span className="text-[10px] font-bold text-slate-500 bg-white border border-slate-200 px-2.5 py-0.5 rounded-full">
+                21 Personel (Saf 1 – 3)
+              </span>
             </div>
             {!isEditingRoster ? (
               Array.isArray(currentTeam.roster?.pasukan) && currentTeam.roster.pasukan.length > 0 ? (
@@ -1040,21 +915,15 @@ export default function RosterTab({
 
           {/* Cadangan Section */}
           <div className="pt-2">
-            <div className="bg-amber-50/50 border border-amber-200/80 rounded-3xl p-5 space-y-4">
-              <div className="flex items-center justify-between border-b border-amber-200/70 pb-2.5">
+            <div className="bg-amber-50/50 border border-amber-200/80 rounded-3xl p-4 sm:p-5 space-y-3.5">
+              <div className="font-black text-xs uppercase tracking-wider text-slate-900 border-b border-amber-200/70 pb-2.5 flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <span className="p-1.5 rounded-xl bg-amber-500 text-slate-950 font-black shadow-xs text-xs">
-                    C1-3
-                  </span>
-                  <div>
-                    <h5 className="font-black text-xs uppercase tracking-wider text-slate-900">
-                      3 Personel Cadangan Peleton
-                    </h5>
-                    <p className="text-[10px] text-slate-600">
-                      Pengganti darurat jika personel inti berhalangan
-                    </p>
-                  </div>
+                  <span className="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                  <span>3 Personel Cadangan Peleton</span>
                 </div>
+                <span className="text-[10px] font-bold text-slate-500 bg-white border border-amber-200 px-2.5 py-0.5 rounded-full">
+                  3 Personel (Cadangan 1 – 3)
+                </span>
               </div>
               {!isEditingRoster ? (
                 Array.isArray(currentTeam.roster?.cadangan) && currentTeam.roster.cadangan.length > 0 ? (

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   BookOpen,
   Search,
@@ -36,11 +36,22 @@ import Rules from '../Rules.jsx';
 import SebaranNilaiTable from './SebaranNilaiTable.jsx';
 
 export default function JuknisView({ embedded = false }) {
-  const { currentTeam } = useCompetition();
+  const { currentTeam, currentUser, role, settings, updateSettings } = useCompetition?.() || {};
+  const isSuperadmin = (currentUser?.role || role) === 'superadmin';
+  const isRatified = Boolean(settings?.juknisPenilaianPublished && settings?.juknisPenilaianRatifiedAt);
+  const canAccessPenilaian = isRatified || isSuperadmin;
 
   // Tab switch: 'penilaian' | 'lapangan' | 'pendaftaran' | 'materials' | 'rundown'
-  const [activeTab, setActiveTab] = useState('penilaian');
+  // Jika belum disahkan dan bukan superadmin, sembunyikan penilaian dan default ke 'lapangan'
+  const [activeTab, setActiveTab] = useState(() => (isRatified || isSuperadmin ? 'penilaian' : 'lapangan'));
   const [rundownSubTab, setRundownSubTab] = useState('competition'); // 'competition' | 'tm' | 'trial'
+
+  // Pastikan jika status pengesahan dicabut dan bukan superadmin, redirect otomatis ke 'lapangan'
+  useEffect(() => {
+    if (!canAccessPenilaian && activeTab === 'penilaian') {
+      setActiveTab('lapangan');
+    }
+  }, [canAccessPenilaian, activeTab]);
   const [openPenilaianSections, setOpenPenilaianSections] = useState({
     'bab-a': false,
     'bab-b': false,
@@ -147,7 +158,11 @@ export default function JuknisView({ embedded = false }) {
                 Petunjuk Teknis & Regulasi Kejuaraan
               </h1>
               <p className="text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed">
-                Dokumen regulasi resmi terbagi dalam 3 naskah baku mandiri: <strong>Petunjuk Teknis Penilaian & Kejuaraan</strong> (sistem coret 5 predikat KS/K/C/B/BS, Danton, Juara Umum, sanggah), <strong>Petunjuk Teknis Lapangan</strong> (kronologis pra s.d. pasca lomba & penalti), serta <strong>Petunjuk Teknis Pendaftaran</strong>.
+                Dokumen regulasi resmi terbagi dalam 3 naskah baku mandiri: {isRatified ? (
+                  <><strong>Petunjuk Teknis Penilaian & Kejuaraan</strong> (sistem coret 5 predikat KS/K/C/B/BS, Danton, Juara Umum, sanggah), </>
+                ) : (
+                  <><em>Petunjuk Teknis Penilaian & Kejuaraan (menunggu pengesahan Superadmin)</em>, </>
+                )}<strong>Petunjuk Teknis Lapangan</strong> (kronologis pra s.d. pasca lomba & penalti), serta <strong>Petunjuk Teknis Pendaftaran</strong>.
               </p>
               <div className="pt-1 flex flex-wrap gap-2.5">
                 <a
@@ -163,30 +178,47 @@ export default function JuknisView({ embedded = false }) {
               </div>
             </div>
 
-            <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-4 text-center min-w-[170px] shrink-0 self-start md:self-center">
-              <span className="text-[10px] uppercase font-bold text-amber-300 block">6 Dewan Juri Independen</span>
-              <span className="text-xl font-black text-white font-mono">KS • K • C • B • BS</span>
-              <span className="text-[10px] text-slate-300 block mt-0.5">Paduan Teknik & Kekompakan</span>
-            </div>
+            {isRatified ? (
+              <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-4 text-center min-w-[170px] shrink-0 self-start md:self-center">
+                <span className="text-[10px] uppercase font-bold text-amber-300 block">6 Dewan Juri Independen</span>
+                <span className="text-xl font-black text-white font-mono">KS • K • C • B • BS</span>
+                <span className="text-[10px] text-slate-300 block mt-0.5">Paduan Teknik & Kekompakan</span>
+              </div>
+            ) : (
+              <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-4 text-center min-w-[170px] shrink-0 self-start md:self-center">
+                <span className="text-[10px] uppercase font-bold text-slate-300 block">Status Regulasi Juri</span>
+                <span className="text-sm font-black text-amber-300 block">Menunggu Pengesahan</span>
+                <span className="text-[10px] text-slate-400 block mt-0.5">Otoritas Superadmin</span>
+              </div>
+            )}
           </div>
         </div>
 
         {/* Document Tab Switcher (5 Tab Khusus & Terpisah) */}
         <div className="flex flex-col gap-2 bg-white p-2.5 rounded-2xl border border-slate-200 shadow-xs">
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-1.5 p-1 bg-slate-100 rounded-xl">
+          <div className={`grid grid-cols-2 sm:grid-cols-3 ${canAccessPenilaian ? 'lg:grid-cols-5' : 'lg:grid-cols-4'} gap-1.5 p-1 bg-slate-100 rounded-xl`}>
             {/* Tab 1: Juknis Penilaian & Kejuaraan */}
-            <button
-              type="button"
-              onClick={() => setActiveTab('penilaian')}
-              className={`flex items-center justify-center gap-2 px-2.5 py-2.5 rounded-lg text-xs font-black transition-all cursor-pointer text-center ${
-                activeTab === 'penilaian'
-                  ? 'bg-amber-600 text-white shadow-md shadow-amber-600/30'
-                  : 'text-slate-700 hover:text-slate-900 hover:bg-slate-200/60'
-              }`}
-            >
-              <Award className="w-4 h-4 shrink-0" />
-              <span>Juknis Penilaian</span>
-            </button>
+            {canAccessPenilaian && (
+              <button
+                type="button"
+                onClick={() => setActiveTab('penilaian')}
+                className={`flex items-center justify-center gap-2 px-2.5 py-2.5 rounded-lg text-xs font-black transition-all cursor-pointer text-center ${
+                  activeTab === 'penilaian'
+                    ? 'bg-amber-600 text-white shadow-md shadow-amber-600/30'
+                    : 'text-slate-700 hover:text-slate-900 hover:bg-slate-200/60'
+                }`}
+              >
+                <Award className="w-4 h-4 shrink-0" />
+                <span className="flex items-center gap-1.5">
+                  Juknis Penilaian
+                  {!isRatified && isSuperadmin && (
+                    <span className="px-1.5 py-0.5 rounded text-[9px] font-black uppercase bg-amber-400 text-amber-950">
+                      Draf
+                    </span>
+                  )}
+                </span>
+              </button>
+            )}
 
             {/* Tab 2: Juknis Lapangan */}
             <button
@@ -260,8 +292,64 @@ export default function JuknisView({ embedded = false }) {
         {/* ============================================================== */}
         {/* TAB 1: PETUNJUK TEKNIS PENILAIAN & KEJUARAAN                   */}
         {/* ============================================================== */}
-        {activeTab === 'penilaian' && (
+        {activeTab === 'penilaian' && canAccessPenilaian && (
           <div className="space-y-6 animate-fade">
+            {/* Banner Mode Draf Superadmin */}
+            {!isRatified && isSuperadmin && (
+              <div className="p-4 sm:p-5 rounded-2xl bg-amber-50 border-2 border-amber-300 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xs">
+                <div className="flex items-start sm:items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center shrink-0 border border-amber-200">
+                    <AlertTriangle className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <span className="text-xs font-black uppercase text-amber-900 tracking-wider block">
+                      Mode Draf Superadmin (Disembunyikan dari Publik)
+                    </span>
+                    <p className="text-xs text-slate-600">
+                      Halaman Petunjuk Teknis Penilaian & Kejuaraan ini saat ini <strong>disembunyikan dari peserta & publik</strong> sampai Anda mengesahkannya.
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    updateSettings?.({
+                      juknisPenilaianPublished: true,
+                      juknisPenilaianRatifiedAt: new Date().toISOString()
+                    });
+                  }}
+                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl shadow-md transition-all flex items-center gap-2 shrink-0 cursor-pointer"
+                >
+                  <CheckCircle2 className="w-4 h-4" />
+                  <span>Sahkan & Tayangkan Sekarang</span>
+                </button>
+              </div>
+            )}
+
+            {/* Banner Telah Disahkan untuk Superadmin */}
+            {isRatified && isSuperadmin && (
+              <div className="p-3 sm:p-4 rounded-xl bg-emerald-50 border border-emerald-300 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+                <div className="flex items-center gap-2 text-emerald-800 font-semibold">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>
+                    Dokumen telah resmi <strong>disahkan oleh Superadmin</strong> ({new Date(settings.juknisPenilaianRatifiedAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}) dan tayang ke publik.
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    updateSettings?.({
+                      juknisPenilaianPublished: false,
+                      juknisPenilaianRatifiedAt: null
+                    });
+                  }}
+                  className="px-3 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-lg text-[11px] transition-colors shrink-0"
+                >
+                  Kembalikan ke Draf
+                </button>
+              </div>
+            )}
+
             {/* Header Pengenal Dokumen */}
             <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-3xl p-6 sm:p-7 shadow-xs space-y-2">
               <div className="flex items-center gap-2 text-amber-800 font-black text-xs uppercase tracking-wider">
