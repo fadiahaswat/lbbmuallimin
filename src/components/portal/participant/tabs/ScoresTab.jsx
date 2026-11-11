@@ -936,19 +936,8 @@ export default function ScoresTab({ teamScore, currentTeam }) {
                         <td className="py-2.5 px-3 text-center font-mono font-bold text-indigo-950 border-r border-slate-100 bg-indigo-50/20">
                           {row.v3}
                         </td>
-                        <td className="py-2.5 px-3 text-center font-mono font-black text-slate-950 bg-slate-50/80">
-                          <div className="flex items-center justify-center gap-1.5">
-                            <span>{row.totalVal}</span>
-                            <span className={`text-[8.5px] px-1.5 py-0.2 rounded font-bold ${
-                              row.totalVal >= 245
-                                ? 'bg-emerald-100 text-emerald-800'
-                                : row.totalVal >= 230
-                                ? 'bg-blue-100 text-blue-800'
-                                : 'bg-amber-100 text-amber-800'
-                            }`}>
-                              {row.totalVal >= 245 ? 'BS' : row.totalVal >= 230 ? 'B' : 'C'}
-                            </span>
-                          </div>
+                        <td className="py-2.5 px-3 text-center font-mono font-black text-slate-950 bg-slate-50/80 text-xs sm:text-sm">
+                          {row.totalVal}
                         </td>
                       </tr>
                     ))}

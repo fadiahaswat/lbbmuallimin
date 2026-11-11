@@ -50,6 +50,7 @@ export default function SimpaskorSidebarLayout({
   onSelectMenu = null,
   hideHeader = false,
   fullWidth = false,
+  onLogout = null,
   children
 }) {
   const {
@@ -550,15 +551,29 @@ export default function SimpaskorSidebarLayout({
     setShowLogoutConfirmModal(true);
   };
 
-  const confirmLogout = () => {
+  const confirmLogout = (e) => {
+    if (e && e.stopPropagation) e.stopPropagation();
     setShowLogoutConfirmModal(false);
-    if (onLogout) {
-      onLogout();
-    } else if (isPeserta) {
-      if (logoutTeam) logoutTeam();
-      if (logoutUser) logoutUser();
-    } else {
-      logoutUser();
+    try {
+      if (typeof onLogout === 'function') {
+        onLogout();
+        return;
+      }
+      if (isPeserta) {
+        if (typeof logoutTeam === 'function') logoutTeam();
+        if (typeof logoutUser === 'function') logoutUser();
+      } else {
+        if (typeof logoutUser === 'function') logoutUser();
+      }
+      if (typeof setActiveView === 'function') {
+        setActiveView('landing');
+      }
+    } catch (err) {
+      console.error('Logout error:', err);
+      try {
+        localStorage.clear();
+        window.location.reload();
+      } catch (ex) {}
     }
   };
 
@@ -1381,8 +1396,14 @@ export default function SimpaskorSidebarLayout({
 
       {/* Modal Konfirmasi Logout / Ganti Akun */}
       {showLogoutConfirmModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 p-4 backdrop-blur-xs animate-in fade-in duration-200">
-          <div className="w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl sm:p-7 space-y-5 animate-in zoom-in-95 duration-200">
+        <div 
+          onClick={() => setShowLogoutConfirmModal(false)}
+          className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/70 p-4 backdrop-blur-xs animate-in fade-in duration-200 cursor-pointer"
+        >
+          <div 
+            onClick={(e) => e.stopPropagation()}
+            className="w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl sm:p-7 space-y-5 animate-in zoom-in-95 duration-200 cursor-default"
+          >
             <div className="flex items-start gap-3.5">
               <div className="w-12 h-12 rounded-2xl bg-rose-50 border border-rose-200 text-rose-600 flex items-center justify-center shrink-0 shadow-xs">
                 <LogOut className="w-6 h-6 stroke-[2.2]" />
@@ -1407,14 +1428,20 @@ export default function SimpaskorSidebarLayout({
             <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-slate-100">
               <button
                 type="button"
-                onClick={() => setShowLogoutConfirmModal(false)}
-                className="px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-100 text-slate-700 font-bold text-xs transition-colors cursor-pointer"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowLogoutConfirmModal(false);
+                }}
+                className="px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-100 text-slate-700 font-bold text-xs transition-colors cursor-pointer active:scale-95"
               >
                 Batal
               </button>
               <button
                 type="button"
-                onClick={confirmLogout}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  confirmLogout(e);
+                }}
                 className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white font-bold text-xs shadow-md shadow-red-600/25 flex items-center gap-1.5 transition-all cursor-pointer active:scale-95"
               >
                 <LogOut className="w-3.5 h-3.5" />
