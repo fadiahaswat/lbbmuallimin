@@ -172,7 +172,8 @@ export function CompetitionProvider({ children }) {
       const saved = localStorage.getItem(STORAGE_KEYS.TEAMS);
       const list = saved ? JSON.parse(saved) : null;
       const isMissingLotNumbers = Array.isArray(list) && list.some(t => t.id && t.id.startsWith('dummy-') && !t.lotNumber);
-      if (Array.isArray(list) && list.length >= 36 && !isMissingLotNumbers) {
+      const hasOldPlatoonNicknames = Array.isArray(list) && list.some(t => t.id && t.id.startsWith('dummy-') && t.platoonName && (t.platoonName.includes('Menggolo') || t.platoonName.includes('Pemanahan')));
+      if (Array.isArray(list) && list.length >= 36 && !isMissingLotNumbers && !hasOldPlatoonNicknames) {
         return list.map(normalizeTeamData);
       }
       // Khusus Localhost: Otomatis sediakan 36 peleton dummy lengkap (18 SD + 18 SMP)

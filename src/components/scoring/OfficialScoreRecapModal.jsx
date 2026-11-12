@@ -491,7 +491,7 @@ export default function OfficialScoreRecapModal({ isOpen, onClose, initialJenjan
                             )}
                           </div>
                           <div className="text-[10px] text-slate-500">
-                            {item.team.platoonName} • Komandan: {item.team.roster?.danton?.name || item.team.dantonName || '-'}
+                            Komandan: {item.team.roster?.danton?.name || item.team.dantonName || '-'}
                           </div>
                         </td>
                         <td className="py-2.5 px-2 border-r border-slate-200 font-bold text-slate-700">

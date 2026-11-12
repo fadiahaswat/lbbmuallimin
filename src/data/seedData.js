@@ -20,6 +20,9 @@ export const INITIAL_SETTINGS = {
   quotaSD: 18,
   quotaSMP: 18,
   currentWave: 1, // Gelombang 1
+  beritaAcaraUrl: '', // Link Google Drive Berita Acara Dewan Juri (General)
+  beritaAcaraUrlSD: '', // Link Google Drive Berita Acara SD/MI
+  beritaAcaraUrlSMP: '', // Link Google Drive Berita Acara SMP/MTs
   eventDates: {
     registrationStart: '2026-10-26T00:00:00+07:00',
     registrationDeadline: '2026-11-22T23:59:59+07:00',

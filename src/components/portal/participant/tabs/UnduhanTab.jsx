@@ -137,20 +137,16 @@ export default function UnduhanTab({ currentTeam, onOpenPactModal, isEmbedded = 
     <div className="space-y-6">
       {/* 1. Header Tab (hanya tampil jika bukan embedded) */}
       {!isEmbedded && (
-        <div className="flex flex-col gap-4 border-b border-slate-100 pb-5 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-3.5">
-            <span className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-700 text-white shadow-lg shadow-blue-600/20">
-              <Download className="w-6 h-6 text-white" />
-              <span className="absolute -right-1 -top-1 h-3.5 w-3.5 rounded-full border-2 border-white bg-emerald-400" />
+        <div className="flex flex-col gap-3 border-b border-slate-100 pb-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-3">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-600 text-white shadow-sm">
+              <Download className="w-5 h-5 text-white" />
             </span>
             <div>
-              <p className="text-[9px] font-black uppercase tracking-[0.18em] text-blue-600">
-                PUSAT DOKUMEN & BERKAS RESMI
-              </p>
-              <h2 className="mt-0.5 text-lg font-black tracking-tight text-slate-950 sm:text-xl">
-                Pusat Unduhan Kontingen 2027
+              <h2 className="text-lg font-black tracking-tight text-slate-950 sm:text-xl">
+                Pusat Unduhan Kontingen
               </h2>
-              <p className="mt-0.5 text-[10px] sm:text-xs text-slate-500">
+              <p className="text-xs text-slate-500">
                 Unduh petunjuk teknis, regulasi juri, materi PBB, format pakta integritas, dan denah kawasan.
               </p>
             </div>
@@ -195,58 +191,33 @@ export default function UnduhanTab({ currentTeam, onOpenPactModal, isEmbedded = 
         </div>
       )}
 
-      {/* 2. Category Filter Pills */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
-        {categories.map((cat) => (
-          <button
-            key={cat.id}
-            type="button"
-            onClick={() => setSelectedCategory(cat.id)}
-            className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all shrink-0 cursor-pointer ${
-              selectedCategory === cat.id
-                ? 'bg-blue-600 text-white shadow-xs'
-                : 'bg-slate-100 text-slate-600 hover:bg-slate-200/80 hover:text-slate-900'
-            }`}
-          >
-            {cat.label}
-          </button>
-        ))}
-      </div>
-
-      {/* 3. Grid of Download Cards */}
+      {/* 2. Grid of Download Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {filteredFiles.map((file) => {
           const Icon = file.icon;
           return (
             <div
               key={file.id}
-              className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5 flex flex-col justify-between space-y-4 hover:border-slate-300 hover:shadow-2xs transition-all"
+              className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5 flex flex-col justify-between space-y-3 hover:border-slate-300 hover:shadow-2xs transition-all"
             >
-              <div className="space-y-3">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center shrink-0">
-                      <Icon className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <span className={`text-[8.5px] font-black uppercase px-2 py-0.5 rounded-md border ${file.badgeColor}`}>
-                        {file.badge}
-                      </span>
-                      <h4 className="text-sm font-black text-slate-900 leading-snug mt-1">
-                        {file.title}
-                      </h4>
-                    </div>
+              <div className="space-y-2">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center shrink-0">
+                    <Icon className="w-5 h-5" />
                   </div>
+                  <h4 className="text-sm font-bold text-slate-900 leading-snug">
+                    {file.title}
+                  </h4>
                 </div>
 
-                <p className="text-xs text-slate-600 leading-relaxed font-normal">
+                <p className="text-xs text-slate-500 leading-relaxed font-normal">
                   {file.description}
                 </p>
               </div>
 
               {/* Bottom Action Row */}
               <div className="flex items-center justify-between pt-3 border-t border-slate-100">
-                <span className="text-[10px] font-mono font-bold text-slate-400">
+                <span className="text-[10px] font-mono text-slate-400">
                   {file.size}
                 </span>
 
@@ -277,19 +248,6 @@ export default function UnduhanTab({ currentTeam, onOpenPactModal, isEmbedded = 
             </div>
           );
         })}
-      </div>
-
-      {/* 4. Information Banner */}
-      <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 flex items-center gap-3 text-xs text-slate-600">
-        <HelpCircle className="w-5 h-5 text-blue-600 shrink-0" />
-        <div className="min-w-0 flex-1">
-          <p className="font-bold text-slate-800">
-            Perlu dokumen atau formulir khusus lainnya?
-          </p>
-          <p className="text-[11px] text-slate-500 mt-0.5">
-            Seluruh dokumen di atas merupakan berkas resmi yang disahkan oleh Panitia LBB Mu'allimin 2027. Jika ada kendala tautan unduh, silakan hubungi Panitia Sekretariat via kontak WhatsApp resmi.
-          </p>
-        </div>
       </div>
     </div>
   );

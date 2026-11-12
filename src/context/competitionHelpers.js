@@ -259,6 +259,13 @@ export function normalizeTeamData(team) {
   if (!team || typeof team !== 'object') return team;
   const t = { ...team };
 
+  // Pastikan tidak ada julukan nama peleton kuno (misal Peleton Singo Menggolo), seragamkan dengan nama sekolah
+  if (t.schoolName) {
+    if (!t.platoonName || t.platoonName.includes('Menggolo') || t.platoonName.includes('Pemanahan') || t.platoonName.startsWith('Peleton ') || t.platoonName.startsWith('Tonti ') || t.platoonName.startsWith('Laskar ') || t.platoonName.startsWith('Satria ')) {
+      t.platoonName = t.schoolName;
+    }
+  }
+
   if (typeof t.files === 'string') {
     try { t.files = JSON.parse(t.files); } catch (e) { t.files = {}; }
   }

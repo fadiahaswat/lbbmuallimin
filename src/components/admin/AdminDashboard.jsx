@@ -32,6 +32,8 @@ export default function AdminDashboard() {
     setAdminActiveTab,
     currentUser,
     role,
+    settings,
+    updateSettings,
     openAuthModal
   } = useCompetition();
 
@@ -477,6 +479,8 @@ export default function AdminDashboard() {
             totalRevenue={totalRevenue}
             openModal={openModal}
             setActiveView={setActiveView}
+            settings={settings}
+            updateSettings={updateSettings}
           />
         )}
       </div>

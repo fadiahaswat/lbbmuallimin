@@ -16,7 +16,9 @@ import {
   ShieldAlert,
   Check,
   UserCheck,
-  Flag
+  Flag,
+  Shield,
+  Medal
 } from 'lucide-react';
 import {
   MATERIALS,
@@ -339,42 +341,45 @@ export default function ScoresTab({ teamScore, currentTeam }) {
   const dantonMurniTotal = dantonData.grandTotal;
   const dantonFinalScore = Number(teamScore?.nilaiAkhirDanton ?? Math.max(0, parseFloat((dantonMurniTotal - dantonPenaltyTotal).toFixed(2))));
 
+  // Format Gelar/Peringkat yang Bersih & Rapi
+  const peletonAwardTitle = useMemo(() => {
+    if (!teamScore?.rank) return null;
+    const raw = teamScore.awardTitle;
+    if (raw && raw.trim()) {
+      return raw.trim().replace(/\b(SD|SMP)\s+(SD|SMP)\b/gi, '$1').toUpperCase();
+    }
+    return teamScore.rank === 1 ? `JUARA UTAMA 1 ${isSMP ? 'SMP' : 'SD'}` : `PERINGKAT #${teamScore.rank}`;
+  }, [teamScore, isSMP]);
+
+  const dantonAwardTitle = useMemo(() => {
+    const rank = teamScore?.dantonRank || teamScore?.rank;
+    if (!rank) return null;
+    return rank <= 3 ? 'DANTON TERBAIK' : 'PERINGKAT DANTON';
+  }, [teamScore]);
+
   return (
     <section className="rounded-[28px] border border-slate-200/90 bg-white p-5 sm:p-7 shadow-[0_18px_46px_rgba(15,23,42,0.06)] space-y-6">
       {/* Panel Header */}
-      <div className="flex flex-col gap-4 border-b border-slate-100 pb-5 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-3.5">
-          <span className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-slate-900 to-slate-950 text-white shadow-lg border border-slate-800">
-            <Award className="w-6 h-6 text-amber-400" />
-            <span className="absolute -right-1 -top-1 h-3.5 w-3.5 rounded-full border-2 border-white bg-red-600 animate-pulse" />
+      <div className="flex flex-col gap-3 border-b border-slate-100 pb-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-3">
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-slate-900 text-white shadow-sm border border-slate-800">
+            <Award className="w-5 h-5 text-amber-400" />
           </span>
           <div>
-            <div className="flex items-center gap-2">
-              <span className="text-[9px] font-black uppercase tracking-[0.18em] text-red-600">
-                PORTAL KONTINGEN RESMI
-              </span>
-              <span className="text-[9px] font-bold text-slate-300">•</span>
-              <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">
-                {currentTeam?.schoolName || currentTeam?.nama || 'Kontingen Peserta'} (#{currentTeam?.chestNumber || (currentTeam?.lotNumber ? String(currentTeam.lotNumber).padStart(2, '0') : (currentTeam?.noUrut || '--'))})
-              </span>
-            </div>
-            <h2 className="mt-0.5 text-lg font-black tracking-tight text-slate-950 sm:text-xl">
-              Hasil Penilaian Resmi &amp; Berita Acara
+            <h2 className="text-lg font-black tracking-tight text-slate-950 sm:text-xl">
+              Hasil Penilaian Resmi
             </h2>
-            <p className="mt-0.5 text-[10px] sm:text-xs text-slate-500">
-              Rekapitulasi nilai resmi dari Dewan Juri LBB Mu'allimin 2027 dan pengesahan dewan hakim.
+            <p className="text-xs text-slate-500">
+              {currentTeam?.schoolName || currentTeam?.nama || 'Kontingen Peserta'} • No. Dada #{currentTeam?.chestNumber || (currentTeam?.lotNumber ? String(currentTeam.lotNumber).padStart(2, '0') : (currentTeam?.noUrut || '--'))}
             </p>
           </div>
         </div>
 
         {teamScore && (
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-black shadow-2xs">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-              <span>Nilai Sah &amp; Terverifikasi</span>
-            </span>
-            
-          </div>
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold shrink-0">
+            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+            <span>Nilai Sah Terverifikasi</span>
+          </span>
         )}
       </div>
 
@@ -382,125 +387,105 @@ export default function ScoresTab({ teamScore, currentTeam }) {
         <div className="space-y-6">
           {/* Dual Executive Championship Scoreboard (Peleton & Komandan Terpisah Sesuai Juknis Bab A.3) */}
           <div className="grid gap-5 lg:grid-cols-2">
-            {/* 1. KATEGORI PELETON */}
-            <div className="overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-4 sm:p-6 text-white relative shadow-xl border border-white/10 flex flex-col justify-between">
-              <div className="absolute -right-12 -top-12 h-44 w-44 rounded-full bg-blue-500/10 blur-3xl pointer-events-none" />
-              <div className="absolute -left-12 -bottom-12 h-44 w-44 rounded-full bg-teal-500/10 blur-3xl pointer-events-none" />
+            {/* 1. KATEGORI PELETON (Brand Mu'allimin Crimson & Gold) */}
+            <div className="overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-br from-slate-950 via-[#180909] to-[#2a0808] p-5 sm:p-6 text-white relative shadow-[0_20px_45px_rgba(139,0,0,0.22)] border border-red-500/30 ring-1 ring-white/10 group">
+              {/* Radial Brand Aura */}
+              <div className="absolute -right-16 -top-16 h-52 w-52 rounded-full bg-gradient-to-br from-red-600/25 via-red-800/15 to-transparent blur-3xl pointer-events-none group-hover:scale-110 transition-transform duration-700" />
+              <div className="absolute -left-12 -bottom-12 h-44 w-44 rounded-full bg-amber-500/10 blur-3xl pointer-events-none" />
 
-              <div className="relative z-10 space-y-2.5 sm:space-y-3.5">
-                <div className="flex items-center justify-between gap-2 border-b border-white/10 pb-2 sm:pb-2.5">
-                  <span className="text-[9.5px] sm:text-[10px] font-black uppercase tracking-[0.14em] text-blue-400 bg-blue-400/10 px-2 sm:px-2.5 py-0.5 rounded-md border border-blue-400/20">
-                    NILAI AKHIR PELETON
-                  </span>
-                  <span className="text-[10px] sm:text-[11px] text-slate-400 font-semibold">
-                    {materialsCount} Gerakan
+              <div className="relative z-10 space-y-4">
+                {/* Header Pill */}
+                <div className="flex items-center">
+                  <span className="inline-flex items-center gap-1.5 text-[10px] sm:text-[10.5px] font-black uppercase tracking-[0.14em] text-red-300 bg-red-950/90 px-3 py-1 rounded-full border border-red-500/40 shadow-xs">
+                    <Shield className="w-3.5 h-3.5 text-red-400 shrink-0" />
+                    <span>NILAI AKHIR PELETON</span>
                   </span>
                 </div>
 
-                <div className="flex items-center justify-between gap-2.5 sm:gap-4 pt-0.5 sm:pt-1">
+                {/* Score & Plaque */}
+                <div className="flex items-center justify-between gap-4 pt-1">
                   <div className="min-w-0 flex-1">
-                    <div className="flex items-baseline gap-1.5 sm:gap-2">
-                      <span className="text-4xl sm:text-5xl lg:text-6xl font-black font-mono tracking-tight text-white drop-shadow-sm leading-none">
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-4xl sm:text-5xl lg:text-6xl font-black font-mono tracking-tight text-white drop-shadow-[0_4px_16px_rgba(0,0,0,0.6)] leading-none">
                         {peletonFinalScore}
                       </span>
-                      <span className="text-xs sm:text-sm font-black text-blue-400 uppercase tracking-widest shrink-0">
+                      <span className="text-xs sm:text-sm font-black text-amber-400 uppercase tracking-widest shrink-0 drop-shadow-xs">
                         POIN
                       </span>
                     </div>
-                    {peletonPenaltyTotal > 0 ? (
-                      <p className="text-[11px] sm:text-xs text-rose-400 font-bold mt-1 font-mono">
-                        Penalti: -{peletonPenaltyTotal} Poin
+                    {peletonPenaltyTotal > 0 && (
+                      <p className="inline-flex items-center gap-1 text-[11px] sm:text-xs text-rose-400 font-bold mt-2 font-mono bg-rose-950/60 border border-rose-500/30 px-2 py-0.5 rounded-md">
+                        <AlertTriangle className="w-3 h-3 text-rose-400 shrink-0" />
+                        <span>Penalti: -{peletonPenaltyTotal} Poin</span>
                       </p>
-                    ) : null}
+                    )}
                   </div>
 
                   {teamScore.rank && (
-                    <div className="rounded-xl sm:rounded-2xl p-2 sm:p-3.5 text-center shrink-0 backdrop-blur-md border border-amber-400/40 bg-gradient-to-b from-amber-400/20 to-amber-500/10 shadow-[0_8px_20px_rgba(251,191,36,0.12)] ring-1 ring-amber-300/30 max-w-[115px] sm:max-w-[150px]">
-                      <div className="flex items-center justify-center gap-1 mb-0.5 sm:mb-1">
-                        <Trophy className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-300 shrink-0" />
-                        <p className="text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-amber-300 truncate max-w-[85px] sm:max-w-none">
-                          {teamScore.awardTitle || (teamScore.rank === 1 ? 'JUARA 1' : `PERINGKAT`)}
+                    <div className="rounded-2xl p-3 sm:p-3.5 text-center shrink-0 border border-amber-400/50 bg-gradient-to-b from-amber-400/20 via-amber-500/10 to-transparent backdrop-blur-md shadow-[0_10px_25px_rgba(245,158,11,0.2)] ring-1 ring-amber-300/30 min-w-[120px] sm:min-w-[145px]">
+                      <div className="flex items-center justify-center gap-1 mb-1">
+                        <Trophy className="w-3.5 h-3.5 text-amber-300 shrink-0" />
+                        <p className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-amber-300 truncate max-w-[110px] sm:max-w-none">
+                          {peletonAwardTitle}
                         </p>
                       </div>
-                      <p className="text-2xl sm:text-4xl font-black text-white font-mono tracking-tight leading-none">
+                      <p className="text-3xl sm:text-4xl font-black text-white font-mono tracking-tight leading-none drop-shadow-[0_2px_10px_rgba(245,158,11,0.4)]">
                         #{teamScore.rank}
                       </p>
                     </div>
                   )}
                 </div>
               </div>
-
-              <div className="mt-3 sm:mt-4 pt-2 sm:pt-2.5 border-t border-white/10 flex items-center justify-between text-[10px] sm:text-[11px] font-mono text-slate-300 relative z-10 flex-wrap gap-1">
-                <div className="flex items-center gap-1.5">
-                  <span className="text-slate-500 font-sans text-[10px]">Skor Juri:</span>
-                  <span className="font-bold text-slate-200">{totalJ1} • {totalJ2} • {totalJ3}</span>
-                </div>
-                {peletonPenaltyTotal > 0 ? (
-                  <span className="font-bold text-rose-400">-{peletonPenaltyTotal} Penalti</span>
-                ) : (
-                  <span className="text-[10px] font-sans font-semibold text-emerald-400">Bebas Penalti</span>
-                )}
-              </div>
             </div>
 
-            {/* 2. KATEGORI KOMANDAN */}
-            <div className="overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-br from-slate-950 via-slate-900 to-stone-950 p-4 sm:p-6 text-white relative shadow-xl border border-white/10 flex flex-col justify-between">
-              <div className="absolute -right-12 -top-12 h-44 w-44 rounded-full bg-amber-500/10 blur-3xl pointer-events-none" />
-              <div className="absolute -left-12 -bottom-12 h-44 w-44 rounded-full bg-rose-500/10 blur-3xl pointer-events-none" />
+            {/* 2. KATEGORI KOMANDAN (Brand Royal Amber & Deep Slate) */}
+            <div className="overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-br from-slate-950 via-[#16120b] to-[#281c08] p-5 sm:p-6 text-white relative shadow-[0_20px_45px_rgba(245,158,11,0.18)] border border-amber-500/30 ring-1 ring-white/10 group">
+              {/* Radial Brand Aura */}
+              <div className="absolute -right-16 -top-16 h-52 w-52 rounded-full bg-gradient-to-br from-amber-500/25 via-amber-600/15 to-transparent blur-3xl pointer-events-none group-hover:scale-110 transition-transform duration-700" />
+              <div className="absolute -left-12 -bottom-12 h-44 w-44 rounded-full bg-red-600/10 blur-3xl pointer-events-none" />
 
-              <div className="relative z-10 space-y-2.5 sm:space-y-3.5">
-                <div className="flex items-center justify-between gap-2 border-b border-white/10 pb-2 sm:pb-2.5">
-                  <span className="text-[9.5px] sm:text-[10px] font-black uppercase tracking-[0.14em] text-amber-400 bg-amber-400/10 px-2 sm:px-2.5 py-0.5 rounded-md border border-amber-400/20">
-                    NILAI AKHIR KOMANDAN
-                  </span>
-                  <span className="text-[10px] sm:text-[11px] text-slate-400 font-semibold">
-                    4 Aspek Rubrik
+              <div className="relative z-10 space-y-4">
+                {/* Header Pill */}
+                <div className="flex items-center">
+                  <span className="inline-flex items-center gap-1.5 text-[10px] sm:text-[10.5px] font-black uppercase tracking-[0.14em] text-amber-300 bg-amber-950/90 px-3 py-1 rounded-full border border-amber-500/40 shadow-xs">
+                    <Medal className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                    <span>NILAI AKHIR KOMANDAN</span>
                   </span>
                 </div>
 
-                <div className="flex items-center justify-between gap-2.5 sm:gap-4 pt-0.5 sm:pt-1">
+                {/* Score & Plaque */}
+                <div className="flex items-center justify-between gap-4 pt-1">
                   <div className="min-w-0 flex-1">
-                    <div className="flex items-baseline gap-1.5 sm:gap-2">
-                      <span className="text-4xl sm:text-5xl lg:text-6xl font-black font-mono tracking-tight text-white drop-shadow-sm leading-none">
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-4xl sm:text-5xl lg:text-6xl font-black font-mono tracking-tight text-white drop-shadow-[0_4px_16px_rgba(0,0,0,0.6)] leading-none">
                         {dantonFinalScore}
                       </span>
-                      <span className="text-xs sm:text-sm font-black text-amber-400 uppercase tracking-widest shrink-0">
+                      <span className="text-xs sm:text-sm font-black text-amber-400 uppercase tracking-widest shrink-0 drop-shadow-xs">
                         POIN
                       </span>
                     </div>
-                    {dantonPenaltyTotal > 0 ? (
-                      <p className="text-[11px] sm:text-xs text-rose-400 font-bold mt-1 font-mono">
-                        Penalti: -{dantonPenaltyTotal} Poin
+                    {dantonPenaltyTotal > 0 && (
+                      <p className="inline-flex items-center gap-1 text-[11px] sm:text-xs text-rose-400 font-bold mt-2 font-mono bg-rose-950/60 border border-rose-500/30 px-2 py-0.5 rounded-md">
+                        <AlertTriangle className="w-3 h-3 text-rose-400 shrink-0" />
+                        <span>Penalti: -{dantonPenaltyTotal} Poin</span>
                       </p>
-                    ) : null}
+                    )}
                   </div>
 
                   {(teamScore.dantonRank || teamScore.rank) && (
-                    <div className="rounded-xl sm:rounded-2xl p-2 sm:p-3.5 text-center shrink-0 backdrop-blur-md border border-amber-400/40 bg-gradient-to-b from-amber-400/20 to-amber-500/10 shadow-[0_8px_20px_rgba(251,191,36,0.12)] ring-1 ring-amber-300/30 max-w-[115px] sm:max-w-[150px]">
-                      <div className="flex items-center justify-center gap-1 mb-0.5 sm:mb-1">
-                        <Award className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-300 shrink-0" />
-                        <p className="text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-amber-300 truncate max-w-[85px] sm:max-w-none">
-                          {(teamScore.dantonRank || teamScore.rank) <= 3 ? 'DANTON TERBAIK' : 'PERINGKAT DANTON'}
+                    <div className="rounded-2xl p-3 sm:p-3.5 text-center shrink-0 border border-amber-400/50 bg-gradient-to-b from-amber-400/20 via-amber-500/10 to-transparent backdrop-blur-md shadow-[0_10px_25px_rgba(245,158,11,0.2)] ring-1 ring-amber-300/30 min-w-[120px] sm:min-w-[145px]">
+                      <div className="flex items-center justify-center gap-1 mb-1">
+                        <Medal className="w-3.5 h-3.5 text-amber-300 shrink-0" />
+                        <p className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-amber-300 truncate max-w-[110px] sm:max-w-none">
+                          {dantonAwardTitle}
                         </p>
                       </div>
-                      <p className="text-2xl sm:text-4xl font-black text-white font-mono tracking-tight leading-none">
+                      <p className="text-3xl sm:text-4xl font-black text-white font-mono tracking-tight leading-none drop-shadow-[0_2px_10px_rgba(245,158,11,0.4)]">
                         #{teamScore.dantonRank || teamScore.rank}
                       </p>
                     </div>
                   )}
                 </div>
-              </div>
-
-              <div className="mt-3 sm:mt-4 pt-2 sm:pt-2.5 border-t border-white/10 flex items-center justify-between text-[10px] sm:text-[11px] font-mono text-slate-300 relative z-10 flex-wrap gap-1">
-                <div className="flex items-center gap-1.5">
-                  <span className="text-slate-500 font-sans text-[10px]">Skor Juri:</span>
-                  <span className="font-bold text-slate-200">{dantonData.t1} • {dantonData.t2} • {dantonData.t3}</span>
-                </div>
-                {dantonPenaltyTotal > 0 ? (
-                  <span className="font-bold text-rose-400">-{dantonPenaltyTotal} Penalti</span>
-                ) : (
-                  <span className="text-[10px] font-sans font-semibold text-emerald-400">Bebas Penalti</span>
-                )}
               </div>
             </div>
           </div>
@@ -508,136 +493,45 @@ export default function ScoresTab({ teamScore, currentTeam }) {
           {/* ============================================================== */}
           {/* SECTION 1: LEMBAR CATATAN WAKTU RESMI (OFFICIAL TIMEKEEPER)   */}
           {/* ============================================================== */}
-          <div className="bg-white rounded-2xl sm:rounded-3xl border border-slate-200/90 shadow-2xs p-3.5 sm:p-4.5 space-y-2.5">
-            {/* Header: Compact One-Liner with Badge & Kuota */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
+          <div className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs p-4 sm:p-5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
               <div className="flex items-center gap-2.5 min-w-0">
-                <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-500 text-slate-950 font-black shadow-2xs shrink-0">
-                  <Timer className="w-4 h-4 text-slate-950" />
+                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500/15 text-amber-700 shrink-0">
+                  <Timer className="w-4.5 h-4.5 text-amber-600" />
                 </span>
-                <div className="min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <h3 className="font-black text-xs sm:text-sm uppercase tracking-wide text-slate-900 truncate">
-                      Catatan Waktu Arena
-                    </h3>
-                    <span className="text-[10px] text-slate-400 font-bold hidden md:inline">• Official Timekeeper</span>
-                    <span className={`inline-flex items-center gap-1.5 text-[9.5px] font-bold px-2 py-0.5 rounded-full border shrink-0 ${
-                      isOvertime
-                        ? 'bg-red-50 text-red-700 border-red-200'
-                        : 'bg-emerald-50 text-emerald-800 border-emerald-200'
-                    }`}>
-                      <span className={`w-1.5 h-1.5 rounded-full ${isOvertime ? 'bg-red-500 animate-ping' : 'bg-emerald-500'}`} />
-                      {isOvertime ? 'Overtime (+Pinalti)' : 'Waktu Sah (Aman)'}
-                    </span>
-                  </div>
+                <div>
+                  <h3 className="font-bold text-sm text-slate-900">
+                    Catatan Waktu Arena
+                  </h3>
+                  <p className="text-xs text-slate-500">
+                    Maksimal {formatTime(maxTimeSeconds)} ({isSMP ? 'SMP' : 'SD'})
+                  </p>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between sm:justify-end gap-2 text-[10.5px] font-mono shrink-0">
-                <span className="text-[10px] text-slate-400 uppercase font-semibold">Batas Kuota:</span>
-                <span className="font-black text-slate-800 bg-slate-100 px-2 py-0.5 rounded-lg border border-slate-200 text-[10.5px]">
-                  Maks. {formatTime(maxTimeSeconds)} ({isSMP ? 'SMP' : 'SD'})
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className={`inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-full border ${
+                  isOvertime
+                    ? 'bg-rose-50 text-rose-700 border-rose-200'
+                    : 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                }`}>
+                  <span className={`w-1.5 h-1.5 rounded-full ${isOvertime ? 'bg-rose-500 animate-ping' : 'bg-emerald-500'}`} />
+                  {isOvertime ? `Overtime +${formatTime(overtimeSeconds)} (-${overTimeBlocks * 20} Poin)` : 'Waktu Sah (Aman)'}
+                </span>
+                <span className="font-mono font-black text-sm text-slate-900 bg-slate-100 px-3 py-1 rounded-xl border border-slate-200">
+                  {formatTime(elapsedSeconds)} / {formatTime(maxTimeSeconds)}
                 </span>
               </div>
             </div>
 
-            {/* Visual Progress Bar - Slim & High-Contrast */}
-            <div className="bg-slate-50/90 rounded-xl px-3 py-2 border border-slate-200/70 space-y-1">
-              <div className="flex items-center justify-between text-[11px] font-mono">
-                <span className="text-slate-600 font-semibold text-[10.5px]">
-                  Penggunaan Waktu: <strong className="text-slate-900 font-black font-mono">{formatTime(elapsedSeconds)}</strong> / {formatTime(maxTimeSeconds)}
-                </span>
-                <span className={`font-bold text-[10.5px] ${isOvertime ? 'text-red-700' : 'text-emerald-700'}`}>
-                  {isOvertime ? `+${formatTime(overtimeSeconds)} Detik Melebihi Kuota` : `Tersisa ${Math.max(0, maxTimeSeconds - elapsedSeconds)} detik aman`}
-                </span>
-              </div>
-              <div className="w-full bg-slate-200/90 h-1.5 rounded-full overflow-hidden flex">
-                <div
-                  className={`h-full transition-all duration-500 rounded-full ${
-                    isOvertime ? 'bg-red-600' : 'bg-gradient-to-r from-teal-500 to-emerald-500'
-                  }`}
-                  style={{ width: `${Math.min(100, (elapsedSeconds / maxTimeSeconds) * 100)}%` }}
-                />
-              </div>
-            </div>
-
-            {/* 4 Compact Dashboard HUD Metric Cards */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-2.5">
-              {/* Card 1: Durasi Tampil Bersih */}
-              <div className="p-2.5 sm:p-3 rounded-xl bg-slate-50/80 border border-slate-200/80 flex flex-col justify-between">
-                <span className="text-[9px] font-black text-slate-400 uppercase tracking-wider block">
-                  DURASI TAMPIL BERSIH
-                </span>
-                <div className="flex items-baseline gap-1 my-0.5">
-                  <span className="text-xl sm:text-2xl font-mono font-black text-slate-900 leading-none">
-                    {formatTime(elapsedSeconds)}
-                  </span>
-                  <span className="text-[10px] font-semibold text-slate-500">mnt</span>
-                </div>
-                <span className="text-[9.5px] text-slate-400 font-mono">
-                  {elapsedSeconds} Detik
-                </span>
-              </div>
-
-              {/* Card 2: Batas Waktu Maksimal */}
-              <div className="p-2.5 sm:p-3 rounded-xl bg-slate-50/80 border border-slate-200/80 flex flex-col justify-between">
-                <span className="text-[9px] font-black text-slate-400 uppercase tracking-wider block">
-                  BATAS WAKTU MAKSIMAL
-                </span>
-                <div className="flex items-baseline gap-1 my-0.5">
-                  <span className="text-xl sm:text-2xl font-mono font-black text-slate-900 leading-none">
-                    {formatTime(maxTimeSeconds)}
-                  </span>
-                  <span className="text-[10px] font-semibold text-slate-500">mnt</span>
-                </div>
-                <span className="text-[9.5px] text-slate-400 font-mono">
-                  {maxTimeSeconds} Detik
-                </span>
-              </div>
-
-              {/* Card 3: Selisih Kelebihan (Overtime) */}
-              <div className={`p-2.5 sm:p-3 rounded-xl border flex flex-col justify-between ${
-                isOvertime ? 'bg-red-50/50 border-red-200' : 'bg-emerald-50/40 border-emerald-200/70'
-              }`}>
-                <span className={`text-[9px] font-black uppercase tracking-wider block ${
-                  isOvertime ? 'text-red-500' : 'text-emerald-700/70'
-                }`}>
-                  SELISIH OVERTIME
-                </span>
-                <div className="flex items-baseline gap-1 my-0.5">
-                  <span className={`text-xl sm:text-2xl font-mono font-black leading-none ${
-                    isOvertime ? 'text-red-700' : 'text-emerald-700'
-                  }`}>
-                    {isOvertime ? `+${formatTime(overtimeSeconds)}` : '00:00'}
-                  </span>
-                </div>
-                <span className={`text-[9.5px] font-semibold truncate ${
-                  isOvertime ? 'text-red-600' : 'text-emerald-700'
-                }`}>
-                  {isOvertime ? `${Math.ceil(overtimeSeconds / 30)} Blok × -20 Poin` : 'Tidak Ada Kelebihan'}
-                </span>
-              </div>
-
-              {/* Card 4: Sanksi Penalti Waktu */}
-              <div className={`p-2.5 sm:p-3 rounded-xl border flex flex-col justify-between ${
-                overTimeBlocks > 0 ? 'bg-red-50/50 border-red-200' : 'bg-emerald-50/40 border-emerald-200/70'
-              }`}>
-                <span className={`text-[9px] font-black uppercase tracking-wider block ${
-                  overTimeBlocks > 0 ? 'text-red-500' : 'text-emerald-700/70'
-                }`}>
-                  PENALTI WAKTU
-                </span>
-                <div className="flex items-baseline gap-1 my-0.5">
-                  <span className={`text-xl sm:text-2xl font-mono font-black leading-none ${
-                    overTimeBlocks > 0 ? 'text-red-700' : 'text-emerald-700'
-                  }`}>
-                    {overTimeBlocks > 0 ? `-${overTimeBlocks * 20}` : '0 Poin'}
-                  </span>
-                </div>
-                <span className="text-[9.5px] text-slate-400 font-semibold truncate">
-                  Regulasi Bab A.3 &amp; C
-                </span>
-              </div>
+            {/* Visual Progress Bar */}
+            <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+              <div
+                className={`h-full transition-all duration-500 rounded-full ${
+                  isOvertime ? 'bg-rose-600' : 'bg-emerald-500'
+                }`}
+                style={{ width: `${Math.min(100, (elapsedSeconds / maxTimeSeconds) * 100)}%` }}
+              />
             </div>
           </div>
 
@@ -652,16 +546,11 @@ export default function ScoresTab({ teamScore, currentTeam }) {
                   <FileSpreadsheet className="w-5 h-5 text-blue-600" />
                 </div>
                 <div>
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <h3 className="text-sm sm:text-base font-black text-slate-900 tracking-tight">
-                      Lembar Penilaian Peleton Resmi
-                    </h3>
-                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
-                      {materialsCount} Gerakan
-                    </span>
-                  </div>
-                  <p className="text-[11px] text-slate-500 mt-0.5">
-                    Format asli aplikasi Dewan Juri (Predikat Baku: KS, K, C, B, BS)
+                  <h3 className="text-sm sm:text-base font-black text-slate-900 tracking-tight">
+                    Lembar Penilaian Peleton
+                  </h3>
+                  <p className="text-xs text-slate-500">
+                    Akumulasi PBB Murni 3 Dewan Juri Resmi
                   </p>
                 </div>
               </div>
@@ -684,71 +573,45 @@ export default function ScoresTab({ teamScore, currentTeam }) {
                 <button
                   type="button"
                   onClick={() => setActiveJuryPost('pos1')}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
                     activeJuryPost === 'pos1'
                       ? 'bg-white text-slate-950 shadow-xs border border-slate-200/80 font-black'
                       : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
                   }`}
                 >
-                  <span>Juri 1</span>
-                  <span className={`font-mono text-[11px] px-1.5 py-0.5 rounded-md font-bold transition-colors ${
-                    activeJuryPost === 'pos1'
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-slate-200/70 text-slate-600'
-                  }`}>
-                    {totalJ1}
-                  </span>
+                  Juri 1
                 </button>
 
                 <button
                   type="button"
                   onClick={() => setActiveJuryPost('pos2')}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
                     activeJuryPost === 'pos2'
                       ? 'bg-white text-slate-950 shadow-xs border border-slate-200/80 font-black'
                       : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
                   }`}
                 >
-                  <span>Juri 2</span>
-                  <span className={`font-mono text-[11px] px-1.5 py-0.5 rounded-md font-bold transition-colors ${
-                    activeJuryPost === 'pos2'
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-slate-200/70 text-slate-600'
-                  }`}>
-                    {totalJ2}
-                  </span>
+                  Juri 2
                 </button>
 
                 <button
                   type="button"
                   onClick={() => setActiveJuryPost('pos3')}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
                     activeJuryPost === 'pos3'
                       ? 'bg-white text-slate-950 shadow-xs border border-slate-200/80 font-black'
                       : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
                   }`}
                 >
-                  <span>Juri 3</span>
-                  <span className={`font-mono text-[11px] px-1.5 py-0.5 rounded-md font-bold transition-colors ${
-                    activeJuryPost === 'pos3'
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-slate-200/70 text-slate-600'
-                  }`}>
-                    {totalJ3}
-                  </span>
+                  Juri 3
                 </button>
               </div>
             </div>
 
             {/* Filter Search Gerakan */}
             <div className="flex items-center justify-between gap-3">
-              <span className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                {activeJuryPost === 'rekap' ? (
-                  <span>Perbandingan Nilai Gerakan: Juri 1 + Juri 2 + Juri 3</span>
-                ) : (
-                  <span>Lembar Asli {activeJuryName}</span>
-                )}
+              <span className="text-xs font-bold text-slate-700">
+                {activeJuryPost === 'rekap' ? 'Perbandingan Nilai 3 Juri' : `Lembar Asli ${activeJuryName}`}
               </span>
 
               <div className="relative">
@@ -758,7 +621,7 @@ export default function ScoresTab({ teamScore, currentTeam }) {
                   value={searchMovement}
                   onChange={(e) => setSearchMovement(e.target.value)}
                   placeholder="Cari materi gerakan..."
-                  className="pl-8 pr-6 py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-white focus:bg-white text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all w-40 sm:w-56"
+                  className="pl-8 pr-6 py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-white focus:bg-white text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all w-44 sm:w-56"
                 />
                 {searchMovement && (
                   <button
@@ -1033,16 +896,11 @@ export default function ScoresTab({ teamScore, currentTeam }) {
                   <Award className="w-5 h-5 text-amber-600" />
                 </div>
                 <div>
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <h3 className="text-sm sm:text-base font-black text-slate-900 tracking-tight">
-                      Lembar Penilaian Komandan Peleton
-                    </h3>
-                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200">
-                      4 Aspek Rubrik
-                    </span>
-                  </div>
-                  <p className="text-[11px] text-slate-500 mt-0.5">
-                    Formula Juknis Bab A.6: (Materi 35%) + (Vokal 25%) + (Sikap 20%) + (Lapangan 20%)
+                  <h3 className="text-sm sm:text-base font-black text-slate-900 tracking-tight">
+                    Lembar Penilaian Komandan Peleton
+                  </h3>
+                  <p className="text-xs text-slate-500">
+                    Akumulasi Nilai Komandan Peleton Terbobot 3 Dewan Juri
                   </p>
                 </div>
               </div>
@@ -1065,58 +923,37 @@ export default function ScoresTab({ teamScore, currentTeam }) {
                 <button
                   type="button"
                   onClick={() => setActiveDantonTab('pos1')}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
                     activeDantonTab === 'pos1'
                       ? 'bg-white text-slate-950 shadow-xs border border-slate-200/80 font-black'
                       : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
                   }`}
                 >
-                  <span>Juri 1</span>
-                  <span className={`font-mono text-[11px] px-1.5 py-0.5 rounded-md font-bold transition-colors ${
-                    activeDantonTab === 'pos1'
-                      ? 'bg-amber-500 text-slate-950'
-                      : 'bg-slate-200/70 text-slate-600'
-                  }`}>
-                    {dantonData.t1}
-                  </span>
+                  Juri 1
                 </button>
 
                 <button
                   type="button"
                   onClick={() => setActiveDantonTab('pos2')}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
                     activeDantonTab === 'pos2'
                       ? 'bg-white text-slate-950 shadow-xs border border-slate-200/80 font-black'
                       : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
                   }`}
                 >
-                  <span>Juri 2</span>
-                  <span className={`font-mono text-[11px] px-1.5 py-0.5 rounded-md font-bold transition-colors ${
-                    activeDantonTab === 'pos2'
-                      ? 'bg-amber-500 text-slate-950'
-                      : 'bg-slate-200/70 text-slate-600'
-                  }`}>
-                    {dantonData.t2}
-                  </span>
+                  Juri 2
                 </button>
 
                 <button
                   type="button"
                   onClick={() => setActiveDantonTab('pos3')}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
                     activeDantonTab === 'pos3'
                       ? 'bg-white text-slate-950 shadow-xs border border-slate-200/80 font-black'
                       : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
                   }`}
                 >
-                  <span>Juri 3</span>
-                  <span className={`font-mono text-[11px] px-1.5 py-0.5 rounded-md font-bold transition-colors ${
-                    activeDantonTab === 'pos3'
-                      ? 'bg-amber-500 text-slate-950'
-                      : 'bg-slate-200/70 text-slate-600'
-                  }`}>
-                    {dantonData.t3}
-                  </span>
+                  Juri 3
                 </button>
               </div>
             </div>
@@ -1345,179 +1182,179 @@ export default function ScoresTab({ teamScore, currentTeam }) {
           {/* ============================================================== */}
           {/* SECTION 4: LEMBAR BERITA ACARA PENALTI (FORMAT APLIKASI JURI)  */}
           {/* ============================================================== */}
-          <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-4 sm:p-6 space-y-5">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3.5 border-b border-slate-200 gap-3">
+          <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-4 sm:p-6 space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3.5 border-b border-slate-100 gap-3">
               <div className="flex items-center gap-3">
                 <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-rose-50 text-rose-700 border border-rose-200/80 font-black shadow-xs shrink-0">
                   <ShieldAlert className="w-5 h-5 text-rose-600" />
                 </span>
                 <div>
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-black text-sm sm:text-base uppercase tracking-wide text-slate-900">
-                      Berita Acara Pengurangan Nilai (Penalti Lapangan &amp; Tata Tertib)
-                    </h3>
-                    <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-md border ${
-                      penalty > 0 ? 'bg-rose-50 text-rose-700 border-rose-200' : 'bg-emerald-50 text-emerald-800 border-emerald-200'
-                    }`}>
-                      {penalty > 0 ? `Total: -${penalty} Poin` : 'Nihil Pelanggaran (0 Poin)'}
-                    </span>
-                  </div>
-                  <p className="text-[11px] text-slate-500 mt-0.5">
-                    Dicatat langsung oleh Hakim Garis, Timekeeper, dan Panitia Lapangan sesuai Juknis Bab A.3 &amp; Bab C.
+                  <h3 className="font-black text-sm sm:text-base text-slate-900">
+                    Pengurangan Nilai (Penalti)
+                  </h3>
+                  <p className="text-xs text-slate-500">
+                    Rekapitulasi sanksi pengurangan nilai lapangan &amp; tata tertib
                   </p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 shrink-0">
-                <div className="bg-rose-50 border border-rose-200 px-3.5 py-1 rounded-xl text-right">
-                  <span className="text-[9.5px] font-bold text-rose-700 uppercase mr-1">Total Penalti:</span>
+              {penalty > 0 ? (
+                <div className="bg-rose-50 border border-rose-200 px-3 py-1 rounded-xl text-right shrink-0">
+                  <span className="text-[10px] font-bold text-rose-700 uppercase mr-1">Total Penalti:</span>
                   <span className="font-mono font-black text-sm text-rose-900">-{penalty} Poin</span>
                 </div>
-              </div>
+              ) : (
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold shrink-0">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>Bebas Penalti (0 Poin)</span>
+                </span>
+              )}
             </div>
 
-            {/* Grid Kartu Rincian Penalti Sesuai Juknis Bab C */}
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {/* 1. Keluar Garis Arena (Bab C.5.a) */}
-              <div className={`p-4 rounded-2xl border flex flex-col justify-between ${
-                injakGarisCount > 0 ? 'bg-rose-50/60 border-rose-300' : 'bg-slate-50 border-slate-200'
-              }`}>
-                <div>
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-xs text-slate-900">Injak / Keluar Garis Arena</span>
-                    <span className="text-[9.5px] font-mono font-bold text-rose-700 bg-rose-100/70 px-2 py-0.5 rounded border border-rose-200">
-                      -50 / kejadian
-                    </span>
+            {/* Jika Nihil Penalti: Banner Bersih & Ringkas */}
+            {penalty === 0 ? (
+              <div className="flex items-center justify-between p-4 rounded-2xl bg-emerald-50/60 border border-emerald-200/80 text-emerald-950">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-700 shrink-0">
+                    <CheckCircle2 className="w-5 h-5" />
                   </div>
-                  <p className="text-[10.5px] text-slate-500 mt-1 leading-snug">
-                    Anggota peleton menginjak atau keluar dari garis batas arena (Juknis Bab C.5.a).
-                  </p>
+                  <div>
+                    <h4 className="font-bold text-xs sm:text-sm text-emerald-950">
+                      Nihil Pengurangan Nilai (0 Poin Penalti)
+                    </h4>
+                    <p className="text-[11px] sm:text-xs text-emerald-700 mt-0.5">
+                      Peleton tampil tertib, disiplin, tepat waktu, dan mematuhi seluruh regulasi perlombaan.
+                    </p>
+                  </div>
                 </div>
-                <div className="pt-3 border-t border-slate-200/60 mt-3 flex items-center justify-between">
-                  <span className="text-xs font-mono font-bold text-slate-600">{injakGarisCount} Kejadian</span>
-                  <span className={`font-mono font-black text-sm ${injakGarisCount > 0 ? 'text-rose-700' : 'text-emerald-700'}`}>
-                    {injakGarisCount > 0 ? `-${injakGarisCount * 50} Poin` : '0 Poin'}
-                  </span>
-                </div>
+                <span className="font-mono font-black text-xs sm:text-sm text-emerald-800 bg-white px-3 py-1 rounded-xl border border-emerald-200 shrink-0">
+                  0 Poin
+                </span>
               </div>
+            ) : (
+              /* Jika Terdapat Penalti: Hanya Tampilkan Item yang Terjadi Saja */
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {injakGarisCount > 0 && (
+                  <div className="p-3.5 rounded-2xl border bg-rose-50/70 border-rose-300 flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-xs text-slate-900">Injak / Keluar Garis</span>
+                        <span className="text-[9.5px] font-mono font-bold text-rose-700 bg-rose-100 px-2 py-0.5 rounded border border-rose-200">
+                          -50 / kejadian
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-600 mt-1">
+                        {injakGarisCount} pelanggaran garis batas arena
+                      </p>
+                    </div>
+                    <div className="pt-2 border-t border-rose-200 mt-2 flex items-center justify-between">
+                      <span className="text-xs font-mono font-bold text-slate-600">{injakGarisCount} Kejadian</span>
+                      <span className="font-mono font-black text-sm text-rose-700">-{injakGarisCount * 50} Poin</span>
+                    </div>
+                  </div>
+                )}
 
-              {/* 2. Kelebihan Waktu Tampil (Bab C.4) */}
-              <div className={`p-4 rounded-2xl border flex flex-col justify-between ${
-                overTimeBlocks > 0 ? 'bg-rose-50/60 border-rose-300' : 'bg-slate-50 border-slate-200'
-              }`}>
-                <div>
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-xs text-slate-900">Kelebihan Durasi Waktu</span>
-                    <span className="text-[9.5px] font-mono font-bold text-rose-700 bg-rose-100/70 px-2 py-0.5 rounded border border-rose-200">
-                      -20 / 30 detik
-                    </span>
+                {overTimeBlocks > 0 && (
+                  <div className="p-3.5 rounded-2xl border bg-rose-50/70 border-rose-300 flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-xs text-slate-900">Kelebihan Durasi Waktu</span>
+                        <span className="text-[9.5px] font-mono font-bold text-rose-700 bg-rose-100 px-2 py-0.5 rounded border border-rose-200">
+                          -20 / 30 detik
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-600 mt-1">
+                        Overtime +{formatTime(overtimeSeconds)} ({overTimeBlocks} blok)
+                      </p>
+                    </div>
+                    <div className="pt-2 border-t border-rose-200 mt-2 flex items-center justify-between">
+                      <span className="text-xs font-mono font-bold text-slate-600">{overTimeBlocks} Blok</span>
+                      <span className="font-mono font-black text-sm text-rose-700">-{overTimeBlocks * 20} Poin</span>
+                    </div>
                   </div>
-                  <p className="text-[10.5px] text-slate-500 mt-1 leading-snug">
-                    Melebihi durasi batas waktu ({formatTime(maxTimeSeconds)} mnt) per 1–30 dtk (Juknis Bab C.4).
-                  </p>
-                </div>
-                <div className="pt-3 border-t border-slate-200/60 mt-3 flex items-center justify-between">
-                  <span className="text-xs font-mono font-bold text-slate-600">{overTimeBlocks} Blok Overtime</span>
-                  <span className={`font-mono font-black text-sm ${overTimeBlocks > 0 ? 'text-red-700' : 'text-emerald-700'}`}>
-                    {overTimeBlocks > 0 ? `-${overTimeBlocks * 20} Poin` : '0 Poin'}
-                  </span>
-                </div>
-              </div>
+                )}
 
-              {/* 3. Keluar Kotak Danton 1.5 x 1.5 meter (Bab C.5.b) */}
-              <div className={`p-4 rounded-2xl border flex flex-col justify-between ${
-                kotakDantonCount > 0 ? 'bg-rose-50/60 border-rose-300' : 'bg-slate-50 border-slate-200'
-              }`}>
-                <div>
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-xs text-slate-900">Keluar Kotak Danton</span>
-                    <span className="text-[9.5px] font-mono font-bold text-rose-700 bg-rose-100/70 px-2 py-0.5 rounded border border-rose-200">
-                      -50 / kejadian
-                    </span>
+                {kotakDantonCount > 0 && (
+                  <div className="p-3.5 rounded-2xl border bg-rose-50/70 border-rose-300 flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-xs text-slate-900">Keluar Kotak Danton</span>
+                        <span className="text-[9.5px] font-mono font-bold text-rose-700 bg-rose-100 px-2 py-0.5 rounded border border-rose-200">
+                          -50 / kejadian
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-600 mt-1">
+                        Komandan keluar kotak 1,5 × 1,5 meter
+                      </p>
+                    </div>
+                    <div className="pt-2 border-t border-rose-200 mt-2 flex items-center justify-between">
+                      <span className="text-xs font-mono font-bold text-slate-600">{kotakDantonCount} Kejadian</span>
+                      <span className="font-mono font-black text-sm text-rose-700">-{kotakDantonCount * 50} Poin</span>
+                    </div>
                   </div>
-                  <p className="text-[10.5px] text-slate-500 mt-1 leading-snug">
-                    Komandan menginjak / keluar batas kotak 1,5 × 1,5 meter (Juknis Bab C.5.b).
-                  </p>
-                </div>
-                <div className="pt-3 border-t border-slate-200/60 mt-3 flex items-center justify-between">
-                  <span className="text-xs font-mono font-bold text-slate-600">{kotakDantonCount} Kejadian</span>
-                  <span className={`font-mono font-black text-sm ${kotakDantonCount > 0 ? 'text-red-700' : 'text-emerald-700'}`}>
-                    {kotakDantonCount > 0 ? `-${kotakDantonCount * 50} Poin` : '0 Poin'}
-                  </span>
-                </div>
-              </div>
+                )}
 
-              {/* 4. Personel Kurang (Bab C.3) */}
-              <div className={`p-4 rounded-2xl border flex flex-col justify-between ${
-                personelKurang ? 'bg-rose-50/60 border-rose-300' : 'bg-slate-50 border-slate-200'
-              }`}>
-                <div>
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-xs text-slate-900">Jumlah Personel Kurang</span>
-                    <span className="text-[9.5px] font-mono font-bold text-rose-700 bg-rose-100/70 px-2 py-0.5 rounded border border-rose-200">
-                      -75 Poin Tetap
-                    </span>
+                {personelKurang && (
+                  <div className="p-3.5 rounded-2xl border bg-rose-50/70 border-rose-300 flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-xs text-slate-900">Personel Kurang</span>
+                        <span className="text-[9.5px] font-mono font-bold text-rose-700 bg-rose-100 px-2 py-0.5 rounded border border-rose-200">
+                          -75 Poin
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-600 mt-1">
+                        Tampil kurang dari 22 orang di lapangan
+                      </p>
+                    </div>
+                    <div className="pt-2 border-t border-rose-200 mt-2 flex items-center justify-between">
+                      <span className="text-xs font-mono font-bold text-slate-600">&lt; 22 Anggota</span>
+                      <span className="font-mono font-black text-sm text-rose-700">-75 Poin</span>
+                    </div>
                   </div>
-                  <p className="text-[10.5px] text-slate-500 mt-1 leading-snug">
-                    Tampil kurang dari 22 orang (1 Danton + 21 Anggota), kecuali evakuasi medis (Bab C.3).
-                  </p>
-                </div>
-                <div className="pt-3 border-t border-slate-200/60 mt-3 flex items-center justify-between">
-                  <span className="text-xs font-mono font-bold text-slate-600">{personelKurang ? 'Personel Kurang (< 22)' : 'Lengkap (22 Personel)'}</span>
-                  <span className={`font-mono font-black text-sm ${personelKurang ? 'text-red-700' : 'text-emerald-700'}`}>
-                    {personelKurang ? '-75 Poin' : '0 Poin'}
-                  </span>
-                </div>
-              </div>
+                )}
 
-              {/* 5. Keterlambatan Masuk DP 1 (Bab C.2) */}
-              <div className={`p-4 rounded-2xl border flex flex-col justify-between ${
-                dp1 ? 'bg-rose-50/60 border-rose-300' : 'bg-slate-50 border-slate-200'
-              }`}>
-                <div>
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-xs text-slate-900">Keterlambatan Masuk DP 1</span>
-                    <span className="text-[9.5px] font-mono font-bold text-rose-700 bg-rose-100/70 px-2 py-0.5 rounded border border-rose-200">
-                      -100 Poin Tetap
-                    </span>
+                {dp1 && (
+                  <div className="p-3.5 rounded-2xl border bg-rose-50/70 border-rose-300 flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-xs text-slate-900">Terlambat DP 1</span>
+                        <span className="text-[9.5px] font-mono font-bold text-rose-700 bg-rose-100 px-2 py-0.5 rounded border border-rose-200">
+                          -100 Poin
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-600 mt-1">
+                        Terlambat memasuki Daerah Persiapan 1
+                      </p>
+                    </div>
+                    <div className="pt-2 border-t border-rose-200 mt-2 flex items-center justify-between">
+                      <span className="text-xs font-mono font-bold text-slate-600">Panggilan 3x</span>
+                      <span className="font-mono font-black text-sm text-rose-700">-100 Poin</span>
+                    </div>
                   </div>
-                  <p className="text-[10.5px] text-slate-500 mt-1 leading-snug">
-                    Tidak hadir di DP 1 setelah 3x pemanggilan resmi interval 2 menit (Juknis Bab C.2).
-                  </p>
-                </div>
-                <div className="pt-3 border-t border-slate-200/60 mt-3 flex items-center justify-between">
-                  <span className="text-xs font-mono font-bold text-slate-600">{dp1 ? 'Terlambat Hadir DP 1' : 'Tepat Waktu di DP 1'}</span>
-                  <span className={`font-mono font-black text-sm ${dp1 ? 'text-red-700' : 'text-emerald-700'}`}>
-                    {dp1 ? '-100 Poin' : '0 Poin'}
-                  </span>
-                </div>
-              </div>
+                )}
 
-              {/* 6. Kebersihan Basecamp, Upacara & Suporter (Bab C.8 - C.10) */}
-              <div className={`p-4 rounded-2xl border flex flex-col justify-between ${
-                nonArenaPenaltyTotal > 0 ? 'bg-rose-50/60 border-rose-300' : 'bg-slate-50 border-slate-200'
-              }`}>
-                <div>
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-xs text-slate-900">Basecamp, Upacara &amp; Suporter</span>
-                    <span className="text-[9.5px] font-mono font-bold text-rose-700 bg-rose-100/70 px-2 py-0.5 rounded border border-rose-200">
-                      Regulasi Bab C
-                    </span>
+                {nonArenaPenaltyTotal > 0 && (
+                  <div className="p-3.5 rounded-2xl border bg-rose-50/70 border-rose-300 flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-xs text-slate-900">Basecamp / Upacara / Suporter</span>
+                        <span className="text-[9.5px] font-mono font-bold text-rose-700 bg-rose-100 px-2 py-0.5 rounded border border-rose-200">
+                          Regulasi
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-600 mt-1">
+                        Pelanggaran tata tertib non-arena
+                      </p>
+                    </div>
+                    <div className="pt-2 border-t border-rose-200 mt-2 flex items-center justify-between">
+                      <span className="text-xs font-mono font-bold text-slate-600">Pelanggaran</span>
+                      <span className="font-mono font-black text-sm text-rose-700">-{nonArenaPenaltyTotal} Poin</span>
+                    </div>
                   </div>
-                  <p className="text-[10.5px] text-slate-500 mt-1 leading-snug">
-                    Basecamp kotor (-150), absen upacara (-150), terlambat upacara (-50/5m), rokok/vape (-75), atau suporter gaduh (-50).
-                  </p>
-                </div>
-                <div className="pt-3 border-t border-slate-200/60 mt-3 flex items-center justify-between">
-                  <span className="text-xs font-mono font-bold text-slate-600">
-                    {nonArenaPenaltyTotal > 0 ? 'Terdapat Pelanggaran' : 'Tertib & Sesuai Regulasi'}
-                  </span>
-                  <span className={`font-mono font-black text-sm ${nonArenaPenaltyTotal > 0 ? 'text-red-700' : 'text-emerald-700'}`}>
-                    {nonArenaPenaltyTotal > 0 ? `-${nonArenaPenaltyTotal} Poin` : '0 Poin'}
-                  </span>
-                </div>
+                )}
               </div>
-            </div>
+            )}
           </div>
         </div>
       ) : (

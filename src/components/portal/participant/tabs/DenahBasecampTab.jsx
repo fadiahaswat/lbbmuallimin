@@ -40,28 +40,22 @@ export default function DenahBasecampTab({ currentTeam, allTeams = [], staging =
       {/* 1. Header Tab Terpadu & Ringkas */}
       <div className="flex flex-col gap-3.5 border-b border-slate-100 pb-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
-          <span className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-600 to-teal-700 text-white shadow-md shadow-emerald-600/20">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-600 to-teal-700 text-white shadow-sm">
             <Building2 className="w-5 h-5 text-white" />
-            <span className={`absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full border-2 border-white ${isRatified ? 'bg-emerald-400' : 'bg-amber-400 animate-pulse'}`} />
           </span>
           <div>
             <div className="flex items-center gap-2 flex-wrap">
               <h2 className="text-base sm:text-lg font-black tracking-tight text-slate-950">
                 Denah Basecamp &amp; Kawasan
               </h2>
-              {isRatified ? (
+              {isRatified && assignedRoomCode && (
                 <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
                   <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                  {assignedRoomCode ? `Ruang: Kelas ${assignedRoomCode}` : 'Alokasi Resmi Panitia'}
-                </span>
-              ) : (
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-900 border border-amber-200">
-                  <Clock className="w-3 h-3 text-amber-600 animate-pulse" />
-                  Alokasi Ruang: Dirilis Setelah UCL (16 Jan 2027)
+                  Ruang: Kelas {assignedRoomCode}
                 </span>
               )}
             </div>
-            <p className="text-[11px] text-slate-500 mt-0.5">
+            <p className="text-xs text-slate-500 mt-0.5">
               Peta interaktif alokasi ruang transit kontingen &amp; rute kawasan kampus.
             </p>
           </div>
@@ -101,52 +95,27 @@ export default function DenahBasecampTab({ currentTeam, allTeams = [], staging =
         <div className="space-y-4">
           {!isRatified && !isStaff ? (
             /* TAMPILAN KHUSUS JIKA ALOKASI BASECAMP BELUM DISAHKAN PANITIA */
-            <div className="rounded-3xl border-2 border-dashed border-amber-300/80 bg-amber-50/40 p-6 sm:p-10 text-center space-y-4">
-              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-100 text-amber-700 border border-amber-200 shadow-xs">
-                <Clock className="w-7 h-7 text-amber-600 animate-pulse" />
+            <div className="rounded-2xl border border-amber-200 bg-amber-50/50 p-5 sm:p-6 text-center space-y-3">
+              <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-xl bg-amber-100 text-amber-700 border border-amber-200">
+                <Clock className="w-5 h-5 text-amber-600" />
               </div>
-              <div className="max-w-xl mx-auto space-y-2">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-200/90 text-amber-950 border border-amber-300/60 shadow-2xs">
-                  <Lock className="w-3 h-3 text-amber-800" />
-                  Menunggu Pengesahan Panitia (Status: Belum Terbit)
-                </span>
-                <h3 className="text-lg sm:text-xl font-black text-slate-950 tracking-tight">
+              <div className="max-w-md mx-auto space-y-1">
+                <h3 className="text-base font-black text-slate-900 tracking-tight">
                   Alokasi Ruang Basecamp Belum Disahkan
                 </h3>
                 <p className="text-xs text-slate-600 leading-relaxed">
-                  Sesuai ketentuan Panitia LBB Mu'allimin 2027, alokasi dan pembagian nomor ruang kelas basecamp transit kontingen <strong>(1 ruang kelas untuk 2 peleton)</strong> saat ini sedang difinalisasi dan akan <strong>ditetapkan serta disahkan secara resmi setelah pelaksanaan Uji Coba Lapangan (UCL)</strong>.
+                  Pembagian ruang transit kontingen sedang difinalisasi dan akan diumumkan secara resmi setelah pelaksanaan Uji Coba Lapangan (UCL).
                 </p>
               </div>
 
-              {/* Info Box Pasca UCL */}
-              <div className="max-w-xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-3 text-left pt-2">
-                <div className="rounded-2xl border border-amber-200/80 bg-white p-3.5 shadow-2xs space-y-1">
-                  <div className="flex items-center gap-1.5 text-amber-800 font-bold text-[11px] uppercase tracking-wider">
-                    <Calendar className="w-3.5 h-3.5 text-amber-600" />
-                    <span>Jadwal Pengesahan Resmi</span>
-                  </div>
-                  <p className="text-xs font-black text-slate-900">Setelah Uji Coba Lapangan (UCL)</p>
-                  <p className="text-[11px] text-slate-500">Sabtu, 16 Januari 2027 (Pasca-UCL)</p>
-                </div>
-
-                <div className="rounded-2xl border border-amber-200/80 bg-white p-3.5 shadow-2xs space-y-1">
-                  <div className="flex items-center gap-1.5 text-amber-800 font-bold text-[11px] uppercase tracking-wider">
-                    <MapPin className="w-3.5 h-3.5 text-amber-600" />
-                    <span>Waktu Penggunaan Lomba</span>
-                  </div>
-                  <p className="text-xs font-black text-slate-900">Ahad, 24 Januari 2027</p>
-                  <p className="text-[11px] text-slate-500">Mulai Pukul 06.00 WIB (Hari Lomba)</p>
-                </div>
-              </div>
-
-              <div className="pt-2 flex flex-wrap items-center justify-center gap-2">
+              <div className="pt-1 flex justify-center">
                 <button
                   type="button"
                   onClick={() => setActiveSubTab('outdoor')}
-                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition shadow-xs cursor-pointer active:scale-95"
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition shadow-xs cursor-pointer active:scale-95"
                 >
-                  <Map className="w-4 h-4 text-amber-400" />
-                  <span>Lihat Peta Kawasan &amp; Rute Arena Perlombaan</span>
+                  <Map className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Lihat Peta Kawasan &amp; Arena</span>
                 </button>
               </div>
             </div>
@@ -201,16 +170,8 @@ export default function DenahBasecampTab({ currentTeam, allTeams = [], staging =
           )}
         </div>
       ) : (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-sm font-black uppercase tracking-wider text-slate-900">
-                Peta Tata Letak & Zona Lomba Terbuka
-              </h3>
-              <p className="text-xs text-slate-500">
-                Alur transit dari Basecamp menuju DP 1, DP 2, Arena 1 (Basket), Arena 2 (Embung), dan Evakuasi.
-              </p>
-            </div>
+        <div className="space-y-3">
+          <div className="flex items-center justify-end">
             <a
               href="/denah-perlombaan.png"
               download="DENAH-PERLOMBAAN-LBB-MUALLIMIN-2027.png"
@@ -241,51 +202,28 @@ export default function DenahBasecampTab({ currentTeam, allTeams = [], staging =
         </div>
       )}
 
-      {/* 4. Regulasi & Tata Tertib Resmi Basecamp (Pasal 11) */}
-      <div className="rounded-2xl border border-slate-200 bg-slate-50/90 p-4 sm:p-5 space-y-3">
-        <div className="flex items-center gap-2 text-slate-900 font-black text-xs uppercase tracking-wider">
-          <ShieldAlert className="w-4 h-4 text-red-600 shrink-0" />
-          <span>Tata Tertib & Ketentuan Resmi Ruang Basecamp (Pasal 11 Juknis)</span>
+      {/* 4. Ketentuan Ringkas Basecamp (Pasal 11) */}
+      <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3 sm:p-4">
+        <div className="flex items-center gap-2 mb-2 text-slate-800 font-bold text-xs uppercase tracking-wider">
+          <ShieldAlert className="w-3.5 h-3.5 text-red-600 shrink-0" />
+          <span>Tata Tertib Basecamp (Pasal 11 Juknis)</span>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-slate-600">
-          <div className="space-y-1.5">
-            <p className="font-bold text-slate-800 flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-red-600 shrink-0" />
-              Jaminan Identitas Saat Check-In
-            </p>
-            <p className="text-[11px] leading-relaxed text-slate-500 pl-3">
-              Official menyerahkan 1 kartu identitas asli (KTP/SIM) ke Pos Registrasi sebagai jaminan ketertiban serta kebersihan ruang kelas basecamp.
-            </p>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px] text-slate-600">
+          <div className="p-2 rounded-lg bg-white border border-slate-100 shadow-2xs">
+            <span className="font-bold text-slate-900 block">Jaminan KTP/SIM</span>
+            <span className="text-slate-500 text-[10px]">1 identitas saat check-in</span>
           </div>
-
-          <div className="space-y-1.5">
-            <p className="font-bold text-slate-800 flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-red-600 shrink-0" />
-              Kawasan Bebas Rokok & Vape
-            </p>
-            <p className="text-[11px] leading-relaxed text-slate-500 pl-3">
-              Dilarang keras merokok/vape di seluruh kawasan kampus madrasah. Pelanggaran di basecamp dikenai penalti <strong>-75 poin</strong> pada nilai akhir.
-            </p>
+          <div className="p-2 rounded-lg bg-white border border-slate-100 shadow-2xs">
+            <span className="font-bold text-slate-900 block">Bebas Rokok/Vape</span>
+            <span className="text-rose-600 font-medium text-[10px]">Sanksi -75 Poin</span>
           </div>
-
-          <div className="space-y-1.5">
-            <p className="font-bold text-slate-800 flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-red-600 shrink-0" />
-              Pemilahan Sampah Terpadu
-            </p>
-            <p className="text-[11px] leading-relaxed text-slate-500 pl-3">
-              Gunakan 2 kantong sampah resmi (organik & anorganik). Ruang kotor atau sampah berserakan dikenai sanksi denda <strong>-150 poin</strong>.
-            </p>
+          <div className="p-2 rounded-lg bg-white border border-slate-100 shadow-2xs">
+            <span className="font-bold text-slate-900 block">2 Trash Bag Sampah</span>
+            <span className="text-slate-500 text-[10px]">Organik & anorganik</span>
           </div>
-
-          <div className="space-y-1.5">
-            <p className="font-bold text-slate-800 flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-red-600 shrink-0" />
-              Batas Maksimal Pengosongan (Checkout)
-            </p>
-            <p className="text-[11px] leading-relaxed text-slate-500 pl-3">
-              Basecamp wajib dikosongkan dan diverifikasi oleh Panitia/LO selambat-lambatnya <strong>pukul 15.00 WIB</strong> sebelum Upacara Penutupan.
-            </p>
+          <div className="p-2 rounded-lg bg-white border border-slate-100 shadow-2xs">
+            <span className="font-bold text-slate-900 block">Maks. Checkout 15.00</span>
+            <span className="text-slate-500 text-[10px]">Sebelum Penutupan</span>
           </div>
         </div>
       </div>

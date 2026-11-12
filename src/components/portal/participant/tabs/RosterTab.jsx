@@ -234,13 +234,14 @@ export default function RosterTab({
         <>
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3 sm:pb-4">
             <div className="flex items-start sm:items-center gap-3 sm:gap-3.5 min-w-0">
-              <span className="relative flex h-10 w-10 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-2xl bg-slate-950 text-white shadow-md mt-0.5 sm:mt-0">
+              <span className="flex h-10 w-10 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-2xl bg-slate-950 text-white shadow-sm mt-0.5 sm:mt-0">
                 <Users className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400" />
-                <span className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full border-2 border-white bg-red-600" />
               </span>
               <div className="min-w-0 flex-1">
                 <div className="flex items-center justify-between sm:justify-start gap-2 flex-wrap">
-                  <p className="section-kicker">PORTAL KONTINGEN</p>
+                  <h4 className="font-black text-sm sm:text-lg md:text-xl text-slate-900 uppercase tracking-tight leading-snug">
+                    Susunan Personel Peleton
+                  </h4>
                   {isRosterLocked ? (
                     <span className="text-[9px] sm:text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-300 px-2 py-0.5 rounded-md shrink-0">
                       Terkunci H-TM
@@ -251,9 +252,6 @@ export default function RosterTab({
                     </span>
                   ) : null}
                 </div>
-                <h4 className="font-black text-sm sm:text-lg md:text-xl text-slate-900 uppercase tracking-tight leading-snug mt-0.5">
-                  Susunan Personel Peleton
-                </h4>
                 <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5 leading-snug">
                   1 komandan, 21 pasukan inti (3 saf × 7 banjar), 3 cadangan, dan official pendamping.
                 </p>
@@ -366,14 +364,8 @@ export default function RosterTab({
 
           {/* Pimpinan & Pendamping Peleton (4 Personel) - Harmonized & Perfectly Balanced in 1 Clean Container */}
           <div className="bg-slate-50/80 border border-slate-200 rounded-3xl p-4 sm:p-5 space-y-3.5">
-            <div className="font-black text-xs uppercase tracking-wider text-slate-900 border-b border-slate-200 pb-2.5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5 sm:gap-2">
-              <div className="flex items-center gap-2 min-w-0">
-                <span className="w-2.5 h-2.5 rounded-full bg-red-600 shrink-0"></span>
-                <span>Pimpinan & Pendamping Peleton</span>
-              </div>
-              <span className="text-[10px] font-bold text-slate-500 bg-white border border-slate-200 px-2.5 py-0.5 rounded-full self-start sm:self-auto shrink-0 whitespace-nowrap">
-                4 Personel (1 Komandan + 3 Official)
-              </span>
+            <div className="font-bold text-xs uppercase tracking-wider text-slate-800 border-b border-slate-200 pb-2">
+              <span>Pimpinan &amp; Pendamping Peleton</span>
             </div>
 
             {(() => {
@@ -744,28 +736,16 @@ export default function RosterTab({
 
           {/* 21 Pasukan Inti Grid */}
           <div className="space-y-4">
-            <div className="font-black text-xs uppercase tracking-wider text-slate-900 border-b border-slate-200 pb-2.5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5 sm:gap-2">
-              <div className="flex items-center gap-2 min-w-0">
-                <span className="w-2.5 h-2.5 rounded-full bg-red-600 shrink-0"></span>
-                <span>21 Pasukan Inti (3 Saf × 7 Banjar)</span>
-              </div>
-              <span className="text-[10px] font-bold text-slate-500 bg-white border border-slate-200 px-2.5 py-0.5 rounded-full self-start sm:self-auto shrink-0 whitespace-nowrap">
-                21 Personel (Saf 1 – 3)
-              </span>
+            <div className="font-bold text-xs uppercase tracking-wider text-slate-800 border-b border-slate-200 pb-2">
+              <span>21 Pasukan Inti (3 Saf × 7 Banjar)</span>
             </div>
             {!isEditingRoster ? (
               Array.isArray(currentTeam.roster?.pasukan) && currentTeam.roster.pasukan.length > 0 ? (
                 <div className="space-y-6">
                   {[1, 2, 3].map(saf => (
                     <div key={saf} className="bg-slate-50/80 border border-slate-200 rounded-3xl p-4 sm:p-5 space-y-3.5">
-                      <div className="font-black text-xs uppercase tracking-wider text-slate-900 border-b border-slate-200 pb-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5 sm:gap-2">
-                        <div className="flex items-center gap-2 min-w-0">
-                          <span className="w-2.5 h-2.5 rounded-full bg-red-600 shrink-0"></span>
-                          <span>Saf {saf} ({saf === 1 ? 'Saf Depan' : saf === 2 ? 'Saf Tengah' : 'Saf Belakang'})</span>
-                        </div>
-                        <span className="text-[10px] font-bold text-slate-500 bg-white border border-slate-200 px-2.5 py-0.5 rounded-full self-start sm:self-auto shrink-0 whitespace-nowrap">
-                          7 Personel (Banjar 1 – 7)
-                        </span>
+                      <div className="font-bold text-xs uppercase tracking-wider text-slate-700 border-b border-slate-200 pb-1.5">
+                        <span>Saf {saf} ({saf === 1 ? 'Saf Depan' : saf === 2 ? 'Saf Tengah' : 'Saf Belakang'})</span>
                       </div>
                       <div className="flex flex-wrap justify-center gap-3 items-stretch">
                         {currentTeam.roster.pasukan
@@ -1037,14 +1017,8 @@ export default function RosterTab({
           {/* Cadangan Section */}
           <div className="pt-2">
             <div className="bg-amber-50/50 border border-amber-200/80 rounded-3xl p-4 sm:p-5 space-y-3.5">
-              <div className="font-black text-xs uppercase tracking-wider text-slate-900 border-b border-amber-200/70 pb-2.5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5 sm:gap-2">
-                <div className="flex items-center gap-2 min-w-0">
-                  <span className="w-2.5 h-2.5 rounded-full bg-amber-500 shrink-0"></span>
-                  <span>3 Personel Cadangan Peleton</span>
-                </div>
-                <span className="text-[10px] font-bold text-amber-800 bg-white border border-amber-200 px-2.5 py-0.5 rounded-full self-start sm:self-auto shrink-0 whitespace-nowrap">
-                  3 Personel (Cadangan 1 – 3)
-                </span>
+              <div className="font-bold text-xs uppercase tracking-wider text-slate-800 border-b border-amber-200/70 pb-2">
+                <span>3 Personel Cadangan Peleton</span>
               </div>
               {!isEditingRoster ? (
                 Array.isArray(currentTeam.roster?.cadangan) && currentTeam.roster.cadangan.length > 0 ? (

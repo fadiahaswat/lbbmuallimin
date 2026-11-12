@@ -158,9 +158,6 @@ export default function TeamInspectionPage({ team, inspectionStage = 'registrati
                 <h1 className="font-black text-2xl sm:text-3xl text-slate-900 tracking-tight">
                   {team.schoolName}
                 </h1>
-                <p className="text-sm text-slate-500 font-medium">
-                  {team.platoonName}
-                </p>
               </div>
             </div>
 

@@ -724,7 +724,6 @@ export default function SimpaskorSidebarLayout({
                         <span>{teamInitials}</span>
                       </div>
                     )}
-                    <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-[#0d1421] bg-emerald-400" />
                   </div>
                   <button
                     type="button"
@@ -753,7 +752,6 @@ export default function SimpaskorSidebarLayout({
                           <span>{teamInitials}</span>
                         </div>
                       )}
-                      <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-[#0d1421] bg-emerald-400" />
                     </div>
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-[10px] font-black text-white" title={displayName}>
@@ -940,7 +938,7 @@ export default function SimpaskorSidebarLayout({
                     title={`${displayName} (${displaySubtitle})`}
                     onClick={() => setShowUserMenu(!showUserMenu)}
                   />
-                  <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-white shadow-2xs" />
+                  
                 </div>
                 <button
                   type="button"
@@ -978,7 +976,7 @@ export default function SimpaskorSidebarLayout({
                           }
                         }}
                       />
-                      <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-white shadow-2xs" />
+                      
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="text-xs font-bold text-slate-900 leading-tight truncate">
@@ -1140,7 +1138,7 @@ export default function SimpaskorSidebarLayout({
                         }
                       }}
                     />
-                    <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-white shadow-xs" title="Online" />
+                    
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between gap-1">
@@ -1219,25 +1217,14 @@ export default function SimpaskorSidebarLayout({
             <div className="flex items-center gap-2 sm:gap-3 shrink-0 min-w-0">
               {currentTeam && (
                 <div className="hidden sm:flex items-center gap-2.5 md:gap-3 shrink-0 min-w-0">
-                  {/* Nama Sekolah / Peleton & Pills */}
-                  <div className="text-right min-w-0 max-w-[160px] md:max-w-xs">
+                  {/* Nama Sekolah / Peleton */}
+                  <div className="text-right min-w-0 max-w-[180px] md:max-w-sm">
                     <span
                       className="text-xs sm:text-sm font-black uppercase tracking-tight text-slate-900 leading-tight block truncate"
                       title={currentTeam?.schoolName || displayName}
                     >
                       {currentTeam?.schoolName || displayName}
                     </span>
-                    <div className="flex items-center justify-end gap-1.5 mt-0.5">
-                      {/* Pill: SD Putra / SMP Putra */}
-                      <span className="inline-flex items-center rounded-full border border-red-100 bg-red-50 px-2 sm:px-2.5 py-0.5 text-[8.5px] font-extrabold uppercase tracking-[0.08em] text-red-700 whitespace-nowrap">
-                        {currentTeam?.jenjang || 'SD'} {String(currentTeam?.category || 'Putra').replace(/homogen\s+/i, '')}
-                      </span>
-                      {/* Pill 3: Kota Yogyakarta dengan dot hijau */}
-                      <span className="hidden md:inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-0.5 text-[8.5px] font-extrabold uppercase tracking-[0.08em] text-emerald-700 whitespace-nowrap">
-                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shrink-0" />
-                        <span>{currentTeam?.city || 'Kota Yogyakarta'}</span>
-                      </span>
-                    </div>
                   </div>
 
                   {/* Logo Sekolah (Tanpa Wadah - Bersih & Rapi) */}
@@ -1358,13 +1345,6 @@ export default function SimpaskorSidebarLayout({
                     <div className={`w-10 h-10 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl flex items-center justify-center font-bold transition-all shadow-md ${getModuleTheme(activeMenu).bg}`}>
                       {React.createElement(getModuleIcon(activeMenu), { className: `w-5 h-5 sm:w-5.5 sm:h-5.5 ${getModuleTheme(activeMenu).iconColor}` })}
                     </div>
-                    {/* Live Pulse Dot for Realtime Scoreboard */}
-                    {(activeMenu === 'klasemen' || activeMenu === 'leaderboard' || activeMenu === 'live_leaderboard') && (
-                      <span className="absolute -bottom-0.5 -right-0.5 flex h-3 w-3" title="Live Realtime Terkoneksi">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500 ring-2 ring-white"></span>
-                      </span>
-                    )}
                   </div>
 
                   {/* 2. Logo Title Grafis Resmi (Hanya tampil jika belum ada di top sticky navbar) */}
@@ -1381,18 +1361,7 @@ export default function SimpaskorSidebarLayout({
 
                   {/* 3. Judul, Kicker & Subtitle Halaman */}
                   <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-1.5 sm:gap-2 mb-0.5 sm:mb-1 flex-wrap sm:flex-nowrap">
-                      <span className="h-1.5 w-1.5 rounded-full bg-red-600 shrink-0" />
-                      <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.12em] sm:tracking-[0.16em] text-slate-500 truncate">
-                        {getModuleTheme(activeMenu).kicker || 'SISTEM RESMI LBB MU\'ALLIMIN 2027'}
-                      </span>
-                      {(activeMenu === 'klasemen' || activeMenu === 'leaderboard' || activeMenu === 'live_leaderboard') && (
-                        <span className="inline-flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded-md text-[8.5px] sm:text-[9px] font-black uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-200/80 shadow-2xs whitespace-nowrap shrink-0">
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
-                          Live Realtime
-                        </span>
-                      )}
-                    </div>
+                    
                     <h1 className="text-sm sm:text-base md:text-lg font-black text-slate-950 tracking-tight leading-tight">
                       {title}
                     </h1>

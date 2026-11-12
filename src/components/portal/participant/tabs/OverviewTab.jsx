@@ -457,21 +457,14 @@ export default function OverviewTab({
 
       {/* 1.5 PAPAN PENGUMUMAN RESMI PANITIA */}
       <section className="overflow-hidden rounded-[24px] border border-slate-200 bg-white shadow-[0_12px_32px_rgba(15,23,42,0.045)]">
-        <div className="flex flex-col gap-2 border-b border-slate-100 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+        <div className="flex items-center justify-between border-b border-slate-100 px-5 py-3.5 sm:px-6">
           <div className="flex items-center gap-3">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 to-red-600 text-white shadow-sm">
-              <Megaphone className="w-5 h-5" />
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500 to-red-600 text-white shadow-sm">
+              <Megaphone className="w-4.5 h-4.5" />
             </span>
-            <div>
-              <p className="section-kicker">BROADCAST BOARD</p>
-              <h3 className="mt-0.5 text-base font-black tracking-tight text-slate-950">
-                Papan Pengumuman Resmi Panitia
-              </h3>
-            </div>
-          </div>
-          <div className="flex items-center gap-2 self-start rounded-full bg-slate-100 px-3 py-1 text-[9px] font-black uppercase tracking-wider text-slate-600 border border-slate-200/70">
-            <Radio className="w-3 h-3 text-red-600 animate-pulse" />
-            <span>3 Arahan Operasional</span>
+            <h3 className="text-base font-black tracking-tight text-slate-950">
+              Papan Pengumuman Resmi Panitia
+            </h3>
           </div>
         </div>
 
@@ -1344,82 +1337,53 @@ export default function OverviewTab({
           {/* PENDAMPING PELETON - LO & POSKO BANTUAN */}
           <article className="overflow-hidden rounded-[24px] border border-slate-200 bg-white shadow-[0_14px_34px_rgba(15,23,42,0.055)]">
             {/* Header Card */}
-            <div className="flex items-center justify-between border-b border-slate-100 p-4 sm:px-5">
-              <div className="flex items-center gap-3">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-emerald-600 text-white shadow-sm">
-                  <UserCheck className="w-5 h-5" />
-                </span>
-                <div>
-                  <p className="text-[9px] font-black uppercase tracking-[0.15em] text-red-700">
-                    PENDAMPING PELETON
-                  </p>
-                  <h4 className="mt-0.5 text-sm font-black tracking-tight text-slate-950">
-                    LO & Posko Bantuan
-                  </h4>
-                </div>
-              </div>
-              <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[9.5px] font-bold ${
-                isLoAssigned ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/80' : 'bg-slate-100 text-slate-600'
-              }`}>
-                <span className={`h-1.5 w-1.5 rounded-full ${isLoAssigned ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'}`} />
-                <span>{isLoAssigned ? 'Siaga Lomba' : 'Menunggu TM'}</span>
+            <div className="flex items-center gap-3 border-b border-slate-100 p-4 sm:px-5">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-xs">
+                <UserCheck className="w-4.5 h-4.5" />
               </span>
+              <h4 className="text-sm font-bold tracking-tight text-slate-950">
+                LO &amp; Posko Bantuan
+              </h4>
             </div>
 
             <div className="p-4 sm:p-5 space-y-3">
               {/* LIAISON OFFICER (LO PELETON) - STREAMLINED & ELEGANT */}
-              <div className="relative overflow-hidden rounded-[20px] border border-emerald-200/90 bg-gradient-to-br from-emerald-50/70 via-white to-emerald-50/30 p-4 transition-all">
+              <div className="relative overflow-hidden rounded-2xl border border-emerald-200/80 bg-gradient-to-br from-emerald-50/60 via-white to-emerald-50/30 p-3.5 transition-all">
                 {isLoAssigned ? (
                   <div className="flex items-center gap-3.5">
-                    {/* Foto LO Besar */}
+                    {/* Foto LO */}
                     <div className="relative shrink-0">
                       <img
                         src={loPhoto}
                         alt={loName || 'Liaison Officer'}
-                        className="h-20 w-20 sm:h-22 sm:w-22 rounded-2xl object-cover object-top border-2 border-emerald-500 shadow-sm ring-4 ring-emerald-100/90"
+                        className="h-16 w-16 sm:h-18 sm:w-18 rounded-2xl object-cover object-top border border-emerald-400 shadow-xs"
                         onError={(e) => {
                           e.currentTarget.onerror = null;
                           e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(loName || 'Rizky Fauzi')}&background=059669&color=fff&bold=true`;
                         }}
                       />
-                      <span className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-emerald-600 text-white border-2 border-white shadow-xs" title="LO Resmi Terverifikasi">
-                        <Check className="w-3 h-3 stroke-[3]" />
-                      </span>
                     </div>
 
                     {/* Informasi LO: Bersih, Rapi & Ringkas */}
-                    <div className="min-w-0 flex-1 space-y-1">
-                      <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100/80 px-2.5 py-0.5 text-[8.5px] font-black uppercase tracking-wider text-emerald-800">
-                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-600 animate-pulse" />
-                        <span>LO Resmi Peleton</span>
-                      </span>
-
-                      <h5 className="text-sm sm:text-base font-black text-slate-950 leading-snug">
+                    <div className="min-w-0 flex-1">
+                      <h5 className="text-sm sm:text-base font-bold text-slate-950 leading-snug">
                         {loName ? loName.replace(/\s*\(Panitia LBB\)/i, '') : 'Kak Rizky Fauzi'}
                       </h5>
-
-                      <p className="text-[10px] text-slate-500 font-medium">
+                      <p className="text-xs text-slate-500 font-medium mt-0.5">
                         Panitia LBB • Kampus Sedayu
-                      </p>
-
-                      <p className="text-[10px] text-emerald-800/90 font-medium leading-tight pt-0.5">
-                        Pendamping resmi kontingen peleton Anda.
                       </p>
                     </div>
                   </div>
                 ) : (
                   <div className="flex items-center gap-3">
-                    <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-700">
-                      <UserCheck className="w-6 h-6" />
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700">
+                      <UserCheck className="w-5 h-5" />
                     </span>
                     <div className="min-w-0 flex-1">
-                      <span className="text-[8.5px] font-black uppercase tracking-wider text-emerald-800">
-                        LIAISON OFFICER
-                      </span>
-                      <h5 className="text-sm font-black text-slate-950">
+                      <h5 className="text-sm font-bold text-slate-950">
                         Penetapan saat TM
                       </h5>
-                      <p className="text-[10px] text-slate-500">
+                      <p className="text-xs text-slate-500">
                         Diperkenalkan langsung saat Technical Meeting.
                       </p>
                     </div>
@@ -1432,17 +1396,17 @@ export default function OverviewTab({
                 href="https://wa.me/6281947491505"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex items-center justify-between gap-3 rounded-[18px] border border-slate-200/80 bg-slate-50/70 p-3.5 transition hover:border-blue-200 hover:bg-blue-50/40 cursor-pointer"
+                className="group flex items-center justify-between gap-3 rounded-2xl border border-slate-200/80 bg-slate-50/70 p-3 transition hover:border-blue-200 hover:bg-blue-50/40 cursor-pointer"
               >
                 <div className="flex items-center gap-3 min-w-0">
                   <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-100 text-blue-700">
                     <Phone className="w-4 h-4" />
                   </span>
                   <div className="min-w-0">
-                    <p className="text-xs font-black text-slate-900 group-hover:text-blue-700 transition truncate">
-                      Sekretariat & Pendaftaran
+                    <p className="text-xs font-bold text-slate-900 group-hover:text-blue-700 transition truncate">
+                      Sekretariat &amp; Pendaftaran
                     </p>
-                    <p className="text-[10px] text-slate-500 font-mono mt-0.5">
+                    <p className="text-[11px] text-slate-500 font-mono mt-0.5">
                       0819-4749-1505 (Admin Tonti)
                     </p>
                   </div>
@@ -1451,47 +1415,24 @@ export default function OverviewTab({
               </a>
 
               {/* POSKO MEDIS & EVAKUASI */}
-              <div className="flex items-center justify-between gap-3 rounded-[18px] border border-slate-200/80 bg-slate-50/70 p-3.5">
+              <div className="flex items-center justify-between gap-3 rounded-2xl border border-slate-200/80 bg-slate-50/70 p-3">
                 <div className="flex items-center gap-3 min-w-0">
                   <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-red-100 text-red-700">
                     <ShieldAlert className="w-4 h-4" />
                   </span>
                   <div className="min-w-0">
-                    <p className="text-xs font-black text-slate-900 truncate">
-                      Posko Medis & Evakuasi
+                    <p className="text-xs font-bold text-slate-900 truncate">
+                      Posko Medis &amp; Evakuasi
                     </p>
-                    <p className="text-[10px] text-slate-500 mt-0.5 truncate">
+                    <p className="text-[11px] text-slate-500 mt-0.5 truncate">
                       PMR / KSR Siaga Ambulans
                     </p>
                   </div>
                 </div>
-                <span className="shrink-0 rounded-full bg-red-100 border border-red-200 px-2.5 py-0.5 text-[8.5px] font-black text-red-700">
+                <span className="shrink-0 rounded-full bg-red-100 border border-red-200 px-2.5 py-0.5 text-[10px] font-bold text-red-700">
                   Arena Sedayu
                 </span>
               </div>
-            </div>
-
-            {/* DOKUMEN RESMI - JUKNIS PDF */}
-            <div className="border-t border-slate-100 p-3.5 bg-slate-50/50">
-              <a
-                href={DOWNLOADS?.[0]?.url || "https://drive.google.com/file/d/1owEDyb680TNB3TkFvZGVfjD_OCbagffQ/view?usp=sharing"}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group flex w-full items-center gap-2.5 rounded-xl bg-slate-900 hover:bg-slate-950 p-2.5 text-left text-white transition cursor-pointer"
-              >
-                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-amber-400/20 text-amber-300">
-                  <FileText className="w-3.5 h-3.5" />
-                </span>
-                <span className="min-w-0 flex-1">
-                  <span className="block text-[7.5px] font-black uppercase tracking-wider text-amber-300">
-                    DOKUMEN RESMI · PDF
-                  </span>
-                  <span className="block truncate text-[10px] font-black text-white">
-                    Petunjuk Teknis LBB 2027
-                  </span>
-                </span>
-                <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-0.5 group-hover:text-white transition" />
-              </a>
             </div>
           </article>
         </aside>

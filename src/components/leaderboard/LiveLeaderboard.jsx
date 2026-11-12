@@ -19,15 +19,22 @@ import {
   FileSpreadsheet,
   ShieldCheck,
   User,
-  X
+  X,
+  Download,
+  ExternalLink,
+  FileText,
+  Settings,
+  Check,
+  AlertCircle
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
 import { VENUE } from '../../config.js';
 import SimpaskorSidebarLayout from '../navigation/SimpaskorSidebarLayout.jsx';
 import { formatImageUrl } from '../../services/sheetService.js';
 import { getChestNumberByLot } from '../../context/competitionHelpers.js';
+import GoldConfetti from '../common/GoldConfetti.jsx';
 
-// Komponen Badge Logo Sekolah dengan Fallback Monogram Inisial
+// Komponen Logo Sekolah Bersih (Tanpa Wadah / Tanpa Box Inisial Berwarna)
 function SchoolLogo({ team, schoolName, size = 'table', className = '', isDark = false }) {
   const [hasError, setHasError] = useState(false);
 
@@ -44,36 +51,17 @@ function SchoolLogo({ team, schoolName, size = 'table', className = '', isDark =
   const validUrl = !hasError && rawLogo && rawLogo !== '#' && !rawLogo.startsWith('#');
   const logoUrl = validUrl ? formatImageUrl(rawLogo) : null;
 
-  const initials = useMemo(() => {
-    if (!name) return 'LK';
-    const clean = name
-      .replace(/\b(sd|mi|smp|mts|sma|smk|negeri|swasta|dan|kabupaten|kota)\b/gi, '')
-      .trim();
-    const words = clean.split(/\s+/).filter(Boolean);
-    if (words.length >= 2) {
-      return (words[0][0] + words[1][0]).toUpperCase();
-    }
-    if (words.length === 1 && words[0].length >= 2) {
-      return words[0].slice(0, 2).toUpperCase();
-    }
-    return name.slice(0, 2).toUpperCase();
-  }, [name]);
-
   let sizeClasses = '';
-  let fontClasses = '';
-
   if (size === 'podium-lg') {
-    sizeClasses = 'w-full h-full';
-    fontClasses = `text-lg sm:text-2xl font-black ${isDark ? 'text-amber-300' : 'text-amber-900'}`;
+    sizeClasses = 'w-18 h-18 sm:w-24 sm:h-24';
   } else if (size === 'podium-md') {
-    sizeClasses = 'w-full h-full';
-    fontClasses = `text-sm sm:text-xl font-black ${isDark ? 'text-slate-300' : 'text-slate-700'}`;
+    sizeClasses = 'w-14 h-14 sm:w-18 sm:h-18';
   } else {
     // table
-    sizeClasses = 'w-9 h-9';
-    fontClasses = `text-xs font-black ${isDark ? 'text-slate-300' : 'text-slate-700'}`;
+    sizeClasses = 'w-7 h-7 sm:w-8 sm:h-8';
   }
 
+  // Jika ada file logo resmi: render gambar logo murni transparan tanpa wadah kotak
   if (logoUrl) {
     return (
       <img
@@ -82,22 +70,31 @@ function SchoolLogo({ team, schoolName, size = 'table', className = '', isDark =
         loading="lazy"
         decoding="async"
         onError={() => setHasError(true)}
-        className={`${sizeClasses} object-contain filter drop-shadow-sm select-none shrink-0 ${className}`}
+        className={`${sizeClasses} object-contain filter drop-shadow-xs select-none shrink-0 ${className}`}
         title={name}
       />
     );
   }
 
+  // Jika tidak ada logo:
+  // 1. Pada tabel: Jangan render wadah/box inisial berwarna (tampil bersih langsung teks sekolah)
+  if (size === 'table') {
+    return null;
+  }
+
+  // 2. Pada podium: Tampilkan emblem minimalis transparan tanpa wadah kotak background solid
   return (
     <div
-      className={`${sizeClasses} rounded-2xl shrink-0 flex items-center justify-center font-black select-none shadow-xs transition-all ${
-        isDark
-          ? 'bg-gradient-to-br from-slate-800 to-slate-950 text-amber-300 border border-slate-700/80 shadow-inner'
-          : 'bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 text-white border border-slate-200/50 shadow-sm'
-      } ${className}`}
+      className={`shrink-0 flex items-center justify-center select-none ${sizeClasses} ${className}`}
       title={name}
     >
-      <span className={fontClasses}>{initials}</span>
+      <Building2
+        className={`${
+          size === 'podium-lg'
+            ? 'w-12 h-12 sm:w-16 sm:h-16 text-amber-500/80'
+            : 'w-10 h-10 sm:w-12 sm:h-12 text-slate-400'
+        } stroke-[1.5] drop-shadow-xs`}
+      />
     </div>
   );
 }
@@ -119,7 +116,7 @@ const DANTON_POINTS = {
 };
 
 export default function LiveLeaderboard() {
-  const { teams, scores, role, currentUser, currentTeam, settings, setActiveView } = useCompetition();
+  const { teams, scores, role, currentUser, currentTeam, settings, updateSettings, setActiveView } = useCompetition();
 
   // Mode Tema (Light vs Dark)
   const [isDarkMode, setIsDarkMode] = useState(() => {
@@ -154,8 +151,67 @@ export default function LiveLeaderboard() {
   // Otoritas & Publikasi
   const userRole = currentUser?.role || (currentTeam ? 'peserta' : (role || 'publik'));
   const isPeserta = userRole === 'peserta';
+  const isSuperOrAdmin = ['admin', 'superadmin'].includes(userRole);
   const isStaffOrJury = !isPeserta && userRole !== 'publik' && ['admin', 'juri', 'superadmin', 'penginput', 'verifikator', 'finalisator'].includes(userRole);
   const isOfficialScoreVisible = isStaffOrJury || Boolean(settings?.announcementPublished);
+
+  // State Modal & Link Berita Acara (Google Drive)
+  const [isBeritaAcaraModalOpen, setIsBeritaAcaraModalOpen] = useState(false);
+  const [beritaAcaraForm, setBeritaAcaraForm] = useState({
+    sd: settings?.beritaAcaraUrlSD || '',
+    smp: settings?.beritaAcaraUrlSMP || ''
+  });
+  const [isSavingBeritaAcara, setIsSavingBeritaAcara] = useState(false);
+  const [saveSuccessNotice, setSaveSuccessNotice] = useState(false);
+
+  // Link aktif sesuai jenjang yang dipilih
+  const currentBeritaAcaraUrl = useMemo(() => {
+    if (selectedJenjang === 'SD') {
+      return settings?.beritaAcaraUrlSD || settings?.beritaAcaraUrl || '';
+    } else {
+      return settings?.beritaAcaraUrlSMP || settings?.beritaAcaraUrl || '';
+    }
+  }, [settings, selectedJenjang]);
+
+  const openBeritaAcaraModal = () => {
+    setBeritaAcaraForm({
+      sd: settings?.beritaAcaraUrlSD || settings?.beritaAcaraUrl || '',
+      smp: settings?.beritaAcaraUrlSMP || settings?.beritaAcaraUrl || ''
+    });
+    setSaveSuccessNotice(false);
+    setIsBeritaAcaraModalOpen(true);
+  };
+
+  const handleBeritaAcaraClick = () => {
+    if (currentBeritaAcaraUrl && currentBeritaAcaraUrl.trim() !== '') {
+      window.open(currentBeritaAcaraUrl.trim(), '_blank', 'noopener,noreferrer');
+    } else {
+      openBeritaAcaraModal();
+    }
+  };
+
+  const handleSaveBeritaAcara = async (e) => {
+    e?.preventDefault();
+    setIsSavingBeritaAcara(true);
+    try {
+      if (typeof updateSettings === 'function') {
+        updateSettings({
+          beritaAcaraUrlSD: beritaAcaraForm.sd.trim(),
+          beritaAcaraUrlSMP: beritaAcaraForm.smp.trim(),
+          beritaAcaraUrl: (beritaAcaraForm.sd.trim() || beritaAcaraForm.smp.trim())
+        });
+      }
+      setSaveSuccessNotice(true);
+      setTimeout(() => {
+        setIsBeritaAcaraModalOpen(false);
+        setSaveSuccessNotice(false);
+      }, 800);
+    } catch (err) {
+      console.error('Gagal menyimpan link berita acara:', err);
+    } finally {
+      setIsSavingBeritaAcara(false);
+    }
+  };
 
   // Filter tim terverifikasi/terundi
   const verifiedTeams = useMemo(() => {
@@ -491,10 +547,10 @@ export default function LiveLeaderboard() {
         team: item.team,
         schoolName: item.team.schoolName,
         mainTitle: item.team.schoolName,
-        subTitle: item.team.dantonName ? `Danton: ${item.team.dantonName}` : (item.team.platoonName || 'Peleton PBB'),
+        subTitle: '',
         score: item.nilaiAkhirPeleton,
-        scoreLabel: 'Nilai Akhir',
-        subScore: `Murni: ${item.nilaiMurniPeleton} | Penalti: ${item.peletonPenalty}`
+        scoreLabel: '',
+        subScore: ''
       }));
     } else if (activeCategory === 'danton') {
       return finalFilteredDanton.map(item => ({
@@ -505,8 +561,8 @@ export default function LiveLeaderboard() {
         mainTitle: item.team.dantonName || 'Komandan Peleton',
         subTitle: item.team.schoolName,
         score: item.nilaiAkhirDanton,
-        scoreLabel: 'Nilai Danton',
-        subScore: `Murni: ${item.nilaiMurniDanton} | Penalti: ${item.dantonPenalty}`
+        scoreLabel: '',
+        subScore: ''
       }));
     } else {
       return finalFilteredJuaraUmum.map((item, idx) => ({
@@ -515,10 +571,10 @@ export default function LiveLeaderboard() {
         team: item.team || item.teams?.[0]?.team,
         schoolName: item.schoolName,
         mainTitle: item.schoolName,
-        subTitle: `${item.teams?.length || 1} Peleton Kontingen`,
+        subTitle: '',
         score: item.totalPoints,
-        scoreLabel: 'Poin Prestasi',
-        subScore: `Peleton: ${item.totalPeletonPoints} pt | Danton: ${item.totalDantonPoints} pt`
+        scoreLabel: '',
+        subScore: ''
       }));
     }
   }, [activeCategory, finalFilteredPeleton, finalFilteredDanton, finalFilteredJuaraUmum]);
@@ -534,11 +590,16 @@ export default function LiveLeaderboard() {
   }, [currentRankingList, activeCategory]);
 
   const remainingRankingList = useMemo(() => {
-    if (viewMode === 'podium' && activeCategory === 'peleton' && currentRankingList.length >= 6 && !searchQuery) {
-      return currentRankingList.slice(6);
+    if (viewMode === 'podium') {
+      if (activeCategory === 'peleton' && currentRankingList.length >= 6) {
+        return currentRankingList.slice(6);
+      }
+      if (activeCategory === 'juara_umum' && currentRankingList.length >= 1) {
+        return currentRankingList.slice(1);
+      }
     }
     return currentRankingList.slice(3);
-  }, [currentRankingList, viewMode, searchQuery, activeCategory]);
+  }, [currentRankingList, viewMode, activeCategory]);
 
   const headerActions = (
     <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
@@ -773,7 +834,7 @@ export default function LiveLeaderboard() {
               }`}
             >
               <Shield className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-300 shrink-0" />
-              <span>Kategori Peleton (PBB)</span>
+              <span>Kejuaraan Peleton</span>
             </button>
 
             <button
@@ -788,7 +849,7 @@ export default function LiveLeaderboard() {
               }`}
             >
               <Medal className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-300 shrink-0" />
-              <span>Danton Terbaik</span>
+              <span>Komandan Peleton</span>
             </button>
 
             <button
@@ -805,121 +866,127 @@ export default function LiveLeaderboard() {
               }`}
             >
               <Crown className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400 shrink-0" />
-              <span>Klasemen Juara Umum</span>
+              <span>Piala Bergilir Juara Umum</span>
             </button>
           </div>
 
-          {/* Kanan: Switch Jenjang + View Mode + Search Box */}
-          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-2.5 w-full xl:w-auto">
-            <div className="grid grid-cols-2 sm:flex sm:items-center gap-2 w-full sm:w-auto">
-              {/* Switch Jenjang Khusus: SD/MI & SMP/MTs */}
-              <div
-                className={`flex items-center justify-center gap-1 p-1 rounded-xl border ${
-                  effectiveDark
-                    ? 'bg-slate-800 border-slate-700'
-                    : 'bg-slate-100 border-slate-200/80'
+          {/* Kanan: Switch Jenjang + View Mode */}
+          <div className="flex items-center gap-2 sm:gap-2.5 flex-wrap sm:flex-nowrap">
+            {/* Switch Jenjang: SD & SMP */}
+            <div
+              className={`flex items-center justify-center gap-1 p-1 rounded-xl border ${
+                effectiveDark
+                  ? 'bg-slate-800 border-slate-700'
+                  : 'bg-slate-100 border-slate-200/80'
+              }`}
+            >
+              <button
+                type="button"
+                onClick={() => setSelectedJenjang('SD')}
+                className={`flex-1 sm:flex-none justify-center px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+                  selectedJenjang === 'SD'
+                    ? effectiveDark
+                      ? 'bg-slate-950 text-white shadow-xs'
+                      : 'bg-white text-slate-900 shadow-xs'
+                    : effectiveDark
+                    ? 'text-slate-400 hover:text-white'
+                    : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                <button
-                  type="button"
-                  onClick={() => setSelectedJenjang('SD')}
-                  className={`flex-1 sm:flex-none justify-center px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
-                    selectedJenjang === 'SD'
-                      ? effectiveDark
-                        ? 'bg-slate-950 text-white shadow-xs'
-                        : 'bg-white text-slate-900 shadow-xs'
-                      : effectiveDark
-                      ? 'text-slate-400 hover:text-white'
-                      : 'text-slate-600 hover:text-slate-900'
-                  }`}
-                >
-                  <span className={`w-2 h-2 rounded-full shrink-0 ${selectedJenjang === 'SD' ? 'bg-red-600' : 'bg-slate-400'}`} />
-                  <span>SD</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setSelectedJenjang('SMP')}
-                  className={`flex-1 sm:flex-none justify-center px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
-                    selectedJenjang === 'SMP'
-                      ? effectiveDark
-                        ? 'bg-slate-950 text-white shadow-xs'
-                        : 'bg-white text-slate-900 shadow-xs'
-                      : effectiveDark
-                      ? 'text-slate-400 hover:text-white'
-                      : 'text-slate-600 hover:text-slate-900'
-                  }`}
-                >
-                  <span className={`w-2 h-2 rounded-full shrink-0 ${selectedJenjang === 'SMP' ? 'bg-blue-600' : 'bg-slate-400'}`} />
-                  <span>SMP</span>
-                </button>
-              </div>
-
-              {/* View Mode Toggle: Podium Juara vs Tabel Juknis */}
-              <div
-                className={`flex items-center justify-center gap-1 p-1 rounded-xl border ${
-                  effectiveDark
-                    ? 'bg-slate-800 border-slate-700'
-                    : 'bg-slate-100 border-slate-200/80'
+                <span className={`w-2 h-2 rounded-full shrink-0 ${selectedJenjang === 'SD' ? 'bg-red-600' : 'bg-slate-400'}`} />
+                <span>SD</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setSelectedJenjang('SMP')}
+                className={`flex-1 sm:flex-none justify-center px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+                  selectedJenjang === 'SMP'
+                    ? effectiveDark
+                      ? 'bg-slate-950 text-white shadow-xs'
+                      : 'bg-white text-slate-900 shadow-xs'
+                    : effectiveDark
+                    ? 'text-slate-400 hover:text-white'
+                    : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                <button
-                  type="button"
-                  onClick={() => setViewMode('podium')}
-                  className={`flex-1 sm:flex-none justify-center px-2 sm:px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1 sm:gap-1.5 ${
-                    viewMode === 'podium'
-                      ? effectiveDark
-                        ? 'bg-slate-950 text-white shadow-xs'
-                        : 'bg-white text-slate-900 shadow-xs'
-                      : effectiveDark
-                      ? 'text-slate-400 hover:text-white'
-                      : 'text-slate-600 hover:text-slate-900'
-                  }`}
-                  title="Tampilan Podium Juara & Peringkat"
-                >
-                  <Trophy className="w-3.5 h-3.5 text-amber-500" />
-                  <span>Podium</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setViewMode('table')}
-                  className={`flex-1 sm:flex-none justify-center px-2 sm:px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1 sm:gap-1.5 ${
-                    viewMode === 'table'
-                      ? effectiveDark
-                        ? 'bg-slate-950 text-white shadow-xs'
-                        : 'bg-white text-slate-900 shadow-xs'
-                      : effectiveDark
-                      ? 'text-slate-400 hover:text-white'
-                      : 'text-slate-600 hover:text-slate-900'
-                  }`}
-                  title="Tampilan Tabel Juknis Lengkap"
-                >
-                  <FileSpreadsheet className="w-3.5 h-3.5 text-blue-600" />
-                  <span>Tabel</span>
-                </button>
-              </div>
+                <span className={`w-2 h-2 rounded-full shrink-0 ${selectedJenjang === 'SMP' ? 'bg-blue-600' : 'bg-slate-400'}`} />
+                <span>SMP</span>
+              </button>
             </div>
 
-            {/* Search Box */}
-            <div className="relative w-full sm:w-auto min-w-[200px] flex-1">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
-              <input
-                type="text"
-                placeholder="Cari sekolah / danton..."
-                value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
-                className={`w-full pl-9 pr-8 py-1.5 text-xs rounded-xl border focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-colors ${
-                  effectiveDark
-                    ? 'bg-slate-800 border-slate-700 text-white placeholder-slate-400'
-                    : 'bg-slate-50 border-slate-200/90 text-slate-900 placeholder-slate-400 focus:bg-white'
+            {/* View Mode Toggle: Podium Juara vs Tabel Juknis */}
+            <div
+              className={`flex items-center justify-center gap-1 p-1 rounded-xl border ${
+                effectiveDark
+                  ? 'bg-slate-800 border-slate-700'
+                  : 'bg-slate-100 border-slate-200/80'
+              }`}
+            >
+              <button
+                type="button"
+                onClick={() => setViewMode('podium')}
+                className={`flex-1 sm:flex-none justify-center px-2 sm:px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1 sm:gap-1.5 ${
+                  viewMode === 'podium'
+                    ? effectiveDark
+                      ? 'bg-slate-950 text-white shadow-xs'
+                      : 'bg-white text-slate-900 shadow-xs'
+                    : effectiveDark
+                    ? 'text-slate-400 hover:text-white'
+                    : 'text-slate-600 hover:text-slate-900'
                 }`}
-              />
-              {searchQuery && (
+                title="Tampilan Podium Juara & Peringkat"
+              >
+                <Trophy className="w-3.5 h-3.5 text-amber-500" />
+                <span>Podium</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode('table')}
+                className={`flex-1 sm:flex-none justify-center px-2 sm:px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1 sm:gap-1.5 ${
+                  viewMode === 'table'
+                    ? effectiveDark
+                      ? 'bg-slate-950 text-white shadow-xs'
+                      : 'bg-white text-slate-900 shadow-xs'
+                    : effectiveDark
+                    ? 'text-slate-400 hover:text-white'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+                title="Tampilan Tabel Juknis Lengkap"
+              >
+                <FileSpreadsheet className="w-3.5 h-3.5 text-blue-600" />
+                <span>Tabel</span>
+              </button>
+            </div>
+
+            {/* Tombol Download Berita Acara (Paling Kanan) */}
+            <div className="flex items-center gap-1 shrink-0">
+              <button
+                type="button"
+                onClick={handleBeritaAcaraClick}
+                className={`px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 border shadow-2xs ${
+                  effectiveDark
+                    ? 'bg-slate-800 hover:bg-slate-700 text-slate-100 hover:text-white border-slate-700'
+                    : 'bg-white hover:bg-slate-50 text-slate-800 hover:text-slate-950 border-slate-200/90'
+                }`}
+                title={`Unduh Berita Acara Resmi Jenjang ${selectedJenjang === 'SD' ? 'SD/MI' : 'SMP/MTs'}`}
+              >
+                <Download className="w-3.5 h-3.5 text-red-600 shrink-0" />
+                <span className="hidden sm:inline">Download Berita Acara</span>
+                <span className="sm:hidden">Berita Acara</span>
+              </button>
+
+              {isSuperOrAdmin && (
                 <button
                   type="button"
-                  onClick={() => setSearchQuery('')}
-                  className="absolute right-2.5 top-2 text-slate-400 hover:text-slate-600 cursor-pointer"
+                  onClick={openBeritaAcaraModal}
+                  className={`p-2 rounded-xl text-xs transition-all cursor-pointer border shadow-2xs ${
+                    effectiveDark
+                      ? 'bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white border-slate-700'
+                      : 'bg-white hover:bg-slate-50 text-slate-500 hover:text-slate-900 border-slate-200/90'
+                  }`}
+                  title="Kelola Link Google Drive Berita Acara (Admin / Superadmin)"
                 >
-                  <X className="w-3.5 h-3.5" />
+                  <Settings className="w-3.5 h-3.5 shrink-0" />
                 </button>
               )}
             </div>
@@ -960,7 +1027,9 @@ export default function LiveLeaderboard() {
       )}
 
             {/* 5. GRAND CHAMPIONSHIP PODIUM STAGE */}
-      {isOfficialScoreVisible && currentPodiumData.length >= 3 && viewMode === 'podium' && (
+      {isOfficialScoreVisible && viewMode === 'podium' && (
+        (activeCategory === 'juara_umum' ? currentRankingList.length >= 1 : currentPodiumData.length >= 3)
+      ) && (
         <div className="space-y-6">
           {/* STAGE PODIUM JUARA */}
           <div className={`relative w-full rounded-[28px] border p-3 sm:p-7 md:p-9 overflow-hidden shadow-[0_20px_50px_rgba(15,23,42,0.06)] transition-all ${
@@ -971,146 +1040,199 @@ export default function LiveLeaderboard() {
             {/* Radial ambient glow */}
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-56 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-amber-300/25 via-amber-100/10 to-transparent pointer-events-none" />
 
+            {/* Efek Animasi Golden Confetti Hujan Khusus Wadah Podium Utama (15 Detik) */}
+            <GoldConfetti
+              key={`gold-confetti-${activeCategory}-${selectedJenjang}`}
+              variant="gold"
+              duration={15000}
+              autoFire={true}
+            />
+
             {/* Championship Kicker */}
             <div className="text-center relative z-10 mb-4 sm:mb-8">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] sm:text-[10px] font-black uppercase tracking-[0.16em] sm:tracking-[0.2em] bg-amber-100/80 text-amber-900 border border-amber-300/80 shadow-2xs">
-                <Trophy className="w-3.5 h-3.5 text-amber-600" />
-                <span>PODIUM UTAMA KEJUARAAN • JENJANG {selectedJenjang}</span>
+              <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] sm:text-[10px] font-black uppercase tracking-[0.16em] sm:tracking-[0.2em] shadow-2xs ${
+                activeCategory === 'juara_umum'
+                  ? 'bg-amber-400/20 text-amber-900 border border-amber-400/60'
+                  : 'bg-amber-100/80 text-amber-900 border border-amber-300/80'
+              }`}>
+                {activeCategory === 'peleton' && <Trophy className="w-3.5 h-3.5 text-amber-600" />}
+                {activeCategory === 'danton' && <Medal className="w-3.5 h-3.5 text-amber-600" />}
+                {activeCategory === 'juara_umum' && <Crown className="w-3.5 h-3.5 text-amber-600" />}
+                <span>
+                  {activeCategory === 'peleton' && `PODIUM UTAMA KEJUARAAN • JENJANG ${selectedJenjang === 'SD' ? 'SD/MI' : 'SMP/MTs'}`}
+                  {activeCategory === 'danton' && `PODIUM KOMANDAN PELETON • JENJANG ${selectedJenjang === 'SD' ? 'SD/MI' : 'SMP/MTs'}`}
+                  {activeCategory === 'juara_umum' && `PIALA BERGILIR JUARA UMUM • JENJANG ${selectedJenjang === 'SD' ? 'SD/MI' : 'SMP/MTs'}`}
+                </span>
               </span>
               <h3 className={`mt-1.5 sm:mt-2 text-base sm:text-2xl font-black uppercase tracking-tight ${
                 effectiveDark ? 'text-white' : 'text-slate-950'
               }`}>
-                {activeCategory === 'peleton' && 'Peleton Terbaik'}
-                {activeCategory === 'danton' && 'Komandan Peleton (Danton) Terbaik'}
-                {activeCategory === 'juara_umum' && 'Klasemen Juara Umum Bergilir'}
+                {activeCategory === 'peleton' && 'Juara Utama Peleton 1, 2, & 3'}
+                {activeCategory === 'danton' && 'Komandan Peleton Terbaik 1, 2, & 3'}
+                {activeCategory === 'juara_umum' && `Juara Umum Jenjang ${selectedJenjang === 'SD' ? 'SD/MI' : 'SMP/MTs'}`}
               </h3>
             </div>
 
-            {/* 3 Pedestal Stage */}
-            <div className="grid grid-cols-3 gap-1.5 sm:gap-5 max-w-3xl mx-auto items-end pt-3 sm:pt-6 relative z-10">
-
-              {/* ========================================= */}
-              {/* RANK 2: PERAK / PLATINUM (KIRI)           */}
-              {/* ========================================= */}
-              <div className="flex flex-col items-center">
+            {activeCategory === 'juara_umum' ? (
+              /* ======================================================== */
+              /* SINGLE JUARA UMUM SHOWCASE (HANYA 1 JUARA UMUM PER JENJANG) */
+              /* ======================================================== */
+              <div className="flex flex-col items-center max-w-md mx-auto pt-3 sm:pt-6 relative z-10">
                 {/* Top Avatar & Identity */}
-                <div className="flex flex-col items-center mb-2.5 sm:mb-3 text-center w-full">
-                  <div className="w-14 h-14 sm:w-20 sm:h-20 mb-1.5 sm:mb-2 flex items-center justify-center hover:scale-105 transition-transform">
-                    <SchoolLogo team={currentPodiumData[1].team} schoolName={currentPodiumData[1].schoolName} size="podium-md" />
+                <div className="flex flex-col items-center mb-3 sm:mb-4 text-center w-full">
+                  <div className="w-20 h-20 sm:w-28 sm:h-28 mb-2 flex items-center justify-center hover:scale-105 transition-transform">
+                    <SchoolLogo team={currentRankingList[0].team} schoolName={currentRankingList[0].schoolName} size="podium-lg" />
                   </div>
 
-                  <h4 className={`font-black text-[11px] sm:text-xs md:text-sm line-clamp-2 min-h-[2.4em] leading-tight w-full px-0.5 break-words ${
-                    effectiveDark ? 'text-white' : 'text-slate-900'
-                  }`} title={currentPodiumData[1].mainTitle}>
-                    {currentPodiumData[1].mainTitle}
-                  </h4>
-                  <p className="text-[9.5px] sm:text-[11px] text-slate-500 line-clamp-1 truncate w-full px-0.5 mt-0.5">
-                    {currentPodiumData[1].subTitle}
-                  </p>
-
-                  <div className="mt-1 sm:mt-1.5 inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full bg-slate-900 text-white shadow-xs border border-slate-400/30">
-                    <span className="text-[10.5px] sm:text-xs font-mono font-black text-slate-200">{currentPodiumData[1].score}</span>
-                    <span className="text-[7.5px] sm:text-[8.5px] font-bold uppercase tracking-wider text-slate-400">Poin</span>
-                  </div>
-                </div>
-
-                {/* Architectural Pedestal #2 */}
-                <div className="w-full h-32 sm:h-48 rounded-t-2xl sm:rounded-t-3xl bg-gradient-to-b from-slate-200 via-slate-300 to-slate-400 border-t-4 border-white shadow-[0_16px_36px_rgba(148,163,184,0.35)] flex flex-col items-center justify-center gap-1 sm:gap-2 p-1.5 sm:p-3 relative overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
-                  <span className="text-[8px] sm:text-[10px] tracking-widest text-slate-600 font-black">★★</span>
-                  <div className="flex flex-col items-center">
-                    <span className="text-3xl sm:text-6xl font-black font-sans text-white tracking-tight drop-shadow-[0_2px_4px_rgba(71,85,105,0.4)]">
-                      2
-                    </span>
-                    <span className="text-[7.5px] sm:text-[10px] font-black uppercase tracking-wider text-slate-800 bg-white/90 px-1.5 sm:px-2.5 py-0.5 rounded-full mt-0.5 sm:mt-1 shadow-2xs whitespace-nowrap">
-                      JUARA 2
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* ========================================= */}
-              {/* RANK 1: EMAS / GOLD CHAMPION (TENGAH)     */}
-              {/* ========================================= */}
-              <div className="flex flex-col items-center -mt-3 sm:-mt-6">
-                {/* Top Avatar & Identity */}
-                <div className="flex flex-col items-center mb-2.5 sm:mb-3 text-center w-full">
-                  <div className="w-18 h-18 sm:w-26 sm:h-26 mb-1.5 sm:mb-2 flex items-center justify-center hover:scale-105 transition-transform">
-                    <SchoolLogo team={currentPodiumData[0].team} schoolName={currentPodiumData[0].schoolName} size="podium-lg" />
-                  </div>
-
-                  <h4 className={`font-black text-xs sm:text-sm md:text-base line-clamp-2 min-h-[2.4em] leading-tight w-full px-0.5 break-words ${
+                  <h4 className={`font-black text-base sm:text-xl md:text-2xl leading-tight w-full px-2 break-words ${
                     effectiveDark ? 'text-white' : 'text-slate-950'
-                  }`} title={currentPodiumData[0].mainTitle}>
-                    {currentPodiumData[0].mainTitle}
+                  }`} title={currentRankingList[0].mainTitle}>
+                    {currentRankingList[0].mainTitle}
                   </h4>
-                  <p className="text-[10px] sm:text-xs text-slate-500 font-medium line-clamp-1 truncate w-full px-0.5 mt-0.5">
-                    {currentPodiumData[0].subTitle}
-                  </p>
 
-                  <div className="mt-1 sm:mt-1.5 inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3.5 py-0.5 sm:py-1 rounded-full bg-slate-950 text-white shadow-md border border-amber-400/50">
-                    <Trophy className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-400" />
-                    <span className="text-[11px] sm:text-sm font-mono font-black text-amber-300">{currentPodiumData[0].score}</span>
-                    <span className="text-[8px] sm:text-[9px] font-bold uppercase tracking-wider text-slate-300">Poin</span>
+                  <div className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-950 text-white shadow-xs border border-amber-400/40">
+                    <span className="text-sm sm:text-base font-mono font-black text-amber-300">{currentRankingList[0].score}</span>
+                    <span className="text-[8.5px] sm:text-[9.5px] font-bold uppercase tracking-wider text-slate-300">Poin</span>
                   </div>
                 </div>
 
-                {/* Architectural Pedestal #1 (Tertinggi) */}
-                <div className="w-full h-44 sm:h-64 rounded-t-2xl sm:rounded-t-3xl bg-gradient-to-b from-amber-300 via-amber-400 to-amber-500 border-t-4 border-amber-100 shadow-[0_20px_50px_rgba(245,158,11,0.4)] flex flex-col items-center justify-center gap-1.5 sm:gap-2.5 p-2 sm:p-4 relative overflow-hidden">
+                {/* Single Architectural Pedestal for Juara Umum */}
+                <div className="w-full h-36 sm:h-52 rounded-t-2xl sm:rounded-t-3xl bg-gradient-to-b from-amber-300 via-amber-400 to-amber-500 border-t-4 border-amber-100 shadow-[0_20px_50px_rgba(245,158,11,0.35)] flex flex-col items-center justify-center p-4 relative overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent pointer-events-none" />
-                  <span className="text-[9px] sm:text-xs tracking-widest text-amber-950/80 font-black">★★★</span>
-                  <div className="flex flex-col items-center">
-                    <span className="text-4xl sm:text-7xl font-black font-sans text-white tracking-tight drop-shadow-[0_4px_8px_rgba(180,83,9,0.5)]">
-                      1
-                    </span>
-                    <span className="text-[8px] sm:text-[11px] font-black uppercase tracking-wider text-slate-950 bg-white/95 px-2 sm:px-3 py-0.5 rounded-full mt-0.5 sm:mt-1 shadow-xs whitespace-nowrap">
-                      JUARA 1 UTAMA
+                  <div className="flex flex-col items-center text-center">
+                    <Crown className="w-9 h-9 sm:w-12 sm:h-12 text-white drop-shadow-[0_4px_8px_rgba(180,83,9,0.5)] mb-1.5" />
+                    <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-slate-950 bg-white/95 px-4 sm:px-6 py-1 rounded-full shadow-xs whitespace-nowrap">
+                      JUARA UMUM
                     </span>
                   </div>
                 </div>
               </div>
+            ) : (
+              /* ========================================= */
+              /* 3 PEDESTAL STAGE (PELETON & DANTON)       */
+              /* ========================================= */
+              <div className="grid grid-cols-3 gap-1.5 sm:gap-5 max-w-3xl mx-auto items-end pt-3 sm:pt-6 relative z-10">
 
-              {/* ========================================= */}
-              {/* RANK 3: PERUNGGU / BRONZE (KANAN)         */}
-              {/* ========================================= */}
-              <div className="flex flex-col items-center">
-                {/* Top Avatar & Identity */}
-                <div className="flex flex-col items-center mb-2.5 sm:mb-3 text-center w-full">
-                  <div className="w-14 h-14 sm:w-20 sm:h-20 mb-1.5 sm:mb-2 flex items-center justify-center hover:scale-105 transition-transform">
-                    <SchoolLogo team={currentPodiumData[2].team} schoolName={currentPodiumData[2].schoolName} size="podium-md" />
+                {/* ========================================= */}
+                {/* RANK 2: PERAK / PLATINUM (KIRI)           */}
+                {/* ========================================= */}
+                <div className="flex flex-col items-center">
+                  {/* Top Avatar & Identity */}
+                  <div className="flex flex-col items-center mb-2.5 sm:mb-3 text-center w-full">
+                    <div className="w-14 h-14 sm:w-20 sm:h-20 mb-1.5 sm:mb-2 flex items-center justify-center hover:scale-105 transition-transform">
+                      <SchoolLogo team={currentPodiumData[1].team} schoolName={currentPodiumData[1].schoolName} size="podium-md" />
+                    </div>
+
+                    <h4 className={`font-black text-[11px] sm:text-xs md:text-sm line-clamp-2 min-h-[2.4em] leading-tight w-full px-0.5 break-words ${
+                      effectiveDark ? 'text-white' : 'text-slate-900'
+                    }`} title={currentPodiumData[1].mainTitle}>
+                      {currentPodiumData[1].mainTitle}
+                    </h4>
+                    <p className="text-[9.5px] sm:text-[11px] text-slate-500 line-clamp-1 truncate w-full px-0.5 mt-0.5">
+                      {currentPodiumData[1].subTitle}
+                    </p>
+
+                    <div className="mt-1 sm:mt-1.5 inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full bg-slate-900 text-white shadow-xs border border-slate-400/30">
+                      <span className="text-[10.5px] sm:text-xs font-mono font-black text-slate-200">{currentPodiumData[1].score}</span>
+                      <span className="text-[7.5px] sm:text-[8.5px] font-bold uppercase tracking-wider text-slate-400">Poin</span>
+                    </div>
                   </div>
 
-                  <h4 className={`font-black text-[11px] sm:text-xs md:text-sm line-clamp-2 min-h-[2.4em] leading-tight w-full px-0.5 break-words ${
-                    effectiveDark ? 'text-white' : 'text-slate-900'
-                  }`} title={currentPodiumData[2].mainTitle}>
-                    {currentPodiumData[2].mainTitle}
-                  </h4>
-                  <p className="text-[9.5px] sm:text-[11px] text-slate-500 line-clamp-1 truncate w-full px-0.5 mt-0.5">
-                    {currentPodiumData[2].subTitle}
-                  </p>
-
-                  <div className="mt-1 sm:mt-1.5 inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full bg-slate-900 text-white shadow-xs border border-amber-600/40">
-                    <span className="text-[10.5px] sm:text-xs font-mono font-black text-amber-300">{currentPodiumData[2].score}</span>
-                    <span className="text-[7.5px] sm:text-[8.5px] font-bold uppercase tracking-wider text-slate-400">Poin</span>
+                  {/* Architectural Pedestal #2 */}
+                  <div className="w-full h-32 sm:h-48 rounded-t-2xl sm:rounded-t-3xl bg-gradient-to-b from-slate-200 via-slate-300 to-slate-400 border-t-4 border-white shadow-[0_16px_36px_rgba(148,163,184,0.35)] flex flex-col items-center justify-center gap-1 sm:gap-2 p-1.5 sm:p-3 relative overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
+                    <div className="flex flex-col items-center">
+                      <span className="text-3xl sm:text-6xl font-black font-sans text-white tracking-tight drop-shadow-[0_2px_4px_rgba(71,85,105,0.4)]">
+                        2
+                      </span>
+                      <span className="text-[7.5px] sm:text-[10px] font-black uppercase tracking-wider text-slate-800 bg-white/90 px-1.5 sm:px-2.5 py-0.5 rounded-full mt-0.5 sm:mt-1 shadow-2xs whitespace-nowrap">
+                        {activeCategory === 'peleton' ? 'JUARA 2 UTAMA' : 'DANTON TERBAIK 2'}
+                      </span>
+                    </div>
                   </div>
                 </div>
 
-                {/* Architectural Pedestal #3 */}
-                <div className="w-full h-28 sm:h-40 rounded-t-2xl sm:rounded-t-3xl bg-gradient-to-b from-amber-600 via-orange-500 to-amber-700 border-t-4 border-orange-300/90 shadow-[0_14px_35px_rgba(194,65,12,0.3)] flex flex-col items-center justify-center gap-1 sm:gap-2 p-1.5 sm:p-3 relative overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
-                  <span className="text-[8px] sm:text-[10px] tracking-widest text-amber-200 font-black">★</span>
-                  <div className="flex flex-col items-center">
-                    <span className="text-3xl sm:text-6xl font-black font-sans text-white tracking-tight drop-shadow-[0_2px_4px_rgba(154,52,18,0.4)]">
-                      3
-                    </span>
-                    <span className="text-[7.5px] sm:text-[10px] font-black uppercase tracking-wider text-amber-950 bg-amber-200 px-1.5 sm:px-2.5 py-0.5 rounded-full mt-0.5 sm:mt-1 shadow-2xs whitespace-nowrap">
-                      JUARA 3
-                    </span>
+                {/* ========================================= */}
+                {/* RANK 1: EMAS / GOLD CHAMPION (TENGAH)     */}
+                {/* ========================================= */}
+                <div className="flex flex-col items-center -mt-3 sm:-mt-6">
+                  {/* Top Avatar & Identity */}
+                  <div className="flex flex-col items-center mb-2.5 sm:mb-3 text-center w-full">
+                    <div className="w-18 h-18 sm:w-26 sm:h-26 mb-1.5 sm:mb-2 flex items-center justify-center hover:scale-105 transition-transform">
+                      <SchoolLogo team={currentPodiumData[0].team} schoolName={currentPodiumData[0].schoolName} size="podium-lg" />
+                    </div>
+
+                    <h4 className={`font-black text-xs sm:text-sm md:text-base line-clamp-2 min-h-[2.4em] leading-tight w-full px-0.5 break-words ${
+                      effectiveDark ? 'text-white' : 'text-slate-950'
+                    }`} title={currentPodiumData[0].mainTitle}>
+                      {currentPodiumData[0].mainTitle}
+                    </h4>
+                    <p className="text-[10px] sm:text-xs text-slate-500 font-medium line-clamp-1 truncate w-full px-0.5 mt-0.5">
+                      {currentPodiumData[0].subTitle}
+                    </p>
+
+                    <div className="mt-1 sm:mt-1.5 inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3.5 py-0.5 sm:py-1 rounded-full bg-slate-950 text-white shadow-md border border-amber-400/50">
+                      <Trophy className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-400" />
+                      <span className="text-[11px] sm:text-sm font-mono font-black text-amber-300">{currentPodiumData[0].score}</span>
+                      <span className="text-[8px] sm:text-[9px] font-bold uppercase tracking-wider text-slate-300">Poin</span>
+                    </div>
+                  </div>
+
+                  {/* Architectural Pedestal #1 (Tertinggi) */}
+                  <div className="w-full h-44 sm:h-64 rounded-t-2xl sm:rounded-t-3xl bg-gradient-to-b from-amber-300 via-amber-400 to-amber-500 border-t-4 border-amber-100 shadow-[0_20px_50px_rgba(245,158,11,0.4)] flex flex-col items-center justify-center gap-1.5 sm:gap-2.5 p-2 sm:p-4 relative overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent pointer-events-none" />
+                    <div className="flex flex-col items-center">
+                      <span className="text-4xl sm:text-7xl font-black font-sans text-white tracking-tight drop-shadow-[0_4px_8px_rgba(180,83,9,0.5)]">
+                        1
+                      </span>
+                      <span className="text-[8px] sm:text-[11px] font-black uppercase tracking-wider text-slate-950 bg-white/95 px-2 sm:px-3 py-0.5 rounded-full mt-0.5 sm:mt-1 shadow-xs whitespace-nowrap">
+                        {activeCategory === 'peleton' ? 'JUARA 1 UTAMA' : 'DANTON TERBAIK 1'}
+                      </span>
+                    </div>
                   </div>
                 </div>
+
+                {/* ========================================= */}
+                {/* RANK 3: PERUNGGU / BRONZE (KANAN)         */}
+                {/* ========================================= */}
+                <div className="flex flex-col items-center">
+                  {/* Top Avatar & Identity */}
+                  <div className="flex flex-col items-center mb-2.5 sm:mb-3 text-center w-full">
+                    <div className="w-14 h-14 sm:w-20 sm:h-20 mb-1.5 sm:mb-2 flex items-center justify-center hover:scale-105 transition-transform">
+                      <SchoolLogo team={currentPodiumData[2].team} schoolName={currentPodiumData[2].schoolName} size="podium-md" />
+                    </div>
+
+                    <h4 className={`font-black text-[11px] sm:text-xs md:text-sm line-clamp-2 min-h-[2.4em] leading-tight w-full px-0.5 break-words ${
+                      effectiveDark ? 'text-white' : 'text-slate-900'
+                    }`} title={currentPodiumData[2].mainTitle}>
+                      {currentPodiumData[2].mainTitle}
+                    </h4>
+                    <p className="text-[9.5px] sm:text-[11px] text-slate-500 line-clamp-1 truncate w-full px-0.5 mt-0.5">
+                      {currentPodiumData[2].subTitle}
+                    </p>
+
+                    <div className="mt-1 sm:mt-1.5 inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full bg-slate-900 text-white shadow-xs border border-amber-600/40">
+                      <span className="text-[10.5px] sm:text-xs font-mono font-black text-amber-300">{currentPodiumData[2].score}</span>
+                      <span className="text-[7.5px] sm:text-[8.5px] font-bold uppercase tracking-wider text-slate-400">Poin</span>
+                    </div>
+                  </div>
+
+                  {/* Architectural Pedestal #3 */}
+                  <div className="w-full h-28 sm:h-40 rounded-t-2xl sm:rounded-t-3xl bg-gradient-to-b from-amber-600 via-orange-500 to-amber-700 border-t-4 border-orange-300/90 shadow-[0_14px_35px_rgba(194,65,12,0.3)] flex flex-col items-center justify-center gap-1 sm:gap-2 p-1.5 sm:p-3 relative overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
+                    <div className="flex flex-col items-center">
+                      <span className="text-3xl sm:text-6xl font-black font-sans text-white tracking-tight drop-shadow-[0_2px_4px_rgba(154,52,18,0.4)]">
+                        3
+                      </span>
+                      <span className="text-[7.5px] sm:text-[10px] font-black uppercase tracking-wider text-amber-950 bg-amber-200 px-1.5 sm:px-2.5 py-0.5 rounded-full mt-0.5 sm:mt-1 shadow-2xs whitespace-nowrap">
+                        {activeCategory === 'peleton' ? 'JUARA 3 UTAMA' : 'DANTON TERBAIK 3'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
               </div>
-
-            </div>
+            )}
 
             {/* Stage Base Plinth */}
             <div className={`max-w-3xl mx-auto h-2.5 sm:h-3.5 rounded-b-xl sm:rounded-b-2xl shadow-xs border-t ${
@@ -1118,20 +1240,6 @@ export default function LiveLeaderboard() {
                 ? 'bg-gradient-to-r from-slate-800 via-slate-700 to-slate-800 border-slate-700/60'
                 : 'bg-gradient-to-r from-slate-200 via-slate-300 to-slate-200 border-slate-300/60'
             }`} />
-
-            {/* Status Timestamp Footer Badge */}
-            <div className="flex items-center justify-center pt-4 sm:pt-5">
-              <div className={`inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 rounded-full text-[10px] sm:text-xs font-semibold border shadow-2xs transition-colors ${
-                effectiveDark
-                  ? 'bg-slate-900/80 text-slate-400 border-slate-800'
-                  : 'bg-white/80 text-slate-500 border-slate-200/80'
-              }`}>
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                <span className="text-center leading-tight">
-                  Papan Klasemen Sah Berdasarkan Berita Acara Rekapitulasi Dewan Juri LBB 2027
-                </span>
-              </div>
-            </div>
           </div>
 
           {/* ======================================================== */}
@@ -1146,11 +1254,19 @@ export default function LiveLeaderboard() {
               {/* Radial ambient glow */}
               <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-40 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-sky-400/15 via-blue-200/5 to-transparent pointer-events-none" />
 
+              {/* Efek Animasi Silver Confetti Hujan Khusus Wadah Podium Harapan (15 Detik) */}
+              <GoldConfetti
+                key={`silver-confetti-${activeCategory}-${selectedJenjang}`}
+                variant="silver"
+                duration={15000}
+                autoFire={true}
+              />
+
               {/* Championship Kicker */}
               <div className="text-center relative z-10 mb-3 sm:mb-6">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] sm:text-[10px] font-black uppercase tracking-[0.16em] sm:tracking-[0.18em] bg-sky-100/90 text-sky-900 border border-sky-200 shadow-2xs">
                   <Award className="w-3.5 h-3.5 text-sky-600" />
-                  <span>PODIUM JUARA HARAPAN • JENJANG {selectedJenjang}</span>
+                  <span>PODIUM JUARA HARAPAN • JENJANG {selectedJenjang === 'SD' ? 'SD/MI' : 'SMP/MTs'}</span>
                 </span>
                 <h3 className={`mt-1.5 text-base sm:text-xl font-black uppercase tracking-tight ${
                   effectiveDark ? 'text-white' : 'text-slate-950'
@@ -1277,13 +1393,17 @@ export default function LiveLeaderboard() {
                   <span className="block sm:inline font-bold leading-snug">
                     {searchQuery
                       ? `Hasil Pencarian`
+                      : activeCategory === 'juara_umum'
+                      ? `Klasemen Akumulasi Poin Sekolah Lainnya`
                       : (currentHarapanPodiumData.length === 3 && viewMode === 'podium')
-                      ? `Peringkat Kontingen Lainnya`
-                      : `Peringkat Harapan & Kontingen Lainnya`}
+                      ? `Peringkat Kontingen Peleton Lainnya`
+                      : `Peringkat Kontingen Lainnya`}
                   </span>
                   <span className="text-[10.5px] sm:text-xs font-normal text-slate-400 block sm:inline sm:ml-1.5">
                     {searchQuery
                       ? `(${currentRankingList.length} Kontingen)`
+                      : activeCategory === 'juara_umum'
+                      ? `(#2 s.d. Selesai)`
                       : (currentHarapanPodiumData.length === 3 && viewMode === 'podium')
                       ? `(#7 s.d. Selesai)`
                       : `(#4 s.d. Selesai)`}
@@ -1308,6 +1428,7 @@ export default function LiveLeaderboard() {
             ) : (
               (searchQuery ? currentRankingList : remainingRankingList).map((item) => {
                 const isMyTeam = (currentTeam?.id && item.team?.id === currentTeam.id) || (currentUser?.teamId && item.team?.id === currentUser.teamId);
+                const chestNumber = item.team?.chestNumber || (item.team?.lotNumber ? getChestNumberByLot(item.team.jenjang, item.team.lotNumber) : '') || '';
 
                 return (
                   <div
@@ -1320,7 +1441,7 @@ export default function LiveLeaderboard() {
                         : 'bg-white border-slate-200/90 hover:border-slate-300'
                     }`}
                   >
-                    <div className="flex items-center gap-2 sm:gap-3.5 min-w-0 flex-1">
+                    <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
                       {/* Rank Number Badge */}
                       <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center font-mono font-black text-[11px] sm:text-sm shrink-0 shadow-2xs ${
                         item.rank === 1
@@ -1330,18 +1451,34 @@ export default function LiveLeaderboard() {
                           : item.rank === 3
                           ? 'bg-amber-600 text-white'
                           : effectiveDark
-                          ? 'bg-slate-800 text-slate-300 border border-slate-700'
-                          : 'bg-slate-100 text-slate-700 border border-slate-200'
+                          ? 'bg-slate-800 text-slate-200 border border-slate-700'
+                          : 'bg-slate-100 text-slate-900 border border-slate-200'
                       }`}>
                         #{String(item.rank).padStart(2, '0')}
                       </div>
 
-                      {/* School Logo */}
-                      <div className={`w-9 h-9 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl border shadow-2xs p-1 flex items-center justify-center shrink-0 overflow-hidden ${
-                        effectiveDark ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200/90'
-                      }`}>
-                        <SchoolLogo team={item.team} schoolName={item.schoolName} size="table" isDark={effectiveDark} />
-                      </div>
+                      {/* No. Dada (Di Sebelah Kanan Peringkat Tanpa Label) */}
+                      {chestNumber && (
+                        <div
+                          className={`h-8 sm:h-10 px-2 sm:px-2.5 rounded-xl border flex items-center justify-center font-mono font-black text-[11px] sm:text-sm shrink-0 shadow-2xs ${
+                            effectiveDark
+                              ? 'bg-slate-800/80 border-slate-700 text-slate-200'
+                              : 'bg-slate-100/90 border-slate-200 text-slate-950'
+                          }`}
+                          title={`Nomor Dada: ${chestNumber}`}
+                        >
+                          {chestNumber}
+                        </div>
+                      )}
+
+                      {/* School Logo (Tanpa Wadah) */}
+                      <SchoolLogo
+                        team={item.team}
+                        schoolName={item.schoolName}
+                        size="table"
+                        isDark={effectiveDark}
+                        className="w-9 h-9 sm:w-10 sm:h-10 shrink-0"
+                      />
 
                       {/* Info Tim & Sekolah */}
                       <div className="min-w-0 flex-1">
@@ -1354,11 +1491,6 @@ export default function LiveLeaderboard() {
                           {isMyTeam && (
                             <span className="px-1.5 py-0.5 rounded-full font-black text-[8.5px] sm:text-[9px] bg-emerald-600 text-white shadow-2xs shrink-0 uppercase tracking-wider">
                               Peleton Anda
-                            </span>
-                          )}
-                          {item.team?.lotNumber && (
-                            <span className="px-1.5 py-0.5 rounded-md font-mono font-bold text-[8.5px] sm:text-[9px] bg-slate-100 text-slate-700 border border-slate-200/80 shrink-0">
-                              TM #{String(item.team.lotNumber).padStart(2, '0')}
                             </span>
                           )}
                         </div>
@@ -1418,26 +1550,7 @@ export default function LiveLeaderboard() {
             : 'bg-white border-slate-200 shadow-2xs'
         }`}
       >
-        {/* Simple & Clean Header Bar */}
-        <div
-          className={`px-4 py-3 border-b flex items-center justify-between transition-colors ${
-            effectiveDark
-              ? 'bg-slate-950 border-slate-800'
-              : 'bg-slate-50/80 border-slate-200'
-          }`}
-        >
-          <div className="flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-amber-500" />
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200">
-              {activeCategory === 'peleton' && 'Klasemen Kategori Peleton (PBB Murni & Akhir)'}
-              {activeCategory === 'danton' && 'Klasemen Kategori Komandan Peleton Terbaik'}
-              {activeCategory === 'juara_umum' && 'Klasemen Juara Umum (Akumulasi Poin Sekolah)'}
-            </span>
-          </div>
-          <span className="text-xs font-medium text-slate-600 dark:text-slate-300">
-            Jenjang: <strong className="text-slate-700 dark:text-slate-300 font-semibold">{selectedJenjang === 'SD' ? 'SD/MI (Arena 1)' : 'SMP/MTs (Arena 2)'}</strong>
-          </span>
-        </div>
+        
 
         <div className="leaderboard-table-scroll overflow-x-auto">
           {/* TAB 1: KATEGORI PELETON */}
@@ -1453,7 +1566,7 @@ export default function LiveLeaderboard() {
                 >
                   {isOfficialScoreVisible && <th className="py-3 px-3 text-center w-28">Peringkat & Gelar</th>}
                   <th className="py-3 px-3 text-center w-20">No. Dada</th>
-                  <th className="py-3 px-4 min-w-[220px]">Peleton & Pangkalan Sekolah</th>
+                  <th className="py-3 px-4 min-w-[220px]">Pangkalan Sekolah</th>
                   {isOfficialScoreVisible ? (
                     <>
                       <th className="py-3 px-2 text-center w-16">Juri 1</th>
@@ -1466,7 +1579,7 @@ export default function LiveLeaderboard() {
                       >
                         Nilai Murni
                       </th>
-                      <th className="py-3 px-2 text-center w-20 text-rose-600 dark:text-rose-400 font-bold">
+                      <th className="py-3 px-2 text-center w-20 text-rose-600 font-bold">
                         Penalti
                       </th>
                       <th
@@ -1566,14 +1679,14 @@ export default function LiveLeaderboard() {
                               </div>
                             )}
                             {item.rank > 6 && (
-                              <span className="font-mono text-xs text-slate-600 dark:text-slate-300 font-semibold">
+                              <span className={`font-mono text-xs font-bold ${effectiveDark ? 'text-slate-200' : 'text-slate-900'}`}>
                                 {item.rank}
                               </span>
                             )}
                           </td>
                         )}
                         <td className="py-2.5 px-3 text-center">
-                          <span className="font-mono font-semibold text-xs text-slate-700 dark:text-slate-300">
+                          <span className={`font-mono font-bold text-xs ${effectiveDark ? 'text-slate-200' : 'text-slate-900'}`}>
                             {chestNumber}
                           </span>
                         </td>
@@ -1599,40 +1712,37 @@ export default function LiveLeaderboard() {
                                   </span>
                                 )}
                               </div>
-                              <div className="text-[11px] text-slate-600 dark:text-slate-300 truncate mt-0.5">
-                                {item.team.platoonName ? `${item.team.platoonName} • ` : ''}Danton: {item.team.dantonName || '-'}
-                              </div>
                             </div>
                           </div>
                         </td>
                         {isOfficialScoreVisible ? (
                           <>
-                            <td className="py-2.5 px-2 text-center font-mono text-xs text-slate-700 dark:text-slate-300">
+                            <td className={`py-2.5 px-2 text-center font-mono font-bold text-xs ${effectiveDark ? 'text-white' : 'text-slate-950'}`}>
                               {j1}
                             </td>
-                            <td className="py-2.5 px-2 text-center font-mono text-xs text-slate-700 dark:text-slate-300">
+                            <td className={`py-2.5 px-2 text-center font-mono font-bold text-xs ${effectiveDark ? 'text-white' : 'text-slate-950'}`}>
                               {j2}
                             </td>
-                            <td className="py-2.5 px-2 text-center font-mono text-xs text-slate-700 dark:text-slate-300">
+                            <td className={`py-2.5 px-2 text-center font-mono font-bold text-xs ${effectiveDark ? 'text-white' : 'text-slate-950'}`}>
                               {j3}
                             </td>
-                            <td className={`py-2.5 px-3 text-center font-mono font-medium text-xs text-slate-700 dark:text-slate-300 ${
-                              effectiveDark ? 'bg-slate-800/70' : 'bg-slate-100'
+                            <td className={`py-2.5 px-3 text-center font-mono font-black text-xs ${
+                              effectiveDark ? 'bg-slate-800 text-white' : 'bg-slate-200/80 text-slate-950'
                             }`}>
                               {murni}
                             </td>
                             <td className="py-2.5 px-2 text-center font-mono text-xs">
                               {penalty > 0 ? (
-                                <span className="text-rose-600 dark:text-rose-400 font-bold">-{penalty}</span>
+                                <span className="text-rose-600 font-black">-{penalty}</span>
                               ) : (
-                                <span className="text-slate-600 dark:text-slate-300">0</span>
+                                <span className={`font-bold ${effectiveDark ? 'text-slate-400' : 'text-slate-950'}`}>0</span>
                               )}
                             </td>
                             <td
-                              className={`py-2.5 px-3 text-center font-mono font-bold text-sm ${
+                              className={`py-2.5 px-3 text-center font-mono font-black text-sm ${
                                 effectiveDark
-                                  ? 'bg-amber-950/20 text-amber-300 border-l border-slate-800'
-                                  : 'bg-amber-50 text-amber-950 border-l border-slate-200/80'
+                                  ? 'bg-amber-950/30 text-amber-300 border-l border-slate-800'
+                                  : 'bg-amber-100/70 text-amber-950 border-l border-slate-300'
                               }`}
                             >
                               {akhir}
@@ -1672,8 +1782,8 @@ export default function LiveLeaderboard() {
                 >
                   {isOfficialScoreVisible && <th className="py-3 px-3 text-center w-28">Peringkat & Gelar</th>}
                   <th className="py-3 px-3 text-center w-20">No. Dada</th>
-                  <th className="py-3 px-4 min-w-[180px]">Nama Komandan (Danton)</th>
-                  <th className="py-3 px-4 min-w-[200px]">Pangkalan Sekolah & Peleton</th>
+                  <th className="py-3 px-4 min-w-[180px]">Nama Komandan Peleton</th>
+                  <th className="py-3 px-4 min-w-[200px]">Pangkalan Sekolah</th>
                   {isOfficialScoreVisible ? (
                     <>
                       <th className="py-3 px-2 text-center w-16">Juri 1</th>
@@ -1686,7 +1796,7 @@ export default function LiveLeaderboard() {
                       >
                         Nilai Murni
                       </th>
-                      <th className="py-3 px-2 text-center w-20 text-rose-600 dark:text-rose-400 font-bold">
+                      <th className="py-3 px-2 text-center w-20 text-rose-600 font-bold">
                         Penalti
                       </th>
                       <th
@@ -1776,14 +1886,14 @@ export default function LiveLeaderboard() {
                               </div>
                             )}
                             {item.rank > 3 && (
-                              <span className="font-mono text-xs text-slate-600 dark:text-slate-300 font-semibold">
+                              <span className={`font-mono text-xs font-bold ${effectiveDark ? 'text-slate-200' : 'text-slate-900'}`}>
                                 {item.rank}
                               </span>
                             )}
                           </td>
                         )}
                         <td className="py-2.5 px-3 text-center">
-                          <span className="font-mono font-semibold text-xs text-slate-700 dark:text-slate-300">
+                          <span className={`font-mono font-bold text-xs ${effectiveDark ? 'text-slate-200' : 'text-slate-900'}`}>
                             {chestNumber}
                           </span>
                         </td>
@@ -1794,9 +1904,6 @@ export default function LiveLeaderboard() {
                             }`}
                           >
                             {item.team.dantonName || 'Komandan Peleton'}
-                          </div>
-                          <div className="text-[11px] text-slate-600 dark:text-slate-300 mt-0.5">
-                            {item.team.platoonName || 'Peleton'}
                           </div>
                         </td>
                         <td className="py-2.5 px-4">
@@ -1819,32 +1926,32 @@ export default function LiveLeaderboard() {
                         </td>
                         {isOfficialScoreVisible ? (
                           <>
-                            <td className="py-2.5 px-2 text-center font-mono text-xs text-slate-700 dark:text-slate-300">
+                            <td className={`py-2.5 px-2 text-center font-mono font-bold text-xs ${effectiveDark ? 'text-white' : 'text-slate-950'}`}>
                               {j1}
                             </td>
-                            <td className="py-2.5 px-2 text-center font-mono text-xs text-slate-700 dark:text-slate-300">
+                            <td className={`py-2.5 px-2 text-center font-mono font-bold text-xs ${effectiveDark ? 'text-white' : 'text-slate-950'}`}>
                               {j2}
                             </td>
-                            <td className="py-2.5 px-2 text-center font-mono text-xs text-slate-700 dark:text-slate-300">
+                            <td className={`py-2.5 px-2 text-center font-mono font-bold text-xs ${effectiveDark ? 'text-white' : 'text-slate-950'}`}>
                               {j3}
                             </td>
-                            <td className={`py-2.5 px-3 text-center font-mono font-medium text-xs text-slate-700 dark:text-slate-300 ${
-                              effectiveDark ? 'bg-slate-800/70' : 'bg-slate-100'
+                            <td className={`py-2.5 px-3 text-center font-mono font-black text-xs ${
+                              effectiveDark ? 'bg-slate-800 text-white' : 'bg-slate-200/80 text-slate-950'
                             }`}>
                               {murni}
                             </td>
                             <td className="py-2.5 px-2 text-center font-mono text-xs">
                               {penalty > 0 ? (
-                                <span className="text-rose-600 dark:text-rose-400 font-bold">-{penalty}</span>
+                                <span className="text-rose-600 font-black">-{penalty}</span>
                               ) : (
-                                <span className="text-slate-600 dark:text-slate-300">0</span>
+                                <span className={`font-bold ${effectiveDark ? 'text-slate-400' : 'text-slate-950'}`}>0</span>
                               )}
                             </td>
                             <td
-                              className={`py-2.5 px-3 text-center font-mono font-bold text-sm ${
+                              className={`py-2.5 px-3 text-center font-mono font-black text-sm ${
                                 effectiveDark
-                                  ? 'bg-amber-950/20 text-amber-300 border-l border-slate-800'
-                                  : 'bg-amber-50 text-amber-950 border-l border-slate-200/80'
+                                  ? 'bg-amber-950/30 text-amber-300 border-l border-slate-800'
+                                  : 'bg-amber-100/70 text-amber-950 border-l border-slate-300'
                               }`}
                             >
                               {akhir}
@@ -1971,7 +2078,7 @@ export default function LiveLeaderboard() {
                             </div>
                           )}
                           {!isChampion && !isRunnerUp1 && !isRunnerUp2 && (
-                            <span className="font-mono text-xs text-slate-600 dark:text-slate-300 font-semibold">
+                            <span className={`font-mono text-xs font-bold ${effectiveDark ? 'text-slate-200' : 'text-slate-900'}`}>
                               {sch.rank}
                             </span>
                           )}
@@ -1993,7 +2100,7 @@ export default function LiveLeaderboard() {
                               >
                                 {sch.schoolName}
                               </div>
-                              <div className="text-[11px] text-slate-600 dark:text-slate-300 mt-0.5">
+                              <div className={`text-[11px] mt-0.5 ${effectiveDark ? 'text-slate-300' : 'text-slate-700'}`}>
                                 Perwakilan: {sch.teams.length} Peleton
                               </div>
                             </div>
@@ -2007,18 +2114,17 @@ export default function LiveLeaderboard() {
                                   key={i}
                                   className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium border ${
                                     effectiveDark
-                                      ? 'bg-slate-800 border-slate-700 text-slate-300'
-                                      : 'bg-slate-50 border-slate-200 text-slate-700'
+                                      ? 'bg-slate-800 border-slate-700 text-slate-200'
+                                      : 'bg-slate-50 border-slate-200 text-slate-800'
                                   }`}
                                 >
-                                  <span>{ach.platoonName}</span>
-                                  <span className="text-slate-600 dark:text-slate-300">({ach.shortTitle})</span>
+                                  <span className="font-semibold">{ach.shortTitle}</span>
                                   <span className="font-mono font-bold text-amber-700 dark:text-amber-400">+{ach.points} pt</span>
                                 </span>
                               ))}
                             </div>
                           ) : (
-                            <span className="text-slate-600 dark:text-slate-300 font-mono text-xs">-</span>
+                            <span className={`font-mono text-xs ${effectiveDark ? 'text-slate-400' : 'text-slate-700'}`}>-</span>
                           )}
                         </td>
                         <td className="py-2 px-4">
@@ -2029,21 +2135,21 @@ export default function LiveLeaderboard() {
                                   key={i}
                                   className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium border ${
                                     effectiveDark
-                                      ? 'bg-slate-800 border-slate-700 text-slate-300'
-                                      : 'bg-slate-50 border-slate-200 text-slate-700'
+                                      ? 'bg-slate-800 border-slate-700 text-slate-200'
+                                      : 'bg-slate-50 border-slate-200 text-slate-800'
                                   }`}
                                 >
                                   <span>{ach.dantonName}</span>
-                                  <span className="text-slate-600 dark:text-slate-300">({ach.shortTitle})</span>
+                                  <span className={effectiveDark ? 'text-slate-300' : 'text-slate-700'}>({ach.shortTitle})</span>
                                   <span className="font-mono font-bold text-amber-700 dark:text-amber-400">+{ach.points} pt</span>
                                 </span>
                               ))}
                             </div>
                           ) : (
-                            <span className="text-slate-600 dark:text-slate-300 font-mono text-xs">-</span>
+                            <span className={`font-mono text-xs ${effectiveDark ? 'text-slate-400' : 'text-slate-700'}`}>-</span>
                           )}
                         </td>
-                        <td className="py-2.5 px-3 text-center font-mono text-xs text-slate-700 dark:text-slate-300">
+                        <td className={`py-2.5 px-3 text-center font-mono font-semibold text-xs ${effectiveDark ? 'text-slate-200' : 'text-slate-900'}`}>
                           {sch.bestMurniPeleton > 0 ? sch.bestMurniPeleton : '-'}
                         </td>
                         <td
@@ -2065,6 +2171,205 @@ export default function LiveLeaderboard() {
         </div>
       </div>
       )}
+
+      {/* Modal Kelola / Unduh Berita Acara */}
+      {isBeritaAcaraModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs animate-in fade-in duration-200">
+          <div
+            className={`w-full max-w-lg rounded-3xl border p-6 sm:p-7 shadow-2xl relative transition-all ${
+              effectiveDark
+                ? 'bg-slate-900 border-slate-800 text-white'
+                : 'bg-white border-slate-200 text-slate-900'
+            }`}
+          >
+            {/* Header Modal */}
+            <div className="flex items-start justify-between gap-4 border-b pb-4 mb-5 border-slate-200 dark:border-slate-800">
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-600 flex items-center justify-center shrink-0">
+                  <FileText className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="text-base sm:text-lg font-black uppercase tracking-tight">
+                    Berita Acara Resmi Dewan Juri
+                  </h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
+                    LBB Mu'allimin 2027 • Dokumen Keputusan Sah
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsBeritaAcaraModalOpen(false)}
+                className="p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Konten Modal: Form untuk Admin/Superadmin */}
+            {isSuperOrAdmin ? (
+              <form onSubmit={handleSaveBeritaAcara} className="space-y-4">
+                <div className="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-800 dark:text-amber-300 leading-relaxed">
+                  <span className="font-bold block mb-0.5">ℹ️ Pengaturan Link Google Drive Berita Acara</span>
+                  Masukkan link Google Drive Berita Acara resmi yang telah ditandatangani panitia/dewan juri. Pastikan akses sharing disetel ke <strong>"Anyone with the link can view"</strong>.
+                </div>
+
+                {/* Input Link SD/MI */}
+                <div className="space-y-1.5">
+                  <label className="text-xs font-black uppercase tracking-wider block text-slate-700 dark:text-slate-300">
+                    Link Google Drive — Jenjang SD/MI
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="url"
+                      placeholder="https://drive.google.com/file/d/... atau link folder"
+                      value={beritaAcaraForm.sd}
+                      onChange={(e) => setBeritaAcaraForm(prev => ({ ...prev, sd: e.target.value }))}
+                      className={`w-full px-3.5 py-2.5 rounded-xl text-xs font-mono border transition-all ${
+                        effectiveDark
+                          ? 'bg-slate-950 border-slate-700 text-white placeholder-slate-600 focus:border-red-500'
+                          : 'bg-slate-50 border-slate-300 text-slate-900 placeholder-slate-400 focus:border-red-600 focus:bg-white'
+                      }`}
+                    />
+                    {beritaAcaraForm.sd && (
+                      <a
+                        href={beritaAcaraForm.sd}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="absolute right-2.5 top-2.5 text-xs text-red-600 hover:text-red-700 flex items-center gap-1 font-sans font-bold"
+                      >
+                        <ExternalLink className="w-3.5 h-3.5" />
+                        <span>Tes Link</span>
+                      </a>
+                    )}
+                  </div>
+                </div>
+
+                {/* Input Link SMP/MTs */}
+                <div className="space-y-1.5">
+                  <label className="text-xs font-black uppercase tracking-wider block text-slate-700 dark:text-slate-300">
+                    Link Google Drive — Jenjang SMP/MTs
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="url"
+                      placeholder="https://drive.google.com/file/d/... atau link folder"
+                      value={beritaAcaraForm.smp}
+                      onChange={(e) => setBeritaAcaraForm(prev => ({ ...prev, smp: e.target.value }))}
+                      className={`w-full px-3.5 py-2.5 rounded-xl text-xs font-mono border transition-all ${
+                        effectiveDark
+                          ? 'bg-slate-950 border-slate-700 text-white placeholder-slate-600 focus:border-red-500'
+                          : 'bg-slate-50 border-slate-300 text-slate-900 placeholder-slate-400 focus:border-red-600 focus:bg-white'
+                      }`}
+                    />
+                    {beritaAcaraForm.smp && (
+                      <a
+                        href={beritaAcaraForm.smp}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="absolute right-2.5 top-2.5 text-xs text-red-600 hover:text-red-700 flex items-center gap-1 font-sans font-bold"
+                      >
+                        <ExternalLink className="w-3.5 h-3.5" />
+                        <span>Tes Link</span>
+                      </a>
+                    )}
+                  </div>
+                </div>
+
+                {saveSuccessNotice && (
+                  <div className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-xs font-bold flex items-center gap-2 animate-in fade-in">
+                    <Check className="w-4 h-4 shrink-0" />
+                    <span>Link Google Drive Berita Acara berhasil disimpan dan diperbarui!</span>
+                  </div>
+                )}
+
+                <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-200 dark:border-slate-800">
+                  <button
+                    type="button"
+                    onClick={() => setIsBeritaAcaraModalOpen(false)}
+                    className="px-4 py-2 rounded-xl text-xs font-bold border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                  >
+                    Batal
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isSavingBeritaAcara}
+                    className="px-4 py-2 rounded-xl text-xs font-black bg-red-600 hover:bg-red-700 text-white transition-all shadow-md flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                  >
+                    <Check className="w-4 h-4" />
+                    <span>{isSavingBeritaAcara ? 'Menyimpan...' : 'Simpan Link Berita Acara'}</span>
+                  </button>
+                </div>
+              </form>
+            ) : (
+              /* Tampilan untuk Publik / Peserta */
+              <div className="space-y-4">
+                {(settings?.beritaAcaraUrlSD || settings?.beritaAcaraUrlSMP || settings?.beritaAcaraUrl) ? (
+                  <div className="space-y-3">
+                    <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                      Dokumen Berita Acara Resmi Keputusan Dewan Juri telah dipublikasikan. Silakan klik jenjang untuk mengunduh:
+                    </p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                      {(settings?.beritaAcaraUrlSD || settings?.beritaAcaraUrl) && (
+                        <a
+                          href={settings?.beritaAcaraUrlSD || settings?.beritaAcaraUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="p-3.5 rounded-2xl border border-red-500/30 bg-red-50/50 dark:bg-red-950/20 hover:border-red-500 transition-all flex items-center justify-between gap-2"
+                        >
+                          <div>
+                            <span className="text-[10px] font-black uppercase text-red-600 block">Jenjang SD/MI</span>
+                            <span className="text-xs font-bold text-slate-900 dark:text-white">Unduh Dokumen</span>
+                          </div>
+                          <Download className="w-4 h-4 text-red-600" />
+                        </a>
+                      )}
+                      {(settings?.beritaAcaraUrlSMP || settings?.beritaAcaraUrl) && (
+                        <a
+                          href={settings?.beritaAcaraUrlSMP || settings?.beritaAcaraUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="p-3.5 rounded-2xl border border-blue-500/30 bg-blue-50/50 dark:bg-blue-950/20 hover:border-blue-500 transition-all flex items-center justify-between gap-2"
+                        >
+                          <div>
+                            <span className="text-[10px] font-black uppercase text-blue-600 block">Jenjang SMP/MTs</span>
+                            <span className="text-xs font-bold text-slate-900 dark:text-white">Unduh Dokumen</span>
+                          </div>
+                          <Download className="w-4 h-4 text-blue-600" />
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center py-6 space-y-3">
+                    <div className="w-12 h-12 rounded-2xl bg-amber-500/10 text-amber-500 mx-auto flex items-center justify-center">
+                      <AlertCircle className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-black text-slate-900 dark:text-white uppercase">
+                        Dokumen Belum Tersedia
+                      </h4>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-sm mx-auto leading-relaxed">
+                        Berita Acara Resmi keputusan dewan juri untuk jenjang {selectedJenjang === 'SD' ? 'SD/MI' : 'SMP/MTs'} sedang dalam proses finalisasi pengesahan dan belum diunggah ke Google Drive.
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                <div className="pt-3 border-t border-slate-200 dark:border-slate-800 flex justify-end">
+                  <button
+                    type="button"
+                    onClick={() => setIsBeritaAcaraModalOpen(false)}
+                    className="px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors cursor-pointer"
+                  >
+                    Tutup
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 
@@ -2082,7 +2387,7 @@ export default function LiveLeaderboard() {
     <SimpaskorSidebarLayout
       activeMenu="klasemen"
       title="Papan Klasemen & Hasil Lomba"
-      subtitle="Papan Peringkat Resmi Dewan Juri Realtime (Penentuan Juara Peleton, Danton & Juara Umum)"
+      subtitle=""
       rightActions={headerActions}
     >
       {/* Wrapper Utama */}

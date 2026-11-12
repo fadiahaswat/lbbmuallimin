@@ -71,7 +71,7 @@ export default function BasecampLogisticsTab({
       setBasecampToast(`Peleton ditemukan: ${found.schoolName} (${found.regCode})`);
       setTimeout(() => setBasecampToast(''), 3500);
     } else {
-      alert(`Kode QR / Nama Peleton "${qrInput}" tidak ditemukan dalam database.`);
+      alert(`Kode QR / Nama Sekolah "${qrInput}" tidak ditemukan dalam database.`);
     }
   }
 
@@ -199,7 +199,6 @@ export default function BasecampLogisticsTab({
                 <h3 className="text-2xl font-black uppercase text-slate-900 mt-1">
                   {selectedBasecampTeam.schoolName}
                 </h3>
-                <p className="text-xs text-slate-600">{selectedBasecampTeam.platoonName}</p>
               </div>
 
               <div className="bg-white border border-slate-200 p-3 rounded-2xl text-right shadow-xs">

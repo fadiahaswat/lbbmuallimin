@@ -48,21 +48,17 @@ export default function BacaPerpangTab({ embedded = false }) {
   return (
     <div className={embedded ? "space-y-4 sm:space-y-5" : "rounded-[28px] border border-slate-200/90 bg-white p-4 sm:p-7 shadow-[0_18px_46px_rgba(15,23,42,0.06)] space-y-4 sm:space-y-5"}>
       {/* 1. Header Tab */}
-      <div className="flex flex-col gap-4 border-b border-slate-100 pb-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-3.5">
-          <span className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-red-600 to-rose-700 text-white shadow-lg shadow-red-600/20">
-            <Scale className="w-6 h-6 text-white" />
-            <span className="absolute -right-1 -top-1 h-3.5 w-3.5 rounded-full border-2 border-white bg-amber-400" />
+      <div className="flex flex-col gap-3 border-b border-slate-100 pb-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-3">
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-red-600 text-white shadow-sm">
+            <Scale className="w-5 h-5 text-white" />
           </span>
           <div>
-            <p className="text-[9px] font-black uppercase tracking-[0.18em] text-red-600">
-              PELIHAT DOKUMEN RESMI // OFFICIAL REGULATIONS
-            </p>
-            <h2 className="mt-0.5 text-lg font-black tracking-tight text-slate-950 sm:text-xl">
+            <h2 className="text-lg font-black tracking-tight text-slate-950 sm:text-xl">
               Pusat Dokumen Regulasi Perpang TNI
             </h2>
-            <p className="mt-0.5 text-[10px] sm:text-xs text-slate-500">
-              Arsip digital resmi Peraturan Panglima TNI yang menjadi rujukan mutlak penilaian Dewan Juri LBB Mu&apos;allimin 2027.
+            <p className="text-xs text-slate-500">
+              Arsip digital resmi Peraturan Panglima TNI rujukan baku penilaian Dewan Juri.
             </p>
           </div>
         </div>

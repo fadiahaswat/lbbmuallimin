@@ -441,20 +441,6 @@ export default function TeamProfileHeader({
                 </div>
               </div>
 
-              {/* Nama Pasukan / Peleton */}
-              <div>
-                <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">
-                  Nama Peleton / Julukan Pasukan
-                </label>
-                <input
-                  type="text"
-                  value={editForm.platoonName}
-                  onChange={(e) => setEditForm(prev => ({ ...prev, platoonName: e.target.value }))}
-                  placeholder={`Contoh: Peleton ${currentTeam.schoolName}`}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-red-600 focus:bg-white focus:ring-1 focus:ring-red-600 font-medium"
-                />
-              </div>
-
               {/* Nama Official / Pendamping */}
               <div>
                 <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">

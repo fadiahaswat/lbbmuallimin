@@ -1,5 +1,5 @@
-import React from 'react';
-import { Printer, Trophy } from 'lucide-react';
+import React, { useState } from 'react';
+import { Printer, Trophy, FileText, ExternalLink, Check, X } from 'lucide-react';
 
 export default function RecapTab({
   teams,
@@ -8,8 +8,41 @@ export default function RecapTab({
   setSelectedJenjang,
   totalRevenue,
   openModal,
-  setActiveView
+  setActiveView,
+  settings,
+  updateSettings
 }) {
+  const [isDriveModalOpen, setIsDriveModalOpen] = useState(false);
+  const [driveForm, setDriveForm] = useState({
+    sd: settings?.beritaAcaraUrlSD || '',
+    smp: settings?.beritaAcaraUrlSMP || ''
+  });
+  const [saveSuccess, setSaveSuccess] = useState(false);
+
+  const handleOpenDriveModal = () => {
+    setDriveForm({
+      sd: settings?.beritaAcaraUrlSD || '',
+      smp: settings?.beritaAcaraUrlSMP || ''
+    });
+    setSaveSuccess(false);
+    setIsDriveModalOpen(true);
+  };
+
+  const handleSaveDrive = (e) => {
+    e?.preventDefault();
+    if (typeof updateSettings === 'function') {
+      updateSettings({
+        beritaAcaraUrlSD: driveForm.sd.trim(),
+        beritaAcaraUrlSMP: driveForm.smp.trim(),
+        beritaAcaraUrl: (driveForm.sd.trim() || driveForm.smp.trim())
+      });
+    }
+    setSaveSuccess(true);
+    setTimeout(() => {
+      setIsDriveModalOpen(false);
+      setSaveSuccess(false);
+    }, 800);
+  };
   return (
     <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-8 border border-slate-200 shadow-xs space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
@@ -28,7 +61,15 @@ export default function RecapTab({
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
+          <button
+            onClick={handleOpenDriveModal}
+            className="px-4 py-2 bg-red-50 hover:bg-red-100 text-red-700 text-xs font-bold rounded-xl flex items-center gap-1.5 border border-red-200 transition-all cursor-pointer"
+            title="Kelola link Google Drive Berita Acara untuk tombol download publik"
+          >
+            <FileText className="w-4 h-4" />
+            <span>Link Berita Acara Drive</span>
+          </button>
           <button
             onClick={() => openModal('docViewer', { docId: 'official-scores' })}
             className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold rounded-xl flex items-center gap-1.5 transition-all cursor-pointer"
@@ -116,7 +157,7 @@ export default function RecapTab({
                     </td>
                     <td className="p-3">
                       <div className="font-black text-slate-900">{t.schoolName}</div>
-                      <div className="text-[11px] text-slate-500">{t.platoonName} • Danton: {t.roster?.danton?.name || t.dantonName || '-'}</div>
+                      <div className="text-[11px] text-slate-500">Danton: {t.roster?.danton?.name || t.dantonName || '-'}</div>
                     </td>
                     <td className="p-3 text-center">
                       <span className="font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded text-[11px]">
@@ -164,6 +205,105 @@ export default function RecapTab({
           <span>Cetak Lembar Rekap Keuangan</span>
         </button>
       </div>
+
+      {/* Modal Input Link Google Drive Berita Acara */}
+      {isDriveModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs animate-in fade-in">
+          <div className="w-full max-w-lg bg-white rounded-3xl border border-slate-200 p-6 sm:p-7 shadow-2xl space-y-4">
+            <div className="flex items-start justify-between gap-3 border-b border-slate-200 pb-3">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center border border-red-200">
+                  <FileText className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-black text-slate-900 text-base uppercase">Link Google Drive Berita Acara</h3>
+                  <p className="text-xs text-slate-500">Target unduhan dokumen sah pada Leaderboard Live publik</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsDriveModalOpen(false)}
+                className="p-1.5 text-slate-400 hover:text-slate-600 rounded-xl hover:bg-slate-100"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveDrive} className="space-y-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-black uppercase text-slate-700 block">Link Google Drive — Jenjang SD/MI</label>
+                <div className="relative">
+                  <input
+                    type="url"
+                    placeholder="https://drive.google.com/file/d/... atau folder"
+                    value={driveForm.sd}
+                    onChange={(e) => setDriveForm(prev => ({ ...prev, sd: e.target.value }))}
+                    className="w-full px-3.5 py-2.5 rounded-xl text-xs font-mono border border-slate-300 bg-slate-50 text-slate-900 focus:bg-white focus:border-red-600"
+                  />
+                  {driveForm.sd && (
+                    <a
+                      href={driveForm.sd}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="absolute right-2.5 top-2.5 text-xs text-red-600 hover:text-red-700 flex items-center gap-1 font-bold"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" />
+                      <span>Tes</span>
+                    </a>
+                  )}
+                </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-black uppercase text-slate-700 block">Link Google Drive — Jenjang SMP/MTs</label>
+                <div className="relative">
+                  <input
+                    type="url"
+                    placeholder="https://drive.google.com/file/d/... atau folder"
+                    value={driveForm.smp}
+                    onChange={(e) => setDriveForm(prev => ({ ...prev, smp: e.target.value }))}
+                    className="w-full px-3.5 py-2.5 rounded-xl text-xs font-mono border border-slate-300 bg-slate-50 text-slate-900 focus:bg-white focus:border-red-600"
+                  />
+                  {driveForm.smp && (
+                    <a
+                      href={driveForm.smp}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="absolute right-2.5 top-2.5 text-xs text-red-600 hover:text-red-700 flex items-center gap-1 font-bold"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" />
+                      <span>Tes</span>
+                    </a>
+                  )}
+                </div>
+              </div>
+
+              {saveSuccess && (
+                <div className="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-bold flex items-center gap-2">
+                  <Check className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>Link Berita Acara berhasil disimpan dan diperbarui!</span>
+                </div>
+              )}
+
+              <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-200">
+                <button
+                  type="button"
+                  onClick={() => setIsDriveModalOpen(false)}
+                  className="px-4 py-2 rounded-xl text-xs font-bold border border-slate-300 hover:bg-slate-100"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 rounded-xl text-xs font-black bg-red-600 hover:bg-red-700 text-white flex items-center gap-1.5 shadow-xs cursor-pointer"
+                >
+                  <Check className="w-4 h-4" />
+                  <span>Simpan Link Berita Acara</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

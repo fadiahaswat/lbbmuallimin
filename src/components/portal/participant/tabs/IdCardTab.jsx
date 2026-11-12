@@ -36,19 +36,17 @@ export default function IdCardTab({ currentTeam }) {
   return (
     <section className="rounded-[26px] border border-slate-200/80 bg-white p-5 shadow-[0_18px_46px_rgba(15,23,42,0.06)] sm:p-7 space-y-6">
       {/* Panel Header */}
-      <div className="flex flex-col gap-4 border-b border-slate-100 pb-5 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-3.5">
-          <span className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-slate-950 text-white shadow-lg">
+      <div className="flex flex-col gap-3 border-b border-slate-100 pb-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-3">
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-slate-950 text-white shadow-sm">
             <QrCode className="w-5 h-5 text-amber-400" />
-            <span className="absolute -right-1 -top-1 h-3 w-3 rounded-full border-2 border-white bg-red-600" />
           </span>
           <div>
-            <p className="section-kicker">PORTAL KONTINGEN</p>
-            <h2 className="mt-0.5 text-lg font-black tracking-tight text-slate-950 sm:text-xl">
-              Credential & Tiket Registrasi
+            <h2 className="text-lg font-black tracking-tight text-slate-950 sm:text-xl">
+              Credential &amp; Tiket Registrasi
             </h2>
-            <p className="mt-0.5 text-[10px] sm:text-xs text-slate-500">
-              Tunjukkan barcode QR kepada Panitia saat tiba di Kampus Terpadu untuk Check-in & Basecamp.
+            <p className="text-xs text-slate-500">
+              Tunjukkan barcode QR kepada Panitia saat tiba di Kampus Terpadu untuk Check-in &amp; Basecamp.
             </p>
           </div>
         </div>
@@ -107,7 +105,7 @@ export default function IdCardTab({ currentTeam }) {
                 <p className="mt-2.5 flex items-center gap-2 text-[10px] sm:text-xs font-bold text-slate-400">
                   <span className="h-1.5 w-1.5 rounded-full bg-amber-400 inline-block" />
                   <span>
-                    {currentTeam.platoonName || `Peleton ${currentTeam.schoolName}`} · Jenjang {currentTeam.jenjang}
+                    Jenjang {currentTeam.jenjang} · {currentTeam.category || 'Homogen'}
                   </span>
                 </p>
               </div>

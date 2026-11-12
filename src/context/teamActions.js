@@ -50,7 +50,7 @@ export function createTeamActions({ teams, setTeams, scores, setScores, setStagi
       teamType: newTeamData.teamType || 'Homogen',
       homogenGender: newTeamData.homogenGender || '',
       category: newTeamData.category || newTeamData.teamType || 'Homogen',
-      platoonName: newTeamData.platoonName || `Peleton ${newTeamData.schoolName}`,
+      platoonName: newTeamData.schoolName || newTeamData.platoonName || '',
       dantonName: newTeamData.dantonName || '',
       officialName: newTeamData.officialName || '',
       waNumber: newTeamData.waNumber || '',

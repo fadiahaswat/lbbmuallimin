@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Crown,
   Shield,
@@ -257,6 +257,28 @@ export default function SuperadminPanel() {
     }
   }
 
+  const [driveForm, setDriveForm] = useState({
+    sd: settings?.beritaAcaraUrlSD || '',
+    smp: settings?.beritaAcaraUrlSMP || ''
+  });
+
+  useEffect(() => {
+    setDriveForm({
+      sd: settings?.beritaAcaraUrlSD || '',
+      smp: settings?.beritaAcaraUrlSMP || ''
+    });
+  }, [settings?.beritaAcaraUrlSD, settings?.beritaAcaraUrlSMP]);
+
+  function handleSaveDriveLinks(e) {
+    e?.preventDefault();
+    updateSettings({
+      beritaAcaraUrlSD: driveForm.sd.trim(),
+      beritaAcaraUrlSMP: driveForm.smp.trim(),
+      beritaAcaraUrl: (driveForm.sd.trim() || driveForm.smp.trim())
+    });
+    showToast('Link Google Drive Berita Acara berhasil disimpan!');
+  }
+
   function handleExportJSON() {
     const backupData = {
       exportedAt: new Date().toISOString(),
@@ -504,6 +526,53 @@ export default function SuperadminPanel() {
                 {settings.announcementPublished ? <ToggleRight className="w-5 h-5" /> : <ToggleLeft className="w-5 h-5" />}
                 <span>{settings.announcementPublished ? 'Status: Dipublikasi' : 'Status: Draf / Rahasia'}</span>
               </button>
+            </div>
+
+            {/* Input Link Google Drive Berita Acara Dewan Juri */}
+            <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl md:col-span-2 lg:col-span-3 space-y-3">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 pb-2.5">
+                <div>
+                  <span className="text-xs font-black uppercase text-slate-800 block">Link Google Drive Berita Acara Dewan Juri</span>
+                  <p className="text-xs text-slate-500">Tautan ini menjadi target tombol "Download Berita Acara" di halaman klasemen publik.</p>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-red-600 bg-red-50 border border-red-200 px-2 py-0.5 rounded-full">
+                    Publik & Peserta
+                  </span>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <label className="text-[11px] font-bold text-slate-700 block">Link Berita Acara SD/MI (Google Drive)</label>
+                  <input
+                    type="url"
+                    placeholder="https://drive.google.com/file/d/... atau folder"
+                    value={driveForm.sd}
+                    onChange={(e) => setDriveForm(prev => ({ ...prev, sd: e.target.value }))}
+                    className="w-full text-xs font-mono px-3 py-2 rounded-xl border border-slate-300 bg-white text-slate-900 focus:border-red-600"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[11px] font-bold text-slate-700 block">Link Berita Acara SMP/MTs (Google Drive)</label>
+                  <input
+                    type="url"
+                    placeholder="https://drive.google.com/file/d/... atau folder"
+                    value={driveForm.smp}
+                    onChange={(e) => setDriveForm(prev => ({ ...prev, smp: e.target.value }))}
+                    className="w-full text-xs font-mono px-3 py-2 rounded-xl border border-slate-300 bg-white text-slate-900 focus:border-red-600"
+                  />
+                </div>
+              </div>
+              <div className="flex items-center justify-end gap-2 pt-1">
+                <button
+                  type="button"
+                  onClick={handleSaveDriveLinks}
+                  className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer flex items-center gap-1.5"
+                >
+                  <Check className="w-3.5 h-3.5" />
+                  <span>Simpan Link Berita Acara</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>

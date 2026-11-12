@@ -115,7 +115,6 @@ export default function DP1InspectionTab({
                   {selectedDP1Team.regCode} • No. Undi #{selectedDP1Team.lotNumber || '-'}
                 </span>
                 <h3 className="text-lg font-black text-slate-900 uppercase mt-1">{selectedDP1Team.schoolName}</h3>
-                <p className="text-xs text-slate-500">{selectedDP1Team.platoonName}</p>
               </div>
 
               <div className="flex items-center gap-3">

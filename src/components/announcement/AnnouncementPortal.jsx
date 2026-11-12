@@ -297,12 +297,11 @@ export default function AnnouncementPortal() {
               2
             </div>
             <span className="text-[10px] font-black uppercase tracking-widest text-slate-600 bg-slate-100 px-2.5 py-1 rounded-full inline-block">
-              Juara 2 {activeJenjang}
+              JUARA 2 UTAMA {activeJenjang}
             </span>
             <h4 className="font-black text-lg text-slate-900 leading-tight">
               {currentRanked[1] ? currentRanked[1].schoolName : 'Menunggu Rekap'}
             </h4>
-            <p className="text-xs text-slate-500">{currentRanked[1]?.platoonName || '-'}</p>
             <div className="pt-2 border-t border-slate-100">
               <span className="text-2xl font-black font-mono text-slate-800">
                 {currentRanked[1]?.finalScore || '-'}
@@ -322,7 +321,6 @@ export default function AnnouncementPortal() {
             <h4 className="font-black text-xl text-slate-900 leading-tight">
               {currentRanked[0] ? currentRanked[0].schoolName : 'Menunggu Rekap'}
             </h4>
-            <p className="text-xs font-bold text-amber-800">{currentRanked[0]?.platoonName || '-'}</p>
             <div className="pt-2 border-t border-yellow-200">
               <span className="text-3xl font-black font-mono text-slate-900">
                 {currentRanked[0]?.finalScore || '-'}
@@ -337,12 +335,11 @@ export default function AnnouncementPortal() {
               3
             </div>
             <span className="text-[10px] font-black uppercase tracking-widest text-amber-800 bg-amber-50 px-2.5 py-1 rounded-full inline-block">
-              Juara 3 {activeJenjang}
+              JUARA 3 UTAMA {activeJenjang}
             </span>
             <h4 className="font-black text-lg text-slate-900 leading-tight">
               {currentRanked[2] ? currentRanked[2].schoolName : 'Menunggu Rekap'}
             </h4>
-            <p className="text-xs text-slate-500">{currentRanked[2]?.platoonName || '-'}</p>
             <div className="pt-2 border-t border-slate-100">
               <span className="text-2xl font-black font-mono text-slate-800">
                 {currentRanked[2]?.finalScore || '-'}
@@ -385,7 +382,7 @@ export default function AnnouncementPortal() {
                 {bestPasukan ? bestPasukan.schoolName : '-'}
               </h5>
               <p className="text-xs text-slate-500">
-                {bestPasukan ? `${bestPasukan.platoonName} (${bestPasukan.pbbScore} pt)` : '-'}
+                {bestPasukan ? `${bestPasukan.pbbScore} pt` : '-'}
               </p>
             </div>
           </div>
@@ -416,7 +413,7 @@ export default function AnnouncementPortal() {
               <thead className="bg-slate-50 text-slate-500 font-bold uppercase tracking-wider text-[10px] border-b border-slate-200">
                 <tr>
                   <th className="p-3">Rank</th>
-                  <th className="p-3">Asal Sekolah & Peleton</th>
+                  <th className="p-3">Asal Sekolah</th>
                   <th className="p-3">Danton</th>
                   <th className="p-3 text-center">Nilai Danton</th>
                   <th className="p-3 text-center">Nilai PBB</th>
@@ -443,7 +440,7 @@ export default function AnnouncementPortal() {
                       </td>
                       <td className="p-3">
                         <span className="font-bold text-slate-900 text-sm block">{team.schoolName}</span>
-                        <span className="text-[10px] text-slate-500">{team.platoonName} • #{team.lotNumber || '-'}</span>
+                        <span className="text-[10px] text-slate-500">#{team.lotNumber || '-'}</span>
                       </td>
                       <td className="p-3 font-semibold text-slate-700">{team.roster?.danton?.name || team.dantonName || '-'}</td>
                       <td className="p-3 text-center font-mono font-bold text-slate-800">{team.dantonScore}</td>

@@ -78,7 +78,7 @@ export default function VerificationTab({
             type="text"
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
-            placeholder="Cari nama sekolah, nama peleton, atau danton..."
+            placeholder="Cari nama sekolah atau danton..."
             className="w-full pl-9 pr-3 py-2 sm:py-2.5 bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-emerald-600/20 focus:border-emerald-600 transition-all shadow-2xs"
           />
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5 sm:top-3" />
@@ -217,11 +217,6 @@ export default function VerificationTab({
                             {team.regCode}
                           </span>
                           <div className="font-black text-slate-900 text-sm leading-tight truncate">{team.schoolName}</div>
-                          {team.platoonName &&
-                           team.platoonName.trim().toLowerCase() !== team.schoolName.trim().toLowerCase() &&
-                           team.platoonName.trim().toLowerCase() !== `pleton ${team.schoolName.trim().toLowerCase()}` && (
-                            <div className="text-slate-500 text-[11px] mt-0.5">Peleton: {team.platoonName}</div>
-                          )}
                         </div>
                       </div>
                     </td>

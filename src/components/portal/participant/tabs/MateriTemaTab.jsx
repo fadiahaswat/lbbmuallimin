@@ -88,20 +88,16 @@ export default function MateriTemaTab({ currentTeam, initialSubTab = 'materi' })
   return (
     <section className="rounded-[28px] border border-slate-200/90 bg-white p-5 sm:p-7 shadow-[0_18px_46px_rgba(15,23,42,0.06)] space-y-6">
       {/* 1. Header Tab */}
-      <div className="flex flex-col gap-4 border-b border-slate-100 pb-5 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-3.5">
-          <span className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/20">
-            <BookOpen className="w-6 h-6 text-white" />
-            <span className="absolute -right-1 -top-1 h-3.5 w-3.5 rounded-full border-2 border-white bg-red-600" />
+      <div className="flex flex-col gap-3 border-b border-slate-100 pb-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-3">
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-amber-500 text-white shadow-sm">
+            <BookOpen className="w-5 h-5 text-white" />
           </span>
           <div>
-            <p className="text-[9px] font-black uppercase tracking-[0.18em] text-amber-600">
-              REGULASI MATERI & TEMA LOMBA
-            </p>
-            <h2 className="mt-0.5 text-lg font-black tracking-tight text-slate-950 sm:text-xl">
-              Materi Gerakan Wajib & Tema Resmi 2027
+            <h2 className="text-lg font-black tracking-tight text-slate-950 sm:text-xl">
+              Materi Gerakan Wajib &amp; Tema Resmi
             </h2>
-            <p className="mt-0.5 text-[10px] sm:text-xs text-slate-500">
+            <p className="text-xs text-slate-500">
               Pedoman urutan PBB Perpang TNI dan amanat tema Komandan Peleton di arena.
             </p>
           </div>
@@ -195,9 +191,6 @@ export default function MateriTemaTab({ currentTeam, initialSubTab = 'materi' })
             <h3 className="text-xl sm:text-2xl lg:text-3xl font-black uppercase tracking-tight text-white leading-tight">
               &ldquo;Semangat Sebagai Ksatria, Berjuang Dengan Gembira&rdquo;
             </h3>
-            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal">
-              Tema ini menjadi pedoman bagi seluruh peserta dalam mengikuti perlombaan. Setiap peleton diharapkan menjunjung tinggi sportivitas, menjaga sikap, menaati peraturan, serta menunjukkan kekompakan dan semangat selama perlombaan berlangsung.
-            </p>
           </div>
 
           {/* Badge Arahan Danton */}
@@ -273,11 +266,6 @@ export default function MateriTemaTab({ currentTeam, initialSubTab = 'materi' })
             </button>
           </div>
         )}
-
-        <div className="text-xs font-bold text-slate-500 flex items-center gap-1.5">
-          <span className="h-2 w-2 rounded-full bg-emerald-500 shrink-0" />
-          <span>Jenjang Kontingen: <strong className="text-slate-900">{isSD ? 'SD / MI' : 'SMP / MTs'}</strong></span>
-        </div>
       </div>
 
       {/* 4. Arena Spec & Durasi Metrics */}

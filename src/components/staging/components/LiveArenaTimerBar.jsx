@@ -46,7 +46,7 @@ export default function LiveArenaTimerBar({
                 </h2>
               </div>
               <p className="text-xs text-slate-600 mt-1">
-                Peleton: <strong className="text-slate-900">{activeArenaTeam.platoonName}</strong> • Danton: <strong className="text-slate-900">{activeArenaTeam.roster?.danton?.name || activeArenaTeam.dantonName || '-'}</strong>
+                Danton: <strong className="text-slate-900">{activeArenaTeam.roster?.danton?.name || activeArenaTeam.dantonName || '-'}</strong>
               </p>
             </div>
           ) : (

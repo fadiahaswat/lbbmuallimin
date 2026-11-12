@@ -946,53 +946,19 @@ export default function FieldTrialView() {
 
           {/* TAMPILAN KHUSUS JIKA JADWAL BELUM DI-ACC / BELUM DISAHKAN PANITIA (UNTUK PESERTA & PUBLIK) */}
           {!isPublished && !isStaff ? (
-            <section className="rounded-[28px] border border-slate-200/90 bg-white p-5 sm:p-7 shadow-[0_18px_46px_rgba(15,23,42,0.06)] space-y-6">
-              {/* Panel Header - Identik dengan ScoresTab (Image 2) */}
-              <div className="flex flex-col gap-4 border-b border-slate-100 pb-5 sm:flex-row sm:items-center sm:justify-between">
-                <div className="flex items-center gap-3.5">
-                  <span className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-slate-900 to-slate-950 text-white shadow-lg border border-slate-800">
-                    <Compass className="w-6 h-6 text-amber-400" />
-                    <span className="absolute -right-1 -top-1 h-3.5 w-3.5 rounded-full border-2 border-white bg-red-600 animate-pulse" />
-                  </span>
-                  <div>
-                    <p className="text-[9px] font-black uppercase tracking-[0.18em] text-red-600">
-                      PORTAL KONTINGEN RESMI
-                    </p>
-                    <h2 className="mt-0.5 text-lg font-black tracking-tight text-slate-950 sm:text-xl">
-                      Jadwal Uji Coba Lapangan (UCL)
-                    </h2>
-                    <p className="mt-0.5 text-[10px] sm:text-xs text-slate-500">
-                      Gladi adaptasi kontur arena, alur lintasan, & orientasi lapangan LBB 2027.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-50 border border-amber-200 text-amber-800 text-xs font-black shadow-2xs">
-                    <Clock className="w-3.5 h-3.5 text-amber-600 animate-pulse" />
-                    <span>Menunggu Pengesahan</span>
-                  </span>
-                </div>
+            <div className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 text-center space-y-3 shadow-2xs">
+              <div className="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center mx-auto border border-amber-200">
+                <Clock className="w-6 h-6" />
               </div>
-
-              {/* Dashed Empty State Box - Identik dengan ScoresTab (Image 2) */}
-              <div className="p-8 sm:p-14 text-center rounded-3xl bg-slate-50 border-2 border-dashed border-slate-200 space-y-3">
-                <div className="w-14 h-14 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mx-auto border border-amber-200">
-                  <Clock className="w-7 h-7" />
-                </div>
-                <div className="max-w-md mx-auto space-y-1.5">
-                  <span className="text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full border border-amber-500/30 text-amber-800 bg-amber-100 inline-block mb-0.5">
-                    Menunggu Pengesahan Panitia
-                  </span>
-                  <h4 className="font-black text-base text-slate-900 uppercase">
-                    Jadwal Belum Tersedia
-                  </h4>
-                  <p className="text-xs text-slate-500 leading-relaxed">
-                    Peleton Anda belum memiliki slot waktu gladi atau panitia pelaksana sedang dalam proses finalisasi matriks jadwal arena. Lembar jadwal resmi akan langsung terbit di sini sesaat setelah disahkan (ACC) oleh panitia.
-                  </p>
-                </div>
+              <div className="max-w-md mx-auto space-y-1">
+                <h4 className="font-black text-base text-slate-900">
+                  Jadwal Gladi Belum Disahkan
+                </h4>
+                <p className="text-xs text-slate-500 leading-relaxed">
+                  Matriks jadwal gladi adaptasi arena Uji Coba Lapangan (UCL) sedang dalam proses finalisasi oleh panitia dan akan terbit di sini segera setelah disahkan.
+                </p>
               </div>
-            </section>
+            </div>
           ) : (
             <>
               {/* Alert Mode Draft untuk Staff / Panitia */}
@@ -1400,9 +1366,9 @@ export default function FieldTrialView() {
               {/* Ringkasan Peleton */}
               <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
                 <div className="flex justify-between">
-                  <span className="text-slate-500">Peleton / Danton:</span>
+                  <span className="text-slate-500">Danton:</span>
                   <span className="font-bold text-slate-800">
-                    {selectedAttendanceTeam.team?.platoonName || '-'} / {selectedAttendanceTeam.team?.dantonName || selectedAttendanceTeam.team?.roster?.danton?.name || '-'}
+                    {selectedAttendanceTeam.team?.dantonName || selectedAttendanceTeam.team?.roster?.danton?.name || '-'}
                   </span>
                 </div>
                 <div className="flex justify-between">
@@ -1610,7 +1576,7 @@ export default function FieldTrialView() {
                           <td className="p-2 border border-slate-200 font-bold">{arenaName}</td>
                           <td className="p-2 border border-slate-200">
                             <div className="font-bold text-slate-900">{team.schoolName}</div>
-                            <div className="text-[10px] text-slate-500">{team.platoonName || '-'} • Danton: {team.dantonName || '-'}</div>
+                            <div className="text-[10px] text-slate-500">Danton: {team.dantonName || '-'}</div>
                           </td>
                           <td className="p-2 border border-slate-200 font-mono text-slate-600">{slotInfo.checkIn || slotInfo.arrival}</td>
                           <td className="p-2 border border-slate-200 font-mono font-bold text-emerald-800">

@@ -753,7 +753,7 @@ export default function JuryScoringApp() {
                     {selectedTeam.schoolName}
                   </h2>
                   <p className="text-xs text-slate-500">
-                    {selectedTeam?.platoonName} • Komandan: <strong className="text-slate-800">{selectedTeam?.roster?.danton?.name || selectedTeam?.dantonName || '-'}</strong>
+                    Komandan: <strong className="text-slate-800">{selectedTeam?.roster?.danton?.name || selectedTeam?.dantonName || '-'}</strong>
                   </p>
                 </div>
               </div>

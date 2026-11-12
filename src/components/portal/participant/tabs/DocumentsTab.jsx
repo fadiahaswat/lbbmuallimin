@@ -88,22 +88,20 @@ export default function DocumentsTab({
   return (
     <section className="rounded-2xl sm:rounded-[26px] border border-slate-200/80 bg-white p-4 sm:p-7 shadow-[0_18px_46px_rgba(15,23,42,0.06)] space-y-6">
       {/* Panel Header */}
-      <div className="flex flex-col gap-4 border-b border-slate-100 pb-5 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-3.5">
-          <span className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-slate-950 text-white shadow-lg">
+      <div className="flex flex-col gap-3 border-b border-slate-100 pb-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-3">
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-slate-950 text-white shadow-sm">
             {activeSubTab === 'upload' ? (
               <FileText className="w-5 h-5 text-amber-400" />
             ) : (
               <Download className="w-5 h-5 text-blue-400" />
             )}
-            <span className="absolute -right-1 -top-1 h-3 w-3 rounded-full border-2 border-white bg-red-600" />
           </span>
           <div>
-            <p className="section-kicker">PORTAL KONTINGEN</p>
-            <h2 className="mt-0.5 text-lg font-black tracking-tight text-slate-950 sm:text-xl">
+            <h2 className="text-lg font-black tracking-tight text-slate-950 sm:text-xl">
               {activeSubTab === 'upload' ? 'Pusat Berkas & Administrasi' : 'Pusat Unduhan Berkas Resmi'}
             </h2>
-            <p className="mt-0.5 text-[10px] sm:text-xs text-slate-500">
+            <p className="text-xs text-slate-500">
               {activeSubTab === 'upload'
                 ? 'Unggah atau perbarui berkas yang diminta oleh panitia verifikator administrasi.'
                 : 'Unduh petunjuk teknis, regulasi juri, materi gerakan PBB, dan format resmi lomba.'}
@@ -234,36 +232,20 @@ export default function DocumentsTab({
               }`}
             >
               {/* Header Box */}
-              <div className="flex items-start justify-between gap-3 border-b border-slate-100 bg-slate-50/70 px-4 py-3">
-                <div className="flex min-w-0 items-start gap-2.5">
-                  <span
-                    className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-[9px] font-mono font-black ${
-                      isAttached ? 'bg-slate-950 text-white' : 'bg-red-600 text-white'
-                    }`}
-                  >
-                    {item.index}
+              <div className="flex items-center justify-between gap-3 border-b border-slate-100 bg-slate-50/70 px-4 py-2.5">
+                <h4 className="text-xs font-bold uppercase leading-tight text-slate-800 truncate" title={item.title}>
+                  {item.title}
+                </h4>
+                {isAttached ? (
+                  <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full shrink-0 flex items-center gap-1">
+                    <Check className="w-3 h-3" />
+                    <span>Terlampir</span>
                   </span>
-                  <div className="min-w-0">
-                    <h4 className="text-[10px] sm:text-xs font-black uppercase leading-tight text-slate-800 truncate" title={item.title}>
-                      {item.title}
-                    </h4>
-                    <p
-                      className={`mt-0.5 text-[8px] font-black uppercase tracking-wider ${
-                        isAttached ? 'text-emerald-700' : 'text-red-700'
-                      }`}
-                    >
-                      {isAttached ? 'Berkas terlampir' : 'Perlu dilengkapi'}
-                    </p>
-                  </div>
-                </div>
-
-                <span
-                  className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full ${
-                    isAttached ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'
-                  }`}
-                >
-                  {isAttached ? <Check className="w-3 h-3 stroke-[3]" /> : <AlertCircle className="w-3 h-3" />}
-                </span>
+                ) : (
+                  <span className="text-[10px] font-bold text-red-700 bg-red-50 border border-red-200 px-2 py-0.5 rounded-full shrink-0">
+                    Wajib Diunggah
+                  </span>
+                )}
               </div>
 
               {/* Preview Window & File Details */}
@@ -277,7 +259,7 @@ export default function DocumentsTab({
                       title="Klik untuk melihat preview berkas"
                     >
                       {isImageCandidate && !imgErrors[item.id] ? (
-                        <div className="w-full h-full flex items-center justify-center p-2 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:12px_12px]">
+                        <div className="w-full h-full flex items-center justify-center p-2 bg-slate-50/60">
                           <img
                             src={formatImageUrl(rawUrl)}
                             alt={item.title}
@@ -490,68 +472,6 @@ export default function DocumentsTab({
         </div>
       )}
 
-      {/* Bottom 2 Feature Spotlight Cards */}
-      <div className="grid gap-4 sm:grid-cols-2">
-        {/* Pasfoto Personel Card */}
-        <article className="relative overflow-hidden rounded-[20px] border border-blue-200 bg-blue-50/60 p-5">
-          <div className="absolute -right-8 -top-8 h-24 w-24 rounded-full border-[16px] border-blue-600/[0.04] pointer-events-none" />
-          <div className="relative">
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-white shadow-md">
-              <Users className="w-5 h-5" />
-            </span>
-            <p className="mt-3 text-[9px] font-black uppercase tracking-[0.14em] text-blue-900">
-              Pasfoto Personel & Official
-            </p>
-            <p className="mt-1.5 text-[10px] leading-relaxed text-slate-600">
-              Pasfoto 3×4 dikelola per individu langsung melalui formation board susunan personel peleton.
-            </p>
-            <button
-              type="button"
-              onClick={() => setActiveTab('roster')}
-              className="mt-3.5 inline-flex items-center gap-1.5 text-[10px] font-black text-blue-700 transition hover:gap-2.5 cursor-pointer"
-            >
-              <span>Buka Formation Board</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </button>
-          </div>
-        </article>
-
-        {/* Pakta Integritas Fisik Card */}
-        <article className="relative overflow-hidden rounded-[20px] bg-gradient-to-br from-red-700 to-red-950 p-5 text-white shadow-[0_14px_30px_rgba(185,28,28,0.16)]">
-          <div className="absolute -bottom-10 -right-8 h-32 w-32 rounded-full border-[20px] border-white/[0.05] pointer-events-none" />
-          <div className="relative">
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-white">
-              <Shield className="w-5 h-5 text-amber-300" />
-            </span>
-            <p className="mt-3 text-[9px] font-black uppercase tracking-[0.14em] text-red-100">
-              Pakta Integritas Fisik
-            </p>
-            <p className="mt-1.5 text-[10px] leading-relaxed text-red-100/70">
-              Cetak fisik lembar A4 bertanda tangan basah dan serahkan saat registrasi Technical Meeting.
-            </p>
-            {onOpenPactModal && (
-              <button
-                type="button"
-                onClick={onOpenPactModal}
-                disabled={isDownloadingPact}
-                className="mt-3.5 inline-flex items-center gap-1.5 rounded-xl bg-white px-3.5 py-2 text-[9px] font-black text-red-800 transition hover:bg-amber-300 cursor-pointer active:scale-95 disabled:opacity-50"
-              >
-                {isDownloadingPact ? (
-                  <>
-                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                    <span>Menyiapkan...</span>
-                  </>
-                ) : (
-                  <>
-                    <Download className="w-3.5 h-3.5" />
-                    <span>Buka Dokumen A4</span>
-                  </>
-                )}
-              </button>
-            )}
-          </div>
-        </article>
-      </div>
         </>
       )}
     </section>

@@ -100,7 +100,7 @@ export default function Step1SchoolAndAccount({
               setIsConnectingGoogle(false);
               setFormData(prev => ({ ...prev, email: '' }));
               setGoogleConnectError(
-                `Email (${cleanEmail}) sudah terdaftar untuk peleton "${existingTeam.schoolName || existingTeam.platoonName || 'peleton lain'}". 1 peleton 1 Gmail, tidak bisa 1 email 2 peleton. Silakan isi email yang lain.`
+                `Email (${cleanEmail}) sudah terdaftar untuk sekolah "${existingTeam.schoolName || 'sekolah lain'}". 1 pendaftaran 1 Gmail, tidak bisa 1 email 2 sekolah. Silakan isi email yang lain.`
               );
               return;
             }
@@ -238,11 +238,11 @@ export default function Step1SchoolAndAccount({
                   Email Sudah Digunakan
                 </p>
                 <p className="text-red-700 leading-relaxed text-[11px]">
-                  Email <strong className="font-mono text-slate-900 font-semibold">{formData.email}</strong> sudah terdaftar untuk peleton{' '}
-                  <strong className="text-red-950 font-bold">{duplicateTeam.schoolName || duplicateTeam.platoonName}</strong>.
+                  Email <strong className="font-mono text-slate-900 font-semibold">{formData.email}</strong> sudah terdaftar untuk{' '}
+                  <strong className="text-red-950 font-bold">{duplicateTeam.schoolName}</strong>.
                 </p>
                 <p className="text-red-800 font-medium leading-relaxed text-[11px] bg-red-100/60 p-2 rounded-lg border border-red-200/80">
-                  1 peleton 1 Gmail, tidak bisa 1 email 2 peleton. Silakan klik tombol "Ganti Akun" di atas dan isi email yang lain.
+                  1 pendaftaran 1 Gmail. Silakan klik tombol "Ganti Akun" di atas dan isi email yang lain.
                 </p>
               </div>
             </div>
@@ -368,7 +368,7 @@ export default function Step1SchoolAndAccount({
           {formData.schoolName.trim() && (
             <div className="flex items-center gap-2 px-3.5 py-2 bg-red-50/80 border border-red-100 rounded-xl text-xs text-slate-700 animate-fade">
               <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 bg-red-700 text-white rounded-md shrink-0">
-                Nama Peleton Terdaftar:
+                Nama Sekolah Terdaftar:
               </span>
               <span className="font-bold text-red-950 truncate">
                 {getFullSchoolName()}

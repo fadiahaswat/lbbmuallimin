@@ -477,7 +477,7 @@ export default function BasecampCheckInView({ initialTab = 'checkin' }) {
                             {t.schoolName}
                           </span>
                           <span className="text-[10px] text-slate-500 font-mono block truncate">
-                            {t.regCode} • {t.platoonName || t.dantonName || t.jenjang}
+                            {t.regCode} • {t.dantonName ? `Danton: ${t.dantonName}` : t.jenjang}
                           </span>
                         </div>
                       </div>

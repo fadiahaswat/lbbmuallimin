@@ -93,7 +93,7 @@ export default function LotteryTab({
                             )}
                           </div>
                           <span className="text-[10px] text-slate-500 block truncate">
-                            {t.platoonName} • Danton: <strong className="text-slate-700">{t.dantonName || t.roster?.danton?.name || '-'}</strong>
+                            Danton: <strong className="text-slate-700">{t.dantonName || t.roster?.danton?.name || '-'}</strong>
                           </span>
                         </div>
                       </div>

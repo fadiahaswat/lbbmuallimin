@@ -46,7 +46,6 @@ export default function PipelineKanbanView({
                       No. {team.lotNumber ? String(team.lotNumber).padStart(2, '0') : '--'} • {team.jenjang}
                     </span>
                     <h4 className="font-black text-sm text-slate-900 mt-1.5">{team.schoolName}</h4>
-                    <p className="text-xs text-slate-500">{team.platoonName}</p>
                   </div>
                   <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded ${
                     currentStage === 'dp1' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'bg-slate-100 text-slate-600'
@@ -113,7 +112,6 @@ export default function PipelineKanbanView({
                       No. {team.lotNumber ? String(team.lotNumber).padStart(2, '0') : '--'} • {team.jenjang}
                     </span>
                     <h4 className="font-black text-sm text-slate-900 mt-1.5">{team.schoolName}</h4>
-                    <p className="text-xs text-slate-500">{team.platoonName}</p>
                   </div>
                   <span className="text-[10px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
                     Siap Tampil

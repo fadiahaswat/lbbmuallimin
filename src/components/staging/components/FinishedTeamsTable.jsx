@@ -50,7 +50,6 @@ export default function FinishedTeamsTable({
                   </td>
                   <td className="py-3 px-3">
                     <div className="font-bold text-slate-900">{team.schoolName}</div>
-                    <div className="text-[10px] text-slate-500">{team.platoonName}</div>
                   </td>
                   <td className="py-3 px-3 text-slate-700 font-bold">{team.jenjang}</td>
                   <td className="py-3 px-3 font-mono font-bold text-slate-900">

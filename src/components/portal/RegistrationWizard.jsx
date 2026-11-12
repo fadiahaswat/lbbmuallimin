@@ -441,7 +441,7 @@ export default function RegistrationWizard({ isOpen, onClose }) {
     const duplicateTeam = findTeamByEmail(formData.email, teams);
     if (duplicateTeam) {
       triggerValidationError(
-        `Email "${formData.email}" sudah terdaftar untuk peleton "${duplicateTeam.schoolName || duplicateTeam.platoonName}". 1 peleton 1 Gmail, tidak bisa 1 email 2 peleton. Silakan isi email yang lain.`,
+        `Email "${formData.email}" sudah terdaftar untuk sekolah "${duplicateTeam.schoolName}". 1 pendaftaran 1 Gmail. Silakan isi email yang lain.`,
         'button[type="button"]'
       );
       return false;
@@ -567,7 +567,7 @@ export default function RegistrationWizard({ isOpen, onClose }) {
     const duplicateTeam = findTeamByEmail(formData.email, teams);
     if (duplicateTeam) {
       triggerValidationError(
-        `Email "${formData.email}" sudah terdaftar untuk peleton "${duplicateTeam.schoolName || duplicateTeam.platoonName}". 1 peleton 1 Gmail, tidak bisa 1 email 2 peleton. Silakan kembali ke Langkah 1 dan isi email yang lain.`
+        `Email "${formData.email}" sudah terdaftar untuk sekolah "${duplicateTeam.schoolName}". 1 pendaftaran 1 Gmail. Silakan kembali ke Langkah 1 dan isi email yang lain.`
       );
       setStep(1);
       return;
@@ -596,7 +596,7 @@ export default function RegistrationWizard({ isOpen, onClose }) {
       address: fullAddress,
       schoolAddress: formData.schoolAddress.trim(),
       schoolRegion: formData.schoolRegion,
-      platoonName: `Peleton ${finalSchoolName}`,
+      platoonName: finalSchoolName,
       teamType: teamTypeLabel,
       category: categoryLabel,
       homogenGender: formData.teamType === 'Homogen' ? (formData.homogenGender || 'Putra') : null,
