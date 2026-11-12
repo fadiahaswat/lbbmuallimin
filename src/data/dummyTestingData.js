@@ -617,31 +617,33 @@ export function generateDummyScores(teams = []) {
       const pbbTotal = pbb1 + pbb2 + pbb3;
 
       // Rubrik Danton Resmi (Bab A.3.b Juknis: Skala Maksimal 90: KS=50, K=54/58/62, C=66/70/74, B=78/82/86, BS=90)
-      // Opsi Baku DANTON_SCALE: [50, 54, 58, 62, 66, 70, 74, 78, 82, 86, 90]
-      const bsOptions = [86, 90, 90];
-      const bOptions = [78, 82, 86];
-      const cOptions = [66, 70, 74];
-      const kOptions = [54, 58, 62];
+      // 18 Preset Monotonik Turun Sah Sesuai Juknis (Materi 35%, Vokal 25%, Sikap 20%, Lapangan 20%)
+      const DANTON_MONOTONIC_PRESETS = [
+        [{m:90, v:90, s:86, l:90}, {m:90, v:86, s:90, l:90}, {m:86, v:90, s:90, l:90}], // Rank 1 -> 266.8
+        [{m:90, v:86, s:86, l:86}, {m:86, v:90, s:86, l:86}, {m:86, v:86, s:90, l:86}], // Rank 2 -> 261.2
+        [{m:86, v:86, s:86, l:86}, {m:86, v:86, s:86, l:82}, {m:86, v:82, s:86, l:86}], // Rank 3 -> 256.2
+        [{m:86, v:82, s:82, l:82}, {m:82, v:86, s:82, l:82}, {m:82, v:82, s:86, l:82}], // Rank 4 -> 249.2
+        [{m:82, v:82, s:82, l:82}, {m:82, v:82, s:82, l:78}, {m:82, v:78, s:82, l:82}], // Rank 5 -> 244.2
+        [{m:82, v:78, s:78, l:78}, {m:78, v:82, s:78, l:78}, {m:78, v:78, s:82, l:78}], // Rank 6 -> 237.2
+        [{m:78, v:78, s:78, l:78}, {m:78, v:78, s:78, l:74}, {m:78, v:74, s:78, l:78}], // Rank 7 -> 232.2
+        [{m:78, v:74, s:74, l:74}, {m:74, v:78, s:74, l:74}, {m:74, v:74, s:78, l:74}], // Rank 8 -> 225.2
+        [{m:74, v:74, s:74, l:74}, {m:74, v:74, s:74, l:70}, {m:74, v:70, s:74, l:74}], // Rank 9 -> 220.2
+        [{m:74, v:70, s:70, l:70}, {m:70, v:74, s:70, l:70}, {m:70, v:70, s:74, l:70}], // Rank 10 -> 213.2
+        [{m:70, v:70, s:70, l:70}, {m:70, v:70, s:70, l:66}, {m:70, v:66, s:70, l:70}], // Rank 11 -> 208.2
+        [{m:70, v:66, s:66, l:66}, {m:66, v:70, s:66, l:66}, {m:66, v:66, s:70, l:66}], // Rank 12 -> 201.2
+        [{m:66, v:66, s:66, l:66}, {m:66, v:66, s:66, l:62}, {m:66, v:62, s:66, l:66}], // Rank 13 -> 196.2
+        [{m:66, v:62, s:62, l:62}, {m:62, v:66, s:62, l:62}, {m:62, v:62, s:66, l:62}], // Rank 14 -> 189.2
+        [{m:62, v:62, s:62, l:62}, {m:62, v:62, s:62, l:58}, {m:62, v:58, s:62, l:62}], // Rank 15 -> 184.2
+        [{m:62, v:58, s:58, l:58}, {m:58, v:62, s:58, l:58}, {m:58, v:58, s:62, l:58}], // Rank 16 -> 177.2
+        [{m:58, v:58, s:58, l:58}, {m:58, v:58, s:58, l:54}, {m:58, v:54, s:58, l:58}], // Rank 17 -> 172.2
+        [{m:54, v:54, s:54, l:54}, {m:54, v:54, s:54, l:50}, {m:54, v:50, s:54, l:54}], // Rank 18 -> 160.2
+      ];
 
-      const pool = num <= 3 ? bsOptions : num <= 8 ? bOptions : num <= 12 ? cOptions : kOptions;
-      const d1Rubric = {
-        materi: pool[(num) % pool.length],
-        vokal: pool[(num + 1) % pool.length],
-        sikap: pool[(num + 2) % pool.length],
-        lapangan: pool[(num) % pool.length],
-      };
-      const d2Rubric = {
-        materi: pool[(num + 1) % pool.length],
-        vokal: pool[(num) % pool.length],
-        sikap: pool[(num + 1) % pool.length],
-        lapangan: pool[(num + 2) % pool.length],
-      };
-      const d3Rubric = {
-        materi: pool[(num + 2) % pool.length],
-        vokal: pool[(num + 2) % pool.length],
-        sikap: pool[(num) % pool.length],
-        lapangan: pool[(num + 1) % pool.length],
-      };
+      const pIdx = Math.max(0, Math.min(17, num - 1));
+      const pChoice = DANTON_MONOTONIC_PRESETS[pIdx];
+      const d1Rubric = { materi: pChoice[0].m, vokal: pChoice[0].v, sikap: pChoice[0].s, lapangan: pChoice[0].l };
+      const d2Rubric = { materi: pChoice[1].m, vokal: pChoice[1].v, sikap: pChoice[1].s, lapangan: pChoice[1].l };
+      const d3Rubric = { materi: pChoice[2].m, vokal: pChoice[2].v, sikap: pChoice[2].s, lapangan: pChoice[2].l };
 
       // Formula Juknis Bab A.3.c: (Materi 35%) + (Vokal 25%) + (Sikap 20%) + (Lapangan 20%)
       const calcDantonJury = (r) => parseFloat(((r.materi * 0.35) + (r.vokal * 0.25) + (r.sikap * 0.20) + (r.lapangan * 0.20)).toFixed(2));

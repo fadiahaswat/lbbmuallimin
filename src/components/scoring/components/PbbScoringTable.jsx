@@ -37,25 +37,17 @@ export default function PbbScoringTable({
       <div className="overflow-x-auto max-h-[600px] overflow-y-auto">
         <table className="w-full text-xs text-left border-collapse">
           <thead className="sticky top-0 z-20 bg-slate-100 shadow-xs">
-            {/* Baris 1: Header Predikat Resmi */}
+            {/* Header Predikat Resmi */}
             <tr className="border-b border-slate-200 text-xs font-black uppercase text-center">
-              <th rowSpan={2} className="py-3 px-3 w-12 text-center text-slate-600 bg-slate-100 border-r border-slate-200">No</th>
-              <th rowSpan={2} className="py-3 px-3 text-left text-slate-800 bg-slate-100 border-r border-slate-200 min-w-[220px]">Materi Gerakan Perlombaan</th>
-              <th rowSpan={2} className="py-3 px-2 bg-rose-100 text-rose-900 border-r border-slate-200 text-center w-16">0 / TL</th>
-              <th className="py-2 px-3 bg-slate-700 text-white border-r border-slate-600 text-center tracking-wider text-xs">KURANG SEKALI</th>
-              <th className="py-2 px-3 bg-red-600 text-white border-r border-red-500 text-center tracking-wider text-xs">KURANG</th>
-              <th className="py-2 px-3 bg-amber-500 text-slate-950 font-black border-r border-amber-400 text-center tracking-wider text-xs">CUKUP</th>
-              <th className="py-2 px-3 bg-emerald-600 text-white border-r border-emerald-500 text-center tracking-wider text-xs">BAIK</th>
-              <th className="py-2 px-3 bg-blue-600 text-white border-r border-blue-500 text-center tracking-wider text-xs">BAIK SEKALI</th>
-              <th rowSpan={2} className="py-3 px-3 text-center w-24 bg-slate-100 text-slate-900 font-black text-sm">Skor</th>
-            </tr>
-            {/* Baris 2: Sub-info predikat */}
-            <tr className="text-[11px] font-mono border-b border-slate-200 text-center">
-              <th className="py-1 px-2 bg-slate-50 text-slate-700 border-r border-slate-200 font-semibold">Taraf KS (50)</th>
-              <th className="py-1 px-2 bg-red-50 text-red-700 border-r border-slate-200 font-semibold">Taraf K (3 Opsi)</th>
-              <th className="py-1 px-2 bg-amber-50 text-amber-800 border-r border-slate-200 font-semibold">Taraf C (3 Opsi)</th>
-              <th className="py-1 px-2 bg-emerald-50 text-emerald-800 border-r border-slate-200 font-semibold">Taraf B (3 Opsi)</th>
-              <th className="py-1 px-2 bg-blue-50 text-blue-800 border-r border-slate-200 font-semibold">Taraf BS (80/85/90)</th>
+              <th className="py-2.5 px-3 w-12 text-center text-slate-600 bg-slate-100 border-r border-slate-200">No</th>
+              <th className="py-2.5 px-3 text-left text-slate-800 bg-slate-100 border-r border-slate-200 min-w-[220px]">Materi Gerakan Perlombaan</th>
+              <th className="py-2.5 px-2 bg-rose-100 text-rose-900 border-r border-slate-200 text-center w-16">0 / TL</th>
+              <th className="py-2.5 px-3 bg-slate-700 text-white border-r border-slate-600 text-center tracking-wider text-xs">KURANG SEKALI</th>
+              <th className="py-2.5 px-3 bg-red-600 text-white border-r border-red-500 text-center tracking-wider text-xs">KURANG</th>
+              <th className="py-2.5 px-3 bg-amber-500 text-slate-950 font-black border-r border-amber-400 text-center tracking-wider text-xs">CUKUP</th>
+              <th className="py-2.5 px-3 bg-emerald-600 text-white border-r border-emerald-500 text-center tracking-wider text-xs">BAIK</th>
+              <th className="py-2.5 px-3 bg-blue-600 text-white border-r border-blue-500 text-center tracking-wider text-xs">BAIK SEKALI</th>
+              <th className="py-2.5 px-3 text-center w-24 bg-slate-100 text-slate-900 font-black text-sm">Skor</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-200 bg-white">

@@ -18,6 +18,7 @@ import {
   Moon,
   FileSpreadsheet,
   ShieldCheck,
+  User,
   X
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
@@ -1411,96 +1412,91 @@ export default function LiveLeaderboard() {
       {/* 6. TABEL HASIL & KLASEMEN RESMI (Tampil saat viewMode === 'table') */}
       {viewMode === 'table' && (
       <div
-        className={`rounded-2xl border overflow-hidden shadow-xs transition-colors ${
+        className={`rounded-xl border overflow-hidden transition-colors ${
           effectiveDark
             ? 'bg-slate-900 border-slate-800'
-            : 'bg-white border-slate-200/90'
+            : 'bg-white border-slate-200 shadow-2xs'
         }`}
       >
-        {/* Section Header Bar */}
+        {/* Simple & Clean Header Bar */}
         <div
-          className={`p-3.5 px-4 border-b flex items-center justify-between transition-colors ${
+          className={`px-4 py-3 border-b flex items-center justify-between transition-colors ${
             effectiveDark
-              ? 'bg-slate-950 border-slate-800 text-amber-400'
-              : 'bg-slate-50 border-slate-200 text-slate-800'
+              ? 'bg-slate-950 border-slate-800'
+              : 'bg-slate-50/80 border-slate-200'
           }`}
         >
           <div className="flex items-center gap-2">
             <Sparkles className="w-4 h-4 text-amber-500" />
-            <span className="text-xs font-black uppercase tracking-wider">
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200">
               {activeCategory === 'peleton' && 'Klasemen Kategori Peleton (PBB Murni & Akhir)'}
               {activeCategory === 'danton' && 'Klasemen Kategori Komandan Peleton Terbaik'}
               {activeCategory === 'juara_umum' && 'Klasemen Juara Umum (Akumulasi Poin Sekolah)'}
             </span>
           </div>
-          <span
-            className={`text-[11px] font-mono font-semibold ${
-              effectiveDark ? 'text-amber-400' : 'text-slate-600'
-            }`}
-          >
-            Jenjang: {selectedJenjang === 'SD' ? 'SD/MI (Arena 1)' : 'SMP/MTs (Arena 2)'}
+          <span className="text-xs font-medium text-slate-600 dark:text-slate-300">
+            Jenjang: <strong className="text-slate-700 dark:text-slate-300 font-semibold">{selectedJenjang === 'SD' ? 'SD/MI (Arena 1)' : 'SMP/MTs (Arena 2)'}</strong>
           </span>
         </div>
 
-        <div className="overflow-x-auto">
+        <div className="leaderboard-table-scroll overflow-x-auto">
           {/* TAB 1: KATEGORI PELETON */}
           {activeCategory === 'peleton' && (
-            <table className="w-full text-left text-xs">
+            <table className="leaderboard-table w-full min-w-[900px] text-left text-xs border-collapse">
               <thead>
                 <tr
-                  className={`uppercase text-[11px] font-black border-b transition-colors ${
+                  className={`uppercase text-[11px] font-bold border-b transition-colors tracking-wider ${
                     effectiveDark
-                      ? 'bg-slate-950/80 text-slate-300 border-slate-800'
-                      : 'bg-slate-100/90 text-slate-700 border-slate-200'
+                      ? 'bg-slate-950 text-slate-200 border-slate-800'
+                  : 'bg-slate-100 text-slate-800 border-slate-200'
                   }`}
                 >
-                  {isOfficialScoreVisible && <th className="py-3.5 px-4 text-center w-28">Peringkat & Gelar</th>}
-                  <th className="py-3.5 px-3 text-center w-20">No. Dada</th>
-                  <th className="py-3.5 px-4">Peleton & Pangkalan Sekolah</th>
+                  {isOfficialScoreVisible && <th className="py-3 px-3 text-center w-28">Peringkat & Gelar</th>}
+                  <th className="py-3 px-3 text-center w-20">No. Dada</th>
+                  <th className="py-3 px-4 min-w-[220px]">Peleton & Pangkalan Sekolah</th>
                   {isOfficialScoreVisible ? (
                     <>
-                      <th className="py-3.5 px-3 text-center w-16">Juri 1</th>
-                      <th className="py-3.5 px-3 text-center w-16">Juri 2</th>
-                      <th className="py-3.5 px-3 text-center w-16">Juri 3</th>
+                      <th className="py-3 px-2 text-center w-16">Juri 1</th>
+                      <th className="py-3 px-2 text-center w-16">Juri 2</th>
+                      <th className="py-3 px-2 text-center w-16">Juri 3</th>
                       <th
-                        className={`py-3.5 px-3 text-center w-24 ${
-                          effectiveDark ? 'bg-slate-800 text-slate-200' : 'bg-slate-200/60 text-slate-800'
+                        className={`py-3 px-3 text-center w-24 font-bold ${
+                          effectiveDark ? 'bg-slate-800 text-slate-100' : 'bg-slate-200 text-slate-900'
                         }`}
                       >
                         Nilai Murni
                       </th>
-                      <th className={`py-3.5 px-3 text-center w-20 font-bold ${
-                        effectiveDark ? 'text-rose-400' : 'text-rose-600'
-                      }`}>Penalti</th>
+                      <th className="py-3 px-2 text-center w-20 text-rose-600 dark:text-rose-400 font-bold">
+                        Penalti
+                      </th>
                       <th
-                        className={`py-3.5 px-3 text-center w-28 ${
+                        className={`py-3 px-3 text-center w-28 font-bold ${
                           effectiveDark
-                            ? 'bg-amber-950/40 text-amber-300'
-                            : 'bg-amber-100/60 text-amber-900'
+                            ? 'bg-amber-950/30 text-amber-300 border-l border-slate-800'
+                            : 'bg-amber-50 text-amber-950 border-l border-slate-200/80'
                         }`}
                       >
                         Nilai Akhir Peleton
                       </th>
                     </>
                   ) : (
-                    <th className="py-3.5 px-4 text-center w-36">Status Tampil</th>
+                    <th className="py-3 px-4 text-center w-36">Status Tampil</th>
                   )}
                 </tr>
               </thead>
               <tbody
-                className={`divide-y font-medium transition-colors ${
-                  effectiveDark ? 'divide-slate-800' : 'divide-slate-100'
+                className={`divide-y transition-colors ${
+                  effectiveDark ? 'divide-slate-800/60' : 'divide-slate-100'
                 }`}
               >
                 {finalFilteredPeleton.length === 0 ? (
                   <tr>
-                    <td colSpan={isOfficialScoreVisible ? 9 : 3} className="py-8 text-center text-slate-400">
+                    <td colSpan={isOfficialScoreVisible ? 9 : 3} className="py-10 text-center text-slate-400">
                       Belum ada peleton pada filter ini.
                     </td>
                   </tr>
                 ) : (
                   finalFilteredPeleton.map(item => {
-                    const isTop3 = isOfficialScoreVisible && item.rank <= 3;
                     const isMyTeam = (currentTeam?.id && item.team.id === currentTeam.id) || (currentUser?.teamId && item.team.id === currentUser.teamId);
                     const j1 = item.j1Peleton > 0 ? item.j1Peleton : '-';
                     const j2 = item.j2Peleton > 0 ? item.j2Peleton : '-';
@@ -1516,173 +1512,142 @@ export default function LiveLeaderboard() {
                         className={`transition-colors ${
                           isMyTeam
                             ? effectiveDark
-                              ? 'bg-emerald-950/40 ring-1 ring-emerald-500/50 hover:bg-emerald-950/50 font-bold'
-                              : 'bg-emerald-50/70 border-l-4 border-l-emerald-600 hover:bg-emerald-50 font-bold'
-                            : isTop3
+                              ? 'bg-emerald-950/30 font-bold'
+                              : 'bg-emerald-50/70 border-l-3 border-l-emerald-600 font-bold'
+                            : item.rank === 1
                             ? effectiveDark
                               ? 'bg-amber-950/20 hover:bg-amber-950/30'
-                              : 'bg-amber-50/50 hover:bg-amber-50/80 font-semibold'
+                              : 'bg-amber-50/40 hover:bg-amber-50/70'
                             : effectiveDark
-                            ? 'hover:bg-slate-800/50 text-slate-200'
-                            : 'hover:bg-slate-50 text-slate-800'
+                            ? 'hover:bg-slate-800/40 text-slate-200'
+                            : 'hover:bg-slate-50/80 text-slate-800'
                         }`}
                       >
                         {isOfficialScoreVisible && (
                           <td className="py-2.5 px-3 text-center">
                             {item.rank === 1 && (
                               <div className="inline-flex flex-col items-center">
-                                <span className="w-6 h-6 rounded-full bg-amber-400 text-slate-950 font-black text-xs inline-flex items-center justify-center shadow-xs">
+                                <span className="w-6 h-6 rounded-full bg-amber-400 text-slate-950 font-black text-xs inline-flex items-center justify-center shadow-2xs">
                                   1
                                 </span>
-                                <span className={`text-[10px] font-black mt-0.5 whitespace-nowrap ${
-                                  effectiveDark ? 'text-amber-400' : 'text-amber-700'
-                                }`}>
+                                <span className="text-[10px] font-bold text-amber-700 dark:text-amber-400 mt-0.5 whitespace-nowrap">
                                   {item.shortTitle}
                                 </span>
                               </div>
                             )}
                             {item.rank === 2 && (
                               <div className="inline-flex flex-col items-center">
-                                <span className="w-6 h-6 rounded-full bg-slate-300 text-slate-900 font-black text-xs inline-flex items-center justify-center shadow-xs">
+                                <span className="w-6 h-6 rounded-full bg-slate-300 text-slate-800 font-black text-xs inline-flex items-center justify-center shadow-2xs">
                                   2
                                 </span>
-                                <span className={`text-[10px] font-bold mt-0.5 whitespace-nowrap ${
-                                  effectiveDark ? 'text-slate-200' : 'text-slate-800'
-                                }`}>
+                                <span className="text-[10px] font-bold text-slate-700 dark:text-slate-300 mt-0.5 whitespace-nowrap">
                                   {item.shortTitle}
                                 </span>
                               </div>
                             )}
                             {item.rank === 3 && (
                               <div className="inline-flex flex-col items-center">
-                                <span className="w-6 h-6 rounded-full bg-amber-700 text-white font-black text-xs inline-flex items-center justify-center shadow-xs">
+                                <span className="w-6 h-6 rounded-full bg-amber-700 text-white font-black text-xs inline-flex items-center justify-center shadow-2xs">
                                   3
                                 </span>
-                                <span className={`text-[10px] font-bold mt-0.5 whitespace-nowrap ${
-                                  effectiveDark ? 'text-amber-400' : 'text-amber-800'
-                                }`}>
+                                <span className="text-[10px] font-bold text-amber-800 dark:text-amber-400 mt-0.5 whitespace-nowrap">
                                   {item.shortTitle}
                                 </span>
                               </div>
                             )}
-                            {item.rank > 3 && (
-                              item.shortTitle ? (
-                                <div className="inline-flex flex-col items-center">
-                                  <span className={`w-5 h-5 rounded-full font-bold text-[11px] inline-flex items-center justify-center ${
-                                    effectiveDark
-                                      ? 'bg-emerald-950/80 text-emerald-300 border border-emerald-800/60'
-                                      : 'bg-emerald-100 text-emerald-800 border border-emerald-300'
-                                  }`}>
-                                    {item.rank}
-                                  </span>
-                                  <span className={`text-[9px] font-bold mt-0.5 whitespace-nowrap ${
-                                    effectiveDark ? 'text-emerald-400' : 'text-emerald-800'
-                                  }`}>
-                                    {item.shortTitle}
-                                  </span>
-                                </div>
-                              ) : (
-                                <span className={`font-mono font-bold text-xs ${
-                                  effectiveDark ? 'text-slate-500' : 'text-slate-400'
-                                }`}>
+                            {item.rank >= 4 && item.rank <= 6 && (
+                              <div className="inline-flex flex-col items-center">
+                                <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 font-bold text-[11px] inline-flex items-center justify-center">
                                   {item.rank}
                                 </span>
-                              )
+                                <span className="text-[9px] font-semibold text-emerald-700 dark:text-emerald-400 mt-0.5 whitespace-nowrap">
+                                  {item.shortTitle}
+                                </span>
+                              </div>
+                            )}
+                            {item.rank > 6 && (
+                              <span className="font-mono text-xs text-slate-600 dark:text-slate-300 font-semibold">
+                                {item.rank}
+                              </span>
                             )}
                           </td>
                         )}
-                        <td
-                          className={`py-3.5 px-3 text-center font-mono font-bold ${
-                            effectiveDark ? 'text-slate-300' : 'text-slate-700'
-                          }`}
-                        >
-                          {chestNumber}
+                        <td className="py-2.5 px-3 text-center">
+                          <span className="font-mono font-semibold text-xs text-slate-700 dark:text-slate-300">
+                            {chestNumber}
+                          </span>
                         </td>
-                        <td className="py-3 px-4">
-                          <div className="flex items-center gap-3">
+                        <td className="py-2.5 px-4">
+                          <div className="flex items-center gap-2.5">
                             <SchoolLogo
                               team={item.team}
                               schoolName={item.team.schoolName}
                               size="table"
                               isDark={effectiveDark}
+                              className="w-8 h-8 rounded-lg shrink-0"
                             />
                             <div className="min-w-0">
                               <div
-                                className={`font-bold text-sm ${
+                                className={`font-semibold text-xs sm:text-sm flex items-center gap-1.5 ${
                                   effectiveDark ? 'text-white' : 'text-slate-900'
                                 }`}
                               >
-                                {item.team.schoolName}
+                                <span className="truncate">{item.team.schoolName}</span>
+                                {isMyTeam && (
+                                  <span className="px-1.5 py-0.2 rounded text-[9px] bg-emerald-100 text-emerald-800 font-bold shrink-0">
+                                    Peleton Anda
+                                  </span>
+                                )}
                               </div>
-                              <div
-                                className={`text-[11px] font-medium ${
-                                  effectiveDark ? 'text-slate-400' : 'text-slate-500'
-                                }`}
-                              >
-                                Danton: {item.team.dantonName || '-'}
+                              <div className="text-[11px] text-slate-600 dark:text-slate-300 truncate mt-0.5">
+                                {item.team.platoonName ? `${item.team.platoonName} • ` : ''}Danton: {item.team.dantonName || '-'}
                               </div>
                             </div>
                           </div>
                         </td>
                         {isOfficialScoreVisible ? (
                           <>
-                            <td
-                              className={`py-3.5 px-3 text-center font-mono ${
-                                effectiveDark ? 'text-slate-300' : 'text-slate-700'
-                              }`}
-                            >
+                            <td className="py-2.5 px-2 text-center font-mono text-xs text-slate-700 dark:text-slate-300">
                               {j1}
                             </td>
-                            <td
-                              className={`py-3.5 px-3 text-center font-mono ${
-                                effectiveDark ? 'text-slate-300' : 'text-slate-700'
-                              }`}
-                            >
+                            <td className="py-2.5 px-2 text-center font-mono text-xs text-slate-700 dark:text-slate-300">
                               {j2}
                             </td>
-                            <td
-                              className={`py-3.5 px-3 text-center font-mono ${
-                                effectiveDark ? 'text-slate-300' : 'text-slate-700'
-                              }`}
-                            >
+                            <td className="py-2.5 px-2 text-center font-mono text-xs text-slate-700 dark:text-slate-300">
                               {j3}
                             </td>
-                            <td
-                              className={`py-3.5 px-3 text-center font-mono font-semibold ${
-                                effectiveDark
-                                  ? 'bg-slate-800/40 text-slate-200'
-                                  : 'bg-slate-100/60 text-slate-800'
-                              }`}
-                            >
+                            <td className={`py-2.5 px-3 text-center font-mono font-medium text-xs text-slate-700 dark:text-slate-300 ${
+                              effectiveDark ? 'bg-slate-800/70' : 'bg-slate-100'
+                            }`}>
                               {murni}
                             </td>
-                            <td className={`py-3.5 px-3 text-center font-mono font-bold ${
-                              effectiveDark ? 'text-rose-400' : 'text-rose-600'
-                            }`}>
-                              {penalty > 0 ? `-${penalty}` : '0'}
+                            <td className="py-2.5 px-2 text-center font-mono text-xs">
+                              {penalty > 0 ? (
+                                <span className="text-rose-600 dark:text-rose-400 font-bold">-{penalty}</span>
+                              ) : (
+                                <span className="text-slate-600 dark:text-slate-300">0</span>
+                              )}
                             </td>
                             <td
-                              className={`py-3.5 px-3 text-center font-mono font-black ${
+                              className={`py-2.5 px-3 text-center font-mono font-bold text-sm ${
                                 effectiveDark
-                                  ? 'bg-amber-950/40 text-amber-300'
-                                  : 'bg-amber-100/60 text-amber-900'
+                                  ? 'bg-amber-950/20 text-amber-300 border-l border-slate-800'
+                                  : 'bg-amber-50 text-amber-950 border-l border-slate-200/80'
                               }`}
                             >
                               {akhir}
                             </td>
                           </>
                         ) : (
-                          <td className="py-3.5 px-4 text-center">
+                          <td className="py-2.5 px-4 text-center">
                             <span
-                              className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold ${
+                              className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-semibold ${
                                 item.hasScore
                                   ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                                  : effectiveDark
-                                  ? 'bg-slate-800 text-slate-300 border border-slate-700'
-                                  : 'bg-slate-100 text-slate-600 border border-slate-200'
+                                  : 'bg-slate-100 text-slate-600'
                               }`}
                             >
-                              {item.hasScore ? 'Sudah Tampil (Terekap)' : 'Menunggu Giliran'}
+                              {item.hasScore ? 'Sudah Terekap' : 'Menunggu Giliran'}
                             </span>
                           </td>
                         )}
@@ -1696,69 +1661,68 @@ export default function LiveLeaderboard() {
 
           {/* TAB 2: KATEGORI DANTON TERBAIK */}
           {activeCategory === 'danton' && (
-            <table className="w-full text-left text-xs">
+            <table className="leaderboard-table w-full min-w-[1040px] text-left text-xs border-collapse">
               <thead>
                 <tr
-                  className={`uppercase text-[11px] font-black border-b transition-colors ${
+                  className={`uppercase text-[11px] font-bold border-b transition-colors tracking-wider ${
                     effectiveDark
-                      ? 'bg-slate-950/80 text-slate-300 border-slate-800'
-                      : 'bg-slate-100/90 text-slate-700 border-slate-200'
+                      ? 'bg-slate-950 text-slate-200 border-slate-800'
+                      : 'bg-slate-100 text-slate-800 border-slate-200'
                   }`}
                 >
-                  {isOfficialScoreVisible && <th className="py-3.5 px-4 text-center w-28">Peringkat & Gelar</th>}
-                  <th className="py-3.5 px-3 text-center w-20">No. Dada</th>
-                  <th className="py-3.5 px-4">Nama Komandan (Danton)</th>
-                  <th className="py-3.5 px-4">Pangkalan Sekolah</th>
+                  {isOfficialScoreVisible && <th className="py-3 px-3 text-center w-28">Peringkat & Gelar</th>}
+                  <th className="py-3 px-3 text-center w-20">No. Dada</th>
+                  <th className="py-3 px-4 min-w-[180px]">Nama Komandan (Danton)</th>
+                  <th className="py-3 px-4 min-w-[200px]">Pangkalan Sekolah & Peleton</th>
                   {isOfficialScoreVisible ? (
                     <>
-                      <th className="py-3.5 px-3 text-center w-16">Juri 1</th>
-                      <th className="py-3.5 px-3 text-center w-16">Juri 2</th>
-                      <th className="py-3.5 px-3 text-center w-16">Juri 3</th>
+                      <th className="py-3 px-2 text-center w-16">Juri 1</th>
+                      <th className="py-3 px-2 text-center w-16">Juri 2</th>
+                      <th className="py-3 px-2 text-center w-16">Juri 3</th>
                       <th
-                        className={`py-3.5 px-3 text-center w-24 ${
-                          effectiveDark ? 'bg-slate-800 text-slate-200' : 'bg-slate-200/60 text-slate-800'
+                        className={`py-3 px-3 text-center w-24 font-bold ${
+                          effectiveDark ? 'bg-slate-800 text-slate-100' : 'bg-slate-200 text-slate-900'
                         }`}
                       >
                         Nilai Murni
                       </th>
-                      <th className={`py-3.5 px-3 text-center w-20 font-bold ${
-                        effectiveDark ? 'text-rose-400' : 'text-rose-600'
-                      }`}>Penalti</th>
+                      <th className="py-3 px-2 text-center w-20 text-rose-600 dark:text-rose-400 font-bold">
+                        Penalti
+                      </th>
                       <th
-                        className={`py-3.5 px-3 text-center w-28 ${
+                        className={`py-3 px-3 text-center w-28 font-bold ${
                           effectiveDark
-                            ? 'bg-amber-950/40 text-amber-300'
-                            : 'bg-amber-100/60 text-amber-900'
+                            ? 'bg-amber-950/30 text-amber-300 border-l border-slate-800'
+                            : 'bg-amber-50 text-amber-950 border-l border-slate-200/80'
                         }`}
                       >
                         Nilai Akhir Danton
                       </th>
                     </>
                   ) : (
-                    <th className="py-3.5 px-4 text-center w-36">Status Tampil</th>
+                    <th className="py-3 px-4 text-center w-36">Status Tampil</th>
                   )}
                 </tr>
               </thead>
               <tbody
-                className={`divide-y font-medium transition-colors ${
-                  effectiveDark ? 'divide-slate-800' : 'divide-slate-100'
+                className={`divide-y transition-colors ${
+                  effectiveDark ? 'divide-slate-800/60' : 'divide-slate-100'
                 }`}
               >
                 {finalFilteredDanton.length === 0 ? (
                   <tr>
-                    <td colSpan={isOfficialScoreVisible ? 10 : 4} className="py-8 text-center text-slate-400">
+                    <td colSpan={isOfficialScoreVisible ? 10 : 4} className="py-10 text-center text-slate-400">
                       Belum ada data danton pada filter ini.
                     </td>
                   </tr>
                 ) : (
                   finalFilteredDanton.map(item => {
-                    const isTop3 = isOfficialScoreVisible && item.rank <= 3;
                     const isMyTeam = (currentTeam?.id && item.team.id === currentTeam.id) || (currentUser?.teamId && item.team.id === currentUser.teamId);
-                    const j1 = item.j1Danton > 0 ? item.j1Danton : '-';
-                    const j2 = item.j2Danton > 0 ? item.j2Danton : '-';
-                    const j3 = item.j3Danton > 0 ? item.j3Danton : '-';
-                    const murni = item.nilaiMurniDanton > 0 ? item.nilaiMurniDanton : '-';
-                    const akhir = item.nilaiAkhirDanton > 0 ? item.nilaiAkhirDanton : '-';
+                    const j1 = item.j1Danton > 0 ? Number(item.j1Danton).toFixed(1) : '-';
+                    const j2 = item.j2Danton > 0 ? Number(item.j2Danton).toFixed(1) : '-';
+                    const j3 = item.j3Danton > 0 ? Number(item.j3Danton).toFixed(1) : '-';
+                    const murni = item.nilaiMurniDanton > 0 ? Number(item.nilaiMurniDanton).toFixed(1) : '-';
+                    const akhir = item.nilaiAkhirDanton > 0 ? Number(item.nilaiAkhirDanton).toFixed(1) : '-';
                     const penalty = item.dantonPenalty || 0;
                     const chestNumber = item.team.chestNumber || (item.team.lotNumber ? getChestNumberByLot(item.team.jenjang, item.team.lotNumber) : '') || '--';
 
@@ -1768,114 +1732,84 @@ export default function LiveLeaderboard() {
                         className={`transition-colors ${
                           isMyTeam
                             ? effectiveDark
-                              ? 'bg-emerald-950/40 ring-1 ring-emerald-500/50 hover:bg-emerald-950/50 font-bold'
-                              : 'bg-emerald-50/70 border-l-4 border-l-emerald-600 hover:bg-emerald-50 font-bold'
-                            : isTop3
+                              ? 'bg-emerald-950/30 font-bold'
+                              : 'bg-emerald-50/70 border-l-3 border-l-emerald-600 font-bold'
+                            : item.rank === 1
                             ? effectiveDark
                               ? 'bg-amber-950/20 hover:bg-amber-950/30'
-                              : 'bg-amber-50/50 hover:bg-amber-50/80 font-semibold'
+                              : 'bg-amber-50/40 hover:bg-amber-50/70'
                             : effectiveDark
-                            ? 'hover:bg-slate-800/50 text-slate-200'
-                            : 'hover:bg-slate-50 text-slate-800'
+                            ? 'hover:bg-slate-800/40 text-slate-200'
+                            : 'hover:bg-slate-50/80 text-slate-800'
                         }`}
                       >
                         {isOfficialScoreVisible && (
                           <td className="py-2.5 px-3 text-center">
                             {item.rank === 1 && (
                               <div className="inline-flex flex-col items-center">
-                                <span className="w-6 h-6 rounded-full bg-amber-400 text-slate-950 font-black text-xs inline-flex items-center justify-center shadow-xs">
+                                <span className="w-6 h-6 rounded-full bg-amber-400 text-slate-950 font-black text-xs inline-flex items-center justify-center shadow-2xs">
                                   1
                                 </span>
-                                <span className={`text-[10px] font-black mt-0.5 whitespace-nowrap ${
-                                  effectiveDark ? 'text-amber-400' : 'text-amber-700'
-                                }`}>
-                                  {item.shortTitle}
+                                <span className="text-[10px] font-bold text-amber-700 dark:text-amber-400 mt-0.5 whitespace-nowrap">
+                                  Danton 1
                                 </span>
                               </div>
                             )}
                             {item.rank === 2 && (
                               <div className="inline-flex flex-col items-center">
-                                <span className="w-6 h-6 rounded-full bg-slate-300 text-slate-900 font-black text-xs inline-flex items-center justify-center shadow-xs">
+                                <span className="w-6 h-6 rounded-full bg-slate-300 text-slate-800 font-black text-xs inline-flex items-center justify-center shadow-2xs">
                                   2
                                 </span>
-                                <span className={`text-[10px] font-bold mt-0.5 whitespace-nowrap ${
-                                  effectiveDark ? 'text-slate-200' : 'text-slate-800'
-                                }`}>
-                                  {item.shortTitle}
+                                <span className="text-[10px] font-bold text-slate-700 dark:text-slate-300 mt-0.5 whitespace-nowrap">
+                                  Danton 2
                                 </span>
                               </div>
                             )}
                             {item.rank === 3 && (
                               <div className="inline-flex flex-col items-center">
-                                <span className="w-6 h-6 rounded-full bg-amber-700 text-white font-black text-xs inline-flex items-center justify-center shadow-xs">
+                                <span className="w-6 h-6 rounded-full bg-amber-700 text-white font-black text-xs inline-flex items-center justify-center shadow-2xs">
                                   3
                                 </span>
-                                <span className={`text-[10px] font-bold mt-0.5 whitespace-nowrap ${
-                                  effectiveDark ? 'text-amber-400' : 'text-amber-800'
-                                }`}>
-                                  {item.shortTitle}
+                                <span className="text-[10px] font-bold text-amber-800 dark:text-amber-400 mt-0.5 whitespace-nowrap">
+                                  Danton 3
                                 </span>
                               </div>
                             )}
                             {item.rank > 3 && (
-                              item.shortTitle ? (
-                                <div className="inline-flex flex-col items-center">
-                                  <span className={`w-5 h-5 rounded-full font-bold text-[11px] inline-flex items-center justify-center ${
-                                    effectiveDark
-                                      ? 'bg-emerald-950/80 text-emerald-300 border border-emerald-800/60'
-                                      : 'bg-emerald-100 text-emerald-800 border border-emerald-300'
-                                  }`}>
-                                    {item.rank}
-                                  </span>
-                                  <span className={`text-[9px] font-bold mt-0.5 whitespace-nowrap ${
-                                    effectiveDark ? 'text-emerald-400' : 'text-emerald-800'
-                                  }`}>
-                                    {item.shortTitle}
-                                  </span>
-                                </div>
-                              ) : (
-                                <span className={`font-mono font-bold text-xs ${
-                                  effectiveDark ? 'text-slate-500' : 'text-slate-400'
-                                }`}>
-                                  {item.rank}
-                                </span>
-                              )
+                              <span className="font-mono text-xs text-slate-600 dark:text-slate-300 font-semibold">
+                                {item.rank}
+                              </span>
                             )}
                           </td>
                         )}
-                        <td
-                          className={`py-3.5 px-3 text-center font-mono font-bold ${
-                            effectiveDark ? 'text-slate-300' : 'text-slate-700'
-                          }`}
-                        >
-                          {chestNumber}
+                        <td className="py-2.5 px-3 text-center">
+                          <span className="font-mono font-semibold text-xs text-slate-700 dark:text-slate-300">
+                            {chestNumber}
+                          </span>
                         </td>
-                        <td className="py-3.5 px-4">
+                        <td className="py-2.5 px-4">
                           <div
-                            className={`font-bold text-sm ${
+                            className={`font-semibold text-xs sm:text-sm ${
                               effectiveDark ? 'text-white' : 'text-slate-900'
                             }`}
                           >
                             {item.team.dantonName || 'Komandan Peleton'}
                           </div>
-                          <div
-                            className={`text-[11px] font-medium ${
-                              effectiveDark ? 'text-slate-400' : 'text-slate-500'
-                            }`}
-                          >
+                          <div className="text-[11px] text-slate-600 dark:text-slate-300 mt-0.5">
                             {item.team.platoonName || 'Peleton'}
                           </div>
                         </td>
-                        <td className="py-3 px-4">
-                          <div className="flex items-center gap-2.5">
+                        <td className="py-2.5 px-4">
+                          <div className="flex items-center gap-2">
                             <SchoolLogo
                               team={item.team}
                               schoolName={item.team.schoolName}
                               size="table"
                               isDark={effectiveDark}
+                              className="w-7 h-7 rounded-md shrink-0"
                             />
                             <span
-                              className={`font-semibold ${
+                              className={`font-medium text-xs ${
                                 effectiveDark ? 'text-slate-200' : 'text-slate-800'
                               }`}
                             >
@@ -1885,63 +1819,47 @@ export default function LiveLeaderboard() {
                         </td>
                         {isOfficialScoreVisible ? (
                           <>
-                            <td
-                              className={`py-3.5 px-3 text-center font-mono ${
-                                effectiveDark ? 'text-slate-300' : 'text-slate-700'
-                              }`}
-                            >
+                            <td className="py-2.5 px-2 text-center font-mono text-xs text-slate-700 dark:text-slate-300">
                               {j1}
                             </td>
-                            <td
-                              className={`py-3.5 px-3 text-center font-mono ${
-                                effectiveDark ? 'text-slate-300' : 'text-slate-700'
-                              }`}
-                            >
+                            <td className="py-2.5 px-2 text-center font-mono text-xs text-slate-700 dark:text-slate-300">
                               {j2}
                             </td>
-                            <td
-                              className={`py-3.5 px-3 text-center font-mono ${
-                                effectiveDark ? 'text-slate-300' : 'text-slate-700'
-                              }`}
-                            >
+                            <td className="py-2.5 px-2 text-center font-mono text-xs text-slate-700 dark:text-slate-300">
                               {j3}
                             </td>
-                            <td
-                              className={`py-3.5 px-3 text-center font-mono font-semibold ${
-                                effectiveDark
-                                  ? 'bg-slate-800/40 text-slate-200'
-                                  : 'bg-slate-100/60 text-slate-800'
-                              }`}
-                            >
+                            <td className={`py-2.5 px-3 text-center font-mono font-medium text-xs text-slate-700 dark:text-slate-300 ${
+                              effectiveDark ? 'bg-slate-800/70' : 'bg-slate-100'
+                            }`}>
                               {murni}
                             </td>
-                            <td className={`py-3.5 px-3 text-center font-mono font-bold ${
-                              effectiveDark ? 'text-rose-400' : 'text-rose-600'
-                            }`}>
-                              {penalty > 0 ? `-${penalty}` : '0'}
+                            <td className="py-2.5 px-2 text-center font-mono text-xs">
+                              {penalty > 0 ? (
+                                <span className="text-rose-600 dark:text-rose-400 font-bold">-{penalty}</span>
+                              ) : (
+                                <span className="text-slate-600 dark:text-slate-300">0</span>
+                              )}
                             </td>
                             <td
-                              className={`py-3.5 px-3 text-center font-mono font-black ${
+                              className={`py-2.5 px-3 text-center font-mono font-bold text-sm ${
                                 effectiveDark
-                                  ? 'bg-amber-950/40 text-amber-300'
-                                  : 'bg-amber-100/60 text-amber-900'
+                                  ? 'bg-amber-950/20 text-amber-300 border-l border-slate-800'
+                                  : 'bg-amber-50 text-amber-950 border-l border-slate-200/80'
                               }`}
                             >
                               {akhir}
                             </td>
                           </>
                         ) : (
-                          <td className="py-3.5 px-4 text-center">
+                          <td className="py-2.5 px-4 text-center">
                             <span
-                              className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold ${
+                              className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-semibold ${
                                 item.hasScore
                                   ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                                  : effectiveDark
-                                  ? 'bg-slate-800 text-slate-300 border border-slate-700'
-                                  : 'bg-slate-100 text-slate-600 border border-slate-200'
+                                  : 'bg-slate-100 text-slate-600'
                               }`}
                             >
-                              {item.hasScore ? 'Sudah Tampil (Terekap)' : 'Menunggu Giliran'}
+                              {item.hasScore ? 'Sudah Terekap' : 'Menunggu Giliran'}
                             </span>
                           </td>
                         )}
@@ -1955,31 +1873,31 @@ export default function LiveLeaderboard() {
 
           {/* TAB 3: KLASEMEN JUARA UMUM SEKOLAH */}
           {activeCategory === 'juara_umum' && (
-            <table className="w-full text-left text-xs">
+            <table className="leaderboard-table w-full min-w-[920px] text-left text-xs border-collapse">
               <thead>
                 <tr
-                  className={`uppercase text-[11px] font-black border-b transition-colors ${
+                  className={`uppercase text-[11px] font-bold border-b transition-colors tracking-wider ${
                     effectiveDark
-                      ? 'bg-slate-950/80 text-slate-300 border-slate-800'
-                      : 'bg-slate-100/90 text-slate-700 border-slate-200'
+                      ? 'bg-slate-950 text-slate-200 border-slate-800'
+                      : 'bg-slate-100 text-slate-800 border-slate-200'
                   }`}
                 >
-                  <th className="py-3.5 px-4 text-center w-28">Peringkat & Gelar</th>
-                  <th className="py-3.5 px-4">Pangkalan Sekolah</th>
-                  <th className="py-3.5 px-4">Prestasi Peleton (Poin Juknis)</th>
-                  <th className="py-3.5 px-4">Prestasi Danton (Poin Juknis)</th>
+                  <th className="py-3 px-3 text-center w-28">Peringkat & Gelar</th>
+                  <th className="py-3 px-4 min-w-[200px]">Pangkalan Sekolah</th>
+                  <th className="py-3 px-4 min-w-[220px]">Prestasi Peleton (Poin Juknis)</th>
+                  <th className="py-3 px-4 min-w-[220px]">Prestasi Danton (Poin Juknis)</th>
                   <th
-                    className={`py-3.5 px-3 text-center w-28 ${
-                      effectiveDark ? 'bg-slate-800 text-slate-200' : 'bg-slate-200/60 text-slate-800'
+                    className={`py-3 px-3 text-center w-28 font-bold ${
+                      effectiveDark ? 'bg-slate-800 text-slate-100' : 'bg-slate-200 text-slate-900'
                     }`}
                   >
                     Murni Tie-Breaker
                   </th>
                   <th
-                    className={`py-3.5 px-4 text-center w-36 font-black ${
+                    className={`py-3 px-4 text-center w-36 font-bold ${
                       effectiveDark
-                        ? 'bg-amber-950/40 text-amber-300'
-                        : 'bg-amber-100/60 text-amber-900'
+                        ? 'bg-amber-950/30 text-amber-300 border-l border-slate-800'
+                        : 'bg-amber-50 text-amber-950 border-l border-slate-200/80'
                     }`}
                   >
                     Total Poin Juara Umum
@@ -1987,19 +1905,21 @@ export default function LiveLeaderboard() {
                 </tr>
               </thead>
               <tbody
-                className={`divide-y font-medium transition-colors ${
-                  effectiveDark ? 'divide-slate-800' : 'divide-slate-100'
+                className={`divide-y transition-colors ${
+                  effectiveDark ? 'divide-slate-800/60' : 'divide-slate-100'
                 }`}
               >
                 {finalFilteredJuaraUmum.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="py-8 text-center text-slate-400">
+                    <td colSpan={6} className="py-10 text-center text-slate-400">
                       Belum ada data akumulasi poin sekolah.
                     </td>
                   </tr>
                 ) : (
                   finalFilteredJuaraUmum.map(sch => {
                     const isChampion = sch.rank === 1;
+                    const isRunnerUp1 = sch.rank === 2;
+                    const isRunnerUp2 = sch.rank === 3;
                     const isMySchool = currentTeam?.schoolName && sch.schoolName?.toLowerCase() === currentTeam.schoolName?.toLowerCase();
 
                     return (
@@ -2008,157 +1928,132 @@ export default function LiveLeaderboard() {
                         className={`transition-colors ${
                           isMySchool
                             ? effectiveDark
-                              ? 'bg-emerald-950/40 ring-1 ring-emerald-500/50 hover:bg-emerald-950/50 font-bold'
-                              : 'bg-emerald-50/70 border-l-4 border-l-emerald-600 hover:bg-emerald-50 font-bold'
+                              ? 'bg-emerald-950/30 font-bold'
+                              : 'bg-emerald-50/70 border-l-3 border-l-emerald-600 font-bold'
                             : isChampion
                             ? effectiveDark
-                              ? 'bg-amber-950/30 hover:bg-amber-950/40 font-bold'
-                              : 'bg-amber-50/70 hover:bg-amber-50 font-bold'
+                              ? 'bg-amber-950/20 hover:bg-amber-950/30 font-semibold'
+                              : 'bg-amber-50/50 hover:bg-amber-50 font-semibold'
                             : effectiveDark
-                            ? 'hover:bg-slate-800/50 text-slate-200'
-                            : 'hover:bg-slate-50 text-slate-800'
+                            ? 'hover:bg-slate-800/40 text-slate-200'
+                            : 'hover:bg-slate-50/80 text-slate-800'
                         }`}
                       >
                         <td className="py-2.5 px-3 text-center">
-                          {sch.rank === 1 && (
+                          {isChampion && (
                             <div className="inline-flex flex-col items-center">
-                              <span className="w-6 h-6 rounded-full bg-amber-400 text-slate-950 font-black text-xs inline-flex items-center justify-center shadow-xs">
+                              <span className="w-6 h-6 rounded-full bg-amber-400 text-slate-950 font-black text-xs inline-flex items-center justify-center shadow-2xs">
                                 1
                               </span>
-                              <span className={`text-[10px] font-black mt-0.5 whitespace-nowrap ${
-                                effectiveDark ? 'text-amber-400' : 'text-amber-700'
-                              }`}>
+                              <span className="text-[10px] font-bold text-amber-700 dark:text-amber-400 mt-0.5 whitespace-nowrap">
                                 Juara Umum
                               </span>
                             </div>
                           )}
-                          {sch.rank === 2 && (
+                          {isRunnerUp1 && (
                             <div className="inline-flex flex-col items-center">
-                              <span className="w-6 h-6 rounded-full bg-slate-300 text-slate-900 font-black text-xs inline-flex items-center justify-center shadow-xs">
+                              <span className="w-6 h-6 rounded-full bg-slate-300 text-slate-800 font-black text-xs inline-flex items-center justify-center shadow-2xs">
                                 2
                               </span>
-                              <span className={`text-[10px] font-bold mt-0.5 whitespace-nowrap ${
-                                effectiveDark ? 'text-slate-200' : 'text-slate-800'
-                              }`}>
+                              <span className="text-[10px] font-bold text-slate-700 dark:text-slate-300 mt-0.5 whitespace-nowrap">
                                 Runner-Up 1
                               </span>
                             </div>
                           )}
-                          {sch.rank === 3 && (
+                          {isRunnerUp2 && (
                             <div className="inline-flex flex-col items-center">
-                              <span className="w-6 h-6 rounded-full bg-amber-700 text-white font-black text-xs inline-flex items-center justify-center shadow-xs">
+                              <span className="w-6 h-6 rounded-full bg-amber-700 text-white font-black text-xs inline-flex items-center justify-center shadow-2xs">
                                 3
                               </span>
-                              <span className={`text-[10px] font-bold mt-0.5 whitespace-nowrap ${
-                                effectiveDark ? 'text-amber-400' : 'text-amber-800'
-                              }`}>
+                              <span className="text-[10px] font-bold text-amber-800 dark:text-amber-400 mt-0.5 whitespace-nowrap">
                                 Runner-Up 2
                               </span>
                             </div>
                           )}
-                          {sch.rank > 3 && (
-                            <span className={`font-mono font-bold text-xs ${
-                              effectiveDark ? 'text-slate-500' : 'text-slate-400'
-                            }`}>
+                          {!isChampion && !isRunnerUp1 && !isRunnerUp2 && (
+                            <span className="font-mono text-xs text-slate-600 dark:text-slate-300 font-semibold">
                               {sch.rank}
                             </span>
                           )}
                         </td>
-                        <td className="py-3 px-4">
-                          <div className="flex items-center gap-3">
+                        <td className="py-2.5 px-4">
+                          <div className="flex items-center gap-2.5">
                             <SchoolLogo
                               team={sch.team || sch.teams?.[0]?.team}
                               schoolName={sch.schoolName}
                               size="table"
                               isDark={effectiveDark}
+                              className="w-8 h-8 rounded-lg shrink-0"
                             />
                             <div className="min-w-0">
                               <div
-                                className={`font-bold text-sm ${
+                                className={`font-semibold text-xs sm:text-sm ${
                                   effectiveDark ? 'text-white' : 'text-slate-900'
                                 }`}
                               >
                                 {sch.schoolName}
                               </div>
-                              <div
-                                className={`text-[11px] font-normal ${
-                                  effectiveDark ? 'text-slate-400' : 'text-slate-500'
-                                }`}
-                              >
+                              <div className="text-[11px] text-slate-600 dark:text-slate-300 mt-0.5">
                                 Perwakilan: {sch.teams.length} Peleton
                               </div>
                             </div>
                           </div>
                         </td>
-                        <td className="py-2.5 px-4">
+                        <td className="py-2 px-4">
                           {sch.peletonAchievements.length > 0 ? (
-                            <div className="flex flex-wrap gap-1.5">
+                            <div className="flex flex-wrap gap-1">
                               {sch.peletonAchievements.map((ach, i) => (
                                 <span
                                   key={i}
-                                  className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold border whitespace-nowrap ${
+                                  className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium border ${
                                     effectiveDark
-                                      ? 'bg-slate-800/90 border-slate-700 text-slate-200'
-                                      : 'bg-white border-slate-200 shadow-2xs text-slate-800'
+                                      ? 'bg-slate-800 border-slate-700 text-slate-300'
+                                      : 'bg-slate-50 border-slate-200 text-slate-700'
                                   }`}
                                 >
-                                  <Shield className={`w-3.5 h-3.5 shrink-0 ${effectiveDark ? 'text-red-400' : 'text-red-600'}`} />
-                                  <span className="font-bold">{ach.platoonName}</span>
-                                  <span className={`font-medium ${effectiveDark ? 'text-slate-400' : 'text-slate-500'}`}>({ach.shortTitle})</span>
-                                  <span className={`font-mono font-black text-[10px] px-1.5 py-0.5 rounded border ${
-                                    effectiveDark ? 'text-amber-300 bg-amber-400/20 border-amber-400/30' : 'text-amber-800 bg-amber-100 border-amber-300'
-                                  }`}>
-                                    +{ach.points} pt
-                                  </span>
+                                  <span>{ach.platoonName}</span>
+                                  <span className="text-slate-600 dark:text-slate-300">({ach.shortTitle})</span>
+                                  <span className="font-mono font-bold text-amber-700 dark:text-amber-400">+{ach.points} pt</span>
                                 </span>
                               ))}
                             </div>
                           ) : (
-                            <span className="text-slate-400 font-mono text-xs">-</span>
+                            <span className="text-slate-600 dark:text-slate-300 font-mono text-xs">-</span>
                           )}
                         </td>
-                        <td className="py-2.5 px-4">
+                        <td className="py-2 px-4">
                           {sch.dantonAchievements.length > 0 ? (
-                            <div className="flex flex-wrap gap-1.5">
+                            <div className="flex flex-wrap gap-1">
                               {sch.dantonAchievements.map((ach, i) => (
                                 <span
                                   key={i}
-                                  className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold border whitespace-nowrap ${
+                                  className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium border ${
                                     effectiveDark
-                                      ? 'bg-slate-800/90 border-slate-700 text-slate-200'
-                                      : 'bg-white border-slate-200 shadow-2xs text-slate-800'
+                                      ? 'bg-slate-800 border-slate-700 text-slate-300'
+                                      : 'bg-slate-50 border-slate-200 text-slate-700'
                                   }`}
                                 >
-                                  <Medal className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-                                  <span className="font-bold">{ach.dantonName}</span>
-                                  <span className={`font-medium ${effectiveDark ? 'text-slate-400' : 'text-slate-500'}`}>({ach.shortTitle})</span>
-                                  <span className={`font-mono font-black text-[10px] px-1.5 py-0.5 rounded border ${
-                                    effectiveDark ? 'text-amber-300 bg-amber-400/20 border-amber-400/30' : 'text-amber-800 bg-amber-100 border-amber-300'
-                                  }`}>
-                                    +{ach.points} pt
-                                  </span>
+                                  <span>{ach.dantonName}</span>
+                                  <span className="text-slate-600 dark:text-slate-300">({ach.shortTitle})</span>
+                                  <span className="font-mono font-bold text-amber-700 dark:text-amber-400">+{ach.points} pt</span>
                                 </span>
                               ))}
                             </div>
                           ) : (
-                            <span className="text-slate-400 font-mono text-xs">-</span>
+                            <span className="text-slate-600 dark:text-slate-300 font-mono text-xs">-</span>
                           )}
                         </td>
-                        <td
-                          className={`py-3.5 px-3 text-center font-mono ${
-                            effectiveDark ? 'text-slate-400' : 'text-slate-600'
-                          }`}
-                        >
+                        <td className="py-2.5 px-3 text-center font-mono text-xs text-slate-700 dark:text-slate-300">
                           {sch.bestMurniPeleton > 0 ? sch.bestMurniPeleton : '-'}
                         </td>
                         <td
-                          className={`py-3.5 px-4 text-center font-mono font-black text-base ${
+                          className={`py-2.5 px-4 text-center font-mono font-bold text-sm ${
                             effectiveDark
-                              ? 'bg-amber-950/40 text-amber-300'
-                              : 'bg-amber-100/60 text-amber-900'
+                              ? 'bg-amber-950/20 text-amber-300 border-l border-slate-800'
+                              : 'bg-amber-50 text-amber-950 border-l border-slate-200/80'
                           }`}
                         >
-                          {sch.totalPoints} <span className="text-xs font-normal text-slate-500">Poin</span>
+                          {sch.totalPoints} <span className="text-xs font-medium text-amber-800 dark:text-amber-200">Poin</span>
                         </td>
                       </tr>
                     );

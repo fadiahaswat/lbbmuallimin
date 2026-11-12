@@ -197,8 +197,12 @@ export function CompetitionProvider({ children }) {
       }
       if (isLocalhostEnvironment()) {
         const dummyScores = generateDummyScores(teams);
-        const isLegacyScores = parsed && Object.values(parsed).some(s => s?.pbbTotal && s.pbbTotal < 3000);
-        if (!parsed || isLegacyScores || !parsed['dummy-team-sd-01']) {
+        const isLegacyScores = !parsed ||
+          !parsed['dummy-team-sd-01'] ||
+          parsed['dummy-team-smp-01']?.pbb?.total === 6494 ||
+          parsed['dummy-team-sd-01']?.danton?.total === 266 ||
+          Object.values(parsed).some(s => s?.pbbTotal && s.pbbTotal < 3000);
+        if (isLegacyScores) {
           safeSetItem(STORAGE_KEYS.SCORES, JSON.stringify(dummyScores));
           return dummyScores;
         }
