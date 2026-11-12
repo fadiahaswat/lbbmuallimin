@@ -37,7 +37,7 @@ export default function RecapTab({
             <span>Cetak Berita Acara Nilai</span>
           </button>
           <button
-            onClick={() => setActiveView('leaderboard')}
+            onClick={() => setActiveView('live_leaderboard')}
             className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs rounded-xl flex items-center gap-1.5 transition-all shadow-md cursor-pointer"
           >
             <Trophy className="w-4 h-4" />

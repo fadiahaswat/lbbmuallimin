@@ -121,14 +121,19 @@ export default function LeaderboardView({
                 const dantonScore = Number(s.nilaiAkhirDanton ?? Math.max(0, nilaiMurniDanton - dantonPenalty));
                 const totalScore = Number(s.finalScore ?? (peletonScore + dantonScore));
                 const dantonName = t.roster?.danton?.name || t.dantonName || '-';
-                const dantonMateri =
-                  Number(juries.pos1?.dantonRubricScores?.materi ?? 0) +
-                  Number(juries.pos2?.dantonRubricScores?.materi ?? 0) +
-                  Number(juries.pos3?.dantonRubricScores?.materi ?? s.danton?.rubricScores?.materi ?? 0);
-                const dantonVokal =
-                  Number(juries.pos1?.dantonRubricScores?.vokal ?? 0) +
-                  Number(juries.pos2?.dantonRubricScores?.vokal ?? 0) +
-                  Number(juries.pos3?.dantonRubricScores?.vokal ?? s.danton?.rubricScores?.vokal ?? 0);
+                const j1Mat = Number(juries.pos1?.dantonRubricScores?.materi ?? 0);
+                const j2Mat = Number(juries.pos2?.dantonRubricScores?.materi ?? 0);
+                const j3Mat = Number(juries.pos3?.dantonRubricScores?.materi ?? 0);
+                const dantonMateri = (j1Mat + j2Mat + j3Mat) > 0
+                  ? (j1Mat + j2Mat + j3Mat)
+                  : Number(s.danton?.rubricScores?.materi ?? 0);
+
+                const j1Vok = Number(juries.pos1?.dantonRubricScores?.vokal ?? 0);
+                const j2Vok = Number(juries.pos2?.dantonRubricScores?.vokal ?? 0);
+                const j3Vok = Number(juries.pos3?.dantonRubricScores?.vokal ?? 0);
+                const dantonVokal = (j1Vok + j2Vok + j3Vok) > 0
+                  ? (j1Vok + j2Vok + j3Vok)
+                  : Number(s.danton?.rubricScores?.vokal ?? 0);
 
                 return {
                   ...t,
@@ -138,6 +143,7 @@ export default function LeaderboardView({
                   nilaiMurniDanton,
                   peletonPenalty,
                   dantonPenalty,
+                  dantonSubstituted,
                   peletonScore,
                   dantonScore,
                   dantonMateri,
@@ -146,7 +152,7 @@ export default function LeaderboardView({
                 };
               });
 
-            // Hitung Peringkat Peleton (Bab A.5) & Danton (Bab A.6)
+            // Hitung Peringkat Peleton (Bab A.5) & Danton (Bab A.6 & Bab E.4.f)
             const peletonSorted = [...rawTeams].sort((a, b) => {
               if (b.peletonScore !== a.peletonScore) return b.peletonScore - a.peletonScore;
               if (b.nilaiMurniPeleton !== a.nilaiMurniPeleton) return b.nilaiMurniPeleton - a.nilaiMurniPeleton;
@@ -155,6 +161,9 @@ export default function LeaderboardView({
             });
 
             const dantonSorted = [...rawTeams].sort((a, b) => {
+              if (Boolean(a.dantonSubstituted) !== Boolean(b.dantonSubstituted)) {
+                return a.dantonSubstituted ? 1 : -1;
+              }
               if (b.dantonScore !== a.dantonScore) return b.dantonScore - a.dantonScore;
               if (b.nilaiMurniDanton !== a.nilaiMurniDanton) return b.nilaiMurniDanton - a.nilaiMurniDanton;
               if (a.dantonPenalty !== b.dantonPenalty) return a.dantonPenalty - b.dantonPenalty;
@@ -185,10 +194,18 @@ export default function LeaderboardView({
                 };
               }
               const sc = schoolMap[t.schoolName];
-              if (t.nilaiMurniPeleton > sc.bestMurniPeleton) sc.bestMurniPeleton = t.nilaiMurniPeleton;
-              sc.peletonPenalty += t.peletonPenalty;
+              const isBetterPlatoon =
+                !sc.bestPlatoon ||
+                t.peletonScore > sc.bestPlatoon.peletonScore ||
+                (t.peletonScore === sc.bestPlatoon.peletonScore && t.nilaiMurniPeleton > sc.bestPlatoon.nilaiMurniPeleton) ||
+                (t.peletonScore === sc.bestPlatoon.peletonScore && t.nilaiMurniPeleton === sc.bestPlatoon.nilaiMurniPeleton && t.peletonPenalty < sc.bestPlatoon.peletonPenalty);
+              if (isBetterPlatoon) {
+                sc.bestPlatoon = t;
+                sc.bestMurniPeleton = t.nilaiMurniPeleton;
+                sc.peletonPenalty = t.peletonPenalty;
+                sc.peletonScore = t.peletonScore;
+              }
               if (t.nilaiMurniDanton > sc.bestMurniDanton) sc.bestMurniDanton = t.nilaiMurniDanton;
-              if (t.peletonScore > sc.peletonScore) sc.peletonScore = t.peletonScore;
               if (t.dantonScore > sc.dantonScore) sc.dantonScore = t.dantonScore;
             });
 
@@ -201,6 +218,7 @@ export default function LeaderboardView({
             });
 
             dantonSorted.forEach((t, idx) => {
+              if (t.dantonSubstituted) return;
               const pts = [3, 2, 1][idx] || 0;
               if (pts > 0 && schoolMap[t.schoolName]) {
                 schoolMap[t.schoolName].dantonPoints += pts;

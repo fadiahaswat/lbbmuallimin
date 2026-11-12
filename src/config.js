@@ -460,6 +460,18 @@ export const SCORING = {
 /** Kategori Predikat Mutu Sesuai Tampilan Standar Simpaskor / LKBB */
 export const RUBRIC_GRADES = [
     {
+        key: 'KS',
+        label: 'KURANG SEKALI',
+        shortLabel: 'KS',
+        headerBg: 'bg-rose-900',
+        headerText: 'text-white',
+        colBg: 'bg-rose-500/10 dark:bg-rose-950/20',
+        border: 'border-rose-500/30',
+        activeBtn: 'bg-rose-700 text-white shadow-md shadow-rose-700/40 ring-2 ring-rose-400',
+        inactiveBtn: 'bg-rose-950/40 text-rose-300 hover:bg-rose-700 hover:text-white border border-rose-500/30',
+        color: 'text-rose-400 bg-rose-950/60 border-rose-500/40'
+    },
+    {
         key: 'K',
         label: 'KURANG',
         shortLabel: 'K',
@@ -518,100 +530,100 @@ export const RUBRIC_GRADES = [
  * - Parade Kerapian Khusus (12-30): [12, 15, 18, 21, 24, 27, 30]
  */
 /**
- * Sebaran Nilai Standar Juknis Penilaian LBB Mu'allimin 2027 (Bab A Angka 3.a & 3.b)
- * Sistem Coret 5 Predikat Baku: KS (3 opsi), K (3 opsi), C (3 opsi), B (3 opsi), BS (3 opsi)
- * - Gerakan Sederhana (50 s.d. 80 Poin): KS (50 - 55 - 60) | K (62 - 64 - 66) | C (68 - 70 - 72) | B (74 - 75 - 76) | BS (78 - 79 - 80)
- * - Gerakan Menengah (50 s.d. 85 Poin): KS (50 - 55 - 60) | K (63 - 65 - 67) | C (70 - 72 - 74) | B (76 - 78 - 80) | BS (82 - 84 - 85)
- * - Gerakan Kompleks (50 s.d. 90 Poin): KS (50 - 55 - 60) | K (64 - 66 - 68) | C (72 - 74 - 76) | B (79 - 81 - 83) | BS (86 - 88 - 90)
+ * Sebaran Nilai Standar Juknis Penilaian LBB Mu'allimin 2027 (Bab A Angka 2 & 3)
+ * Sistem Coret 5 Predikat Baku (11 Opsi Nilai per Baris): KS (1 opsi), K (3 opsi), C (3 opsi), B (3 opsi), BS (1 opsi)
+ * - Gerakan Sederhana (50 s.d. 80 Poin): KS (50) | K (53 - 56 - 59) | C (62 - 65 - 68) | B (71 - 74 - 77) | BS (80)
+ * - Gerakan Menengah (50 s.d. 85 Poin): KS (50) | K (53 - 57 - 60) | C (64 - 67 - 71) | B (74 - 78 - 81) | BS (85)
+ * - Gerakan Kompleks & Danton (50 s.d. 90 Poin): KS (50) | K (54 - 58 - 62) | C (66 - 70 - 74) | B (78 - 82 - 86) | BS (90)
  */
 export const RUBRIC_SCALE_TEMPLATES = {
     SEDERHANA: [
-        { grade: 'KS', val: 50 }, { grade: 'KS', val: 55 }, { grade: 'KS', val: 60 },
-        { grade: 'K', val: 62 }, { grade: 'K', val: 64 }, { grade: 'K', val: 66 },
-        { grade: 'C', val: 68 }, { grade: 'C', val: 70 }, { grade: 'C', val: 72 },
-        { grade: 'B', val: 74 }, { grade: 'B', val: 75 }, { grade: 'B', val: 76 },
-        { grade: 'BS', val: 78 }, { grade: 'BS', val: 79 }, { grade: 'BS', val: 80 }
+        { grade: 'KS', val: 50 },
+        { grade: 'K', val: 53 }, { grade: 'K', val: 56 }, { grade: 'K', val: 59 },
+        { grade: 'C', val: 62 }, { grade: 'C', val: 65 }, { grade: 'C', val: 68 },
+        { grade: 'B', val: 71 }, { grade: 'B', val: 74 }, { grade: 'B', val: 77 },
+        { grade: 'BS', val: 80 }
     ],
     MENENGAH: [
-        { grade: 'KS', val: 50 }, { grade: 'KS', val: 55 }, { grade: 'KS', val: 60 },
-        { grade: 'K', val: 63 }, { grade: 'K', val: 65 }, { grade: 'K', val: 67 },
-        { grade: 'C', val: 70 }, { grade: 'C', val: 72 }, { grade: 'C', val: 74 },
-        { grade: 'B', val: 76 }, { grade: 'B', val: 78 }, { grade: 'B', val: 80 },
-        { grade: 'BS', val: 82 }, { grade: 'BS', val: 84 }, { grade: 'BS', val: 85 }
+        { grade: 'KS', val: 50 },
+        { grade: 'K', val: 53 }, { grade: 'K', val: 57 }, { grade: 'K', val: 60 },
+        { grade: 'C', val: 64 }, { grade: 'C', val: 67 }, { grade: 'C', val: 71 },
+        { grade: 'B', val: 74 }, { grade: 'B', val: 78 }, { grade: 'B', val: 81 },
+        { grade: 'BS', val: 85 }
     ],
     KOMPLEKS: [
-        { grade: 'KS', val: 50 }, { grade: 'KS', val: 55 }, { grade: 'KS', val: 60 },
-        { grade: 'K', val: 64 }, { grade: 'K', val: 66 }, { grade: 'K', val: 68 },
-        { grade: 'C', val: 72 }, { grade: 'C', val: 74 }, { grade: 'C', val: 76 },
-        { grade: 'B', val: 79 }, { grade: 'B', val: 81 }, { grade: 'B', val: 83 },
-        { grade: 'BS', val: 86 }, { grade: 'BS', val: 88 }, { grade: 'BS', val: 90 }
+        { grade: 'KS', val: 50 },
+        { grade: 'K', val: 54 }, { grade: 'K', val: 58 }, { grade: 'K', val: 62 },
+        { grade: 'C', val: 66 }, { grade: 'C', val: 70 }, { grade: 'C', val: 74 },
+        { grade: 'B', val: 78 }, { grade: 'B', val: 82 }, { grade: 'B', val: 86 },
+        { grade: 'BS', val: 90 }
     ],
     // Aliases for compatibility
     DITEMPAT: [
-        { grade: 'KS', val: 50 }, { grade: 'KS', val: 55 }, { grade: 'KS', val: 60 },
-        { grade: 'K', val: 62 }, { grade: 'K', val: 64 }, { grade: 'K', val: 66 },
-        { grade: 'C', val: 68 }, { grade: 'C', val: 70 }, { grade: 'C', val: 72 },
-        { grade: 'B', val: 74 }, { grade: 'B', val: 75 }, { grade: 'B', val: 76 },
-        { grade: 'BS', val: 78 }, { grade: 'BS', val: 79 }, { grade: 'BS', val: 80 }
+        { grade: 'KS', val: 50 },
+        { grade: 'K', val: 53 }, { grade: 'K', val: 56 }, { grade: 'K', val: 59 },
+        { grade: 'C', val: 62 }, { grade: 'C', val: 65 }, { grade: 'C', val: 68 },
+        { grade: 'B', val: 71 }, { grade: 'B', val: 74 }, { grade: 'B', val: 77 },
+        { grade: 'BS', val: 80 }
     ],
     BERPINDAH: [
-        { grade: 'KS', val: 50 }, { grade: 'KS', val: 55 }, { grade: 'KS', val: 60 },
-        { grade: 'K', val: 63 }, { grade: 'K', val: 65 }, { grade: 'K', val: 67 },
-        { grade: 'C', val: 70 }, { grade: 'C', val: 72 }, { grade: 'C', val: 74 },
-        { grade: 'B', val: 76 }, { grade: 'B', val: 78 }, { grade: 'B', val: 80 },
-        { grade: 'BS', val: 82 }, { grade: 'BS', val: 84 }, { grade: 'BS', val: 85 }
+        { grade: 'KS', val: 50 },
+        { grade: 'K', val: 53 }, { grade: 'K', val: 57 }, { grade: 'K', val: 60 },
+        { grade: 'C', val: 64 }, { grade: 'C', val: 67 }, { grade: 'C', val: 71 },
+        { grade: 'B', val: 74 }, { grade: 'B', val: 78 }, { grade: 'B', val: 81 },
+        { grade: 'BS', val: 85 }
     ],
     BERJALAN: [
-        { grade: 'KS', val: 50 }, { grade: 'KS', val: 55 }, { grade: 'KS', val: 60 },
-        { grade: 'K', val: 64 }, { grade: 'K', val: 66 }, { grade: 'K', val: 68 },
-        { grade: 'C', val: 72 }, { grade: 'C', val: 74 }, { grade: 'C', val: 76 },
-        { grade: 'B', val: 79 }, { grade: 'B', val: 81 }, { grade: 'B', val: 83 },
-        { grade: 'BS', val: 86 }, { grade: 'BS', val: 88 }, { grade: 'BS', val: 90 }
+        { grade: 'KS', val: 50 },
+        { grade: 'K', val: 54 }, { grade: 'K', val: 58 }, { grade: 'K', val: 62 },
+        { grade: 'C', val: 66 }, { grade: 'C', val: 70 }, { grade: 'C', val: 74 },
+        { grade: 'B', val: 78 }, { grade: 'B', val: 82 }, { grade: 'B', val: 86 },
+        { grade: 'BS', val: 90 }
     ],
     BERJALAN_KOMPLEKS: [
-        { grade: 'KS', val: 50 }, { grade: 'KS', val: 55 }, { grade: 'KS', val: 60 },
-        { grade: 'K', val: 64 }, { grade: 'K', val: 66 }, { grade: 'K', val: 68 },
-        { grade: 'C', val: 72 }, { grade: 'C', val: 74 }, { grade: 'C', val: 76 },
-        { grade: 'B', val: 79 }, { grade: 'B', val: 81 }, { grade: 'B', val: 83 },
-        { grade: 'BS', val: 86 }, { grade: 'BS', val: 88 }, { grade: 'BS', val: 90 }
+        { grade: 'KS', val: 50 },
+        { grade: 'K', val: 54 }, { grade: 'K', val: 58 }, { grade: 'K', val: 62 },
+        { grade: 'C', val: 66 }, { grade: 'C', val: 70 }, { grade: 'C', val: 74 },
+        { grade: 'B', val: 78 }, { grade: 'B', val: 82 }, { grade: 'B', val: 86 },
+        { grade: 'BS', val: 90 }
     ],
     KERAPIAN_PARADE: [
-        { grade: 'KS', val: 50 }, { grade: 'KS', val: 55 }, { grade: 'KS', val: 60 },
-        { grade: 'K', val: 64 }, { grade: 'K', val: 66 }, { grade: 'K', val: 68 },
-        { grade: 'C', val: 72 }, { grade: 'C', val: 74 }, { grade: 'C', val: 76 },
-        { grade: 'B', val: 79 }, { grade: 'B', val: 81 }, { grade: 'B', val: 83 },
-        { grade: 'BS', val: 86 }, { grade: 'BS', val: 88 }, { grade: 'BS', val: 90 }
+        { grade: 'KS', val: 50 },
+        { grade: 'K', val: 54 }, { grade: 'K', val: 58 }, { grade: 'K', val: 62 },
+        { grade: 'C', val: 66 }, { grade: 'C', val: 70 }, { grade: 'C', val: 74 },
+        { grade: 'B', val: 78 }, { grade: 'B', val: 82 }, { grade: 'B', val: 86 },
+        { grade: 'BS', val: 90 }
     ],
     BUBAR_BERKUMPUL: [
-        { grade: 'KS', val: 50 }, { grade: 'KS', val: 55 }, { grade: 'KS', val: 60 },
-        { grade: 'K', val: 63 }, { grade: 'K', val: 65 }, { grade: 'K', val: 67 },
-        { grade: 'C', val: 70 }, { grade: 'C', val: 72 }, { grade: 'C', val: 74 },
-        { grade: 'B', val: 76 }, { grade: 'B', val: 78 }, { grade: 'B', val: 80 },
-        { grade: 'BS', val: 82 }, { grade: 'BS', val: 84 }, { grade: 'BS', val: 85 }
+        { grade: 'KS', val: 50 },
+        { grade: 'K', val: 53 }, { grade: 'K', val: 57 }, { grade: 'K', val: 60 },
+        { grade: 'C', val: 64 }, { grade: 'C', val: 67 }, { grade: 'C', val: 71 },
+        { grade: 'B', val: 74 }, { grade: 'B', val: 78 }, { grade: 'B', val: 81 },
+        { grade: 'BS', val: 85 }
     ],
     DANTON_UMUM: [
-        { grade: 'KS', val: 50 }, { grade: 'KS', val: 55 }, { grade: 'KS', val: 60 },
-        { grade: 'K', val: 64 }, { grade: 'K', val: 66 }, { grade: 'K', val: 68 },
-        { grade: 'C', val: 72 }, { grade: 'C', val: 74 }, { grade: 'C', val: 76 },
-        { grade: 'B', val: 79 }, { grade: 'B', val: 81 }, { grade: 'B', val: 83 },
-        { grade: 'BS', val: 86 }, { grade: 'BS', val: 88 }, { grade: 'BS', val: 90 }
+        { grade: 'KS', val: 50 },
+        { grade: 'K', val: 54 }, { grade: 'K', val: 58 }, { grade: 'K', val: 62 },
+        { grade: 'C', val: 66 }, { grade: 'C', val: 70 }, { grade: 'C', val: 74 },
+        { grade: 'B', val: 78 }, { grade: 'B', val: 82 }, { grade: 'B', val: 86 },
+        { grade: 'BS', val: 90 }
     ],
 };
 
 /** Kriteria Penilaian Komandan Pasukan (Danton) Resmi (Bab A Angka 3.b Juknis) */
 export const DANTON_CRITERIA = [
-    { id: 'materi', name: 'Penguasaan Materi Lomba', weight: 0.35, weightPercent: '35%', defaultScore: 79 },
-    { id: 'vokal', name: 'Kualitas Suara / Vokal', weight: 0.25, weightPercent: '25%', defaultScore: 79 },
-    { id: 'sikap', name: 'Sikap & Pelaporan', weight: 0.20, weightPercent: '20%', defaultScore: 79 },
-    { id: 'lapangan', name: 'Penguasaan Lapangan', weight: 0.20, weightPercent: '20%', defaultScore: 79 },
+    { id: 'materi', name: 'Penguasaan Materi Lomba', weight: 0.35, weightPercent: '35%', defaultScore: 78 },
+    { id: 'vokal', name: 'Kualitas Suara / Vokal', weight: 0.25, weightPercent: '25%', defaultScore: 78 },
+    { id: 'sikap', name: 'Sikap & Pelaporan', weight: 0.20, weightPercent: '20%', defaultScore: 78 },
+    { id: 'lapangan', name: 'Penguasaan Lapangan', weight: 0.20, weightPercent: '20%', defaultScore: 78 },
 ];
 
 export const DANTON_SCALE = [
-    { grade: 'KS', val: 50 }, { grade: 'KS', val: 55 }, { grade: 'KS', val: 60 },
-    { grade: 'K', val: 64 }, { grade: 'K', val: 66 }, { grade: 'K', val: 68 },
-    { grade: 'C', val: 72 }, { grade: 'C', val: 74 }, { grade: 'C', val: 76 },
-    { grade: 'B', val: 79 }, { grade: 'B', val: 81 }, { grade: 'B', val: 83 },
-    { grade: 'BS', val: 86 }, { grade: 'BS', val: 88 }, { grade: 'BS', val: 90 }
+    { grade: 'KS', val: 50 },
+    { grade: 'K', val: 54 }, { grade: 'K', val: 58 }, { grade: 'K', val: 62 },
+    { grade: 'C', val: 66 }, { grade: 'C', val: 70 }, { grade: 'C', val: 74 },
+    { grade: 'B', val: 78 }, { grade: 'B', val: 82 }, { grade: 'B', val: 86 },
+    { grade: 'BS', val: 90 }
 ];
 
 /** Helper untuk menentukan tingkat kesulitan gerakan (Sederhana / Menengah / Kompleks) */
@@ -921,8 +933,7 @@ export const JURY_POSTS = {
 // Basecamp: Checkin (Scan QR, Titip KTP/SIM, 1 Dus Air, No Dada, Cocard, Karung Sampah)
 //           Checkout (Cek Kebersihan Basecamp, Kumpul Sampah Pilah, Scan QR, Balikkan KTP/SIM)
 // DP 1: Cek Foto & Kelengkapan Personel Menggunakan Tab/iPad
-// DP 2: Ruang Tunggu Steril
-// DP 3: Pintu Masuk Lapangan
+// DP 2: Ruang Tunggu Siap Tampil (Holding Area)
 // Arena: Kotak Lomba Didampingi Hakim Garis & Timer
 // ---------------------------------------------------------------------------
 export const STAGING_CONFIG = {

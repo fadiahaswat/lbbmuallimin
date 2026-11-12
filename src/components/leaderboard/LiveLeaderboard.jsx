@@ -192,8 +192,19 @@ export default function LiveLeaderboard() {
       );
 
       // Rubrik Danton untuk tie-breaker (Bab A.6: Materi 35%, Vokal 25%)
-      const dantonMateri = Number(s.danton?.rubricScores?.materi ?? 0);
-      const dantonVokal = Number(s.danton?.rubricScores?.vokal ?? 0);
+      const j1Mat = Number(juries.pos1?.dantonRubricScores?.materi || 0);
+      const j2Mat = Number(juries.pos2?.dantonRubricScores?.materi || 0);
+      const j3Mat = Number(juries.pos3?.dantonRubricScores?.materi || 0);
+      const dantonMateri = (j1Mat + j2Mat + j3Mat) > 0
+        ? (j1Mat + j2Mat + j3Mat)
+        : Number(s.danton?.rubricScores?.materi ?? 0);
+
+      const j1Vok = Number(juries.pos1?.dantonRubricScores?.vokal || 0);
+      const j2Vok = Number(juries.pos2?.dantonRubricScores?.vokal || 0);
+      const j3Vok = Number(juries.pos3?.dantonRubricScores?.vokal || 0);
+      const dantonVokal = (j1Vok + j2Vok + j3Vok) > 0
+        ? (j1Vok + j2Vok + j3Vok)
+        : Number(s.danton?.rubricScores?.vokal ?? 0);
 
       const penaltyTotal = Number(s.penalties?.totalPenalty ?? (peletonPenalty + dantonPenalty));
       const hasScore = Boolean(s && (nilaiMurniPeleton > 0 || nilaiMurniDanton > 0 || s.scoredAt));
@@ -379,10 +390,16 @@ export default function LiveLeaderboard() {
         });
       }
 
-      if (item.nilaiMurniPeleton > sch.bestMurniPeleton) {
+      // Juknis Bab A.8: Tie-breaker Juara Umum mengacu pada peleton terbaik milik sekolah tersebut
+      const isBetterPlatoon =
+        !sch.bestPlatoon ||
+        item.nilaiAkhirPeleton > sch.bestPlatoon.nilaiAkhirPeleton ||
+        (item.nilaiAkhirPeleton === sch.bestPlatoon.nilaiAkhirPeleton && item.nilaiMurniPeleton > sch.bestPlatoon.nilaiMurniPeleton) ||
+        (item.nilaiAkhirPeleton === sch.bestPlatoon.nilaiAkhirPeleton && item.nilaiMurniPeleton === sch.bestPlatoon.nilaiMurniPeleton && item.peletonPenalty < sch.bestPlatoon.peletonPenalty);
+
+      if (isBetterPlatoon) {
+        sch.bestPlatoon = item;
         sch.bestMurniPeleton = item.nilaiMurniPeleton;
-      }
-      if (item.peletonPenalty < sch.leastPeletonPenalty) {
         sch.leastPeletonPenalty = item.peletonPenalty;
       }
       if (item.nilaiMurniDanton > sch.bestMurniDanton) {

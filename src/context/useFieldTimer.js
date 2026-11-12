@@ -3,7 +3,7 @@ import { STAGING_CONFIG } from '../config.js';
 import { saveRecordToSheet } from '../services/sheetService.js';
 import { calculatePenalties } from './scoringActions.js';
 
-export function useFieldTimer({ updateTeamStaging, setScores }) {
+export function useFieldTimer({ updateTeamStaging, scores = {}, setScores }) {
   const [fieldTimer, setFieldTimer] = useState({
     isRunning: false,
     elapsedSeconds: 0,
@@ -65,14 +65,15 @@ export function useFieldTimer({ updateTeamStaging, setScores }) {
     });
 
     let updatedScoreRecord = null;
+    let lockedSkip = false;
 
-    setScores(prev => {
+    const buildTimerScore = (prev) => {
       const existing = prev[teamId] || {
         id: teamId,
         teamId,
         status: 'draft',
         juries: {},
-        pbb: { total: 0, j1: 0, j2: 0, rubricScores: {} },
+        pbb: { total: 0, j1: 0, j2: 0, j3: 0, rubricScores: {} },
         danton: { total: 0, rubricScores: {} },
         penalties: {
           upacara: false,
@@ -93,7 +94,8 @@ export function useFieldTimer({ updateTeamStaging, setScores }) {
       };
 
       if (existing.isLocked || existing.status === 'finalized') {
-        return prev;
+        lockedSkip = true;
+        return null;
       }
 
       const pen = calculatePenalties({
@@ -107,7 +109,7 @@ export function useFieldTimer({ updateTeamStaging, setScores }) {
       const nilaiAkhirDanton = Math.max(0, parseFloat((dantonTotal - pen.dantonPenalty).toFixed(2)));
       const finalScore = Math.max(0, parseFloat((nilaiAkhirPeleton + nilaiAkhirDanton).toFixed(2)));
 
-      const nextScore = {
+      return {
         ...existing,
         id: teamId,
         teamId,
@@ -125,13 +127,21 @@ export function useFieldTimer({ updateTeamStaging, setScores }) {
         },
         finalScore,
       };
-      updatedScoreRecord = nextScore;
+    };
 
+    setScores(prev => {
+      const nextScore = buildTimerScore(prev || {});
+      if (!nextScore) return prev;
+      updatedScoreRecord = nextScore;
       return {
         ...prev,
         [teamId]: nextScore,
       };
     });
+
+    if (!updatedScoreRecord && !lockedSkip) {
+      updatedScoreRecord = buildTimerScore(scores || {});
+    }
 
     if (updatedScoreRecord) {
       saveRecordToSheet('scores', { id: teamId, ...updatedScoreRecord }).catch(err =>

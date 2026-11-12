@@ -94,7 +94,8 @@ export default function OverviewTab({
   const autoTrialSchedule = teamDynamicTrial?.schedule || (lotIdx >= 0 ? UJI_COBA_SCHEDULE[jKey]?.[lotIdx] : null);
 
   const displayEstimatedTime = currentTeam.estimatedTime || autoSchedule?.startTampil || (currentTeam.lotNumber ? `#${String(currentTeam.lotNumber).padStart(2, '0')}` : null);
-  const displayBasecamp = currentTeam.basecampNumber || (currentTeam.lotNumber ? `Ruang ${String(currentTeam.lotNumber).padStart(2, '0')}` : null);
+  const isBasecampRatified = Boolean(settings?.basecampPublished && settings?.basecampRatifiedAt);
+  const displayBasecamp = isBasecampRatified ? (currentTeam.basecampNumber || currentTeam.basecampRoom || (currentTeam.lotNumber ? `Ruang ${String(currentTeam.lotNumber).padStart(2, '0')}` : null)) : null;
 
   // Format jam spesifik Uji Coba Lapangan (UCL) dari matriks resmi (dinamis sesuai slot yang terisi)
   const trialArenaTime = autoTrialSchedule?.enterArena && autoTrialSchedule?.finishArena 
@@ -1266,10 +1267,16 @@ export default function OverviewTab({
                   <p className="mt-1 text-xs font-black font-mono text-slate-900">
                     {filledPasukan} <span className="text-[9px] font-normal text-slate-400">/ 21</span>
                   </p>
-                  <span className="mt-1 inline-flex items-center gap-0.5 text-[8.5px] font-bold text-emerald-600">
-                    <Check className="w-2.5 h-2.5 stroke-[3]" />
-                    <span>Lengkap</span>
-                  </span>
+                  {filledPasukan >= 21 ? (
+                    <span className="mt-1 inline-flex items-center gap-0.5 text-[8.5px] font-bold text-emerald-600">
+                      <Check className="w-2.5 h-2.5 stroke-[3]" />
+                      <span>Lengkap</span>
+                    </span>
+                  ) : (
+                    <span className="mt-1 inline-flex items-center gap-0.5 text-[8.5px] font-bold text-amber-600">
+                      <span>Belum</span>
+                    </span>
+                  )}
                 </div>
 
                 {/* Cadangan */}
@@ -1280,10 +1287,16 @@ export default function OverviewTab({
                   <p className="mt-1 text-xs font-black font-mono text-slate-900">
                     {filledCadangan} <span className="text-[9px] font-normal text-slate-400">/ 3</span>
                   </p>
-                  <span className="mt-1 inline-flex items-center gap-0.5 text-[8.5px] font-bold text-emerald-600">
-                    <Check className="w-2.5 h-2.5 stroke-[3]" />
-                    <span>Lengkap</span>
-                  </span>
+                  {filledCadangan >= 3 ? (
+                    <span className="mt-1 inline-flex items-center gap-0.5 text-[8.5px] font-bold text-emerald-600">
+                      <Check className="w-2.5 h-2.5 stroke-[3]" />
+                      <span>Lengkap</span>
+                    </span>
+                  ) : (
+                    <span className="mt-1 inline-flex items-center gap-0.5 text-[8.5px] font-bold text-amber-600">
+                      <span>Opsional</span>
+                    </span>
+                  )}
                 </div>
 
                 {/* Berkas */}
@@ -1294,10 +1307,16 @@ export default function OverviewTab({
                   <p className="mt-1 text-xs font-black font-mono text-slate-900">
                     {filledDocs} <span className="text-[9px] font-normal text-slate-400">/ 4</span>
                   </p>
-                  <span className="mt-1 inline-flex items-center gap-0.5 text-[8.5px] font-bold text-emerald-600">
-                    <Check className="w-2.5 h-2.5 stroke-[3]" />
-                    <span>Lengkap</span>
-                  </span>
+                  {filledDocs >= 4 ? (
+                    <span className="mt-1 inline-flex items-center gap-0.5 text-[8.5px] font-bold text-emerald-600">
+                      <Check className="w-2.5 h-2.5 stroke-[3]" />
+                      <span>Lengkap</span>
+                    </span>
+                  ) : (
+                    <span className="mt-1 inline-flex items-center gap-0.5 text-[8.5px] font-bold text-amber-600">
+                      <span>Belum</span>
+                    </span>
+                  )}
                 </div>
               </div>
             </div>

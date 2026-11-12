@@ -118,7 +118,7 @@ export default function IdCardTab({ currentTeam }) {
                   { label: 'Kategori', value: currentTeam.category || 'Homogen Putra' },
                   { label: 'Urutan Tampil', value: currentTeam.lotNumber ? `#${String(currentTeam.lotNumber).padStart(2, '0')}` : 'Belum TM' },
                   { label: 'No. Dada', value: currentTeam.chestNumber || '—' },
-                  { label: 'Basecamp', value: currentTeam.basecampNumber || (currentTeam.lotNumber ? `Ruang ${String(currentTeam.lotNumber).padStart(2, '0')}` : '—') },
+                  { label: 'Basecamp', value: currentTeam.basecampNumber || currentTeam.basecampRoom || 'Setelah UCL' },
                 ].map(spec => (
                   <div key={spec.label} className="bg-slate-950/80 p-3">
                     <p className="text-[7px] font-black uppercase tracking-wider text-slate-500">

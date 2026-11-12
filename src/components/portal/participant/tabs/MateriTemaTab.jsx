@@ -128,9 +128,9 @@ export default function MateriTemaTab({ currentTeam, initialSubTab = 'materi' })
             )}
           </button>
 
-          {DOWNLOADS?.JUKNIS && (
+          {false && (
             <a
-              href={DOWNLOADS.JUKNIS}
+              href={DOWNLOADS?.JUKNIS || DOWNLOADS?.[0]?.url}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold transition shadow-xs cursor-pointer active:scale-95"

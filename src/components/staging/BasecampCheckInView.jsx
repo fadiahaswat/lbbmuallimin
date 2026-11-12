@@ -44,8 +44,8 @@ export default function BasecampCheckInView({ initialTab = 'checkin' }) {
   } = useCompetition();
 
   const userRole = currentUser?.role || role || 'publik';
-  // Hanya Petugas Khusus Basecamp (checkin@lbbmuallimin.com) dan Superadmin
-  const canProcess = ['checkin', 'superadmin'].includes(userRole);
+  // Petugas Khusus Basecamp, Admin Sekretariat, dan Superadmin
+  const canProcess = ['checkin', 'admin', 'superadmin'].includes(userRole);
 
   const [activeTab, setActiveTab] = useState(initialTab);
   const [mainViewMode, setMainViewMode] = useState('list'); // 'list' (default terbuka pertama) | 'map'
@@ -295,7 +295,7 @@ export default function BasecampCheckInView({ initialTab = 'checkin' }) {
 
   return (
     <SimpaskorSidebarLayout
-      activeMenu="checkin"
+      activeMenu={activeTab === 'checkout' ? 'checkout' : 'checkin'}
       title={activeTab === 'checkin' ? "Check-In Basecamp & Logistik" : "Check-Out Basecamp & Kliring"}
       subtitle={activeTab === 'checkin' ? "Registrasi kedatangan peleton hari-H, serah terima KTP jaminan, & distribusi paket logistik" : "Inspeksi kebersihan ruang transit basecamp, pembuangan sampah terpilah, & pengembalian KTP fisik"}
     >
@@ -733,33 +733,67 @@ export default function BasecampCheckInView({ initialTab = 'checkin' }) {
 
               {/* Status Filter Pills */}
               <div className="flex flex-wrap gap-1.5 text-xs font-bold">
-                <button
-                  type="button"
-                  onClick={() => setStatusFilterCheckIn('all')}
-                  className={`px-3 py-1.5 rounded-xl text-xs transition-colors cursor-pointer ${
-                    statusFilterCheckIn === 'all' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                  }`}
-                >
-                  Semua ({competitionTeams.length})
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setStatusFilterCheckIn('pending')}
-                  className={`px-3 py-1.5 rounded-xl text-xs transition-colors cursor-pointer ${
-                    statusFilterCheckIn === 'pending' ? 'bg-amber-600 text-white' : 'bg-amber-50 text-amber-800 hover:bg-amber-100'
-                  }`}
-                >
-                  Belum Tiba ({pendingTeams.length})
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setStatusFilterCheckIn('checkedin')}
-                  className={`px-3 py-1.5 rounded-xl text-xs transition-colors cursor-pointer ${
-                    statusFilterCheckIn === 'checkedin' ? 'bg-teal-700 text-white' : 'bg-teal-50 text-teal-800 hover:bg-teal-100'
-                  }`}
-                >
-                  Tiba ({checkedInTeams.length})
-                </button>
+                {activeTab === 'checkin' ? (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => setStatusFilterCheckIn('all')}
+                      className={`px-3 py-1.5 rounded-xl text-xs transition-colors cursor-pointer ${
+                        statusFilterCheckIn === 'all' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                      }`}
+                    >
+                      Semua ({competitionTeams.length})
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setStatusFilterCheckIn('pending')}
+                      className={`px-3 py-1.5 rounded-xl text-xs transition-colors cursor-pointer ${
+                        statusFilterCheckIn === 'pending' ? 'bg-amber-600 text-white' : 'bg-amber-50 text-amber-800 hover:bg-amber-100'
+                      }`}
+                    >
+                      Belum Tiba ({pendingTeams.length})
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setStatusFilterCheckIn('checkedin')}
+                      className={`px-3 py-1.5 rounded-xl text-xs transition-colors cursor-pointer ${
+                        statusFilterCheckIn === 'checkedin' ? 'bg-teal-700 text-white' : 'bg-teal-50 text-teal-800 hover:bg-teal-100'
+                      }`}
+                    >
+                      Tiba ({checkedInTeams.length})
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => setStatusFilterCheckOut('all')}
+                      className={`px-3 py-1.5 rounded-xl text-xs transition-colors cursor-pointer ${
+                        statusFilterCheckOut === 'all' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                      }`}
+                    >
+                      Semua ({competitionTeams.length})
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setStatusFilterCheckOut('in_venue')}
+                      className={`px-3 py-1.5 rounded-xl text-xs transition-colors cursor-pointer ${
+                        statusFilterCheckOut === 'in_venue' ? 'bg-amber-600 text-white' : 'bg-amber-50 text-amber-800 hover:bg-amber-100'
+                      }`}
+                    >
+                      Masih di Lokasi ({activeInVenueTeams.length})
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setStatusFilterCheckOut('checkedout')}
+                      className={`px-3 py-1.5 rounded-xl text-xs transition-colors cursor-pointer ${
+                        statusFilterCheckOut === 'checkedout' ? 'bg-emerald-700 text-white' : 'bg-emerald-50 text-emerald-800 hover:bg-emerald-100'
+                      }`}
+                    >
+                      Sudah Pulang ({checkedOutTeams.length})
+                    </button>
+                  </>
+                )}
               </div>
             </div>
 

@@ -18,10 +18,25 @@ export function calculatePenalties(penalties = {}) {
   dantonPenalty += (penalties.kotakDantonCount || 0) * 50;
 
   // Yel-Yel Pelanggaran ke-3 dst: Potong Nilai Peleton (Bab C.10.b & d)
-  const yelYelDeduction = (penalties.yelYelCount || 0) * 50;
+  const yelCount = penalties.yelYelCount !== undefined ? penalties.yelYelCount : (penalties.penyesuaianCount || 0);
+  const yelYelDeduction = (yelCount || 0) * 50;
   peletonPenalty += yelYelDeduction;
 
-  const totalPenalty = peletonPenalty + dantonPenalty;
+  let totalPenalty = peletonPenalty + dantonPenalty;
+
+  // Fallback jika caller hanya mengirim totalPenalty eksplisit tanpa rincian flag
+  if (totalPenalty === 0 && Number(penalties.totalPenalty) > 0) {
+    const hasAnyExplicitFlag = [
+      'upacara', 'upacaraTerlambatBlocks', 'dp1', 'personelKurang',
+      'overTimeBlocks', 'injakGarisCount', 'basecampKotor', 'rokokCount',
+      'kotakDantonCount', 'yelYelCount', 'penyesuaianCount'
+    ].some(k => penalties[k] !== undefined && penalties[k] !== false && penalties[k] !== 0);
+    if (!hasAnyExplicitFlag) {
+      peletonPenalty = Number(penalties.peletonPenalty ?? penalties.totalPenalty);
+      dantonPenalty = Number(penalties.dantonPenalty ?? 0);
+      totalPenalty = peletonPenalty + dantonPenalty;
+    }
+  }
 
   return {
     ...penalties,
@@ -50,7 +65,22 @@ export function calculatePeletonScoreFromRubric(rubricScores = {}) {
   return Object.values(rubricScores || {}).reduce((acc, curr) => acc + (Number(curr) || 0), 0);
 }
 
-export function createScoringActions({ setScores, currentUser }) {
+export function aggregateDantonRubricScores(juries = {}, fallbackRubric = {}) {
+  const r1 = juries?.pos1?.dantonRubricScores || {};
+  const r2 = juries?.pos2?.dantonRubricScores || {};
+  const r3 = juries?.pos3?.dantonRubricScores || {};
+  const hasPerJury = [r1, r2, r3].some(r => Object.keys(r).length > 0);
+  if (!hasPerJury) return fallbackRubric || {};
+  return {
+    ...fallbackRubric,
+    materi: Number(r1.materi || 0) + Number(r2.materi || 0) + Number(r3.materi || 0),
+    vokal: Number(r1.vokal || 0) + Number(r2.vokal || 0) + Number(r3.vokal || 0),
+    sikap: Number(r1.sikap || 0) + Number(r2.sikap || 0) + Number(r3.sikap || 0),
+    lapangan: Number(r1.lapangan || 0) + Number(r2.lapangan || 0) + Number(r3.lapangan || 0),
+  };
+}
+
+export function createScoringActions({ scores = {}, setScores, currentUser }) {
   function recordAuditLog(teamId, action, prevScore, newScore, actor, reason = '') {
     const auditEntry = {
       id: `audit-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
@@ -72,13 +102,12 @@ export function createScoringActions({ setScores, currentUser }) {
   function saveScore(teamId, scoreData) {
     let previousRecord = null;
     let newRecord = null;
+    let blockedByLock = false;
 
-    setScores(prev => {
-      const existing = prev[teamId];
+    const buildScoreRecord = (existing) => {
       if (existing && (existing.isLocked || existing.status === 'finalized') && currentUser?.role !== 'superadmin') {
-        console.warn(`[Security] Nilai peleton ${teamId} sudah dikunci dan tidak dapat diubah.`);
-        alert('Peringatan: Nilai peleton ini sudah disahkan & dikunci (Finalized). Perubahan ditolak.');
-        return prev;
+        blockedByLock = true;
+        return null;
       }
       previousRecord = existing;
 
@@ -102,13 +131,15 @@ export function createScoringActions({ setScores, currentUser }) {
       const nilaiAkhirDanton = Math.max(0, parseFloat((nilaiMurniDanton - dantonPenalty).toFixed(2)));
 
       const finalScore = parseFloat((nilaiAkhirPeleton + nilaiAkhirDanton).toFixed(2));
+      const juriesObj = scoreData.juries || {};
 
-      const record = {
+      return {
+        id: teamId,
         teamId,
         juryName: scoreData.juryName || currentUser?.name || 'Dewan Juri LBB Muallimin',
         juryRole: scoreData.juryRole || currentUser?.roleLabel || 'Juri Lapangan',
         scoredAt: new Date().toISOString(),
-        juries: scoreData.juries || {},
+        juries: juriesObj,
         danton: {
           total: nilaiMurniDanton,
           nilaiMurni: nilaiMurniDanton,
@@ -116,7 +147,7 @@ export function createScoringActions({ setScores, currentUser }) {
           j1: j1Danton,
           j2: j2Danton,
           j3: j3Danton,
-          rubricScores: scoreData.danton?.rubricScores || {},
+          rubricScores: aggregateDantonRubricScores(juriesObj, scoreData.danton?.rubricScores),
         },
         pbb: {
           total: nilaiMurniPeleton,
@@ -137,13 +168,31 @@ export function createScoringActions({ setScores, currentUser }) {
         isLocked: existing?.isLocked || false,
         status: existing?.status || 'draft',
       };
-      newRecord = record;
+    };
 
+    setScores(prev => {
+      const existing = prev[teamId];
+      const record = buildScoreRecord(existing);
+      if (!record) return prev;
+      newRecord = record;
       return {
         ...prev,
         [teamId]: record,
       };
     });
+
+    if (blockedByLock) {
+      console.warn(`[Security] Nilai peleton ${teamId} sudah dikunci dan tidak dapat diubah.`);
+      if (typeof alert === 'function') {
+        alert('Peringatan: Nilai peleton ini sudah disahkan & dikunci (Finalized). Perubahan ditolak.');
+      }
+      return null;
+    }
+
+    if (!newRecord) {
+      newRecord = buildScoreRecord(scores[teamId]);
+      if (blockedByLock) return null;
+    }
 
     if (newRecord) {
       saveRecordToSheet('scores', { id: teamId, ...newRecord }).catch(err =>
@@ -158,16 +207,16 @@ export function createScoringActions({ setScores, currentUser }) {
   function saveJuryPostScore(teamId, postKey, postScoreData) {
     let updatedRecord = null;
     let prevRecord = null;
-    setScores(prev => {
-      const existing = prev[teamId];
+    let blockedByLock = false;
+
+    const buildPostScoreRecord = (existing) => {
       if (existing && (existing.isLocked || existing.status === 'finalized') && currentUser?.role !== 'superadmin') {
-        console.warn(`[Security] Nilai peleton ${teamId} sudah dikunci (finalized).`);
-        alert('Peringatan: Nilai peleton ini sudah dikunci secara sah. Perubahan ditolak.');
-        return prev;
+        blockedByLock = true;
+        return null;
       }
       prevRecord = existing;
 
-      const currentTeamScore = prev[teamId] || {
+      const currentTeamScore = existing || {
         teamId,
         juries: {},
         penalties: {
@@ -214,7 +263,7 @@ export function createScoringActions({ setScores, currentUser }) {
 
       const finalScore = parseFloat((nilaiAkhirPeleton + nilaiAkhirDanton).toFixed(2));
 
-      updatedRecord = {
+      return {
         ...currentTeamScore,
         id: teamId,
         teamId,
@@ -235,6 +284,7 @@ export function createScoringActions({ setScores, currentUser }) {
           j1: j1Danton,
           j2: j2Danton,
           j3: j3Danton,
+          rubricScores: aggregateDantonRubricScores(updatedJuries, currentTeamScore.danton?.rubricScores),
         },
         nilaiMurniPeleton,
         nilaiAkhirPeleton,
@@ -246,12 +296,31 @@ export function createScoringActions({ setScores, currentUser }) {
         isLocked: Boolean(updatedJuries.pos1 && updatedJuries.pos2 && updatedJuries.pos3),
         notes: postScoreData.notes || currentTeamScore.notes || '',
       };
+    };
 
+    setScores(prev => {
+      const existing = prev[teamId];
+      const record = buildPostScoreRecord(existing);
+      if (!record) return prev;
+      updatedRecord = record;
       return {
         ...prev,
-        [teamId]: updatedRecord,
+        [teamId]: record,
       };
     });
+
+    if (blockedByLock) {
+      console.warn(`[Security] Nilai peleton ${teamId} sudah dikunci (finalized).`);
+      if (typeof alert === 'function') {
+        alert('Peringatan: Nilai peleton ini sudah dikunci secara sah. Perubahan ditolak.');
+      }
+      return null;
+    }
+
+    if (!updatedRecord) {
+      updatedRecord = buildPostScoreRecord(scores[teamId]);
+      if (blockedByLock) return null;
+    }
 
     if (updatedRecord) {
       saveRecordToSheet('scores', updatedRecord).catch(err =>
@@ -266,17 +335,25 @@ export function createScoringActions({ setScores, currentUser }) {
   function saveDraftScore(teamId, draftData) {
     let prevDraftRecord = null;
     let createdRecord = null;
+    let blockedByLock = false;
 
-    setScores(prev => {
-      const existing = prev[teamId];
+    const buildDraftRecord = (existing) => {
       if (existing && (existing.isLocked || existing.status === 'finalized') && currentUser?.role !== 'superadmin') {
-        console.warn(`[Security] Nilai peleton ${teamId} sudah dikunci (finalized). Input draft ditolak.`);
-        alert('Peringatan: Nilai peleton ini sudah dikunci (Finalized). Operator tidak dapat menimpa dengan draft baru.');
-        return prev;
+        blockedByLock = true;
+        return null;
       }
       prevDraftRecord = existing;
 
-      const mergedPenalties = calculatePenalties(draftData.penalties || {});
+      const rawPenalties = {
+        ...(existing?.penalties || {}),
+        ...(draftData.penalties || {}),
+      };
+      // Pertahankan penalti otomatis dari Field Timer jika tidak sengaja tertimpa 0
+      if (existing?.fieldTimerData?.overtimeBlocks && !draftData.penalties?.overTimeBlocks) {
+        rawPenalties.overTimeBlocks = existing.fieldTimerData.overtimeBlocks;
+      }
+
+      const mergedPenalties = calculatePenalties(rawPenalties);
       const peletonPenalty = mergedPenalties.peletonPenalty;
       const dantonPenalty = mergedPenalties.dantonPenalty;
 
@@ -297,39 +374,43 @@ export function createScoringActions({ setScores, currentUser }) {
 
       const calculatedFinal = parseFloat((nilaiAkhirPeleton + nilaiAkhirDanton).toFixed(2));
 
-      const record = {
+      const juriesObj = {
+        pos1: {
+          title: 'Dewan Juri 1',
+          peletonTotal: j1Peleton,
+          dantonTotal: j1Danton,
+          total: j1Peleton,
+          rubricScores: draftData.juries?.pos1?.rubricScores || draftData.pbb1?.rubricScores || {},
+          dantonRubricScores: draftData.juries?.pos1?.dantonRubricScores || {},
+        },
+        pos2: {
+          title: 'Dewan Juri 2',
+          peletonTotal: j2Peleton,
+          dantonTotal: j2Danton,
+          total: j2Peleton,
+          rubricScores: draftData.juries?.pos2?.rubricScores || draftData.pbb2?.rubricScores || {},
+          dantonRubricScores: draftData.juries?.pos2?.dantonRubricScores || {},
+        },
+        pos3: {
+          title: 'Dewan Juri 3',
+          peletonTotal: j3Peleton,
+          dantonTotal: j3Danton,
+          total: j3Peleton,
+          rubricScores: draftData.juries?.pos3?.rubricScores || {},
+          dantonRubricScores: draftData.juries?.pos3?.dantonRubricScores || draftData.danton?.rubricScores || {},
+        },
+      };
+
+      return {
+        ...(existing || {}),
+        id: teamId,
         teamId,
         status: 'draft',
         inputBy: currentUser?.name || 'Operator Penginput',
         inputAt: new Date().toISOString(),
-        paperEvidenceUrl: draftData.paperEvidenceUrl || '',
-        paperEvidenceName: draftData.paperEvidenceName || 'Lembar_Kertas_Juri.jpg',
-        juries: {
-          pos1: {
-            title: 'Dewan Juri 1',
-            peletonTotal: j1Peleton,
-            dantonTotal: j1Danton,
-            total: j1Peleton,
-            rubricScores: draftData.juries?.pos1?.rubricScores || draftData.pbb1?.rubricScores || {},
-            dantonRubricScores: draftData.juries?.pos1?.dantonRubricScores || {},
-          },
-          pos2: {
-            title: 'Dewan Juri 2',
-            peletonTotal: j2Peleton,
-            dantonTotal: j2Danton,
-            total: j2Peleton,
-            rubricScores: draftData.juries?.pos2?.rubricScores || draftData.pbb2?.rubricScores || {},
-            dantonRubricScores: draftData.juries?.pos2?.dantonRubricScores || {},
-          },
-          pos3: {
-            title: 'Dewan Juri 3',
-            peletonTotal: j3Peleton,
-            dantonTotal: j3Danton,
-            total: j3Peleton,
-            rubricScores: draftData.juries?.pos3?.rubricScores || {},
-            dantonRubricScores: draftData.juries?.pos3?.dantonRubricScores || draftData.danton?.rubricScores || {},
-          },
-        },
+        paperEvidenceUrl: draftData.paperEvidenceUrl || existing?.paperEvidenceUrl || '',
+        paperEvidenceName: draftData.paperEvidenceName || existing?.paperEvidenceName || 'Lembar_Kertas_Juri.jpg',
+        juries: juriesObj,
         pbb: {
           total: nilaiMurniPeleton,
           nilaiMurni: nilaiMurniPeleton,
@@ -346,7 +427,7 @@ export function createScoringActions({ setScores, currentUser }) {
           j1: j1Danton,
           j2: j2Danton,
           j3: j3Danton,
-          rubricScores: draftData.danton?.rubricScores || {},
+          rubricScores: aggregateDantonRubricScores(juriesObj, draftData.danton?.rubricScores),
         },
         penalties: mergedPenalties,
         nilaiMurniPeleton,
@@ -354,17 +435,35 @@ export function createScoringActions({ setScores, currentUser }) {
         nilaiMurniDanton,
         nilaiAkhirDanton,
         finalScore: calculatedFinal,
-        notes: draftData.notes || '',
+        notes: draftData.notes !== undefined ? draftData.notes : (existing?.notes || ''),
         verificationNotes: '',
         isLocked: false,
       };
-      createdRecord = record;
+    };
 
+    setScores(prev => {
+      const existing = prev[teamId];
+      const record = buildDraftRecord(existing);
+      if (!record) return prev;
+      createdRecord = record;
       return {
         ...prev,
         [teamId]: record,
       };
     });
+
+    if (blockedByLock) {
+      console.warn(`[Security] Nilai peleton ${teamId} sudah dikunci (finalized). Input draft ditolak.`);
+      if (typeof alert === 'function') {
+        alert('Peringatan: Nilai peleton ini sudah dikunci (Finalized). Operator tidak dapat menimpa dengan draft baru.');
+      }
+      return null;
+    }
+
+    if (!createdRecord) {
+      createdRecord = buildDraftRecord(scores[teamId]);
+      if (blockedByLock) return null;
+    }
 
     if (createdRecord) {
       saveRecordToSheet('scores', { id: teamId, ...createdRecord }).catch(err =>
@@ -379,7 +478,9 @@ export function createScoringActions({ setScores, currentUser }) {
   function verifyScore(teamId, isApproved = true, note = '') {
     if (!['verifikator', 'superadmin'].includes(currentUser?.role)) {
       console.warn('[Security] Unauthorized call to verifyScore:', currentUser);
-      alert('Akses Ditolak: Hanya Verifikator Nilai atau Superadmin yang berhak memverifikasi skor.');
+      if (typeof alert === 'function') {
+        alert('Akses Ditolak: Hanya Verifikator Nilai atau Superadmin yang berhak memverifikasi skor.');
+      }
       return;
     }
 
@@ -387,12 +488,10 @@ export function createScoringActions({ setScores, currentUser }) {
     let prevRecord = null;
     let nextRecord = null;
 
-    setScores(prev => {
-      const existing = prev[teamId];
-      if (!existing) return prev;
+    const buildVerifyRecord = (existing) => {
+      if (!existing) return null;
       prevRecord = existing;
-
-      const updated = {
+      return {
         ...existing,
         id: teamId,
         teamId,
@@ -402,13 +501,22 @@ export function createScoringActions({ setScores, currentUser }) {
         verifiedAt: new Date().toISOString(),
         verificationNotes: note,
       };
-      nextRecord = updated;
+    };
 
+    setScores(prev => {
+      const existing = prev[teamId];
+      const updated = buildVerifyRecord(existing);
+      if (!updated) return prev;
+      nextRecord = updated;
       return {
         ...prev,
         [teamId]: updated,
       };
     });
+
+    if (!nextRecord && scores[teamId]) {
+      nextRecord = buildVerifyRecord(scores[teamId]);
+    }
 
     if (nextRecord) {
       saveRecordToSheet('scores', { id: teamId, ...nextRecord }).catch(err =>
@@ -421,19 +529,19 @@ export function createScoringActions({ setScores, currentUser }) {
   function finalizeScore(teamId, signatureName = null) {
     if (!['finalisator', 'superadmin'].includes(currentUser?.role)) {
       console.warn('[Security] Unauthorized call to finalizeScore:', currentUser);
-      alert('Akses Ditolak: Hanya Finalisator (Ketua Dewan Juri) atau Superadmin yang berhak mengesahkan & mengunci skor.');
+      if (typeof alert === 'function') {
+        alert('Akses Ditolak: Hanya Finalisator (Ketua Dewan Juri) atau Superadmin yang berhak mengesahkan & mengunci skor.');
+      }
       return;
     }
 
     let prevRecord = null;
     let nextRecord = null;
 
-    setScores(prev => {
-      const existing = prev[teamId];
-      if (!existing) return prev;
+    const buildFinalizeRecord = (existing) => {
+      if (!existing) return null;
       prevRecord = existing;
-
-      const updated = {
+      return {
         ...existing,
         id: teamId,
         teamId,
@@ -443,13 +551,22 @@ export function createScoringActions({ setScores, currentUser }) {
         finalizedBy: signatureName || currentUser?.name || 'Ketua Dewan Juri',
         finalizedAt: new Date().toISOString(),
       };
-      nextRecord = updated;
+    };
 
+    setScores(prev => {
+      const existing = prev[teamId];
+      const updated = buildFinalizeRecord(existing);
+      if (!updated) return prev;
+      nextRecord = updated;
       return {
         ...prev,
         [teamId]: updated,
       };
     });
+
+    if (!nextRecord && scores[teamId]) {
+      nextRecord = buildFinalizeRecord(scores[teamId]);
+    }
 
     if (nextRecord) {
       saveRecordToSheet('scores', { id: teamId, ...nextRecord }).catch(err =>
@@ -461,15 +578,21 @@ export function createScoringActions({ setScores, currentUser }) {
 
   // 5. Buka Kunci Nilai (Unlock) oleh Superadmin
   function unlockScore(teamId) {
+    if (currentUser && currentUser.role !== 'superadmin') {
+      console.warn('[Security] Unauthorized call to unlockScore:', currentUser);
+      if (typeof alert === 'function') {
+        alert('Akses Ditolak: Hanya Superadmin yang berhak membuka kunci nilai.');
+      }
+      return;
+    }
+
     let prevRecord = null;
     let nextRecord = null;
 
-    setScores(prev => {
-      const existing = prev[teamId];
-      if (!existing) return prev;
+    const buildUnlockRecord = (existing) => {
+      if (!existing) return null;
       prevRecord = existing;
-
-      const updated = {
+      return {
         ...existing,
         id: teamId,
         teamId,
@@ -478,13 +601,22 @@ export function createScoringActions({ setScores, currentUser }) {
         unlockedBy: currentUser?.name || 'Superadmin',
         unlockedAt: new Date().toISOString(),
       };
-      nextRecord = updated;
+    };
 
+    setScores(prev => {
+      const existing = prev[teamId];
+      const updated = buildUnlockRecord(existing);
+      if (!updated) return prev;
+      nextRecord = updated;
       return {
         ...prev,
         [teamId]: updated,
       };
     });
+
+    if (!nextRecord && scores[teamId]) {
+      nextRecord = buildUnlockRecord(scores[teamId]);
+    }
 
     if (nextRecord) {
       saveRecordToSheet('scores', { id: teamId, ...nextRecord }).catch(err =>

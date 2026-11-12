@@ -421,12 +421,14 @@ export function normalizeGmail(email) {
 export function findTeamByEmail(email, teams = [], excludeTeamId = null) {
   if (!email || !Array.isArray(teams)) return null;
   const cleanEmail = String(email).trim().toLowerCase();
+  const normalizedTarget = normalizeGmail(cleanEmail);
 
   return teams.find(t => {
     if (excludeTeamId && t.id === excludeTeamId) return false;
+    if (t.status === 'rejected') return false;
     if (!t.email) return false;
     const tClean = String(t.email).trim().toLowerCase();
-    return tClean === cleanEmail;
+    return tClean === cleanEmail || normalizeGmail(tClean) === normalizedTarget;
   }) || null;
 }
 

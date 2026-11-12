@@ -171,10 +171,16 @@ export default function OfficialScoreRecapModal({ isOpen, onClose, initialJenjan
     const key = `${item.team.jenjang}__${item.team.schoolName}`;
     const school = schoolPointsMap[key];
     if (!school) return;
-    if (item.nilaiMurniPeleton > school.bestMurniPeleton) {
+    const isBetterPlatoon =
+      !school.bestPlatoon ||
+      item.nilaiAkhirPeleton > school.bestPlatoon.nilaiAkhirPeleton ||
+      (item.nilaiAkhirPeleton === school.bestPlatoon.nilaiAkhirPeleton && item.nilaiMurniPeleton > school.bestPlatoon.nilaiMurniPeleton) ||
+      (item.nilaiAkhirPeleton === school.bestPlatoon.nilaiAkhirPeleton && item.nilaiMurniPeleton === school.bestPlatoon.nilaiMurniPeleton && item.peletonPenalty < school.bestPlatoon.peletonPenalty);
+    if (isBetterPlatoon) {
+      school.bestPlatoon = item;
       school.bestMurniPeleton = item.nilaiMurniPeleton;
+      school.peletonPenaltySum = item.peletonPenalty;
     }
-    school.peletonPenaltySum += item.peletonPenalty;
     if (item.nilaiMurniDanton > school.bestMurniDanton) {
       school.bestMurniDanton = item.nilaiMurniDanton;
     }
@@ -538,7 +544,7 @@ export default function OfficialScoreRecapModal({ isOpen, onClose, initialJenjan
                     const isWinner = rank === 1 && item.totalPoints > 0;
                     return (
                       <tr
-                        key={item.schoolName}
+                        key={`${item.jenjang}__${item.schoolName}`}
                         className={`text-center ${isWinner ? 'bg-amber-50 font-bold' : (idx % 2 === 0 ? 'bg-white' : 'bg-slate-50/60')}`}
                       >
                         <td className="py-2.5 px-2 border-r border-slate-200">

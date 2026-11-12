@@ -186,31 +186,45 @@ export default function ParticipantQRStatusView({ regCode, onBack }) {
     url.searchParams.delete('reg');
     window.history.replaceState({}, '', url.pathname);
 
-    // 2. Siapkan data session peserta
-    const schoolLogo = team.files?.schoolLogo?.url && team.files?.schoolLogo?.url !== '#' && !team.files?.schoolLogo?.url.startsWith('#')
-      ? team.files.schoolLogo.url
-      : null;
+    // 2. Keamanan Otorisasi: Pastikan pengguna telah login dengan email peleton yang sesuai atau akun Admin/Superadmin
+    const isAdminOrSuper = currentUser?.role === 'superadmin' || currentUser?.role === 'admin';
+    const isTeamOwner = Boolean(
+      currentUser?.email &&
+      team.email &&
+      currentUser.email.trim().toLowerCase() === team.email.trim().toLowerCase()
+    );
 
-    const user = {
-      id: `user-${team.id}`,
-      name: team.officialName || team.schoolName,
-      email: team.email || '',
-      role: 'peserta',
-      roleLabel: 'Calon Peserta Resmi',
-      teamId: team.id,
-      regCode: team.regCode,
-      schoolName: team.schoolName,
-      avatar: schoolLogo || `https://ui-avatars.com/api/?name=${encodeURIComponent(team.schoolName)}&background=8B0000&color=fff&bold=true`
-    };
-
-    // Pastikan tersimpan secara persisten di localStorage
-    safeSetItem(STORAGE_KEYS.CURRENT_TEAM_ID, team.id);
-    safeSetItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(user));
-    safeSetItem(STORAGE_KEYS.ROLE, 'peserta');
+    if (!isAdminOrSuper && !isTeamOwner) {
+      if (onBack) onBack();
+      if (openAuthModal) openAuthModal('login');
+      return;
+    }
 
     if (setCurrentTeamId) setCurrentTeamId(team.id);
-    if (setCurrentUser) setCurrentUser(user);
-    if (setRole) setRole('peserta');
+    safeSetItem(STORAGE_KEYS.CURRENT_TEAM_ID, team.id);
+
+    if (!isAdminOrSuper) {
+      const schoolLogo = team.files?.schoolLogo?.url && team.files?.schoolLogo?.url !== '#' && !team.files?.schoolLogo?.url.startsWith('#')
+        ? team.files.schoolLogo.url
+        : null;
+
+      const user = {
+        id: `user-${team.id}`,
+        name: team.officialName || team.schoolName,
+        email: team.email || '',
+        role: 'peserta',
+        roleLabel: 'Calon Peserta Resmi',
+        teamId: team.id,
+        regCode: team.regCode,
+        schoolName: team.schoolName,
+        avatar: schoolLogo || `https://ui-avatars.com/api/?name=${encodeURIComponent(team.schoolName)}&background=8B0000&color=fff&bold=true`
+      };
+
+      safeSetItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(user));
+      safeSetItem(STORAGE_KEYS.ROLE, 'peserta');
+      if (setCurrentUser) setCurrentUser(user);
+      if (setRole) setRole('peserta');
+    }
 
     // 3. Panggil onBack agar MainApp menghilangkan state scannedRegCode
     if (onBack) onBack();

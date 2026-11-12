@@ -49,8 +49,8 @@ export default function StagingDashboard() {
   const basecampActionType = stagingBasecampAction || 'checkin';
   const setBasecampActionType = setStagingBasecampAction || (() => {});
 
-  // Akses Terbatas: Admin, Superadmin, atau Penginput/Verifikator/Finalisator/Juri
-  const hasAccess = currentUser && ['admin', 'superadmin', 'penginput', 'verifikator', 'finalisator', 'juri'].includes(currentUser.role);
+  // Akses Terbatas: Admin, Superadmin, Petugas Lapangan (checkin/dp/staging), atau Penginput/Verifikator/Finalisator/Juri
+  const hasAccess = currentUser && ['admin', 'superadmin', 'checkin', 'dp', 'staging', 'penginput', 'verifikator', 'finalisator', 'juri'].includes(currentUser.role);
 
   if (!hasAccess) {
     return (
@@ -186,7 +186,7 @@ export default function StagingDashboard() {
                 Staging Area & Operasional Lapangan
               </h1>
               <p className="text-xs text-slate-500 mt-0.5">
-                Basecamp (QR & Logistik), DP 1 (Inspeksi Tab/iPad), DP 2 (Tunggu Steril), DP 3, dan Kotak Lomba.
+                Basecamp (QR & Logistik), DP 1 (Verifikasi Fisik & Personel via Tab/iPad), DP 2 (Holding Area Siap Tampil), dan Kotak Lomba.
               </p>
             </div>
           </div>

@@ -6,6 +6,13 @@
  * Menghubungkan seluruh alur: Pendaftaran, TM, Uji Coba, Basecamp, DP, Penjurian, Rekap, dan Klasemen!
  */
 
+import {
+  MATERIALS,
+  RUBRIC_SCALE_TEMPLATES,
+  getScaleTemplateForMaterial,
+  DANTON_SCALE
+} from '../config.js';
+
 const SD_SCHOOL_PROFILES = [
   { name: 'SD Muhammadiyah Sapen Yogyakarta', danton: 'M. Fadhil Arkananta', platoon: 'Peleton Singo Menggolo', official: 'Drs. Hendro Wibowo', category: 'Homogen Putra' },
   { name: 'SD Muhammadiyah Sukonandi Yogyakarta', danton: 'Raditya Bagas Prakoso', platoon: 'Peleton Ki Ageng Pemanahan', official: 'Ahmad Sofyan, S.Pd.', category: 'Homogen Putra' },
@@ -180,24 +187,11 @@ export function generate36DummyTeams({ realisticWorkflow = true } = {}) {
     const regCode = `LBB27-SD-${numStr}-${p.name.substring(0, 4).toUpperCase().replace(/[^A-Z]/g, '')}`;
     const regDateIso = new Date(2026, 9, 1, 8, idx * 35).toISOString();
 
-    // Skenario realistis: 14 tim sudah undi nomor (1-14), 4 tim belum undi (15-18) untuk test TM
-    let lotNumber = null;
-    let drawTime = null;
+    // Skenario 18 tim sah dan terundi nomor tampil resmi (1-18)
+    let lotNumber = idx + 1;
+    let drawTime = '2027-01-09T14:15:00+07:00';
     let status = 'verified';
     let revisionNote = '';
-
-    if (realisticWorkflow) {
-      if (idx < 14) {
-        lotNumber = idx + 1;
-        drawTime = '2027-01-09T14:15:00+07:00';
-      }
-      if (idx === 15 || idx === 16) {
-        status = 'pending'; // Siap diuji fungsi verifikasi Admin
-      } else if (idx === 17) {
-        status = 'revision';
-        revisionNote = 'Surat rekomendasi kepala sekolah dan foto roster pasukan belum diunggah.';
-      }
-    }
 
     dummyTeams.push({
       id,
@@ -272,23 +266,10 @@ export function generate36DummyTeams({ realisticWorkflow = true } = {}) {
     const regCode = `LBB27-SMP-${numStr}-${p.name.substring(0, 4).toUpperCase().replace(/[^A-Z]/g, '')}`;
     const regDateIso = new Date(2026, 9, 1, 9, idx * 30).toISOString();
 
-    let lotNumber = null;
-    let drawTime = null;
+    let lotNumber = idx + 1;
+    let drawTime = '2027-01-09T14:45:00+07:00';
     let status = 'verified';
     let revisionNote = '';
-
-    if (realisticWorkflow) {
-      if (idx < 14) {
-        lotNumber = idx + 1;
-        drawTime = '2027-01-09T14:45:00+07:00';
-      }
-      if (idx === 15 || idx === 16) {
-        status = 'pending';
-      } else if (idx === 17) {
-        status = 'revision';
-        revisionNote = 'Berkas formulir A.1 dan KTP Pembina belum dibubuhi stempel resmi.';
-      }
-    }
 
     dummyTeams.push({
       id,
@@ -574,56 +555,104 @@ export function generateDummyStaging(teams = []) {
 }
 
 /**
+ * Generator Rubrik PBB Sah Sesuai Skala Resmi Juknis (50 s.d. 90)
+ * Menghasilkan rincian nilai tiap gerakan yang valid di RUBRIC_SCALE_TEMPLATES
+ */
+function generateRubricForTarget(materials, target, seedOffset) {
+  const result = {};
+  const optionsMap = {};
+  materials.forEach((m, idx) => {
+    const key = getScaleTemplateForMaterial(m);
+    const tmpl = RUBRIC_SCALE_TEMPLATES[key] || RUBRIC_SCALE_TEMPLATES.SEDERHANA;
+    optionsMap[idx] = tmpl.map(t => t.val);
+    const mid = tmpl[Math.floor(tmpl.length * 0.7)] || tmpl[0];
+    result[idx] = mid.val;
+  });
+
+  let currentSum = Object.values(result).reduce((a, b) => a + b, 0);
+  let attempts = 0;
+  while (currentSum !== target && attempts < 3000) {
+    attempts++;
+    const idx = (attempts * 11 + seedOffset) % materials.length;
+    const opts = optionsMap[idx];
+    const curVal = result[idx];
+    const curPos = opts.indexOf(curVal);
+    if (currentSum > target && curPos > 0) {
+      result[idx] = opts[curPos - 1];
+      currentSum -= (curVal - opts[curPos - 1]);
+    } else if (currentSum < target && curPos < opts.length - 1) {
+      result[idx] = opts[curPos + 1];
+      currentSum += (opts[curPos + 1] - curVal);
+    }
+  }
+  return result;
+}
+
+/**
  * Generate Skor Penjurian & Rekapitulasi Nilai Realistis (Klasemen & Rekap)
  */
 export function generateDummyScores(teams = []) {
   const scores = {};
 
-  // Tim yang sudah selesai tampil dan memiliki nilai (Nomor 1 s.d. 14 SD & SMP)
+  // Seluruh 18 tim SD dan 18 tim SMP memiliki nilai berjenjang resmi
   teams.forEach(team => {
     const num = parseInt(team.id.replace(/[^0-9]/g, ''), 10) || 1;
     const isSD = team.jenjang === 'SD';
+    const materials = isSD ? MATERIALS.SD : MATERIALS.SMP;
 
-    if (num >= 1 && num <= 14) {
-      // Skema Nilai Berjenjang Realistis
-      // SD: 26 Gerakan (~ 1800 - 2150 total)
-      // SMP: 28 Gerakan (~ 1900 - 2250 total)
-      const basePbb = isSD ? 1860 : 1940;
-      const rankBonus = (15 - num) * 18; // Tim nomor 1 (Sapen) tertinggi: 2112
-      const pbbTotal = basePbb + rankBonus;
-      const pbb1 = Math.round(pbbTotal * 0.334);
-      const pbb2 = Math.round(pbbTotal * 0.333);
-      const pbb3 = pbbTotal - pbb1 - pbb2;
+    if (num >= 1 && num <= 18) {
+      // Skema Nilai Berjenjang Realistis Sesuai Juknis Bab A.3 & Skala 50-90
+      // 1 Juri: SD 26 Gerakan (~1800 - 2180), SMP 28 Gerakan (~2000 - 2380)
+      // Akumulasi 3 Dewan Juri: SD (~5400 - 6540), SMP (~6000 - 7140)
+      const baseTarget = isSD ? 2180 : 2320;
+      const juryTarget = baseTarget - (num - 1) * 22;
+
+      const j1Rubric = generateRubricForTarget(materials, juryTarget, 1);
+      const j2Rubric = generateRubricForTarget(materials, juryTarget - 2, 2);
+      const j3Rubric = generateRubricForTarget(materials, juryTarget - 1, 3);
+
+      const pbb1 = Object.values(j1Rubric).reduce((a, b) => a + b, 0);
+      const pbb2 = Object.values(j2Rubric).reduce((a, b) => a + b, 0);
+      const pbb3 = Object.values(j3Rubric).reduce((a, b) => a + b, 0);
+      const pbbTotal = pbb1 + pbb2 + pbb3;
 
       // Rubrik Danton Resmi (Bab A.3.b Juknis: Skala Maksimal 90: KS=50, K=54/58/62, C=66/70/74, B=78/82/86, BS=90)
-      // Opsi Baku DANTON_SCALE: [50, 55, 60, 64, 66, 68, 72, 74, 76, 79, 81, 83, 86, 88, 90]
-      const bsOptions = [86, 88, 90];
-      const bOptions = [79, 81, 83];
-      const cOptions = [72, 74, 76];
-      const kOptions = [64, 66, 68];
+      // Opsi Baku DANTON_SCALE: [50, 54, 58, 62, 66, 70, 74, 78, 82, 86, 90]
+      const bsOptions = [86, 90, 90];
+      const bOptions = [78, 82, 86];
+      const cOptions = [66, 70, 74];
+      const kOptions = [54, 58, 62];
 
       const pool = num <= 3 ? bsOptions : num <= 8 ? bOptions : num <= 12 ? cOptions : kOptions;
-      const dantonMateri = pool[(num) % pool.length];
-      const dantonVokal = pool[(num + 1) % pool.length];
-      const dantonSikap = pool[(num + 2) % pool.length];
-      const dantonLapangan = pool[(num) % pool.length];
+      const d1Rubric = {
+        materi: pool[(num) % pool.length],
+        vokal: pool[(num + 1) % pool.length],
+        sikap: pool[(num + 2) % pool.length],
+        lapangan: pool[(num) % pool.length],
+      };
+      const d2Rubric = {
+        materi: pool[(num + 1) % pool.length],
+        vokal: pool[(num) % pool.length],
+        sikap: pool[(num + 1) % pool.length],
+        lapangan: pool[(num + 2) % pool.length],
+      };
+      const d3Rubric = {
+        materi: pool[(num + 2) % pool.length],
+        vokal: pool[(num + 2) % pool.length],
+        sikap: pool[(num) % pool.length],
+        lapangan: pool[(num + 1) % pool.length],
+      };
 
       // Formula Juknis Bab A.3.c: (Materi 35%) + (Vokal 25%) + (Sikap 20%) + (Lapangan 20%)
-      const calcDantonJury = (m, v, s, l) => parseFloat(((m * 0.35) + (v * 0.25) + (s * 0.20) + (l * 0.20)).toFixed(2));
-      const danton1 = calcDantonJury(dantonMateri, dantonVokal, dantonSikap, dantonLapangan);
-      const danton2 = calcDantonJury(
-        pool[(num + 1) % pool.length],
-        pool[(num) % pool.length],
-        pool[(num + 1) % pool.length],
-        pool[(num + 2) % pool.length]
-      );
-      const danton3 = calcDantonJury(
-        pool[(num + 2) % pool.length],
-        pool[(num + 2) % pool.length],
-        pool[(num) % pool.length],
-        pool[(num + 1) % pool.length]
-      );
+      const calcDantonJury = (r) => parseFloat(((r.materi * 0.35) + (r.vokal * 0.25) + (r.sikap * 0.20) + (r.lapangan * 0.20)).toFixed(2));
+      const danton1 = calcDantonJury(d1Rubric);
+      const danton2 = calcDantonJury(d2Rubric);
+      const danton3 = calcDantonJury(d3Rubric);
       const dantonTotal = parseFloat((danton1 + danton2 + danton3).toFixed(2));
+      const dantonMateri = d1Rubric.materi + d2Rubric.materi + d3Rubric.materi;
+      const dantonVokal = d1Rubric.vokal + d2Rubric.vokal + d3Rubric.vokal;
+      const dantonSikap = d1Rubric.sikap + d2Rubric.sikap + d3Rubric.sikap;
+      const dantonLapangan = d1Rubric.lapangan + d2Rubric.lapangan + d3Rubric.lapangan;
 
       // Contoh tim nomor 6 kena penalti injak garis (-50 poin) untuk simulasi
       let peletonPenalty = 0;
@@ -639,13 +668,27 @@ export function generateDummyScores(teams = []) {
 
       let status = 'finalized';
       let isLocked = true;
-      if (num === 13) {
+      if (num === 17) {
         status = 'verified';
         isLocked = false;
-      } else if (num === 14) {
+      } else if (num === 18) {
         status = 'draft';
         isLocked = false;
       }
+
+      const awardTitle = num === 1
+        ? `Juara Utama 1 ${isSD ? 'SD' : 'SMP'}`
+        : num === 2
+        ? `Juara Utama 2 ${isSD ? 'SD' : 'SMP'}`
+        : num === 3
+        ? `Juara Utama 3 ${isSD ? 'SD' : 'SMP'}`
+        : num === 4
+        ? `Juara Harapan 1 ${isSD ? 'SD' : 'SMP'}`
+        : num === 5
+        ? `Juara Harapan 2 ${isSD ? 'SD' : 'SMP'}`
+        : num === 6
+        ? `Juara Harapan 3 ${isSD ? 'SD' : 'SMP'}`
+        : `Peringkat #${num}`;
 
       const scoreEntry = {
         teamId: team.id,
@@ -654,11 +697,11 @@ export function generateDummyScores(teams = []) {
         scoredAt: '2027-01-24T09:30:00+07:00',
         rank: num,
         categoryRank: num,
-        awardTitle: num === 1 ? `Juara 1 Peleton ${isSD ? 'SD' : 'SMP'}` : num === 2 ? `Juara 2 Peleton ${isSD ? 'SD' : 'SMP'}` : num === 3 ? `Juara 3 Peleton ${isSD ? 'SD' : 'SMP'}` : `Peringkat #${num}`,
+        awardTitle,
         juries: {
-          pos1: { peletonTotal: pbb1, dantonTotal: danton1, total: parseFloat((pbb1 + danton1).toFixed(2)) },
-          pos2: { peletonTotal: pbb2, dantonTotal: danton2, total: parseFloat((pbb2 + danton2).toFixed(2)) },
-          pos3: { peletonTotal: pbb3, dantonTotal: danton3, total: parseFloat((pbb3 + danton3).toFixed(2)) },
+          pos1: { peletonTotal: pbb1, dantonTotal: danton1, total: parseFloat((pbb1 + danton1).toFixed(2)), rubricScores: j1Rubric, dantonRubricScores: d1Rubric },
+          pos2: { peletonTotal: pbb2, dantonTotal: danton2, total: parseFloat((pbb2 + danton2).toFixed(2)), rubricScores: j2Rubric, dantonRubricScores: d2Rubric },
+          pos3: { peletonTotal: pbb3, dantonTotal: danton3, total: parseFloat((pbb3 + danton3).toFixed(2)), rubricScores: j3Rubric, dantonRubricScores: d3Rubric },
         },
         pbb: {
           total: pbbTotal,
@@ -667,7 +710,7 @@ export function generateDummyScores(teams = []) {
           j1: pbb1,
           j2: pbb2,
           j3: pbb3,
-          rubricScores: {},
+          rubricScores: j1Rubric,
         },
         danton: {
           total: dantonTotal,

@@ -140,7 +140,10 @@ export default function AdminDashboard() {
     }
 
     const matchesJenjang = selectedJenjang === 'ALL' || team.jenjang === selectedJenjang;
-    const matchesStatus = selectedStatus === 'ALL' || team.status === selectedStatus;
+    const matchesStatus =
+      selectedStatus === 'ALL' ||
+      team.status === selectedStatus ||
+      (selectedStatus === 'pending_verification' && (team.status === 'registered' || team.status === 'pending_verification'));
     const matchesSearch =
       team.schoolName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       team.regCode.toLowerCase().includes(searchQuery.toLowerCase()) ||

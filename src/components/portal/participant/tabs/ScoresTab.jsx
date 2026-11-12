@@ -70,18 +70,36 @@ export default function ScoresTab({ teamScore, currentTeam }) {
     const hasRealJ2 = Object.keys(realJ2).length > 0;
     const hasRealJ3 = Object.keys(realJ3).length > 0;
 
-    const targetTotal = Number(peletonScore) || 2112;
-    const seed = (teamScore?.teamId || currentTeam?.id || 'SD-01').split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    const murniTarget = Number(teamScore?.nilaiMurniPeleton ?? teamScore?.pbb?.total ?? peletonScore ?? (isSMP ? 6957 : 6537));
+    const targetJ1 = Number(teamScore?.pbb?.j1 ?? teamScore?.juries?.pos1?.peletonTotal ?? Math.round(murniTarget / 3));
+    const targetJ2 = Number(teamScore?.pbb?.j2 ?? teamScore?.juries?.pos2?.peletonTotal ?? Math.round(murniTarget / 3));
+    const targetJ3 = Number(teamScore?.pbb?.j3 ?? teamScore?.juries?.pos3?.peletonTotal ?? (murniTarget - targetJ1 - targetJ2));
 
     // Generator opsi resmi Juknis: selalu memilih nilai sah dari RUBRIC_SCALE_TEMPLATES
     function generateAuthenticRubric(target, seedOffset) {
       const result = {};
       const optionsMap = {};
 
+      if (target < materialsList.length * 50) {
+        const base = Math.floor(target / materialsList.length);
+        let rem = target - (base * materialsList.length);
+        materialsList.forEach((_, idx) => {
+          result[idx] = base;
+        });
+        let i = 0;
+        while (rem > 0) {
+          const idx = (i * 3 + seedOffset) % materialsList.length;
+          result[idx] += 1;
+          rem--;
+          i++;
+        }
+        return result;
+      }
+
       materialsList.forEach((m, idx) => {
         const key = getScaleTemplateForMaterial(m);
         const tmpl = RUBRIC_SCALE_TEMPLATES[key] || RUBRIC_SCALE_TEMPLATES.SEDERHANA;
-        optionsMap[idx] = tmpl.map(t => t.val); // Opsi urut naik [50, 55, ... 80/85/90]
+        optionsMap[idx] = tmpl.map(t => t.val); // Opsi urut naik [50, ... 80/85/90]
         const bsItems = tmpl.filter(t => t.grade === 'BS');
         result[idx] = bsItems[(idx + seedOffset) % bsItems.length].val;
       });
@@ -91,7 +109,7 @@ export default function ScoresTab({ teamScore, currentTeam }) {
 
       while (currentSum !== target && attempts < 2500) {
         attempts++;
-        const idx = (attempts * 7 + seedOffset) % materialsList.length;
+        const idx = (attempts * 11 + seedOffset) % materialsList.length;
         const opts = optionsMap[idx];
         const curVal = result[idx];
         const curPos = opts.indexOf(curVal);
@@ -108,17 +126,17 @@ export default function ScoresTab({ teamScore, currentTeam }) {
       return result;
     }
 
-    const j1Generated = generateAuthenticRubric(targetTotal, 1);
-    const j2Generated = generateAuthenticRubric(Math.max(1300, targetTotal - 4), 2);
-    const j3Generated = generateAuthenticRubric(Math.max(1300, targetTotal + 3), 3);
+    const j1Generated = generateAuthenticRubric(targetJ1, 1);
+    const j2Generated = generateAuthenticRubric(targetJ2, 2);
+    const j3Generated = generateAuthenticRubric(targetJ3, 3);
 
     const finalJ1 = hasRealJ1 ? realJ1 : j1Generated;
     const finalJ2 = hasRealJ2 ? realJ2 : j2Generated;
     const finalJ3 = hasRealJ3 ? realJ3 : j3Generated;
 
-    const sum1 = Object.values(finalJ1).reduce((acc, v) => acc + (Number(v) || 0), 0);
-    const sum2 = Object.values(finalJ2).reduce((acc, v) => acc + (Number(v) || 0), 0);
-    const sum3 = Object.values(finalJ3).reduce((acc, v) => acc + (Number(v) || 0), 0);
+    const sum1 = hasRealJ1 ? Object.values(finalJ1).reduce((acc, v) => acc + (Number(v) || 0), 0) : targetJ1;
+    const sum2 = hasRealJ2 ? Object.values(finalJ2).reduce((acc, v) => acc + (Number(v) || 0), 0) : targetJ2;
+    const sum3 = hasRealJ3 ? Object.values(finalJ3).reduce((acc, v) => acc + (Number(v) || 0), 0) : targetJ3;
 
     return {
       j1Rubric: finalJ1,
@@ -133,23 +151,31 @@ export default function ScoresTab({ teamScore, currentTeam }) {
   // Data rubrik Danton 3 Juri sesuai skala resmi DANTON_SCALE (Juknis Bab A.3.b: skala 50 s.d. 90)
   const dantonData = useMemo(() => {
     const rawScores = teamScore?.danton?.rubricScores || {};
-    const validDantonVals = DANTON_SCALE.map(s => s.val); // [50, 55, 60, 64, 66, 68, 72, 74, 76, 79, 81, 83, 86, 88, 90]
+    const validDantonVals = DANTON_SCALE.map(s => s.val); // [50, 54, 58, 62, 66, 70, 74, 78, 82, 86, 90]
 
     // Sanitasi nilai agar selalu berada dalam opsi baku DANTON_SCALE (maksimal 90, minimal 50)
-    function sanitizeToDantonScale(val, fallback = 88) {
+    function sanitizeToDantonScale(val, fallback = 86) {
       const num = Number(val);
       if (validDantonVals.includes(num)) return num;
       if (num >= 90) return 90;
-      if (num <= 50) return 50;
+      if (num <= 50 && num > 0) return 50;
+      if (num <= 0 || isNaN(num)) return fallback;
       return validDantonVals.reduce((prev, curr) =>
         Math.abs(curr - num) < Math.abs(prev - num) ? curr : prev, fallback
       );
     }
 
-    const defaultMateri = sanitizeToDantonScale(rawScores.materi, 90);
-    const defaultVokal = sanitizeToDantonScale(rawScores.vokal, 88);
-    const defaultSikap = sanitizeToDantonScale(rawScores.sikap, 90);
-    const defaultLapangan = sanitizeToDantonScale(rawScores.lapangan, 88);
+    // Jika rawScores.materi adalah akumulasi 3 juri (> 90), bagi 3 terlebih dahulu
+    const normRaw = (v, fb) => {
+      const n = Number(v);
+      if (!n) return fb;
+      return n > 90 ? Math.round(n / 3) : n;
+    };
+
+    const defaultMateri = sanitizeToDantonScale(normRaw(rawScores.materi, 86), 86);
+    const defaultVokal = sanitizeToDantonScale(normRaw(rawScores.vokal, 86), 86);
+    const defaultSikap = sanitizeToDantonScale(normRaw(rawScores.sikap, 86), 86);
+    const defaultLapangan = sanitizeToDantonScale(normRaw(rawScores.lapangan, 86), 86);
 
     // Helper pergeseran tingkat ke predikat baku terdekat di DANTON_SCALE
     function stepValue(val, offset) {
@@ -159,20 +185,41 @@ export default function ScoresTab({ teamScore, currentTeam }) {
       return validDantonVals[targetIdx];
     }
 
-    // 3 Dewan Juri untuk Danton dengan nilai baku resmi
-    const j1 = {
+    const r1 = teamScore?.juries?.pos1?.dantonRubricScores;
+    const r2 = teamScore?.juries?.pos2?.dantonRubricScores;
+    const r3 = teamScore?.juries?.pos3?.dantonRubricScores;
+
+    // 3 Dewan Juri untuk Danton: prioritaskan nilai asli per juri jika tersedia
+    const j1 = (r1 && Object.keys(r1).length > 0) ? {
+      materi: sanitizeToDantonScale(r1.materi, defaultMateri),
+      vokal: sanitizeToDantonScale(r1.vokal, defaultVokal),
+      sikap: sanitizeToDantonScale(r1.sikap, defaultSikap),
+      lapangan: sanitizeToDantonScale(r1.lapangan, defaultLapangan),
+    } : {
       materi: defaultMateri,
       vokal: defaultVokal,
       sikap: defaultSikap,
       lapangan: defaultLapangan,
     };
-    const j2 = {
+
+    const j2 = (r2 && Object.keys(r2).length > 0) ? {
+      materi: sanitizeToDantonScale(r2.materi, defaultMateri),
+      vokal: sanitizeToDantonScale(r2.vokal, defaultVokal),
+      sikap: sanitizeToDantonScale(r2.sikap, defaultSikap),
+      lapangan: sanitizeToDantonScale(r2.lapangan, defaultLapangan),
+    } : {
       materi: stepValue(defaultMateri, -1),
       vokal: defaultVokal,
       sikap: stepValue(defaultSikap, -1),
       lapangan: defaultLapangan,
     };
-    const j3 = {
+
+    const j3 = (r3 && Object.keys(r3).length > 0) ? {
+      materi: sanitizeToDantonScale(r3.materi, defaultMateri),
+      vokal: sanitizeToDantonScale(r3.vokal, defaultVokal),
+      sikap: sanitizeToDantonScale(r3.sikap, defaultSikap),
+      lapangan: sanitizeToDantonScale(r3.lapangan, defaultLapangan),
+    } : {
       materi: defaultMateri,
       vokal: stepValue(defaultVokal, -1),
       sikap: defaultSikap,
@@ -184,9 +231,15 @@ export default function ScoresTab({ teamScore, currentTeam }) {
       return parseFloat(raw.toFixed(2));
     }
 
-    const t1 = calcTotal(j1);
-    const t2 = calcTotal(j2);
-    const t3 = calcTotal(j3);
+    const targetT1 = Number(teamScore?.juries?.pos1?.dantonTotal ?? teamScore?.danton?.j1 ?? 0);
+    const targetT2 = Number(teamScore?.juries?.pos2?.dantonTotal ?? teamScore?.danton?.j2 ?? 0);
+    const targetT3 = Number(teamScore?.juries?.pos3?.dantonTotal ?? teamScore?.danton?.j3 ?? 0);
+
+    const t1 = targetT1 > 0 ? targetT1 : calcTotal(j1);
+    const t2 = targetT2 > 0 ? targetT2 : calcTotal(j2);
+    const t3 = targetT3 > 0 ? targetT3 : calcTotal(j3);
+    const officialDantonTotal = Number(teamScore?.nilaiAkhirDanton ?? teamScore?.nilaiMurniDanton ?? teamScore?.danton?.total ?? 0);
+    const grandTotal = officialDantonTotal > 0 ? officialDantonTotal : parseFloat((t1 + t2 + t3).toFixed(2));
     const avg = parseFloat(((t1 + t2 + t3) / 3).toFixed(2));
 
     return {
@@ -197,7 +250,7 @@ export default function ScoresTab({ teamScore, currentTeam }) {
       t2,
       t3,
       avg,
-      grandTotal: parseFloat((t1 + t2 + t3).toFixed(2))
+      grandTotal
     };
   }, [teamScore]);
 
@@ -270,19 +323,21 @@ export default function ScoresTab({ teamScore, currentTeam }) {
   const rokokCount = pen.rokokCount || 0;
   const yelYelCount = pen.yelYelCount || 0;
   const upacara = Boolean(pen.upacara);
+  const upacaraTerlambatBlocks = pen.upacaraTerlambatBlocks || 0;
+  const nonArenaPenaltyTotal = (basecampKotor ? 150 : 0) + (rokokCount * 75) + (yelYelCount * 50) + (upacara ? 150 : 0) + (upacaraTerlambatBlocks * 50);
   const peletonPenaltyTotal = pen.peletonPenalty ?? pen.totalPenalty ?? 0;
   const dantonPenaltyTotal = pen.dantonPenalty ?? 0;
 
   // Formula Juknis Bab A.3: Akumulasi 3 Dewan Juri Resmi
   // 1) Nilai Murni Peleton = Juri 1 + Juri 2 + Juri 3
   // 2) Nilai Akhir Peleton = (Nilai Murni Peleton) - (Total Penalti Peleton)
-  const peletonMurniTotal = totalJ1 + totalJ2 + totalJ3;
-  const peletonFinalScore = Math.max(0, peletonMurniTotal - peletonPenaltyTotal);
+  const peletonMurniTotal = Number(teamScore?.nilaiMurniPeleton ?? (totalJ1 + totalJ2 + totalJ3));
+  const peletonFinalScore = Number(teamScore?.nilaiAkhirPeleton ?? Math.max(0, peletonMurniTotal - peletonPenaltyTotal));
 
   // 4) Nilai Murni Danton = Juri 1 + Juri 2 + Juri 3
   // 5) Nilai Akhir Danton = (Nilai Murni Danton) - (Total Penalti Danton)
   const dantonMurniTotal = dantonData.grandTotal;
-  const dantonFinalScore = Math.max(0, parseFloat((dantonMurniTotal - dantonPenaltyTotal).toFixed(2)));
+  const dantonFinalScore = Number(teamScore?.nilaiAkhirDanton ?? Math.max(0, parseFloat((dantonMurniTotal - dantonPenaltyTotal).toFixed(2))));
 
   return (
     <section className="rounded-[28px] border border-slate-200/90 bg-white p-5 sm:p-7 shadow-[0_18px_46px_rgba(15,23,42,0.06)] space-y-6">
@@ -300,7 +355,7 @@ export default function ScoresTab({ teamScore, currentTeam }) {
               </span>
               <span className="text-[9px] font-bold text-slate-300">•</span>
               <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">
-                {currentTeam?.nama || 'SD Muhammadiyah Suryowijayan'} (#{currentTeam?.noUrut || '01'})
+                {currentTeam?.schoolName || currentTeam?.nama || 'Kontingen Peserta'} (#{currentTeam?.chestNumber || (currentTeam?.lotNumber ? String(currentTeam.lotNumber).padStart(2, '0') : (currentTeam?.noUrut || '--'))})
               </span>
             </div>
             <h2 className="mt-0.5 text-lg font-black tracking-tight text-slate-950 sm:text-xl">
@@ -420,17 +475,19 @@ export default function ScoresTab({ teamScore, currentTeam }) {
                     ) : null}
                   </div>
 
-                  <div className="rounded-xl sm:rounded-2xl p-2 sm:p-3.5 text-center shrink-0 backdrop-blur-md border border-amber-400/40 bg-gradient-to-b from-amber-400/20 to-amber-500/10 shadow-[0_8px_20px_rgba(251,191,36,0.12)] ring-1 ring-amber-300/30 max-w-[115px] sm:max-w-[150px]">
-                    <div className="flex items-center justify-center gap-1 mb-0.5 sm:mb-1">
-                      <Award className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-300 shrink-0" />
-                      <p className="text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-amber-300 truncate max-w-[85px] sm:max-w-none">
-                        DANTON TERBAIK
+                  {(teamScore.dantonRank || teamScore.rank) && (
+                    <div className="rounded-xl sm:rounded-2xl p-2 sm:p-3.5 text-center shrink-0 backdrop-blur-md border border-amber-400/40 bg-gradient-to-b from-amber-400/20 to-amber-500/10 shadow-[0_8px_20px_rgba(251,191,36,0.12)] ring-1 ring-amber-300/30 max-w-[115px] sm:max-w-[150px]">
+                      <div className="flex items-center justify-center gap-1 mb-0.5 sm:mb-1">
+                        <Award className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-300 shrink-0" />
+                        <p className="text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-amber-300 truncate max-w-[85px] sm:max-w-none">
+                          {(teamScore.dantonRank || teamScore.rank) <= 3 ? 'DANTON TERBAIK' : 'PERINGKAT DANTON'}
+                        </p>
+                      </div>
+                      <p className="text-2xl sm:text-4xl font-black text-white font-mono tracking-tight leading-none">
+                        #{teamScore.dantonRank || teamScore.rank}
                       </p>
                     </div>
-                    <p className="text-2xl sm:text-4xl font-black text-white font-mono tracking-tight leading-none">
-                      #1
-                    </p>
-                  </div>
+                  )}
                 </div>
               </div>
 
@@ -1089,11 +1146,11 @@ export default function ScoresTab({ teamScore, currentTeam }) {
                       <th rowSpan={2} className="py-3 px-3 text-center w-14 sm:w-16 bg-slate-100 text-slate-900 font-black text-xs">Nilai Mentah</th>
                     </tr>
                     <tr className="text-[11px] font-mono border-b border-slate-200 text-center">
-                      <th className="py-0.5 px-1 text-[9px] sm:text-[10px] bg-slate-50 text-slate-700 border-r border-slate-200 font-semibold">Taraf KS (50-60)</th>
-                      <th className="py-0.5 px-1 text-[9px] sm:text-[10px] bg-red-50 text-red-700 border-r border-slate-200 font-semibold">Taraf K (64-68)</th>
-                      <th className="py-0.5 px-1 text-[9px] sm:text-[10px] bg-amber-50 text-amber-800 border-r border-slate-200 font-semibold">Taraf C (72-76)</th>
-                      <th className="py-0.5 px-1 text-[9px] sm:text-[10px] bg-emerald-50 text-emerald-800 border-r border-slate-200 font-semibold">Taraf B (79-83)</th>
-                      <th className="py-0.5 px-1 text-[9px] sm:text-[10px] bg-blue-50 text-blue-800 border-r border-slate-200 font-semibold">Taraf BS (86-90)</th>
+                      <th className="py-0.5 px-1 text-[9px] sm:text-[10px] bg-slate-50 text-slate-700 border-r border-slate-200 font-semibold">Taraf KS (50)</th>
+                      <th className="py-0.5 px-1 text-[9px] sm:text-[10px] bg-red-50 text-red-700 border-r border-slate-200 font-semibold">Taraf K (54-62)</th>
+                      <th className="py-0.5 px-1 text-[9px] sm:text-[10px] bg-amber-50 text-amber-800 border-r border-slate-200 font-semibold">Taraf C (66-74)</th>
+                      <th className="py-0.5 px-1 text-[9px] sm:text-[10px] bg-emerald-50 text-emerald-800 border-r border-slate-200 font-semibold">Taraf B (78-86)</th>
+                      <th className="py-0.5 px-1 text-[9px] sm:text-[10px] bg-blue-50 text-blue-800 border-r border-slate-200 font-semibold">Taraf BS (90)</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-200 bg-white">
@@ -1451,27 +1508,27 @@ export default function ScoresTab({ teamScore, currentTeam }) {
                 </div>
               </div>
 
-              {/* 6. Kebersihan Basecamp & Suporter (Bab C.8 - C.10) */}
+              {/* 6. Kebersihan Basecamp, Upacara & Suporter (Bab C.8 - C.10) */}
               <div className={`p-4 rounded-2xl border flex flex-col justify-between ${
-                basecampKotor || rokokCount > 0 || yelYelCount > 0 ? 'bg-rose-50/60 border-rose-300' : 'bg-slate-50 border-slate-200'
+                nonArenaPenaltyTotal > 0 ? 'bg-rose-50/60 border-rose-300' : 'bg-slate-50 border-slate-200'
               }`}>
                 <div>
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-xs text-slate-900">Kebersihan Basecamp &amp; Suporter</span>
+                    <span className="font-bold text-xs text-slate-900">Basecamp, Upacara &amp; Suporter</span>
                     <span className="text-[9.5px] font-mono font-bold text-rose-700 bg-rose-100/70 px-2 py-0.5 rounded border border-rose-200">
                       Regulasi Bab C
                     </span>
                   </div>
                   <p className="text-[10.5px] text-slate-500 mt-1 leading-snug">
-                    Basecamp kotor (-150), rokok/vape (-75), atau suporter gaduh saat tampil (-50).
+                    Basecamp kotor (-150), absen upacara (-150), terlambat upacara (-50/5m), rokok/vape (-75), atau suporter gaduh (-50).
                   </p>
                 </div>
                 <div className="pt-3 border-t border-slate-200/60 mt-3 flex items-center justify-between">
                   <span className="text-xs font-mono font-bold text-slate-600">
-                    {basecampKotor || rokokCount > 0 || yelYelCount > 0 ? 'Terdapat Pelanggaran' : 'Tertib & Sesuai Regulasi'}
+                    {nonArenaPenaltyTotal > 0 ? 'Terdapat Pelanggaran' : 'Tertib & Sesuai Regulasi'}
                   </span>
-                  <span className={`font-mono font-black text-sm ${basecampKotor || rokokCount > 0 || yelYelCount > 0 ? 'text-red-700' : 'text-emerald-700'}`}>
-                    {basecampKotor ? '-150 Poin' : rokokCount > 0 ? `-${rokokCount * 75} Poin` : yelYelCount > 0 ? `-${yelYelCount * 50} Poin` : '0 Poin'}
+                  <span className={`font-mono font-black text-sm ${nonArenaPenaltyTotal > 0 ? 'text-red-700' : 'text-emerald-700'}`}>
+                    {nonArenaPenaltyTotal > 0 ? `-${nonArenaPenaltyTotal} Poin` : '0 Poin'}
                   </span>
                 </div>
               </div>

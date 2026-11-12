@@ -113,12 +113,17 @@ export default function DaerahPersiapanView() {
     teams,
     staging,
     updateDP1PersonnelInspection,
+    passToDP2,
+    startFieldTimer,
+    stopAndSaveFieldTimer,
+    fieldTimer,
+    updateTeamStaging,
     currentUser,
     role
   } = useCompetition();
 
   const userRole = currentUser?.role || role || 'publik';
-  const canOperateDP = ['dp', 'staging', 'superadmin'].includes(userRole);
+  const canOperateDP = ['dp', 'staging', 'admin', 'superadmin'].includes(userRole);
 
   const isTeamCheckedIn = (teamId) => {
     const st = staging?.[teamId] || staging?.basecamp?.[teamId];
@@ -269,6 +274,7 @@ export default function DaerahPersiapanView() {
     // Notifikasi otomatis saat tepat mencapai ambang 22 personel
     const wasAlreadyChecked = person.aliasKeys.some(k => dp1TeamInspections[k]?.verified === true);
     if (isVerified && !wasAlreadyChecked && prevVerified === 21) {
+      if (passToDP2) passToDP2(activeTeam.id);
       showNotice(`${activeTeam.schoolName} mencapai 22 personel — otomatis masuk DP 2 & Siap Dinilai!`);
     }
   };
@@ -276,6 +282,7 @@ export default function DaerahPersiapanView() {
   const handleVerifyAll = () => {
     if (!canOperateDP || !activeTeam) return;
     updateDP1PersonnelInspection(activeTeam.id, allPersonnels.map(p => p.id), true, '');
+    if (passToDP2) passToDP2(activeTeam.id);
     showNotice(`25 personel ${activeTeam.schoolName} terverifikasi — otomatis masuk DP 2 & Siap Dinilai!`);
   };
 
@@ -643,6 +650,35 @@ export default function DaerahPersiapanView() {
                 <span className="text-xs font-mono font-black text-slate-800 bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200/70">
                   {verifiedCount}/{allPersonnels.length} Personel
                 </span>
+
+                {canOperateDP && activeTeam && (
+                  <div className="flex items-center gap-1.5">
+                    {fieldTimer?.activeTeamId === activeTeam.id ? (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          stopAndSaveFieldTimer(activeTeam.id, activeTeam.jenjang);
+                          showNotice(`Timer arena ${activeTeam.schoolName} dihentikan & waktu tampil disimpan!`);
+                        }}
+                        className="px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-black transition cursor-pointer"
+                      >
+                        Selesai Tampil (Simpan Timer)
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (passToDP2) passToDP2(activeTeam.id);
+                          if (startFieldTimer) startFieldTimer(activeTeam.id);
+                          showNotice(`Peleton ${activeTeam.schoolName} masuk Arena & Timer dimulai!`);
+                        }}
+                        className="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition cursor-pointer"
+                      >
+                        Mulai Arena
+                      </button>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
 

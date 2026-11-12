@@ -286,7 +286,7 @@ export default function SuperadminPanel() {
   const [editForm, setEditForm] = useState({ name: '', email: '', role: '', roleLabel: '' });
 
   const staffUsers = (users || []).filter(u =>
-    ['superadmin', 'admin', 'penginput', 'verifikator', 'finalisator'].includes(u.role)
+    ['superadmin', 'admin', 'penginput', 'verifikator', 'finalisator', 'checkin', 'dp', 'juri'].includes(u.role)
   );
 
   function handleAddStaffSubmit(e) {
@@ -649,6 +649,9 @@ export default function SuperadminPanel() {
                             <option value="penginput">Penginput Nilai</option>
                             <option value="verifikator">Verifikator Nilai</option>
                             <option value="finalisator">Finalisator (Ketua Juri)</option>
+                            <option value="checkin">Petugas Pos Basecamp (Check-In/Out)</option>
+                            <option value="dp">Petugas Daerah Persiapan (DP 1 & Arena)</option>
+                            <option value="juri">Dewan Juri</option>
                             <option value="admin">Admin Sekretariat</option>
                             <option value="superadmin">Superadmin</option>
                           </select>
@@ -791,6 +794,9 @@ export default function SuperadminPanel() {
                         penginput: 'Operator Input Nilai Kertas',
                         verifikator: 'Verifikator & Checker Nilai',
                         finalisator: 'Finalisator & Pengesah Rekap Nilai',
+                        checkin: 'Petugas Pos Registrasi & Basecamp',
+                        dp: 'Petugas Daerah Persiapan (DP 1 & Arena)',
+                        juri: 'Dewan Juri Kehormatan',
                         admin: 'Panitia Sekretariat (Admin)',
                         superadmin: 'Superadmin Pelaksana',
                       };
@@ -801,6 +807,9 @@ export default function SuperadminPanel() {
                     <option value="penginput">1. Penginput Nilai (Input skor kertas + bukti foto)</option>
                     <option value="verifikator">2. Verifikator Nilai (Audit lembar fisik vs sistem)</option>
                     <option value="finalisator">3. Finalisator (Kunci permanen & sahkan Berita Acara)</option>
+                    <option value="checkin">4. Petugas Basecamp (Check-In, Logistik & Check-Out)</option>
+                    <option value="dp">5. Petugas Daerah Persiapan (Inspeksi DP 1 & Timer Arena)</option>
+                    <option value="juri">6. Dewan Juri (E-Scoring Arena)</option>
                     <option value="admin">Admin Sekretariat (Kelola peleton, undian, verifikasi)</option>
                     <option value="superadmin">Superadmin Master</option>
                   </select>

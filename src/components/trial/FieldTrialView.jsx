@@ -47,7 +47,7 @@ export default function FieldTrialView() {
   // Role permissions
   const userRole = currentUser?.role || (currentTeam ? 'peserta' : (role || 'publik'));
   const isPeserta = userRole === 'peserta';
-  const isStaff = !isPeserta && userRole !== 'publik' && ['admin', 'superadmin', 'checkin', 'dp', 'staging', 'panitia'].includes(userRole);
+  const isStaff = !isPeserta && userRole !== 'publik' && ['admin', 'superadmin', 'checkin', 'dp', 'staging', 'panitia', 'juri', 'penginput', 'verifikator', 'finalisator'].includes(userRole);
   const isPublished = Boolean(settings?.trialSchedulePublished && settings?.trialScheduleRatifiedAt);
 
   // Interactive Swap & Team Assign state for Panitia

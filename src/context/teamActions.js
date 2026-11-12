@@ -31,6 +31,15 @@ export function createTeamActions({ teams, setTeams, scores, setScores, setStagi
     const id = `TEAM-${jenjang}-${Date.now()}-${randPart}`;
 
     const nowIso = new Date().toISOString();
+    const baseRoster = generatePersonnels(newTeamData.schoolName, jenjang, 'Anggota', newTeamData.dantonName);
+    if (Array.isArray(baseRoster.officials) && baseRoster.officials.length > 0) {
+      baseRoster.officials[0] = {
+        ...baseRoster.officials[0],
+        name: newTeamData.officialName || baseRoster.officials[0].name || '',
+        phone: newTeamData.waNumber || baseRoster.officials[0].phone || '',
+      };
+    }
+
     const createdTeam = {
       id,
       regCode,
@@ -39,13 +48,17 @@ export function createTeamActions({ teams, setTeams, scores, setScores, setStagi
       teamUnit: newTeamData.teamUnit || 'Tim A',
       jenjang: newTeamData.jenjang,
       teamType: newTeamData.teamType || 'Homogen',
+      homogenGender: newTeamData.homogenGender || '',
       category: newTeamData.category || newTeamData.teamType || 'Homogen',
       platoonName: newTeamData.platoonName || `Peleton ${newTeamData.schoolName}`,
       dantonName: newTeamData.dantonName || '',
       officialName: newTeamData.officialName || '',
       waNumber: newTeamData.waNumber || '',
       email: (newTeamData.email || '').trim().toLowerCase(),
-      address: newTeamData.address || '',
+      address: newTeamData.address || newTeamData.schoolAddress || '',
+      schoolAddress: newTeamData.schoolAddress || newTeamData.address || '',
+      schoolRegion: newTeamData.schoolRegion || newTeamData.city || '',
+      city: newTeamData.city || newTeamData.schoolRegion || '',
       status: 'pending',
       lotNumber: null,
       drawTime: null,
@@ -63,7 +76,7 @@ export function createTeamActions({ teams, setTeams, scores, setScores, setStagi
         recommendationLetter: newTeamData.files?.recommendationLetter || null,
       },
       revisionNote: '',
-      roster: generatePersonnels(newTeamData.schoolName, jenjang, 'Anggota', newTeamData.dantonName),
+      roster: baseRoster,
     };
 
     setTeams(prev => [createdTeam, ...prev]);
@@ -86,7 +99,7 @@ export function createTeamActions({ teams, setTeams, scores, setScores, setStagi
             ...team.files,
             [fileKey]: fileData,
           };
-          const nextStatus = team.status === 'revision' ? 'registered' : team.status;
+          const nextStatus = (team.status === 'revision' && fileData && fileData.url) ? 'registered' : team.status;
           updatedTeam = {
             ...team,
             files: updatedFiles,
@@ -131,23 +144,28 @@ export function createTeamActions({ teams, setTeams, scores, setScores, setStagi
     let updatedTeam = null;
     const nowIso = new Date().toISOString();
 
+    const applyRosterUpdate = (team) => ({
+      ...team,
+      roster: newRoster,
+      dantonName: newRoster?.danton?.name || team.dantonName,
+      updatedAt: nowIso,
+    });
+
     setTeams(prev =>
       prev.map(team => {
         if (team.id === teamId) {
-          updatedTeam = {
-            ...team,
-            roster: newRoster,
-            dantonName: newRoster?.danton?.name || team.dantonName,
-            updatedAt: nowIso,
-          };
+          updatedTeam = applyRosterUpdate(team);
           return updatedTeam;
         }
         return team;
       })
     );
 
-    if (updatedTeam) {
-      saveRecordToSheet('teams', updatedTeam).catch(err =>
+    const fallbackTeam = teams.find(t => t.id === teamId);
+    const toSave = updatedTeam || (fallbackTeam ? applyRosterUpdate(fallbackTeam) : null);
+
+    if (toSave) {
+      saveRecordToSheet('teams', toSave).catch(err =>
         console.warn('[CompetitionContext] Sync updateTeamRoster failed:', err)
       );
     }
@@ -157,29 +175,56 @@ export function createTeamActions({ teams, setTeams, scores, setScores, setStagi
     let updatedTeam = null;
     const nowIso = new Date().toISOString();
 
+    const applyProfileUpdate = (team) => {
+      const nextCity = profileData.city !== undefined ? profileData.city : (profileData.schoolRegion !== undefined ? profileData.schoolRegion : team.city);
+      const nextRegion = profileData.schoolRegion !== undefined ? profileData.schoolRegion : (profileData.city !== undefined ? profileData.city : team.schoolRegion);
+      const nextOfficialName = profileData.officialName !== undefined ? profileData.officialName : team.officialName;
+      const nextWa = profileData.waNumber !== undefined ? profileData.waNumber : team.waNumber;
+      const nextAddress = profileData.address !== undefined ? profileData.address : (profileData.schoolAddress !== undefined ? profileData.schoolAddress : team.address);
+
+      let nextRoster = team.roster;
+      if (team.roster && Array.isArray(team.roster.officials) && team.roster.officials.length > 0) {
+        const updatedOfficials = [...team.roster.officials];
+        updatedOfficials[0] = {
+          ...updatedOfficials[0],
+          name: nextOfficialName || updatedOfficials[0].name || '',
+          phone: nextWa || updatedOfficials[0].phone || '',
+        };
+        nextRoster = { ...team.roster, officials: updatedOfficials };
+      }
+
+      return {
+        ...team,
+        ...profileData,
+        schoolName: profileData.schoolName !== undefined ? profileData.schoolName : team.schoolName,
+        city: nextCity,
+        schoolRegion: nextRegion,
+        province: profileData.province !== undefined ? profileData.province : team.province,
+        address: nextAddress,
+        schoolAddress: nextAddress,
+        waNumber: nextWa,
+        officialName: nextOfficialName,
+        platoonName: profileData.platoonName !== undefined ? profileData.platoonName : team.platoonName,
+        roster: nextRoster,
+        updatedAt: nowIso,
+      };
+    };
+
     setTeams(prev =>
       prev.map(team => {
         if (team.id === teamId) {
-          updatedTeam = {
-            ...team,
-            ...profileData,
-            schoolName: profileData.schoolName !== undefined ? profileData.schoolName : team.schoolName,
-            city: profileData.city !== undefined ? profileData.city : team.city,
-            province: profileData.province !== undefined ? profileData.province : team.province,
-            address: profileData.address !== undefined ? profileData.address : team.address,
-            waNumber: profileData.waNumber !== undefined ? profileData.waNumber : team.waNumber,
-            officialName: profileData.officialName !== undefined ? profileData.officialName : team.officialName,
-            platoonName: profileData.platoonName !== undefined ? profileData.platoonName : team.platoonName,
-            updatedAt: nowIso,
-          };
+          updatedTeam = applyProfileUpdate(team);
           return updatedTeam;
         }
         return team;
       })
     );
 
-    if (updatedTeam) {
-      saveRecordToSheet('teams', updatedTeam).catch(err =>
+    const fallbackTeam = teams.find(t => t.id === teamId);
+    const toSave = updatedTeam || (fallbackTeam ? applyProfileUpdate(fallbackTeam) : null);
+
+    if (toSave) {
+      saveRecordToSheet('teams', toSave).catch(err =>
         console.warn('[CompetitionContext] Sync updateTeamProfile failed:', err)
       );
     }
@@ -190,31 +235,38 @@ export function createTeamActions({ teams, setTeams, scores, setScores, setStagi
     let updatedTeam = null;
     const nowIso = new Date().toISOString();
 
+    const applySurveyUpdate = (team) => {
+      const existingSurveys = team.vehicleSurveys || {};
+      const updatedSurveys = {
+        ...existingSurveys,
+        [agendaKey]: {
+          ...(existingSurveys[agendaKey] || {}),
+          ...surveyData,
+          updatedAt: nowIso
+        }
+      };
+      return {
+        ...team,
+        vehicleSurveys: updatedSurveys,
+        updatedAt: nowIso,
+      };
+    };
+
     setTeams(prev =>
       prev.map(team => {
         if (team.id === teamId) {
-          const existingSurveys = team.vehicleSurveys || {};
-          const updatedSurveys = {
-            ...existingSurveys,
-            [agendaKey]: {
-              ...(existingSurveys[agendaKey] || {}),
-              ...surveyData,
-              updatedAt: nowIso
-            }
-          };
-          updatedTeam = {
-            ...team,
-            vehicleSurveys: updatedSurveys,
-            updatedAt: nowIso,
-          };
+          updatedTeam = applySurveyUpdate(team);
           return updatedTeam;
         }
         return team;
       })
     );
 
-    if (updatedTeam) {
-      saveRecordToSheet('teams', updatedTeam).catch(err =>
+    const fallbackTeam = teams.find(t => t.id === teamId);
+    const toSave = updatedTeam || (fallbackTeam ? applySurveyUpdate(fallbackTeam) : null);
+
+    if (toSave) {
+      saveRecordToSheet('teams', toSave).catch(err =>
         console.warn('[CompetitionContext] Sync vehicleSurveys failed:', err)
       );
     }
@@ -235,29 +287,35 @@ export function createTeamActions({ teams, setTeams, scores, setScores, setStagi
     let updatedTeam = null;
     const nowIso = new Date().toISOString();
 
+    const applyVerifyUpdate = (team) => {
+      const nextPaymentStatus = (newStatus === 'registered' || newStatus === 'verified' || newStatus === 'drawn') 
+        ? 'paid' 
+        : (newStatus === 'pending' ? 'unverified' : team.paymentStatus);
+
+      return {
+        ...team,
+        status: newStatus,
+        paymentStatus: nextPaymentStatus,
+        revisionNote: note,
+        updatedAt: nowIso,
+      };
+    };
+
     setTeams(prev =>
       prev.map(team => {
         if (team.id === teamId) {
-          // Ketika status di-ACC menjadi 'registered' atau 'verified', pembayaran pendaftaran resmi disahkan (paid)
-          const nextPaymentStatus = (newStatus === 'registered' || newStatus === 'verified' || newStatus === 'drawn') 
-            ? 'paid' 
-            : (newStatus === 'pending' ? 'unverified' : team.paymentStatus);
-
-          updatedTeam = {
-            ...team,
-            status: newStatus,
-            paymentStatus: nextPaymentStatus,
-            revisionNote: note,
-            updatedAt: nowIso,
-          };
+          updatedTeam = applyVerifyUpdate(team);
           return updatedTeam;
         }
         return team;
       })
     );
 
-    if (updatedTeam) {
-      saveRecordToSheet('teams', updatedTeam).catch(err =>
+    const fallbackTeam = teams.find(t => t.id === teamId);
+    const toSave = updatedTeam || (fallbackTeam ? applyVerifyUpdate(fallbackTeam) : null);
+
+    if (toSave) {
+      saveRecordToSheet('teams', toSave).catch(err =>
         console.warn('[CompetitionContext] Sync verifyTeam failed:', err)
       );
     }
@@ -274,7 +332,9 @@ export function createTeamActions({ teams, setTeams, scores, setScores, setStagi
       const eligibility = checkTeamVerificationEligibility(target);
       if (!eligibility.isEligible) {
         console.warn(`[CompetitionContext] Peleton ${target.schoolName} belum dapat diundi:`, eligibility.issues);
-        alert(`Peleton belum dapat diundi karena belum lengkap:\n\n• ${eligibility.issues.join('\n• ')}`);
+        if (typeof alert === 'function') {
+          alert(`Peleton belum dapat diundi karena belum lengkap:\n\n• ${eligibility.issues.join('\n• ')}`);
+        }
         return { success: false, issues: eligibility.issues };
       }
     }
@@ -282,46 +342,55 @@ export function createTeamActions({ teams, setTeams, scores, setScores, setStagi
     let updatedTeam = null;
     const nowIso = new Date().toISOString();
 
+    const applyLotUpdate = (team) => {
+      const defaultChestFromLot = num ? getChestNumberByLot(team.jenjang, num) : '';
+      let chest = team.chestNumber || '';
+      if (chestNumber !== undefined) {
+        chest = chestNumber ? String(chestNumber).trim() : defaultChestFromLot;
+      } else if (num) {
+        chest = defaultChestFromLot || chest;
+      } else {
+        chest = '';
+      }
+
+      const estTime = (estimatedTime !== undefined) ? (estimatedTime ? String(estimatedTime).trim() : '') : (team.estimatedTime || '');
+      const basecamp = (basecampNumber !== undefined) ? (basecampNumber ? String(basecampNumber).trim() : '') : (team.basecampNumber || '');
+      const nextStatus = num ? 'drawn' : (team.status === 'drawn' ? 'verified' : team.status);
+      return {
+        ...team,
+        lotNumber: num,
+        chestNumber: chest,
+        estimatedTime: estTime,
+        basecampNumber: basecamp,
+        status: nextStatus,
+        drawTime: num ? nowIso : null,
+        updatedAt: nowIso,
+      };
+    };
+
     setTeams(prev =>
       prev.map(team => {
         if (team.id === teamId) {
-          // Auto-pair nomor dada sesuai aturan berpasangan jenjang jika tidak diisi manual atau jika nomor undian berubah
-          const defaultChestFromLot = num ? getChestNumberByLot(team.jenjang, num) : '';
-          let chest = team.chestNumber || '';
-          if (chestNumber !== undefined) {
-            chest = chestNumber ? String(chestNumber).trim() : defaultChestFromLot;
-          } else if (num && !chest) {
-            chest = defaultChestFromLot;
-          }
-
-          const estTime = (estimatedTime !== undefined) ? (estimatedTime ? String(estimatedTime).trim() : '') : (team.estimatedTime || '');
-          const basecamp = (basecampNumber !== undefined) ? (basecampNumber ? String(basecampNumber).trim() : '') : (team.basecampNumber || '');
-          const nextStatus = num ? 'drawn' : (team.status === 'drawn' ? 'verified' : team.status);
-          updatedTeam = {
-            ...team,
-            lotNumber: num,
-            chestNumber: chest,
-            estimatedTime: estTime,
-            basecampNumber: basecamp,
-            status: nextStatus,
-            drawTime: num ? nowIso : null,
-            updatedAt: nowIso,
-          };
+          updatedTeam = applyLotUpdate(team);
           return updatedTeam;
         }
         return team;
       })
     );
 
-    if (updatedTeam) {
-      saveRecordToSheet('teams', updatedTeam).catch(err =>
+    const fallbackTeam = target || teams.find(t => t.id === teamId);
+    const toSave = updatedTeam || (fallbackTeam ? applyLotUpdate(fallbackTeam) : null);
+
+    if (toSave) {
+      saveRecordToSheet('teams', toSave).catch(err =>
         console.warn('[CompetitionContext] Sync assignLot failed:', err)
       );
     }
+    return { success: true, team: toSave };
   }
 
   function updateTeamDraw(teamId, lotNumber, chestNumber, estimatedTime, basecampNumber) {
-    assignLotNumber(teamId, lotNumber, chestNumber, estimatedTime, basecampNumber);
+    return assignLotNumber(teamId, lotNumber, chestNumber, estimatedTime, basecampNumber);
   }
 
   function randomizeLotNumbers(jenjang) {
@@ -340,26 +409,23 @@ export function createTeamActions({ teams, setTeams, scores, setScores, setStagi
     });
 
     const nowIso = new Date().toISOString();
-    const updatedList = [];
+    const updatedList = eligibleTeams.map(t => {
+      const lotNum = idToNumber[t.id];
+      const autoChest = getChestNumberByLot(t.jenjang, lotNum);
+      return {
+        ...t,
+        lotNumber: lotNum,
+        chestNumber: autoChest || t.chestNumber || '',
+        status: 'drawn',
+        drawTime: nowIso,
+        updatedAt: nowIso,
+      };
+    });
+
+    const updatedById = new Map(updatedList.map(u => [u.id, u]));
 
     setTeams(prev =>
-      prev.map(t => {
-        if (idToNumber[t.id] !== undefined) {
-          const lotNum = idToNumber[t.id];
-          const autoChest = getChestNumberByLot(t.jenjang, lotNum);
-          const updated = {
-            ...t,
-            lotNumber: lotNum,
-            chestNumber: autoChest || t.chestNumber || '',
-            status: 'drawn',
-            drawTime: nowIso,
-            updatedAt: nowIso,
-          };
-          updatedList.push(updated);
-          return updated;
-        }
-        return t;
-      })
+      prev.map(t => updatedById.get(t.id) || t)
     );
 
     if (updatedList.length > 0) {

@@ -225,6 +225,21 @@ export default function JuryScoringApp() {
   const [juryNotes, setJuryNotes] = useState('');
   const [saveSuccessMsg, setSaveSuccessMsg] = useState('');
 
+  // Sinkronisasi penalti otomatis dari Field Timer, DP, atau Basecamp ke state lokal saat tim sedang dipilih
+  React.useEffect(() => {
+    if (!existingScore?.penalties) return;
+    setPenalties(prev => ({
+      ...prev,
+      overTimeBlocks: existingScore.penalties.overTimeBlocks ?? prev.overTimeBlocks ?? 0,
+      personelKurang: existingScore.penalties.personelKurang ?? prev.personelKurang ?? false,
+      basecampKotor: existingScore.penalties.basecampKotor ?? prev.basecampKotor ?? false,
+    }));
+  }, [
+    existingScore?.penalties?.overTimeBlocks,
+    existingScore?.penalties?.personelKurang,
+    existingScore?.penalties?.basecampKotor
+  ]);
+
   // Sinkronisasi data saat memilih tim
   function handleSelectTeam(teamId) {
     setSelectedTeamId(teamId);
@@ -798,7 +813,7 @@ export default function JuryScoringApp() {
                 </div>
               </div>
 
-              {/* 3. Total Nilai Akhir (Penentu Juara Umum) */}
+              {/* 3. Total Nilai Akhir Gabungan */}
               <div className="bg-emerald-50 border border-emerald-300 rounded-2xl p-3.5 flex flex-col justify-between">
                 <div>
                   <span className="text-[10px] uppercase font-black text-emerald-800 tracking-wider block">
@@ -812,7 +827,7 @@ export default function JuryScoringApp() {
                   </div>
                 </div>
                 <div className="text-[10px] text-emerald-800 border-t border-emerald-200 pt-1.5 mt-2 font-medium">
-                  Penentu Juara Umum (Piala Bergilir)
+                  Juara Peleton = Nilai A • Danton Terbaik = Nilai B
                 </div>
               </div>
             </div>
@@ -1004,6 +1019,7 @@ export default function JuryScoringApp() {
                   selectedTeam={selectedTeam}
                   peletonPenalty={peletonPenalty}
                   dantonPenalty={dantonPenalty}
+                  isInputDisabled={isInputDisabled}
                 />
               )}
 

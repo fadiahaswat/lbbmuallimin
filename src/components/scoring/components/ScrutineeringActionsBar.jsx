@@ -13,6 +13,8 @@ export default function ScrutineeringActionsBar({
   setIsRecapModalOpen
 }) {
   const isSuperadmin = currentUser?.role === 'superadmin';
+  const canVerify = ['verifikator', 'superadmin'].includes(currentUser?.role);
+  const canFinalize = ['finalisator', 'superadmin'].includes(currentUser?.role);
 
   return (
     <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-5">
@@ -62,7 +64,7 @@ export default function ScrutineeringActionsBar({
         </label>
         <textarea
           rows={2}
-          disabled={existingScore?.isLocked}
+          disabled={existingScore?.isLocked && !isSuperadmin}
           value={juryNotes}
           onChange={e => setJuryNotes(e.target.value)}
           placeholder="Tuliskan evaluasi gerakan, kerapian, atau instruksi danton..."
@@ -125,8 +127,8 @@ export default function ScrutineeringActionsBar({
         ) : (
           /* KONDISI 2: BELUM DIKUNCI - TAMPILKAN LANGKAH SESUAI STATUS */
           <div className="space-y-3">
-            {/* JIKA STATUS MASIH DRAFT / BELUM DISIMPAN */}
-            {(!existingScore || existingScore.status === 'draft' || existingScore.status === 'rejected_to_draft') && (
+            {/* JIKA BELUM DIKUNCI: SELALU SEDIAKAN TOMBOL SIMPAN INPUT NILAI JURI */}
+            {(!existingScore || !existingScore.isLocked) && (
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50 p-4 rounded-2xl border border-amber-200">
                 <div>
                   <span className="text-xs font-bold text-amber-800 block">
@@ -148,7 +150,7 @@ export default function ScrutineeringActionsBar({
             )}
 
             {/* JIKA STATUS SUDAH TERSIMPAN (SIAP DIVERIFIKASI / DIKUNCI) */}
-            {existingScore && existingScore.status === 'draft' && (
+            {existingScore && existingScore.status === 'draft' && canVerify && (
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50 p-4 rounded-2xl border border-blue-200">
                 <div>
                   <span className="text-xs font-bold text-blue-800 block">
@@ -172,7 +174,7 @@ export default function ScrutineeringActionsBar({
             )}
 
             {/* JIKA STATUS SUDAH TERVERIFIKASI (SIAP DIKUNCI FINALISATOR) */}
-            {existingScore?.status === 'verified' && (
+            {existingScore?.status === 'verified' && (canVerify || canFinalize) && (
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50 p-4 rounded-2xl border border-emerald-200">
                 <div>
                   <div className="flex items-center gap-2">
@@ -188,22 +190,26 @@ export default function ScrutineeringActionsBar({
                   </p>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
-                  <button
-                    type="button"
-                    onClick={() => handleVerifyScoreAction(false)}
-                    className="px-3.5 py-2.5 bg-slate-100 hover:bg-rose-50 hover:text-rose-700 text-slate-600 font-bold text-xs uppercase tracking-wider rounded-xl border border-slate-200 transition-all cursor-pointer"
-                    title="Kembalikan ke status Draft jika ditemukan ketidaksesuaian"
-                  >
-                    <span>Batal Verifikasi</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleFinalizeScoreAction}
-                    className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-black text-xs uppercase tracking-wider rounded-xl flex items-center gap-1.5 shadow-sm transition-all cursor-pointer"
-                  >
-                    <Lock className="w-4 h-4" />
-                    <span>Kunci & Sahkan Nilai</span>
-                  </button>
+                  {canVerify && (
+                    <button
+                      type="button"
+                      onClick={() => handleVerifyScoreAction(false)}
+                      className="px-3.5 py-2.5 bg-slate-100 hover:bg-rose-50 hover:text-rose-700 text-slate-600 font-bold text-xs uppercase tracking-wider rounded-xl border border-slate-200 transition-all cursor-pointer"
+                      title="Kembalikan ke status Draft jika ditemukan ketidaksesuaian"
+                    >
+                      <span>Batal Verifikasi</span>
+                    </button>
+                  )}
+                  {canFinalize && (
+                    <button
+                      type="button"
+                      onClick={handleFinalizeScoreAction}
+                      className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-black text-xs uppercase tracking-wider rounded-xl flex items-center gap-1.5 shadow-sm transition-all cursor-pointer"
+                    >
+                      <Lock className="w-4 h-4" />
+                      <span>Kunci & Sahkan Nilai</span>
+                    </button>
+                  )}
                 </div>
               </div>
             )}

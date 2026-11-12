@@ -83,7 +83,7 @@ export default function BasecampCheckoutTracker({ currentTeam, stagingInfo }) {
             </span>
           </div>
           <p className="text-xs text-rose-900 leading-snug">
-            Peleton yang meninggalkan basecamp dalam keadaan kotor/sampah tidak diserahkan dikenakan <strong>penalti -50 poin</strong> (Pasal 14 ayat 4).
+            Peleton yang meninggalkan basecamp dalam keadaan kotor/sampah tidak diserahkan dikenakan <strong>penalti -150 poin</strong> (Pasal 11 Juknis).
           </p>
         </div>
       </div>

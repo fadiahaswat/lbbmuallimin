@@ -33,7 +33,7 @@ export default function DenahBasecampTab({ currentTeam, allTeams = [], staging =
 
   // Cek apakah ada alokasi basecamp untuk tim ini
   const teamStaging = staging?.[currentTeam?.id] || null;
-  const assignedRoomCode = currentTeam?.basecampRoom || teamStaging?.room || teamStaging?.basecampRoom || null;
+  const assignedRoomCode = currentTeam?.basecampNumber || currentTeam?.basecampRoom || teamStaging?.room || teamStaging?.basecampRoom || null;
 
   return (
     <section className="rounded-2xl sm:rounded-[28px] border border-slate-200/90 bg-white p-4 sm:p-7 shadow-[0_18px_46px_rgba(15,23,42,0.06)] space-y-5">

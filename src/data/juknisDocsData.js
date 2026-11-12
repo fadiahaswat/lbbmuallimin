@@ -254,7 +254,7 @@ export const JUKNIS_PENDAFTARAN_CHAPTERS = [
         number: 1,
         title: 'Sistem dan Mekanisme Pendaftaran',
         sub: [
-          `a. Pendaftaran administratif awal Lomba Baris-Berbaris (LBB) Mu’allimin 2027 diselenggarakan secara daring melalui Portal Resmi Sistem Informasi LBB Mu’allimin pada laman https://lbb.tontimuallimin.com, yang dilanjutkan dengan verifikasi berkas fisik pada saat Pertemuan Teknis (Technical Meeting/TM).`,
+          `a. Pendaftaran administratif awal Lomba Baris-Berbaris (LBB) Mu’allimin 2027 diselenggarakan secara daring melalui Portal Resmi Sistem Informasi LBB Mu’allimin pada laman https://lbb.tontimuallimin.com , yang dilanjutkan dengan verifikasi berkas fisik pada saat Pertemuan Teknis (Technical Meeting/TM).`,
           `b. Panitia tidak melayani pendaftaran manual secara luring (offline) di tempat ataupun pendaftaran susulan setelah kuota resmi terpenuhi.`,
           `c. Sistem pendaftaran menerapkan asas siapa cepat, dia dapat (first-come, first-served). Tim yang menyelesaikan pengisian formulir, melengkapi berkas unggahan, dan memverifikasi setoran pembayaran terlebih dahululah yang berhak mengamankan kuota resmi peserta.`
         ]
@@ -282,73 +282,73 @@ export const JUKNIS_PENDAFTARAN_CHAPTERS = [
         title: 'Biaya Pendaftaran dan Tata Cara Pembayaran',
         sub: [
           `a. Biaya pendaftaran per peleton terbagi ke dalam 2 (dua) gelombang berjenjang (bersifat tidak dapat ditarik kembali/non-refundable apabila tim mengundurkan diri sepihak):\n1) Gelombang 1 (26 Oktober – 8 November 2026): Rp 350.000,00 per peleton.\n2) Gelombang 2 (9 November – 22 November 2026/Kuota Penuh): Rp 400.000 per peleton (hanya dibuka jika sisa kuota masih tersedia).\n3) Setiap pembayaran wajib menambahkan kode unik transfer 108 pada tiga digit terakhir nominal pembayaran.`,
-          `b. Pembayaran disetorkan melalui transfer perbankan ke rekening resmi panitia:\n1) Bank Tujuan: Bank Syariah Indonesia (BSI)\n2) Nomor Rekening: 2600051817\n3) Atas Nama: ADMISI HUMAS DAN KERJA SAMA\n4) Format Berita Transfer (Wajib): NAMA SEKOLAH_JUMLAH PELETON (Contoh: MTS MUALLIMIN YK_1).`,
+          `b. Pembayaran disetorkan via transfer perbankan ke rekening resmi panitia:\n1) Bank Tujuan: Bank Syariah Indonesia (BSI)\n2) Nomor Rekening: 2600051817\n3) Atas Nama: ADMISI HUMAS DAN KERJA SAMA\n4) Format Berita Transfer (Wajib): NAMA SEKOLAH_JUMLAH PELETON (Contoh: MTS MUALLIMIN YK_1).`,
           `c. Ketentuan Nominal Pembayaran:\n1) 1 (satu) peleton Gelombang 1: Rp350.108,00\n2) 2 (dua) peleton Gelombang 1: Rp700.108,00\n3) 1 (satu) peleton Gelombang 2: Rp400.108,00\n4) 2 (dua) peleton Gelombang 2: Rp800.108,00`,
-          `d. Bukti transfer asli (struk ATM/teller atau tangkapan layar m-banking yang terbaca jelas) wajib diunggah pada formulir pendaftaran daring.`,
-          `e. Setiap peleton terdaftar berhak memperoleh fasilitas berupa: ruang kelas transit (basecamp), 1 (satu) dus air minum dalam kemasan (botol) saat registrasi ulang, 3 (tiga) buah Tanda Pengenal (ID Card) resmi (untuk 1 Official dan 2 Pendukung Resmi), Nomor Dada Peleton, 2 (dua) kantong sampah terpilah, akses area parkir, serta sertifikat elektronik resmi bagi pemenang.`
+          `d. Bukti transfer asli (struk ATM/teller atau tangkapan layar m-banking yang jelas) wajib diunggah pada formulir digital pendaftaran.`,
+          `e. Setiap peleton terdaftar berhak mendapatkan fasilitas: ruang kelas (basecamp), 1 (satu) dus air minum kemasan botol per peleton saat registrasi ulang, 3 (tiga) buah kartu tanda pengenal (ID card) resmi (1 official dan 2 pendukung resmi), nomor dada peleton, 2 (dua) kantong sampah terpilah, akses parkir, serta sertifikat elektronik resmi bagi pemenang.`
         ]
       },
       {
         number: 5,
         title: 'Alur Prosedur Pendaftaran Digital (5 Langkah)',
         sub: [
-          `a. Langkah 1 (Akses Formulir): Perwakilan sekolah/madrasah mengakses portal resmi https://lbb.tontimuallimin.com lalu mengeklik tombol "Daftar Peleton" untuk membuka formulir pendaftaran.`,
-          `b. Langkah 2 (Data Sekolah & Akun Tim): Memilih jenjang perlombaan (SD/MI atau SMP/MTs), mendaftarkan alamat pos-el (email) Google aktif (yang akan digunakan untuk masuk ke Dasbor Tim), mengisi identitas sekolah/madrasah, mengunggah logo sekolah/madrasah, serta memilih kategori peleton (Putra/Putri/Campuran).`,
-          `c. Langkah 3 (Data Danton & Official): Mengisi identitas lengkap Komandan Peleton (Danton) beserta unggahan pindaian (scan) Kartu Pelajar yang sah, serta melengkapi identitas Official (Pelatih/Pembina) disertai nomor WhatsApp aktif.`,
-          `d. Langkah 4 (Pembayaran & Pakta Integritas): Mengunggah bukti transfer biaya pendaftaran yang sah dan membubuhkan tanda tangan elektronik pada kanvas Pakta Integritas Daring.`,
-          `e. Langkah 5 (Konfirmasi & Aktivasi Dashboard Tim): Tim akan memperoleh Kode Registrasi unik resmi. Panitia akan melakukan verifikasi maksimal dalam waktu 1x24 jam. Setelah terverifikasi, tim dapat masuk (login) ke Dasbor Peserta untuk melengkapi daftar susunan personel peleton.`
+          `a. Langkah 1 (Akses Formulir): Perwakilan sekolah/peleton membuka portal resmi https://lbb.tontimuallimin.com/ lalu meng-klik tombol "Daftar Peleton" untuk masuk ke formulir pendaftaran.`,
+          `b. Langkah 2 (Data Sekolah & Akun Tim): Memilih jenjang perlombaan (SD/MI atau SMP/MTs), mendaftarkan email Google aktif (digunakan untuk login Dashboard Tim), mengisi biodata sekolah, mengunggah logo sekolah, dan memilih kategori peleton (Putra/Putri/Campuran).`,
+          `c. Langkah 3 (Data Danton & Official): Meng-input identitas lengkap Komandan Peleton beserta unggahan scan Kartu Pelajar sah, serta mengisi identitas Official/Pelatih pendamping lengkap dengan nomor WhatsApp aktif.`,
+          `d. Langkah 4 (Pembayaran & Pakta Integritas): Mengunggah bukti transfer biaya pendaftaran yang valid dan membubuhkan tanda tangan digital pada kanvas Pakta Integritas Online.`,
+          `e. Langkah 5 (Konfirmasi & Aktivasi Dashboard Tim): Tim menerima Kode Registrasi unik resmi. Panitia melakukan verifikasi dalam 1x24 jam. Setelah diverifikasi, tim dapat login ke Dashboard Peserta untuk melengkapi susunan identitas peleton.`
         ]
       },
       {
         number: 6,
         title: 'Dokumen Persyaratan yang Wajib Diunggah (Digital)',
         sub: [
-          `a. Surat Tugas atau Surat Rekomendasi Resmi dari Kepala Sekolah/Madrasah asli yang telah ditandatangani dan dibubuhi stempel basah (format PDF/JPG, ukuran maks. 2 MB).`,
-          `b. Bukti transfer biaya pendaftaran sesuai dengan gelombang pendaftaran yang berlaku (format JPG/PNG, ukuran maks. 2 MB).`,
-          `c. Pindaian (scan) atau foto Kartu Pelajar yang sah milik Komandan Peleton (Danton) dari pangkalan sekolah/madrasah yang bersangkutan (format Foto/PDF, ukuran maks. 3 MB).`,
-          `d. Logo peleton atau sekolah/madrasah beresolusi tinggi dengan format PNG berlatar belakang transparan`,
-          `e. Pasfoto resmi seluruh personel peleton berukuran 3x4 (latar belakang MERAH untuk jenjang SD/MI dan latar belakang BIRU untuk jenjang SMP/MTs), yang diunggah melalui menu Identitas Personel pada portal peserta.`,
-          `f. Data identitas seluruh personel peleton yang meliputi: Nama Lengkap (sesuai ijazah terakhir atau dokumen resmi sebagai dasar penerbitan sertifikat), NISN, Tempat dan Tanggal Lahir, serta Kelas. Seluruh data tersebut diisikan melalui portal peserta sesuai dengan format yang tersedia.`
+          `a. Surat Tugas / Rekomendasi Resmi dari Kepala Sekolah/Madrasah asli bertanda tangan dan berstempel basah (format PDF/JPG, maks. 2 MB).`,
+          `b. Bukti transfer biaya pendaftaran sesuai biaya pendaftaran gelombang berjalan (format JPG/PNG, maks. 2 MB).`,
+          `c. Scan/Foto Kartu Pelajar sah Komandan Peleton (Danton) bersangkutan (format Foto/PDF, maks. 3 MB).`,
+          `d. Logo peleton atau sekolah/madrasah beresolusi tinggi format PNG transparan`,
+          `e. Pasfoto resmi seluruh personel peleton ukuran 3 x 4 (latar belakang MERAH untuk SD/MI dan BIRU untuk SMP/MTs) yang diunggah melalui menu Identitas Personel di portal peserta.`,
+          `f. Data identitas seluruh personel peleton yang meliputi: Nama Lengkap (sesuai ijazah terakhir atau dokumen resmi sebagai dasar penerbitan sertifikat), NISN, Tempat dan Tanggal Lahir, serta Kelas. Seluruh data diinput melalui portal peserta sesuai format yang tersedia.`
         ]
       },
       {
         number: 7,
         title: 'Regulasi Komposisi Personel Peleton',
         sub: [
-          `a. Komposisi resmi setiap peleton berjumlah paling banyak 25 personel, yang terdiri atas: 1 Komandan Peleton (Danton), 21 Anggota Inti (formasi 3 saf x 7 banjar), serta maksimal 3 Anggota Cadangan.`,
-          `b. Setiap peleton didampingi oleh maksimal 3 orang pendamping, yang terdiri atas: 1 Official (Pelatih/Pembina) dan 2 Pendukung Resmi (Medis/Dokumentasi) yang wajib mengenakan Tanda Pengenal (ID Card) resmi dari panitia.`,
-          `c. Jumlah minimal personel yang tampil di arena perlombaan adalah 22 orang (1 Danton dan 21 Anggota Inti). Penggantian anggota inti oleh anggota cadangan hanya diperkenankan pada saat jeda transisi resmi sebagaimana diatur dalam petunjuk teknis materi lomba.`
+          `a. Komposisi resmi setiap peleton berjumlah maksimal 25 personel yang terdiri dari: 1 Komandan Peleton (Danton), 21 Anggota Inti (formasi 3 saf x 7 banjar), dan maksimal 3 Anggota Cadangan.`,
+          `b. Setiap peleton didampingi oleh maksimal 3 orang pendamping yang terdiri dari: 1 Official/Pelatih dan 2 Pendukung Resmi (Medis/Dokumentasi) yang wajib mengenakan tanda pengenal (ID card) resmi panitia.`,
+          `c. Jumlah minimal personel yang tampil di arena perlombaan adalah 22 orang (1 Danton dan 21 Anggota Inti). Pergantian anggota inti dengan anggota cadangan hanya diperkenankan pada jeda transisi resmi sesuai petunjuk teknis materi lomba.`
         ]
       },
       {
         number: 8,
         title: 'Kewajiban Penyerahan Berkas Fisik Asli saat Technical Meeting',
         sub: [
-          `a. Meskipun pendaftaran awal dilakukan secara daring, utusan resmi sekolah/madrasah (maksimal 2 orang perwakilan untuk setiap sekolah/madrasah, baik yang mengirimkan 1 maupun 2 peleton) WAJIB membawa dan menyerahkan berkas fisik asli pada saat registrasi Pertemuan Teknis (Technical Meeting) pada hari Sabtu, 9 Januari 2027 pukul 12.30–13.00 WIB di Aula Kampus Induk Madrasah Mu’allimin Wirobrajan. Bagi sekolah/madrasah yang mengirimkan 2 (dua) peleton, utusan yang hadir dapat mewakili proses verifikasi untuk kedua peleton tersebut sekaligus.`,
-          `b. Berkas fisik asli yang wajib diserahkan meliputi:\n1) Surat Tugas atau Surat Rekomendasi Kepala Sekolah/Madrasah asli berstempel basah yang memuat daftar nama lengkap seluruh unsur peleton (1 Danton, 21 Anggota Inti, hingga 3 anggota Cadangan, 1 Official, serta 2 Pendukung Resmi).\n2) Pakta Integritas fisik yang telah ditandatangani basah oleh Official bersangkutan.`
+          `a. Meskipun pendaftaran awal dilakukan secara daring, utusan resmi sekolah/peleton (maksimal 2 orang perwakilan per sekolah/madrasah, baik yang mengirim 1 maupun 2 peleton) WAJIB membawa dan menyerahkan berkas fisik asli pada saat registrasi Pertemuan Teknis (Technical Meeting) pada Sabtu, 9 Januari 2027 pukul 12.30–13.00 WIB di Aula Kampus Induk Madrasah Mu’allimin Wirobrajan. Sekolah yang mengirimkan 2 peleton dapat diwakilkan verifikasi berkasnya oleh utusan yang hadir tersebut.`,
+          `b. Berkas fisik asli yang wajib diserahkan:\n1) Surat Tugas / Rekomendasi Kepala Sekolah asli berstempel basah yang memuat daftar nama lengkap seluruh unsur peleton (1 Danton, 21 Inti, hingga 3 Cadangan, 1 Official, dan 2 Pendukung Resmi).\n2) Pakta Integritas fisik yang telah ditandatangani basah oleh Official bersangkutan.`
         ]
       },
       {
         number: 9,
         title: 'Ketentuan Diskualifikasi & Sanksi Administrasi',
         sub: [
-          `a. Diskualifikasi Mutlak: Dijatuhkan kepada peleton yang terbukti memanipulasi data identitas siswa, memalsukan tanda tangan atau stempel pada surat rekomendasi kepala sekolah/madrasah, dan/atau mengikutsertakan peserta yang bukan berasal dari pangkalan sekolah/madrasah yang bersangkutan.`,
-          `b. Ketentuan Pembatalan (Non-Refundable): Biaya pendaftaran yang telah disetorkan tidak dapat ditarik kembali dengan alasan apa pun apabila peleton mengundurkan diri atau membatalkan keikutsertaan secara sepihak.`,
-          `c. Pergantian Personel: Perubahan data personel—meliputi nama, susunan formasi, posisi, pasfoto, maupun pergantian individu—masih diperkenankan hingga batas waktu sebelum pelaksanaan Pertemuan Teknis (Technical Meeting/TM). Setiap perubahan wajib dilaporkan kepada panitia dan disesuaikan dengan Surat Tugas/Rekomendasi resmi dari Kepala Sekolah/Madrasah. Segala bentuk perubahan yang tidak tercantum atau tidak sesuai dengan Surat Tugas/Rekomendasi resmi dinyatakan tidak sah.`
+          `a. Diskualifikasi Mutlak: Diberlakukan bagi peleton yang terbukti memanipulasi data identitas siswa, memalsukan tanda tangan/stempel surat rekomendasi kepala sekolah, dan/atau menyertakan peserta yang bukan berasal dari sekolah pangkalan bersangkutan.`,
+          `b. Ketentuan Pembatalan (Non-Refundable): Biaya pendaftaran yang telah disetorkan tidak dapat ditarik kembali dengan alasan apa pun apabila tim mengundurkan diri atau batal berpartisipasi secara sepihak.`,
+          `c. Pergantian Personel: Perubahan data personel (nama, susunan posisi, pasfoto, atau pergantian individu) masih dapat dilakukan hingga sebelum pelaksanaan Pertemuan Teknis (Technical Meeting/TM). Setiap perubahan wajib dilaporkan kepada panitia dan disesuaikan dengan Surat Tugas/Rekomendasi resmi dari Kepala Sekolah/Madrasah. Perubahan yang tidak tercantum atau tidak sesuai dengan Surat Tugas/Rekomendasi resmi dinyatakan tidak sah.`
         ]
       },
       {
         number: 10,
         title: 'Pusat Layanan dan Narahubung Resmi',
         sub: [
-          `a. Seluruh komunikasi, koordinasi, dan konfirmasi resmi terkait pendaftaran hanya dilayani melalui kanal resmi berikut:\n1) Laman Portal Pendaftaran: https://lbb.tontimuallimin.com\n2) Layanan Bantuan (Helpdesk) WhatsApp Resmi: https://wa.me/6281947491505 (Admin)\n3) Pos-el (Email) Resmi: lbb@tontimuallimin.com\n4) Media Sosial Resmi: Instagram @lbbmuin & @mualliminjogja | TikTok: @tontimuallimin`
+          `a. Seluruh komunikasi, koordinasi, dan konfirmasi resmi terkait pendaftaran hanya dilayani melalui kanal resmi berikut:\n1) Laman Portal Pendaftaran: https://lbb.tontimuallimin.com\n2) Layanan Bantuan (Helpdesk) WhatsApp Resmi: https://wa.me/6281947491505 (Admin)\n3) Email Resmi: lbb@tontimuallimin.com\n4) Media Sosial Resmi: Instagram @lbbmuin & @mualliminjogja | TikTok: @tontimuallimin`
         ]
       },
       {
         number: 11,
         title: 'Mitigasi Gangguan Sistem Digital Pendaftaran',
         sub: [
-          `Apabila peserta mengalami kendala teknis saat masuk (login) ke akun atau gagal mengunggah dokumen akibat gangguan pada peladen (server) portal resmi, panitia menyediakan mekanisme verifikasi dan pengumpulan dokumen darurat secara manual melalui koordinasi dengan Layanan Bantuan (Helpdesk) WhatsApp Resmi. Adapun kendala atau keterlambatan yang disebabkan oleh kelalaian peserta hingga melewati batas waktu pendaftaran tidak termasuk dalam ketentuan mitigasi ini.`
+          `Apabila peserta mengalami kendala teknis saat login akun atau gagal mengunggah dokumen akibat gangguan pada server portal resmi, panitia menyediakan mekanisme verifikasi dan pengumpulan dokumen darurat secara manual melalui koordinasi dengan Layanan Bantuan (Helpdesk) WhatsApp Resmi. Kendala atau keterlambatan yang disebabkan oleh kelalaian peserta hingga melewati batas waktu yang ditentukan tidak termasuk dalam ketentuan mitigasi ini.`
         ]
       }
     ]
@@ -357,7 +357,7 @@ export const JUKNIS_PENDAFTARAN_CHAPTERS = [
     id: 'reg-b',
     letter: 'B',
     title: 'PENUTUP',
-    content: `Petunjuk Teknis Pendaftaran ini disusun sebagai pedoman resmi yang mengikat bagi seluruh panitia penyelenggara dan calon peserta Lomba Baris-Berbaris (LBB) Mu’allimin Tahun 2027. Segala ketentuan teknis tambahan yang disepakati bersama dalam forum Pertemuan Teknis (Technical Meeting) dinyatakan sah serta menjadi bagian yang tidak terpisahkan dari petunjuk teknis ini.`
+    content: `Petunjuk Teknis Pendaftaran ini disusun sebagai pedoman resmi yang mengikat bagi seluruh panitia penyelenggara dan calon peserta Lomba Baris-Berbaris (LBB) Mu’allimin Tahun 2027. Segala ketentuan teknis tambahan yang disepakati bersama dalam forum Pertemuan Teknis (Technical Meeting) dinyatakan sah dan menjadi bagian yang tidak terpisahkan dari petunjuk teknis ini.`
   }
 ];
 

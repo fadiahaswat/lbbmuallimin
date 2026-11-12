@@ -30,7 +30,8 @@ registerHooks({
 
 const { createTeamActions } = await import('../src/context/teamActions.js');
 const { createStagingActions } = await import('../src/context/stagingActions.js');
-const { createScoringActions } = await import('../src/context/scoringActions.js');
+const { createScoringActions, calculatePenalties } = await import('../src/context/scoringActions.js');
+const { PAYMENT, STAGING_CONFIG, MATERIALS } = await import('../src/config.js');
 const {
   saveRecordToSheet,
   bulkSyncToSheet,
@@ -126,6 +127,22 @@ async function runAllTests() {
     Boolean(SCORE_SECRET_KEY && SCORE_SECRET_KEY.length >= 16),
     'SCORE_SECRET_KEY memiliki panjang minimal 16 karakter yang kuat',
     `Panjang kunci: ${SCORE_SECRET_KEY.length} karakter`
+  );
+
+  assert(
+    PAYMENT.ACCOUNT_NAME === 'ADMISI HUMAS DAN KERJA SAMA' &&
+      MATERIALS.SD.length === 26 &&
+      MATERIALS.SMP.length === 28 &&
+      STAGING_CONFIG.STAGES.some(s => s.id === 'dp1') &&
+      STAGING_CONFIG.STAGES.some(s => s.id === 'dp2') &&
+      !STAGING_CONFIG.STAGES.some(s => s.id === 'dp3'),
+    'Konfigurasi Juknis 2027 (Rekening BSI, 26 Materi SD, 28 Materi SMP, Alur DP 1 & DP 2) sesuai verbatim Juknis'
+  );
+
+  const dantonSubPen = calculatePenalties({ kotakDantonCount: 1, dantonSubstituted: true });
+  assert(
+    dantonSubPen.dantonSubstituted === true && dantonSubPen.dantonPenalty === 50,
+    'calculatePenalties() mempreservasi flag dantonSubstituted (Bab E.4.f Juknis Lapangan) dan menghitung penalti Danton'
   );
 
   // ---------------------------------------------------------------------------
@@ -301,10 +318,13 @@ async function runAllTests() {
   console.log(`\n${BOLD}4. Pengujian Modul Nyata: stagingActions.js (Check-In, DP 1 Batch, DP 2, Check-Out)${RESET}`);
 
   stagingState.value = {};
+  scoresState.value = {};
   const getStagingActions = () =>
     createStagingActions({
       staging: stagingState.value,
       setStaging: stagingState.setState,
+      scores: scoresState.value,
+      setScores: scoresState.setState,
       currentUser: { name: 'Petugas Lapangan', role: 'checkin' },
     });
 
@@ -375,6 +395,27 @@ async function runAllTests() {
     'checkOutBasecamp() mempertahankan checkedIn: true dan menyetel checkedOut: true beserta waktu kepulangan'
   );
 
+  // 4E: Sinkronisasi Penalti Antar-Portal (Check-out Kotor -> -150 Poin & DP1 Personel Kurang -> -75 Poin)
+  getStagingActions().checkOutBasecamp('T-SMP-DIRTY', {
+    roomCleanChecked: false,
+    sortedTrashReturned: true,
+    ktpReturned: false,
+    checkedOutAt: '15:05',
+  });
+  assert(
+    scoresState.value['T-SMP-DIRTY']?.penalties?.basecampKotor === true &&
+      scoresState.value['T-SMP-DIRTY']?.penalties?.totalPenalty === 150,
+    'checkOutBasecamp() otomatis menyinkronkan penalti basecampKotor (-150 poin) ke tabel scores saat ruang kotor/sampah belum disetor'
+  );
+
+  getStagingActions().updateDP1PersonnelInspection('T-SMP-SHORT', ['danton', 'p-1', 'p-2'], true, 'Kurang personel');
+  getStagingActions().passToDP2('T-SMP-SHORT');
+  assert(
+    scoresState.value['T-SMP-SHORT']?.penalties?.personelKurang === true &&
+      scoresState.value['T-SMP-SHORT']?.penalties?.totalPenalty === 75,
+    'passToDP2() otomatis menyinkronkan penalti personelKurang (-75 poin) ke tabel scores saat personel terverifikasi < 22'
+  );
+
   // ---------------------------------------------------------------------------
   // TEST 5: PENGUJIAN MODUL NYATA `scoringActions.js` (SKOR, 10 PENALTI, VERIFIKASI, KUNCI)
   // ---------------------------------------------------------------------------
@@ -389,36 +430,52 @@ async function runAllTests() {
 
   // 5A: Input Juri Pos 1, Pos 2, Pos 3 + Seluruh 10 Komponen Penalti
   const juriActions = makeScoringWithRole('juri', 'Juri Utama');
-  juriActions.saveJuryPostScore('T-SMP-2', 'pos1', { total: 800, juryName: 'Juri 1' });
-  juriActions.saveJuryPostScore('T-SMP-2', 'pos2', { total: 820, juryName: 'Juri 2' });
+  juriActions.saveJuryPostScore('T-SMP-2', 'pos1', {
+    total: 800,
+    juryName: 'Juri 1',
+    dantonRubricScores: { materi: 85, vokal: 80, sikap: 75, lapangan: 70 },
+  });
+  juriActions.saveJuryPostScore('T-SMP-2', 'pos2', {
+    total: 820,
+    juryName: 'Juri 2',
+    dantonRubricScores: { materi: 90, vokal: 85, sikap: 80, lapangan: 75 },
+  });
   juriActions.saveJuryPostScore('T-SMP-2', 'pos3', {
     total: 190,
     juryName: 'Juri 3',
+    dantonRubricScores: { materi: 80, vokal: 75, sikap: 70, lapangan: 65 },
     penalties: {
       upacara: true, // 150
       upacaraTerlambatBlocks: 1, // 50
       dp1: true, // 100
       personelKurang: true, // 75
-      overTimeBlocks: 2, // 100
+      overTimeBlocks: 2, // 40 (2 x 20 poin per 30 detik sesuai Juknis 2027)
       injakGarisCount: 1, // 50
       kotakDantonCount: 1, // 50
       yelYelCount: 1, // 50
-      rokokCount: 1, // 50
-      basecampKotor: true, // 50
+      rokokCount: 1, // 75 (sesuai Juknis 2027)
+      basecampKotor: true, // 150 (sesuai Juknis 2027)
     },
   });
 
-  // Total PBB rata-rata = (800 + 820)/2 = 810. Danton = 190. Total kotor = 1000.
-  // Total 10 penalti = 150 + 50 + 100 + 75 + 100 + 50 + 50 + 50 + 50 + 50 = 725.
-  // Final Score = 1000 - 725 = 275.
+  // Juknis 2027: Akumulasi PBB = 800 + 820 = 1620 (atau jika pos3 juga memiliki total 190: 800 + 820 + 190 = 1810). Danton = 190. Total kotor = 2000.
+  // Total 10 penalti = 150 + 50 + 100 + 75 + 40 + 50 + 50 + 50 + 75 + 150 = 790 (740 peleton + 50 danton).
+  // Final Score = (1810 - 740) + (190 - 50) = 1070 + 140 = 1210.
   const scRecord = scoresState.value['T-SMP-2'];
   assert(
-    scRecord?.pbb?.total === 810 &&
+    scRecord?.pbb?.total === 1810 &&
       scRecord?.danton?.total === 190 &&
-      scRecord?.penalties?.totalPenalty === 725 &&
-      scRecord?.finalScore === 275,
-    'saveJuryPostScore() menghitung rata-rata PBB (810), Danton (190), dan seluruh 10 komponen penalti (725) -> Skor Akhir 275',
+      scRecord?.penalties?.totalPenalty === 790 &&
+      scRecord?.finalScore === 1210,
+    'saveJuryPostScore() menghitung akumulasi PBB (1810), Danton (190), dan seluruh 10 komponen penalti Juknis 2027 (790) -> Skor Akhir 1210',
     `PBB: ${scRecord?.pbb?.total}, Danton: ${scRecord?.danton?.total}, Penalti: ${scRecord?.penalties?.totalPenalty}, Final: ${scRecord?.finalScore}`
+  );
+  assert(
+    scRecord?.danton?.rubricScores?.materi === 255 &&
+      scRecord?.danton?.rubricScores?.vokal === 240 &&
+      scRecord?.danton?.rubricScores?.sikap === 225 &&
+      scRecord?.danton?.rubricScores?.lapangan === 210,
+    'saveJuryPostScore() mengakumulasi dantonRubricScores (materi, vokal, sikap, lapangan) dari 3 juri untuk Tie-Breaker #3 & #4 Danton Terbaik'
   );
 
   // 5B: Draft Score oleh Operator Penginput
@@ -434,9 +491,9 @@ async function runAllTests() {
 
   assert(
     scoresState.value['T-SMP-3']?.status === 'draft' &&
-      scoresState.value['T-SMP-3']?.finalScore === 890 &&
+      scoresState.value['T-SMP-3']?.finalScore === 1650 &&
       scoresState.value['T-SMP-3']?.paperEvidenceUrl.includes('EVIDENCE123'),
-    'saveDraftScore() menyimpan draft skor (PBB avg 760 + Danton 180 - Penalti 50 = 890) beserta URL bukti kertas'
+    'saveDraftScore() menyimpan draft skor (PBB akumulasi 1520 + Danton 180 - Penalti 50 = 1650) beserta URL bukti kertas'
   );
 
   // 5C: Verifikasi Skor oleh Verifikator
@@ -469,8 +526,8 @@ async function runAllTests() {
     danton: { total: 999 },
   });
   assert(
-    scoresState.value['T-SMP-3']?.finalScore === 890,
-    'Mutasi oleh Penginput/Juri pada skor yang sudah Finalized otomatis DITOLAK (skor tetap 890)'
+    scoresState.value['T-SMP-3']?.finalScore === 1650,
+    'Mutasi oleh Penginput/Juri pada skor yang sudah Finalized otomatis DITOLAK (skor tetap 1650)'
   );
 
   // Superadmin dapat melakukan override darurat
@@ -482,7 +539,7 @@ async function runAllTests() {
     penalties: { totalPenalty: 50 },
   });
   assert(
-    scoresState.value['T-SMP-3']?.finalScore === 900,
+    scoresState.value['T-SMP-3']?.finalScore === 1670,
     'Superadmin dapat melakukan override darurat pada skor terkunci disertai pencatatan audit log'
   );
 

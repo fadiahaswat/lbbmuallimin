@@ -36,6 +36,7 @@ export default function DocumentsTab({
     }
   }, [initialSubTab]);
 
+  const isVerifiedOrDrawn = currentTeam?.status === 'verified' || currentTeam?.status === 'drawn';
   const docList = [
     {
       id: 'schoolLogo',
@@ -43,16 +44,16 @@ export default function DocumentsTab({
       title: 'Logo Sekolah / Lambang Peleton',
       file: currentTeam?.files?.schoolLogo,
       accept: 'image/png,image/jpeg,image/webp',
-      hint: 'Format PNG (transparan), JPG, atau WEBP',
+      hint: 'Format PNG transparan beresolusi tinggi (Maks. 3 MB)',
       btnLabel: 'Unggah Logo'
     },
     {
       id: 'recommendationLetter',
       index: '02',
-      title: 'Surat Rekomendasi Kepala Sekolah',
+      title: 'Surat Tugas / Rekomendasi Kepala Sekolah',
       file: currentTeam?.files?.recommendationLetter,
-      accept: '.pdf,image/*',
-      hint: 'Dokumen PDF atau foto hasil scan resmi',
+      accept: '.pdf,image/jpeg,image/jpg',
+      hint: 'Format PDF/JPG bertanda tangan & berstempel basah (Maks. 2 MB)',
       btnLabel: 'Unggah Surat'
     },
     {
@@ -60,8 +61,8 @@ export default function DocumentsTab({
       index: '03',
       title: 'Bukti Transfer Pembayaran BSI',
       file: currentTeam?.files?.paymentProof,
-      accept: '.pdf,image/*',
-      hint: 'Struk ATM, m-banking BSI, atau resi valid',
+      accept: 'image/jpeg,image/png',
+      hint: 'Format JPG/PNG struk ATM atau m-banking jelas (Maks. 2 MB)',
       btnLabel: 'Unggah Bukti'
     },
     {
@@ -70,7 +71,7 @@ export default function DocumentsTab({
       title: 'Kartu Pelajar Komandan Peleton',
       file: currentTeam?.files?.dantonCard,
       accept: '.pdf,image/*',
-      hint: 'Kartu Pelajar, KIA, atau Surat Keterangan Siswa Aktif',
+      hint: 'Format Foto/PDF Kartu Pelajar sah (Maks. 3 MB)',
       btnLabel: 'Unggah Kartu'
     },
   ];
@@ -349,15 +350,22 @@ export default function DocumentsTab({
                           <span>Lihat</span>
                         </button>
 
-                        <button
-                          type="button"
-                          onClick={() => triggerFileUpload(item.id)}
-                          className="inline-flex items-center gap-1 rounded-xl border border-slate-200 bg-slate-50 px-2.5 sm:px-3 py-1.5 text-[10px] font-black text-slate-700 hover:border-slate-300 hover:bg-slate-100 transition cursor-pointer active:scale-95 shadow-2xs"
-                          title="Ganti berkas ini dengan file baru"
-                        >
-                          <Upload className="w-3.5 h-3.5 text-slate-500" />
-                          <span>Ganti</span>
-                        </button>
+                        {!isVerifiedOrDrawn ? (
+                          <button
+                            type="button"
+                            onClick={() => triggerFileUpload(item.id)}
+                            className="inline-flex items-center gap-1 rounded-xl border border-slate-200 bg-slate-50 px-2.5 sm:px-3 py-1.5 text-[10px] font-black text-slate-700 hover:border-slate-300 hover:bg-slate-100 transition cursor-pointer active:scale-95 shadow-2xs"
+                            title="Ganti berkas ini dengan file baru"
+                          >
+                            <Upload className="w-3.5 h-3.5 text-slate-500" />
+                            <span>Ganti</span>
+                          </button>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 rounded-xl border border-emerald-200 bg-emerald-50 px-2.5 py-1.5 text-[9.5px] font-black text-emerald-700">
+                            <Check className="w-3 h-3 stroke-[3]" />
+                            <span>Terkunci</span>
+                          </span>
+                        )}
                       </div>
                     </div>
                   </>
@@ -463,18 +471,20 @@ export default function DocumentsTab({
               <span className="text-xs text-slate-500 truncate max-w-xs sm:max-w-md">
                 {previewDoc.hint}
               </span>
-              <button
-                type="button"
-                onClick={() => {
-                  const targetId = previewDoc.id;
-                  setPreviewDoc(null);
-                  triggerFileUpload(targetId);
-                }}
-                className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-950 text-white font-bold text-xs flex items-center gap-2 cursor-pointer transition-all shadow-xs shrink-0"
-              >
-                <Upload className="w-3.5 h-3.5" />
-                <span>Ganti Berkas</span>
-              </button>
+              {!isVerifiedOrDrawn && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    const targetId = previewDoc.id;
+                    setPreviewDoc(null);
+                    triggerFileUpload(targetId);
+                  }}
+                  className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-950 text-white font-bold text-xs flex items-center gap-2 cursor-pointer transition-all shadow-xs shrink-0"
+                >
+                  <Upload className="w-3.5 h-3.5" />
+                  <span>Ganti Berkas</span>
+                </button>
+              )}
             </div>
           </div>
         </div>

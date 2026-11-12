@@ -27,13 +27,13 @@ export default function Step3PaymentAndPact({
 }) {
   const [copiedNote, setCopiedNote] = useState(false);
 
-  // Otomatis hasilkan berita transfer berdasarkan nama sekolah atau default ke MTS MU'ALLIMIN_1
+  // Otomatis hasilkan berita transfer berdasarkan nama sekolah atau default ke MTS MUALLIMIN YK_1
   const rawSchool = (formData?.schoolName || '').trim().toUpperCase();
   const teamSuffix = formData?.teamUnit && formData.teamUnit !== 'Tunggal'
     ? (formData.teamUnit === 'Tim A' || formData.teamUnit === 'A' ? 'A' : 'B')
     : '';
   const schoolFormatted = rawSchool ? (teamSuffix ? `${rawSchool} ${teamSuffix}` : rawSchool) : '';
-  const autoTransferNote = schoolFormatted ? `${schoolFormatted}_1` : "MTS MU'ALLIMIN_1";
+  const autoTransferNote = schoolFormatted ? `${schoolFormatted}_1` : 'MTS MUALLIMIN YK_1';
 
   const handleCopyNote = () => {
     navigator.clipboard?.writeText(autoTransferNote);
@@ -217,7 +217,7 @@ export default function Step3PaymentAndPact({
                   Ganti Bukti
                   <input
                     type="file"
-                    accept="image/*,.pdf"
+                    accept="image/jpeg,image/png"
                     onChange={e => handleFileChange('paymentProof', e)}
                     className="hidden"
                   />
@@ -227,10 +227,10 @@ export default function Step3PaymentAndPact({
               <label className="cursor-pointer flex flex-col items-center justify-center gap-2 py-4 text-xs font-bold text-slate-700 hover:text-red-700 transition-colors">
                 <UploadCloud className="w-6 h-6 text-red-600" />
                 <span>Pilih Foto / Screenshot Struk Bukti Transfer</span>
-                <span className="text-[10px] text-slate-500 font-normal">Format JPG, PNG, PDF (Maks. 5 MB)</span>
+                <span className="text-[10px] text-slate-500 font-normal">Format JPG, PNG (Maks. 2 MB)</span>
                 <input
                   type="file"
-                  accept="image/*,.pdf"
+                  accept="image/jpeg,image/png"
                   onChange={e => handleFileChange('paymentProof', e)}
                   className="hidden"
                 />

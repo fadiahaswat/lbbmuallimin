@@ -6,11 +6,12 @@ export default function PenaltiesSection({
   selectedTeam,
   peletonPenalty = 0,
   dantonPenalty = 0,
+  isInputDisabled = false,
 }) {
   const totalCombinedPenalty = peletonPenalty + dantonPenalty;
 
   return (
-    <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-6">
+    <fieldset disabled={isInputDisabled} className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-6 disabled:opacity-75">
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-4 gap-3">
         <div>
@@ -327,6 +328,6 @@ export default function PenaltiesSection({
         </div>
         <span className="text-slate-500 italic">Nilai penalti otomatis terakumulasi pada rekapitulasi nilai</span>
       </div>
-    </div>
+    </fieldset>
   );
 }

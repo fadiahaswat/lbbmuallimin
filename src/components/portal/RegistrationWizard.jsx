@@ -43,11 +43,11 @@ export default function RegistrationWizard({ isOpen, onClose }) {
     }
   };
 
-  // Quota calculation per jenjang
+  // Quota calculation per jenjang (abaikan tim yang ditolak / rejected)
   const quotaSD = settings?.quotaSD || 18;
   const quotaSMP = settings?.quotaSMP || 18;
-  const registeredSD = (teams || []).filter(t => t.jenjang === 'SD').length;
-  const registeredSMP = (teams || []).filter(t => t.jenjang === 'SMP').length;
+  const registeredSD = (teams || []).filter(t => t.jenjang === 'SD' && t.status !== 'rejected').length;
+  const registeredSMP = (teams || []).filter(t => t.jenjang === 'SMP' && t.status !== 'rejected').length;
   const isSDFull = registeredSD >= quotaSD;
   const isSMPFull = registeredSMP >= quotaSMP;
   const isRegOpenMaster = settings?.registrationOpen !== false;
@@ -186,13 +186,16 @@ export default function RegistrationWizard({ isOpen, onClose }) {
   // Submission result
   const [createdTeam, setCreatedTeam] = useState(null);
 
-  // File size & format checks
-  const MAX_IMAGE_SIZE = 3 * 1024 * 1024; // 3 MB
-  const MAX_DOC_SIZE = 5 * 1024 * 1024; // 5 MB
+  // File size & format checks sesuai Juknis Pendaftaran Bab A.6:
+  // - Bukti Transfer (paymentProof): JPG/PNG, maks. 2 MB
+  // - Kartu Pelajar Danton (dantonCard): Foto/PDF, maks. 3 MB
+  // - Logo Sekolah (schoolLogo): PNG transparan/JPG, maks. 3 MB
+  const MAX_2MB_SIZE = 2 * 1024 * 1024; // 2 MB
+  const MAX_3MB_SIZE = 3 * 1024 * 1024; // 3 MB
   const ALLOWED_IMAGE_EXTS = ['.jpg', '.jpeg', '.png'];
   const ALLOWED_DOC_EXTS = ['.pdf', '.jpg', '.jpeg', '.png'];
 
-  function processUploadedFile(file, isDocument = false) {
+  function processUploadedFile(file, fileKey = 'schoolLogo') {
     return new Promise((resolve) => {
       if (!file) {
         resolve(null);
@@ -201,7 +204,9 @@ export default function RegistrationWizard({ isOpen, onClose }) {
 
       const fileName = (file.name || '').toLowerCase();
       const ext = fileName.slice(fileName.lastIndexOf('.'));
-      const allowedList = isDocument ? ALLOWED_DOC_EXTS : ALLOWED_IMAGE_EXTS;
+      const isDantonCard = fileKey === 'dantonCard';
+      const isPaymentProof = fileKey === 'paymentProof';
+      const allowedList = isDantonCard ? ALLOWED_DOC_EXTS : ALLOWED_IMAGE_EXTS;
 
       if (!allowedList.includes(ext)) {
         alert(`Format file "${file.name}" tidak diizinkan! Format yang diterima hanya: ${allowedList.join(', ')}`);
@@ -209,10 +214,10 @@ export default function RegistrationWizard({ isOpen, onClose }) {
         return;
       }
 
-      const maxLimit = isDocument ? MAX_DOC_SIZE : MAX_IMAGE_SIZE;
+      const maxLimit = isPaymentProof ? MAX_2MB_SIZE : MAX_3MB_SIZE;
       if (file.size > maxLimit) {
         const limitMb = Math.round(maxLimit / (1024 * 1024));
-        alert(`Ukuran file "${file.name}" (${(file.size / (1024 * 1024)).toFixed(2)} MB) melebihi batas maksimal ${limitMb} MB!`);
+        alert(`Ukuran file "${file.name}" (${(file.size / (1024 * 1024)).toFixed(2)} MB) melebihi batas maksimal ${limitMb} MB sesuai Juknis Pendaftaran!`);
         resolve(null);
         return;
       }
@@ -222,7 +227,7 @@ export default function RegistrationWizard({ isOpen, onClose }) {
         // Khusus Logo Sekolah atau file PNG transparan: Pertahankan file asli apa adanya via FileReader readAsDataURL
         // agar tidak terjadi degradasi kualitas, distorsi pixel, atau hilangnya transparansi alpha channel
         const isPng = file.type === 'image/png' || ext === '.png';
-        if (isDocument === false && isPng) {
+        if (fileKey === 'schoolLogo' && isPng) {
           const reader = new FileReader();
           reader.onload = (e) => {
             const kb = Math.round(file.size / 1024);
@@ -306,8 +311,7 @@ export default function RegistrationWizard({ isOpen, onClose }) {
   async function handleFileChange(key, e) {
     const file = e.target.files?.[0];
     if (file) {
-      const isDocument = ['dantonCard', 'paymentProof'].includes(key);
-      const processed = await processUploadedFile(file, isDocument);
+      const processed = await processUploadedFile(file, key);
       if (processed) {
         setFiles(prev => ({
           ...prev,
@@ -456,6 +460,27 @@ export default function RegistrationWizard({ isOpen, onClose }) {
     }
     if (!formData.schoolName.trim()) {
       triggerValidationError('Nama lengkap sekolah wajib diisi.', 'input[placeholder*="NAMA LENGKAP SEKOLAH"]');
+      return false;
+    }
+    const baseSchoolClean = formData.schoolName.trim().toUpperCase().replace(/\s+[AB]$/, '');
+    const sameSchoolTeams = (teams || []).filter(t => {
+      if (t.status === 'rejected') return false;
+      const tSchoolBase = String(t.schoolName || '').trim().toUpperCase().replace(/\s+[AB]$/, '');
+      return tSchoolBase === baseSchoolClean && t.jenjang === formData.jenjang;
+    });
+    if (sameSchoolTeams.length >= 2) {
+      triggerValidationError(
+        `Sekolah "${baseSchoolClean}" sudah mendaftarkan maksimal 2 peleton pada jenjang ${formData.jenjang} sesuai Juknis Bab A.2.`,
+        'input[placeholder*="NAMA LENGKAP SEKOLAH"]'
+      );
+      return false;
+    }
+    const targetFullSchoolName = getFullSchoolName();
+    if (sameSchoolTeams.some(t => String(t.schoolName || '').trim().toUpperCase() === targetFullSchoolName)) {
+      triggerValidationError(
+        `Peleton "${targetFullSchoolName}" sudah terdaftar. Jika ingin mendaftarkan peleton ke-2 dari sekolah yang sama, pilih unit "Tim B" (atau unit yang berbeda).`,
+        'input[placeholder*="NAMA LENGKAP SEKOLAH"]'
+      );
       return false;
     }
     if (!formData.schoolAddress.trim()) {

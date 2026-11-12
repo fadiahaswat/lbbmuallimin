@@ -72,6 +72,8 @@ export default function RabFinanceView() {
 
   const [activeTab, setActiveTab] = useState('pengeluaran'); // 'pengeluaran' | 'pemasukan'
   const [expandedDiv, setExpandedDiv] = useState(null);
+  const realizedPaidTeams = (teams || []).filter(t => ['registered', 'verified', 'drawn'].includes(t.status)).length;
+  const realizedRegistrationRevenue = realizedPaidTeams * (PAYMENT?.REGISTRATION_FEE || 400000);
 
   const toggleDivision = (id) => {
     setExpandedDiv(expandedDiv === id ? null : id);
@@ -176,7 +178,7 @@ export default function RabFinanceView() {
               Rp {OFFICIAL_RAB.TOTAL_INCOME.toLocaleString('id-ID')}
             </div>
             <p className="text-[11px] text-slate-400 mt-2">
-              Subsidi, Sponsor, 36 Peleton & Bazar
+              Realisasi Pendaftaran: <strong className="text-emerald-700 font-mono">Rp {realizedRegistrationRevenue.toLocaleString('id-ID')}</strong> ({realizedPaidTeams} tim)
             </p>
           </div>
 

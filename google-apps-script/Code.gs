@@ -87,15 +87,28 @@ function doGet(e) {
       });
     }
 
+    function normalizeGmailAddress(em) {
+      var str = String(em || '').trim().toLowerCase();
+      var parts = str.split('@');
+      if (parts.length !== 2) return str;
+      if (parts[1] === 'gmail.com' || parts[1] === 'googlemail.com') {
+        var user = parts[0].replace(/\./g, '').split('+')[0];
+        return user + '@gmail.com';
+      }
+      return parts[0] + '@' + parts[1];
+    }
+
     if (action === 'checkEmail') {
       var emailToCheck = String(params.email || '').trim().toLowerCase();
+      var normToCheck = normalizeGmailAddress(emailToCheck);
       var teamsSheet = getOrCreateSheet(ss, 'teams');
       var allTeams = readSheetData(teamsSheet);
       var matchedTeam = null;
       for (var emIdx = 0; emIdx < allTeams.length; emIdx++) {
         var tItem = allTeams[emIdx];
+        if (String(tItem.status || '').toLowerCase() === 'rejected') continue;
         var rowEm = String(tItem.email || '').trim().toLowerCase();
-        if (rowEm && rowEm === emailToCheck) {
+        if (rowEm && (rowEm === emailToCheck || normalizeGmailAddress(rowEm) === normToCheck)) {
           matchedTeam = {
             id: tItem.id,
             schoolName: tItem.schoolName || tItem.platoonName || 'Peleton Lain',
@@ -290,16 +303,33 @@ function doPost(e) {
       // KEAMANAN 4: Validasi 1 Peleton 1 Akun Gmail (Mencegah 1 email digunakan 2 peleton)
       if (tableName === 'teams' && item.email) {
         var cleanEmail = String(item.email).trim().toLowerCase();
+        var normCleanEmail = (function(em) {
+          var p = em.split('@');
+          if (p.length !== 2) return em;
+          if (p[1] === 'gmail.com' || p[1] === 'googlemail.com') {
+            return p[0].replace(/\./g, '').split('+')[0] + '@gmail.com';
+          }
+          return em;
+        })(cleanEmail);
         var existingTeams = readSheetData(sheet);
         var targetTeamId = String(item.id || '');
         for (var tIdx = 0; tIdx < existingTeams.length; tIdx++) {
           var tRow = existingTeams[tIdx];
+          if (String(tRow.status || '').toLowerCase() === 'rejected') continue;
           var existingTeamId = String(tRow.id || '');
           if (targetTeamId && existingTeamId === targetTeamId) {
             continue; // Diizinkan jika mengupdate peleton miliknya sendiri
           }
           var rowEmail = String(tRow.email || '').trim().toLowerCase();
-          if (rowEmail && rowEmail === cleanEmail) {
+          var normRowEmail = (function(em) {
+            var p = em.split('@');
+            if (p.length !== 2) return em;
+            if (p[1] === 'gmail.com' || p[1] === 'googlemail.com') {
+              return p[0].replace(/\./g, '').split('+')[0] + '@gmail.com';
+            }
+            return em;
+          })(rowEmail);
+          if (rowEmail && (rowEmail === cleanEmail || normRowEmail === normCleanEmail)) {
             return jsonResponse({
               success: false,
               error: 'Email ' + cleanEmail + ' sudah terdaftar untuk peleton ' + (tRow.schoolName || 'lain') + '. 1 peleton 1 Gmail, tidak bisa 1 email 2 peleton. Silakan isi email yang lain.'

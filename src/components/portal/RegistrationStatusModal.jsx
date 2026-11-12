@@ -425,8 +425,8 @@ export default function RegistrationStatusModal({ isOpen, onClose }) {
                   </h3>
 
                   <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-500">
-                    <span>Peleton: <strong className="text-slate-800">{team.platoonName}</strong></span>
-                    <span>Pembina: <strong className="text-slate-800">{team.coachName}</strong></span>
+                    <span>Peleton: <strong className="text-slate-800">{team.platoonName || team.schoolName}</strong></span>
+                    <span>Official/Pelatih: <strong className="text-slate-800">{team.officialName || team.coachName || '-'}</strong></span>
                     <span>No. WA: <strong className="text-slate-800 font-mono">{team.waNumber}</strong></span>
                   </div>
                 </div>

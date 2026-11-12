@@ -212,7 +212,12 @@ export default function ParticipantDashboard() {
     );
   }
 
-  const teamScore = (currentTeam?.id && scores[currentTeam.id]) || scores['team-sd-01'] || scores['team-sd-1'] || null;
+  const rawTeamScore = currentTeam?.id
+    ? (scores[currentTeam.id] || (currentTeam.id === 'team-sd-01' ? scores['team-sd-1'] : null))
+    : null;
+  const teamScore = rawTeamScore && (settings?.announcementPublished || rawTeamScore.status === 'finalized' || rawTeamScore.isLocked)
+    ? rawTeamScore
+    : null;
 
   const availableClassOptions = currentTeam.jenjang === 'SD'
     ? ['1', '2', '3', '4', '5', '6']
@@ -371,6 +376,25 @@ export default function ParticipantDashboard() {
   function handleFileSelected(e) {
     const file = e.target.files?.[0];
     if (file && currentUploadKey) {
+      // Sesuai Juknis Pendaftaran Bab A.6:
+      // - Surat Tugas/Rekomendasi (recommendationLetter) & Bukti Transfer (paymentProof): maks. 2 MB
+      // - Kartu Pelajar Danton (dantonCard) & Logo Sekolah (schoolLogo): maks. 3 MB
+      const is2MbDoc = ['recommendationLetter', 'paymentProof'].includes(currentUploadKey);
+      const maxBytes = (is2MbDoc ? 2 : 3) * 1024 * 1024;
+      if (file.size > maxBytes) {
+        alert(`Ukuran berkas melebihi batas maksimal ${is2MbDoc ? 2 : 3} MB sesuai Juknis Pendaftaran. Silakan kompres berkas terlebih dahulu.`);
+        return;
+      }
+      const isPaymentProof = currentUploadKey === 'paymentProof';
+      const isAllowedType = isPaymentProof
+        ? (file.type?.startsWith('image/') || /\.(jpg|jpeg|png)$/i.test(file.name))
+        : (file.type?.startsWith('image/') || file.type === 'application/pdf' || /\.(jpg|jpeg|png|webp|pdf)$/i.test(file.name));
+      if (!isAllowedType) {
+        alert(isPaymentProof
+          ? 'Format bukti transfer tidak didukung. Gunakan format JPG atau PNG (Maks. 2 MB).'
+          : 'Format berkas tidak didukung. Gunakan format PDF, JPG, atau PNG.');
+        return;
+      }
       const isImg = file.type?.startsWith('image/') || /\.(jpg|jpeg|png|webp)$/i.test(file.name);
       if (isImg) {
         const reader = new FileReader();
@@ -550,7 +574,7 @@ export default function ParticipantDashboard() {
           nisn: newPasukan[sIdx].nisn,
           class: newPasukan[sIdx].class,
           birthPlace: newPasukan[sIdx].birthPlace,
-          birthDate: newPasukan[sIdx].birthDate,
+          birthDate: newPasukan[sIdx].birthDate, medicalHistory: newPasukan[sIdx].medicalHistory,
           photo: newPasukan[sIdx].photo,
         };
         const tData = {
@@ -558,7 +582,7 @@ export default function ParticipantDashboard() {
           nisn: newPasukan[tIdx].nisn,
           class: newPasukan[tIdx].class,
           birthPlace: newPasukan[tIdx].birthPlace,
-          birthDate: newPasukan[tIdx].birthDate,
+          birthDate: newPasukan[tIdx].birthDate, medicalHistory: newPasukan[tIdx].medicalHistory,
           photo: newPasukan[tIdx].photo,
         };
 
@@ -577,7 +601,7 @@ export default function ParticipantDashboard() {
           nisn: newPasukan[pIdx].nisn,
           class: newPasukan[pIdx].class,
           birthPlace: newPasukan[pIdx].birthPlace,
-          birthDate: newPasukan[pIdx].birthDate,
+          birthDate: newPasukan[pIdx].birthDate, medicalHistory: newPasukan[pIdx].medicalHistory,
           photo: newPasukan[pIdx].photo,
         };
         const cData = {
@@ -585,7 +609,7 @@ export default function ParticipantDashboard() {
           nisn: newCadangan[cIdx].nisn,
           class: newCadangan[cIdx].class,
           birthPlace: newCadangan[cIdx].birthPlace,
-          birthDate: newCadangan[cIdx].birthDate,
+          birthDate: newCadangan[cIdx].birthDate, medicalHistory: newCadangan[cIdx].medicalHistory,
           photo: newCadangan[cIdx].photo,
         };
 
@@ -605,7 +629,7 @@ export default function ParticipantDashboard() {
           nisn: newCadangan[cIdx].nisn,
           class: newCadangan[cIdx].class,
           birthPlace: newCadangan[cIdx].birthPlace,
-          birthDate: newCadangan[cIdx].birthDate,
+          birthDate: newCadangan[cIdx].birthDate, medicalHistory: newCadangan[cIdx].medicalHistory,
           photo: newCadangan[cIdx].photo,
         };
         const pData = {
@@ -613,7 +637,7 @@ export default function ParticipantDashboard() {
           nisn: newPasukan[pIdx].nisn,
           class: newPasukan[pIdx].class,
           birthPlace: newPasukan[pIdx].birthPlace,
-          birthDate: newPasukan[pIdx].birthDate,
+          birthDate: newPasukan[pIdx].birthDate, medicalHistory: newPasukan[pIdx].medicalHistory,
           photo: newPasukan[pIdx].photo,
         };
 
@@ -633,7 +657,7 @@ export default function ParticipantDashboard() {
           nisn: newCadangan[sIdx].nisn,
           class: newCadangan[sIdx].class,
           birthPlace: newCadangan[sIdx].birthPlace,
-          birthDate: newCadangan[sIdx].birthDate,
+          birthDate: newCadangan[sIdx].birthDate, medicalHistory: newCadangan[sIdx].medicalHistory,
           photo: newCadangan[sIdx].photo,
         };
         const tData = {
@@ -641,7 +665,7 @@ export default function ParticipantDashboard() {
           nisn: newCadangan[tIdx].nisn,
           class: newCadangan[tIdx].class,
           birthPlace: newCadangan[tIdx].birthPlace,
-          birthDate: newCadangan[tIdx].birthDate,
+          birthDate: newCadangan[tIdx].birthDate, medicalHistory: newCadangan[tIdx].medicalHistory,
           photo: newCadangan[tIdx].photo,
         };
 
@@ -921,7 +945,7 @@ export default function ParticipantDashboard() {
                   </span>
                   <div>
                     <p className="text-xs sm:text-sm font-black text-emerald-950">
-                      {currentTeam.status === 'verified'
+                      {(currentTeam.status === 'verified' || currentTeam.status === 'drawn')
                         ? 'ACC Panitia Sekretariat'
                         : currentTeam.status === 'pending'
                         ? 'Menunggu Validasi Dokumen'
@@ -930,7 +954,7 @@ export default function ParticipantDashboard() {
                         : 'Terdaftar di Sistem'}
                     </p>
                     <p className="text-[11px] text-emerald-700">
-                      {currentTeam.status === 'verified'
+                      {(currentTeam.status === 'verified' || currentTeam.status === 'drawn')
                         ? 'Seluruh data utama kontingen telah lolos verifikasi resmi.'
                         : 'Panitia sedang memproses verifikasi administrasi tim Anda.'}
                     </p>
@@ -943,7 +967,7 @@ export default function ParticipantDashboard() {
                 {[
                   { label: 'Pendaftaran formulir peleton diterima', done: true, note: 'Tahap 1 selesai' },
                   { label: 'Administrasi bukti pembayaran tervalidasi', done: Boolean(currentTeam.files?.paymentProof?.url), note: 'Tahap 2 selesai' },
-                  { label: 'Data 25 personel peleton & pasfoto lengkap', done: Boolean(currentTeam.roster?.pasukan?.length >= 21), note: 'Tahap 3 (Formation Board)' },
+                  { label: 'Data 25 personel peleton & pasfoto lengkap', done: Boolean((currentTeam.roster?.pasukan || []).filter(p => p.name?.trim() && p.nisn?.trim()).length >= 21 && currentTeam.roster?.danton?.name?.trim()), note: 'Tahap 3 (Formation Board)' },
                   { label: 'Nomor dada & jadwal arena disahkan', done: Boolean(currentTeam.lotNumber), note: 'Tahap 4 (Technical Meeting)' },
                 ].map((step, idx) => (
                   <div key={step.label} className="flex items-center gap-3">

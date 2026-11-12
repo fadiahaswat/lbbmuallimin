@@ -63,7 +63,9 @@ function ViewLoader() {
 }
 
 function MainApp() {
-  const { activeView, setActiveView } = useCompetition();
+  const { activeView, setActiveView, currentUser, role } = useCompetition();
+  const effectiveRole = currentUser?.role || role || 'publik';
+  const isStaffMember = ['superadmin', 'admin', 'checkin', 'dp', 'staging', 'juri', 'penginput', 'verifikator', 'finalisator'].includes(effectiveRole);
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showStickyCta, setShowStickyCta] = useState(false);
@@ -168,11 +170,11 @@ function MainApp() {
         {activeView === 'staging' && <StagingDashboard />}
         {activeView === 'live_leaderboard' && <LiveLeaderboard />}
         {activeView === 'field_trial' && <FieldTrialView />}
-        {activeView === 'tm' && <TechnicalMeetingView />}
-        {activeView === 'checkin' && <BasecampCheckInView />}
-        {activeView === 'dp' && <DaerahPersiapanView />}
-        {activeView === 'rekap_nilai' && <RekapNilaiView />}
-        {activeView === 'checkout' && <BasecampCheckOutView />}
+        {activeView === 'tm' && (isStaffMember || effectiveRole === 'peserta' ? <TechnicalMeetingView /> : <AuthModal />)}
+        {activeView === 'checkin' && (['checkin', 'admin', 'superadmin'].includes(effectiveRole) ? <BasecampCheckInView /> : <AuthModal />)}
+        {activeView === 'dp' && (['dp', 'staging', 'admin', 'superadmin', 'juri'].includes(effectiveRole) ? <DaerahPersiapanView /> : <AuthModal />)}
+        {activeView === 'rekap_nilai' && (['penginput', 'verifikator', 'finalisator', 'juri', 'admin', 'superadmin'].includes(effectiveRole) ? <RekapNilaiView /> : <AuthModal />)}
+        {activeView === 'checkout' && (['checkin', 'admin', 'superadmin'].includes(effectiveRole) ? <BasecampCheckOutView /> : <AuthModal />)}
         {activeView === 'rab' && <RabFinanceView />}
         {activeView === 'dokumen' && <DokumenRegulasiPortal initialTab="juknis" />}
         {activeView === 'juknis' && <DokumenRegulasiPortal initialTab="juknis" />}

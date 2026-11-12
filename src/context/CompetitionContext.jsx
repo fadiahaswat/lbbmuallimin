@@ -116,19 +116,31 @@ export function CompetitionProvider({ children }) {
   const [authModal, setAuthModal] = useState({ isOpen: false, tab: 'login' });
   const [authTab, setAuthTab] = useState('login');
 
-  // 1. Roles: 'publik' | 'peserta' | 'admin' | 'juri' | 'superadmin'
+  // 1. Roles: 'publik' | 'peserta' | 'admin' | 'checkin' | 'dp' | 'juri' | 'penginput' | 'verifikator' | 'finalisator' | 'superadmin'
   const [role, setRole] = useState(() => {
     try {
       const savedUser = localStorage.getItem(STORAGE_KEYS.CURRENT_USER);
+      const savedRole = localStorage.getItem(STORAGE_KEYS.ROLE);
       if (savedUser) {
         const parsed = JSON.parse(savedUser);
         const matchInit = INITIAL_USERS.find(iu => iu.email?.toLowerCase() === parsed?.email?.toLowerCase());
-        if (matchInit) return matchInit.role;
+        if (matchInit) {
+          if (matchInit.role === 'superadmin' && savedRole) return savedRole;
+          return matchInit.role;
+        }
+        if (parsed?.role) {
+          if (parsed.role === 'superadmin' && savedRole) return savedRole;
+          return parsed.role;
+        }
+      }
+      const savedTeamId = localStorage.getItem(STORAGE_KEYS.CURRENT_TEAM_ID);
+      if (savedRole === 'peserta' && savedTeamId) {
+        return 'peserta';
       }
     } catch {
       // ignore
     }
-    return localStorage.getItem(STORAGE_KEYS.ROLE) || 'publik';
+    return 'publik';
   });
 
   // 2. Active View with persistence for logged-in sessions
@@ -159,7 +171,8 @@ export function CompetitionProvider({ children }) {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.TEAMS);
       const list = saved ? JSON.parse(saved) : null;
-      if (Array.isArray(list) && list.length >= 36) {
+      const isMissingLotNumbers = Array.isArray(list) && list.some(t => t.id && t.id.startsWith('dummy-') && !t.lotNumber);
+      if (Array.isArray(list) && list.length >= 36 && !isMissingLotNumbers) {
         return list.map(normalizeTeamData);
       }
       // Khusus Localhost: Otomatis sediakan 36 peleton dummy lengkap (18 SD + 18 SMP)
@@ -184,13 +197,10 @@ export function CompetitionProvider({ children }) {
       }
       if (isLocalhostEnvironment()) {
         const dummyScores = generateDummyScores(teams);
-        // Selalu pastikan tim demo (team-sd-01 / Sapen) memiliki skor rekap yang keluar di localhost
-        if (!parsed || !parsed['team-sd-01'] || !parsed['team-sd-1']) {
-          const merged = { ...dummyScores, ...(parsed || {}) };
-          if (dummyScores['team-sd-01']) merged['team-sd-01'] = dummyScores['team-sd-01'];
-          if (dummyScores['team-sd-1']) merged['team-sd-1'] = dummyScores['team-sd-1'];
-          safeSetItem(STORAGE_KEYS.SCORES, JSON.stringify(merged));
-          return merged;
+        const isLegacyScores = parsed && Object.values(parsed).some(s => s?.pbbTotal && s.pbbTotal < 3000);
+        if (!parsed || isLegacyScores || !parsed['dummy-team-sd-01']) {
+          safeSetItem(STORAGE_KEYS.SCORES, JSON.stringify(dummyScores));
+          return dummyScores;
         }
         return parsed;
       }
@@ -334,7 +344,7 @@ export function CompetitionProvider({ children }) {
     checkOutBasecamp,
     updateDP1PersonnelInspection,
     passToDP2
-  } = useMemo(() => createStagingActions({ staging, setStaging, currentUser }), [staging, currentUser]);
+  } = useMemo(() => createStagingActions({ staging, setStaging, scores, setScores, currentUser }), [staging, scores, currentUser]);
 
   // Modular Field Timer
   const {
@@ -344,7 +354,7 @@ export function CompetitionProvider({ children }) {
     resumeFieldTimer,
     resetFieldTimer,
     stopAndSaveFieldTimer
-  } = useFieldTimer({ updateTeamStaging, setScores });
+  } = useFieldTimer({ updateTeamStaging, scores, setScores });
 
   // Modular Team Actions
   const {
@@ -371,7 +381,7 @@ export function CompetitionProvider({ children }) {
     verifyScore,
     finalizeScore,
     unlockScore,
-  } = useMemo(() => createScoringActions({ setScores, currentUser }), [currentUser]);
+  } = useMemo(() => createScoringActions({ scores, setScores, currentUser }), [scores, currentUser]);
 
   function getAggregatedScore(teamId) {
     return scores[teamId] || null;
@@ -434,6 +444,36 @@ export function CompetitionProvider({ children }) {
       } catch (e) {}
     }
   }, [currentTeamId]);
+
+  // Cross-tab synchronization via storage event listener
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const handleStorageChange = (e) => {
+      if (!e.key || !e.newValue) return;
+      try {
+        if (e.key === STORAGE_KEYS.TEAMS) {
+          const parsed = JSON.parse(e.newValue);
+          if (Array.isArray(parsed)) setTeams(parsed.map(normalizeTeamData));
+        } else if (e.key === STORAGE_KEYS.SCORES) {
+          const parsed = JSON.parse(e.newValue);
+          if (parsed && typeof parsed === 'object') setScores(parsed);
+        } else if (e.key === STORAGE_KEYS.STAGING) {
+          const parsed = JSON.parse(e.newValue);
+          if (parsed && typeof parsed === 'object') setStaging(parsed);
+        } else if (e.key === STORAGE_KEYS.SETTINGS) {
+          const parsed = JSON.parse(e.newValue);
+          if (parsed && typeof parsed === 'object') setSettings(prev => ({ ...prev, ...parsed }));
+        } else if (e.key === STORAGE_KEYS.USERS) {
+          const parsed = JSON.parse(e.newValue);
+          if (Array.isArray(parsed)) setUsers(parsed);
+        }
+      } catch (err) {
+        console.warn('[CompetitionContext] Cross-tab storage parse warning:', err);
+      }
+    };
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
 
   // Initial & Role-Based Sync: Mengambil data terbaru dari Google Sheet jika sudah terkonfigurasi
   useEffect(() => {
@@ -511,6 +551,7 @@ export function CompetitionProvider({ children }) {
                     class: (sP?.class && sP.class !== '-') ? sP.class : (eP?.class || ''),
                     birthPlace: sP?.birthPlace || eP?.birthPlace || '',
                     birthDate: sP?.birthDate || eP?.birthDate || '',
+                    medicalHistory: sP?.medicalHistory || eP?.medicalHistory || '',
                     photo: (sP?.photo && sP.photo !== '#' && !sP.photo.startsWith('#'))
                       ? sP.photo
                       : (eP?.photo || null),
@@ -534,6 +575,7 @@ export function CompetitionProvider({ children }) {
                     class: (sC?.class && sC.class !== '-') ? sC.class : (eC?.class || ''),
                     birthPlace: sC?.birthPlace || eC?.birthPlace || '',
                     birthDate: sC?.birthDate || eC?.birthDate || '',
+                    medicalHistory: sC?.medicalHistory || eC?.medicalHistory || '',
                     photo: (sC?.photo && sC.photo !== '#' && !sC.photo.startsWith('#'))
                       ? sC.photo
                       : (eC?.photo || null),
@@ -957,10 +999,9 @@ export function CompetitionProvider({ children }) {
     }
 
     // Security Gate: Self-registration HANYA diizinkan untuk peran 'peserta'
-    // Peran panitia (admin/juri/superadmin) wajib didaftarkan melalui superadmin panel
-    const assignedRole = (currentUser?.role === 'superadmin' && ['admin', 'juri', 'superadmin', 'penginput', 'verifikator', 'finalisator'].includes(requestedRole))
-      ? requestedRole
-      : 'peserta';
+    // Peran panitia (admin/juri/superadmin/dll) wajib didaftarkan melalui superadmin panel
+    const isSuperadminCreatingStaff = currentUser?.role === 'superadmin' && ['admin', 'checkin', 'dp', 'juri', 'superadmin', 'penginput', 'verifikator', 'finalisator'].includes(requestedRole);
+    const assignedRole = isSuperadminCreatingStaff ? requestedRole : 'peserta';
 
     const newUser = {
       id: `user-${Date.now()}`,
@@ -970,8 +1011,18 @@ export function CompetitionProvider({ children }) {
       roleLabel:
         assignedRole === 'admin'
           ? 'Panitia Sekretariat'
+          : assignedRole === 'checkin'
+          ? 'Petugas Basecamp (Check-In & Check-Out)'
+          : assignedRole === 'dp'
+          ? 'Petugas Daerah Persiapan (DP 1-2)'
           : assignedRole === 'juri'
           ? 'Dewan Juri'
+          : assignedRole === 'penginput'
+          ? 'Operator Input Nilai Kertas'
+          : assignedRole === 'verifikator'
+          ? 'Verifikator & Checker Nilai'
+          : assignedRole === 'finalisator'
+          ? 'Finalisator & Pengesah Rekap Nilai'
           : assignedRole === 'superadmin'
           ? 'Ketua Panitia'
           : 'Official Peserta',
@@ -981,6 +1032,16 @@ export function CompetitionProvider({ children }) {
     };
 
     setUsers(prev => [newUser, ...prev]);
+    if (assignedRole !== 'peserta') {
+      saveRecordToSheet('users', newUser).catch(err =>
+        console.warn('[CompetitionContext] Sync registerUser to sheet failed:', err)
+      );
+    }
+
+    if (isSuperadminCreatingStaff) {
+      return { success: true, user: newUser };
+    }
+
     setCurrentUser(newUser);
     setRole(newUser.role);
 
@@ -1199,7 +1260,10 @@ export function CompetitionProvider({ children }) {
     if (currentUser && (currentUser.role === targetRole || currentUser.role === 'superadmin')) {
       setRole(targetRole);
       if (targetRole === 'admin') setActiveView('admin');
-      else if (['penginput', 'verifikator', 'finalisator', 'juri'].includes(targetRole)) setActiveView('juri');
+      else if (targetRole === 'checkin') setActiveView('checkin');
+      else if (targetRole === 'dp') setActiveView('dp');
+      else if (['penginput', 'juri'].includes(targetRole)) setActiveView('juri');
+      else if (['verifikator', 'finalisator'].includes(targetRole)) setActiveView('rekap_nilai');
       else if (targetRole === 'superadmin') setActiveView('superadmin');
       return true;
     }
@@ -1272,7 +1336,7 @@ export function CompetitionProvider({ children }) {
         return true;
       }
       const teamSchool = String(t.schoolName || '').trim().toLowerCase();
-      if (cleanId.length >= 4 && (teamSchool === cleanId || teamSchool.includes(cleanId))) {
+      if (isLocalhostEnvironment() && cleanId.length >= 4 && teamSchool === cleanId) {
         return true;
       }
       return false;
@@ -1333,7 +1397,7 @@ export function CompetitionProvider({ children }) {
 
   function updateSettings(newSettings) {
     let nextSettings = null;
-    setSettings(prev => {
+    const buildSettings = (prev) => {
       const merged = { ...prev, ...newSettings };
       if (newSettings?.eventDates) {
         merged.eventDates = {
@@ -1341,9 +1405,18 @@ export function CompetitionProvider({ children }) {
           ...newSettings.eventDates,
         };
       }
+      return merged;
+    };
+
+    setSettings(prev => {
+      const merged = buildSettings(prev);
       nextSettings = merged;
       return merged;
     });
+
+    if (!nextSettings) {
+      nextSettings = buildSettings(settings);
+    }
 
     if (nextSettings) {
       saveRecordToSheet('settings', { id: 'competition_settings', ...nextSettings }).catch(err =>
@@ -1407,81 +1480,142 @@ export function CompetitionProvider({ children }) {
     return { success: true };
   }
 
-  // Khusus Testing TM: Undi otomatis acak semua nomor dada 18 SD & 18 SMP
+  // Khusus Testing TM: Undi otomatis acak semua nomor dada 18 SD & 18 SMP (hanya untuk tim verified/drawn)
   function randomizeAllLotNumbers() {
-    const shuffle = arr => [...arr].sort(() => Math.random() - 0.5);
-    const sdLots = shuffle(Array.from({ length: 18 }, (_, i) => i + 1));
-    const smpLots = shuffle(Array.from({ length: 18 }, (_, i) => i + 1));
+    const shuffle = arr => {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    };
+    const eligibleSD = teams.filter(t => t.jenjang === 'SD' && ['verified', 'drawn'].includes(t.status));
+    const eligibleSMP = teams.filter(t => t.jenjang === 'SMP' && ['verified', 'drawn'].includes(t.status));
+    const sdLots = shuffle(Array.from({ length: Math.max(eligibleSD.length, 18) }, (_, i) => i + 1));
+    const smpLots = shuffle(Array.from({ length: Math.max(eligibleSMP.length, 18) }, (_, i) => i + 1));
 
     let sdIdx = 0;
     let smpIdx = 0;
     const nowIso = new Date().toISOString();
+    const updatedList = [];
 
-    setTeams(prev =>
-      prev.map(team => {
-        const lot = team.jenjang === 'SD' ? sdLots[sdIdx++] : smpLots[smpIdx++];
-        const chest = lot ? getChestNumberByLot(team.jenjang, lot) : '';
-        return {
-          ...team,
-          lotNumber: lot || null,
-          chestNumber: chest || '',
-          status: lot ? 'drawn' : team.status,
-          drawTime: nowIso,
-        };
-      })
-    );
+    const nextTeams = teams.map(team => {
+      if (!['verified', 'drawn'].includes(team.status)) return team;
+      const lot = team.jenjang === 'SD' ? sdLots[sdIdx++] : smpLots[smpIdx++];
+      const chest = lot ? getChestNumberByLot(team.jenjang, lot) : '';
+      const updated = {
+        ...team,
+        lotNumber: lot || null,
+        chestNumber: chest || '',
+        status: lot ? 'drawn' : team.status,
+        drawTime: nowIso,
+        updatedAt: nowIso,
+      };
+      updatedList.push(updated);
+      return updated;
+    });
+
+    setTeams(nextTeams);
+    if (updatedList.length > 0) {
+      bulkSyncToSheet('teams', updatedList).catch(err =>
+        console.warn('[CompetitionContext] Sync randomizeAllLotNumbers failed:', err)
+      );
+    }
   }
 
   // Undi acak hanya untuk jenjang tertentu ('SD' atau 'SMP')
   function randomizeJenjangLotNumbers(targetJenjang) {
-    const shuffle = arr => [...arr].sort(() => Math.random() - 0.5);
-    const lots = shuffle(Array.from({ length: 18 }, (_, i) => i + 1));
+    const shuffle = arr => {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    };
+    const eligible = teams.filter(t => t.jenjang === targetJenjang && ['verified', 'drawn'].includes(t.status));
+    const lots = shuffle(Array.from({ length: Math.max(eligible.length, 18) }, (_, i) => i + 1));
     let lotIdx = 0;
     const nowIso = new Date().toISOString();
+    const updatedList = [];
 
-    setTeams(prev =>
-      prev.map(team => {
-        if (team.jenjang !== targetJenjang) return team;
-        const lot = lots[lotIdx++];
-        const chest = lot ? getChestNumberByLot(team.jenjang, lot) : '';
-        return {
-          ...team,
-          lotNumber: lot || null,
-          chestNumber: chest || '',
-          status: lot ? 'drawn' : team.status,
-          drawTime: nowIso,
-        };
-      })
-    );
+    const nextTeams = teams.map(team => {
+      if (team.jenjang !== targetJenjang || !['verified', 'drawn'].includes(team.status)) return team;
+      const lot = lots[lotIdx++];
+      const chest = lot ? getChestNumberByLot(team.jenjang, lot) : '';
+      const updated = {
+        ...team,
+        lotNumber: lot || null,
+        chestNumber: chest || '',
+        status: lot ? 'drawn' : team.status,
+        drawTime: nowIso,
+        updatedAt: nowIso,
+      };
+      updatedList.push(updated);
+      return updated;
+    });
+
+    setTeams(nextTeams);
+    if (updatedList.length > 0) {
+      bulkSyncToSheet('teams', updatedList).catch(err =>
+        console.warn('[CompetitionContext] Sync randomizeJenjangLotNumbers failed:', err)
+      );
+    }
   }
 
   // Reset undian hanya untuk jenjang tertentu ('SD' atau 'SMP')
   function clearJenjangLotNumbers(targetJenjang) {
-    setTeams(prev =>
-      prev.map(team => {
-        if (team.jenjang !== targetJenjang) return team;
-        return {
-          ...team,
-          lotNumber: null,
-          chestNumber: '',
-          status: 'verified',
-          drawTime: null,
-        };
-      })
-    );
+    const nowIso = new Date().toISOString();
+    const updatedList = [];
+
+    const nextTeams = teams.map(team => {
+      if (team.jenjang !== targetJenjang || (!team.lotNumber && team.status !== 'drawn')) return team;
+      const updated = {
+        ...team,
+        lotNumber: null,
+        chestNumber: '',
+        status: team.status === 'drawn' ? 'verified' : team.status,
+        drawTime: null,
+        updatedAt: nowIso,
+      };
+      updatedList.push(updated);
+      return updated;
+    });
+
+    setTeams(nextTeams);
+    if (updatedList.length > 0) {
+      bulkSyncToSheet('teams', updatedList).catch(err =>
+        console.warn('[CompetitionContext] Sync clearJenjangLotNumbers failed:', err)
+      );
+    }
   }
 
   // Khusus Testing TM: Reset semua undian nomor dada ke belum diundi
   function clearAllLotNumbers() {
-    setTeams(prev =>
-      prev.map(team => ({
+    const nowIso = new Date().toISOString();
+    const updatedList = [];
+
+    const nextTeams = teams.map(team => {
+      if (!team.lotNumber && team.status !== 'drawn') return team;
+      const updated = {
         ...team,
         lotNumber: null,
         chestNumber: '',
-        status: 'verified',
+        status: team.status === 'drawn' ? 'verified' : team.status,
         drawTime: null,
-      }))
-    );
+        updatedAt: nowIso,
+      };
+      updatedList.push(updated);
+      return updated;
+    });
+
+    setTeams(nextTeams);
+    if (updatedList.length > 0) {
+      bulkSyncToSheet('teams', updatedList).catch(err =>
+        console.warn('[CompetitionContext] Sync clearAllLotNumbers failed:', err)
+      );
+    }
   }
 
   function openModal(modalName, data = null) {
@@ -1538,7 +1672,7 @@ export function CompetitionProvider({ children }) {
       sanitizeCsvCell(t.platoonName),
       sanitizeCsvCell(t.status ? t.status.toUpperCase() : ''),
       sanitizeCsvCell(t.lotNumber || '-'),
-      sanitizeCsvCell(t.coachName),
+      sanitizeCsvCell(t.officialName || t.coachName || '-'),
       sanitizeCsvCell(t.waNumber),
       sanitizeCsvCell(t.email),
       sanitizeCsvCell(t.feeAmount),

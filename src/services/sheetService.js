@@ -17,8 +17,8 @@ const APPS_SCRIPT_URL = import.meta.env?.VITE_APPS_SCRIPT_URL || BACKEND_CONFIG?
  * Cek apakah sedang berjalan di localhost
  */
 export function isLocalhost() {
-  if (typeof window === 'undefined') return true;
-  const h = window.location.hostname || '';
+  if (typeof window === 'undefined') return false;
+  const h = window.location?.hostname || '';
   return h === 'localhost' || h === '127.0.0.1' || h === '::1';
 }
 

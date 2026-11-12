@@ -689,7 +689,7 @@ export default function Rules({ embedded = false }) {
                         <div className="space-y-2 flex-1">
                           <strong className="text-slate-900 text-sm block">Pelaksanaan Upacara Pembukaan Resmi (Pukul 07.00 - 07.45 WIB)</strong>
                           <ul className="list-[lower-alpha] pl-5 space-y-1.5 text-xs text-slate-700">
-                            <li>Peleton dengan 5 (lima) peleton urutan tampil 6 sampai dengan 10 pada masing-masing tingkatan WAJIB mengikuti Upacara Pembukaan resmi. Yakni:
+                            <li>5 (lima) peleton dengan nomor urut tampil 6 sampai dengan 10 pada masing-masing tingkatan WAJIB mengikuti Upacara Pembukaan resmi, yakni:
                               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 my-1.5">
                                 <div className="p-2.5 bg-white rounded-xl border border-slate-200 font-mono text-[11px]">
                                   <strong className="text-red-700 block font-sans font-bold mb-0.5">Tingkat SD/MI:</strong>
@@ -820,7 +820,7 @@ export default function Rules({ embedded = false }) {
                             </li>
                             <li><strong className="text-slate-800">Pergantian Komandan Peleton:</strong> Komandan Peleton hanya dapat digantikan apabila mengalami kondisi darurat, seperti sakit berat, pingsan, atau kondisi lain yang menyebabkan tidak dapat melanjutkan perlombaan. Apabila kondisi tersebut terjadi di dalam arena, Komandan Peleton dapat digantikan oleh personel yang berada di dalam arena sesuai arahan Panitia Lapangan. Komandan pengganti tidak berhak mengikuti penilaian atau perebutan kategori Juara Komandan Peleton.</li>
                             <li><strong className="text-slate-800">Penanganan Insiden Fisik:</strong> Personel yang mengalami cedera, pingsan, atau insiden fisik lainnya dapat ditangani oleh Official, pemain cadangan, atau tim medis tanpa menghentikan waktu perlombaan. Apabila insiden dinilai membahayakan keselamatan atau jiwa peserta, Panitia Lapangan berwenang menghentikan sementara penampilan untuk penanganan keadaan darurat.</li>
-                            <li><strong className="text-slate-800">Ketentuan Garis Selama Pergantian:</strong> Pergerakan pemain yang digantikan untuk keluar dari arena dan pemain pengganti untuk memasuki arena hanya dibebaskan dari ketentuan pelanggaran garis selama proses pergantian resmi sebagaimana dimaksud pada huruf b, c, e, dan f. Di luar proses pergantian resmi tersebut, setiap anggota tetap wajib mematuhi ketentuan garis arena dan dapat dikenai penalti sesuai ketentuan yang berlaku.</li>
+                            <li><strong className="text-slate-800">Ketentuan Garis Selama Pergantian:</strong> Pergerakan pemain yang digantikan untuk keluar dari arena dan pemain pengganti untuk memasuki arena hanya dibebaskan dari ketentuan pelanggaran garis selama proses pergantian resmi sebagaimana dimaksud pada poin b, c, e, dan f. Di luar proses pergantian resmi tersebut, setiap anggota tetap wajib mematuhi ketentuan garis arena dan dapat dikenai penalti sesuai ketentuan yang berlaku.</li>
                           </ul>
                         </div>
                       </div>
@@ -833,7 +833,7 @@ export default function Rules({ embedded = false }) {
                         <div className="space-y-1">
                           <strong className="text-slate-900 text-sm block">Alur Keluar Arena dan Kepemilikan Nomor Dada:</strong>
                           <p className="text-slate-700 text-xs sm:text-sm leading-relaxed">
-                            Setelah peleton menyelesaikan seluruh rangkaian materi perlombaan dan penghormatan penutup, Komandan Peleton memimpin peleton melangkah keluar arena menuju basecamp. <strong className="text-slate-900 font-bold">Nomor Dada Peleton resmi TIDAK PERLU dikembalikan kepada panitia</strong> dan sepenuhnya menjadi hak milik serta cenderamata resmi (souvenir) bagi masing-masing peleton/sekolah bersangkutan.
+                            Setelah peleton menyelesaikan seluruh rangkaian materi perlombaan dan penghormatan penutup, Komandan Peleton memimpin peleton melangkah keluar arena menuju basecamp. <strong className="text-slate-900 font-bold">Nomor Dada Peleton resmi TIDAK PERLU dikembalikan kepada panitia</strong> dan sepenuhnya menjadi hak milik serta cenderamata resmi bagi masing-masing peleton/sekolah bersangkutan.
                           </p>
                         </div>
                       </div>
@@ -881,12 +881,12 @@ export default function Rules({ embedded = false }) {
                         </span>
                         <div className="space-y-2 flex-1">
                           <strong className="text-slate-900 text-sm block">Alur 4 Langkah Checkout Resmi:</strong>
-                          <ul className="list-[lower-alpha] pl-5 space-y-1.5 text-xs text-slate-700">
-                            <li><strong>(1) Merapikan kembali susunan meja-kursi</strong> dan memastikan tidak ada barang peleton tertinggal di dalam ruang kelas basecamp;</li>
-                            <li><strong>(2) Membawa dan menyerahkan 2 (dua) kantong sampah terpilah</strong> (Organik & Non-Organik) ke Pos/Area Checkout Panitia;</li>
-                            <li><strong>(3) Pemeriksaan langsung kebersihan dan keutuhan fasilitas ruangan kelas</strong> oleh LO/Panitia Kebersihan guna memperoleh Tanda Bukti Lolos Verifikasi Checkout;</li>
-                            <li><strong>(4) Pengambilan kembali kartu identitas jaminan (KTP/SIM)</strong> di Ruang Informasi Panitia dengan menunjukkan Tanda Bukti Lolos Verifikasi Checkout.</li>
-                          </ul>
+                          <ol className="list-decimal pl-5 space-y-1.5 text-xs text-slate-700">
+                            <li><strong>Merapikan kembali susunan meja-kursi</strong> dan memastikan tidak ada barang peleton tertinggal di dalam ruang kelas basecamp;</li>
+                            <li><strong>Membawa dan menyerahkan 2 (dua) kantong sampah terpilah</strong> (Organik & Non-Organik) ke Pos/Area Checkout Panitia;</li>
+                            <li><strong>Pemeriksaan langsung kebersihan dan keutuhan fasilitas ruangan kelas</strong> oleh LO/Panitia Kebersihan guna memperoleh Tanda Bukti Lolos Verifikasi Checkout;</li>
+                            <li><strong>Pengambilan kembali kartu identitas jaminan (KTP/SIM)</strong> di Ruang Informasi Panitia dengan menunjukkan Tanda Bukti Lolos Verifikasi Checkout.</li>
+                          </ol>
                         </div>
                       </div>
 
@@ -898,7 +898,7 @@ export default function Rules({ embedded = false }) {
                         <div className="space-y-1">
                           <strong className="text-slate-900 text-sm block">Ketentuan Sanksi & Denda:</strong>
                           <p className="text-slate-700 text-xs sm:text-sm leading-relaxed">
-                            Peleton yang meninggalkan basecamp dalam keadaan kotor atau berantakan dikenai sanksi penalti pengurangan nilai sebesar -150 poin pada rekapitulasi nilai akhir. Apabila terbukti terjadi kerusakan fisik atau kehilangan fasilitas kelas (meja, kursi, kaca jendela, stopkontak, LCD/proyektor, dll.), kartu jaminan KTP/SIM ditahan serta dikenakan sanksi ganti rugi penuh dan denda administratif perbaikan sebesar Rp 500.000,- sesuai Pasal 14 Tata Tertib Peserta dan Bab C.8 Juknis Penilaian.
+                            Peleton yang meninggalkan basecamp dalam keadaan kotor atau berantakan dikenai sanksi penalti pengurangan nilai sebesar -150 poin pada rekapitulasi nilai akhir. Apabila terbukti terjadi kerusakan fisik atau kehilangan fasilitas kelas (meja, kursi, kaca jendela, stopkontak, LCD/proyektor, dll.), kartu jaminan KTP/SIM ditahan serta dikenakan sanksi ganti rugi penuh dan denda administratif perbaikan sebesar Rp 500.000,00 sesuai Pasal 14 Tata Tertib Peserta dan Bab C.8 Juknis Penilaian.
                           </p>
                         </div>
                       </div>
