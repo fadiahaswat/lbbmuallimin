@@ -112,11 +112,6 @@ export default function BacaPerpangTab({ embedded = false }) {
               }`}
             >
               <span>{doc.code}</span>
-              <span className={`text-[9px] font-black uppercase px-1.5 py-0.5 rounded ${
-                isActive ? 'bg-red-600 text-white' : 'bg-slate-100 text-slate-600'
-              }`}>
-                {doc.badge}
-              </span>
             </button>
           );
         })}

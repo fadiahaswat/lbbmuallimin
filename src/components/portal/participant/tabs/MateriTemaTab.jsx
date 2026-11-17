@@ -167,9 +167,6 @@ export default function MateriTemaTab({ currentTeam, initialSubTab = 'materi' })
           <Scale className={`w-4 h-4 shrink-0 ${activeSubTab === 'perpang' ? 'text-red-600' : 'text-slate-400'}`} />
           <span className="hidden sm:inline">Baca Dokumen Perpang TNI</span>
           <span className="sm:hidden">Dokumen Perpang</span>
-          <span className={`hidden sm:inline-block px-2 py-0.5 rounded-full text-[9px] font-bold ${activeSubTab === 'perpang' ? 'bg-red-100 text-red-700' : 'bg-slate-200 text-slate-600'}`}>
-            3 PDF Resmi
-          </span>
         </button>
       </div>
 
