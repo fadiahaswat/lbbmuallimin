@@ -1,5 +1,5 @@
-import React from 'react';
-import { RUBRIC_SCALE_TEMPLATES, getScaleTemplateForMaterial } from '../../../config.js';
+import React, { useMemo } from 'react';
+import { parseMaterialsList } from '../../../config.js';
 
 export default function PbbScoringTable({
   materialsList = [],
@@ -8,9 +8,29 @@ export default function PbbScoringTable({
   isInputDisabled,
   juryLabel = 'Dewan Juri',
 }) {
-  // Hitung jumlah materi yang sudah dinilai
-  const filledCount = Object.values(rubricScores).filter(v => v !== null && v !== undefined).length;
-  const isComplete = filledCount === materialsList.length;
+  const parsedItems = useMemo(() => parseMaterialsList(materialsList), [materialsList]);
+
+  const totalMovementsCount = useMemo(() => {
+    return parsedItems.reduce((acc, it) => acc + it.movements.length, 0);
+  }, [parsedItems]);
+
+  // Hitung jumlah gerakan yang sudah dinilai
+  const filledCount = useMemo(() => {
+    let count = 0;
+    parsedItems.forEach(it => {
+      it.movements.forEach(m => {
+        const val = rubricScores[m.key] !== undefined && rubricScores[m.key] !== null
+          ? rubricScores[m.key]
+          : (m.subIndex === 0 && rubricScores[it.originalIndex] !== undefined && rubricScores[it.originalIndex] !== null
+              ? rubricScores[it.originalIndex]
+              : null);
+        if (val !== null && val !== undefined) count++;
+      });
+    });
+    return count;
+  }, [parsedItems, rubricScores]);
+
+  const isComplete = totalMovementsCount > 0 && filledCount === totalMovementsCount;
 
   return (
     <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
@@ -25,7 +45,7 @@ export default function PbbScoringTable({
               ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
               : 'bg-amber-100 text-amber-800 border border-amber-300'
           }`}>
-            {filledCount} / {materialsList.length} Dinilai
+            {filledCount} / {totalMovementsCount} Dinilai
           </span>
         </div>
         <div className="text-[11px] text-slate-500 font-medium">
@@ -51,183 +71,206 @@ export default function PbbScoringTable({
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-200 bg-white">
-            {materialsList.map((materiText, idx) => {
-              const templateKey = getScaleTemplateForMaterial(materiText);
-              const template = RUBRIC_SCALE_TEMPLATES[templateKey] || RUBRIC_SCALE_TEMPLATES.SEDERHANA;
-              const selectedVal = rubricScores[idx];
+            {parsedItems.map((item) => {
+              const isMulti = item.movements.length > 1;
 
-              const ksItems = template.filter(t => t.grade === 'KS');
-              const kItems = template.filter(t => t.grade === 'K');
-              const cItems = template.filter(t => t.grade === 'C');
-              const bItems = template.filter(t => t.grade === 'B');
-              const bsItems = template.filter(t => t.grade === 'BS');
+              return item.movements.map((m, subIdx) => {
+                const template = m.template;
+                const selectedVal = rubricScores[m.key] !== undefined && rubricScores[m.key] !== null
+                  ? rubricScores[m.key]
+                  : (m.subIndex === 0 && rubricScores[item.originalIndex] !== undefined && rubricScores[item.originalIndex] !== null
+                      ? rubricScores[item.originalIndex]
+                      : null);
 
-              const isZero = selectedVal === 0;
+                const ksItems = template.filter(t => t.grade === 'KS');
+                const kItems = template.filter(t => t.grade === 'K');
+                const cItems = template.filter(t => t.grade === 'C');
+                const bItems = template.filter(t => t.grade === 'B');
+                const bsItems = template.filter(t => t.grade === 'BS');
 
-              return (
-                <tr key={idx} className="hover:bg-slate-50/80 transition-colors">
-                  <td className="py-2.5 px-3 text-center font-bold text-slate-500 border-r border-slate-200 text-xs sm:text-sm">{idx + 1}</td>
-                  <td className="py-2.5 px-3 font-semibold text-slate-800 border-r border-slate-200">
-                    <div className="text-xs sm:text-sm font-bold text-slate-900 leading-snug">{materiText}</div>
-                  </td>
+                const isZero = selectedVal === 0;
 
-                  {/* Tombol Cepat 0 (Terlewat / Tidak Dilaksanakan) */}
-                  <td className="py-2 px-2 text-center bg-rose-50/30 border-r border-slate-200">
-                    <button
-                      type="button"
-                      disabled={isInputDisabled}
-                      title="Gerakan Terlewat / Tidak Dilaksanakan (Nilai 0)"
-                      onClick={() => setRubricScores(prev => ({ ...(prev || {}), [idx]: 0 }))}
-                      className={`min-w-[42px] sm:min-w-[46px] h-10 sm:h-11 py-1 px-2 rounded-xl text-sm sm:text-base font-mono font-black transition-all ${
-                        isInputDisabled ? 'cursor-default' : 'cursor-pointer'
-                      } ${
-                        isZero
-                          ? 'bg-rose-700 text-white shadow-md ring-2 ring-rose-400 scale-105'
-                          : 'bg-white text-rose-700 hover:bg-rose-700 hover:text-white border-2 border-rose-300 shadow-2xs'
-                      }`}
-                    >
-                      0
-                    </button>
-                  </td>
+                return (
+                  <tr
+                    key={m.key}
+                    className={`hover:bg-slate-50/80 transition-colors ${
+                      isMulti && subIdx > 0 ? 'bg-slate-50/30' : ''
+                    }`}
+                  >
+                    {subIdx === 0 && (
+                      <td
+                        rowSpan={item.movements.length}
+                        className="py-2.5 px-3 text-center font-bold text-slate-500 border-r border-slate-200 text-xs sm:text-sm bg-slate-50/50 align-middle"
+                      >
+                        <span className="font-mono font-black text-slate-800 text-sm sm:text-base">
+                          {item.number}
+                        </span>
+                      </td>
+                    )}
+                    <td className="py-2.5 px-3 font-semibold text-slate-800 border-r border-slate-200">
+                      <div className="text-xs sm:text-sm font-bold text-slate-900 leading-snug">
+                        {m.name}
+                      </div>
+                    </td>
 
-                  {/* KURANG SEKALI (KS: 50, 55, 60) */}
-                  <td className="py-2 px-2 text-center bg-slate-50/50 border-r border-slate-200">
-                    <div className="flex items-center justify-center gap-1.5">
-                      {ksItems.map((opt, oIdx) => {
-                        const isChosen = selectedVal === opt.val;
-                        return (
-                          <button
-                            key={oIdx}
-                            type="button"
-                            disabled={isInputDisabled}
-                            onClick={() => setRubricScores(prev => ({ ...(prev || {}), [idx]: opt.val }))}
-                            className={`min-w-[42px] sm:min-w-[46px] h-10 sm:h-11 py-1 px-2 rounded-xl text-sm sm:text-base font-mono font-black transition-all ${
-                              isInputDisabled ? 'cursor-default' : 'cursor-pointer'
-                            } ${
-                              isChosen
-                                ? 'bg-slate-800 text-white shadow-md ring-2 ring-slate-400 scale-105'
-                                : 'bg-white text-slate-700 hover:bg-slate-700 hover:text-white border-2 border-slate-300 shadow-2xs'
-                            }`}
-                          >
-                            {opt.val}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </td>
+                    {/* Tombol Cepat 0 (Terlewat / Tidak Dilaksanakan) */}
+                    <td className="py-2 px-2 text-center bg-rose-50/30 border-r border-slate-200">
+                      <button
+                        type="button"
+                        disabled={isInputDisabled}
+                        title={`Gerakan Terlewat / Tidak Dilaksanakan (Nilai 0) - ${m.name}`}
+                        onClick={() => setRubricScores(prev => ({ ...(prev || {}), [m.key]: 0 }))}
+                        className={`min-w-[42px] sm:min-w-[46px] h-10 sm:h-11 py-1 px-2 rounded-xl text-sm sm:text-base font-mono font-black transition-all ${
+                          isInputDisabled ? 'cursor-default' : 'cursor-pointer'
+                        } ${
+                          isZero
+                            ? 'bg-rose-700 text-white shadow-md ring-2 ring-rose-400 scale-105'
+                            : 'bg-white text-rose-700 hover:bg-rose-700 hover:text-white border-2 border-rose-300 shadow-2xs'
+                        }`}
+                      >
+                        0
+                      </button>
+                    </td>
 
-                  {/* Kolom KURANG (Merah) */}
-                  <td className="py-2 px-2 text-center bg-red-50/30 border-r border-slate-200">
-                    <div className="flex items-center justify-center gap-1.5">
-                      {kItems.map((opt, oIdx) => {
-                        const isChosen = selectedVal === opt.val;
-                        return (
-                          <button
-                            key={oIdx}
-                            type="button"
-                            disabled={isInputDisabled}
-                            onClick={() => setRubricScores(prev => ({ ...(prev || {}), [idx]: opt.val }))}
-                            className={`min-w-[42px] sm:min-w-[46px] h-10 sm:h-11 py-1 px-2 rounded-xl text-sm sm:text-base font-mono font-black transition-all ${
-                              isInputDisabled ? 'cursor-default' : 'cursor-pointer'
-                            } ${
-                              isChosen
-                                ? 'bg-red-600 text-white shadow-md ring-2 ring-red-400 scale-105'
-                                : 'bg-white text-red-700 hover:bg-red-600 hover:text-white border-2 border-red-200 shadow-2xs'
-                            }`}
-                          >
-                            {opt.val}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </td>
+                    {/* KURANG SEKALI (KS: 50, 55, 60) */}
+                    <td className="py-2 px-2 text-center bg-slate-50/50 border-r border-slate-200">
+                      <div className="flex items-center justify-center gap-1.5">
+                        {ksItems.map((opt, oIdx) => {
+                          const isChosen = selectedVal === opt.val;
+                          return (
+                            <button
+                              key={oIdx}
+                              type="button"
+                              disabled={isInputDisabled}
+                              onClick={() => setRubricScores(prev => ({ ...(prev || {}), [m.key]: opt.val }))}
+                              className={`min-w-[42px] sm:min-w-[46px] h-10 sm:h-11 py-1 px-2 rounded-xl text-sm sm:text-base font-mono font-black transition-all ${
+                                isInputDisabled ? 'cursor-default' : 'cursor-pointer'
+                              } ${
+                                isChosen
+                                  ? 'bg-slate-800 text-white shadow-md ring-2 ring-slate-400 scale-105'
+                                  : 'bg-white text-slate-700 hover:bg-slate-700 hover:text-white border-2 border-slate-300 shadow-2xs'
+                              }`}
+                            >
+                              {opt.val}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </td>
 
-                  {/* Kolom CUKUP (Kuning) */}
-                  <td className="py-2 px-2 text-center bg-amber-50/30 border-r border-slate-200">
-                    <div className="flex items-center justify-center gap-1.5">
-                      {cItems.map((opt, oIdx) => {
-                        const isChosen = selectedVal === opt.val;
-                        return (
-                          <button
-                            key={oIdx}
-                            type="button"
-                            disabled={isInputDisabled}
-                            onClick={() => setRubricScores(prev => ({ ...(prev || {}), [idx]: opt.val }))}
-                            className={`min-w-[42px] sm:min-w-[46px] h-10 sm:h-11 py-1 px-2 rounded-xl text-sm sm:text-base font-mono font-black transition-all ${
-                              isInputDisabled ? 'cursor-default' : 'cursor-pointer'
-                            } ${
-                              isChosen
-                                ? 'bg-amber-500 text-slate-950 shadow-md ring-2 ring-amber-300 scale-105'
-                                : 'bg-white text-amber-900 hover:bg-amber-500 hover:text-slate-950 border-2 border-amber-200 shadow-2xs'
-                            }`}
-                          >
-                            {opt.val}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </td>
+                    {/* Kolom KURANG (Merah) */}
+                    <td className="py-2 px-2 text-center bg-red-50/30 border-r border-slate-200">
+                      <div className="flex items-center justify-center gap-1.5">
+                        {kItems.map((opt, oIdx) => {
+                          const isChosen = selectedVal === opt.val;
+                          return (
+                            <button
+                              key={oIdx}
+                              type="button"
+                              disabled={isInputDisabled}
+                              onClick={() => setRubricScores(prev => ({ ...(prev || {}), [m.key]: opt.val }))}
+                              className={`min-w-[42px] sm:min-w-[46px] h-10 sm:h-11 py-1 px-2 rounded-xl text-sm sm:text-base font-mono font-black transition-all ${
+                                isInputDisabled ? 'cursor-default' : 'cursor-pointer'
+                              } ${
+                                isChosen
+                                  ? 'bg-red-600 text-white shadow-md ring-2 ring-red-400 scale-105'
+                                  : 'bg-white text-red-700 hover:bg-red-600 hover:text-white border-2 border-red-200 shadow-2xs'
+                              }`}
+                            >
+                              {opt.val}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </td>
 
-                  {/* Kolom BAIK (Hijau) */}
-                  <td className="py-2 px-2 text-center bg-emerald-50/30 border-r border-slate-200">
-                    <div className="flex items-center justify-center gap-1.5">
-                      {bItems.map((opt, oIdx) => {
-                        const isChosen = selectedVal === opt.val;
-                        return (
-                          <button
-                            key={oIdx}
-                            type="button"
-                            disabled={isInputDisabled}
-                            onClick={() => setRubricScores(prev => ({ ...(prev || {}), [idx]: opt.val }))}
-                            className={`min-w-[42px] sm:min-w-[46px] h-10 sm:h-11 py-1 px-2 rounded-xl text-sm sm:text-base font-mono font-black transition-all ${
-                              isInputDisabled ? 'cursor-default' : 'cursor-pointer'
-                            } ${
-                              isChosen
-                                ? 'bg-emerald-600 text-white shadow-md ring-2 ring-emerald-400 scale-105'
-                                : 'bg-white text-emerald-800 hover:bg-emerald-600 hover:text-white border-2 border-emerald-200 shadow-2xs'
-                            }`}
-                          >
-                            {opt.val}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </td>
+                    {/* Kolom CUKUP (Kuning) */}
+                    <td className="py-2 px-2 text-center bg-amber-50/30 border-r border-slate-200">
+                      <div className="flex items-center justify-center gap-1.5">
+                        {cItems.map((opt, oIdx) => {
+                          const isChosen = selectedVal === opt.val;
+                          return (
+                            <button
+                              key={oIdx}
+                              type="button"
+                              disabled={isInputDisabled}
+                              onClick={() => setRubricScores(prev => ({ ...(prev || {}), [m.key]: opt.val }))}
+                              className={`min-w-[42px] sm:min-w-[46px] h-10 sm:h-11 py-1 px-2 rounded-xl text-sm sm:text-base font-mono font-black transition-all ${
+                                isInputDisabled ? 'cursor-default' : 'cursor-pointer'
+                              } ${
+                                isChosen
+                                  ? 'bg-amber-500 text-slate-950 shadow-md ring-2 ring-amber-300 scale-105'
+                                  : 'bg-white text-amber-900 hover:bg-amber-500 hover:text-slate-950 border-2 border-amber-200 shadow-2xs'
+                              }`}
+                            >
+                              {opt.val}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </td>
 
-                  {/* Kolom BAIK SEKALI (Biru) */}
-                  <td className="py-2 px-2 text-center bg-blue-50/30 border-r border-slate-200">
-                    <div className="flex items-center justify-center gap-1.5">
-                      {bsItems.map((opt, oIdx) => {
-                        const isChosen = selectedVal === opt.val;
-                        return (
-                          <button
-                            key={oIdx}
-                            type="button"
-                            disabled={isInputDisabled}
-                            onClick={() => setRubricScores(prev => ({ ...(prev || {}), [idx]: opt.val }))}
-                            className={`min-w-[42px] sm:min-w-[46px] h-10 sm:h-11 py-1 px-2 rounded-xl text-sm sm:text-base font-mono font-black transition-all ${
-                              isInputDisabled ? 'cursor-default' : 'cursor-pointer'
-                            } ${
-                              isChosen
-                                ? 'bg-blue-600 text-white shadow-md ring-2 ring-blue-400 scale-105'
-                                : 'bg-white text-blue-800 hover:bg-blue-600 hover:text-white border-2 border-blue-200 shadow-2xs'
-                            }`}
-                          >
-                            {opt.val}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </td>
+                    {/* Kolom BAIK (Hijau) */}
+                    <td className="py-2 px-2 text-center bg-emerald-50/30 border-r border-slate-200">
+                      <div className="flex items-center justify-center gap-1.5">
+                        {bItems.map((opt, oIdx) => {
+                          const isChosen = selectedVal === opt.val;
+                          return (
+                            <button
+                              key={oIdx}
+                              type="button"
+                              disabled={isInputDisabled}
+                              onClick={() => setRubricScores(prev => ({ ...(prev || {}), [m.key]: opt.val }))}
+                              className={`min-w-[42px] sm:min-w-[46px] h-10 sm:h-11 py-1 px-2 rounded-xl text-sm sm:text-base font-mono font-black transition-all ${
+                                isInputDisabled ? 'cursor-default' : 'cursor-pointer'
+                              } ${
+                                isChosen
+                                  ? 'bg-emerald-600 text-white shadow-md ring-2 ring-emerald-400 scale-105'
+                                  : 'bg-white text-emerald-800 hover:bg-emerald-600 hover:text-white border-2 border-emerald-200 shadow-2xs'
+                              }`}
+                            >
+                              {opt.val}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </td>
 
-                  {/* Nilai Terpilih */}
-                  <td className={`py-2.5 px-3 text-center font-mono font-black text-lg sm:text-xl ${
-                    isZero ? 'text-rose-700 bg-rose-50/60' : 'text-slate-900 bg-slate-50'
-                  }`}>
-                    {selectedVal ?? '-'}
-                  </td>
-                </tr>
-              );
+                    {/* Kolom BAIK SEKALI (Biru) */}
+                    <td className="py-2 px-2 text-center bg-blue-50/30 border-r border-slate-200">
+                      <div className="flex items-center justify-center gap-1.5">
+                        {bsItems.map((opt, oIdx) => {
+                          const isChosen = selectedVal === opt.val;
+                          return (
+                            <button
+                              key={oIdx}
+                              type="button"
+                              disabled={isInputDisabled}
+                              onClick={() => setRubricScores(prev => ({ ...(prev || {}), [m.key]: opt.val }))}
+                              className={`min-w-[42px] sm:min-w-[46px] h-10 sm:h-11 py-1 px-2 rounded-xl text-sm sm:text-base font-mono font-black transition-all ${
+                                isInputDisabled ? 'cursor-default' : 'cursor-pointer'
+                              } ${
+                                isChosen
+                                  ? 'bg-blue-600 text-white shadow-md ring-2 ring-blue-400 scale-105'
+                                  : 'bg-white text-blue-800 hover:bg-blue-600 hover:text-white border-2 border-blue-200 shadow-2xs'
+                              }`}
+                            >
+                              {opt.val}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </td>
+
+                    {/* Nilai Terpilih */}
+                    <td className={`py-2.5 px-3 text-center font-mono font-black text-lg sm:text-xl ${
+                      isZero ? 'text-rose-700 bg-rose-50/60' : 'text-slate-900 bg-slate-50'
+                    }`}>
+                      {selectedVal ?? '-'}
+                    </td>
+                  </tr>
+                );
+              });
             })}
           </tbody>
         </table>

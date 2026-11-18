@@ -37,6 +37,7 @@ import SimpaskorSidebarLayout from '../navigation/SimpaskorSidebarLayout.jsx';
 export default function TechnicalMeetingView() {
   const {
     teams,
+    settings,
     assignLotNumber,
     randomizeJenjangLotNumbers,
     clearJenjangLotNumbers,
@@ -130,7 +131,8 @@ export default function TechnicalMeetingView() {
   const unassignedTeams = useMemo(() => currentJenjangTeams.filter(t => !t.lotNumber), [currentJenjangTeams]);
   const drawnCount = useMemo(() => currentJenjangTeams.filter(t => t.lotNumber).length, [currentJenjangTeams]);
   const totalCount = currentJenjangTeams.length;
-  const totalSlotsCount = Math.max(18, currentJenjangTeams.length);
+  const targetQuota = selectedJenjang === 'SD' ? (settings?.quotaSD || 18) : (settings?.quotaSMP || 18);
+  const totalSlotsCount = Math.max(targetQuota, currentJenjangTeams.length);
   const percentComplete = Math.round((drawnCount / totalSlotsCount) * 100);
 
   const chestMapList = LOTTERY_CHEST_MAP[selectedJenjang] || [];

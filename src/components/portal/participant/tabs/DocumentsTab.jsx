@@ -122,15 +122,6 @@ export default function DocumentsTab({
           >
             <Upload className="w-3.5 h-3.5 shrink-0" />
             <span>Unggah<span className="hidden min-[380px]:inline"> Berkas</span></span>
-            {actionRequired > 0 ? (
-              <span className="px-1.5 py-0.5 text-[9px] font-black rounded-md bg-amber-100 text-amber-800 shrink-0">
-                {actionRequired} Belum
-              </span>
-            ) : (
-              <span className="px-1.5 py-0.5 text-[9px] font-black rounded-md bg-emerald-100 text-emerald-800 shrink-0">
-                Lengkap
-              </span>
-            )}
           </button>
           <button
             type="button"

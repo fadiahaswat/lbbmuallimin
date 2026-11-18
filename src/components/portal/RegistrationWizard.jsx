@@ -564,6 +564,17 @@ export default function RegistrationWizard({ isOpen, onClose }) {
     e.preventDefault();
     if (!validateStep3()) return;
 
+    if (formData.jenjang === 'SD' && isSDFull) {
+      triggerValidationError(`Mohon maaf, kuota peleton untuk tingkat SD/MI telah penuh (${quotaSD} peleton). Pendaftaran tidak dapat diproses.`);
+      setStep(1);
+      return;
+    }
+    if (formData.jenjang === 'SMP' && isSMPFull) {
+      triggerValidationError(`Mohon maaf, kuota peleton untuk tingkat SMP/MTs telah penuh (${quotaSMP} peleton). Pendaftaran tidak dapat diproses.`);
+      setStep(1);
+      return;
+    }
+
     const duplicateTeam = findTeamByEmail(formData.email, teams);
     if (duplicateTeam) {
       triggerValidationError(

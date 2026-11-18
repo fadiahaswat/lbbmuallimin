@@ -17,7 +17,8 @@ import { useCompetition } from '../../context/CompetitionContext.jsx';
 import {
   MATERIALS,
   JURY_POSTS,
-  DANTON_CRITERIA
+  DANTON_CRITERIA,
+  parseMaterialsList
 } from '../../config.js';
 import {
   calculatePenalties,
@@ -38,11 +39,14 @@ import ScrutineeringActionsBar from './components/ScrutineeringActionsBar.jsx';
 import TeamSelectorModal from './components/TeamSelectorModal.jsx';
 import LeaderboardView from './components/LeaderboardView.jsx';
 
-// Helper membuat initial rubrik state untuk materi peleton
+// Helper membuat initial rubrik state untuk materi peleton (mencakup seluruh sub-gerakan)
 function getInitialRubricScores(materialsList) {
   const initial = {};
-  materialsList.forEach((_m, idx) => {
-    initial[idx] = null;
+  const parsed = parseMaterialsList(materialsList);
+  parsed.forEach(item => {
+    item.movements.forEach(m => {
+      initial[m.key] = null;
+    });
   });
   return initial;
 }
@@ -303,10 +307,10 @@ export default function JuryScoringApp() {
     }
   }
 
-  // Hitung Skor Peleton per Juri
-  const j1PeletonTotal = useMemo(() => calculatePeletonScoreFromRubric(j1PbbRubric), [j1PbbRubric]);
-  const j2PeletonTotal = useMemo(() => calculatePeletonScoreFromRubric(j2PbbRubric), [j2PbbRubric]);
-  const j3PeletonTotal = useMemo(() => calculatePeletonScoreFromRubric(j3PbbRubric), [j3PbbRubric]);
+  // Hitung Skor Peleton per Juri (berdasarkan akumulasi sub-gerakan sah)
+  const j1PeletonTotal = useMemo(() => calculatePeletonScoreFromRubric(j1PbbRubric, materialsList), [j1PbbRubric, materialsList]);
+  const j2PeletonTotal = useMemo(() => calculatePeletonScoreFromRubric(j2PbbRubric, materialsList), [j2PbbRubric, materialsList]);
+  const j3PeletonTotal = useMemo(() => calculatePeletonScoreFromRubric(j3PbbRubric, materialsList), [j3PbbRubric, materialsList]);
 
   // Hitung Skor Danton per Juri (Bobot: Materi 35%, Vokal 25%, Sikap 20%, Lapangan 20%)
   const j1DantonTotal = useMemo(() => calculateDantonScoreFromRubric(j1DantonRubric), [j1DantonRubric]);

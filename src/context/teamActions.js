@@ -3,10 +3,17 @@ import { generatePersonnels } from '../data/seedData.js';
 import { checkTeamVerificationEligibility, getChestNumberByLot, canFillRegistrationForm, findTeamByEmail } from './competitionHelpers.js';
 import { EVENT } from '../config.js';
 
-export function createTeamActions({ teams, setTeams, scores, setScores, setStaging, setCurrentUser, setUsers }) {
+export function createTeamActions({ teams, setTeams, scores, setScores, setStaging, setCurrentUser, setUsers, settings }) {
   function registerTeam(newTeamData) {
     if (!canFillRegistrationForm(EVENT.REGISTRATION_START)) {
       throw new Error('Pendaftaran daring baru dibuka resmi pada 26 Oktober 2026 pukul 00.00 WIB.');
+    }
+
+    const jenjang = (newTeamData.jenjang || 'SMP').toUpperCase();
+    const maxQuota = jenjang === 'SD' ? (settings?.quotaSD || 18) : (settings?.quotaSMP || 18);
+    const activeTeamsInJenjang = (teams || []).filter(t => t.jenjang === jenjang && t.status !== 'rejected');
+    if (activeTeamsInJenjang.length >= maxQuota) {
+      throw new Error(`Pendaftaran ditolak: Kuota peserta untuk jenjang ${jenjang}/Sederajat telah penuh (${maxQuota} peleton).`);
     }
 
     const cleanEmail = (newTeamData.email || '').trim().toLowerCase();
@@ -20,8 +27,6 @@ export function createTeamActions({ teams, setTeams, scores, setScores, setStagi
         `Email "${cleanEmail}" sudah digunakan oleh "${duplicateTeam.schoolName || 'peleton lain'}". 1 peleton 1 Gmail, tidak bisa 1 email 2 peleton. Silakan isi email yang lain.`
       );
     }
-
-    const jenjang = (newTeamData.jenjang || 'SMP').toUpperCase();
     
     // Generate kode pendaftaran unik 8 karakter (2 blok x 4 karakter):
     // Format: LBB27-{JENJANG}-{WAKTU_UNIK}-{RANDOM} (contoh: LBB27-SMP-M5K8-7X9B)

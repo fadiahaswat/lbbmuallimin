@@ -25,8 +25,10 @@ import {
   RUBRIC_SCALE_TEMPLATES,
   DANTON_CRITERIA,
   DANTON_SCALE,
-  getScaleTemplateForMaterial
+  getScaleTemplateForMaterial,
+  parseMaterialsList
 } from '../../../../config.js';
+import { calculatePeletonScoreFromRubric } from '../../../../context/scoringActions.js';
 
 export default function ScoresTab({ teamScore, currentTeam }) {
   const [activeJuryPost, setActiveJuryPost] = useState('rekap'); // 'rekap' | 'pos1' | 'pos2' | 'pos3'
@@ -77,33 +79,40 @@ export default function ScoresTab({ teamScore, currentTeam }) {
     const targetJ2 = Number(teamScore?.pbb?.j2 ?? teamScore?.juries?.pos2?.peletonTotal ?? Math.round(murniTarget / 3));
     const targetJ3 = Number(teamScore?.pbb?.j3 ?? teamScore?.juries?.pos3?.peletonTotal ?? (murniTarget - targetJ1 - targetJ2));
 
+    const parsedMaterials = parseMaterialsList(materialsList);
+    const allMovements = [];
+    parsedMaterials.forEach(it => {
+      it.movements.forEach(m => {
+        allMovements.push(m);
+      });
+    });
+
     // Generator opsi resmi Juknis: selalu memilih nilai sah dari RUBRIC_SCALE_TEMPLATES
     function generateAuthenticRubric(target, seedOffset) {
       const result = {};
       const optionsMap = {};
 
-      if (target < materialsList.length * 50) {
-        const base = Math.floor(target / materialsList.length);
-        let rem = target - (base * materialsList.length);
-        materialsList.forEach((_, idx) => {
-          result[idx] = base;
+      if (target < allMovements.length * 50) {
+        const base = Math.floor(target / (allMovements.length || 1));
+        let rem = target - (base * allMovements.length);
+        allMovements.forEach((m) => {
+          result[m.key] = base;
         });
         let i = 0;
         while (rem > 0) {
-          const idx = (i * 3 + seedOffset) % materialsList.length;
-          result[idx] += 1;
+          const idx = (i * 3 + seedOffset) % allMovements.length;
+          result[allMovements[idx].key] += 1;
           rem--;
           i++;
         }
         return result;
       }
 
-      materialsList.forEach((m, idx) => {
-        const key = getScaleTemplateForMaterial(m);
-        const tmpl = RUBRIC_SCALE_TEMPLATES[key] || RUBRIC_SCALE_TEMPLATES.SEDERHANA;
-        optionsMap[idx] = tmpl.map(t => t.val); // Opsi urut naik [50, ... 80/85/90]
+      allMovements.forEach((m, idx) => {
+        const tmpl = m.template;
+        optionsMap[m.key] = tmpl.map(t => t.val); // Opsi urut naik [50, ... 80/85/90]
         const bsItems = tmpl.filter(t => t.grade === 'BS');
-        result[idx] = bsItems[(idx + seedOffset) % bsItems.length].val;
+        result[m.key] = bsItems[(idx + seedOffset) % bsItems.length].val;
       });
 
       let currentSum = Object.values(result).reduce((a, b) => a + b, 0);
@@ -111,16 +120,17 @@ export default function ScoresTab({ teamScore, currentTeam }) {
 
       while (currentSum !== target && attempts < 2500) {
         attempts++;
-        const idx = (attempts * 11 + seedOffset) % materialsList.length;
-        const opts = optionsMap[idx];
-        const curVal = result[idx];
+        const idx = (attempts * 11 + seedOffset) % allMovements.length;
+        const key = allMovements[idx].key;
+        const opts = optionsMap[key];
+        const curVal = result[key];
         const curPos = opts.indexOf(curVal);
 
         if (currentSum > target && curPos > 0) {
-          result[idx] = opts[curPos - 1];
+          result[key] = opts[curPos - 1];
           currentSum -= (curVal - opts[curPos - 1]);
         } else if (currentSum < target && curPos < opts.length - 1) {
-          result[idx] = opts[curPos + 1];
+          result[key] = opts[curPos + 1];
           currentSum += (opts[curPos + 1] - curVal);
         }
       }
@@ -136,9 +146,9 @@ export default function ScoresTab({ teamScore, currentTeam }) {
     const finalJ2 = hasRealJ2 ? realJ2 : j2Generated;
     const finalJ3 = hasRealJ3 ? realJ3 : j3Generated;
 
-    const sum1 = hasRealJ1 ? Object.values(finalJ1).reduce((acc, v) => acc + (Number(v) || 0), 0) : targetJ1;
-    const sum2 = hasRealJ2 ? Object.values(finalJ2).reduce((acc, v) => acc + (Number(v) || 0), 0) : targetJ2;
-    const sum3 = hasRealJ3 ? Object.values(finalJ3).reduce((acc, v) => acc + (Number(v) || 0), 0) : targetJ3;
+    const sum1 = calculatePeletonScoreFromRubric(finalJ1, materialsList);
+    const sum2 = calculatePeletonScoreFromRubric(finalJ2, materialsList);
+    const sum3 = calculatePeletonScoreFromRubric(finalJ3, materialsList);
 
     return {
       j1Rubric: finalJ1,
@@ -256,37 +266,46 @@ export default function ScoresTab({ teamScore, currentTeam }) {
     };
   }, [teamScore]);
 
-  // Data gabungan PBB per gerakan
+  // Data gabungan PBB per sub-gerakan
   const combinedMovementData = useMemo(() => {
-    return materialsList.map((materiText, idx) => {
-      const templateKey = getScaleTemplateForMaterial(materiText);
-      const template = RUBRIC_SCALE_TEMPLATES[templateKey] || RUBRIC_SCALE_TEMPLATES.SEDERHANA;
+    const parsed = parseMaterialsList(materialsList);
+    const list = [];
+    parsed.forEach((item) => {
+      item.movements.forEach((m, subIdx) => {
+        const v1 = Number(j1Rubric[m.key] ?? (subIdx === 0 && j1Rubric[item.originalIndex] !== undefined ? j1Rubric[item.originalIndex] : 0));
+        const v2 = Number(j2Rubric[m.key] ?? (subIdx === 0 && j2Rubric[item.originalIndex] !== undefined ? j2Rubric[item.originalIndex] : 0));
+        const v3 = Number(j3Rubric[m.key] ?? (subIdx === 0 && j3Rubric[item.originalIndex] !== undefined ? j3Rubric[item.originalIndex] : 0));
 
-      const v1 = Number(j1Rubric[idx] ?? 0);
-      const v2 = Number(j2Rubric[idx] ?? 0);
-      const v3 = Number(j3Rubric[idx] ?? 0);
+        const totalVal = v1 + v2 + v3;
+        const avgVal = parseFloat((totalVal / 3).toFixed(1));
 
-      const totalVal = v1 + v2 + v3;
-      const avgVal = parseFloat((totalVal / 3).toFixed(1));
-
-      return {
-        index: idx + 1,
-        materiText,
-        templateKey,
-        template,
-        v1,
-        v2,
-        v3,
-        totalVal,
-        avgVal,
-      };
+        list.push({
+          itemNumber: item.number,
+          originalIndex: item.originalIndex,
+          subIdx,
+          key: m.key,
+          isFirstSub: subIdx === 0,
+          totalSubMovements: item.movements.length,
+          materiText: m.name,
+          parentText: item.rawText,
+          templateKey: m.templateKey,
+          template: m.template,
+          v1,
+          v2,
+          v3,
+          totalVal,
+          avgVal,
+        });
+      });
     });
+    return list;
   }, [materialsList, j1Rubric, j2Rubric, j3Rubric]);
 
   // Filter pencarian
   const filteredRows = useMemo(() => {
     if (!searchMovement.trim()) return combinedMovementData;
-    return combinedMovementData.filter(r => r.materiText.toLowerCase().includes(searchMovement.toLowerCase()));
+    const q = searchMovement.toLowerCase();
+    return combinedMovementData.filter(r => r.materiText.toLowerCase().includes(q) || r.parentText.toLowerCase().includes(q));
   }, [combinedMovementData, searchMovement]);
 
   // Rubrik PBB yang sedang aktif
@@ -327,18 +346,27 @@ export default function ScoresTab({ teamScore, currentTeam }) {
   const upacara = Boolean(pen.upacara);
   const upacaraTerlambatBlocks = pen.upacaraTerlambatBlocks || 0;
   const nonArenaPenaltyTotal = (basecampKotor ? 150 : 0) + (rokokCount * 75) + (yelYelCount * 50) + (upacara ? 150 : 0) + (upacaraTerlambatBlocks * 50);
-  const peletonPenaltyTotal = pen.peletonPenalty ?? pen.totalPenalty ?? 0;
-  const dantonPenaltyTotal = pen.dantonPenalty ?? 0;
+  const peletonPenaltyTotal = Math.abs(Number(pen.peletonPenalty ?? pen.totalPenalty ?? 0));
+  const dantonPenaltyTotal = Math.abs(Number(pen.dantonPenalty ?? 0));
 
   // Formula Juknis Bab A.3: Akumulasi 3 Dewan Juri Resmi
   // 1) Nilai Murni Peleton = Juri 1 + Juri 2 + Juri 3
   // 2) Nilai Akhir Peleton = (Nilai Murni Peleton) - (Total Penalti Peleton)
-  const peletonMurniTotal = Number(teamScore?.nilaiMurniPeleton ?? (totalJ1 + totalJ2 + totalJ3));
+  const peletonMurniTotal = Number(
+    teamScore?.nilaiMurniPeleton ??
+    ((totalJ1 + totalJ2 + totalJ3) > 0 ? (totalJ1 + totalJ2 + totalJ3) : (Number(teamScore?.nilaiAkhirPeleton ?? 0) + peletonPenaltyTotal))
+  );
   const peletonFinalScore = Number(teamScore?.nilaiAkhirPeleton ?? Math.max(0, peletonMurniTotal - peletonPenaltyTotal));
 
   // 4) Nilai Murni Danton = Juri 1 + Juri 2 + Juri 3
   // 5) Nilai Akhir Danton = (Nilai Murni Danton) - (Total Penalti Danton)
-  const dantonMurniTotal = dantonData.grandTotal;
+  const rawDantonSum = (dantonData.t1 + dantonData.t2 + dantonData.t3) > 0
+    ? parseFloat((dantonData.t1 + dantonData.t2 + dantonData.t3).toFixed(2))
+    : 0;
+  const dantonMurniTotal = Number(
+    teamScore?.nilaiMurniDanton ??
+    (rawDantonSum > 0 ? rawDantonSum : parseFloat(((Number(teamScore?.nilaiAkhirDanton ?? dantonData.grandTotal)) + dantonPenaltyTotal).toFixed(2)))
+  );
   const dantonFinalScore = Number(teamScore?.nilaiAkhirDanton ?? Math.max(0, parseFloat((dantonMurniTotal - dantonPenaltyTotal).toFixed(2))));
 
   // Format Gelar/Peringkat yang Bersih & Rapi
@@ -374,117 +402,142 @@ export default function ScoresTab({ teamScore, currentTeam }) {
             </p>
           </div>
         </div>
-
-        {teamScore && (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold shrink-0">
-            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-            <span>Nilai Sah Terverifikasi</span>
-          </span>
-        )}
       </div>
 
       {teamScore ? (
         <div className="space-y-6">
-          {/* Dual Executive Championship Scoreboard (Peleton & Komandan Terpisah Sesuai Juknis Bab A.3) */}
-          <div className="grid gap-5 lg:grid-cols-2">
-            {/* 1. KATEGORI PELETON (Brand Mu'allimin Crimson & Gold) */}
-            <div className="overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-br from-slate-950 via-[#180909] to-[#2a0808] p-5 sm:p-6 text-white relative shadow-[0_20px_45px_rgba(139,0,0,0.22)] border border-red-500/30 ring-1 ring-white/10 group">
-              {/* Radial Brand Aura */}
-              <div className="absolute -right-16 -top-16 h-52 w-52 rounded-full bg-gradient-to-br from-red-600/25 via-red-800/15 to-transparent blur-3xl pointer-events-none group-hover:scale-110 transition-transform duration-700" />
-              <div className="absolute -left-12 -bottom-12 h-44 w-44 rounded-full bg-amber-500/10 blur-3xl pointer-events-none" />
+          {/* Dual Executive Championship Scoreboard (Peleton & Komandan) */}
+          <div className="grid gap-4 sm:gap-5 lg:grid-cols-2">
+            {/* 1. KATEGORI PELETON */}
+            <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-slate-900 border border-slate-800/90 shadow-xl p-5 sm:p-6 text-white group">
+              {/* Subtle Ambient Aura */}
+              <div className="absolute -right-12 -top-12 h-44 w-44 rounded-full bg-red-600/15 blur-3xl pointer-events-none group-hover:scale-110 transition-transform duration-700" />
+              <div className="absolute -left-12 -bottom-12 h-36 w-36 rounded-full bg-amber-500/10 blur-3xl pointer-events-none" />
 
               <div className="relative z-10 space-y-4">
                 {/* Header Pill */}
-                <div className="flex items-center">
-                  <span className="inline-flex items-center gap-1.5 text-[10px] sm:text-[10.5px] font-black uppercase tracking-[0.14em] text-red-300 bg-red-950/90 px-3 py-1 rounded-full border border-red-500/40 shadow-xs">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="inline-flex items-center gap-1.5 text-[10.5px] sm:text-xs font-black uppercase tracking-wider text-red-300 bg-red-500/15 px-3 py-1 rounded-full border border-red-500/30 shadow-xs">
                     <Shield className="w-3.5 h-3.5 text-red-400 shrink-0" />
                     <span>NILAI AKHIR PELETON</span>
                   </span>
                 </div>
 
                 {/* Score & Plaque */}
-                <div className="flex items-center justify-between gap-4 pt-1">
+                <div className="flex items-center justify-between gap-2 sm:gap-3 pt-1">
                   <div className="min-w-0 flex-1">
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-4xl sm:text-5xl lg:text-6xl font-black font-mono tracking-tight text-white drop-shadow-[0_4px_16px_rgba(0,0,0,0.6)] leading-none">
+                    <div className="flex items-baseline gap-1.5 sm:gap-2">
+                      <span className="text-3xl sm:text-4xl lg:text-5xl font-black font-mono tracking-tight text-white drop-shadow-[0_4px_16px_rgba(0,0,0,0.6)] leading-none">
                         {peletonFinalScore}
                       </span>
-                      <span className="text-xs sm:text-sm font-black text-amber-400 uppercase tracking-widest shrink-0 drop-shadow-xs">
+                      <span className="text-[10px] sm:text-xs font-black text-amber-400 uppercase tracking-wider shrink-0">
                         POIN
                       </span>
                     </div>
-                    {peletonPenaltyTotal > 0 && (
-                      <p className="inline-flex items-center gap-1 text-[11px] sm:text-xs text-rose-400 font-bold mt-2 font-mono bg-rose-950/60 border border-rose-500/30 px-2 py-0.5 rounded-md">
-                        <AlertTriangle className="w-3 h-3 text-rose-400 shrink-0" />
-                        <span>Penalti: -{peletonPenaltyTotal} Poin</span>
-                      </p>
-                    )}
                   </div>
 
                   {teamScore.rank && (
-                    <div className="rounded-2xl p-3 sm:p-3.5 text-center shrink-0 border border-amber-400/50 bg-gradient-to-b from-amber-400/20 via-amber-500/10 to-transparent backdrop-blur-md shadow-[0_10px_25px_rgba(245,158,11,0.2)] ring-1 ring-amber-300/30 min-w-[120px] sm:min-w-[145px]">
-                      <div className="flex items-center justify-center gap-1 mb-1">
-                        <Trophy className="w-3.5 h-3.5 text-amber-300 shrink-0" />
-                        <p className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-amber-300 truncate max-w-[110px] sm:max-w-none">
+                    <div className="rounded-xl sm:rounded-2xl px-2.5 py-1.5 sm:px-3.5 sm:py-2 text-center shrink-0 border border-amber-400/40 bg-amber-500/10 backdrop-blur-md shadow-xs ring-1 ring-amber-400/20 min-w-[90px] sm:min-w-[120px]">
+                      <div className="flex items-center justify-center gap-1 mb-0.5 sm:mb-1">
+                        <Trophy className="w-3 h-3 text-amber-300 shrink-0" />
+                        <p className="text-[8.5px] sm:text-[10px] font-black uppercase tracking-wider text-amber-300 truncate max-w-[80px] sm:max-w-none">
                           {peletonAwardTitle}
                         </p>
                       </div>
-                      <p className="text-3xl sm:text-4xl font-black text-white font-mono tracking-tight leading-none drop-shadow-[0_2px_10px_rgba(245,158,11,0.4)]">
+                      <p className="text-xl sm:text-2xl lg:text-3xl font-black text-white font-mono tracking-tight leading-none drop-shadow-xs">
                         #{teamScore.rank}
                       </p>
                     </div>
                   )}
                 </div>
+
+                {/* Breakdown Nilai Murni & Penalti */}
+                <div className="flex items-center justify-between pt-3 border-t border-slate-800/80 text-xs">
+                  <div className="flex items-center gap-1.5 text-slate-400">
+                    <span className="font-medium">Nilai Murni:</span>
+                    <span className="font-mono font-bold text-slate-100">{peletonMurniTotal}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-slate-400 font-medium">Penalti:</span>
+                    {peletonPenaltyTotal > 0 ? (
+                      <span className="font-mono font-black text-rose-400 bg-rose-500/15 px-2 py-0.5 rounded-lg border border-rose-500/30 flex items-center gap-1 text-[11px] sm:text-xs">
+                        <AlertTriangle className="w-3 h-3 text-rose-400 shrink-0" />
+                        <span>-{peletonPenaltyTotal} Poin</span>
+                      </span>
+                    ) : (
+                      <span className="font-mono font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-lg border border-emerald-500/20 flex items-center gap-1 text-[11px] sm:text-xs">
+                        <Check className="w-3 h-3 text-emerald-400 shrink-0" />
+                        <span>0 Poin</span>
+                      </span>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
 
-            {/* 2. KATEGORI KOMANDAN (Brand Royal Amber & Deep Slate) */}
-            <div className="overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-br from-slate-950 via-[#16120b] to-[#281c08] p-5 sm:p-6 text-white relative shadow-[0_20px_45px_rgba(245,158,11,0.18)] border border-amber-500/30 ring-1 ring-white/10 group">
-              {/* Radial Brand Aura */}
-              <div className="absolute -right-16 -top-16 h-52 w-52 rounded-full bg-gradient-to-br from-amber-500/25 via-amber-600/15 to-transparent blur-3xl pointer-events-none group-hover:scale-110 transition-transform duration-700" />
-              <div className="absolute -left-12 -bottom-12 h-44 w-44 rounded-full bg-red-600/10 blur-3xl pointer-events-none" />
+            {/* 2. KATEGORI KOMANDAN */}
+            <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-slate-900 border border-slate-800/90 shadow-xl p-5 sm:p-6 text-white group">
+              {/* Subtle Ambient Aura */}
+              <div className="absolute -right-12 -top-12 h-44 w-44 rounded-full bg-amber-500/15 blur-3xl pointer-events-none group-hover:scale-110 transition-transform duration-700" />
+              <div className="absolute -left-12 -bottom-12 h-36 w-36 rounded-full bg-slate-700/15 blur-3xl pointer-events-none" />
 
               <div className="relative z-10 space-y-4">
                 {/* Header Pill */}
-                <div className="flex items-center">
-                  <span className="inline-flex items-center gap-1.5 text-[10px] sm:text-[10.5px] font-black uppercase tracking-[0.14em] text-amber-300 bg-amber-950/90 px-3 py-1 rounded-full border border-amber-500/40 shadow-xs">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="inline-flex items-center gap-1.5 text-[10.5px] sm:text-xs font-black uppercase tracking-wider text-amber-300 bg-amber-500/15 px-3 py-1 rounded-full border border-amber-500/30 shadow-xs">
                     <Medal className="w-3.5 h-3.5 text-amber-400 shrink-0" />
                     <span>NILAI AKHIR KOMANDAN</span>
                   </span>
                 </div>
 
                 {/* Score & Plaque */}
-                <div className="flex items-center justify-between gap-4 pt-1">
+                <div className="flex items-center justify-between gap-2 sm:gap-3 pt-1">
                   <div className="min-w-0 flex-1">
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-4xl sm:text-5xl lg:text-6xl font-black font-mono tracking-tight text-white drop-shadow-[0_4px_16px_rgba(0,0,0,0.6)] leading-none">
+                    <div className="flex items-baseline gap-1.5 sm:gap-2">
+                      <span className="text-3xl sm:text-4xl lg:text-5xl font-black font-mono tracking-tight text-white drop-shadow-[0_4px_16px_rgba(0,0,0,0.6)] leading-none">
                         {dantonFinalScore}
                       </span>
-                      <span className="text-xs sm:text-sm font-black text-amber-400 uppercase tracking-widest shrink-0 drop-shadow-xs">
+                      <span className="text-[10px] sm:text-xs font-black text-amber-400 uppercase tracking-wider shrink-0">
                         POIN
                       </span>
                     </div>
-                    {dantonPenaltyTotal > 0 && (
-                      <p className="inline-flex items-center gap-1 text-[11px] sm:text-xs text-rose-400 font-bold mt-2 font-mono bg-rose-950/60 border border-rose-500/30 px-2 py-0.5 rounded-md">
-                        <AlertTriangle className="w-3 h-3 text-rose-400 shrink-0" />
-                        <span>Penalti: -{dantonPenaltyTotal} Poin</span>
-                      </p>
-                    )}
                   </div>
 
                   {(teamScore.dantonRank || teamScore.rank) && (
-                    <div className="rounded-2xl p-3 sm:p-3.5 text-center shrink-0 border border-amber-400/50 bg-gradient-to-b from-amber-400/20 via-amber-500/10 to-transparent backdrop-blur-md shadow-[0_10px_25px_rgba(245,158,11,0.2)] ring-1 ring-amber-300/30 min-w-[120px] sm:min-w-[145px]">
-                      <div className="flex items-center justify-center gap-1 mb-1">
-                        <Medal className="w-3.5 h-3.5 text-amber-300 shrink-0" />
-                        <p className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-amber-300 truncate max-w-[110px] sm:max-w-none">
+                    <div className="rounded-xl sm:rounded-2xl px-2.5 py-1.5 sm:px-3.5 sm:py-2 text-center shrink-0 border border-amber-400/40 bg-amber-500/10 backdrop-blur-md shadow-xs ring-1 ring-amber-400/20 min-w-[90px] sm:min-w-[120px]">
+                      <div className="flex items-center justify-center gap-1 mb-0.5 sm:mb-1">
+                        <Medal className="w-3 h-3 text-amber-300 shrink-0" />
+                        <p className="text-[8.5px] sm:text-[10px] font-black uppercase tracking-wider text-amber-300 truncate max-w-[80px] sm:max-w-none">
                           {dantonAwardTitle}
                         </p>
                       </div>
-                      <p className="text-3xl sm:text-4xl font-black text-white font-mono tracking-tight leading-none drop-shadow-[0_2px_10px_rgba(245,158,11,0.4)]">
+                      <p className="text-xl sm:text-2xl lg:text-3xl font-black text-white font-mono tracking-tight leading-none drop-shadow-xs">
                         #{teamScore.dantonRank || teamScore.rank}
                       </p>
                     </div>
                   )}
+                </div>
+
+                {/* Breakdown Nilai Murni & Penalti */}
+                <div className="flex items-center justify-between pt-3 border-t border-slate-800/80 text-xs">
+                  <div className="flex items-center gap-1.5 text-slate-400">
+                    <span className="font-medium">Nilai Murni:</span>
+                    <span className="font-mono font-bold text-slate-100">{dantonMurniTotal}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-slate-400 font-medium">Penalti:</span>
+                    {dantonPenaltyTotal > 0 ? (
+                      <span className="font-mono font-black text-rose-400 bg-rose-500/15 px-2 py-0.5 rounded-lg border border-rose-500/30 flex items-center gap-1 text-[11px] sm:text-xs">
+                        <AlertTriangle className="w-3 h-3 text-rose-400 shrink-0" />
+                        <span>-{dantonPenaltyTotal} Poin</span>
+                      </span>
+                    ) : (
+                      <span className="font-mono font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-lg border border-emerald-500/20 flex items-center gap-1 text-[11px] sm:text-xs">
+                        <Check className="w-3 h-3 text-emerald-400 shrink-0" />
+                        <span>0 Poin</span>
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
@@ -655,8 +708,7 @@ export default function ScoresTab({ teamScore, currentTeam }) {
                   </thead>
                   <tbody className="divide-y divide-slate-200 bg-white">
                     {filteredRows.map((row) => {
-                      const idx = row.index - 1;
-                      const selectedVal = Number(activeJuryRubric[idx]);
+                      const selectedVal = Number(activeJuryRubric[row.key] ?? (row.isFirstSub && activeJuryRubric[row.originalIndex] !== undefined ? activeJuryRubric[row.originalIndex] : 0));
                       const isZero = selectedVal === 0;
 
                       const ksItems = row.template.filter(t => t.grade === 'KS');
@@ -666,10 +718,15 @@ export default function ScoresTab({ teamScore, currentTeam }) {
                       const bsItems = row.template.filter(t => t.grade === 'BS');
 
                       return (
-                        <tr key={idx} className="hover:bg-slate-50/80 transition-colors">
-                          <td className="py-1 px-1 text-center font-bold text-slate-400 border-r border-slate-200 text-xs">
-                            {row.index}
-                          </td>
+                        <tr key={row.key} className={`hover:bg-slate-50/80 transition-colors ${row.totalSubMovements > 1 && !row.isFirstSub ? 'bg-slate-50/30' : ''}`}>
+                          {row.isFirstSub && (
+                            <td
+                              rowSpan={row.totalSubMovements}
+                              className="py-1 px-1 text-center font-bold text-slate-500 border-r border-slate-200 text-xs bg-slate-50/50 align-middle"
+                            >
+                              <span className="font-mono font-black text-slate-800 text-xs sm:text-sm">{row.itemNumber}</span>
+                            </td>
+                          )}
                           <td className="py-1 px-2 font-semibold text-slate-800 border-r border-slate-200">
                             <div className="text-xs font-bold text-slate-900 leading-tight">{row.materiText}</div>
                           </td>
@@ -839,10 +896,15 @@ export default function ScoresTab({ teamScore, currentTeam }) {
                   </thead>
                   <tbody className="divide-y divide-slate-100 bg-white">
                     {filteredRows.map((row) => (
-                      <tr key={row.index} className="hover:bg-slate-50/80 transition-colors">
-                        <td className="py-2.5 px-3 text-center font-mono font-bold text-slate-400 border-r border-slate-100">
-                          {row.index}
-                        </td>
+                      <tr key={row.key} className={`hover:bg-slate-50/80 transition-colors ${row.totalSubMovements > 1 && !row.isFirstSub ? 'bg-slate-50/30' : ''}`}>
+                        {row.isFirstSub && (
+                          <td
+                            rowSpan={row.totalSubMovements}
+                            className="py-2.5 px-3 text-center font-mono font-bold text-slate-500 border-r border-slate-100 bg-slate-50/50 align-middle"
+                          >
+                            <span className="font-mono font-black text-slate-800 text-xs sm:text-sm">{row.itemNumber}</span>
+                          </td>
+                        )}
                         <td className="py-2.5 px-3.5 font-semibold text-slate-900 border-r border-slate-100">
                           <div className="leading-snug">{row.materiText}</div>
                         </td>

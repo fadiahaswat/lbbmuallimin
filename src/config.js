@@ -650,12 +650,78 @@ export function getScaleTemplateForMaterial(materiText) {
         lower.includes('berkumpul') ||
         lower.includes('berhimpun') ||
         lower.includes('langkah perlahan') ||
+        lower.includes('maju') ||
         lower.includes('– hadap') ||
         lower.includes('– balik')
     ) {
         return 'MENENGAH';
     }
     return 'SEDERHANA';
+}
+
+/**
+ * Helper memecah materi gerakan perlombaan menjadi sub-gerakan sah:
+ * 1. Aba-aba pembuka & penutup (Penghormatan & Laporan) tetap 1 baris utuh.
+ * 2. Berhimpun - Selesai tetap 1 baris utuh.
+ * 3. Semua gerakan "Henti" digabungkan dalam 1 baris di gerakan sebelumnya.
+ */
+export function splitMaterialMovements(materiText) {
+    const trimmed = (materiText || '').trim();
+    if (!trimmed) return [];
+
+    // Ketentuan khusus: Pembuka, Penutup, dan Berhimpun tetap 1 baris utuh
+    if (
+        /penghormatan.*laporan|laporan.*penghormatan/i.test(trimmed) ||
+        /berhimpun.*selesai/i.test(trimmed)
+    ) {
+        return [trimmed];
+    }
+
+    // Pemisah en-dash, em-dash, atau tanda hubung berspasi
+    const rawParts = trimmed.split(/\s*[\u2013\u2014]\s*|\s+-\s+/).map(s => s.trim()).filter(Boolean);
+
+    // Semua gerakan 'Henti' ikut dalam 1 baris di gerakan sebelumnya
+    const merged = [];
+    for (let i = 0; i < rawParts.length; i++) {
+        const part = rawParts[i];
+        if (/^henti$/i.test(part) && merged.length > 0) {
+            merged[merged.length - 1] = `${merged[merged.length - 1]} \u2013 ${part}`;
+        } else {
+            merged.push(part);
+        }
+    }
+
+    return merged.length > 0 ? merged : [trimmed];
+}
+
+/**
+ * Parser daftar materi lomba lengkap dengan metadata sub-gerakan dan skala rubrik
+ */
+export function parseMaterialsList(materialsList = []) {
+    return (materialsList || []).map((materiText, originalIndex) => {
+        const parts = splitMaterialMovements(materiText);
+        const number = originalIndex + 1;
+        const movements = parts.map((name, subIndex) => {
+            const templateKey = getScaleTemplateForMaterial(name);
+            const template = RUBRIC_SCALE_TEMPLATES[templateKey] || RUBRIC_SCALE_TEMPLATES.SEDERHANA;
+            return {
+                originalIndex,
+                subIndex,
+                key: `${originalIndex}_${subIndex}`,
+                name,
+                templateKey,
+                template,
+            };
+        });
+
+        return {
+            originalIndex,
+            number,
+            rawText: materiText,
+            isMulti: movements.length > 1,
+            movements,
+        };
+    });
 }
 
 

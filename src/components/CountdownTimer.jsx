@@ -21,8 +21,8 @@ export default function CountdownTimer() {
   // Check quota fullness (SD + SMP)
   const totalTargetSD = settings?.quotaSD || COMPETITION.SD.TARGET_PLATOONS || 18;
   const totalTargetSMP = settings?.quotaSMP || COMPETITION.SMP.TARGET_PLATOONS || 18;
-  const registeredSD = (teams || []).filter(t => t.jenjang === 'SD').length;
-  const registeredSMP = (teams || []).filter(t => t.jenjang === 'SMP').length;
+  const registeredSD = (teams || []).filter(t => t.jenjang === 'SD' && t.status !== 'rejected').length;
+  const registeredSMP = (teams || []).filter(t => t.jenjang === 'SMP' && t.status !== 'rejected').length;
   const isQuotaFull = registeredSD >= totalTargetSD && registeredSMP >= totalTargetSMP;
 
   const eventDates = settings?.eventDates || {};

@@ -241,10 +241,11 @@ export function CompetitionProvider({ children }) {
         if (!base.trialPlan || !base.trialPlan.SD?.slots?.some(Boolean)) {
           base.trialPlan = generateDummyTrialPlan(teams);
         }
-        // Jangan publikasikan jadwal UCL secara otomatis di localhost
-        // Hanya tayang jika sudah disahkan (ACC) dan tercatat trialScheduleRatifiedAt
-        base.trialSchedulePublished = Boolean(parsed.trialSchedulePublished && parsed.trialScheduleRatifiedAt);
-        base.trialScheduleRatifiedAt = parsed.trialScheduleRatifiedAt || null;
+        // Khusus Localhost: Otomatis tayangkan jadwal UCL & denah basecamp untuk pengujian/preview
+        base.trialSchedulePublished = true;
+        base.trialScheduleRatifiedAt = parsed.trialScheduleRatifiedAt || '2027-01-09T16:00:00.000Z';
+        base.basecampPublished = true;
+        base.basecampRatifiedAt = parsed.basecampRatifiedAt || '2027-01-16T08:00:00.000Z';
         base.announcementPublished = true;
       }
       return base;
@@ -374,8 +375,8 @@ export function CompetitionProvider({ children }) {
     randomizeLotNumbers,
     deleteTeam
   } = useMemo(
-    () => createTeamActions({ teams, setTeams, scores, setScores, setStaging, setCurrentUser, setUsers }),
-    [teams, scores]
+    () => createTeamActions({ teams, setTeams, scores, setScores, setStaging, setCurrentUser, setUsers, settings }),
+    [teams, scores, settings]
   );
 
   // Modular Scoring Actions
@@ -1464,6 +1465,9 @@ export function CompetitionProvider({ children }) {
       ...prev,
       trialPlan: suite.trialPlan,
       trialSchedulePublished: true,
+      trialScheduleRatifiedAt: prev?.trialScheduleRatifiedAt || '2027-01-09T16:00:00.000Z',
+      basecampPublished: true,
+      basecampRatifiedAt: prev?.basecampRatifiedAt || '2027-01-16T08:00:00.000Z',
       announcementPublished: true,
     }));
     safeSetItem(STORAGE_KEYS.TEAMS, JSON.stringify(normalized));

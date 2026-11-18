@@ -1,4 +1,5 @@
 import { saveRecordToSheet } from '../services/sheetService.js';
+import { parseMaterialsList } from '../config.js';
 
 export function calculatePenalties(penalties = {}) {
   let peletonPenalty = 0;
@@ -61,7 +62,30 @@ export function calculateDantonScoreFromRubric(dantonRubricScores = {}) {
   return parseFloat(rawScore.toFixed(2));
 }
 
-export function calculatePeletonScoreFromRubric(rubricScores = {}) {
+export function calculatePeletonScoreFromRubric(rubricScores = {}, materialsList = null) {
+  if (!rubricScores) return 0;
+  if (materialsList && Array.isArray(materialsList)) {
+    const parsed = parseMaterialsList(materialsList);
+    let total = 0;
+    parsed.forEach(item => {
+      item.movements.forEach(m => {
+        const val = rubricScores[m.key] !== undefined && rubricScores[m.key] !== null
+          ? rubricScores[m.key]
+          : (m.subIndex === 0 && rubricScores[item.originalIndex] !== undefined && rubricScores[item.originalIndex] !== null
+              ? rubricScores[item.originalIndex]
+              : null);
+        total += Number(val || 0);
+      });
+    });
+    return total;
+  }
+  const keys = Object.keys(rubricScores);
+  const hasSubKeys = keys.some(k => k.includes('_'));
+  if (hasSubKeys) {
+    return keys
+      .filter(k => k.includes('_'))
+      .reduce((acc, k) => acc + (Number(rubricScores[k]) || 0), 0);
+  }
   return Object.values(rubricScores || {}).reduce((acc, curr) => acc + (Number(curr) || 0), 0);
 }
 

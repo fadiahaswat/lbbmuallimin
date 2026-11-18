@@ -811,185 +811,185 @@ export default function LiveLeaderboard() {
 
       {/* 3. Toolbar Filter: Jenjang & Kategori Kejuaraan */}
       <div
-        className={`p-4 sm:p-5 rounded-[24px] border shadow-[0_12px_32px_rgba(15,23,42,0.04)] space-y-3.5 transition-colors ${
+        className={`p-3 sm:p-4 rounded-2xl sm:rounded-3xl border shadow-xs space-y-2.5 sm:space-y-3 transition-colors ${
           effectiveDark
             ? 'bg-slate-900 border-slate-800'
             : 'bg-white border-slate-200/90'
         }`}
       >
-        <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-3.5">
-          {/* Kiri: Switch Kategori Kejuaraan (Peleton, Danton, Juara Umum) */}
-          <div className={`inline-flex p-1 rounded-2xl border gap-1 overflow-x-auto no-scrollbar [&::-webkit-scrollbar]:hidden [scrollbar-width:none] [-ms-overflow-style:none] max-w-full ${
-            effectiveDark ? 'bg-slate-800/90 border-slate-700' : 'bg-slate-100 border-slate-200/80'
-          }`}>
-            <button
-              type="button"
-              onClick={() => setActiveCategory('peleton')}
-              className={`px-3 sm:px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 sm:gap-2 cursor-pointer shrink-0 ${
-                activeCategory === 'peleton'
-                  ? 'bg-gradient-to-r from-red-600 to-red-700 text-white shadow-xs'
-                  : effectiveDark
-                  ? 'text-slate-300 hover:text-white hover:bg-slate-700/60'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/70'
-              }`}
-            >
-              <Shield className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-300 shrink-0" />
-              <span>Kejuaraan Peleton</span>
-            </button>
+        {/* Tier 1: Kategori Kejuaraan (Peleton, Danton, Juara Umum) */}
+        <div className={`grid grid-cols-3 p-1 rounded-xl sm:rounded-2xl border gap-1 ${
+          effectiveDark ? 'bg-slate-800/90 border-slate-700' : 'bg-slate-100 border-slate-200/80'
+        }`}>
+          <button
+            type="button"
+            onClick={() => setActiveCategory('peleton')}
+            className={`py-2 px-1 sm:px-3 rounded-lg sm:rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 cursor-pointer text-center whitespace-nowrap ${
+              activeCategory === 'peleton'
+                ? effectiveDark
+                  ? 'bg-slate-950 text-white shadow-xs border border-slate-700'
+                  : 'bg-white text-slate-950 shadow-xs border border-slate-200/80'
+                : effectiveDark
+                ? 'text-slate-400 hover:text-white'
+                : 'text-slate-600 hover:text-slate-950 hover:bg-white/50'
+            }`}
+          >
+            <Shield className={`w-3.5 h-3.5 shrink-0 ${activeCategory === 'peleton' ? 'text-red-600' : 'text-slate-400'}`} />
+            <span>Peleton</span>
+          </button>
 
-            <button
-              type="button"
-              onClick={() => setActiveCategory('danton')}
-              className={`px-3 sm:px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 sm:gap-2 cursor-pointer shrink-0 ${
-                activeCategory === 'danton'
-                  ? 'bg-gradient-to-r from-amber-600 to-amber-700 text-white shadow-xs'
-                  : effectiveDark
-                  ? 'text-slate-300 hover:text-white hover:bg-slate-700/60'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/70'
-              }`}
-            >
-              <Medal className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-300 shrink-0" />
-              <span>Komandan Peleton</span>
-            </button>
+          <button
+            type="button"
+            onClick={() => setActiveCategory('danton')}
+            className={`py-2 px-1 sm:px-3 rounded-lg sm:rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 cursor-pointer text-center whitespace-nowrap ${
+              activeCategory === 'danton'
+                ? effectiveDark
+                  ? 'bg-slate-950 text-white shadow-xs border border-slate-700'
+                  : 'bg-white text-slate-950 shadow-xs border border-slate-200/80'
+                : effectiveDark
+                ? 'text-slate-400 hover:text-white'
+                : 'text-slate-600 hover:text-slate-950 hover:bg-white/50'
+            }`}
+          >
+            <Medal className={`w-3.5 h-3.5 shrink-0 ${activeCategory === 'danton' ? 'text-amber-500' : 'text-slate-400'}`} />
+            <span>Danton</span>
+          </button>
 
+          <button
+            type="button"
+            onClick={() => setActiveCategory('juara_umum')}
+            className={`py-2 px-1 sm:px-3 rounded-lg sm:rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 cursor-pointer text-center whitespace-nowrap ${
+              activeCategory === 'juara_umum'
+                ? effectiveDark
+                  ? 'bg-slate-950 text-white shadow-xs border border-slate-700'
+                  : 'bg-white text-slate-950 shadow-xs border border-slate-200/80'
+                : effectiveDark
+                ? 'text-slate-400 hover:text-white'
+                : 'text-slate-600 hover:text-slate-950 hover:bg-white/50'
+            }`}
+          >
+            <Crown className={`w-3.5 h-3.5 shrink-0 ${activeCategory === 'juara_umum' ? 'text-amber-500' : 'text-slate-400'}`} />
+            <span>Juara Umum</span>
+          </button>
+        </div>
+
+        {/* Tier 2: Sub-filter & Actions (Satu Baris Seimbang: Kiri, Tengah, Kanan) */}
+        <div className="flex items-center justify-between gap-1.5 sm:gap-2.5 pt-0.5 overflow-x-auto no-scrollbar">
+          {/* 1. Switch Jenjang: SD & SMP */}
+          <div
+            className={`flex items-center p-0.5 sm:p-1 rounded-xl border shrink-0 ${
+              effectiveDark
+                ? 'bg-slate-800/90 border-slate-700'
+                : 'bg-slate-100 border-slate-200/80'
+            }`}
+          >
             <button
               type="button"
-              onClick={() => setActiveCategory('juara_umum')}
-              className={`px-3 sm:px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 sm:gap-2 cursor-pointer shrink-0 ${
-                activeCategory === 'juara_umum'
+              onClick={() => setSelectedJenjang('SD')}
+              className={`px-2 py-1 sm:px-3 sm:py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1 whitespace-nowrap ${
+                selectedJenjang === 'SD'
                   ? effectiveDark
-                    ? 'bg-amber-400 text-slate-950 font-black shadow-xs'
-                    : 'bg-slate-950 text-white shadow-xs'
+                    ? 'bg-slate-950 text-white shadow-xs font-black'
+                    : 'bg-white text-slate-950 shadow-xs font-black border border-slate-200/60'
                   : effectiveDark
-                  ? 'text-slate-300 hover:text-white hover:bg-slate-700/60'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/70'
+                  ? 'text-slate-400 hover:text-white'
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              <Crown className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400 shrink-0" />
-              <span>Piala Bergilir Juara Umum</span>
+              <span>SD</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setSelectedJenjang('SMP')}
+              className={`px-2 py-1 sm:px-3 sm:py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1 whitespace-nowrap ${
+                selectedJenjang === 'SMP'
+                  ? effectiveDark
+                    ? 'bg-slate-950 text-white shadow-xs font-black'
+                    : 'bg-white text-slate-950 shadow-xs font-black border border-slate-200/60'
+                  : effectiveDark
+                  ? 'text-slate-400 hover:text-white'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              <span>SMP</span>
             </button>
           </div>
 
-          {/* Kanan: Switch Jenjang + View Mode */}
-          <div className="flex items-center gap-2 sm:gap-2.5 flex-wrap sm:flex-nowrap">
-            {/* Switch Jenjang: SD & SMP */}
-            <div
-              className={`flex items-center justify-center gap-1 p-1 rounded-xl border ${
-                effectiveDark
-                  ? 'bg-slate-800 border-slate-700'
-                  : 'bg-slate-100 border-slate-200/80'
+          {/* 2. View Mode Toggle: Podium vs Tabel */}
+          <div
+            className={`flex items-center p-0.5 sm:p-1 rounded-xl border shrink-0 ${
+              effectiveDark
+                ? 'bg-slate-800/90 border-slate-700'
+                : 'bg-slate-100 border-slate-200/80'
+            }`}
+          >
+            <button
+              type="button"
+              onClick={() => setViewMode('podium')}
+              className={`px-2 py-1 sm:px-3 sm:py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+                viewMode === 'podium'
+                  ? effectiveDark
+                    ? 'bg-slate-950 text-white shadow-xs font-black'
+                    : 'bg-white text-slate-950 shadow-xs font-black border border-slate-200/60'
+                  : effectiveDark
+                  ? 'text-slate-400 hover:text-white'
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
+              title="Tampilan Podium Juara & Peringkat"
             >
-              <button
-                type="button"
-                onClick={() => setSelectedJenjang('SD')}
-                className={`flex-1 sm:flex-none justify-center px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
-                  selectedJenjang === 'SD'
-                    ? effectiveDark
-                      ? 'bg-slate-950 text-white shadow-xs'
-                      : 'bg-white text-slate-900 shadow-xs'
-                    : effectiveDark
-                    ? 'text-slate-400 hover:text-white'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                <span className={`w-2 h-2 rounded-full shrink-0 ${selectedJenjang === 'SD' ? 'bg-red-600' : 'bg-slate-400'}`} />
-                <span>SD</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setSelectedJenjang('SMP')}
-                className={`flex-1 sm:flex-none justify-center px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
-                  selectedJenjang === 'SMP'
-                    ? effectiveDark
-                      ? 'bg-slate-950 text-white shadow-xs'
-                      : 'bg-white text-slate-900 shadow-xs'
-                    : effectiveDark
-                    ? 'text-slate-400 hover:text-white'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                <span className={`w-2 h-2 rounded-full shrink-0 ${selectedJenjang === 'SMP' ? 'bg-blue-600' : 'bg-slate-400'}`} />
-                <span>SMP</span>
-              </button>
-            </div>
-
-            {/* View Mode Toggle: Podium Juara vs Tabel Juknis */}
-            <div
-              className={`flex items-center justify-center gap-1 p-1 rounded-xl border ${
-                effectiveDark
-                  ? 'bg-slate-800 border-slate-700'
-                  : 'bg-slate-100 border-slate-200/80'
+              <Trophy className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+              <span>Podium</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setViewMode('table')}
+              className={`px-2 py-1 sm:px-3 sm:py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+                viewMode === 'table'
+                  ? effectiveDark
+                    ? 'bg-slate-950 text-white shadow-xs font-black'
+                    : 'bg-white text-slate-950 shadow-xs font-black border border-slate-200/60'
+                  : effectiveDark
+                  ? 'text-slate-400 hover:text-white'
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
+              title="Tampilan Tabel Juknis Lengkap"
             >
-              <button
-                type="button"
-                onClick={() => setViewMode('podium')}
-                className={`flex-1 sm:flex-none justify-center px-2 sm:px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1 sm:gap-1.5 ${
-                  viewMode === 'podium'
-                    ? effectiveDark
-                      ? 'bg-slate-950 text-white shadow-xs'
-                      : 'bg-white text-slate-900 shadow-xs'
-                    : effectiveDark
-                    ? 'text-slate-400 hover:text-white'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-                title="Tampilan Podium Juara & Peringkat"
-              >
-                <Trophy className="w-3.5 h-3.5 text-amber-500" />
-                <span>Podium</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setViewMode('table')}
-                className={`flex-1 sm:flex-none justify-center px-2 sm:px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1 sm:gap-1.5 ${
-                  viewMode === 'table'
-                    ? effectiveDark
-                      ? 'bg-slate-950 text-white shadow-xs'
-                      : 'bg-white text-slate-900 shadow-xs'
-                    : effectiveDark
-                    ? 'text-slate-400 hover:text-white'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-                title="Tampilan Tabel Juknis Lengkap"
-              >
-                <FileSpreadsheet className="w-3.5 h-3.5 text-blue-600" />
-                <span>Tabel</span>
-              </button>
-            </div>
+              <FileSpreadsheet className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+              <span>Tabel</span>
+            </button>
+          </div>
 
-            {/* Tombol Download Berita Acara (Paling Kanan) */}
-            <div className="flex items-center gap-1 shrink-0">
+          {/* 3. Sisi Kanan: Tombol Download Berita Acara & Kelola */}
+          <div className="flex items-center gap-1 shrink-0">
+            <button
+              type="button"
+              onClick={handleBeritaAcaraClick}
+              className={`px-2 py-1 sm:px-3 sm:py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 border shadow-2xs whitespace-nowrap ${
+                effectiveDark
+                  ? 'bg-slate-800 hover:bg-slate-700 text-slate-100 hover:text-white border-slate-700'
+                  : 'bg-white hover:bg-slate-50 text-slate-800 hover:text-slate-950 border-slate-200/90'
+              }`}
+              title={`Unduh Berita Acara Resmi Jenjang ${selectedJenjang === 'SD' ? 'SD/MI' : 'SMP/MTs'}`}
+            >
+              <Download className="w-3.5 h-3.5 text-red-600 shrink-0" />
+              <span>Berita Acara</span>
+              <span className="hidden md:inline font-normal text-slate-400">({selectedJenjang})</span>
+            </button>
+
+            {isSuperOrAdmin && (
               <button
                 type="button"
-                onClick={handleBeritaAcaraClick}
-                className={`px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 border shadow-2xs ${
+                onClick={openBeritaAcaraModal}
+                className={`p-1 sm:p-1.5 rounded-xl text-xs transition-all cursor-pointer border shadow-2xs shrink-0 ${
                   effectiveDark
-                    ? 'bg-slate-800 hover:bg-slate-700 text-slate-100 hover:text-white border-slate-700'
-                    : 'bg-white hover:bg-slate-50 text-slate-800 hover:text-slate-950 border-slate-200/90'
+                    ? 'bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white border-slate-700'
+                    : 'bg-white hover:bg-slate-50 text-slate-500 hover:text-slate-900 border-slate-200/90'
                 }`}
-                title={`Unduh Berita Acara Resmi Jenjang ${selectedJenjang === 'SD' ? 'SD/MI' : 'SMP/MTs'}`}
+                title="Kelola Link Google Drive Berita Acara (Admin / Superadmin)"
               >
-                <Download className="w-3.5 h-3.5 text-red-600 shrink-0" />
-                <span className="hidden sm:inline">Download Berita Acara</span>
-                <span className="sm:hidden">Berita Acara</span>
+                <Settings className="w-3.5 h-3.5 shrink-0" />
               </button>
-
-              {isSuperOrAdmin && (
-                <button
-                  type="button"
-                  onClick={openBeritaAcaraModal}
-                  className={`p-2 rounded-xl text-xs transition-all cursor-pointer border shadow-2xs ${
-                    effectiveDark
-                      ? 'bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white border-slate-700'
-                      : 'bg-white hover:bg-slate-50 text-slate-500 hover:text-slate-900 border-slate-200/90'
-                  }`}
-                  title="Kelola Link Google Drive Berita Acara (Admin / Superadmin)"
-                >
-                  <Settings className="w-3.5 h-3.5 shrink-0" />
-                </button>
-              )}
-            </div>
+            )}
           </div>
         </div>
       </div>
@@ -1050,18 +1050,44 @@ export default function LiveLeaderboard() {
 
             {/* Championship Kicker */}
             <div className="text-center relative z-10 mb-4 sm:mb-8">
-              <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] sm:text-[10px] font-black uppercase tracking-[0.16em] sm:tracking-[0.2em] shadow-2xs ${
-                activeCategory === 'juara_umum'
+              <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] sm:text-[10px] font-black uppercase tracking-wider shadow-2xs whitespace-nowrap ${
+                effectiveDark
+                  ? 'bg-amber-400/15 text-amber-300 border border-amber-400/30'
+                  : activeCategory === 'juara_umum'
                   ? 'bg-amber-400/20 text-amber-900 border border-amber-400/60'
                   : 'bg-amber-100/80 text-amber-900 border border-amber-300/80'
               }`}>
-                {activeCategory === 'peleton' && <Trophy className="w-3.5 h-3.5 text-amber-600" />}
-                {activeCategory === 'danton' && <Medal className="w-3.5 h-3.5 text-amber-600" />}
-                {activeCategory === 'juara_umum' && <Crown className="w-3.5 h-3.5 text-amber-600" />}
+                {activeCategory === 'peleton' && <Trophy className="w-3.5 h-3.5 text-amber-600 shrink-0" />}
+                {activeCategory === 'danton' && <Medal className="w-3.5 h-3.5 text-amber-600 shrink-0" />}
+                {activeCategory === 'juara_umum' && <Crown className="w-3.5 h-3.5 text-amber-600 shrink-0" />}
                 <span>
-                  {activeCategory === 'peleton' && `PODIUM UTAMA KEJUARAAN • JENJANG ${selectedJenjang === 'SD' ? 'SD/MI' : 'SMP/MTs'}`}
-                  {activeCategory === 'danton' && `PODIUM KOMANDAN PELETON • JENJANG ${selectedJenjang === 'SD' ? 'SD/MI' : 'SMP/MTs'}`}
-                  {activeCategory === 'juara_umum' && `PIALA BERGILIR JUARA UMUM • JENJANG ${selectedJenjang === 'SD' ? 'SD/MI' : 'SMP/MTs'}`}
+                  {activeCategory === 'peleton' && (
+                    <>
+                      <span>PODIUM UTAMA</span>
+                      <span className="hidden sm:inline"> KEJUARAAN</span>
+                      <span> • </span>
+                      <span className="sm:hidden">{selectedJenjang}</span>
+                      <span className="hidden sm:inline">JENJANG {selectedJenjang === 'SD' ? 'SD/MI' : 'SMP/MTs'}</span>
+                    </>
+                  )}
+                  {activeCategory === 'danton' && (
+                    <>
+                      <span>PODIUM DANTON</span>
+                      <span className="hidden sm:inline"> TERBAIK</span>
+                      <span> • </span>
+                      <span className="sm:hidden">{selectedJenjang}</span>
+                      <span className="hidden sm:inline">JENJANG {selectedJenjang === 'SD' ? 'SD/MI' : 'SMP/MTs'}</span>
+                    </>
+                  )}
+                  {activeCategory === 'juara_umum' && (
+                    <>
+                      <span>PIALA BERGILIR</span>
+                      <span className="hidden sm:inline"> JUARA UMUM</span>
+                      <span> • </span>
+                      <span className="sm:hidden">{selectedJenjang}</span>
+                      <span className="hidden sm:inline">JENJANG {selectedJenjang === 'SD' ? 'SD/MI' : 'SMP/MTs'}</span>
+                    </>
+                  )}
                 </span>
               </span>
               <h3 className={`mt-1.5 sm:mt-2 text-base sm:text-2xl font-black uppercase tracking-tight ${
@@ -1264,9 +1290,18 @@ export default function LiveLeaderboard() {
 
               {/* Championship Kicker */}
               <div className="text-center relative z-10 mb-3 sm:mb-6">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] sm:text-[10px] font-black uppercase tracking-[0.16em] sm:tracking-[0.18em] bg-sky-100/90 text-sky-900 border border-sky-200 shadow-2xs">
-                  <Award className="w-3.5 h-3.5 text-sky-600" />
-                  <span>PODIUM JUARA HARAPAN • JENJANG {selectedJenjang === 'SD' ? 'SD/MI' : 'SMP/MTs'}</span>
+                <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] sm:text-[10px] font-black uppercase tracking-wider shadow-2xs whitespace-nowrap ${
+                  effectiveDark
+                    ? 'bg-sky-950 text-sky-300 border border-sky-800'
+                    : 'bg-sky-100/90 text-sky-900 border border-sky-200'
+                }`}>
+                  <Award className="w-3.5 h-3.5 text-sky-600 shrink-0" />
+                  <span>
+                    <span>PODIUM JUARA HARAPAN</span>
+                    <span> • </span>
+                    <span className="sm:hidden">{selectedJenjang}</span>
+                    <span className="hidden sm:inline">JENJANG {selectedJenjang === 'SD' ? 'SD/MI' : 'SMP/MTs'}</span>
+                  </span>
                 </span>
                 <h3 className={`mt-1.5 text-base sm:text-xl font-black uppercase tracking-tight ${
                   effectiveDark ? 'text-white' : 'text-slate-950'

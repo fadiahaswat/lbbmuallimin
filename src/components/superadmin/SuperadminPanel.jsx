@@ -26,7 +26,10 @@ import {
   Check,
   X,
   Lock,
-  Coins
+  Coins,
+  Plus,
+  Minus,
+  Sparkles
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
 import { EVENT, OFFICIAL_RAB } from '../../config.js';
@@ -277,6 +280,85 @@ export default function SuperadminPanel() {
       beritaAcaraUrl: (driveForm.sd.trim() || driveForm.smp.trim())
     });
     showToast('Link Google Drive Berita Acara berhasil disimpan!');
+  }
+
+  // Quota Management Form State
+  const currentCountSD = (teams || []).filter(t => t.jenjang === 'SD' && t.status !== 'rejected').length;
+  const currentCountSMP = (teams || []).filter(t => t.jenjang === 'SMP' && t.status !== 'rejected').length;
+
+  const [quotaForm, setQuotaForm] = useState(() => ({
+    sd: settings?.quotaSD || 18,
+    smp: settings?.quotaSMP || 18,
+  }));
+  const [quotaError, setQuotaError] = useState('');
+
+  useEffect(() => {
+    setQuotaForm({
+      sd: settings?.quotaSD || 18,
+      smp: settings?.quotaSMP || 18,
+    });
+  }, [settings?.quotaSD, settings?.quotaSMP]);
+
+  function handleSaveQuota(e) {
+    if (e) e.preventDefault();
+    setQuotaError('');
+    const newSD = parseInt(quotaForm.sd, 10);
+    const newSMP = parseInt(quotaForm.smp, 10);
+
+    if (isNaN(newSD) || newSD < 1) {
+      setQuotaError('Kuota peleton SD/MI harus berupa angka positif (minimal 1).');
+      return;
+    }
+    if (isNaN(newSMP) || newSMP < 1) {
+      setQuotaError('Kuota peleton SMP/MTs harus berupa angka positif (minimal 1).');
+      return;
+    }
+    if (newSD < currentCountSD) {
+      setQuotaError(`Kuota SD/MI (${newSD}) tidak boleh lebih kecil dari jumlah peleton terdaftar saat ini (${currentCountSD} peleton).`);
+      return;
+    }
+    if (newSMP < currentCountSMP) {
+      setQuotaError(`Kuota SMP/MTs (${newSMP}) tidak boleh lebih kecil dari jumlah peleton terdaftar saat ini (${currentCountSMP} peleton).`);
+      return;
+    }
+
+    updateSettings({
+      quotaSD: newSD,
+      quotaSMP: newSMP,
+    });
+    showToast(`Kuota peserta berhasil diperbarui: SD (${newSD} peleton), SMP (${newSMP} peleton), Total (${newSD + newSMP} peleton)!`);
+  }
+
+  function handleResetQuota() {
+    setQuotaError('');
+    const defaultSD = 18;
+    const defaultSMP = 18;
+    if (defaultSD < currentCountSD || defaultSMP < currentCountSMP) {
+      setQuotaError(`Gagal reset ke 18: saat ini peleton terdaftar (${currentCountSD} SD, ${currentCountSMP} SMP) melebihi batas 18.`);
+      return;
+    }
+    setQuotaForm({ sd: defaultSD, smp: defaultSMP });
+    updateSettings({
+      quotaSD: defaultSD,
+      quotaSMP: defaultSMP,
+    });
+    showToast('Kuota peserta berhasil direset ke standar default (18 SD & 18 SMP)!');
+  }
+
+  function handlePresetExpansion() {
+    setQuotaError('');
+    const targetSD = 21;
+    const targetSMP = 21;
+    if (targetSD < currentCountSD || targetSMP < currentCountSMP) {
+      setQuotaError(`Gagal terapkan preset 21: saat ini peleton terdaftar (${currentCountSD} SD, ${currentCountSMP} SMP) melebihi batas 21.`);
+      return;
+    }
+    setQuotaForm({ sd: targetSD, smp: targetSMP });
+    updateSettings({
+      quotaSD: targetSD,
+      quotaSMP: targetSMP,
+    });
+    showToast('Kuota peserta berhasil diatur ke skema ekspansi optimal (21 SD & 21 SMP - Total 42 Peleton)!');
   }
 
   function handleExportJSON() {
@@ -572,6 +654,241 @@ export default function SuperadminPanel() {
                   <Check className="w-3.5 h-3.5" />
                   <span>Simpan Link Berita Acara</span>
                 </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* SEKSI SUPERADMIN: MANAJEMEN KUOTA PESERTA PELETON (SD/MI & SMP/MTs) */}
+        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="w-8 h-8 rounded-xl bg-red-500/10 border border-red-500/20 text-red-600 flex items-center justify-center font-black">
+                  <Users className="w-4 h-4" />
+                </span>
+                <h3 className="font-black text-lg text-slate-900 uppercase">
+                  Manajemen Kuota Peserta Peleton
+                </h3>
+              </div>
+              <p className="text-xs text-slate-500 mt-1">
+                Atur batas kuota maksimal peleton SD/MI dan SMP/MTs. Perubahan kuota otomatis sinkron secara real-time ke formulir pendaftaran, countdown timer, dan dashboard admin.
+              </p>
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onClick={handleResetQuota}
+                className="px-3 py-2 rounded-xl border border-slate-300 hover:bg-slate-100 text-slate-700 font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer"
+                title="Kembalikan kuota ke standar awal (18 SD & 18 SMP)"
+              >
+                <RotateCcw className="w-3.5 h-3.5 text-slate-500" />
+                <span>Standar (18/18)</span>
+              </button>
+              <button
+                type="button"
+                onClick={handlePresetExpansion}
+                className="px-3.5 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-300 text-amber-900 font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer shadow-xs"
+                title="Terapkan kuota ekspansi simetris (21 SD & 21 SMP = Total 42 Peleton)"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+                <span>Ekspansi (21/21)</span>
+              </button>
+              <button
+                type="button"
+                onClick={handleSaveQuota}
+                className="px-4 py-2 rounded-xl bg-red-700 hover:bg-red-800 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm transition-all cursor-pointer"
+              >
+                <Save className="w-3.5 h-3.5" />
+                <span>Simpan Kuota</span>
+              </button>
+            </div>
+          </div>
+
+          {quotaError && (
+            <div className="p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-start gap-2.5">
+              <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+              <div>
+                <p className="font-bold">Penyesuaian Kuota Ditolak</p>
+                <p className="text-[11px] text-rose-700">{quotaError}</p>
+              </div>
+            </div>
+          )}
+
+          {/* Grid Kuota: SD/MI, SMP/MTs, dan Total Ringkasan */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {/* 1. Kuota SD/MI */}
+            <div className="p-5 rounded-2xl bg-gradient-to-br from-red-50/50 via-white to-slate-50 border border-red-100 flex flex-col justify-between space-y-4">
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-black uppercase tracking-wider text-red-700 flex items-center gap-1.5">
+                    <span className="w-2.5 h-2.5 rounded-full bg-red-600 inline-block" />
+                    Tingkat SD / MI
+                  </span>
+                  <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-red-100 text-red-800 border border-red-200">
+                    {currentCountSD} Terisi
+                  </span>
+                </div>
+                <p className="text-xs text-slate-500 leading-relaxed">
+                  Batas maksimal peleton sekolah dasar / madrasah ibtidaiyah yang diizinkan mendaftar.
+                </p>
+              </div>
+
+              <div className="space-y-3 pt-2">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-slate-500 font-semibold">Terdaftar Aktif:</span>
+                  <span className="font-mono font-bold text-slate-900">{currentCountSD} Peleton</span>
+                </div>
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-slate-500 font-semibold">Sisa Slot Terbuka:</span>
+                  <span className="font-mono font-bold text-emerald-600">
+                    {Math.max(0, (parseInt(quotaForm.sd, 10) || 0) - currentCountSD)} Slot
+                  </span>
+                </div>
+
+                <div className="pt-2 border-t border-red-100">
+                  <label className="block text-[11px] font-bold text-slate-700 mb-1.5">
+                    Target Kuota SD/MI (Peleton):
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      disabled={parseInt(quotaForm.sd, 10) <= currentCountSD}
+                      onClick={() => setQuotaForm(prev => ({ ...prev, sd: Math.max(currentCountSD, (parseInt(prev.sd, 10) || 0) - 1) }))}
+                      className="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center font-bold text-slate-700 transition-all cursor-pointer"
+                    >
+                      <Minus className="w-4 h-4" />
+                    </button>
+                    <input
+                      type="number"
+                      min={currentCountSD || 1}
+                      max={100}
+                      value={quotaForm.sd}
+                      onChange={(e) => setQuotaForm(prev => ({ ...prev, sd: e.target.value }))}
+                      className="flex-1 text-center font-mono font-black text-lg py-1.5 px-3 rounded-xl border border-slate-300 bg-white text-slate-900 focus:border-red-600 focus:ring-1 focus:ring-red-600"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setQuotaForm(prev => ({ ...prev, sd: (parseInt(prev.sd, 10) || 0) + 1 }))}
+                      className="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 flex items-center justify-center font-bold text-slate-700 transition-all cursor-pointer"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </button>
+                  </div>
+                  <span className="text-[10px] text-slate-400 mt-1 block">Batas minimal: {currentCountSD} peleton (sesuai tim terdaftar)</span>
+                </div>
+              </div>
+            </div>
+
+            {/* 2. Kuota SMP/MTs */}
+            <div className="p-5 rounded-2xl bg-gradient-to-br from-blue-50/50 via-white to-slate-50 border border-blue-100 flex flex-col justify-between space-y-4">
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-black uppercase tracking-wider text-blue-700 flex items-center gap-1.5">
+                    <span className="w-2.5 h-2.5 rounded-full bg-blue-600 inline-block" />
+                    Tingkat SMP / MTs
+                  </span>
+                  <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 border border-blue-200">
+                    {currentCountSMP} Terisi
+                  </span>
+                </div>
+                <p className="text-xs text-slate-500 leading-relaxed">
+                  Batas maksimal peleton sekolah menengah pertama / tsanawiyah yang diizinkan mendaftar.
+                </p>
+              </div>
+
+              <div className="space-y-3 pt-2">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-slate-500 font-semibold">Terdaftar Aktif:</span>
+                  <span className="font-mono font-bold text-slate-900">{currentCountSMP} Peleton</span>
+                </div>
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-slate-500 font-semibold">Sisa Slot Terbuka:</span>
+                  <span className="font-mono font-bold text-emerald-600">
+                    {Math.max(0, (parseInt(quotaForm.smp, 10) || 0) - currentCountSMP)} Slot
+                  </span>
+                </div>
+
+                <div className="pt-2 border-t border-blue-100">
+                  <label className="block text-[11px] font-bold text-slate-700 mb-1.5">
+                    Target Kuota SMP/MTs (Peleton):
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      disabled={parseInt(quotaForm.smp, 10) <= currentCountSMP}
+                      onClick={() => setQuotaForm(prev => ({ ...prev, smp: Math.max(currentCountSMP, (parseInt(prev.smp, 10) || 0) - 1) }))}
+                      className="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center font-bold text-slate-700 transition-all cursor-pointer"
+                    >
+                      <Minus className="w-4 h-4" />
+                    </button>
+                    <input
+                      type="number"
+                      min={currentCountSMP || 1}
+                      max={100}
+                      value={quotaForm.smp}
+                      onChange={(e) => setQuotaForm(prev => ({ ...prev, smp: e.target.value }))}
+                      className="flex-1 text-center font-mono font-black text-lg py-1.5 px-3 rounded-xl border border-slate-300 bg-white text-slate-900 focus:border-blue-600 focus:ring-1 focus:ring-blue-600"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setQuotaForm(prev => ({ ...prev, smp: (parseInt(prev.smp, 10) || 0) + 1 }))}
+                      className="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 flex items-center justify-center font-bold text-slate-700 transition-all cursor-pointer"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </button>
+                  </div>
+                  <span className="text-[10px] text-slate-400 mt-1 block">Batas minimal: {currentCountSMP} peleton (sesuai tim terdaftar)</span>
+                </div>
+              </div>
+            </div>
+
+            {/* 3. Ringkasan Total Kuota Keseluruhan */}
+            <div className="p-5 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-900 to-slate-950 text-white flex flex-col justify-between space-y-4 shadow-md">
+              <div>
+                <span className="text-xs font-black uppercase tracking-wider text-amber-400 flex items-center gap-1.5 mb-2">
+                  <Coins className="w-3.5 h-3.5" />
+                  Kapasitas Total Lomba
+                </span>
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  Akumulasi total peleton yang akan berlaga di Arena 1 & Arena 2 Kampus Terpadu Mu'allimin.
+                </p>
+              </div>
+
+              <div className="space-y-3 pt-2">
+                <div className="flex items-baseline justify-between border-b border-white/10 pb-2">
+                  <span className="text-xs text-slate-400">Total Kuota Gabungan:</span>
+                  <div className="text-right">
+                    <span className="font-mono text-2xl font-black text-white">
+                      {(parseInt(quotaForm.sd, 10) || 0) + (parseInt(quotaForm.smp, 10) || 0)}
+                    </span>
+                    <span className="text-xs text-slate-400 ml-1">Peleton</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-slate-400">Total Terisi Saat Ini:</span>
+                  <span className="font-mono font-bold text-slate-200">
+                    {currentCountSD + currentCountSMP} Peleton
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-slate-400">Total Slot Tersedia:</span>
+                  <span className="font-mono font-bold text-emerald-400">
+                    {Math.max(0, ((parseInt(quotaForm.sd, 10) || 0) + (parseInt(quotaForm.smp, 10) || 0)) - (currentCountSD + currentCountSMP))} Slot
+                  </span>
+                </div>
+
+                <div className="pt-2">
+                  <button
+                    type="button"
+                    onClick={handleSaveQuota}
+                    className="w-full py-2.5 px-4 rounded-xl bg-red-600 hover:bg-red-500 active:scale-95 text-white font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-md cursor-pointer"
+                  >
+                    <Save className="w-4 h-4" />
+                    <span>Terapkan Kuota Sekarang</span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>

@@ -10,7 +10,8 @@ import {
   MATERIALS,
   RUBRIC_SCALE_TEMPLATES,
   getScaleTemplateForMaterial,
-  DANTON_SCALE
+  DANTON_SCALE,
+  parseMaterialsList
 } from '../config.js';
 
 const SD_SCHOOL_PROFILES = [
@@ -559,29 +560,37 @@ export function generateDummyStaging(teams = []) {
  * Menghasilkan rincian nilai tiap gerakan yang valid di RUBRIC_SCALE_TEMPLATES
  */
 function generateRubricForTarget(materials, target, seedOffset) {
+  const parsed = parseMaterialsList(materials);
+  const allMovements = [];
+  parsed.forEach(it => {
+    it.movements.forEach(m => {
+      allMovements.push(m);
+    });
+  });
+
   const result = {};
   const optionsMap = {};
-  materials.forEach((m, idx) => {
-    const key = getScaleTemplateForMaterial(m);
-    const tmpl = RUBRIC_SCALE_TEMPLATES[key] || RUBRIC_SCALE_TEMPLATES.SEDERHANA;
-    optionsMap[idx] = tmpl.map(t => t.val);
+  allMovements.forEach((m, idx) => {
+    const tmpl = m.template;
+    optionsMap[m.key] = tmpl.map(t => t.val);
     const mid = tmpl[Math.floor(tmpl.length * 0.7)] || tmpl[0];
-    result[idx] = mid.val;
+    result[m.key] = mid.val;
   });
 
   let currentSum = Object.values(result).reduce((a, b) => a + b, 0);
   let attempts = 0;
   while (currentSum !== target && attempts < 3000) {
     attempts++;
-    const idx = (attempts * 11 + seedOffset) % materials.length;
-    const opts = optionsMap[idx];
-    const curVal = result[idx];
+    const idx = (attempts * 11 + seedOffset) % allMovements.length;
+    const key = allMovements[idx].key;
+    const opts = optionsMap[key];
+    const curVal = result[key];
     const curPos = opts.indexOf(curVal);
     if (currentSum > target && curPos > 0) {
-      result[idx] = opts[curPos - 1];
+      result[key] = opts[curPos - 1];
       currentSum -= (curVal - opts[curPos - 1]);
     } else if (currentSum < target && curPos < opts.length - 1) {
-      result[idx] = opts[curPos + 1];
+      result[key] = opts[curPos + 1];
       currentSum += (opts[curPos + 1] - curVal);
     }
   }
@@ -602,10 +611,10 @@ export function generateDummyScores(teams = []) {
 
     if (num >= 1 && num <= 18) {
       // Skema Nilai Berjenjang Realistis Sesuai Juknis Bab A.3 & Skala 50-90
-      // 1 Juri: SD 26 Gerakan (~1800 - 2180), SMP 28 Gerakan (~2000 - 2380)
-      // Akumulasi 3 Dewan Juri: SD (~5400 - 6540), SMP (~6000 - 7140)
-      const baseTarget = isSD ? 2180 : 2320;
-      const juryTarget = baseTarget - (num - 1) * 22;
+      // 1 Juri: SD 36 Gerakan (~2500 - 2950), SMP 46 Gerakan (~3200 - 3780)
+      // Akumulasi 3 Dewan Juri: SD (~7500 - 8850), SMP (~9600 - 11340)
+      const baseTarget = isSD ? 2950 : 3780;
+      const juryTarget = baseTarget - (num - 1) * 25;
 
       const j1Rubric = generateRubricForTarget(materials, juryTarget, 1);
       const j2Rubric = generateRubricForTarget(materials, juryTarget - 2, 2);

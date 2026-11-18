@@ -28,8 +28,14 @@ export default function DenahBasecampTab({ currentTeam, allTeams = [], staging =
   const { settings, updateSettings, currentUser, role } = useCompetition?.() || {};
   const userRole = currentUser?.role || role || 'peserta';
   const isStaff = !currentTeam && ['admin', 'superadmin', 'checkin', 'dp', 'staging', 'panitia'].includes(userRole);
-  const isSuperadmin = userRole === 'superadmin';
-  const isRatified = Boolean(settings?.basecampPublished && settings?.basecampRatifiedAt);
+  const isLocalhost = typeof window !== 'undefined' && (
+    window.location.hostname === 'localhost' ||
+    window.location.hostname === '127.0.0.1' ||
+    window.location.hostname.startsWith('192.168.') ||
+    window.location.hostname.startsWith('172.') ||
+    window.location.hostname.startsWith('10.')
+  );
+  const isRatified = Boolean((settings?.basecampPublished && settings?.basecampRatifiedAt) || isLocalhost);
 
   // Cek apakah ada alokasi basecamp untuk tim ini
   const teamStaging = staging?.[currentTeam?.id] || null;

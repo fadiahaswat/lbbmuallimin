@@ -5,23 +5,31 @@ import { formatImageUrl } from '../services/sheetService.js';
  * Berpasangan saat Technical Meeting (TM)
  */
 export const LOTTERY_CHEST_MAP = {
+  // SD: Seluruh digit wajib angka GANJIL (1, 3, 5, 7, 9) tanpa angka genap sama sekali
   SD: [
     '111', '113', '115', '117', '119',
     '131', '133', '135', '137', '139',
     '151', '153', '155', '157', '159',
-    '171', '173', '175',
+    '171', '173', '175', '177', '179',
+    '191', '193', '195', '197', '199',
+    '311', '313', '315', '317', '319',
   ],
+  // SMP: Seluruh digit wajib angka GENAP (0, 2, 4, 6, 8) tanpa angka ganjil sama sekali
   SMP: [
     '222', '224', '226', '228',
     '240', '242', '244', '246', '248',
     '260', '262', '264', '266', '268',
-    '280', '282', '284', '286',
+    '280', '282', '284', '286', '288',
+    '400', '402', '404', '406', '408',
+    '420', '422', '424', '426', '428',
   ],
 };
 
 /**
  * Dapatkan Nomor Dada resmi berdasarkan Jenjang dan Urutan Tampil (lotNumber 1-indexed)
- * Contoh: Urutan 1 SD -> "111", Urutan 1 SMP -> "222"
+ * Kaidah Baku LBB Mu'allimin 2027:
+ * - SD/MI  : Seluruh 3 digit WAJIB GANJIL (contoh: 111, 131, bukan 121 karena ada angka 2 genap).
+ * - SMP/MTs: Seluruh 3 digit WAJIB GENAP (contoh: 222, 240, bukan 230 karena ada angka 3 ganjil).
  */
 export function getChestNumberByLot(jenjang, lotNumber) {
   if (!lotNumber || isNaN(lotNumber)) return '';
@@ -29,7 +37,30 @@ export function getChestNumberByLot(jenjang, lotNumber) {
   if (num < 1) return '';
   const jKey = String(jenjang || '').toUpperCase().includes('SD') ? 'SD' : 'SMP';
   const list = LOTTERY_CHEST_MAP[jKey] || [];
-  return list[num - 1] || '';
+  if (list[num - 1]) return list[num - 1];
+
+  // Algoritma murni digit ganjil (SD) & genap (SMP) jika kuota melampaui daftar
+  if (jKey === 'SD') {
+    const oddDigits = ['1', '3', '5', '7', '9'];
+    let idx = num - 1;
+    const d3 = oddDigits[idx % 5];
+    idx = Math.floor(idx / 5);
+    const d2 = oddDigits[idx % 5];
+    idx = Math.floor(idx / 5);
+    const d1 = oddDigits[idx % 5];
+    return `${d1}${d2}${d3}`;
+  } else {
+    // SMP: 222 adalah item pertama (idx 0)
+    const evenDigits = ['0', '2', '4', '6', '8'];
+    const evenHundreds = ['2', '4', '6', '8'];
+    let idx = num - 1;
+    const d3 = evenDigits[idx % 5];
+    idx = Math.floor(idx / 5);
+    const d2 = evenDigits[idx % 5];
+    idx = Math.floor(idx / 5);
+    const d1 = evenHundreds[idx % 4];
+    return `${d1}${d2}${d3}`;
+  }
 }
 
 /**

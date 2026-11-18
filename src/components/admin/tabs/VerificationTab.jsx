@@ -13,7 +13,10 @@ import { checkTeamVerificationEligibility } from '../../../context/CompetitionCo
 import { formatImageUrl, getFallbackImageUrl } from '../../../services/sheetService.js';
 
 export default function VerificationTab({
+  activeTab = 'verification',
+  onSelectStage,
   filteredTeams,
+  stage1PendingCount = 0,
   stage2PendingCount,
   stage2VerifiedCount,
   isRefreshing,
@@ -31,136 +34,249 @@ export default function VerificationTab({
   handleQuickVerify
 }) {
   return (
-    <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-slate-200 shadow-xs space-y-5">
-      {/* Header Info Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3.5 border-b border-slate-100">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
-            <span className="shrink-0 whitespace-nowrap text-[10px] font-black uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-              Tahap 2
+    <div className="space-y-4">
+      {/* 1. Embedded Subheader & Compact Search (Identik dengan Pusat Unduhan di Portal Peserta) */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+        <div>
+          <h3 className="text-sm font-black text-slate-900 tracking-tight flex items-center gap-2">
+            <span>Daftar Verifikasi Roster &amp; Rekomendasi</span>
+            <span className="text-[10px] font-mono font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200/80">
+              {filteredTeams.length} Peleton
             </span>
-            <h3 className="font-extrabold text-sm sm:text-base text-slate-900 tracking-tight leading-snug">
-              Verifikasi Biodata Peleton & Surat Rekomendasi
-            </h3>
-          </div>
-          <p className="text-[11px] sm:text-xs text-slate-500 leading-relaxed">
-            Periksa susunan 25 personel peleton dan kelengkapan surat rekomendasi kepala sekolah.
+          </h3>
+          <p className="text-xs text-slate-500 mt-0.5">
+            Periksa susunan 25 personel peleton (1 danton, 21 inti, 3 cadangan) dan surat rekomendasi sekolah.
           </p>
         </div>
 
-        {/* Counter Badges & Refresh */}
-        <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap pt-0.5 sm:pt-0">
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-50 border border-amber-200 text-amber-800 text-[11px] sm:text-xs font-bold whitespace-nowrap">
-            <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse shrink-0" />
-            <span>{stage2PendingCount} Perlu Dicek</span>
-          </div>
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 text-[11px] sm:text-xs font-bold whitespace-nowrap">
-            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-            <span>{stage2VerifiedCount} Sah Terverifikasi</span>
-          </div>
-          <button
-            type="button"
-            onClick={handleRefreshData}
-            disabled={isRefreshing}
-            className="p-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-900 text-xs transition-all shadow-2xs active:scale-95 disabled:opacity-50 shrink-0 ml-auto sm:ml-0"
-            title="Segarkan data terbaru"
-          >
-            <RefreshCw className={`w-3.5 h-3.5 text-emerald-600 ${isRefreshing ? 'animate-spin' : ''}`} />
-          </button>
-        </div>
-      </div>
-
-      {/* Clean Toolbar: Search & Interactive Filter Pills */}
-      <div className="space-y-3 pt-1">
-        {/* Search Input */}
-        <div className="relative">
+        <div className="relative min-w-[220px] sm:w-64">
+          <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
             type="text"
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
-            placeholder="Cari nama sekolah atau danton..."
-            className="w-full pl-9 pr-3 py-2 sm:py-2.5 bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-emerald-600/20 focus:border-emerald-600 transition-all shadow-2xs"
+            placeholder="Cari sekolah, kode, danton..."
+            className="w-full pl-9 pr-3.5 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 transition-all"
           />
-          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5 sm:top-3" />
-        </div>
-
-        {/* Filter Badges / Pills Row */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
-          {/* Jenjang Pills */}
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
-            <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mr-1 shrink-0">
-              Jenjang:
-            </span>
-            {[
-              { id: 'ALL', label: 'Semua' },
-              { id: 'SD', label: 'SD / MI', activeClass: 'bg-rose-600 text-white shadow-rose-500/25 border-rose-600' },
-              { id: 'SMP', label: 'SMP / MTs', activeClass: 'bg-emerald-600 text-white shadow-emerald-500/25 border-emerald-600' },
-            ].map(j => {
-              const isActive = selectedJenjang === j.id;
-              return (
-                <button
-                  key={j.id}
-                  type="button"
-                  onClick={() => setSelectedJenjang(j.id)}
-                  className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all shrink-0 cursor-pointer border ${
-                    isActive
-                      ? (j.activeClass || 'bg-slate-900 text-white border-slate-900 shadow-sm')
-                      : 'bg-slate-50 hover:bg-white text-slate-600 border-slate-200 hover:border-slate-300'
-                  }`}
-                >
-                  {j.label}
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Status Pills */}
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
-            <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mr-1 shrink-0">
-              Status:
-            </span>
-            {[
-              { id: 'ALL', label: 'Semua Status' },
-              { id: 'pending_verification', label: 'Perlu ACC', dot: 'bg-amber-500', activeClass: 'bg-amber-500 text-white border-amber-500 shadow-amber-500/20' },
-              { id: 'verified', label: 'Sah Terverifikasi', activeClass: 'bg-emerald-600 text-white border-emerald-600 shadow-emerald-500/20' },
-              { id: 'registered', label: 'Belum Lengkap', activeClass: 'bg-slate-700 text-white border-slate-700 shadow-slate-700/20' },
-              { id: 'revision', label: 'Perlu Revisi', activeClass: 'bg-rose-600 text-white border-rose-600 shadow-rose-500/20' },
-            ].map(st => {
-              const isActive = selectedStatus === st.id;
-              return (
-                <button
-                  key={st.id}
-                  type="button"
-                  onClick={() => setSelectedStatus(st.id)}
-                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all shrink-0 cursor-pointer border ${
-                    isActive
-                      ? (st.activeClass || 'bg-slate-900 text-white border-slate-900 shadow-sm')
-                      : 'bg-slate-50 hover:bg-white text-slate-600 border-slate-200 hover:border-slate-300'
-                  }`}
-                >
-                  {st.dot && !isActive && (
-                    <span className={`w-1.5 h-1.5 rounded-full ${st.dot} shrink-0`} />
-                  )}
-                  <span>{st.label}</span>
-                </button>
-              );
-            })}
-          </div>
         </div>
       </div>
 
-      {/* Teams Table: Verifikasi Peleton */}
-      <div className="overflow-x-auto rounded-2xl border border-slate-200">
+      {/* 2. Compact Filter Pills Bar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-1">
+        {/* Jenjang Pills */}
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+          <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mr-0.5 shrink-0">
+            Jenjang:
+          </span>
+          {[
+            { id: 'ALL', label: 'Semua' },
+            { id: 'SD', label: 'SD / MI', activeClass: 'bg-rose-600 text-white border-rose-600' },
+            { id: 'SMP', label: 'SMP / MTs', activeClass: 'bg-blue-600 text-white border-blue-600' },
+          ].map(j => {
+            const isActive = selectedJenjang === j.id;
+            return (
+              <button
+                key={j.id}
+                type="button"
+                onClick={() => setSelectedJenjang(j.id)}
+                className={`px-2.5 py-1 rounded-full text-[11px] font-bold transition-all shrink-0 cursor-pointer border ${
+                  isActive
+                    ? (j.activeClass || 'bg-slate-950 text-white border-slate-950')
+                    : 'bg-slate-50 hover:bg-slate-100 text-slate-600 border-slate-200'
+                }`}
+              >
+                {j.label}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Status Pills */}
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+          <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mr-0.5 shrink-0">
+            Status:
+          </span>
+          {[
+            { id: 'ALL', label: 'Semua' },
+            { id: 'pending_verification', label: `Perlu ACC (${stage2PendingCount})`, dot: 'bg-amber-500', activeClass: 'bg-amber-500 text-white border-amber-500' },
+            { id: 'verified', label: `Sah (${stage2VerifiedCount})`, activeClass: 'bg-emerald-600 text-white border-emerald-600' },
+            { id: 'registered', label: 'Belum Lengkap', activeClass: 'bg-slate-950 text-white border-slate-950' },
+            { id: 'revision', label: 'Perlu Revisi', activeClass: 'bg-rose-600 text-white border-rose-600' },
+          ].map(st => {
+            const isActive = selectedStatus === st.id;
+            return (
+              <button
+                key={st.id}
+                type="button"
+                onClick={() => setSelectedStatus(st.id)}
+                className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold transition-all shrink-0 cursor-pointer border ${
+                  isActive
+                    ? (st.activeClass || 'bg-slate-950 text-white border-slate-950')
+                    : 'bg-slate-50 hover:bg-slate-100 text-slate-600 border-slate-200'
+                }`}
+              >
+                {st.dot && !isActive && (
+                  <span className={`w-1.5 h-1.5 rounded-full ${st.dot} shrink-0`} />
+                )}
+                <span>{st.label}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* 3. Data Container */}
+      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+
+      {/* 3A. MOBILE BALANCED LIST VIEW */}
+      <div className="md:hidden divide-y divide-slate-100">
+        {filteredTeams.length === 0 ? (
+          <div className="text-center py-10 px-4 text-xs text-slate-400">
+            Tidak ada peleton yang cocok dengan filter yang dipilih.
+          </div>
+        ) : (
+          filteredTeams.map(team => {
+            const allPasukan = Array.isArray(team.roster?.pasukan) ? team.roster.pasukan : [];
+            const allCadangan = Array.isArray(team.roster?.cadangan) ? team.roster.cadangan : [];
+            const filledPasukan = allPasukan.filter(p => p?.name && p.name !== '-' && p.name.trim() !== '');
+            const filledCadangan = allCadangan.filter(c => c?.name && c.name !== '-' && c.name.trim() !== '');
+            const hasRecLetter = Boolean(team.files?.recommendationLetter?.url && team.files?.recommendationLetter?.url !== '#');
+            const eligibility = checkTeamVerificationEligibility(team);
+
+            return (
+              <div key={team.id} className="p-4 space-y-3 hover:bg-slate-50/60 transition-colors">
+                <div className="flex items-start justify-between gap-2.5">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    {team.files?.schoolLogo?.url && team.files.schoolLogo.url !== '#' ? (
+                      <img
+                        src={formatImageUrl(team.files.schoolLogo.url)}
+                        alt="Logo"
+                        referrerPolicy="no-referrer"
+                        className="w-10 h-10 rounded-xl border border-slate-200 bg-white p-1 object-contain shrink-0"
+                      />
+                    ) : (
+                      <div className="w-10 h-10 rounded-xl bg-slate-950 text-white flex items-center justify-center font-black text-xs shrink-0">
+                        {team.jenjang}
+                      </div>
+                    )}
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="font-mono font-bold text-[10px] text-slate-700 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200">
+                          {team.regCode}
+                        </span>
+                        {team.lotNumber && (
+                          <span className="font-mono font-black text-[10px] text-amber-800 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200">
+                            #{String(team.lotNumber).padStart(2, '0')}
+                          </span>
+                        )}
+                      </div>
+                      <h4 className="font-black text-slate-900 text-sm leading-snug mt-0.5 truncate">
+                        {team.schoolName}
+                      </h4>
+                    </div>
+                  </div>
+
+                  {['verified', 'drawn'].includes(team.status) ? (
+                    <span className="shrink-0 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-1 rounded-lg border border-emerald-200">
+                      Sah
+                    </span>
+                  ) : team.status === 'revision' ? (
+                    <span className="shrink-0 text-[10px] font-bold text-rose-700 bg-rose-50 px-2 py-1 rounded-lg border border-rose-200">
+                      Revisi
+                    </span>
+                  ) : (
+                    <span className="shrink-0 text-[10px] font-bold text-amber-800 bg-amber-50 px-2 py-1 rounded-lg border border-amber-200">
+                      Perlu Cek
+                    </span>
+                  )}
+                </div>
+
+                {/* Baris Ringkasan Roster & Surat Rekomendasi */}
+                <div className="flex items-center justify-between gap-2 text-[11px] bg-slate-50 rounded-xl px-3 py-2 border border-slate-100 flex-wrap">
+                  <div className="flex items-center gap-1.5">
+                    <span className={`px-2 py-0.5 rounded font-mono font-bold text-[10px] ${
+                      filledPasukan.length >= 21 ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-900'
+                    }`}>
+                      {filledPasukan.length}/21 Inti
+                    </span>
+                    <span className="px-2 py-0.5 rounded font-mono font-bold text-[10px] bg-slate-200/70 text-slate-700">
+                      {filledCadangan.length}/3 Cad
+                    </span>
+                  </div>
+                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded border ${
+                    hasRecLetter
+                      ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                      : 'bg-amber-50 text-amber-800 border-amber-200'
+                  }`}>
+                    {hasRecLetter ? 'Surat Rekom ✓' : 'Belum Ada Surat'}
+                  </span>
+                </div>
+
+                {/* Tombol Aksi Seimbang */}
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setInspectingTeam(team);
+                      setInspectingStage('verification');
+                      setRevisionNoteInput(team.revisionNote || '');
+                      setShowRevisionBox(false);
+                    }}
+                    className="flex-1 py-2 px-3 bg-slate-950 hover:bg-slate-800 text-white font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                  >
+                    <Eye className="w-3.5 h-3.5" />
+                    <span>Cek Peleton</span>
+                  </button>
+
+                  {(team.status === 'registered' || team.status === 'revision') && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (!eligibility.isEligible) {
+                          alert(`Peleton belum dapat diverifikasi sah karena:\n\n• ${eligibility.issues.join('\n• ')}`);
+                          return;
+                        }
+                        handleQuickVerify(team.id, 'verified');
+                      }}
+                      className={`flex-1 py-2 px-3 font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-1.5 ${
+                        eligibility.isEligible
+                          ? 'bg-emerald-600 hover:bg-emerald-500 text-white cursor-pointer'
+                          : 'bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed'
+                      }`}
+                    >
+                      <Check className="w-3.5 h-3.5" />
+                      <span>ACC Sah</span>
+                    </button>
+                  )}
+
+                  {['verified', 'drawn'].includes(team.status) && (
+                    <button
+                      type="button"
+                      onClick={() => handleQuickVerify(team.id, 'registered')}
+                      className="py-2 px-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition-colors cursor-pointer shrink-0"
+                    >
+                      Batal Sah
+                    </button>
+                  )}
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      {/* 3B. DESKTOP TABLE VIEW */}
+      <div className="hidden md:block overflow-x-auto">
         <table className="w-full text-left text-xs">
           <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase tracking-wider text-[10px]">
             <tr>
-              <th className="p-3.5">Kode & Sekolah</th>
-              <th className="p-3.5">Susunan Personel Peleton</th>
-              <th className="p-3.5">Surat Rekomendasi Sekolah</th>
-              <th className="p-3.5">Status Peleton</th>
-              <th className="p-3.5 text-center">No. Tampil (TM)</th>
-              <th className="p-3.5 text-center">No. Dada</th>
-              <th className="p-3.5 text-right">Aksi Verifikasi Peleton</th>
+              <th className="py-3 px-4">Kode &amp; Sekolah</th>
+              <th className="py-3 px-4">Susunan Personel Peleton</th>
+              <th className="py-3 px-4">Surat Rekomendasi Sekolah</th>
+              <th className="py-3 px-4">Status Peleton</th>
+              <th className="py-3 px-4 text-center">No. Tampil (TM)</th>
+              <th className="py-3 px-4 text-center">No. Dada</th>
+              <th className="py-3 px-4 text-right">Aksi Verifikasi Peleton</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
@@ -327,7 +443,7 @@ export default function VerificationTab({
                       )}
                     </td>
 
-                    <td className="p-3.5 align-middle text-right">
+                    <td className="py-3.5 px-4 align-middle text-right">
                       <div className="flex items-center justify-end gap-1.5">
                         <button
                           onClick={() => {
@@ -336,7 +452,7 @@ export default function VerificationTab({
                             setRevisionNoteInput(team.revisionNote || '');
                             setShowRevisionBox(false);
                           }}
-                          className="px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold rounded-lg border border-emerald-200 transition-colors flex items-center gap-1.5 cursor-pointer text-xs"
+                          className="px-3 py-2 bg-slate-950 hover:bg-slate-800 text-white font-bold rounded-xl transition-colors flex items-center gap-1.5 cursor-pointer text-xs"
                           title="Periksa Biodata 25 Personel Peleton & Surat Rekomendasi"
                         >
                           <Eye className="w-3.5 h-3.5" />
@@ -354,7 +470,7 @@ export default function VerificationTab({
                                 }
                                 handleQuickVerify(team.id, 'verified');
                               }}
-                              className={`px-3 py-1.5 font-bold rounded-lg transition-all flex items-center gap-1 text-xs shadow-xs ${
+                              className={`px-3 py-2 font-bold rounded-xl transition-all flex items-center gap-1 text-xs shadow-xs ${
                                 eligibility.isEligible
                                   ? 'bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer active:scale-95'
                                   : 'bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed opacity-75'
@@ -374,7 +490,7 @@ export default function VerificationTab({
                         {['verified', 'drawn'].includes(team.status) && (
                           <button
                             onClick={() => handleQuickVerify(team.id, 'registered')}
-                            className="px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[10px] rounded-lg transition-colors cursor-pointer"
+                            className="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[10px] rounded-xl transition-colors cursor-pointer"
                             title="Batalkan Status Sah (Kembalikan ke status Terdaftar)"
                           >
                             Batal Sah
@@ -388,6 +504,7 @@ export default function VerificationTab({
             )}
           </tbody>
         </table>
+      </div>
       </div>
     </div>
   );
