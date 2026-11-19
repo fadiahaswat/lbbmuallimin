@@ -293,11 +293,32 @@ function doPost(e) {
         }
       }
 
-      // KEAMANAN 3: Pencegahan Bypass Status Pendaftaran
+      // KEAMANAN 3: Pencegahan Bypass Status Pendaftaran & Perlindungan Status Terverifikasi
+      var existingTeamsForCheck = (tableName === 'teams') ? readSheetData(sheet) : [];
       if (tableName === 'teams' && !isAuthorized) {
-        // Pendaftaran mandiri dari publik dipaksa ke status pending & unverified
-        item.status = 'pending';
-        item.paymentStatus = 'unverified';
+        var existingMatch = null;
+        var checkId = String(item.id || '');
+        for (var eIdx = 0; eIdx < existingTeamsForCheck.length; eIdx++) {
+          if (checkId && String(existingTeamsForCheck[eIdx].id || '') === checkId) {
+            existingMatch = existingTeamsForCheck[eIdx];
+            break;
+          }
+        }
+        if (existingMatch) {
+          // Pertahankan status otoritatif dari database agar update berkas/roster peserta tidak mereset status verified atau menaikkan status secara ilegal
+          item.status = existingMatch.status || 'pending';
+          item.paymentStatus = existingMatch.paymentStatus || 'unverified';
+          if (existingMatch.queueNumber !== undefined && existingMatch.queueNumber !== '') {
+            item.queueNumber = existingMatch.queueNumber;
+          }
+          if (existingMatch.trialNumber !== undefined && existingMatch.trialNumber !== '') {
+            item.trialNumber = existingMatch.trialNumber;
+          }
+        } else {
+          // Pendaftaran mandiri baru dari publik dipaksa ke status pending & unverified
+          item.status = 'pending';
+          item.paymentStatus = 'unverified';
+        }
       }
 
       // KEAMANAN 4: Validasi 1 Peleton 1 Akun Gmail (Mencegah 1 email digunakan 2 peleton)
@@ -311,7 +332,7 @@ function doPost(e) {
           }
           return em;
         })(cleanEmail);
-        var existingTeams = readSheetData(sheet);
+        var existingTeams = existingTeamsForCheck;
         var targetTeamId = String(item.id || '');
         for (var tIdx = 0; tIdx < existingTeams.length; tIdx++) {
           var tRow = existingTeams[tIdx];

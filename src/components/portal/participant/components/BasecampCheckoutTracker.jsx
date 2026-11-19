@@ -2,7 +2,15 @@ import React from 'react';
 import { Home, Key, CheckCircle2, AlertTriangle, Trash2, Clock, ShieldCheck, MapPin, Sparkles } from 'lucide-react';
 
 export default function BasecampCheckoutTracker({ currentTeam, stagingInfo }) {
-  const displayBasecamp = currentTeam.basecampNumber || (currentTeam.lotNumber ? `Ruang ${String(currentTeam.lotNumber).padStart(2, '0')}` : null);
+  const resolvedRoom =
+    stagingInfo?.basecamp?.roomName ||
+    stagingInfo?.roomName ||
+    stagingInfo?.basecampRoom ||
+    stagingInfo?.room ||
+    currentTeam?.basecampNumber ||
+    currentTeam?.basecampRoom ||
+    (currentTeam?.lotNumber ? `Ruang ${String(currentTeam.lotNumber).padStart(2, '0')}` : null);
+  const displayBasecamp = resolvedRoom;
   const logistics = stagingInfo?.basecampLogistics || {};
 
   // Status flags

@@ -655,165 +655,142 @@ export default function FieldTrialView() {
           <div className="lg:col-span-4 xl:col-span-4 space-y-3.5 lg:sticky lg:top-4">
 
           {/* MASTER CARD: POS PRESENSI & KONTROL GLADI */}
-          <div className="bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden">
-            
-            {/* Header Pos Presensi Ringkas */}
-            <div className="px-3.5 py-3 sm:px-4 bg-white border-b border-slate-100 text-slate-900 flex items-center justify-between gap-2">
-              <div className="flex items-center gap-2.5 min-w-0">
-                <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200/80 flex items-center justify-center shrink-0">
-                  <UserCheck className="w-4 h-4" />
+          <div className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs overflow-hidden">
+            {/* Dark Obsidian Header + Embedded Jenjang Switcher */}
+            <div className="bg-slate-950 text-white">
+              <div className="px-4 py-3.5 flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="w-9 h-9 rounded-xl bg-white/10 text-emerald-400 border border-white/10 flex items-center justify-center shrink-0">
+                    <UserCheck className="w-4 h-4" />
+                  </div>
+                  <div className="min-w-0">
+                    <h3 className="font-black text-xs sm:text-sm uppercase tracking-tight text-white leading-tight truncate">
+                      Pos Presensi Gladi
+                    </h3>
+                    <p className="text-[10.5px] text-slate-400 truncate mt-0.5">
+                      {EVENT.FIELD_TRIAL_FULL_DATE || 'Sabtu, 16 Jan 2027'} · 06.30 WIB
+                    </p>
+                  </div>
                 </div>
-                <div className="min-w-0">
-                  <h3 className="font-black text-xs sm:text-sm uppercase tracking-tight text-slate-900 leading-tight truncate">
-                    Pos Presensi Gladi
-                  </h3>
-                  <p className="text-[10.5px] text-slate-500 truncate mt-0.5">
-                    {EVENT.FIELD_TRIAL_FULL_DATE || 'Sabtu, 16 Jan 2027'} • 06.30 WIB
-                  </p>
+
+                {/* Status Gladi & Tombol Kunci/Sahkan */}
+                <div className="flex items-center gap-1.5 shrink-0">
+                  {isPublished ? (
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-500/15 text-emerald-300 border border-emerald-400/30">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                      <span>Sah</span>
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-500/15 text-amber-300 border border-amber-400/30">
+                      <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                      <span>Draft</span>
+                    </span>
+                  )}
+
+                  {isStaff && (
+                    isPublished ? (
+                      <button
+                        type="button"
+                        onClick={handleUnpublishSchedule}
+                        className="p-1.5 rounded-lg bg-white/10 hover:bg-white/15 text-slate-300 hover:text-white border border-white/10 transition-colors cursor-pointer"
+                        title="Buka Kunci (Revisi Jadwal)"
+                      >
+                        <Unlock className="w-3.5 h-3.5" />
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => setShowConfirmPublishModal(true)}
+                        className="px-2.5 py-1 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-[10px] font-black flex items-center gap-1 cursor-pointer transition-colors"
+                        title="Sahkan Jadwal Resmi"
+                      >
+                        <FileCheck className="w-3 h-3" />
+                        <span>Sahkan</span>
+                      </button>
+                    )
+                  )}
                 </div>
               </div>
 
-              {/* Status Gladi & Tombol Panitia Ringkas (Kontras Jelas) */}
-              <div className="flex items-center gap-1.5 shrink-0">
-                {isPublished ? (
-                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-200">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                    <span>Sah</span>
+              {/* Embedded Dark Jenjang Tabs */}
+              <div className="grid grid-cols-2 border-t border-slate-800 bg-slate-900/70">
+                <button
+                  type="button"
+                  onClick={() => handleSelectJenjangTab('SD')}
+                  className={`relative py-2.5 px-3 text-xs transition-all flex items-center justify-center gap-2 cursor-pointer border-r border-slate-800 ${
+                    activeJenjang === 'SD'
+                      ? 'bg-slate-950 text-white font-black'
+                      : 'text-slate-400 hover:text-white hover:bg-slate-900 font-bold'
+                  }`}
+                >
+                  <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${activeJenjang === 'SD' ? 'bg-rose-500' : 'bg-slate-600'}`} />
+                  <span>SD / MI</span>
+                  <span className={`px-1.5 py-0.5 rounded-md text-[10px] font-mono font-black leading-none shrink-0 ${
+                    activeJenjang === 'SD' ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30' : 'bg-slate-800 text-slate-400'
+                  }`}>
+                    {attendanceStats.SD.totalScheduled}
                   </span>
-                ) : (
-                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-50 text-amber-800 border border-amber-200">
-                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-                    <span>Draft</span>
-                  </span>
-                )}
+                  {activeJenjang === 'SD' && (
+                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-rose-500" />
+                  )}
+                </button>
 
-                {isStaff && (
-                  isPublished ? (
-                    <button
-                      type="button"
-                      onClick={handleUnpublishSchedule}
-                      className="p-1.5 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-600 hover:text-slate-900 border border-slate-200 transition-colors cursor-pointer"
-                      title="Buka Kunci (Revisi Jadwal)"
-                    >
-                      <Unlock className="w-3.5 h-3.5" />
-                    </button>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={() => setShowConfirmPublishModal(true)}
-                      className="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-bold flex items-center gap-1 cursor-pointer transition-colors shadow-2xs"
-                      title="Sahkan Jadwal Resmi"
-                    >
-                      <FileCheck className="w-3 h-3" />
-                      <span>Sahkan</span>
-                    </button>
-                  )
-                )}
+                <button
+                  type="button"
+                  onClick={() => handleSelectJenjangTab('SMP')}
+                  className={`relative py-2.5 px-3 text-xs transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                    activeJenjang === 'SMP'
+                      ? 'bg-slate-950 text-white font-black'
+                      : 'text-slate-400 hover:text-white hover:bg-slate-900 font-bold'
+                  }`}
+                >
+                  <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${activeJenjang === 'SMP' ? 'bg-blue-500' : 'bg-slate-600'}`} />
+                  <span>SMP / MTs</span>
+                  <span className={`px-1.5 py-0.5 rounded-md text-[10px] font-mono font-black leading-none shrink-0 ${
+                    activeJenjang === 'SMP' ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30' : 'bg-slate-800 text-slate-400'
+                  }`}>
+                    {attendanceStats.SMP.totalScheduled}
+                  </span>
+                  {activeJenjang === 'SMP' && (
+                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-500" />
+                  )}
+                </button>
               </div>
             </div>
 
-            {/* Level 1 Navigation: Tab Jenjang Flush (SD / MI vs SMP / MTs) */}
-            <div className="grid grid-cols-2 border-b border-slate-200 bg-slate-50/60">
-              <button
-                type="button"
-                onClick={() => handleSelectJenjangTab('SD')}
-                className={`relative py-2.5 px-3 text-xs transition-all flex items-center justify-center gap-2 cursor-pointer border-r border-slate-200/80 ${
-                  activeJenjang === 'SD'
-                    ? 'bg-white text-red-700 font-black'
-                    : 'text-slate-500 hover:text-slate-800 hover:bg-white/60 font-bold'
-                }`}
-              >
-                <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${activeJenjang === 'SD' ? 'bg-red-600' : 'bg-slate-300'}`} />
-                <span>SD / MI</span>
-                <span className={`px-1.5 py-0.5 rounded-md text-[10px] font-mono font-black leading-none shrink-0 ${
-                  activeJenjang === 'SD' ? 'bg-red-100 text-red-700' : 'bg-slate-200/80 text-slate-600'
-                }`}>
-                  {attendanceStats.SD.totalScheduled}
-                </span>
-                {activeJenjang === 'SD' && (
-                  <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-600" />
-                )}
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleSelectJenjangTab('SMP')}
-                className={`relative py-2.5 px-3 text-xs transition-all flex items-center justify-center gap-2 cursor-pointer ${
-                  activeJenjang === 'SMP'
-                    ? 'bg-white text-blue-700 font-black'
-                    : 'text-slate-500 hover:text-slate-800 hover:bg-white/60 font-bold'
-                }`}
-              >
-                <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${activeJenjang === 'SMP' ? 'bg-blue-600' : 'bg-slate-300'}`} />
-                <span>SMP / MTs</span>
-                <span className={`px-1.5 py-0.5 rounded-md text-[10px] font-mono font-black leading-none shrink-0 ${
-                  activeJenjang === 'SMP' ? 'bg-blue-100 text-blue-700' : 'bg-slate-200/80 text-slate-600'
-                }`}>
-                  {attendanceStats.SMP.totalScheduled}
-                </span>
-                {activeJenjang === 'SMP' && (
-                  <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600" />
-                )}
-              </button>
+            {/* Clean Flush Underline Status Tabs (No Bulky Gray Tray) */}
+            <div className="grid grid-cols-3 border-b border-slate-200 bg-slate-50/60 text-[11px] font-bold">
+              {[
+                { id: 'not_arrived', label: 'Belum', count: activeAttendanceStats.notArrived, dot: 'bg-amber-500', bar: 'bg-amber-500', activeText: 'text-amber-900', badge: 'bg-amber-100 text-amber-800' },
+                { id: 'checked_in', label: 'Di Lokasi', count: activeAttendanceStats.checkedIn, dot: 'bg-emerald-500 animate-pulse', bar: 'bg-emerald-600', activeText: 'text-emerald-900', badge: 'bg-emerald-100 text-emerald-800' },
+                { id: 'checked_out', label: 'Selesai', count: activeAttendanceStats.checkedOut, dot: 'bg-blue-500', bar: 'bg-blue-600', activeText: 'text-blue-900', badge: 'bg-blue-100 text-blue-800' },
+              ].map((st, idx) => {
+                const isActive = leftAttendanceTab === st.id;
+                return (
+                  <button
+                    key={st.id}
+                    type="button"
+                    onClick={() => setLeftAttendanceTab(st.id)}
+                    className={`relative py-2.5 px-2 transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                      idx < 2 ? 'border-r border-slate-200/80' : ''
+                    } ${
+                      isActive ? `bg-white ${st.activeText} font-black` : 'text-slate-500 hover:text-slate-900 hover:bg-white/60'
+                    }`}
+                  >
+                    <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${isActive ? st.dot : 'bg-slate-300'}`} />
+                    <span className="truncate">{st.label}</span>
+                    <span className={`px-1.5 py-0.5 rounded-md text-[9.5px] font-mono font-black leading-none shrink-0 ${
+                      isActive ? st.badge : 'bg-slate-200/80 text-slate-600'
+                    }`}>
+                      {st.count}
+                    </span>
+                    {isActive && <span className={`absolute bottom-0 left-0 right-0 h-0.5 ${st.bar}`} />}
+                  </button>
+                );
+              })}
             </div>
 
             <div className="p-3 space-y-2.5">
-              {/* Level 2 Filter: Status Presensi */}
-              <div className="grid grid-cols-3 p-1 rounded-xl bg-slate-100/90 border border-slate-200/70 text-slate-600 text-[11px] font-bold gap-1">
-                <button
-                  type="button"
-                  onClick={() => setLeftAttendanceTab('not_arrived')}
-                  className={`py-1.5 px-1.5 rounded-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-                    leftAttendanceTab === 'not_arrived'
-                      ? 'bg-white text-amber-900 font-black shadow-2xs ring-1 ring-slate-200/80'
-                      : 'hover:text-slate-900 text-slate-500'
-                  }`}
-                >
-                  <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${leftAttendanceTab === 'not_arrived' ? 'bg-amber-500' : 'bg-slate-300'}`} />
-                  <span className="truncate">Belum</span>
-                  <span className={`px-1.5 py-0.5 rounded-md text-[9.5px] font-mono font-black leading-none shrink-0 ${
-                    leftAttendanceTab === 'not_arrived' ? 'bg-amber-100 text-amber-800' : 'bg-slate-200/80 text-slate-600'
-                  }`}>
-                    {activeAttendanceStats.notArrived}
-                  </span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setLeftAttendanceTab('checked_in')}
-                  className={`py-1.5 px-1.5 rounded-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-                    leftAttendanceTab === 'checked_in'
-                      ? 'bg-white text-emerald-900 font-black shadow-2xs ring-1 ring-slate-200/80'
-                      : 'hover:text-slate-900 text-slate-500'
-                  }`}
-                >
-                  <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${leftAttendanceTab === 'checked_in' ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300'}`} />
-                  <span className="truncate">Di Lokasi</span>
-                  <span className={`px-1.5 py-0.5 rounded-md text-[9.5px] font-mono font-black leading-none shrink-0 ${
-                    leftAttendanceTab === 'checked_in' ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200/80 text-slate-600'
-                  }`}>
-                    {activeAttendanceStats.checkedIn}
-                  </span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setLeftAttendanceTab('checked_out')}
-                  className={`py-1.5 px-1.5 rounded-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-                    leftAttendanceTab === 'checked_out'
-                      ? 'bg-white text-blue-900 font-black shadow-2xs ring-1 ring-slate-200/80'
-                      : 'hover:text-slate-900 text-slate-500'
-                  }`}
-                >
-                  <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${leftAttendanceTab === 'checked_out' ? 'bg-blue-500' : 'bg-slate-300'}`} />
-                  <span className="truncate">Selesai</span>
-                  <span className={`px-1.5 py-0.5 rounded-md text-[9.5px] font-mono font-black leading-none shrink-0 ${
-                    leftAttendanceTab === 'checked_out' ? 'bg-blue-100 text-blue-800' : 'bg-slate-200/80 text-slate-600'
-                  }`}>
-                    {activeAttendanceStats.checkedOut}
-                  </span>
-                </button>
-              </div>
 
               {/* Toolbar: Pencarian Peleton (Full Width, Icon Rapi) */}
               <div className="relative">

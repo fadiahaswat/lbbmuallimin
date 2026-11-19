@@ -57,12 +57,23 @@ export default function Hero() {
     : CADET_FIGURES;
 
   const regRangeText = settings?.eventDates?.registrationRangeText || EVENT.REGISTRATION_RANGE;
+  const compDateText = settings?.eventDates?.competitionDate || EVENT.COMPETITION_DATE;
+  const tmDateText =
+    settings?.eventDates?.technicalMeetingFullDate ||
+    settings?.eventDates?.technicalMeetingDate ||
+    EVENT.TECHNICAL_MEETING_FULL_DATE ||
+    EVENT.TECHNICAL_MEETING_DATE;
+  const trialDateText =
+    settings?.eventDates?.fieldTrialFullDate ||
+    settings?.eventDates?.fieldTrialDate ||
+    EVENT.FIELD_TRIAL_FULL_DATE ||
+    EVENT.FIELD_TRIAL_DATE;
 
   // Jadwal dinamis bergantian: Perlombaan -> Pendaftaran -> TM -> Uji Coba Lapangan
   const schedules = [
     {
       label: 'Perlombaan',
-      date: EVENT.COMPETITION_DATE,
+      date: compDateText,
     },
     {
       label: 'Pendaftaran',
@@ -70,11 +81,11 @@ export default function Hero() {
     },
     {
       label: 'TM Peserta',
-      date: EVENT.TECHNICAL_MEETING_FULL_DATE || EVENT.TECHNICAL_MEETING_DATE,
+      date: tmDateText,
     },
     {
       label: 'Uji Coba Lapangan',
-      date: EVENT.FIELD_TRIAL_FULL_DATE || EVENT.FIELD_TRIAL_DATE,
+      date: trialDateText,
     },
   ];
 

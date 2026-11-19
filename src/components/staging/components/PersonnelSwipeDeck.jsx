@@ -402,9 +402,9 @@ export default function PersonnelSwipeDeck({
     <div className="space-y-4">
       {/* MODE 1: ERGONOMIC SWIPE DECK + INTERACTIVE FORMATION MAP */}
       {activeViewMode === 'swipe' ? (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
-          {/* LEFT (6 COLS): COMPACT 1-VIEWPORT SWIPE STAGE (3:4 FULL PHOTO) + TACTILE CONTROLS */}
-          <div className="lg:col-span-6 xl:col-span-5 flex flex-col items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
+          {/* LEFT (5 COLS): FRAMED SWIPE STAGE (3:4 FULL PHOTO) + TACTILE CONTROLS */}
+          <div className="lg:col-span-5 bg-slate-50/70 rounded-2xl border border-slate-200/80 p-4 flex flex-col items-center justify-between">
             <div className="relative w-full max-w-[276px] h-[488px] flex items-center justify-center select-none">
               {currentPerson ? (
                 <>
@@ -504,7 +504,11 @@ export default function PersonnelSwipeDeck({
                             ? 'bg-purple-600/90 text-white border-purple-400/40'
                             : 'bg-slate-900/85 text-white border-white/15'
                         }`}>
-                          {currentPerson.code} • {currentPerson.roleType === 'danton' ? 'Danton' : currentPerson.roleType === 'cadangan' ? 'Cadangan' : `Saf ${currentPerson.saf} Bjr ${currentPerson.banjar}`}
+                          {currentPerson.roleType === 'danton'
+                            ? 'Danton'
+                            : currentPerson.roleType === 'cadangan'
+                            ? `Cadangan · ${currentPerson.code}`
+                            : `${currentPerson.code} · Saf ${currentPerson.saf} Bjr ${currentPerson.banjar}`}
                         </span>
 
                         <div className="flex items-center gap-1.5">
@@ -532,13 +536,8 @@ export default function PersonnelSwipeDeck({
                         </div>
                       </div>
 
-                      {/* Bottom Status on Photo */}
-                      <div className="absolute bottom-2.5 inset-x-3 flex items-center justify-between z-10 pointer-events-none">
-                        <span className={`text-[10.5px] font-semibold truncate ${
-                          isValidPhotoUrl(currentPerson.photo) ? 'text-white/90' : 'text-slate-500'
-                        }`}>
-                          {currentPerson.roleLabel}
-                        </span>
+                      {/* Bottom Status on Photo (Only when already inspected) */}
+                      <div className="absolute bottom-2.5 right-3 flex items-center justify-end z-10 pointer-events-none">
                         {getPersonStatus(currentPerson) === 'verified' && (
                           <span className="px-2 py-0.5 rounded-full bg-emerald-500 text-white text-[9.5px] font-black uppercase tracking-wide shadow-sm flex items-center gap-1 shrink-0">
                             <Check className="w-2.5 h-2.5 stroke-[3]" /> Cocok
@@ -726,283 +725,228 @@ export default function PersonnelSwipeDeck({
             )}
           </div>
 
-          {/* RIGHT (6/7 COLS): INTERACTIVE FORMATION MINI-MAP */}
-          <div className="lg:col-span-6 xl:col-span-7 bg-slate-50/80 rounded-2xl sm:rounded-3xl border border-slate-200/90 p-4 sm:p-5 space-y-4">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <div>
-                <h4 className="text-xs font-black uppercase tracking-wider text-slate-900">
-                  Peta Barisan Peleton
-                </h4>
-                <p className="text-[11px] text-slate-500">
-                  Klik posisi anggota untuk langsung melompat ke kartunya
-                </p>
-              </div>
+          {/* RIGHT (7 COLS): INTERACTIVE FORMATION MINI-MAP */}
+          <div className="lg:col-span-7 bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 space-y-4 flex flex-col justify-between">
+            <div className="space-y-4">
+              <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-100">
+                <div>
+                  <h4 className="text-xs font-black uppercase tracking-wider text-slate-900">
+                    Peta Barisan Peleton
+                  </h4>
+                  <p className="text-[11px] text-slate-500">
+                    Klik posisi anggota untuk langsung melompat ke kartunya
+                  </p>
+                </div>
 
-              <div className="flex items-center gap-2">
-                {canOperate && onVerifyAll && verifiedCount < personnels.length && (
-                  <button
-                    type="button"
-                    onClick={async () => {
-                      const ok = await appConfirm(
-                        `Verifikasi seluruh ${personnels.length} personel ${team?.schoolName || ''} sekaligus sebagai COCOK?`,
-                        { title: 'Cocokkan Semua Personel', confirmText: 'Ya, Cocokkan Semua', variant: 'success' }
-                      );
-                      if (ok) {
-                        onVerifyAll();
-                      }
-                    }}
-                    className="px-2.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-black inline-flex items-center gap-1.5 shadow-2xs cursor-pointer transition-all active:scale-95"
-                  >
-                    <CheckCheck className="w-3.5 h-3.5" />
-                    <span>Cocokkan Semua</span>
-                  </button>
-                )}
-                <span className="text-xs font-mono font-black text-slate-800 bg-white px-2.5 py-1 rounded-xl border border-slate-200">
-                  {verifiedCount}/{personnels.length}
-                </span>
-              </div>
-            </div>
-
-            {/* Progress Bar + Threshold */}
-            <div className="space-y-1.5">
-              <div className="h-2 w-full bg-slate-200/80 rounded-full overflow-hidden">
-                <div
-                  className={`h-full rounded-full transition-all duration-300 ${
-                    isMinPersonnelMet ? 'bg-emerald-500' : 'bg-blue-600'
-                  }`}
-                  style={{ width: `${progressPct}%` }}
-                />
-              </div>
-              <div className="flex items-center justify-between text-[10.5px]">
-                <span className="text-slate-500 font-medium">
-                  Ambang lulus DP 1: <strong className="text-slate-700">Min. 22 personel</strong>
-                </span>
-                {isMinPersonnelMet ? (
-                  <span className="font-black text-emerald-700 flex items-center gap-1">
-                    <CheckCircle2 className="w-3.5 h-3.5" />
-                    <span>Siap Dinilai (DP 2)</span>
+                <div className="flex items-center gap-2">
+                  {canOperate && onVerifyAll && verifiedCount < personnels.length && (
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        const ok = await appConfirm(
+                          `Verifikasi seluruh ${personnels.length} personel ${team?.schoolName || ''} sekaligus sebagai COCOK?`,
+                          { title: 'Cocokkan Semua Personel', confirmText: 'Ya, Cocokkan Semua', variant: 'success' }
+                        );
+                        if (ok) {
+                          onVerifyAll();
+                        }
+                      }}
+                      className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-black inline-flex items-center gap-1.5 shadow-2xs cursor-pointer transition-all active:scale-95"
+                    >
+                      <CheckCheck className="w-3.5 h-3.5" />
+                      <span>Cocokkan Semua</span>
+                    </button>
+                  )}
+                  <span className="text-xs font-mono font-black text-slate-800 bg-slate-50 px-2.5 py-1 rounded-xl border border-slate-200">
+                    {verifiedCount}/{personnels.length}
                   </span>
-                ) : (
-                  <span className="font-bold text-amber-700">
-                    Kurang {Math.max(0, 22 - verifiedCount)} personel lagi
-                  </span>
-                )}
+                </div>
               </div>
-            </div>
 
-            {/* 1. Komandan Peleton */}
-            {dantonPerson && (() => {
-              const idx = personnels.findIndex(p => p.id === dantonPerson.id);
-              const status = getPersonStatus(dantonPerson);
-              const isCurrent = idx === currentIndex;
-              return (
+              {/* Progress Bar + Threshold */}
+              <div className="space-y-1.5">
+                <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                  <div
+                    className={`h-full rounded-full transition-all duration-300 ${
+                      isMinPersonnelMet ? 'bg-emerald-500' : 'bg-blue-600'
+                    }`}
+                    style={{ width: `${progressPct}%` }}
+                  />
+                </div>
+                <div className="flex items-center justify-between text-[10.5px]">
+                  <span className="text-slate-500 font-medium">
+                    Ambang lulus DP 1: <strong className="text-slate-700">Min. 22 personel</strong>
+                  </span>
+                  {isMinPersonnelMet ? (
+                    <span className="font-black text-emerald-700 flex items-center gap-1">
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      <span>Siap Dinilai (DP 2)</span>
+                    </span>
+                  ) : (
+                    <span className="font-bold text-amber-700">
+                      Kurang {Math.max(0, 22 - verifiedCount)} personel lagi
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* 1. Komandan & Cadangan (Satu Baris Kompak Sejajar) */}
+              {(dantonPerson || cadanganPersons.length > 0) && (
                 <div className="space-y-1.5">
                   <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 block">
-                    Komandan Peleton (Danton)
+                    Komandan &amp; Cadangan
                   </span>
-                  <button
-                    type="button"
-                    onClick={() => jumpToPerson(idx)}
-                    className={`w-full p-2.5 rounded-2xl border text-left flex items-center justify-between gap-3 transition-all cursor-pointer ${
-                      isCurrent
-                        ? 'bg-white border-blue-500 ring-2 ring-blue-500/20 shadow-xs'
-                        : status === 'verified'
-                        ? 'bg-emerald-50/60 border-emerald-200 hover:bg-emerald-50'
-                        : status === 'excused'
-                        ? 'bg-amber-50/70 border-amber-200 hover:bg-amber-50'
-                        : status === 'flagged'
-                        ? 'bg-rose-50/70 border-rose-200 hover:bg-rose-50'
-                        : 'bg-white border-slate-200 hover:border-slate-300'
-                    }`}
-                  >
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="w-10 h-10 rounded-xl bg-slate-200 overflow-hidden shrink-0 border border-slate-200">
-                        <PersonAvatarImg
-                          photo={dantonPerson.photo}
-                          name={dantonPerson.name}
-                          fallback={
-                            <div className="w-full h-full flex items-center justify-center bg-amber-100 text-amber-800 text-[10px] font-black">
-                              DAN
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    {[...(dantonPerson ? [dantonPerson] : []), ...cadanganPersons].map(person => {
+                      const idx = personnels.findIndex(p => p.id === person.id);
+                      const status = getPersonStatus(person);
+                      const isCurrent = idx === currentIndex;
+                      const isDan = person.roleType === 'danton';
+                      return (
+                        <button
+                          key={person.id}
+                          type="button"
+                          onClick={() => jumpToPerson(idx)}
+                          className={`relative p-2 rounded-xl border text-left flex items-center gap-2.5 transition-all cursor-pointer ${
+                            isCurrent
+                              ? 'bg-slate-50 border-slate-900 ring-2 ring-slate-900/15 shadow-xs'
+                              : status === 'verified'
+                              ? 'bg-emerald-50/60 border-emerald-200 hover:bg-emerald-50'
+                              : status === 'excused'
+                              ? 'bg-amber-50/70 border-amber-200 hover:bg-amber-50'
+                              : status === 'flagged'
+                              ? 'bg-rose-50/70 border-rose-200 hover:bg-rose-50'
+                              : 'bg-white border-slate-200 hover:border-slate-300'
+                          }`}
+                        >
+                          <div className={`w-9 h-9 rounded-lg overflow-hidden shrink-0 border flex items-center justify-center text-[10px] font-black ${
+                            isDan ? 'bg-amber-100 border-amber-200 text-amber-800' : 'bg-purple-100 border-purple-200 text-purple-700'
+                          }`}>
+                            <PersonAvatarImg
+                              photo={person.photo}
+                              name={person.name}
+                              fallback={<span>{person.code}</span>}
+                            />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center gap-1">
+                              <span className={`text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded leading-none ${
+                                isDan ? 'bg-amber-100 text-amber-800' : 'bg-purple-100 text-purple-700'
+                              }`}>
+                                {isDan ? 'Danton' : person.code}
+                              </span>
                             </div>
-                          }
-                        />
-                      </div>
-                      <div className="min-w-0">
-                        <div className="text-xs font-black text-slate-900 uppercase truncate">
-                          {dantonPerson.name}
-                        </div>
-                        <div className="text-[10px] font-mono text-slate-500">
-                          DAN • NISN {dantonPerson.nisn || '-'}
-                        </div>
-                      </div>
-                    </div>
-                    <span className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 ${
-                      status === 'verified'
-                        ? 'bg-emerald-500 text-white'
-                        : status === 'excused'
-                        ? 'bg-amber-500 text-white'
-                        : status === 'flagged'
-                        ? 'bg-rose-500 text-white'
-                        : 'bg-slate-200 text-slate-500'
-                    }`}>
-                      {status === 'verified' ? <Check className="w-3.5 h-3.5 stroke-[3]" /> : status === 'excused' ? <Stethoscope className="w-3 h-3" /> : status === 'flagged' ? <AlertTriangle className="w-3 h-3" /> : <span className="w-2 h-2 rounded-full bg-slate-400" />}
-                    </span>
-                  </button>
+                            <div className="text-[11px] font-bold text-slate-900 uppercase truncate mt-1">
+                              {person.name}
+                            </div>
+                          </div>
+                          {status === 'verified' && (
+                            <span className="w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center shrink-0">
+                              <Check className="w-3 h-3 stroke-[3]" />
+                            </span>
+                          )}
+                          {status === 'excused' && (
+                            <span className="w-5 h-5 rounded-full bg-amber-500 text-white flex items-center justify-center shrink-0">
+                              <Stethoscope className="w-2.5 h-2.5" />
+                            </span>
+                          )}
+                          {status === 'flagged' && (
+                            <span className="w-5 h-5 rounded-full bg-rose-500 text-white flex items-center justify-center shrink-0">
+                              <X className="w-3 h-3 stroke-[3]" />
+                            </span>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
-              );
-            })()}
+              )}
 
-            {/* 2. Pasukan Inti (3 Saf x 7 Banjar dengan Label Saf) */}
-            <div className="space-y-2">
-              <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 block">
-                Pasukan Inti (3 Saf × 7 Banjar)
-              </span>
-              <div className="space-y-1.5">
-                {[1, 2, 3].map(safNum => {
-                  const safMembers = pasukanPersons.slice((safNum - 1) * 7, safNum * 7);
-                  return (
-                    <div key={safNum} className="flex items-center gap-2">
-                      <span className="text-[9px] font-mono font-black uppercase text-slate-400 w-8 shrink-0">
-                        Saf {safNum}
-                      </span>
-                      <div className="grid grid-cols-7 gap-1.5 flex-1">
-                        {safMembers.map(person => {
-                          const idx = personnels.findIndex(p => p.id === person.id);
-                          const status = getPersonStatus(person);
-                          const isCurrent = idx === currentIndex;
-                          return (
-                            <button
-                              key={person.id}
-                              type="button"
-                              onClick={() => jumpToPerson(idx)}
-                              title={`${person.code} • ${person.name}`}
-                              className={`relative p-1 rounded-xl border flex flex-col items-center gap-0.5 transition-all cursor-pointer ${
-                                isCurrent
-                                  ? 'bg-white border-blue-500 ring-2 ring-blue-500/25 shadow-xs scale-[1.04] z-10'
-                                  : status === 'verified'
-                                  ? 'bg-emerald-50/70 border-emerald-200 hover:bg-emerald-50'
-                                  : status === 'excused'
-                                  ? 'bg-amber-50 border-amber-300 hover:bg-amber-100/70'
-                                  : status === 'flagged'
-                                  ? 'bg-rose-50 border-rose-300 hover:bg-rose-100/70'
-                                  : 'bg-white border-slate-200 hover:border-slate-300'
-                              }`}
-                            >
-                              {isValidPhotoUrl(person.photo) ? (
-                                <>
-                                  <div className="w-8 h-8 rounded-lg bg-slate-200 overflow-hidden shrink-0">
-                                    <PersonAvatarImg
-                                      photo={person.photo}
-                                      name={person.name}
-                                      fallback={
-                                        <div className="w-full h-full flex items-center justify-center bg-slate-100 text-slate-500 text-[9px] font-black">
-                                          {person.code}
-                                        </div>
-                                      }
-                                    />
-                                  </div>
-                                  <span className="text-[9px] font-mono font-bold text-slate-600 leading-none">
-                                    {person.code}
-                                  </span>
-                                </>
-                              ) : (
-                                <div className="w-full py-2 flex items-center justify-center">
-                                  <span className="text-[11px] font-mono font-black text-slate-700 leading-none">
-                                    {person.code}
-                                  </span>
-                                </div>
-                              )}
-                              {status === 'verified' && (
-                                <span className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-emerald-500 text-white flex items-center justify-center ring-1 ring-white">
-                                  <Check className="w-2.5 h-2.5 stroke-[3.5]" />
-                                </span>
-                              )}
-                              {status === 'excused' && (
-                                <span className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-amber-500 text-white flex items-center justify-center ring-1 ring-white" title="Sakit / Izin">
-                                  <Stethoscope className="w-2 h-2" />
-                                </span>
-                              )}
-                              {status === 'flagged' && (
-                                <span className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-rose-500 text-white flex items-center justify-center ring-1 ring-white">
-                                  <X className="w-2.5 h-2.5 stroke-[3]" />
-                                </span>
-                              )}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* 3. Cadangan (Hanya tampil jika tim mendaftarkan cadangan) */}
-            {cadanganPersons.length > 0 && (
-              <div className="space-y-1.5">
+              {/* 2. Pasukan Inti (3 Saf x 7 Banjar dengan Foto Lebih Jelas) */}
+              <div className="space-y-2">
                 <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 block">
-                  Personel Cadangan ({cadanganPersons.length})
+                  Pasukan Inti (3 Saf × 7 Banjar)
                 </span>
-                <div className={`grid gap-2 ${
-                  cadanganPersons.length === 1
-                    ? 'grid-cols-1'
-                    : cadanganPersons.length === 2
-                    ? 'grid-cols-2'
-                    : 'grid-cols-3'
-                }`}>
-                  {cadanganPersons.map(person => {
-                    const idx = personnels.findIndex(p => p.id === person.id);
-                    const status = getPersonStatus(person);
-                    const isCurrent = idx === currentIndex;
+                <div className="space-y-1.5">
+                  {[1, 2, 3].map(safNum => {
+                    const safMembers = pasukanPersons.slice((safNum - 1) * 7, safNum * 7);
                     return (
-                      <button
-                        key={person.id}
-                        type="button"
-                        onClick={() => jumpToPerson(idx)}
-                        className={`relative p-2 rounded-xl border text-left flex items-center gap-2 transition-all cursor-pointer ${
-                          isCurrent
-                            ? 'bg-white border-blue-500 ring-2 ring-blue-500/20 shadow-xs'
-                            : status === 'verified'
-                            ? 'bg-emerald-50/70 border-emerald-200 hover:bg-emerald-50'
-                            : status === 'excused'
-                            ? 'bg-amber-50 border-amber-200 hover:bg-amber-100/70'
-                            : status === 'flagged'
-                            ? 'bg-rose-50 border-rose-200'
-                            : 'bg-white border-slate-200 hover:border-slate-300'
-                        }`}
-                      >
-                        <div className="w-7 h-7 rounded-lg bg-purple-100 text-purple-700 overflow-hidden shrink-0 flex items-center justify-center text-[10px] font-black">
-                          <PersonAvatarImg
-                            photo={person.photo}
-                            name={person.name}
-                            fallback={<span>{person.code}</span>}
-                          />
+                      <div key={safNum} className="flex items-center gap-2">
+                        <span className="text-[9.5px] font-mono font-black uppercase text-slate-400 w-9 shrink-0">
+                          Saf {safNum}
+                        </span>
+                        <div className="grid grid-cols-7 gap-1.5 flex-1">
+                          {safMembers.map(person => {
+                            const idx = personnels.findIndex(p => p.id === person.id);
+                            const status = getPersonStatus(person);
+                            const isCurrent = idx === currentIndex;
+                            return (
+                              <button
+                                key={person.id}
+                                type="button"
+                                onClick={() => jumpToPerson(idx)}
+                                title={`${person.code} • ${person.name}`}
+                                className={`relative p-1.5 rounded-xl border flex flex-col items-center gap-1 transition-all cursor-pointer ${
+                                  isCurrent
+                                    ? 'bg-slate-50 border-slate-900 ring-2 ring-slate-900/20 shadow-xs scale-[1.03] z-10'
+                                    : status === 'verified'
+                                    ? 'bg-emerald-50/70 border-emerald-200 hover:bg-emerald-50'
+                                    : status === 'excused'
+                                    ? 'bg-amber-50 border-amber-300 hover:bg-amber-100/70'
+                                    : status === 'flagged'
+                                    ? 'bg-rose-50 border-rose-300 hover:bg-rose-100/70'
+                                    : 'bg-white border-slate-200 hover:border-slate-300'
+                                }`}
+                              >
+                                {isValidPhotoUrl(person.photo) ? (
+                                  <>
+                                    <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-slate-200 overflow-hidden shrink-0">
+                                      <PersonAvatarImg
+                                        photo={person.photo}
+                                        name={person.name}
+                                        fallback={
+                                          <div className="w-full h-full flex items-center justify-center bg-slate-100 text-slate-500 text-[9px] font-black">
+                                            {person.code}
+                                          </div>
+                                        }
+                                      />
+                                    </div>
+                                    <span className="text-[9.5px] font-mono font-bold text-slate-700 leading-none">
+                                      {person.code}
+                                    </span>
+                                  </>
+                                ) : (
+                                  <div className="w-full py-2.5 flex items-center justify-center">
+                                    <span className="text-[11px] font-mono font-black text-slate-700 leading-none">
+                                      {person.code}
+                                    </span>
+                                  </div>
+                                )}
+                                {status === 'verified' && (
+                                  <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-emerald-500 text-white flex items-center justify-center ring-2 ring-white">
+                                    <Check className="w-2.5 h-2.5 stroke-[3.5]" />
+                                  </span>
+                                )}
+                                {status === 'excused' && (
+                                  <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-amber-500 text-white flex items-center justify-center ring-2 ring-white" title="Sakit / Izin">
+                                    <Stethoscope className="w-2.5 h-2.5" />
+                                  </span>
+                                )}
+                                {status === 'flagged' && (
+                                  <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-rose-500 text-white flex items-center justify-center ring-2 ring-white">
+                                    <X className="w-2.5 h-2.5 stroke-[3]" />
+                                  </span>
+                                )}
+                              </button>
+                            );
+                          })}
                         </div>
-                        <div className="min-w-0">
-                          <div className="text-[10px] font-black text-slate-800 leading-none">{person.code}</div>
-                          <div className="text-[9.5px] text-slate-500 truncate mt-0.5">{person.name}</div>
-                        </div>
-                        {status === 'verified' && (
-                          <span className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-emerald-500 text-white flex items-center justify-center ring-1 ring-white">
-                            <Check className="w-2.5 h-2.5 stroke-[3.5]" />
-                          </span>
-                        )}
-                        {status === 'excused' && (
-                          <span className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-amber-500 text-white flex items-center justify-center ring-1 ring-white" title="Sakit / Izin">
-                            <Stethoscope className="w-2 h-2" />
-                          </span>
-                        )}
-                        {status === 'flagged' && (
-                          <span className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-rose-500 text-white flex items-center justify-center ring-1 ring-white">
-                            <X className="w-2.5 h-2.5 stroke-[3]" />
-                          </span>
-                        )}
-                      </button>
+                      </div>
                     );
                   })}
                 </div>
               </div>
-            )}
+            </div>
           </div>
         </div>
       ) : (

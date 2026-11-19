@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   X,
   Search,
@@ -12,19 +12,28 @@ import {
   Printer,
   Sparkles,
   School,
-  CalendarCheck
+  CalendarCheck,
+  RefreshCw
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
 import logoImg from '../../assets/logo-tonti.png';
 import titleLogoImg from '../../assets/title-logo.png';
 
 export default function RegistrationStatusModal({ isOpen, onClose }) {
-  const { teams, currentUser, openAuthModal, navigateTo, goBack } = useCompetition();
+  const { teams, currentUser, openAuthModal, navigateTo, goBack, pullFromGoogleSheet, isCloudLoading } = useCompetition();
 
   const [jenjang, setJenjang] = useState('SMP');
   const [otpValues, setOtpValues] = useState(Array(8).fill(''));
   const [errorMessage, setErrorMessage] = useState('');
   const inputRefs = useRef([]);
+  const lastFetchedCodeRef = useRef('');
+
+  // Tarik data terbaru dari Cloud Database saat modal status pendaftaran dibuka
+  useEffect(() => {
+    if (isOpen !== false && typeof pullFromGoogleSheet === 'function') {
+      pullFromGoogleSheet(true);
+    }
+  }, [isOpen, pullFromGoogleSheet]);
 
   if (isOpen === false) return null;
 
@@ -57,6 +66,18 @@ export default function RegistrationStatusModal({ isOpen, onClose }) {
         );
       })
     : [];
+
+  useEffect(() => {
+    if (
+      isCompleted &&
+      filteredTeams.length === 0 &&
+      lastFetchedCodeRef.current !== fullTargetCode &&
+      typeof pullFromGoogleSheet === 'function'
+    ) {
+      lastFetchedCodeRef.current = fullTargetCode;
+      pullFromGoogleSheet(true);
+    }
+  }, [isCompleted, filteredTeams.length, fullTargetCode, pullFromGoogleSheet]);
 
   const handleOtpChange = (val, idx) => {
     setErrorMessage('');

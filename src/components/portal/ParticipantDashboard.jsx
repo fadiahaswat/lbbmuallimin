@@ -195,16 +195,22 @@ export default function ParticipantDashboard() {
         <p className="text-slate-500 text-sm max-w-md mt-1 mb-6">
           Akun Anda belum memiliki peleton yang didaftarkan. Daftarkan peleton sekolah Anda sekarang untuk mengikuti perlombaan.
         </p>
-        <div className="flex gap-3">
+        <div className="flex flex-wrap justify-center gap-3">
+          <button
+            onClick={() => openModal('auth')}
+            className="px-6 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-all shadow-md cursor-pointer"
+          >
+            Masuk Akun Peleton
+          </button>
           <button
             onClick={() => setActiveView('register')}
-            className="px-6 py-2.5 bg-red-700 hover:bg-red-600 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-all shadow-md"
+            className="px-6 py-2.5 bg-red-700 hover:bg-red-600 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-all shadow-md cursor-pointer"
           >
             Daftar Peleton Sekarang
           </button>
           <button
             onClick={() => setActiveView('landing')}
-            className="px-6 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs uppercase tracking-wider transition-all"
+            className="px-6 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs uppercase tracking-wider transition-all cursor-pointer"
           >
             Kembali ke Beranda
           </button>
@@ -216,9 +222,92 @@ export default function ParticipantDashboard() {
   const rawTeamScore = currentTeam?.id
     ? (scores[currentTeam.id] || (currentTeam.id === 'team-sd-01' ? scores['team-sd-1'] : null))
     : null;
-  const teamScore = rawTeamScore && (settings?.announcementPublished || rawTeamScore.status === 'finalized' || rawTeamScore.isLocked)
-    ? rawTeamScore
-    : null;
+  const isStaffViewer = ['admin', 'superadmin', 'juri', 'penginput', 'verifikator', 'finalisator'].includes(currentUser?.role);
+  const canViewTeamScore = Boolean(settings?.announcementPublished || isStaffViewer);
+
+  const teamScore = (() => {
+    if (!rawTeamScore || !canViewTeamScore) return null;
+    const jKey = currentTeam.jenjang || 'SMP';
+    const jenjangScored = (teams || [])
+      .filter(t => t.jenjang === jKey && scores[t.id])
+      .map(t => {
+        const s = scores[t.id];
+        const jr = s.juries || {};
+        const j1P = Number(jr.pos1?.peletonTotal ?? jr.pos1?.total ?? s.pbb?.j1 ?? 0);
+        const j2P = Number(jr.pos2?.peletonTotal ?? jr.pos2?.total ?? s.pbb?.j2 ?? 0);
+        const j3P = Number(jr.pos3?.peletonTotal ?? s.pbb?.j3 ?? 0);
+        const nilaiMurniPeleton = Number(s.nilaiMurniPeleton ?? ((j1P + j2P + j3P) || Number(s.pbb?.total || 0)));
+        const peletonPenalty = Number(s.penalties?.peletonPenalty ?? s.penalties?.totalPenalty ?? 0);
+        const nilaiAkhirPeleton = Number(s.nilaiAkhirPeleton ?? Math.max(0, parseFloat((nilaiMurniPeleton - peletonPenalty).toFixed(2))));
+
+        const j1D = Number(jr.pos1?.dantonTotal ?? 0);
+        const j2D = Number(jr.pos2?.dantonTotal ?? 0);
+        const j3D = Number(jr.pos3?.dantonTotal ?? jr.pos3?.total ?? s.danton?.total ?? 0);
+        const nilaiMurniDanton = Number(s.nilaiMurniDanton ?? parseFloat((j1D + j2D + j3D).toFixed(2)));
+        const dantonPenalty = Number(s.penalties?.dantonPenalty ?? 0);
+        const nilaiAkhirDanton = Number(s.nilaiAkhirDanton ?? Math.max(0, parseFloat((nilaiMurniDanton - dantonPenalty).toFixed(2))));
+
+        const dantonMateri =
+          Number(jr.pos1?.dantonRubricScores?.materi || 0) +
+          Number(jr.pos2?.dantonRubricScores?.materi || 0) +
+          Number(jr.pos3?.dantonRubricScores?.materi || s.danton?.rubricScores?.materi || 0);
+        const dantonVokal =
+          Number(jr.pos1?.dantonRubricScores?.vokal || 0) +
+          Number(jr.pos2?.dantonRubricScores?.vokal || 0) +
+          Number(jr.pos3?.dantonRubricScores?.vokal || s.danton?.rubricScores?.vokal || 0);
+
+        return {
+          id: t.id,
+          nilaiAkhirPeleton,
+          nilaiMurniPeleton,
+          peletonPenalty,
+          nilaiAkhirDanton,
+          nilaiMurniDanton,
+          dantonPenalty,
+          dantonMateri,
+          dantonVokal,
+        };
+      });
+
+    const peletonRanked = [...jenjangScored].sort((a, b) => {
+      if (b.nilaiAkhirPeleton !== a.nilaiAkhirPeleton) return b.nilaiAkhirPeleton - a.nilaiAkhirPeleton;
+      if (b.nilaiMurniPeleton !== a.nilaiMurniPeleton) return b.nilaiMurniPeleton - a.nilaiMurniPeleton;
+      if (a.peletonPenalty !== b.peletonPenalty) return a.peletonPenalty - b.peletonPenalty;
+      return b.nilaiMurniDanton - a.nilaiMurniDanton;
+    });
+
+    const dantonRanked = [...jenjangScored].sort((a, b) => {
+      if (b.nilaiAkhirDanton !== a.nilaiAkhirDanton) return b.nilaiAkhirDanton - a.nilaiAkhirDanton;
+      if (b.nilaiMurniDanton !== a.nilaiMurniDanton) return b.nilaiMurniDanton - a.nilaiMurniDanton;
+      if (a.dantonPenalty !== b.dantonPenalty) return a.dantonPenalty - b.dantonPenalty;
+      if (b.dantonMateri !== a.dantonMateri) return b.dantonMateri - a.dantonMateri;
+      return b.dantonVokal - a.dantonVokal;
+    });
+
+    const pRankIdx = peletonRanked.findIndex(x => x.id === currentTeam.id);
+    const dRankIdx = dantonRanked.findIndex(x => x.id === currentTeam.id);
+    const computedRank = rawTeamScore.rank || (pRankIdx !== -1 ? pRankIdx + 1 : null);
+    const computedDantonRank = rawTeamScore.dantonRank || (dRankIdx !== -1 ? dRankIdx + 1 : null);
+
+    let computedAwardTitle = rawTeamScore.awardTitle || '';
+    if (!computedAwardTitle && computedRank) {
+      if (computedRank === 1) computedAwardTitle = `JUARA UTAMA 1 ${jKey}`;
+      else if (computedRank === 2) computedAwardTitle = `JUARA UTAMA 2 ${jKey}`;
+      else if (computedRank === 3) computedAwardTitle = `JUARA UTAMA 3 ${jKey}`;
+      else if (computedRank === 4) computedAwardTitle = `JUARA HARAPAN 1 ${jKey}`;
+      else if (computedRank === 5) computedAwardTitle = `JUARA HARAPAN 2 ${jKey}`;
+      else if (computedRank === 6) computedAwardTitle = `JUARA HARAPAN 3 ${jKey}`;
+      else computedAwardTitle = `PERINGKAT #${computedRank} ${jKey}`;
+    }
+
+    return {
+      ...rawTeamScore,
+      rank: computedRank,
+      dantonRank: computedDantonRank,
+      awardTitle: computedAwardTitle,
+      stagingDurationSeconds: staging?.[currentTeam.id]?.durationSeconds ?? null,
+    };
+  })();
 
   const availableClassOptions = currentTeam.jenjang === 'SD'
     ? ['1', '2', '3', '4', '5', '6']

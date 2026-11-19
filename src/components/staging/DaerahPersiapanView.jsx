@@ -15,6 +15,7 @@ import {
   DoorOpen
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
+import { getChestNumberByLot } from '../../context/competitionHelpers.js';
 import { formatImageUrl } from '../../services/sheetService.js';
 import { appToast } from '../../utils/appDialog.js';
 import SimpaskorSidebarLayout from '../navigation/SimpaskorSidebarLayout.jsx';
@@ -609,97 +610,104 @@ export default function DaerahPersiapanView() {
           /* SCREEN 2: INSPECTION COCKPIT (SINGLE UNIFIED COMMAND BAR)      */
           /* ============================================================== */
           <section className="rounded-2xl sm:rounded-[26px] border border-slate-200/80 bg-white shadow-[0_14px_38px_rgba(15,23,42,0.05)] overflow-hidden">
-            {/* Single Sticky Command Bar — Zero Vertical Bloat */}
-            <div className="px-4 py-3 sm:px-5 sm:py-3.5 border-b border-slate-200/80 bg-slate-50/60 flex flex-col xl:flex-row xl:items-center justify-between gap-3">
-              {/* Left: Back + Prev/Next + Team Identity */}
-              <div className="flex items-center gap-2.5 min-w-0">
-                <button
-                  type="button"
-                  onClick={() => setIsPickerOpen(true)}
-                  className="px-2.5 py-2 rounded-xl bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 text-xs font-bold flex items-center gap-1.5 shrink-0 transition-colors cursor-pointer shadow-2xs"
-                  title="Kembali ke Daftar Antrean"
-                >
-                  <ArrowLeft className="w-3.5 h-3.5" />
-                  <span className="hidden sm:inline">Antrean</span>
-                  <span className="px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[10px] font-mono font-black leading-none">
-                    {posTeams.length}
-                  </span>
-                </button>
+            {/* Dark Obsidian Cockpit Command Bar */}
+            <div className="px-4 py-3.5 sm:px-5 bg-slate-950 text-white border-b border-slate-800 flex flex-col xl:flex-row xl:items-center justify-between gap-3">
+              {/* Left: Unified Nav + No. Dada + Unframed Logo + Team Identity */}
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="inline-flex items-center p-0.5 rounded-xl bg-slate-900 border border-slate-800 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => setIsPickerOpen(true)}
+                    className="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold flex items-center gap-1.5 shrink-0 transition-colors cursor-pointer"
+                    title="Kembali ke Daftar Antrean"
+                  >
+                    <ArrowLeft className="w-3.5 h-3.5" />
+                    <span className="hidden sm:inline">Antrean</span>
+                    <span className="px-1.5 py-0.5 rounded-md bg-white/10 text-slate-300 text-[10px] font-mono font-black leading-none">
+                      {posTeams.length}
+                    </span>
+                  </button>
 
-                {posTeams.length > 1 && (
-                  <div className="hidden sm:flex items-center gap-1 shrink-0">
-                    <button
-                      type="button"
-                      onClick={() => handleCycleTeam(-1)}
-                      className="w-8 h-8 rounded-xl bg-white border border-slate-200 hover:bg-slate-100 text-slate-600 flex items-center justify-center cursor-pointer shadow-2xs"
-                      title="Peleton Sebelumnya"
-                    >
-                      <ChevronLeft className="w-4 h-4" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleCycleTeam(1)}
-                      className="w-8 h-8 rounded-xl bg-white border border-slate-200 hover:bg-slate-100 text-slate-600 flex items-center justify-center cursor-pointer shadow-2xs"
-                      title="Peleton Berikutnya"
-                    >
-                      <ChevronRight className="w-4 h-4" />
-                    </button>
-                  </div>
+                  {posTeams.length > 1 && (
+                    <div className="hidden sm:flex items-center pl-0.5">
+                      <button
+                        type="button"
+                        onClick={() => handleCycleTeam(-1)}
+                        className="w-7 h-7 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center cursor-pointer transition-colors"
+                        title="Peleton Sebelumnya"
+                      >
+                        <ChevronLeft className="w-4 h-4" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleCycleTeam(1)}
+                        className="w-7 h-7 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center cursor-pointer transition-colors"
+                        title="Peleton Berikutnya"
+                      >
+                        <ChevronRight className="w-4 h-4" />
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                {/* Blok No. Dada Menonjol */}
+                <div className={`min-w-[54px] h-11 px-2 rounded-xl flex flex-col items-center justify-center shrink-0 text-white shadow-xs ${
+                  isSDPos ? 'bg-red-600' : 'bg-blue-600'
+                }`}>
+                  <span className="text-[7px] font-bold uppercase tracking-widest opacity-80 leading-none">
+                    No. Dada
+                  </span>
+                  <span className="text-base font-mono font-black leading-none tracking-tight mt-0.5">
+                    {activeTeam.chestNumber || getChestNumberByLot(activeTeam.jenjang, activeTeam.lotNumber) || '—'}
+                  </span>
+                </div>
+
+                {/* Logo Sekolah tanpa wadah */}
+                {getTeamLogoUrl(activeTeam) ? (
+                  <img
+                    src={getTeamLogoUrl(activeTeam)}
+                    alt={activeTeam.schoolName}
+                    className="w-9 h-9 object-contain shrink-0"
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none';
+                    }}
+                  />
+                ) : (
+                  <span className={`w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center font-mono font-bold text-xs shrink-0 ${isSDPos ? 'text-rose-300' : 'text-blue-300'}`}>
+                    {activeTeam.jenjang}
+                  </span>
                 )}
 
-                <div className="h-7 w-px bg-slate-200 hidden sm:block shrink-0" />
-
-                {/* Active Team */}
-                <div className="flex items-center gap-2.5 min-w-0">
-                  {getTeamLogoUrl(activeTeam) ? (
-                    <img
-                      src={getTeamLogoUrl(activeTeam)}
-                      alt={activeTeam.schoolName}
-                      className="w-8 h-8 object-contain shrink-0"
-                      onError={(e) => {
-                        e.currentTarget.style.display = 'none';
-                      }}
-                    />
-                  ) : (
-                    <span className={`w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center font-mono font-bold text-xs shrink-0 ${isSDPos ? 'text-red-700' : 'text-blue-700'}`}>
+                {/* Team Identity (Tanpa kata 'Danton:') */}
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h2 className="text-sm sm:text-[15px] font-black text-white uppercase truncate leading-tight">
+                      {activeTeam.schoolName}
+                    </h2>
+                    <span className={`px-1.5 py-0.5 rounded text-[9px] font-extrabold uppercase shrink-0 border ${
+                      isSDPos ? 'bg-rose-500/20 text-rose-300 border-rose-500/30' : 'bg-blue-500/20 text-blue-300 border-blue-500/30'
+                    }`}>
                       {activeTeam.jenjang}
                     </span>
-                  )}
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-1.5">
-                      {activeTeam.chestNumber && (
-                        <span className="px-1.5 py-0.5 rounded bg-slate-900 text-white font-mono text-[10px] font-bold shrink-0">
-                          #{activeTeam.chestNumber}
-                        </span>
-                      )}
-                      <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold uppercase shrink-0 ${
-                        isSDPos ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700'
-                      }`}>
-                        {activeTeam.jenjang}
-                      </span>
-                      <h2 className="text-sm sm:text-[15px] font-black text-slate-950 truncate leading-tight">
-                        {activeTeam.schoolName}
-                      </h2>
-                    </div>
-                    <p className="text-[11px] text-slate-500 truncate mt-0.5">
-                      Danton: <strong className="text-slate-700">{activeTeam.roster?.danton?.name || activeTeam.dantonName || '-'}</strong>
-                      {activeMeta?.roomName ? ` · Ruang ${activeMeta.roomName}` : ''}
-                    </p>
                   </div>
+                  <p className="text-[11px] text-slate-400 truncate mt-0.5">
+                    <strong className="text-slate-200 font-semibold">{activeTeam.roster?.danton?.name || activeTeam.dantonName || '-'}</strong>
+                    {activeMeta?.roomName ? ` · Ruang ${activeMeta.roomName}` : ''}
+                  </p>
                 </div>
               </div>
 
               {/* Right: Mode Toggle + DP 2 Status */}
-              <div className="flex flex-wrap items-center justify-between xl:justify-end gap-2 pt-2 xl:pt-0 border-t xl:border-t-0 border-slate-200/70">
+              <div className="flex flex-wrap items-center justify-between xl:justify-end gap-2 pt-2 xl:pt-0 border-t xl:border-t-0 border-slate-800">
                 {/* Unified Mode Toggle (Swipe | Grid N) */}
-                <div className="inline-flex items-center p-1 bg-white rounded-xl border border-slate-200 shadow-2xs">
+                <div className="inline-flex items-center p-0.5 bg-slate-900 rounded-xl border border-slate-800">
                   <button
                     type="button"
                     onClick={() => setDeckViewMode('swipe')}
-                    className={`px-2.5 py-1.5 rounded-lg text-[11px] font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                    className={`px-3 py-1.5 rounded-lg text-[11px] font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
                       deckViewMode === 'swipe'
-                        ? 'bg-slate-900 text-white shadow-2xs'
-                        : 'text-slate-600 hover:text-slate-900'
+                        ? 'bg-white text-slate-950 shadow-2xs'
+                        : 'text-slate-400 hover:text-white'
                     }`}
                   >
                     <Layers className="w-3.5 h-3.5" />
@@ -708,10 +716,10 @@ export default function DaerahPersiapanView() {
                   <button
                     type="button"
                     onClick={() => setDeckViewMode('grid')}
-                    className={`px-2.5 py-1.5 rounded-lg text-[11px] font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                    className={`px-3 py-1.5 rounded-lg text-[11px] font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
                       deckViewMode === 'grid'
-                        ? 'bg-slate-900 text-white shadow-2xs'
-                        : 'text-slate-600 hover:text-slate-900'
+                        ? 'bg-white text-slate-950 shadow-2xs'
+                        : 'text-slate-400 hover:text-white'
                     }`}
                   >
                     <LayoutGrid className="w-3.5 h-3.5" />
@@ -721,14 +729,14 @@ export default function DaerahPersiapanView() {
 
                 {/* Compact DP 2 Status Pill */}
                 {isMinPersonnelMet ? (
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-[11px] font-black">
-                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/15 border border-emerald-400/30 text-emerald-300 text-[11px] font-black">
+                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                     <span>DP 2 Siap ({verifiedCount}/{allPersonnels.length})</span>
                   </span>
                 ) : (
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-[11px] font-bold">
-                    <Clock className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-                    <span>{verifiedCount}/{allPersonnels.length} (Min. 22)</span>
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/15 border border-amber-400/30 text-amber-300 text-[11px] font-bold">
+                    <Clock className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                    <span>{verifiedCount}/{allPersonnels.length} · Min. 22</span>
                   </span>
                 )}
               </div>

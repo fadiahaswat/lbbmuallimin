@@ -1,7 +1,7 @@
-import { saveRecordToSheet } from '../services/sheetService.js';
+import { saveRecordToSheet, bulkSyncToSheet } from '../services/sheetService.js';
 import { calculatePenalties } from './scoringActions.js';
 
-export function createStagingActions({ staging = {}, setStaging, scores = {}, setScores = null, currentUser }) {
+export function createStagingActions({ staging = {}, setStaging, scores = {}, setScores = null, setTeams = null, currentUser }) {
   function syncStagingPenaltyToScores(teamId, penaltyUpdates = {}) {
     if (typeof setScores !== 'function') return;
     let updatedScoreRecord = null;
@@ -145,12 +145,115 @@ export function createStagingActions({ staging = {}, setStaging, scores = {}, se
       nextRecord = buildStagingRecord(staging[teamId]);
     }
 
+    // Sinkronisasi dua arah: jika ada perubahan alokasi ruang basecamp di staging, perbarui juga di objek teams
+    const hasRoomUpdate =
+      updates.roomName !== undefined ||
+      updates.basecampRoom !== undefined ||
+      updates.room !== undefined ||
+      updates.basecamp?.roomName !== undefined;
+
+    if (hasRoomUpdate && typeof setTeams === 'function') {
+      const nextRoomCode =
+        updates.basecamp?.roomName ??
+        updates.roomName ??
+        updates.basecampRoom ??
+        updates.room ??
+        '';
+      setTeams(prevTeams =>
+        Array.isArray(prevTeams)
+          ? prevTeams.map(t =>
+              t.id === teamId
+                ? { ...t, basecampNumber: nextRoomCode, basecampRoom: nextRoomCode, updatedAt: nowIso }
+                : t
+            )
+          : prevTeams
+      );
+    }
+
     if (nextRecord) {
       saveRecordToSheet('staging', nextRecord).catch(err =>
         console.warn('[CompetitionContext] Sync updateTeamStaging to sheet failed:', err)
       );
     }
     return nextRecord;
+  }
+
+  function bulkUpdateTeamStaging(batchList = []) {
+    if (!Array.isArray(batchList) || batchList.length === 0) return [];
+    const nowIso = new Date().toISOString();
+    const updatedRecords = [];
+    const roomSyncMap = new Map();
+
+    setStaging(prev => {
+      const nextMap = { ...prev };
+      batchList.forEach(({ teamId, newStage, updates = {} }) => {
+        if (!teamId) return;
+        const current = nextMap[teamId] || {
+          teamId,
+          stage: 'waiting',
+          checklist: {},
+          durationSeconds: 0,
+          overtimePenaltyBlocks: 0,
+          notes: '',
+        };
+        const stageVal = newStage || current.stage || 'waiting';
+        const rec = {
+          ...current,
+          id: teamId,
+          teamId,
+          stage: stageVal,
+          status: updates.status || stageVal,
+          ...updates,
+          checklist: {
+            ...(current.checklist || {}),
+            ...(updates.checklist || {}),
+          },
+          updatedAt: nowIso,
+        };
+        nextMap[teamId] = rec;
+        updatedRecords.push(rec);
+
+        const hasRoomUpdate =
+          updates.roomName !== undefined ||
+          updates.basecampRoom !== undefined ||
+          updates.room !== undefined ||
+          updates.basecamp?.roomName !== undefined;
+        if (hasRoomUpdate) {
+          const nextRoomCode =
+            updates.basecamp?.roomName ??
+            updates.roomName ??
+            updates.basecampRoom ??
+            updates.room ??
+            '';
+          roomSyncMap.set(teamId, nextRoomCode);
+        }
+      });
+      return nextMap;
+    });
+
+    if (roomSyncMap.size > 0 && typeof setTeams === 'function') {
+      setTeams(prevTeams =>
+        Array.isArray(prevTeams)
+          ? prevTeams.map(t =>
+              roomSyncMap.has(t.id)
+                ? {
+                    ...t,
+                    basecampNumber: roomSyncMap.get(t.id),
+                    basecampRoom: roomSyncMap.get(t.id),
+                    updatedAt: nowIso,
+                  }
+                : t
+            )
+          : prevTeams
+      );
+    }
+
+    if (updatedRecords.length > 0) {
+      bulkSyncToSheet('staging', updatedRecords).catch(err =>
+        console.warn('[CompetitionContext] Sync bulkUpdateTeamStaging to sheet failed:', err)
+      );
+    }
+    return updatedRecords;
   }
 
   function checkInBasecamp(teamId, logistikData = {}) {
@@ -400,6 +503,7 @@ export function createStagingActions({ staging = {}, setStaging, scores = {}, se
 
   return {
     updateTeamStaging,
+    bulkUpdateTeamStaging,
     checkInBasecamp,
     checkOutBasecamp,
     updateDP1PersonnelInspection,

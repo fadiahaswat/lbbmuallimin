@@ -27,6 +27,7 @@ export default function DenahBasecampTab({ currentTeam, allTeams = [], staging =
 
   const { settings, updateSettings, currentUser, role } = useCompetition?.() || {};
   const userRole = currentUser?.role || role || 'peserta';
+  const isSuperadmin = ['superadmin', 'admin', 'checkin'].includes(userRole);
   const isStaff = !currentTeam && ['admin', 'superadmin', 'checkin', 'dp', 'staging', 'panitia'].includes(userRole);
   const isLocalhost = typeof window !== 'undefined' && (
     window.location.hostname === 'localhost' ||
@@ -37,9 +38,16 @@ export default function DenahBasecampTab({ currentTeam, allTeams = [], staging =
   );
   const isRatified = Boolean((settings?.basecampPublished && settings?.basecampRatifiedAt) || isLocalhost);
 
-  // Cek apakah ada alokasi basecamp untuk tim ini
-  const teamStaging = staging?.[currentTeam?.id] || null;
-  const assignedRoomCode = currentTeam?.basecampNumber || currentTeam?.basecampRoom || teamStaging?.room || teamStaging?.basecampRoom || null;
+  // Cek apakah ada alokasi basecamp untuk tim ini (sinkron antara staging & teams)
+  const teamStaging = staging?.[currentTeam?.id] || staging?.basecamp?.[currentTeam?.id] || null;
+  const assignedRoomCode =
+    teamStaging?.basecamp?.roomName ||
+    teamStaging?.roomName ||
+    teamStaging?.basecampRoom ||
+    teamStaging?.room ||
+    currentTeam?.basecampNumber ||
+    currentTeam?.basecampRoom ||
+    null;
 
   return (
     <section className="rounded-2xl sm:rounded-[28px] border border-slate-200/90 bg-white p-4 sm:p-7 shadow-[0_18px_46px_rgba(15,23,42,0.06)] space-y-5">

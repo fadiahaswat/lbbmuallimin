@@ -50,7 +50,11 @@ export default function ScoresTab({ teamScore, currentTeam }) {
 
   // Max duration & arena timekeeper data (Juknis Bab C.4: 8 menit SD, 12 menit SMP)
   const maxTimeSeconds = isSMP ? 720 : 480; // 12 menit SMP, 8 menit SD
-  const elapsedSeconds = teamScore?.fieldTimerData?.durationSeconds ?? (isSMP ? 698 : 458); // default: 07:38 SD / 11:38 SMP
+  const elapsedSeconds =
+    teamScore?.durationSeconds ??
+    teamScore?.fieldTimerData?.durationSeconds ??
+    teamScore?.stagingDurationSeconds ??
+    (isSMP ? 698 : 458); // default fallback: 07:38 SD / 11:38 SMP
   const isOvertime = elapsedSeconds > maxTimeSeconds;
   const overtimeSeconds = Math.max(0, elapsedSeconds - maxTimeSeconds);
 

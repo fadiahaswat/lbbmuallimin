@@ -38,6 +38,7 @@ import {
 import { EVENT, VENUE, DOWNLOADS } from '../../../../config.js';
 import { HARI_H_SCHEDULE, UJI_COBA_SCHEDULE } from '../../../../data/scheduleMatrices.js';
 import { calculateDynamicTrialSchedule } from '../../../../context/competitionHelpers.js';
+import { generateSmartTrialPlan, TRIAL_TIME_SLOTS } from '../../../trial/trialPlanGenerator.js';
 
 export default function OverviewTab({
   currentTeam,
@@ -84,7 +85,40 @@ export default function OverviewTab({
   const jKey = String(currentTeam.jenjang || '').toUpperCase().includes('SD') ? 'SD' : 'SMP';
   const autoSchedule = (lotIdx >= 0 && HARI_H_SCHEDULE[jKey]?.[lotIdx]) ? HARI_H_SCHEDULE[jKey][lotIdx] : null;
 
-  // Kalkulasi jadwal dinamis Uji Coba Lapangan (UCL) dengan perapatan slot jika ada yang berhalangan
+  // Single Source of Truth Jadwal Uji Coba Lapangan (UCL): Sinkron 100% dengan FieldTrialView Panitia
+  const currentTmLotSignature = React.useMemo(() => {
+    const teamsList = (allTeams && allTeams.length > 0) ? allTeams : [currentTeam];
+    return teamsList
+      .filter(t => t?.lotNumber)
+      .map(t => `${t.id}:${t.lotNumber}`)
+      .sort()
+      .join('|');
+  }, [allTeams, currentTeam]);
+
+  const activeTrialPlan = React.useMemo(() => {
+    const teamsList = (allTeams && allTeams.length > 0) ? allTeams : [currentTeam];
+    const savedPlan = settings?.trialPlan;
+    const hasValidSd = savedPlan?.SD?.slots?.some(Boolean);
+    const hasValidSmp = savedPlan?.SMP?.slots?.some(Boolean);
+    if ((hasValidSd || hasValidSmp) && savedPlan?.tmLotSignature === currentTmLotSignature) {
+      return savedPlan;
+    }
+    return generateSmartTrialPlan(teamsList);
+  }, [settings?.trialPlan, currentTmLotSignature, allTeams, currentTeam]);
+
+  const myTrialSlotMeta = React.useMemo(() => {
+    if (!currentTeam?.id || !activeTrialPlan) return null;
+    const jSlots = activeTrialPlan[jKey]?.slots || [];
+    const sIdx = jSlots.findIndex(id => id === currentTeam.id);
+    if (sIdx === -1) return null;
+    return {
+      slotIdx: sIdx,
+      slotInfo: TRIAL_TIME_SLOTS[sIdx] || null,
+      attendance: settings?.trialAttendance?.[currentTeam.id] || null,
+    };
+  }, [currentTeam?.id, activeTrialPlan, jKey, settings?.trialAttendance]);
+
+  // Fallback matriks jadwal UCL jika diperlukan
   const dynamicTrialMap = React.useMemo(() => {
     const teamsList = (allTeams && allTeams.length > 0) ? allTeams : [currentTeam];
     return calculateDynamicTrialSchedule(teamsList, UJI_COBA_SCHEDULE);
@@ -94,16 +128,29 @@ export default function OverviewTab({
   const autoTrialSchedule = teamDynamicTrial?.schedule || (lotIdx >= 0 ? UJI_COBA_SCHEDULE[jKey]?.[lotIdx] : null);
 
   const displayEstimatedTime = currentTeam.estimatedTime || autoSchedule?.startTampil || (currentTeam.lotNumber ? `#${String(currentTeam.lotNumber).padStart(2, '0')}` : null);
-  const isBasecampRatified = Boolean(settings?.basecampPublished && settings?.basecampRatifiedAt);
-  const displayBasecamp = isBasecampRatified ? (currentTeam.basecampNumber || currentTeam.basecampRoom || (currentTeam.lotNumber ? `Ruang ${String(currentTeam.lotNumber).padStart(2, '0')}` : null)) : null;
+  const isBasecampRatified = Boolean((settings?.basecampPublished && settings?.basecampRatifiedAt) || isLocalhost);
+  const resolvedBasecampCode =
+    stagingInfo?.basecamp?.roomName ||
+    stagingInfo?.roomName ||
+    stagingInfo?.basecampRoom ||
+    stagingInfo?.room ||
+    currentTeam.basecampNumber ||
+    currentTeam.basecampRoom ||
+    null;
+  const displayBasecamp = isBasecampRatified
+    ? (resolvedBasecampCode || (currentTeam.lotNumber ? `Ruang ${String(currentTeam.lotNumber).padStart(2, '0')}` : null))
+    : null;
 
-  // Format jam spesifik Uji Coba Lapangan (UCL) dari matriks resmi (dinamis sesuai slot yang terisi)
-  const trialArenaTime = autoTrialSchedule?.enterArena && autoTrialSchedule?.finishArena 
-    ? `${autoTrialSchedule.enterArena.replace(' WIB', '')} - ${autoTrialSchedule.finishArena.replace(' WIB', '')}`
-    : autoTrialSchedule?.enterArena || null;
+  // Format jam spesifik Uji Coba Lapangan (UCL) dari trialPlan resmi panitia (atau matriks dinamis)
+  const trialArenaTime = myTrialSlotMeta?.slotInfo?.time
+    ? myTrialSlotMeta.slotInfo.time.replace(' WIB', '')
+    : (autoTrialSchedule?.enterArena && autoTrialSchedule?.finishArena
+      ? `${autoTrialSchedule.enterArena.replace(' WIB', '')} - ${autoTrialSchedule.finishArena.replace(' WIB', '')}`
+      : autoTrialSchedule?.enterArena || null);
+  const isTrialRatified = Boolean((settings?.trialSchedulePublished && settings?.trialScheduleRatifiedAt) || isLocalhost);
   const displayTrialTime = currentTeam.vehicleSurveys?.trialAttendance?.status === 'declined'
     ? 'Berhalangan'
-    : !settings?.trialSchedulePublished
+    : !isTrialRatified
     ? 'Menunggu Pengesahan'
     : (currentTeam.trialSpecificTime || trialArenaTime || (currentTeam.lotNumber ? '16 Jan 2027' : null));
 
@@ -229,11 +276,11 @@ export default function OverviewTab({
   const phaseConfig = {
     tm: {
       number: '01',
-      day: '09',
+      day: (tmDate && tmDate.match(/\d+/)) ? String(tmDate.match(/\d+/)[0]).padStart(2, '0') : '09',
       month: 'JAN',
       year: '2027',
       label: 'Technical Meeting',
-      time: '13.00 WIB s.d. Selesai',
+      time: tmTime || '13.00 WIB s.d. Selesai',
       title: 'Technical Meeting & Validasi Fisik Berkas',
       copy: 'Wajib dihadiri 1 Pembina dan 1 Danton. Agenda pengambilan nomor dada & pengundian nomor urut tampil peleton.',
       badgeClass: 'bg-purple-100 text-purple-700',
@@ -242,11 +289,11 @@ export default function OverviewTab({
     },
     trial: {
       number: '02',
-      day: '16',
+      day: (trialDate && trialDate.match(/\d+/)) ? String(trialDate.match(/\d+/)[0]).padStart(2, '0') : '16',
       month: 'JAN',
       year: '2027',
       label: 'Uji Coba Lapangan',
-      time: '07.00 WIB s.d. 13.00 WIB',
+      time: trialTime || '07.00 WIB s.d. 13.00 WIB',
       title: 'Uji Coba Lapangan (UCL) & Orientasi Arena',
       copy: 'Pengenalan pos arena perlombaan, pos DP 1, DP 2, dan area steril demi kesiapan teknis peleton.',
       badgeClass: 'bg-emerald-100 text-emerald-700',
@@ -255,11 +302,11 @@ export default function OverviewTab({
     },
     competition: {
       number: '03',
-      day: '24',
+      day: (compDate && compDate.match(/\d+/)) ? String(compDate.match(/\d+/)[0]).padStart(2, '0') : '24',
       month: 'JAN',
       year: '2027',
       label: 'Hari Perlombaan',
-      time: '06.00 WIB s.d. 17.00 WIB',
+      time: compTime || '06.00 WIB s.d. 17.00 WIB',
       title: 'Hari-H Pelaksanaan LBB Mu’allimin 2027',
       copy: 'Daftar ulang mulai 06.00 WIB, dilanjutkan upacara pembukaan dan perlombaan di lapangan utama.',
       badgeClass: 'bg-red-100 text-red-700',

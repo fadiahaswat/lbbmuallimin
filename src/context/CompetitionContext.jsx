@@ -218,10 +218,10 @@ export function CompetitionProvider({ children }) {
       const base = {
         ...INITIAL_SETTINGS,
         ...parsed,
-        // Selalu pastikan jadwal master resmi mengacu ke INITIAL_SETTINGS / EVENT resmi
+        // Pastikan INITIAL_SETTINGS menjadi default dasar dan perubahan jadwal dari Cloud / Superadmin menjadi acuan utama
         eventDates: {
-          ...(parsed.eventDates || {}),
           ...INITIAL_SETTINGS.eventDates,
+          ...(parsed.eventDates || {}),
         }
       };
 
@@ -305,19 +305,19 @@ export function CompetitionProvider({ children }) {
     }
   }
 
-  // Multi-Role Authorization Matrix Helper
+  // Multi-Role Authorization Matrix Helper (Terintegrasi dengan App.jsx, Sidebar & Navbar)
   const canAccessStage = (stageId, targetRole = role) => {
     const userR = currentUser?.role || targetRole || 'publik';
     if (userR === 'superadmin') return true;
-    if (userR === 'publik') return ['klasemen', 'uji_coba'].includes(stageId);
-    if (userR === 'peserta') return ['tm', 'uji_coba', 'klasemen'].includes(stageId);
-    if (userR === 'checkin') return ['checkin', 'checkout'].includes(stageId);
-    if (userR === 'dp' || userR === 'staging') return ['dp', 'uji_coba'].includes(stageId);
-    if (userR === 'juri') return ['penjurian'].includes(stageId);
-    if (userR === 'penginput') return ['penjurian', 'rekap_nilai'].includes(stageId);
-    if (userR === 'verifikator') return ['rekap_nilai', 'klasemen'].includes(stageId);
-    if (userR === 'finalisator') return ['rekap_nilai', 'klasemen'].includes(stageId);
-    if (userR === 'admin') return ['pendaftaran', 'tm', 'uji_coba', 'klasemen'].includes(stageId);
+    if (userR === 'publik') return ['klasemen', 'uji_coba', 'dokumen'].includes(stageId);
+    if (userR === 'peserta') return ['tm', 'uji_coba', 'klasemen', 'dokumen'].includes(stageId);
+    if (userR === 'checkin') return ['checkin', 'checkout', 'klasemen', 'dokumen'].includes(stageId);
+    if (userR === 'dp' || userR === 'staging') return ['dp', 'uji_coba', 'klasemen', 'dokumen'].includes(stageId);
+    if (userR === 'juri') return ['penjurian', 'rekap_nilai', 'klasemen', 'dp', 'dokumen'].includes(stageId);
+    if (userR === 'penginput') return ['penjurian', 'rekap_nilai', 'klasemen', 'dokumen'].includes(stageId);
+    if (userR === 'verifikator') return ['rekap_nilai', 'klasemen', 'dokumen'].includes(stageId);
+    if (userR === 'finalisator') return ['rekap_nilai', 'klasemen', 'dokumen'].includes(stageId);
+    if (userR === 'admin') return ['pendaftaran', 'tm', 'uji_coba', 'checkin', 'checkout', 'dp', 'rekap_nilai', 'klasemen', 'dokumen'].includes(stageId);
     return false;
   };
 
@@ -330,11 +330,12 @@ export function CompetitionProvider({ children }) {
   // Modular Staging Actions
   const {
     updateTeamStaging,
+    bulkUpdateTeamStaging,
     checkInBasecamp,
     checkOutBasecamp,
     updateDP1PersonnelInspection,
     passToDP2
-  } = useMemo(() => createStagingActions({ staging, setStaging, scores, setScores, currentUser }), [staging, scores, currentUser]);
+  } = useMemo(() => createStagingActions({ staging, setStaging, scores, setScores, setTeams, currentUser }), [staging, scores, currentUser]);
 
   // Modular Field Timer
   const {
@@ -465,319 +466,378 @@ export function CompetitionProvider({ children }) {
     return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
-  // Ref untuk melacak kloningan awal data asli di Mode Sandbox Localhost
+  // Ref untuk melacak kloningan awal data asli di Mode Sandbox Localhost & Status Real-Time Sync
   const localhostSyncedModeRef = useRef({ done: false, withScores: false });
+  const lastCloudFetchMsRef = useRef(0);
+  const [cloudSyncStatus, setCloudSyncStatus] = useState('idle'); // 'idle' | 'syncing' | 'synced' | 'error'
+  const [lastSyncedAt, setLastSyncedAt] = useState(null);
 
-  // Initial & Role-Based Sync: Mengambil data terbaru dari Google Sheet jika sudah terkonfigurasi
-  useEffect(() => {
-    if (!isGoogleSheetConfigured()) return;
+  // Fungsi Terpusat Sinkronisasi Cloud Database (Single Source of Truth)
+  const applyCloudSnapshot = React.useCallback((res, allowScoresSync, isSandboxClone = false) => {
+    if (!res || !res.success || !res.data) return;
+    const { teams: sheetTeams, scores: sheetScores, settings: sheetSettings, staging: sheetStaging, users: sheetUsers } = res.data;
 
-    const isStaffOrJury = ['admin', 'juri', 'superadmin', 'penginput', 'verifikator', 'finalisator'].includes(role);
-    const allowScoresSync = isStaffOrJury || Boolean(settings.announcementPublished);
-
-    // Di localhost (Mode Sandbox): kloning data asli sekali saat mount (atau saat naik akses ke staff/juri),
-    // agar simulasi/edit yang sedang dilakukan di localhost tidak tertimpa ulang saat toggle setting lokal.
-    if (isLocalhostEnvironment() && localhostSyncedModeRef.current.done) {
-      if (!allowScoresSync || localhostSyncedModeRef.current.withScores) {
-        return;
-      }
-    }
-
-    let isMounted = true;
-    fetchAllDataFromSheet(allowScoresSync).then(res => {
-      if (!isMounted || !res || !res.success || !res.data) return;
-
-      const { teams: sheetTeams, scores: sheetScores, settings: sheetSettings, staging: sheetStaging } = res.data;
-
-      if (isLocalhostEnvironment()) {
-        localhostSyncedModeRef.current = { done: true, withScores: allowScoresSync };
-        console.info('[CompetitionContext] Mode Sandbox Localhost: Data asli dari Google Sheet berhasil dikloning (Read-Only). Perubahan di localhost tidak berdampak ke data asli.');
-
-        if (Array.isArray(sheetTeams)) {
-          setTeams(sheetTeams.map(normalizeTeamData));
-        }
-
-        if (allowScoresSync && Array.isArray(sheetScores)) {
-          const nextScores = {};
-          sheetScores.forEach(sc => {
-            if (sc?.teamId) nextScores[sc.teamId] = sc;
-          });
-          setScores(nextScores);
-        }
-
-        if (Array.isArray(sheetStaging)) {
-          const nextStaging = {};
-          sheetStaging.forEach(st => {
-            const stId = st?.teamId || st?.id;
-            if (stId) nextStaging[stId] = st;
-          });
-          setStaging(nextStaging);
-        }
-
-        if (Array.isArray(res.data.users) && res.data.users.length > 0) {
-          setUsers(prev => {
-            const byEmail = new Map();
-            INITIAL_USERS.forEach(u => {
-              if (u.email) byEmail.set(u.email.toLowerCase(), u);
-            });
-            prev.forEach(u => {
-              if (u.email) byEmail.set(u.email.toLowerCase(), u);
-            });
-            res.data.users.forEach(u => {
-              if (u && u.email) byEmail.set(String(u.email).toLowerCase(), u);
-            });
-            return Array.from(byEmail.values());
-          });
-        }
-
-        if (Array.isArray(sheetSettings) && sheetSettings.length > 0 && sheetSettings[0]) {
-          const remoteSettings = sheetSettings[0];
-          setSettings({
-            ...INITIAL_SETTINGS,
-            ...remoteSettings,
-            eventDates: {
-              ...(remoteSettings.eventDates || {}),
-              ...INITIAL_SETTINGS.eventDates,
-            },
-            juknisPenilaianPublished: Boolean(remoteSettings.juknisPenilaianPublished && remoteSettings.juknisPenilaianRatifiedAt),
-            juknisPenilaianRatifiedAt: remoteSettings.juknisPenilaianRatifiedAt || null,
-            basecampPublished: Boolean(remoteSettings.basecampPublished && remoteSettings.basecampRatifiedAt),
-            basecampRatifiedAt: remoteSettings.basecampRatifiedAt || null,
-          });
-        }
-        return;
-      }
-
+    if (isSandboxClone) {
+      localhostSyncedModeRef.current = { done: true, withScores: allowScoresSync };
       if (Array.isArray(sheetTeams)) {
-        if (sheetTeams.length === 0) {
-          setTeams([]);
-        } else {
-          setTeams(prev => {
-            const prevMap = new Map();
-            prev.forEach(t => prevMap.set(t.id, normalizeTeamData(t)));
-
-            const nextTeams = sheetTeams.map(rawSheetTeam => {
-              const normalizedSheetTeam = normalizeTeamData(rawSheetTeam);
-              const existing = prevMap.get(normalizedSheetTeam.id);
-
-              if (existing) {
-                const mergedFiles = {
-                  ...existing.files,
-                  ...normalizedSheetTeam.files,
-                };
-                Object.keys(existing.files || {}).forEach(k => {
-                  if (existing.files[k]?.url && (!mergedFiles[k]?.url || mergedFiles[k]?.url === '#')) {
-                    mergedFiles[k] = existing.files[k];
-                  }
-                });
-
-                const existingRoster = existing.roster || {};
-                const sheetRoster = normalizedSheetTeam.roster || {};
-
-                const mergedDanton = {
-                  ...existingRoster.danton,
-                  ...sheetRoster.danton,
-                  name: (sheetRoster.danton?.name && sheetRoster.danton.name !== '-' && sheetRoster.danton.name !== 'Anggota Pratama') 
-                    ? sheetRoster.danton.name 
-                    : (existingRoster.danton?.name || existing.dantonName || normalizedSheetTeam.dantonName || '-'),
-                  photo: (sheetRoster.danton?.photo && sheetRoster.danton.photo !== '#' && !sheetRoster.danton.photo.startsWith('#'))
-                    ? sheetRoster.danton.photo
-                    : (existingRoster.danton?.photo || null),
-                };
-
-                const sheetPasukan = Array.isArray(sheetRoster.pasukan) ? sheetRoster.pasukan : [];
-                const existingPasukan = Array.isArray(existingRoster.pasukan) ? existingRoster.pasukan : [];
-                const maxPasukanLen = Math.max(sheetPasukan.length, existingPasukan.length, 21);
-                const mergedPasukan = [];
-
-                for (let i = 0; i < maxPasukanLen; i++) {
-                  const sP = sheetPasukan[i];
-                  const eP = existingPasukan[i];
-                  if (!sP && !eP) continue;
-
-                  const pId = sP?.id || eP?.id || `p-${i + 1}`;
-                  const safNumber = sP?.safNumber || eP?.safNumber || Math.ceil((i + 1) / 7);
-                  const banjarNumber = sP?.banjarNumber || eP?.banjarNumber || (((i) % 7) + 1);
-
-                  mergedPasukan.push({
-                    id: pId,
-                    role: 'pasukan',
-                    safNumber,
-                    banjarNumber,
-                    name: (sP?.name && sP.name !== '-') ? sP.name : (eP?.name || ''),
-                    nisn: (sP?.nisn && sP.nisn !== '-') ? sP.nisn : (eP?.nisn || ''),
-                    class: (sP?.class && sP.class !== '-') ? sP.class : (eP?.class || ''),
-                    birthPlace: sP?.birthPlace || eP?.birthPlace || '',
-                    birthDate: sP?.birthDate || eP?.birthDate || '',
-                    medicalHistory: sP?.medicalHistory || eP?.medicalHistory || '',
-                    photo: (sP?.photo && sP.photo !== '#' && !sP.photo.startsWith('#'))
-                      ? sP.photo
-                      : (eP?.photo || null),
-                  });
-                }
-
-                const sheetCadangan = Array.isArray(sheetRoster.cadangan) ? sheetRoster.cadangan : [];
-                const existingCadangan = Array.isArray(existingRoster.cadangan) ? existingRoster.cadangan : [];
-                const maxCadLen = Math.max(sheetCadangan.length, existingCadangan.length, 3);
-                const mergedCadangan = [];
-
-                for (let i = 0; i < maxCadLen; i++) {
-                  const sC = sheetCadangan[i];
-                  const eC = existingCadangan[i];
-                  if (!sC && !eC) continue;
-                  mergedCadangan.push({
-                    id: sC?.id || eC?.id || `c-${i + 1}`,
-                    role: 'cadangan',
-                    name: (sC?.name && sC.name !== '-') ? sC.name : (eC?.name || ''),
-                    nisn: (sC?.nisn && sC.nisn !== '-') ? sC.nisn : (eC?.nisn || ''),
-                    class: (sC?.class && sC.class !== '-') ? sC.class : (eC?.class || ''),
-                    birthPlace: sC?.birthPlace || eC?.birthPlace || '',
-                    birthDate: sC?.birthDate || eC?.birthDate || '',
-                    medicalHistory: sC?.medicalHistory || eC?.medicalHistory || '',
-                    photo: (sC?.photo && sC.photo !== '#' && !sC.photo.startsWith('#'))
-                      ? sC.photo
-                      : (eC?.photo || null),
-                  });
-                }
-
-                const sheetOfficials = Array.isArray(sheetRoster.officials) ? sheetRoster.officials : [];
-                const existingOfficials = Array.isArray(existingRoster.officials) ? existingRoster.officials : [];
-                const maxOffLen = Math.max(sheetOfficials.length, existingOfficials.length, 3);
-                const mergedOfficials = [];
-
-                const defaultRoles = [
-                  'Official (Pelatih / Pembina)',
-                  'Pendukung 1 (Medis / Dokum)',
-                  'Pendukung 2 (Medis / Dokum)'
-                ];
-
-                for (let i = 0; i < maxOffLen; i++) {
-                  const sO = sheetOfficials[i];
-                  const eO = existingOfficials[i];
-                  if (!sO && !eO && i >= 3) continue;
-                  mergedOfficials.push({
-                    id: sO?.id || eO?.id || `off-${i + 1}`,
-                    role: sO?.role || eO?.role || defaultRoles[i] || `Pendukung ${i + 1}`,
-                    category: i === 0 ? 'official' : 'pendukung',
-                    name: (sO?.name && sO.name !== '-') ? sO.name : (eO?.name || ''),
-                    phone: sO?.phone || eO?.phone || '',
-                    photo: (sO?.photo && sO.photo !== '#' && !sO.photo.startsWith('#'))
-                      ? sO.photo
-                      : (eO?.photo || null),
-                  });
-                }
-
-                const mergedTeam = {
-                  ...existing,
-                  ...normalizedSheetTeam,
-                };
-
-                ['schoolName', 'schoolBaseName', 'jenjang', 'teamType', 'regCode', 'email', 'waNumber', 'dantonName', 'officialName'].forEach(field => {
-                  if (existing[field] && (!normalizedSheetTeam[field] || normalizedSheetTeam[field] === '')) {
-                    mergedTeam[field] = existing[field];
-                  }
-                });
-
-                const existingTime = existing.updatedAt ? new Date(existing.updatedAt).getTime() : 0;
-                const sheetTime = normalizedSheetTeam.updatedAt ? new Date(normalizedSheetTeam.updatedAt).getTime() : 0;
-
-                if (existingTime > sheetTime && existing.status) {
-                  mergedTeam.status = existing.status;
-                  mergedTeam.paymentStatus = existing.paymentStatus || mergedTeam.paymentStatus;
-                  mergedTeam.revisionNote = existing.revisionNote ?? mergedTeam.revisionNote;
-                } else if (normalizedSheetTeam.status) {
-                  mergedTeam.status = normalizedSheetTeam.status;
-                } else if (existing.status) {
-                  mergedTeam.status = existing.status;
-                }
-
-                if (['registered', 'verified', 'drawn'].includes(mergedTeam.status)) {
-                  mergedTeam.paymentStatus = 'paid';
-                }
-
-                return {
-                  ...mergedTeam,
-                  files: mergedFiles,
-                  roster: {
-                    danton: mergedDanton,
-                    pasukan: mergedPasukan,
-                    cadangan: mergedCadangan,
-                    officials: mergedOfficials,
-                  },
-                  dantonName: mergedDanton.name || normalizedSheetTeam.dantonName || existing.dantonName,
-                };
-              }
-
-              return normalizedSheetTeam;
-            });
-
-            // Keep any very recently registered local teams not yet reflected in sheet fetch
-            const nowMs = Date.now();
-            prev.forEach(t => {
-              if (!nextTeams.some(nt => nt.id === t.id)) {
-                const regMs = t.registeredAt ? new Date(t.registeredAt).getTime() : 0;
-                if (nowMs - regMs < 120000) {
-                  nextTeams.unshift(t);
-                }
-              }
-            });
-
-            return nextTeams;
-          });
-        }
+        setTeams(sheetTeams.map(normalizeTeamData));
       }
-
-      if (allowScoresSync && Array.isArray(sheetScores) && sheetScores.length > 0) {
-        setScores(prev => {
-          const nextScores = { ...prev };
-          sheetScores.forEach(sc => {
-            if (sc.teamId) nextScores[sc.teamId] = sc;
-          });
-          return nextScores;
+      if (allowScoresSync && Array.isArray(sheetScores)) {
+        const nextScores = {};
+        sheetScores.forEach(sc => {
+          if (sc?.teamId) nextScores[sc.teamId] = sc;
         });
+        setScores(nextScores);
       }
-
-      if (Array.isArray(sheetStaging) && sheetStaging.length > 0) {
-        setStaging(prev => {
-          const nextStaging = { ...prev };
-          sheetStaging.forEach(st => {
-            const stId = st.teamId || st.id;
-            if (stId) nextStaging[stId] = st;
-          });
-          return nextStaging;
+      if (Array.isArray(sheetStaging)) {
+        const nextStaging = {};
+        sheetStaging.forEach(st => {
+          const stId = st?.teamId || st?.id;
+          if (stId) nextStaging[stId] = st;
         });
+        setStaging(nextStaging);
       }
-
-      if (Array.isArray(res.data.users) && res.data.users.length > 0) {
+      if (Array.isArray(sheetUsers) && sheetUsers.length > 0) {
         setUsers(prev => {
           const byEmail = new Map();
           INITIAL_USERS.forEach(u => {
             if (u.email) byEmail.set(u.email.toLowerCase(), u);
           });
           prev.forEach(u => {
-            if (u.email) byEmail.set(u.email.toLowerCase(), u);
+            if (u.email && u.role === 'peserta') byEmail.set(u.email.toLowerCase(), u);
           });
-          res.data.users.forEach(u => {
+          sheetUsers.forEach(u => {
             if (u && u.email) byEmail.set(String(u.email).toLowerCase(), u);
           });
           return Array.from(byEmail.values());
         });
       }
-
-      if (Array.isArray(sheetSettings) && sheetSettings.length > 0) {
+      if (Array.isArray(sheetSettings) && sheetSettings.length > 0 && sheetSettings[0]) {
         const remoteSettings = sheetSettings[0];
-        if (remoteSettings) {
-          setSettings(prev => ({ ...prev, ...remoteSettings }));
+        setSettings({
+          ...INITIAL_SETTINGS,
+          ...remoteSettings,
+          eventDates: {
+            ...INITIAL_SETTINGS.eventDates,
+            ...(remoteSettings.eventDates || {}),
+          },
+          juknisPenilaianPublished: Boolean(remoteSettings.juknisPenilaianPublished && remoteSettings.juknisPenilaianRatifiedAt),
+          juknisPenilaianRatifiedAt: remoteSettings.juknisPenilaianRatifiedAt || null,
+          basecampPublished: Boolean(remoteSettings.basecampPublished && remoteSettings.basecampRatifiedAt),
+          basecampRatifiedAt: remoteSettings.basecampRatifiedAt || null,
+        });
+      }
+      setLastSyncedAt(new Date().toISOString());
+      setCloudSyncStatus('synced');
+      return;
+    }
+
+    if (Array.isArray(sheetTeams)) {
+      if (sheetTeams.length === 0) {
+        setTeams([]);
+      } else {
+        setTeams(prev => {
+          const prevMap = new Map();
+          prev.forEach(t => prevMap.set(t.id, normalizeTeamData(t)));
+
+          const nextTeams = sheetTeams.map(rawSheetTeam => {
+            const normalizedSheetTeam = normalizeTeamData(rawSheetTeam);
+            const existing = prevMap.get(normalizedSheetTeam.id);
+
+            if (existing) {
+              const mergedFiles = {
+                ...existing.files,
+                ...normalizedSheetTeam.files,
+              };
+              Object.keys(existing.files || {}).forEach(k => {
+                if (existing.files[k]?.url && (!mergedFiles[k]?.url || mergedFiles[k]?.url === '#')) {
+                  mergedFiles[k] = existing.files[k];
+                }
+              });
+
+              const existingRoster = existing.roster || {};
+              const sheetRoster = normalizedSheetTeam.roster || {};
+
+              const mergedDanton = {
+                ...existingRoster.danton,
+                ...sheetRoster.danton,
+                name: (sheetRoster.danton?.name && sheetRoster.danton.name !== '-' && sheetRoster.danton.name !== 'Anggota Pratama')
+                  ? sheetRoster.danton.name
+                  : (existingRoster.danton?.name || existing.dantonName || normalizedSheetTeam.dantonName || '-'),
+                photo: (sheetRoster.danton?.photo && sheetRoster.danton.photo !== '#' && !sheetRoster.danton.photo.startsWith('#'))
+                  ? sheetRoster.danton.photo
+                  : (existingRoster.danton?.photo || null),
+              };
+
+              const sheetPasukan = Array.isArray(sheetRoster.pasukan) ? sheetRoster.pasukan : [];
+              const existingPasukan = Array.isArray(existingRoster.pasukan) ? existingRoster.pasukan : [];
+              const maxPasukanLen = Math.max(sheetPasukan.length, existingPasukan.length, 21);
+              const mergedPasukan = [];
+
+              for (let i = 0; i < maxPasukanLen; i++) {
+                const sP = sheetPasukan[i];
+                const eP = existingPasukan[i];
+                if (!sP && !eP) continue;
+
+                const pId = sP?.id || eP?.id || `p-${i + 1}`;
+                const safNumber = sP?.safNumber || eP?.safNumber || Math.ceil((i + 1) / 7);
+                const banjarNumber = sP?.banjarNumber || eP?.banjarNumber || (((i) % 7) + 1);
+
+                mergedPasukan.push({
+                  id: pId,
+                  role: 'pasukan',
+                  safNumber,
+                  banjarNumber,
+                  name: (sP?.name && sP.name !== '-') ? sP.name : (eP?.name || ''),
+                  nisn: (sP?.nisn && sP.nisn !== '-') ? sP.nisn : (eP?.nisn || ''),
+                  class: (sP?.class && sP.class !== '-') ? sP.class : (eP?.class || ''),
+                  birthPlace: sP?.birthPlace || eP?.birthPlace || '',
+                  birthDate: sP?.birthDate || eP?.birthDate || '',
+                  medicalHistory: sP?.medicalHistory || eP?.medicalHistory || '',
+                  photo: (sP?.photo && sP.photo !== '#' && !sP.photo.startsWith('#'))
+                    ? sP.photo
+                    : (eP?.photo || null),
+                });
+              }
+
+              const sheetCadangan = Array.isArray(sheetRoster.cadangan) ? sheetRoster.cadangan : [];
+              const existingCadangan = Array.isArray(existingRoster.cadangan) ? existingRoster.cadangan : [];
+              const maxCadLen = Math.max(sheetCadangan.length, existingCadangan.length, 3);
+              const mergedCadangan = [];
+
+              for (let i = 0; i < maxCadLen; i++) {
+                const sC = sheetCadangan[i];
+                const eC = existingCadangan[i];
+                if (!sC && !eC) continue;
+                mergedCadangan.push({
+                  id: sC?.id || eC?.id || `c-${i + 1}`,
+                  role: 'cadangan',
+                  name: (sC?.name && sC.name !== '-') ? sC.name : (eC?.name || ''),
+                  nisn: (sC?.nisn && sC.nisn !== '-') ? sC.nisn : (eC?.nisn || ''),
+                  class: (sC?.class && sC.class !== '-') ? sC.class : (eC?.class || ''),
+                  birthPlace: sC?.birthPlace || eC?.birthPlace || '',
+                  birthDate: sC?.birthDate || eC?.birthDate || '',
+                  medicalHistory: sC?.medicalHistory || eC?.medicalHistory || '',
+                  photo: (sC?.photo && sC.photo !== '#' && !sC.photo.startsWith('#'))
+                    ? sC.photo
+                    : (eC?.photo || null),
+                });
+              }
+
+              const sheetOfficials = Array.isArray(sheetRoster.officials) ? sheetRoster.officials : [];
+              const existingOfficials = Array.isArray(existingRoster.officials) ? existingRoster.officials : [];
+              const maxOffLen = Math.max(sheetOfficials.length, existingOfficials.length, 3);
+              const mergedOfficials = [];
+
+              const defaultRoles = [
+                'Official (Pelatih / Pembina)',
+                'Pendukung 1 (Medis / Dokum)',
+                'Pendukung 2 (Medis / Dokum)'
+              ];
+
+              for (let i = 0; i < maxOffLen; i++) {
+                const sO = sheetOfficials[i];
+                const eO = existingOfficials[i];
+                if (!sO && !eO && i >= 3) continue;
+                mergedOfficials.push({
+                  id: sO?.id || eO?.id || `off-${i + 1}`,
+                  role: sO?.role || eO?.role || defaultRoles[i] || `Pendukung ${i + 1}`,
+                  category: i === 0 ? 'official' : 'pendukung',
+                  name: (sO?.name && sO.name !== '-') ? sO.name : (eO?.name || ''),
+                  phone: sO?.phone || eO?.phone || '',
+                  photo: (sO?.photo && sO.photo !== '#' && !sO.photo.startsWith('#'))
+                    ? sO.photo
+                    : (eO?.photo || null),
+                });
+              }
+
+              const mergedTeam = {
+                ...existing,
+                ...normalizedSheetTeam,
+              };
+
+              ['schoolName', 'schoolBaseName', 'jenjang', 'teamType', 'regCode', 'email', 'waNumber', 'dantonName', 'officialName'].forEach(field => {
+                if (existing[field] && (!normalizedSheetTeam[field] || normalizedSheetTeam[field] === '')) {
+                  mergedTeam[field] = existing[field];
+                }
+              });
+
+              const existingTime = existing.updatedAt ? new Date(existing.updatedAt).getTime() : 0;
+              const sheetTime = normalizedSheetTeam.updatedAt ? new Date(normalizedSheetTeam.updatedAt).getTime() : 0;
+
+              if (existingTime > sheetTime && existing.status) {
+                mergedTeam.status = existing.status;
+                mergedTeam.paymentStatus = existing.paymentStatus || mergedTeam.paymentStatus;
+                mergedTeam.revisionNote = existing.revisionNote ?? mergedTeam.revisionNote;
+              } else if (normalizedSheetTeam.status) {
+                mergedTeam.status = normalizedSheetTeam.status;
+              } else if (existing.status) {
+                mergedTeam.status = existing.status;
+              }
+
+              if (['registered', 'verified', 'drawn'].includes(mergedTeam.status)) {
+                mergedTeam.paymentStatus = 'paid';
+              }
+
+              return {
+                ...mergedTeam,
+                files: mergedFiles,
+                roster: {
+                  danton: mergedDanton,
+                  pasukan: mergedPasukan,
+                  cadangan: mergedCadangan,
+                  officials: mergedOfficials,
+                },
+                dantonName: mergedDanton.name || normalizedSheetTeam.dantonName || existing.dantonName,
+              };
+            }
+
+            return normalizedSheetTeam;
+          });
+
+          // Keep any very recently registered local teams not yet reflected in sheet fetch (< 2 min)
+          const nowMs = Date.now();
+          prev.forEach(t => {
+            if (!nextTeams.some(nt => nt.id === t.id)) {
+              const regMs = t.registeredAt ? new Date(t.registeredAt).getTime() : 0;
+              if (nowMs - regMs < 120000) {
+                nextTeams.unshift(t);
+              }
+            }
+          });
+
+          return nextTeams;
+        });
+      }
+    }
+
+    if (allowScoresSync && Array.isArray(sheetScores)) {
+      const nextScores = {};
+      sheetScores.forEach(sc => {
+        if (sc?.teamId) nextScores[sc.teamId] = sc;
+      });
+      setScores(nextScores);
+    }
+
+    if (Array.isArray(sheetStaging)) {
+      const nextStaging = {};
+      sheetStaging.forEach(st => {
+        const stId = st?.teamId || st?.id;
+        if (stId) nextStaging[stId] = st;
+      });
+      setStaging(nextStaging);
+    }
+
+    if (Array.isArray(sheetUsers) && sheetUsers.length > 0) {
+      setUsers(prev => {
+        const byEmail = new Map();
+        INITIAL_USERS.forEach(u => {
+          if (u.email) byEmail.set(u.email.toLowerCase(), u);
+        });
+        prev.forEach(u => {
+          if (u.email && u.role === 'peserta') byEmail.set(u.email.toLowerCase(), u);
+        });
+        sheetUsers.forEach(u => {
+          if (u && u.email) byEmail.set(String(u.email).toLowerCase(), u);
+        });
+        return Array.from(byEmail.values());
+      });
+    }
+
+    if (Array.isArray(sheetSettings) && sheetSettings.length > 0) {
+      const remoteSettings = sheetSettings[0];
+      if (remoteSettings) {
+        setSettings(prev => ({
+          ...INITIAL_SETTINGS,
+          ...prev,
+          ...remoteSettings,
+          eventDates: {
+            ...INITIAL_SETTINGS.eventDates,
+            ...(prev?.eventDates || {}),
+            ...(remoteSettings.eventDates || {}),
+          },
+          juknisPenilaianPublished: Boolean(remoteSettings.juknisPenilaianPublished && remoteSettings.juknisPenilaianRatifiedAt),
+          juknisPenilaianRatifiedAt: remoteSettings.juknisPenilaianRatifiedAt || null,
+          basecampPublished: Boolean(remoteSettings.basecampPublished && remoteSettings.basecampRatifiedAt),
+          basecampRatifiedAt: remoteSettings.basecampRatifiedAt || null,
+        }));
+      }
+    }
+
+    setLastSyncedAt(new Date().toISOString());
+    setCloudSyncStatus('synced');
+  }, []);
+
+  // Initial, Role-Based, Periodic & Visibility/Focus Real-Time Cloud Sync
+  useEffect(() => {
+    if (!isGoogleSheetConfigured()) return;
+
+    const isStaffOrJury = ['admin', 'juri', 'superadmin', 'penginput', 'verifikator', 'finalisator'].includes(role);
+    const allowScoresSync = isStaffOrJury || Boolean(settings.announcementPublished);
+
+    let isMounted = true;
+
+    const executeSync = async (isInitial = false) => {
+      // Di localhost (Mode Sandbox): kloning data asli sekali saat mount (atau saat naik akses ke staff/juri),
+      // agar simulasi/edit yang sedang dilakukan di localhost tidak tertimpa ulang oleh background polling.
+      if (isLocalhostEnvironment() && localhostSyncedModeRef.current.done) {
+        if (!allowScoresSync || localhostSyncedModeRef.current.withScores) {
+          return;
         }
       }
-    }).catch(err => {
-      console.warn('[CompetitionContext] Sync sheet on load failed:', err);
-    });
+
+      const now = Date.now();
+      if (!isInitial && now - lastCloudFetchMsRef.current < 5000) {
+        return;
+      }
+      lastCloudFetchMsRef.current = now;
+
+      if (isMounted) setCloudSyncStatus('syncing');
+      try {
+        const res = await fetchAllDataFromSheet(allowScoresSync);
+        if (!isMounted) return;
+        if (res && res.success && res.data) {
+          applyCloudSnapshot(res, allowScoresSync, isLocalhostEnvironment());
+        } else {
+          setCloudSyncStatus('error');
+        }
+      } catch (err) {
+        if (isMounted) setCloudSyncStatus('error');
+        console.warn('[CompetitionContext] Cloud sync failed:', err);
+      }
+    };
+
+    // 1. Sync segera saat mount atau perubahan role/status publikasi
+    executeSync(true);
+
+    // 2. Real-time Periodic Polling (setiap 25 detik saat tab aktif di produksi)
+    const pollInterval = setInterval(() => {
+      if (typeof document !== 'undefined' && document.visibilityState !== 'visible') return;
+      if (isLocalhostEnvironment()) return;
+      executeSync(false);
+    }, 25000);
+
+    // 3. Sinkronisasi instan saat pengguna berpindah perangkat / kembali ke tab browser (Focus & Visibility)
+    const handleVisibilityOrFocus = () => {
+      if (typeof document !== 'undefined' && document.visibilityState !== 'visible') return;
+      if (isLocalhostEnvironment()) return;
+      executeSync(false);
+    };
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('focus', handleVisibilityOrFocus);
+      document.addEventListener('visibilitychange', handleVisibilityOrFocus);
+    }
 
     return () => {
       isMounted = false;
+      clearInterval(pollInterval);
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('focus', handleVisibilityOrFocus);
+        document.removeEventListener('visibilitychange', handleVisibilityOrFocus);
+      }
     };
-  }, [role, settings.announcementPublished]);
+  }, [role, settings.announcementPublished, applyCloudSnapshot]);
 
   function navigateTo(targetView, data = null) {
     setPreviousView(activeView);
@@ -945,12 +1005,8 @@ export function CompetitionProvider({ children }) {
           }
           if (sheetRes.data?.teams && Array.isArray(sheetRes.data.teams)) {
             const freshTeams = sheetRes.data.teams.map(normalizeTeamData);
-            setTeams(prev => {
-              const map = new Map();
-              prev.forEach(t => map.set(t.id, t));
-              freshTeams.forEach(ft => map.set(ft.id, ft));
-              return Array.from(map.values());
-            });
+            const isStaffOrJury = STAFF_ROLES.includes(role);
+            applyCloudSnapshot(sheetRes, isStaffOrJury || Boolean(settings.announcementPublished), isLocalhostEnvironment());
             currentTeamsList = freshTeams;
             matchedTeam = freshTeams.find(t => t.email && (t.email.toLowerCase() === cleanEmail || normalizeGmail(t.email) === normEmail)) || matchedTeam;
           }
@@ -1711,6 +1767,8 @@ export function CompetitionProvider({ children }) {
     } else if (modalName === 'docViewer') {
       setDocViewerData(data);
       navigateTo('document_viewer', data);
+    } else if (modalName === 'auth') {
+      openAuthModal(data?.tab || 'login');
     } else {
       setActiveModal(modalName);
     }
@@ -1838,6 +1896,7 @@ export function CompetitionProvider({ children }) {
 
       staging,
       updateTeamStaging,
+      bulkUpdateTeamStaging,
       checkInBasecamp,
       checkOutBasecamp,
       updateDP1PersonnelInspection,
@@ -1861,6 +1920,8 @@ export function CompetitionProvider({ children }) {
       exportTeamsCSV,
 
       isGoogleSheetConfigured: isGoogleSheetConfigured(),
+      cloudSyncStatus,
+      lastSyncedAt,
       pingSheetDatabase,
       syncAllToGoogleSheet: async () => {
         if (isLocalhostEnvironment()) {
@@ -1871,6 +1932,7 @@ export function CompetitionProvider({ children }) {
             message: 'Mode Sandbox Localhost: Pengiriman data ke Google Sheet diblokir agar data asli tetap aman.'
           };
         }
+        setCloudSyncStatus('syncing');
         const results = {};
         if (teams.length > 0) {
           results.teams = await bulkSyncToSheet('teams', teams);
@@ -1888,195 +1950,22 @@ export function CompetitionProvider({ children }) {
           results.users = await bulkSyncToSheet('users', staffUsers);
         }
         results.settings = await saveRecordToSheet('settings', { id: 'competition_settings', ...settings });
+        setLastSyncedAt(new Date().toISOString());
+        setCloudSyncStatus('synced');
         return results;
       },
       pullFromGoogleSheet: async () => {
         const isStaffOrJury = ['admin', 'juri', 'superadmin', 'penginput', 'verifikator', 'finalisator'].includes(role);
         const allowScoresSync = isStaffOrJury || Boolean(settings.announcementPublished);
+        setCloudSyncStatus('syncing');
         const res = await fetchAllDataFromSheet(allowScoresSync);
         if (res && res.success && res.data) {
-          const { teams: sheetTeams, scores: sheetScores, settings: sheetSettings, staging: sheetStaging, users: sheetUsers } = res.data;
-
-          // Di localhost (Mode Sandbox): ganti bersih seluruh data lokal dengan kloningan terbaru dari Google Sheet
+          applyCloudSnapshot(res, allowScoresSync, isLocalhostEnvironment());
           if (isLocalhostEnvironment()) {
-            localhostSyncedModeRef.current = { done: true, withScores: allowScoresSync };
-            if (Array.isArray(sheetTeams)) {
-              setTeams(sheetTeams.map(normalizeTeamData));
-            }
-            if (allowScoresSync && Array.isArray(sheetScores)) {
-              const nextScores = {};
-              sheetScores.forEach(sc => {
-                if (sc?.teamId) nextScores[sc.teamId] = sc;
-              });
-              setScores(nextScores);
-            }
-            if (Array.isArray(sheetStaging)) {
-              const nextStaging = {};
-              sheetStaging.forEach(st => {
-                const stId = st?.teamId || st?.id;
-                if (stId) nextStaging[stId] = st;
-              });
-              setStaging(nextStaging);
-            }
-            if (Array.isArray(sheetUsers) && sheetUsers.length > 0) {
-              setUsers(prev => {
-                const byEmail = new Map();
-                INITIAL_USERS.forEach(u => {
-                  if (u.email) byEmail.set(u.email.toLowerCase(), u);
-                });
-                prev.forEach(u => {
-                  if (u.email) byEmail.set(u.email.toLowerCase(), u);
-                });
-                sheetUsers.forEach(u => {
-                  if (u && u.email) byEmail.set(String(u.email).toLowerCase(), u);
-                });
-                return Array.from(byEmail.values());
-              });
-            }
-            if (Array.isArray(sheetSettings) && sheetSettings[0]) {
-              const remoteSettings = sheetSettings[0];
-              setSettings({
-                ...INITIAL_SETTINGS,
-                ...remoteSettings,
-                eventDates: {
-                  ...(remoteSettings.eventDates || {}),
-                  ...INITIAL_SETTINGS.eventDates,
-                },
-                juknisPenilaianPublished: Boolean(remoteSettings.juknisPenilaianPublished && remoteSettings.juknisPenilaianRatifiedAt),
-                juknisPenilaianRatifiedAt: remoteSettings.juknisPenilaianRatifiedAt || null,
-                basecampPublished: Boolean(remoteSettings.basecampPublished && remoteSettings.basecampRatifiedAt),
-                basecampRatifiedAt: remoteSettings.basecampRatifiedAt || null,
-              });
-            }
             return { ...res, sandboxClone: true };
           }
-
-          if (Array.isArray(sheetTeams)) {
-            if (sheetTeams.length === 0) {
-              setTeams([]);
-            } else {
-              setTeams(prev => {
-                const prevMap = new Map();
-                prev.forEach(t => prevMap.set(t.id, normalizeTeamData(t)));
-
-                const mergedTeams = sheetTeams.map(rawSheetTeam => {
-                  const normalized = normalizeTeamData(rawSheetTeam);
-                  const existing = prevMap.get(normalized.id);
-                  if (!existing) return normalized;
-
-                  // Merge files: prioritize non-empty valid files
-                  const mergedFiles = { ...existing.files, ...normalized.files };
-                  Object.keys(existing.files || {}).forEach(k => {
-                    if (existing.files[k]?.url && (!mergedFiles[k]?.url || mergedFiles[k]?.url === '#')) {
-                      mergedFiles[k] = existing.files[k];
-                    }
-                  });
-
-                  // Merge roster
-                  const existingRoster = existing.roster || {};
-                  const sheetRoster = normalized.roster || {};
-                  const mergedDanton = {
-                    ...existingRoster.danton,
-                    ...sheetRoster.danton,
-                    name: (sheetRoster.danton?.name && sheetRoster.danton.name !== '-' && sheetRoster.danton.name !== 'Anggota Pratama')
-                      ? sheetRoster.danton.name
-                      : (existingRoster.danton?.name || existing.dantonName || normalized.dantonName || '-'),
-                    photo: (sheetRoster.danton?.photo && sheetRoster.danton.photo !== '#' && !sheetRoster.danton.photo.startsWith('#'))
-                      ? sheetRoster.danton.photo
-                      : (existingRoster.danton?.photo || null),
-                  };
-
-                  const mergedTeam = {
-                    ...existing,
-                    ...normalized,
-                    files: mergedFiles,
-                    roster: {
-                      ...existingRoster,
-                      ...sheetRoster,
-                      danton: mergedDanton,
-                      pasukan: (Array.isArray(sheetRoster.pasukan) && sheetRoster.pasukan.length > 0) ? sheetRoster.pasukan : (existingRoster.pasukan || []),
-                      cadangan: (Array.isArray(sheetRoster.cadangan) && sheetRoster.cadangan.length > 0) ? sheetRoster.cadangan : (existingRoster.cadangan || []),
-                      officials: (Array.isArray(sheetRoster.officials) && sheetRoster.officials.length > 0) ? sheetRoster.officials : (existingRoster.officials || []),
-                    },
-                  };
-
-                  // Preserve non-empty fields if sheet returned empty
-                  ['schoolName', 'schoolBaseName', 'jenjang', 'teamType', 'regCode', 'email', 'waNumber', 'dantonName', 'officialName'].forEach(field => {
-                    if (existing[field] && (!normalized[field] || normalized[field] === '')) {
-                      mergedTeam[field] = existing[field];
-                    }
-                  });
-
-                  // Smart status resolution based on updatedAt timestamp
-                  const existingTime = existing.updatedAt ? new Date(existing.updatedAt).getTime() : 0;
-                  const sheetTime = normalized.updatedAt ? new Date(normalized.updatedAt).getTime() : 0;
-                  if (existingTime > sheetTime && existing.status) {
-                    mergedTeam.status = existing.status;
-                    mergedTeam.paymentStatus = existing.paymentStatus || mergedTeam.paymentStatus;
-                    mergedTeam.revisionNote = existing.revisionNote ?? mergedTeam.revisionNote;
-                  } else if (normalized.status) {
-                    mergedTeam.status = normalized.status;
-                  } else if (existing.status) {
-                    mergedTeam.status = existing.status;
-                  }
-
-                  if (['registered', 'verified', 'drawn'].includes(mergedTeam.status)) {
-                    mergedTeam.paymentStatus = 'paid';
-                  }
-
-                  return mergedTeam;
-                });
-
-                // Keep any local teams that were very recently registered
-                const nowMs = Date.now();
-                prev.forEach(t => {
-                  if (!mergedTeams.some(mt => mt.id === t.id)) {
-                    const regMs = t.registeredAt ? new Date(t.registeredAt).getTime() : 0;
-                    if (nowMs - regMs < 120000) {
-                      mergedTeams.unshift(t);
-                    }
-                  }
-                });
-
-                return mergedTeams;
-              });
-            }
-          }
-          if (allowScoresSync && Array.isArray(sheetScores) && sheetScores.length > 0) {
-            const nextScores = {};
-            sheetScores.forEach(sc => {
-              if (sc.teamId) nextScores[sc.teamId] = sc;
-            });
-            setScores(nextScores);
-          }
-          if (Array.isArray(sheetStaging) && sheetStaging.length > 0) {
-            setStaging(prev => {
-              const nextStaging = { ...prev };
-              sheetStaging.forEach(st => {
-                const stId = st.teamId || st.id;
-                if (stId) nextStaging[stId] = st;
-              });
-              return nextStaging;
-            });
-          }
-          if (Array.isArray(sheetUsers) && sheetUsers.length > 0) {
-            setUsers(prev => {
-              const byEmail = new Map();
-              INITIAL_USERS.forEach(u => {
-                if (u.email) byEmail.set(u.email.toLowerCase(), u);
-              });
-              prev.forEach(u => {
-                if (u.email) byEmail.set(u.email.toLowerCase(), u);
-              });
-              sheetUsers.forEach(u => {
-                if (u && u.email) byEmail.set(String(u.email).toLowerCase(), u);
-              });
-              return Array.from(byEmail.values());
-            });
-          }
-          if (Array.isArray(sheetSettings) && sheetSettings[0]) {
-            setSettings(prev => ({ ...prev, ...sheetSettings[0] }));
-          }
+        } else {
+          setCloudSyncStatus('error');
         }
         return res;
       },
@@ -2122,6 +2011,9 @@ export function CompetitionProvider({ children }) {
       isLocalhost,
       isRegistrationStarted,
       canAccessRegistration,
+      cloudSyncStatus,
+      lastSyncedAt,
+      applyCloudSnapshot,
     ]
   );
 

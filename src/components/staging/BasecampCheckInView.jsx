@@ -33,6 +33,7 @@ export default function BasecampCheckInView({ initialTab = 'checkin' }) {
     settings,
     updateSettings,
     updateTeamStaging,
+    bulkUpdateTeamStaging,
     checkInBasecamp,
     checkOutBasecamp,
     currentUser,
@@ -560,22 +561,33 @@ export default function BasecampCheckInView({ initialTab = 'checkin' }) {
       });
     });
 
-    // Simpan semua hasil plot ke staging
+    // Simpan semua hasil plot ke staging & cloud database dalam 1 transaksi bulk
+    const batchUpdates = [];
     assignedMap.forEach((room, teamId) => {
       const existing = getTeamStaging(teamId);
       const currentStage = existing?.stage || 'waiting';
-      updateTeamStaging(teamId, currentStage, {
-        roomName: room.code,
-        basecampRoom: room.code,
-        room: room.code,
-        basecamp: {
-          ...(existing?.basecamp || {}),
+      batchUpdates.push({
+        teamId,
+        newStage: currentStage,
+        updates: {
           roomName: room.code,
-          roomLabel: room.name,
-          floor: room.floor,
+          basecampRoom: room.code,
+          room: room.code,
+          basecamp: {
+            ...(existing?.basecamp || {}),
+            roomName: room.code,
+            roomLabel: room.name,
+            floor: room.floor,
+          },
         },
       });
     });
+
+    if (typeof bulkUpdateTeamStaging === 'function') {
+      bulkUpdateTeamStaging(batchUpdates);
+    } else {
+      batchUpdates.forEach(({ teamId, newStage, updates }) => updateTeamStaging(teamId, newStage, updates));
+    }
 
     showToast(`Auto-Plot selesai! ${assignedMap.size} peleton ditempatkan (1 sekolah = 1 basecamp, SD lantai bawah, urut No. Dada).`);
   };
@@ -590,21 +602,30 @@ export default function BasecampCheckInView({ initialTab = 'checkin' }) {
       { title: 'Reset Penempatan Ruang', confirmText: 'Kosongkan Semua', variant: 'danger' }
     );
     if (!ok) return;
-    assignedList.forEach(team => {
+    const batchReset = assignedList.map(team => {
       const existing = getTeamStaging(team.id);
       const currentStage = existing?.stage || 'waiting';
-      updateTeamStaging(team.id, currentStage, {
-        roomName: '',
-        basecampRoom: '',
-        room: '',
-        basecamp: {
-          ...(existing?.basecamp || {}),
+      return {
+        teamId: team.id,
+        newStage: currentStage,
+        updates: {
           roomName: '',
-          roomLabel: '',
-          floor: null,
+          basecampRoom: '',
+          room: '',
+          basecamp: {
+            ...(existing?.basecamp || {}),
+            roomName: '',
+            roomLabel: '',
+            floor: null,
+          },
         },
-      });
+      };
     });
+    if (typeof bulkUpdateTeamStaging === 'function') {
+      bulkUpdateTeamStaging(batchReset);
+    } else {
+      batchReset.forEach(({ teamId, newStage, updates }) => updateTeamStaging(teamId, newStage, updates));
+    }
     showToast(`Seluruh penempatan ruang basecamp (${assignedList.length} peleton) telah dikosongkan.`);
   };
 

@@ -8,14 +8,21 @@ import {
   ShieldAlert,
   Building2,
   Layers,
-  Sparkles
+  Sparkles,
+  Clock
 } from 'lucide-react';
 import { VENUE } from '../config.js';
+import { useCompetition } from '../context/CompetitionContext.jsx';
 import InteractiveBasecampMap from './staging/components/InteractiveBasecampMap.jsx';
 
 export default function DenahSection() {
   const [activeTab, setActiveTab] = useState('outdoor'); // 'outdoor' (Peta Kampus) | 'basecamp' (Denah Basecamp)
   const [isZoomOpen, setIsZoomOpen] = useState(false);
+
+  const { teams, staging, settings, currentUser, role, isLocalhost } = useCompetition?.() || {};
+  const userRole = currentUser?.role || role || 'publik';
+  const isStaff = ['admin', 'superadmin', 'checkin', 'dp', 'staging', 'panitia'].includes(userRole);
+  const isBasecampRatified = Boolean((settings?.basecampPublished && settings?.basecampRatifiedAt) || isLocalhost || isStaff);
 
   return (
     <section id="denah" className="py-16 sm:py-24 lg:py-32 bg-white relative overflow-hidden text-slate-800 font-sans border-t border-slate-200">
@@ -69,10 +76,40 @@ export default function DenahSection() {
           </div>
         </div>
 
-        {/* Tab Content: Basecamp Interaktif */}
+        {/* Tab Content: Basecamp Interaktif (Tersinkronisasi dengan Cloud Database) */}
         {activeTab === 'basecamp' && (
           <div className="max-w-6xl mx-auto animate-in fade-in duration-300">
-            <InteractiveBasecampMap isPublicView={true} />
+            {isBasecampRatified ? (
+              <InteractiveBasecampMap
+                teams={teams || []}
+                staging={staging || {}}
+                isPublicView={true}
+              />
+            ) : (
+              <div className="rounded-3xl border border-amber-200 bg-amber-50/60 p-8 sm:p-10 text-center space-y-4 shadow-sm">
+                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-100 text-amber-700 border border-amber-200">
+                  <Clock className="w-7 h-7 text-amber-600" />
+                </div>
+                <div className="max-w-lg mx-auto space-y-1.5">
+                  <h3 className="text-lg sm:text-xl font-black text-slate-900 tracking-tight uppercase">
+                    Alokasi Ruang Basecamp Sedang Difinalisasi
+                  </h3>
+                  <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                    Pembagian ruang transit kontingen gedung 4 lantai akan ditayangkan secara resmi setelah pelaksanaan Uji Coba Lapangan (UCL) dan disahkan oleh Panitia.
+                  </p>
+                </div>
+                <div className="pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('outdoor')}
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition shadow-sm cursor-pointer active:scale-95"
+                  >
+                    <Map className="w-4 h-4 text-amber-400" />
+                    <span>Lihat Peta Kawasan &amp; Arena Lomba</span>
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
