@@ -24,7 +24,6 @@ import AppDialogHost from './components/common/AppDialogHost.jsx';
 const RegistrationWizard = React.lazy(() => import('./components/portal/RegistrationWizard.jsx'));
 const RegistrationStatusModal = React.lazy(() => import('./components/portal/RegistrationStatusModal.jsx'));
 const ParticipantQRStatusView = React.lazy(() => import('./components/portal/ParticipantQRStatusView.jsx'));
-const DocumentViewerModal = React.lazy(() => import('./components/documents/DocumentViewerModal.jsx'));
 const AuthModal = React.lazy(() => import('./components/auth/AuthModal.jsx'));
 // Portals & Backoffice Dashboards (Lazy loaded on demand)
 const ParticipantDashboard = React.lazy(() => import('./components/portal/ParticipantDashboard.jsx'));
@@ -161,7 +160,6 @@ function MainApp() {
         <React.Suspense fallback={<ViewLoader />}>
           {activeView === 'register' && <RegistrationWizard />}
           {activeView === 'status_check' && <RegistrationStatusModal />}
-          {activeView === 'document_viewer' && <DocumentViewerModal />}
           {activeView === 'auth' && <AuthModal />}
           {activeView === 'peserta_dashboard' && <ParticipantDashboard />}
         {activeView === 'admin' && <AdminDashboard />}

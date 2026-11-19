@@ -24,6 +24,7 @@ import { formatImageUrl, getFallbackImageUrl } from '../../../../services/sheetS
 import { extractLogoTheme } from '../../../../utils/extractLogoColor.js';
 import { useCompetition } from '../../../../context/CompetitionContext.jsx';
 import { generateParticipantQRCode, downloadDataUrl, OFFICIAL_BASE_URL } from '../../../../utils/qrGenerator.js';
+import RankMedal from '../../../common/RankMedal.jsx';
 
 export default function TeamProfileHeader({
   currentTeam: propCurrentTeam,
@@ -38,6 +39,54 @@ export default function TeamProfileHeader({
   const compCtx = useCompetition?.() || {};
   const currentTeam = propCurrentTeam || compCtx.currentTeam;
   const activeUpdateTeamProfile = updateTeamProfile || compCtx.updateTeamProfile;
+  const allTeams = compCtx.teams || [];
+  const allScores = compCtx.scores || {};
+  const isAnnouncementPublished = Boolean(compCtx.settings?.announcementPublished);
+
+  // Hitung medali resmi tim saat pengumuman juara sudah dipublikasikan
+  const publishedMedals = React.useMemo(() => {
+    if (!isAnnouncementPublished || !currentTeam?.id || !allScores[currentTeam.id]) return [];
+    const sameJenjang = allTeams
+      .filter(t => t.jenjang === currentTeam.jenjang && allScores[t.id])
+      .map(t => {
+        const sc = allScores[t.id] || {};
+        const juries = sc.juries || {};
+        const murniPeleton = Number(
+          sc.nilaiMurniPeleton ??
+          ((Number(juries.pos1?.peletonTotal ?? 0) + Number(juries.pos2?.peletonTotal ?? 0) + Number(juries.pos3?.peletonTotal ?? 0)) || Number(sc.pbb?.total ?? 0))
+        );
+        const penPeleton = Number(sc.penalties?.peletonPenalty ?? sc.penalties?.totalPenalty ?? 0);
+        const akhirPeleton = Number(sc.nilaiAkhirPeleton ?? Math.max(0, murniPeleton - penPeleton));
+
+        const murniDanton = Number(
+          sc.nilaiMurniDanton ??
+          ((Number(juries.pos1?.dantonTotal ?? 0) + Number(juries.pos2?.dantonTotal ?? 0) + Number(juries.pos3?.dantonTotal ?? 0)) || Number(sc.danton?.total ?? 0))
+        );
+        const penDanton = Number(sc.penalties?.dantonPenalty ?? 0);
+        const akhirDanton = Number(sc.nilaiAkhirDanton ?? Math.max(0, murniDanton - penDanton));
+
+        return { id: t.id, akhirPeleton, murniPeleton, penPeleton, akhirDanton, murniDanton, penDanton };
+      });
+
+    const awards = [];
+    const peletonRank = [...sameJenjang]
+      .sort((a, b) => (b.akhirPeleton - a.akhirPeleton) || (b.murniPeleton - a.murniPeleton) || (a.penPeleton - b.penPeleton) || (b.murniDanton - a.murniDanton))
+      .findIndex(x => x.id === currentTeam.id) + 1;
+    if (peletonRank >= 1 && peletonRank <= 3) {
+      awards.push({ rank: peletonRank, label: `Juara ${peletonRank} Peleton` });
+    } else if (peletonRank >= 4 && peletonRank <= 6) {
+      awards.push({ rank: peletonRank, label: `Harapan ${peletonRank - 3} Peleton` });
+    }
+
+    const dantonRank = [...sameJenjang]
+      .sort((a, b) => (b.akhirDanton - a.akhirDanton) || (b.murniDanton - a.murniDanton) || (a.penDanton - b.penDanton))
+      .findIndex(x => x.id === currentTeam.id) + 1;
+    if (dantonRank >= 1 && dantonRank <= 3) {
+      awards.push({ rank: dantonRank, label: `Danton Terbaik ${dantonRank}` });
+    }
+
+    return awards;
+  }, [isAnnouncementPublished, currentTeam?.id, currentTeam?.jenjang, allTeams, allScores]);
 
   const [internalLogoLoadFailed, setInternalLogoLoadFailed] = useState(false);
   const logoLoadFailed = propLogoLoadFailed !== undefined ? propLogoLoadFailed : internalLogoLoadFailed;
@@ -292,6 +341,15 @@ export default function TeamProfileHeader({
                   <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shrink-0" />
                   <span>{locationText}</span>
                 </span>
+                {publishedMedals.map((m, idx) => (
+                  <span
+                    key={idx}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-amber-200 bg-amber-50/90 pl-1 pr-2.5 py-0.5 text-[9.5px] font-black uppercase tracking-[0.06em] text-amber-900 shadow-2xs"
+                  >
+                    <RankMedal rank={m.rank} className="w-4 h-4" title={m.label} />
+                    <span>{m.label}</span>
+                  </span>
+                ))}
                 <button
                   type="button"
                   onClick={handleOpenEdit}

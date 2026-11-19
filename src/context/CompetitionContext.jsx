@@ -146,7 +146,7 @@ export function CompetitionProvider({ children }) {
   // 2. Active View with persistence for logged-in sessions (with safe validation to prevent blank screen)
   const [activeView, setActiveView] = useState(() => {
     const VALID_VIEWS = new Set([
-      'landing', 'register', 'status_check', 'document_viewer', 'auth',
+      'landing', 'register', 'status_check', 'auth',
       'peserta_dashboard', 'admin', 'juri', 'superadmin', 'announcement',
       'staging', 'live_leaderboard', 'field_trial', 'tm', 'checkin', 'dp',
       'rekap_nilai', 'checkout', 'rab', 'dokumen', 'juknis', 'tatib',
@@ -173,7 +173,6 @@ export function CompetitionProvider({ children }) {
     }
   });
   const [previousView, setPreviousView] = useState('landing');
-  const [docViewerData, setDocViewerData] = useState(null);
 
   // 3. Teams data
   const [teams, setTeams] = useState(() => {
@@ -843,9 +842,6 @@ export function CompetitionProvider({ children }) {
     setPreviousView(activeView);
     if (data) {
       setModalData(data);
-      if (targetView === 'document_viewer') {
-        setDocViewerData(data);
-      }
     }
     setActiveView(targetView);
     try {
@@ -1765,8 +1761,7 @@ export function CompetitionProvider({ children }) {
     } else if (modalName === 'statusCheck') {
       navigateTo('status_check');
     } else if (modalName === 'docViewer') {
-      setDocViewerData(data);
-      navigateTo('document_viewer', data);
+      navigateTo('dokumen', data);
     } else if (modalName === 'auth') {
       openAuthModal(data?.tab || 'login');
     } else {
@@ -1788,8 +1783,12 @@ export function CompetitionProvider({ children }) {
       'Kategori',
       'Nama Peleton',
       'Status Verifikasi',
-      'No Undian',
-      'Nama Pembina',
+      'No Urut Tampil',
+      'Nomor Dada',
+      'No Sesi UCL',
+      'Ruang Basecamp',
+      'Nama Danton',
+      'Nama Official / Pembina',
       'No WA',
       'Email',
       'Biaya (Rp)',
@@ -1806,30 +1805,57 @@ export function CompetitionProvider({ children }) {
       return `"${str}"`;
     };
 
-    const rows = teams.map(t => [
-      sanitizeCsvCell(t.regCode),
-      sanitizeCsvCell(t.schoolName),
-      sanitizeCsvCell(t.jenjang),
-      sanitizeCsvCell(t.category),
-      sanitizeCsvCell(t.platoonName),
-      sanitizeCsvCell(t.status ? t.status.toUpperCase() : ''),
-      sanitizeCsvCell(t.lotNumber || '-'),
-      sanitizeCsvCell(t.officialName || t.coachName || '-'),
-      sanitizeCsvCell(t.waNumber),
-      sanitizeCsvCell(t.email),
-      sanitizeCsvCell(t.feeAmount),
-      sanitizeCsvCell(t.paymentStatus),
-      sanitizeCsvCell(new Date(t.registeredAt).toLocaleString('id-ID')),
-    ]);
+    const formatRegDate = (t) => {
+      const raw = t.registeredAt || t.createdAt || t.registrationDate || t.timestamp || t.updatedAt;
+      if (!raw) return '-';
+      const d = new Date(raw);
+      return isNaN(d.getTime()) ? String(raw) : d.toLocaleString('id-ID');
+    };
 
-    const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
-    const encodedUri = encodeURI(csvContent);
+    const rows = teams.map(t => {
+      const stg = staging?.[t.id] || {};
+      const roomCode =
+        stg.roomName ||
+        stg.basecampRoom ||
+        stg.room ||
+        t.basecampNumber ||
+        t.basecampRoom ||
+        t.roomName ||
+        '-';
+      const dantonName = t.roster?.danton?.name || t.dantonName || '-';
+      const officialName = t.officialName || t.roster?.officials?.[0]?.name || t.coachName || '-';
+
+      return [
+        sanitizeCsvCell(t.regCode),
+        sanitizeCsvCell(t.schoolName),
+        sanitizeCsvCell(t.jenjang),
+        sanitizeCsvCell(t.category),
+        sanitizeCsvCell(t.platoonName || '-'),
+        sanitizeCsvCell(t.status ? t.status.toUpperCase() : ''),
+        sanitizeCsvCell(t.lotNumber || t.queueNumber || '-'),
+        sanitizeCsvCell(t.chestNumber || '-'),
+        sanitizeCsvCell(t.trialNumber || '-'),
+        sanitizeCsvCell(roomCode),
+        sanitizeCsvCell(dantonName),
+        sanitizeCsvCell(officialName),
+        sanitizeCsvCell(t.waNumber),
+        sanitizeCsvCell(t.email),
+        sanitizeCsvCell(t.feeAmount),
+        sanitizeCsvCell(t.paymentStatus),
+        sanitizeCsvCell(formatRegDate(t)),
+      ];
+    });
+
+    const csvBody = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    const blob = new Blob(['\uFEFF' + csvBody], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
-    link.setAttribute('href', encodedUri);
+    link.href = url;
     link.setAttribute('download', `Rekap_Pendaftar_LBB_Muallimin_${new Date().toISOString().slice(0, 10)}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   }
 
   const contextValue = useMemo(
@@ -1847,8 +1873,6 @@ export function CompetitionProvider({ children }) {
       currentTeamId,
       activeModal,
       modalData,
-      docViewerData,
-      setDocViewerData,
 
       currentUser,
       setCurrentUser,
@@ -1998,7 +2022,6 @@ export function CompetitionProvider({ children }) {
       currentTeamId,
       activeModal,
       modalData,
-      docViewerData,
       currentUser,
       users,
       authModal,

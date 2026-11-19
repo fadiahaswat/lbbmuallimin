@@ -10,6 +10,8 @@ import {
   Lock,
   Clock,
   AlertCircle,
+  Circle,
+  FileEdit,
   Search,
   ArrowLeft,
   ArrowRight,
@@ -481,7 +483,8 @@ export default function JuryScoringApp() {
       notes: juryNotes,
     });
 
-    appToast(`Draft nilai ${selectedTeam.schoolName} (${selectedTeam.jenjang}) berhasil disimpan!`, { variant: 'success' });
+    const chestLabel = selectedTeam.chestNumber || getChestNumberByLot(selectedTeam.jenjang, selectedTeam.lotNumber) || selectedTeam.lotNumber || '';
+    appToast(`Draft nilai Peleton #${chestLabel} (${selectedTeam.jenjang}) berhasil disimpan!`, { variant: 'success' });
   }
 
   // 2. Verifikasi Nilai oleh Verifikator
@@ -530,10 +533,36 @@ export default function JuryScoringApp() {
     return (t.status === 'verified' || t.status === 'drawn') && isTeamCheckedIn(t.id);
   };
 
-  const verifiedTeams = useMemo(() => {
+  const sortByChestAndLot = (a, b) => {
+    const aLot = Number(a.lotNumber) || 999;
+    const bLot = Number(b.lotNumber) || 999;
+    if (aLot !== bLot) return aLot - bLot;
+    const aJenjang = a.jenjang === 'SD' ? 0 : 1;
+    const bJenjang = b.jenjang === 'SD' ? 0 : 1;
+    if (aJenjang !== bJenjang) return aJenjang - bJenjang;
+    const aChestRaw = a.chestNumber || getChestNumberByLot(a.jenjang, a.lotNumber);
+    const bChestRaw = b.chestNumber || getChestNumberByLot(b.jenjang, b.lotNumber);
+    const aNum = parseInt(aChestRaw, 10);
+    const bNum = parseInt(bChestRaw, 10);
+    if (!isNaN(aNum) && !isNaN(bNum) && aNum !== bNum) return aNum - bNum;
+    return String(a.schoolName || '').localeCompare(String(b.schoolName || ''));
+  };
+
+  const jenjangEligibleTeams = useMemo(() => {
     return teams
       .filter(isEligibleForScoring)
-      .filter(t => sidebarJenjang === 'ALL' || t.jenjang === sidebarJenjang)
+      .filter(t => sidebarJenjang === 'ALL' || t.jenjang === sidebarJenjang);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [teams, staging, scores, sidebarJenjang, isLocalhost]);
+
+  const isTeamIdentityRevealed = (teamId) => {
+    const sc = scores[teamId];
+    if (!sc) return false;
+    return Boolean(sc.isLocked || sc.status === 'finalized' || sc.status === 'verified');
+  };
+
+  const verifiedTeams = useMemo(() => {
+    return jenjangEligibleTeams
       .filter(t => {
         if (scoreStatusFilter === 'UNSCORED') return !scores[t.id];
         if (scoreStatusFilter === 'SCORED') return Boolean(scores[t.id]);
@@ -541,30 +570,39 @@ export default function JuryScoringApp() {
       })
       .filter(t => {
         if (!sidebarSearch.trim()) return true;
-        const q = sidebarSearch.toLowerCase();
+        const q = sidebarSearch.toLowerCase().replace(/^#/, '');
+        const chest = String(t.chestNumber || getChestNumberByLot(t.jenjang, t.lotNumber) || '');
+        const lotStr = t.lotNumber ? String(t.lotNumber).padStart(2, '0') : '';
+        if (chest.includes(q) || lotStr.includes(q) || String(t.lotNumber || '').includes(q)) return true;
+        // Identitas sekolah/danton hanya bisa dicari jika sudah selesai dinilai (Anti-Bias)
+        if (!isTeamIdentityRevealed(t.id)) return false;
         return (
           t.schoolName?.toLowerCase().includes(q) ||
           t.platoonName?.toLowerCase().includes(q) ||
           (t.roster?.danton?.name && t.roster.danton.name.toLowerCase().includes(q)) ||
-          (t.dantonName && t.dantonName.toLowerCase().includes(q)) ||
-          String(t.chestNumber || '').includes(q) ||
-          String(t.lotNumber || '').includes(q)
+          (t.dantonName && t.dantonName.toLowerCase().includes(q))
         );
       })
       .sort((a, b) => {
-        const aNum = parseInt(a.chestNumber, 10);
-        const bNum = parseInt(b.chestNumber, 10);
-        if (!isNaN(aNum) && !isNaN(bNum)) return aNum - bNum;
-        const aStr = String(a.chestNumber || '');
-        const bStr = String(b.chestNumber || '');
-        if (aStr && bStr) return aStr.localeCompare(bStr);
-        return (a.lotNumber || 999) - (b.lotNumber || 999);
+        const aScored = Boolean(scores[a.id]) ? 1 : 0;
+        const bScored = Boolean(scores[b.id]) ? 1 : 0;
+        if (aScored !== bScored) return aScored - bScored;
+        return sortByChestAndLot(a, b);
       });
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [teams, staging, scores, sidebarJenjang, scoreStatusFilter, sidebarSearch, isLocalhost]);
+  }, [jenjangEligibleTeams, scores, scoreStatusFilter, sidebarSearch]);
 
-  const totalDrawnCount = teams.filter(isEligibleForScoring).length;
-  const scoredCount = teams.filter(t => isEligibleForScoring(t) && scores[t.id]).length;
+  const unscoredTeamsList = useMemo(
+    () => verifiedTeams.filter(t => !scores[t.id]),
+    [verifiedTeams, scores]
+  );
+  const scoredTeamsList = useMemo(
+    () => verifiedTeams.filter(t => Boolean(scores[t.id])),
+    [verifiedTeams, scores]
+  );
+
+  const totalDrawnCount = jenjangEligibleTeams.length;
+  const scoredCount = jenjangEligibleTeams.filter(t => Boolean(scores[t.id])).length;
   const unscoredCount = Math.max(0, totalDrawnCount - scoredCount);
 
   // Hitung progres input per Juri (jumlah gerakan terisi) untuk indikator di tab Juri 1/2/3
@@ -631,9 +669,6 @@ export default function JuryScoringApp() {
                     <h1 className="text-[15px] sm:text-base font-black uppercase tracking-tight text-white leading-tight">
                       E-Scoring &amp; Penjurian Lapangan
                     </h1>
-                    <span className="text-[10px] font-bold uppercase tracking-wider bg-emerald-500/15 text-emerald-300 border border-emerald-400/30 px-2 py-0.5 rounded-full">
-                      3 Juri Simultan
-                    </span>
                   </div>
                   <p className="text-[11.5px] text-slate-400 mt-1 truncate">
                     Pilih peleton sesuai No. Dada · Petugas: <strong className="text-slate-200">{currentUser?.email}</strong>
@@ -743,7 +778,7 @@ export default function JuryScoringApp() {
                     type="text"
                     value={sidebarSearch}
                     onChange={e => setSidebarSearch(e.target.value)}
-                    placeholder="Cari Nomor Dada (#111), nama sekolah, atau komandan..."
+                    placeholder="Cari Nomor Dada (#111) atau No. Urut (#01)..."
                     className="w-full pl-10 pr-8 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-slate-900 outline-none transition-colors"
                   />
                   {sidebarSearch && (
@@ -780,7 +815,7 @@ export default function JuryScoringApp() {
                 </div>
               </div>
 
-              {/* Grid Kartu Peleton */}
+              {/* Grid Kartu Peleton (Urut No. Dada · Yang Sudah Dinilai Otomatis di Bawah) */}
               {verifiedTeams.length === 0 ? (
                 <div className="py-14 text-center space-y-2.5 bg-slate-50/70 rounded-2xl border border-dashed border-slate-200">
                   <Users className="w-9 h-9 text-slate-400 mx-auto" />
@@ -791,106 +826,201 @@ export default function JuryScoringApp() {
                     Peleton akan otomatis masuk ke daftar siap dinilai setelah lolos inspeksi personel di Pos DP 1.
                   </p>
                 </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
-                  {verifiedTeams.map(team => {
-                    const teamScore = scores[team.id];
-                    const isFinal = teamScore?.isLocked || teamScore?.status === 'finalized';
-                    const isDraft = teamScore?.status === 'draft';
-                    const isVerified = teamScore?.status === 'verified';
-                    const isSD = team.jenjang === 'SD';
-                    const chestNum = team.chestNumber || getChestNumberByLot(team.jenjang, team.lotNumber);
-                    const totalPts = Number(teamScore?.finalScore || 0);
+              ) : (() => {
+                const renderTeamCard = (team) => {
+                  const teamScore = scores[team.id];
+                  const isFinal = teamScore?.isLocked || teamScore?.status === 'finalized';
+                  const isDraft = teamScore?.status === 'draft';
+                  const isVerified = teamScore?.status === 'verified';
+                  const isSD = team.jenjang === 'SD';
+                  const chestNum = team.chestNumber || getChestNumberByLot(team.jenjang, team.lotNumber);
+                  const totalPts = Number(teamScore?.finalScore || 0);
+                  const revealed = isTeamIdentityRevealed(team.id);
 
-                    return (
-                      <div
-                        key={team.id}
-                        onClick={() => handleSelectTeam(team.id)}
-                        className={`bg-white border rounded-2xl p-4 transition-all duration-150 cursor-pointer shadow-2xs hover:shadow-md flex flex-col justify-between gap-3 group ${
+                  const juries = teamScore?.juries || {};
+                  const j1Done = Boolean((juries.pos1?.peletonTotal || 0) > 0 || (juries.pos1?.dantonTotal || 0) > 0);
+                  const j2Done = Boolean((juries.pos2?.peletonTotal || 0) > 0 || (juries.pos2?.dantonTotal || 0) > 0);
+                  const j3Done = Boolean((juries.pos3?.peletonTotal || 0) > 0 || (juries.pos3?.dantonTotal || 0) > 0);
+                  const hasPen = Boolean((teamScore?.penalties?.totalPenalty || 0) > 0);
+
+                  return (
+                    <div
+                      key={team.id}
+                      onClick={() => handleSelectTeam(team.id)}
+                      className={`bg-white border rounded-2xl p-4 transition-all duration-150 cursor-pointer shadow-2xs hover:shadow-md flex flex-col justify-between gap-3 group ${
+                        isFinal
+                          ? 'border-emerald-200/90 bg-emerald-50/15 hover:border-emerald-400'
+                          : isVerified
+                          ? 'border-blue-200/90 hover:border-blue-400'
+                          : isDraft
+                          ? 'border-amber-200/90 hover:border-amber-400'
+                          : isSD
+                          ? 'border-slate-200 hover:border-red-400 hover:bg-red-50/15'
+                          : 'border-slate-200 hover:border-blue-400 hover:bg-blue-50/15'
+                      }`}
+                    >
+                      <div className="flex items-start gap-3">
+                        {/* Blok No. Dada Menonjol */}
+                        <div className={`min-w-[66px] h-14 px-2 rounded-xl flex flex-col items-center justify-center shrink-0 text-white shadow-xs ${
                           isFinal
-                            ? 'border-emerald-200/90 hover:border-emerald-400'
+                            ? 'bg-emerald-600'
                             : isSD
-                            ? 'border-slate-200 hover:border-red-400 hover:bg-red-50/15'
-                            : 'border-slate-200 hover:border-blue-400 hover:bg-blue-50/15'
-                        }`}
-                      >
-                        <div className="flex items-start gap-3">
-                          {/* Blok No. Dada Menonjol (Primary Anchor untuk Inputor Lapangan) */}
-                          <div className={`min-w-[68px] h-14 px-2 rounded-xl flex flex-col items-center justify-center shrink-0 text-white shadow-xs ${
-                            isSD ? 'bg-red-600' : 'bg-blue-600'
-                          }`}>
-                            <span className="text-[8px] font-bold uppercase tracking-widest opacity-80 leading-none">
-                              No. Dada
-                            </span>
-                            <span className="text-2xl font-mono font-black leading-none tracking-tight mt-0.5">
-                              {chestNum || '-'}
-                            </span>
-                          </div>
+                            ? 'bg-red-600'
+                            : 'bg-blue-600'
+                        }`}>
+                          <span className="text-[8px] font-bold uppercase tracking-widest opacity-80 leading-none">
+                            No. Dada
+                          </span>
+                          <span className="text-2xl font-mono font-black leading-none tracking-tight mt-0.5">
+                            {chestNum || '-'}
+                          </span>
+                        </div>
 
-                          <div className="min-w-0 flex-1 space-y-1">
-                            <div className="flex items-center justify-between gap-1.5">
-                              <div className="flex items-center gap-1.5">
-                                <span className={`text-[9.5px] font-black uppercase px-1.5 py-0.5 rounded-md border leading-none ${
-                                  isSD
-                                    ? 'text-red-700 bg-red-50 border-red-200'
-                                    : 'text-blue-700 bg-blue-50 border-blue-200'
-                                }`}>
-                                  {isSD ? 'SD' : 'SMP'}
-                                </span>
-                                {team.lotNumber && (
-                                  <span className="text-[10px] font-mono text-slate-400 font-semibold">
-                                    Urut #{String(team.lotNumber).padStart(2, '0')}
-                                  </span>
-                                )}
-                              </div>
-
-                              {/* Status Badge */}
-                              {isFinal ? (
-                                <span className="text-[9px] font-black uppercase bg-emerald-100 text-emerald-800 border border-emerald-300 px-2 py-0.5 rounded-full shrink-0">
-                                  Final
-                                </span>
-                              ) : isVerified ? (
-                                <span className="text-[9px] font-black uppercase bg-blue-100 text-blue-800 border border-blue-300 px-2 py-0.5 rounded-full shrink-0">
-                                  Verif
-                                </span>
-                              ) : isDraft ? (
-                                <span className="text-[9px] font-black uppercase bg-amber-100 text-amber-800 border border-amber-300 px-2 py-0.5 rounded-full shrink-0">
-                                  Draft
-                                </span>
-                              ) : (
-                                <span className="text-[9px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full border border-slate-200 shrink-0">
-                                  Belum
+                        <div className="min-w-0 flex-1 space-y-1">
+                          <div className="flex items-center justify-between gap-1.5">
+                            <div className="flex items-center gap-1.5">
+                              <span className={`text-[9.5px] font-black uppercase px-1.5 py-0.5 rounded-md border leading-none ${
+                                isSD
+                                  ? 'text-red-700 bg-red-50 border-red-200'
+                                  : 'text-blue-700 bg-blue-50 border-blue-200'
+                              }`}>
+                                {isSD ? 'SD' : 'SMP'}
+                              </span>
+                              {team.lotNumber && (
+                                <span className="text-[10px] font-mono text-slate-400 font-semibold">
+                                  Urut #{String(team.lotNumber).padStart(2, '0')}
                                 </span>
                               )}
                             </div>
 
-                            <h4 className="font-black text-[13px] text-slate-900 uppercase group-hover:text-slate-950 leading-snug line-clamp-1" title={team.schoolName}>
-                              {team.schoolName}
-                            </h4>
-                            <p className="text-[11px] font-medium text-slate-500 truncate">
-                              {team.roster?.danton?.name || team.dantonName || '-'}
-                            </p>
+                            {/* Status Badge dengan Ikon Progres */}
+                            {isFinal ? (
+                              <span className="inline-flex items-center gap-1 text-[9.5px] font-black uppercase bg-emerald-100 text-emerald-800 border border-emerald-300 px-2 py-0.5 rounded-full shrink-0">
+                                <Lock className="w-2.5 h-2.5" />
+                                <span>Final</span>
+                              </span>
+                            ) : isVerified ? (
+                              <span className="inline-flex items-center gap-1 text-[9.5px] font-black uppercase bg-blue-100 text-blue-800 border border-blue-300 px-2 py-0.5 rounded-full shrink-0">
+                                <ShieldCheck className="w-2.5 h-2.5" />
+                                <span>Verif</span>
+                              </span>
+                            ) : isDraft ? (
+                              <span className="inline-flex items-center gap-1 text-[9.5px] font-black uppercase bg-amber-100 text-amber-800 border border-amber-300 px-2 py-0.5 rounded-full shrink-0">
+                                <FileEdit className="w-2.5 h-2.5" />
+                                <span>Draft</span>
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 text-[9.5px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full border border-slate-200 shrink-0">
+                                <Clock className="w-2.5 h-2.5 text-slate-400" />
+                                <span>Belum</span>
+                              </span>
+                            )}
                           </div>
+
+                          {revealed ? (
+                            <>
+                              <h4 className="font-black text-[13px] text-slate-900 uppercase group-hover:text-slate-950 leading-snug line-clamp-1" title={team.schoolName}>
+                                {team.schoolName}
+                              </h4>
+                              <p className="text-[11px] font-medium text-slate-500 truncate">
+                                {team.roster?.danton?.name || team.dantonName || '-'}
+                              </p>
+                            </>
+                          ) : (
+                            <>
+                              <h4 className="font-black text-[13px] text-slate-900 uppercase group-hover:text-slate-950 leading-snug line-clamp-1">
+                                Peleton #{chestNum || (team.lotNumber ? String(team.lotNumber).padStart(2, '0') : '—')}
+                              </h4>
+                              <p className="text-[11px] font-medium text-slate-400 truncate">
+                                {isSD ? 'Tingkat SD / MI' : 'Tingkat SMP / MTs'}
+                              </p>
+                            </>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Baris Ikon Progres 3 Juri + Penalti */}
+                      <div className="flex items-center justify-between gap-2 pt-2 border-t border-slate-100">
+                        <div className="flex items-center gap-1.5">
+                          {[
+                            { label: 'J1', done: j1Done },
+                            { label: 'J2', done: j2Done },
+                            { label: 'J3', done: j3Done },
+                          ].map(j => (
+                            <span
+                              key={j.label}
+                              title={`${j.label}: ${j.done ? 'Sudah diisi' : 'Belum diisi'}`}
+                              className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[10px] font-mono font-bold border ${
+                                j.done
+                                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                  : 'bg-slate-50 text-slate-400 border-slate-200/80'
+                              }`}
+                            >
+                              {j.done ? (
+                                <CheckCircle2 className="w-2.5 h-2.5 text-emerald-600" />
+                              ) : (
+                                <Circle className="w-2.5 h-2.5 text-slate-300" />
+                              )}
+                              <span>{j.label}</span>
+                            </span>
+                          ))}
+                          {hasPen && (
+                            <span
+                              title={`Penalti: -${teamScore.penalties.totalPenalty} poin`}
+                              className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md text-[10px] font-mono font-bold bg-rose-50 text-rose-700 border border-rose-200"
+                            >
+                              <AlertCircle className="w-2.5 h-2.5 text-rose-600" />
+                              <span>-{teamScore.penalties.totalPenalty}</span>
+                            </span>
+                          )}
                         </div>
 
-                        <div className="pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs">
-                          {totalPts > 0 ? (
-                            <span className="font-mono font-black text-emerald-700">
-                              {totalPts.toLocaleString('id-ID')} <span className="text-[10px] font-semibold text-slate-500">Poin</span>
+                        <div className="flex items-center gap-2 shrink-0">
+                          {totalPts > 0 && (
+                            <span className="font-mono font-black text-xs text-emerald-700">
+                              {totalPts.toLocaleString('id-ID')}
                             </span>
-                          ) : (
-                            <span className="text-[11px] font-semibold text-slate-400">Belum ada skor</span>
                           )}
                           <span className="font-black text-[11px] text-slate-900 group-hover:text-emerald-700 inline-flex items-center gap-1 transition-colors">
-                            <span>{teamScore ? 'Buka Nilai' : 'Mulai Nilai'}</span>
+                            <span>{teamScore ? 'Buka' : 'Nilai'}</span>
                             <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
                           </span>
                         </div>
                       </div>
-                    );
-                  })}
-                </div>
-              )}
+                    </div>
+                  );
+                };
+
+                return (
+                  <div className="space-y-5">
+                    {/* Bagian 1: Antrean Belum Dinilai (Prioritas di Atas) */}
+                    {unscoredTeamsList.length > 0 && (
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
+                        {unscoredTeamsList.map(renderTeamCard)}
+                      </div>
+                    )}
+
+                    {/* Bagian 2: Sudah Dinilai (Otomatis Pindah ke Bawah dengan Pemisah) */}
+                    {scoredTeamsList.length > 0 && (
+                      <div className="space-y-3">
+                        {unscoredTeamsList.length > 0 && (
+                          <div className="flex items-center gap-3 pt-2">
+                            <div className="h-px flex-1 bg-slate-200" />
+                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-[11px] font-bold">
+                              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                              <span>Sudah Dinilai ({scoredTeamsList.length})</span>
+                            </span>
+                            <div className="h-px flex-1 bg-slate-200" />
+                          </div>
+                        )}
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
+                          {scoredTeamsList.map(renderTeamCard)}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
             </div>
           </section>
         )}
@@ -951,14 +1081,18 @@ export default function JuryScoringApp() {
                     </span>
                   </div>
 
-                  {/* Logo Sekolah tanpa wadah */}
-                  <TeamSchoolLogo team={selectedTeam} bare={true} />
+                  {/* Logo Sekolah (Hanya tampil jika nilai sudah selesai/terverifikasi — Mode Anti-Bias) */}
+                  {isTeamIdentityRevealed(selectedTeam.id) && (
+                    <TeamSchoolLogo team={selectedTeam} bare={true} />
+                  )}
 
-                  {/* Identitas 2 Baris Seimbang */}
+                  {/* Identitas 2 Baris Seimbang (Blind Judging saat proses penilaian) */}
                   <div className="min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <h2 className="text-sm sm:text-base font-black text-slate-950 uppercase tracking-tight truncate leading-tight">
-                        {selectedTeam.schoolName}
+                        {isTeamIdentityRevealed(selectedTeam.id)
+                          ? selectedTeam.schoolName
+                          : `Peleton #${selectedTeam?.chestNumber || getChestNumberByLot(selectedTeam?.jenjang, selectedTeam?.lotNumber) || (selectedTeam?.lotNumber ? String(selectedTeam.lotNumber).padStart(2, '0') : '—')}`}
                       </h2>
                       <span className={`text-[9.5px] font-extrabold uppercase px-1.5 py-0.5 rounded-md border leading-none shrink-0 ${
                         selectedTeam?.jenjang === 'SD'
@@ -967,10 +1101,21 @@ export default function JuryScoringApp() {
                       }`}>
                         {selectedTeam?.jenjang || 'SD'}
                       </span>
+                      {selectedTeam?.lotNumber && (
+                        <span className="text-[10.5px] font-mono font-bold text-slate-400 shrink-0">
+                          Urut #{String(selectedTeam.lotNumber).padStart(2, '0')}
+                        </span>
+                      )}
                     </div>
-                    <p className="text-[11.5px] font-medium text-slate-500 truncate mt-0.5">
-                      {selectedTeam?.roster?.danton?.name || selectedTeam?.dantonName || '-'}
-                    </p>
+                    {isTeamIdentityRevealed(selectedTeam.id) ? (
+                      <p className="text-[11.5px] font-medium text-slate-500 truncate mt-0.5">
+                        {selectedTeam?.roster?.danton?.name || selectedTeam?.dantonName || '-'}
+                      </p>
+                    ) : (
+                      <p className="text-[11px] font-medium text-slate-400 truncate mt-0.5">
+                        {selectedTeam?.jenjang === 'SD' ? 'Tingkat SD / MI' : 'Tingkat SMP / MTs'}
+                      </p>
+                    )}
                   </div>
                 </div>
 

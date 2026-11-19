@@ -10,6 +10,7 @@ import {
   CheckCircle2
 } from 'lucide-react';
 import { PRIZES } from '../config.js';
+import RankMedal from './common/RankMedal.jsx';
 
 export default function Prizes() {
   return (
@@ -49,9 +50,9 @@ export default function Prizes() {
         <div className="max-w-5xl mx-auto mb-12 sm:mb-16">
           <div className="relative rounded-2xl bg-slate-900/90 border border-white/[0.08] shadow-lg p-6 sm:p-8 lg:p-10 overflow-hidden text-center">
             
-            {/* Top Trophy Icon Badge */}
-            <div className="w-14 h-14 bg-amber-500 rounded-xl flex items-center justify-center mb-4 mx-auto shadow-md">
-              <Trophy className="w-7 h-7 text-slate-950" />
+            {/* Top Gold Medal Emblem */}
+            <div className="mb-4 flex justify-center">
+              <RankMedal rank={1} className="w-20 h-20 sm:w-24 sm:h-24 drop-shadow-[0_8px_20px_rgba(245,158,11,0.35)]" title="Piala Bergilir Juara Umum" />
             </div>
 
             <span className="inline-block text-[11px] font-bold uppercase tracking-wider text-amber-400 mb-1">
@@ -61,7 +62,7 @@ export default function Prizes() {
               {PRIZES.ROLLING_TROPHY_TITLE}
             </h3>
             <p className="text-slate-300 text-xs sm:text-sm max-w-xl mx-auto mb-8 font-normal leading-relaxed">
-              Dianugerahkan kepada pangkalan sekolah dengan akumulasi poin kejuaraan tertinggi (Peleton + Danton) pada masing-masing jenjang.
+              Dianugerahkan kepada pangkalan sekolah dengan akumulasi poin kejuaraan tertinggi dari kategori Peleton Utama &amp; Komandan Terbaik pada masing-masing jenjang.
             </p>
 
             {/* Dual Trophies (SD & SMP) */}
@@ -159,9 +160,7 @@ export default function Prizes() {
                 {/* Juara 1 */}
                 <div className="p-3 sm:p-3.5 rounded-xl bg-white/[0.05] border border-white/[0.08] flex items-center justify-between gap-2.5">
                   <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
-                    <span className="w-7 h-7 rounded-lg bg-amber-500 text-slate-950 font-bold text-xs flex items-center justify-center shrink-0">
-                      1
-                    </span>
+                    <RankMedal rank={1} className="w-9 h-9 sm:w-10 sm:h-10" title="Juara I" />
                     <div className="min-w-0">
                       <div className="flex items-center gap-1.5 flex-wrap">
                         <span className="text-xs sm:text-sm font-bold text-white">Juara I</span>
@@ -180,9 +179,7 @@ export default function Prizes() {
                 {/* Juara 2 */}
                 <div className="p-3 sm:p-3.5 rounded-xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-between gap-2.5">
                   <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
-                    <span className="w-7 h-7 rounded-lg bg-slate-400 text-slate-950 font-bold text-xs flex items-center justify-center shrink-0">
-                      2
-                    </span>
+                    <RankMedal rank={2} className="w-9 h-9 sm:w-10 sm:h-10" title="Juara II" />
                     <div className="min-w-0">
                       <div className="flex items-center gap-1.5 flex-wrap">
                         <span className="text-xs sm:text-sm font-bold text-white">Juara II</span>
@@ -201,9 +198,7 @@ export default function Prizes() {
                 {/* Juara 3 */}
                 <div className="p-3 sm:p-3.5 rounded-xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-between gap-2.5">
                   <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
-                    <span className="w-7 h-7 rounded-lg bg-amber-700 text-white font-bold text-xs flex items-center justify-center shrink-0">
-                      3
-                    </span>
+                    <RankMedal rank={3} className="w-9 h-9 sm:w-10 sm:h-10" title="Juara III" />
                     <div className="min-w-0">
                       <div className="flex items-center gap-1.5 flex-wrap">
                         <span className="text-xs sm:text-sm font-bold text-white">Juara III</span>
@@ -236,18 +231,21 @@ export default function Prizes() {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5 text-center">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase block mb-1">Harapan I</span>
+                <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5 text-center flex flex-col items-center">
+                  <RankMedal rank={4} className="w-9 h-9 mb-1.5" title="Juara Harapan I" />
+                  <span className="text-[10px] font-bold text-slate-400 uppercase block mb-0.5">Harapan I</span>
                   <span className="text-xs font-black text-white block">Piala Tetap</span>
                   <span className="text-[10px] text-amber-300 font-semibold block">+ Uang Pembinaan & Piagam</span>
                 </div>
-                <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5 text-center">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase block mb-1">Harapan II</span>
+                <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5 text-center flex flex-col items-center">
+                  <RankMedal rank={5} className="w-9 h-9 mb-1.5" title="Juara Harapan II" />
+                  <span className="text-[10px] font-bold text-slate-400 uppercase block mb-0.5">Harapan II</span>
                   <span className="text-xs font-black text-white block">Piala Tetap</span>
                   <span className="text-[10px] text-amber-300 font-semibold block">+ Uang Pembinaan & Piagam</span>
                 </div>
-                <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5 text-center">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase block mb-1">Harapan III</span>
+                <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5 text-center flex flex-col items-center">
+                  <RankMedal rank={6} className="w-9 h-9 mb-1.5" title="Juara Harapan III" />
+                  <span className="text-[10px] font-bold text-slate-400 uppercase block mb-0.5">Harapan III</span>
                   <span className="text-xs font-black text-white block">Piala Tetap</span>
                   <span className="text-[10px] text-amber-300 font-semibold block">+ Uang Pembinaan & Piagam</span>
                 </div>
@@ -295,9 +293,7 @@ export default function Prizes() {
                 {/* Juara 1 */}
                 <div className="p-3 sm:p-3.5 rounded-xl bg-white/[0.05] border border-white/[0.08] flex items-center justify-between gap-2.5">
                   <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
-                    <span className="w-7 h-7 rounded-lg bg-amber-500 text-slate-950 font-bold text-xs flex items-center justify-center shrink-0">
-                      1
-                    </span>
+                    <RankMedal rank={1} className="w-9 h-9 sm:w-10 sm:h-10" title="Juara I" />
                     <div className="min-w-0">
                       <div className="flex items-center gap-1.5 flex-wrap">
                         <span className="text-xs sm:text-sm font-bold text-white">Juara I</span>
@@ -316,9 +312,7 @@ export default function Prizes() {
                 {/* Juara 2 */}
                 <div className="p-3 sm:p-3.5 rounded-xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-between gap-2.5">
                   <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
-                    <span className="w-7 h-7 rounded-lg bg-slate-400 text-slate-950 font-bold text-xs flex items-center justify-center shrink-0">
-                      2
-                    </span>
+                    <RankMedal rank={2} className="w-9 h-9 sm:w-10 sm:h-10" title="Juara II" />
                     <div className="min-w-0">
                       <div className="flex items-center gap-1.5 flex-wrap">
                         <span className="text-xs sm:text-sm font-bold text-white">Juara II</span>
@@ -337,9 +331,7 @@ export default function Prizes() {
                 {/* Juara 3 */}
                 <div className="p-3 sm:p-3.5 rounded-xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-between gap-2.5">
                   <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
-                    <span className="w-7 h-7 rounded-lg bg-amber-700 text-white font-bold text-xs flex items-center justify-center shrink-0">
-                      3
-                    </span>
+                    <RankMedal rank={3} className="w-9 h-9 sm:w-10 sm:h-10" title="Juara III" />
                     <div className="min-w-0">
                       <div className="flex items-center gap-1.5 flex-wrap">
                         <span className="text-xs sm:text-sm font-bold text-white">Juara III</span>
@@ -372,18 +364,21 @@ export default function Prizes() {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5 text-center">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase block mb-1">Harapan I</span>
+                <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5 text-center flex flex-col items-center">
+                  <RankMedal rank={4} className="w-9 h-9 mb-1.5" title="Juara Harapan I" />
+                  <span className="text-[10px] font-bold text-slate-400 uppercase block mb-0.5">Harapan I</span>
                   <span className="text-xs font-black text-white block">Piala Tetap</span>
                   <span className="text-[10px] text-amber-300 font-semibold block">+ Uang Pembinaan & Piagam</span>
                 </div>
-                <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5 text-center">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase block mb-1">Harapan II</span>
+                <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5 text-center flex flex-col items-center">
+                  <RankMedal rank={5} className="w-9 h-9 mb-1.5" title="Juara Harapan II" />
+                  <span className="text-[10px] font-bold text-slate-400 uppercase block mb-0.5">Harapan II</span>
                   <span className="text-xs font-black text-white block">Piala Tetap</span>
                   <span className="text-[10px] text-amber-300 font-semibold block">+ Uang Pembinaan & Piagam</span>
                 </div>
-                <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5 text-center">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase block mb-1">Harapan III</span>
+                <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5 text-center flex flex-col items-center">
+                  <RankMedal rank={6} className="w-9 h-9 mb-1.5" title="Juara Harapan III" />
+                  <span className="text-[10px] font-bold text-slate-400 uppercase block mb-0.5">Harapan III</span>
                   <span className="text-xs font-black text-white block">Piala Tetap</span>
                   <span className="text-[10px] text-amber-300 font-semibold block">+ Uang Pembinaan & Piagam</span>
                 </div>
@@ -420,7 +415,7 @@ export default function Prizes() {
                 <div className="space-y-2">
                   <div className="p-2.5 sm:p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-between gap-2">
                     <div className="flex items-center gap-2.5 min-w-0">
-                      <span className="w-6 h-6 rounded-md bg-amber-500 text-slate-950 font-black text-xs flex items-center justify-center shrink-0">1</span>
+                      <RankMedal rank={1} className="w-8 h-8" title="Danton Terbaik I" />
                       <div className="min-w-0">
                         <span className="text-xs font-bold text-white block">Danton Terbaik I</span>
                         <span className="text-[11px] text-amber-300 font-semibold block sm:hidden">Piala Tetap + Uang Pembinaan</span>
@@ -433,7 +428,7 @@ export default function Prizes() {
 
                   <div className="p-2.5 sm:p-3 rounded-xl bg-white/[0.02] border border-white/5 flex items-center justify-between gap-2">
                     <div className="flex items-center gap-2.5 min-w-0">
-                      <span className="w-6 h-6 rounded-md bg-slate-400 text-slate-950 font-black text-xs flex items-center justify-center shrink-0">2</span>
+                      <RankMedal rank={2} className="w-8 h-8" title="Danton Terbaik II" />
                       <div className="min-w-0">
                         <span className="text-xs font-bold text-white block">Danton Terbaik II</span>
                         <span className="text-[11px] text-amber-300 font-semibold block sm:hidden">Piala Tetap + Uang Pembinaan</span>
@@ -446,7 +441,7 @@ export default function Prizes() {
 
                   <div className="p-2.5 sm:p-3 rounded-xl bg-white/[0.02] border border-white/5 flex items-center justify-between gap-2">
                     <div className="flex items-center gap-2.5 min-w-0">
-                      <span className="w-6 h-6 rounded-md bg-amber-700 text-white font-black text-xs flex items-center justify-center shrink-0">3</span>
+                      <RankMedal rank={3} className="w-8 h-8" title="Danton Terbaik III" />
                       <div className="min-w-0">
                         <span className="text-xs font-bold text-white block">Danton Terbaik III</span>
                         <span className="text-[11px] text-amber-300 font-semibold block sm:hidden">Piala Tetap + Uang Pembinaan</span>
@@ -471,7 +466,7 @@ export default function Prizes() {
                 <div className="space-y-2">
                   <div className="p-2.5 sm:p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-between gap-2">
                     <div className="flex items-center gap-2.5 min-w-0">
-                      <span className="w-6 h-6 rounded-md bg-amber-500 text-slate-950 font-black text-xs flex items-center justify-center shrink-0">1</span>
+                      <RankMedal rank={1} className="w-8 h-8" title="Danton Terbaik I" />
                       <div className="min-w-0">
                         <span className="text-xs font-bold text-white block">Danton Terbaik I</span>
                         <span className="text-[11px] text-amber-300 font-semibold block sm:hidden">Piala Tetap + Uang Pembinaan</span>
@@ -484,7 +479,7 @@ export default function Prizes() {
 
                   <div className="p-2.5 sm:p-3 rounded-xl bg-white/[0.02] border border-white/5 flex items-center justify-between gap-2">
                     <div className="flex items-center gap-2.5 min-w-0">
-                      <span className="w-6 h-6 rounded-md bg-slate-400 text-slate-950 font-black text-xs flex items-center justify-center shrink-0">2</span>
+                      <RankMedal rank={2} className="w-8 h-8" title="Danton Terbaik II" />
                       <div className="min-w-0">
                         <span className="text-xs font-bold text-white block">Danton Terbaik II</span>
                         <span className="text-[11px] text-amber-300 font-semibold block sm:hidden">Piala Tetap + Uang Pembinaan</span>
@@ -497,7 +492,7 @@ export default function Prizes() {
 
                   <div className="p-2.5 sm:p-3 rounded-xl bg-white/[0.02] border border-white/5 flex items-center justify-between gap-2">
                     <div className="flex items-center gap-2.5 min-w-0">
-                      <span className="w-6 h-6 rounded-md bg-amber-700 text-white font-black text-xs flex items-center justify-center shrink-0">3</span>
+                      <RankMedal rank={3} className="w-8 h-8" title="Danton Terbaik III" />
                       <div className="min-w-0">
                         <span className="text-xs font-bold text-white block">Danton Terbaik III</span>
                         <span className="text-[11px] text-amber-300 font-semibold block sm:hidden">Piala Tetap + Uang Pembinaan</span>

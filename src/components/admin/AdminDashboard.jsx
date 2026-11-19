@@ -16,18 +16,13 @@ import SimpaskorSidebarLayout from '../navigation/SimpaskorSidebarLayout.jsx';
 import TeamInspectionPage from './components/TeamInspectionPage.jsx';
 import RegistrationTab from './tabs/RegistrationTab.jsx';
 import VerificationTab from './tabs/VerificationTab.jsx';
-import LotteryTab from './tabs/LotteryTab.jsx';
-import RecapTab from './tabs/RecapTab.jsx';
 
 export default function AdminDashboard() {
   const {
     teams,
-    scores,
     verifyTeam,
-    updateTeamDraw,
     deleteTeam,
     exportTeamsCSV,
-    openModal,
     setActiveView,
     pullFromGoogleSheet,
     adminActiveTab,
@@ -35,7 +30,6 @@ export default function AdminDashboard() {
     currentUser,
     role,
     settings,
-    updateSettings,
     openAuthModal,
     isLocalhost
   } = useCompetition();
@@ -224,23 +218,21 @@ export default function AdminDashboard() {
   if (inspectingTeam) {
     const liveTeam = teams.find(t => t.id === inspectingTeam.id) || inspectingTeam;
     return (
-      <TeamInspectionPage
-        team={liveTeam}
-        inspectionStage={inspectingStage}
-        onBack={() => setInspectingTeam(null)}
-        onVerify={handleQuickVerify}
-        openModal={openModal}
-        deleteTeam={deleteTeam}
-      />
+      <SimpaskorSidebarLayout activeMenu="pendaftaran" setActiveView={setActiveView} hideHeader={true}>
+        <TeamInspectionPage
+          team={liveTeam}
+          teamsList={filteredTeams}
+          onSelectTeam={(t) => setInspectingTeam(t)}
+          inspectionStage={inspectingStage}
+          onBack={() => setInspectingTeam(null)}
+          onVerify={handleQuickVerify}
+          deleteTeam={deleteTeam}
+        />
+      </SimpaskorSidebarLayout>
     );
   }
 
-  const currentActiveMenu =
-    activeTab === 'lottery'
-      ? 'tm'
-      : activeTab === 'recap'
-      ? 'rekap_nilai'
-      : 'pendaftaran';
+  const currentActiveMenu = 'pendaftaran';
 
   const totalQuota = targetQuotaSD + targetQuotaSMP;
   const totalFilled = countSD + countSMP;
@@ -301,9 +293,7 @@ export default function AdminDashboard() {
       subtitle="Manajemen pendaftaran, verifikasi berkas, kuota peleton & undian nomor tampil"
       hideHeader={true}
     >
-      {/* Jika berada di tab Pendaftaran atau Verifikasi: Tampilkan Master Panel ala RosterTab / DocumentsTab */}
-      {(activeTab === 'registration' || activeTab === 'verification') ? (
-        <section className="rounded-2xl sm:rounded-[26px] border border-slate-200/80 bg-white p-4 sm:p-7 shadow-[0_18px_46px_rgba(15,23,42,0.06)] space-y-5 sm:space-y-6">
+      <section className="rounded-2xl sm:rounded-[26px] border border-slate-200/80 bg-white p-4 sm:p-7 shadow-[0_18px_46px_rgba(15,23,42,0.06)] space-y-5 sm:space-y-6">
           {/* 1. Panel Header (Dark Squircle Icon + Title + Segmented Sub-Tab Switcher) */}
           <div className="flex flex-col gap-3.5 border-b border-slate-100 pb-4 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex items-start sm:items-center gap-3 sm:gap-3.5 min-w-0">
@@ -484,33 +474,6 @@ export default function AdminDashboard() {
             />
           )}
         </section>
-      ) : (
-        <div className="space-y-5">
-          {/* TAB 3: UNDIAN NOMOR URUT TAMPIL (TECHNICAL MEETING) */}
-          {activeTab === 'lottery' && (
-            <LotteryTab
-              teams={teams}
-              lotSuccessMsg={lotSuccessMsg}
-              updateTeamDraw={updateTeamDraw}
-            />
-          )}
-
-          {/* TAB 4: REKAPITULASI NILAI & KEJUARAAN */}
-          {activeTab === 'recap' && (
-            <RecapTab
-              teams={teams}
-              scores={scores}
-              selectedJenjang={selectedJenjang}
-              setSelectedJenjang={setSelectedJenjang}
-              totalRevenue={totalRevenue}
-              openModal={openModal}
-              setActiveView={setActiveView}
-              settings={settings}
-              updateSettings={updateSettings}
-            />
-          )}
-        </div>
-      )}
     </SimpaskorSidebarLayout>
   );
 }

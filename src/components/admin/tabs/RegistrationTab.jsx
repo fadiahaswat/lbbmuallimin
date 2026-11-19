@@ -71,18 +71,15 @@ export default function RegistrationTab({
 
   return (
     <div className="space-y-4">
-      {/* 1. Embedded Subheader & Compact Search (Identik dengan Pusat Unduhan di Portal Peserta) */}
+      {/* 1. Compact Header & Search */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-        <div>
-          <h3 className="text-sm font-black text-slate-900 tracking-tight flex items-center gap-2">
-            <span>Daftar Berkas Pendaftaran Awal</span>
-            <span className="text-[10px] font-mono font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200/80">
-              {filteredTeams.length} Peleton
-            </span>
+        <div className="flex items-center gap-2">
+          <h3 className="text-sm font-black text-slate-900 tracking-tight">
+            Berkas Pendaftaran Awal
           </h3>
-          <p className="text-xs text-slate-500 mt-0.5">
-            Verifikasi bukti transfer BSI, kartu pelajar danton, logo sekolah, dan pakta integritas.
-          </p>
+          <span className="text-[10.5px] font-mono font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md">
+            {filteredTeams.length}
+          </span>
         </div>
 
         <div className="relative min-w-[220px] sm:w-64">
@@ -303,227 +300,190 @@ export default function RegistrationTab({
         )}
       </div>
 
-      {/* 3B. DESKTOP TABLE VIEW */}
+      {/* 3B. DESKTOP TABLE VIEW (CLEAN & MINIMAL) */}
       <div className="hidden md:block overflow-x-auto">
         <table className="w-full text-left text-xs">
-          <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase tracking-wider text-[10px]">
+          <thead className="bg-slate-50/90 border-b border-slate-200 text-slate-500 font-bold uppercase tracking-wider text-[10px]">
             <tr>
-              <th className="py-3 px-4">Kode &amp; Sekolah</th>
-              <th className="py-3 px-4">Jenjang / Gelombang</th>
+              <th className="py-3 px-4">Peleton / Sekolah</th>
               <th className="py-3 px-4">Danton &amp; Pembina</th>
-              <th className="py-3 px-4">Berkas Pendaftaran Awal</th>
-              <th className="py-3 px-4">Status Pendaftaran</th>
-              <th className="py-3 px-4 text-right">Aksi Verifikasi</th>
+              <th className="py-3 px-4 text-center">Berkas</th>
+              <th className="py-3 px-4 text-center">Status</th>
+              <th className="py-3 px-4 text-right">Aksi</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
             {filteredTeams.length === 0 ? (
               <tr>
-                <td colSpan={6} className="text-center py-10 text-slate-400">
+                <td colSpan={5} className="text-center py-10 text-slate-400">
                   Tidak ada pendaftar yang cocok dengan filter yang dipilih.
                 </td>
               </tr>
             ) : (
-              filteredTeams.map(team => (
-                <tr key={team.id} className="hover:bg-slate-50/80 transition-colors">
-                  <td className="py-3.5 px-4 align-middle">
-                    <div className="flex items-center gap-3">
-                      {team.files?.schoolLogo?.url && team.files.schoolLogo.url !== '#' ? (
-                        <div className="w-10 h-10 rounded-xl bg-white border border-slate-200 p-1 shrink-0 flex items-center justify-center">
+              filteredTeams.map(team => {
+                const fileItems = getFileItems(team);
+                const uploadedCount = fileItems.filter(f => f.hasFile).length;
+                const allFilesComplete = uploadedCount === fileItems.length;
+                const filesTooltip = fileItems.map(f => `${f.label}: ${f.hasFile ? '✓' : '✕'}`).join(' · ');
+                const isSD = team.jenjang === 'SD';
+
+                return (
+                  <tr key={team.id} className="hover:bg-slate-50/70 transition-colors">
+                    {/* Peleton / Sekolah */}
+                    <td className="py-3 px-4 align-middle">
+                      <div className="flex items-center gap-3">
+                        {team.files?.schoolLogo?.url && team.files.schoolLogo.url !== '#' ? (
                           <img
                             src={formatImageUrl(team.files.schoolLogo.url)}
-                            alt="Logo"
+                            alt={team.schoolName}
                             referrerPolicy="no-referrer"
                             onError={(e) => {
                               const fallback = getFallbackImageUrl(team.files.schoolLogo.url);
                               if (fallback && e.currentTarget.src !== fallback) {
                                 e.currentTarget.src = fallback;
                               } else {
-                                e.currentTarget.parentElement.style.display = 'none';
-                                if (e.currentTarget.parentElement.nextElementSibling) {
-                                  e.currentTarget.parentElement.nextElementSibling.style.display = 'flex';
+                                e.currentTarget.style.display = 'none';
+                                if (e.currentTarget.nextElementSibling) {
+                                  e.currentTarget.nextElementSibling.style.display = 'flex';
                                 }
                               }
                             }}
-                            className="max-w-full max-h-full object-contain"
+                            className="w-8 h-8 object-contain shrink-0"
                           />
+                        ) : null}
+                        <div
+                          className={`w-8 h-8 rounded-lg flex items-center justify-center font-black text-[10px] shrink-0 ${
+                            isSD ? 'bg-rose-50 text-rose-700' : 'bg-blue-50 text-blue-700'
+                          }`}
+                          style={{ display: team.files?.schoolLogo?.url && team.files.schoolLogo.url !== '#' ? 'none' : 'flex' }}
+                        >
+                          {team.jenjang}
                         </div>
-                      ) : null}
-                      <div
-                        className="w-10 h-10 rounded-xl bg-slate-950 text-white flex items-center justify-center font-black text-xs shrink-0"
-                        style={{ display: team.files?.schoolLogo?.url && team.files.schoolLogo.url !== '#' ? 'none' : 'flex' }}
-                      >
-                        {team.jenjang}
+                        <div className="min-w-0">
+                          <div className="font-extrabold text-slate-900 text-[13px] leading-snug truncate">
+                            {team.schoolName}
+                          </div>
+                          <div className="text-[10.5px] text-slate-400 font-mono truncate mt-0.5">
+                            {team.regCode} · Gel. {team.wave || 1}
+                          </div>
+                        </div>
                       </div>
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-1.5 mb-0.5">
-                          <span className="font-mono font-bold text-[10px] text-slate-700 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
-                            {team.regCode}
-                          </span>
-                        </div>
-                        <div className="font-extrabold text-slate-900 text-sm leading-snug">
-                          {team.schoolName}
-                        </div>
-                      </div>
-                    </div>
-                  </td>
+                    </td>
 
-                  <td className="p-3.5 align-middle">
-                    <div className="space-y-1">
-                      <span className="inline-block px-2 py-0.5 rounded-md font-extrabold text-xs bg-slate-100 text-slate-800 border border-slate-200">
-                        {team.jenjang}
-                      </span>
-                      <div className="text-slate-500 text-[11px] leading-tight font-medium">
-                        Gelombang {team.wave || 1}
-                      </div>
-                      <div className="text-slate-700 font-bold text-[11px] leading-tight">
-                        Rp{(team.feeAmount || 450000).toLocaleString('id-ID')}
-                      </div>
-                    </div>
-                  </td>
-
-                  <td className="p-3.5 align-middle">
-                    <div className="space-y-1">
-                      <div className="font-extrabold text-slate-900 text-xs">
+                    {/* Danton & Pembina */}
+                    <td className="py-3 px-4 align-middle">
+                      <div className="font-bold text-slate-800 text-xs leading-snug truncate max-w-[240px]">
                         {team.roster?.danton?.name || team.dantonName || '-'}
                       </div>
-                      <div className="text-slate-500 text-[11px] leading-tight">
-                        <span className="text-slate-400 font-medium">Pembina:</span> {team.officialName || team.coachName || '-'}
+                      <div className="text-slate-400 text-[10.5px] leading-tight truncate max-w-[240px] mt-0.5">
+                        {team.officialName || team.coachName || '-'}
                       </div>
-                    </div>
-                  </td>
+                    </td>
 
-                  <td className="p-3.5 align-middle">
-                    {(() => {
-                      const fileItems = [
-                        {
-                          id: 'paymentProof',
-                          label: 'Transfer BSI',
-                          icon: CreditCard,
-                          hasFile: Boolean(team.files?.paymentProof?.url ? team.files.paymentProof.url !== '#' : team.files?.paymentProof),
-                        },
-                        {
-                          id: 'dantonCard',
-                          label: 'Kartu Danton',
-                          icon: IdCard,
-                          hasFile: Boolean(team.files?.dantonCard?.url ? team.files.dantonCard.url !== '#' : team.files?.dantonCard),
-                        },
-                        {
-                          id: 'schoolLogo',
-                          label: 'Logo Sekolah',
-                          icon: ImageIcon,
-                          hasFile: Boolean(team.files?.schoolLogo?.url ? team.files.schoolLogo.url !== '#' : team.files?.schoolLogo),
-                        },
-                        {
-                          id: 'integrityPact',
-                          label: 'Pakta Integritas',
-                          icon: FileSignature,
-                          hasFile: Boolean(team.files?.integrityPact?.url || team.files?.integrityPact?.signatureUrl ? (team.files.integrityPact.url !== '#' || team.files.integrityPact.signatureUrl !== '#') : team.files?.integrityPact),
-                        },
-                      ];
-
-                      return (
-                        <div className="flex items-center gap-1.5">
-                          {fileItems.map((item) => {
-                            const IconComponent = item.icon;
-                            return (
-                              <div
-                                key={item.id}
-                                title={`${item.label}: ${item.hasFile ? 'Sudah Diunggah' : 'Belum Diunggah'}`}
-                                className={`group relative inline-flex items-center justify-center w-8 h-8 rounded-full border transition-all cursor-pointer ${
-                                  item.hasFile
-                                    ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100 hover:border-emerald-300 shadow-2xs hover:scale-105'
-                                    : 'bg-rose-50 text-rose-500 border-rose-200 hover:bg-rose-100 hover:border-rose-300 hover:scale-105'
-                                }`}
-                                onClick={() => {
-                                  setInspectingTeam(team);
-                                  setInspectingStage('registration');
-                                }}
-                              >
-                                <IconComponent className="w-4 h-4" />
-
-                                {/* Tooltip Hover */}
-                                <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 z-30 whitespace-nowrap rounded-md bg-slate-900 px-2 py-0.5 text-[10px] font-semibold text-white opacity-0 shadow-md transition-opacity group-hover:opacity-100">
-                                  {item.label}: {item.hasFile ? 'Lengkap' : 'Belum'}
-                                </span>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      );
-                    })()}
-                  </td>
-
-                  <td className="p-3.5 align-middle">
-                    {team.status === 'pending' && (
-                      <span className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-700 bg-amber-50 px-3 py-1.5 rounded-xl border border-amber-200 shadow-2xs">
-                        <Clock className="w-3.5 h-3.5 text-amber-600" /> Menunggu Pengecekan
-                      </span>
-                    )}
-                    {team.status === 'registered' && (
-                      <span className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-700 bg-blue-50 px-3 py-1.5 rounded-xl border border-blue-200 shadow-2xs">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-blue-600" /> ACC Terdaftar
-                      </span>
-                    )}
-                    {team.status === 'revision' && (
-                      <span className="inline-flex items-center gap-1.5 text-xs font-bold text-rose-700 bg-rose-50 px-3 py-1.5 rounded-xl border border-rose-200 shadow-2xs">
-                        <AlertTriangle className="w-3.5 h-3.5 text-rose-600" /> Minta Revisi Berkas
-                      </span>
-                    )}
-                    {['verified', 'drawn'].includes(team.status) && (
-                      <span className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-200 shadow-2xs">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Terverifikasi Sah
-                      </span>
-                    )}
-                  </td>
-
-                  <td className="py-3.5 px-4 align-middle text-right">
-                    <div className="flex items-center justify-end gap-2">
+                    {/* Berkas (Compact 1-pill summary instead of 4 circles) */}
+                    <td className="py-3 px-4 align-middle text-center">
                       <button
+                        type="button"
+                        title={filesTooltip}
                         onClick={() => {
                           setInspectingTeam(team);
                           setInspectingStage('registration');
-                          setRevisionNoteInput(team.revisionNote || '');
-                          setShowRevisionBox(false);
                         }}
-                        className="px-3 py-2 bg-slate-950 hover:bg-slate-800 text-white font-bold text-xs rounded-xl transition-all flex items-center gap-1.5 shadow-2xs active:scale-95 cursor-pointer"
-                        title="Cek Berkas Pendaftaran Awal"
+                        className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-mono font-bold transition-colors cursor-pointer whitespace-nowrap ${
+                          allFilesComplete
+                            ? 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
+                            : 'bg-amber-50 text-amber-700 hover:bg-amber-100'
+                        }`}
                       >
-                        <Eye className="w-3.5 h-3.5" />
-                        <span>Cek Berkas</span>
+                        {allFilesComplete ? (
+                          <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                        ) : (
+                          <Clock className="w-3 h-3 text-amber-600" />
+                        )}
+                        <span>{uploadedCount}/{fileItems.length}</span>
                       </button>
+                    </td>
 
+                    {/* Status (Single-line compact pill) */}
+                    <td className="py-3 px-4 align-middle text-center">
                       {team.status === 'pending' && (
-                        <button
-                          onClick={() => handleQuickVerify(team.id, 'registered')}
-                          className="px-3 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl transition-all flex items-center gap-1.5 shadow-xs active:scale-95 cursor-pointer"
-                          title="ACC Pendaftaran (Status Terdaftar)"
-                        >
-                          <Check className="w-3.5 h-3.5 stroke-[2.5]" />
-                          <span>ACC Daftar</span>
-                        </button>
+                        <span className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-700 bg-amber-50 px-2.5 py-1 rounded-full whitespace-nowrap">
+                          <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+                          Menunggu
+                        </span>
                       )}
+                      {team.status === 'registered' && (
+                        <span className="inline-flex items-center gap-1 text-[11px] font-bold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-full whitespace-nowrap">
+                          <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+                          Terdaftar
+                        </span>
+                      )}
+                      {team.status === 'revision' && (
+                        <span className="inline-flex items-center gap-1 text-[11px] font-bold text-rose-700 bg-rose-50 px-2.5 py-1 rounded-full whitespace-nowrap">
+                          <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
+                          Revisi
+                        </span>
+                      )}
+                      {['verified', 'drawn'].includes(team.status) && (
+                        <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full whitespace-nowrap">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                          Sah
+                        </span>
+                      )}
+                    </td>
 
-                      <button
-                        onClick={async () => {
-                          const ok = await appConfirm(`Yakin ingin menghapus data ${team.schoolName}?`, {
-                            title: 'Hapus Peserta',
-                            confirmText: 'Hapus',
-                            variant: 'danger',
-                          });
-                          if (ok) {
-                            deleteTeam(team.id);
-                          }
-                        }}
-                        className="p-2 bg-white hover:bg-rose-50 text-rose-600 hover:text-rose-700 rounded-xl border border-slate-200 hover:border-rose-200 transition-all cursor-pointer shadow-2xs active:scale-95"
-                        title="Hapus Peserta"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))
+                    {/* Aksi (Lightweight, single-line) */}
+                    <td className="py-3 px-4 align-middle text-right">
+                      <div className="inline-flex items-center justify-end gap-1.5">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setInspectingTeam(team);
+                            setInspectingStage('registration');
+                            setRevisionNoteInput(team.revisionNote || '');
+                            setShowRevisionBox(false);
+                          }}
+                          className="px-3 py-1.5 bg-white hover:bg-slate-900 text-slate-700 hover:text-white border border-slate-200 hover:border-slate-900 font-bold text-[11px] rounded-lg transition-all inline-flex items-center gap-1.5 whitespace-nowrap cursor-pointer"
+                          title="Cek Berkas Pendaftaran Awal"
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                          <span>Cek</span>
+                        </button>
+
+                        {team.status === 'pending' && (
+                          <button
+                            type="button"
+                            onClick={() => handleQuickVerify(team.id, 'registered')}
+                            className="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px] rounded-lg transition-all inline-flex items-center gap-1 whitespace-nowrap cursor-pointer"
+                            title="ACC Pendaftaran (Status Terdaftar)"
+                          >
+                            <Check className="w-3.5 h-3.5 stroke-[2.5]" />
+                            <span>ACC</span>
+                          </button>
+                        )}
+
+                        <button
+                          type="button"
+                          onClick={async () => {
+                            const ok = await appConfirm(`Yakin ingin menghapus data ${team.schoolName}?`, {
+                              title: 'Hapus Peserta',
+                              confirmText: 'Hapus',
+                              variant: 'danger',
+                            });
+                            if (ok) {
+                              deleteTeam(team.id);
+                            }
+                          }}
+                          className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+                          title="Hapus Peserta"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })
             )}
           </tbody>
         </table>

@@ -92,19 +92,16 @@ export const JUKNIS_PENILAIAN_CHAPTERS = [
       {
         number: 7,
         title: 'Sistem Perolehan Poin Juara Umum',
-        content: `Juara Umum ditetapkan secara terpisah untuk tingkat SD/MI dan SMP/MTs berdasarkan akumulasi poin prestasi dari seluruh perwakilan sekolah yang sama:`,
+        content: `Juara Umum ditetapkan secara terpisah untuk tingkat SD/MI dan SMP/MTs berdasarkan akumulasi poin prestasi dari seluruh perwakilan sekolah yang sama pada kategori Peleton Utama dan Komandan Terbaik:`,
         pointCards: [
-          { label: 'Juara 1 Peleton', score: '6 Poin', type: 'peleton' },
-          { label: 'Juara 2 Peleton', score: '5 Poin', type: 'peleton' },
-          { label: 'Juara 3 Peleton', score: '4 Poin', type: 'peleton' },
-          { label: 'Juara Harapan 1 Peleton', score: '3 Poin', type: 'peleton' },
-          { label: 'Juara Harapan 2 Peleton', score: '2 Poin', type: 'peleton' },
-          { label: 'Juara Harapan 3 Peleton', score: '1 Poin', type: 'peleton' },
-          { label: 'Juara 1 Komandan Terbaik', score: '3 Poin', type: 'danton' },
+          { label: 'Juara 1 Peleton', score: '10 Poin', type: 'peleton' },
+          { label: 'Juara 2 Peleton', score: '3 Poin', type: 'peleton' },
+          { label: 'Juara 3 Peleton', score: '1 Poin', type: 'peleton' },
+          { label: 'Juara 1 Komandan Terbaik', score: '5 Poin', type: 'danton' },
           { label: 'Juara 2 Komandan Terbaik', score: '2 Poin', type: 'danton' },
           { label: 'Juara 3 Komandan Terbaik', score: '1 Poin', type: 'danton' },
         ],
-        extraText: `Total Poin Sekolah = (Total Poin Prestasi Peleton) + (Total Poin Prestasi Danton). Sekolah dengan akumulasi poin tertinggi dinobatkan sebagai Juara Umum.`
+        extraText: `Total Poin Sekolah = (Total Poin Prestasi Peleton) + (Total Poin Prestasi Komandan). Gelar Juara Harapan 1, 2, dan 3 Peleton tidak diperhitungkan dalam akumulasi poin Juara Umum. Sekolah dengan akumulasi poin tertinggi dinobatkan sebagai Juara Umum.`
       },
       {
         number: 8,

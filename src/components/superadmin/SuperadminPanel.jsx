@@ -88,12 +88,12 @@ export default function SuperadminPanel() {
   const {
     teams,
     scores,
+    staging,
     settings,
     updateSettings,
     randomizeAllLotNumbers,
     clearAllLotNumbers,
     isLocalhost,
-    exportTeamsCSV,
     setActiveView,
     isGoogleSheetConfigured,
     pingSheetDatabase,
@@ -337,15 +337,19 @@ export default function SuperadminPanel() {
       settings,
       teams,
       scores,
+      staging,
+      users,
     };
     const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
     a.download = `LBB_Muallimin_Backup_${new Date().toISOString().slice(0, 10)}.json`;
+    document.body.appendChild(a);
     a.click();
+    document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    appToast('Cadangan JSON berhasil diunduh!', { variant: 'success' });
+    appToast('Cadangan JSON lengkap (semua tabel) berhasil diunduh!', { variant: 'success' });
   }
 
   const staffUsers = (users || []).filter(u =>

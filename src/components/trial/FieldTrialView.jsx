@@ -1699,21 +1699,38 @@ export default function FieldTrialView() {
       {/* MODAL: REKAP PRESENSI UJI COBA (CETAK / PRINT VIEW)      */}
       {/* ======================================================== */}
       {isStaff && showRecapModal && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 animate-in fade-in">
-          <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl w-full max-w-4xl overflow-hidden flex flex-col max-h-[90vh]">
-            <div className="p-4 bg-slate-900 text-white flex items-center justify-between">
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 animate-in fade-in print:static print:inset-auto print:bg-white print:p-0">
+          <style>{`
+            @media print {
+              body * { visibility: hidden; }
+              #ucl-recap-print-area, #ucl-recap-print-area * { visibility: visible; }
+              #ucl-recap-print-area {
+                position: absolute !important;
+                left: 0 !important;
+                top: 0 !important;
+                width: 100% !important;
+                max-height: none !important;
+                overflow: visible !important;
+                box-shadow: none !important;
+                border: none !important;
+                border-radius: 0 !important;
+              }
+            }
+          `}</style>
+          <div id="ucl-recap-print-area" className="bg-white rounded-3xl border border-slate-200 shadow-2xl w-full max-w-4xl overflow-hidden flex flex-col max-h-[90vh] print:max-h-none print:overflow-visible">
+            <div className="p-4 bg-slate-900 text-white flex items-center justify-between print:bg-white print:text-slate-900 print:border-b print:border-slate-300">
               <div className="flex items-center gap-2">
-                <FileSpreadsheet className="w-5 h-5 text-emerald-400" />
+                <FileSpreadsheet className="w-5 h-5 text-emerald-400 print:hidden" />
                 <div>
                   <h3 className="font-black text-sm uppercase tracking-tight">
                     Rekapitulasi Presensi Uji Coba Lapangan
                   </h3>
-                  <p className="text-[11px] text-slate-300">
+                  <p className="text-[11px] text-slate-300 print:text-slate-600">
                     LBB Mu'allimin 2027 • Kampus Terpadu Madrasah Mu'allimin Muhammadiyah Yogyakarta
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 print:hidden">
                 <button
                   type="button"
                   onClick={() => window.print()}

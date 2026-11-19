@@ -84,12 +84,18 @@ export default function RabFinanceView() {
   };
 
   const handleExportCSV = () => {
-    let csv = 'No,Divisi / Pos Anggaran,Uraian Kebutuhan,Volume,Satuan,Harga Satuan,Total Anggaran\n';
+    const esc = (val) => `"${String(val ?? '').replace(/"/g, '""')}"`;
+    let csv = '\uFEFF';
+    csv += 'No,Divisi / Pos Anggaran,Uraian Kebutuhan,Volume,Satuan,Harga Satuan,Total Anggaran\n';
     OFFICIAL_RAB.DIVISIONS.forEach((div, dIdx) => {
       div.items.forEach((it, iIdx) => {
-        csv += `${dIdx + 1}.${iIdx + 1},"${div.name}","${it.item}",${it.volume},"${it.unit}",${it.price},${it.total}\n`;
+        csv += `${dIdx + 1}.${iIdx + 1},${esc(div.name)},${esc(it.item)},${it.volume},${esc(it.unit)},${it.price},${it.total}\n`;
       });
     });
+    csv += `\n,"TOTAL ALOKASI PENGELUARAN (12 DIVISI)",,,,,${OFFICIAL_RAB.TOTAL_EXPENSE}\n`;
+    csv += `,"TOTAL RENCANA PEMASUKAN",,,,,${OFFICIAL_RAB.TOTAL_INCOME}\n`;
+    csv += `,"REALISASI KAS PENDAFTARAN (${realizedPaidTeams} PELETON)",,,,,${realizedRegistrationRevenue}\n`;
+
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -98,6 +104,7 @@ export default function RabFinanceView() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   return (

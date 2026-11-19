@@ -11,6 +11,7 @@ import {
   Building2,
   Clock,
   Layers,
+  LayoutList,
   LayoutGrid,
   DoorOpen
 } from 'lucide-react';
@@ -469,34 +470,33 @@ export default function DaerahPersiapanView() {
                     </div>
                   </div>
 
-                  {/* Structured Queue Table By Content */}
+                  {/* Clean Balanced Queue Table (Selaras dengan RekapNilaiView) */}
                   <div className="rounded-xl border border-slate-200/90 overflow-hidden bg-white">
                     <div className="overflow-x-auto">
-                      <table className="w-full text-left text-xs border-collapse table-auto">
+                      <table className="w-full text-left text-xs border-collapse">
                         <thead>
                           <tr className="bg-slate-50/90 text-slate-500 uppercase text-[10px] tracking-wider font-bold border-b border-slate-200/90">
-                            <th className="py-2.5 px-3 text-center w-[1%] whitespace-nowrap">No. Dada</th>
-                            <th className="py-2.5 px-3">Peleton / Sekolah</th>
-                            <th className="py-2.5 px-3 hidden lg:table-cell whitespace-nowrap">Danton</th>
-                            <th className="py-2.5 px-3 hidden md:table-cell whitespace-nowrap">Basecamp</th>
-                            <th className="py-2.5 px-3 whitespace-nowrap">Progres Inspeksi</th>
-                            <th className="py-2.5 px-3 text-right w-[1%] whitespace-nowrap">Aksi</th>
+                            <th className="py-3 px-3.5 text-center w-24 border-r border-slate-200/70">No. Dada</th>
+                            <th className="py-3 px-4 min-w-[240px] border-r border-slate-200/70">Peleton</th>
+                            <th className="py-3 px-4 text-center w-44 border-r border-slate-200/70">Personel Cocok</th>
+                            <th className="py-3 px-3.5 text-center w-36 border-r border-slate-200/70">Status</th>
+                            <th className="py-3 px-4 text-center w-36">Aksi</th>
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-100">
+                        <tbody className="divide-y divide-slate-100 bg-white">
                           {filteredPosTeams.length === 0 ? (
                             <tr>
-                              <td colSpan={6} className="py-10 text-center text-xs text-slate-400">
+                              <td colSpan={5} className="py-12 text-center text-xs text-slate-400 font-medium">
                                 Tidak ada peleton yang cocok dengan filter pencarian.
                               </td>
                             </tr>
                           ) : (
-                            filteredPosTeams.map((team, idx) => {
+                            filteredPosTeams.map((team) => {
                               const meta = getTeamStageMeta(team);
                               const logoUrl = getTeamLogoUrl(team);
                               const dantonName = team.roster?.danton?.name || team.dantonName || '-';
                               const pct = meta.total ? Math.round((meta.verified / meta.total) * 100) : 0;
-                              const numLabel = team.chestNumber || (team.lotNumber ? `#${String(team.lotNumber).padStart(2, '0')}` : String(idx + 1).padStart(2, '0'));
+                              const chestNum = team.chestNumber || getChestNumberByLot(team.jenjang, team.lotNumber) || '';
                               const isInProgress = !meta.isPassedDP1 && (meta.verified > 0 || meta.flagged > 0);
 
                               return (
@@ -505,76 +505,88 @@ export default function DaerahPersiapanView() {
                                   onClick={() => handleSelectTeam(team.id)}
                                   className="hover:bg-slate-50/80 transition-colors cursor-pointer group"
                                 >
-                                  <td className="py-2 px-3 text-center font-mono font-bold text-slate-700 text-xs whitespace-nowrap align-middle">
-                                    <span className="inline-flex items-center justify-center min-w-[36px] px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-800 border border-slate-200/80 text-[11px] font-bold">
-                                      {numLabel}
-                                    </span>
+                                  {/* No. Dada */}
+                                  <td className="py-3 px-3.5 text-center border-r border-slate-100 align-middle">
+                                    {chestNum ? (
+                                      <span className={`inline-flex items-center justify-center min-w-[46px] h-7 px-2 rounded-lg font-mono font-black text-xs text-white shadow-2xs ${
+                                        isSDPos ? 'bg-red-600' : 'bg-blue-600'
+                                      }`}>
+                                        {chestNum}
+                                      </span>
+                                    ) : (
+                                      <span className="inline-flex items-center justify-center min-w-[46px] h-7 px-2 rounded-lg font-mono font-bold text-xs bg-slate-100 text-slate-400 border border-slate-200/80">
+                                        —
+                                      </span>
+                                    )}
                                   </td>
 
-                                  <td className="py-2 px-3 align-middle">
-                                    <div className="flex items-center gap-2.5 min-w-0">
+                                  {/* Peleton (Logo Tanpa Wadah + Nama Sekolah + Room Chip + Nama Danton di bawah) */}
+                                  <td className="py-3 px-4 border-r border-slate-100 align-middle">
+                                    <div className="flex items-center gap-3 min-w-0">
                                       {logoUrl ? (
                                         <img
                                           src={logoUrl}
                                           alt={team.schoolName}
-                                          className="w-7 h-7 object-contain shrink-0"
+                                          className="w-8 h-8 object-contain shrink-0"
                                           onError={(e) => {
                                             e.currentTarget.style.display = 'none';
                                           }}
                                         />
                                       ) : (
-                                        <span className="w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center font-mono font-bold text-[10px] text-slate-600 shrink-0">
+                                        <span className={`w-8 h-8 rounded-lg flex items-center justify-center font-mono font-black text-[10px] shrink-0 ${
+                                          isSDPos ? 'bg-red-50 text-red-700' : 'bg-blue-50 text-blue-700'
+                                        }`}>
                                           {team.jenjang}
                                         </span>
                                       )}
                                       <div className="min-w-0">
-                                        <div className="font-bold text-xs sm:text-[13px] text-slate-900 leading-snug group-hover:text-slate-950 truncate">
-                                          {team.schoolName}
+                                        <div className="flex items-center gap-2 flex-wrap">
+                                          <span className="font-bold text-slate-900 truncate">
+                                            {team.schoolName}
+                                          </span>
+                                          {meta.roomName && (
+                                            <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-200/80 font-mono text-[9.5px] font-bold shrink-0">
+                                              <DoorOpen className="w-2.5 h-2.5 text-slate-400" />
+                                              <span>{meta.roomName}</span>
+                                            </span>
+                                          )}
                                         </div>
-                                        <div className="lg:hidden text-[10.5px] text-slate-400 truncate">
+                                        <div className="text-[11px] text-slate-500 truncate mt-0.5">
                                           {dantonName}
                                         </div>
                                       </div>
                                     </div>
                                   </td>
 
-                                  <td className="py-2 px-3 hidden lg:table-cell align-middle">
-                                    <div className="text-[11.5px] font-semibold text-slate-800 leading-snug">
-                                      {dantonName}
+                                  {/* Personel Cocok */}
+                                  <td className="py-3 px-4 text-center border-r border-slate-100 align-middle">
+                                    <div className="inline-flex flex-col items-center gap-1 w-28">
+                                      <div className="flex items-baseline justify-between w-full text-[11px] font-mono">
+                                        <span className={`font-black ${meta.isPassedDP1 ? 'text-emerald-700' : meta.verified > 0 ? 'text-slate-900' : 'text-slate-400'}`}>
+                                          {meta.verified}/{meta.total}
+                                        </span>
+                                        <span className="text-[9.5px] text-slate-400">min. 22</span>
+                                      </div>
+                                      <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                                        <div
+                                          className={`h-full rounded-full transition-all ${
+                                            meta.isPassedDP1 ? 'bg-emerald-500' : isSDPos ? 'bg-red-500' : 'bg-blue-600'
+                                          }`}
+                                          style={{ width: `${pct}%` }}
+                                        />
+                                      </div>
                                     </div>
                                   </td>
 
-                                  <td className="py-2 px-3 hidden md:table-cell whitespace-nowrap align-middle">
-                                    {meta.roomName ? (
-                                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-slate-100 text-slate-700 border border-slate-200/80 font-mono text-[10.5px] font-bold">
-                                        <DoorOpen className="w-3 h-3 text-slate-400" />
-                                        <span>{meta.roomName}</span>
-                                      </span>
-                                    ) : (
-                                      <span className="text-[11px] text-slate-400">—</span>
-                                    )}
+                                  {/* Status */}
+                                  <td className="py-3 px-3.5 text-center border-r border-slate-100 whitespace-nowrap align-middle">
+                                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10.5px] font-bold border ${meta.badgeTone}`}>
+                                      {meta.stageLabel}
+                                    </span>
                                   </td>
 
-                                  <td className="py-2.5 px-3 align-middle min-w-[170px]">
-                                    <div className="flex items-center justify-between gap-2 text-[10.5px] mb-1">
-                                      <span className={`px-2 py-0.5 rounded-full text-[9.5px] font-bold border ${meta.badgeTone}`}>
-                                        {meta.stageLabel}
-                                      </span>
-                                      <span className="font-mono font-bold text-slate-600">
-                                        {meta.verified}/{meta.total}
-                                      </span>
-                                    </div>
-                                    <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-                                      <div
-                                        className={`h-full rounded-full transition-all ${
-                                          meta.isPassedDP1 ? 'bg-emerald-500' : isSDPos ? 'bg-red-500' : 'bg-blue-600'
-                                        }`}
-                                        style={{ width: `${pct}%` }}
-                                      />
-                                    </div>
-                                  </td>
-
-                                  <td className="py-2.5 px-3 text-right whitespace-nowrap align-middle">
+                                  {/* Aksi */}
+                                  <td className="py-3 px-4 text-center whitespace-nowrap align-middle">
                                     <button
                                       type="button"
                                       onClick={(e) => {
@@ -586,11 +598,11 @@ export default function DaerahPersiapanView() {
                                           ? 'bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200'
                                           : isInProgress
                                           ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-2xs'
-                                          : 'bg-slate-900 hover:bg-slate-800 text-white shadow-2xs'
+                                          : 'bg-white hover:bg-slate-900 hover:text-white text-slate-700 border border-slate-200 hover:border-slate-900'
                                       }`}
                                     >
                                       <span>{meta.isPassedDP1 ? 'Tinjau' : isInProgress ? 'Lanjutkan' : 'Inspeksi'}</span>
-                                      <ArrowRight className="w-3.5 h-3.5" />
+                                      <ArrowRight className="w-3 h-3" />
                                     </button>
                                   </td>
                                 </tr>
@@ -699,12 +711,12 @@ export default function DaerahPersiapanView() {
 
               {/* Right: Mode Toggle + DP 2 Status */}
               <div className="flex flex-wrap items-center justify-between xl:justify-end gap-2 pt-2 xl:pt-0 border-t xl:border-t-0 border-slate-800">
-                {/* Unified Mode Toggle (Swipe | Grid N) */}
+                {/* Unified 3-Mode Toggle (Swipe | Baris | Grid) */}
                 <div className="inline-flex items-center p-0.5 bg-slate-900 rounded-xl border border-slate-800">
                   <button
                     type="button"
                     onClick={() => setDeckViewMode('swipe')}
-                    className={`px-3 py-1.5 rounded-lg text-[11px] font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                    className={`px-2.5 py-1.5 rounded-lg text-[11px] font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
                       deckViewMode === 'swipe'
                         ? 'bg-white text-slate-950 shadow-2xs'
                         : 'text-slate-400 hover:text-white'
@@ -715,15 +727,27 @@ export default function DaerahPersiapanView() {
                   </button>
                   <button
                     type="button"
+                    onClick={() => setDeckViewMode('list')}
+                    className={`px-2.5 py-1.5 rounded-lg text-[11px] font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                      deckViewMode === 'list'
+                        ? 'bg-white text-slate-950 shadow-2xs'
+                        : 'text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    <LayoutList className="w-3.5 h-3.5" />
+                    <span>Baris</span>
+                  </button>
+                  <button
+                    type="button"
                     onClick={() => setDeckViewMode('grid')}
-                    className={`px-3 py-1.5 rounded-lg text-[11px] font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                    className={`px-2.5 py-1.5 rounded-lg text-[11px] font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
                       deckViewMode === 'grid'
                         ? 'bg-white text-slate-950 shadow-2xs'
                         : 'text-slate-400 hover:text-white'
                     }`}
                   >
                     <LayoutGrid className="w-3.5 h-3.5" />
-                    <span>Grid ({allPersonnels.length})</span>
+                    <span>Grid</span>
                   </button>
                 </div>
 

@@ -17,11 +17,14 @@ import {
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
 import { PRIZES, VENUE, EVENT } from '../../config.js';
+import OfficialScoreRecapModal from '../scoring/OfficialScoreRecapModal.jsx';
+import RankMedal from '../common/RankMedal.jsx';
 
 export default function AnnouncementPortal() {
-  const { teams, scores, settings, setActiveView, openModal } = useCompetition();
+  const { teams, scores, settings, setActiveView } = useCompetition();
 
   const [activeJenjang, setActiveJenjang] = useState('SMP'); // 'SD' | 'SMP'
+  const [isRecapModalOpen, setIsRecapModalOpen] = useState(false);
 
   // Jika pengumuman belum dibuka resmi oleh superadmin
   if (!settings.announcementPublished) {
@@ -129,29 +132,53 @@ export default function AnnouncementPortal() {
   // Best Pasukan (Juara 1 Peleton Bab A.5)
   const bestPasukan = currentRanked[0] || null;
 
-  // Juara Umum per jenjang berdasarkan Poin Prestasi Sekolah (Bab A.7 & A.8)
+  // Juara Umum per jenjang berdasarkan Klasemen Medali Sekolah (Sistem Olimpiade — Bab A.7 & A.8)
   const computeGrandChampionForJenjang = list => {
     if (!list.length) return null;
+    const getBaseSchool = name => {
+      const cleaned = String(name || '').trim().replace(/\s+/g, ' ');
+      const m = cleaned.match(/^(.*?)(?:\s+(?:PELETON|TIM|REGU|PASUKAN)?\s*([A-D]|[1-4]))$/i);
+      return m && m[1].trim().length >= 4 ? m[1].trim() : cleaned;
+    };
+    const getSchoolKey = name =>
+      getBaseSchool(name)
+        .toUpperCase()
+        .replace(/\bSDN\b/g, 'SD NEGERI')
+        .replace(/\bSMPN\b/g, 'SMP NEGERI')
+        .replace(/[^A-Z0-9]+/g, ' ')
+        .trim();
+
     const schoolMap = {};
     list.forEach(t => {
-      if (!schoolMap[t.schoolName]) {
-        schoolMap[t.schoolName] = {
+      const baseName = getBaseSchool(t.schoolName);
+      const sKey = getSchoolKey(t.schoolName);
+      if (!schoolMap[sKey]) {
+        schoolMap[sKey] = {
           ...t,
+          schoolName: baseName,
+          medals: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 },
+          totalMedals: 0,
           totalPoints: 0,
           bestMurniPeleton: 0,
           peletonPenaltySum: 0,
           bestMurniDanton: 0,
         };
       }
-      const sc = schoolMap[t.schoolName];
+      const sc = schoolMap[sKey];
       if (t.nilaiMurniPeleton > sc.bestMurniPeleton) sc.bestMurniPeleton = t.nilaiMurniPeleton;
       sc.peletonPenaltySum += t.peletonPenalty;
       if (t.nilaiMurniDanton > sc.bestMurniDanton) sc.bestMurniDanton = t.nilaiMurniDanton;
     });
 
     list.forEach((t, idx) => {
-      const pts = [6, 5, 4, 3, 2, 1][idx] || 0;
-      if (pts > 0 && schoolMap[t.schoolName]) schoolMap[t.schoolName].totalPoints += pts;
+      const rank = idx + 1;
+      const sKey = getSchoolKey(t.schoolName);
+      const pts = [10, 3, 1][idx] || 0;
+      if (pts > 0 && schoolMap[sKey]) {
+        schoolMap[sKey].medals[rank] += 1;
+        schoolMap[sKey].totalMedals += 1;
+        schoolMap[sKey].totalPoints += pts;
+      }
     });
 
     const dantonRankedList = [...list].sort((a, b) => {
@@ -163,8 +190,14 @@ export default function AnnouncementPortal() {
     });
 
     dantonRankedList.forEach((t, idx) => {
-      const pts = [3, 2, 1][idx] || 0;
-      if (pts > 0 && schoolMap[t.schoolName]) schoolMap[t.schoolName].totalPoints += pts;
+      const rank = idx + 1;
+      const sKey = getSchoolKey(t.schoolName);
+      const pts = [5, 2, 1][idx] || 0;
+      if (pts > 0 && schoolMap[sKey]) {
+        schoolMap[sKey].medals[rank] += 1;
+        schoolMap[sKey].totalMedals += 1;
+        schoolMap[sKey].totalPoints += pts;
+      }
     });
 
     return Object.values(schoolMap).sort((a, b) => {
@@ -219,11 +252,12 @@ export default function AnnouncementPortal() {
 
             <div className="pt-2 flex flex-wrap justify-center gap-3">
               <button
-                onClick={() => openModal('docViewer', { docId: 'berita-acara' })}
+                type="button"
+                onClick={() => setIsRecapModalOpen(true)}
                 className="px-6 py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl shadow-lg shadow-amber-500/20 flex items-center gap-2 transition-all cursor-pointer"
               >
                 <Printer className="w-4 h-4" />
-                <span>Unduh Berita Acara Rekapitulasi (PDF)</span>
+                <span>Cetak / Unduh Berita Acara Rekapitulasi (PDF)</span>
               </button>
             </div>
           </div>
@@ -234,8 +268,8 @@ export default function AnnouncementPortal() {
           <div className="bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 rounded-3xl p-1 shadow-xl">
             <div className="bg-slate-950 text-white rounded-[22px] p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
               <div className="flex items-center gap-5 text-left">
-                <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-amber-500 flex items-center justify-center text-slate-950 shadow-lg shrink-0">
-                  <Crown className="w-12 h-12" />
+                <div className="w-20 h-20 sm:w-24 sm:h-24 flex items-center justify-center shrink-0">
+                  <RankMedal rank={1} className="w-20 h-20 sm:w-24 sm:h-24 drop-shadow-[0_6px_16px_rgba(245,158,11,0.45)]" title="Juara Umum" />
                 </div>
                 <div>
                   <span className="text-xs font-black uppercase tracking-widest text-amber-400 flex items-center gap-1.5">
@@ -293,8 +327,8 @@ export default function AnnouncementPortal() {
         <div className="grid md:grid-cols-3 gap-6 items-end">
           {/* Juara 2 */}
           <div className="order-2 md:order-1 bg-white rounded-3xl p-6 border border-slate-200 shadow-sm text-center space-y-3 relative overflow-hidden">
-            <div className="w-12 h-12 rounded-2xl bg-slate-200 text-slate-700 font-black text-lg flex items-center justify-center mx-auto shadow-xs">
-              2
+            <div className="flex justify-center">
+              <RankMedal rank={2} className="w-14 h-14 sm:w-16 sm:h-16" title={`Juara 2 Utama ${activeJenjang}`} />
             </div>
             <span className="text-[10px] font-black uppercase tracking-widest text-slate-600 bg-slate-100 px-2.5 py-1 rounded-full inline-block">
               JUARA 2 UTAMA {activeJenjang}
@@ -312,8 +346,8 @@ export default function AnnouncementPortal() {
 
           {/* Juara 1 (Pusat / Lebih Tinggi) */}
           <div className="order-1 md:order-2 bg-gradient-to-b from-amber-50 to-yellow-50/50 rounded-3xl p-7 border-2 border-yellow-400 shadow-xl text-center space-y-4 relative overflow-hidden transform md:-translate-y-4">
-            <div className="w-16 h-16 rounded-3xl bg-gradient-to-tr from-yellow-400 to-amber-500 text-slate-950 font-black text-2xl flex items-center justify-center mx-auto shadow-md">
-              <Crown className="w-8 h-8" />
+            <div className="flex justify-center">
+              <RankMedal rank={1} className="w-16 h-16 sm:w-20 sm:h-20 drop-shadow-[0_6px_14px_rgba(245,158,11,0.35)]" title={`Juara 1 Utama ${activeJenjang}`} />
             </div>
             <span className="text-xs font-black uppercase tracking-widest text-slate-950 bg-yellow-400 px-3 py-1 rounded-full inline-block shadow-sm">
               JUARA 1 UTAMA {activeJenjang}
@@ -331,8 +365,8 @@ export default function AnnouncementPortal() {
 
           {/* Juara 3 */}
           <div className="order-3 bg-white rounded-3xl p-6 border border-slate-200 shadow-sm text-center space-y-3 relative overflow-hidden">
-            <div className="w-12 h-12 rounded-2xl bg-amber-100 text-amber-900 font-black text-lg flex items-center justify-center mx-auto shadow-xs">
-              3
+            <div className="flex justify-center">
+              <RankMedal rank={3} className="w-14 h-14 sm:w-16 sm:h-16" title={`Juara 3 Utama ${activeJenjang}`} />
             </div>
             <span className="text-[10px] font-black uppercase tracking-widest text-amber-800 bg-amber-50 px-2.5 py-1 rounded-full inline-block">
               JUARA 3 UTAMA {activeJenjang}
@@ -400,8 +434,9 @@ export default function AnnouncementPortal() {
               </p>
             </div>
             <button
-              onClick={() => openModal('docViewer', { docId: 'berita-acara' })}
-              className="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl flex items-center gap-1.5 transition-all"
+              type="button"
+              onClick={() => setIsRecapModalOpen(true)}
+              className="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl flex items-center gap-1.5 transition-all cursor-pointer"
             >
               <Printer className="w-3.5 h-3.5" />
               <span>Cetak Rekap</span>
@@ -432,11 +467,17 @@ export default function AnnouncementPortal() {
                   currentRanked.map((team, idx) => (
                     <tr key={team.id} className="hover:bg-slate-50">
                       <td className="p-3 font-bold font-mono">
-                        <span className={`w-6 h-6 rounded-full inline-flex items-center justify-center ${
-                          idx === 0 ? 'bg-yellow-400 text-slate-950 font-black' : idx === 1 ? 'bg-slate-200 text-slate-700' : idx === 2 ? 'bg-amber-700 text-white' : 'text-slate-600'
-                        }`}>
-                          {idx + 1}
-                        </span>
+                        {idx < 3 ? (
+                          <RankMedal rank={idx + 1} className="w-8 h-8" />
+                        ) : idx < 6 ? (
+                          <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 border border-slate-200/90 text-[10.5px] font-sans font-bold whitespace-nowrap">
+                            Harapan {idx - 2}
+                          </span>
+                        ) : (
+                          <span className="w-6 h-6 rounded-full inline-flex items-center justify-center text-slate-600">
+                            {idx + 1}
+                          </span>
+                        )}
                       </td>
                       <td className="p-3">
                         <span className="font-bold text-slate-900 text-sm block">{team.schoolName}</span>
@@ -456,6 +497,14 @@ export default function AnnouncementPortal() {
         </div>
 
       </div>
+
+      {isRecapModalOpen && (
+        <OfficialScoreRecapModal
+          isOpen={isRecapModalOpen}
+          onClose={() => setIsRecapModalOpen(false)}
+          defaultJenjang={activeJenjang}
+        />
+      )}
     </div>
   );
 }

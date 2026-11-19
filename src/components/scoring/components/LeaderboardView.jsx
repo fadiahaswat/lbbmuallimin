@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Trophy, Printer, Award, User, ShieldCheck, Info } from 'lucide-react';
+import RankMedal from '../../common/RankMedal.jsx';
 
 export default function LeaderboardView({
   teams = [],
@@ -171,14 +172,31 @@ export default function LeaderboardView({
               return b.dantonVokal - a.dantonVokal;
             });
 
-            // Hitung Poin Prestasi Sekolah (Bab A.7 & A.8) untuk tab 'umum'
+            // Hitung Klasemen Medali Sekolah (Sistem Olimpiade — Bab A.7 & A.8) untuk tab 'umum'
+            const getBaseSchool = (name) => {
+              const cleaned = String(name || '').trim().replace(/\s+/g, ' ');
+              const m = cleaned.match(/^(.*?)(?:\s+(?:PELETON|TIM|REGU|PASUKAN)?\s*([A-D]|[1-4]))$/i);
+              return m && m[1].trim().length >= 4 ? m[1].trim() : cleaned;
+            };
+            const getSchoolKey = (name) =>
+              getBaseSchool(name)
+                .toUpperCase()
+                .replace(/\bSDN\b/g, 'SD NEGERI')
+                .replace(/\bSMPN\b/g, 'SMP NEGERI')
+                .replace(/[^A-Z0-9]+/g, ' ')
+                .trim();
+
             const schoolMap = {};
             rawTeams.forEach(t => {
-              if (!schoolMap[t.schoolName]) {
-                schoolMap[t.schoolName] = {
-                  id: `school-${jenjang}-${t.schoolName}`,
-                  schoolName: t.schoolName,
+              const baseName = getBaseSchool(t.schoolName);
+              const sKey = getSchoolKey(t.schoolName);
+              if (!schoolMap[sKey]) {
+                schoolMap[sKey] = {
+                  id: `school-${jenjang}-${sKey}`,
+                  schoolName: baseName,
                   jenjang,
+                  medals: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 },
+                  totalMedals: 0,
                   peletonPoints: 0,
                   dantonPoints: 0,
                   totalPoints: 0,
@@ -188,12 +206,12 @@ export default function LeaderboardView({
                   peletonScore: 0,
                   dantonScore: 0,
                   dantonName: t.dantonName,
-                  chestNumber: t.chestNumber,
+                  chestNumber: '',
                   scoreData: t.scoreData,
                   achievements: [],
                 };
               }
-              const sc = schoolMap[t.schoolName];
+              const sc = schoolMap[sKey];
               const isBetterPlatoon =
                 !sc.bestPlatoon ||
                 t.peletonScore > sc.bestPlatoon.peletonScore ||
@@ -210,19 +228,27 @@ export default function LeaderboardView({
             });
 
             peletonSorted.forEach((t, idx) => {
-              const pts = [6, 5, 4, 3, 2, 1][idx] || 0;
-              if (pts > 0 && schoolMap[t.schoolName]) {
-                schoolMap[t.schoolName].peletonPoints += pts;
-                schoolMap[t.schoolName].totalPoints += pts;
+              const rank = idx + 1;
+              const sKey = getSchoolKey(t.schoolName);
+              const pts = [10, 3, 1][idx] || 0;
+              if (pts > 0 && schoolMap[sKey]) {
+                schoolMap[sKey].medals[rank] += 1;
+                schoolMap[sKey].totalMedals += 1;
+                schoolMap[sKey].peletonPoints += pts;
+                schoolMap[sKey].totalPoints += pts;
               }
             });
 
             dantonSorted.forEach((t, idx) => {
               if (t.dantonSubstituted) return;
-              const pts = [3, 2, 1][idx] || 0;
-              if (pts > 0 && schoolMap[t.schoolName]) {
-                schoolMap[t.schoolName].dantonPoints += pts;
-                schoolMap[t.schoolName].totalPoints += pts;
+              const rank = idx + 1;
+              const sKey = getSchoolKey(t.schoolName);
+              const pts = [5, 2, 1][idx] || 0;
+              if (pts > 0 && schoolMap[sKey]) {
+                schoolMap[sKey].medals[rank] += 1;
+                schoolMap[sKey].totalMedals += 1;
+                schoolMap[sKey].dantonPoints += pts;
+                schoolMap[sKey].totalPoints += pts;
               }
             });
 
@@ -306,17 +332,15 @@ export default function LeaderboardView({
                           }`}
                         >
                           <div className="flex items-center gap-3.5 min-w-0">
-                            <div className={`w-9 h-9 rounded-xl font-mono font-black text-sm flex items-center justify-center shrink-0 shadow-xs ${
-                              idx === 0
-                                ? 'bg-amber-400 text-slate-950 shadow-amber-400/50'
-                                : idx === 1
-                                ? 'bg-slate-200 text-slate-800'
-                                : idx === 2
-                                ? 'bg-amber-600 text-white'
-                                : 'bg-slate-100 text-slate-600 border border-slate-200'
-                            }`}>
-                              #{idx + 1}
-                            </div>
+                            {(idx < 3 || (standingType === 'peleton' && idx < 6)) ? (
+                              <div className="w-10 h-10 flex items-center justify-center shrink-0">
+                                <RankMedal rank={idx + 1} className="w-10 h-10" />
+                              </div>
+                            ) : (
+                              <div className="w-9 h-9 rounded-xl font-mono font-black text-sm flex items-center justify-center shrink-0 shadow-xs bg-slate-100 text-slate-600 border border-slate-200">
+                                #{idx + 1}
+                              </div>
+                            )}
                             <div className="min-w-0">
                               <div className="flex items-center gap-2 flex-wrap">
                                 {team.chestNumber && (

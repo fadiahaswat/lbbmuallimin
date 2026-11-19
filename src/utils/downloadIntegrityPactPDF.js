@@ -8,13 +8,22 @@ import html2canvas from 'html2canvas';
 export async function downloadIntegrityPactPDF(team) {
   if (!team) return;
 
-  const schoolName = team.schoolName || team.schoolBaseName || '-';
-  const jenjang = team.jenjang || 'SMP';
-  const officialName = team.officialName || team.roster?.officials?.[0]?.name || team.coachName || '-';
-  const dantonName = team.roster?.danton?.name || team.dantonName || '-';
-  const regCode = team.regCode || '-';
-  const category = team.category || team.teamType || 'Putra';
-  const unit = team.teamUnit || 'Tunggal';
+  const escapeHtml = (val) =>
+    String(val ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+
+  const rawSchoolName = team.schoolName || team.schoolBaseName || '-';
+  const schoolName = escapeHtml(rawSchoolName);
+  const jenjang = escapeHtml(team.jenjang || 'SMP');
+  const officialName = escapeHtml(team.officialName || team.roster?.officials?.[0]?.name || team.coachName || '-');
+  const dantonName = escapeHtml(team.roster?.danton?.name || team.dantonName || '-');
+  const regCode = escapeHtml(team.regCode || '-');
+  const category = escapeHtml(team.category || team.teamType || 'Putra');
+  const unit = escapeHtml(team.teamUnit || 'Tunggal');
 
   const rawWa = String(team.waNumber || team.roster?.officials?.[0]?.phone || '').trim();
   const formatWa = (num) => {
@@ -25,7 +34,7 @@ export async function downloadIntegrityPactPDF(team) {
     if (!cleaned.startsWith('0')) return '0' + cleaned;
     return cleaned;
   };
-  const waNumber = formatWa(rawWa);
+  const waNumber = escapeHtml(formatWa(rawWa));
 
   // Buat container HTML tersembunyi berukuran tepat 210mm x 297mm (A4 standar 794px x 1123px pada 96 DPI)
   const container = document.createElement('div');
@@ -205,8 +214,9 @@ export async function downloadIntegrityPactPDF(team) {
     });
 
     pdf.addImage(imgData, 'JPEG', 0, 0, 210, 297);
-    const sanitizedSchool = schoolName.replace(/[^a-zA-Z0-9]/g, '_');
-    const fileName = `Pakta_Integritas_TM_LBB2027_${sanitizedSchool}_${regCode}.pdf`;
+    const sanitizedSchool = String(rawSchoolName).replace(/[^a-zA-Z0-9]/g, '_');
+    const sanitizedRegCode = String(team.regCode || 'REG').replace(/[^a-zA-Z0-9_-]/g, '_');
+    const fileName = `Pakta_Integritas_TM_LBB2027_${sanitizedSchool}_${sanitizedRegCode}.pdf`;
     pdf.save(fileName);
   } finally {
     document.body.removeChild(container);

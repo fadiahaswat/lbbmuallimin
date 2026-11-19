@@ -33,6 +33,7 @@ import SimpaskorSidebarLayout from '../navigation/SimpaskorSidebarLayout.jsx';
 import { formatImageUrl } from '../../services/sheetService.js';
 import { getChestNumberByLot } from '../../context/competitionHelpers.js';
 import GoldConfetti from '../common/GoldConfetti.jsx';
+import RankMedal from '../common/RankMedal.jsx';
 
 // Komponen Logo Sekolah Bersih (Tanpa Wadah / Tanpa Box Inisial Berwarna)
 function SchoolLogo({ team, schoolName, size = 'table', className = '', isDark = false }) {
@@ -70,7 +71,7 @@ function SchoolLogo({ team, schoolName, size = 'table', className = '', isDark =
         loading="lazy"
         decoding="async"
         onError={() => setHasError(true)}
-        className={`${sizeClasses} object-contain filter drop-shadow-xs select-none shrink-0 ${className}`}
+        className={`${sizeClasses} object-contain filter drop-shadow-xs select-none shrink-0 ${!isDark ? 'mix-blend-multiply' : ''} ${className}`}
         title={name}
       />
     );
@@ -99,18 +100,42 @@ function SchoolLogo({ team, schoolName, size = 'table', className = '', isDark =
   );
 }
 
-// Poin Juara Umum Berdasarkan Juknis Bab A Poin 7
+function getBaseSchoolName(rawName = '') {
+  return String(rawName || '')
+    .trim()
+    .replace(/\s*\((?:tim|peleton|regu|pasukan)?\s*(?:putra|putri|pa|pi|[a-d])\)$/i, '')
+    .replace(/\s+(?:tim|peleton|regu|pasukan)\s+(?:putra|putri|pa|pi|[a-d])$/i, '')
+    .replace(/\s+(?:putra|putri|[a-d])$/i, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function getNormalizedSchoolKey(jenjang, rawName = '') {
+  const base = getBaseSchoolName(rawName)
+    .toLowerCase()
+    .replace(/\bsmpn\b/g, 'smp negeri')
+    .replace(/\bsdn\b/g, 'sd negeri')
+    .replace(/\bmtsn\b/g, 'mts negeri')
+    .replace(/\bmin\b/g, 'mi negeri')
+    .replace(/\s+/g, ' ')
+    .trim();
+  return `${jenjang}_${base}`;
+}
+
+function getPlatoonSuffix(rawName = '') {
+  const m = String(rawName || '').trim().match(/(?:\s+|\()(?:(?:tim|peleton|regu|pasukan)\s+)?(putra|putri|pa|pi|[a-d])\)?$/i);
+  return m ? m[1].toUpperCase() : '';
+}
+
+// Poin Juara Umum Berdasarkan Juknis Bab A Poin 7 (Juara Harapan tidak dihitung)
 const PELETON_POINTS = {
-  1: 6, // Juara 1 Peleton = 6 Poin
-  2: 5, // Juara 2 Peleton = 5 Poin
-  3: 4, // Juara 3 Peleton = 4 Poin
-  4: 3, // Juara Harapan 1 Peleton = 3 Poin
-  5: 2, // Juara Harapan 2 Peleton = 2 Poin
-  6: 1, // Juara Harapan 3 Peleton = 1 Poin
+  1: 10, // Juara 1 Peleton = 10 Poin
+  2: 3,  // Juara 2 Peleton = 3 Poin
+  3: 1,  // Juara 3 Peleton = 1 Poin
 };
 
 const DANTON_POINTS = {
-  1: 3, // Juara 1 Komandan = 3 Poin
+  1: 5, // Juara 1 Komandan = 5 Poin
   2: 2, // Juara 2 Komandan = 2 Poin
   3: 1, // Juara 3 Komandan = 1 Poin
 };
@@ -403,16 +428,20 @@ export default function LiveLeaderboard() {
     const schoolMap = new Map();
 
     jenjangFilteredTeams.forEach(item => {
-      const schoolKey = `${item.team.jenjang}_${item.team.schoolName}`;
+      const baseSchoolName = getBaseSchoolName(item.team.schoolName);
+      const schoolKey = getNormalizedSchoolKey(item.team.jenjang, item.team.schoolName);
+      const suffix = getPlatoonSuffix(item.team.schoolName);
       const pInfo = peletonPointsMap.get(item.team.id) || { rank: 99, title: '-', shortTitle: '', points: 0 };
       const dInfo = dantonPointsMap.get(item.team.id) || { rank: 99, title: '-', shortTitle: '', points: 0 };
 
       if (!schoolMap.has(schoolKey)) {
         schoolMap.set(schoolKey, {
-          schoolName: item.team.schoolName,
+          schoolName: baseSchoolName || item.team.schoolName,
           jenjang: item.team.jenjang,
           team: item.team,
           teams: [],
+          medals: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 },
+          totalMedals: 0,
           totalPeletonPoints: 0,
           totalDantonPoints: 0,
           totalPoints: 0,
@@ -430,17 +459,25 @@ export default function LiveLeaderboard() {
       sch.totalDantonPoints += dInfo.points;
       sch.totalPoints += (pInfo.points + dInfo.points);
 
-      if (pInfo.points > 0) {
+      if (pInfo.rank >= 1 && pInfo.rank <= 3) {
+        sch.medals[pInfo.rank] += 1;
+        sch.totalMedals += 1;
         sch.peletonAchievements.push({
+          rank: pInfo.rank,
           platoonName: item.team.platoonName || 'Peleton',
+          suffix,
           title: pInfo.title,
           shortTitle: pInfo.shortTitle || pInfo.title,
           points: pInfo.points
         });
       }
-      if (dInfo.points > 0) {
+      if (dInfo.rank >= 1 && dInfo.rank <= 3) {
+        sch.medals[dInfo.rank] += 1;
+        sch.totalMedals += 1;
         sch.dantonAchievements.push({
+          rank: dInfo.rank,
           dantonName: item.team.dantonName || 'Danton',
+          suffix,
           title: dInfo.title,
           shortTitle: dInfo.shortTitle || dInfo.title,
           points: dInfo.points
@@ -572,8 +609,10 @@ export default function LiveLeaderboard() {
         schoolName: item.schoolName,
         mainTitle: item.schoolName,
         subTitle: '',
+        medals: item.medals,
+        totalMedals: item.totalMedals,
         score: item.totalPoints,
-        scoreLabel: '',
+        scoreLabel: 'Poin',
         subScore: ''
       }));
     }
@@ -794,16 +833,16 @@ export default function LiveLeaderboard() {
                 <span>3. Piala Bergilir Juara Umum (Bab A.7 & 8)</span>
               </div>
               <p className={`text-[11px] leading-relaxed ${effectiveDark ? 'text-slate-300' : 'text-slate-600'}`}>
-                Dihitung dari akumulasi poin prestasi per sekolah pada jenjang terkait:
+                Dihitung dari akumulasi poin prestasi per sekolah pada jenjang terkait (Juara Harapan tidak dihitung):
               </p>
               <div
                 className={`text-[10px] p-2 rounded-lg space-y-1 ${
                   effectiveDark ? 'bg-slate-900 text-slate-400' : 'bg-slate-50 text-slate-600 border border-slate-200'
                 }`}
               >
-                <div><strong>Peleton:</strong> Juara 1=6 pt, 2=5 pt, 3=4 pt, H1=3 pt, H2=2 pt, H3=1 pt.</div>
-                <div><strong>Danton:</strong> Juara 1=3 pt, 2=2 pt, 3=1 pt.</div>
-                <div className={`font-bold ${effectiveDark ? 'text-amber-400' : 'text-amber-700'}`}>Total Poin = Poin Peleton + Poin Danton.</div>
+                <div><strong>Peleton:</strong> Juara 1 = 10 pt, Juara 2 = 3 pt, Juara 3 = 1 pt.</div>
+                <div><strong>Komandan (Danton):</strong> Juara 1 = 5 pt, Juara 2 = 2 pt, Juara 3 = 1 pt.</div>
+                <div className={`font-bold ${effectiveDark ? 'text-amber-400' : 'text-amber-700'}`}>Total Poin = Poin Peleton + Poin Komandan.</div>
               </div>
             </div>
           </div>
@@ -1112,7 +1151,7 @@ export default function LiveLeaderboard() {
                 {/* Top Avatar & Identity */}
                 <div className="flex flex-col items-center mb-3 sm:mb-4 text-center w-full">
                   <div className="w-20 h-20 sm:w-28 sm:h-28 mb-2 flex items-center justify-center hover:scale-105 transition-transform">
-                    <SchoolLogo team={currentRankingList[0].team} schoolName={currentRankingList[0].schoolName} size="podium-lg" />
+                    <SchoolLogo team={currentRankingList[0].team} schoolName={currentRankingList[0].schoolName} size="podium-lg" isDark={effectiveDark} />
                   </div>
 
                   <h4 className={`font-black text-base sm:text-xl md:text-2xl leading-tight w-full px-2 break-words ${
@@ -1121,7 +1160,7 @@ export default function LiveLeaderboard() {
                     {currentRankingList[0].mainTitle}
                   </h4>
 
-                  <div className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-950 text-white shadow-xs border border-amber-400/40">
+                  <div className="mt-2 inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-slate-950 text-white shadow-xs border border-amber-400/40">
                     <span className="text-sm sm:text-base font-mono font-black text-amber-300">{currentRankingList[0].score}</span>
                     <span className="text-[8.5px] sm:text-[9.5px] font-bold uppercase tracking-wider text-slate-300">Poin</span>
                   </div>
@@ -1131,7 +1170,7 @@ export default function LiveLeaderboard() {
                 <div className="w-full h-36 sm:h-52 rounded-t-2xl sm:rounded-t-3xl bg-gradient-to-b from-amber-300 via-amber-400 to-amber-500 border-t-4 border-amber-100 shadow-[0_20px_50px_rgba(245,158,11,0.35)] flex flex-col items-center justify-center p-4 relative overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent pointer-events-none" />
                   <div className="flex flex-col items-center text-center">
-                    <Crown className="w-9 h-9 sm:w-12 sm:h-12 text-white drop-shadow-[0_4px_8px_rgba(180,83,9,0.5)] mb-1.5" />
+                    <RankMedal rank={1} className="w-16 h-16 sm:w-20 sm:h-20 mb-2 drop-shadow-[0_6px_12px_rgba(120,53,15,0.45)]" />
                     <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-slate-950 bg-white/95 px-4 sm:px-6 py-1 rounded-full shadow-xs whitespace-nowrap">
                       JUARA UMUM
                     </span>
@@ -1150,11 +1189,11 @@ export default function LiveLeaderboard() {
                 <div className="flex flex-col items-center">
                   {/* Top Avatar & Identity */}
                   <div className="flex flex-col items-center mb-2.5 sm:mb-3 text-center w-full">
-                    <div className="w-14 h-14 sm:w-20 sm:h-20 mb-1.5 sm:mb-2 flex items-center justify-center hover:scale-105 transition-transform">
-                      <SchoolLogo team={currentPodiumData[1].team} schoolName={currentPodiumData[1].schoolName} size="podium-md" />
+                    <div className="w-14 h-14 sm:w-20 sm:h-20 mb-2 flex items-center justify-center hover:scale-105 transition-transform">
+                      <SchoolLogo team={currentPodiumData[1].team} schoolName={currentPodiumData[1].schoolName} size="podium-md" isDark={effectiveDark} />
                     </div>
 
-                    <h4 className={`font-black text-[11px] sm:text-xs md:text-sm line-clamp-2 min-h-[2.4em] leading-tight w-full px-0.5 break-words ${
+                    <h4 className={`font-black text-[11px] sm:text-xs md:text-sm line-clamp-2 leading-snug w-full px-1 break-words ${
                       effectiveDark ? 'text-white' : 'text-slate-900'
                     }`} title={currentPodiumData[1].mainTitle}>
                       {currentPodiumData[1].mainTitle}
@@ -1169,14 +1208,12 @@ export default function LiveLeaderboard() {
                     </div>
                   </div>
 
-                  {/* Architectural Pedestal #2 */}
-                  <div className="w-full h-32 sm:h-48 rounded-t-2xl sm:rounded-t-3xl bg-gradient-to-b from-slate-200 via-slate-300 to-slate-400 border-t-4 border-white shadow-[0_16px_36px_rgba(148,163,184,0.35)] flex flex-col items-center justify-center gap-1 sm:gap-2 p-1.5 sm:p-3 relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
-                    <div className="flex flex-col items-center">
-                      <span className="text-3xl sm:text-6xl font-black font-sans text-white tracking-tight drop-shadow-[0_2px_4px_rgba(71,85,105,0.4)]">
-                        2
-                      </span>
-                      <span className="text-[7.5px] sm:text-[10px] font-black uppercase tracking-wider text-slate-800 bg-white/90 px-1.5 sm:px-2.5 py-0.5 rounded-full mt-0.5 sm:mt-1 shadow-2xs whitespace-nowrap">
+                  {/* Architectural Pedestal #2 — Pure Brushed Metallic Silver */}
+                  <div className="w-full h-32 sm:h-48 rounded-t-2xl sm:rounded-t-3xl bg-gradient-to-b from-[#d9d9dd] via-[#b5b6bb] to-[#888a90] border-t-4 border-[#f4f4f5] shadow-[0_16px_36px_rgba(113,113,122,0.32)] flex flex-col items-center justify-center gap-1 sm:gap-2 p-1.5 sm:p-3 relative overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent pointer-events-none" />
+                    <div className="flex flex-col items-center relative z-10">
+                      <RankMedal rank={2} className="w-14 h-14 sm:w-20 sm:h-20 drop-shadow-[0_6px_12px_rgba(39,39,42,0.45)]" />
+                      <span className="text-[7.5px] sm:text-[10px] font-black uppercase tracking-wider text-zinc-900 bg-white/95 px-1.5 sm:px-2.5 py-0.5 rounded-full mt-1 sm:mt-1.5 shadow-2xs whitespace-nowrap">
                         {activeCategory === 'peleton' ? 'JUARA 2 UTAMA' : 'DANTON TERBAIK 2'}
                       </span>
                     </div>
@@ -1189,11 +1226,11 @@ export default function LiveLeaderboard() {
                 <div className="flex flex-col items-center -mt-3 sm:-mt-6">
                   {/* Top Avatar & Identity */}
                   <div className="flex flex-col items-center mb-2.5 sm:mb-3 text-center w-full">
-                    <div className="w-18 h-18 sm:w-26 sm:h-26 mb-1.5 sm:mb-2 flex items-center justify-center hover:scale-105 transition-transform">
-                      <SchoolLogo team={currentPodiumData[0].team} schoolName={currentPodiumData[0].schoolName} size="podium-lg" />
+                    <div className="w-18 h-18 sm:w-24 sm:h-24 mb-2 flex items-center justify-center hover:scale-105 transition-transform">
+                      <SchoolLogo team={currentPodiumData[0].team} schoolName={currentPodiumData[0].schoolName} size="podium-lg" isDark={effectiveDark} />
                     </div>
 
-                    <h4 className={`font-black text-xs sm:text-sm md:text-base line-clamp-2 min-h-[2.4em] leading-tight w-full px-0.5 break-words ${
+                    <h4 className={`font-black text-xs sm:text-sm md:text-base line-clamp-2 leading-snug w-full px-1 break-words ${
                       effectiveDark ? 'text-white' : 'text-slate-950'
                     }`} title={currentPodiumData[0].mainTitle}>
                       {currentPodiumData[0].mainTitle}
@@ -1213,10 +1250,8 @@ export default function LiveLeaderboard() {
                   <div className="w-full h-44 sm:h-64 rounded-t-2xl sm:rounded-t-3xl bg-gradient-to-b from-amber-300 via-amber-400 to-amber-500 border-t-4 border-amber-100 shadow-[0_20px_50px_rgba(245,158,11,0.4)] flex flex-col items-center justify-center gap-1.5 sm:gap-2.5 p-2 sm:p-4 relative overflow-hidden">
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent pointer-events-none" />
                     <div className="flex flex-col items-center">
-                      <span className="text-4xl sm:text-7xl font-black font-sans text-white tracking-tight drop-shadow-[0_4px_8px_rgba(180,83,9,0.5)]">
-                        1
-                      </span>
-                      <span className="text-[8px] sm:text-[11px] font-black uppercase tracking-wider text-slate-950 bg-white/95 px-2 sm:px-3 py-0.5 rounded-full mt-0.5 sm:mt-1 shadow-xs whitespace-nowrap">
+                      <RankMedal rank={1} className="w-16 h-16 sm:w-24 sm:h-24 drop-shadow-[0_8px_16px_rgba(120,53,15,0.45)]" />
+                      <span className="text-[8px] sm:text-[11px] font-black uppercase tracking-wider text-slate-950 bg-white/95 px-2 sm:px-3 py-0.5 rounded-full mt-1.5 sm:mt-2 shadow-xs whitespace-nowrap">
                         {activeCategory === 'peleton' ? 'JUARA 1 UTAMA' : 'DANTON TERBAIK 1'}
                       </span>
                     </div>
@@ -1229,11 +1264,11 @@ export default function LiveLeaderboard() {
                 <div className="flex flex-col items-center">
                   {/* Top Avatar & Identity */}
                   <div className="flex flex-col items-center mb-2.5 sm:mb-3 text-center w-full">
-                    <div className="w-14 h-14 sm:w-20 sm:h-20 mb-1.5 sm:mb-2 flex items-center justify-center hover:scale-105 transition-transform">
-                      <SchoolLogo team={currentPodiumData[2].team} schoolName={currentPodiumData[2].schoolName} size="podium-md" />
+                    <div className="w-14 h-14 sm:w-20 sm:h-20 mb-2 flex items-center justify-center hover:scale-105 transition-transform">
+                      <SchoolLogo team={currentPodiumData[2].team} schoolName={currentPodiumData[2].schoolName} size="podium-md" isDark={effectiveDark} />
                     </div>
 
-                    <h4 className={`font-black text-[11px] sm:text-xs md:text-sm line-clamp-2 min-h-[2.4em] leading-tight w-full px-0.5 break-words ${
+                    <h4 className={`font-black text-[11px] sm:text-xs md:text-sm line-clamp-2 leading-snug w-full px-1 break-words ${
                       effectiveDark ? 'text-white' : 'text-slate-900'
                     }`} title={currentPodiumData[2].mainTitle}>
                       {currentPodiumData[2].mainTitle}
@@ -1248,14 +1283,12 @@ export default function LiveLeaderboard() {
                     </div>
                   </div>
 
-                  {/* Architectural Pedestal #3 */}
-                  <div className="w-full h-28 sm:h-40 rounded-t-2xl sm:rounded-t-3xl bg-gradient-to-b from-amber-600 via-orange-500 to-amber-700 border-t-4 border-orange-300/90 shadow-[0_14px_35px_rgba(194,65,12,0.3)] flex flex-col items-center justify-center gap-1 sm:gap-2 p-1.5 sm:p-3 relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
-                    <div className="flex flex-col items-center">
-                      <span className="text-3xl sm:text-6xl font-black font-sans text-white tracking-tight drop-shadow-[0_2px_4px_rgba(154,52,18,0.4)]">
-                        3
-                      </span>
-                      <span className="text-[7.5px] sm:text-[10px] font-black uppercase tracking-wider text-amber-950 bg-amber-200 px-1.5 sm:px-2.5 py-0.5 rounded-full mt-0.5 sm:mt-1 shadow-2xs whitespace-nowrap">
+                  {/* Architectural Pedestal #3 — Burnished Metallic Bronze */}
+                  <div className="w-full h-28 sm:h-40 rounded-t-2xl sm:rounded-t-3xl bg-gradient-to-b from-[#b88158] via-[#925c36] to-[#633b1f] border-t-4 border-[#e0b899]/90 shadow-[0_14px_35px_rgba(99,59,31,0.32)] flex flex-col items-center justify-center gap-1 sm:gap-2 p-1.5 sm:p-3 relative overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent pointer-events-none" />
+                    <div className="flex flex-col items-center relative z-10">
+                      <RankMedal rank={3} className="w-12 h-12 sm:w-18 sm:h-18 drop-shadow-[0_6px_12px_rgba(45,22,8,0.5)]" />
+                      <span className="text-[7.5px] sm:text-[10px] font-black uppercase tracking-wider text-[#4a2b14] bg-white/95 px-1.5 sm:px-2.5 py-0.5 rounded-full mt-1 sm:mt-1.5 shadow-2xs whitespace-nowrap">
                         {activeCategory === 'peleton' ? 'JUARA 3 UTAMA' : 'DANTON TERBAIK 3'}
                       </span>
                     </div>
@@ -1315,67 +1348,65 @@ export default function LiveLeaderboard() {
                 </h3>
               </div>
 
-              {/* 3 Pedestal Stage for Harapan */}
-              <div className="grid grid-cols-3 gap-1.5 sm:gap-4 max-w-2xl mx-auto items-end pt-2 sm:pt-4 relative z-10">
+              {/* 3 Pedestal Stage for Harapan (Proporsi & Ukuran Logo Seimbang dengan Podium Utama) */}
+              <div className="grid grid-cols-3 gap-1.5 sm:gap-5 max-w-3xl mx-auto items-end pt-3 sm:pt-5 relative z-10">
                 {/* HARAPAN 2 (#5) - KIRI */}
                 <div className="flex flex-col items-center">
-                  <div className="flex flex-col items-center mb-2 sm:mb-2.5 text-center w-full">
-                    <div className="w-12 h-12 sm:w-16 sm:h-16 mb-1 sm:mb-1.5 flex items-center justify-center hover:scale-105 transition-transform">
-                      <SchoolLogo team={currentHarapanPodiumData[1].team} schoolName={currentHarapanPodiumData[1].schoolName} size="table" isDark={effectiveDark} />
+                  <div className="flex flex-col items-center mb-2.5 sm:mb-3 text-center w-full">
+                    <div className="w-14 h-14 sm:w-20 sm:h-20 mb-2 flex items-center justify-center hover:scale-105 transition-transform">
+                      <SchoolLogo team={currentHarapanPodiumData[1].team} schoolName={currentHarapanPodiumData[1].schoolName} size="podium-md" isDark={effectiveDark} />
                     </div>
-                    <h4 className={`font-black text-[10.5px] sm:text-xs line-clamp-2 min-h-[2.4em] leading-tight w-full px-0.5 break-words ${
+                    <h4 className={`font-black text-[11px] sm:text-xs md:text-sm line-clamp-2 leading-snug w-full px-1 break-words ${
                       effectiveDark ? 'text-white' : 'text-slate-900'
                     }`} title={currentHarapanPodiumData[1].mainTitle}>
                       {currentHarapanPodiumData[1].mainTitle}
                     </h4>
-                    <p className="text-[9px] sm:text-[10.5px] text-slate-500 line-clamp-1 truncate w-full px-0.5 mt-0.5 font-medium">
+                    <p className="text-[9.5px] sm:text-[11px] text-slate-500 line-clamp-1 truncate w-full px-1 mt-0.5 font-medium">
                       {currentHarapanPodiumData[1].subTitle}
                     </p>
-                    <div className="mt-1 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-slate-900 text-white shadow-2xs border border-slate-700">
-                      <span className="text-[10px] sm:text-[11px] font-mono font-black text-slate-200">{currentHarapanPodiumData[1].score}</span>
-                      <span className="text-[7px] sm:text-[8px] font-bold uppercase tracking-wider text-slate-400">Poin</span>
+                    <div className="mt-1 sm:mt-1.5 inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full bg-slate-900 text-white shadow-2xs border border-slate-700">
+                      <span className="text-[10.5px] sm:text-xs font-mono font-black text-slate-200">{currentHarapanPodiumData[1].score}</span>
+                      <span className="text-[7.5px] sm:text-[8.5px] font-bold uppercase tracking-wider text-slate-400">Poin</span>
                     </div>
                   </div>
 
-                  {/* Pedestal Harapan 2 (#5) */}
-                  <div className="w-full h-28 sm:h-38 rounded-t-xl sm:rounded-t-2xl bg-gradient-to-b from-slate-200 via-slate-300 to-slate-400 border-t-3 border-white shadow-xs flex flex-col items-center justify-center gap-1 sm:gap-1.5 p-1.5 sm:p-2.5 relative overflow-hidden">
-                    <span className="text-2xl sm:text-4xl font-black font-sans text-white tracking-tight drop-shadow-[0_2px_4px_rgba(71,85,105,0.4)]">
-                      5
-                    </span>
-                    <span className="text-[7.5px] sm:text-[9.5px] font-black uppercase tracking-wider text-slate-800 bg-white/95 px-2 py-0.5 rounded-full shadow-2xs whitespace-nowrap">
+                  {/* Pedestal Harapan 2 (#5) — Tema Besi / Forged Steel */}
+                  <div className="w-full h-28 sm:h-40 rounded-t-2xl sm:rounded-t-3xl bg-gradient-to-b from-slate-500 via-slate-700 to-slate-900 border-t-4 border-slate-400/80 shadow-[0_12px_28px_rgba(15,23,42,0.32)] flex flex-col items-center justify-center gap-1.5 sm:gap-2 p-1.5 sm:p-3 relative overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-tr from-black/25 via-white/10 to-transparent pointer-events-none" />
+                    <RankMedal rank={5} className="w-12 h-12 sm:w-18 sm:h-18 relative z-10 drop-shadow-[0_6px_12px_rgba(0,0,0,0.55)]" />
+                    <span className="relative z-10 text-[7.5px] sm:text-[10px] font-black uppercase tracking-wider text-slate-900 bg-slate-100/95 px-2 sm:px-2.5 py-0.5 rounded-full shadow-2xs whitespace-nowrap">
                       HARAPAN 2
                     </span>
                   </div>
                 </div>
 
                 {/* HARAPAN 1 (#4) - TENGAH (Tertinggi di Harapan) */}
-                <div className="flex flex-col items-center -mt-2 sm:-mt-4">
-                  <div className="flex flex-col items-center mb-2 sm:mb-2.5 text-center w-full">
-                    <div className="w-14 h-14 sm:w-20 sm:h-20 mb-1 sm:mb-1.5 flex items-center justify-center hover:scale-105 transition-transform">
-                      <SchoolLogo team={currentHarapanPodiumData[0].team} schoolName={currentHarapanPodiumData[0].schoolName} size="podium-md" isDark={effectiveDark} />
+                <div className="flex flex-col items-center -mt-2 sm:-mt-5">
+                  <div className="flex flex-col items-center mb-2.5 sm:mb-3 text-center w-full">
+                    <div className="w-18 h-18 sm:w-24 sm:h-24 mb-2 flex items-center justify-center hover:scale-105 transition-transform">
+                      <SchoolLogo team={currentHarapanPodiumData[0].team} schoolName={currentHarapanPodiumData[0].schoolName} size="podium-lg" isDark={effectiveDark} />
                     </div>
-                    <h4 className={`font-black text-[11px] sm:text-xs md:text-sm line-clamp-2 min-h-[2.4em] leading-tight w-full px-0.5 break-words ${
+                    <h4 className={`font-black text-xs sm:text-sm md:text-base line-clamp-2 leading-snug w-full px-1 break-words ${
                       effectiveDark ? 'text-white' : 'text-slate-950'
                     }`} title={currentHarapanPodiumData[0].mainTitle}>
                       {currentHarapanPodiumData[0].mainTitle}
                     </h4>
-                    <p className="text-[9.5px] sm:text-[11px] text-slate-500 line-clamp-1 truncate w-full px-0.5 mt-0.5 font-medium">
+                    <p className="text-[10px] sm:text-xs text-slate-500 line-clamp-1 truncate w-full px-1 mt-0.5 font-medium">
                       {currentHarapanPodiumData[0].subTitle}
                     </p>
-                    <div className="mt-1 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-slate-950 text-white shadow-xs border border-sky-400/40">
-                      <Award className="w-3 h-3 text-sky-400" />
-                      <span className="text-[10.5px] sm:text-xs font-mono font-black text-sky-300">{currentHarapanPodiumData[0].score}</span>
-                      <span className="text-[7.5px] sm:text-[8.5px] font-bold uppercase tracking-wider text-slate-300">Poin</span>
+                    <div className="mt-1 sm:mt-1.5 inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3.5 py-0.5 sm:py-1 rounded-full bg-slate-950 text-white shadow-xs border border-white/25">
+                      <Award className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-slate-200" />
+                      <span className="text-[11px] sm:text-sm font-mono font-black text-white">{currentHarapanPodiumData[0].score}</span>
+                      <span className="text-[8px] sm:text-[9px] font-bold uppercase tracking-wider text-slate-300">Poin</span>
                     </div>
                   </div>
 
-                  {/* Pedestal Harapan 1 (#4) */}
-                  <div className="w-full h-36 sm:h-48 rounded-t-xl sm:rounded-t-2xl bg-gradient-to-b from-sky-400 via-blue-500 to-indigo-600 border-t-4 border-sky-200 shadow-md flex flex-col items-center justify-center gap-1 sm:gap-2 p-1.5 sm:p-3 relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
-                    <span className="text-3xl sm:text-5xl font-black font-sans text-white tracking-tight drop-shadow-[0_2px_4px_rgba(30,58,138,0.5)]">
-                      4
-                    </span>
-                    <span className="text-[8px] sm:text-[10px] font-black uppercase tracking-wider text-indigo-950 bg-white/95 px-2.5 py-0.5 rounded-full shadow-xs whitespace-nowrap">
+                  {/* Pedestal Harapan 1 (#4) — Tema Kaca Kristal / Smoky Frosted Glass */}
+                  <div className="w-full h-36 sm:h-52 rounded-t-2xl sm:rounded-t-3xl bg-gradient-to-b from-[#d8e1ea] via-[#bcc9d6] to-[#98a9ba] border-t-4 border-white/95 border-x border-[#b2c0cf] shadow-[0_14px_34px_rgba(71,85,105,0.22),inset_0_1px_1px_rgba(255,255,255,0.9)] flex flex-col items-center justify-center gap-1.5 sm:gap-2.5 p-2 sm:p-3.5 relative overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/35 to-white/10 pointer-events-none" />
+                    <div className="absolute -top-10 -left-10 w-36 h-36 bg-white/45 rounded-full blur-2xl pointer-events-none" />
+                    <RankMedal rank={4} className="w-14 h-14 sm:w-22 sm:h-22 relative z-10 drop-shadow-[0_6px_14px_rgba(30,41,59,0.42)]" />
+                    <span className="relative z-10 text-[8px] sm:text-[10.5px] font-black uppercase tracking-wider text-slate-900 bg-white/95 border border-white px-2.5 sm:px-3 py-0.5 rounded-full shadow-xs whitespace-nowrap">
                       HARAPAN 1
                     </span>
                   </div>
@@ -1383,30 +1414,29 @@ export default function LiveLeaderboard() {
 
                 {/* HARAPAN 3 (#6) - KANAN */}
                 <div className="flex flex-col items-center">
-                  <div className="flex flex-col items-center mb-2 sm:mb-2.5 text-center w-full">
-                    <div className="w-12 h-12 sm:w-16 sm:h-16 mb-1 sm:mb-1.5 flex items-center justify-center hover:scale-105 transition-transform">
-                      <SchoolLogo team={currentHarapanPodiumData[2].team} schoolName={currentHarapanPodiumData[2].schoolName} size="table" isDark={effectiveDark} />
+                  <div className="flex flex-col items-center mb-2.5 sm:mb-3 text-center w-full">
+                    <div className="w-14 h-14 sm:w-20 sm:h-20 mb-2 flex items-center justify-center hover:scale-105 transition-transform">
+                      <SchoolLogo team={currentHarapanPodiumData[2].team} schoolName={currentHarapanPodiumData[2].schoolName} size="podium-md" isDark={effectiveDark} />
                     </div>
-                    <h4 className={`font-black text-[10.5px] sm:text-xs line-clamp-2 min-h-[2.4em] leading-tight w-full px-0.5 break-words ${
+                    <h4 className={`font-black text-[11px] sm:text-xs md:text-sm line-clamp-2 leading-snug w-full px-1 break-words ${
                       effectiveDark ? 'text-white' : 'text-slate-900'
                     }`} title={currentHarapanPodiumData[2].mainTitle}>
                       {currentHarapanPodiumData[2].mainTitle}
                     </h4>
-                    <p className="text-[9px] sm:text-[10.5px] text-slate-500 line-clamp-1 truncate w-full px-0.5 mt-0.5 font-medium">
+                    <p className="text-[9.5px] sm:text-[11px] text-slate-500 line-clamp-1 truncate w-full px-1 mt-0.5 font-medium">
                       {currentHarapanPodiumData[2].subTitle}
                     </p>
-                    <div className="mt-1 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-slate-900 text-white shadow-2xs border border-slate-700">
-                      <span className="text-[10px] sm:text-[11px] font-mono font-black text-slate-200">{currentHarapanPodiumData[2].score}</span>
-                      <span className="text-[7px] sm:text-[8px] font-bold uppercase tracking-wider text-slate-400">Poin</span>
+                    <div className="mt-1 sm:mt-1.5 inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full bg-slate-900 text-white shadow-2xs border border-slate-700">
+                      <span className="text-[10.5px] sm:text-xs font-mono font-black text-slate-200">{currentHarapanPodiumData[2].score}</span>
+                      <span className="text-[7.5px] sm:text-[8.5px] font-bold uppercase tracking-wider text-slate-400">Poin</span>
                     </div>
                   </div>
 
-                  {/* Pedestal Harapan 3 (#6) */}
-                  <div className="w-full h-25 sm:h-34 rounded-t-xl sm:rounded-t-2xl bg-gradient-to-b from-stone-300 via-stone-400 to-stone-500 border-t-3 border-stone-200 shadow-xs flex flex-col items-center justify-center gap-1 sm:gap-1.5 p-1.5 sm:p-2.5 relative overflow-hidden">
-                    <span className="text-2xl sm:text-4xl font-black font-sans text-white tracking-tight drop-shadow-[0_2px_4px_rgba(87,83,78,0.4)]">
-                      6
-                    </span>
-                    <span className="text-[7.5px] sm:text-[9.5px] font-black uppercase tracking-wider text-stone-900 bg-white/95 px-2 py-0.5 rounded-full shadow-2xs whitespace-nowrap">
+                  {/* Pedestal Harapan 3 (#6) — Tema Kayu / Warm Carved Wood */}
+                  <div className="w-full h-24 sm:h-36 rounded-t-2xl sm:rounded-t-3xl bg-gradient-to-b from-[#a46a3e] via-[#7c4926] to-[#4f2d16] border-t-4 border-[#d4a373]/90 shadow-[0_12px_26px_rgba(92,51,23,0.3)] flex flex-col items-center justify-center gap-1.5 sm:gap-2 p-1.5 sm:p-3 relative overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-r from-black/15 via-amber-200/10 to-black/20 pointer-events-none" />
+                    <RankMedal rank={6} className="w-11 h-11 sm:w-16 sm:h-16 relative z-10 drop-shadow-[0_6px_12px_rgba(38,19,8,0.55)]" />
+                    <span className="relative z-10 text-[7.5px] sm:text-[10px] font-black uppercase tracking-wider text-amber-950 bg-amber-100/95 px-2 sm:px-2.5 py-0.5 rounded-full shadow-2xs whitespace-nowrap">
                       HARAPAN 3
                     </span>
                   </div>
@@ -1414,7 +1444,7 @@ export default function LiveLeaderboard() {
               </div>
 
               {/* Base Deck for Harapan */}
-              <div className={`max-w-2xl mx-auto h-2 sm:h-3 rounded-b-xl shadow-xs border-t ${
+              <div className={`max-w-3xl mx-auto h-2.5 sm:h-3.5 rounded-b-xl sm:rounded-b-2xl shadow-xs border-t ${
                 effectiveDark
                   ? 'bg-slate-800 border-slate-700'
                   : 'bg-slate-200 border-slate-300'
@@ -1482,20 +1512,20 @@ export default function LiveLeaderboard() {
                     }`}
                   >
                     <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
-                      {/* Rank Number Badge */}
-                      <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center font-mono font-black text-[11px] sm:text-sm shrink-0 shadow-2xs ${
-                        item.rank === 1
-                          ? 'bg-amber-400 text-slate-950'
-                          : item.rank === 2
-                          ? 'bg-slate-300 text-slate-900'
-                          : item.rank === 3
-                          ? 'bg-amber-600 text-white'
-                          : effectiveDark
-                          ? 'bg-slate-800 text-slate-200 border border-slate-700'
-                          : 'bg-slate-100 text-slate-900 border border-slate-200'
-                      }`}>
-                        #{String(item.rank).padStart(2, '0')}
-                      </div>
+                      {/* Rank Number / Medal Emblem */}
+                      {(item.rank <= 3 || (activeCategory === 'peleton' && item.rank <= 6)) ? (
+                        <div className="w-9 h-9 sm:w-11 sm:h-11 flex items-center justify-center shrink-0">
+                          <RankMedal rank={item.rank} className="w-9 h-9 sm:w-11 sm:h-11" />
+                        </div>
+                      ) : (
+                        <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center font-mono font-black text-[11px] sm:text-sm shrink-0 shadow-2xs ${
+                          effectiveDark
+                            ? 'bg-slate-800 text-slate-200 border border-slate-700'
+                            : 'bg-slate-100 text-slate-900 border border-slate-200'
+                        }`}>
+                          #{String(item.rank).padStart(2, '0')}
+                        </div>
+                      )}
 
                       {/* No. Dada (Di Sebelah Kanan Peringkat Tanpa Label) */}
                       {chestNumber && (
@@ -1678,45 +1708,15 @@ export default function LiveLeaderboard() {
                       >
                         {isOfficialScoreVisible && (
                           <td className="py-2.5 px-3 text-center">
-                            {item.rank === 1 && (
-                              <div className="inline-flex flex-col items-center">
-                                <span className="w-6 h-6 rounded-full bg-amber-400 text-slate-950 font-black text-xs inline-flex items-center justify-center shadow-2xs">
-                                  1
-                                </span>
-                                <span className="text-[10px] font-bold text-amber-700 dark:text-amber-400 mt-0.5 whitespace-nowrap">
-                                  {item.shortTitle}
-                                </span>
-                              </div>
-                            )}
-                            {item.rank === 2 && (
-                              <div className="inline-flex flex-col items-center">
-                                <span className="w-6 h-6 rounded-full bg-slate-300 text-slate-800 font-black text-xs inline-flex items-center justify-center shadow-2xs">
-                                  2
-                                </span>
-                                <span className="text-[10px] font-bold text-slate-700 dark:text-slate-300 mt-0.5 whitespace-nowrap">
-                                  {item.shortTitle}
-                                </span>
-                              </div>
-                            )}
-                            {item.rank === 3 && (
-                              <div className="inline-flex flex-col items-center">
-                                <span className="w-6 h-6 rounded-full bg-amber-700 text-white font-black text-xs inline-flex items-center justify-center shadow-2xs">
-                                  3
-                                </span>
-                                <span className="text-[10px] font-bold text-amber-800 dark:text-amber-400 mt-0.5 whitespace-nowrap">
-                                  {item.shortTitle}
-                                </span>
+                            {item.rank <= 3 && (
+                              <div className="inline-flex items-center justify-center">
+                                <RankMedal rank={item.rank} className="w-10 h-10" />
                               </div>
                             )}
                             {item.rank >= 4 && item.rank <= 6 && (
-                              <div className="inline-flex flex-col items-center">
-                                <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 font-bold text-[11px] inline-flex items-center justify-center">
-                                  {item.rank}
-                                </span>
-                                <span className="text-[9px] font-semibold text-emerald-700 dark:text-emerald-400 mt-0.5 whitespace-nowrap">
-                                  {item.shortTitle}
-                                </span>
-                              </div>
+                              <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border border-slate-200/90 dark:border-slate-700 text-[10.5px] font-bold whitespace-nowrap">
+                                {item.shortTitle}
+                              </span>
                             )}
                             {item.rank > 6 && (
                               <span className={`font-mono text-xs font-bold ${effectiveDark ? 'text-slate-200' : 'text-slate-900'}`}>
@@ -1895,34 +1895,9 @@ export default function LiveLeaderboard() {
                       >
                         {isOfficialScoreVisible && (
                           <td className="py-2.5 px-3 text-center">
-                            {item.rank === 1 && (
-                              <div className="inline-flex flex-col items-center">
-                                <span className="w-6 h-6 rounded-full bg-amber-400 text-slate-950 font-black text-xs inline-flex items-center justify-center shadow-2xs">
-                                  1
-                                </span>
-                                <span className="text-[10px] font-bold text-amber-700 dark:text-amber-400 mt-0.5 whitespace-nowrap">
-                                  Danton 1
-                                </span>
-                              </div>
-                            )}
-                            {item.rank === 2 && (
-                              <div className="inline-flex flex-col items-center">
-                                <span className="w-6 h-6 rounded-full bg-slate-300 text-slate-800 font-black text-xs inline-flex items-center justify-center shadow-2xs">
-                                  2
-                                </span>
-                                <span className="text-[10px] font-bold text-slate-700 dark:text-slate-300 mt-0.5 whitespace-nowrap">
-                                  Danton 2
-                                </span>
-                              </div>
-                            )}
-                            {item.rank === 3 && (
-                              <div className="inline-flex flex-col items-center">
-                                <span className="w-6 h-6 rounded-full bg-amber-700 text-white font-black text-xs inline-flex items-center justify-center shadow-2xs">
-                                  3
-                                </span>
-                                <span className="text-[10px] font-bold text-amber-800 dark:text-amber-400 mt-0.5 whitespace-nowrap">
-                                  Danton 3
-                                </span>
+                            {item.rank <= 3 && (
+                              <div className="inline-flex items-center justify-center">
+                                <RankMedal rank={item.rank} className="w-10 h-10" />
                               </div>
                             )}
                             {item.rank > 3 && (
@@ -2019,195 +1994,194 @@ export default function LiveLeaderboard() {
           )}
 
           {/* TAB 3: KLASEMEN JUARA UMUM SEKOLAH */}
-          {activeCategory === 'juara_umum' && (
-            <table className="leaderboard-table w-full min-w-[920px] text-left text-xs border-collapse">
-              <thead>
-                <tr
-                  className={`uppercase text-[11px] font-bold border-b transition-colors tracking-wider ${
-                    effectiveDark
-                      ? 'bg-slate-950 text-slate-200 border-slate-800'
-                      : 'bg-slate-100 text-slate-800 border-slate-200'
+          {activeCategory === 'juara_umum' && (() => {
+            const maxPoints = Math.max(1, ...finalFilteredJuaraUmum.map(s => Number(s.totalPoints) || 0));
+            return (
+              <table className="leaderboard-table w-full min-w-[820px] text-left text-xs border-collapse">
+                <thead>
+                  <tr
+                    className={`uppercase text-[10px] font-extrabold border-b transition-colors tracking-wider ${
+                      effectiveDark
+                        ? 'bg-slate-950 text-slate-400 border-slate-800'
+                        : 'bg-slate-50/90 text-slate-500 border-slate-200'
+                    }`}
+                  >
+                    <th className="py-3 px-4 text-center w-16">#</th>
+                    <th className="py-3 px-4 min-w-[220px]">Pangkalan Sekolah</th>
+                    <th className="py-3 px-4 min-w-[170px]">Prestasi Peleton</th>
+                    <th className="py-3 px-4 min-w-[240px]">Prestasi Danton</th>
+                    <th className="py-3 px-3 text-center w-24">Tie-Breaker</th>
+                    <th className="py-3 px-5 text-right w-40">Total Poin</th>
+                  </tr>
+                </thead>
+                <tbody
+                  className={`divide-y transition-colors ${
+                    effectiveDark ? 'divide-slate-800/60' : 'divide-slate-100'
                   }`}
                 >
-                  <th className="py-3 px-3 text-center w-28">Peringkat & Gelar</th>
-                  <th className="py-3 px-4 min-w-[200px]">Pangkalan Sekolah</th>
-                  <th className="py-3 px-4 min-w-[220px]">Prestasi Peleton (Poin Juknis)</th>
-                  <th className="py-3 px-4 min-w-[220px]">Prestasi Danton (Poin Juknis)</th>
-                  <th
-                    className={`py-3 px-3 text-center w-28 font-bold ${
-                      effectiveDark ? 'bg-slate-800 text-slate-100' : 'bg-slate-200 text-slate-900'
-                    }`}
-                  >
-                    Murni Tie-Breaker
-                  </th>
-                  <th
-                    className={`py-3 px-4 text-center w-36 font-bold ${
-                      effectiveDark
-                        ? 'bg-amber-950/30 text-amber-300 border-l border-slate-800'
-                        : 'bg-amber-50 text-amber-950 border-l border-slate-200/80'
-                    }`}
-                  >
-                    Total Poin Juara Umum
-                  </th>
-                </tr>
-              </thead>
-              <tbody
-                className={`divide-y transition-colors ${
-                  effectiveDark ? 'divide-slate-800/60' : 'divide-slate-100'
-                }`}
-              >
-                {finalFilteredJuaraUmum.length === 0 ? (
-                  <tr>
-                    <td colSpan={6} className="py-10 text-center text-slate-400">
-                      Belum ada data akumulasi poin sekolah.
-                    </td>
-                  </tr>
-                ) : (
-                  finalFilteredJuaraUmum.map(sch => {
-                    const isChampion = sch.rank === 1;
-                    const isRunnerUp1 = sch.rank === 2;
-                    const isRunnerUp2 = sch.rank === 3;
-                    const isMySchool = currentTeam?.schoolName && sch.schoolName?.toLowerCase() === currentTeam.schoolName?.toLowerCase();
+                  {finalFilteredJuaraUmum.length === 0 ? (
+                    <tr>
+                      <td colSpan={6} className="py-12 text-center text-slate-400">
+                        Belum ada data akumulasi poin sekolah.
+                      </td>
+                    </tr>
+                  ) : (
+                    finalFilteredJuaraUmum.map(sch => {
+                      const isChampion = sch.rank === 1;
+                      const isRunnerUp1 = sch.rank === 2;
+                      const isRunnerUp2 = sch.rank === 3;
+                      const isMySchool = currentTeam?.schoolName &&
+                        getNormalizedSchoolKey(currentTeam.jenjang, currentTeam.schoolName) === getNormalizedSchoolKey(sch.jenjang, sch.schoolName);
+                      const barPct = Math.round(((Number(sch.totalPoints) || 0) / maxPoints) * 100);
 
-                    return (
-                      <tr
-                        key={`${sch.jenjang}_${sch.schoolName}`}
-                        className={`transition-colors ${
-                          isMySchool
-                            ? effectiveDark
-                              ? 'bg-emerald-950/30 font-bold'
-                              : 'bg-emerald-50/70 border-l-3 border-l-emerald-600 font-bold'
-                            : isChampion
-                            ? effectiveDark
-                              ? 'bg-amber-950/20 hover:bg-amber-950/30 font-semibold'
-                              : 'bg-amber-50/50 hover:bg-amber-50 font-semibold'
-                            : effectiveDark
-                            ? 'hover:bg-slate-800/40 text-slate-200'
-                            : 'hover:bg-slate-50/80 text-slate-800'
-                        }`}
-                      >
-                        <td className="py-2.5 px-3 text-center">
-                          {isChampion && (
-                            <div className="inline-flex flex-col items-center">
-                              <span className="w-6 h-6 rounded-full bg-amber-400 text-slate-950 font-black text-xs inline-flex items-center justify-center shadow-2xs">
-                                1
-                              </span>
-                              <span className="text-[10px] font-bold text-amber-700 dark:text-amber-400 mt-0.5 whitespace-nowrap">
-                                Juara Umum
-                              </span>
-                            </div>
-                          )}
-                          {isRunnerUp1 && (
-                            <div className="inline-flex flex-col items-center">
-                              <span className="w-6 h-6 rounded-full bg-slate-300 text-slate-800 font-black text-xs inline-flex items-center justify-center shadow-2xs">
-                                2
-                              </span>
-                              <span className="text-[10px] font-bold text-slate-700 dark:text-slate-300 mt-0.5 whitespace-nowrap">
-                                Runner-Up 1
-                              </span>
-                            </div>
-                          )}
-                          {isRunnerUp2 && (
-                            <div className="inline-flex flex-col items-center">
-                              <span className="w-6 h-6 rounded-full bg-amber-700 text-white font-black text-xs inline-flex items-center justify-center shadow-2xs">
-                                3
-                              </span>
-                              <span className="text-[10px] font-bold text-amber-800 dark:text-amber-400 mt-0.5 whitespace-nowrap">
-                                Runner-Up 2
-                              </span>
-                            </div>
-                          )}
-                          {!isChampion && !isRunnerUp1 && !isRunnerUp2 && (
-                            <span className={`font-mono text-xs font-bold ${effectiveDark ? 'text-slate-200' : 'text-slate-900'}`}>
-                              {sch.rank}
-                            </span>
-                          )}
-                        </td>
-                        <td className="py-2.5 px-4">
-                          <div className="flex items-center gap-2.5">
-                            <SchoolLogo
-                              team={sch.team || sch.teams?.[0]?.team}
-                              schoolName={sch.schoolName}
-                              size="table"
-                              isDark={effectiveDark}
-                              className="w-8 h-8 rounded-lg shrink-0"
-                            />
-                            <div className="min-w-0">
-                              <div
-                                className={`font-semibold text-xs sm:text-sm ${
-                                  effectiveDark ? 'text-white' : 'text-slate-900'
-                                }`}
-                              >
-                                {sch.schoolName}
-                              </div>
-                              <div className={`text-[11px] mt-0.5 ${effectiveDark ? 'text-slate-300' : 'text-slate-700'}`}>
-                                Perwakilan: {sch.teams.length} Peleton
-                              </div>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="py-2 px-4">
-                          {sch.peletonAchievements.length > 0 ? (
-                            <div className="flex flex-wrap gap-1">
-                              {sch.peletonAchievements.map((ach, i) => (
-                                <span
-                                  key={i}
-                                  className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium border ${
-                                    effectiveDark
-                                      ? 'bg-slate-800 border-slate-700 text-slate-200'
-                                      : 'bg-slate-50 border-slate-200 text-slate-800'
-                                  }`}
-                                >
-                                  <span className="font-semibold">{ach.shortTitle}</span>
-                                  <span className="font-mono font-bold text-amber-700 dark:text-amber-400">+{ach.points} pt</span>
-                                </span>
-                              ))}
-                            </div>
-                          ) : (
-                            <span className={`font-mono text-xs ${effectiveDark ? 'text-slate-400' : 'text-slate-700'}`}>-</span>
-                          )}
-                        </td>
-                        <td className="py-2 px-4">
-                          {sch.dantonAchievements.length > 0 ? (
-                            <div className="flex flex-wrap gap-1">
-                              {sch.dantonAchievements.map((ach, i) => (
-                                <span
-                                  key={i}
-                                  className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium border ${
-                                    effectiveDark
-                                      ? 'bg-slate-800 border-slate-700 text-slate-200'
-                                      : 'bg-slate-50 border-slate-200 text-slate-800'
-                                  }`}
-                                >
-                                  <span>{ach.dantonName}</span>
-                                  <span className={effectiveDark ? 'text-slate-300' : 'text-slate-700'}>({ach.shortTitle})</span>
-                                  <span className="font-mono font-bold text-amber-700 dark:text-amber-400">+{ach.points} pt</span>
-                                </span>
-                              ))}
-                            </div>
-                          ) : (
-                            <span className={`font-mono text-xs ${effectiveDark ? 'text-slate-400' : 'text-slate-700'}`}>-</span>
-                          )}
-                        </td>
-                        <td className={`py-2.5 px-3 text-center font-mono font-semibold text-xs ${effectiveDark ? 'text-slate-200' : 'text-slate-900'}`}>
-                          {sch.bestMurniPeleton > 0 ? sch.bestMurniPeleton : '-'}
-                        </td>
-                        <td
-                          className={`py-2.5 px-4 text-center font-mono font-bold text-sm ${
-                            effectiveDark
-                              ? 'bg-amber-950/20 text-amber-300 border-l border-slate-800'
-                              : 'bg-amber-50 text-amber-950 border-l border-slate-200/80'
+                      return (
+                        <tr
+                          key={`${sch.jenjang}_${sch.schoolName}`}
+                          className={`transition-colors ${
+                            isMySchool
+                              ? effectiveDark
+                                ? 'bg-emerald-950/30'
+                                : 'bg-emerald-50/60'
+                              : isChampion
+                              ? effectiveDark
+                                ? 'bg-amber-950/20 hover:bg-amber-950/30'
+                                : 'bg-amber-50/45 hover:bg-amber-50/80'
+                              : effectiveDark
+                              ? 'hover:bg-slate-800/40 text-slate-200'
+                              : 'hover:bg-slate-50/80 text-slate-800'
                           }`}
                         >
-                          {sch.totalPoints} <span className="text-xs font-medium text-amber-800 dark:text-amber-200">Poin</span>
-                        </td>
-                      </tr>
-                    );
-                  })
-                )}
-              </tbody>
-            </table>
-          )}
+                          {/* Rank */}
+                          <td className="py-3.5 px-4 text-center align-middle">
+                            {isChampion ? (
+                              <div className="inline-flex items-center justify-center">
+                                <RankMedal rank={1} className="w-10 h-10" title="Juara Umum" />
+                              </div>
+                            ) : (
+                              <span className={`font-mono text-xs font-bold ${effectiveDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                                {sch.rank}
+                              </span>
+                            )}
+                          </td>
+
+                          {/* Pangkalan Sekolah */}
+                          <td className="py-3.5 px-4 align-middle">
+                            <div className="flex items-center gap-3">
+                              <SchoolLogo
+                                team={sch.team || sch.teams?.[0]?.team}
+                                schoolName={sch.schoolName}
+                                size="table"
+                                isDark={effectiveDark}
+                                className="w-8 h-8 shrink-0"
+                              />
+                              <div className="min-w-0">
+                                <div className="flex items-center gap-2 flex-wrap">
+                                  <span
+                                    className={`font-extrabold text-[13px] leading-snug ${
+                                      effectiveDark ? 'text-white' : 'text-slate-900'
+                                    }`}
+                                  >
+                                    {sch.schoolName}
+                                  </span>
+                                </div>
+                                <div className={`text-[10.5px] mt-0.5 ${effectiveDark ? 'text-slate-400' : 'text-slate-400'}`}>
+                                  {sch.teams.length} Peleton
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+
+                          {/* Prestasi Peleton */}
+                          <td className="py-3.5 px-4 align-middle">
+                            {sch.peletonAchievements.length > 0 ? (
+                              <div className="flex flex-wrap items-center gap-2">
+                                {sch.peletonAchievements.map((ach, i) => (
+                                  <RankMedal
+                                    key={i}
+                                    rank={ach.rank}
+                                    className="w-8 h-8"
+                                    title={`${ach.shortTitle}${sch.teams.length > 1 && ach.suffix ? ` (Peleton ${ach.suffix})` : ''} • +${ach.points} Poin`}
+                                  />
+                                ))}
+                              </div>
+                            ) : (
+                              <span className="text-slate-300 font-mono">—</span>
+                            )}
+                          </td>
+
+                          {/* Prestasi Danton */}
+                          <td className="py-3.5 px-4 align-middle">
+                            {sch.dantonAchievements.length > 0 ? (
+                              <div className="space-y-1.5">
+                                {sch.dantonAchievements.map((ach, i) => (
+                                  <div key={i} className="flex items-center gap-2 min-w-0">
+                                    <RankMedal
+                                      rank={ach.rank}
+                                      className="w-7 h-7"
+                                      title={`${ach.shortTitle}${sch.teams.length > 1 && ach.suffix ? ` (Peleton ${ach.suffix})` : ''} • +${ach.points} Poin`}
+                                    />
+                                    <span
+                                      className={`text-[11.5px] font-semibold truncate max-w-[200px] ${
+                                        effectiveDark ? 'text-slate-300' : 'text-slate-700'
+                                      }`}
+                                      title={`${ach.dantonName} (${ach.shortTitle} • +${ach.points} Poin)`}
+                                    >
+                                      {ach.dantonName}
+                                    </span>
+                                  </div>
+                                ))}
+                              </div>
+                            ) : (
+                              <span className="text-slate-300 font-mono">—</span>
+                            )}
+                          </td>
+
+                          {/* Tie-Breaker */}
+                          <td className={`py-3.5 px-3 text-center align-middle font-mono text-xs ${effectiveDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                            {sch.bestMurniPeleton > 0 ? (
+                              <span className="font-bold text-slate-800 dark:text-slate-200">{sch.bestMurniPeleton}</span>
+                            ) : (
+                              <span className="text-slate-300">—</span>
+                            )}
+                          </td>
+
+                          {/* Total Poin + Mini Visual Bar */}
+                          <td className="py-3.5 px-5 text-right align-middle">
+                            <div className="inline-flex flex-col items-end gap-1 min-w-[96px]">
+                              <div className="flex items-baseline gap-1">
+                                <span
+                                  className={`font-mono font-black text-base leading-none ${
+                                    isChampion
+                                      ? 'text-amber-600 dark:text-amber-400'
+                                      : effectiveDark
+                                      ? 'text-white'
+                                      : 'text-slate-950'
+                                  }`}
+                                >
+                                  {sch.totalPoints}
+                                </span>
+                                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                                  Poin
+                                </span>
+                              </div>
+                              <div className={`w-24 h-1.5 rounded-full overflow-hidden ${effectiveDark ? 'bg-slate-800' : 'bg-slate-100'}`}>
+                                <div
+                                  className={`h-full rounded-full transition-all duration-500 ${
+                                    isChampion ? 'bg-amber-400' : isRunnerUp1 ? 'bg-slate-400' : isRunnerUp2 ? 'bg-amber-700/80' : 'bg-slate-300'
+                                  }`}
+                                  style={{ width: `${barPct}%` }}
+                                />
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
+            );
+          })()}
         </div>
       </div>
       )}
