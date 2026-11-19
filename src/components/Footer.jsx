@@ -117,7 +117,7 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href="#materi" className="text-slate-400 hover:text-yellow-400 transition-colors flex items-center gap-1.5 group">
+                <a href="#materi-lomba" className="text-slate-400 hover:text-yellow-400 transition-colors flex items-center gap-1.5 group">
                   <ChevronRight className="w-3.5 h-3.5 text-yellow-400 opacity-60 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
                   <span>Materi Gerakan</span>
                 </a>
@@ -139,7 +139,7 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href="#faq" className="text-slate-400 hover:text-yellow-400 transition-colors flex items-center gap-1.5 group">
+                <a href="#contact" className="text-slate-400 hover:text-yellow-400 transition-colors flex items-center gap-1.5 group">
                   <ChevronRight className="w-3.5 h-3.5 text-yellow-400 opacity-60 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
                   <span>Tanya Jawab (FAQ)</span>
                 </a>

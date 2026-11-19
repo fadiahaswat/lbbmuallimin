@@ -90,10 +90,10 @@ export default function UnduhanTab({ currentTeam, onOpenPactModal, isEmbedded = 
     ] : []),
     {
       id: 'pakta-integritas',
-      title: 'Pakta Integritas Peleton Bermaterai Rp 10.000',
+      title: 'Pakta Integritas Peleton (TTD Basah Official)',
       category: 'formulir',
       categoryLabel: 'Formulir Resmi',
-      description: 'Surat pernyataan komitmen sportivitas resmi bermaterai yang telah terisi otomatis dengan identitas kontingen Anda, siap dicetak dan ditandatangani.',
+      description: 'Surat pernyataan komitmen sportivitas resmi yang telah terisi otomatis dengan identitas kontingen Anda, siap dicetak dan ditandatangani.',
       type: 'PDF OTOMATIS',
       size: 'Cetak Langsung',
       isAction: true,

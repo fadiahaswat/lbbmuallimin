@@ -71,7 +71,7 @@ export function createTeamActions({ teams, setTeams, scores, setScores, setStagi
       registeredAt: nowIso,
       updatedAt: nowIso,
       wave: newTeamData.wave || 1,
-      feeAmount: newTeamData.feeAmount || 450000,
+      feeAmount: newTeamData.feeAmount || 350000,
       paymentStatus: 'unverified',
       files: {
         schoolLogo: newTeamData.files?.schoolLogo || null,

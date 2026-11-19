@@ -128,6 +128,11 @@ export default function OverviewTab({
   const autoTrialSchedule = teamDynamicTrial?.schedule || (lotIdx >= 0 ? UJI_COBA_SCHEDULE[jKey]?.[lotIdx] : null);
 
   const displayEstimatedTime = currentTeam.estimatedTime || autoSchedule?.startTampil || (currentTeam.lotNumber ? `#${String(currentTeam.lotNumber).padStart(2, '0')}` : null);
+  const isLocalhost = typeof window !== 'undefined' && (
+    window.location.hostname === 'localhost' ||
+    window.location.hostname === '127.0.0.1' ||
+    window.location.hostname.includes('192.168.')
+  );
   const isBasecampRatified = Boolean((settings?.basecampPublished && settings?.basecampRatifiedAt) || isLocalhost);
   const resolvedBasecampCode =
     stagingInfo?.basecamp?.roomName ||
@@ -187,11 +192,6 @@ export default function OverviewTab({
   };
 
   // LO State & Fallback logic (terhubung dummy/localStorage, selalu tampil ditetapkan di localhost)
-  const isLocalhost = typeof window !== 'undefined' && (
-    window.location.hostname === 'localhost' ||
-    window.location.hostname === '127.0.0.1' ||
-    window.location.hostname.includes('192.168.')
-  );
   const loName = currentTeam?.loName || (isLocalhost ? 'Kak Rizky Fauzi (Panitia LBB)' : null);
   const loRole = currentTeam?.loRole || (isLocalhost ? 'LO Pendamping Peleton' : null);
   const loPhoto = currentTeam?.loPhoto || (isLocalhost ? 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=240&auto=format&fit=crop&q=80' : null);
@@ -282,7 +282,7 @@ export default function OverviewTab({
       label: 'Technical Meeting',
       time: tmTime || '13.00 WIB s.d. Selesai',
       title: 'Technical Meeting & Validasi Fisik Berkas',
-      copy: 'Wajib dihadiri 1 Pembina dan 1 Danton. Agenda pengambilan nomor dada & pengundian nomor urut tampil peleton.',
+      copy: 'Registrasi 12.30-13.00 WIB. Maks. 2 perwakilan per sekolah (Official dan/atau Danton). Bawa Surat Tugas asli stempel basah & Pakta Integritas ttd basah Official. Agenda: pemaparan juknis & pengundian nomor urut tampil. Nomor dada dibagikan saat daftar ulang Hari-H.',
       badgeClass: 'bg-purple-100 text-purple-700',
       btnClass: 'bg-purple-600 hover:bg-purple-700',
       mapsUrl: EVENT.TECHNICAL_MEETING_MAPS_URL || "https://www.google.com/maps/dir/?api=1&destination=Madrasah+Mu'allimin+Muhammadiyah+Yogyakarta+Jl.+Letjen+S.+Parman+No.+68+Wirobrajan"

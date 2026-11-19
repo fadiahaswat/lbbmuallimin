@@ -121,7 +121,7 @@ export default function TeamInspectionPage({
     }
   };
 
-  const feeFormatted = (team.feeAmount || 450000).toLocaleString('id-ID');
+  const feeFormatted = (team.feeAmount || 350000).toLocaleString('id-ID');
   const danton = team.roster?.danton;
   const pasukan = Array.isArray(team.roster?.pasukan) ? team.roster.pasukan : [];
   const cadangan = Array.isArray(team.roster?.cadangan) ? team.roster.cadangan : [];

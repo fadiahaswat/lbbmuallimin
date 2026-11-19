@@ -43,7 +43,7 @@ export default function MateriTemaTab({ currentTeam, initialSubTab = 'materi' })
   const list = isSD ? MATERIALS.SD : MATERIALS.SMP;
   const specLabel = isSD ? COMPETITION.SD.ARENA_SPEC_LABEL : COMPETITION.SMP.ARENA_SPEC_LABEL;
   const arenaName = isSD ? 'Arena 1: Lapangan Basket Kampus Sedayu' : 'Arena 2: Pelataran Embung Kampus Sedayu';
-  const arenaDim = isSD ? '18m × 20m' : '20m × 22m';
+  const arenaDim = isSD ? '25m × 14m' : '26m × 15m';
   const maxDuration = isSD ? '8 Menit' : '12 Menit';
 
   function generateTextMateri(level) {

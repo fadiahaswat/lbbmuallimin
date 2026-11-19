@@ -85,7 +85,7 @@ export default function LeaderboardView({
           </div>
           {standingType === 'umum' && (
             <p className="text-[11px] text-slate-600 leading-relaxed pl-6">
-              <strong>Juara Umum (Piala Bergilir)</strong> ditentukan dari <strong>Akumulasi Poin Prestasi Sekolah</strong> tertinggi pada masing-masing jenjang melalui skema konversi peringkat kejuaraan (Juara 1–3 & Harapan 1–3 Peleton: <strong>6, 5, 4, 3, 2, 1 Poin</strong> + Juara 1–3 Komandan Terbaik: <strong>3, 2, 1 Poin</strong>). Tie-breaker Bab A.8: Nilai Murni Peleton tertinggi salah satu peleton terbaik sekolah → Penalti Peleton terkecil → Nilai Murni Komandan tertinggi.
+              <strong>Juara Umum (Piala Bergilir)</strong> ditentukan dari <strong>Akumulasi Poin Prestasi Sekolah</strong> tertinggi pada masing-masing jenjang melalui skema konversi peringkat kejuaraan (Juara 1–3 Peleton: <strong>10, 3, 1 Poin</strong> + Juara 1–3 Komandan Terbaik: <strong>5, 2, 1 Poin</strong>; Juara Harapan tidak dihitung). Tie-breaker Bab A.8: Nilai Murni Peleton tertinggi salah satu peleton terbaik sekolah → Penalti Peleton terkecil → Nilai Murni Komandan tertinggi.
             </p>
           )}
           {standingType === 'peleton' && (
@@ -144,7 +144,7 @@ export default function LeaderboardView({
                   nilaiMurniDanton,
                   peletonPenalty,
                   dantonPenalty,
-                  dantonSubstituted,
+                  dantonSubstituted: Boolean(s.dantonSubstituted),
                   peletonScore,
                   dantonScore,
                   dantonMateri,

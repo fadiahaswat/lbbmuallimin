@@ -96,17 +96,17 @@ export const EVENT = {
     TECHNICAL_MEETING_DATE: '9 Januari 2027',
 
     /** Waktu Technical Meeting (singkat, di timeline) */
-    TECHNICAL_MEETING_TIME: '13.00 - 16.30 WIB',
+    TECHNICAL_MEETING_TIME: '13.00 - 16.30 WIB (Registrasi 12.30)',
 
     /** Hari + tanggal lengkap Technical Meeting (untuk FAQ & kartu) */
     TECHNICAL_MEETING_FULL_DATE: 'Sabtu, 9 Januari 2027',
 
     /** Rentang jam Technical Meeting */
-    TECHNICAL_MEETING_TIME_RANGE: '13.00 - 16.30 WIB',
+    TECHNICAL_MEETING_TIME_RANGE: '13.00 - 16.30 WIB (Registrasi 12.30)',
 
     /** Lokasi / venue Technical Meeting */
     TECHNICAL_MEETING_VENUE:
-        "Aula Kampus Induk Madrasah Mu\u2019allimin Muhammadiyah Yogyakarta, Jalan Letjen S. Parman No. 68, Wirobrajan, Kota Yogyakarta, Daerah Istimewa Yogyakarta.",
+        "Aula Kampus Induk Madrasah Mu\u2019allimin Muhammadiyah Yogyakarta, Jl. Letjen S. Parman No. 68, Patangpuluhan, Wirobrajan, Kota Yogyakarta, Daerah Istimewa Yogyakarta.",
     TECHNICAL_MEETING_VENUE_NAME: "Aula Kampus Induk Madrasah Mu\u2019allimin Muhammadiyah Yogyakarta",
     TECHNICAL_MEETING_ADDRESS: "Jl. Letjen S. Parman No. 68, Patangpuluhan, Wirobrajan, Kota Yogyakarta, DIY",
     TECHNICAL_MEETING_MAPS_URL: "https://maps.app.goo.gl/8tSQHpribqPXTSA79",
@@ -114,13 +114,13 @@ export const EVENT = {
     /** Uji Coba Lapangan */
     FIELD_TRIAL_DATE: '16 Januari 2027',
     FIELD_TRIAL_FULL_DATE: 'Sabtu, 16 Januari 2027',
-    FIELD_TRIAL_TIME_RANGE: '07.00 \u2013 13.00 WIB',
+    FIELD_TRIAL_TIME_RANGE: '06.30 \u2013 12.00 WIB',
 
     /** Hari & tanggal hari-H */
     COMPETITION_DATE: 'Ahad, 24 Januari 2027',
 
     /** Rentang waktu hari-H */
-    COMPETITION_TIME_RANGE: '06.00 WIB \u2013 17.00 WIB',
+    COMPETITION_TIME_RANGE: '06.00 WIB \u2013 17.15 WIB',
 
     /** Jam mulai hari-H (untuk teks "Mulai 06.00 WIB") */
     COMPETITION_TIME_START_LABEL: 'Mulai 06.00 WIB',
@@ -157,8 +157,8 @@ export const VENUE = {
 export const VENUE_INDUK = {
     NAME: "Kampus Induk Madrasah Mu\u2019allimin",
     SUBTITLE: "Lokasi Technical Meeting (TM)",
-    ADDRESS: "Jalan Letjen S. Parman No. 68, Notoprajan, Ngampilan / Wirobrajan, Kota Yogyakarta, D.I. Yogyakarta 55262.",
-    SHORT_ADDRESS: "Jl. Letjen S. Parman No. 68, Wirobrajan, Yogyakarta.",
+    ADDRESS: "Jl. Letjen S. Parman No. 68, Patangpuluhan, Wirobrajan, Kota Yogyakarta, D.I. Yogyakarta.",
+    SHORT_ADDRESS: "Jl. Letjen S. Parman No. 68, Patangpuluhan, Wirobrajan, Yogyakarta.",
     MAPS_URL: "https://maps.app.goo.gl/8tSQHpribqPXTSA79",
     MAPS_EMBED_URL: "https://maps.google.com/maps?q=-7.8075522,110.351427&hl=id&z=17&output=embed",
     GPS: "-7.8076, 110.3514",
@@ -509,7 +509,7 @@ export const RUBRIC_GRADES = [
     },
     {
         key: 'BS',
-        label: 'SANGAT BAIK',
+        label: 'BAIK SEKALI',
         shortLabel: 'BS',
         headerBg: 'bg-blue-600',
         headerText: 'text-white',
@@ -787,7 +787,7 @@ export const PENALTIES = [
     {
         label: 'Yel-Yel / Teriakan yang Mengganggu Jalannya Perlombaan',
         value: 'Peringatan 1-2 & -50 Poin ke-3 dst (Nilai Peleton)',
-        desc: 'Pelanggaran ke-1 dan ke-2 diberikan Peringatan Lisan oleh Panitia Lapangan; pelanggaran ketiga dan setiap pelanggaran berikutnya dikenai penalti -50 poin terhadap Nilai Peleton untuk setiap kejadian. Pelanggaran sengaja, berulang, atau berat dapat langsung dikenai penalti tanpa peringatan awal. Penalti akibat kegaduhan suporter dibebankan terhadap Nilai Peleton (Pasal 8 Tatib & Bab C.10).',
+        desc: 'Pelanggaran ke-1 dan ke-2 diberikan Peringatan Lisan oleh Panitia Lapangan; pelanggaran ketiga dan setiap pelanggaran berikutnya dikenai penalti -50 poin terhadap Nilai Peleton untuk setiap kejadian. Pelanggaran sengaja, berulang, atau berat dapat langsung dikenai penalti tanpa peringatan awal. Penalti akibat kegaduhan suporter dibebankan terhadap Nilai Peleton (Pasal 9 Tatib & Bab C.10).',
     },
     {
         label: 'Penggunaan Gerakan Penyesuaian',
@@ -811,13 +811,10 @@ export const PRIZES = {
     ROLLING_TROPHY_SMP:    'Piala Bergilir Juara Umum Tingkat SMP/MTs Sederajat',
     TOTAL_CASH_PRIZE:      9600000,
     POINTS_CHAMPIONSHIP: [
-        { rank: 'Juara 1 Peleton', points: 6 },
-        { rank: 'Juara 2 Peleton', points: 5 },
-        { rank: 'Juara 3 Peleton', points: 4 },
-        { rank: 'Juara Harapan 1 Peleton', points: 3 },
-        { rank: 'Juara Harapan 2 Peleton', points: 2 },
-        { rank: 'Juara Harapan 3 Peleton', points: 1 },
-        { rank: 'Juara 1 Komandan Terbaik', points: 3 },
+        { rank: 'Juara 1 Peleton', points: 10 },
+        { rank: 'Juara 2 Peleton', points: 3 },
+        { rank: 'Juara 3 Peleton', points: 1 },
+        { rank: 'Juara 1 Komandan Terbaik', points: 5 },
         { rank: 'Juara 2 Komandan Terbaik', points: 2 },
         { rank: 'Juara 3 Komandan Terbaik', points: 1 },
     ],
@@ -1130,7 +1127,7 @@ export const OFFICIAL_RAB = {
             name: 'Divisi Konsumsi',
             subtotal: 6177000,
             items: [
-                { item: 'Air Mineral Gelas Peserta (1 Dus per Peleton x 36)', volume: 36, unit: 'Dus', price: 30000, total: 1080000 },
+                { item: 'Air Minum Botol Peserta (1 Dus per Peleton x 36)', volume: 36, unit: 'Dus', price: 30000, total: 1080000 },
                 { item: 'Air Mineral Galon Isi Ulang Panitia & Transit', volume: 10, unit: 'Galon', price: 10000, total: 100000 },
                 { item: 'Snack Box Coffee Break TM Juri (6 Dewan Juri)', volume: 6, unit: 'Box', price: 8000, total: 48000 },
                 { item: 'Snack Box TM Peserta (36 Kontingen @ 2 Perwakilan)', volume: 72, unit: 'Box', price: 8000, total: 576000 },
@@ -1153,7 +1150,7 @@ export const OFFICIAL_RAB = {
                 { item: 'Bahan & Ornamen Dekorasi Venue Minisoccer & Arena', volume: 1, unit: 'Paket', price: 300000, total: 300000 },
                 { item: 'Produksi Kaos Panitia Resmi (100 Personil)', volume: 100, unit: 'Pcs', price: 85000, total: 8500000 },
                 { item: 'ID Card Panitia Lengkap + Tali Lanyard', volume: 100, unit: 'Pcs', price: 5000, total: 500000 },
-                { item: 'ID Card Official & Pendukung Kontingen (36 Peleton)', volume: 72, unit: 'Pcs', price: 5000, total: 360000 },
+                { item: 'ID Card Official & Pendukung Kontingen (36 Peleton x 3)', volume: 108, unit: 'Pcs', price: 5000, total: 540000 },
                 { item: 'Lanyard Cetak Resmi Panitia & Juri', volume: 100, unit: 'Pcs', price: 15000, total: 1500000 },
                 { item: 'Topi Lapangan Panitia', volume: 100, unit: 'Pcs', price: 35000, total: 3500000 },
             ],
@@ -1287,7 +1284,7 @@ export const OFFICIAL_TIMELINE = [
         phase: "D. Tahap Pengadaan Logistik, Produksi & Pemantapan Sistem (Nov - Des 2026)",
         period: "1 - 20 Desember 2026",
         title: "PENGADAAN TROFI JUARA, DANA PEMBINAAN & DUKUNGAN MEDIS",
-        desc: "Pemesanan 2 Piala Bergilir, 12 Piala Tetap Juara 1-3 & Harapan 1-3, dan 2 Piala Danton Terbaik. Pembuatan 18 papan simbolis juara 40x60 cm & alokasi uang tunai pembinaan Rp 9.600.000. Surat tim medis & ambulans siaga ke PMI / Dinkes Bantul, serta permohonan tenda pleton ke DENBEKANG.",
+        desc: "Pemesanan 2 Piala Bergilir, 12 Piala Tetap Juara 1-3 & Harapan 1-3, dan 6 Piala Danton Terbaik (J1-3 SD & SMP). Pembuatan 18 papan simbolis juara 40x60 cm & alokasi uang tunai pembinaan Rp 9.600.000. Surat tim medis & ambulans siaga ke PMI / Dinkes Bantul, serta permohonan tenda pleton ke DENBEKANG.",
         pic: "Divisi Penghargaan & Medis, Divisi Perlengkapan, Sekretaris, Bendahara",
     },
     {
@@ -1319,7 +1316,7 @@ export const OFFICIAL_TIMELINE = [
         phase: "E. Rangkaian Agenda Technical Meeting Peserta / TM Peserta (Januari 2027)",
         period: "Sabtu, 9 Januari 2027 (Pukul 12.30 - 16.30 WIB)",
         title: "PELAKSANAAN TECHNICAL MEETING PESERTA (TM PESERTA)",
-        desc: "12.30 - 13.00: Registrasi ulang 36 kontingen, verifikasi berkas fisik asli (Surat Tugas berstempel & Pakta Integritas bermaterai Rp 10.000), pembagian snack box siang. 13.00 - 13.20: Pembukaan resmi, lagu Indonesia Raya & Mars Mu'allimin, sambutan Ketua Panitia. 13.20 - 14.30: Pemaparan mendalam Juknis Lapangan, dimensi 2 arena, alur DP 1 & DP 2, gerakan penyesuaian (tidak dibatasi kuota, mempengaruhi penilaian Penguasaan Lapangan), kotak danton, larangan sol paku/pines, sistem live score website, tata tertib basecamp kelas & parkir. 14.30 - 15.15: Sesi tanya jawab teknis & klarifikasi multitafsir. 15.15 - 16.00: Lotting undian nomor urut tampil resmi (SD-111 s.d. SD-175 & SMP-222 s.d. SMP-286). 16.00 - 16.30: Pembagian slot Uji Coba Lapangan (16 Jan 2027), penandatanganan Berita Acara TM Peserta, dan temu LO pendamping.",
+        desc: "12.30 - 13.00: Registrasi ulang 36 kontingen, verifikasi berkas fisik asli (Surat Tugas berstempel & Pakta Integritas ttd basah Official), pembagian snack box siang. 13.00 - 13.20: Pembukaan resmi, lagu Indonesia Raya & Mars Mu'allimin, sambutan Ketua Panitia. 13.20 - 14.30: Pemaparan mendalam Juknis Lapangan, dimensi 2 arena, alur DP 1 & DP 2, gerakan penyesuaian (tidak dibatasi kuota, mempengaruhi penilaian Penguasaan Lapangan), kotak danton, larangan sol paku/pines, sistem live score website, tata tertib basecamp kelas & parkir. 14.30 - 15.15: Sesi tanya jawab teknis & klarifikasi multitafsir. 15.15 - 16.00: Lotting undian nomor urut tampil resmi (SD-111 s.d. SD-175 & SMP-222 s.d. SMP-286). 16.00 - 16.30: Pembagian slot Uji Coba Lapangan (16 Jan 2027), penandatanganan Berita Acara TM Peserta, dan temu LO pendamping.",
         pic: "Panitia Inti, Divisi Acara, Divisi LO & Humas, Divisi Teknis Lapangan, Divisi Juri",
     },
     {

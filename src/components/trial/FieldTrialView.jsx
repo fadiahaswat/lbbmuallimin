@@ -1152,7 +1152,7 @@ export default function FieldTrialView() {
                     </div>
                     <div>
                       <p className="text-xs sm:text-sm font-black text-slate-900">
-                        {myTeamTrialSlot ? `Arena ${myTeamTrialSlot.jenjang} (${myTeamTrialSlot.jenjang === 'SD' ? 'Lapangan Basket' : 'Lapangan Embung'})` : (isTeamWillingToTrial(currentTeam) ? 'Sedang Dijadwalkan' : 'Menolak Gladi')}
+                        {myTeamTrialSlot ? `Arena ${myTeamTrialSlot.jenjang} (${myTeamTrialSlot.jenjang === 'SD' ? 'Lapangan Basket' : 'Pelataran Embung'})` : (isTeamWillingToTrial(currentTeam) ? 'Sedang Dijadwalkan' : 'Menolak Gladi')}
                       </p>
                       <p className="text-[10px] font-medium text-slate-500 mt-0.5">
                         Kampus Terpadu Sedayu
@@ -1265,7 +1265,7 @@ export default function FieldTrialView() {
                   <span className={`text-[10px] font-medium hidden sm:inline ${
                     participantJenjang === 'SD' ? 'text-red-700/80' : 'text-blue-700/80'
                   }`}>
-                    • {participantJenjang === 'SD' ? 'Lapangan Basket' : 'Lapangan Embung'}
+                    • {participantJenjang === 'SD' ? 'Lapangan Basket' : 'Pelataran Embung'}
                   </span>
                 </div>
               ) : (
@@ -1329,7 +1329,7 @@ export default function FieldTrialView() {
                       {activeJenjang === 'SD' ? 'Arena 1: SD / MI' : 'Arena 2: SMP / MTs'}
                     </span>
                     <span className="text-[9.5px] font-bold rounded-full bg-white/20 px-2 py-0.5 shrink-0 hidden sm:inline">
-                      {activeJenjang === 'SD' ? 'Lapangan Basket' : 'Lapangan Embung'}
+                      {activeJenjang === 'SD' ? 'Lapangan Basket' : 'Pelataran Embung'}
                     </span>
                   </div>
                   <span className="text-[10px] font-mono font-bold bg-black/20 px-2.5 py-0.5 rounded-full shrink-0">

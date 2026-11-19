@@ -442,12 +442,12 @@ export default function RosterTab({
                   {/* Cards 2, 3, 4: 3 Pendamping Peleton */}
                   {Array.isArray(officialsList) && officialsList.map((off, i) => {
                     const isMainOfficial = i === 0 || off.category === 'official';
-                    const badgeLabel = isMainOfficial ? 'Official' : i === 1 ? 'Medis' : 'Logistik';
+                    const badgeLabel = isMainOfficial ? 'Official' : i === 1 ? 'Medis' : 'Dokumentasi';
                     const roleSubTitle = isMainOfficial
                       ? 'Pelatih / Pembina'
                       : i === 1
                       ? 'Medis & Dokumentasi'
-                      : 'Logistik & Lapangan';
+                      : 'Pendukung Resmi (Dokumentasi)';
                     const hasPhoto = off.photo && typeof off.photo === 'string' && off.photo !== '#' && !off.photo.startsWith('#') && !off.photo.includes('drive.google.com/open?id=');
                     const badgeBg = isMainOfficial ? 'bg-blue-600' : i === 1 ? 'bg-emerald-600' : 'bg-slate-700';
 
@@ -631,7 +631,7 @@ export default function RosterTab({
                   {rosterDraft?.officials?.map((off, i) => {
                     const isMainOfficial = i === 0 || off.category === 'official';
                     const hasPhoto = off.photo && typeof off.photo === 'string' && off.photo !== '#' && !off.photo.startsWith('#') && !off.photo.includes('drive.google.com/open?id=');
-                    const badgeLabel = isMainOfficial ? 'Official' : i === 1 ? 'Medis' : 'Logistik';
+                    const badgeLabel = isMainOfficial ? 'Official' : i === 1 ? 'Medis' : 'Dokumentasi';
                     const badgeBg = isMainOfficial ? 'bg-blue-600' : i === 1 ? 'bg-emerald-600' : 'bg-slate-700';
 
                     return (

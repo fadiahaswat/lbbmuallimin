@@ -1003,7 +1003,7 @@ export default function ParticipantDashboard() {
           />
         )}
 
-        {/* Modal Cetak Fisik Pakta Integritas Bermaterai Rp 10.000 */}
+        {/* Modal Cetak Fisik Pakta Integritas (TTD Basah Official) */}
         <PhysicalIntegrityPactModal
           isOpen={isPactModalOpen}
           onClose={() => setIsPactModalOpen(false)}

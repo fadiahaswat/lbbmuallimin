@@ -235,19 +235,19 @@ export default function Prizes() {
                   <RankMedal rank={4} className="w-9 h-9 mb-1.5" title="Juara Harapan I" />
                   <span className="text-[10px] font-bold text-slate-400 uppercase block mb-0.5">Harapan I</span>
                   <span className="text-xs font-black text-white block">Piala Tetap</span>
-                  <span className="text-[10px] text-amber-300 font-semibold block">+ Uang Pembinaan & Piagam</span>
+                  <span className="text-[10px] text-amber-300 font-semibold block">+ E-Sertifikat</span>
                 </div>
                 <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5 text-center flex flex-col items-center">
                   <RankMedal rank={5} className="w-9 h-9 mb-1.5" title="Juara Harapan II" />
                   <span className="text-[10px] font-bold text-slate-400 uppercase block mb-0.5">Harapan II</span>
                   <span className="text-xs font-black text-white block">Piala Tetap</span>
-                  <span className="text-[10px] text-amber-300 font-semibold block">+ Uang Pembinaan & Piagam</span>
+                  <span className="text-[10px] text-amber-300 font-semibold block">+ E-Sertifikat</span>
                 </div>
                 <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5 text-center flex flex-col items-center">
                   <RankMedal rank={6} className="w-9 h-9 mb-1.5" title="Juara Harapan III" />
                   <span className="text-[10px] font-bold text-slate-400 uppercase block mb-0.5">Harapan III</span>
                   <span className="text-xs font-black text-white block">Piala Tetap</span>
-                  <span className="text-[10px] text-amber-300 font-semibold block">+ Uang Pembinaan & Piagam</span>
+                  <span className="text-[10px] text-amber-300 font-semibold block">+ E-Sertifikat</span>
                 </div>
               </div>
             </div>
@@ -368,19 +368,19 @@ export default function Prizes() {
                   <RankMedal rank={4} className="w-9 h-9 mb-1.5" title="Juara Harapan I" />
                   <span className="text-[10px] font-bold text-slate-400 uppercase block mb-0.5">Harapan I</span>
                   <span className="text-xs font-black text-white block">Piala Tetap</span>
-                  <span className="text-[10px] text-amber-300 font-semibold block">+ Uang Pembinaan & Piagam</span>
+                  <span className="text-[10px] text-amber-300 font-semibold block">+ E-Sertifikat</span>
                 </div>
                 <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5 text-center flex flex-col items-center">
                   <RankMedal rank={5} className="w-9 h-9 mb-1.5" title="Juara Harapan II" />
                   <span className="text-[10px] font-bold text-slate-400 uppercase block mb-0.5">Harapan II</span>
                   <span className="text-xs font-black text-white block">Piala Tetap</span>
-                  <span className="text-[10px] text-amber-300 font-semibold block">+ Uang Pembinaan & Piagam</span>
+                  <span className="text-[10px] text-amber-300 font-semibold block">+ E-Sertifikat</span>
                 </div>
                 <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5 text-center flex flex-col items-center">
                   <RankMedal rank={6} className="w-9 h-9 mb-1.5" title="Juara Harapan III" />
                   <span className="text-[10px] font-bold text-slate-400 uppercase block mb-0.5">Harapan III</span>
                   <span className="text-xs font-black text-white block">Piala Tetap</span>
-                  <span className="text-[10px] text-amber-300 font-semibold block">+ Uang Pembinaan & Piagam</span>
+                  <span className="text-[10px] text-amber-300 font-semibold block">+ E-Sertifikat</span>
                 </div>
               </div>
             </div>
@@ -431,11 +431,11 @@ export default function Prizes() {
                       <RankMedal rank={2} className="w-8 h-8" title="Danton Terbaik II" />
                       <div className="min-w-0">
                         <span className="text-xs font-bold text-white block">Danton Terbaik II</span>
-                        <span className="text-[11px] text-amber-300 font-semibold block sm:hidden">Piala Tetap + Uang Pembinaan</span>
+                        <span className="text-[11px] text-amber-300 font-semibold block sm:hidden">Piala Tetap</span>
                       </div>
                     </div>
                     <span className="hidden sm:inline-block text-[11px] font-black text-amber-300 bg-amber-500/20 px-2 py-0.5 rounded border border-amber-500/30 shrink-0 whitespace-nowrap">
-                      Piala + Uang Pembinaan
+                      Piala Tetap
                     </span>
                   </div>
 
@@ -444,11 +444,11 @@ export default function Prizes() {
                       <RankMedal rank={3} className="w-8 h-8" title="Danton Terbaik III" />
                       <div className="min-w-0">
                         <span className="text-xs font-bold text-white block">Danton Terbaik III</span>
-                        <span className="text-[11px] text-amber-300 font-semibold block sm:hidden">Piala Tetap + Uang Pembinaan</span>
+                        <span className="text-[11px] text-amber-300 font-semibold block sm:hidden">Piala Tetap</span>
                       </div>
                     </div>
                     <span className="hidden sm:inline-block text-[11px] font-black text-amber-300 bg-amber-500/20 px-2 py-0.5 rounded border border-amber-500/30 shrink-0 whitespace-nowrap">
-                      Piala + Uang Pembinaan
+                      Piala Tetap
                     </span>
                   </div>
                 </div>
@@ -482,11 +482,11 @@ export default function Prizes() {
                       <RankMedal rank={2} className="w-8 h-8" title="Danton Terbaik II" />
                       <div className="min-w-0">
                         <span className="text-xs font-bold text-white block">Danton Terbaik II</span>
-                        <span className="text-[11px] text-amber-300 font-semibold block sm:hidden">Piala Tetap + Uang Pembinaan</span>
+                        <span className="text-[11px] text-amber-300 font-semibold block sm:hidden">Piala Tetap</span>
                       </div>
                     </div>
                     <span className="hidden sm:inline-block text-[11px] font-black text-amber-300 bg-amber-500/20 px-2 py-0.5 rounded border border-amber-500/30 shrink-0 whitespace-nowrap">
-                      Piala + Uang Pembinaan
+                      Piala Tetap
                     </span>
                   </div>
 
@@ -495,11 +495,11 @@ export default function Prizes() {
                       <RankMedal rank={3} className="w-8 h-8" title="Danton Terbaik III" />
                       <div className="min-w-0">
                         <span className="text-xs font-bold text-white block">Danton Terbaik III</span>
-                        <span className="text-[11px] text-amber-300 font-semibold block sm:hidden">Piala Tetap + Uang Pembinaan</span>
+                        <span className="text-[11px] text-amber-300 font-semibold block sm:hidden">Piala Tetap</span>
                       </div>
                     </div>
                     <span className="hidden sm:inline-block text-[11px] font-black text-amber-300 bg-amber-500/20 px-2 py-0.5 rounded border border-amber-500/30 shrink-0 whitespace-nowrap">
-                      Piala + Uang Pembinaan
+                      Piala Tetap
                     </span>
                   </div>
                 </div>
