@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { appPrompt } from '../utils/appDialog.js';
 import {
   AlertCircle,
   MonitorSmartphone,
@@ -96,10 +97,10 @@ export default function Registration() {
       if (successful) {
         triggerCopied();
       } else {
-        prompt('Silakan salin nomor rekening berikut:', PAYMENT.ACCOUNT_NUMBER);
+        appPrompt('Silakan salin nomor rekening berikut:', PAYMENT.ACCOUNT_NUMBER, { title: 'Salin Nomor Rekening', confirmText: 'Tutup', readOnly: true });
       }
     } catch {
-      prompt('Silakan salin nomor rekening berikut:', PAYMENT.ACCOUNT_NUMBER);
+      appPrompt('Silakan salin nomor rekening berikut:', PAYMENT.ACCOUNT_NUMBER, { title: 'Salin Nomor Rekening', confirmText: 'Tutup', readOnly: true });
     }
   }
 

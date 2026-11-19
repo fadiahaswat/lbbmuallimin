@@ -421,6 +421,9 @@ export default function OfficialScoreRecapModal({ isOpen, onClose, initialJenjan
                     <th className="py-2.5 px-2 border-r border-slate-700 w-12">No. Undi</th>
                     <th className="py-2.5 px-3 border-r border-slate-700 text-left">Peleton & Asal Sekolah</th>
                     <th className="py-2.5 px-2 border-r border-slate-700 w-14">Jenjang</th>
+                    {awardCategory === 'peleton' && (
+                      <th className="py-2.5 px-2 border-r border-slate-700 w-16">Durasi</th>
+                    )}
                     
                     {/* Kolom Juri 1, 2, 3 */}
                     <th className="py-2.5 px-2 border-r border-slate-700 w-18 bg-slate-800">
@@ -497,6 +500,19 @@ export default function OfficialScoreRecapModal({ isOpen, onClose, initialJenjan
                         <td className="py-2.5 px-2 border-r border-slate-200 font-bold text-slate-700">
                           {item.team.jenjang}
                         </td>
+                        {awardCategory === 'peleton' && (
+                          <td className="py-2.5 px-2 border-r border-slate-200 font-mono text-slate-700">
+                            {(() => {
+                              const sc = scores[item.team.id];
+                              if (sc?.performanceDuration) return sc.performanceDuration;
+                              const sec = sc?.durationSeconds ?? sc?.fieldTimerData?.durationSeconds;
+                              if (Number.isFinite(sec) && sec > 0) {
+                                return `${String(Math.floor(sec / 60)).padStart(2, '0')}:${String(sec % 60).padStart(2, '0')}`;
+                              }
+                              return '-';
+                            })()}
+                          </td>
+                        )}
                         <td className="py-2.5 px-2 border-r border-slate-200 font-mono text-slate-800">
                           {j1 > 0 ? j1 : '-'}
                         </td>

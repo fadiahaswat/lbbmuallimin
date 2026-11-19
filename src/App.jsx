@@ -18,6 +18,7 @@ import Footer from './components/Footer.jsx';
 import FabWhatsApp from './components/FabWhatsApp.jsx';
 import StickyCta from './components/StickyCta.jsx';
 import PwaInstallPrompt from './components/PwaInstallPrompt.jsx';
+import AppDialogHost from './components/common/AppDialogHost.jsx';
 
 // Dedicated Full Pages & Views (Lazy loaded for optimal initial bundle performance)
 const RegistrationWizard = React.lazy(() => import('./components/portal/RegistrationWizard.jsx'));
@@ -294,6 +295,7 @@ export default function App() {
     <ErrorBoundary>
       <CompetitionProvider>
         <MainApp />
+        <AppDialogHost />
       </CompetitionProvider>
     </ErrorBoundary>
   );

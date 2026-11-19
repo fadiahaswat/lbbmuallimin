@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { appConfirm, appToast } from '../../utils/appDialog.js';
 import {
   CalendarCheck,
   Trophy,
@@ -42,7 +43,8 @@ export default function TechnicalMeetingView() {
     randomizeJenjangLotNumbers,
     clearJenjangLotNumbers,
     currentUser,
-    role
+    role,
+    isLocalhost
   } = useCompetition();
 
   const userRole = currentUser?.role || role || 'publik';
@@ -62,8 +64,11 @@ export default function TechnicalMeetingView() {
 
   const isSD = selectedJenjang === 'SD';
 
-  // Tim yang sah untuk TM (status drawn atau verified lengkap)
+  // Tim yang sah untuk TM (status drawn atau verified lengkap; khusus localhost bypass kelengkapan agar semua data tampil)
   const eligibleTeams = useMemo(() => {
+    if (isLocalhost) {
+      return teams.filter(t => t.status !== 'rejected');
+    }
     return teams.filter(t => {
       if (t.status === 'drawn') return true;
       if (t.status === 'verified') {
@@ -72,7 +77,7 @@ export default function TechnicalMeetingView() {
       }
       return false;
     });
-  }, [teams]);
+  }, [teams, isLocalhost]);
 
   const currentJenjangTeams = useMemo(() => {
     return eligibleTeams.filter(t => t.jenjang === selectedJenjang);
@@ -133,7 +138,7 @@ export default function TechnicalMeetingView() {
   const totalCount = currentJenjangTeams.length;
   const targetQuota = selectedJenjang === 'SD' ? (settings?.quotaSD || 18) : (settings?.quotaSMP || 18);
   const totalSlotsCount = Math.max(targetQuota, currentJenjangTeams.length);
-  const percentComplete = Math.round((drawnCount / totalSlotsCount) * 100);
+  const percentComplete = totalCount > 0 ? Math.min(100, Math.round((drawnCount / totalCount) * 100)) : 0;
 
   const chestMapList = LOTTERY_CHEST_MAP[selectedJenjang] || [];
   const scheduleData = HARI_H_SCHEDULE[selectedJenjang] || [];
@@ -197,20 +202,37 @@ export default function TechnicalMeetingView() {
     setTimeout(() => setLotSuccessMsg(''), 2500);
   };
 
-  const handleRandomizeCurrentJenjang = () => {
+  const handleRandomizeCurrentJenjang = async () => {
     if (!canManageLottery) return;
-    if (window.confirm(`Undi acak otomatis semua peleton tingkat ${selectedJenjang} yang belum terpasang?`)) {
+    const unassignedCount = currentJenjangTeams.filter(t => !t.lotNumber).length;
+    if (unassignedCount === 0) {
+      appToast(`Seluruh peleton ${selectedJenjang} sudah terpasang di papan undian.`, { variant: 'info' });
+      return;
+    }
+    const totalCount = currentJenjangTeams.length;
+    const ok = await appConfirm(
+      `Undi acak otomatis untuk ${unassignedCount} peleton ${selectedJenjang} yang belum terpasang?\n\n` +
+      `Aturan:\n` +
+      `1. Peleton yang sudah dipasang manual tetap dipertahankan\n` +
+      `2. Slot diisi rapat dari #01 s.d. #${String(totalCount).padStart(2, '0')} (tanpa slot bolong)`,
+      { title: 'Undi Acak Otomatis', confirmText: 'Undi Sekarang', variant: 'info' }
+    );
+    if (ok) {
       if (typeof randomizeJenjangLotNumbers === 'function') {
         randomizeJenjangLotNumbers(selectedJenjang);
       }
-      setLotSuccessMsg(`Seluruh peleton ${selectedJenjang} berhasil diundi otomatis.`);
+      setLotSuccessMsg(`${unassignedCount} peleton ${selectedJenjang} berhasil diundi otomatis.`);
       setTimeout(() => setLotSuccessMsg(''), 3500);
     }
   };
 
-  const handleClearCurrentJenjang = () => {
+  const handleClearCurrentJenjang = async () => {
     if (!canManageLottery) return;
-    if (window.confirm(`Yakin ingin mengosongkan nomor undian seluruh peleton tingkat ${selectedJenjang}?`)) {
+    const ok = await appConfirm(
+      `Yakin ingin mengosongkan nomor undian seluruh peleton tingkat ${selectedJenjang}?`,
+      { title: 'Kosongkan Papan Undian', confirmText: 'Kosongkan', variant: 'danger' }
+    );
+    if (ok) {
       if (typeof clearJenjangLotNumbers === 'function') {
         clearJenjangLotNumbers(selectedJenjang);
       }
@@ -305,114 +327,131 @@ export default function TechnicalMeetingView() {
       title="Pengundian Nomor Urut Tampil & Nomor Dada"
       subtitle="Gladi pengundian nomor tampil 36 peleton & distribusi nomor dada peserta"
       fullWidth
-      rightActions={
-        <div className="flex items-center gap-2">
-          {canManageLottery && (
-            <button
-              type="button"
-              onClick={handleClearCurrentJenjang}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-slate-200 hover:border-red-200 hover:bg-red-50 text-slate-700 hover:text-red-700 text-xs font-bold transition-all shadow-2xs active:scale-95 cursor-pointer"
-              title="Kosongkan seluruh nomor undian peleton"
-            >
-              <RotateCcw className="w-3.5 h-3.5 text-slate-500" />
-              <span className="hidden sm:inline">Reset</span>
-            </button>
-          )}
-
-          <button
-            type="button"
-            onClick={handleExportExcel}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-bold transition-all shadow-sm active:scale-95 cursor-pointer"
-            title="Cetak dan unduh rekapitulasi hasil undian TM ke file Excel (.csv)"
-          >
-            <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-200" />
-            <span>Cetak Rekap Excel</span>
-          </button>
-        </div>
-      }
+      hideHeader={true}
     >
-      <div className="space-y-5 w-full pb-12">
+      <div className="space-y-4 w-full pb-10">
+        {/* MASTER HEADER + FLUSH DIVISION TABS (1 KARTU RINGKAS, TANPA BAR GANDA) */}
         <div className="bg-white rounded-2xl border border-slate-200/90 shadow-[0_1px_3px_rgba(0,0,0,0.04)] overflow-hidden">
-          {/* Division Selector & Live Drawing Telemetry */}
-          <div className="p-3.5 sm:p-5 flex flex-col lg:flex-row lg:items-center justify-between gap-3.5 sm:gap-5">
-            {/* Division Tabs: SD vs SMP */}
-            <div className="grid grid-cols-2 gap-1.5 sm:gap-2 bg-slate-100/90 p-1 rounded-xl border border-slate-200/80 w-full lg:w-fit">
-              <button
-                type="button"
-                onClick={() => setSelectedJenjang('SD')}
-                className={`relative px-2.5 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all flex items-center justify-between sm:justify-start gap-1.5 sm:gap-2.5 cursor-pointer ${
-                  selectedJenjang === 'SD'
-                    ? 'bg-white text-slate-900 shadow-sm border border-slate-200/60 font-black'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
-                }`}
-              >
-                <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
-                  <span className={`w-2 h-2 rounded-full shrink-0 ${selectedJenjang === 'SD' ? 'bg-rose-600 ring-4 ring-rose-100' : 'bg-slate-400'}`} />
-                  <span className="whitespace-nowrap truncate">SD / MI</span>
-                </div>
-                <span className={`px-1.5 sm:px-2 py-0.5 rounded-md text-[10px] sm:text-[11px] font-mono font-bold shrink-0 whitespace-nowrap ${
-                  selectedJenjang === 'SD' ? 'bg-rose-50 text-rose-800 border border-rose-200/80' : 'bg-slate-200/80 text-slate-600'
-                }`}>
-                  {eligibleTeams.filter(t => t.jenjang === 'SD').length} Peleton
-                </span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setSelectedJenjang('SMP')}
-                className={`relative px-2.5 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all flex items-center justify-between sm:justify-start gap-1.5 sm:gap-2.5 cursor-pointer ${
-                  selectedJenjang === 'SMP'
-                    ? 'bg-white text-slate-900 shadow-sm border border-slate-200/60 font-black'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
-                }`}
-              >
-                <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
-                  <span className={`w-2 h-2 rounded-full shrink-0 ${selectedJenjang === 'SMP' ? 'bg-blue-600 ring-4 ring-blue-100' : 'bg-slate-400'}`} />
-                  <span className="whitespace-nowrap truncate">SMP / MTs</span>
-                </div>
-                <span className={`px-1.5 sm:px-2 py-0.5 rounded-md text-[10px] sm:text-[11px] font-mono font-bold shrink-0 whitespace-nowrap ${
-                  selectedJenjang === 'SMP' ? 'bg-blue-50 text-blue-800 border border-blue-200/80' : 'bg-slate-200/80 text-slate-600'
-                }`}>
-                  {eligibleTeams.filter(t => t.jenjang === 'SMP').length} Peleton
-                </span>
-              </button>
+          <div className="p-4 sm:px-6 sm:py-4 flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-slate-100">
+            {/* Title */}
+            <div className="flex items-start sm:items-center gap-3 min-w-0">
+              <div className="w-10 h-10 rounded-xl bg-slate-950 text-white flex items-center justify-center shrink-0 shadow-2xs">
+                <CalendarCheck className="w-5 h-5 text-amber-400" />
+              </div>
+              <div className="min-w-0">
+                <h1 className="text-base sm:text-lg font-black text-slate-950 tracking-tight leading-tight">
+                  Pengundian Nomor Urut Tampil &amp; Nomor Dada
+                </h1>
+                <p className="text-xs text-slate-500 mt-0.5 truncate">
+                  Technical Meeting • Tarik peleton ke slot urutan atau klik tombol pasang
+                </p>
+              </div>
             </div>
 
-            {/* Drawing Telemetry & Progress */}
-            <div className="flex items-center justify-between gap-3 sm:gap-6 bg-slate-50 border border-slate-200/80 rounded-xl px-3 sm:px-4 py-2.5 w-full lg:w-auto">
-              <div className="space-y-1.5 flex-1 min-w-0">
-                <div className="flex items-center justify-between gap-3">
-                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider truncate">
-                    Status Pengundian
-                  </span>
-                  <span className="text-xs font-mono font-bold text-slate-900 shrink-0 whitespace-nowrap">
-                    <strong className="font-black text-slate-950">{drawnCount}</strong> / {totalSlotsCount} Peleton
-                  </span>
+            {/* Right: Compact Progress + Actions */}
+            <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+              {/* Compact Progress Telemetry */}
+              <div className="flex items-center gap-3 bg-slate-50 border border-slate-200/80 rounded-xl px-3 py-1.5">
+                <div className="space-y-1 min-w-[115px]">
+                  <div className="flex items-center justify-between gap-2 text-[10px]">
+                    <span className="font-bold text-slate-500 uppercase tracking-wider">Terpasang</span>
+                    <span className="font-mono font-black text-slate-900">{drawnCount}/{totalCount}</span>
+                  </div>
+                  <div className="w-full h-1.5 bg-slate-200/80 rounded-full overflow-hidden">
+                    <div
+                      className={`h-full transition-all duration-300 rounded-full ${
+                        percentComplete === 100
+                          ? 'bg-emerald-600'
+                          : isSD ? 'bg-rose-600' : 'bg-blue-600'
+                      }`}
+                      style={{ width: `${percentComplete}%` }}
+                    />
+                  </div>
                 </div>
-                {/* Micro Progress Bar (100% width on mobile) */}
-                <div className="w-full sm:w-56 h-2 bg-slate-200/80 rounded-full overflow-hidden">
-                  <div
-                    className={`h-full transition-all duration-300 rounded-full ${
-                      percentComplete === 100
-                        ? 'bg-emerald-600'
-                        : isSD ? 'bg-rose-600' : 'bg-blue-600'
-                    }`}
-                    style={{ width: `${percentComplete}%` }}
-                  />
-                </div>
-              </div>
-
-              {/* Status Chip */}
-              <div className="shrink-0">
-                <span className={`inline-flex items-center px-2 sm:px-2.5 py-1 rounded-lg text-xs font-mono font-black border ${
+                <span className={`px-2 py-0.5 rounded-md text-[11px] font-mono font-black border ${
                   percentComplete === 100
-                    ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
-                    : 'bg-white text-slate-800 border-slate-200/90 shadow-2xs'
+                    ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                    : 'bg-white text-slate-700 border-slate-200'
                 }`}>
                   {percentComplete}%
                 </span>
               </div>
+
+              {canManageLottery && unassignedTeams.length > 0 && (
+                <button
+                  type="button"
+                  onClick={handleRandomizeCurrentJenjang}
+                  className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300/80 text-xs font-black transition-all active:scale-95 cursor-pointer"
+                  title="Undi acak otomatis semua peleton jenjang ini"
+                >
+                  <Dice5 className="w-3.5 h-3.5 text-amber-600" />
+                  <span>Undi Acak</span>
+                </button>
+              )}
+
+              {canManageLottery && drawnCount > 0 && (
+                <button
+                  type="button"
+                  onClick={handleClearCurrentJenjang}
+                  className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white border border-slate-200 hover:border-rose-200 hover:bg-rose-50 text-slate-700 hover:text-rose-700 text-xs font-bold transition-all active:scale-95 cursor-pointer"
+                  title="Kosongkan seluruh nomor undian peleton"
+                >
+                  <RotateCcw className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">Reset</span>
+                </button>
+              )}
+
+              <button
+                type="button"
+                onClick={handleExportExcel}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-bold transition-all shadow-2xs active:scale-95 cursor-pointer"
+                title="Cetak dan unduh rekapitulasi hasil undian TM ke file Excel (.csv)"
+              >
+                <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-200" />
+                <span>Cetak Excel</span>
+              </button>
             </div>
+          </div>
+
+          {/* Dark Obsidian Division Stage Switcher: SD / MI vs SMP / MTs */}
+          <div className="grid grid-cols-2 border-t border-slate-800 bg-slate-950 text-white">
+            <button
+              type="button"
+              onClick={() => setSelectedJenjang('SD')}
+              className={`relative py-3 px-4 text-xs transition-all flex items-center justify-center gap-2 cursor-pointer border-r border-slate-800 ${
+                selectedJenjang === 'SD'
+                  ? 'bg-slate-900 text-white font-black'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-900/60 font-bold'
+              }`}
+            >
+              <span className={`w-2 h-2 rounded-full shrink-0 ${selectedJenjang === 'SD' ? 'bg-rose-500' : 'bg-slate-600'}`} />
+              <span>SD / MI</span>
+              <span className={`px-1.5 py-0.5 rounded-md text-[10px] font-mono font-black leading-none ${
+                selectedJenjang === 'SD' ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30' : 'bg-slate-800 text-slate-400'
+              }`}>
+                {eligibleTeams.filter(t => t.jenjang === 'SD').length} Peleton
+              </span>
+              {selectedJenjang === 'SD' && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-rose-500" />}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setSelectedJenjang('SMP')}
+              className={`relative py-3 px-4 text-xs transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                selectedJenjang === 'SMP'
+                  ? 'bg-slate-900 text-white font-black'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-900/60 font-bold'
+              }`}
+            >
+              <span className={`w-2 h-2 rounded-full shrink-0 ${selectedJenjang === 'SMP' ? 'bg-blue-500' : 'bg-slate-600'}`} />
+              <span>SMP / MTs</span>
+              <span className={`px-1.5 py-0.5 rounded-md text-[10px] font-mono font-black leading-none ${
+                selectedJenjang === 'SMP' ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30' : 'bg-slate-800 text-slate-400'
+              }`}>
+                {eligibleTeams.filter(t => t.jenjang === 'SMP').length} Peleton
+              </span>
+              {selectedJenjang === 'SMP' && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-500" />}
+            </button>
           </div>
         </div>
 
@@ -526,7 +565,7 @@ export default function TechnicalMeetingView() {
             </div>
 
             {/* Team Roster List */}
-            <div className="space-y-2.5 max-h-[calc(100vh-340px)] overflow-y-auto pr-1">
+            <div className="space-y-2 max-h-[calc(100vh-290px)] overflow-y-auto pr-1">
               {filteredLeftTeams.length === 0 ? (
                 <div className="py-12 text-center bg-slate-50/70 rounded-xl border border-dashed border-slate-200 p-5">
                   <CheckCircle2 className="w-7 h-7 text-emerald-600 mx-auto mb-2 opacity-80" />
@@ -603,18 +642,12 @@ export default function TechnicalMeetingView() {
 
                         {/* Team Details */}
                         <div className="min-w-0 flex-1">
-                          <h3 className="text-xs sm:text-sm font-bold text-slate-900 leading-snug break-normal line-clamp-2" title={team.schoolName}>
+                          <h3 className="text-xs sm:text-[13px] font-extrabold text-slate-900 leading-snug line-clamp-1" title={team.schoolName}>
                             {team.schoolName}
                           </h3>
-                          <div className="mt-0.5 flex flex-col sm:flex-row sm:items-center gap-0.5 sm:gap-2 text-[11px] text-slate-500">
-                            <span className="inline-flex items-center gap-1 font-medium text-slate-700 truncate max-w-[150px] sm:max-w-none">
-                              <UserCheck className="w-3 h-3 text-slate-400 shrink-0" />
-                              <span className="truncate">{team.dantonName || 'Belum diisi'}</span>
-                            </span>
-                            <span className="hidden sm:inline text-slate-300">•</span>
-                            <span className="font-mono text-[10px] text-slate-400">
-                              {team.regCode}
-                            </span>
+                          <div className="mt-0.5 flex items-center gap-1.5 text-[11px] text-slate-500 min-w-0">
+                            <UserCheck className="w-3 h-3 text-slate-400 shrink-0" />
+                            <span className="font-medium text-slate-600 truncate">{team.dantonName || 'Belum diisi'}</span>
                           </div>
                         </div>
                       </div>
@@ -692,16 +725,8 @@ export default function TechnicalMeetingView() {
               </div>
             </div>
 
-            {/* Table Header Columns */}
-            <div className="hidden sm:grid grid-cols-12 gap-3 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400 bg-slate-50 rounded-lg border border-slate-100">
-              <div className="col-span-3 text-left">Urutan & Bib</div>
-              <div className="col-span-6 text-left">Peleton Terpasang</div>
-              <div className="col-span-2 text-right">Jadwal Tampil</div>
-              <div className="col-span-1 text-right">Aksi</div>
-            </div>
-
             {/* 18 Slot Draw Targets */}
-            <div className="space-y-2 max-h-[calc(100vh-290px)] overflow-y-auto pr-1">
+            <div className="space-y-2 max-h-[calc(100vh-250px)] overflow-y-auto pr-1">
               {slots.map((slot) => {
                 const isHovered = dragOverLotNumber === slot.lotNumber;
                 const assignedTeam = slot.team;
@@ -725,12 +750,14 @@ export default function TechnicalMeetingView() {
                     onDragOver={(e) => onDragOverSlot(e, slot.lotNumber)}
                     onDragLeave={onDragLeaveSlot}
                     onDrop={(e) => onDropOnSlot(e, slot.lotNumber)}
-                    className={`rounded-xl border transition-all duration-150 p-2.5 sm:p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 ${
+                    className={`rounded-xl border transition-all duration-150 p-2.5 sm:px-3 sm:py-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 ${
+                      isCeremonySlot ? 'border-l-4 border-l-amber-400' : ''
+                    } ${
                       isHovered
                         ? 'bg-slate-100/90 border-slate-400 ring-2 ring-slate-400/30'
                         : assignedTeam
                         ? 'bg-white border-slate-200/90 shadow-2xs hover:border-slate-300'
-                        : 'bg-slate-50/40 border-slate-200 hover:border-slate-300'
+                        : 'bg-slate-50/40 border-slate-200/90 hover:border-slate-300'
                     }`}
                   >
                     {/* Top Section on mobile, Left Side on sm+ */}

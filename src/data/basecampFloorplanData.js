@@ -7,9 +7,9 @@ export const FLOORS_CONFIG = [
     title: 'Lantai 1 (Ground Floor)',
     shortTitle: 'Lantai 1',
     image: '/denah-basecamp/denah-lantai-1.jpg',
-    description: 'Akses langsung halaman utama, 2 area taman terbuka, dan 11 ruang kelas transit reguler (kelas internasional steril).',
+    description: 'Akses langsung halaman utama, 2 area taman terbuka, dan 7 ruang kelas transit reguler (kelas internasional & ruang kelas baru tidak dialokasikan sebagai basecamp).',
     stats: {
-      classes: 11,
+      classes: 7,
       international: 4,
       facilities: 6,
       stairs: 3,
@@ -58,9 +58,9 @@ export const FLOORS_CONFIG = [
         wing: 'east',
         wingLabel: 'Sayap Timur (East Wing)',
         rooms: [
-          { id: 'L1-E-01', code: 'RB-1', name: 'Ruangan Baru (Utara)', category: 'class', categoryLabel: 'Ruang Serbaguna', isBasecampCandidate: true, lbbRole: 'Ruang Transit Official / Pendamping' },
-          { id: 'L1-E-02', code: 'RKB-1', name: 'Ruang Kelas Baru 1', category: 'class', categoryLabel: 'Ruang Kelas Baru', isBasecampCandidate: true, lbbRole: 'Basecamp Peleton SD/MI' },
-          { id: 'L1-E-03', code: 'RKB-2', name: 'Ruang Kelas Baru 2', category: 'class', categoryLabel: 'Ruang Kelas Baru', isBasecampCandidate: true, lbbRole: 'Basecamp Peleton SD/MI' },
+          { id: 'L1-E-01', code: 'RB-1', name: 'Ruangan Baru (Utara)', category: 'office', categoryLabel: 'Ruang Serbaguna', isBasecampCandidate: false, lbbRole: 'Tidak Dialokasikan sebagai Basecamp' },
+          { id: 'L1-E-02', code: 'RKB-1', name: 'Ruang Kelas Baru 1', category: 'office', categoryLabel: 'Ruang Kelas Baru', isBasecampCandidate: false, lbbRole: 'Tidak Dialokasikan sebagai Basecamp' },
+          { id: 'L1-E-03', code: 'RKB-2', name: 'Ruang Kelas Baru 2', category: 'office', categoryLabel: 'Ruang Kelas Baru', isBasecampCandidate: false, lbbRole: 'Tidak Dialokasikan sebagai Basecamp' },
           { id: 'L1-E-04', code: 'INFO-PANITIA', name: 'Ruang Informasi Panitia & Daftar Ulang', category: 'office', categoryLabel: 'Informasi & Registrasi', isBasecampCandidate: false, lbbRole: 'Pusat Informasi Panitia & Meja Daftar Ulang' },
         ]
       }

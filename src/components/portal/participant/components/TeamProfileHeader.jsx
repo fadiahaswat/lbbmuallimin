@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { appAlert } from '../../../../utils/appDialog.js';
 import {
   Camera,
   CheckCircle2,
@@ -120,7 +121,7 @@ export default function TeamProfileHeader({
       setIsEditModalOpen(false);
     } catch (err) {
       console.error('Gagal memperbarui profil peleton:', err);
-      alert('Terjadi kesalahan saat menyimpan perubahan profil.');
+      appAlert('Terjadi kesalahan saat menyimpan perubahan profil.', { title: 'Gagal Menyimpan', variant: 'danger' });
     } finally {
       setIsSaving(false);
     }

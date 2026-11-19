@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { appConfirm } from '../../../utils/appDialog.js';
 import {
   Check,
   X,
@@ -9,10 +10,10 @@ import {
   CheckCircle2,
   AlertTriangle,
   Sparkles,
-  Layers,
-  LayoutGrid,
   ArrowRight,
-  ShieldCheck
+  ShieldCheck,
+  CheckCheck,
+  Stethoscope
 } from 'lucide-react';
 import { formatImageUrl, getFallbackImageUrl } from '../../../services/sheetService.js';
 
@@ -21,7 +22,7 @@ function isValidPhotoUrl(url) {
 }
 
 function PersonAvatarImg({ photo, name, className = 'w-full h-full object-cover object-top', fallback }) {
-  const [imgState, setImgState] = useState('primary'); // 'primary' | 'fallback' | 'error'
+  const [imgState, setImgState] = useState('primary');
 
   useEffect(() => {
     setImgState('primary');
@@ -63,9 +64,15 @@ export default function PersonnelSwipeDeck({
   onVerifyAll,
   onNextTeam,
   hasNextTeam = false,
-  isMinPersonnelMet = false
+  isMinPersonnelMet = false,
+  viewMode = 'swipe',
+  onViewModeChange = null
 }) {
-  const [viewMode, setViewMode] = useState('swipe'); // 'swipe' | 'grid'
+  const [internalViewMode, setInternalViewMode] = useState('swipe');
+  const activeViewMode = onViewModeChange ? viewMode : internalViewMode;
+  const setActiveViewMode = onViewModeChange || setInternalViewMode;
+
+  const [gridFilter, setGridFilter] = useState('all'); // 'all' | 'pending' | 'flagged' | 'verified'
   const [currentIndex, setCurrentIndex] = useState(0);
   const [history, setHistory] = useState([]);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
@@ -87,7 +94,10 @@ export default function PersonnelSwipeDeck({
   const getPersonStatus = (person) => {
     const entry = getInspectionEntry(person);
     if (entry?.verified === true) return 'verified';
-    if (entry?.verified === false && entry?.inspectedAt) return 'flagged';
+    if (entry?.verified === false && entry?.inspectedAt) {
+      if (/sakit|izin/i.test(entry?.note || '')) return 'excused';
+      return 'flagged';
+    }
     return 'pending';
   };
 
@@ -99,13 +109,13 @@ export default function PersonnelSwipeDeck({
     setIsDragging(false);
     setHistory([]);
     setZoomedPerson(null);
+    setGridFilter('all');
 
     const firstUnverifiedIdx = personnels.findIndex((p) => {
       const entry = (p.aliasKeys || [p.id]).map(k => inspections[k]).find(Boolean);
       return !entry?.verified;
     });
     setCurrentIndex(firstUnverifiedIdx >= 0 ? firstUnverifiedIdx : 0);
-    // Hanya reset saat tim berganti
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [team?.id]);
 
@@ -116,13 +126,15 @@ export default function PersonnelSwipeDeck({
   }, []);
 
   const verifiedCount = personnels.filter(p => getPersonStatus(p) === 'verified').length;
+  const excusedCount = personnels.filter(p => getPersonStatus(p) === 'excused').length;
   const flaggedCount = personnels.filter(p => getPersonStatus(p) === 'flagged').length;
-  const pendingCount = Math.max(0, personnels.length - verifiedCount - flaggedCount);
+  const pendingCount = Math.max(0, personnels.length - verifiedCount - excusedCount - flaggedCount);
+  const progressPct = personnels.length > 0 ? Math.round((verifiedCount / personnels.length) * 100) : 0;
 
   const currentPerson = currentIndex < personnels.length ? personnels[currentIndex] : null;
   const nextCards = personnels.slice(currentIndex + 1, currentIndex + 3);
 
-  const commitSwipe = (direction) => {
+  const commitSwipe = (direction, customNote = null) => {
     if (!currentPerson || flyOut) return;
 
     setFlyOut(direction);
@@ -133,7 +145,7 @@ export default function PersonnelSwipeDeck({
       if (direction === 'right') {
         onInspect(currentPerson, true, '');
       } else if (direction === 'left') {
-        onInspect(currentPerson, false, 'Ditandai perlu cek ulang di DP 1');
+        onInspect(currentPerson, false, customNote || 'Ditandai perlu cek ulang di DP 1');
       }
     }
 
@@ -142,7 +154,11 @@ export default function PersonnelSwipeDeck({
     animTimerRef.current = setTimeout(() => {
       setFlyOut(null);
       setCurrentIndex(prev => Math.min(personnels.length, prev + 1));
-    }, 210);
+    }, 190);
+  };
+
+  const commitExcused = () => {
+    commitSwipe('left', 'Sakit / Izin');
   };
 
   const handleUndo = () => {
@@ -162,21 +178,24 @@ export default function PersonnelSwipeDeck({
     setCurrentIndex(prev => Math.min(personnels.length, prev + 1));
   };
 
-  // Keyboard shortcuts (<- Tandai, -> Cocok, Backspace Undo)
+  // Keyboard shortcuts (<- Tandai, -> / Enter Cocok, S Sakit/Izin, Backspace / Z Undo)
   useEffect(() => {
-    if (viewMode !== 'swipe' || zoomedPerson) return undefined;
+    if (activeViewMode !== 'swipe' || zoomedPerson) return undefined;
 
     const onKeyDown = (e) => {
       const tag = document.activeElement?.tagName;
       if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
 
-      if (e.key === 'ArrowRight' && currentPerson) {
+      if ((e.key === 'ArrowRight' || e.key === 'Enter') && currentPerson) {
         e.preventDefault();
         commitSwipe('right');
       } else if (e.key === 'ArrowLeft' && currentPerson) {
         e.preventDefault();
         commitSwipe('left');
-      } else if (e.key === 'Backspace') {
+      } else if ((e.key === 's' || e.key === 'S') && currentPerson) {
+        e.preventDefault();
+        commitExcused();
+      } else if (e.key === 'Backspace' || e.key === 'z' || e.key === 'Z') {
         e.preventDefault();
         handleUndo();
       }
@@ -186,7 +205,6 @@ export default function PersonnelSwipeDeck({
     return () => window.removeEventListener('keydown', onKeyDown);
   });
 
-  // Pointer drag handlers untuk kartu teratas
   const handlePointerDown = (e) => {
     if (flyOut || !currentPerson) return;
     if (e.button !== undefined && e.button !== 0) return;
@@ -202,7 +220,7 @@ export default function PersonnelSwipeDeck({
   const handlePointerMove = (e) => {
     if (!isDragging || flyOut) return;
     const dx = e.clientX - dragStartRef.current.x;
-    const dy = (e.clientY - dragStartRef.current.y) * 0.28;
+    const dy = (e.clientY - dragStartRef.current.y) * 0.25;
     setDragOffset({ x: dx, y: dy });
   };
 
@@ -211,9 +229,9 @@ export default function PersonnelSwipeDeck({
     const dx = dragOffset.x;
     setIsDragging(false);
 
-    if (dx > 90) {
+    if (dx > 85) {
       commitSwipe('right');
-    } else if (dx < -90) {
+    } else if (dx < -85) {
       commitSwipe('left');
     } else {
       setDragOffset({ x: 0, y: 0 });
@@ -225,7 +243,7 @@ export default function PersonnelSwipeDeck({
     setFlyOut(null);
     setDragOffset({ x: 0, y: 0 });
     setCurrentIndex(idx);
-    if (viewMode !== 'swipe') setViewMode('swipe');
+    if (activeViewMode !== 'swipe') setActiveViewMode('swipe');
   };
 
   const jumpToFirstRemaining = () => {
@@ -233,81 +251,169 @@ export default function PersonnelSwipeDeck({
     setCurrentIndex(idx >= 0 ? idx : 0);
   };
 
-  // Kalkulasi transform kartu teratas
-  const activeTranslateX = flyOut === 'right' ? 440 : flyOut === 'left' ? -440 : dragOffset.x;
-  const activeTranslateY = flyOut ? 24 : dragOffset.y;
-  const activeRotate = flyOut === 'right' ? 18 : flyOut === 'left' ? -18 : dragOffset.x * 0.045;
-  const rightStampOpacity = flyOut === 'right' ? 1 : Math.min(1, Math.max(0, (dragOffset.x - 25) / 70));
-  const leftStampOpacity = flyOut === 'left' ? 1 : Math.min(1, Math.max(0, (-dragOffset.x - 25) / 70));
+  const activeTranslateX = flyOut === 'right' ? 420 : flyOut === 'left' ? -420 : dragOffset.x;
+  const activeTranslateY = flyOut ? 20 : dragOffset.y;
+  const activeRotate = flyOut === 'right' ? 16 : flyOut === 'left' ? -16 : dragOffset.x * 0.04;
+  const rightStampOpacity = flyOut === 'right' ? 1 : Math.min(1, Math.max(0, (dragOffset.x - 25) / 65));
+  const leftStampOpacity = flyOut === 'left' ? 1 : Math.min(1, Math.max(0, (-dragOffset.x - 25) / 65));
 
   const dantonPerson = personnels.find(p => p.roleType === 'danton');
   const pasukanPersons = personnels.filter(p => p.roleType === 'pasukan');
   const cadanganPersons = personnels.filter(p => p.roleType === 'cadangan');
 
-  return (
-    <div className="space-y-4">
-      {/* Sub-Toolbar: Mode Switcher + Progress Summary */}
-      <div className="flex flex-wrap items-center justify-between gap-3 bg-slate-50/90 border border-slate-200/80 rounded-2xl px-4 py-2.5">
-        <div className="flex items-center gap-1 p-1 bg-white rounded-xl border border-slate-200/80 shadow-sm">
-          <button
-            type="button"
-            onClick={() => setViewMode('swipe')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
-              viewMode === 'swipe'
-                ? 'bg-slate-900 text-white shadow-sm'
-                : 'text-slate-600 hover:text-slate-900'
-            }`}
-          >
-            <Layers className="w-3.5 h-3.5" />
-            <span>Slide Kartu (Swipe)</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setViewMode('grid')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
-              viewMode === 'grid'
-                ? 'bg-slate-900 text-white shadow-sm'
-                : 'text-slate-600 hover:text-slate-900'
-            }`}
-          >
-            <LayoutGrid className="w-3.5 h-3.5" />
-            <span>Grid 25 Foto</span>
-          </button>
-        </div>
+  const matchesGridFilter = (person) => {
+    if (gridFilter === 'all') return true;
+    return getPersonStatus(person) === gridFilter;
+  };
 
-        {/* Status Pills */}
-        <div className="flex flex-wrap items-center gap-2 text-xs">
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 font-bold">
-            <span className="w-2 h-2 rounded-full bg-emerald-500" />
-            Cocok: {verifiedCount}
+  const renderGridCard = (person) => {
+    const status = getPersonStatus(person);
+    const isVerified = status === 'verified';
+    const isExcused = status === 'excused';
+    const isFlagged = status === 'flagged';
+
+    return (
+      <div
+        key={person.id}
+        className={`group rounded-2xl border overflow-hidden transition-all flex flex-col bg-white ${
+          isVerified
+            ? 'border-emerald-300/90 shadow-2xs'
+            : isExcused
+            ? 'border-amber-300 ring-1 ring-amber-200 shadow-2xs'
+            : isFlagged
+            ? 'border-rose-300 ring-1 ring-rose-200 shadow-2xs'
+            : 'border-slate-200 hover:border-slate-300 shadow-2xs'
+        }`}
+      >
+        {/* Foto 3:4 Full Edge-to-Edge — Klik foto untuk Zoom */}
+        <div
+          onClick={() => isValidPhotoUrl(person.photo) && setZoomedPerson(person)}
+          className={`relative aspect-[3/4] bg-slate-100 overflow-hidden ${
+            isValidPhotoUrl(person.photo) ? 'cursor-zoom-in' : ''
+          }`}
+        >
+          <PersonAvatarImg
+            photo={person.photo}
+            name={person.name}
+            className="w-full h-full object-cover object-top group-hover:scale-[1.02] transition-transform duration-300"
+            fallback={
+              <div className="w-full h-full flex flex-col items-center justify-center bg-slate-100/90 text-slate-400 border-b border-slate-200/70">
+                <span className="text-lg font-black text-slate-400">{person.code}</span>
+                <span className="text-[9.5px] font-medium mt-0.5 text-slate-400">Tanpa Foto</span>
+              </div>
+            }
+          />
+
+          {/* Top Left Code Badge */}
+          <span className={`absolute top-2 left-2 px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wide shadow-sm ${
+            person.roleType === 'danton'
+              ? 'bg-amber-400 text-slate-950'
+              : person.roleType === 'cadangan'
+              ? 'bg-purple-600 text-white'
+              : 'bg-slate-950/80 text-white backdrop-blur-xs'
+          }`}>
+            {person.code}
           </span>
-          {flaggedCount > 0 && (
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-rose-50 border border-rose-200 text-rose-700 font-bold">
-              <span className="w-2 h-2 rounded-full bg-rose-500" />
-              Cek Ulang: {flaggedCount}
+
+          {/* Top Right Status Pill */}
+          {isVerified && (
+            <span className="absolute top-2 right-2 w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-md ring-2 ring-white">
+              <Check className="w-3.5 h-3.5 stroke-[3]" />
             </span>
           )}
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white border border-slate-200 text-slate-600 font-semibold">
-            Belum: {pendingCount}
-          </span>
+          {isExcused && (
+            <span className="absolute top-2 right-2 px-1.5 py-0.5 rounded-full bg-amber-500 text-white text-[9px] font-black uppercase flex items-center gap-0.5 shadow-md ring-2 ring-white">
+              <Stethoscope className="w-2.5 h-2.5" />
+              <span>Izin</span>
+            </span>
+          )}
+          {isFlagged && (
+            <span className="absolute top-2 right-2 w-6 h-6 rounded-full bg-rose-500 text-white flex items-center justify-center shadow-md ring-2 ring-white">
+              <AlertTriangle className="w-3 h-3" />
+            </span>
+          )}
+
+          {/* Subtle Zoom Hover Icon */}
+          {isValidPhotoUrl(person.photo) && (
+            <span className="absolute bottom-2 right-2 w-7 h-7 rounded-full bg-black/55 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-xs">
+              <ZoomIn className="w-3.5 h-3.5" />
+            </span>
+          )}
+        </div>
+
+        {/* Info & Clean Toggle Actions */}
+        <div className="p-2.5 flex-1 flex flex-col justify-between gap-2">
+          <div className="min-w-0">
+            <h5 className="text-[11.5px] font-black text-slate-900 uppercase leading-tight truncate" title={person.name}>
+              {person.name}
+            </h5>
+            <p className="text-[10px] text-slate-500 font-mono truncate mt-0.5">
+              {person.nisn || '-'} · Kls {person.className || '-'}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-3 gap-1 pt-1">
+            <button
+              type="button"
+              disabled={!canOperate}
+              onClick={() => onInspect?.(person, false, 'Ditandai perlu cek ulang di DP 1')}
+              className={`py-1.5 px-1 rounded-lg text-[10.5px] font-bold flex items-center justify-center transition-all cursor-pointer disabled:opacity-40 whitespace-nowrap ${
+                isFlagged
+                  ? 'bg-rose-600 text-white shadow-2xs'
+                  : 'bg-slate-100 hover:bg-rose-50 text-slate-600 hover:text-rose-700'
+              }`}
+              title="Tandai perlu cek ulang"
+            >
+              Tandai
+            </button>
+            <button
+              type="button"
+              disabled={!canOperate}
+              onClick={() => onInspect?.(person, false, 'Sakit / Izin')}
+              className={`py-1.5 px-1 rounded-lg text-[10.5px] font-bold flex items-center justify-center transition-all cursor-pointer disabled:opacity-40 whitespace-nowrap ${
+                isExcused
+                  ? 'bg-amber-500 text-white shadow-2xs'
+                  : 'bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200/70'
+              }`}
+              title="Tandai Sakit / Izin"
+            >
+              Izin
+            </button>
+            <button
+              type="button"
+              disabled={!canOperate}
+              onClick={() => onInspect?.(person, true, '')}
+              className={`py-1.5 px-1 rounded-lg text-[10.5px] font-bold flex items-center justify-center transition-all cursor-pointer disabled:opacity-40 whitespace-nowrap ${
+                isVerified
+                  ? 'bg-emerald-600 text-white shadow-2xs'
+                  : 'bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white border border-emerald-200/80'
+              }`}
+              title="Cocok / Valid"
+            >
+              Cocok
+            </button>
+          </div>
         </div>
       </div>
+    );
+  };
 
-      {/* MODE 1: TINDER SWIPE DECK + FORMATION MINI-MAP */}
-      {viewMode === 'swipe' ? (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-          {/* LEFT / CENTER (7 COLS): TINDER CARD STACK */}
-          <div className="lg:col-span-7 flex flex-col items-center">
-            {/* Card Stack Stage */}
-            <div className="relative w-full max-w-[380px] h-[490px] sm:h-[520px] flex items-center justify-center select-none my-1">
+  return (
+    <div className="space-y-4">
+      {/* MODE 1: ERGONOMIC SWIPE DECK + INTERACTIVE FORMATION MAP */}
+      {activeViewMode === 'swipe' ? (
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+          {/* LEFT (6 COLS): COMPACT 1-VIEWPORT SWIPE STAGE (3:4 FULL PHOTO) + TACTILE CONTROLS */}
+          <div className="lg:col-span-6 xl:col-span-5 flex flex-col items-center">
+            <div className="relative w-full max-w-[276px] h-[488px] flex items-center justify-center select-none">
               {currentPerson ? (
                 <>
-                  {/* Background Stacked Cards (Next 2 Cards Peeking) */}
+                  {/* Background Stacked Cards */}
                   {[...nextCards].reverse().map((bgPerson, revIdx) => {
-                    const stackDepth = nextCards.length - revIdx; // 1 = directly behind, 2 = third
+                    const stackDepth = nextCards.length - revIdx;
                     const dragBoost = Math.min(1, Math.abs(dragOffset.x) / 140);
                     const scale = stackDepth === 1 ? 0.95 + dragBoost * 0.04 : 0.90 + dragBoost * 0.03;
-                    const translateY = stackDepth === 1 ? 14 - dragBoost * 10 : 26 - dragBoost * 8;
+                    const translateY = stackDepth === 1 ? 12 - dragBoost * 8 : 22 - dragBoost * 6;
 
                     return (
                       <div
@@ -316,23 +422,22 @@ export default function PersonnelSwipeDeck({
                           transform: `translateY(${translateY}px) scale(${scale})`,
                           zIndex: 10 - stackDepth
                         }}
-                        className="absolute inset-x-0 top-0 h-[465px] sm:h-[490px] bg-white rounded-3xl border border-slate-200/90 shadow-md overflow-hidden pointer-events-none transition-transform duration-150"
+                        className="absolute inset-x-0 top-0 bg-white rounded-3xl border border-slate-200/90 shadow-md overflow-hidden pointer-events-none transition-transform duration-150"
                       >
-                        <div className="h-[310px] sm:h-[335px] bg-slate-900 relative overflow-hidden">
+                        <div className="w-full aspect-[3/4] bg-slate-100 relative overflow-hidden">
                           <PersonAvatarImg
                             photo={bgPerson.photo}
                             name={bgPerson.name}
-                            className="w-full h-full object-cover object-top opacity-75"
+                            className="w-full h-full object-cover object-top opacity-70"
                             fallback={
-                              <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-800 to-slate-950 text-slate-400">
-                                <User className="w-12 h-12 opacity-40" />
+                              <div className="w-full h-full flex items-center justify-center bg-slate-900 text-slate-600">
+                                <User className="w-10 h-10 opacity-40" />
                               </div>
                             }
                           />
-                          <div className="absolute inset-0 bg-slate-950/20" />
                         </div>
-                        <div className="p-4 bg-white">
-                          <div className="text-xs font-bold text-slate-400 truncate">
+                        <div className="p-3 bg-white h-[104px]">
+                          <div className="text-[11px] font-bold text-slate-400 truncate">
                             Berikutnya: {bgPerson.code} • {bgPerson.name}
                           </div>
                         </div>
@@ -340,7 +445,7 @@ export default function PersonnelSwipeDeck({
                     );
                   })}
 
-                  {/* TOP INTERACTIVE SWIPE CARD */}
+                  {/* TOP INTERACTIVE CARD */}
                   <div
                     key={currentPerson.id}
                     onPointerDown={handlePointerDown}
@@ -349,10 +454,10 @@ export default function PersonnelSwipeDeck({
                     onPointerCancel={handlePointerUp}
                     style={{
                       transform: `translate3d(${activeTranslateX}px, ${activeTranslateY}px, 0) rotate(${activeRotate}deg)`,
-                      transition: isDragging ? 'none' : 'transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1)',
+                      transition: isDragging ? 'none' : 'transform 200ms cubic-bezier(0.2, 0.8, 0.2, 1)',
                       zIndex: 20
                     }}
-                    className={`absolute inset-x-0 top-0 h-[465px] sm:h-[490px] bg-white rounded-3xl border shadow-xl overflow-hidden touch-none ${
+                    className={`absolute inset-x-0 top-0 bg-white rounded-3xl border shadow-xl overflow-hidden touch-none ${
                       isDragging ? 'cursor-grabbing shadow-2xl' : 'cursor-grab'
                     } ${
                       rightStampOpacity > 0.15
@@ -362,51 +467,52 @@ export default function PersonnelSwipeDeck({
                         : 'border-slate-200/90'
                     }`}
                   >
-                    {/* Photo Hero Area */}
-                    <div className="relative h-[315px] sm:h-[340px] bg-slate-900 overflow-hidden">
+                    {/* Photo Area: True 3:4 Full Edge-to-Edge */}
+                    <div className="relative w-full aspect-[3/4] bg-slate-100 overflow-hidden">
                       <PersonAvatarImg
                         photo={currentPerson.photo}
                         name={currentPerson.name}
                         className="w-full h-full object-cover object-top select-none pointer-events-none"
                         fallback={
-                          <div className={`w-full h-full flex flex-col items-center justify-center p-6 text-center bg-gradient-to-br ${
-                            currentPerson.roleType === 'danton'
-                              ? 'from-amber-900 via-slate-900 to-slate-950'
-                              : currentPerson.roleType === 'cadangan'
-                              ? 'from-purple-900 via-slate-900 to-slate-950'
-                              : 'from-slate-800 via-slate-900 to-slate-950'
-                          }`}>
-                            <div className="w-24 h-24 rounded-3xl bg-white/10 border border-white/15 flex items-center justify-center text-white text-3xl font-black mb-3 shadow-inner">
+                          <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center bg-slate-100/90 border-b border-slate-200/80">
+                            <div className="w-18 h-18 rounded-2xl bg-white border border-slate-200 shadow-2xs flex items-center justify-center text-slate-600 text-2xl font-black mb-2.5">
                               {currentPerson.code}
                             </div>
-                            <span className="text-xs font-bold uppercase tracking-wider text-slate-300">
+                            <span className="text-xs font-bold uppercase tracking-wider text-slate-600">
                               Pasfoto Belum Diunggah
                             </span>
-                            <span className="text-[11px] text-slate-400 mt-1">
-                              Verifikasi menggunakan kartu pelajar / fisik langsung
+                            <span className="text-[10.5px] text-slate-400 mt-1 max-w-[200px] leading-snug">
+                              Verifikasi dengan kartu pelajar / fisik langsung
                             </span>
                           </div>
                         }
                       />
 
-                      {/* Subtle Top & Bottom Gradient Scrim */}
-                      <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-black/60 to-transparent pointer-events-none" />
-                      <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/75 via-black/25 to-transparent pointer-events-none" />
+                      {isValidPhotoUrl(currentPerson.photo) && (
+                        <>
+                          <div className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-black/55 to-transparent pointer-events-none" />
+                          <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-black/75 via-black/25 to-transparent pointer-events-none" />
+                        </>
+                      )}
 
-                      {/* Top Badges: Role Code & Photo Zoom */}
-                      <div className="absolute top-3.5 inset-x-3.5 flex items-center justify-between gap-2 z-10">
-                        <span className={`px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-wider shadow-sm backdrop-blur-md border ${
+                      {/* Top Badges */}
+                      <div className="absolute top-3 inset-x-3 flex items-center justify-between gap-2 z-10">
+                        <span className={`px-2.5 py-1 rounded-full text-[10.5px] font-black uppercase tracking-wider shadow-xs backdrop-blur-md border ${
                           currentPerson.roleType === 'danton'
                             ? 'bg-amber-400/95 text-slate-950 border-amber-300'
                             : currentPerson.roleType === 'cadangan'
                             ? 'bg-purple-600/90 text-white border-purple-400/40'
                             : 'bg-slate-900/85 text-white border-white/15'
                         }`}>
-                          {currentPerson.code} • {currentPerson.roleType === 'danton' ? 'Danton' : currentPerson.roleType === 'cadangan' ? 'Cadangan' : `Saf ${currentPerson.saf} Banjar ${currentPerson.banjar}`}
+                          {currentPerson.code} • {currentPerson.roleType === 'danton' ? 'Danton' : currentPerson.roleType === 'cadangan' ? 'Cadangan' : `Saf ${currentPerson.saf} Bjr ${currentPerson.banjar}`}
                         </span>
 
                         <div className="flex items-center gap-1.5">
-                          <span className="px-2.5 py-1 rounded-full bg-black/55 backdrop-blur-md text-white text-[11px] font-mono font-bold border border-white/15">
+                          <span className={`px-2 py-0.5 rounded-full text-[10.5px] font-mono font-bold border ${
+                            isValidPhotoUrl(currentPerson.photo)
+                              ? 'bg-black/55 backdrop-blur-md text-white border-white/15'
+                              : 'bg-white/90 text-slate-700 border-slate-200'
+                          }`}>
                             {currentIndex + 1}/{personnels.length}
                           </span>
                           {isValidPhotoUrl(currentPerson.photo) && (
@@ -417,115 +523,121 @@ export default function PersonnelSwipeDeck({
                                 e.stopPropagation();
                                 setZoomedPerson(currentPerson);
                               }}
-                              className="w-8 h-8 rounded-full bg-black/55 hover:bg-black/80 backdrop-blur-md text-white flex items-center justify-center border border-white/20 transition-colors cursor-pointer"
+                              className="w-7 h-7 rounded-full bg-black/55 hover:bg-black/80 backdrop-blur-md text-white flex items-center justify-center border border-white/20 transition-colors cursor-pointer"
                               title="Perbesar Foto"
                             >
-                              <ZoomIn className="w-4 h-4" />
+                              <ZoomIn className="w-3.5 h-3.5" />
                             </button>
                           )}
                         </div>
                       </div>
 
-                      {/* Current Verification Status Badge on Bottom of Photo */}
-                      <div className="absolute bottom-3 left-3.5 right-3.5 flex items-center justify-between z-10 pointer-events-none">
-                        <span className="text-[11px] font-semibold text-white/90 truncate">
+                      {/* Bottom Status on Photo */}
+                      <div className="absolute bottom-2.5 inset-x-3 flex items-center justify-between z-10 pointer-events-none">
+                        <span className={`text-[10.5px] font-semibold truncate ${
+                          isValidPhotoUrl(currentPerson.photo) ? 'text-white/90' : 'text-slate-500'
+                        }`}>
                           {currentPerson.roleLabel}
                         </span>
                         {getPersonStatus(currentPerson) === 'verified' && (
-                          <span className="px-2.5 py-0.5 rounded-full bg-emerald-500 text-white text-[10px] font-black uppercase tracking-wide shadow-sm flex items-center gap-1 shrink-0">
-                            <Check className="w-3 h-3 stroke-[3]" /> Cocok
+                          <span className="px-2 py-0.5 rounded-full bg-emerald-500 text-white text-[9.5px] font-black uppercase tracking-wide shadow-sm flex items-center gap-1 shrink-0">
+                            <Check className="w-2.5 h-2.5 stroke-[3]" /> Cocok
+                          </span>
+                        )}
+                        {getPersonStatus(currentPerson) === 'excused' && (
+                          <span className="px-2 py-0.5 rounded-full bg-amber-500 text-white text-[9.5px] font-black uppercase tracking-wide shadow-sm flex items-center gap-1 shrink-0">
+                            <Stethoscope className="w-2.5 h-2.5" /> Sakit/Izin
                           </span>
                         )}
                         {getPersonStatus(currentPerson) === 'flagged' && (
-                          <span className="px-2.5 py-0.5 rounded-full bg-rose-500 text-white text-[10px] font-black uppercase tracking-wide shadow-sm flex items-center gap-1 shrink-0">
-                            <AlertTriangle className="w-3 h-3" /> Cek Ulang
+                          <span className="px-2 py-0.5 rounded-full bg-rose-500 text-white text-[9.5px] font-black uppercase tracking-wide shadow-sm flex items-center gap-1 shrink-0">
+                            <AlertTriangle className="w-2.5 h-2.5" /> Cek Ulang
                           </span>
                         )}
                       </div>
 
-                      {/* TINDER STAMP OVERLAY: COCOK / VALID (RIGHT SWIPE) */}
+                      {/* Swipe Stamp Overlays */}
                       <div
                         style={{ opacity: rightStampOpacity }}
-                        className="absolute inset-0 bg-emerald-500/20 pointer-events-none flex items-start justify-start p-6 z-20"
+                        className="absolute inset-0 bg-emerald-500/20 pointer-events-none flex items-start justify-start p-5 z-20"
                       >
-                        <div className="-rotate-12 border-4 border-emerald-400 bg-emerald-950/75 backdrop-blur-sm text-emerald-300 px-4 py-1.5 rounded-2xl font-black text-2xl tracking-widest uppercase shadow-lg">
+                        <div className="-rotate-12 border-4 border-emerald-400 bg-emerald-950/75 backdrop-blur-xs text-emerald-300 px-3.5 py-1 rounded-2xl font-black text-xl tracking-widest uppercase shadow-lg">
                           COCOK ✓
                         </div>
                       </div>
-
-                      {/* TINDER STAMP OVERLAY: CEK ULANG (LEFT SWIPE) */}
                       <div
                         style={{ opacity: leftStampOpacity }}
-                        className="absolute inset-0 bg-rose-500/20 pointer-events-none flex items-start justify-end p-6 z-20"
+                        className="absolute inset-0 bg-rose-500/20 pointer-events-none flex items-start justify-end p-5 z-20"
                       >
-                        <div className="rotate-12 border-4 border-rose-400 bg-rose-950/75 backdrop-blur-sm text-rose-300 px-4 py-1.5 rounded-2xl font-black text-2xl tracking-widest uppercase shadow-lg">
+                        <div className="rotate-12 border-4 border-rose-400 bg-rose-950/75 backdrop-blur-xs text-rose-300 px-3.5 py-1 rounded-2xl font-black text-xl tracking-widest uppercase shadow-lg">
                           TANDAI ✕
                         </div>
                       </div>
                     </div>
 
-                    {/* Card Identity Info Footer */}
-                    <div className="p-4 sm:p-5 bg-white flex flex-col justify-between h-[150px]">
+                    {/* Identity Footer */}
+                    <div className="p-3 bg-white flex flex-col justify-between h-[104px]">
                       <div>
-                        <h4 className="text-lg sm:text-xl font-black text-slate-900 leading-tight uppercase truncate" title={currentPerson.name}>
+                        <h4 className="text-sm sm:text-[15px] font-black text-slate-900 leading-tight uppercase truncate" title={currentPerson.name}>
                           {currentPerson.name}
                         </h4>
-                        <div className="flex flex-wrap items-center gap-1.5 mt-2">
-                          <span className="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 text-[11px] font-mono font-semibold">
+                        <div className="flex flex-wrap items-center gap-1.5 mt-1.5">
+                          <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 text-[10px] font-mono font-semibold">
                             NISN: {currentPerson.nisn || '-'}
                           </span>
-                          <span className="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 text-[11px] font-semibold">
-                            Kelas: {currentPerson.className || '-'}
+                          <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 text-[10px] font-semibold">
+                            Kls {currentPerson.className || '-'}
                           </span>
                           {currentPerson.medicalHistory && (
-                            <span className="px-2.5 py-1 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 text-[10px] font-bold truncate max-w-full">
+                            <span className="px-2 py-0.5 rounded-md bg-rose-50 border border-rose-200 text-rose-700 text-[9.5px] font-bold truncate max-w-full">
                               Medis: {currentPerson.medicalHistory}
                             </span>
                           )}
                         </div>
                       </div>
 
-                      <div className="flex items-center justify-between text-[11px] text-slate-400 pt-2 border-t border-slate-100">
-                        <span>Geser kiri <strong className="text-rose-500">Tandai</strong> • Geser kanan <strong className="text-emerald-600">Cocok</strong></span>
-                        <span className="font-mono text-[10px] hidden sm:inline">← / →</span>
+                      <div className="flex items-center justify-between text-[10px] text-slate-400 pt-1 border-t border-slate-100">
+                        <span>Geser kiri <strong className="text-rose-500">Tandai</strong> • kanan <strong className="text-emerald-600">Cocok</strong></span>
+                        <span className="font-mono text-[9.5px] hidden sm:inline bg-slate-100 px-1.5 py-0.5 rounded text-slate-500">← / →</span>
                       </div>
                     </div>
                   </div>
                 </>
               ) : (
                 /* END OF DECK SUMMARY CARD */
-                <div className="w-full h-[465px] sm:h-[490px] bg-white rounded-3xl border border-slate-200 shadow-lg p-6 sm:p-8 flex flex-col items-center justify-center text-center space-y-5">
-                  <div className={`w-16 h-16 rounded-2xl flex items-center justify-center ${
+                <div className="w-full h-[468px] bg-white rounded-3xl border border-slate-200 shadow-lg p-6 flex flex-col items-center justify-center text-center space-y-4">
+                  <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${
                     isMinPersonnelMet
                       ? 'bg-emerald-100 text-emerald-600 border border-emerald-200'
                       : 'bg-amber-100 text-amber-600 border border-amber-200'
                   }`}>
-                    {isMinPersonnelMet ? <Sparkles className="w-8 h-8" /> : <AlertTriangle className="w-8 h-8" />}
+                    {isMinPersonnelMet ? <Sparkles className="w-7 h-7" /> : <AlertTriangle className="w-7 h-7" />}
                   </div>
 
                   <div>
-                    <h4 className="text-lg font-black text-slate-900">
-                      Selesai Melewati 25 Kartu Personel
+                    <h4 className="text-base font-black text-slate-900">
+                      Selesai Melewati {personnels.length} Personel
                     </h4>
                     <p className="text-xs text-slate-500 mt-1 max-w-xs mx-auto">
                       Terverifikasi <strong className="text-emerald-700">{verifiedCount} cocok</strong>
-                      {flaggedCount > 0 ? <>, <strong className="text-rose-600">{flaggedCount} perlu cek ulang</strong></> : ''}
-                      {pendingCount > 0 ? <>, dan <strong>{pendingCount} belum diperiksa</strong></> : ''}.
+                      {excusedCount > 0 ? <>, <strong className="text-amber-600">{excusedCount} sakit/izin</strong></> : ''}
+                      {flaggedCount > 0 ? <>, <strong className="text-rose-600">{flaggedCount} cek ulang</strong></> : ''}
+                      {pendingCount > 0 ? <>, dan <strong>{pendingCount} belum dicek</strong></> : ''}.
                     </p>
                     {isMinPersonnelMet && (
-                      <div className="mt-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-[11px] font-bold">
+                      <div className="mt-2.5 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-[10.5px] font-bold">
                         <ShieldCheck className="w-3.5 h-3.5" />
-                        <span>Otomatis Masuk DP 2 &amp; Siap Dinilai Juri</span>
+                        <span>Otomatis Masuk DP 2 &amp; Siap Dinilai</span>
                       </div>
                     )}
                   </div>
 
-                  <div className="w-full space-y-2.5 pt-1">
+                  <div className="w-full space-y-2 pt-1">
                     {hasNextTeam && onNextTeam && (
                       <button
                         type="button"
                         onClick={onNextTeam}
-                        className="w-full py-3.5 px-5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-emerald-600/25 flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-95"
+                        className="w-full py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs uppercase tracking-wider shadow-sm flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-95"
                       >
                         <span>Lanjut ke Peleton Berikutnya</span>
                         <ArrowRight className="w-4 h-4" />
@@ -545,445 +657,525 @@ export default function PersonnelSwipeDeck({
                     <button
                       type="button"
                       onClick={() => setCurrentIndex(0)}
-                      className="w-full py-2.5 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-all cursor-pointer"
+                      className="w-full py-2 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-all cursor-pointer"
                     >
-                      Ulangi Kartu dari Danton (Awal)
+                      Ulangi dari Danton
                     </button>
                   </div>
                 </div>
               )}
             </div>
 
-            {/* TACTILE SWIPE CONTROLS BELOW CARD */}
+            {/* TACTILE CONTROLS DIRECTLY VISIBLE IN 1 VIEWPORT */}
             {currentPerson && (
-              <div className="flex items-center justify-center gap-3 sm:gap-4 mt-2">
-                <button
-                  type="button"
-                  onClick={handleUndo}
-                  disabled={currentIndex === 0 && history.length === 0}
-                  className="w-11 h-11 rounded-full bg-white hover:bg-slate-100 border border-slate-200 text-slate-600 flex items-center justify-center shadow-sm transition-all cursor-pointer disabled:opacity-35 disabled:cursor-not-allowed active:scale-95"
-                  title="Kembali ke personel sebelumnya (Backspace)"
-                >
-                  <RotateCcw className="w-4 h-4" />
-                </button>
+              <div className="w-full max-w-[340px] space-y-2 mt-2.5">
+                <div className="flex items-center justify-center gap-2">
+                  <button
+                    type="button"
+                    onClick={handleUndo}
+                    disabled={currentIndex === 0 && history.length === 0}
+                    className="w-10 h-10 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-slate-600 flex items-center justify-center shadow-2xs transition-all cursor-pointer disabled:opacity-35 disabled:cursor-not-allowed active:scale-95 shrink-0"
+                    title="Kembali (Backspace)"
+                  >
+                    <RotateCcw className="w-4 h-4" />
+                  </button>
 
-                <button
-                  type="button"
-                  onClick={() => commitSwipe('left')}
-                  disabled={!canOperate}
-                  className="h-12 sm:h-14 px-5 sm:px-6 rounded-full bg-white hover:bg-rose-50 border-2 border-rose-200 hover:border-rose-400 text-rose-600 font-black text-xs uppercase tracking-wider shadow-sm hover:shadow-md flex items-center gap-2 transition-all cursor-pointer disabled:opacity-40 active:scale-95"
-                  title="Tandai perlu cek ulang (Panah Kiri)"
-                >
-                  <X className="w-5 h-5 stroke-[2.75]" />
-                  <span>Tandai</span>
-                </button>
+                  <button
+                    type="button"
+                    onClick={() => commitSwipe('left')}
+                    disabled={!canOperate}
+                    className="flex-1 h-10 px-3 rounded-xl bg-white hover:bg-rose-50 border-2 border-rose-200 hover:border-rose-400 text-rose-600 font-black text-[11px] uppercase tracking-wider shadow-2xs flex items-center justify-center gap-1 transition-all cursor-pointer disabled:opacity-40 active:scale-95"
+                    title="Tandai perlu cek ulang (Panah Kiri)"
+                  >
+                    <X className="w-3.5 h-3.5 stroke-[2.75]" />
+                    <span>Tandai</span>
+                  </button>
 
-                <button
-                  type="button"
-                  onClick={() => commitSwipe('right')}
-                  disabled={!canOperate}
-                  className="h-12 sm:h-14 px-6 sm:px-7 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-emerald-600/30 flex items-center gap-2 transition-all cursor-pointer disabled:opacity-40 active:scale-95"
-                  title="Wajah & identitas sesuai (Panah Kanan)"
-                >
-                  <Check className="w-5 h-5 stroke-[3]" />
-                  <span>Cocok</span>
-                </button>
+                  <button
+                    type="button"
+                    onClick={commitExcused}
+                    disabled={!canOperate}
+                    className="flex-1 h-10 px-3 rounded-xl bg-amber-50 hover:bg-amber-100 border-2 border-amber-300 text-amber-800 font-black text-[11px] uppercase tracking-wider shadow-2xs flex items-center justify-center gap-1 transition-all cursor-pointer disabled:opacity-40 active:scale-95"
+                    title="Tandai personel Sakit / Izin"
+                  >
+                    <Stethoscope className="w-3.5 h-3.5" />
+                    <span>Sakit/Izin</span>
+                  </button>
 
-                <button
-                  type="button"
-                  onClick={handleSkipNext}
-                  className="w-11 h-11 rounded-full bg-white hover:bg-slate-100 border border-slate-200 text-slate-600 flex items-center justify-center shadow-sm transition-all cursor-pointer active:scale-95"
-                  title="Lewati ke personel berikutnya"
-                >
-                  <ChevronRight className="w-5 h-5" />
-                </button>
+                  <button
+                    type="button"
+                    onClick={() => commitSwipe('right')}
+                    disabled={!canOperate}
+                    className="flex-1 h-10 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[11px] uppercase tracking-wider shadow-md shadow-emerald-600/25 flex items-center justify-center gap-1 transition-all cursor-pointer disabled:opacity-40 active:scale-95"
+                    title="Wajah & identitas cocok (Panah Kanan)"
+                  >
+                    <Check className="w-3.5 h-3.5 stroke-[3]" />
+                    <span>Cocok</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleSkipNext}
+                    className="w-10 h-10 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-slate-600 flex items-center justify-center shadow-2xs transition-all cursor-pointer active:scale-95 shrink-0"
+                    title="Lewati"
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
             )}
           </div>
 
-          {/* RIGHT (5 COLS): INTERACTIVE FORMATION MINI-MAP (BARISAN 25 PERSONEL) */}
-          <div className="lg:col-span-5 bg-slate-50/80 rounded-3xl border border-slate-200/90 p-4 sm:p-5 space-y-4">
-            <div className="flex items-center justify-between gap-2">
+          {/* RIGHT (6/7 COLS): INTERACTIVE FORMATION MINI-MAP */}
+          <div className="lg:col-span-6 xl:col-span-7 bg-slate-50/80 rounded-2xl sm:rounded-3xl border border-slate-200/90 p-4 sm:p-5 space-y-4">
+            <div className="flex flex-wrap items-center justify-between gap-2">
               <div>
-                <h4 className="text-xs font-black uppercase tracking-wider text-slate-800">
+                <h4 className="text-xs font-black uppercase tracking-wider text-slate-900">
                   Peta Barisan Peleton
                 </h4>
                 <p className="text-[11px] text-slate-500">
-                  Klik posisi anggota untuk lompat langsung ke kartunya
+                  Klik posisi anggota untuk langsung melompat ke kartunya
                 </p>
               </div>
-              <span className="text-xs font-mono font-black text-slate-800 bg-white px-2.5 py-1 rounded-lg border border-slate-200">
-                {verifiedCount}/{personnels.length}
-              </span>
+
+              <div className="flex items-center gap-2">
+                {canOperate && onVerifyAll && verifiedCount < personnels.length && (
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      const ok = await appConfirm(
+                        `Verifikasi seluruh ${personnels.length} personel ${team?.schoolName || ''} sekaligus sebagai COCOK?`,
+                        { title: 'Cocokkan Semua Personel', confirmText: 'Ya, Cocokkan Semua', variant: 'success' }
+                      );
+                      if (ok) {
+                        onVerifyAll();
+                      }
+                    }}
+                    className="px-2.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-black inline-flex items-center gap-1.5 shadow-2xs cursor-pointer transition-all active:scale-95"
+                  >
+                    <CheckCheck className="w-3.5 h-3.5" />
+                    <span>Cocokkan Semua</span>
+                  </button>
+                )}
+                <span className="text-xs font-mono font-black text-slate-800 bg-white px-2.5 py-1 rounded-xl border border-slate-200">
+                  {verifiedCount}/{personnels.length}
+                </span>
+              </div>
             </div>
 
-            {/* Progress Bar */}
-            <div className="space-y-1">
-              <div className="h-2 w-full bg-slate-200 rounded-full overflow-hidden">
+            {/* Progress Bar + Threshold */}
+            <div className="space-y-1.5">
+              <div className="h-2 w-full bg-slate-200/80 rounded-full overflow-hidden">
                 <div
-                  className={`h-full transition-all duration-300 rounded-full ${
+                  className={`h-full rounded-full transition-all duration-300 ${
                     isMinPersonnelMet ? 'bg-emerald-500' : 'bg-blue-600'
                   }`}
-                  style={{ width: `${personnels.length ? Math.round((verifiedCount / personnels.length) * 100) : 0}%` }}
+                  style={{ width: `${progressPct}%` }}
                 />
               </div>
-              <div className="flex items-center justify-between text-[10px] text-slate-500">
-                <span>Min. 22 Personel → Otomatis ke DP 2 &amp; Siap Dinilai</span>
+              <div className="flex items-center justify-between text-[10.5px]">
+                <span className="text-slate-500 font-medium">
+                  Ambang lulus DP 1: <strong className="text-slate-700">Min. 22 personel</strong>
+                </span>
                 {isMinPersonnelMet ? (
-                  <span className="font-bold text-emerald-600">✓ Siap Dinilai</span>
+                  <span className="font-black text-emerald-700 flex items-center gap-1">
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    <span>Siap Dinilai (DP 2)</span>
+                  </span>
                 ) : (
-                  <span>Kurang {Math.max(0, 22 - verifiedCount)} lagi</span>
+                  <span className="font-bold text-amber-700">
+                    Kurang {Math.max(0, 22 - verifiedCount)} personel lagi
+                  </span>
                 )}
               </div>
             </div>
 
-            {/* 1. Danton Slot */}
+            {/* 1. Komandan Peleton */}
             {dantonPerson && (() => {
-              const dIdx = personnels.indexOf(dantonPerson);
+              const idx = personnels.findIndex(p => p.id === dantonPerson.id);
               const status = getPersonStatus(dantonPerson);
-              const isCurrent = currentIndex === dIdx;
-
+              const isCurrent = idx === currentIndex;
               return (
-                <div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1.5">
-                    Komandan Peleton
+                <div className="space-y-1.5">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 block">
+                    Komandan Peleton (Danton)
                   </span>
                   <button
                     type="button"
-                    onClick={() => jumpToPerson(dIdx)}
-                    className={`w-full p-2.5 rounded-2xl border flex items-center justify-between gap-3 transition-all cursor-pointer text-left ${
+                    onClick={() => jumpToPerson(idx)}
+                    className={`w-full p-2.5 rounded-2xl border text-left flex items-center justify-between gap-3 transition-all cursor-pointer ${
                       isCurrent
-                        ? 'bg-white border-blue-500 ring-2 ring-blue-500/20 shadow-sm'
+                        ? 'bg-white border-blue-500 ring-2 ring-blue-500/20 shadow-xs'
                         : status === 'verified'
-                        ? 'bg-emerald-50/80 border-emerald-200 hover:bg-emerald-50'
+                        ? 'bg-emerald-50/60 border-emerald-200 hover:bg-emerald-50'
+                        : status === 'excused'
+                        ? 'bg-amber-50/70 border-amber-200 hover:bg-amber-50'
                         : status === 'flagged'
-                        ? 'bg-rose-50/80 border-rose-200 hover:bg-rose-50'
+                        ? 'bg-rose-50/70 border-rose-200 hover:bg-rose-50'
                         : 'bg-white border-slate-200 hover:border-slate-300'
                     }`}
                   >
                     <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="w-10 h-10 rounded-xl overflow-hidden bg-amber-100 border border-amber-300 shrink-0 flex items-center justify-center font-black text-[11px] text-amber-800">
+                      <div className="w-10 h-10 rounded-xl bg-slate-200 overflow-hidden shrink-0 border border-slate-200">
                         <PersonAvatarImg
                           photo={dantonPerson.photo}
                           name={dantonPerson.name}
-                          fallback={<span>DAN</span>}
+                          fallback={
+                            <div className="w-full h-full flex items-center justify-center bg-amber-100 text-amber-800 text-[10px] font-black">
+                              DAN
+                            </div>
+                          }
                         />
                       </div>
                       <div className="min-w-0">
-                        <div className="text-xs font-black text-slate-900 truncate">{dantonPerson.name}</div>
-                        <div className="text-[10px] text-slate-500 font-mono truncate">DAN • NISN {dantonPerson.nisn || '-'}</div>
+                        <div className="text-xs font-black text-slate-900 uppercase truncate">
+                          {dantonPerson.name}
+                        </div>
+                        <div className="text-[10px] font-mono text-slate-500">
+                          DAN • NISN {dantonPerson.nisn || '-'}
+                        </div>
                       </div>
                     </div>
-                    <StatusDot status={status} />
+                    <span className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 ${
+                      status === 'verified'
+                        ? 'bg-emerald-500 text-white'
+                        : status === 'excused'
+                        ? 'bg-amber-500 text-white'
+                        : status === 'flagged'
+                        ? 'bg-rose-500 text-white'
+                        : 'bg-slate-200 text-slate-500'
+                    }`}>
+                      {status === 'verified' ? <Check className="w-3.5 h-3.5 stroke-[3]" /> : status === 'excused' ? <Stethoscope className="w-3 h-3" /> : status === 'flagged' ? <AlertTriangle className="w-3 h-3" /> : <span className="w-2 h-2 rounded-full bg-slate-400" />}
+                    </span>
                   </button>
                 </div>
               );
             })()}
 
-            {/* 2. Pasukan Inti (21 Personel: 3 Saf x 7 Banjar) */}
-            {pasukanPersons.length > 0 && (
-              <div>
-                <div className="flex items-center justify-between mb-1.5">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                    Pasukan Inti (3 Saf × 7 Banjar)
-                  </span>
-                </div>
-                <div className="grid grid-cols-7 gap-1.5">
-                  {pasukanPersons.map((p) => {
-                    const pIdx = personnels.indexOf(p);
-                    const status = getPersonStatus(p);
-                    const isCurrent = currentIndex === pIdx;
-
-                    return (
-                      <button
-                        key={p.id}
-                        type="button"
-                        onClick={() => jumpToPerson(pIdx)}
-                        title={`${p.code}: ${p.name}`}
-                        className={`relative p-1 rounded-xl border flex flex-col items-center gap-1 transition-all cursor-pointer ${
-                          isCurrent
-                            ? 'bg-blue-600 border-blue-600 text-white ring-2 ring-blue-500/30 shadow-sm scale-105 z-10'
-                            : status === 'verified'
-                            ? 'bg-emerald-50 border-emerald-300 text-emerald-900 hover:bg-emerald-100/70'
-                            : status === 'flagged'
-                            ? 'bg-rose-50 border-rose-300 text-rose-900 hover:bg-rose-100/70'
-                            : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300'
-                        }`}
-                      >
-                        <div className="w-8 h-8 rounded-lg overflow-hidden bg-slate-100 shrink-0 flex items-center justify-center text-[10px] font-bold text-slate-500">
-                          <PersonAvatarImg
-                            photo={p.photo}
-                            name={p.name}
-                            fallback={<span>{p.code}</span>}
-                          />
-                        </div>
-                        <span className="text-[9.5px] font-mono font-bold leading-none">{p.code}</span>
-                        {status === 'verified' && !isCurrent && (
-                          <span className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-sm">
-                            <Check className="w-2.5 h-2.5 stroke-[3]" />
-                          </span>
-                        )}
-                        {status === 'flagged' && !isCurrent && (
-                          <span className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-rose-500 text-white flex items-center justify-center shadow-sm text-[8px] font-black">
-                            !
-                          </span>
-                        )}
-                      </button>
-                    );
-                  })}
-                </div>
+            {/* 2. Pasukan Inti (3 Saf x 7 Banjar dengan Label Saf) */}
+            <div className="space-y-2">
+              <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 block">
+                Pasukan Inti (3 Saf × 7 Banjar)
+              </span>
+              <div className="space-y-1.5">
+                {[1, 2, 3].map(safNum => {
+                  const safMembers = pasukanPersons.slice((safNum - 1) * 7, safNum * 7);
+                  return (
+                    <div key={safNum} className="flex items-center gap-2">
+                      <span className="text-[9px] font-mono font-black uppercase text-slate-400 w-8 shrink-0">
+                        Saf {safNum}
+                      </span>
+                      <div className="grid grid-cols-7 gap-1.5 flex-1">
+                        {safMembers.map(person => {
+                          const idx = personnels.findIndex(p => p.id === person.id);
+                          const status = getPersonStatus(person);
+                          const isCurrent = idx === currentIndex;
+                          return (
+                            <button
+                              key={person.id}
+                              type="button"
+                              onClick={() => jumpToPerson(idx)}
+                              title={`${person.code} • ${person.name}`}
+                              className={`relative p-1 rounded-xl border flex flex-col items-center gap-0.5 transition-all cursor-pointer ${
+                                isCurrent
+                                  ? 'bg-white border-blue-500 ring-2 ring-blue-500/25 shadow-xs scale-[1.04] z-10'
+                                  : status === 'verified'
+                                  ? 'bg-emerald-50/70 border-emerald-200 hover:bg-emerald-50'
+                                  : status === 'excused'
+                                  ? 'bg-amber-50 border-amber-300 hover:bg-amber-100/70'
+                                  : status === 'flagged'
+                                  ? 'bg-rose-50 border-rose-300 hover:bg-rose-100/70'
+                                  : 'bg-white border-slate-200 hover:border-slate-300'
+                              }`}
+                            >
+                              {isValidPhotoUrl(person.photo) ? (
+                                <>
+                                  <div className="w-8 h-8 rounded-lg bg-slate-200 overflow-hidden shrink-0">
+                                    <PersonAvatarImg
+                                      photo={person.photo}
+                                      name={person.name}
+                                      fallback={
+                                        <div className="w-full h-full flex items-center justify-center bg-slate-100 text-slate-500 text-[9px] font-black">
+                                          {person.code}
+                                        </div>
+                                      }
+                                    />
+                                  </div>
+                                  <span className="text-[9px] font-mono font-bold text-slate-600 leading-none">
+                                    {person.code}
+                                  </span>
+                                </>
+                              ) : (
+                                <div className="w-full py-2 flex items-center justify-center">
+                                  <span className="text-[11px] font-mono font-black text-slate-700 leading-none">
+                                    {person.code}
+                                  </span>
+                                </div>
+                              )}
+                              {status === 'verified' && (
+                                <span className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-emerald-500 text-white flex items-center justify-center ring-1 ring-white">
+                                  <Check className="w-2.5 h-2.5 stroke-[3.5]" />
+                                </span>
+                              )}
+                              {status === 'excused' && (
+                                <span className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-amber-500 text-white flex items-center justify-center ring-1 ring-white" title="Sakit / Izin">
+                                  <Stethoscope className="w-2 h-2" />
+                                </span>
+                              )}
+                              {status === 'flagged' && (
+                                <span className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-rose-500 text-white flex items-center justify-center ring-1 ring-white">
+                                  <X className="w-2.5 h-2.5 stroke-[3]" />
+                                </span>
+                              )}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
-            )}
+            </div>
 
-            {/* 3. Cadangan (3 Personel) */}
+            {/* 3. Cadangan (Hanya tampil jika tim mendaftarkan cadangan) */}
             {cadanganPersons.length > 0 && (
-              <div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1.5">
-                  Personel Cadangan
+              <div className="space-y-1.5">
+                <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 block">
+                  Personel Cadangan ({cadanganPersons.length})
                 </span>
-                <div className="grid grid-cols-3 gap-2">
-                  {cadanganPersons.map((c) => {
-                    const cIdx = personnels.indexOf(c);
-                    const status = getPersonStatus(c);
-                    const isCurrent = currentIndex === cIdx;
-
+                <div className={`grid gap-2 ${
+                  cadanganPersons.length === 1
+                    ? 'grid-cols-1'
+                    : cadanganPersons.length === 2
+                    ? 'grid-cols-2'
+                    : 'grid-cols-3'
+                }`}>
+                  {cadanganPersons.map(person => {
+                    const idx = personnels.findIndex(p => p.id === person.id);
+                    const status = getPersonStatus(person);
+                    const isCurrent = idx === currentIndex;
                     return (
                       <button
-                        key={c.id}
+                        key={person.id}
                         type="button"
-                        onClick={() => jumpToPerson(cIdx)}
-                        className={`p-2 rounded-xl border flex items-center gap-2 transition-all cursor-pointer text-left min-w-0 ${
+                        onClick={() => jumpToPerson(idx)}
+                        className={`relative p-2 rounded-xl border text-left flex items-center gap-2 transition-all cursor-pointer ${
                           isCurrent
-                            ? 'bg-white border-blue-500 ring-2 ring-blue-500/20 shadow-sm'
+                            ? 'bg-white border-blue-500 ring-2 ring-blue-500/20 shadow-xs'
                             : status === 'verified'
-                            ? 'bg-emerald-50/80 border-emerald-200'
+                            ? 'bg-emerald-50/70 border-emerald-200 hover:bg-emerald-50'
+                            : status === 'excused'
+                            ? 'bg-amber-50 border-amber-200 hover:bg-amber-100/70'
                             : status === 'flagged'
-                            ? 'bg-rose-50/80 border-rose-200'
+                            ? 'bg-rose-50 border-rose-200'
                             : 'bg-white border-slate-200 hover:border-slate-300'
                         }`}
                       >
-                        <div className="w-8 h-8 rounded-lg overflow-hidden bg-purple-100 text-purple-700 font-bold text-[10px] shrink-0 flex items-center justify-center">
+                        <div className="w-7 h-7 rounded-lg bg-purple-100 text-purple-700 overflow-hidden shrink-0 flex items-center justify-center text-[10px] font-black">
                           <PersonAvatarImg
-                            photo={c.photo}
-                            name={c.name}
-                            fallback={<span>{c.code}</span>}
+                            photo={person.photo}
+                            name={person.name}
+                            fallback={<span>{person.code}</span>}
                           />
                         </div>
-                        <div className="min-w-0 flex-1">
-                          <div className="text-[10px] font-black text-slate-800 truncate">{c.code}</div>
-                          <div className="text-[9.5px] text-slate-500 truncate">{c.name}</div>
+                        <div className="min-w-0">
+                          <div className="text-[10px] font-black text-slate-800 leading-none">{person.code}</div>
+                          <div className="text-[9.5px] text-slate-500 truncate mt-0.5">{person.name}</div>
                         </div>
+                        {status === 'verified' && (
+                          <span className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-emerald-500 text-white flex items-center justify-center ring-1 ring-white">
+                            <Check className="w-2.5 h-2.5 stroke-[3.5]" />
+                          </span>
+                        )}
+                        {status === 'excused' && (
+                          <span className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-amber-500 text-white flex items-center justify-center ring-1 ring-white" title="Sakit / Izin">
+                            <Stethoscope className="w-2 h-2" />
+                          </span>
+                        )}
+                        {status === 'flagged' && (
+                          <span className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-rose-500 text-white flex items-center justify-center ring-1 ring-white">
+                            <X className="w-2.5 h-2.5 stroke-[3]" />
+                          </span>
+                        )}
                       </button>
                     );
                   })}
                 </div>
-              </div>
-            )}
-
-            {/* Quick Bulk Actions */}
-            {canOperate && (
-              <div className="pt-2 border-t border-slate-200/80 flex items-center justify-between gap-2">
-                <button
-                  type="button"
-                  onClick={onVerifyAll}
-                  className="flex-1 py-2 px-3 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs font-bold transition-all cursor-pointer"
-                >
-                  Verifikasi Semua (25)
-                </button>
-                {hasNextTeam && onNextTeam && (
-                  <button
-                    type="button"
-                    onClick={onNextTeam}
-                    className="flex-1 py-2 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5"
-                  >
-                    <span>Peleton Berikutnya</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </button>
-                )}
               </div>
             )}
           </div>
         </div>
       ) : (
-        /* MODE 2: PHOTO GRID 25 PERSONEL */
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-3.5">
-          {personnels.map((person, idx) => {
-            const status = getPersonStatus(person);
-            const isVerified = status === 'verified';
-            const isFlagged = status === 'flagged';
+        /* MODE 2: GRID 25 FOTO TERSTRUKTUR PER FORMASI + FILTER CEPAT */
+        <div className="space-y-5">
+          {/* Grid Filter & Quick Verify All Bar */}
+          <div className="flex flex-wrap items-center justify-between gap-2.5 pb-3 border-b border-slate-100">
+            <div className="flex items-center gap-1.5 flex-wrap text-[11px] font-bold">
+              {[
+                { id: 'all', label: `Semua (${personnels.length})` },
+                { id: 'pending', label: `Belum (${pendingCount})` },
+                { id: 'excused', label: `Sakit/Izin (${excusedCount})` },
+                { id: 'flagged', label: `Cek Ulang (${flaggedCount})` },
+                { id: 'verified', label: `Cocok (${verifiedCount})` },
+              ].map(f => (
+                <button
+                  key={f.id}
+                  type="button"
+                  onClick={() => setGridFilter(f.id)}
+                  className={`px-3 py-1 rounded-full border transition-colors cursor-pointer ${
+                    gridFilter === f.id
+                      ? 'bg-slate-900 text-white border-slate-900'
+                      : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
+                  }`}
+                >
+                  {f.label}
+                </button>
+              ))}
+            </div>
+
+            {canOperate && onVerifyAll && verifiedCount < personnels.length && (
+              <button
+                type="button"
+                onClick={async () => {
+                  const ok = await appConfirm(
+                    `Verifikasi seluruh ${personnels.length} personel ${team?.schoolName || ''} sekaligus sebagai COCOK?`,
+                    { title: 'Cocokkan Semua Personel', confirmText: 'Ya, Cocokkan Semua', variant: 'success' }
+                  );
+                  if (ok) {
+                    onVerifyAll();
+                  }
+                }}
+                className="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black inline-flex items-center gap-1.5 shadow-2xs cursor-pointer transition-all active:scale-95"
+              >
+                <CheckCheck className="w-3.5 h-3.5" />
+                <span>Cocokkan Semua ({personnels.length}/{personnels.length})</span>
+              </button>
+            )}
+          </div>
+
+          {/* Section 1: Komandan & Cadangan + Pasukan Inti */}
+          {(() => {
+            const visibleDanton = dantonPerson && matchesGridFilter(dantonPerson) ? [dantonPerson] : [];
+            const visiblePasukan = pasukanPersons.filter(matchesGridFilter);
+            const visibleCadangan = cadanganPersons.filter(matchesGridFilter);
+            const totalVisible = visibleDanton.length + visiblePasukan.length + visibleCadangan.length;
+
+            if (totalVisible === 0) {
+              return (
+                <div className="py-12 text-center text-xs text-slate-400 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                  Tidak ada personel yang cocok dengan filter ini.
+                </div>
+              );
+            }
+
+            const mainSquad = [...visibleDanton, ...visiblePasukan];
 
             return (
-              <div
-                key={person.id}
-                className={`rounded-2xl border overflow-hidden bg-white transition-all flex flex-col justify-between ${
-                  isVerified
-                    ? 'border-emerald-300 ring-1 ring-emerald-200/70'
-                    : isFlagged
-                    ? 'border-rose-300 ring-1 ring-rose-200/70'
-                    : 'border-slate-200 hover:border-slate-300'
-                }`}
-              >
-                {/* Photo Top */}
-                <div
-                  onClick={() => jumpToPerson(idx)}
-                  className="relative aspect-[4/4.2] bg-slate-900 overflow-hidden cursor-pointer group"
-                >
-                  <PersonAvatarImg
-                    photo={person.photo}
-                    name={person.name}
-                    className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-200"
-                    fallback={
-                      <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-800 to-slate-950 text-slate-400 p-3 text-center">
-                        <User className="w-8 h-8 opacity-50 mb-1" />
-                        <span className="text-[9px] font-bold uppercase tracking-wider opacity-75">Tanpa Foto</span>
-                      </div>
-                    }
-                  />
-                  <div className="absolute top-2 left-2">
-                    <span className={`px-2 py-0.5 rounded-md text-[10px] font-black uppercase ${
-                      person.roleType === 'danton'
-                        ? 'bg-amber-400 text-slate-950'
-                        : person.roleType === 'cadangan'
-                        ? 'bg-purple-600 text-white'
-                        : 'bg-slate-900/85 text-white'
-                    }`}>
-                      {person.code}
-                    </span>
-                  </div>
-                  {isValidPhotoUrl(person.photo) && (
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setZoomedPerson(person);
-                      }}
-                      className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/55 hover:bg-black/80 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
-                      title="Perbesar Foto"
-                    >
-                      <ZoomIn className="w-3.5 h-3.5" />
-                    </button>
-                  )}
-                </div>
-
-                {/* Info & Quick Action Buttons */}
-                <div className="p-3 space-y-2.5 flex-1 flex flex-col justify-between">
-                  <div>
-                    <div className="text-xs font-black text-slate-900 truncate" title={person.name}>
-                      {person.name}
-                    </div>
-                    <div className="text-[10px] text-slate-500 font-mono truncate">
-                      NISN: {person.nisn || '-'} • Kls {person.className || '-'}
+              <div className="space-y-5">
+                {mainSquad.length > 0 && (
+                  <div className="space-y-2.5">
+                    <h4 className="text-[11px] font-black uppercase tracking-wider text-slate-500">
+                      Komandan &amp; Pasukan Inti ({mainSquad.length} Personel)
+                    </h4>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-3">
+                      {mainSquad.map(renderGridCard)}
                     </div>
                   </div>
+                )}
 
-                  {canOperate && (
-                    <div className="grid grid-cols-2 gap-1.5">
-                      <button
-                        type="button"
-                        onClick={() => onInspect(person, false, 'Ditandai perlu cek ulang')}
-                        className={`py-1.5 rounded-lg text-[10px] font-bold flex items-center justify-center gap-1 transition-all cursor-pointer ${
-                          isFlagged
-                            ? 'bg-rose-600 text-white'
-                            : 'bg-slate-100 hover:bg-rose-50 text-slate-600 hover:text-rose-600'
-                        }`}
-                      >
-                        <X className="w-3 h-3" />
-                        <span>Tandai</span>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => onInspect(person, true, '')}
-                        className={`py-1.5 rounded-lg text-[10px] font-bold flex items-center justify-center gap-1 transition-all cursor-pointer ${
-                          isVerified
-                            ? 'bg-emerald-600 text-white'
-                            : 'bg-slate-100 hover:bg-emerald-50 text-slate-700 hover:text-emerald-700'
-                        }`}
-                      >
-                        <Check className="w-3 h-3" />
-                        <span>Cocok</span>
-                      </button>
+                {visibleCadangan.length > 0 && (
+                  <div className="space-y-2.5">
+                    <h4 className="text-[11px] font-black uppercase tracking-wider text-slate-500">
+                      Personel Cadangan ({visibleCadangan.length} Personel)
+                    </h4>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-3">
+                      {visibleCadangan.map(renderGridCard)}
                     </div>
-                  )}
-                </div>
+                  </div>
+                )}
               </div>
             );
-          })}
+          })()}
         </div>
       )}
 
-      {/* PHOTO ZOOM LIGHTBOX MODAL */}
+      {/* ZOOM PHOTO LIGHTBOX MODAL */}
       {zoomedPerson && (
         <div
+          className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in"
           onClick={() => setZoomedPerson(null)}
-          className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4"
         >
           <div
-            onClick={(e) => e.stopPropagation()}
             className="bg-white rounded-3xl max-w-md w-full overflow-hidden shadow-2xl border border-slate-200"
+            onClick={(e) => e.stopPropagation()}
           >
-            <div className="relative aspect-[3/4] max-h-[68vh] w-full bg-slate-950">
+            <div className="relative bg-slate-900 aspect-[3/4] max-h-[65vh] w-full flex items-center justify-center overflow-hidden">
               <PersonAvatarImg
                 photo={zoomedPerson.photo}
                 name={zoomedPerson.name}
-                className="w-full h-full object-contain"
+                className="w-full h-full object-contain bg-slate-950"
                 fallback={
-                  <div className="w-full h-full flex items-center justify-center text-slate-400">
-                    <User className="w-16 h-16" />
-                  </div>
+                  <div className="text-slate-400 text-xs">Foto tidak tersedia</div>
                 }
               />
               <button
                 type="button"
                 onClick={() => setZoomedPerson(null)}
-                className="absolute top-3 right-3 w-9 h-9 rounded-full bg-black/60 hover:bg-black text-white flex items-center justify-center cursor-pointer"
+                className="absolute top-3 right-3 w-9 h-9 rounded-full bg-black/60 hover:bg-black/85 text-white flex items-center justify-center cursor-pointer"
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4" />
               </button>
+              <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-black/65 text-white text-[11px] font-black uppercase">
+                {zoomedPerson.code} • {zoomedPerson.roleLabel}
+              </span>
             </div>
             <div className="p-4 flex items-center justify-between gap-3">
               <div className="min-w-0">
-                <span className="text-[10px] font-black uppercase text-blue-600">{zoomedPerson.roleLabel}</span>
-                <h4 className="text-base font-black text-slate-900 truncate">{zoomedPerson.name}</h4>
-                <p className="text-xs text-slate-500 font-mono">NISN: {zoomedPerson.nisn || '-'} • Kelas {zoomedPerson.className || '-'}</p>
+                <h4 className="text-sm font-black text-slate-900 uppercase truncate">
+                  {zoomedPerson.name}
+                </h4>
+                <p className="text-xs font-mono text-slate-500 mt-0.5">
+                  NISN: {zoomedPerson.nisn || '-'} · Kelas {zoomedPerson.className || '-'}
+                </p>
               </div>
               {canOperate && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    onInspect(zoomedPerson, true, '');
-                    setZoomedPerson(null);
-                  }}
-                  className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black uppercase shrink-0 cursor-pointer"
-                >
-                  ✓ Cocok
-                </button>
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onInspect?.(zoomedPerson, false, 'Ditandai perlu cek ulang di DP 1');
+                      setZoomedPerson(null);
+                    }}
+                    className="px-2.5 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-black cursor-pointer"
+                  >
+                    Tandai
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onInspect?.(zoomedPerson, false, 'Sakit / Izin');
+                      setZoomedPerson(null);
+                    }}
+                    className="px-2.5 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 text-xs font-black cursor-pointer"
+                  >
+                    Sakit/Izin
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onInspect?.(zoomedPerson, true, '');
+                      setZoomedPerson(null);
+                    }}
+                    className="px-2.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black cursor-pointer"
+                  >
+                    Cocok
+                  </button>
+                </div>
               )}
             </div>
           </div>
         </div>
       )}
     </div>
-  );
-}
-
-function StatusDot({ status }) {
-  if (status === 'verified') {
-    return (
-      <span className="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center shrink-0 shadow-sm">
-        <Check className="w-3.5 h-3.5 stroke-[3]" />
-      </span>
-    );
-  }
-  if (status === 'flagged') {
-    return (
-      <span className="w-6 h-6 rounded-full bg-rose-500 text-white flex items-center justify-center shrink-0 shadow-sm">
-        <AlertTriangle className="w-3.5 h-3.5" />
-      </span>
-    );
-  }
-  return (
-    <span className="w-6 h-6 rounded-full bg-slate-100 border border-slate-200 text-slate-400 flex items-center justify-center shrink-0">
-      <CheckCircle2 className="w-3.5 h-3.5 opacity-40" />
-    </span>
   );
 }

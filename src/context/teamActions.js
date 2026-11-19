@@ -1,7 +1,8 @@
 import { saveRecordToSheet, bulkSyncToSheet, deleteRecordFromSheet } from '../services/sheetService.js';
 import { generatePersonnels } from '../data/seedData.js';
-import { checkTeamVerificationEligibility, getChestNumberByLot, canFillRegistrationForm, findTeamByEmail } from './competitionHelpers.js';
+import { checkTeamVerificationEligibility, getChestNumberByLot, canFillRegistrationForm, findTeamByEmail, isLocalhostEnvironment } from './competitionHelpers.js';
 import { EVENT } from '../config.js';
+import { appAlert } from '../utils/appDialog.js';
 
 export function createTeamActions({ teams, setTeams, scores, setScores, setStaging, setCurrentUser, setUsers, settings }) {
   function registerTeam(newTeamData) {
@@ -280,7 +281,7 @@ export function createTeamActions({ teams, setTeams, scores, setScores, setStagi
   function verifyTeam(teamId, newStatus, note = '') {
     if (newStatus === 'verified') {
       const targetTeam = teams.find(t => t.id === teamId);
-      if (targetTeam) {
+      if (targetTeam && !isLocalhostEnvironment()) {
         const check = checkTeamVerificationEligibility(targetTeam);
         if (!check.isEligible) {
           console.warn('[CompetitionContext] Peleton belum memenuhi syarat verifikasi:', check.issues);
@@ -333,13 +334,12 @@ export function createTeamActions({ teams, setTeams, scores, setScores, setStagi
     const num = (lotNumber !== undefined && lotNumber !== '' && lotNumber !== null) ? parseInt(lotNumber, 10) : null;
     
     // Validasi ketat: Peleton HANYA bisa diundi jika berkas & biodata (Danton, 21 Pasukan, Surat Rekomendasi) sudah lengkap
-    if (num && target) {
+    // Khusus localhost: bypass validasi kelengkapan untuk pengujian
+    if (num && target && !isLocalhostEnvironment()) {
       const eligibility = checkTeamVerificationEligibility(target);
       if (!eligibility.isEligible) {
         console.warn(`[CompetitionContext] Peleton ${target.schoolName} belum dapat diundi:`, eligibility.issues);
-        if (typeof alert === 'function') {
-          alert(`Peleton belum dapat diundi karena belum lengkap:\n\n• ${eligibility.issues.join('\n• ')}`);
-        }
+        appAlert(`Peleton belum dapat diundi karena belum lengkap:\n\n• ${eligibility.issues.join('\n• ')}`, { title: 'Belum Dapat Diundi', variant: 'warning' });
         return { success: false, issues: eligibility.issues };
       }
     }

@@ -116,7 +116,7 @@ const DANTON_POINTS = {
 };
 
 export default function LiveLeaderboard() {
-  const { teams, scores, role, currentUser, currentTeam, settings, updateSettings, setActiveView } = useCompetition();
+  const { teams, scores, role, currentUser, currentTeam, settings, updateSettings, setActiveView, isLocalhost } = useCompetition();
 
   // Mode Tema (Light vs Dark)
   const [isDarkMode, setIsDarkMode] = useState(() => {
@@ -213,10 +213,10 @@ export default function LiveLeaderboard() {
     }
   };
 
-  // Filter tim terverifikasi/terundi
+  // Filter tim terverifikasi/terundi (khusus localhost: bypass kelengkapan, tampilkan semua non-rejected)
   const verifiedTeams = useMemo(() => {
-    return teams.filter(t => t.status === 'verified' || t.status === 'drawn' || t.lotNumber);
-  }, [teams]);
+    return teams.filter(t => isLocalhost ? t.status !== 'rejected' : (t.status === 'verified' || t.status === 'drawn' || t.lotNumber));
+  }, [teams, isLocalhost]);
 
   // Ekstraksi data nilai murni, penalti, dan nilai akhir per tim sesuai Formula Juknis Bab A.3
   const teamsWithScores = useMemo(() => {
@@ -624,8 +624,9 @@ export default function LiveLeaderboard() {
         <button
           type="button"
           onClick={toggleStageMode}
-          className="px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl font-bold text-xs bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white shadow-xs flex items-center gap-1.5 transition-all cursor-pointer active:scale-95 whitespace-nowrap"
+          className="px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl font-bold text-xs bg-slate-900 hover:bg-slate-800 text-white shadow-2xs flex items-center gap-1.5 transition-all cursor-pointer active:scale-95 whitespace-nowrap"
         >
+          <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
           <Maximize2 className="w-3.5 h-3.5" />
           <span>Layar Panggung</span>
         </button>
@@ -809,190 +810,194 @@ export default function LiveLeaderboard() {
         </div>
       )}
 
-      {/* 3. Toolbar Filter: Jenjang & Kategori Kejuaraan */}
-      <div
-        className={`p-3 sm:p-4 rounded-2xl sm:rounded-3xl border shadow-xs space-y-2.5 sm:space-y-3 transition-colors ${
-          effectiveDark
-            ? 'bg-slate-900 border-slate-800'
-            : 'bg-white border-slate-200/90'
-        }`}
-      >
-        {/* Tier 1: Kategori Kejuaraan (Peleton, Danton, Juara Umum) */}
-        <div className={`grid grid-cols-3 p-1 rounded-xl sm:rounded-2xl border gap-1 ${
-          effectiveDark ? 'bg-slate-800/90 border-slate-700' : 'bg-slate-100 border-slate-200/80'
-        }`}>
-          <button
-            type="button"
-            onClick={() => setActiveCategory('peleton')}
-            className={`py-2 px-1 sm:px-3 rounded-lg sm:rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 cursor-pointer text-center whitespace-nowrap ${
-              activeCategory === 'peleton'
-                ? effectiveDark
-                  ? 'bg-slate-950 text-white shadow-xs border border-slate-700'
-                  : 'bg-white text-slate-950 shadow-xs border border-slate-200/80'
-                : effectiveDark
-                ? 'text-slate-400 hover:text-white'
-                : 'text-slate-600 hover:text-slate-950 hover:bg-white/50'
-            }`}
-          >
-            <Shield className={`w-3.5 h-3.5 shrink-0 ${activeCategory === 'peleton' ? 'text-red-600' : 'text-slate-400'}`} />
-            <span>Peleton</span>
-          </button>
+      {/* 3. Dark Broadcast Control Deck: Kategori Kejuaraan, Jenjang, Telemetry & Aksi */}
+      {(() => {
+        const sdAll = teamsWithScores.filter(i => i.team.jenjang === 'SD');
+        const smpAll = teamsWithScores.filter(i => i.team.jenjang === 'SMP');
+        const activeDivAll = selectedJenjang === 'SD' ? sdAll : smpAll;
+        const activeDivScored = activeDivAll.filter(i => i.hasScore).length;
+        const isSD = selectedJenjang === 'SD';
 
-          <button
-            type="button"
-            onClick={() => setActiveCategory('danton')}
-            className={`py-2 px-1 sm:px-3 rounded-lg sm:rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 cursor-pointer text-center whitespace-nowrap ${
-              activeCategory === 'danton'
-                ? effectiveDark
-                  ? 'bg-slate-950 text-white shadow-xs border border-slate-700'
-                  : 'bg-white text-slate-950 shadow-xs border border-slate-200/80'
-                : effectiveDark
-                ? 'text-slate-400 hover:text-white'
-                : 'text-slate-600 hover:text-slate-950 hover:bg-white/50'
-            }`}
-          >
-            <Medal className={`w-3.5 h-3.5 shrink-0 ${activeCategory === 'danton' ? 'text-amber-500' : 'text-slate-400'}`} />
-            <span>Danton</span>
-          </button>
+        return (
+          <div className="rounded-2xl border border-slate-800 bg-slate-950 text-white shadow-[0_14px_34px_rgba(15,23,42,0.16)] overflow-hidden">
+            {/* Tier 1: Dark Flush Underline Category Tabs */}
+            <div className="grid grid-cols-3 border-b border-slate-800/90 bg-slate-900/60">
+              {[
+                {
+                  id: 'peleton',
+                  label: 'Peleton',
+                  sub: 'PBB Murni',
+                  icon: Shield,
+                  activeIcon: isSD ? 'text-rose-400' : 'text-blue-400',
+                  activeBar: isSD ? 'bg-rose-500' : 'bg-blue-500',
+                },
+                {
+                  id: 'danton',
+                  label: 'Danton',
+                  sub: 'Komandan Terbaik',
+                  icon: Medal,
+                  activeIcon: 'text-amber-400',
+                  activeBar: 'bg-amber-400',
+                },
+                {
+                  id: 'juara_umum',
+                  label: 'Juara Umum',
+                  sub: 'Piala Bergilir',
+                  icon: Crown,
+                  activeIcon: 'text-amber-400',
+                  activeBar: 'bg-amber-400',
+                },
+              ].map((cat, idx) => {
+                const Icon = cat.icon;
+                const isActive = activeCategory === cat.id;
+                return (
+                  <button
+                    key={cat.id}
+                    type="button"
+                    onClick={() => setActiveCategory(cat.id)}
+                    className={`relative py-3.5 px-2 sm:px-4 text-xs transition-all flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap ${
+                      idx < 2 ? 'border-r border-slate-800/80' : ''
+                    } ${
+                      isActive
+                        ? 'bg-slate-950 text-white font-black'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-900/80 font-semibold'
+                    }`}
+                  >
+                    <Icon className={`w-4 h-4 shrink-0 ${isActive ? cat.activeIcon : 'text-slate-500'}`} />
+                    <span>{cat.label}</span>
+                    <span className={`hidden md:inline text-[10px] font-medium ${
+                      isActive ? 'text-slate-400' : 'text-slate-600'
+                    }`}>
+                      · {cat.sub}
+                    </span>
+                    {isActive && <span className={`absolute bottom-0 left-0 right-0 h-0.5 ${cat.activeBar}`} />}
+                  </button>
+                );
+              })}
+            </div>
 
-          <button
-            type="button"
-            onClick={() => setActiveCategory('juara_umum')}
-            className={`py-2 px-1 sm:px-3 rounded-lg sm:rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 cursor-pointer text-center whitespace-nowrap ${
-              activeCategory === 'juara_umum'
-                ? effectiveDark
-                  ? 'bg-slate-950 text-white shadow-xs border border-slate-700'
-                  : 'bg-white text-slate-950 shadow-xs border border-slate-200/80'
-                : effectiveDark
-                ? 'text-slate-400 hover:text-white'
-                : 'text-slate-600 hover:text-slate-950 hover:bg-white/50'
-            }`}
-          >
-            <Crown className={`w-3.5 h-3.5 shrink-0 ${activeCategory === 'juara_umum' ? 'text-amber-500' : 'text-slate-400'}`} />
-            <span>Juara Umum</span>
-          </button>
-        </div>
+            {/* Tier 2: Balanced Dark Sub-Toolbar */}
+            <div className="px-3.5 sm:px-5 py-3 flex flex-wrap items-center justify-between gap-3">
+              {/* Left Group: Jenjang Switcher + Live Telemetry */}
+              <div className="flex items-center gap-2.5 flex-wrap">
+                <div className="inline-flex items-center p-0.5 rounded-xl border border-slate-800 bg-slate-900">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedJenjang('SD')}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+                      selectedJenjang === 'SD'
+                        ? 'bg-rose-600 text-white shadow-2xs'
+                        : 'text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    <span className={`w-1.5 h-1.5 rounded-full ${selectedJenjang === 'SD' ? 'bg-white' : 'bg-rose-500'}`} />
+                    <span>SD / MI</span>
+                    <span className={`font-mono text-[10px] px-1.5 py-0.5 rounded-md leading-none ${
+                      selectedJenjang === 'SD' ? 'bg-white/20 text-white' : 'bg-slate-800 text-slate-400'
+                    }`}>
+                      {sdAll.length}
+                    </span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedJenjang('SMP')}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+                      selectedJenjang === 'SMP'
+                        ? 'bg-blue-600 text-white shadow-2xs'
+                        : 'text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    <span className={`w-1.5 h-1.5 rounded-full ${selectedJenjang === 'SMP' ? 'bg-white' : 'bg-blue-500'}`} />
+                    <span>SMP / MTs</span>
+                    <span className={`font-mono text-[10px] px-1.5 py-0.5 rounded-md leading-none ${
+                      selectedJenjang === 'SMP' ? 'bg-white/20 text-white' : 'bg-slate-800 text-slate-400'
+                    }`}>
+                      {smpAll.length}
+                    </span>
+                  </button>
+                </div>
 
-        {/* Tier 2: Sub-filter & Actions (Satu Baris Seimbang: Kiri, Tengah, Kanan) */}
-        <div className="flex items-center justify-between gap-1.5 sm:gap-2.5 pt-0.5 overflow-x-auto no-scrollbar">
-          {/* 1. Switch Jenjang: SD & SMP */}
-          <div
-            className={`flex items-center p-0.5 sm:p-1 rounded-xl border shrink-0 ${
-              effectiveDark
-                ? 'bg-slate-800/90 border-slate-700'
-                : 'bg-slate-100 border-slate-200/80'
-            }`}
-          >
-            <button
-              type="button"
-              onClick={() => setSelectedJenjang('SD')}
-              className={`px-2 py-1 sm:px-3 sm:py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1 whitespace-nowrap ${
-                selectedJenjang === 'SD'
-                  ? effectiveDark
-                    ? 'bg-slate-950 text-white shadow-xs font-black'
-                    : 'bg-white text-slate-950 shadow-xs font-black border border-slate-200/60'
-                  : effectiveDark
-                  ? 'text-slate-400 hover:text-white'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              <span>SD</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setSelectedJenjang('SMP')}
-              className={`px-2 py-1 sm:px-3 sm:py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1 whitespace-nowrap ${
-                selectedJenjang === 'SMP'
-                  ? effectiveDark
-                    ? 'bg-slate-950 text-white shadow-xs font-black'
-                    : 'bg-white text-slate-950 shadow-xs font-black border border-slate-200/60'
-                  : effectiveDark
-                  ? 'text-slate-400 hover:text-white'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              <span>SMP</span>
-            </button>
+                {/* Live Telemetry Chip */}
+                <div className="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-xl border border-slate-800 bg-slate-900/80 text-[11px] font-semibold text-slate-300">
+                  <span className={`w-1.5 h-1.5 rounded-full ${
+                    settings?.announcementPublished ? 'bg-emerald-400' : 'bg-amber-400'
+                  }`} />
+                  <span>
+                    <strong className="font-mono font-black text-white">
+                      {activeDivScored}/{activeDivAll.length}
+                    </strong>{' '}
+                    ternilai
+                  </span>
+                  <span className="text-slate-700">·</span>
+                  <span className={settings?.announcementPublished ? 'text-emerald-400 font-bold' : 'text-amber-400 font-bold'}>
+                    {settings?.announcementPublished ? 'Publik' : 'Preview'}
+                  </span>
+                </div>
+              </div>
+
+              {/* Right Group: View Mode + Split Berita Acara */}
+              <div className="flex items-center gap-2 flex-wrap ml-auto">
+                {/* View Mode Toggle: Podium vs Tabel */}
+                <div className="inline-flex items-center p-0.5 rounded-xl border border-slate-800 bg-slate-900">
+                  <button
+                    type="button"
+                    onClick={() => setViewMode('podium')}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+                      viewMode === 'podium'
+                        ? 'bg-white text-slate-950 shadow-2xs'
+                        : 'text-slate-400 hover:text-white'
+                    }`}
+                    title="Tampilan Podium Juara & Peringkat"
+                  >
+                    <Trophy className={`w-3.5 h-3.5 shrink-0 ${viewMode === 'podium' ? 'text-amber-500' : 'text-slate-500'}`} />
+                    <span>Podium</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setViewMode('table')}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+                      viewMode === 'table'
+                        ? 'bg-white text-slate-950 shadow-2xs'
+                        : 'text-slate-400 hover:text-white'
+                    }`}
+                    title="Tampilan Tabel Juknis Lengkap"
+                  >
+                    <FileSpreadsheet className={`w-3.5 h-3.5 shrink-0 ${viewMode === 'table' ? 'text-blue-600' : 'text-slate-500'}`} />
+                    <span>Tabel</span>
+                  </button>
+                </div>
+
+                {/* Unified Split Berita Acara Button */}
+                <div className="inline-flex items-center rounded-xl border border-slate-700 bg-slate-900 overflow-hidden divide-x divide-slate-800">
+                  <button
+                    type="button"
+                    onClick={handleBeritaAcaraClick}
+                    className="px-3 py-1.5 text-xs font-bold text-slate-100 hover:bg-slate-800 transition-colors cursor-pointer flex items-center gap-1.5 whitespace-nowrap"
+                    title={`Unduh Berita Acara Resmi Jenjang ${selectedJenjang === 'SD' ? 'SD/MI' : 'SMP/MTs'}`}
+                  >
+                    <Download className="w-3.5 h-3.5 text-rose-400 shrink-0" />
+                    <span>Berita Acara</span>
+                    <span className="hidden sm:inline font-mono text-[10.5px] font-semibold text-slate-400">
+                      {selectedJenjang}
+                    </span>
+                  </button>
+
+                  {isSuperOrAdmin && (
+                    <button
+                      type="button"
+                      onClick={openBeritaAcaraModal}
+                      className="px-2 py-1.5 text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer flex items-center justify-center"
+                      title="Kelola Link Google Drive Berita Acara (Admin / Superadmin)"
+                    >
+                      <Settings className="w-3.5 h-3.5 shrink-0" />
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
-
-          {/* 2. View Mode Toggle: Podium vs Tabel */}
-          <div
-            className={`flex items-center p-0.5 sm:p-1 rounded-xl border shrink-0 ${
-              effectiveDark
-                ? 'bg-slate-800/90 border-slate-700'
-                : 'bg-slate-100 border-slate-200/80'
-            }`}
-          >
-            <button
-              type="button"
-              onClick={() => setViewMode('podium')}
-              className={`px-2 py-1 sm:px-3 sm:py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
-                viewMode === 'podium'
-                  ? effectiveDark
-                    ? 'bg-slate-950 text-white shadow-xs font-black'
-                    : 'bg-white text-slate-950 shadow-xs font-black border border-slate-200/60'
-                  : effectiveDark
-                  ? 'text-slate-400 hover:text-white'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-              title="Tampilan Podium Juara & Peringkat"
-            >
-              <Trophy className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-              <span>Podium</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setViewMode('table')}
-              className={`px-2 py-1 sm:px-3 sm:py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
-                viewMode === 'table'
-                  ? effectiveDark
-                    ? 'bg-slate-950 text-white shadow-xs font-black'
-                    : 'bg-white text-slate-950 shadow-xs font-black border border-slate-200/60'
-                  : effectiveDark
-                  ? 'text-slate-400 hover:text-white'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-              title="Tampilan Tabel Juknis Lengkap"
-            >
-              <FileSpreadsheet className="w-3.5 h-3.5 text-blue-600 shrink-0" />
-              <span>Tabel</span>
-            </button>
-          </div>
-
-          {/* 3. Sisi Kanan: Tombol Download Berita Acara & Kelola */}
-          <div className="flex items-center gap-1 shrink-0">
-            <button
-              type="button"
-              onClick={handleBeritaAcaraClick}
-              className={`px-2 py-1 sm:px-3 sm:py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 border shadow-2xs whitespace-nowrap ${
-                effectiveDark
-                  ? 'bg-slate-800 hover:bg-slate-700 text-slate-100 hover:text-white border-slate-700'
-                  : 'bg-white hover:bg-slate-50 text-slate-800 hover:text-slate-950 border-slate-200/90'
-              }`}
-              title={`Unduh Berita Acara Resmi Jenjang ${selectedJenjang === 'SD' ? 'SD/MI' : 'SMP/MTs'}`}
-            >
-              <Download className="w-3.5 h-3.5 text-red-600 shrink-0" />
-              <span>Berita Acara</span>
-              <span className="hidden md:inline font-normal text-slate-400">({selectedJenjang})</span>
-            </button>
-
-            {isSuperOrAdmin && (
-              <button
-                type="button"
-                onClick={openBeritaAcaraModal}
-                className={`p-1 sm:p-1.5 rounded-xl text-xs transition-all cursor-pointer border shadow-2xs shrink-0 ${
-                  effectiveDark
-                    ? 'bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white border-slate-700'
-                    : 'bg-white hover:bg-slate-50 text-slate-500 hover:text-slate-900 border-slate-200/90'
-                }`}
-                title="Kelola Link Google Drive Berita Acara (Admin / Superadmin)"
-              >
-                <Settings className="w-3.5 h-3.5 shrink-0" />
-              </button>
-            )}
-          </div>
-        </div>
-      </div>
+        );
+      })()}
 
       {/* 4. Banner Kerahasiaan Jika Skor Belum Dipublikasikan Resmi */}
       {!isOfficialScoreVisible && (
@@ -2422,7 +2427,7 @@ export default function LiveLeaderboard() {
     <SimpaskorSidebarLayout
       activeMenu="klasemen"
       title="Papan Klasemen & Hasil Lomba"
-      subtitle=""
+      subtitle="Peringkat resmi Peleton, Komandan Terbaik, dan Juara Umum LBB Mu'allimin 2027"
       rightActions={headerActions}
     >
       {/* Wrapper Utama */}

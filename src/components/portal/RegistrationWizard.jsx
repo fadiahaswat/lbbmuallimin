@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { appAlert } from '../../utils/appDialog.js';
 import {
   ArrowLeft,
   AlertCircle,
@@ -209,7 +210,7 @@ export default function RegistrationWizard({ isOpen, onClose }) {
       const allowedList = isDantonCard ? ALLOWED_DOC_EXTS : ALLOWED_IMAGE_EXTS;
 
       if (!allowedList.includes(ext)) {
-        alert(`Format file "${file.name}" tidak diizinkan! Format yang diterima hanya: ${allowedList.join(', ')}`);
+        appAlert(`Format file "${file.name}" tidak diizinkan! Format yang diterima hanya: ${allowedList.join(', ')}`, { title: 'Format File Tidak Diizinkan', variant: 'warning' });
         resolve(null);
         return;
       }
@@ -217,7 +218,7 @@ export default function RegistrationWizard({ isOpen, onClose }) {
       const maxLimit = isPaymentProof ? MAX_2MB_SIZE : MAX_3MB_SIZE;
       if (file.size > maxLimit) {
         const limitMb = Math.round(maxLimit / (1024 * 1024));
-        alert(`Ukuran file "${file.name}" (${(file.size / (1024 * 1024)).toFixed(2)} MB) melebihi batas maksimal ${limitMb} MB sesuai Juknis Pendaftaran!`);
+        appAlert(`Ukuran file "${file.name}" (${(file.size / (1024 * 1024)).toFixed(2)} MB) melebihi batas maksimal ${limitMb} MB sesuai Juknis Pendaftaran!`, { title: 'Ukuran File Melebihi Batas', variant: 'warning' });
         resolve(null);
         return;
       }
@@ -377,7 +378,7 @@ export default function RegistrationWizard({ isOpen, onClose }) {
 
   function saveOnlineSignature() {
     if (!hasSignature) {
-      alert('Silakan bubuhkan tanda tangan digital Anda pada area kanvas terlebih dahulu.');
+      appAlert('Silakan bubuhkan tanda tangan digital Anda pada area kanvas terlebih dahulu.', { title: 'Tanda Tangan Kosong', variant: 'warning' });
       return;
     }
     const canvas = canvasRef.current;

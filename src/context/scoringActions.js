@@ -1,5 +1,6 @@
 import { saveRecordToSheet } from '../services/sheetService.js';
 import { parseMaterialsList } from '../config.js';
+import { appAlert } from '../utils/appDialog.js';
 
 export function calculatePenalties(penalties = {}) {
   let peletonPenalty = 0;
@@ -183,6 +184,8 @@ export function createScoringActions({ scores = {}, setScores, currentUser }) {
           rubricScores: scoreData.pbb?.rubricScores || {},
         },
         penalties: mergedPenalties,
+        durationSeconds: scoreData.durationSeconds ?? existing?.durationSeconds ?? null,
+        performanceDuration: scoreData.performanceDuration ?? existing?.performanceDuration ?? '',
         nilaiMurniPeleton,
         nilaiAkhirPeleton,
         nilaiMurniDanton,
@@ -208,7 +211,7 @@ export function createScoringActions({ scores = {}, setScores, currentUser }) {
     if (blockedByLock) {
       console.warn(`[Security] Nilai peleton ${teamId} sudah dikunci dan tidak dapat diubah.`);
       if (typeof alert === 'function') {
-        alert('Peringatan: Nilai peleton ini sudah disahkan & dikunci (Finalized). Perubahan ditolak.');
+        appAlert('Peringatan: Nilai peleton ini sudah disahkan & dikunci (Finalized). Perubahan ditolak.', { title: 'Nilai Sudah Dikunci', variant: 'danger' });
       }
       return null;
     }
@@ -336,7 +339,7 @@ export function createScoringActions({ scores = {}, setScores, currentUser }) {
     if (blockedByLock) {
       console.warn(`[Security] Nilai peleton ${teamId} sudah dikunci (finalized).`);
       if (typeof alert === 'function') {
-        alert('Peringatan: Nilai peleton ini sudah dikunci secara sah. Perubahan ditolak.');
+        appAlert('Peringatan: Nilai peleton ini sudah dikunci secara sah. Perubahan ditolak.', { title: 'Nilai Sudah Dikunci', variant: 'danger' });
       }
       return null;
     }
@@ -372,10 +375,26 @@ export function createScoringActions({ scores = {}, setScores, currentUser }) {
         ...(existing?.penalties || {}),
         ...(draftData.penalties || {}),
       };
-      // Pertahankan penalti otomatis dari Field Timer jika tidak sengaja tertimpa 0
-      if (existing?.fieldTimerData?.overtimeBlocks && !draftData.penalties?.overTimeBlocks) {
+      // Pertahankan penalti otomatis dari Field Timer jika tidak ada input manual durasi/overtime
+      if (
+        existing?.fieldTimerData?.overtimeBlocks &&
+        draftData.durationSeconds === undefined &&
+        !draftData.penalties?.overTimeBlocks
+      ) {
         rawPenalties.overTimeBlocks = existing.fieldTimerData.overtimeBlocks;
       }
+
+      const resolvedDurationSeconds =
+        draftData.durationSeconds !== undefined
+          ? draftData.durationSeconds
+          : (existing?.durationSeconds ?? existing?.fieldTimerData?.durationSeconds ?? null);
+      const resolvedPerformanceDuration =
+        draftData.performanceDuration !== undefined
+          ? draftData.performanceDuration
+          : (existing?.performanceDuration ||
+              (Number.isFinite(resolvedDurationSeconds) && resolvedDurationSeconds > 0
+                ? `${String(Math.floor(resolvedDurationSeconds / 60)).padStart(2, '0')}:${String(resolvedDurationSeconds % 60).padStart(2, '0')}`
+                : ''));
 
       const mergedPenalties = calculatePenalties(rawPenalties);
       const peletonPenalty = mergedPenalties.peletonPenalty;
@@ -454,6 +473,8 @@ export function createScoringActions({ scores = {}, setScores, currentUser }) {
           rubricScores: aggregateDantonRubricScores(juriesObj, draftData.danton?.rubricScores),
         },
         penalties: mergedPenalties,
+        durationSeconds: resolvedDurationSeconds,
+        performanceDuration: resolvedPerformanceDuration,
         nilaiMurniPeleton,
         nilaiAkhirPeleton,
         nilaiMurniDanton,
@@ -479,7 +500,7 @@ export function createScoringActions({ scores = {}, setScores, currentUser }) {
     if (blockedByLock) {
       console.warn(`[Security] Nilai peleton ${teamId} sudah dikunci (finalized). Input draft ditolak.`);
       if (typeof alert === 'function') {
-        alert('Peringatan: Nilai peleton ini sudah dikunci (Finalized). Operator tidak dapat menimpa dengan draft baru.');
+        appAlert('Peringatan: Nilai peleton ini sudah dikunci (Finalized). Operator tidak dapat menimpa dengan draft baru.', { title: 'Nilai Sudah Dikunci', variant: 'danger' });
       }
       return null;
     }
@@ -503,7 +524,7 @@ export function createScoringActions({ scores = {}, setScores, currentUser }) {
     if (!['verifikator', 'superadmin'].includes(currentUser?.role)) {
       console.warn('[Security] Unauthorized call to verifyScore:', currentUser);
       if (typeof alert === 'function') {
-        alert('Akses Ditolak: Hanya Verifikator Nilai atau Superadmin yang berhak memverifikasi skor.');
+        appAlert('Akses Ditolak: Hanya Verifikator Nilai atau Superadmin yang berhak memverifikasi skor.', { title: 'Akses Ditolak', variant: 'danger' });
       }
       return;
     }
@@ -554,7 +575,7 @@ export function createScoringActions({ scores = {}, setScores, currentUser }) {
     if (!['finalisator', 'superadmin'].includes(currentUser?.role)) {
       console.warn('[Security] Unauthorized call to finalizeScore:', currentUser);
       if (typeof alert === 'function') {
-        alert('Akses Ditolak: Hanya Finalisator (Ketua Dewan Juri) atau Superadmin yang berhak mengesahkan & mengunci skor.');
+        appAlert('Akses Ditolak: Hanya Finalisator (Ketua Dewan Juri) atau Superadmin yang berhak mengesahkan & mengunci skor.', { title: 'Akses Ditolak', variant: 'danger' });
       }
       return;
     }
@@ -605,7 +626,7 @@ export function createScoringActions({ scores = {}, setScores, currentUser }) {
     if (currentUser && currentUser.role !== 'superadmin') {
       console.warn('[Security] Unauthorized call to unlockScore:', currentUser);
       if (typeof alert === 'function') {
-        alert('Akses Ditolak: Hanya Superadmin yang berhak membuka kunci nilai.');
+        appAlert('Akses Ditolak: Hanya Superadmin yang berhak membuka kunci nilai.', { title: 'Akses Ditolak', variant: 'danger' });
       }
       return;
     }

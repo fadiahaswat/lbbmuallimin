@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { appConfirm } from '../../../utils/appDialog.js';
 import { ExternalLink, FileText, AlertTriangle, Upload, Trash2 } from 'lucide-react';
 import { formatImageUrl, getFallbackImageUrl } from '../../../services/sheetService.js';
 
@@ -97,8 +98,13 @@ export default function DocumentFileCard({
     e.target.value = '';
   };
 
-  const handleDelete = () => {
-    if (window.confirm(`Hapus berkas "${title}" ini?`)) {
+  const handleDelete = async () => {
+    const ok = await appConfirm(`Hapus berkas "${title}" ini?`, {
+      title: 'Hapus Berkas',
+      confirmText: 'Hapus',
+      variant: 'danger',
+    });
+    if (ok) {
       onDelete?.();
     }
   };

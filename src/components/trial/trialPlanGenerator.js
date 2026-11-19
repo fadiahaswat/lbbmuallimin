@@ -39,7 +39,8 @@ export function normalizeSchoolName(name = '') {
     .toLowerCase()
     .replace(/\b(peleton|pasukan|tim|regu)\b.*$/gi, '')
     .replace(/[\(\[\{].*?[\)\]\}]/g, '')
-    .replace(/\b(a|b|c|1|2|3|putra|putri|pa|pi)\b$/gi, '')
+    .replace(/\b(a|b|c|d|1|2|3|i|ii|iii|putra|putri|pa|pi)\b$/gi, '')
+    .replace(/\s+/g, ' ')
     .trim();
 }
 
@@ -67,10 +68,11 @@ export function generateSmartTrialPlan(allTeams = []) {
   };
 
   ['SD', 'SMP'].forEach((jenjangKey) => {
-    // 1. Ambil seluruh tim untuk jenjang terkait
+    // 1. Ambil seluruh tim untuk jenjang terkait (termasuk yang sudah memiliki lotNumber dari TM)
     const jenjangTeams = allTeams.filter(t => {
+      if (t.status === 'rejected') return false;
       const match = String(t.jenjang || '').toUpperCase().includes(jenjangKey);
-      return match && ['registered', 'verified', 'drawn'].includes(t.status);
+      return match && (['registered', 'verified', 'drawn'].includes(t.status) || Boolean(t.lotNumber));
     });
 
     // 2. Prioritas 1: Pisahkan yang bersedia hadir vs menolak
@@ -123,10 +125,13 @@ export function generateSmartTrialPlan(allTeams = []) {
       };
     });
 
-    // Urutkan grup berdasarkan hasil TM (nomor undian paling awal tampil lebih dulu di sesi pagi)
-    groupsWithScore.sort((a, b) => a.sortKey - b.sortKey);
+    // Urutkan grup berdasarkan hasil lotting TM (lotNumber terkecil dulu; jika belum diundi, urut abjad)
+    groupsWithScore.sort((a, b) => {
+      if (a.sortKey !== b.sortKey) return a.sortKey - b.sortKey;
+      return a.schoolName.localeCompare(b.schoolName);
+    });
 
-    // 5. Flatten ke dalam 18 slot waktu (berurutan)
+    // 5. Flatten ke dalam 18 slot waktu (berurutan rapat, 2 peleton 1 sekolah selalu berdekatan)
     const flattenedTeams = [];
     groupsWithScore.forEach(item => {
       item.group.forEach(team => {
@@ -141,6 +146,13 @@ export function generateSmartTrialPlan(allTeams = []) {
 
     result[jenjangKey].slots = slots;
   });
+
+  // Simpan signature lotting TM agar FieldTrialView bisa mendeteksi otomatis saat hasil TM berubah
+  result.tmLotSignature = allTeams
+    .filter(t => t.lotNumber)
+    .map(t => `${t.id}:${t.lotNumber}`)
+    .sort()
+    .join('|');
 
   return result;
 }

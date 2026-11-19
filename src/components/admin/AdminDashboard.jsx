@@ -36,7 +36,8 @@ export default function AdminDashboard() {
     role,
     settings,
     updateSettings,
-    openAuthModal
+    openAuthModal,
+    isLocalhost
   } = useCompetition();
 
   const userRole = currentUser?.role || role;
@@ -159,8 +160,8 @@ export default function AdminDashboard() {
             return false;
           }
         } else if (activeTab === 'lottery') {
-          // Tahap 3: HANYA peleton yang sudah SAH terverifikasi (verified atau drawn)
-          if (!['verified', 'drawn'].includes(team.status)) {
+          // Tahap 3: HANYA peleton yang sudah SAH terverifikasi (khusus localhost: bypass kelengkapan)
+          if (!isLocalhost && !['verified', 'drawn'].includes(team.status)) {
             return false;
           }
         }

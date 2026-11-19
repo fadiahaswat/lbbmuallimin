@@ -1,23 +1,16 @@
 import React, { useState, useEffect } from 'react';
+import { appAlert, appConfirm, appToast } from '../../utils/appDialog.js';
 import {
-  Crown,
   Shield,
   Award,
   Users,
-  Settings,
-  ToggleLeft,
-  ToggleRight,
   RotateCcw,
   Download,
   Upload,
-  CheckCircle2,
-  AlertTriangle,
   FileSpreadsheet,
   Trash2,
   Database,
-  ArrowLeft,
   Calendar,
-  Clock,
   Save,
   RefreshCw,
   UserPlus,
@@ -26,13 +19,13 @@ import {
   Check,
   X,
   Lock,
-  Coins,
   Plus,
   Minus,
-  Sparkles
+  Sparkles,
+  Sliders,
+  ExternalLink
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
-import { EVENT, OFFICIAL_RAB } from '../../config.js';
 import SimpaskorSidebarLayout from '../navigation/SimpaskorSidebarLayout.jsx';
 
 const INDO_MONTHS = [
@@ -97,8 +90,6 @@ export default function SuperadminPanel() {
     scores,
     settings,
     updateSettings,
-    resetToSeedData,
-    loadDummyTestingTeams,
     randomizeAllLotNumbers,
     clearAllLotNumbers,
     isLocalhost,
@@ -114,11 +105,72 @@ export default function SuperadminPanel() {
     deleteStaffUser,
     currentUser,
     role,
-    openAuthModal,
-    loginUser
+    openAuthModal
   } = useCompetition();
 
+  const [activeSectionTab, setActiveSectionTab] = useState('staff'); // 'staff' | 'quota' | 'dates' | 'links'
+
   const userRole = currentUser?.role || role;
+
+  const defaultDates = {
+    registrationStart: '2026-10-26T00:00:00+07:00',
+    registrationDeadline: '2026-11-22T23:59:59+07:00',
+    registrationRangeText: '26 Oktober – 22 November 2026',
+    verificationRangeText: '26 Oktober – 22 November 2026',
+    technicalMeetingDate: '9 Januari 2027',
+    technicalMeetingTime: '13.00 - 16.30 WIB',
+    technicalMeetingFullDate: 'Sabtu, 9 Januari 2027',
+    technicalMeetingVenue: "Aula Kampus Induk Madrasah Mu'allimin Muhammadiyah Yogyakarta, Jalan Letjen S. Parman No. 68, Wirobrajan, Kota Yogyakarta, Daerah Istimewa Yogyakarta.",
+    fieldTrialDate: '16 Januari 2027',
+    fieldTrialTime: '07.00 – 13.00 WIB',
+    fieldTrialFullDate: 'Sabtu, 16 Januari 2027',
+    competitionDate: 'Ahad, 24 Januari 2027',
+    competitionTimeRange: '06.00 WIB – 17.00 WIB',
+  };
+
+  const [dateForm, setDateForm] = useState(() => ({
+    ...defaultDates,
+    ...(settings?.eventDates || {}),
+  }));
+
+  const [driveForm, setDriveForm] = useState({
+    sd: settings?.beritaAcaraUrlSD || '',
+    smp: settings?.beritaAcaraUrlSMP || ''
+  });
+
+  useEffect(() => {
+    setDriveForm({
+      sd: settings?.beritaAcaraUrlSD || '',
+      smp: settings?.beritaAcaraUrlSMP || ''
+    });
+  }, [settings?.beritaAcaraUrlSD, settings?.beritaAcaraUrlSMP]);
+
+  const currentCountSD = (teams || []).filter(t => t.jenjang === 'SD' && t.status !== 'rejected').length;
+  const currentCountSMP = (teams || []).filter(t => t.jenjang === 'SMP' && t.status !== 'rejected').length;
+
+  const [quotaForm, setQuotaForm] = useState(() => ({
+    sd: settings?.quotaSD || 18,
+    smp: settings?.quotaSMP || 18,
+  }));
+  const [quotaError, setQuotaError] = useState('');
+
+  useEffect(() => {
+    setQuotaForm({
+      sd: settings?.quotaSD || 18,
+      smp: settings?.quotaSMP || 18,
+    });
+  }, [settings?.quotaSD, settings?.quotaSMP]);
+
+  const [isAddStaffModalOpen, setIsAddStaffModalOpen] = useState(false);
+  const [newStaffForm, setNewStaffForm] = useState({
+    name: '',
+    email: '',
+    role: 'penginput',
+    roleLabel: 'Operator Input Nilai',
+  });
+  const [editingUserId, setEditingUserId] = useState(null);
+  const [editForm, setEditForm] = useState({ name: '', email: '', role: '', roleLabel: '' });
+
   if (userRole !== 'superadmin') {
     return (
       <div className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center p-6 text-center">
@@ -152,9 +204,7 @@ export default function SuperadminPanel() {
             </button>
             <button
               type="button"
-              onClick={() => {
-                if (openAuthModal) openAuthModal();
-              }}
+              onClick={() => openAuthModal?.()}
               className="w-full py-3 bg-red-600 hover:bg-red-500 active:scale-95 text-white font-black text-xs uppercase tracking-wider rounded-xl transition-all cursor-pointer shadow-md shadow-red-950/40"
             >
               Masuk Akun Superadmin
@@ -164,30 +214,6 @@ export default function SuperadminPanel() {
       </div>
     );
   }
-
-  const [toastMsg, setToastMsg] = useState('');
-
-  // Form state untuk jadwal dan tanggal pelaksanaan
-  const defaultDates = {
-    registrationStart: '2026-10-26T00:00:00+07:00',
-    registrationDeadline: '2026-11-22T23:59:59+07:00',
-    registrationRangeText: '26 Oktober – 22 November 2026',
-    verificationRangeText: '26 Oktober – 22 November 2026',
-    technicalMeetingDate: '9 Januari 2027',
-    technicalMeetingTime: '13.00 - 16.30 WIB',
-    technicalMeetingFullDate: 'Sabtu, 9 Januari 2027',
-    technicalMeetingVenue: "Aula Kampus Induk Madrasah Mu'allimin Muhammadiyah Yogyakarta, Jalan Letjen S. Parman No. 68, Wirobrajan, Kota Yogyakarta, Daerah Istimewa Yogyakarta.",
-    fieldTrialDate: '16 Januari 2027',
-    fieldTrialTime: '07.00 – 13.00 WIB',
-    fieldTrialFullDate: 'Sabtu, 16 Januari 2027',
-    competitionDate: 'Ahad, 24 Januari 2027',
-    competitionTimeRange: '06.00 WIB – 17.00 WIB',
-  };
-
-  const [dateForm, setDateForm] = useState(() => ({
-    ...defaultDates,
-    ...(settings?.eventDates || {}),
-  }));
 
   function handleDateChange(field, value) {
     setDateForm(prev => ({ ...prev, [field]: value }));
@@ -202,6 +228,7 @@ export default function SuperadminPanel() {
       ...prev,
       registrationStart: iso,
       registrationRangeText: rangeText || prev.registrationRangeText,
+      verificationRangeText: rangeText || prev.verificationRangeText,
     }));
   }
 
@@ -214,63 +241,51 @@ export default function SuperadminPanel() {
       ...prev,
       registrationDeadline: iso,
       registrationRangeText: rangeText || prev.registrationRangeText,
+      verificationRangeText: rangeText || prev.verificationRangeText,
     }));
   }
 
   function handleTmDateChange(val) {
-    const shortDate = formatIndoDate(val, false);
-    const fullDate = formatIndoDate(val, true);
     setDateForm(prev => ({
       ...prev,
-      technicalMeetingDate: shortDate,
-      technicalMeetingFullDate: fullDate,
+      technicalMeetingDate: formatIndoDate(val, false),
+      technicalMeetingFullDate: formatIndoDate(val, true),
     }));
   }
 
   function handleTrialDateChange(val) {
-    const shortDate = formatIndoDate(val, false);
-    const fullDate = formatIndoDate(val, true);
     setDateForm(prev => ({
       ...prev,
-      fieldTrialDate: shortDate,
-      fieldTrialFullDate: fullDate,
+      fieldTrialDate: formatIndoDate(val, false),
+      fieldTrialFullDate: formatIndoDate(val, true),
     }));
   }
 
   function handleCompDateChange(val) {
-    const isAhad = String(dateForm.competitionDate || '').toLowerCase().includes('ahad');
-    const fullDate = formatIndoDate(val, true, isAhad);
     setDateForm(prev => ({
       ...prev,
-      competitionDate: fullDate,
+      competitionDate: formatIndoDate(val, true, true),
     }));
   }
 
   function handleSaveDates(e) {
     e?.preventDefault();
     updateSettings({ eventDates: dateForm });
-    showToast('Jadwal & tanggal pelaksanaan berhasil diperbarui!');
+    appToast('Jadwal & tanggal pelaksanaan berhasil diperbarui!', { variant: 'success' });
   }
 
-  function handleResetDates() {
-    if (confirm('Kembalikan jadwal kegiatan ke tanggal standar resmi?')) {
+  async function handleResetDates() {
+    const ok = await appConfirm('Kembalikan jadwal kegiatan ke tanggal standar resmi?', {
+      title: 'Reset Jadwal Resmi',
+      confirmText: 'Kembalikan',
+      variant: 'warning',
+    });
+    if (ok) {
       setDateForm(defaultDates);
       updateSettings({ eventDates: defaultDates });
-      showToast('Jadwal kegiatan dikembalikan ke default resmi!');
+      appToast('Jadwal kegiatan dikembalikan ke default resmi!', { variant: 'info' });
     }
   }
-
-  const [driveForm, setDriveForm] = useState({
-    sd: settings?.beritaAcaraUrlSD || '',
-    smp: settings?.beritaAcaraUrlSMP || ''
-  });
-
-  useEffect(() => {
-    setDriveForm({
-      sd: settings?.beritaAcaraUrlSD || '',
-      smp: settings?.beritaAcaraUrlSMP || ''
-    });
-  }, [settings?.beritaAcaraUrlSD, settings?.beritaAcaraUrlSMP]);
 
   function handleSaveDriveLinks(e) {
     e?.preventDefault();
@@ -279,25 +294,8 @@ export default function SuperadminPanel() {
       beritaAcaraUrlSMP: driveForm.smp.trim(),
       beritaAcaraUrl: (driveForm.sd.trim() || driveForm.smp.trim())
     });
-    showToast('Link Google Drive Berita Acara berhasil disimpan!');
+    appToast('Link Google Drive Berita Acara berhasil disimpan!', { variant: 'success' });
   }
-
-  // Quota Management Form State
-  const currentCountSD = (teams || []).filter(t => t.jenjang === 'SD' && t.status !== 'rejected').length;
-  const currentCountSMP = (teams || []).filter(t => t.jenjang === 'SMP' && t.status !== 'rejected').length;
-
-  const [quotaForm, setQuotaForm] = useState(() => ({
-    sd: settings?.quotaSD || 18,
-    smp: settings?.quotaSMP || 18,
-  }));
-  const [quotaError, setQuotaError] = useState('');
-
-  useEffect(() => {
-    setQuotaForm({
-      sd: settings?.quotaSD || 18,
-      smp: settings?.quotaSMP || 18,
-    });
-  }, [settings?.quotaSD, settings?.quotaSMP]);
 
   function handleSaveQuota(e) {
     if (e) e.preventDefault();
@@ -305,60 +303,32 @@ export default function SuperadminPanel() {
     const newSD = parseInt(quotaForm.sd, 10);
     const newSMP = parseInt(quotaForm.smp, 10);
 
-    if (isNaN(newSD) || newSD < 1) {
-      setQuotaError('Kuota peleton SD/MI harus berupa angka positif (minimal 1).');
-      return;
-    }
-    if (isNaN(newSMP) || newSMP < 1) {
-      setQuotaError('Kuota peleton SMP/MTs harus berupa angka positif (minimal 1).');
+    if (isNaN(newSD) || newSD < 1 || isNaN(newSMP) || newSMP < 1) {
+      setQuotaError('Kuota peleton harus berupa angka positif (minimal 1).');
       return;
     }
     if (newSD < currentCountSD) {
-      setQuotaError(`Kuota SD/MI (${newSD}) tidak boleh lebih kecil dari jumlah peleton terdaftar saat ini (${currentCountSD} peleton).`);
+      setQuotaError(`Kuota SD/MI (${newSD}) tidak boleh lebih kecil dari peleton terdaftar (${currentCountSD}).`);
       return;
     }
     if (newSMP < currentCountSMP) {
-      setQuotaError(`Kuota SMP/MTs (${newSMP}) tidak boleh lebih kecil dari jumlah peleton terdaftar saat ini (${currentCountSMP} peleton).`);
+      setQuotaError(`Kuota SMP/MTs (${newSMP}) tidak boleh lebih kecil dari peleton terdaftar (${currentCountSMP}).`);
       return;
     }
 
-    updateSettings({
-      quotaSD: newSD,
-      quotaSMP: newSMP,
-    });
-    showToast(`Kuota peserta berhasil diperbarui: SD (${newSD} peleton), SMP (${newSMP} peleton), Total (${newSD + newSMP} peleton)!`);
+    updateSettings({ quotaSD: newSD, quotaSMP: newSMP });
+    appToast(`Kuota diperbarui: ${newSD} SD & ${newSMP} SMP (Total ${newSD + newSMP} Peleton)`, { variant: 'success' });
   }
 
-  function handleResetQuota() {
+  function handleApplyQuotaPreset(sdVal, smpVal, label) {
     setQuotaError('');
-    const defaultSD = 18;
-    const defaultSMP = 18;
-    if (defaultSD < currentCountSD || defaultSMP < currentCountSMP) {
-      setQuotaError(`Gagal reset ke 18: saat ini peleton terdaftar (${currentCountSD} SD, ${currentCountSMP} SMP) melebihi batas 18.`);
+    if (sdVal < currentCountSD || smpVal < currentCountSMP) {
+      setQuotaError(`Gagal menerapkan preset: peleton terdaftar (${currentCountSD} SD, ${currentCountSMP} SMP) melebihi batas.`);
       return;
     }
-    setQuotaForm({ sd: defaultSD, smp: defaultSMP });
-    updateSettings({
-      quotaSD: defaultSD,
-      quotaSMP: defaultSMP,
-    });
-    showToast('Kuota peserta berhasil direset ke standar default (18 SD & 18 SMP)!');
-  }
-
-  function handlePresetExpansion() {
-    setQuotaError('');
-    const targetSD = 21;
-    const targetSMP = 21;
-    if (targetSD < currentCountSD || targetSMP < currentCountSMP) {
-      setQuotaError(`Gagal terapkan preset 21: saat ini peleton terdaftar (${currentCountSD} SD, ${currentCountSMP} SMP) melebihi batas 21.`);
-      return;
-    }
-    setQuotaForm({ sd: targetSD, smp: targetSMP });
-    updateSettings({
-      quotaSD: targetSD,
-      quotaSMP: targetSMP,
-    });
-    showToast('Kuota peserta berhasil diatur ke skema ekspansi optimal (21 SD & 21 SMP - Total 42 Peleton)!');
+    setQuotaForm({ sd: sdVal, smp: smpVal });
+    updateSettings({ quotaSD: sdVal, quotaSMP: smpVal });
+    appToast(`Kuota diatur ke ${label} (${sdVal} SD & ${smpVal} SMP)`, { variant: 'success' });
   }
 
   function handleExportJSON() {
@@ -375,19 +345,8 @@ export default function SuperadminPanel() {
     a.download = `LBB_Muallimin_Backup_${new Date().toISOString().slice(0, 10)}.json`;
     a.click();
     URL.revokeObjectURL(url);
-    showToast('Database JSON berhasil diunduh!');
+    appToast('Cadangan JSON berhasil diunduh!', { variant: 'success' });
   }
-
-  // State Manajemen Pengguna / Email Role oleh Superadmin
-  const [isAddStaffModalOpen, setIsAddStaffModalOpen] = useState(false);
-  const [newStaffForm, setNewStaffForm] = useState({
-    name: '',
-    email: '',
-    role: 'penginput',
-    roleLabel: 'Operator Input Nilai Kertas',
-  });
-  const [editingUserId, setEditingUserId] = useState(null);
-  const [editForm, setEditForm] = useState({ name: '', email: '', role: '', roleLabel: '' });
 
   const staffUsers = (users || []).filter(u =>
     ['superadmin', 'admin', 'penginput', 'verifikator', 'finalisator', 'checkin', 'dp', 'juri'].includes(u.role)
@@ -397,16 +356,16 @@ export default function SuperadminPanel() {
     e.preventDefault();
     const res = addStaffUser(newStaffForm);
     if (res.success) {
-      showToast(res.message);
+      appToast(res.message, { variant: 'success' });
       setIsAddStaffModalOpen(false);
       setNewStaffForm({
         name: '',
         email: '',
         role: 'penginput',
-        roleLabel: 'Operator Input Nilai Kertas',
+        roleLabel: 'Operator Input Nilai',
       });
     } else {
-      alert(res.message);
+      appAlert(res.message, { title: 'Gagal Menambahkan Petugas', variant: 'warning' });
     }
   }
 
@@ -423,726 +382,854 @@ export default function SuperadminPanel() {
   function handleSaveEditStaff(userId) {
     const res = updateStaffUser(userId, editForm);
     if (res.success) {
-      showToast(res.message);
+      appToast(res.message, { variant: 'success' });
       setEditingUserId(null);
     } else {
-      alert(res.message);
+      appAlert(res.message, { title: 'Gagal Menyimpan Perubahan', variant: 'warning' });
     }
   }
 
-  function handleDeleteStaff(userId, email) {
-    if (confirm(`Yakin ingin mencabut hak akses petugas untuk email "${email}"?`)) {
+  async function handleDeleteStaff(userId, email) {
+    const ok = await appConfirm(`Yakin ingin mencabut hak akses petugas untuk email "${email}"?`, {
+      title: 'Cabut Hak Akses Petugas',
+      confirmText: 'Cabut Akses',
+      variant: 'danger',
+    });
+    if (ok) {
       const res = deleteStaffUser(userId);
       if (res.success) {
-        showToast(res.message);
+        appToast(res.message, { variant: 'info' });
       } else {
-        alert(res.message);
+        appAlert(res.message, { title: 'Gagal Mencabut Akses', variant: 'warning' });
       }
     }
   }
+
+  const isUclPublished = Boolean(settings.trialSchedulePublished && settings.trialScheduleRatifiedAt);
+  const isJuknisPublished = Boolean(settings.juknisPenilaianPublished && settings.juknisPenilaianRatifiedAt);
+  const isBasecampPublished = Boolean(settings.basecampPublished && settings.basecampRatifiedAt);
+
+  const switches = [
+    {
+      id: 'reg',
+      label: 'Pendaftaran Peserta',
+      desc: 'Formulir pendaftaran daring',
+      active: Boolean(settings.registrationOpen),
+      onText: 'Terbuka',
+      offText: 'Ditutup',
+      onToggle: () => {
+        const next = !settings.registrationOpen;
+        updateSettings({ registrationOpen: next });
+        appToast(`Pendaftaran peserta ${next ? 'DIBUKA' : 'DITUTUP'}`, { variant: next ? 'success' : 'info' });
+      },
+    },
+    {
+      id: 'scoring',
+      label: 'Akses E-Scoring Juri',
+      desc: 'Input & edit nilai 3 juri',
+      active: Boolean(settings.scoringOpen),
+      onText: 'Terbuka',
+      offText: 'Terkunci',
+      onToggle: () => {
+        const next = !settings.scoringOpen;
+        updateSettings({ scoringOpen: next });
+        appToast(`Akses penilaian juri ${next ? 'DIBUKA' : 'DIKUNCI'}`, { variant: next ? 'success' : 'info' });
+      },
+    },
+    {
+      id: 'ucl',
+      label: 'Jadwal Uji Coba (UCL)',
+      desc: 'Tayangkan jadwal ke peserta',
+      active: isUclPublished,
+      onText: 'Tayang',
+      offText: 'Draf',
+      onToggle: () => {
+        const next = !isUclPublished;
+        updateSettings({
+          trialSchedulePublished: next,
+          trialScheduleRatifiedAt: next ? new Date().toISOString() : null,
+        });
+        appToast(`Jadwal UCL ${next ? 'DISAHKAN & TAYANG' : 'KEMBALI KE DRAF'}`, { variant: next ? 'success' : 'info' });
+      },
+    },
+    {
+      id: 'juknis',
+      label: 'Juknis Penilaian',
+      desc: 'Tayangkan Bab penilaian & juara',
+      active: isJuknisPublished,
+      onText: 'Tayang',
+      offText: 'Draf',
+      onToggle: () => {
+        const next = !isJuknisPublished;
+        updateSettings({
+          juknisPenilaianPublished: next,
+          juknisPenilaianRatifiedAt: next ? new Date().toISOString() : null,
+        });
+        appToast(`Juknis Penilaian ${next ? 'DISAHKAN & TAYANG' : 'KEMBALI KE DRAF'}`, { variant: next ? 'success' : 'info' });
+      },
+    },
+    {
+      id: 'basecamp',
+      label: 'Alokasi Basecamp',
+      desc: 'Tayangkan denah ruang peserta',
+      active: isBasecampPublished,
+      onText: 'Tayang',
+      offText: 'Draf',
+      onToggle: () => {
+        const next = !isBasecampPublished;
+        updateSettings({
+          basecampPublished: next,
+          basecampRatifiedAt: next ? new Date().toISOString() : null,
+        });
+        appToast(`Alokasi Basecamp ${next ? 'DISAHKAN & TAYANG' : 'KEMBALI KE DRAF'}`, { variant: next ? 'success' : 'info' });
+      },
+    },
+    {
+      id: 'leaderboard',
+      label: 'Publikasi Klasemen Juara',
+      desc: 'Buka hasil juara ke publik',
+      active: Boolean(settings.announcementPublished),
+      onText: 'Publik',
+      offText: 'Rahasia',
+      onToggle: () => {
+        const next = !settings.announcementPublished;
+        updateSettings({ announcementPublished: next });
+        appToast(`Klasemen Juara ${next ? 'DIPUBLIKASIKAN' : 'DISEMBUNYIKAN'}`, { variant: next ? 'success' : 'info' });
+      },
+    },
+  ];
 
   return (
     <SimpaskorSidebarLayout
       activeMenu="superadmin"
       title="Master Authority Superadmin"
-      subtitle="Kontrol Sistem, Pengaturan Lomba, Sinkronisasi Spreadsheet & Hak Akses Panitia"
+      subtitle="Saklar operasional lomba, manajemen akun petugas, kuota kontingen & sinkronisasi cloud"
+      rightActions={
+        <div className="flex items-center gap-2 flex-wrap">
+          <button
+            type="button"
+            onClick={async () => {
+              const res = await pingSheetDatabase();
+              if (res.connected) {
+                appToast(`Terhubung ke Sheet: "${res.spreadsheetName}"`, { variant: 'success' });
+              } else {
+                appToast(`Koneksi gagal: ${res.message}`, { variant: 'error' });
+              }
+            }}
+            className="px-3 py-1.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-200/90 text-slate-700 text-xs font-bold inline-flex items-center gap-1.5 cursor-pointer transition-colors"
+            title="Uji Koneksi Google Sheets"
+          >
+            <span className={`w-2 h-2 rounded-full ${isGoogleSheetConfigured ? 'bg-emerald-500' : 'bg-amber-500'}`} />
+            <span>Ping Sheet</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={async () => {
+              const res = await pullFromGoogleSheet();
+              if (res?.success) {
+                appToast('Data terbaru berhasil ditarik dari Google Sheet!', { variant: 'success' });
+              } else {
+                appToast(`Gagal menarik data: ${res?.error || 'Cek koneksi'}`, { variant: 'error' });
+              }
+            }}
+            className="px-3 py-1.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-200/90 text-slate-700 text-xs font-bold inline-flex items-center gap-1.5 cursor-pointer transition-colors"
+            title="Tarik Data Terbaru dari Google Sheet (Pull)"
+          >
+            <Download className="w-3.5 h-3.5 text-slate-500" />
+            <span>Pull</span>
+          </button>
+
+          {!isLocalhost && (
+            <button
+              type="button"
+              onClick={async () => {
+                await syncAllToGoogleSheet();
+                appToast('Seluruh data berhasil disinkronkan ke Google Sheet!', { variant: 'success' });
+              }}
+              className="px-3 py-1.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-200/90 text-slate-700 text-xs font-bold inline-flex items-center gap-1.5 cursor-pointer transition-colors"
+              title="Kirim Data ke Google Sheet (Push)"
+            >
+              <Upload className="w-3.5 h-3.5 text-blue-600" />
+              <span>Push</span>
+            </button>
+          )}
+
+          <button
+            type="button"
+            onClick={handleExportJSON}
+            className="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold inline-flex items-center gap-1.5 cursor-pointer transition-colors"
+            title="Unduh Backup Database JSON"
+          >
+            <Database className="w-3.5 h-3.5 text-amber-400" />
+            <span>Backup JSON</span>
+          </button>
+        </div>
+      }
     >
-      <div className="space-y-6">
-
-        {toastMsg && (
-          <div className="bg-emerald-600 text-white p-3.5 rounded-2xl text-xs font-bold flex items-center gap-2 shadow-lg animate-in fade-in duration-300">
-            <CheckCircle2 className="w-4 h-4" />
-            <span>{toastMsg}</span>
-          </div>
-        )}
-
-        {/* Master Toggles Grid */}
-        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
-          <h3 className="font-black text-lg text-slate-900 uppercase border-b border-slate-200 pb-3">
-            Saklar Operasional Lomba
-          </h3>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-            {/* Toggle 1: Pendaftaran */}
-            <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl flex flex-col justify-between">
-              <div>
-                <span className="text-xs font-black uppercase text-slate-800 block mb-1">Pendaftaran Peserta</span>
-                <p className="text-xs text-slate-500">Membuka atau menutup formulir pendaftaran daring.</p>
-              </div>
-              <button
-                onClick={() => {
-                  updateSettings({ registrationOpen: !settings.registrationOpen });
-                  showToast(`Pendaftaran ${!settings.registrationOpen ? 'DIBUKA' : 'DITUTUP'}!`);
-                }}
-                className={`mt-4 w-full py-2 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all ${
-                  settings.registrationOpen
-                    ? 'bg-emerald-600 text-white'
-                    : 'bg-slate-300 text-slate-700'
-                }`}
-              >
-                {settings.registrationOpen ? <ToggleRight className="w-5 h-5" /> : <ToggleLeft className="w-5 h-5" />}
-                <span>{settings.registrationOpen ? 'Status: Terbuka' : 'Status: Ditutup'}</span>
-              </button>
+      <div className="space-y-4">
+        {/* 1. Dark Obsidian Master Switchboard Console (Distinct Dark UI Anchor) */}
+        <div className="rounded-2xl bg-slate-950 text-white border border-slate-800 shadow-[0_14px_34px_rgba(15,23,42,0.16)] overflow-hidden">
+          <div className="px-4 sm:px-6 py-3.5 border-b border-slate-800/90 flex flex-wrap items-center justify-between gap-3 bg-slate-900/50">
+            <div className="flex items-center gap-2.5">
+              <Sliders className="w-4 h-4 text-amber-400" />
+              <span className="text-xs font-black uppercase tracking-wider text-white">
+                Saklar Operasional Lomba
+              </span>
+              <span className="text-[10.5px] font-mono font-bold px-2 py-0.5 rounded-md bg-white/10 text-slate-300">
+                {switches.filter(s => s.active).length}/{switches.length} Aktif
+              </span>
             </div>
 
-            {/* Toggle 2: E-Scoring Juri */}
-            <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl flex flex-col justify-between">
-              <div>
-                <span className="text-xs font-black uppercase text-slate-800 block mb-1">Akses Penilaian Juri</span>
-                <p className="text-xs text-slate-500">Mengizinkan dewan juri untuk menginput dan mengubah nilai.</p>
-              </div>
-              <button
-                onClick={() => {
-                  updateSettings({ scoringOpen: !settings.scoringOpen });
-                  showToast(`Penilaian Juri ${!settings.scoringOpen ? 'DIBUKA' : 'DIKUNCI'}!`);
-                }}
-                className={`mt-4 w-full py-2 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all ${
-                  settings.scoringOpen
-                    ? 'bg-emerald-600 text-white'
-                    : 'bg-slate-300 text-slate-700'
-                }`}
-              >
-                {settings.scoringOpen ? <ToggleRight className="w-5 h-5" /> : <ToggleLeft className="w-5 h-5" />}
-                <span>{settings.scoringOpen ? 'Status: Terbuka' : 'Status: Terkunci'}</span>
-              </button>
-            </div>
-
-            {/* Toggle 3: Pengesahan & Publikasi Jadwal UCL */}
-            <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl flex flex-col justify-between">
-              <div>
-                <span className="text-xs font-black uppercase text-slate-800 block mb-1">Pengesahan Jadwal UCL</span>
-                <p className="text-xs text-slate-500">Mengesahkan (ACC) dan menampilkan jadwal gladi lapangan ke peserta.</p>
-              </div>
-              <button
-                onClick={() => {
-                  const isCurrentlyPublished = Boolean(settings.trialSchedulePublished && settings.trialScheduleRatifiedAt);
-                  const nextState = !isCurrentlyPublished;
-                  updateSettings({
-                    trialSchedulePublished: nextState,
-                    trialScheduleRatifiedAt: nextState ? new Date().toISOString() : null
-                  });
-                  showToast(`Jadwal Uji Coba Lapangan (UCL) ${nextState ? 'RESMI DISAHKAN & DITAYANGKAN KE PESERTA' : 'KEMBALI KE DRAFT (DISEMBUNYIKAN)'}!`);
-                }}
-                className={`mt-4 w-full py-2 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all ${
-                  Boolean(settings.trialSchedulePublished && settings.trialScheduleRatifiedAt)
-                    ? 'bg-emerald-600 text-white'
-                    : 'bg-slate-300 text-slate-700'
-                }`}
-              >
-                {Boolean(settings.trialSchedulePublished && settings.trialScheduleRatifiedAt) ? <ToggleRight className="w-5 h-5" /> : <ToggleLeft className="w-5 h-5" />}
-                <span>{Boolean(settings.trialSchedulePublished && settings.trialScheduleRatifiedAt) ? 'Status: Disahkan & Tayang' : 'Status: Draf (Belum ACC)'}</span>
-              </button>
-            </div>
-
-            {/* Toggle 4: Pengesahan & Publikasi Juknis Penilaian & Kejuaraan */}
-            <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl flex flex-col justify-between">
-              <div>
-                <span className="text-xs font-black uppercase text-slate-800 block mb-1">Pengesahan Juknis Penilaian</span>
-                <p className="text-xs text-slate-500">Mengesahkan (ACC) dan menayangkan Petunjuk Teknis Penilaian & Kejuaraan ke peserta & publik.</p>
-              </div>
-              <button
-                onClick={() => {
-                  const isCurrentlyRatified = Boolean(settings.juknisPenilaianPublished && settings.juknisPenilaianRatifiedAt);
-                  const nextState = !isCurrentlyRatified;
-                  updateSettings({
-                    juknisPenilaianPublished: nextState,
-                    juknisPenilaianRatifiedAt: nextState ? new Date().toISOString() : null
-                  });
-                  showToast(`Petunjuk Teknis Penilaian & Kejuaraan ${nextState ? 'RESMI DISAHKAN & DITAYANGKAN KE PUBLIK' : 'DISEMBUNYIKAN (KEMBALI KE DRAF)'}!`);
-                }}
-                className={`mt-4 w-full py-2 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all ${
-                  Boolean(settings.juknisPenilaianPublished && settings.juknisPenilaianRatifiedAt)
-                    ? 'bg-emerald-600 text-white'
-                    : 'bg-slate-300 text-slate-700'
-                }`}
-              >
-                {Boolean(settings.juknisPenilaianPublished && settings.juknisPenilaianRatifiedAt) ? <ToggleRight className="w-5 h-5" /> : <ToggleLeft className="w-5 h-5" />}
-                <span>{Boolean(settings.juknisPenilaianPublished && settings.juknisPenilaianRatifiedAt) ? 'Status: Disahkan & Tayang' : 'Status: Draf (Disembunyikan)'}</span>
-              </button>
-            </div>
-
-            {/* Toggle 5: Pengesahan & Publikasi Alokasi Basecamp Kontingen */}
-            <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl flex flex-col justify-between">
-              <div>
-                <span className="text-xs font-black uppercase text-slate-800 block mb-1">Pengesahan Alokasi Basecamp</span>
-                <p className="text-xs text-slate-500">Mengesahkan (ACC) dan menayangkan denah serta nomor ruang basecamp ke portal peserta.</p>
-              </div>
-              <button
-                onClick={() => {
-                  const isCurrentlyRatified = Boolean(settings.basecampPublished && settings.basecampRatifiedAt);
-                  const nextState = !isCurrentlyRatified;
-                  updateSettings({
-                    basecampPublished: nextState,
-                    basecampRatifiedAt: nextState ? new Date().toISOString() : null
-                  });
-                  showToast(`Alokasi Ruang Basecamp ${nextState ? 'RESMI DISAHKAN & DITAYANGKAN KE PESERTA' : 'KEMBALI KE DRAF (DISEMBUNYIKAN)'}!`);
-                }}
-                className={`mt-4 w-full py-2 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all ${
-                  Boolean(settings.basecampPublished && settings.basecampRatifiedAt)
-                    ? 'bg-emerald-600 text-white'
-                    : 'bg-slate-300 text-slate-700'
-                }`}
-              >
-                {Boolean(settings.basecampPublished && settings.basecampRatifiedAt) ? <ToggleRight className="w-5 h-5" /> : <ToggleLeft className="w-5 h-5" />}
-                <span>{Boolean(settings.basecampPublished && settings.basecampRatifiedAt) ? 'Status: Disahkan & Tayang' : 'Status: Draf (Belum ACC)'}</span>
-              </button>
-            </div>
-
-            {/* Toggle 6: Publikasi Hasil Lomba */}
-            <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl flex flex-col justify-between">
-              <div>
-                <span className="text-xs font-black uppercase text-slate-800 block mb-1">Publikasi Pengumuman Juara</span>
-                <p className="text-xs text-slate-500">Menampilkan peringkat dan perolehan juara ke publik.</p>
-              </div>
-              <button
-                onClick={() => {
-                  updateSettings({ announcementPublished: !settings.announcementPublished });
-                  showToast(`Pengumuman Juara ${!settings.announcementPublished ? 'DITAYANGKAN KE PUBLIK' : 'DISEMBUNYIKAN'}!`);
-                }}
-                className={`mt-4 w-full py-2 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all ${
-                  settings.announcementPublished
-                    ? 'bg-amber-600 text-white'
-                    : 'bg-slate-300 text-slate-700'
-                }`}
-              >
-                {settings.announcementPublished ? <ToggleRight className="w-5 h-5" /> : <ToggleLeft className="w-5 h-5" />}
-                <span>{settings.announcementPublished ? 'Status: Dipublikasi' : 'Status: Draf / Rahasia'}</span>
-              </button>
-            </div>
-
-            {/* Input Link Google Drive Berita Acara Dewan Juri */}
-            <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl md:col-span-2 lg:col-span-3 space-y-3">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 pb-2.5">
-                <div>
-                  <span className="text-xs font-black uppercase text-slate-800 block">Link Google Drive Berita Acara Dewan Juri</span>
-                  <p className="text-xs text-slate-500">Tautan ini menjadi target tombol "Download Berita Acara" di halaman klasemen publik.</p>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <span className="text-[10px] font-black uppercase tracking-wider text-red-600 bg-red-50 border border-red-200 px-2 py-0.5 rounded-full">
-                    Publik & Peserta
-                  </span>
-                </div>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div className="space-y-1">
-                  <label className="text-[11px] font-bold text-slate-700 block">Link Berita Acara SD/MI (Google Drive)</label>
-                  <input
-                    type="url"
-                    placeholder="https://drive.google.com/file/d/... atau folder"
-                    value={driveForm.sd}
-                    onChange={(e) => setDriveForm(prev => ({ ...prev, sd: e.target.value }))}
-                    className="w-full text-xs font-mono px-3 py-2 rounded-xl border border-slate-300 bg-white text-slate-900 focus:border-red-600"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-[11px] font-bold text-slate-700 block">Link Berita Acara SMP/MTs (Google Drive)</label>
-                  <input
-                    type="url"
-                    placeholder="https://drive.google.com/file/d/... atau folder"
-                    value={driveForm.smp}
-                    onChange={(e) => setDriveForm(prev => ({ ...prev, smp: e.target.value }))}
-                    className="w-full text-xs font-mono px-3 py-2 rounded-xl border border-slate-300 bg-white text-slate-900 focus:border-red-600"
-                  />
-                </div>
-              </div>
-              <div className="flex items-center justify-end gap-2 pt-1">
+            {/* Sandbox Localhost Quick Tools (Compact Inline Bar, only on Localhost) */}
+            {isLocalhost && (
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-emerald-400 bg-emerald-500/10 border border-emerald-500/25 px-2 py-1 rounded-lg">
+                  Sandbox Read-Only
+                </span>
                 <button
                   type="button"
-                  onClick={handleSaveDriveLinks}
-                  className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer flex items-center gap-1.5"
+                  onClick={async () => {
+                    const ok = await appConfirm('Acak nomor dada otomatis untuk semua peleton (simulasi TM selesai)?', {
+                      title: 'Simulasi Undi Semua No. Dada',
+                      confirmText: 'Undi Semua',
+                      variant: 'info',
+                    });
+                    if (ok) {
+                      randomizeAllLotNumbers();
+                      appToast('Semua peleton berhasil diberi No. Dada simulasi!', { variant: 'success' });
+                    }
+                  }}
+                  className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-[11px] font-bold cursor-pointer transition-colors"
                 >
-                  <Check className="w-3.5 h-3.5" />
-                  <span>Simpan Link Berita Acara</span>
+                  Simulasi Undi TM
+                </button>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    const ok = await appConfirm('Kosongkan kembali seluruh nomor undian peleton di sandbox lokal?', {
+                      title: 'Reset Nomor Undian',
+                      confirmText: 'Kosongkan',
+                      variant: 'warning',
+                    });
+                    if (ok) {
+                      clearAllLotNumbers();
+                      appToast('Nomor undian direset kosong!', { variant: 'info' });
+                    }
+                  }}
+                  className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white text-[11px] font-bold cursor-pointer transition-colors"
+                >
+                  Reset Undian
                 </button>
               </div>
-            </div>
+            )}
+          </div>
+
+          {/* 6 Compact Dark Switch Cells */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-slate-800/80">
+            {switches.map(sw => (
+              <div
+                key={sw.id}
+                onClick={sw.onToggle}
+                className="bg-slate-950 hover:bg-slate-900/90 px-4 sm:px-5 py-3.5 flex items-center justify-between gap-3 cursor-pointer transition-colors group"
+              >
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2">
+                    <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${sw.active ? 'bg-emerald-400' : 'bg-slate-600'}`} />
+                    <span className="text-xs font-extrabold text-white truncate">{sw.label}</span>
+                  </div>
+                  <p className="text-[11px] text-slate-400 truncate mt-0.5 pl-3.5">{sw.desc}</p>
+                </div>
+
+                <div className="flex items-center gap-2 shrink-0">
+                  <span className={`text-[10px] font-mono font-bold uppercase ${
+                    sw.active ? 'text-emerald-400' : 'text-slate-500'
+                  }`}>
+                    {sw.active ? sw.onText : sw.offText}
+                  </span>
+                  <button
+                    type="button"
+                    aria-label={sw.label}
+                    className={`w-10 h-5.5 rounded-full p-0.5 transition-colors flex items-center cursor-pointer ${
+                      sw.active ? 'bg-emerald-500 justify-end' : 'bg-slate-800 border border-slate-700 justify-start'
+                    }`}
+                  >
+                    <span className="w-4 h-4 rounded-full bg-white shadow-xs block" />
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* SEKSI SUPERADMIN: MANAJEMEN KUOTA PESERTA PELETON (SD/MI & SMP/MTs) */}
-        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="w-8 h-8 rounded-xl bg-red-500/10 border border-red-500/20 text-red-600 flex items-center justify-center font-black">
-                  <Users className="w-4 h-4" />
-                </span>
-                <h3 className="font-black text-lg text-slate-900 uppercase">
-                  Manajemen Kuota Peserta Peleton
-                </h3>
-              </div>
-              <p className="text-xs text-slate-500 mt-1">
-                Atur batas kuota maksimal peleton SD/MI dan SMP/MTs. Perubahan kuota otomatis sinkron secara real-time ke formulir pendaftaran, countdown timer, dan dashboard admin.
-              </p>
-            </div>
-            <div className="flex flex-wrap items-center gap-2">
-              <button
-                type="button"
-                onClick={handleResetQuota}
-                className="px-3 py-2 rounded-xl border border-slate-300 hover:bg-slate-100 text-slate-700 font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer"
-                title="Kembalikan kuota ke standar awal (18 SD & 18 SMP)"
-              >
-                <RotateCcw className="w-3.5 h-3.5 text-slate-500" />
-                <span>Standar (18/18)</span>
-              </button>
-              <button
-                type="button"
-                onClick={handlePresetExpansion}
-                className="px-3.5 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-300 text-amber-900 font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer shadow-xs"
-                title="Terapkan kuota ekspansi simetris (21 SD & 21 SMP = Total 42 Peleton)"
-              >
-                <Sparkles className="w-3.5 h-3.5 text-amber-600" />
-                <span>Ekspansi (21/21)</span>
-              </button>
-              <button
-                type="button"
-                onClick={handleSaveQuota}
-                className="px-4 py-2 rounded-xl bg-red-700 hover:bg-red-800 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm transition-all cursor-pointer"
-              >
-                <Save className="w-3.5 h-3.5" />
-                <span>Simpan Kuota</span>
-              </button>
-            </div>
+        {/* 2. Unified Tabbed Workspace Card (Petugas | Kuota | Jadwal | Tautan Berita Acara) */}
+        <div className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs overflow-hidden">
+          {/* Flush Underline Section Tabs */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 border-b border-slate-200 bg-slate-50/70">
+            {[
+              { id: 'staff', label: 'Akun & Role Petugas', badge: staffUsers.length, icon: Shield },
+              { id: 'quota', label: 'Kuota Kontingen', badge: `${quotaForm.sd}/${quotaForm.smp}`, icon: Users },
+              { id: 'dates', label: 'Jadwal & Lini Masa', badge: '6 Tahap', icon: Calendar },
+              { id: 'links', label: 'Tautan Berita Acara', badge: 'Drive', icon: ExternalLink },
+            ].map((t, idx) => {
+              const Icon = t.icon;
+              const isActive = activeSectionTab === t.id;
+              return (
+                <button
+                  key={t.id}
+                  type="button"
+                  onClick={() => setActiveSectionTab(t.id)}
+                  className={`relative py-3 px-3 text-xs transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                    idx < 3 ? 'border-r border-slate-200/80' : ''
+                  } ${
+                    isActive
+                      ? 'bg-white text-slate-950 font-extrabold'
+                      : 'text-slate-500 hover:text-slate-900 hover:bg-white/60 font-semibold'
+                  }`}
+                >
+                  <Icon className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-slate-900' : 'text-slate-400'}`} />
+                  <span className="truncate">{t.label}</span>
+                  <span className={`px-1.5 py-0.5 rounded-md text-[10px] font-mono font-bold leading-none ${
+                    isActive ? 'bg-slate-900 text-white' : 'bg-slate-200/80 text-slate-600'
+                  }`}>
+                    {t.badge}
+                  </span>
+                  {isActive && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-slate-950" />}
+                </button>
+              );
+            })}
           </div>
 
-          {quotaError && (
-            <div className="p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-start gap-2.5">
-              <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
-              <div>
-                <p className="font-bold">Penyesuaian Kuota Ditolak</p>
-                <p className="text-[11px] text-rose-700">{quotaError}</p>
+          {/* TAB 1: AKUN & ROLE PETUGAS */}
+          {activeSectionTab === 'staff' && (
+            <div>
+              <div className="px-4 sm:px-5 py-3.5 border-b border-slate-100 flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <h3 className="text-xs sm:text-sm font-black uppercase text-slate-900">
+                    Daftar Email &amp; Wewenang Petugas Resmi
+                  </h3>
+                  <p className="text-[11px] text-slate-500">
+                    Hanya email Google di bawah ini yang diizinkan mengakses portal panitia &amp; juri.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsAddStaffModalOpen(true)}
+                  className="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs inline-flex items-center gap-1.5 cursor-pointer transition-colors"
+                >
+                  <UserPlus className="w-3.5 h-3.5" />
+                  <span>Tambah Petugas</span>
+                </button>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="bg-slate-50/80 border-b border-slate-200 text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                      <th className="py-3 px-4">Petugas</th>
+                      <th className="py-3 px-4">Email Google</th>
+                      <th className="py-3 px-4 text-center">Role</th>
+                      <th className="py-3 px-4">Label Tugas</th>
+                      <th className="py-3 px-4 text-center w-24">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {staffUsers.map(user => {
+                      const isPrimarySuperadmin = user.email === 'tontimuallimin2026@gmail.com';
+                      const isEditingThis = editingUserId === user.id;
+
+                      return (
+                        <tr key={user.id} className="hover:bg-slate-50/80 transition-colors">
+                          <td className="py-3 px-4">
+                            {isEditingThis ? (
+                              <input
+                                type="text"
+                                value={editForm.name}
+                                onChange={e => setEditForm(prev => ({ ...prev, name: e.target.value }))}
+                                className="px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-bold text-slate-900 w-full"
+                              />
+                            ) : (
+                              <div className="flex items-center gap-2.5">
+                                <img
+                                  src={user.avatar}
+                                  alt={user.name}
+                                  className="w-7 h-7 rounded-full border border-slate-200 object-cover shrink-0"
+                                />
+                                <span className="font-bold text-slate-900">{user.name}</span>
+                              </div>
+                            )}
+                          </td>
+
+                          <td className="py-3 px-4">
+                            {isEditingThis ? (
+                              <input
+                                type="email"
+                                value={editForm.email}
+                                onChange={e => setEditForm(prev => ({ ...prev, email: e.target.value }))}
+                                className="px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-mono text-slate-900 w-full"
+                              />
+                            ) : (
+                              <div className="flex items-center gap-1.5">
+                                <Mail className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                                <span className="font-mono font-semibold text-slate-700">{user.email}</span>
+                              </div>
+                            )}
+                          </td>
+
+                          <td className="py-3 px-4 text-center">
+                            {isEditingThis ? (
+                              <select
+                                value={editForm.role}
+                                onChange={e => setEditForm(prev => ({ ...prev, role: e.target.value }))}
+                                className="px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-bold text-slate-900"
+                              >
+                                <option value="penginput">Penginput Nilai</option>
+                                <option value="verifikator">Verifikator Nilai</option>
+                                <option value="finalisator">Finalisator (Ketua Juri)</option>
+                                <option value="checkin">Petugas Basecamp</option>
+                                <option value="dp">Petugas DP 1</option>
+                                <option value="juri">Dewan Juri</option>
+                                <option value="admin">Admin Sekretariat</option>
+                                <option value="superadmin">Superadmin</option>
+                              </select>
+                            ) : (
+                              <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider inline-flex items-center border ${
+                                user.role === 'superadmin' ? 'bg-rose-50 text-rose-700 border-rose-200' :
+                                user.role === 'admin' ? 'bg-blue-50 text-blue-700 border-blue-200' :
+                                user.role === 'penginput' ? 'bg-amber-50 text-amber-800 border-amber-200' :
+                                user.role === 'verifikator' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
+                                user.role === 'finalisator' ? 'bg-purple-50 text-purple-700 border-purple-200' :
+                                'bg-slate-100 text-slate-700 border-slate-200'
+                              }`}>
+                                {user.role}
+                              </span>
+                            )}
+                          </td>
+
+                          <td className="py-3 px-4">
+                            {isEditingThis ? (
+                              <input
+                                type="text"
+                                value={editForm.roleLabel}
+                                onChange={e => setEditForm(prev => ({ ...prev, roleLabel: e.target.value }))}
+                                className="px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs text-slate-900 w-full"
+                              />
+                            ) : (
+                              <span className="text-slate-600">{user.roleLabel || '—'}</span>
+                            )}
+                          </td>
+
+                          <td className="py-3 px-4 text-center">
+                            {isEditingThis ? (
+                              <div className="flex items-center justify-center gap-1">
+                                <button
+                                  type="button"
+                                  onClick={() => handleSaveEditStaff(user.id)}
+                                  className="p-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer"
+                                  title="Simpan"
+                                >
+                                  <Check className="w-3.5 h-3.5" />
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => setEditingUserId(null)}
+                                  className="p-1.5 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-700 cursor-pointer"
+                                  title="Batal"
+                                >
+                                  <X className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                            ) : (
+                              <div className="flex items-center justify-center gap-1">
+                                <button
+                                  type="button"
+                                  onClick={() => handleStartEditStaff(user)}
+                                  className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-slate-900 cursor-pointer"
+                                  title="Edit"
+                                >
+                                  <Edit2 className="w-3.5 h-3.5" />
+                                </button>
+                                {!isPrimarySuperadmin && (
+                                  <button
+                                    type="button"
+                                    onClick={() => handleDeleteStaff(user.id, user.email)}
+                                    className="p-1.5 rounded-lg hover:bg-rose-50 text-slate-400 hover:text-rose-600 cursor-pointer"
+                                    title="Hapus"
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </button>
+                                )}
+                              </div>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
               </div>
             </div>
           )}
 
-          {/* Grid Kuota: SD/MI, SMP/MTs, dan Total Ringkasan */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            {/* 1. Kuota SD/MI */}
-            <div className="p-5 rounded-2xl bg-gradient-to-br from-red-50/50 via-white to-slate-50 border border-red-100 flex flex-col justify-between space-y-4">
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-black uppercase tracking-wider text-red-700 flex items-center gap-1.5">
-                    <span className="w-2.5 h-2.5 rounded-full bg-red-600 inline-block" />
-                    Tingkat SD / MI
-                  </span>
-                  <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-red-100 text-red-800 border border-red-200">
-                    {currentCountSD} Terisi
-                  </span>
+          {/* TAB 2: KUOTA KONTINGEN */}
+          {activeSectionTab === 'quota' && (
+            <div className="p-4 sm:p-6 space-y-4">
+              <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-100">
+                <div>
+                  <h3 className="text-xs sm:text-sm font-black uppercase text-slate-900">
+                    Batas Kuota Peleton SD/MI &amp; SMP/MTs
+                  </h3>
+                  <p className="text-[11px] text-slate-500">
+                    Pendaftaran otomatis terkunci saat jumlah peleton mencapai target kuota.
+                  </p>
                 </div>
-                <p className="text-xs text-slate-500 leading-relaxed">
-                  Batas maksimal peleton sekolah dasar / madrasah ibtidaiyah yang diizinkan mendaftar.
-                </p>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <button
+                    type="button"
+                    onClick={() => handleApplyQuotaPreset(18, 18, 'Standar 18/18')}
+                    className="px-3 py-1.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs inline-flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <RotateCcw className="w-3.5 h-3.5 text-slate-400" />
+                    <span>Standar (18/18)</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleApplyQuotaPreset(21, 21, 'Ekspansi 21/21')}
+                    className="px-3 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-900 font-bold text-xs inline-flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+                    <span>Ekspansi (21/21)</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleSaveQuota}
+                    className="px-4 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs inline-flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <Save className="w-3.5 h-3.5" />
+                    <span>Simpan Kuota</span>
+                  </button>
+                </div>
               </div>
 
-              <div className="space-y-3 pt-2">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-slate-500 font-semibold">Terdaftar Aktif:</span>
-                  <span className="font-mono font-bold text-slate-900">{currentCountSD} Peleton</span>
+              {quotaError && (
+                <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-semibold">
+                  {quotaError}
                 </div>
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-slate-500 font-semibold">Sisa Slot Terbuka:</span>
-                  <span className="font-mono font-bold text-emerald-600">
-                    {Math.max(0, (parseInt(quotaForm.sd, 10) || 0) - currentCountSD)} Slot
-                  </span>
-                </div>
+              )}
 
-                <div className="pt-2 border-t border-red-100">
-                  <label className="block text-[11px] font-bold text-slate-700 mb-1.5">
-                    Target Kuota SD/MI (Peleton):
-                  </label>
-                  <div className="flex items-center gap-2">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* SD */}
+                <div className="p-4 rounded-2xl border border-slate-200/90 bg-slate-50/50 flex items-center justify-between gap-4">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-red-600" />
+                      <span className="text-xs font-black uppercase text-slate-900">Tingkat SD / MI</span>
+                    </div>
+                    <p className="text-[11px] text-slate-500 mt-1">
+                      Terdaftar: <strong className="font-mono text-slate-900">{currentCountSD}</strong> · Sisa:{' '}
+                      <strong className="font-mono text-emerald-600">
+                        {Math.max(0, (parseInt(quotaForm.sd, 10) || 0) - currentCountSD)}
+                      </strong>
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-1.5">
                     <button
                       type="button"
                       disabled={parseInt(quotaForm.sd, 10) <= currentCountSD}
                       onClick={() => setQuotaForm(prev => ({ ...prev, sd: Math.max(currentCountSD, (parseInt(prev.sd, 10) || 0) - 1) }))}
-                      className="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center font-bold text-slate-700 transition-all cursor-pointer"
+                      className="w-9 h-9 rounded-xl bg-white border border-slate-200 hover:bg-slate-100 disabled:opacity-40 flex items-center justify-center text-slate-700 cursor-pointer"
                     >
-                      <Minus className="w-4 h-4" />
+                      <Minus className="w-3.5 h-3.5" />
                     </button>
                     <input
                       type="number"
                       min={currentCountSD || 1}
                       max={100}
                       value={quotaForm.sd}
-                      onChange={(e) => setQuotaForm(prev => ({ ...prev, sd: e.target.value }))}
-                      className="flex-1 text-center font-mono font-black text-lg py-1.5 px-3 rounded-xl border border-slate-300 bg-white text-slate-900 focus:border-red-600 focus:ring-1 focus:ring-red-600"
+                      onChange={e => setQuotaForm(prev => ({ ...prev, sd: e.target.value }))}
+                      className="w-16 h-9 text-center font-mono font-black text-base rounded-xl border border-slate-200 bg-white text-slate-950"
                     />
                     <button
                       type="button"
                       onClick={() => setQuotaForm(prev => ({ ...prev, sd: (parseInt(prev.sd, 10) || 0) + 1 }))}
-                      className="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 flex items-center justify-center font-bold text-slate-700 transition-all cursor-pointer"
+                      className="w-9 h-9 rounded-xl bg-white border border-slate-200 hover:bg-slate-100 flex items-center justify-center text-slate-700 cursor-pointer"
                     >
-                      <Plus className="w-4 h-4" />
+                      <Plus className="w-3.5 h-3.5" />
                     </button>
                   </div>
-                  <span className="text-[10px] text-slate-400 mt-1 block">Batas minimal: {currentCountSD} peleton (sesuai tim terdaftar)</span>
-                </div>
-              </div>
-            </div>
-
-            {/* 2. Kuota SMP/MTs */}
-            <div className="p-5 rounded-2xl bg-gradient-to-br from-blue-50/50 via-white to-slate-50 border border-blue-100 flex flex-col justify-between space-y-4">
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-black uppercase tracking-wider text-blue-700 flex items-center gap-1.5">
-                    <span className="w-2.5 h-2.5 rounded-full bg-blue-600 inline-block" />
-                    Tingkat SMP / MTs
-                  </span>
-                  <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 border border-blue-200">
-                    {currentCountSMP} Terisi
-                  </span>
-                </div>
-                <p className="text-xs text-slate-500 leading-relaxed">
-                  Batas maksimal peleton sekolah menengah pertama / tsanawiyah yang diizinkan mendaftar.
-                </p>
-              </div>
-
-              <div className="space-y-3 pt-2">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-slate-500 font-semibold">Terdaftar Aktif:</span>
-                  <span className="font-mono font-bold text-slate-900">{currentCountSMP} Peleton</span>
-                </div>
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-slate-500 font-semibold">Sisa Slot Terbuka:</span>
-                  <span className="font-mono font-bold text-emerald-600">
-                    {Math.max(0, (parseInt(quotaForm.smp, 10) || 0) - currentCountSMP)} Slot
-                  </span>
                 </div>
 
-                <div className="pt-2 border-t border-blue-100">
-                  <label className="block text-[11px] font-bold text-slate-700 mb-1.5">
-                    Target Kuota SMP/MTs (Peleton):
-                  </label>
-                  <div className="flex items-center gap-2">
+                {/* SMP */}
+                <div className="p-4 rounded-2xl border border-slate-200/90 bg-slate-50/50 flex items-center justify-between gap-4">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-blue-600" />
+                      <span className="text-xs font-black uppercase text-slate-900">Tingkat SMP / MTs</span>
+                    </div>
+                    <p className="text-[11px] text-slate-500 mt-1">
+                      Terdaftar: <strong className="font-mono text-slate-900">{currentCountSMP}</strong> · Sisa:{' '}
+                      <strong className="font-mono text-emerald-600">
+                        {Math.max(0, (parseInt(quotaForm.smp, 10) || 0) - currentCountSMP)}
+                      </strong>
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-1.5">
                     <button
                       type="button"
                       disabled={parseInt(quotaForm.smp, 10) <= currentCountSMP}
                       onClick={() => setQuotaForm(prev => ({ ...prev, smp: Math.max(currentCountSMP, (parseInt(prev.smp, 10) || 0) - 1) }))}
-                      className="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center font-bold text-slate-700 transition-all cursor-pointer"
+                      className="w-9 h-9 rounded-xl bg-white border border-slate-200 hover:bg-slate-100 disabled:opacity-40 flex items-center justify-center text-slate-700 cursor-pointer"
                     >
-                      <Minus className="w-4 h-4" />
+                      <Minus className="w-3.5 h-3.5" />
                     </button>
                     <input
                       type="number"
                       min={currentCountSMP || 1}
                       max={100}
                       value={quotaForm.smp}
-                      onChange={(e) => setQuotaForm(prev => ({ ...prev, smp: e.target.value }))}
-                      className="flex-1 text-center font-mono font-black text-lg py-1.5 px-3 rounded-xl border border-slate-300 bg-white text-slate-900 focus:border-blue-600 focus:ring-1 focus:ring-blue-600"
+                      onChange={e => setQuotaForm(prev => ({ ...prev, smp: e.target.value }))}
+                      className="w-16 h-9 text-center font-mono font-black text-base rounded-xl border border-slate-200 bg-white text-slate-950"
                     />
                     <button
                       type="button"
                       onClick={() => setQuotaForm(prev => ({ ...prev, smp: (parseInt(prev.smp, 10) || 0) + 1 }))}
-                      className="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 flex items-center justify-center font-bold text-slate-700 transition-all cursor-pointer"
+                      className="w-9 h-9 rounded-xl bg-white border border-slate-200 hover:bg-slate-100 flex items-center justify-center text-slate-700 cursor-pointer"
                     >
-                      <Plus className="w-4 h-4" />
+                      <Plus className="w-3.5 h-3.5" />
                     </button>
                   </div>
-                  <span className="text-[10px] text-slate-400 mt-1 block">Batas minimal: {currentCountSMP} peleton (sesuai tim terdaftar)</span>
                 </div>
               </div>
             </div>
+          )}
 
-            {/* 3. Ringkasan Total Kuota Keseluruhan */}
-            <div className="p-5 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-900 to-slate-950 text-white flex flex-col justify-between space-y-4 shadow-md">
-              <div>
-                <span className="text-xs font-black uppercase tracking-wider text-amber-400 flex items-center gap-1.5 mb-2">
-                  <Coins className="w-3.5 h-3.5" />
-                  Kapasitas Total Lomba
-                </span>
-                <p className="text-xs text-slate-300 leading-relaxed">
-                  Akumulasi total peleton yang akan berlaga di Arena 1 & Arena 2 Kampus Terpadu Mu'allimin.
-                </p>
-              </div>
-
-              <div className="space-y-3 pt-2">
-                <div className="flex items-baseline justify-between border-b border-white/10 pb-2">
-                  <span className="text-xs text-slate-400">Total Kuota Gabungan:</span>
-                  <div className="text-right">
-                    <span className="font-mono text-2xl font-black text-white">
-                      {(parseInt(quotaForm.sd, 10) || 0) + (parseInt(quotaForm.smp, 10) || 0)}
-                    </span>
-                    <span className="text-xs text-slate-400 ml-1">Peleton</span>
-                  </div>
+          {/* TAB 3: JADWAL & LINI MASA (RINGKAS, TANPA INPUT DUPLIKAT) */}
+          {activeSectionTab === 'dates' && (
+            <form onSubmit={handleSaveDates} className="p-4 sm:p-6 space-y-4">
+              <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-100">
+                <div>
+                  <h3 className="text-xs sm:text-sm font-black uppercase text-slate-900">
+                    Jadwal &amp; Tanggal Pelaksanaan Resmi
+                  </h3>
+                  <p className="text-[11px] text-slate-500">
+                    Label hari &amp; rentang tanggal diperbarui otomatis mengikuti tanggal yang dipilih.
+                  </p>
                 </div>
-
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-slate-400">Total Terisi Saat Ini:</span>
-                  <span className="font-mono font-bold text-slate-200">
-                    {currentCountSD + currentCountSMP} Peleton
-                  </span>
-                </div>
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-slate-400">Total Slot Tersedia:</span>
-                  <span className="font-mono font-bold text-emerald-400">
-                    {Math.max(0, ((parseInt(quotaForm.sd, 10) || 0) + (parseInt(quotaForm.smp, 10) || 0)) - (currentCountSD + currentCountSMP))} Slot
-                  </span>
-                </div>
-
-                <div className="pt-2">
+                <div className="flex items-center gap-2">
                   <button
                     type="button"
-                    onClick={handleSaveQuota}
-                    className="w-full py-2.5 px-4 rounded-xl bg-red-600 hover:bg-red-500 active:scale-95 text-white font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-md cursor-pointer"
+                    onClick={handleResetDates}
+                    className="px-3 py-1.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-600 font-bold text-xs inline-flex items-center gap-1.5 cursor-pointer"
                   >
-                    <Save className="w-4 h-4" />
-                    <span>Terapkan Kuota Sekarang</span>
+                    <RefreshCw className="w-3.5 h-3.5" />
+                    <span>Reset Default</span>
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-4 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs inline-flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <Save className="w-3.5 h-3.5" />
+                    <span>Simpan Jadwal</span>
                   </button>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
 
-        {/* SEKSI SUPERADMIN: KONTROL RAB & KEUANGAN LBB (EKSLUSIF SUPERADMIN) */}
-        <div className="bg-gradient-to-br from-emerald-950 via-slate-900 to-teal-950 text-white rounded-3xl p-6 sm:p-8 shadow-xl border border-emerald-900/50 relative overflow-hidden">
-          <div className="absolute right-0 top-0 bottom-0 w-80 bg-emerald-500/10 blur-3xl pointer-events-none" />
-          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div className="space-y-3">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 text-xs font-black uppercase tracking-wider">
-                <Coins className="w-3.5 h-3.5" />
-                <span>Otoritas Finansial Tertutup (Eksklusif Superadmin)</span>
-              </div>
-              <h3 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-white">
-                Rencana Anggaran Biaya (RAB) & Keuangan LBB
-              </h3>
-              <p className="text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed">
-                Struktur neraca anggaran 12 divisi operasional (Total Rp 63.711.450) telah dipusatkan secara eksklusif ke dalam Master System agar tidak dapat diakses oleh panitia umum.
-              </p>
-              <div className="flex flex-wrap gap-2.5 pt-1">
-                <div className="px-3 py-1.5 rounded-xl bg-white/10 border border-white/10 text-xs">
-                  <span className="text-slate-400 block text-[10px] uppercase font-bold">Total Anggaran:</span>
-                  <span className="font-mono font-bold text-emerald-400">Rp {OFFICIAL_RAB?.TOTAL_EXPENSE?.toLocaleString('id-ID') || '63.711.450'}</span>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
+                {/* 1. Pembukaan Pendaftaran */}
+                <div className="p-3.5 rounded-xl bg-slate-50/70 border border-slate-200/80 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-slate-800">1. Pembukaan Pendaftaran</span>
+                    <span className="text-[10px] font-mono text-slate-400">{dateForm.registrationRangeText}</span>
+                  </div>
+                  <input
+                    type="datetime-local"
+                    value={toDatetimeLocal(dateForm.registrationStart, '2026-10-26T00:00')}
+                    onChange={e => handleRegStartChange(e.target.value)}
+                    className="w-full px-3 py-1.5 text-xs bg-white border border-slate-200 rounded-lg outline-none focus:border-slate-900"
+                  />
                 </div>
-                <div className="px-3 py-1.5 rounded-xl bg-white/10 border border-white/10 text-xs">
-                  <span className="text-slate-400 block text-[10px] uppercase font-bold">Cakupan Divisi:</span>
-                  <span className="font-mono font-bold text-white">12 Pos Divisi</span>
+
+                {/* 2. Penutupan Pendaftaran */}
+                <div className="p-3.5 rounded-xl bg-slate-50/70 border border-slate-200/80 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-slate-800">2. Penutupan Pendaftaran</span>
+                    <span className="text-[10px] font-bold text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded">Auto-Close</span>
+                  </div>
+                  <input
+                    type="datetime-local"
+                    value={toDatetimeLocal(dateForm.registrationDeadline, '2026-11-22T23:59')}
+                    onChange={e => handleRegDeadlineChange(e.target.value)}
+                    className="w-full px-3 py-1.5 text-xs bg-white border border-slate-200 rounded-lg outline-none focus:border-slate-900"
+                  />
                 </div>
-                <div className="px-3 py-1.5 rounded-xl bg-white/10 border border-white/10 text-xs">
-                  <span className="text-slate-400 block text-[10px] uppercase font-bold">Status Neraca:</span>
-                  <span className="font-mono font-bold text-teal-300">Berimbang (Rp 0)</span>
+
+                {/* 3. Rentang Verifikasi */}
+                <div className="p-3.5 rounded-xl bg-slate-50/70 border border-slate-200/80 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-slate-800">3. Verifikasi Berkas</span>
+                    <button
+                      type="button"
+                      onClick={() => handleDateChange('verificationRangeText', dateForm.registrationRangeText)}
+                      className="text-[10px] text-blue-600 hover:underline font-semibold cursor-pointer"
+                    >
+                      Samakan
+                    </button>
+                  </div>
+                  <input
+                    type="text"
+                    value={dateForm.verificationRangeText}
+                    onChange={e => handleDateChange('verificationRangeText', e.target.value)}
+                    className="w-full px-3 py-1.5 text-xs bg-white border border-slate-200 rounded-lg outline-none focus:border-slate-900"
+                  />
+                </div>
+
+                {/* 4. Technical Meeting */}
+                <div className="p-3.5 rounded-xl bg-slate-50/70 border border-slate-200/80 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-slate-800">4. Technical Meeting</span>
+                    <span className="text-[10px] font-mono text-slate-500">{dateForm.technicalMeetingFullDate}</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <input
+                      type="date"
+                      value={toDateOnly(dateForm.technicalMeetingDate, '2027-01-09')}
+                      onChange={e => handleTmDateChange(e.target.value)}
+                      className="w-full px-2.5 py-1.5 text-xs bg-white border border-slate-200 rounded-lg outline-none focus:border-slate-900"
+                    />
+                    <input
+                      type="text"
+                      value={dateForm.technicalMeetingTime}
+                      onChange={e => handleDateChange('technicalMeetingTime', e.target.value)}
+                      placeholder="13.00 - 16.30 WIB"
+                      className="w-full px-2.5 py-1.5 text-xs bg-white border border-slate-200 rounded-lg outline-none focus:border-slate-900"
+                    />
+                  </div>
+                </div>
+
+                {/* 5. Uji Coba Lapangan */}
+                <div className="p-3.5 rounded-xl bg-slate-50/70 border border-slate-200/80 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-slate-800">5. Uji Coba Lapangan</span>
+                    <span className="text-[10px] font-mono text-slate-500">{dateForm.fieldTrialFullDate}</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <input
+                      type="date"
+                      value={toDateOnly(dateForm.fieldTrialDate, '2027-01-16')}
+                      onChange={e => handleTrialDateChange(e.target.value)}
+                      className="w-full px-2.5 py-1.5 text-xs bg-white border border-slate-200 rounded-lg outline-none focus:border-slate-900"
+                    />
+                    <input
+                      type="text"
+                      value={dateForm.fieldTrialTime}
+                      onChange={e => handleDateChange('fieldTrialTime', e.target.value)}
+                      placeholder="07.00 – 13.00 WIB"
+                      className="w-full px-2.5 py-1.5 text-xs bg-white border border-slate-200 rounded-lg outline-none focus:border-slate-900"
+                    />
+                  </div>
+                </div>
+
+                {/* 6. Hari Pelaksanaan Lomba */}
+                <div className="p-3.5 rounded-xl bg-slate-50/70 border border-slate-200/80 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-slate-800">6. Hari-H Perlombaan</span>
+                    <span className="text-[10px] font-mono font-bold text-rose-600">{dateForm.competitionDate}</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <input
+                      type="date"
+                      value={toDateOnly(dateForm.competitionDate, '2027-01-24')}
+                      onChange={e => handleCompDateChange(e.target.value)}
+                      className="w-full px-2.5 py-1.5 text-xs bg-white border border-slate-200 rounded-lg outline-none focus:border-slate-900"
+                    />
+                    <input
+                      type="text"
+                      value={dateForm.competitionTimeRange}
+                      onChange={e => handleDateChange('competitionTimeRange', e.target.value)}
+                      placeholder="06.00 – 17.00 WIB"
+                      className="w-full px-2.5 py-1.5 text-xs bg-white border border-slate-200 rounded-lg outline-none focus:border-slate-900"
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
+            </form>
+          )}
 
-            <div className="shrink-0">
-              <button
-                type="button"
-                onClick={() => setActiveView('rab')}
-                className="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-slate-950 font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-lg shadow-emerald-950/50 cursor-pointer"
-              >
-                <Coins className="w-4 h-4" />
-                <span>Buka Panel RAB & Keuangan</span>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* SEKSI SUPERADMIN: KELOLA AKUN & HAK AKSES EMAIL PETUGAS */}
-        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-black uppercase tracking-wider text-blue-700 bg-blue-100 px-2.5 py-0.5 rounded-full flex items-center gap-1.5">
-                  <Shield className="w-3.5 h-3.5" />
-                  Otoritas Pengguna
-                </span>
-                <span className="text-xs text-slate-500 font-medium">Anti Kebocoran Data</span>
+          {/* TAB 4: TAUTAN BERITA ACARA DRIVE */}
+          {activeSectionTab === 'links' && (
+            <form onSubmit={handleSaveDriveLinks} className="p-4 sm:p-6 space-y-4">
+              <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-100">
+                <div>
+                  <h3 className="text-xs sm:text-sm font-black uppercase text-slate-900">
+                    Link Google Drive Berita Acara Resmi
+                  </h3>
+                  <p className="text-[11px] text-slate-500">
+                    Tautan unduhan untuk tombol &quot;Berita Acara&quot; di halaman Papan Klasemen publik.
+                  </p>
+                </div>
+                <button
+                  type="submit"
+                  className="px-4 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs inline-flex items-center gap-1.5 cursor-pointer"
+                >
+                  <Check className="w-3.5 h-3.5" />
+                  <span>Simpan Tautan</span>
+                </button>
               </div>
-              <h3 className="font-black text-lg text-slate-900 uppercase mt-1">
-                Kelola Email & Role Petugas Resmi
-              </h3>
-              <p className="text-xs text-slate-500 mt-0.5">
-                Superadmin mengatur sendiri daftar email Google yang diizinkan bertindak sebagai Admin, Penginput, Verifikator, dan Finalisator.
-              </p>
-            </div>
-            
-            <button
-              type="button"
-              onClick={() => setIsAddStaffModalOpen(true)}
-              className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm transition-all cursor-pointer"
-            >
-              <UserPlus className="w-4 h-4" />
-              <span>Tambah Email Petugas</span>
-            </button>
-          </div>
 
-          {/* Tabel Daftar Pengguna & Role Terdaftar */}
-          <div className="overflow-x-auto rounded-2xl border border-slate-200">
-            <table className="w-full text-left text-xs border-collapse">
-              <thead>
-                <tr className="bg-slate-50 border-b border-slate-200 text-[11px] font-black uppercase text-slate-600">
-                  <th className="py-3 px-4">Nama Petugas</th>
-                  <th className="py-3 px-4">Alamat Email Google</th>
-                  <th className="py-3 px-4">Role / Wewenang</th>
-                  <th className="py-3 px-4">Label Tugas</th>
-                  <th className="py-3 px-4 text-center">Aksi</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {staffUsers.map(user => {
-                  const isPrimarySuperadmin = user.email === 'tontimuallimin2026@gmail.com';
-                  const isEditingThis = editingUserId === user.id;
-
-                  return (
-                    <tr key={user.id} className="hover:bg-slate-50/80 transition-colors">
-                      <td className="py-3 px-4">
-                        {isEditingThis ? (
-                          <input
-                            type="text"
-                            value={editForm.name}
-                            onChange={e => setEditForm(prev => ({ ...prev, name: e.target.value }))}
-                            className="px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-bold text-slate-900 w-full"
-                          />
-                        ) : (
-                          <div className="flex items-center gap-2.5">
-                            <img
-                              src={user.avatar}
-                              alt={user.name}
-                              className="w-8 h-8 rounded-full border border-slate-200 object-cover"
-                            />
-                            <div>
-                              <span className="font-bold text-slate-900 block">{user.name}</span>
-                              <span className="text-[10px] text-slate-400 font-mono">ID: {user.id}</span>
-                            </div>
-                          </div>
-                        )}
-                      </td>
-
-                      <td className="py-3 px-4">
-                        {isEditingThis ? (
-                          <input
-                            type="email"
-                            value={editForm.email}
-                            onChange={e => setEditForm(prev => ({ ...prev, email: e.target.value }))}
-                            className="px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-mono text-slate-900 w-full"
-                          />
-                        ) : (
-                          <div className="flex items-center gap-1.5">
-                            <Mail className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                            <span className="font-mono font-bold text-slate-700">{user.email}</span>
-                          </div>
-                        )}
-                      </td>
-
-                      <td className="py-3 px-4">
-                        {isEditingThis ? (
-                          <select
-                            value={editForm.role}
-                            onChange={e => setEditForm(prev => ({ ...prev, role: e.target.value }))}
-                            className="px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-bold text-slate-900"
-                          >
-                            <option value="penginput">Penginput Nilai</option>
-                            <option value="verifikator">Verifikator Nilai</option>
-                            <option value="finalisator">Finalisator (Ketua Juri)</option>
-                            <option value="checkin">Petugas Pos Basecamp (Check-In/Out)</option>
-                            <option value="dp">Petugas Daerah Persiapan (DP 1 & Arena)</option>
-                            <option value="juri">Dewan Juri</option>
-                            <option value="admin">Admin Sekretariat</option>
-                            <option value="superadmin">Superadmin</option>
-                          </select>
-                        ) : (
-                          <span className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider inline-flex items-center gap-1 border ${
-                            user.role === 'superadmin' ? 'bg-rose-100 text-rose-800 border-rose-200' :
-                            user.role === 'admin' ? 'bg-blue-100 text-blue-800 border-blue-200' :
-                            user.role === 'penginput' ? 'bg-amber-100 text-amber-800 border-amber-200' :
-                            user.role === 'verifikator' ? 'bg-emerald-100 text-emerald-800 border-emerald-200' :
-                            user.role === 'finalisator' ? 'bg-purple-100 text-purple-800 border-purple-200' :
-                            'bg-slate-100 text-slate-800 border-slate-200'
-                          }`}>
-                            {user.role}
-                          </span>
-                        )}
-                      </td>
-
-                      <td className="py-3 px-4">
-                        {isEditingThis ? (
-                          <input
-                            type="text"
-                            value={editForm.roleLabel}
-                            onChange={e => setEditForm(prev => ({ ...prev, roleLabel: e.target.value }))}
-                            className="px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs text-slate-900 w-full"
-                          />
-                        ) : (
-                          <span className="text-slate-600 font-medium">{user.roleLabel || '-'}</span>
-                        )}
-                      </td>
-
-                      <td className="py-3 px-4 text-center">
-                        {isEditingThis ? (
-                          <div className="flex items-center justify-center gap-1.5">
-                            <button
-                              type="button"
-                              onClick={() => handleSaveEditStaff(user.id)}
-                              className="p-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white transition-colors cursor-pointer"
-                              title="Simpan Perubahan"
-                            >
-                              <Check className="w-4 h-4" />
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => setEditingUserId(null)}
-                              className="p-1.5 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-700 transition-colors cursor-pointer"
-                              title="Batal"
-                            >
-                              <X className="w-4 h-4" />
-                            </button>
-                          </div>
-                        ) : (
-                          <div className="flex items-center justify-center gap-1.5">
-                            <button
-                              type="button"
-                              onClick={() => handleStartEditStaff(user)}
-                              className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-slate-900 transition-colors cursor-pointer"
-                              title="Edit Email / Role"
-                            >
-                              <Edit2 className="w-3.5 h-3.5" />
-                            </button>
-                            {!isPrimarySuperadmin && (
-                              <button
-                                type="button"
-                                onClick={() => handleDeleteStaff(user.id, user.email)}
-                                className="p-1.5 rounded-lg hover:bg-rose-50 text-slate-400 hover:text-rose-600 transition-colors cursor-pointer"
-                                title="Hapus Akses"
-                              >
-                                <Trash2 className="w-3.5 h-3.5" />
-                              </button>
-                            )}
-                          </div>
-                        )}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-[11px] font-bold text-slate-700 block mb-1">
+                    Link Berita Acara SD / MI (Google Drive)
+                  </label>
+                  <input
+                    type="url"
+                    placeholder="https://drive.google.com/file/d/..."
+                    value={driveForm.sd}
+                    onChange={e => setDriveForm(prev => ({ ...prev, sd: e.target.value }))}
+                    className="w-full text-xs font-mono px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white text-slate-900 focus:border-slate-900 outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="text-[11px] font-bold text-slate-700 block mb-1">
+                    Link Berita Acara SMP / MTs (Google Drive)
+                  </label>
+                  <input
+                    type="url"
+                    placeholder="https://drive.google.com/file/d/..."
+                    value={driveForm.smp}
+                    onChange={e => setDriveForm(prev => ({ ...prev, smp: e.target.value }))}
+                    className="w-full text-xs font-mono px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white text-slate-900 focus:border-slate-900 outline-none"
+                  />
+                </div>
+              </div>
+            </form>
+          )}
         </div>
 
         {/* Modal Tambah Email Petugas Baru */}
         {isAddStaffModalOpen && (
           <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4">
-            <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-slate-200 space-y-5 animate-in fade-in zoom-in-95 duration-200">
-              <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+            <div className="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl border border-slate-200 space-y-4">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center">
-                    <UserPlus className="w-5 h-5" />
+                  <div className="w-8 h-8 rounded-xl bg-slate-900 text-white flex items-center justify-center">
+                    <UserPlus className="w-4 h-4" />
                   </div>
                   <div>
-                    <h4 className="font-black text-sm text-slate-900 uppercase">Tambah Email Petugas</h4>
-                    <p className="text-[11px] text-slate-500">Berikan wewenang login Google ke email tertentu</p>
+                    <h4 className="font-black text-sm text-slate-900 uppercase">Tambah Petugas Resmi</h4>
+                    <p className="text-[11px] text-slate-500">Daftarkan email Google panitia atau juri</p>
                   </div>
                 </div>
                 <button
                   type="button"
                   onClick={() => setIsAddStaffModalOpen(false)}
-                  className="p-1.5 rounded-xl hover:bg-slate-100 text-slate-400 hover:text-slate-700"
+                  className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-700 cursor-pointer"
                 >
-                  <X className="w-5 h-5" />
+                  <X className="w-4 h-4" />
                 </button>
               </div>
 
-              <form onSubmit={handleAddStaffSubmit} className="space-y-3.5 text-xs">
+              <form onSubmit={handleAddStaffSubmit} className="space-y-3 text-xs">
                 <div>
                   <label className="block font-bold text-slate-700 mb-1">Nama Petugas</label>
                   <input
@@ -1151,639 +1238,83 @@ export default function SuperadminPanel() {
                     value={newStaffForm.name}
                     onChange={e => setNewStaffForm(prev => ({ ...prev, name: e.target.value }))}
                     placeholder="Contoh: Budi Santoso"
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:outline-hidden focus:border-blue-600"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 outline-none focus:bg-white focus:border-slate-900"
                   />
                 </div>
 
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">Alamat Email Google (Akun Gmail)</label>
+                  <label className="block font-bold text-slate-700 mb-1">Alamat Email Google</label>
                   <input
                     type="email"
                     required
                     value={newStaffForm.email}
                     onChange={e => setNewStaffForm(prev => ({ ...prev, email: e.target.value }))}
-                    placeholder="Contoh: budi.lbb@gmail.com"
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono text-slate-900 focus:outline-hidden focus:border-blue-600"
+                    placeholder="budi.lbb@gmail.com"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono text-slate-900 outline-none focus:bg-white focus:border-slate-900"
                   />
-                  <span className="text-[10px] text-slate-400 mt-0.5 block">
-                    Petugas wajib login menggunakan email ini saat menekan tombol Google Sign-In.
-                  </span>
                 </div>
 
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">Role / Peran Wewenang</label>
+                  <label className="block font-bold text-slate-700 mb-1">Role / Wewenang</label>
                   <select
                     value={newStaffForm.role}
                     onChange={e => {
                       const r = e.target.value;
                       const labels = {
-                        penginput: 'Operator Input Nilai Kertas',
-                        verifikator: 'Verifikator & Checker Nilai',
+                        penginput: 'Operator Input Nilai',
+                        verifikator: 'Verifikator & Audit Nilai',
                         finalisator: 'Finalisator & Pengesah Rekap Nilai',
-                        checkin: 'Petugas Pos Registrasi & Basecamp',
-                        dp: 'Petugas Daerah Persiapan (DP 1 & Arena)',
-                        juri: 'Dewan Juri Kehormatan',
-                        admin: 'Panitia Sekretariat (Admin)',
+                        checkin: 'Petugas Basecamp (Check-In & Check-Out)',
+                        dp: 'Petugas Daerah Persiapan (DP 1)',
+                        juri: 'Dewan Juri Lapangan',
+                        admin: 'Admin Sekretariat',
                         superadmin: 'Superadmin Pelaksana',
                       };
                       setNewStaffForm(prev => ({ ...prev, role: r, roleLabel: labels[r] || '' }));
                     }}
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:outline-hidden focus:border-blue-600"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 outline-none focus:bg-white focus:border-slate-900"
                   >
-                    <option value="penginput">1. Penginput Nilai (Input skor kertas + bukti foto)</option>
-                    <option value="verifikator">2. Verifikator Nilai (Audit lembar fisik vs sistem)</option>
-                    <option value="finalisator">3. Finalisator (Kunci permanen & sahkan Berita Acara)</option>
-                    <option value="checkin">4. Petugas Basecamp (Check-In, Logistik & Check-Out)</option>
-                    <option value="dp">5. Petugas Daerah Persiapan (Inspeksi DP 1 & Timer Arena)</option>
-                    <option value="juri">6. Dewan Juri (E-Scoring Arena)</option>
-                    <option value="admin">Admin Sekretariat (Kelola peleton, undian, verifikasi)</option>
-                    <option value="superadmin">Superadmin Master</option>
+                    <option value="penginput">Penginput Nilai</option>
+                    <option value="verifikator">Verifikator Nilai</option>
+                    <option value="finalisator">Finalisator (Ketua Dewan Juri)</option>
+                    <option value="checkin">Petugas Basecamp (Check-In/Out)</option>
+                    <option value="dp">Petugas Daerah Persiapan (DP 1)</option>
+                    <option value="juri">Dewan Juri</option>
+                    <option value="admin">Admin Sekretariat</option>
+                    <option value="superadmin">Superadmin</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">Label Jabatan / Tugas</label>
+                  <label className="block font-bold text-slate-700 mb-1">Label Tugas</label>
                   <input
                     type="text"
                     value={newStaffForm.roleLabel}
                     onChange={e => setNewStaffForm(prev => ({ ...prev, roleLabel: e.target.value }))}
-                    placeholder="Contoh: Petugas Scrutineering Pos 1"
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-hidden focus:border-blue-600"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 outline-none focus:bg-white focus:border-slate-900"
                   />
                 </div>
 
-                <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-2.5">
+                <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-2">
                   <button
                     type="button"
                     onClick={() => setIsAddStaffModalOpen(false)}
-                    className="px-4 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 font-bold text-slate-600 cursor-pointer"
+                    className="px-3.5 py-2 rounded-xl border border-slate-200 hover:bg-slate-50 font-bold text-slate-600 cursor-pointer"
                   >
                     Batal
                   </button>
                   <button
                     type="submit"
-                    className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-bold rounded-xl shadow-sm transition-all cursor-pointer flex items-center gap-1.5"
+                    className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl cursor-pointer inline-flex items-center gap-1.5"
                   >
-                    <Save className="w-4 h-4" />
-                    <span>Simpan Petugas</span>
+                    <Save className="w-3.5 h-3.5" />
+                    <span>Simpan</span>
                   </button>
                 </div>
               </form>
             </div>
           </div>
         )}
-
-        {/* Form Kelola Jadwal & Tanggal Pelaksanaan */}
-        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-black uppercase tracking-wider text-purple-700 bg-purple-100 px-2.5 py-0.5 rounded-full flex items-center gap-1.5">
-                  <Calendar className="w-3.5 h-3.5" />
-                  Jadwal & Lini Masa
-                </span>
-                <span className="text-xs text-slate-500 font-medium">Pengaturan Dinamis Waktu & Agenda</span>
-              </div>
-              <h3 className="font-black text-lg text-slate-900 uppercase mt-1">
-                Kelola Tanggal Pelaksanaan Kegiatan
-              </h3>
-            </div>
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={handleResetDates}
-                className="px-3.5 py-2 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-600 font-bold text-xs flex items-center gap-1.5 transition-colors cursor-pointer"
-                title="Reset ke Jadwal Default"
-              >
-                <RefreshCw className="w-3.5 h-3.5" />
-                <span>Reset Default</span>
-              </button>
-              <button
-                type="button"
-                onClick={handleSaveDates}
-                className="px-4 py-2 rounded-xl bg-purple-700 hover:bg-purple-800 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm transition-all cursor-pointer"
-              >
-                <Save className="w-3.5 h-3.5" />
-                <span>Simpan Tanggal</span>
-              </button>
-            </div>
-          </div>
-
-          <p className="text-xs text-slate-600 leading-relaxed">
-            Pembaruan tanggal di bawah ini akan <strong>langsung disinkronkan secara real-time</strong> ke Countdown Timer, banner Hero, kartu Lini Masa pendaftaran, jadwal Waktu & Tempat di landing page, serta dashboard peserta.
-          </p>
-
-          <form onSubmit={handleSaveDates} className="space-y-6">
-            <div className="grid sm:grid-cols-2 gap-5">
-              
-              {/* 1. Pembukaan Pendaftaran */}
-              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-black uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-                    1. Pembukaan Pendaftaran
-                  </span>
-                  <span className="text-[10px] font-bold text-slate-400">Tahap 1</span>
-                </div>
-                <div>
-                  <label className="block text-[11px] font-bold text-slate-600 mb-1">
-                    Waktu Mulai Buka (Tanggal & Jam):
-                  </label>
-                  <input
-                    type="datetime-local"
-                    value={toDatetimeLocal(dateForm.registrationStart, '2026-10-26T00:00')}
-                    onChange={e => handleRegStartChange(e.target.value)}
-                    className="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-lg focus:border-purple-600 outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[11px] font-bold text-slate-600 mb-1">
-                    Teks Tampilan Rentang Pendaftaran:
-                  </label>
-                  <input
-                    type="text"
-                    value={dateForm.registrationRangeText}
-                    onChange={e => handleDateChange('registrationRangeText', e.target.value)}
-                    className="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-lg focus:border-purple-600 outline-none"
-                    placeholder="26 Oktober – 22 November 2026"
-                  />
-                </div>
-              </div>
-
-              {/* 2. Penutupan Pendaftaran */}
-              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-black uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-amber-500"></span>
-                    2. Penutupan Pendaftaran
-                  </span>
-                  <span className="text-[10px] font-bold text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded">
-                    Auto-Close Saat Kuota Penuh
-                  </span>
-                </div>
-                <div>
-                  <label className="block text-[11px] font-bold text-slate-600 mb-1">
-                    Deadline Akhir Pendaftaran (Tanggal & Jam):
-                  </label>
-                  <input
-                    type="datetime-local"
-                    value={toDatetimeLocal(dateForm.registrationDeadline, '2026-11-22T23:59')}
-                    onChange={e => handleRegDeadlineChange(e.target.value)}
-                    className="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-lg focus:border-purple-600 outline-none"
-                  />
-                </div>
-                <p className="text-[11px] text-slate-500">
-                  * Sistem otomatis menutup tombol pendaftaran bila kuota SD & SMP telah habis terisi.
-                </p>
-              </div>
-
-              {/* 3. Verifikasi Berkas */}
-              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-black uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-blue-500"></span>
-                    3. Verifikasi Berkas Panitia
-                  </span>
-                  <span className="text-[10px] font-bold text-slate-400">Tahap 2</span>
-                </div>
-                <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <label className="text-[11px] font-bold text-slate-600">
-                      Teks Rentang Tanggal Verifikasi:
-                    </label>
-                    <button
-                      type="button"
-                      onClick={() => handleDateChange('verificationRangeText', dateForm.registrationRangeText)}
-                      className="text-[10px] text-blue-600 hover:underline font-semibold cursor-pointer"
-                    >
-                      Samakan pendaftaran
-                    </button>
-                  </div>
-                  <input
-                    type="text"
-                    value={dateForm.verificationRangeText}
-                    onChange={e => handleDateChange('verificationRangeText', e.target.value)}
-                    className="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-lg focus:border-purple-600 outline-none"
-                    placeholder="26 Oktober – 22 November 2026"
-                  />
-                </div>
-              </div>
-
-              {/* 4. Technical Meeting (TM) */}
-              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-black uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-purple-500"></span>
-                    4. Technical Meeting (TM)
-                  </span>
-                  <span className="text-[10px] font-bold text-slate-400">Tahap 3</span>
-                </div>
-                <div className="grid grid-cols-2 gap-2">
-                  <div>
-                    <label className="block text-[11px] font-bold text-slate-600 mb-1">Pilih Tanggal TM:</label>
-                    <input
-                      type="date"
-                      value={toDateOnly(dateForm.technicalMeetingDate, '2027-01-09')}
-                      onChange={e => handleTmDateChange(e.target.value)}
-                      className="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-lg focus:border-purple-600 outline-none"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[11px] font-bold text-slate-600 mb-1">Waktu TM:</label>
-                    <input
-                      type="text"
-                      value={dateForm.technicalMeetingTime}
-                      onChange={e => handleDateChange('technicalMeetingTime', e.target.value)}
-                      className="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-lg focus:border-purple-600 outline-none"
-                      placeholder="13.00 - 16.30 WIB"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-[11px] font-bold text-slate-600 mb-1">Hari & Tanggal Lengkap TM:</label>
-                  <input
-                    type="text"
-                    value={dateForm.technicalMeetingFullDate}
-                    onChange={e => handleDateChange('technicalMeetingFullDate', e.target.value)}
-                    className="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-lg focus:border-purple-600 outline-none"
-                    placeholder="Sabtu, 9 Januari 2027"
-                  />
-                </div>
-              </div>
-
-              {/* 5. Uji Coba Lapangan */}
-              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-black uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-                    5. Uji Coba Lapangan
-                  </span>
-                  <span className="text-[10px] font-bold text-slate-400">Tahap 4</span>
-                </div>
-                <div className="grid grid-cols-2 gap-2">
-                  <div>
-                    <label className="block text-[11px] font-bold text-slate-600 mb-1">Pilih Tanggal Uji Coba:</label>
-                    <input
-                      type="date"
-                      value={toDateOnly(dateForm.fieldTrialDate, '2027-01-16')}
-                      onChange={e => handleTrialDateChange(e.target.value)}
-                      className="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-lg focus:border-purple-600 outline-none"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[11px] font-bold text-slate-600 mb-1">Waktu Uji Coba:</label>
-                    <input
-                      type="text"
-                      value={dateForm.fieldTrialTime}
-                      onChange={e => handleDateChange('fieldTrialTime', e.target.value)}
-                      className="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-lg focus:border-purple-600 outline-none"
-                      placeholder="07.00 – 13.00 WIB"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-[11px] font-bold text-slate-600 mb-1">Hari & Tanggal Lengkap:</label>
-                  <input
-                    type="text"
-                    value={dateForm.fieldTrialFullDate}
-                    onChange={e => handleDateChange('fieldTrialFullDate', e.target.value)}
-                    className="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-lg focus:border-purple-600 outline-none"
-                    placeholder="Sabtu, 16 Januari 2027"
-                  />
-                </div>
-              </div>
-
-              {/* 6. Hari Pelaksanaan Lomba */}
-              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-black uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-rose-600"></span>
-                    6. Hari Pelaksanaan Lomba (Hari-H)
-                  </span>
-                  <span className="text-[10px] font-black text-rose-700 bg-rose-100 px-1.5 py-0.5 rounded">
-                    Hari H
-                  </span>
-                </div>
-                <div className="grid grid-cols-2 gap-2">
-                  <div>
-                    <label className="block text-[11px] font-bold text-slate-600 mb-1">Pilih Tanggal Lomba:</label>
-                    <input
-                      type="date"
-                      value={toDateOnly(dateForm.competitionDate, '2027-01-24')}
-                      onChange={e => handleCompDateChange(e.target.value)}
-                      className="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-lg focus:border-purple-600 outline-none"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[11px] font-bold text-slate-600 mb-1">Hari & Tanggal Lomba:</label>
-                    <input
-                      type="text"
-                      value={dateForm.competitionDate}
-                      onChange={e => handleDateChange('competitionDate', e.target.value)}
-                      className="w-full px-3 py-2 text-xs font-bold text-slate-900 bg-white border border-slate-200 rounded-lg focus:border-purple-600 outline-none"
-                      placeholder="Ahad, 24 Januari 2027"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-[11px] font-bold text-slate-600 mb-1">Rentang Waktu Hari-H:</label>
-                  <input
-                    type="text"
-                    value={dateForm.competitionTimeRange}
-                    onChange={e => handleDateChange('competitionTimeRange', e.target.value)}
-                    className="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-lg focus:border-purple-600 outline-none"
-                    placeholder="06.00 WIB – 17.00 WIB"
-                  />
-                </div>
-              </div>
-
-            </div>
-
-            <div className="flex justify-end pt-2 border-t border-slate-100">
-              <button
-                type="submit"
-                className="px-6 py-2.5 rounded-xl bg-purple-700 hover:bg-purple-800 text-white font-black text-xs uppercase tracking-wider flex items-center gap-2 shadow-md transition-all cursor-pointer"
-              >
-                <Save className="w-4 h-4" />
-                <span>Simpan Perubahan Jadwal</span>
-              </button>
-            </div>
-          </form>
-        </div>
-
-        {/* Google Spreadsheet Cloud Database Control */}
-        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-black uppercase tracking-wider text-emerald-700 bg-emerald-100 px-2.5 py-0.5 rounded-full">
-                  Cloud Spreadsheet
-                </span>
-                <span className="text-xs text-slate-500 font-medium">Google Apps Script Auto-Schema</span>
-              </div>
-              <h3 className="font-black text-lg text-slate-900 uppercase mt-1">
-                Konektivitas Google Sheets
-              </h3>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className={`w-3 h-3 rounded-full ${isGoogleSheetConfigured ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`} />
-              <span className="text-xs font-bold text-slate-700">
-                {isGoogleSheetConfigured ? 'Terkoneksi ke Apps Script' : 'URL Belum Dikonfigurasi di .env'}
-              </span>
-            </div>
-          </div>
-
-          <p className="text-xs text-slate-600 leading-relaxed">
-            Database ini terhubung langsung ke Google Spreadsheet panitia melalui Google Apps Script universal.
-            Setiap data baru (tab baru / kolom baru) akan dibuat secara otomatis di Google Spreadsheet tanpa perlu mengubah file <code className="bg-slate-100 px-1 py-0.5 rounded text-rose-600 font-bold">Code.gs</code> lagi.
-          </p>
-
-          <div className="grid sm:grid-cols-3 gap-4">
-            <button
-              onClick={async () => {
-                showToast('Menguji koneksi ke Google Spreadsheet...');
-                const res = await pingSheetDatabase();
-                if (res.connected) {
-                  showToast(`Koneksi Sukses! Terhubung ke Spreadsheet: "${res.spreadsheetName}"`);
-                } else {
-                  showToast(`Gagal terhubung: ${res.message}`);
-                }
-              }}
-              className="p-4 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-2xl text-left transition-all group"
-            >
-              <Database className="w-5 h-5 text-emerald-600 mb-2 group-hover:scale-110 transition-transform" />
-              <span className="font-black text-xs uppercase text-slate-900 block">Uji Koneksi (Ping)</span>
-              <span className="text-[11px] text-slate-500 mt-0.5 block leading-relaxed">
-                Periksa apakah URL Web App Apps Script merespons dengan benar.
-              </span>
-            </button>
-
-            <button
-              onClick={async () => {
-                showToast('Menyinkronkan seluruh data ke Google Sheet...');
-                const res = await syncAllToGoogleSheet();
-                showToast('Sinkronisasi selesai! Seluruh tab & kolom diperbarui.');
-              }}
-              className="p-4 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-2xl text-left transition-all group"
-            >
-              <Upload className="w-5 h-5 text-blue-600 mb-2 group-hover:scale-110 transition-transform" />
-              <span className="font-black text-xs uppercase text-slate-900 block">Sinkronkan ke Sheet (Push)</span>
-              <span className="text-[11px] text-slate-500 mt-0.5 block leading-relaxed">
-                Kirim data tim, nilai juri, dan konfigurasi lokal ke spreadsheet.
-              </span>
-            </button>
-
-            <button
-              onClick={async () => {
-                showToast('Mengambil data terbaru dari Google Sheet...');
-                const res = await pullFromGoogleSheet();
-                if (res && res.success) {
-                  showToast('Berhasil memuat data terbaru dari Google Spreadsheet!');
-                } else {
-                  showToast(`Gagal menarik data: ${res?.error || 'Periksa koneksi internet/URL'}`);
-                }
-              }}
-              className="p-4 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-2xl text-left transition-all group"
-            >
-              <Download className="w-5 h-5 text-purple-600 mb-2 group-hover:scale-110 transition-transform" />
-              <span className="font-black text-xs uppercase text-slate-900 block">Tarik dari Sheet (Pull)</span>
-              <span className="text-[11px] text-slate-500 mt-0.5 block leading-relaxed">
-                Ambil pembaruan manual langsung dari Google Spreadsheet ke aplikasi.
-              </span>
-            </button>
-          </div>
-        </div>
-
-        {/* Database & Backup Actions */}
-        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-6">
-          <h3 className="font-black text-lg text-slate-900 uppercase border-b border-slate-200 pb-3">
-            Cadangan & Pemulihan Basis Data (Backup & Reset)
-          </h3>
-
-          <div className="grid sm:grid-cols-3 gap-4">
-            <button
-              onClick={handleExportJSON}
-              className="p-5 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-2xl text-left transition-all group"
-            >
-              <Download className="w-6 h-6 text-blue-600 mb-2 group-hover:scale-110 transition-transform" />
-              <span className="font-black text-sm text-slate-900 block">Cadangkan Basis Data (JSON)</span>
-              <span className="text-xs text-slate-500 mt-1 block leading-relaxed">
-                Ekspor seluruh data pendaftar, nilai juri, dan berkas ke file JSON.
-              </span>
-            </button>
-
-            <button
-              onClick={exportTeamsCSV}
-              className="p-5 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-2xl text-left transition-all group"
-            >
-              <FileSpreadsheet className="w-6 h-6 text-emerald-600 mb-2 group-hover:scale-110 transition-transform" />
-              <span className="font-black text-sm text-slate-900 block">Ekspor Excel / CSV</span>
-              <span className="text-xs text-slate-500 mt-1 block leading-relaxed">
-                Tabel pendaftar lengkap untuk arsip sekretariat lomba.
-              </span>
-            </button>
-
-            <button
-              onClick={() => {
-                if (confirm('PERINGATAN: Seluruh data akan dikembalikan ke data awal simulasi (seed data). Lanjutkan?')) {
-                  resetToSeedData();
-                  showToast('Database berhasil direset ke data awal!');
-                }
-              }}
-              className="p-5 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-2xl text-left transition-all group"
-            >
-              <RotateCcw className="w-6 h-6 text-rose-600 mb-2 group-hover:rotate-180 transition-transform" />
-              <span className="font-black text-sm text-rose-900 block">Reset Basis Data Sistem</span>
-              <span className="text-xs text-rose-700/80 mt-1 block leading-relaxed">
-                Kembalikan master data sekolah ke konfigurasi awal sistem.
-              </span>
-            </button>
-          </div>
-        </div>
-
-        {/* PANEL TESTING KHUSUS LOCALHOST & SUPERADMIN */}
-        {isLocalhost && (
-          <div className="bg-gradient-to-br from-emerald-950 via-slate-900 to-teal-950 rounded-3xl p-6 sm:p-7 text-white shadow-xl border border-emerald-500/30 space-y-5">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-emerald-800/60 pb-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 flex items-center justify-center font-bold">
-                  <Database className="w-5 h-5" />
-                </div>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-black uppercase tracking-wider text-emerald-400">
-                      Khusus Localhost & Superadmin
-                    </span>
-                    <span className="text-[10px] bg-emerald-500/20 text-emerald-200 border border-emerald-400/40 px-2 py-0.5 rounded-full font-mono font-bold">
-                      Isolasi Data Aman
-                    </span>
-                  </div>
-                  <h3 className="text-lg font-black text-white uppercase tracking-tight mt-0.5">
-                    Generator Data Dummy Testing (18 SD + 18 SMP)
-                  </h3>
-                </div>
-              </div>
-              <div className="text-xs text-slate-300 bg-black/40 px-3.5 py-1.5 rounded-xl border border-white/10 font-mono">
-                {teams.filter(t => t.jenjang === 'SD').length} SD • {teams.filter(t => t.jenjang === 'SMP').length} SMP (Total {teams.length} Peleton)
-              </div>
-            </div>
-
-            <p className="text-xs text-slate-300 leading-relaxed">
-              Data pendaftar asli dari Google Sheet <strong>diblokir secara otomatis di localhost</strong> untuk menjaga kerahasiaan data riil. Anda dapat menggunakan tombol di bawah untuk menguji simulasi alur <strong>Technical Meeting (Undian Nomor Dada)</strong>, <strong>Jadwal Uji Coba Lapangan</strong>, dan <strong>Penjurian (E-Scoring)</strong>.
-            </p>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-1">
-              <button
-                type="button"
-                onClick={() => {
-                  if (confirm('Muat ulang 36 tim dummy (18 SD + 18 SMP) lengkap dengan Danton, 21 Pasukan, berkas sah, dan siap diuji?')) {
-                    const res = loadDummyTestingTeams();
-                    showToast(`Berhasil memuat ${res.count} tim dummy (18 SD + 18 SMP) lengkap!`);
-                  }
-                }}
-                className="p-4 bg-emerald-600/30 hover:bg-emerald-600/50 border border-emerald-400/40 rounded-2xl text-left transition-all active:scale-95 cursor-pointer group"
-              >
-                <RefreshCw className="w-5 h-5 text-emerald-400 mb-2 group-hover:rotate-180 transition-transform" />
-                <span className="font-black text-xs uppercase tracking-wider text-white block">
-                  1. Muat Ulang 36 Tim Dummy
-                </span>
-                <span className="text-[11px] text-slate-300 mt-1 block">
-                  18 SD + 18 SMP lengkap biodata, danton, pasukan, dan berkas sah (belum diundi).
-                </span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => {
-                  if (confirm('Acak dan tetapkan nomor undian (1-18) serta nomor dada otomatis untuk semua 36 tim? (Simulasi TM selesai)')) {
-                    randomizeAllLotNumbers();
-                    showToast('Semua 36 peleton berhasil diundi nomor dada secara otomatis!');
-                  }
-                }}
-                className="p-4 bg-blue-600/30 hover:bg-blue-600/50 border border-blue-400/40 rounded-2xl text-left transition-all active:scale-95 cursor-pointer group"
-              >
-                <Award className="w-5 h-5 text-blue-400 mb-2 group-hover:scale-110 transition-transform" />
-                <span className="font-black text-xs uppercase tracking-wider text-white block">
-                  2. Undi Acak Semua No. Dada
-                </span>
-                <span className="text-[11px] text-slate-300 mt-1 block">
-                  Simulasikan hasil undian TM selesai seketika agar siap dinilai di E-Scoring.
-                </span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => {
-                  if (confirm('Kosongkan kembali nomor undian semua tim agar bisa ditest undian satu per satu di menu Technical Meeting?')) {
-                    clearAllLotNumbers();
-                    showToast('Nomor undian direset ke kosong (siap diundi di Technical Meeting)!');
-                  }
-                }}
-                className="p-4 bg-amber-600/30 hover:bg-amber-600/50 border border-amber-400/40 rounded-2xl text-left transition-all active:scale-95 cursor-pointer group"
-              >
-                <RotateCcw className="w-5 h-5 text-amber-400 mb-2 group-hover:-rotate-90 transition-transform" />
-                <span className="font-black text-xs uppercase tracking-wider text-white block">
-                  3. Reset Nomor Undian TM
-                </span>
-                <span className="text-[11px] text-slate-300 mt-1 block">
-                  Kembalikan ke status "Belum Diundi" untuk menguji proses undian manual di TM.
-                </span>
-              </button>
-
-              <button
-                type="button"
-                onClick={async () => {
-                  const targetTeam = teams.find(t => t.jenjang === 'SD' && t.status !== 'pending') || teams[0];
-                  if (targetTeam?.email) {
-                    await loginUser(targetTeam.email);
-                    setActiveView('peserta_dashboard');
-                  }
-                }}
-                className="p-4 bg-purple-600/30 hover:bg-purple-600/50 border border-purple-400/40 rounded-2xl text-left transition-all active:scale-95 cursor-pointer group"
-              >
-                <Users className="w-5 h-5 text-purple-400 mb-2 group-hover:scale-110 transition-transform" />
-                <span className="font-black text-xs uppercase tracking-wider text-white block">
-                  4. Masuk Dashboard Peserta
-                </span>
-                <span className="text-[11px] text-slate-300 mt-1 block">
-                  Langsung buka simulasi portal peleton SD Sapen (#01) & floating pill nav.
-                </span>
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Audit Log / Metrics Overview */}
-        <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs space-y-3">
-          <h4 className="font-black text-sm uppercase tracking-wider text-slate-800">
-            Statistik Real-Time Sistem
-          </h4>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-            <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
-              <span className="text-slate-500 uppercase font-bold text-[10px] block">Total Tim Terdaftar</span>
-              <span className="text-xl font-mono font-black text-slate-900">{teams.length}</span>
-            </div>
-            <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
-              <span className="text-slate-500 uppercase font-bold text-[10px] block">Terverifikasi</span>
-              <span className="text-xl font-mono font-black text-emerald-600">
-                {teams.filter(t => t.status === 'verified').length}
-              </span>
-            </div>
-            <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
-              <span className="text-slate-500 uppercase font-bold text-[10px] block">Nomor Tampil Terundi</span>
-              <span className="text-xl font-mono font-black text-blue-600">
-                {teams.filter(t => t.lotNumber).length}
-              </span>
-            </div>
-            <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
-              <span className="text-slate-500 uppercase font-bold text-[10px] block">Sudah Dinilai Juri</span>
-              <span className="text-xl font-mono font-black text-purple-600">
-                {Object.keys(scores).length}
-              </span>
-            </div>
-          </div>
-        </div>
-
       </div>
     </SimpaskorSidebarLayout>
   );

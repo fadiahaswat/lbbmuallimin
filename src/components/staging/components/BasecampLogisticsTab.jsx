@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { appAlert } from '../../../utils/appDialog.js';
 import {
   QrCode,
   Search,
@@ -71,7 +72,7 @@ export default function BasecampLogisticsTab({
       setBasecampToast(`Peleton ditemukan: ${found.schoolName} (${found.regCode})`);
       setTimeout(() => setBasecampToast(''), 3500);
     } else {
-      alert(`Kode QR / Nama Sekolah "${qrInput}" tidak ditemukan dalam database.`);
+      appAlert(`Kode QR / Nama Sekolah "${qrInput}" tidak ditemukan dalam database.`, { title: 'Tidak Ditemukan', variant: 'warning' });
     }
   }
 

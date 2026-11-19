@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo, useRef } from 'react';
 import {
   INITIAL_TEAMS,
   INITIAL_SCORES,
@@ -143,12 +143,21 @@ export function CompetitionProvider({ children }) {
     return 'publik';
   });
 
-  // 2. Active View with persistence for logged-in sessions
+  // 2. Active View with persistence for logged-in sessions (with safe validation to prevent blank screen)
   const [activeView, setActiveView] = useState(() => {
+    const VALID_VIEWS = new Set([
+      'landing', 'register', 'status_check', 'document_viewer', 'auth',
+      'peserta_dashboard', 'admin', 'juri', 'superadmin', 'announcement',
+      'staging', 'live_leaderboard', 'field_trial', 'tm', 'checkin', 'dp',
+      'rekap_nilai', 'checkout', 'rab', 'dokumen', 'juknis', 'tatib',
+      'rundown', 'proposal', 'timeline'
+    ]);
     try {
       const savedUser = localStorage.getItem(STORAGE_KEYS.CURRENT_USER);
       const savedRole = localStorage.getItem(STORAGE_KEYS.ROLE);
-      const savedView = localStorage.getItem(STORAGE_KEYS.ACTIVE_VIEW);
+      const rawSavedView = localStorage.getItem(STORAGE_KEYS.ACTIVE_VIEW);
+      const normalizedView = rawSavedView === 'scoring' ? 'juri' : rawSavedView;
+      const savedView = normalizedView && VALID_VIEWS.has(normalizedView) ? normalizedView : null;
       if (savedUser || (savedRole && savedRole !== 'publik')) {
         if (savedView && savedView !== 'auth') {
           return savedView;
@@ -171,20 +180,16 @@ export function CompetitionProvider({ children }) {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.TEAMS);
       const list = saved ? JSON.parse(saved) : null;
-      const isMissingLotNumbers = Array.isArray(list) && list.some(t => t.id && t.id.startsWith('dummy-') && !t.lotNumber);
-      const hasOldPlatoonNicknames = Array.isArray(list) && list.some(t => t.id && t.id.startsWith('dummy-') && t.platoonName && (t.platoonName.includes('Menggolo') || t.platoonName.includes('Pemanahan')));
-      if (Array.isArray(list) && list.length >= 36 && !isMissingLotNumbers && !hasOldPlatoonNicknames) {
+      if (Array.isArray(list)) {
+        // Di localhost: bersihkan cache tim dummy sintetis lama agar langsung digantikan kloningan data asli dari Google Sheet
+        if (isLocalhostEnvironment() && list.some(t => t?.id && String(t.id).startsWith('dummy-'))) {
+          return INITIAL_TEAMS;
+        }
         return list.map(normalizeTeamData);
       }
-      // Khusus Localhost: Otomatis sediakan 36 peleton dummy lengkap (18 SD + 18 SMP)
-      if (isLocalhostEnvironment()) {
-        const dummy36 = generate36DummyTeams({ realisticWorkflow: true });
-        safeSetItem(STORAGE_KEYS.TEAMS, JSON.stringify(dummy36));
-        return dummy36.map(normalizeTeamData);
-      }
-      return Array.isArray(list) ? list.map(normalizeTeamData) : INITIAL_TEAMS;
+      return INITIAL_TEAMS;
     } catch {
-      return isLocalhostEnvironment() ? generate36DummyTeams({ realisticWorkflow: true }).map(normalizeTeamData) : INITIAL_TEAMS;
+      return INITIAL_TEAMS;
     }
   });
 
@@ -192,26 +197,16 @@ export function CompetitionProvider({ children }) {
   const [scores, setScores] = useState(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.SCORES);
-      let parsed = null;
-      if (saved) {
-        parsed = JSON.parse(saved);
-      }
-      if (isLocalhostEnvironment()) {
-        const dummyScores = generateDummyScores(teams);
-        const isLegacyScores = !parsed ||
-          !parsed['dummy-team-sd-01'] ||
-          parsed['dummy-team-smp-01']?.pbb?.total === 6494 ||
-          parsed['dummy-team-sd-01']?.danton?.total === 266 ||
-          Object.values(parsed).some(s => s?.pbbTotal && s.pbbTotal < 3000);
-        if (isLegacyScores) {
-          safeSetItem(STORAGE_KEYS.SCORES, JSON.stringify(dummyScores));
-          return dummyScores;
+      const parsed = saved ? JSON.parse(saved) : null;
+      if (parsed && typeof parsed === 'object') {
+        if (isLocalhostEnvironment() && Object.keys(parsed).some(k => String(k).startsWith('dummy-'))) {
+          return INITIAL_SCORES;
         }
-        return parsed;
+        if (Object.keys(parsed).length > 0) return parsed;
       }
-      return parsed && typeof parsed === 'object' && Object.keys(parsed).length > 0 ? parsed : INITIAL_SCORES;
+      return INITIAL_SCORES;
     } catch {
-      return isLocalhostEnvironment() ? generateDummyScores(teams) : INITIAL_SCORES;
+      return INITIAL_SCORES;
     }
   });
 
@@ -237,17 +232,6 @@ export function CompetitionProvider({ children }) {
       // Pastikan status pengesahan Alokasi Basecamp valid (hanya tayang jika disahkan oleh Panitia/Superadmin & ada timestamp)
       base.basecampPublished = Boolean(parsed.basecampPublished && parsed.basecampRatifiedAt);
       base.basecampRatifiedAt = parsed.basecampRatifiedAt || null;
-      if (isLocalhostEnvironment()) {
-        if (!base.trialPlan || !base.trialPlan.SD?.slots?.some(Boolean)) {
-          base.trialPlan = generateDummyTrialPlan(teams);
-        }
-        // Khusus Localhost: Otomatis tayangkan jadwal UCL & denah basecamp untuk pengujian/preview
-        base.trialSchedulePublished = true;
-        base.trialScheduleRatifiedAt = parsed.trialScheduleRatifiedAt || '2027-01-09T16:00:00.000Z';
-        base.basecampPublished = true;
-        base.basecampRatifiedAt = parsed.basecampRatifiedAt || '2027-01-16T08:00:00.000Z';
-        base.announcementPublished = true;
-      }
       return base;
     } catch {
       return INITIAL_SETTINGS;
@@ -269,18 +253,18 @@ export function CompetitionProvider({ children }) {
       const saved = localStorage.getItem(STORAGE_KEYS.STAGING);
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (parsed && typeof parsed === 'object' && Object.keys(parsed).length > 0) {
-          return parsed;
+        if (parsed && typeof parsed === 'object') {
+          if (isLocalhostEnvironment() && Object.keys(parsed).some(k => String(k).startsWith('dummy-'))) {
+            return INITIAL_STAGING;
+          }
+          if (Object.keys(parsed).length > 0) {
+            return parsed;
+          }
         }
-      }
-      if (isLocalhostEnvironment()) {
-        const dummyStaging = generateDummyStaging(teams);
-        safeSetItem(STORAGE_KEYS.STAGING, JSON.stringify(dummyStaging));
-        return dummyStaging;
       }
       return INITIAL_STAGING;
     } catch {
-      return isLocalhostEnvironment() ? generateDummyStaging(teams) : INITIAL_STAGING;
+      return INITIAL_STAGING;
     }
   });
 
@@ -481,6 +465,9 @@ export function CompetitionProvider({ children }) {
     return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
+  // Ref untuk melacak kloningan awal data asli di Mode Sandbox Localhost
+  const localhostSyncedModeRef = useRef({ done: false, withScores: false });
+
   // Initial & Role-Based Sync: Mengambil data terbaru dari Google Sheet jika sudah terkonfigurasi
   useEffect(() => {
     if (!isGoogleSheetConfigured()) return;
@@ -488,16 +475,81 @@ export function CompetitionProvider({ children }) {
     const isStaffOrJury = ['admin', 'juri', 'superadmin', 'penginput', 'verifikator', 'finalisator'].includes(role);
     const allowScoresSync = isStaffOrJury || Boolean(settings.announcementPublished);
 
+    // Di localhost (Mode Sandbox): kloning data asli sekali saat mount (atau saat naik akses ke staff/juri),
+    // agar simulasi/edit yang sedang dilakukan di localhost tidak tertimpa ulang saat toggle setting lokal.
+    if (isLocalhostEnvironment() && localhostSyncedModeRef.current.done) {
+      if (!allowScoresSync || localhostSyncedModeRef.current.withScores) {
+        return;
+      }
+    }
+
     let isMounted = true;
     fetchAllDataFromSheet(allowScoresSync).then(res => {
       if (!isMounted || !res || !res.success || !res.data) return;
 
       const { teams: sheetTeams, scores: sheetScores, settings: sheetSettings, staging: sheetStaging } = res.data;
 
+      if (isLocalhostEnvironment()) {
+        localhostSyncedModeRef.current = { done: true, withScores: allowScoresSync };
+        console.info('[CompetitionContext] Mode Sandbox Localhost: Data asli dari Google Sheet berhasil dikloning (Read-Only). Perubahan di localhost tidak berdampak ke data asli.');
+
+        if (Array.isArray(sheetTeams)) {
+          setTeams(sheetTeams.map(normalizeTeamData));
+        }
+
+        if (allowScoresSync && Array.isArray(sheetScores)) {
+          const nextScores = {};
+          sheetScores.forEach(sc => {
+            if (sc?.teamId) nextScores[sc.teamId] = sc;
+          });
+          setScores(nextScores);
+        }
+
+        if (Array.isArray(sheetStaging)) {
+          const nextStaging = {};
+          sheetStaging.forEach(st => {
+            const stId = st?.teamId || st?.id;
+            if (stId) nextStaging[stId] = st;
+          });
+          setStaging(nextStaging);
+        }
+
+        if (Array.isArray(res.data.users) && res.data.users.length > 0) {
+          setUsers(prev => {
+            const byEmail = new Map();
+            INITIAL_USERS.forEach(u => {
+              if (u.email) byEmail.set(u.email.toLowerCase(), u);
+            });
+            prev.forEach(u => {
+              if (u.email) byEmail.set(u.email.toLowerCase(), u);
+            });
+            res.data.users.forEach(u => {
+              if (u && u.email) byEmail.set(String(u.email).toLowerCase(), u);
+            });
+            return Array.from(byEmail.values());
+          });
+        }
+
+        if (Array.isArray(sheetSettings) && sheetSettings.length > 0 && sheetSettings[0]) {
+          const remoteSettings = sheetSettings[0];
+          setSettings({
+            ...INITIAL_SETTINGS,
+            ...remoteSettings,
+            eventDates: {
+              ...(remoteSettings.eventDates || {}),
+              ...INITIAL_SETTINGS.eventDates,
+            },
+            juknisPenilaianPublished: Boolean(remoteSettings.juknisPenilaianPublished && remoteSettings.juknisPenilaianRatifiedAt),
+            juknisPenilaianRatifiedAt: remoteSettings.juknisPenilaianRatifiedAt || null,
+            basecampPublished: Boolean(remoteSettings.basecampPublished && remoteSettings.basecampRatifiedAt),
+            basecampRatifiedAt: remoteSettings.basecampRatifiedAt || null,
+          });
+        }
+        return;
+      }
+
       if (Array.isArray(sheetTeams)) {
-        if (isLocalhostEnvironment()) {
-          console.info('[CompetitionContext] Localhost Mode: Data asli Google Sheet tidak dimuat ke localhost agar terisolasi.');
-        } else if (sheetTeams.length === 0) {
+        if (sheetTeams.length === 0) {
           setTeams([]);
         } else {
           setTeams(prev => {
@@ -1534,6 +1586,9 @@ export function CompetitionProvider({ children }) {
   }
 
   // Undi acak hanya untuk jenjang tertentu ('SD' atau 'SMP')
+  // Aturan:
+  // 1. Pertahankan peleton yang sudah dipasang manual (hanya acak yang belum terpasang)
+  // 2. Rapat dari #01 s.d. #N (tanpa slot bolong di tengah jika jumlah peserta < 18)
   function randomizeJenjangLotNumbers(targetJenjang) {
     const shuffle = arr => {
       const copy = [...arr];
@@ -1543,14 +1598,34 @@ export function CompetitionProvider({ children }) {
       }
       return copy;
     };
-    const eligible = teams.filter(t => t.jenjang === targetJenjang && ['verified', 'drawn'].includes(t.status));
-    const lots = shuffle(Array.from({ length: Math.max(eligible.length, 18) }, (_, i) => i + 1));
+    const isEligibleForLottery = (t) =>
+      isLocalhostEnvironment() ? t.status !== 'rejected' : ['verified', 'drawn'].includes(t.status);
+
+    const eligible = teams.filter(t => t.jenjang === targetJenjang && isEligibleForLottery(t));
+    const alreadyAssigned = eligible.filter(t => Boolean(t.lotNumber));
+    const unassigned = eligible.filter(t => !t.lotNumber);
+    if (unassigned.length === 0) return;
+
+    // Kumpulkan slot yang sudah dipakai tim terpasang manual
+    const usedLots = new Set(alreadyAssigned.map(t => Number(t.lotNumber)));
+
+    // Ambil slot kosong paling awal (rapat dari #01 s.d. #N) sebanyak jumlah peleton belum terpasang
+    const availableLots = [];
+    let slotCursor = 1;
+    while (availableLots.length < unassigned.length) {
+      if (!usedLots.has(slotCursor)) {
+        availableLots.push(slotCursor);
+      }
+      slotCursor++;
+    }
+
+    const lots = shuffle(availableLots);
     let lotIdx = 0;
     const nowIso = new Date().toISOString();
     const updatedList = [];
 
     const nextTeams = teams.map(team => {
-      if (team.jenjang !== targetJenjang || !['verified', 'drawn'].includes(team.status)) return team;
+      if (team.jenjang !== targetJenjang || !isEligibleForLottery(team) || team.lotNumber) return team;
       const lot = lots[lotIdx++];
       const chest = lot ? getChestNumberByLot(team.jenjang, lot) : '';
       const updated = {
@@ -1788,6 +1863,14 @@ export function CompetitionProvider({ children }) {
       isGoogleSheetConfigured: isGoogleSheetConfigured(),
       pingSheetDatabase,
       syncAllToGoogleSheet: async () => {
+        if (isLocalhostEnvironment()) {
+          console.info('[CompetitionContext] Mode Sandbox Localhost: syncAllToGoogleSheet diblokir agar tidak berdampak ke data asli.');
+          return {
+            success: false,
+            localOnly: true,
+            message: 'Mode Sandbox Localhost: Pengiriman data ke Google Sheet diblokir agar data asli tetap aman.'
+          };
+        }
         const results = {};
         if (teams.length > 0) {
           results.teams = await bulkSyncToSheet('teams', teams);
@@ -1808,14 +1891,66 @@ export function CompetitionProvider({ children }) {
         return results;
       },
       pullFromGoogleSheet: async () => {
-        if (isLocalhostEnvironment()) {
-          return { success: false, reason: 'localhost_protection', message: 'Mode Localhost Aktif: Penarikan data asli dicegah demi keamanan & isolasi data dummy.' };
-        }
         const isStaffOrJury = ['admin', 'juri', 'superadmin', 'penginput', 'verifikator', 'finalisator'].includes(role);
         const allowScoresSync = isStaffOrJury || Boolean(settings.announcementPublished);
         const res = await fetchAllDataFromSheet(allowScoresSync);
         if (res && res.success && res.data) {
           const { teams: sheetTeams, scores: sheetScores, settings: sheetSettings, staging: sheetStaging, users: sheetUsers } = res.data;
+
+          // Di localhost (Mode Sandbox): ganti bersih seluruh data lokal dengan kloningan terbaru dari Google Sheet
+          if (isLocalhostEnvironment()) {
+            localhostSyncedModeRef.current = { done: true, withScores: allowScoresSync };
+            if (Array.isArray(sheetTeams)) {
+              setTeams(sheetTeams.map(normalizeTeamData));
+            }
+            if (allowScoresSync && Array.isArray(sheetScores)) {
+              const nextScores = {};
+              sheetScores.forEach(sc => {
+                if (sc?.teamId) nextScores[sc.teamId] = sc;
+              });
+              setScores(nextScores);
+            }
+            if (Array.isArray(sheetStaging)) {
+              const nextStaging = {};
+              sheetStaging.forEach(st => {
+                const stId = st?.teamId || st?.id;
+                if (stId) nextStaging[stId] = st;
+              });
+              setStaging(nextStaging);
+            }
+            if (Array.isArray(sheetUsers) && sheetUsers.length > 0) {
+              setUsers(prev => {
+                const byEmail = new Map();
+                INITIAL_USERS.forEach(u => {
+                  if (u.email) byEmail.set(u.email.toLowerCase(), u);
+                });
+                prev.forEach(u => {
+                  if (u.email) byEmail.set(u.email.toLowerCase(), u);
+                });
+                sheetUsers.forEach(u => {
+                  if (u && u.email) byEmail.set(String(u.email).toLowerCase(), u);
+                });
+                return Array.from(byEmail.values());
+              });
+            }
+            if (Array.isArray(sheetSettings) && sheetSettings[0]) {
+              const remoteSettings = sheetSettings[0];
+              setSettings({
+                ...INITIAL_SETTINGS,
+                ...remoteSettings,
+                eventDates: {
+                  ...(remoteSettings.eventDates || {}),
+                  ...INITIAL_SETTINGS.eventDates,
+                },
+                juknisPenilaianPublished: Boolean(remoteSettings.juknisPenilaianPublished && remoteSettings.juknisPenilaianRatifiedAt),
+                juknisPenilaianRatifiedAt: remoteSettings.juknisPenilaianRatifiedAt || null,
+                basecampPublished: Boolean(remoteSettings.basecampPublished && remoteSettings.basecampRatifiedAt),
+                basecampRatifiedAt: remoteSettings.basecampRatifiedAt || null,
+              });
+            }
+            return { ...res, sandboxClone: true };
+          }
+
           if (Array.isArray(sheetTeams)) {
             if (sheetTeams.length === 0) {
               setTeams([]);

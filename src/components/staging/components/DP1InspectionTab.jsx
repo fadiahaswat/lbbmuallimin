@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { appToast } from '../../../utils/appDialog.js';
 import { Tablet, Users, ArrowRight, UserCheck, UserX } from 'lucide-react';
 
 export default function DP1InspectionTab({
@@ -128,7 +129,7 @@ export default function DP1InspectionTab({
                 <button
                   onClick={() => {
                     passToDP2(selectedDP1Team.id);
-                    alert(`Peleton ${selectedDP1Team.schoolName} berhasil diloloskan ke DP 2 (Ruang Tunggu Steril)!`);
+                    appToast(`Peleton ${selectedDP1Team.schoolName} berhasil diloloskan ke DP 2 (Ruang Tunggu Steril)!`, { variant: 'success' });
                   }}
                   className={`px-5 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider flex items-center gap-2 transition-all cursor-pointer ${
                     isDP1AllVerified

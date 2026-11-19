@@ -349,6 +349,13 @@ export default function LeaderboardView({
                                     <span>Peleton: <strong className="text-slate-800">{team.peletonScore}</strong></span>
                                     {' • '}
                                     <span>Danton: <strong className="text-slate-800">{team.dantonScore}</strong></span>
+                                    {(team.scoreData?.performanceDuration || (Number.isFinite(team.scoreData?.durationSeconds) && team.scoreData.durationSeconds > 0)) && (
+                                      <span>
+                                        {' • '}Durasi: <strong className="text-slate-800">
+                                          {team.scoreData.performanceDuration || `${String(Math.floor(team.scoreData.durationSeconds / 60)).padStart(2, '0')}:${String(team.scoreData.durationSeconds % 60).padStart(2, '0')}`}
+                                        </strong>
+                                      </span>
+                                    )}
                                     {team.scoreData?.penalties?.totalPenalty > 0 && (
                                       <span className="text-rose-600 font-bold"> • Penalti: -{team.scoreData.penalties.totalPenalty}</span>
                                     )}

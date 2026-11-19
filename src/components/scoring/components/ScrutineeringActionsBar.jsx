@@ -15,101 +15,88 @@ export default function ScrutineeringActionsBar({
   const isSuperadmin = currentUser?.role === 'superadmin';
   const canVerify = ['verifikator', 'superadmin'].includes(currentUser?.role);
   const canFinalize = ['finalisator', 'superadmin'].includes(currentUser?.role);
+  const isLocked = Boolean(existingScore?.isLocked);
+  const isVerified = existingScore?.status === 'verified';
+  const isDraft = !existingScore || existingScore.status === 'draft' || existingScore.status === 'rejected_to_draft';
 
   return (
-    <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-5">
-      {/* Header & Status Stepper Visual */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+    <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-2xs space-y-4">
+      {/* Header & Compact Stepper */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-3 border-b border-slate-100">
         <div>
-          <span className="text-[10px] font-black uppercase tracking-wider text-emerald-700 block">
-            Tahapan Scrutineering Resmi
-          </span>
-          <h4 className="font-black text-base text-slate-900 uppercase">
-            Pengesahan & Penguncian Nilai
+          <h4 className="font-extrabold text-sm text-slate-900 uppercase tracking-tight">
+            Pengesahan &amp; Penguncian Nilai
           </h4>
+          <p className="text-[11px] text-slate-500">
+            Tahapan scrutineering resmi sebelum nilai terbit ke klasemen
+          </p>
         </div>
 
-        {/* Stepper Badge */}
-        <div className="flex items-center gap-1.5 bg-slate-50 px-3 py-1.5 rounded-2xl border border-slate-200 text-[11px] font-bold">
-          <span className={`px-2 py-0.5 rounded-lg flex items-center gap-1 ${
-            !existingScore || existingScore.status === 'draft' || existingScore.status === 'rejected_to_draft'
-              ? 'bg-amber-500 text-slate-950 font-black shadow-xs'
+        <div className="inline-flex items-center gap-1.5 bg-slate-50 px-2.5 py-1 rounded-xl border border-slate-200/80 text-[10.5px] font-bold self-start sm:self-auto">
+          <span className={`px-2 py-0.5 rounded-md ${
+            isDraft && !isLocked
+              ? 'bg-amber-100 text-amber-900 font-extrabold'
               : 'text-slate-400'
           }`}>
-            <span>1. Draft</span>
+            1. Draft
           </span>
           <span className="text-slate-300">→</span>
-          <span className={`px-2 py-0.5 rounded-lg flex items-center gap-1 ${
-            existingScore?.status === 'verified'
-              ? 'bg-blue-600 text-white font-black shadow-xs'
-              : (existingScore?.isLocked ? 'text-blue-600' : 'text-slate-400')
-          }`}>
-            <span>2. Terverifikasi</span>
-          </span>
-          <span className="text-slate-300">→</span>
-          <span className={`px-2 py-0.5 rounded-lg flex items-center gap-1 ${
-            existingScore?.isLocked
-              ? 'bg-emerald-600 text-white font-black shadow-xs'
+          <span className={`px-2 py-0.5 rounded-md ${
+            isVerified && !isLocked
+              ? 'bg-blue-600 text-white font-extrabold'
+              : isLocked
+              ? 'text-blue-600'
               : 'text-slate-400'
           }`}>
-            <span>3. Final & Terkunci</span>
+            2. Terverifikasi
+          </span>
+          <span className="text-slate-300">→</span>
+          <span className={`px-2 py-0.5 rounded-md ${
+            isLocked
+              ? 'bg-emerald-600 text-white font-extrabold'
+              : 'text-slate-400'
+          }`}>
+            3. Final
           </span>
         </div>
       </div>
 
-      {/* Catatan Evaluasi Lapangan */}
-      <div>
-        <label className="block text-xs font-bold text-slate-700 uppercase mb-1.5">
-          Catatan Evaluasi Lapangan untuk Peleton
-        </label>
-        <textarea
-          rows={2}
-          disabled={existingScore?.isLocked && !isSuperadmin}
-          value={juryNotes}
-          onChange={e => setJuryNotes(e.target.value)}
-          placeholder="Tuliskan evaluasi gerakan, kerapian, atau instruksi danton..."
-          className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 focus:border-emerald-500 rounded-xl text-xs text-slate-800 focus:outline-none transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
-        />
-      </div>
+      {/* Catatan Evaluasi + Aksi Terpadu */}
+      <div className="flex flex-col lg:flex-row lg:items-end gap-3">
+        <div className="flex-1 min-w-0">
+          <label className="block text-[11px] font-bold text-slate-600 mb-1">
+            Catatan Evaluasi Lapangan (Opsional)
+          </label>
+          <textarea
+            rows={2}
+            disabled={isLocked && !isSuperadmin}
+            value={juryNotes}
+            onChange={e => setJuryNotes(e.target.value)}
+            placeholder="Tuliskan evaluasi gerakan, kerapian, atau instruksi danton..."
+            className="w-full px-3 py-2 bg-slate-50 border border-slate-200 focus:bg-white focus:border-slate-900 rounded-xl text-xs text-slate-800 focus:outline-none transition-colors disabled:opacity-60 disabled:cursor-not-allowed resize-none"
+          />
+        </div>
 
-      {/* Action Bar Dinamis Berdasarkan Tahapan Status */}
-      <div className="pt-2">
-        {/* KONDISI 1: NILAI SUDAH DIKUNCI FINAL */}
-        {existingScore?.isLocked ? (
-          <div className="p-4 bg-emerald-50 rounded-2xl border border-emerald-200 flex items-center justify-between flex-wrap gap-3">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold">
-                <Lock className="w-5 h-5" />
-              </div>
-              <div>
-                <div className="text-xs font-black uppercase text-emerald-800">
-                  Nilai Peleton Telah Disahkan & Dikunci Permanen
-                </div>
-                <p className="text-[11px] text-slate-600">
-                  Disahkan oleh {existingScore.finalizedBy || 'Ketua Dewan Juri'}. Nilai masuk ke rekapitulasi resmi.
-                  {isSuperadmin && <span className="font-bold text-amber-700 ml-1">(Otoritas Superadmin: Anda dapat membuka kunci kembali)</span>}
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
+        {/* Action Buttons */}
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
+          {isLocked ? (
+            <>
               {isSuperadmin && (
                 <>
                   <button
                     type="button"
                     onClick={handleUnlockScoreAction}
-                    className="px-3.5 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-xs cursor-pointer"
-                    title="Buka kembali kunci nilai agar dapat diedit atau diperbaiki"
+                    className="px-3.5 py-2.5 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 rounded-xl text-xs font-bold inline-flex items-center gap-1.5 transition-all cursor-pointer active:scale-95"
                   >
-                    <Unlock className="w-4 h-4" />
-                    <span>Buka Kunci Nilai</span>
+                    <Unlock className="w-3.5 h-3.5" />
+                    <span>Buka Kunci</span>
                   </button>
                   <button
                     type="button"
                     onClick={handleSaveDraft}
-                    className="px-3.5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-xs cursor-pointer"
-                    title="Simpan perubahan langsung dengan hak Superadmin"
+                    className="px-3.5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold inline-flex items-center gap-1.5 transition-all cursor-pointer active:scale-95"
                   >
-                    <Save className="w-4 h-4" />
+                    <Save className="w-3.5 h-3.5" />
                     <span>Simpan Perubahan</span>
                   </button>
                 </>
@@ -117,105 +104,76 @@ export default function ScrutineeringActionsBar({
               <button
                 type="button"
                 onClick={() => setIsRecapModalOpen(true)}
-                className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-xs cursor-pointer"
+                className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold inline-flex items-center gap-1.5 transition-all cursor-pointer active:scale-95"
               >
-                <Printer className="w-4 h-4" />
-                <span>Lihat Berita Acara</span>
+                <Printer className="w-3.5 h-3.5" />
+                <span>Berita Acara</span>
               </button>
-            </div>
-          </div>
-        ) : (
-          /* KONDISI 2: BELUM DIKUNCI - TAMPILKAN LANGKAH SESUAI STATUS */
-          <div className="space-y-3">
-            {/* JIKA BELUM DIKUNCI: SELALU SEDIAKAN TOMBOL SIMPAN INPUT NILAI JURI */}
-            {(!existingScore || !existingScore.isLocked) && (
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50 p-4 rounded-2xl border border-amber-200">
-                <div>
-                  <span className="text-xs font-bold text-amber-800 block">
-                    Langkah 1: Simpan Input Nilai Juri
-                  </span>
-                  <p className="text-[11px] text-slate-500">
-                    Pastikan seluruh nilai materi PBB, Danton, dan penalti telah dicocokkan dengan lembar kertas.
-                  </p>
-                </div>
+            </>
+          ) : (
+            <>
+              <button
+                type="button"
+                onClick={handleSaveDraft}
+                className="px-4 py-2.5 bg-slate-900 hover:bg-slate-800 active:scale-95 text-white font-bold text-xs rounded-xl inline-flex items-center gap-1.5 shadow-2xs transition-all cursor-pointer"
+              >
+                <Save className="w-3.5 h-3.5 text-amber-400" />
+                <span>Simpan Hasil Nilai</span>
+              </button>
+
+              {existingScore && existingScore.status === 'draft' && canVerify && (
                 <button
                   type="button"
-                  onClick={handleSaveDraft}
-                  className="px-6 py-3 bg-amber-500 hover:bg-amber-400 active:scale-95 text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer shrink-0"
+                  onClick={() => handleVerifyScoreAction(true)}
+                  className="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-bold text-xs rounded-xl inline-flex items-center gap-1.5 shadow-2xs transition-all cursor-pointer"
                 >
-                  <Save className="w-4 h-4" />
-                  <span>Simpan Hasil Nilai</span>
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  <span>Verifikasi Sah</span>
                 </button>
-              </div>
-            )}
+              )}
 
-            {/* JIKA STATUS SUDAH TERSIMPAN (SIAP DIVERIFIKASI / DIKUNCI) */}
-            {existingScore && existingScore.status === 'draft' && canVerify && (
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50 p-4 rounded-2xl border border-blue-200">
-                <div>
-                  <span className="text-xs font-bold text-blue-800 block">
-                    Langkah 2: Verifikasi Kesesuaian Fisik (Scrutineering)
-                  </span>
-                  <p className="text-[11px] text-slate-500">
-                    Verifikator mencocokkan input sistem dengan foto blangko fisik dewan juri.
-                  </p>
-                </div>
-                <div className="flex items-center gap-2 shrink-0">
-                  <button
-                    type="button"
-                    onClick={() => handleVerifyScoreAction(true)}
-                    className="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 active:scale-95 text-white font-black text-xs uppercase tracking-wider rounded-xl flex items-center gap-1.5 shadow-sm transition-all cursor-pointer"
-                  >
-                    <CheckCircle2 className="w-4 h-4" />
-                    <span>Verifikasi Sah</span>
-                  </button>
-                </div>
-              </div>
-            )}
+              {isVerified && canVerify && (
+                <button
+                  type="button"
+                  onClick={() => handleVerifyScoreAction(false)}
+                  className="px-3.5 py-2.5 bg-slate-100 hover:bg-rose-50 hover:text-rose-700 text-slate-600 font-bold text-xs rounded-xl border border-slate-200 transition-all cursor-pointer"
+                >
+                  Batal Verifikasi
+                </button>
+              )}
 
-            {/* JIKA STATUS SUDAH TERVERIFIKASI (SIAP DIKUNCI FINALISATOR) */}
-            {existingScore?.status === 'verified' && (canVerify || canFinalize) && (
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50 p-4 rounded-2xl border border-emerald-200">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold text-emerald-800">
-                      Langkah 3: Pengesahan & Penguncian Final
-                    </span>
-                    <span className="text-[10px] bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded font-mono">
-                      Terverifikasi oleh {existingScore.verifiedBy || 'Verifikator'}
-                    </span>
-                  </div>
-                  <p className="text-[11px] text-slate-500 mt-0.5">
-                    Kunci nilai permanen agar tidak dapat diubah kembali dan terbit di Berita Acara Rekap Nilai.
-                  </p>
-                </div>
-                <div className="flex items-center gap-2 shrink-0">
-                  {canVerify && (
-                    <button
-                      type="button"
-                      onClick={() => handleVerifyScoreAction(false)}
-                      className="px-3.5 py-2.5 bg-slate-100 hover:bg-rose-50 hover:text-rose-700 text-slate-600 font-bold text-xs uppercase tracking-wider rounded-xl border border-slate-200 transition-all cursor-pointer"
-                      title="Kembalikan ke status Draft jika ditemukan ketidaksesuaian"
-                    >
-                      <span>Batal Verifikasi</span>
-                    </button>
-                  )}
-                  {canFinalize && (
-                    <button
-                      type="button"
-                      onClick={handleFinalizeScoreAction}
-                      className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-black text-xs uppercase tracking-wider rounded-xl flex items-center gap-1.5 shadow-sm transition-all cursor-pointer"
-                    >
-                      <Lock className="w-4 h-4" />
-                      <span>Kunci & Sahkan Nilai</span>
-                    </button>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
+              {isVerified && canFinalize && (
+                <button
+                  type="button"
+                  onClick={handleFinalizeScoreAction}
+                  className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold text-xs rounded-xl inline-flex items-center gap-1.5 shadow-2xs transition-all cursor-pointer"
+                >
+                  <Lock className="w-3.5 h-3.5" />
+                  <span>Kunci &amp; Sahkan</span>
+                </button>
+              )}
+            </>
+          )}
+        </div>
       </div>
+
+      {/* Info Status Ringkas bila Terkunci / Terverifikasi */}
+      {isLocked && (
+        <div className="px-3.5 py-2 rounded-xl bg-emerald-50 border border-emerald-200/80 text-[11px] text-emerald-800 flex items-center gap-2">
+          <Lock className="w-3.5 h-3.5 shrink-0" />
+          <span>
+            Nilai telah disahkan &amp; dikunci permanen oleh <strong>{existingScore.finalizedBy || 'Ketua Dewan Juri'}</strong>.
+          </span>
+        </div>
+      )}
+      {isVerified && !isLocked && (
+        <div className="px-3.5 py-2 rounded-xl bg-blue-50 border border-blue-200/80 text-[11px] text-blue-800 flex items-center gap-2">
+          <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
+          <span>
+            Terverifikasi oleh <strong>{existingScore.verifiedBy || 'Verifikator'}</strong> — siap dikunci permanen oleh Finalisator.
+          </span>
+        </div>
+      )}
     </div>
   );
 }

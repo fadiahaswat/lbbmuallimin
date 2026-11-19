@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { appAlert } from '../../utils/appDialog.js';
 import {
   Users,
   Upload,
@@ -382,7 +383,7 @@ export default function ParticipantDashboard() {
       const is2MbDoc = ['recommendationLetter', 'paymentProof'].includes(currentUploadKey);
       const maxBytes = (is2MbDoc ? 2 : 3) * 1024 * 1024;
       if (file.size > maxBytes) {
-        alert(`Ukuran berkas melebihi batas maksimal ${is2MbDoc ? 2 : 3} MB sesuai Juknis Pendaftaran. Silakan kompres berkas terlebih dahulu.`);
+        appAlert(`Ukuran berkas melebihi batas maksimal ${is2MbDoc ? 2 : 3} MB sesuai Juknis Pendaftaran. Silakan kompres berkas terlebih dahulu.`, { title: 'Ukuran Berkas Terlalu Besar', variant: 'warning' });
         return;
       }
       const isPaymentProof = currentUploadKey === 'paymentProof';
@@ -390,9 +391,12 @@ export default function ParticipantDashboard() {
         ? (file.type?.startsWith('image/') || /\.(jpg|jpeg|png)$/i.test(file.name))
         : (file.type?.startsWith('image/') || file.type === 'application/pdf' || /\.(jpg|jpeg|png|webp|pdf)$/i.test(file.name));
       if (!isAllowedType) {
-        alert(isPaymentProof
-          ? 'Format bukti transfer tidak didukung. Gunakan format JPG atau PNG (Maks. 2 MB).'
-          : 'Format berkas tidak didukung. Gunakan format PDF, JPG, atau PNG.');
+        appAlert(
+          isPaymentProof
+            ? 'Format bukti transfer tidak didukung. Gunakan format JPG atau PNG (Maks. 2 MB).'
+            : 'Format berkas tidak didukung. Gunakan format PDF, JPG, atau PNG.',
+          { title: 'Format Tidak Didukung', variant: 'warning' }
+        );
         return;
       }
       const isImg = file.type?.startsWith('image/') || /\.(jpg|jpeg|png|webp)$/i.test(file.name);

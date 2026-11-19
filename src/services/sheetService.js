@@ -14,12 +14,23 @@ import { BACKEND_CONFIG } from '../config.js';
 const APPS_SCRIPT_URL = import.meta.env?.VITE_APPS_SCRIPT_URL || BACKEND_CONFIG?.DEFAULT_APPS_SCRIPT_URL || '';
 
 /**
- * Cek apakah sedang berjalan di localhost
+ * Cek apakah sedang berjalan di localhost / jaringan lokal / mode DEV.
+ * Di lingkungan ini, SEMUA operasi tulis (save, bulkSync, delete) ke Google Sheet
+ * DIBLOKIR secara ketat agar eksekusi di localhost tidak pernah berdampak ke data asli.
  */
 export function isLocalhost() {
-  if (typeof window === 'undefined') return false;
+  if (import.meta.env?.DEV) return true;
+  if (typeof window === 'undefined') return true;
   const h = window.location?.hostname || '';
-  return h === 'localhost' || h === '127.0.0.1' || h === '::1';
+  return (
+    h === 'localhost' ||
+    h === '127.0.0.1' ||
+    h === '::1' ||
+    h.startsWith('192.168.') ||
+    h.startsWith('10.') ||
+    h.startsWith('172.') ||
+    h.endsWith('.local')
+  );
 }
 
 /**
@@ -85,7 +96,8 @@ export function getFallbackImageUrl(url) {
  */
 export async function saveRecordToSheet(table, data) {
   if (isLocalhost()) {
-    // Di localhost: mode simulasi/testing, tidak mengirim ke spreadsheet produksi
+    // Mode Sandbox Localhost: Operasi tulis diblokir total agar tidak berdampak ke spreadsheet asli
+    console.info(`[SheetService Sandbox] Write diblokir di localhost (upsert tabel: ${table}) — hanya tersimpan di lokal.`);
     return { success: true, localOnly: true };
   }
   if (!isGoogleSheetConfigured()) {
@@ -128,6 +140,7 @@ export async function saveRecordToSheet(table, data) {
  */
 export async function bulkSyncToSheet(table, items) {
   if (isLocalhost()) {
+    console.info(`[SheetService Sandbox] Bulk sync diblokir di localhost (tabel: ${table}, ${items?.length || 0} item) — hanya tersimpan di lokal.`);
     return { success: true, count: items?.length || 0, localOnly: true };
   }
   if (!isGoogleSheetConfigured()) {
@@ -216,14 +229,12 @@ export async function searchRecordsFromSheet(table, keyword) {
 }
 
 /**
- * Mengambil seluruh data dari semua tab sheet
+ * Mengambil seluruh data dari semua tab sheet (READ-ONLY GET).
+ * Di localhost, data asli tetap ditarik sebagai kloningan sandbox (read-only),
+ * sedangkan seluruh aksi ubah/hapus/simpan tetap diblokir agar tidak berdampak ke data asli.
  * @param {boolean} includeSecretScores - Apakah menyertakan lembar skor rahasia (hanya untuk staff/juri)
  */
 export async function fetchAllDataFromSheet(includeSecretScores = false) {
-  if (isLocalhost()) {
-    // Di localhost: data asli live tidak dimuat agar terisolasi dengan data dummy testing
-    return { success: true, data: { teams: null, scores: null, settings: null, staging: null }, localOnly: true };
-  }
   if (!isGoogleSheetConfigured()) {
     return { success: false, reason: 'unconfigured' };
   }
@@ -237,15 +248,20 @@ export async function fetchAllDataFromSheet(includeSecretScores = false) {
       return { success: false, error: `HTTP ${response.status}` };
     }
     const contentType = response.headers.get('content-type') || '';
+    let result;
     if (!contentType.includes('application/json')) {
       const text = await response.text();
       try {
-        return JSON.parse(text);
+        result = JSON.parse(text);
       } catch {
         return { success: false, error: 'Non-JSON response from Apps Script' };
       }
+    } else {
+      result = await response.json();
     }
-    const result = await response.json();
+    if (result && typeof result === 'object' && isLocalhost()) {
+      return { ...result, sandboxClone: true };
+    }
     return result;
   } catch (error) {
     console.warn('[SheetService] Gagal mengambil seluruh data sheet:', error);
@@ -260,6 +276,7 @@ export async function fetchAllDataFromSheet(includeSecretScores = false) {
  */
 export async function deleteRecordFromSheet(table, id) {
   if (isLocalhost()) {
+    console.info(`[SheetService Sandbox] Delete diblokir di localhost (tabel: ${table}, id: ${id}) — hanya terhapus di lokal.`);
     return { success: true, localOnly: true };
   }
   if (!isGoogleSheetConfigured()) {

@@ -1,4 +1,5 @@
 import React from 'react';
+import { appConfirm } from '../../../utils/appDialog.js';
 import {
   RefreshCw,
   Search,
@@ -280,8 +281,13 @@ export default function RegistrationTab({
 
                   <button
                     type="button"
-                    onClick={() => {
-                      if (confirm(`Yakin ingin menghapus data ${team.schoolName}?`)) {
+                    onClick={async () => {
+                      const ok = await appConfirm(`Yakin ingin menghapus data ${team.schoolName}?`, {
+                        title: 'Hapus Peserta',
+                        confirmText: 'Hapus',
+                        variant: 'danger',
+                      });
+                      if (ok) {
                         deleteTeam(team.id);
                       }
                     }}
@@ -499,8 +505,13 @@ export default function RegistrationTab({
                       )}
 
                       <button
-                        onClick={() => {
-                          if (confirm(`Yakin ingin menghapus data ${team.schoolName}?`)) {
+                        onClick={async () => {
+                          const ok = await appConfirm(`Yakin ingin menghapus data ${team.schoolName}?`, {
+                            title: 'Hapus Peserta',
+                            confirmText: 'Hapus',
+                            variant: 'danger',
+                          });
+                          if (ok) {
                             deleteTeam(team.id);
                           }
                         }}

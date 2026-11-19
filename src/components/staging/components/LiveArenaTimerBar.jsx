@@ -1,4 +1,5 @@
 import React from 'react';
+import { appConfirm } from '../../../utils/appDialog.js';
 import { Play, Pause, RotateCcw, CheckCircle2 } from 'lucide-react';
 
 export default function LiveArenaTimerBar({
@@ -106,8 +107,13 @@ export default function LiveArenaTimerBar({
 
           <button
             disabled={!activeArenaTeam}
-            onClick={() => {
-              if (activeArenaTeam && window.confirm(`Konfirmasi selesai tampil untuk ${activeArenaTeam.schoolName}? Waktu akhir ${formatTime(elapsed)} akan dikunci.`)) {
+            onClick={async () => {
+              if (!activeArenaTeam) return;
+              const ok = await appConfirm(
+                `Konfirmasi selesai tampil untuk ${activeArenaTeam.schoolName}? Waktu akhir ${formatTime(elapsed)} akan dikunci.`,
+                { title: 'Kunci Waktu Tampil', confirmText: 'Selesai & Kunci', variant: 'info' }
+              );
+              if (ok) {
                 stopAndSaveFieldTimer(activeArenaTeam.id, activeArenaTeam.jenjang);
               }
             }}

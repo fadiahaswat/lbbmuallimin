@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { appConfirm } from '../../utils/appDialog.js';
 import {
   Compass,
   Clock,
@@ -28,7 +29,8 @@ import {
   UserCheck,
   ChevronRight,
   Sparkles,
-  Calendar
+  Calendar,
+  RefreshCw
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
 import { EVENT, VENUE } from '../../config.js';
@@ -75,7 +77,7 @@ export default function FieldTrialView() {
       if (/\b(SD|MI)\b/i.test(u)) return 'SD';
       if (/\b(SMP|MTS)\b/i.test(u)) return 'SMP';
     }
-    return 'all';
+    return 'SD';
   });
 
   // Attendance management state (KIRI: Pos Presensi & Aksi)
@@ -103,16 +105,26 @@ export default function FieldTrialView() {
     return map;
   }, [teams]);
 
-  // Current active plan: MUST ALWAYS BE POPULATED
-  const currentPlan = useMemo(() => {
-    const hasValidSd = settings?.trialPlan?.SD?.slots?.some(Boolean);
-    const hasValidSmp = settings?.trialPlan?.SMP?.slots?.some(Boolean);
+  // Signature hasil lotting TM saat ini agar jadwal UCL otomatis sinkron saat nomor undian TM berubah
+  const currentTmLotSignature = useMemo(() => {
+    return teams
+      .filter(t => t.lotNumber)
+      .map(t => `${t.id}:${t.lotNumber}`)
+      .sort()
+      .join('|');
+  }, [teams]);
 
-    if (hasValidSd || hasValidSmp) {
-      return settings.trialPlan;
+  // Current active plan: otomatis mengikuti hasil lotting TM (1 sekolah berdekatan) jika belum disesuaikan manual untuk lotting TM saat ini
+  const currentPlan = useMemo(() => {
+    const savedPlan = settings?.trialPlan;
+    const hasValidSd = savedPlan?.SD?.slots?.some(Boolean);
+    const hasValidSmp = savedPlan?.SMP?.slots?.some(Boolean);
+
+    if ((hasValidSd || hasValidSmp) && savedPlan?.tmLotSignature === currentTmLotSignature) {
+      return savedPlan;
     }
     return generateSmartTrialPlan(teams);
-  }, [settings?.trialPlan, teams]);
+  }, [settings?.trialPlan, currentTmLotSignature, teams]);
 
   // Active attendance data from settings
   const trialAttendance = useMemo(() => {
@@ -195,31 +207,47 @@ export default function FieldTrialView() {
     return `${hh}.${mm} WIB`;
   };
 
-  // Attendance Statistics
+  // Attendance Statistics (Global & Per Jenjang)
   const attendanceStats = useMemo(() => {
-    let totalScheduled = 0;
-    let checkedIn = 0;
-    let checkedOut = 0;
-
-    const countSlot = (teamId) => {
-      if (!teamId) return;
-      totalScheduled++;
-      const att = trialAttendance[teamId];
-      if (att?.status === 'checked_out') {
-        checkedOut++;
-      } else if (att?.status === 'checked_in') {
-        checkedIn++;
-      }
+    const calcForSlots = (slots = []) => {
+      let totalScheduled = 0;
+      let checkedIn = 0;
+      let checkedOut = 0;
+      slots.forEach((teamId) => {
+        if (!teamId) return;
+        totalScheduled++;
+        const att = trialAttendance[teamId];
+        if (att?.status === 'checked_out') {
+          checkedOut++;
+        } else if (att?.status === 'checked_in') {
+          checkedIn++;
+        }
+      });
+      const notArrived = Math.max(0, totalScheduled - checkedIn - checkedOut);
+      const percentDone = totalScheduled > 0 ? Math.round(((checkedIn + checkedOut) / totalScheduled) * 100) : 0;
+      return { totalScheduled, checkedIn, checkedOut, notArrived, percentDone };
     };
 
-    currentPlan.SD?.slots?.forEach(countSlot);
-    currentPlan.SMP?.slots?.forEach(countSlot);
-
+    const sd = calcForSlots(currentPlan.SD?.slots);
+    const smp = calcForSlots(currentPlan.SMP?.slots);
+    const totalScheduled = sd.totalScheduled + smp.totalScheduled;
+    const checkedIn = sd.checkedIn + smp.checkedIn;
+    const checkedOut = sd.checkedOut + smp.checkedOut;
     const notArrived = Math.max(0, totalScheduled - checkedIn - checkedOut);
     const percentDone = totalScheduled > 0 ? Math.round(((checkedIn + checkedOut) / totalScheduled) * 100) : 0;
 
-    return { totalScheduled, checkedIn, checkedOut, notArrived, percentDone };
+    return { totalScheduled, checkedIn, checkedOut, notArrived, percentDone, SD: sd, SMP: smp };
   }, [currentPlan, trialAttendance]);
+
+  const activeJenjang = mobileArenaFilter === 'SMP' ? 'SMP' : 'SD';
+  const activeAttendanceStats = attendanceStats[activeJenjang] || attendanceStats;
+
+  const handleSelectJenjangTab = (jenjang) => {
+    setMobileArenaFilter(jenjang);
+    if (activeSelectedTeam && activeSelectedTeam.jenjang !== jenjang) {
+      setActiveSelectedTeam(null);
+    }
+  };
 
   // Daftar Flat Seluruh Peleton Terjadwal untuk Panel Kiri
   const scheduledTeamsList = useMemo(() => {
@@ -249,9 +277,11 @@ export default function FieldTrialView() {
     return list;
   }, [currentPlan, teamsMap]);
 
-  // Filter list untuk antrean aksi di panel kiri
+  // Filter list untuk antrean aksi di panel kiri (dipisah per tab SD / SMP)
   const filteredActionList = useMemo(() => {
     return scheduledTeamsList.filter(item => {
+      if (item.jenjang !== activeJenjang) return false;
+
       const att = trialAttendance[item.team.id];
       const status = att?.status;
 
@@ -273,7 +303,7 @@ export default function FieldTrialView() {
 
       return true;
     });
-  }, [scheduledTeamsList, trialAttendance, leftAttendanceTab, searchQuery]);
+  }, [scheduledTeamsList, activeJenjang, trialAttendance, leftAttendanceTab, searchQuery]);
 
   // Quick Action: 1-Click Check-In (KIRI)
   const handleQuickCheckIn = (team, slotInfo) => {
@@ -359,8 +389,13 @@ export default function FieldTrialView() {
   };
 
   // Reset Attendance (Undo back to Belum Hadir)
-  const handleResetAttendance = (teamId) => {
-    if (!window.confirm('Reset status presensi peleton ini kembali ke Belum Hadir?')) return;
+  const handleResetAttendance = async (teamId) => {
+    const ok = await appConfirm('Reset status presensi peleton ini kembali ke Belum Hadir?', {
+      title: 'Reset Presensi',
+      confirmText: 'Reset',
+      variant: 'danger',
+    });
+    if (!ok) return;
     const nextAttendance = { ...trialAttendance };
     delete nextAttendance[teamId];
     updateSettings({ trialAttendance: nextAttendance });
@@ -389,8 +424,13 @@ export default function FieldTrialView() {
   };
 
   // Action: Unpublish / Reopen
-  const handleUnpublishSchedule = () => {
-    if (window.confirm('Buka kunci jadwal untuk kembali ke mode DRAFT dan menyembunyikan jadwal dari peserta?')) {
+  const handleUnpublishSchedule = async () => {
+    const ok = await appConfirm('Buka kunci jadwal untuk kembali ke mode DRAFT dan menyembunyikan jadwal dari peserta?', {
+      title: 'Buka Kunci Jadwal',
+      confirmText: 'Buka Kunci',
+      variant: 'danger',
+    });
+    if (ok) {
       updateSettings({
         trialSchedulePublished: false,
         trialScheduleRatifiedAt: null
@@ -618,35 +658,32 @@ export default function FieldTrialView() {
           <div className="bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden">
             
             {/* Header Pos Presensi Ringkas */}
-            <div className="p-3 sm:px-4 bg-slate-50/80 border-b border-slate-200/80 text-slate-900 flex items-center justify-between gap-2">
-              <div className="flex items-center gap-2 min-w-0">
-                <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center justify-center shrink-0">
-                  <UserCheck className="w-3.5 h-3.5" />
+            <div className="px-3.5 py-3 sm:px-4 bg-white border-b border-slate-100 text-slate-900 flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200/80 flex items-center justify-center shrink-0">
+                  <UserCheck className="w-4 h-4" />
                 </div>
                 <div className="min-w-0">
-                  <div className="flex items-center gap-1.5 flex-wrap">
-                    <h3 className="font-black text-xs sm:text-sm uppercase tracking-tight text-slate-900">
-                      Pos Presensi Gladi
-                    </h3>
-                    <span className="text-[10px] text-slate-500 font-mono font-bold">
-                      ({attendanceStats.totalScheduled} Peleton)
-                    </span>
-                  </div>
-                  <p className="text-[10px] sm:text-[11px] text-slate-500 truncate">
+                  <h3 className="font-black text-xs sm:text-sm uppercase tracking-tight text-slate-900 leading-tight truncate">
+                    Pos Presensi Gladi
+                  </h3>
+                  <p className="text-[10.5px] text-slate-500 truncate mt-0.5">
                     {EVENT.FIELD_TRIAL_FULL_DATE || 'Sabtu, 16 Jan 2027'} • 06.30 WIB
                   </p>
                 </div>
               </div>
 
-              {/* Status Gladi & Tombol Panitia Ringkas */}
+              {/* Status Gladi & Tombol Panitia Ringkas (Kontras Jelas) */}
               <div className="flex items-center gap-1.5 shrink-0">
                 {isPublished ? (
-                  <span className="px-2 py-0.5 rounded-full text-[9px] font-black uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
-                    Sah
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                    <span>Sah</span>
                   </span>
                 ) : (
-                  <span className="px-2 py-0.5 rounded-full text-[9px] font-black uppercase bg-amber-500/20 text-amber-300 border border-amber-500/40">
-                    Draft
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-50 text-amber-800 border border-amber-200">
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+                    <span>Draft</span>
                   </span>
                 )}
 
@@ -655,7 +692,7 @@ export default function FieldTrialView() {
                     <button
                       type="button"
                       onClick={handleUnpublishSchedule}
-                      className="p-1 rounded-lg bg-white/10 hover:bg-white/20 text-slate-200 text-xs cursor-pointer"
+                      className="p-1.5 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-600 hover:text-slate-900 border border-slate-200 transition-colors cursor-pointer"
                       title="Buka Kunci (Revisi Jadwal)"
                     >
                       <Unlock className="w-3.5 h-3.5" />
@@ -664,7 +701,7 @@ export default function FieldTrialView() {
                     <button
                       type="button"
                       onClick={() => setShowConfirmPublishModal(true)}
-                      className="px-2 py-0.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] font-bold flex items-center gap-1 cursor-pointer"
+                      className="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-bold flex items-center gap-1 cursor-pointer transition-colors shadow-2xs"
                       title="Sahkan Jadwal Resmi"
                     >
                       <FileCheck className="w-3 h-3" />
@@ -675,60 +712,105 @@ export default function FieldTrialView() {
               </div>
             </div>
 
+            {/* Level 1 Navigation: Tab Jenjang Flush (SD / MI vs SMP / MTs) */}
+            <div className="grid grid-cols-2 border-b border-slate-200 bg-slate-50/60">
+              <button
+                type="button"
+                onClick={() => handleSelectJenjangTab('SD')}
+                className={`relative py-2.5 px-3 text-xs transition-all flex items-center justify-center gap-2 cursor-pointer border-r border-slate-200/80 ${
+                  activeJenjang === 'SD'
+                    ? 'bg-white text-red-700 font-black'
+                    : 'text-slate-500 hover:text-slate-800 hover:bg-white/60 font-bold'
+                }`}
+              >
+                <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${activeJenjang === 'SD' ? 'bg-red-600' : 'bg-slate-300'}`} />
+                <span>SD / MI</span>
+                <span className={`px-1.5 py-0.5 rounded-md text-[10px] font-mono font-black leading-none shrink-0 ${
+                  activeJenjang === 'SD' ? 'bg-red-100 text-red-700' : 'bg-slate-200/80 text-slate-600'
+                }`}>
+                  {attendanceStats.SD.totalScheduled}
+                </span>
+                {activeJenjang === 'SD' && (
+                  <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-600" />
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleSelectJenjangTab('SMP')}
+                className={`relative py-2.5 px-3 text-xs transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                  activeJenjang === 'SMP'
+                    ? 'bg-white text-blue-700 font-black'
+                    : 'text-slate-500 hover:text-slate-800 hover:bg-white/60 font-bold'
+                }`}
+              >
+                <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${activeJenjang === 'SMP' ? 'bg-blue-600' : 'bg-slate-300'}`} />
+                <span>SMP / MTs</span>
+                <span className={`px-1.5 py-0.5 rounded-md text-[10px] font-mono font-black leading-none shrink-0 ${
+                  activeJenjang === 'SMP' ? 'bg-blue-100 text-blue-700' : 'bg-slate-200/80 text-slate-600'
+                }`}>
+                  {attendanceStats.SMP.totalScheduled}
+                </span>
+                {activeJenjang === 'SMP' && (
+                  <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600" />
+                )}
+              </button>
+            </div>
+
             <div className="p-3 space-y-2.5">
-              {/* Segmented Control: Tab Antrean + Counter Stats Interaktif */}
-              <div className="grid grid-cols-3 p-1 rounded-xl bg-slate-100 text-slate-600 text-xs font-bold gap-1">
+              {/* Level 2 Filter: Status Presensi */}
+              <div className="grid grid-cols-3 p-1 rounded-xl bg-slate-100/90 border border-slate-200/70 text-slate-600 text-[11px] font-bold gap-1">
                 <button
                   type="button"
                   onClick={() => setLeftAttendanceTab('not_arrived')}
-                  className={`py-1.5 px-1.5 rounded-lg text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                  className={`py-1.5 px-1.5 rounded-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                     leftAttendanceTab === 'not_arrived'
-                      ? 'bg-white text-amber-900 font-black shadow-xs'
-                      : 'hover:text-slate-900 text-slate-600'
+                      ? 'bg-white text-amber-900 font-black shadow-2xs ring-1 ring-slate-200/80'
+                      : 'hover:text-slate-900 text-slate-500'
                   }`}
                 >
-                  <span className={`w-2 h-2 rounded-full shrink-0 ${leftAttendanceTab === 'not_arrived' ? 'bg-amber-500' : 'bg-slate-300'}`} />
+                  <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${leftAttendanceTab === 'not_arrived' ? 'bg-amber-500' : 'bg-slate-300'}`} />
                   <span className="truncate">Belum</span>
-                  <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-mono font-black shrink-0 ${
-                    leftAttendanceTab === 'not_arrived' ? 'bg-amber-100 text-amber-800' : 'bg-slate-200 text-slate-600'
+                  <span className={`px-1.5 py-0.5 rounded-md text-[9.5px] font-mono font-black leading-none shrink-0 ${
+                    leftAttendanceTab === 'not_arrived' ? 'bg-amber-100 text-amber-800' : 'bg-slate-200/80 text-slate-600'
                   }`}>
-                    {attendanceStats.notArrived}
+                    {activeAttendanceStats.notArrived}
                   </span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => setLeftAttendanceTab('checked_in')}
-                  className={`py-1.5 px-1.5 rounded-lg text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                  className={`py-1.5 px-1.5 rounded-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                     leftAttendanceTab === 'checked_in'
-                      ? 'bg-white text-emerald-900 font-black shadow-xs'
-                      : 'hover:text-slate-900 text-slate-600'
+                      ? 'bg-white text-emerald-900 font-black shadow-2xs ring-1 ring-slate-200/80'
+                      : 'hover:text-slate-900 text-slate-500'
                   }`}
                 >
-                  <span className={`w-2 h-2 rounded-full shrink-0 ${leftAttendanceTab === 'checked_in' ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300'}`} />
+                  <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${leftAttendanceTab === 'checked_in' ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300'}`} />
                   <span className="truncate">Di Lokasi</span>
-                  <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-mono font-black shrink-0 ${
-                    leftAttendanceTab === 'checked_in' ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200 text-slate-600'
+                  <span className={`px-1.5 py-0.5 rounded-md text-[9.5px] font-mono font-black leading-none shrink-0 ${
+                    leftAttendanceTab === 'checked_in' ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200/80 text-slate-600'
                   }`}>
-                    {attendanceStats.checkedIn}
+                    {activeAttendanceStats.checkedIn}
                   </span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => setLeftAttendanceTab('checked_out')}
-                  className={`py-1.5 px-1.5 rounded-lg text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                  className={`py-1.5 px-1.5 rounded-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                     leftAttendanceTab === 'checked_out'
-                      ? 'bg-white text-blue-900 font-black shadow-xs'
-                      : 'hover:text-slate-900 text-slate-600'
+                      ? 'bg-white text-blue-900 font-black shadow-2xs ring-1 ring-slate-200/80'
+                      : 'hover:text-slate-900 text-slate-500'
                   }`}
                 >
-                  <span className={`w-2 h-2 rounded-full shrink-0 ${leftAttendanceTab === 'checked_out' ? 'bg-blue-500' : 'bg-slate-300'}`} />
+                  <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${leftAttendanceTab === 'checked_out' ? 'bg-blue-500' : 'bg-slate-300'}`} />
                   <span className="truncate">Selesai</span>
-                  <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-mono font-black shrink-0 ${
-                    leftAttendanceTab === 'checked_out' ? 'bg-blue-100 text-blue-800' : 'bg-slate-200 text-slate-600'
+                  <span className={`px-1.5 py-0.5 rounded-md text-[9.5px] font-mono font-black leading-none shrink-0 ${
+                    leftAttendanceTab === 'checked_out' ? 'bg-blue-100 text-blue-800' : 'bg-slate-200/80 text-slate-600'
                   }`}>
-                    {attendanceStats.checkedOut}
+                    {activeAttendanceStats.checkedOut}
                   </span>
                 </button>
               </div>
@@ -825,14 +907,14 @@ export default function FieldTrialView() {
                 </div>
               )}
 
-              {/* DAFTAR PELETON 2 KOLOM (PROPORSI PROPORSIONAL, TIDAK LONJONG) */}
+              {/* DAFTAR PELETON 1 KOLOM (NAMA SEKOLAH & DANTON TAMPIL PENUH) */}
               <div className="overflow-y-auto pr-1 max-h-[calc(100vh-250px)] min-h-[300px]">
                 {filteredActionList.length === 0 ? (
                   <div className="py-12 text-center text-xs text-slate-400">
-                    Tidak ada peleton dalam antrean ini.
+                    Tidak ada peleton {activeJenjang} dalam antrean ini.
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-2 sm:gap-2.5 items-start content-start">
+                  <div className="flex flex-col gap-2.5">
                     {filteredActionList.map((item) => {
                       const att = trialAttendance[item.team.id];
                       const isItemActive = activeSelectedTeam?.team?.id === item.team.id;
@@ -1210,167 +1292,267 @@ export default function FieldTrialView() {
                   </span>
                 </div>
               ) : (
-                <div className="flex items-center gap-1 rounded-xl border border-slate-200/80 bg-slate-100/80 p-1 text-[10px] font-black uppercase tracking-wider">
-                  <button
-                    type="button"
-                    onClick={() => setMobileArenaFilter('all')}
-                    className={`rounded-lg px-2.5 py-1.5 transition-all cursor-pointer ${
-                      mobileArenaFilter === 'all'
-                        ? 'bg-white text-slate-900 shadow-xs border border-slate-200/70 font-black'
-                        : 'text-slate-500 hover:text-slate-900'
-                    }`}
-                    title="Tampilkan Kedua Arena"
-                  >
-                    Semua
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setMobileArenaFilter('SD')}
-                    className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 transition-all cursor-pointer ${
-                      mobileArenaFilter === 'SD'
-                        ? 'bg-red-600 text-white shadow-xs font-black'
-                        : 'text-red-700 hover:bg-red-50'
-                    }`}
-                    title="Fokus Arena 1 (SD)"
-                  >
-                    <span className="w-1.5 h-1.5 rounded-full bg-red-400" />
-                    <span>Arena 1 (SD)</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setMobileArenaFilter('SMP')}
-                    className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 transition-all cursor-pointer ${
-                      mobileArenaFilter === 'SMP'
-                        ? 'bg-blue-600 text-white shadow-xs font-black'
-                        : 'text-blue-700 hover:bg-blue-50'
-                    }`}
-                    title="Fokus Arena 2 (SMP)"
-                  >
-                    <span className="w-1.5 h-1.5 rounded-full bg-blue-400" />
-                    <span>Arena 2 (SMP)</span>
-                  </button>
+                <div className="flex items-center gap-2 flex-wrap">
+                  {isStaff && (
+                    <button
+                      type="button"
+                      onClick={handleAutoGeneratePlan}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300/80 text-[11px] font-black transition-all cursor-pointer active:scale-95"
+                      title="Susun ulang jadwal UCL mengikuti urutan hasil lotting TM terbaru (2 peleton 1 sekolah otomatis berdekatan)"
+                    >
+                      <RefreshCw className="w-3.5 h-3.5 text-amber-600" />
+                      <span>Sinkron Hasil TM</span>
+                    </button>
+                  )}
+
+                  <div className="flex items-center gap-1 rounded-xl border border-slate-200/80 bg-slate-100/80 p-1 text-[10px] font-black uppercase tracking-wider">
+                    <button
+                      type="button"
+                      onClick={() => handleSelectJenjangTab('SD')}
+                      className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 transition-all cursor-pointer ${
+                        activeJenjang === 'SD'
+                          ? 'bg-red-600 text-white shadow-xs font-black'
+                          : 'text-red-700 hover:bg-red-50'
+                      }`}
+                      title="Tampilkan Arena 1 (SD / MI)"
+                    >
+                      <span className={`w-1.5 h-1.5 rounded-full ${activeJenjang === 'SD' ? 'bg-red-200' : 'bg-red-500'}`} />
+                      <span>Arena 1 (SD)</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleSelectJenjangTab('SMP')}
+                      className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 transition-all cursor-pointer ${
+                        activeJenjang === 'SMP'
+                          ? 'bg-blue-600 text-white shadow-xs font-black'
+                          : 'text-blue-700 hover:bg-blue-50'
+                      }`}
+                      title="Tampilkan Arena 2 (SMP / MTs)"
+                    >
+                      <span className={`w-1.5 h-1.5 rounded-full ${activeJenjang === 'SMP' ? 'bg-blue-200' : 'bg-blue-500'}`} />
+                      <span>Arena 2 (SMP)</span>
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
 
-            <div className="p-2 sm:p-3.5">
-              {/* Petunjuk Geser jika di Mobile pada Mode Semua */}
-              {mobileArenaFilter === 'all' && (
-                <div className="flex items-center justify-between text-[10px] text-slate-500 pb-2 px-1 sm:hidden">
-                  <span className="font-medium">↔ Geser horizontal untuk melihat kedua arena</span>
-                  <span className="text-[9px] text-slate-400">atau pilih tab Arena 1 / 2 di atas</span>
+            <div className="p-2.5 sm:p-4">
+              {/* Tabel Jadwal Terstruktur By Content (1 Arena Aktif: SD atau SMP) */}
+              <div className="rounded-2xl border border-slate-200/90 overflow-hidden bg-white shadow-2xs">
+                {/* Banner Arena Aktif */}
+                <div className={`px-3.5 sm:px-4 py-2.5 flex items-center justify-between gap-2 text-white ${
+                  activeJenjang === 'SD'
+                    ? 'bg-gradient-to-r from-red-600 to-red-700'
+                    : 'bg-gradient-to-r from-blue-600 to-blue-700'
+                }`}>
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className="w-2 h-2 rounded-full bg-white/80 shrink-0" />
+                    <span className="text-[11px] sm:text-xs font-black uppercase tracking-wider truncate">
+                      {activeJenjang === 'SD' ? 'Arena 1: SD / MI' : 'Arena 2: SMP / MTs'}
+                    </span>
+                    <span className="text-[9.5px] font-bold rounded-full bg-white/20 px-2 py-0.5 shrink-0 hidden sm:inline">
+                      {activeJenjang === 'SD' ? 'Lapangan Basket' : 'Lapangan Embung'}
+                    </span>
+                  </div>
+                  <span className="text-[10px] font-mono font-bold bg-black/20 px-2.5 py-0.5 rounded-full shrink-0">
+                    {activeAttendanceStats.totalScheduled} / {TRIAL_TIME_SLOTS.length} Slot Terisi
+                  </span>
                 </div>
-              )}
 
-              {/* Tabel Matriks */}
-            <div className="rounded-2xl border border-slate-200 overflow-x-auto bg-white shadow-2xs">
-              <table className={`w-full text-left text-xs border-collapse ${
-                mobileArenaFilter === 'all' ? 'min-w-[620px] md:min-w-0 table-fixed' : 'min-w-0 table-fixed'
-              }`}>
-                <colgroup>
-                  <col className="w-8 sm:w-10" />
-                  <col className="w-24 sm:w-28" />
-                  {(mobileArenaFilter === 'all' || mobileArenaFilter === 'SD') && (
-                    <col className={mobileArenaFilter === 'all' ? "w-[260px] sm:w-[calc(50%-75px)]" : "w-auto"} />
-                  )}
-                  {(mobileArenaFilter === 'all' || mobileArenaFilter === 'SMP') && (
-                    <col className={mobileArenaFilter === 'all' ? "w-[260px] sm:w-[calc(50%-75px)]" : "w-auto"} />
-                  )}
-                </colgroup>
-                <thead>
-                  <tr className="uppercase text-[9.5px] tracking-wider font-black">
-                    <th className="py-3 px-1 sm:px-1.5 text-center bg-slate-900 text-slate-200 border-b border-r border-slate-800">#</th>
-                    <th className="py-3 px-2 sm:px-3 bg-slate-900 text-slate-200 border-b border-r border-slate-800">
-                      <div className="leading-tight">Waktu</div>
-                      <div className="text-[8px] font-normal text-slate-400">In • Out (WIB)</div>
-                    </th>
-                    {(mobileArenaFilter === 'all' || mobileArenaFilter === 'SD') && (
-                      <th className="py-3 px-3 sm:px-3.5 bg-gradient-to-r from-red-600 to-red-700 text-white border-r border-red-800">
-                        <div className="flex items-center justify-between gap-1.5 min-w-0">
-                          <span className="truncate font-black">Arena 1: SD / MI</span>
-                          <span className="text-[8.5px] font-bold rounded-full bg-white/20 px-2 py-0.5 shrink-0 hidden sm:inline">Lapangan Basket</span>
-                        </div>
-                      </th>
-                    )}
-                    {(mobileArenaFilter === 'all' || mobileArenaFilter === 'SMP') && (
-                      <th className="py-3 px-3 sm:px-3.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white">
-                        <div className="flex items-center justify-between gap-1.5 min-w-0">
-                          <span className="truncate font-black">Arena 2: SMP / MTs</span>
-                          <span className="text-[8.5px] font-bold rounded-full bg-white/20 px-2 py-0.5 shrink-0 hidden sm:inline">Lapangan Embung</span>
-                        </div>
-                      </th>
-                    )}
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {TRIAL_TIME_SLOTS.map((slotInfo, slotIdx) => {
-                    const sdTeamId = currentPlan.SD?.slots?.[slotIdx];
-                    const smpTeamId = currentPlan.SMP?.slots?.[slotIdx];
-                    const sdTeam = sdTeamId ? teamsMap.get(sdTeamId) : null;
-                    const smpTeam = smpTeamId ? teamsMap.get(smpTeamId) : null;
-
-                    // Priority 2: Detect twin neighbor from the same school
-                    const isSdTwin = sdTeam && (
-                      (slotIdx > 0 && normalizeSchoolName(teamsMap.get(currentPlan.SD?.slots?.[slotIdx - 1])?.schoolName) === normalizeSchoolName(sdTeam.schoolName)) ||
-                      (slotIdx < 17 && normalizeSchoolName(teamsMap.get(currentPlan.SD?.slots?.[slotIdx + 1])?.schoolName) === normalizeSchoolName(sdTeam.schoolName))
-                    );
-
-                    const isSmpTwin = smpTeam && (
-                      (slotIdx > 0 && normalizeSchoolName(teamsMap.get(currentPlan.SMP?.slots?.[slotIdx - 1])?.schoolName) === normalizeSchoolName(smpTeam.schoolName)) ||
-                      (slotIdx < 17 && normalizeSchoolName(teamsMap.get(currentPlan.SMP?.slots?.[slotIdx + 1])?.schoolName) === normalizeSchoolName(smpTeam.schoolName))
-                    );
-
-                    const isSdSwapSelected = swapSource?.jenjang === 'SD' && swapSource?.slotIdx === slotIdx;
-                    const isSmpSwapSelected = swapSource?.jenjang === 'SMP' && swapSource?.slotIdx === slotIdx;
-
-                    return (
-                      <tr key={slotInfo.index} className="hover:bg-slate-50/70 transition-colors divide-x divide-slate-100">
-                        {/* Slot # */}
-                        <td className="py-2 px-1 text-center font-mono font-black text-slate-500 text-[11px]">
-                          #{String(slotInfo.index).padStart(2, '0')}
-                        </td>
-
-                        {/* Waktu (WIB): Jam Gladi, In & Out */}
-                        <td className="py-2 px-1.5 sm:px-2">
-                          <div className="font-mono font-black text-slate-900 text-[11px] leading-tight whitespace-nowrap">
-                            {slotInfo.time.replace(/\s*WIB/i, '')}
-                          </div>
-                          <div className="flex flex-col gap-0.5 mt-1 font-mono text-[9px]">
-                            <div className="inline-flex items-center gap-0.5 text-emerald-800 bg-emerald-50 px-1 py-0.2 rounded border border-emerald-200/80 w-fit whitespace-nowrap">
-                              <span className="text-[8px] uppercase font-black text-emerald-600">In:</span>
-                              <span className="font-bold">{slotInfo.checkIn || slotInfo.arrival}</span>
-                            </div>
-                            <div className="inline-flex items-center gap-0.5 text-slate-600 bg-slate-100 px-1 py-0.2 rounded border border-slate-200/60 w-fit whitespace-nowrap">
-                              <span className="text-[8px] uppercase font-black text-slate-500">Out:</span>
-                              <span className="font-bold">{slotInfo.checkOut || '15 Mnt'}</span>
-                            </div>
-                          </div>
-                        </td>
-
-                        {/* Kolom Arena 1 (SD) */}
-                        {(mobileArenaFilter === 'all' || mobileArenaFilter === 'SD') && (
-                          <td className={`py-1.5 px-1.5 sm:px-2 overflow-hidden transition-colors ${
-                            isSdSwapSelected ? 'bg-amber-100 ring-2 ring-amber-400' : 'bg-red-50/10'
-                          }`}>
-                            {renderScheduleOnlyCard(sdTeam, 'SD', slotIdx, slotInfo, isSdTwin)}
-                          </td>
-                        )}
-
-                        {/* Kolom Arena 2 (SMP) */}
-                        {(mobileArenaFilter === 'all' || mobileArenaFilter === 'SMP') && (
-                          <td className={`py-1.5 px-1.5 sm:px-2 overflow-hidden transition-colors ${
-                            isSmpSwapSelected ? 'bg-amber-100 ring-2 ring-amber-400' : 'bg-blue-50/10'
-                          }`}>
-                            {renderScheduleOnlyCard(smpTeam, 'SMP', slotIdx, slotInfo, isSmpTwin)}
-                          </td>
-                        )}
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs border-collapse table-auto">
+                    <thead>
+                      <tr className="bg-slate-900 text-slate-300 uppercase text-[9.5px] tracking-wider font-black border-b border-slate-800">
+                        <th className="py-2.5 px-2.5 text-center w-[1%] whitespace-nowrap">#</th>
+                        <th className="py-2.5 px-3 w-[1%] whitespace-nowrap">Waktu Gladi</th>
+                        <th className="py-2.5 px-3">Peleton / Sekolah</th>
+                        <th className="py-2.5 px-3 hidden sm:table-cell whitespace-nowrap">Danton</th>
+                        <th className="py-2.5 px-3 text-right w-[1%] whitespace-nowrap">Status</th>
                       </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {TRIAL_TIME_SLOTS.map((slotInfo, slotIdx) => {
+                        const teamId = currentPlan[activeJenjang]?.slots?.[slotIdx];
+                        const team = teamId ? teamsMap.get(teamId) : null;
+                        const isSwapSelected = swapSource?.jenjang === activeJenjang && swapSource?.slotIdx === slotIdx;
+                        const isTeamActiveSelected = team && activeSelectedTeam?.team?.id === team.id;
+                        const isMyTeam = team && ((currentTeam?.id && team.id === currentTeam.id) || (currentUser?.teamId && team.id === currentUser.teamId));
+                        const att = team ? trialAttendance[team.id] : null;
+                        const isCheckedIn = att?.status === 'checked_in';
+                        const isCheckedOut = att?.status === 'checked_out';
+                        const dantonName = team ? (team.dantonName || team.roster?.danton?.name || '-') : '';
+                        const logoRaw = team ? (team.files?.schoolLogo?.url || team.file_logo_sekolah || team.logoUrl) : '';
+                        const fallbackAvatar = team
+                          ? `https://ui-avatars.com/api/?name=${encodeURIComponent(team.schoolName)}&background=${activeJenjang === 'SD' ? 'b91c1c' : '1d4ed8'}&color=fff&bold=true`
+                          : '';
+
+                        const handleRowClick = () => {
+                          if (!isStaff) return;
+                          if (!team) {
+                            if (!isPublished) handleSlotClick(activeJenjang, slotIdx, null);
+                            return;
+                          }
+                          if (!isPublished && swapSource) {
+                            handleSlotClick(activeJenjang, slotIdx, team.id);
+                          } else {
+                            setActiveSelectedTeam({ team, slotInfo, jenjang: activeJenjang, slotIdx });
+                          }
+                        };
+
+                        return (
+                          <tr
+                            key={slotInfo.index}
+                            onClick={handleRowClick}
+                            className={`transition-colors ${
+                              isStaff && (team || !isPublished) ? 'cursor-pointer' : ''
+                            } ${
+                              isSwapSelected
+                                ? 'bg-amber-50 ring-1 ring-inset ring-amber-400'
+                                : isTeamActiveSelected
+                                ? 'bg-emerald-50/70'
+                                : isMyTeam
+                                ? 'bg-emerald-50/50'
+                                : !team
+                                ? 'bg-slate-50/40 hover:bg-slate-50'
+                                : 'bg-white hover:bg-slate-50/90'
+                            }`}
+                          >
+                            {/* Kolom 1: Slot # */}
+                            <td className="py-2.5 px-2.5 text-center font-mono font-black text-slate-500 text-[11px] whitespace-nowrap align-middle">
+                              #{String(slotInfo.index).padStart(2, '0')}
+                            </td>
+
+                            {/* Kolom 2: Waktu Gladi (In & Out Ringkas) */}
+                            <td className="py-2.5 px-3 whitespace-nowrap align-middle">
+                              <div className="font-mono font-black text-slate-900 text-[11.5px] leading-tight">
+                                {slotInfo.time.replace(/\s*WIB/i, '')} <span className="text-[9.5px] font-bold text-slate-400">WIB</span>
+                              </div>
+                              <div className="flex items-center gap-1 mt-1 font-mono text-[9px]">
+                                <span className="inline-flex items-center gap-0.5 text-emerald-800 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200/70">
+                                  <span className="font-black text-emerald-600">IN</span>
+                                  <span className="font-bold">{(slotInfo.checkIn || slotInfo.arrival || '').replace(/\s*WIB/i, '')}</span>
+                                </span>
+                                <span className="inline-flex items-center gap-0.5 text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200/70">
+                                  <span className="font-black text-slate-500">OUT</span>
+                                  <span className="font-bold">{(slotInfo.checkOut || '15m').replace(/\s*WIB/i, '')}</span>
+                                </span>
+                              </div>
+                            </td>
+
+                            {!team ? (
+                              <td colSpan={3} className="py-3 px-3 align-middle">
+                                <div className={`py-2 px-3 rounded-xl border border-dashed text-center text-[11px] font-bold transition-colors ${
+                                  isStaff && !isPublished
+                                    ? 'border-slate-300 text-slate-500 hover:border-slate-400 hover:text-slate-800 hover:bg-white'
+                                    : 'border-slate-200 text-slate-400 bg-white/50'
+                                }`}>
+                                  {isStaff && !isPublished ? `+ Isi Peleton ${activeJenjang} di Slot #${String(slotInfo.index).padStart(2, '0')}` : '— Slot Kosong —'}
+                                </div>
+                              </td>
+                            ) : (
+                              <>
+                                {/* Kolom 3: Peleton / Sekolah */}
+                                <td className="py-2.5 px-3 align-middle">
+                                  <div className="flex items-center gap-2.5 min-w-0">
+                                    <div className="w-8 h-8 rounded-lg bg-white border border-slate-200 p-0.5 flex items-center justify-center shrink-0 overflow-hidden shadow-2xs">
+                                      <img
+                                        src={logoRaw ? formatImageUrl(logoRaw) : fallbackAvatar}
+                                        alt={team.schoolName}
+                                        className="w-full h-full object-contain"
+                                        onError={(e) => {
+                                          e.target.onerror = null;
+                                          e.target.src = fallbackAvatar;
+                                        }}
+                                      />
+                                    </div>
+                                    <div className="min-w-0">
+                                      <div className="flex items-center gap-1.5 flex-wrap">
+                                        <span className="font-extrabold text-xs sm:text-[13px] text-slate-900 leading-snug">
+                                          {team.schoolName}
+                                        </span>
+                                        {team.lotNumber && (
+                                          <span className="px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-600 border border-slate-200 font-mono text-[9.5px] font-bold shrink-0">
+                                            TM #{String(team.lotNumber).padStart(2, '0')}
+                                          </span>
+                                        )}
+                                        {(() => {
+                                          const prevId = slotIdx > 0 ? currentPlan[activeJenjang]?.slots?.[slotIdx - 1] : null;
+                                          const nextId = slotIdx < 17 ? currentPlan[activeJenjang]?.slots?.[slotIdx + 1] : null;
+                                          const baseName = normalizeSchoolName(team.schoolBaseName || team.schoolName);
+                                          const isTwinAdj =
+                                            (prevId && normalizeSchoolName(teamsMap.get(prevId)?.schoolBaseName || teamsMap.get(prevId)?.schoolName) === baseName) ||
+                                            (nextId && normalizeSchoolName(teamsMap.get(nextId)?.schoolBaseName || teamsMap.get(nextId)?.schoolName) === baseName);
+                                          return isTwinAdj ? (
+                                            <span className="px-1.5 py-0.5 rounded-md bg-amber-50 text-amber-800 border border-amber-200 text-[9px] font-black uppercase shrink-0">
+                                              1 Sekolah
+                                            </span>
+                                          ) : null;
+                                        })()}
+                                        {isMyTeam && (
+                                          <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full font-black text-[8.5px] bg-emerald-600 text-white uppercase tracking-wider shrink-0">
+                                            <Sparkles className="w-2.5 h-2.5" />
+                                            <span>Peleton Anda</span>
+                                          </span>
+                                        )}
+                                      </div>
+                                      {/* Danton tampil di bawah nama sekolah khusus layar mobile */}
+                                      <div className="text-[10.5px] text-slate-500 font-medium mt-0.5 sm:hidden truncate">
+                                        Danton: <span className="text-slate-700 font-semibold">{dantonName}</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </td>
+
+                                {/* Kolom 4: Danton (Desktop) */}
+                                <td className="py-2.5 px-3 hidden sm:table-cell align-middle">
+                                  <span className="text-[11.5px] font-semibold text-slate-700 leading-snug block">
+                                    {dantonName}
+                                  </span>
+                                </td>
+
+                                {/* Kolom 5: Status Presensi & Aksi Draft */}
+                                <td className="py-2.5 px-3 text-right whitespace-nowrap align-middle">
+                                  <div className="inline-flex items-center justify-end gap-1.5">
+                                    {isCheckedOut ? (
+                                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-800 border border-blue-200">
+                                        <CheckCircle2 className="w-3 h-3 text-blue-600" />
+                                        <span>Selesai {att.checkOutTime?.replace(/\s*WIB/i, '')}</span>
+                                      </span>
+                                    ) : isCheckedIn ? (
+                                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-50 text-emerald-800 border border-emerald-300">
+                                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                        <span>Di Lokasi {att.checkInTime?.replace(/\s*WIB/i, '')}</span>
+                                      </span>
+                                    ) : (
+                                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-500 border border-slate-200/80">
+                                        <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                                        <span>Belum Tiba</span>
+                                      </span>
+                                    )}
+
+                                    {isStaff && !isPublished && (
+                                      <button
+                                        type="button"
+                                        onClick={(e) => handleRemoveFromSlot(e, activeJenjang, slotIdx)}
+                                        className="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+                                        title="Copot dari slot"
+                                      >
+                                        <X className="w-3.5 h-3.5" />
+                                      </button>
+                                    )}
+                                  </div>
+                                </td>
+                              </>
+                            )}
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </div>
-          </div>
         </div>
         </>
       )}

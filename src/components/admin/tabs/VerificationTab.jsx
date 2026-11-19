@@ -1,4 +1,5 @@
 import React from 'react';
+import { appAlert } from '../../../utils/appDialog.js';
 import {
   RefreshCw,
   Search,
@@ -233,7 +234,7 @@ export default function VerificationTab({
                       type="button"
                       onClick={() => {
                         if (!eligibility.isEligible) {
-                          alert(`Peleton belum dapat diverifikasi sah karena:\n\n• ${eligibility.issues.join('\n• ')}`);
+                          appAlert(`Peleton belum dapat diverifikasi sah karena:\n\n• ${eligibility.issues.join('\n• ')}`, { title: 'Berkas Belum Lengkap', variant: 'warning' });
                           return;
                         }
                         handleQuickVerify(team.id, 'verified');
@@ -465,7 +466,7 @@ export default function VerificationTab({
                             <button
                               onClick={() => {
                                 if (!eligibility.isEligible) {
-                                  alert(`Peleton belum dapat diverifikasi sah karena:\n\n• ${eligibility.issues.join('\n• ')}`);
+                                  appAlert(`Peleton belum dapat diverifikasi sah karena:\n\n• ${eligibility.issues.join('\n• ')}`, { title: 'Berkas Belum Lengkap', variant: 'warning' });
                                   return;
                                 }
                                 handleQuickVerify(team.id, 'verified');

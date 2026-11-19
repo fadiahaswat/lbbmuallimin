@@ -1,18 +1,22 @@
 import React, { useState, useMemo } from 'react';
 import {
-  Users,
   ChevronLeft,
   ChevronRight,
+  ArrowLeft,
   ArrowRight,
   Search,
   Sparkles,
   ShieldCheck,
   X,
   Building2,
-  Clock
+  Clock,
+  Layers,
+  LayoutGrid,
+  DoorOpen
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
 import { formatImageUrl } from '../../services/sheetService.js';
+import { appToast } from '../../utils/appDialog.js';
 import SimpaskorSidebarLayout from '../navigation/SimpaskorSidebarLayout.jsx';
 import PersonnelSwipeDeck from './components/PersonnelSwipeDeck.jsx';
 
@@ -76,11 +80,16 @@ function buildTeamPersonnels(team) {
     });
   }
 
-  // 3. 3 Cadangan
+  // 3. Cadangan — HANYA tampilkan cadangan yang benar-benar didaftarkan tim (tanpa template kosong)
   const cadanganArr = Array.isArray(r.cadangan) ? r.cadangan : [];
-  const cadanganTotal = Math.max(3, cadanganArr.length);
-  for (let i = 0; i < cadanganTotal; i++) {
-    const c = cadanganArr[i] || {};
+  cadanganArr.forEach((c, i) => {
+    if (!c || typeof c !== 'object') return;
+    const cleanName = String(c.name || '').trim();
+    const hasRealName = Boolean(cleanName && cleanName !== '-' && !/^cadangan\s*\d+$/i.test(cleanName));
+    const hasRealNisn = Boolean(c.nisn && String(c.nisn).trim() !== '' && String(c.nisn).trim() !== '-');
+    const hasRealPhoto = Boolean(c.photo && typeof c.photo === 'string' && c.photo !== '#' && !c.photo.startsWith('#'));
+    if (!hasRealName && !hasRealNisn && !hasRealPhoto) return;
+
     const num = i + 1;
     const cid = c.id || `c-${num}`;
     list.push({
@@ -89,7 +98,7 @@ function buildTeamPersonnels(team) {
       code: `C${num}`,
       roleType: 'cadangan',
       roleLabel: `Personel Cadangan ${num}`,
-      name: c.name || `Cadangan ${num}`,
+      name: cleanName || `Cadangan ${num}`,
       nisn: c.nisn || '-',
       className: c.class || '-',
       birthPlace: c.birthPlace || '',
@@ -97,7 +106,7 @@ function buildTeamPersonnels(team) {
       medicalHistory: c.medicalHistory || '',
       photo: c.photo || null,
     });
-  }
+  });
 
   return list;
 }
@@ -114,12 +123,9 @@ export default function DaerahPersiapanView() {
     staging,
     updateDP1PersonnelInspection,
     passToDP2,
-    startFieldTimer,
-    stopAndSaveFieldTimer,
-    fieldTimer,
-    updateTeamStaging,
     currentUser,
-    role
+    role,
+    isLocalhost
   } = useCompetition();
 
   const userRole = currentUser?.role || role || 'publik';
@@ -135,10 +141,10 @@ export default function DaerahPersiapanView() {
     );
   };
 
-  // Semua peleton yang sudah Check-In Basecamp, diurutkan berdasarkan nomor dada / undian
+  // Semua peleton yang sudah Check-In Basecamp (khusus localhost: bypass check-in, tampilkan semua non-rejected)
   const checkedInTeams = useMemo(() => {
     return teams
-      .filter(t => isTeamCheckedIn(t.id))
+      .filter(t => isLocalhost ? t.status !== 'rejected' : isTeamCheckedIn(t.id))
       .sort((a, b) => {
         const chestA = parseInt(a.chestNumber, 10);
         const chestB = parseInt(b.chestNumber, 10);
@@ -149,27 +155,23 @@ export default function DaerahPersiapanView() {
         return String(a.schoolName || '').localeCompare(String(b.schoolName || ''));
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [teams, staging]);
+  }, [teams, staging, isLocalhost]);
 
   const sdCheckedInTeams = useMemo(() => checkedInTeams.filter(t => t.jenjang === 'SD'), [checkedInTeams]);
   const smpCheckedInTeams = useMemo(() => checkedInTeams.filter(t => t.jenjang === 'SMP'), [checkedInTeams]);
 
-  // Pos aktif: 'SD' (DP 1 SD/MI) | 'SMP' (DP 1 SMP/MTs)
   const [activePosJenjang, setActivePosJenjang] = useState(() => {
     if (sdCheckedInTeams.length === 0 && smpCheckedInTeams.length > 0) return 'SMP';
     return 'SD';
   });
   const [selectedTeamId, setSelectedTeamId] = useState(null);
   const [isPickerOpen, setIsPickerOpen] = useState(true);
+  const [deckViewMode, setDeckViewMode] = useState('swipe'); // 'swipe' | 'grid'
   const [searchQuery, setSearchQuery] = useState('');
   const [stageFilter, setStageFilter] = useState('ALL'); // 'ALL' | 'WAITING' | 'READY'
-  const [toastMsg, setToastMsg] = useState(null);
 
   const showNotice = (msg) => {
-    setToastMsg(msg);
-    setTimeout(() => {
-      setToastMsg(prev => (prev === msg ? null : prev));
-    }, 3600);
+    appToast(msg, { variant: 'success' });
   };
 
   const posTeams = activePosJenjang === 'SD' ? sdCheckedInTeams : smpCheckedInTeams;
@@ -181,8 +183,12 @@ export default function DaerahPersiapanView() {
     const verified = personnels.filter(p =>
       p.aliasKeys.some(k => inspections[k]?.verified === true)
     ).length;
+    const flagged = personnels.filter(p =>
+      p.aliasKeys.some(k => inspections[k]?.verified === false && inspections[k]?.inspectedAt)
+    ).length;
     const hasExplicitInspections = Object.keys(inspections).length > 0;
     const isPassedDP1 = verified >= 22 || (!hasExplicitInspections && Boolean(st.dp1Passed));
+    const roomName = st?.basecamp?.roomName || st?.roomName || team.basecampRoom || '';
 
     let stageLabel = 'Antrean DP 1';
     let badgeTone = 'bg-slate-100 text-slate-700 border-slate-200';
@@ -193,7 +199,7 @@ export default function DaerahPersiapanView() {
       stageLabel = 'DP 2 • Siap Dinilai';
       badgeTone = 'bg-emerald-50 text-emerald-700 border-emerald-200';
     } else if (verified > 0) {
-      stageLabel = 'Sedang Dicek DP 1';
+      stageLabel = 'Proses DP 1';
       badgeTone = 'bg-blue-50 text-blue-700 border-blue-200';
     }
 
@@ -201,8 +207,10 @@ export default function DaerahPersiapanView() {
       inspections,
       personnels,
       verified,
+      flagged,
       total: personnels.length,
       isPassedDP1,
+      roomName,
       stageLabel,
       badgeTone
     };
@@ -231,8 +239,7 @@ export default function DaerahPersiapanView() {
 
   const activeTeam = useMemo(() => {
     if (!selectedTeamId) return null;
-    const found = posTeams.find(t => t.id === selectedTeamId);
-    return found || null;
+    return posTeams.find(t => t.id === selectedTeamId) || null;
   }, [posTeams, selectedTeamId]);
 
   const activeMeta = activeTeam ? getTeamStageMeta(activeTeam) : null;
@@ -271,7 +278,6 @@ export default function DaerahPersiapanView() {
     const prevVerified = verifiedCount;
     updateDP1PersonnelInspection(activeTeam.id, person.id, isVerified, note);
 
-    // Notifikasi otomatis saat tepat mencapai ambang 22 personel
     const wasAlreadyChecked = person.aliasKeys.some(k => dp1TeamInspections[k]?.verified === true);
     if (isVerified && !wasAlreadyChecked && prevVerified === 21) {
       if (passToDP2) passToDP2(activeTeam.id);
@@ -283,7 +289,7 @@ export default function DaerahPersiapanView() {
     if (!canOperateDP || !activeTeam) return;
     updateDP1PersonnelInspection(activeTeam.id, allPersonnels.map(p => p.id), true, '');
     if (passToDP2) passToDP2(activeTeam.id);
-    showNotice(`25 personel ${activeTeam.schoolName} terverifikasi — otomatis masuk DP 2 & Siap Dinilai!`);
+    showNotice(`${allPersonnels.length} personel ${activeTeam.schoolName} terverifikasi — otomatis masuk DP 2 & Siap Dinilai!`);
   };
 
   const isSDPos = activePosJenjang === 'SD';
@@ -294,299 +300,338 @@ export default function DaerahPersiapanView() {
       activeMenu="dp"
       title={`Pos DP 1 ${isSDPos ? 'SD / MI' : 'SMP / MTs'}`}
       subtitle="Inspeksi pasfoto & fisik 25 personel — otomatis masuk DP 2 & siap dinilai Dewan Juri"
-      rightActions={
-        <div className="flex items-center gap-1.5 p-1 bg-slate-100 rounded-xl border border-slate-200/80">
-          <button
-            type="button"
-            onClick={() => handleSwitchPos('SD')}
-            className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
-              isSDPos
-                ? 'bg-red-600 text-white shadow-sm'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
-            }`}
-          >
-            <span className={`w-2 h-2 rounded-full ${isSDPos ? 'bg-white' : 'bg-red-500'}`} />
-            <span>DP 1 SD / MI</span>
-            <span className={`px-1.5 py-0.5 rounded-md text-[10px] font-mono ${
-              isSDPos ? 'bg-white/20 text-white' : 'bg-slate-200/80 text-slate-600'
-            }`}>
-              {sdCheckedInTeams.length}
-            </span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => handleSwitchPos('SMP')}
-            className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
-              !isSDPos
-                ? 'bg-blue-600 text-white shadow-sm'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
-            }`}
-          >
-            <span className={`w-2 h-2 rounded-full ${!isSDPos ? 'bg-white' : 'bg-blue-500'}`} />
-            <span>DP 1 SMP / MTs</span>
-            <span className={`px-1.5 py-0.5 rounded-md text-[10px] font-mono ${
-              !isSDPos ? 'bg-white/20 text-white' : 'bg-slate-200/80 text-slate-600'
-            }`}>
-              {smpCheckedInTeams.length}
-            </span>
-          </button>
-        </div>
-      }
+      hideHeader={true}
     >
-      <div className="space-y-5">
-        {/* Toast Notification Non-Blocking */}
-        {toastMsg && (
-          <div className="bg-slate-900 text-white px-4 py-3 rounded-2xl shadow-lg flex items-center justify-between gap-3 text-xs font-semibold">
-            <div className="flex items-center gap-2.5">
-              <Sparkles className="w-4 h-4 text-emerald-400 shrink-0" />
-              <span>{toastMsg}</span>
-            </div>
-            <button
-              type="button"
-              onClick={() => setToastMsg(null)}
-              className="text-slate-400 hover:text-white cursor-pointer"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          </div>
-        )}
-
+      <div className="space-y-4">
         {/* ============================================================== */}
-        {/* LANGKAH 1: PEMILIHAN PELETON DI POS DP 1 SD / DP 1 SMP         */}
+        {/* SCREEN 1: ANTREAN PELETON POS DP 1 (CLEAN & ERGONOMIC)         */}
         {/* ============================================================== */}
-        {posTeams.length === 0 ? (
-          <div className="bg-white rounded-3xl p-12 text-center border border-slate-200 space-y-3 shadow-sm">
-            <div className="w-14 h-14 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto">
-              <Building2 className="w-7 h-7" />
-            </div>
-            <h4 className="text-base font-black text-slate-800">
-              Belum Ada Peleton {isSDPos ? 'SD / MI' : 'SMP / MTs'} di Antrean DP 1
-            </h4>
-            <p className="text-xs text-slate-500 max-w-md mx-auto leading-relaxed">
-              Peleton jenjang {isSDPos ? 'SD / MI' : 'SMP / MTs'} akan otomatis masuk ke Pos DP 1 ini segera setelah melakukan Check-In di Pos Basecamp.
-            </p>
-            {(isSDPos ? smpCheckedInTeams.length > 0 : sdCheckedInTeams.length > 0) && (
-              <button
-                type="button"
-                onClick={() => handleSwitchPos(isSDPos ? 'SMP' : 'SD')}
-                className="mt-2 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-colors cursor-pointer"
-              >
-                <span>Buka Pos DP 1 {isSDPos ? `SMP / MTs (${smpCheckedInTeams.length} Tim)` : `SD / MI (${sdCheckedInTeams.length} Tim)`}</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            )}
-          </div>
-        ) : showPickerScreen ? (
-          <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-sm space-y-4">
-            {/* Header Pemilihan Peleton */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
-              <div className="space-y-1 min-w-0">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider border whitespace-nowrap shrink-0 ${
-                    isSDPos
-                      ? 'bg-red-50 text-red-700 border-red-200'
-                      : 'bg-blue-50 text-blue-700 border-blue-200'
-                  }`}>
-                    Pos DP 1 {isSDPos ? 'SD / MI' : 'SMP / MTs'}
-                  </span>
-                  <span className="text-[11px] sm:text-xs text-slate-400 font-medium">
-                    Min. 22 personel cocok → otomatis ke DP 2 &amp; siap dinilai
-                  </span>
+        {showPickerScreen ? (
+          <section className="rounded-2xl border border-slate-200/90 bg-white shadow-[0_8px_30px_rgba(15,23,42,0.04)] overflow-hidden">
+            {/* Dark Obsidian Inspection Cockpit Header */}
+            <div className="bg-slate-950 text-white px-4 py-4 sm:px-6 sm:py-5 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+              <div className="flex items-start sm:items-center gap-3.5 min-w-0">
+                <div className="w-11 h-11 rounded-2xl bg-white/10 border border-white/10 text-amber-400 flex items-center justify-center shrink-0">
+                  <Clock className="w-5 h-5" />
                 </div>
-                <h2 className="text-base sm:text-lg font-black text-slate-900 tracking-tight">
-                  Pilih Peleton {isSDPos ? 'SD / MI' : 'SMP / MTs'} untuk Inspeksi Fisik
-                </h2>
+                <div className="min-w-0">
+                  <h1 className="text-[15px] sm:text-base font-black uppercase tracking-tight text-white leading-tight">
+                    Daerah Persiapan (DP 1 &amp; DP 2)
+                  </h1>
+                  <p className="text-[11.5px] text-slate-400 mt-1">
+                    Inspeksi fisik &amp; pasfoto personel · Minimal <strong className="text-slate-200">22 cocok</strong> → otomatis masuk DP 2 &amp; siap dinilai juri.
+                  </p>
+                </div>
               </div>
 
-              {activeTeam && (
-                <button
-                  type="button"
-                  onClick={() => setIsPickerOpen(false)}
-                  className="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold flex items-center gap-1.5 self-start sm:self-center cursor-pointer transition-colors shrink-0"
-                >
-                  <span>Kembali ke {activeTeam.schoolName}</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </button>
-              )}
-            </div>
-
-            {/* Filter & Search Bar */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              {/* Search Input */}
-              <div className="relative flex-1 max-w-md">
-                <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder={`Cari sekolah ${isSDPos ? 'SD/MI' : 'SMP/MTs'}, nomor dada, atau danton...`}
-                  className="w-full pl-9 pr-8 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-800 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-slate-400 transition-colors"
-                />
-                {searchQuery && (
+              {/* Pos KPIs */}
+              <div className="flex items-center gap-2 shrink-0 flex-wrap">
+                <div className="px-3 py-1.5 rounded-xl bg-amber-400/10 border border-amber-400/25 flex items-center gap-2">
+                  <span className="text-[10px] uppercase font-bold text-amber-300">Antrean</span>
+                  <span className="text-xs font-black font-mono text-white">{waitingCount}</span>
+                </div>
+                <div className="px-3 py-1.5 rounded-xl bg-emerald-400/10 border border-emerald-400/25 flex items-center gap-2">
+                  <span className="text-[10px] uppercase font-bold text-emerald-300">Siap DP 2</span>
+                  <span className="text-xs font-black font-mono text-white">{readyCount}/{posTeams.length}</span>
+                </div>
+                {activeTeam && (
                   <button
                     type="button"
-                    onClick={() => setSearchQuery('')}
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 cursor-pointer"
+                    onClick={() => setIsPickerOpen(false)}
+                    className="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-100 text-slate-950 text-xs font-bold inline-flex items-center gap-1.5 cursor-pointer transition-all active:scale-95"
                   >
-                    <X className="w-3.5 h-3.5" />
+                    <span className="max-w-[150px] truncate">Lanjut {activeTeam.schoolName}</span>
+                    <ArrowRight className="w-3.5 h-3.5 shrink-0" />
                   </button>
                 )}
               </div>
-
-              {/* Filter Status Antrean */}
-              <div className="flex items-center gap-1 p-1 bg-slate-100 rounded-xl border border-slate-200/70 self-start sm:self-auto">
-                {[
-                  { id: 'ALL', label: `Semua (${posTeams.length})` },
-                  { id: 'WAITING', label: `Belum Selesai (${waitingCount})` },
-                  { id: 'READY', label: `Siap Dinilai (${readyCount})` }
-                ].map(st => (
-                  <button
-                    key={st.id}
-                    type="button"
-                    onClick={() => setStageFilter(st.id)}
-                    className={`px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
-                      stageFilter === st.id
-                        ? 'bg-white text-slate-900 shadow-sm'
-                        : 'text-slate-500 hover:text-slate-800'
-                    }`}
-                  >
-                    {st.label}
-                  </button>
-                ))}
-              </div>
             </div>
 
-            {/* Grid Kartu Peleton */}
-            {filteredPosTeams.length === 0 ? (
-              <div className="py-10 text-center text-xs text-slate-400 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
-                Tidak ada peleton {isSDPos ? 'SD / MI' : 'SMP / MTs'} yang cocok dengan filter pencarian.
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3.5">
-                {filteredPosTeams.map((team) => {
-                  const meta = getTeamStageMeta(team);
-                  const logoUrl = getTeamLogoUrl(team);
-                  const isSelected = activeTeam?.id === team.id;
-                  const dantonName = team.roster?.danton?.name || team.dantonName || '-';
-                  const pct = meta.total ? Math.round((meta.verified / meta.total) * 100) : 0;
-                  const numBadge = team.chestNumber || (team.lotNumber ? String(team.lotNumber).padStart(2, '0') : '#');
+            {/* Slim Progress Strip */}
+            <div className="h-1 w-full bg-slate-800 overflow-hidden">
+              <div
+                className="h-full bg-emerald-400 transition-all duration-500"
+                style={{ width: `${posTeams.length > 0 ? Math.round((readyCount / posTeams.length) * 100) : 0}%` }}
+              />
+            </div>
 
-                  return (
+            {/* Flush Underline Tab Bar: Pos DP 1 SD / MI vs SMP / MTs */}
+            <div className="grid grid-cols-2 border-b border-slate-200 bg-slate-50/70">
+              <button
+                type="button"
+                onClick={() => handleSwitchPos('SD')}
+                className={`relative py-3 px-4 text-xs transition-all flex items-center justify-center gap-2 cursor-pointer border-r border-slate-200/80 ${
+                  isSDPos
+                    ? 'bg-white text-red-700 font-black'
+                    : 'text-slate-500 hover:text-slate-800 hover:bg-white/60 font-bold'
+                }`}
+              >
+                <span className={`w-2 h-2 rounded-full ${isSDPos ? 'bg-red-600' : 'bg-slate-300'}`} />
+                <span>Pos DP 1 SD / MI</span>
+                <span className={`px-1.5 py-0.5 rounded-md text-[10px] font-mono font-black leading-none ${
+                  isSDPos ? 'bg-red-100 text-red-700' : 'bg-slate-200/80 text-slate-600'
+                }`}>
+                  {sdCheckedInTeams.length}
+                </span>
+                {isSDPos && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-600" />}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleSwitchPos('SMP')}
+                className={`relative py-3 px-4 text-xs transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                  !isSDPos
+                    ? 'bg-white text-blue-700 font-black'
+                    : 'text-slate-500 hover:text-slate-800 hover:bg-white/60 font-bold'
+                }`}
+              >
+                <span className={`w-2 h-2 rounded-full ${!isSDPos ? 'bg-blue-600' : 'bg-slate-300'}`} />
+                <span>Pos DP 1 SMP / MTs</span>
+                <span className={`px-1.5 py-0.5 rounded-md text-[10px] font-mono font-black leading-none ${
+                  !isSDPos ? 'bg-blue-100 text-blue-700' : 'bg-slate-200/80 text-slate-600'
+                }`}>
+                  {smpCheckedInTeams.length}
+                </span>
+                {!isSDPos && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600" />}
+              </button>
+            </div>
+
+            {/* Body Antrean */}
+            <div className="p-4 sm:p-6 space-y-4">
+              {posTeams.length === 0 ? (
+                <div className="py-14 text-center space-y-3 bg-slate-50/70 rounded-2xl border border-dashed border-slate-200">
+                  <div className="w-12 h-12 rounded-2xl bg-white border border-slate-200 text-slate-400 flex items-center justify-center mx-auto shadow-2xs">
+                    <Building2 className="w-6 h-6" />
+                  </div>
+                  <div className="space-y-1">
+                    <h4 className="text-sm font-black text-slate-800">
+                      Belum Ada Peleton {isSDPos ? 'SD / MI' : 'SMP / MTs'} yang Check-In
+                    </h4>
+                    <p className="text-xs text-slate-500 max-w-md mx-auto leading-relaxed">
+                      Peleton akan otomatis masuk ke antrean Pos DP 1 segera setelah melakukan Check-In di Pos Basecamp.
+                    </p>
+                  </div>
+                  {(isSDPos ? smpCheckedInTeams.length > 0 : sdCheckedInTeams.length > 0) && (
                     <button
-                      key={team.id}
                       type="button"
-                      onClick={() => handleSelectTeam(team.id)}
-                      className={`p-4 rounded-2xl border text-left transition-all cursor-pointer group flex flex-col justify-between gap-3.5 ${
-                        isSelected
-                          ? isSDPos
-                            ? 'bg-red-50/30 border-red-500 ring-2 ring-red-500/15 shadow-sm'
-                            : 'bg-blue-50/40 border-blue-500 ring-2 ring-blue-500/15 shadow-sm'
-                          : 'bg-white hover:bg-slate-50/80 border-slate-200 hover:border-slate-300 shadow-sm'
-                      }`}
+                      onClick={() => handleSwitchPos(isSDPos ? 'SMP' : 'SD')}
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-colors cursor-pointer"
                     >
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="flex items-center gap-3 min-w-0">
-                          {/* Nomor Dada / Logo */}
-                          <div className="relative w-12 h-12 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0 overflow-hidden">
-                            {logoUrl ? (
-                              <img
-                                src={logoUrl}
-                                alt={team.schoolName}
-                                className="w-full h-full object-contain p-1.5 bg-white"
-                                onError={(e) => {
-                                  e.currentTarget.style.display = 'none';
-                                }}
-                              />
-                            ) : (
-                              <span className="font-mono font-black text-sm text-slate-700">
-                                {numBadge}
-                              </span>
-                            )}
-                            {numBadge !== '#' && logoUrl && (
-                              <span className="absolute -bottom-0.5 -right-0.5 px-1.5 py-0.5 bg-slate-900 text-white text-[9px] font-mono font-black rounded-tl-lg">
-                                #{numBadge}
-                              </span>
-                            )}
-                          </div>
-
-                          <div className="min-w-0">
-                            <div className="flex items-center gap-1.5 mb-0.5">
-                              <span className={`px-1.5 py-0.5 rounded text-[9px] font-black uppercase ${
-                                isSDPos
-                                  ? 'bg-red-50 text-red-700 border border-red-200'
-                                  : 'bg-blue-50 text-blue-700 border border-blue-200'
-                              }`}>
-                                {team.jenjang}
-                              </span>
-                              <span className="text-[10px] font-mono text-slate-400 truncate">
-                                No. Dada {team.chestNumber || (team.lotNumber ? String(team.lotNumber).padStart(2, '0') : '-')}
-                              </span>
-                            </div>
-                            <h3 className="text-sm font-black text-slate-900 leading-snug line-clamp-1 group-hover:text-slate-950 transition-colors" title={team.schoolName}>
-                              {team.schoolName}
-                            </h3>
-                            <p className="text-[11px] text-slate-500 truncate mt-0.5">
-                              Danton: {dantonName}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Progress & Auto-DP2 Status Footer */}
-                      <div className="space-y-2 pt-2 border-t border-slate-100">
-                        <div className="flex items-center justify-between text-[11px]">
-                          <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${meta.badgeTone}`}>
-                            {meta.stageLabel}
-                          </span>
-                          <span className="font-mono font-bold text-slate-700">
-                            {meta.verified}/{meta.total} Cocok
-                          </span>
-                        </div>
-                        <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-                          <div
-                            className={`h-full rounded-full transition-all ${
-                              meta.isPassedDP1 ? 'bg-emerald-500' : isSDPos ? 'bg-red-500' : 'bg-blue-600'
-                            }`}
-                            style={{ width: `${pct}%` }}
-                          />
-                        </div>
-                      </div>
+                      <span>Buka Pos DP 1 {isSDPos ? `SMP / MTs (${smpCheckedInTeams.length} Tim)` : `SD / MI (${sdCheckedInTeams.length} Tim)`}</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
                     </button>
-                  );
-                })}
-              </div>
-            )}
-          </div>
+                  )}
+                </div>
+              ) : (
+                <>
+                  {/* Search + Filter */}
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div className="relative flex-1 max-w-md">
+                      <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                      <input
+                        type="text"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        placeholder={`Cari sekolah ${isSDPos ? 'SD/MI' : 'SMP/MTs'}, nomor dada, atau danton...`}
+                        className="w-full pl-10 pr-8 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-slate-900 transition-colors"
+                      />
+                      {searchQuery && (
+                        <button
+                          type="button"
+                          onClick={() => setSearchQuery('')}
+                          className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 cursor-pointer"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                    </div>
+
+                    <div className="flex items-center gap-1.5 flex-wrap text-[11px] font-bold">
+                      {[
+                        { id: 'ALL', label: `Semua (${posTeams.length})` },
+                        { id: 'WAITING', label: `Perlu Dicek (${waitingCount})` },
+                        { id: 'READY', label: `Siap DP 2 (${readyCount})` }
+                      ].map(st => (
+                        <button
+                          key={st.id}
+                          type="button"
+                          onClick={() => setStageFilter(st.id)}
+                          className={`px-3 py-1.5 rounded-full border transition-colors cursor-pointer ${
+                            stageFilter === st.id
+                              ? 'bg-slate-900 text-white border-slate-900'
+                              : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
+                          }`}
+                        >
+                          {st.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Structured Queue Table By Content */}
+                  <div className="rounded-xl border border-slate-200/90 overflow-hidden bg-white">
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-left text-xs border-collapse table-auto">
+                        <thead>
+                          <tr className="bg-slate-50/90 text-slate-500 uppercase text-[10px] tracking-wider font-bold border-b border-slate-200/90">
+                            <th className="py-2.5 px-3 text-center w-[1%] whitespace-nowrap">No. Dada</th>
+                            <th className="py-2.5 px-3">Peleton / Sekolah</th>
+                            <th className="py-2.5 px-3 hidden lg:table-cell whitespace-nowrap">Danton</th>
+                            <th className="py-2.5 px-3 hidden md:table-cell whitespace-nowrap">Basecamp</th>
+                            <th className="py-2.5 px-3 whitespace-nowrap">Progres Inspeksi</th>
+                            <th className="py-2.5 px-3 text-right w-[1%] whitespace-nowrap">Aksi</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-100">
+                          {filteredPosTeams.length === 0 ? (
+                            <tr>
+                              <td colSpan={6} className="py-10 text-center text-xs text-slate-400">
+                                Tidak ada peleton yang cocok dengan filter pencarian.
+                              </td>
+                            </tr>
+                          ) : (
+                            filteredPosTeams.map((team, idx) => {
+                              const meta = getTeamStageMeta(team);
+                              const logoUrl = getTeamLogoUrl(team);
+                              const dantonName = team.roster?.danton?.name || team.dantonName || '-';
+                              const pct = meta.total ? Math.round((meta.verified / meta.total) * 100) : 0;
+                              const numLabel = team.chestNumber || (team.lotNumber ? `#${String(team.lotNumber).padStart(2, '0')}` : String(idx + 1).padStart(2, '0'));
+                              const isInProgress = !meta.isPassedDP1 && (meta.verified > 0 || meta.flagged > 0);
+
+                              return (
+                                <tr
+                                  key={team.id}
+                                  onClick={() => handleSelectTeam(team.id)}
+                                  className="hover:bg-slate-50/80 transition-colors cursor-pointer group"
+                                >
+                                  <td className="py-2 px-3 text-center font-mono font-bold text-slate-700 text-xs whitespace-nowrap align-middle">
+                                    <span className="inline-flex items-center justify-center min-w-[36px] px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-800 border border-slate-200/80 text-[11px] font-bold">
+                                      {numLabel}
+                                    </span>
+                                  </td>
+
+                                  <td className="py-2 px-3 align-middle">
+                                    <div className="flex items-center gap-2.5 min-w-0">
+                                      {logoUrl ? (
+                                        <img
+                                          src={logoUrl}
+                                          alt={team.schoolName}
+                                          className="w-7 h-7 object-contain shrink-0"
+                                          onError={(e) => {
+                                            e.currentTarget.style.display = 'none';
+                                          }}
+                                        />
+                                      ) : (
+                                        <span className="w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center font-mono font-bold text-[10px] text-slate-600 shrink-0">
+                                          {team.jenjang}
+                                        </span>
+                                      )}
+                                      <div className="min-w-0">
+                                        <div className="font-bold text-xs sm:text-[13px] text-slate-900 leading-snug group-hover:text-slate-950 truncate">
+                                          {team.schoolName}
+                                        </div>
+                                        <div className="lg:hidden text-[10.5px] text-slate-400 truncate">
+                                          {dantonName}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </td>
+
+                                  <td className="py-2 px-3 hidden lg:table-cell align-middle">
+                                    <div className="text-[11.5px] font-semibold text-slate-800 leading-snug">
+                                      {dantonName}
+                                    </div>
+                                  </td>
+
+                                  <td className="py-2 px-3 hidden md:table-cell whitespace-nowrap align-middle">
+                                    {meta.roomName ? (
+                                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-slate-100 text-slate-700 border border-slate-200/80 font-mono text-[10.5px] font-bold">
+                                        <DoorOpen className="w-3 h-3 text-slate-400" />
+                                        <span>{meta.roomName}</span>
+                                      </span>
+                                    ) : (
+                                      <span className="text-[11px] text-slate-400">—</span>
+                                    )}
+                                  </td>
+
+                                  <td className="py-2.5 px-3 align-middle min-w-[170px]">
+                                    <div className="flex items-center justify-between gap-2 text-[10.5px] mb-1">
+                                      <span className={`px-2 py-0.5 rounded-full text-[9.5px] font-bold border ${meta.badgeTone}`}>
+                                        {meta.stageLabel}
+                                      </span>
+                                      <span className="font-mono font-bold text-slate-600">
+                                        {meta.verified}/{meta.total}
+                                      </span>
+                                    </div>
+                                    <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                                      <div
+                                        className={`h-full rounded-full transition-all ${
+                                          meta.isPassedDP1 ? 'bg-emerald-500' : isSDPos ? 'bg-red-500' : 'bg-blue-600'
+                                        }`}
+                                        style={{ width: `${pct}%` }}
+                                      />
+                                    </div>
+                                  </td>
+
+                                  <td className="py-2.5 px-3 text-right whitespace-nowrap align-middle">
+                                    <button
+                                      type="button"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleSelectTeam(team.id);
+                                      }}
+                                      className={`px-3 py-1.5 rounded-lg text-[11px] font-bold inline-flex items-center gap-1.5 transition-all cursor-pointer active:scale-95 ${
+                                        meta.isPassedDP1
+                                          ? 'bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200'
+                                          : isInProgress
+                                          ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-2xs'
+                                          : 'bg-slate-900 hover:bg-slate-800 text-white shadow-2xs'
+                                      }`}
+                                    >
+                                      <span>{meta.isPassedDP1 ? 'Tinjau' : isInProgress ? 'Lanjutkan' : 'Inspeksi'}</span>
+                                      <ArrowRight className="w-3.5 h-3.5" />
+                                    </button>
+                                  </td>
+                                </tr>
+                              );
+                            })
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          </section>
         ) : (
           /* ============================================================== */
-          /* LANGKAH 2: INSPEKSI SWIPE KARTU FOTO 25 PERSONEL (FOKUS DP 1)  */
+          /* SCREEN 2: INSPECTION COCKPIT (SINGLE UNIFIED COMMAND BAR)      */
           /* ============================================================== */
-          <div className="space-y-5">
-            {/* Compact Active Peleton Command Bar */}
-            <div className="bg-white rounded-2xl p-3.5 sm:px-5 sm:py-4 border border-slate-200/90 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-3.5">
-              <div className="flex items-center gap-3 min-w-0">
-                {/* Back to Pos Team Picker Button */}
+          <section className="rounded-2xl sm:rounded-[26px] border border-slate-200/80 bg-white shadow-[0_14px_38px_rgba(15,23,42,0.05)] overflow-hidden">
+            {/* Single Sticky Command Bar — Zero Vertical Bloat */}
+            <div className="px-4 py-3 sm:px-5 sm:py-3.5 border-b border-slate-200/80 bg-slate-50/60 flex flex-col xl:flex-row xl:items-center justify-between gap-3">
+              {/* Left: Back + Prev/Next + Team Identity */}
+              <div className="flex items-center gap-2.5 min-w-0">
                 <button
                   type="button"
                   onClick={() => setIsPickerOpen(true)}
-                  className="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold flex items-center gap-1.5 shrink-0 transition-colors cursor-pointer"
-                  title={`Buka Daftar Peleton DP 1 ${isSDPos ? 'SD/MI' : 'SMP/MTs'}`}
+                  className="px-2.5 py-2 rounded-xl bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 text-xs font-bold flex items-center gap-1.5 shrink-0 transition-colors cursor-pointer shadow-2xs"
+                  title="Kembali ke Daftar Antrean"
                 >
-                  <Users className={`w-3.5 h-3.5 ${isSDPos ? 'text-red-600' : 'text-blue-600'}`} />
-                  <span>Pilih Peleton {isSDPos ? 'SD' : 'SMP'}</span>
-                  <span className="px-1.5 py-0.5 rounded-md bg-white text-slate-600 text-[10px] font-mono">
+                  <ArrowLeft className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">Antrean</span>
+                  <span className="px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[10px] font-mono font-black leading-none">
                     {posTeams.length}
                   </span>
                 </button>
 
-                {/* Prev / Next Quick Switcher within same Pos */}
                 {posTeams.length > 1 && (
                   <div className="hidden sm:flex items-center gap-1 shrink-0">
                     <button
                       type="button"
                       onClick={() => handleCycleTeam(-1)}
-                      className="w-8 h-8 rounded-lg border border-slate-200 hover:bg-slate-100 text-slate-600 flex items-center justify-center cursor-pointer"
+                      className="w-8 h-8 rounded-xl bg-white border border-slate-200 hover:bg-slate-100 text-slate-600 flex items-center justify-center cursor-pointer shadow-2xs"
                       title="Peleton Sebelumnya"
                     >
                       <ChevronLeft className="w-4 h-4" />
@@ -594,7 +639,7 @@ export default function DaerahPersiapanView() {
                     <button
                       type="button"
                       onClick={() => handleCycleTeam(1)}
-                      className="w-8 h-8 rounded-lg border border-slate-200 hover:bg-slate-100 text-slate-600 flex items-center justify-center cursor-pointer"
+                      className="w-8 h-8 rounded-xl bg-white border border-slate-200 hover:bg-slate-100 text-slate-600 flex items-center justify-center cursor-pointer shadow-2xs"
                       title="Peleton Berikutnya"
                     >
                       <ChevronRight className="w-4 h-4" />
@@ -602,88 +647,95 @@ export default function DaerahPersiapanView() {
                   </div>
                 )}
 
-                <div className="h-8 w-px bg-slate-200 hidden sm:block shrink-0" />
+                <div className="h-7 w-px bg-slate-200 hidden sm:block shrink-0" />
 
-                {/* Active Team Identity */}
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="relative w-11 h-11 rounded-xl bg-white border border-slate-200 flex items-center justify-center shrink-0 overflow-hidden p-1 shadow-sm">
-                    {getTeamLogoUrl(activeTeam) ? (
-                      <img
-                        src={getTeamLogoUrl(activeTeam)}
-                        alt={activeTeam.schoolName}
-                        className="w-full h-full object-contain"
-                        onError={(e) => {
-                          e.currentTarget.style.display = 'none';
-                        }}
-                      />
-                    ) : (
-                      <span className={`font-mono font-black text-xs ${isSDPos ? 'text-red-700' : 'text-blue-700'}`}>
-                        {activeTeam.chestNumber || (activeTeam.lotNumber ? String(activeTeam.lotNumber).padStart(2, '0') : '#')}
-                      </span>
-                    )}
-                  </div>
+                {/* Active Team */}
+                <div className="flex items-center gap-2.5 min-w-0">
+                  {getTeamLogoUrl(activeTeam) ? (
+                    <img
+                      src={getTeamLogoUrl(activeTeam)}
+                      alt={activeTeam.schoolName}
+                      className="w-8 h-8 object-contain shrink-0"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                      }}
+                    />
+                  ) : (
+                    <span className={`w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center font-mono font-bold text-xs shrink-0 ${isSDPos ? 'text-red-700' : 'text-blue-700'}`}>
+                      {activeTeam.jenjang}
+                    </span>
+                  )}
                   <div className="min-w-0">
-                    <h3 className="text-sm sm:text-base font-black text-slate-900 truncate">
-                      {activeTeam.schoolName}
-                    </h3>
-                    <p className="text-[11px] text-slate-500 font-mono truncate">
-                      DP 1 {activeTeam.jenjang} • Danton: {activeTeam.roster?.danton?.name || activeTeam.dantonName || '-'}
+                    <div className="flex items-center gap-1.5">
+                      {activeTeam.chestNumber && (
+                        <span className="px-1.5 py-0.5 rounded bg-slate-900 text-white font-mono text-[10px] font-bold shrink-0">
+                          #{activeTeam.chestNumber}
+                        </span>
+                      )}
+                      <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold uppercase shrink-0 ${
+                        isSDPos ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700'
+                      }`}>
+                        {activeTeam.jenjang}
+                      </span>
+                      <h2 className="text-sm sm:text-[15px] font-black text-slate-950 truncate leading-tight">
+                        {activeTeam.schoolName}
+                      </h2>
+                    </div>
+                    <p className="text-[11px] text-slate-500 truncate mt-0.5">
+                      Danton: <strong className="text-slate-700">{activeTeam.roster?.danton?.name || activeTeam.dantonName || '-'}</strong>
+                      {activeMeta?.roomName ? ` · Ruang ${activeMeta.roomName}` : ''}
                     </p>
                   </div>
                 </div>
               </div>
 
-              {/* Right Automatic DP 2 & Scoring Status */}
-              <div className="flex flex-wrap items-center justify-between lg:justify-end gap-2.5 pt-2 lg:pt-0 border-t lg:border-t-0 border-slate-100">
+              {/* Right: Mode Toggle + DP 2 Status */}
+              <div className="flex flex-wrap items-center justify-between xl:justify-end gap-2 pt-2 xl:pt-0 border-t xl:border-t-0 border-slate-200/70">
+                {/* Unified Mode Toggle (Swipe | Grid N) */}
+                <div className="inline-flex items-center p-1 bg-white rounded-xl border border-slate-200 shadow-2xs">
+                  <button
+                    type="button"
+                    onClick={() => setDeckViewMode('swipe')}
+                    className={`px-2.5 py-1.5 rounded-lg text-[11px] font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                      deckViewMode === 'swipe'
+                        ? 'bg-slate-900 text-white shadow-2xs'
+                        : 'text-slate-600 hover:text-slate-900'
+                    }`}
+                  >
+                    <Layers className="w-3.5 h-3.5" />
+                    <span>Swipe</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setDeckViewMode('grid')}
+                    className={`px-2.5 py-1.5 rounded-lg text-[11px] font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                      deckViewMode === 'grid'
+                        ? 'bg-slate-900 text-white shadow-2xs'
+                        : 'text-slate-600 hover:text-slate-900'
+                    }`}
+                  >
+                    <LayoutGrid className="w-3.5 h-3.5" />
+                    <span>Grid ({allPersonnels.length})</span>
+                  </button>
+                </div>
+
+                {/* Compact DP 2 Status Pill */}
                 {isMinPersonnelMet ? (
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-black">
-                    <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <span>Otomatis di DP 2 • Siap Dinilai</span>
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-[11px] font-black">
+                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                    <span>DP 2 Siap ({verifiedCount}/{allPersonnels.length})</span>
                   </span>
                 ) : (
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs font-bold">
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-[11px] font-bold">
                     <Clock className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-                    <span>Kurang {Math.max(0, 22 - verifiedCount)} lagi → Otomatis DP 2</span>
+                    <span>{verifiedCount}/{allPersonnels.length} (Min. 22)</span>
                   </span>
-                )}
-
-                <span className="text-xs font-mono font-black text-slate-800 bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200/70">
-                  {verifiedCount}/{allPersonnels.length} Personel
-                </span>
-
-                {canOperateDP && activeTeam && (
-                  <div className="flex items-center gap-1.5">
-                    {fieldTimer?.activeTeamId === activeTeam.id ? (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          stopAndSaveFieldTimer(activeTeam.id, activeTeam.jenjang);
-                          showNotice(`Timer arena ${activeTeam.schoolName} dihentikan & waktu tampil disimpan!`);
-                        }}
-                        className="px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-black transition cursor-pointer"
-                      >
-                        Selesai Tampil (Simpan Timer)
-                      </button>
-                    ) : (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          if (passToDP2) passToDP2(activeTeam.id);
-                          if (startFieldTimer) startFieldTimer(activeTeam.id);
-                          showNotice(`Peleton ${activeTeam.schoolName} masuk Arena & Timer dimulai!`);
-                        }}
-                        className="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition cursor-pointer"
-                      >
-                        Mulai Arena
-                      </button>
-                    )}
-                  </div>
                 )}
               </div>
             </div>
 
-            {/* TINDER SWIPE INSPECTION DECK */}
-            <div className="bg-white rounded-3xl p-4 sm:p-6 border border-slate-200/90 shadow-sm">
+            {/* Inspection Workspace Body */}
+            <div className="p-4 sm:p-5">
               <PersonnelSwipeDeck
                 team={activeTeam}
                 personnels={allPersonnels}
@@ -694,9 +746,11 @@ export default function DaerahPersiapanView() {
                 onNextTeam={() => handleCycleTeam(1)}
                 hasNextTeam={posTeams.length > 1}
                 isMinPersonnelMet={isMinPersonnelMet}
+                viewMode={deckViewMode}
+                onViewModeChange={setDeckViewMode}
               />
             </div>
-          </div>
+          </section>
         )}
       </div>
     </SimpaskorSidebarLayout>

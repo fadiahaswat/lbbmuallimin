@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { appAlert } from '../../../utils/appDialog.js';
 import {
   ArrowLeft,
   ChevronRight,
@@ -211,7 +212,7 @@ export default function TeamInspectionPage({ team, inspectionStage = 'registrati
                   <button
                     onClick={() => {
                       if (!eligibility.isEligible) {
-                        alert(`Peleton belum dapat diverifikasi sah karena:\n\n• ${eligibility.issues.join('\n• ')}`);
+                        appAlert(`Peleton belum dapat diverifikasi sah karena:\n\n• ${eligibility.issues.join('\n• ')}`, { title: 'Berkas Belum Lengkap', variant: 'warning' });
                         return;
                       }
                       onVerify(team.id, 'verified');
@@ -986,7 +987,7 @@ export default function TeamInspectionPage({ team, inspectionStage = 'registrati
               <button
                 onClick={() => {
                   if (!eligibility.isEligible) {
-                    alert(`Peleton belum dapat diverifikasi sah karena:\n\n• ${eligibility.issues.join('\n• ')}`);
+                    appAlert(`Peleton belum dapat diverifikasi sah karena:\n\n• ${eligibility.issues.join('\n• ')}`, { title: 'Berkas Belum Lengkap', variant: 'warning' });
                     return;
                   }
                   onVerify(team.id, 'verified');
