@@ -312,8 +312,8 @@ export default function PenaltiesSection({
             type: 'stepper',
             title: 'Keluar Garis Kotak Danton',
             desc: 'Menginjak / keluar kotak 1,5 × 1,5 m',
-            rateLabel: '-50 / kejadian',
-            unitPoints: 50,
+            rateLabel: '-10 / kejadian',
+            unitPoints: 10,
           })}
         </div>
       </div>

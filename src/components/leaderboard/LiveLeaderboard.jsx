@@ -178,7 +178,7 @@ export default function LiveLeaderboard() {
   const isPeserta = userRole === 'peserta';
   const isSuperOrAdmin = ['admin', 'superadmin'].includes(userRole);
   const isStaffOrJury = !isPeserta && userRole !== 'publik' && ['admin', 'juri', 'superadmin', 'penginput', 'verifikator', 'finalisator'].includes(userRole);
-  const isOfficialScoreVisible = isStaffOrJury || Boolean(settings?.announcementPublished);
+  const isOfficialScoreVisible = isLocalhost || isStaffOrJury || Boolean(settings?.announcementPublished);
 
   // State Modal & Link Berita Acara (Google Drive)
   const [isBeritaAcaraModalOpen, setIsBeritaAcaraModalOpen] = useState(false);
@@ -264,7 +264,7 @@ export default function LiveLeaderboard() {
       // 2. Aspek Komandan Peleton (Danton)
       const j1D = Number(juries.pos1?.dantonTotal ?? 0);
       const j2D = Number(juries.pos2?.dantonTotal ?? 0);
-      const j3D = Number(juries.pos3?.dantonTotal ?? juries.pos3?.total ?? s.danton?.total ?? 0);
+      const j3D = Number(juries.pos3?.dantonTotal ?? 0);
       const nilaiMurniDanton = Number(
         s.nilaiMurniDanton ?? parseFloat((j1D + j2D + j3D).toFixed(2))
       );
@@ -894,7 +894,7 @@ export default function LiveLeaderboard() {
                     key={cat.id}
                     type="button"
                     onClick={() => setActiveCategory(cat.id)}
-                    className={`relative py-3.5 px-2 sm:px-4 text-xs transition-all flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap ${
+                    className={`relative py-4 sm:py-5 px-2.5 sm:px-5 text-xs sm:text-[13px] transition-all flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap ${
                       idx < 2 ? 'border-r border-slate-800/80' : ''
                     } ${
                       isActive
@@ -916,14 +916,14 @@ export default function LiveLeaderboard() {
             </div>
 
             {/* Tier 2: Balanced Dark Sub-Toolbar */}
-            <div className="px-3.5 sm:px-5 py-3 flex flex-wrap items-center justify-between gap-3">
+            <div className="px-4 sm:px-6 py-4 sm:py-5 flex flex-wrap items-center justify-between gap-3">
               {/* Left Group: Jenjang Switcher + Live Telemetry */}
               <div className="flex items-center gap-2.5 flex-wrap">
-                <div className="inline-flex items-center p-0.5 rounded-xl border border-slate-800 bg-slate-900">
+                <div className="inline-flex items-center p-1 rounded-xl border border-slate-800 bg-slate-900">
                   <button
                     type="button"
                     onClick={() => setSelectedJenjang('SD')}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+                    className={`px-3.5 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
                       selectedJenjang === 'SD'
                         ? 'bg-rose-600 text-white shadow-2xs'
                         : 'text-slate-400 hover:text-white'
@@ -940,7 +940,7 @@ export default function LiveLeaderboard() {
                   <button
                     type="button"
                     onClick={() => setSelectedJenjang('SMP')}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+                    className={`px-3.5 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
                       selectedJenjang === 'SMP'
                         ? 'bg-blue-600 text-white shadow-2xs'
                         : 'text-slate-400 hover:text-white'
@@ -957,7 +957,7 @@ export default function LiveLeaderboard() {
                 </div>
 
                 {/* Live Telemetry Chip */}
-                <div className="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-xl border border-slate-800 bg-slate-900/80 text-[11px] font-semibold text-slate-300">
+                <div className="hidden sm:inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border border-slate-800 bg-slate-900/80 text-[11px] font-semibold text-slate-300">
                   <span className={`w-1.5 h-1.5 rounded-full ${
                     settings?.announcementPublished ? 'bg-emerald-400' : 'bg-amber-400'
                   }`} />
@@ -975,13 +975,13 @@ export default function LiveLeaderboard() {
               </div>
 
               {/* Right Group: View Mode + Split Berita Acara */}
-              <div className="flex items-center gap-2 flex-wrap ml-auto">
+              <div className="flex items-center gap-2.5 flex-wrap ml-auto">
                 {/* View Mode Toggle: Podium vs Tabel */}
-                <div className="inline-flex items-center p-0.5 rounded-xl border border-slate-800 bg-slate-900">
+                <div className="inline-flex items-center p-1 rounded-xl border border-slate-800 bg-slate-900">
                   <button
                     type="button"
                     onClick={() => setViewMode('podium')}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+                    className={`px-3.5 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
                       viewMode === 'podium'
                         ? 'bg-white text-slate-950 shadow-2xs'
                         : 'text-slate-400 hover:text-white'
@@ -994,7 +994,7 @@ export default function LiveLeaderboard() {
                   <button
                     type="button"
                     onClick={() => setViewMode('table')}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+                    className={`px-3.5 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
                       viewMode === 'table'
                         ? 'bg-white text-slate-950 shadow-2xs'
                         : 'text-slate-400 hover:text-white'
@@ -1011,7 +1011,7 @@ export default function LiveLeaderboard() {
                   <button
                     type="button"
                     onClick={handleBeritaAcaraClick}
-                    className="px-3 py-1.5 text-xs font-bold text-slate-100 hover:bg-slate-800 transition-colors cursor-pointer flex items-center gap-1.5 whitespace-nowrap"
+                    className="px-3.5 py-2 text-xs font-bold text-slate-100 hover:bg-slate-800 transition-colors cursor-pointer flex items-center gap-1.5 whitespace-nowrap"
                     title={`Unduh Berita Acara Resmi Jenjang ${selectedJenjang === 'SD' ? 'SD/MI' : 'SMP/MTs'}`}
                   >
                     <Download className="w-3.5 h-3.5 text-rose-400 shrink-0" />
@@ -1025,7 +1025,7 @@ export default function LiveLeaderboard() {
                     <button
                       type="button"
                       onClick={openBeritaAcaraModal}
-                      className="px-2 py-1.5 text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer flex items-center justify-center"
+                      className="px-2.5 py-2 text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer flex items-center justify-center"
                       title="Kelola Link Google Drive Berita Acara (Admin / Superadmin)"
                     >
                       <Settings className="w-3.5 h-3.5 shrink-0" />

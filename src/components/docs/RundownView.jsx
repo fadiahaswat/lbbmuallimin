@@ -426,7 +426,7 @@ export default function RundownView({ embedded = false }) {
                   Wajib membawa dan menyerahkan berkas fisik asli: <strong>Surat Rekomendasi/Tugas Kepala Sekolah asli</strong> (berstempel basah) dan <strong>Pakta Integritas</strong> kepada Divisi Kesekretariatan.
                 </li>
                 <li>
-                  Agenda mencakup lotting pengundian nomor urut tampil, penjelasan teknis dewan juri, tata tertib basecamp, dan pembagian ID card resmi kontingen.
+                  Agenda mencakup lotting pengundian nomor urut tampil, penjelasan teknis dewan juri, tata tertib basecamp, dan konfirmasi uji coba lapangan. (3 ID Card & Nomor Dada dibagikan saat daftar ulang Hari-H).
                 </li>
               </ul>
             </div>
@@ -544,7 +544,7 @@ export default function RundownView({ embedded = false }) {
                   Tiap slot dialokasikan total waktu <strong>15 menit</strong> kotor (orientasi bersih lapangan sesuai durasi perlombaan: <strong>8 menit</strong> untuk SD/MI dan <strong>12 menit</strong> untuk SMP/MTs, ditambah 5 menit transisi peleton).
                 </li>
                 <li>
-                  Peleton wajib hadir di lokasi minimal 30 menit sebelum slot waktu uji coba yang ditentukan.
+                  Peleton wajib hadir di lokasi minimal 15 menit sebelum slot waktu uji coba yang ditentukan.
                 </li>
               </ul>
             </div>

@@ -50,61 +50,62 @@ export default function DenahBasecampTab({ currentTeam, allTeams = [], staging =
     null;
 
   return (
-    <section className="rounded-2xl sm:rounded-[28px] border border-slate-200/90 bg-white p-4 sm:p-7 shadow-[0_18px_46px_rgba(15,23,42,0.06)] space-y-5">
-      {/* 1. Header Tab Terpadu & Ringkas */}
-      <div className="flex flex-col gap-3.5 border-b border-slate-100 pb-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-3">
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-600 to-teal-700 text-white shadow-sm">
-            <Building2 className="w-5 h-5 text-white" />
+    <section className="space-y-4">
+      {/* 1. Dark Obsidian Command Header Bar */}
+      <div className="rounded-3xl bg-slate-950 border border-slate-800/90 text-white px-5 sm:px-6 py-4 sm:py-5 shadow-[0_16px_40px_rgba(15,23,42,0.14)] flex flex-col gap-3.5 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-3.5 min-w-0">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400">
+            <Building2 className="w-5 h-5" />
           </span>
-          <div>
+          <div className="min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <h2 className="text-base sm:text-lg font-black tracking-tight text-slate-950">
+              <h2 className="text-base sm:text-lg font-black tracking-tight text-white leading-tight">
                 Denah Basecamp &amp; Kawasan
               </h2>
               {isRatified && assignedRoomCode && (
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                  Ruang: Kelas {assignedRoomCode}
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 shrink-0">
+                  <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                  Kelas {assignedRoomCode}
                 </span>
               )}
             </div>
-            <p className="text-xs text-slate-500 mt-0.5">
+            <p className="text-[11.5px] text-slate-400 truncate mt-0.5">
               Peta interaktif alokasi ruang transit kontingen &amp; rute kawasan kampus.
             </p>
           </div>
         </div>
 
-        {/* View Switcher Pills */}
-        <div className="w-full sm:w-auto grid grid-cols-2 sm:flex items-center gap-1 p-1 bg-slate-100 rounded-xl border border-slate-200/80">
+        {/* Dark Segmented View Switcher */}
+        <div className="w-full sm:w-auto grid grid-cols-2 sm:inline-flex items-center gap-1 p-1 bg-slate-900 rounded-xl border border-slate-800 shrink-0">
           <button
             type="button"
             onClick={() => setActiveSubTab('basecamp')}
-            className={`flex items-center justify-center gap-1.5 px-2.5 sm:px-3 py-2 sm:py-1.5 rounded-lg text-xs font-bold transition cursor-pointer whitespace-nowrap ${
+            className={`flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
               activeSubTab === 'basecamp'
-                ? 'bg-white text-slate-950 shadow-xs'
-                : 'text-slate-600 hover:text-slate-900'
+                ? 'bg-white text-slate-950 shadow-2xs'
+                : 'text-slate-400 hover:text-white'
             }`}
           >
-            <Building2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+            <Building2 className={`w-3.5 h-3.5 shrink-0 ${activeSubTab === 'basecamp' ? 'text-emerald-600' : 'text-slate-500'}`} />
             <span>Denah Basecamp</span>
           </button>
           <button
             type="button"
             onClick={() => setActiveSubTab('outdoor')}
-            className={`flex items-center justify-center gap-1.5 px-2.5 sm:px-3 py-2 sm:py-1.5 rounded-lg text-xs font-bold transition cursor-pointer whitespace-nowrap ${
+            className={`flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
               activeSubTab === 'outdoor'
-                ? 'bg-white text-slate-950 shadow-xs'
-                : 'text-slate-600 hover:text-slate-900'
+                ? 'bg-white text-slate-950 shadow-2xs'
+                : 'text-slate-400 hover:text-white'
             }`}
           >
-            <Map className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+            <Map className={`w-3.5 h-3.5 shrink-0 ${activeSubTab === 'outdoor' ? 'text-blue-600' : 'text-slate-500'}`} />
             <span>Peta Kawasan<span className="hidden min-[380px]:inline"> &amp; Arena</span></span>
           </button>
         </div>
       </div>
 
       {/* 2. Konten Utama Sesuai Tab Aktif */}
+      <div className="rounded-3xl border border-slate-200/90 bg-white p-4 sm:p-6 shadow-[0_12px_32px_rgba(15,23,42,0.05)]">
       {activeSubTab === 'basecamp' ? (
         <div className="space-y-4">
           {!isRatified && !isStaff ? (
@@ -215,29 +216,50 @@ export default function DenahBasecampTab({ currentTeam, allTeams = [], staging =
           </div>
         </div>
       )}
+      </div>
 
-      {/* 4. Ketentuan Ringkas Basecamp (Pasal 11) */}
-      <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3 sm:p-4">
-        <div className="flex items-center gap-2 mb-2 text-slate-800 font-bold text-xs uppercase tracking-wider">
-          <ShieldAlert className="w-3.5 h-3.5 text-red-600 shrink-0" />
+      {/* 4. Ketentuan Ringkas Basecamp (Pasal 11) — Clean 4-Column Executive Strip */}
+      <div className="rounded-2xl border border-slate-200/90 bg-white shadow-2xs overflow-hidden">
+        <div className="px-4 sm:px-5 py-2.5 border-b border-slate-100 bg-slate-50/70 flex items-center gap-2 text-slate-800 font-black text-[10.5px] uppercase tracking-wider">
+          <ShieldAlert className="w-3.5 h-3.5 text-rose-600 shrink-0" />
           <span>Tata Tertib Basecamp (Pasal 11 Juknis)</span>
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px] text-slate-600">
-          <div className="p-2 rounded-lg bg-white border border-slate-100 shadow-2xs">
-            <span className="font-bold text-slate-900 block">Jaminan KTP/SIM</span>
-            <span className="text-slate-500 text-[10px]">1 identitas saat check-in</span>
+        <div className="grid grid-cols-2 lg:grid-cols-4 divide-y lg:divide-y-0 sm:divide-x divide-slate-200/80 text-xs">
+          <div className="px-4 py-3 flex items-center gap-3">
+            <span className="w-8 h-8 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
+              <DoorOpen className="w-4 h-4" />
+            </span>
+            <div className="min-w-0">
+              <span className="font-bold text-slate-900 block truncate">Jaminan KTP / SIM</span>
+              <span className="text-slate-500 text-[10.5px] block truncate">1 identitas saat check-in</span>
+            </div>
           </div>
-          <div className="p-2 rounded-lg bg-white border border-slate-100 shadow-2xs">
-            <span className="font-bold text-slate-900 block">Bebas Rokok/Vape</span>
-            <span className="text-rose-600 font-medium text-[10px]">Sanksi -75 Poin</span>
+          <div className="px-4 py-3 flex items-center gap-3">
+            <span className="w-8 h-8 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center shrink-0">
+              <ShieldAlert className="w-4 h-4" />
+            </span>
+            <div className="min-w-0">
+              <span className="font-bold text-slate-900 block truncate">Bebas Rokok / Vape</span>
+              <span className="text-rose-600 font-semibold text-[10.5px] block truncate">Sanksi -75 Poin</span>
+            </div>
           </div>
-          <div className="p-2 rounded-lg bg-white border border-slate-100 shadow-2xs">
-            <span className="font-bold text-slate-900 block">2 Trash Bag Sampah</span>
-            <span className="text-slate-500 text-[10px]">Organik & anorganik</span>
+          <div className="px-4 py-3 flex items-center gap-3">
+            <span className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+              <Layers className="w-4 h-4" />
+            </span>
+            <div className="min-w-0">
+              <span className="font-bold text-slate-900 block truncate">2 Trash Bag Sampah</span>
+              <span className="text-slate-500 text-[10.5px] block truncate">Organik &amp; anorganik</span>
+            </div>
           </div>
-          <div className="p-2 rounded-lg bg-white border border-slate-100 shadow-2xs">
-            <span className="font-bold text-slate-900 block">Maks. Checkout 15.00</span>
-            <span className="text-slate-500 text-[10px]">Sebelum Penutupan</span>
+          <div className="px-4 py-3 flex items-center gap-3">
+            <span className="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+              <Clock className="w-4 h-4" />
+            </span>
+            <div className="min-w-0">
+              <span className="font-bold text-slate-900 block truncate">Maks. Checkout 15.00</span>
+              <span className="text-slate-500 text-[10.5px] block truncate">Sebelum Penutupan</span>
+            </div>
           </div>
         </div>
       </div>

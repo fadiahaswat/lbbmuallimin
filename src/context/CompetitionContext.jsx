@@ -48,7 +48,9 @@ export { checkTeamVerificationEligibility, resolveUserAvatar, normalizeTeamData 
 // Clean legacy storage on module init
 cleanLegacyStorage();
 
-const CompetitionContext = createContext(null);
+const CompetitionContext =
+  globalThis.__LBB_COMPETITION_CONTEXT__ ||
+  (globalThis.__LBB_COMPETITION_CONTEXT__ = createContext(null));
 
 export function CompetitionProvider({ children }) {
   // 0. User Auth State

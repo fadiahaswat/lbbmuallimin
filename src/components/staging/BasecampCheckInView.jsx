@@ -1447,8 +1447,8 @@ export default function BasecampCheckInView({ initialTab = 'checkin' }) {
                         <span className="text-[11px] font-bold text-slate-600 block mb-1">
                           Jenis Kartu Identitas:
                         </span>
-                        <div className="grid grid-cols-3 gap-2">
-                          {['KTP Fisik', 'SIM', 'KTA'].map(type => (
+                        <div className="grid grid-cols-2 gap-2">
+                          {['KTP Fisik', 'SIM'].map(type => (
                             <button
                               key={type}
                               type="button"
@@ -1472,10 +1472,10 @@ export default function BasecampCheckInView({ initialTab = 'checkin' }) {
                       </label>
                       <div className="space-y-2 text-xs">
                         {[
-                          { key: 'waterBox', label: '1 Dus Air Mineral 330ml' },
-                          { key: 'chestNumber', label: '1 Set Nomor Dada Danton & Peleton' },
-                          { key: 'cocardOfficial', label: 'ID Card / CoCard Official & Pembina' },
-                          { key: 'trashBag', label: '2 Kantong Sampah Terpilah' },
+                          { key: 'waterBox', label: '1 Dus Air Minum Kemasan Botol' },
+                          { key: 'chestNumber', label: '1 Nomor Dada Peleton (Dipasang di S2B1, Souvenir)' },
+                          { key: 'cocardOfficial', label: '3 ID Card Resmi (1 Official + 2 Pendukung Resmi)' },
+                          { key: 'trashBag', label: '2 Kantong Sampah Terpilah (Organik & Anorganik)' },
                         ].map(item => (
                           <label key={item.key} className="flex items-center gap-2.5 p-2.5 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer hover:bg-slate-100">
                             <input
@@ -1511,14 +1511,14 @@ export default function BasecampCheckInView({ initialTab = 'checkin' }) {
               ) : (
                 <form onSubmit={handleProcessCheckOut} className="space-y-4">
                   <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-900 leading-relaxed">
-                    <strong>Pemeriksaan Kliring:</strong> Pastikan ruang basecamp bersih, sampah terpilah disetorkan ke pos kebersihan, dan KTP jaminan dikembalikan ke pembina.
+                    <strong>Pemeriksaan Kliring (Batas 15.00 WIB):</strong> Pastikan ruang basecamp bersih &amp; fasilitas utuh (kerusakan aset dikenai ganti rugi + denda Rp 500.000), 2 kantong sampah terpilah disetorkan ke pos kebersihan, dan KTP/SIM jaminan dikembalikan ke Official.
                   </div>
 
                   <div className="space-y-2 text-xs">
                     {[
-                      { key: 'roomCleanChecked', label: 'Ruang Transit Basecamp Bersih & Rapi (Tidak ada sampah tertinggal)' },
-                      { key: 'sortedTrashReturned', label: 'Kantong Sampah Terpilah Disetorkan ke Pos Kebersihan' },
-                      { key: 'ktpReturned', label: 'KTP Fisik Asli Telah Diserahkan Kembali ke Pembina' },
+                      { key: 'roomCleanChecked', label: '1. Ruang Basecamp Bersih, Rapi & Inventaris/Fasilitas Kelas Utuh' },
+                      { key: 'sortedTrashReturned', label: '2. 2 Kantong Sampah Terpilah (Organik & Anorganik) Disetorkan ke Pos Checkout' },
+                      { key: 'ktpReturned', label: '3. Bukti Lolos Verifikasi Diterbitkan & KTP/SIM Asli Diserahkan Kembali ke Official' },
                     ].map(item => (
                       <label key={item.key} className="flex items-center gap-2.5 p-3 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer hover:bg-slate-100">
                         <input

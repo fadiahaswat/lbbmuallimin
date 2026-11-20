@@ -29,7 +29,7 @@ import {
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
 import { EVENT, VENUE_INDUK } from '../../config.js';
-import { LOTTERY_CHEST_MAP, checkTeamVerificationEligibility } from '../../context/competitionHelpers.js';
+import { LOTTERY_CHEST_MAP, getChestNumberByLot, checkTeamVerificationEligibility } from '../../context/competitionHelpers.js';
 import { HARI_H_SCHEDULE } from '../../data/scheduleMatrices.js';
 import { formatImageUrl } from '../../services/sheetService.js';
 import titleLogoImg from '../../assets/title-logo.png';
@@ -146,7 +146,7 @@ export default function TechnicalMeetingView() {
   const slots = useMemo(() => {
     return Array.from({ length: totalSlotsCount }, (_, i) => {
       const lotNumber = i + 1;
-      const rawChestNumber = chestMapList[i] || (selectedJenjang === 'SD' ? `${101 + i * 2}` : `${202 + i * 2}`);
+      const rawChestNumber = chestMapList[i] || getChestNumberByLot(selectedJenjang, lotNumber);
       const assignedTeam = currentJenjangTeams.find(t => Number(t.lotNumber) === lotNumber);
       const sched = scheduleData[i] || {};
 
@@ -164,7 +164,7 @@ export default function TechnicalMeetingView() {
         warningPeluit: sched.warningPeluit || '-',
         stopPeluit: sched.stopPeluit || '-',
         exitArena: sched.exitArena || '-',
-        session: sched.session || (i < 12 ? 'Sesi I (Pagi)' : 'Sesi II (Siang)')
+        session: sched.session || (i < 14 ? 'Sesi I (Pagi)' : 'Sesi II (Siang)')
       };
     });
   }, [totalSlotsCount, chestMapList, selectedJenjang, currentJenjangTeams, scheduleData]);

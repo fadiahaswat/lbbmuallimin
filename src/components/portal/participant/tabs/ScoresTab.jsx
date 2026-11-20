@@ -29,11 +29,37 @@ import {
   parseMaterialsList
 } from '../../../../config.js';
 import { calculatePeletonScoreFromRubric } from '../../../../context/scoringActions.js';
+import { useCompetition } from '../../../../context/CompetitionContext.jsx';
+import { formatImageUrl } from '../../../../services/sheetService.js';
 
-export default function ScoresTab({ teamScore, currentTeam }) {
+export default function ScoresTab({ teamScore: propTeamScore, currentTeam }) {
+  const { isLocalhost } = useCompetition();
+  const [activeSheetTab, setActiveSheetTab] = useState('peleton'); // 'peleton' | 'danton' | 'penalti'
   const [activeJuryPost, setActiveJuryPost] = useState('rekap'); // 'rekap' | 'pos1' | 'pos2' | 'pos3'
   const [activeDantonTab, setActiveDantonTab] = useState('rekap'); // 'rekap' | 'pos1' | 'pos2' | 'pos3'
   const [searchMovement, setSearchMovement] = useState('');
+
+  // Di localhost, tampilkan preview lembar penilaian resmi jika skor tim belum ada
+  const teamScore = useMemo(() => {
+    if (propTeamScore) return propTeamScore;
+    if (!isLocalhost) return null;
+    const smp = currentTeam?.jenjang === 'SMP';
+    const murniPeleton = smp ? 6957 : 6537;
+    const murniDanton = 267;
+    return {
+      jenjang: currentTeam?.jenjang || 'SD',
+      status: 'finalized',
+      nilaiMurniPeleton: murniPeleton,
+      nilaiAkhirPeleton: murniPeleton,
+      nilaiMurniDanton: murniDanton,
+      nilaiAkhirDanton: murniDanton,
+      finalScore: murniPeleton + murniDanton,
+      pbb: { total: murniPeleton },
+      danton: { total: murniDanton },
+      penalties: { totalPenalty: 0, peletonPenalty: 0, dantonPenalty: 0 },
+      durationSeconds: smp ? 698 : 458,
+    };
+  }, [propTeamScore, isLocalhost, currentTeam?.jenjang]);
 
   const finalScore = teamScore?.finalScore ?? null;
   const peletonScore = teamScore?.nilaiAkhirPeleton ?? teamScore?.pbb?.total ?? (teamScore ? 0 : null);
@@ -390,307 +416,323 @@ export default function ScoresTab({ teamScore, currentTeam }) {
   }, [teamScore]);
 
   return (
-    <section className="rounded-[28px] border border-slate-200/90 bg-white p-5 sm:p-7 shadow-[0_18px_46px_rgba(15,23,42,0.06)] space-y-6">
-      {/* Panel Header */}
-      <div className="flex flex-col gap-3 border-b border-slate-100 pb-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-3">
-          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-slate-900 text-white shadow-sm border border-slate-800">
-            <Award className="w-5 h-5 text-amber-400" />
-          </span>
-          <div>
-            <h2 className="text-lg font-black tracking-tight text-slate-950 sm:text-xl">
-              Hasil Penilaian Resmi
-            </h2>
-            <p className="text-xs text-slate-500">
-              {currentTeam?.schoolName || currentTeam?.nama || 'Kontingen Peserta'} • No. Dada #{currentTeam?.chestNumber || (currentTeam?.lotNumber ? String(currentTeam.lotNumber).padStart(2, '0') : (currentTeam?.noUrut || '--'))}
-            </p>
-          </div>
-        </div>
-      </div>
-
+    <section className="space-y-5">
       {teamScore ? (
-        <div className="space-y-6">
-          {/* Dual Executive Championship Scoreboard (Peleton & Komandan) */}
-          <div className="grid gap-4 sm:gap-5 lg:grid-cols-2">
-            {/* 1. KATEGORI PELETON */}
-            <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-slate-900 border border-slate-800/90 shadow-xl p-5 sm:p-6 text-white group">
-              {/* Subtle Ambient Aura */}
-              <div className="absolute -right-12 -top-12 h-44 w-44 rounded-full bg-red-600/15 blur-3xl pointer-events-none group-hover:scale-110 transition-transform duration-700" />
-              <div className="absolute -left-12 -bottom-12 h-36 w-36 rounded-full bg-amber-500/10 blur-3xl pointer-events-none" />
+        <div className="space-y-5">
+          {/* ============================================================== */}
+          {/* 1. UNIFIED DARK OBSIDIAN SCORE COMMAND HEADER                  */}
+          {/* ============================================================== */}
+          <div className="rounded-3xl bg-slate-950 border border-slate-800/90 text-white shadow-[0_18px_46px_rgba(15,23,42,0.16)] overflow-hidden">
+            {/* Top Identity Bar — Fokus Identitas Peleton */}
+            {(() => {
+              const logoRaw = currentTeam?.files?.schoolLogo?.url || currentTeam?.file_logo_sekolah || currentTeam?.logoUrl || '';
+              const schoolName = currentTeam?.schoolName || currentTeam?.nama || 'Kontingen Peserta';
+              const dantonName = currentTeam?.dantonName || currentTeam?.roster?.danton?.name || '';
+              const chestNum = currentTeam?.chestNumber || (currentTeam?.lotNumber ? String(currentTeam.lotNumber).padStart(2, '0') : (currentTeam?.noUrut || '--'));
+              const fallbackAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(schoolName)}&background=${isSMP ? '1d4ed8' : 'b91c1c'}&color=fff&bold=true`;
 
-              <div className="relative z-10 space-y-4">
-                {/* Header Pill */}
-                <div className="flex items-center justify-between gap-2">
-                  <span className="inline-flex items-center gap-1.5 text-[10.5px] sm:text-xs font-black uppercase tracking-wider text-red-300 bg-red-500/15 px-3 py-1 rounded-full border border-red-500/30 shadow-xs">
-                    <Shield className="w-3.5 h-3.5 text-red-400 shrink-0" />
-                    <span>NILAI AKHIR PELETON</span>
-                  </span>
-                </div>
-
-                {/* Score & Plaque */}
-                <div className="flex items-center justify-between gap-2 sm:gap-3 pt-1">
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-baseline gap-1.5 sm:gap-2">
-                      <span className="text-3xl sm:text-4xl lg:text-5xl font-black font-mono tracking-tight text-white drop-shadow-[0_4px_16px_rgba(0,0,0,0.6)] leading-none">
-                        {peletonFinalScore}
-                      </span>
-                      <span className="text-[10px] sm:text-xs font-black text-amber-400 uppercase tracking-wider shrink-0">
-                        POIN
-                      </span>
+              return (
+                <div className="px-5 sm:px-6 py-4 border-b border-slate-800/90 flex flex-wrap items-center justify-between gap-3 bg-gradient-to-r from-slate-950 via-slate-900/90 to-slate-950">
+                  <div className="flex items-center gap-3.5 min-w-0">
+                    <img
+                      src={logoRaw ? formatImageUrl(logoRaw) : fallbackAvatar}
+                      alt={schoolName}
+                      className="w-11 h-11 object-contain shrink-0 drop-shadow-[0_2px_8px_rgba(0,0,0,0.45)]"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = fallbackAvatar;
+                      }}
+                    />
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h2 className="text-base sm:text-xl font-black tracking-tight text-white leading-tight truncate">
+                          {schoolName}
+                        </h2>
+                        <span className={`text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md border shrink-0 ${
+                          isSMP
+                            ? 'bg-blue-500/15 text-blue-300 border-blue-500/30'
+                            : 'bg-rose-500/15 text-rose-300 border-rose-500/30'
+                        }`}>
+                          {isSMP ? 'SMP / MTs' : 'SD / MI'}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 flex-wrap text-[11.5px] text-slate-400 mt-0.5">
+                        <span className="font-mono font-bold text-amber-300">No. Dada #{chestNum}</span>
+                        {currentTeam?.platoonName && (
+                          <>
+                            <span className="text-slate-700">·</span>
+                            <span className="text-slate-300 font-semibold">{currentTeam.platoonName}</span>
+                          </>
+                        )}
+                        {dantonName && (
+                          <>
+                            <span className="text-slate-700">·</span>
+                            <span className="text-slate-300 truncate">{dantonName}</span>
+                          </>
+                        )}
+                        {currentTeam?.regCode && (
+                          <>
+                            <span className="text-slate-700 hidden sm:inline">·</span>
+                            <span className="font-mono text-slate-500 hidden sm:inline">{currentTeam.regCode}</span>
+                          </>
+                        )}
+                      </div>
                     </div>
                   </div>
 
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-300 text-[11px] font-bold shrink-0">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                    <span>Disahkan Dewan Juri</span>
+                  </span>
+                </div>
+              );
+            })()}
+
+            {/* Integrated 3-Column Score & Telemetry Strip */}
+            <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-slate-800/90">
+              {/* Col 1: Nilai Akhir Peleton */}
+              <div className="p-5 sm:p-6 flex flex-col justify-between gap-3.5 relative">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider text-rose-300">
+                    <Shield className="w-3.5 h-3.5 text-rose-400" />
+                    <span>Nilai Akhir Peleton</span>
+                  </span>
                   {teamScore.rank && (
-                    <div className="rounded-xl sm:rounded-2xl px-2.5 py-1.5 sm:px-3.5 sm:py-2 text-center shrink-0 border border-amber-400/40 bg-amber-500/10 backdrop-blur-md shadow-xs ring-1 ring-amber-400/20 min-w-[90px] sm:min-w-[120px]">
-                      <div className="flex items-center justify-center gap-1 mb-0.5 sm:mb-1">
-                        <Trophy className="w-3 h-3 text-amber-300 shrink-0" />
-                        <p className="text-[8.5px] sm:text-[10px] font-black uppercase tracking-wider text-amber-300 truncate max-w-[80px] sm:max-w-none">
-                          {peletonAwardTitle}
-                        </p>
-                      </div>
-                      <p className="text-xl sm:text-2xl lg:text-3xl font-black text-white font-mono tracking-tight leading-none drop-shadow-xs">
-                        #{teamScore.rank}
-                      </p>
-                    </div>
+                    <span className="font-mono font-black text-[11px] px-2 py-0.5 rounded-md bg-amber-400/15 text-amber-300 border border-amber-400/30">
+                      #{teamScore.rank}
+                    </span>
                   )}
                 </div>
 
-                {/* Breakdown Nilai Murni & Penalti */}
-                <div className="flex items-center justify-between pt-3 border-t border-slate-800/80 text-xs">
-                  <div className="flex items-center gap-1.5 text-slate-400">
-                    <span className="font-medium">Nilai Murni:</span>
-                    <span className="font-mono font-bold text-slate-100">{peletonMurniTotal}</span>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-3xl sm:text-4xl font-black font-mono tracking-tight text-white leading-none">
+                    {peletonFinalScore}
+                  </span>
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Poin</span>
+                </div>
+
+                <div className="flex items-center justify-between gap-2 pt-3 border-t border-slate-800/80 text-[11px]">
+                  <div className="flex items-center gap-1.5 font-mono text-slate-400">
+                    <span>J1 <strong className="text-slate-200">{totalJ1}</strong></span>
+                    <span className="text-slate-700">·</span>
+                    <span>J2 <strong className="text-slate-200">{totalJ2}</strong></span>
+                    <span className="text-slate-700">·</span>
+                    <span>J3 <strong className="text-slate-200">{totalJ3}</strong></span>
                   </div>
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-slate-400 font-medium">Penalti:</span>
-                    {peletonPenaltyTotal > 0 ? (
-                      <span className="font-mono font-black text-rose-400 bg-rose-500/15 px-2 py-0.5 rounded-lg border border-rose-500/30 flex items-center gap-1 text-[11px] sm:text-xs">
-                        <AlertTriangle className="w-3 h-3 text-rose-400 shrink-0" />
-                        <span>-{peletonPenaltyTotal} Poin</span>
-                      </span>
-                    ) : (
-                      <span className="font-mono font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-lg border border-emerald-500/20 flex items-center gap-1 text-[11px] sm:text-xs">
-                        <Check className="w-3 h-3 text-emerald-400 shrink-0" />
-                        <span>0 Poin</span>
-                      </span>
-                    )}
-                  </div>
+                  {peletonPenaltyTotal > 0 ? (
+                    <span className="font-mono font-bold text-rose-400">-{peletonPenaltyTotal}</span>
+                  ) : (
+                    <span className="font-mono font-semibold text-emerald-400">Murni {peletonMurniTotal}</span>
+                  )}
                 </div>
               </div>
-            </div>
 
-            {/* 2. KATEGORI KOMANDAN */}
-            <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-slate-900 border border-slate-800/90 shadow-xl p-5 sm:p-6 text-white group">
-              {/* Subtle Ambient Aura */}
-              <div className="absolute -right-12 -top-12 h-44 w-44 rounded-full bg-amber-500/15 blur-3xl pointer-events-none group-hover:scale-110 transition-transform duration-700" />
-              <div className="absolute -left-12 -bottom-12 h-36 w-36 rounded-full bg-slate-700/15 blur-3xl pointer-events-none" />
-
-              <div className="relative z-10 space-y-4">
-                {/* Header Pill */}
+              {/* Col 2: Nilai Akhir Komandan */}
+              <div className="p-5 sm:p-6 flex flex-col justify-between gap-3.5">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="inline-flex items-center gap-1.5 text-[10.5px] sm:text-xs font-black uppercase tracking-wider text-amber-300 bg-amber-500/15 px-3 py-1 rounded-full border border-amber-500/30 shadow-xs">
-                    <Medal className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                    <span>NILAI AKHIR KOMANDAN</span>
+                  <span className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider text-amber-300">
+                    <Medal className="w-3.5 h-3.5 text-amber-400" />
+                    <span>Nilai Akhir Komandan</span>
+                  </span>
+                  {(teamScore.dantonRank || teamScore.rank) && (
+                    <span className="font-mono font-black text-[11px] px-2 py-0.5 rounded-md bg-amber-400/15 text-amber-300 border border-amber-400/30">
+                      #{teamScore.dantonRank || teamScore.rank}
+                    </span>
+                  )}
+                </div>
+
+                <div className="flex items-baseline gap-2">
+                  <span className="text-3xl sm:text-4xl font-black font-mono tracking-tight text-amber-300 leading-none">
+                    {dantonFinalScore}
+                  </span>
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Poin</span>
+                </div>
+
+                <div className="flex items-center justify-between gap-2 pt-3 border-t border-slate-800/80 text-[11px]">
+                  <div className="flex items-center gap-1.5 font-mono text-slate-400">
+                    <span>J1 <strong className="text-slate-200">{dantonData.t1}</strong></span>
+                    <span className="text-slate-700">·</span>
+                    <span>J2 <strong className="text-slate-200">{dantonData.t2}</strong></span>
+                    <span className="text-slate-700">·</span>
+                    <span>J3 <strong className="text-slate-200">{dantonData.t3}</strong></span>
+                  </div>
+                  {dantonPenaltyTotal > 0 ? (
+                    <span className="font-mono font-bold text-rose-400">-{dantonPenaltyTotal}</span>
+                  ) : (
+                    <span className="font-mono font-semibold text-emerald-400">Murni {dantonMurniTotal}</span>
+                  )}
+                </div>
+              </div>
+
+              {/* Col 3: Catatan Waktu Arena & Penalti */}
+              <div className="p-5 sm:p-6 flex flex-col justify-between gap-3.5">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider text-slate-300">
+                    <Timer className="w-3.5 h-3.5 text-sky-400" />
+                    <span>Waktu Arena &amp; Penalti</span>
+                  </span>
+                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
+                    isOvertime
+                      ? 'bg-rose-500/15 text-rose-300 border-rose-500/30'
+                      : 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30'
+                  }`}>
+                    {isOvertime ? `Overtime +${formatTime(overtimeSeconds)}` : 'Waktu Sah'}
                   </span>
                 </div>
 
-                {/* Score & Plaque */}
-                <div className="flex items-center justify-between gap-2 sm:gap-3 pt-1">
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-baseline gap-1.5 sm:gap-2">
-                      <span className="text-3xl sm:text-4xl lg:text-5xl font-black font-mono tracking-tight text-white drop-shadow-[0_4px_16px_rgba(0,0,0,0.6)] leading-none">
-                        {dantonFinalScore}
-                      </span>
-                      <span className="text-[10px] sm:text-xs font-black text-amber-400 uppercase tracking-wider shrink-0">
-                        POIN
-                      </span>
-                    </div>
+                <div className="space-y-2">
+                  <div className="flex items-baseline justify-between gap-2">
+                    <span className="text-2xl sm:text-3xl font-black font-mono tracking-tight text-white leading-none">
+                      {formatTime(elapsedSeconds)}
+                    </span>
+                    <span className="font-mono text-xs text-slate-400">
+                      / {formatTime(maxTimeSeconds)}
+                    </span>
                   </div>
-
-                  {(teamScore.dantonRank || teamScore.rank) && (
-                    <div className="rounded-xl sm:rounded-2xl px-2.5 py-1.5 sm:px-3.5 sm:py-2 text-center shrink-0 border border-amber-400/40 bg-amber-500/10 backdrop-blur-md shadow-xs ring-1 ring-amber-400/20 min-w-[90px] sm:min-w-[120px]">
-                      <div className="flex items-center justify-center gap-1 mb-0.5 sm:mb-1">
-                        <Medal className="w-3 h-3 text-amber-300 shrink-0" />
-                        <p className="text-[8.5px] sm:text-[10px] font-black uppercase tracking-wider text-amber-300 truncate max-w-[80px] sm:max-w-none">
-                          {dantonAwardTitle}
-                        </p>
-                      </div>
-                      <p className="text-xl sm:text-2xl lg:text-3xl font-black text-white font-mono tracking-tight leading-none drop-shadow-xs">
-                        #{teamScore.dantonRank || teamScore.rank}
-                      </p>
-                    </div>
-                  )}
+                  <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                    <div
+                      className={`h-full transition-all duration-500 rounded-full ${
+                        isOvertime ? 'bg-rose-500' : 'bg-emerald-400'
+                      }`}
+                      style={{ width: `${Math.min(100, (elapsedSeconds / maxTimeSeconds) * 100)}%` }}
+                    />
+                  </div>
                 </div>
 
-                {/* Breakdown Nilai Murni & Penalti */}
-                <div className="flex items-center justify-between pt-3 border-t border-slate-800/80 text-xs">
-                  <div className="flex items-center gap-1.5 text-slate-400">
-                    <span className="font-medium">Nilai Murni:</span>
-                    <span className="font-mono font-bold text-slate-100">{dantonMurniTotal}</span>
+                <div className="flex items-center justify-between gap-2 pt-3 border-t border-slate-800/80 text-[11px]">
+                  <span className="text-slate-400 font-medium">Total Penalti</span>
+                  {penalty > 0 ? (
+                    <span className="font-mono font-black text-rose-400 flex items-center gap-1">
+                      <AlertTriangle className="w-3 h-3" />
+                      <span>-{penalty} Poin</span>
+                    </span>
+                  ) : (
+                    <span className="font-mono font-bold text-emerald-400 flex items-center gap-1">
+                      <Check className="w-3 h-3" />
+                      <span>Bebas Penalti (0)</span>
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* ============================================================== */}
+          {/* 2. UNIFIED TABBED EVALUATION STUDIO                            */}
+          {/* ============================================================== */}
+          <div className="bg-white rounded-3xl border border-slate-200/90 shadow-[0_12px_32px_rgba(15,23,42,0.05)] overflow-hidden">
+            {/* Flush 3-Tab Navigation Header */}
+            <div className="grid grid-cols-3 border-b border-slate-200 bg-slate-50/80">
+              {[
+                {
+                  id: 'peleton',
+                  label: 'Lembar Peleton',
+                  badge: `${materialsCount} Gerakan`,
+                  icon: Shield,
+                  activeBar: 'bg-rose-600',
+                  activeIcon: 'text-rose-600',
+                },
+                {
+                  id: 'danton',
+                  label: 'Lembar Komandan',
+                  badge: `${DANTON_CRITERIA.length} Aspek`,
+                  icon: Medal,
+                  activeBar: 'bg-amber-500',
+                  activeIcon: 'text-amber-600',
+                },
+                {
+                  id: 'penalti',
+                  label: 'Berita Acara Penalti',
+                  badge: penalty > 0 ? `-${penalty} Poin` : '0 Poin',
+                  icon: ShieldAlert,
+                  activeBar: penalty > 0 ? 'bg-rose-600' : 'bg-emerald-600',
+                  activeIcon: penalty > 0 ? 'text-rose-600' : 'text-emerald-600',
+                },
+              ].map((tab, idx) => {
+                const Icon = tab.icon;
+                const isActive = activeSheetTab === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => setActiveSheetTab(tab.id)}
+                    className={`relative py-3.5 px-2.5 sm:px-5 text-xs transition-all cursor-pointer flex items-center justify-center gap-2 whitespace-nowrap ${
+                      idx < 2 ? 'border-r border-slate-200/80' : ''
+                    } ${
+                      isActive
+                        ? 'bg-white text-slate-950 font-black'
+                        : 'text-slate-500 hover:text-slate-900 hover:bg-white/60 font-semibold'
+                    }`}
+                  >
+                    <Icon className={`w-4 h-4 shrink-0 ${isActive ? tab.activeIcon : 'text-slate-400'}`} />
+                    <span className="truncate">{tab.label}</span>
+                    <span className={`hidden sm:inline-flex px-2 py-0.5 rounded-full text-[10px] font-mono font-bold ${
+                      tab.id === 'penalti'
+                        ? penalty > 0
+                          ? 'bg-rose-100 text-rose-700'
+                          : 'bg-emerald-100 text-emerald-700'
+                        : isActive
+                        ? 'bg-slate-900 text-white'
+                        : 'bg-slate-200/80 text-slate-600'
+                    }`}>
+                      {tab.badge}
+                    </span>
+                    {isActive && <span className={`absolute bottom-0 left-0 right-0 h-0.5 ${tab.activeBar}`} />}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* TAB CONTENT 1: LEMBAR PENILAIAN PELETON */}
+            {activeSheetTab === 'peleton' && (
+              <div className="p-4 sm:p-6 space-y-4">
+                {/* Unified Compact Toolbar: Jury Selector + Search */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  {/* Segmented Control: Rekap 3 Juri + Juri 1, 2, 3 */}
+                  <div className="inline-flex items-center gap-1 p-1 bg-slate-100 rounded-xl border border-slate-200/80 overflow-x-auto shrink-0">
+                    {[
+                      { id: 'rekap', label: 'Rekap 3 Juri' },
+                      { id: 'pos1', label: 'Juri 1' },
+                      { id: 'pos2', label: 'Juri 2' },
+                      { id: 'pos3', label: 'Juri 3' },
+                    ].map(opt => (
+                      <button
+                        key={opt.id}
+                        type="button"
+                        onClick={() => setActiveJuryPost(opt.id)}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+                          activeJuryPost === opt.id
+                            ? 'bg-slate-900 text-white shadow-2xs'
+                            : 'text-slate-600 hover:text-slate-950 hover:bg-white/70'
+                        }`}
+                      >
+                        {opt.id === 'rekap' && <FileSpreadsheet className="w-3.5 h-3.5" />}
+                        <span>{opt.label}</span>
+                      </button>
+                    ))}
                   </div>
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-slate-400 font-medium">Penalti:</span>
-                    {dantonPenaltyTotal > 0 ? (
-                      <span className="font-mono font-black text-rose-400 bg-rose-500/15 px-2 py-0.5 rounded-lg border border-rose-500/30 flex items-center gap-1 text-[11px] sm:text-xs">
-                        <AlertTriangle className="w-3 h-3 text-rose-400 shrink-0" />
-                        <span>-{dantonPenaltyTotal} Poin</span>
-                      </span>
-                    ) : (
-                      <span className="font-mono font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-lg border border-emerald-500/20 flex items-center gap-1 text-[11px] sm:text-xs">
-                        <Check className="w-3 h-3 text-emerald-400 shrink-0" />
-                        <span>0 Poin</span>
-                      </span>
+
+                  {/* Search Input */}
+                  <div className="relative">
+                    <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                    <input
+                      type="text"
+                      value={searchMovement}
+                      onChange={(e) => setSearchMovement(e.target.value)}
+                      placeholder="Cari materi gerakan..."
+                      className="pl-8 pr-7 py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-white focus:bg-white text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-400 transition-all w-full sm:w-60"
+                    />
+                    {searchMovement && (
+                      <button
+                        type="button"
+                        onClick={() => setSearchMovement('')}
+                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 text-sm cursor-pointer"
+                      >
+                        ×
+                      </button>
                     )}
                   </div>
                 </div>
-              </div>
-            </div>
-          </div>
-
-          {/* ============================================================== */}
-          {/* SECTION 1: LEMBAR CATATAN WAKTU RESMI (OFFICIAL TIMEKEEPER)   */}
-          {/* ============================================================== */}
-          <div className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs p-4 sm:p-5">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
-              <div className="flex items-center gap-2.5 min-w-0">
-                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500/15 text-amber-700 shrink-0">
-                  <Timer className="w-4.5 h-4.5 text-amber-600" />
-                </span>
-                <div>
-                  <h3 className="font-bold text-sm text-slate-900">
-                    Catatan Waktu Arena
-                  </h3>
-                  <p className="text-xs text-slate-500">
-                    Maksimal {formatTime(maxTimeSeconds)} ({isSMP ? 'SMP' : 'SD'})
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className={`inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-full border ${
-                  isOvertime
-                    ? 'bg-rose-50 text-rose-700 border-rose-200'
-                    : 'bg-emerald-50 text-emerald-800 border-emerald-200'
-                }`}>
-                  <span className={`w-1.5 h-1.5 rounded-full ${isOvertime ? 'bg-rose-500 animate-ping' : 'bg-emerald-500'}`} />
-                  {isOvertime ? `Overtime +${formatTime(overtimeSeconds)} (-${overTimeBlocks * 20} Poin)` : 'Waktu Sah (Aman)'}
-                </span>
-                <span className="font-mono font-black text-sm text-slate-900 bg-slate-100 px-3 py-1 rounded-xl border border-slate-200">
-                  {formatTime(elapsedSeconds)} / {formatTime(maxTimeSeconds)}
-                </span>
-              </div>
-            </div>
-
-            {/* Visual Progress Bar */}
-            <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
-              <div
-                className={`h-full transition-all duration-500 rounded-full ${
-                  isOvertime ? 'bg-rose-600' : 'bg-emerald-500'
-                }`}
-                style={{ width: `${Math.min(100, (elapsedSeconds / maxTimeSeconds) * 100)}%` }}
-              />
-            </div>
-          </div>
-
-          {/* SECTION 2: LEMBAR PENILAIAN PELETON (FORMAT APLIKASI JURI)     */}
-          {/* ============================================================== */}
-          <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden space-y-4 p-4 sm:p-6">
-            
-            {/* Header Bagian: Judul & Tab Selector Juri */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-100 gap-3">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-700 border border-blue-200/80 font-black shadow-2xs">
-                  <FileSpreadsheet className="w-5 h-5 text-blue-600" />
-                </div>
-                <div>
-                  <h3 className="text-sm sm:text-base font-black text-slate-900 tracking-tight">
-                    Lembar Penilaian Peleton
-                  </h3>
-                  <p className="text-xs text-slate-500">
-                    Akumulasi PBB Murni 3 Dewan Juri Resmi
-                  </p>
-                </div>
-              </div>
-
-              {/* Segmented Control: Rekap 3 Juri + Juri 1, 2, 3 */}
-              <div className="flex items-center gap-1 p-1 bg-slate-100/90 rounded-2xl border border-slate-200/80 overflow-x-auto shrink-0 shadow-2xs">
-                <button
-                  type="button"
-                  onClick={() => setActiveJuryPost('rekap')}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
-                    activeJuryPost === 'rekap'
-                      ? 'bg-white text-slate-950 shadow-xs border border-slate-200/80 font-black'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
-                  }`}
-                >
-                  <FileSpreadsheet className={`w-3.5 h-3.5 ${activeJuryPost === 'rekap' ? 'text-blue-600' : 'text-slate-400'}`} />
-                  <span>Rekap 3 Juri</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setActiveJuryPost('pos1')}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
-                    activeJuryPost === 'pos1'
-                      ? 'bg-white text-slate-950 shadow-xs border border-slate-200/80 font-black'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
-                  }`}
-                >
-                  Juri 1
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setActiveJuryPost('pos2')}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
-                    activeJuryPost === 'pos2'
-                      ? 'bg-white text-slate-950 shadow-xs border border-slate-200/80 font-black'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
-                  }`}
-                >
-                  Juri 2
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setActiveJuryPost('pos3')}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
-                    activeJuryPost === 'pos3'
-                      ? 'bg-white text-slate-950 shadow-xs border border-slate-200/80 font-black'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
-                  }`}
-                >
-                  Juri 3
-                </button>
-              </div>
-            </div>
-
-            {/* Filter Search Gerakan */}
-            <div className="flex items-center justify-between gap-3">
-              <span className="text-xs font-bold text-slate-700">
-                {activeJuryPost === 'rekap' ? 'Perbandingan Nilai 3 Juri' : `Lembar Asli ${activeJuryName}`}
-              </span>
-
-              <div className="relative">
-                <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
-                <input
-                  type="text"
-                  value={searchMovement}
-                  onChange={(e) => setSearchMovement(e.target.value)}
-                  placeholder="Cari materi gerakan..."
-                  className="pl-8 pr-6 py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-white focus:bg-white text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all w-44 sm:w-56"
-                />
-                {searchMovement && (
-                  <button
-                    type="button"
-                    onClick={() => setSearchMovement('')}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs cursor-pointer"
-                  >
-                    ×
-                  </button>
-                )}
-              </div>
-            </div>
 
             {/* KONTEN 1: TABEL ASLI APLIKASI JURI PELETON (FORMAT CHECKLIST 5 PREDIKAT BAKU) */}
             {activeJuryPost !== 'rekap' ? (
@@ -879,22 +921,21 @@ export default function ScoresTab({ teamScore, currentTeam }) {
               /* KONTEN 2: TABEL PERBANDINGAN REKAPITULASI 3 JURI PELETON */
               <div className="overflow-x-auto rounded-2xl border border-slate-200 shadow-2xs max-h-[640px] overflow-y-auto">
                 <table className="w-full text-xs text-left border-collapse">
-                  <thead className="sticky top-0 z-20 bg-slate-100 text-slate-700 uppercase font-black text-[10px] tracking-wider border-b border-slate-200 shadow-xs">
+                  <thead className="sticky top-0 z-20 bg-slate-900 text-slate-300 uppercase font-black text-[10px] tracking-wider border-b border-slate-800">
                     <tr>
-                      <th className="py-3 px-3 text-center w-12 border-r border-slate-200">No</th>
-                      <th className="py-1.5 px-2 min-w-[240px] border-r border-slate-200">Materi Gerakan Perlombaan</th>
-                      <th className="py-3 px-3 text-center w-24 border-r border-slate-200 bg-blue-50/80 text-blue-900">
+                      <th className="py-3 px-3 text-center w-12 border-r border-slate-800">No</th>
+                      <th className="py-3 px-3.5 min-w-[240px] border-r border-slate-800">Materi Gerakan Perlombaan</th>
+                      <th className="py-3 px-3 text-center w-24 border-r border-slate-800 text-sky-300">
                         Juri 1
                       </th>
-                      <th className="py-3 px-3 text-center w-24 border-r border-slate-200 bg-sky-50/80 text-sky-900">
+                      <th className="py-3 px-3 text-center w-24 border-r border-slate-800 text-emerald-300">
                         Juri 2
                       </th>
-                      <th className="py-3 px-3 text-center w-24 border-r border-slate-200 bg-indigo-50/80 text-indigo-900">
+                      <th className="py-3 px-3 text-center w-24 border-r border-slate-800 text-violet-300">
                         Juri 3
                       </th>
-                      <th className="py-3 px-3 text-center w-28 bg-slate-900 text-white font-black">
+                      <th className="py-3 px-3 text-center w-28 bg-slate-950 text-amber-300 font-black">
                         Total Poin
-                        <span className="block text-[8px] font-normal text-amber-300 lowercase">Akumulasi 3 Juri</span>
                       </th>
                     </tr>
                   </thead>
@@ -949,80 +990,43 @@ export default function ScoresTab({ teamScore, currentTeam }) {
                 </table>
               </div>
             )}
-          </div>
-
-          {/* ============================================================== */}
-          {/* SECTION 3: LEMBAR PENILAIAN KOMANDAN (FORMAT APLIKASI JURI)    */}
-          {/* ============================================================== */}
-          <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden space-y-4 p-4 sm:p-6">
-            {/* Header Bagian: Judul & Tab Selector Juri Danton */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-100 gap-3">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-50 text-amber-800 border border-amber-200/80 font-black shadow-2xs">
-                  <Award className="w-5 h-5 text-amber-600" />
-                </div>
-                <div>
-                  <h3 className="text-sm sm:text-base font-black text-slate-900 tracking-tight">
-                    Lembar Penilaian Komandan Peleton
-                  </h3>
-                  <p className="text-xs text-slate-500">
-                    Akumulasi Nilai Komandan Peleton Terbobot 3 Dewan Juri
-                  </p>
-                </div>
               </div>
+            )}
 
-              {/* Segmented Control: Rekap 3 Juri + Juri 1, 2, 3 */}
-              <div className="flex items-center gap-1 p-1 bg-slate-100/90 rounded-2xl border border-slate-200/80 overflow-x-auto shrink-0 shadow-2xs">
-                <button
-                  type="button"
-                  onClick={() => setActiveDantonTab('rekap')}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
-                    activeDantonTab === 'rekap'
-                      ? 'bg-white text-slate-950 shadow-xs border border-slate-200/80 font-black'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
-                  }`}
-                >
-                  <FileSpreadsheet className={`w-3.5 h-3.5 ${activeDantonTab === 'rekap' ? 'text-amber-600' : 'text-slate-400'}`} />
-                  <span>Rekap 3 Juri</span>
-                </button>
+            {/* TAB CONTENT 2: LEMBAR PENILAIAN KOMANDAN */}
+            {activeSheetTab === 'danton' && (
+              <div className="p-4 sm:p-6 space-y-4">
+                {/* Compact Toolbar: Jury Selector + Danton Identity */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="inline-flex items-center gap-1 p-1 bg-slate-100 rounded-xl border border-slate-200/80 overflow-x-auto shrink-0">
+                    {[
+                      { id: 'rekap', label: 'Rekap 3 Juri' },
+                      { id: 'pos1', label: 'Juri 1' },
+                      { id: 'pos2', label: 'Juri 2' },
+                      { id: 'pos3', label: 'Juri 3' },
+                    ].map(opt => (
+                      <button
+                        key={opt.id}
+                        type="button"
+                        onClick={() => setActiveDantonTab(opt.id)}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+                          activeDantonTab === opt.id
+                            ? 'bg-slate-900 text-white shadow-2xs'
+                            : 'text-slate-600 hover:text-slate-950 hover:bg-white/70'
+                        }`}
+                      >
+                        {opt.id === 'rekap' && <FileSpreadsheet className="w-3.5 h-3.5" />}
+                        <span>{opt.label}</span>
+                      </button>
+                    ))}
+                  </div>
 
-                <button
-                  type="button"
-                  onClick={() => setActiveDantonTab('pos1')}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
-                    activeDantonTab === 'pos1'
-                      ? 'bg-white text-slate-950 shadow-xs border border-slate-200/80 font-black'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
-                  }`}
-                >
-                  Juri 1
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setActiveDantonTab('pos2')}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
-                    activeDantonTab === 'pos2'
-                      ? 'bg-white text-slate-950 shadow-xs border border-slate-200/80 font-black'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
-                  }`}
-                >
-                  Juri 2
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setActiveDantonTab('pos3')}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
-                    activeDantonTab === 'pos3'
-                      ? 'bg-white text-slate-950 shadow-xs border border-slate-200/80 font-black'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
-                  }`}
-                >
-                  Juri 3
-                </button>
-              </div>
-            </div>
+                  {(currentTeam?.dantonName || currentTeam?.roster?.danton?.name) && (
+                    <span className="text-xs font-bold text-slate-600 bg-slate-50 border border-slate-200/80 px-3 py-1.5 rounded-xl truncate">
+                      {currentTeam?.dantonName || currentTeam?.roster?.danton?.name}
+                    </span>
+                  )}
+                </div>
 
             {/* KONTEN DANTON: CHECKLIST ASLI SESUAI APLIKASI JURI */}
             {activeDantonTab !== 'rekap' ? (
@@ -1171,17 +1175,16 @@ export default function ScoresTab({ teamScore, currentTeam }) {
               /* TABEL REKAP 3 JURI DANTON */
               <div className="overflow-x-auto rounded-2xl border border-slate-200 shadow-2xs">
                 <table className="w-full text-xs text-left border-collapse">
-                  <thead className="bg-slate-100 text-slate-700 uppercase font-black text-[10px] tracking-wider border-b border-slate-200">
+                  <thead className="bg-slate-900 text-slate-300 uppercase font-black text-[10px] tracking-wider border-b border-slate-800">
                     <tr>
-                      <th className="py-3 px-3 text-center w-12 border-r border-slate-200">No</th>
-                      <th className="py-1.5 px-2 min-w-[120px] max-w-[170px] border-r border-slate-200">Aspek Rubrik Komandan</th>
-                      <th className="py-1.5 px-1 text-center w-16 border-r border-slate-200">Bobot</th>
-                      <th className="py-3 px-3 text-center w-24 border-r border-slate-200 bg-blue-50 text-blue-900">Juri 1</th>
-                      <th className="py-3 px-3 text-center w-24 border-r border-slate-200 bg-sky-50 text-sky-900">Juri 2</th>
-                      <th className="py-3 px-3 text-center w-24 border-r border-slate-200 bg-indigo-50 text-indigo-900">Juri 3</th>
-                      <th className="py-3 px-3 text-center w-28 bg-slate-900 text-white font-black">
+                      <th className="py-3 px-3 text-center w-12 border-r border-slate-800">No</th>
+                      <th className="py-3 px-3.5 min-w-[160px] border-r border-slate-800">Aspek Rubrik Komandan</th>
+                      <th className="py-3 px-2 text-center w-16 border-r border-slate-800 text-amber-300">Bobot</th>
+                      <th className="py-3 px-3 text-center w-24 border-r border-slate-800 text-sky-300">Juri 1</th>
+                      <th className="py-3 px-3 text-center w-24 border-r border-slate-800 text-emerald-300">Juri 2</th>
+                      <th className="py-3 px-3 text-center w-24 border-r border-slate-800 text-violet-300">Juri 3</th>
+                      <th className="py-3 px-3 text-center w-28 bg-slate-950 text-amber-300 font-black">
                         Total Nilai
-                        <span className="block text-[8px] font-normal text-amber-300 lowercase">Terbobot 3 Juri</span>
                       </th>
                     </tr>
                   </thead>
@@ -1243,39 +1246,12 @@ export default function ScoresTab({ teamScore, currentTeam }) {
                 </table>
               </div>
             )}
-          </div>
-
-          {/* ============================================================== */}
-          {/* SECTION 4: LEMBAR BERITA ACARA PENALTI (FORMAT APLIKASI JURI)  */}
-          {/* ============================================================== */}
-          <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-4 sm:p-6 space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3.5 border-b border-slate-100 gap-3">
-              <div className="flex items-center gap-3">
-                <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-rose-50 text-rose-700 border border-rose-200/80 font-black shadow-xs shrink-0">
-                  <ShieldAlert className="w-5 h-5 text-rose-600" />
-                </span>
-                <div>
-                  <h3 className="font-black text-sm sm:text-base text-slate-900">
-                    Pengurangan Nilai (Penalti)
-                  </h3>
-                  <p className="text-xs text-slate-500">
-                    Rekapitulasi sanksi pengurangan nilai lapangan &amp; tata tertib
-                  </p>
-                </div>
               </div>
+            )}
 
-              {penalty > 0 ? (
-                <div className="bg-rose-50 border border-rose-200 px-3 py-1 rounded-xl text-right shrink-0">
-                  <span className="text-[10px] font-bold text-rose-700 uppercase mr-1">Total Penalti:</span>
-                  <span className="font-mono font-black text-sm text-rose-900">-{penalty} Poin</span>
-                </div>
-              ) : (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold shrink-0">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>Bebas Penalti (0 Poin)</span>
-                </span>
-              )}
-            </div>
+            {/* TAB CONTENT 3: BERITA ACARA PENALTI */}
+            {activeSheetTab === 'penalti' && (
+              <div className="p-4 sm:p-6 space-y-4">
 
             {/* Jika Nihil Penalti: Banner Bersih & Ringkas */}
             {penalty === 0 ? (
@@ -1419,6 +1395,8 @@ export default function ScoresTab({ teamScore, currentTeam }) {
                     </div>
                   </div>
                 )}
+              </div>
+            )}
               </div>
             )}
           </div>

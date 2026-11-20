@@ -118,6 +118,8 @@ export function useFieldTimer({ updateTeamStaging, scores = {}, setScores }) {
         dantonPenalty: pen.dantonPenalty,
         nilaiAkhirPeleton,
         nilaiAkhirDanton,
+        pbb: existing.pbb ? { ...existing.pbb, nilaiAkhir: nilaiAkhirPeleton } : existing.pbb,
+        danton: existing.danton ? { ...existing.danton, nilaiAkhir: nilaiAkhirDanton } : existing.danton,
         fieldTimerData: {
           ...(existing.fieldTimerData || {}),
           durationSeconds: elapsed,

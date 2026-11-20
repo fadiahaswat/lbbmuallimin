@@ -27,7 +27,7 @@ export default function SebaranNilaiTable({ className = '', showSectionHeader = 
             <thead>
               <tr className="border-b border-black font-black text-black">
                 <th className="py-2.5 px-3 text-left border-r border-black bg-white w-32 sm:w-36">
-                  Kesulitan Gerakan
+                  Tingkat Kesulitan
                 </th>
                 <th className="py-2.5 px-2 border-r border-black bg-[#7f7f7f] text-black w-10 sm:w-11">
                   KS
@@ -50,7 +50,7 @@ export default function SebaranNilaiTable({ className = '', showSectionHeader = 
               {/* Sederhana (50 - 80, Step +3) */}
               <tr className="border-b border-black">
                 <td className="py-2.5 px-3 text-left font-semibold border-r border-black bg-white">
-                  Sederhana
+                  I
                 </td>
                 <td className="py-2.5 px-2 border-r border-black bg-[#d9d9d9]">50</td>
                 <td className="py-2.5 px-2 border-r border-black bg-[#fce4d6]">53</td>
@@ -68,7 +68,7 @@ export default function SebaranNilaiTable({ className = '', showSectionHeader = 
               {/* Menengah (50 - 85, Alternating Step +3 / +4) */}
               <tr className="border-b border-black">
                 <td className="py-2.5 px-3 text-left font-semibold border-r border-black bg-white">
-                  Menengah
+                  II
                 </td>
                 <td className="py-2.5 px-2 border-r border-black bg-[#d9d9d9]">50</td>
                 <td className="py-2.5 px-2 border-r border-black bg-[#fce4d6]">53</td>
@@ -86,7 +86,7 @@ export default function SebaranNilaiTable({ className = '', showSectionHeader = 
               {/* Kompleks (50 - 90, Step +4) */}
               <tr>
                 <td className="py-2.5 px-3 text-left font-semibold border-r border-black bg-white">
-                  Kompleks
+                  III
                 </td>
                 <td className="py-2.5 px-2 border-r border-black bg-[#d9d9d9]">50</td>
                 <td className="py-2.5 px-2 border-r border-black bg-[#fce4d6]">54</td>

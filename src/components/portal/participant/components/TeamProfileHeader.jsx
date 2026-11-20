@@ -41,7 +41,7 @@ export default function TeamProfileHeader({
   const activeUpdateTeamProfile = updateTeamProfile || compCtx.updateTeamProfile;
   const allTeams = compCtx.teams || [];
   const allScores = compCtx.scores || {};
-  const isAnnouncementPublished = Boolean(compCtx.settings?.announcementPublished);
+  const isAnnouncementPublished = Boolean(compCtx.settings?.announcementPublished || compCtx.isLocalhost);
 
   // Hitung medali resmi tim saat pengumuman juara sudah dipublikasikan
   const publishedMedals = React.useMemo(() => {

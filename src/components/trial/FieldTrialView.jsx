@@ -565,13 +565,6 @@ export default function FieldTrialView() {
           </h4>
 
           <div className="flex items-center gap-1 shrink-0">
-            {isMyTeam && (
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full font-black text-[8.5px] bg-emerald-600 text-white shadow-2xs shrink-0 uppercase tracking-wider">
-                <Sparkles className="w-2.5 h-2.5" />
-                <span>Peleton Anda</span>
-              </span>
-            )}
-
             {isCheckedOut ? (
               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] sm:text-[9.5px] font-bold bg-slate-100 text-slate-700 border border-slate-200 shrink-0">
                 <CheckCircle2 className="w-3 h-3 text-emerald-600" />
@@ -1015,7 +1008,7 @@ export default function FieldTrialView() {
               <span>Petunjuk Alur Gladi</span>
             </div>
             <p className="leading-relaxed text-slate-500">
-              Peleton check-in di pos gerbang 30 menit sebelum slot. Durasi gladi orientasi kontur lapangan maksimal 15 menit per peleton.
+              Peleton bersiap di lokasi minimal 15 menit sebelum slot. Durasi gladi orientasi kontur lapangan maksimal 15 menit per peleton.
             </p>
           </div>
 
@@ -1082,129 +1075,128 @@ export default function FieldTrialView() {
             const mySlotTime = myTeamTrialSlot?.slotInfo?.time ? myTeamTrialSlot.slotInfo.time.replace(/\s*WIB/i, '') : '-';
             const mySlotIndex = myTeamTrialSlot?.slotInfo?.index || (myTeamTrialSlot ? myTeamTrialSlot.slotIdx + 1 : '-');
             const myCheckInTime = myTeamTrialSlot?.slotInfo?.checkIn || myTeamTrialSlot?.slotInfo?.arrival || '06.30 WIB';
+            const myLogoRaw = currentTeam?.files?.schoolLogo?.url || currentTeam?.file_logo_sekolah || currentTeam?.logoUrl || '';
+            const myFallbackAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(currentTeam.schoolName || 'Tim')}&background=${currentTeam.jenjang === 'SMP' ? '1d4ed8' : 'b91c1c'}&color=fff&bold=true`;
+            const myDantonName = currentTeam?.dantonName || currentTeam?.roster?.danton?.name || '';
 
             return (
-              <div className="overflow-hidden rounded-[28px] border border-slate-200/90 bg-white shadow-[0_16px_38px_rgba(15,23,42,0.06)]">
-                {/* Header Card */}
-                <div className="p-3.5 sm:p-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 bg-gradient-to-r from-slate-50/70 via-white to-slate-50/40">
-                  <div className="flex items-start sm:items-center gap-3 min-w-0 flex-1">
-                    <div className="flex h-10 w-10 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-red-600 to-red-800 text-white shadow-md mt-0.5 sm:mt-0">
-                      <Compass className="w-5 h-5" />
-                    </div>
+              <div className="overflow-hidden rounded-3xl border border-slate-800/90 bg-slate-950 text-white shadow-[0_18px_46px_rgba(15,23,42,0.16)]">
+                {/* Top Identity Bar — Fokus Identitas Peleton */}
+                <div className="px-5 sm:px-6 py-4 border-b border-slate-800/90 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-gradient-to-r from-slate-950 via-slate-900/90 to-slate-950">
+                  <div className="flex items-center gap-3.5 min-w-0 flex-1">
+                    <img
+                      src={myLogoRaw ? formatImageUrl(myLogoRaw) : myFallbackAvatar}
+                      alt={currentTeam.schoolName}
+                      className="w-11 h-11 object-contain shrink-0 drop-shadow-[0_2px_8px_rgba(0,0,0,0.45)]"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = myFallbackAvatar;
+                      }}
+                    />
                     <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-1.5 flex-wrap">
-                        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 border border-emerald-200/70 px-2 py-0.5 text-[8.5px] font-black uppercase tracking-wider text-emerald-700 shrink-0">
-                          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                          Peleton Anda
-                        </span>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h3 className="text-base sm:text-xl font-black tracking-tight text-white leading-tight truncate">
+                          {currentTeam.schoolName}
+                        </h3>
                         {currentTeam.jenjang && (
-                          <span className={`rounded-full px-2 py-0.5 text-[8.5px] font-black uppercase border shrink-0 ${
+                          <span className={`rounded-md px-2 py-0.5 text-[10px] font-black uppercase tracking-wider border shrink-0 ${
                             currentTeam.jenjang === 'SD'
-                              ? 'bg-red-50 text-red-700 border-red-200/80'
-                              : 'bg-blue-50 text-blue-700 border-blue-200/80'
+                              ? 'bg-rose-500/15 text-rose-300 border-rose-500/30'
+                              : 'bg-blue-500/15 text-blue-300 border-blue-500/30'
                           }`}>
-                            Jenjang {currentTeam.jenjang}
-                          </span>
-                        )}
-                        {currentTeam.lotNumber && (
-                          <span className="rounded-full bg-slate-100 border border-slate-200 px-2 py-0.5 text-[8.5px] font-mono font-bold text-slate-700 shrink-0">
-                            TM #{String(currentTeam.lotNumber).padStart(2, '0')}
+                            {currentTeam.jenjang === 'SD' ? 'SD / MI' : 'SMP / MTs'}
                           </span>
                         )}
                       </div>
-                      <h3 className="mt-1 text-sm sm:text-base md:text-lg font-black tracking-tight text-slate-950 leading-snug break-words">
-                        {currentTeam.schoolName}
-                      </h3>
+                      <div className="flex items-center gap-2 flex-wrap text-[11.5px] text-slate-400 mt-0.5">
+                        {myTeamTrialSlot && (
+                          <span className="font-mono font-bold text-amber-300">
+                            Slot #{String(mySlotIndex).padStart(2, '0')}
+                          </span>
+                        )}
+                        {currentTeam.lotNumber && (
+                          <>
+                            <span className="text-slate-700">·</span>
+                            <span className="font-mono text-slate-300">TM #{String(currentTeam.lotNumber).padStart(2, '0')}</span>
+                          </>
+                        )}
+                        {myDantonName && (
+                          <>
+                            <span className="text-slate-700">·</span>
+                            <span className="text-slate-300 truncate">{myDantonName}</span>
+                          </>
+                        )}
+                      </div>
                     </div>
                   </div>
 
                   {/* Status Presensi Peleton */}
                   <div className="shrink-0 w-full sm:w-auto">
                     {myTeamTrialSlot?.attendance?.status === 'checked_out' ? (
-                      <span className="inline-flex w-full sm:w-auto items-center justify-center sm:justify-start gap-1.5 rounded-full border border-slate-200 bg-slate-100 px-3.5 py-1.5 text-xs font-bold text-slate-700 shadow-2xs">
-                        <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                      <span className="inline-flex w-full sm:w-auto items-center justify-center sm:justify-start gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/15 px-3.5 py-1.5 text-xs font-bold text-emerald-300">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
                         <span>Gladi Selesai ({myTeamTrialSlot.attendance.checkOutTime})</span>
                       </span>
                     ) : myTeamTrialSlot?.attendance?.status === 'checked_in' ? (
-                      <span className="inline-flex w-full sm:w-auto items-center justify-center sm:justify-start gap-1.5 rounded-full border border-emerald-300 bg-emerald-50 px-3.5 py-1.5 text-xs font-black text-emerald-800 shadow-2xs">
-                        <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                      <span className="inline-flex w-full sm:w-auto items-center justify-center sm:justify-start gap-1.5 rounded-full border border-emerald-400/40 bg-emerald-500/20 px-3.5 py-1.5 text-xs font-black text-emerald-200">
+                        <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
                         <span>Standby di Lokasi ({myTeamTrialSlot.attendance.checkInTime})</span>
                       </span>
                     ) : (
-                      <span className="inline-flex w-full sm:w-auto items-center justify-center sm:justify-start gap-1.5 rounded-full border border-amber-200 bg-amber-50 px-3.5 py-1.5 text-xs font-bold text-amber-800 shadow-2xs">
-                        <Clock className="w-4 h-4 text-amber-600" />
-                        <span>Belum Tiba (Standby 30 mnt sebelumnya)</span>
+                      <span className="inline-flex w-full sm:w-auto items-center justify-center sm:justify-start gap-1.5 rounded-full border border-amber-400/30 bg-amber-400/10 px-3.5 py-1.5 text-xs font-bold text-amber-300">
+                        <Clock className="w-3.5 h-3.5 text-amber-400" />
+                        <span>Belum Tiba · Standby 30 mnt sebelumnya</span>
                       </span>
                     )}
                   </div>
                 </div>
 
-                {/* 3 Detail Quadrant Grid */}
-                <div className="p-4 sm:p-5 grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <div className="rounded-2xl border border-slate-200/80 bg-white p-3.5 shadow-2xs hover:border-slate-300 transition-all flex flex-col justify-between">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-red-50 text-red-700 border border-red-100">
-                        <MapPin className="w-3.5 h-3.5" />
-                      </div>
-                      <span className="text-[9px] uppercase font-black tracking-wider text-slate-400">
-                        Arena Lapangan
-                      </span>
-                    </div>
+                {/* Integrated 3-Column Dark Telemetry Strip */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-slate-800/90">
+                  <div className="px-5 py-4 flex flex-col justify-between gap-2">
+                    <span className="inline-flex items-center gap-1.5 text-[9.5px] uppercase font-black tracking-wider text-slate-400">
+                      <LogIn className="w-3.5 h-3.5 text-emerald-400" />
+                      <span>Target Kedatangan (Check-In)</span>
+                    </span>
                     <div>
-                      <p className="text-xs sm:text-sm font-black text-slate-900">
+                      <p className="text-lg sm:text-xl font-black text-emerald-300 font-mono leading-tight">
+                        {myTeamTrialSlot ? `${myCheckInTime}` : '06.30 WIB'}
+                      </p>
+                      <p className="text-[11px] font-medium text-slate-400 mt-0.5">
+                        Wajib presensi di Pos Gerbang
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="px-5 py-4 flex flex-col justify-between gap-2">
+                    <span className="inline-flex items-center gap-1.5 text-[9.5px] uppercase font-black tracking-wider text-slate-400">
+                      <Clock className="w-3.5 h-3.5 text-amber-400" />
+                      <span>Waktu &amp; Slot Gladi</span>
+                    </span>
+                    <div>
+                      <p className="text-lg sm:text-xl font-black text-white font-mono leading-tight">
+                        {myTeamTrialSlot ? `${mySlotTime} WIB` : '-'}
+                      </p>
+                      <p className="text-[11px] font-medium text-amber-300/90 mt-0.5">
+                        {myTeamTrialSlot ? `Slot #${String(mySlotIndex).padStart(2, '0')} · Durasi maksimal 15 menit` : 'Belum Terjadwal'}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="px-5 py-4 flex flex-col justify-between gap-2">
+                    <span className="inline-flex items-center gap-1.5 text-[9.5px] uppercase font-black tracking-wider text-slate-400">
+                      <MapPin className="w-3.5 h-3.5 text-rose-400" />
+                      <span>Arena Lapangan</span>
+                    </span>
+                    <div>
+                      <p className="text-sm sm:text-base font-black text-white leading-snug">
                         {myTeamTrialSlot ? `Arena ${myTeamTrialSlot.jenjang} (${myTeamTrialSlot.jenjang === 'SD' ? 'Lapangan Basket' : 'Pelataran Embung'})` : (isTeamWillingToTrial(currentTeam) ? 'Sedang Dijadwalkan' : 'Menolak Gladi')}
                       </p>
-                      <p className="text-[10px] font-medium text-slate-500 mt-0.5">
+                      <p className="text-[11px] font-medium text-slate-400 mt-0.5">
                         Kampus Terpadu Sedayu
                       </p>
                     </div>
                   </div>
-
-                  <div className="rounded-2xl border border-slate-200/80 bg-white p-3.5 shadow-2xs hover:border-slate-300 transition-all flex flex-col justify-between">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-amber-50 text-amber-700 border border-amber-100">
-                        <Clock className="w-3.5 h-3.5" />
-                      </div>
-                      <span className="text-[9px] uppercase font-black tracking-wider text-slate-400">
-                        Waktu & Slot Giliran
-                      </span>
-                    </div>
-                    <div>
-                      <p className="text-xs sm:text-sm font-black text-slate-900 font-mono">
-                        {myTeamTrialSlot ? `${mySlotTime} WIB` : '-'}
-                      </p>
-                      <p className="text-[10px] font-bold text-amber-700 mt-0.5">
-                        {myTeamTrialSlot ? `Slot #${String(mySlotIndex).padStart(2, '0')} · Durasi 15 Menit` : 'Belum Terjadwal'}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="rounded-2xl border border-slate-200/80 bg-white p-3.5 shadow-2xs hover:border-slate-300 transition-all flex flex-col justify-between">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-100">
-                        <LogIn className="w-3.5 h-3.5" />
-                      </div>
-                      <span className="text-[9px] uppercase font-black tracking-wider text-slate-400">
-                        Target Kedatangan
-                      </span>
-                    </div>
-                    <div>
-                      <p className="text-xs sm:text-sm font-black text-slate-900 font-mono">
-                        {myTeamTrialSlot ? `${myCheckInTime}` : '06.30 WIB'}
-                      </p>
-                      <p className="text-[10px] font-bold text-emerald-700 mt-0.5">
-                        Wajib Presensi di Pos Gerbang
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Advisory note */}
-                <div className="mx-4 sm:mx-5 mb-4 sm:mb-5 rounded-xl border border-slate-200/70 bg-slate-50/70 p-3 flex items-start gap-2.5 text-xs text-slate-600">
-                  <Info className="w-4 h-4 text-slate-500 shrink-0 mt-0.5" />
-                  <p className="text-[11px] leading-relaxed">
-                    Orientasi kontur lapangan maksimal <strong>15 menit</strong>. Danton & pendamping wajib melapor ke <strong>Pos Presensi Kedatangan</strong> saat tiba di lokasi untuk validasi ID Card.
-                  </p>
                 </div>
               </div>
             );
@@ -1342,7 +1334,9 @@ export default function FieldTrialView() {
                     <thead>
                       <tr className="bg-slate-900 text-slate-300 uppercase text-[9.5px] tracking-wider font-black border-b border-slate-800">
                         <th className="py-2.5 px-2.5 text-center w-[1%] whitespace-nowrap">#</th>
-                        <th className="py-2.5 px-3 w-[1%] whitespace-nowrap">Waktu Gladi</th>
+                        <th className="py-2.5 px-3 text-center w-[1%] whitespace-nowrap">Check-In</th>
+                        <th className="py-2.5 px-3 text-center w-[1%] whitespace-nowrap">Waktu Gladi</th>
+                        <th className="py-2.5 px-3 text-center w-[1%] whitespace-nowrap">Check-Out</th>
                         <th className="py-2.5 px-3">Peleton / Sekolah</th>
                         <th className="py-2.5 px-3 hidden sm:table-cell whitespace-nowrap">Danton</th>
                         <th className="py-2.5 px-3 text-right w-[1%] whitespace-nowrap">Status</th>
@@ -1400,21 +1394,26 @@ export default function FieldTrialView() {
                               #{String(slotInfo.index).padStart(2, '0')}
                             </td>
 
-                            {/* Kolom 2: Waktu Gladi (In & Out Ringkas) */}
-                            <td className="py-2.5 px-3 whitespace-nowrap align-middle">
-                              <div className="font-mono font-black text-slate-900 text-[11.5px] leading-tight">
-                                {slotInfo.time.replace(/\s*WIB/i, '')} <span className="text-[9.5px] font-bold text-slate-400">WIB</span>
-                              </div>
-                              <div className="flex items-center gap-1 mt-1 font-mono text-[9px]">
-                                <span className="inline-flex items-center gap-0.5 text-emerald-800 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200/70">
-                                  <span className="font-black text-emerald-600">IN</span>
-                                  <span className="font-bold">{(slotInfo.checkIn || slotInfo.arrival || '').replace(/\s*WIB/i, '')}</span>
-                                </span>
-                                <span className="inline-flex items-center gap-0.5 text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200/70">
-                                  <span className="font-black text-slate-500">OUT</span>
-                                  <span className="font-bold">{(slotInfo.checkOut || '15m').replace(/\s*WIB/i, '')}</span>
-                                </span>
-                              </div>
+                            {/* Kolom 2: Check-In */}
+                            <td className="py-2.5 px-3 text-center whitespace-nowrap align-middle">
+                              <span className="inline-flex items-center px-2 py-0.5 rounded-md font-mono font-bold text-[11px] text-emerald-800 bg-emerald-50 border border-emerald-200/70">
+                                {(slotInfo.checkIn || slotInfo.arrival || '-').replace(/\s*WIB/i, '')}
+                              </span>
+                            </td>
+
+                            {/* Kolom 3: Waktu Gladi */}
+                            <td className="py-2.5 px-3 text-center whitespace-nowrap align-middle">
+                              <span className="font-mono font-black text-slate-900 text-[11.5px]">
+                                {slotInfo.time.replace(/\s*WIB/i, '')}
+                              </span>{' '}
+                              <span className="font-mono text-[9.5px] font-bold text-slate-400">WIB</span>
+                            </td>
+
+                            {/* Kolom 4: Check-Out */}
+                            <td className="py-2.5 px-3 text-center whitespace-nowrap align-middle">
+                              <span className="inline-flex items-center px-2 py-0.5 rounded-md font-mono font-bold text-[11px] text-slate-700 bg-slate-100 border border-slate-200/80">
+                                {(slotInfo.checkOut || '-').replace(/\s*WIB/i, '')}
+                              </span>
                             </td>
 
                             {!team ? (
@@ -1429,20 +1428,18 @@ export default function FieldTrialView() {
                               </td>
                             ) : (
                               <>
-                                {/* Kolom 3: Peleton / Sekolah */}
+                                {/* Kolom 5: Peleton / Sekolah */}
                                 <td className="py-2.5 px-3 align-middle">
                                   <div className="flex items-center gap-2.5 min-w-0">
-                                    <div className="w-8 h-8 rounded-lg bg-white border border-slate-200 p-0.5 flex items-center justify-center shrink-0 overflow-hidden shadow-2xs">
-                                      <img
-                                        src={logoRaw ? formatImageUrl(logoRaw) : fallbackAvatar}
-                                        alt={team.schoolName}
-                                        className="w-full h-full object-contain"
-                                        onError={(e) => {
-                                          e.target.onerror = null;
-                                          e.target.src = fallbackAvatar;
-                                        }}
-                                      />
-                                    </div>
+                                    <img
+                                      src={logoRaw ? formatImageUrl(logoRaw) : fallbackAvatar}
+                                      alt={team.schoolName}
+                                      className="w-8 h-8 object-contain shrink-0 mix-blend-multiply"
+                                      onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = fallbackAvatar;
+                                      }}
+                                    />
                                     <div className="min-w-0">
                                       <div className="flex items-center gap-1.5 flex-wrap">
                                         <span className="font-extrabold text-xs sm:text-[13px] text-slate-900 leading-snug">
@@ -1453,29 +1450,10 @@ export default function FieldTrialView() {
                                             TM #{String(team.lotNumber).padStart(2, '0')}
                                           </span>
                                         )}
-                                        {(() => {
-                                          const prevId = slotIdx > 0 ? currentPlan[activeJenjang]?.slots?.[slotIdx - 1] : null;
-                                          const nextId = slotIdx < 17 ? currentPlan[activeJenjang]?.slots?.[slotIdx + 1] : null;
-                                          const baseName = normalizeSchoolName(team.schoolBaseName || team.schoolName);
-                                          const isTwinAdj =
-                                            (prevId && normalizeSchoolName(teamsMap.get(prevId)?.schoolBaseName || teamsMap.get(prevId)?.schoolName) === baseName) ||
-                                            (nextId && normalizeSchoolName(teamsMap.get(nextId)?.schoolBaseName || teamsMap.get(nextId)?.schoolName) === baseName);
-                                          return isTwinAdj ? (
-                                            <span className="px-1.5 py-0.5 rounded-md bg-amber-50 text-amber-800 border border-amber-200 text-[9px] font-black uppercase shrink-0">
-                                              1 Sekolah
-                                            </span>
-                                          ) : null;
-                                        })()}
-                                        {isMyTeam && (
-                                          <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full font-black text-[8.5px] bg-emerald-600 text-white uppercase tracking-wider shrink-0">
-                                            <Sparkles className="w-2.5 h-2.5" />
-                                            <span>Peleton Anda</span>
-                                          </span>
-                                        )}
                                       </div>
                                       {/* Danton tampil di bawah nama sekolah khusus layar mobile */}
                                       <div className="text-[10.5px] text-slate-500 font-medium mt-0.5 sm:hidden truncate">
-                                        Danton: <span className="text-slate-700 font-semibold">{dantonName}</span>
+                                        {dantonName}
                                       </div>
                                     </div>
                                   </div>

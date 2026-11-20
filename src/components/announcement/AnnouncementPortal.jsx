@@ -160,13 +160,18 @@ export default function AnnouncementPortal() {
           totalMedals: 0,
           totalPoints: 0,
           bestMurniPeleton: 0,
-          peletonPenaltySum: 0,
+          bestPeletonPenalty: Number.POSITIVE_INFINITY,
           bestMurniDanton: 0,
         };
       }
       const sc = schoolMap[sKey];
-      if (t.nilaiMurniPeleton > sc.bestMurniPeleton) sc.bestMurniPeleton = t.nilaiMurniPeleton;
-      sc.peletonPenaltySum += t.peletonPenalty;
+      if (
+        t.nilaiMurniPeleton > sc.bestMurniPeleton ||
+        (t.nilaiMurniPeleton === sc.bestMurniPeleton && t.peletonPenalty < sc.bestPeletonPenalty)
+      ) {
+        sc.bestMurniPeleton = t.nilaiMurniPeleton;
+        sc.bestPeletonPenalty = t.peletonPenalty;
+      }
       if (t.nilaiMurniDanton > sc.bestMurniDanton) sc.bestMurniDanton = t.nilaiMurniDanton;
     });
 
@@ -203,7 +208,7 @@ export default function AnnouncementPortal() {
     return Object.values(schoolMap).sort((a, b) => {
       if (b.totalPoints !== a.totalPoints) return b.totalPoints - a.totalPoints;
       if (b.bestMurniPeleton !== a.bestMurniPeleton) return b.bestMurniPeleton - a.bestMurniPeleton;
-      if (a.peletonPenaltySum !== b.peletonPenaltySum) return a.peletonPenaltySum - b.peletonPenaltySum;
+      if (a.bestPeletonPenalty !== b.bestPeletonPenalty) return a.bestPeletonPenalty - b.bestPeletonPenalty;
       return b.bestMurniDanton - a.bestMurniDanton;
     })[0] || null;
   };
@@ -338,9 +343,9 @@ export default function AnnouncementPortal() {
             </h4>
             <div className="pt-2 border-t border-slate-100">
               <span className="text-2xl font-black font-mono text-slate-800">
-                {currentRanked[1]?.finalScore || '-'}
+                {currentRanked[1]?.pbbScore || '-'}
               </span>
-              <span className="text-xs text-slate-400 ml-1">Poin</span>
+              <span className="text-xs text-slate-400 ml-1">Poin Peleton</span>
             </div>
           </div>
 
@@ -357,9 +362,9 @@ export default function AnnouncementPortal() {
             </h4>
             <div className="pt-2 border-t border-yellow-200">
               <span className="text-3xl font-black font-mono text-slate-900">
-                {currentRanked[0]?.finalScore || '-'}
+                {currentRanked[0]?.pbbScore || '-'}
               </span>
-              <span className="text-xs text-slate-500 ml-1">Poin Akhir</span>
+              <span className="text-xs text-slate-500 ml-1">Nilai Akhir Peleton</span>
             </div>
           </div>
 
@@ -376,9 +381,9 @@ export default function AnnouncementPortal() {
             </h4>
             <div className="pt-2 border-t border-slate-100">
               <span className="text-2xl font-black font-mono text-slate-800">
-                {currentRanked[2]?.finalScore || '-'}
+                {currentRanked[2]?.pbbScore || '-'}
               </span>
-              <span className="text-xs text-slate-400 ml-1">Poin</span>
+              <span className="text-xs text-slate-400 ml-1">Poin Peleton</span>
             </div>
           </div>
         </div>
@@ -451,9 +456,9 @@ export default function AnnouncementPortal() {
                   <th className="p-3">Asal Sekolah</th>
                   <th className="p-3">Danton</th>
                   <th className="p-3 text-center">Nilai Danton</th>
-                  <th className="p-3 text-center">Nilai PBB</th>
-                  <th className="p-3 text-center">Penalti</th>
-                  <th className="p-3 text-right">Total Akhir</th>
+                  <th className="p-3 text-center">Nilai Murni PBB</th>
+                  <th className="p-3 text-center">Penalti Peleton</th>
+                  <th className="p-3 text-right">Nilai Akhir Peleton</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -485,9 +490,9 @@ export default function AnnouncementPortal() {
                       </td>
                       <td className="p-3 font-semibold text-slate-700">{team.roster?.danton?.name || team.dantonName || '-'}</td>
                       <td className="p-3 text-center font-mono font-bold text-slate-800">{team.dantonScore}</td>
-                      <td className="p-3 text-center font-mono font-bold text-slate-800">{team.pbbScore}</td>
-                      <td className="p-3 text-center font-mono font-bold text-rose-700">-{team.scoreData.penalties.totalPenalty}</td>
-                      <td className="p-3 text-right font-mono font-black text-sm text-slate-900">{team.finalScore}</td>
+                      <td className="p-3 text-center font-mono font-bold text-slate-800">{team.nilaiMurniPeleton}</td>
+                      <td className="p-3 text-center font-mono font-bold text-rose-700">-{team.peletonPenalty}</td>
+                      <td className="p-3 text-right font-mono font-black text-sm text-slate-900">{team.pbbScore}</td>
                     </tr>
                   ))
                 )}

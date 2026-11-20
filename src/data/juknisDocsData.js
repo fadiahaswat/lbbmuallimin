@@ -44,10 +44,10 @@ export const JUKNIS_PENILAIAN_CHAPTERS = [
         ],
         subItems: [
           `a. Sebaran Nilai Materi Peleton:`,
-          `• Sederhana (50 – 80): KS = 50 | K = 53, 56, 59 | C = 62, 65, 68 | B = 71, 74, 77 | BS = 80`,
-          `• Menengah (50 – 85): KS = 50 | K = 53, 57, 60 | C = 64, 67, 71 | B = 74, 78, 81 | BS = 85`,
-          `• Kompleks (50 – 90): KS = 50 | K = 54, 58, 62 | C = 66, 70, 74 | B = 78, 82, 86 | BS = 90`,
-          `Gerakan yang terlewat atau tidak dilaksanakan sama sekali diberi nilai 0 (nol).`,
+          `• Tingkat Kesulitan I (50 – 80): KS = 50 | K = 53, 56, 59 | C = 62, 65, 68 | B = 71, 74, 77 | BS = 80`,
+          `• Tingkat Kesulitan II (50 – 85): KS = 50 | K = 53, 57, 60 | C = 64, 67, 71 | B = 74, 78, 81 | BS = 85`,
+          `• Tingkat Kesulitan III (50 – 90): KS = 50 | K = 54, 58, 62 | C = 66, 70, 74 | B = 78, 82, 86 | BS = 90`,
+          `Gerakan yang terlewat dan tidak dilaksanakan sama sekali diberi nilai 0 (nol).`,
           `b. Sebaran Nilai Komandan Peleton (Danton): Dinilai pada 4 aspek dengan sebaran nilai skala maksimal 90 (KS=50 | K=54, 58, 62 | C=66, 70, 74 | B=78, 82, 86 | BS=90):`,
           `1) Penguasaan Materi Lomba (Bobot 35%)`,
           `2) Kualitas Suara / Vokal (Bobot 25%)`,
@@ -72,9 +72,8 @@ export const JUKNIS_PENILAIAN_CHAPTERS = [
         content: `Penentuan Juara Peleton didasarkan pada perolehan Nilai Akhir Peleton tertinggi. Apabila terdapat kesamaan Nilai Akhir Peleton, peringkat ditentukan berdasarkan urutan prioritas:`,
         subItems: [
           `a. Nilai Murni Peleton tertinggi (akumulasi 3 juri sebelum penalti);`,
-          `b. Akumulasi pengurangan poin penalti paling sedikit;`,
-          `c. Nilai Murni Komandan Peleton (Danton) tertinggi; dan`,
-          `d. Hasil musyawarah Dewan Juri dalam Sidang Pleno Juri yang bersifat final dan mengikat.`
+          `b. Nilai Murni Komandan Peleton (Danton) tertinggi; dan`,
+          `c. Hasil musyawarah Dewan Juri dalam Sidang Pleno Juri yang bersifat final dan mengikat.`
         ]
       },
       {
@@ -83,10 +82,9 @@ export const JUKNIS_PENILAIAN_CHAPTERS = [
         content: `Penentuan Juara Danton didasarkan pada perolehan Nilai Akhir Komandan tertinggi. Apabila terdapat kesamaan Nilai Akhir Komandan, peringkat ditentukan berdasarkan urutan prioritas:`,
         subItems: [
           `a. Nilai Murni Danton tertinggi (akumulasi 3 juri sebelum penalti);`,
-          `b. Akumulasi pengurangan poin penalti Danton paling sedikit;`,
-          `c. Akumulasi nilai tertinggi pada Aspek Penguasaan Materi Lomba (bobot 35%);`,
-          `d. Akumulasi nilai tertinggi pada Aspek Kualitas Suara/Vokal (bobot 25%); dan`,
-          `e. Hasil musyawarah Dewan Juri dalam Sidang Pleno Juri yang bersifat final dan mengikat.`
+          `b. Akumulasi nilai tertinggi pada Aspek Penguasaan Materi Lomba (bobot 35%);`,
+          `c. Akumulasi nilai tertinggi pada Aspek Kualitas Suara/Vokal (bobot 25%); dan`,
+          `d. Hasil musyawarah Dewan Juri dalam Sidang Pleno Juri yang bersifat final dan mengikat.`
         ]
       },
       {
@@ -186,7 +184,7 @@ export const JUKNIS_PENILAIAN_CHAPTERS = [
         content: 'Pelanggaran garis dibedakan berdasarkan pihak yang melakukan pelanggaran:',
         subItems: [
           'a. Anggota Peleton yang menginjak atau keluar dari garis arena dikenai penalti -50 poin untuk setiap kejadian terhadap nilai Peleton.',
-          'b. Komandan Peleton yang menginjak atau keluar dari Kotak Danton berukuran 1,5 × 1,5 meter dikenai penalti -50 poin untuk setiap kejadian terhadap nilai Komandan Peleton.'
+          'b. Komandan Peleton yang menginjak atau keluar dari Kotak Danton berukuran 1,5 × 1,5 meter dikenai penalti -10 poin untuk setiap kejadian terhadap nilai Komandan Peleton.'
         ]
       },
       {
@@ -303,7 +301,7 @@ export const JUKNIS_PENDAFTARAN_CHAPTERS = [
           `a. Surat Tugas / Rekomendasi Resmi dari Kepala Sekolah/Madrasah asli bertanda tangan dan berstempel basah (format PDF/JPG, maks. 2 MB).`,
           `b. Bukti transfer biaya pendaftaran sesuai biaya pendaftaran gelombang berjalan (format JPG/PNG, maks. 2 MB).`,
           `c. Scan/Foto Kartu Pelajar sah Komandan Peleton (Danton) bersangkutan (format Foto/PDF, maks. 3 MB).`,
-          `d. Logo peleton atau sekolah/madrasah beresolusi tinggi format PNG transparan`,
+          `d. Logo peleton atau sekolah/madrasah beresolusi tinggi disarankan PNG transparan; mendukung PNG/JPG/WebP.`,
           `e. Pasfoto resmi seluruh personel peleton ukuran 3 x 4 (latar belakang MERAH untuk SD/MI dan BIRU untuk SMP/MTs) yang diunggah melalui menu Identitas Personel di portal peserta.`,
           `f. Data identitas seluruh personel peleton yang meliputi: Nama Lengkap (sesuai ijazah terakhir atau dokumen resmi sebagai dasar penerbitan sertifikat), NISN, Tempat dan Tanggal Lahir, serta Kelas. Seluruh data diinput melalui portal peserta sesuai format yang tersedia.`
         ]
@@ -331,7 +329,7 @@ export const JUKNIS_PENDAFTARAN_CHAPTERS = [
         sub: [
           `a. Diskualifikasi Mutlak: Diberlakukan bagi peleton yang terbukti memanipulasi data identitas siswa, memalsukan tanda tangan/stempel surat rekomendasi kepala sekolah, dan/atau menyertakan peserta yang bukan berasal dari sekolah pangkalan bersangkutan.`,
           `b. Ketentuan Pembatalan (Non-Refundable): Biaya pendaftaran yang telah disetorkan tidak dapat ditarik kembali dengan alasan apa pun apabila tim mengundurkan diri atau batal berpartisipasi secara sepihak.`,
-          `c. Pergantian Personel: Perubahan data personel (nama, susunan posisi, pasfoto, atau pergantian individu) masih dapat dilakukan hingga sebelum pelaksanaan Pertemuan Teknis (Technical Meeting/TM). Setiap perubahan wajib dilaporkan kepada panitia dan disesuaikan dengan Surat Tugas/Rekomendasi resmi dari Kepala Sekolah/Madrasah. Perubahan yang tidak tercantum atau tidak sesuai dengan Surat Tugas/Rekomendasi resmi dinyatakan tidak sah.`
+          `c. Pergantian Personel: Perubahan data personel (nama, susunan posisi, pasfoto, atau pergantian individu) masih dapat dilakukan hingga sebelum pelaksanaan Pertemuan Teknis (8 Januari 2027 pukul 23.59 WIB). Setiap perubahan wajib dilaporkan kepada panitia dan disesuaikan dengan Surat Tugas/Rekomendasi resmi dari Kepala Sekolah/Madrasah. Perubahan yang tidak tercantum atau tidak sesuai dengan Surat Tugas/Rekomendasi resmi dinyatakan tidak sah.`
         ]
       },
       {
@@ -412,8 +410,8 @@ export const RUNDOWN_DATA = {
       { time: '07.45 – 08.00', duration: "15'", agenda: 'Jeda Kesiapan Peserta, Mobilisasi Pos Juri & Pemanggilan DP 1', desc: 'Transisi peleton awal. Dewan Juri menempati meja penilaian di Arena 1 & 2. Peleton urutan 1 (SD-111 & SMP-222) dipanggil resmi ke DP 1 pukul 07.45 WIB.', location: 'Pos DP 1 & Meja Dewan Juri' },
       { time: '08.00 – 11.30', duration: "210'", agenda: 'Pelaksanaan Lomba Sesi I (Pagi) (Urutan Tampil 1 s.d. 14)', desc: 'Dilaksanakan secara simultan/paralel: • Arena 1 (Basket): SD-111 s.d. SD-157 (14 Peleton) • Arena 2 (Embung): SMP-222 s.d. SMP-268 (14 Peleton). Estimasi rolling release e-nilai ±1 jam setelah tampil.', location: '• Arena 1 (Lap. Basket) • Arena 2 (Pelataran Embung)' },
       { time: '11.30 – 12.30', duration: "60'", agenda: 'ISHOMA (Istirahat, Salat Dhuhur Berjamaah, & Makan Siang)', desc: 'Penghentian sementara seluruh aktivitas arena lomba. Salat Dhuhur berjamaah di Masjid Kampus Terpadu.', location: 'Masjid Kampus Terpadu Sedayu' },
-      { time: '12.30 – 14.00', duration: "90'", agenda: 'Pelaksanaan Lomba Sesi II (Siang) (Lanjutan Urutan Tampil)', desc: 'Lanjutan penampilan peleton sesi siang (menampung hingga nomor urut 21 jika kuota ekspansi diaktifkan superadmin): • Arena 1 (Basket): SD • Arena 2 (Embung): SMP. Seluruh penampilan perlombaan tuntas maksimal pukul 14.00 WIB.', location: '• Arena 1 (Lap. Basket) • Arena 2 (Pelataran Embung)' },
-      { time: '14.00 – 15.00', duration: "60'", agenda: 'Sidang Pleno Dewan Juri & Checkout Basecamp', desc: '• Masa Sanggah Administrasi: Ditutup tepat pukul 15.00 WIB. • Sidang Pleno Juri: Rekapitulasi final, pengesahan nilai murni, pemotongan penalti, dan penandatanganan SK Juara Umum/Peleton oleh Dewan Juri (durasi 60 menit tercukupi optimal didukung e-scoring rolling release). • Checkout Basecamp: Pembersihan kelas, penyerahan 2 trash bag sampah ke pos checkout, inspeksi LO, dan penukaran identitas jaminan KTP/SIM.', location: '• Ruang VIP Pleno Juri • Ruang Informasi Sanggah • Ruang Kelas Basecamp' },
+      { time: '12.30 – 13.30', duration: "60'", agenda: 'Pelaksanaan Lomba Sesi II (Siang) (Urutan Tampil 15 s.d. 18)', desc: 'Lanjutan penampilan 4 peleton terakhir: • Arena 1 (Basket): SD-159 s.d. SD-175 (4 Peleton) • Arena 2 (Embung): SMP-280 s.d. SMP-286 (4 Peleton). Seluruh penampilan tuntas pukul 13.30 WIB.', location: '• Arena 1 (Lap. Basket) • Arena 2 (Pelataran Embung)' },
+      { time: '13.30 – 15.00', duration: "90'", agenda: 'Sidang Pleno Dewan Juri, Masa Sanggah & Checkout Basecamp', desc: '• Masa Sanggah Administrasi: Ditutup tepat pukul 15.00 WIB. • Checkout Basecamp: Pembersihan kelas, penyerahan 2 trash bag sampah ke pos checkout, inspeksi LO, dan penukaran kartu identitas jaminan KTP/SIM. • Sidang Pleno: Rekapitulasi final, pengesahan nilai murni, pemotongan penalti, dan penandatanganan SK Juara Umum/Peleton oleh Dewan Juri.', location: '• Ruang VIP Pleno Juri • Ruang Informasi Sanggah • Ruang Kelas Basecamp' },
       { time: '15.00 – 15.45', duration: "45'", agenda: 'Istirahat Sore, Salat Ashar Berjamaah', desc: 'Pelaksanaan salat Ashar berjamaah di Masjid Kampus Terpadu.', location: 'Masjid Kampus Terpadu' },
       { time: '15.45 – 16.00', duration: "15'", agenda: 'Standby & Pengecekan Barisan Apel Penutupan', desc: 'Seluruh perwakilan kontingen (1 Danton + 4 Anggota berseragam lengkap) wajib telah berbaris rapi di Lapangan Mini Soccer. Pengecekan kehadiran oleh protokol panitia.', location: 'Lapangan Mini Soccer' },
       { time: '16.00 – 16.30', duration: "30'", agenda: 'Upacara / Apel Penutupan Resmi', desc: 'Upacara penutupan resmi dipimpin Pimpinan Madrasah Mu\'allimin Muhammadiyah Yogyakarta dan amanat penutup.', location: 'Lapangan Mini Soccer' },

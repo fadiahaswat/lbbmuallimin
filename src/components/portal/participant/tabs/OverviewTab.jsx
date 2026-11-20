@@ -494,7 +494,7 @@ export default function OverviewTab({
                 {displayBasecamp || 'Belum Ditetapkan'}
               </p>
               <p className="mt-0.5 text-[9px] font-semibold text-slate-400">
-                {displayBasecamp ? 'Transit kontingen' : 'Diumumkan saat TM'}
+                {displayBasecamp ? 'Transit kontingen' : 'Diumumkan setelah UCL'}
               </p>
             </div>
             <span className="absolute inset-x-5 bottom-0 h-0.5 origin-left scale-x-0 bg-red-600 transition-transform group-hover:scale-x-100" />
@@ -692,10 +692,10 @@ export default function OverviewTab({
                         Dokumen wajib TM
                       </p>
                       <p className="mt-0.5 text-xs font-black text-slate-900">
-                        Pakta Integritas Fisik (Tanda Tangan Basah)
+                        Berkas Fisik Asli TM (Registrasi 12.30–13.00 WIB)
                       </p>
                       <p className="mt-0.5 text-[9px] leading-relaxed text-slate-500">
-                        Cetak, tandatangani basah, dan bawa saat registrasi TM di Kampus Induk.
+                        Bawa <strong>Surat Tugas/Rekomendasi Kepala Sekolah asli stempel basah</strong> &amp; <strong>Pakta Integritas Fisik (TTD basah Official)</strong> saat TM di Aula Kampus Induk Wirobrajan.
                       </p>
                     </div>
                   </div>

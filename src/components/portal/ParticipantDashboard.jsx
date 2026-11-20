@@ -151,7 +151,7 @@ export default function ParticipantDashboard() {
   };
 
   // Regulasi Penguncian Data Personel (Bab A.9.c): Perubahan data personel diperbolehkan s.d. sebelum Technical Meeting (9 Jan 2027)
-  const tmCutoffDate = new Date('2027-01-09T12:00:00+07:00');
+  const tmCutoffDate = new Date('2027-01-08T23:59:59+07:00');
   const isPastTMCutoff = new Date() >= tmCutoffDate;
   const isRosterLocked = Boolean(currentTeam?.isRosterLocked || isPastTMCutoff);
 

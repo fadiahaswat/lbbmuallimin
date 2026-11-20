@@ -93,7 +93,7 @@ export default function Step3PaymentAndPact({
                 </span>
               </div>
               <span className="text-[10px] text-slate-400 mt-0.5">
-                *Termasuk 3 digit kode unik verifikasi otomatis
+                *Termasuk kode unik 108 (2 Peleton: Rp 700.108 Gel. 1 / Rp 800.108 Gel. 2)
               </span>
             </div>
           </div>

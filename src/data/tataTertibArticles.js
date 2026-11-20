@@ -21,14 +21,14 @@ export const TATA_TERTIB_ARTICLES = [
     points: [
       "1. Pendaftaran resmi dilakukan secara online melalui website resmi: https://lbb.tontimuallimin.com sesuai dengan batas periode waktu yang telah ditentukan oleh panitia.",
       "2. Seluruh proses pendaftaran bersifat paperless (unggah digital), kecuali berkas fisik asli yang wajib dibawa dan diserahkan langsung saat forum Technical Meeting (TM) Peserta.",
-      "3. Berkas fisik asli yang wajib diserahkan dan diverifikasi saat TM Peserta mencakup:\na. Surat Tugas / Rekomendasi Resmi Kepala Sekolah asli berstempel basah yang memuat daftar nama lengkap seluruh personel peleton: 1 Komandan Peleton (Danton), 21 Anggota Inti, 3 Anggota Cadangan, 1 Official (Pelatih/Pembina), dan 2 Pendukung Resmi (masing-masing dapat berfungsi sebagai Medis dan Dokumentasi).\nb. Pakta Integritas yang telah ditandatangani oleh Official resmi sekolah."
+      "3. Berkas fisik asli yang wajib diserahkan dan diverifikasi saat TM Peserta mencakup:\na. Surat Tugas / Rekomendasi Resmi Kepala Sekolah asli berstempel basah yang memuat daftar nama lengkap seluruh personel peleton: 1 Komandan Peleton (Danton), 21 Anggota Inti, maksimal 3 Anggota Cadangan, 1 Official (Pelatih/Pembina), dan 2 Pendukung Resmi (masing-masing dapat berfungsi sebagai Medis dan Dokumentasi).\nb. Pakta Integritas yang telah ditandatangani oleh Official resmi sekolah."
     ]
   },
   {
     pasal: 3,
     title: 'Technical Meeting (TM) Peserta',
     points: [
-      "1. Waktu dan Tempat: Technical Meeting (TM) Peserta dilaksanakan pada hari Sabtu, 9 Januari 2027 pukul 13.00 - 16.30 WIB bertempat di Kampus Induk Madrasah Mu'allimin Muhammadiyah Yogyakarta (Jl. Letjen S. Parman No. 68, Wirobrajan, Kota Yogyakarta).",
+      "1. Waktu dan Tempat: Technical Meeting (TM) Peserta dilaksanakan pada hari Sabtu, 9 Januari 2027 pukul 12.30 - 16.30 WIB bertempat di Aula Kampus Induk Madrasah Mu'allimin Muhammadiyah Yogyakarta (Jl. Letjen S. Parman No. 68 Patangpuluhan, Wirobrajan, Kota Yogyakarta).",
       "2. Kehadiran Delegasi: Setiap sekolah/madrasah wajib diwakili oleh maksimal 2 (dua) orang perwakilan resmi per SEKOLAH (Official/Pembina atau Komandan Peleton), baik yang mengirimkan 1 (satu) peleton maupun 2 (dua) peleton. Perwakilan wajib mengenakan pakaian rapi, sopan, dan bersepatu.",
       "3. Hasil technical meeting wajib dipatuhi dan dilaksanakan selama perlombaan berlangsung. Pada hari pelaksanaan perlombaan, panitia tidak menerima protes tentang ketentuan-ketentuan yang sudah disepakati pada saat technical meeting, baik yang berupa ketentuan tertulis maupun yang tidak tertulis."
     ]
@@ -78,8 +78,8 @@ export const TATA_TERTIB_ARTICLES = [
     title: 'Area Lomba, Penggunaan Basecamp, dan Zonasi Pesantren',
     points: [
       "1. Lokasi kegiatan dibagi menjadi beberapa area: Area Lomba (Arena 1 & 2), Area Basecamp (ruang kelas transit peleton), Daerah Persiapan (DP 1 Pengecekan Personel & DP 2 Ruang Tunggu), Area Penonton/Suporter, dan Area Steril/Privat Pesantren.",
-      "2. Setiap 1 (satu) ruang kelas difungsikan sebagai basecamp bersama untuk 2 (dua) peleton dengan pembagian resmi yang ditetapkan oleh panitia. Akses masuk ke area ini dijaga ketat dan HANYA diperuntukkan bagi anggota peleton (inti maupun cadangan) yang mengenakan seragam lengkap, serta 1 Official dan 2 Pendukung Resmi yang mengenakan ID Card resmi.",
-      "3. Penentuan pasangan peleton dalam satu ruangan diatur sepenuhnya oleh panitia berdasarkan urutan skala prioritas. Prioritas utama diberikan kepada sekolah yang mengirimkan 2 peleton untuk ditempatkan dalam satu ruang yang sama. Jika kuota tersebut telah terpenuhi, penempatan berikutnya akan mengelompokkan peleton homogen (putra dengan putra, atau putri dengan putri), dan opsi terakhir adalah penggabungan peleton secara heterogen atau campuran.",
+      "2. Setiap 1 (satu) ruang kelas difungsikan sebagai basecamp bersama untuk maksimal 2 (dua) peleton dengan pembagian resmi yang ditetapkan oleh panitia. Akses masuk ke area ini dijaga ketat dan HANYA diperuntukkan bagi anggota peleton (inti maupun cadangan) yang mengenakan seragam lengkap, serta 1 Official dan 2 Pendukung Resmi yang mengenakan ID Card resmi.",
+      "3. Penentuan pasangan peleton dalam satu ruangan diatur sepenuhnya oleh panitia berdasarkan urutan skala prioritas. Prioritas utama diberikan kepada sekolah yang mengirimkan 2 peleton untuk ditempatkan dalam satu ruang yang sama.",
       "4. Wali murid, suporter, maupun penonton DILARANG KERAS memasuki area basecamp / ruang kelas peserta demi menjaga ketertiban, keamanan barang bawaan, dan kenyamanan istirahat peserta lomba.",
       "5. Peserta dan pendamping DILARANG menggunakan aset/fasilitas ruang kelas (seperti LCD proyektor, papan tulis, perangkat guru, sound kelas) dan DILARANG memindahkan meja maupun kursi keluar dari dalam ruang kelas.",
       "6. Seluruh unsur peleton DILARANG KERAS memasuki area privat Kampus Terpadu Madrasah Mu'allimin Muhammadiyah Yogyakarta, khususnya kawasan ASRAMA SANTRI. Pelanggaran terhadap batas privasi ini akan dikenakan sanksi tegas oleh Panitia dan Keamanan.",

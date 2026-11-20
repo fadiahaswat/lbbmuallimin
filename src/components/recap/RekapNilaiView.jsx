@@ -163,7 +163,21 @@ export default function RekapNilaiView() {
 
     const j1Danton = Number(juries.pos1?.dantonTotal ?? 0);
     const j2Danton = Number(juries.pos2?.dantonTotal ?? 0);
-    const j3Danton = Number(juries.pos3?.dantonTotal ?? juries.pos3?.total ?? sc.danton?.total ?? 0);
+    const j3Danton = Number(juries.pos3?.dantonTotal ?? 0);
+
+    const j1Mat = Number(juries.pos1?.dantonRubricScores?.materi ?? 0);
+    const j2Mat = Number(juries.pos2?.dantonRubricScores?.materi ?? 0);
+    const j3Mat = Number(juries.pos3?.dantonRubricScores?.materi ?? 0);
+    const dantonMateri = (j1Mat + j2Mat + j3Mat) > 0
+      ? (j1Mat + j2Mat + j3Mat)
+      : Number(sc.danton?.rubricScores?.materi ?? 0);
+
+    const j1Vok = Number(juries.pos1?.dantonRubricScores?.vokal ?? 0);
+    const j2Vok = Number(juries.pos2?.dantonRubricScores?.vokal ?? 0);
+    const j3Vok = Number(juries.pos3?.dantonRubricScores?.vokal ?? 0);
+    const dantonVokal = (j1Vok + j2Vok + j3Vok) > 0
+      ? (j1Vok + j2Vok + j3Vok)
+      : Number(sc.danton?.rubricScores?.vokal ?? 0);
 
     const nilaiMurniPeleton = Number(sc.nilaiMurniPeleton ?? sc.pbbTotal ?? sc.pbb?.total ?? (j1Peleton + j2Peleton + j3Peleton));
     const peletonPenalty = Number(sc.penalties?.peletonPenalty ?? sc.penaltiesTotal ?? sc.penalties?.totalPenalty ?? 0);
@@ -193,6 +207,8 @@ export default function RekapNilaiView() {
       j1Danton,
       j2Danton,
       j3Danton,
+      dantonMateri,
+      dantonVokal,
       durationLabel,
     };
   };
@@ -233,7 +249,8 @@ export default function RekapNilaiView() {
     if (mA.hasScore && mB.hasScore) {
       if (mB.nilaiAkhirDanton !== mA.nilaiAkhirDanton) return mB.nilaiAkhirDanton - mA.nilaiAkhirDanton;
       if (mB.nilaiMurniDanton !== mA.nilaiMurniDanton) return mB.nilaiMurniDanton - mA.nilaiMurniDanton;
-      if (mA.dantonPenalty !== mB.dantonPenalty) return mA.dantonPenalty - mB.dantonPenalty;
+      if (mB.dantonMateri !== mA.dantonMateri) return mB.dantonMateri - mA.dantonMateri;
+      if (mB.dantonVokal !== mA.dantonVokal) return mB.dantonVokal - mA.dantonVokal;
     }
     const chestA = parseInt(getChestNum(a) || '9999', 10);
     const chestB = parseInt(getChestNum(b) || '9999', 10);

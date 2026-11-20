@@ -160,7 +160,7 @@ export default function BasecampLogisticsTab({
               type="text"
               value={qrInput}
               onChange={(e) => setQrInput(e.target.value)}
-              placeholder="Scan QR ID Card Peleton atau ketik Kode Registrasi (cth: LBB26-SMP-001)..."
+              placeholder="Scan QR Tiket Registrasi Peleton atau ketik Kode Registrasi (cth: LBB27-SMP-001)..."
               className="w-full pl-11 pr-4 py-3 bg-white border border-slate-300 rounded-2xl text-slate-900 text-sm font-mono focus:border-teal-500 focus:outline-none placeholder:text-slate-400"
             />
           </div>
@@ -250,7 +250,6 @@ export default function BasecampLogisticsTab({
                         >
                           <option value="KTP Fisik">KTP Fisik Asli</option>
                           <option value="SIM Fisik">SIM Fisik Asli</option>
-                          <option value="Kartu Pegawai">Kartu Pegawai / Guru Asli</option>
                         </select>
                       </div>
                     </div>
@@ -270,7 +269,7 @@ export default function BasecampLogisticsTab({
                           onChange={(e) => setLogisticsChecklist({ ...logisticsChecklist, waterBox: e.target.checked })}
                           className="w-4 h-4 rounded accent-teal-600 cursor-pointer"
                         />
-                        <span>1 Dus Air Minum Mineral (24 botol / cup)</span>
+                        <span>1 Dus Air Minum Kemasan Botol</span>
                       </label>
 
                       <label className="flex items-center gap-2 cursor-pointer text-slate-700 hover:text-slate-900">
@@ -280,7 +279,7 @@ export default function BasecampLogisticsTab({
                           onChange={(e) => setLogisticsChecklist({ ...logisticsChecklist, chestNumber: e.target.checked })}
                           className="w-4 h-4 rounded accent-teal-600 cursor-pointer"
                         />
-                        <span>Nomor Dada Peleton (Sesuai Undian)</span>
+                        <span>1 Nomor Dada Peleton (S2B1, Hak Milik / Souvenir)</span>
                       </label>
 
                       <label className="flex items-center gap-2 cursor-pointer text-slate-700 hover:text-slate-900">
@@ -290,7 +289,7 @@ export default function BasecampLogisticsTab({
                           onChange={(e) => setLogisticsChecklist({ ...logisticsChecklist, cocardOfficial: e.target.checked })}
                           className="w-4 h-4 rounded accent-teal-600 cursor-pointer"
                         />
-                        <span>Cocard ID Pendamping (3 Pcs: 1 Official + 2 Pendukung)</span>
+                        <span>3 ID Card Resmi (1 Official + 2 Pendukung Resmi)</span>
                       </label>
 
                       <label className="flex items-center gap-2 cursor-pointer text-slate-700 hover:text-slate-900">
@@ -300,7 +299,7 @@ export default function BasecampLogisticsTab({
                           onChange={(e) => setLogisticsChecklist({ ...logisticsChecklist, trashBag: e.target.checked })}
                           className="w-4 h-4 rounded accent-teal-600 cursor-pointer"
                         />
-                        <span>Karung Sampah untuk Pemilahan Sampah Basecamp</span>
+                        <span>2 Kantong Sampah Terpilah (Organik &amp; Anorganik)</span>
                       </label>
                     </div>
                   </div>
@@ -328,7 +327,7 @@ export default function BasecampLogisticsTab({
                     <span>SOP Check-out Kepulangan Peleton</span>
                   </h4>
                   <p className="text-xs text-amber-700">
-                    Sebelum mengembalikan KTP/SIM, panitia wajib memeriksa kebersihan ruangan basecamp dan memastikan sampah telah dipilah ke karung sampah.
+                    Batas checkout pukul 15.00 WIB. Sebelum mengembalikan KTP/SIM, panitia wajib memeriksa kebersihan &amp; keutuhan inventaris ruangan (kerusakan aset dikenai ganti rugi + denda Rp 500.000) serta memastikan 2 kantong sampah terpilah diserahkan ke Pos Checkout.
                   </p>
                 </div>
 
@@ -341,7 +340,7 @@ export default function BasecampLogisticsTab({
                         onChange={(e) => setCheckoutChecklist({ ...checkoutChecklist, roomCleanChecked: e.target.checked })}
                         className="w-4 h-4 rounded accent-amber-600 cursor-pointer"
                       />
-                      <span className="font-bold">1. Kebersihan Basecamp Telah Diperiksa & Bersih</span>
+                      <span className="font-bold">1. Kebersihan, Kerapian &amp; Keutuhan Inventaris Basecamp Lolos Inspeksi</span>
                     </label>
 
                     <label className="flex items-center gap-2.5 cursor-pointer text-slate-700 hover:text-slate-900">
@@ -351,7 +350,7 @@ export default function BasecampLogisticsTab({
                         onChange={(e) => setCheckoutChecklist({ ...checkoutChecklist, sortedTrashReturned: e.target.checked })}
                         className="w-4 h-4 rounded accent-amber-600 cursor-pointer"
                       />
-                      <span className="font-bold">2. Karung Sampah Terpilah Telah Dikembalikan ke Panitia</span>
+                      <span className="font-bold">2. 2 Kantong Sampah Terpilah (Organik &amp; Anorganik) Diserahkan ke Pos Checkout</span>
                     </label>
 
                     <label className="flex items-center gap-2.5 cursor-pointer text-slate-700 hover:text-slate-900">
@@ -361,7 +360,7 @@ export default function BasecampLogisticsTab({
                         onChange={(e) => setCheckoutChecklist({ ...checkoutChecklist, ktpReturned: e.target.checked })}
                         className="w-4 h-4 rounded accent-amber-600 cursor-pointer"
                       />
-                      <span className="font-bold">3. KTP/SIM Fisik Official Siap Diserahkan Kembali</span>
+                      <span className="font-bold">3. KTP/SIM Fisik Official Diserahkan Kembali</span>
                     </label>
                   </div>
                 </div>

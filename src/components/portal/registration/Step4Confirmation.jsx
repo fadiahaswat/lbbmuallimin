@@ -141,7 +141,7 @@ export default function Step4Confirmation({
           <span>Petunjuk Akses Masuk Portal Peleton:</span>
         </p>
         <ul className="list-disc pl-5 space-y-1 text-slate-600 text-[11px]">
-          <li>Panitia akan memverifikasi data dan bukti pembayaran pendaftaran Anda.</li>
+          <li>Panitia akan memverifikasi data dan bukti pembayaran pendaftaran Anda dalam waktu maksimal <strong className="text-slate-900">1×24 jam</strong>.</li>
           <li>Setelah diverifikasi oleh panitia, akun peleton resmi aktif.</li>
           <li>Akses login ke portal peleton menggunakan Akun Google <strong className="text-slate-900">{createdTeam.email}</strong> melalui tombol <strong className="text-slate-900">Daftar / Masuk</strong>.</li>
         </ul>

@@ -29,14 +29,14 @@ export const INITIAL_SETTINGS = {
     registrationRangeText: '26 Oktober – 22 November 2026',
     verificationRangeText: '26 Oktober – 22 November 2026',
     technicalMeetingDate: '9 Januari 2027',
-    technicalMeetingTime: '13.00 - 16.30 WIB',
+    technicalMeetingTime: '12.30 - 16.30 WIB (Reg 12.30)',
     technicalMeetingFullDate: 'Sabtu, 9 Januari 2027',
-    technicalMeetingVenue: "Aula Kampus Induk Madrasah Mu'allimin Muhammadiyah Yogyakarta, Jalan Letjen S. Parman No. 68, Wirobrajan, Kota Yogyakarta, Daerah Istimewa Yogyakarta.",
+    technicalMeetingVenue: "Aula Kampus Induk Madrasah Mu'allimin Muhammadiyah Yogyakarta, Jl. Letjen S. Parman No. 68, Patangpuluhan, Wirobrajan, Kota Yogyakarta, Daerah Istimewa Yogyakarta.",
     fieldTrialDate: '16 Januari 2027',
-    fieldTrialTime: '07.00 – 13.00 WIB',
+    fieldTrialTime: '06.30 – 12.00 WIB',
     fieldTrialFullDate: 'Sabtu, 16 Januari 2027',
     competitionDate: 'Ahad, 24 Januari 2027',
-    competitionTimeRange: '06.00 WIB – 17.00 WIB',
+    competitionTimeRange: '06.00 WIB – 17.15 WIB',
   },
 };
 

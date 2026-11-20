@@ -87,10 +87,10 @@ export default function TataTertibView({ embedded = false }) {
     },
     {
       violation: 'Pelanggaran Garis Kotak Danton 1,5 × 1,5 Meter oleh Komandan',
-      points: 50,
-      pointsDisplay: '-50 Poin / kejadian',
+      points: 10,
+      pointsDisplay: '-10 Poin / kejadian',
       rule: 'Bab C.5.b Juknis Penilaian / Bab A.3 Juknis Lapangan',
-      desc: 'Komandan Peleton yang menginjak atau keluar dari Kotak Danton berukuran 1,5 × 1,5 meter dikenai penalti -50 poin untuk setiap kejadian terhadap nilai Komandan Peleton.',
+      desc: 'Komandan Peleton yang menginjak atau keluar dari Kotak Danton berukuran 1,5 × 1,5 meter dikenai penalti -10 poin untuk setiap kejadian terhadap nilai Komandan Peleton.',
       type: 'Arena & Garis',
     },
     {
@@ -207,7 +207,7 @@ export default function TataTertibView({ embedded = false }) {
               </p>
               <div className="flex flex-wrap items-center gap-2.5 pt-1">
                 <a
-                  href={DOWNLOADS[1]?.url || "https://docs.google.com/document/d/1rkVVB0XgycFRQgx8N4Zs7K6LB6T2J0cjYTtmALxpDzM/edit?usp=sharing"}
+                  href={DOWNLOADS[4]?.url || DOWNLOADS[1]?.url || "https://docs.google.com/document/d/1rkVVB0XgycFRQgx8N4Zs7K6LB6T2J0cjYTtmALxpDzM/edit?usp=sharing"}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-bold transition-all shadow-md active:scale-95 cursor-pointer"
@@ -456,7 +456,7 @@ export default function TataTertibView({ embedded = false }) {
               </li>
               <li className="flex items-start gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 shrink-0 mt-1.5"></span>
-                <span>Menyematkan nomor dada resmi di dada sebelah kiri personel penjuru depan tengah (S2B1).</span>
+                <span>Menyematkan nomor dada resmi pada dada personel banjar paling kanan saf kedua (Saf 2 Banjar 1 / S2B1).</span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 shrink-0 mt-1.5"></span>

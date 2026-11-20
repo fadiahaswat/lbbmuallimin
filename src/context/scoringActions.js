@@ -16,8 +16,8 @@ export function calculatePenalties(penalties = {}) {
   if (penalties.basecampKotor) peletonPenalty += 150;
   peletonPenalty += (penalties.rokokCount || 0) * 75;
 
-  // Danton Penalties (Bab A.3.c & Bab H)
-  dantonPenalty += (penalties.kotakDantonCount || 0) * 50;
+  // Danton Penalties (Bab A.3.c & Bab C.5.b: -10 poin per kejadian)
+  dantonPenalty += (penalties.kotakDantonCount || 0) * 10;
 
   // Yel-Yel Pelanggaran ke-3 dst: Potong Nilai Peleton (Bab C.10.b & d)
   const yelCount = penalties.yelYelCount !== undefined ? penalties.yelYelCount : (penalties.penyesuaianCount || 0);
@@ -283,7 +283,7 @@ export function createScoringActions({ scores = {}, setScores, currentUser }) {
 
       const j1Danton = Number(updatedJuries.pos1?.dantonTotal ?? 0);
       const j2Danton = Number(updatedJuries.pos2?.dantonTotal ?? 0);
-      const j3Danton = Number(updatedJuries.pos3?.dantonTotal ?? updatedJuries.pos3?.total ?? 0);
+      const j3Danton = Number(updatedJuries.pos3?.dantonTotal ?? 0);
 
       const nilaiMurniDanton = parseFloat((j1Danton + j2Danton + j3Danton).toFixed(2));
       const nilaiAkhirDanton = Math.max(0, parseFloat((nilaiMurniDanton - dantonPenalty).toFixed(2)));
@@ -320,7 +320,7 @@ export function createScoringActions({ scores = {}, setScores, currentUser }) {
         finalScore,
         scoredAt: new Date().toISOString(),
         lastUpdatedBy: postScoreData.juryName || 'Dewan Juri',
-        isLocked: Boolean(updatedJuries.pos1 && updatedJuries.pos2 && updatedJuries.pos3),
+        isLocked: Boolean(currentTeamScore.isLocked),
         notes: postScoreData.notes || currentTeamScore.notes || '',
       };
     };

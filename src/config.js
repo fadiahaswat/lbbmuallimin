@@ -761,8 +761,8 @@ export const PENALTIES = [
     },
     {
         label: 'Pelanggaran Garis Kotak Danton 1,5 x 1,5 Meter oleh Komandan',
-        value: '-50 Poin / kejadian (Nilai Komandan Peleton)',
-        desc: '-50 Poin per kejadian (menginjak atau keluar garis kotak selama memimpin materi), diberlakukan terhadap Nilai Komandan Peleton.',
+        value: '-10 Poin / kejadian (Nilai Komandan Peleton)',
+        desc: '-10 Poin per kejadian (menginjak atau keluar garis kotak selama memimpin materi), diberlakukan terhadap Nilai Komandan Peleton.',
     },
     {
         label: 'Gerakan Terlewat / Tidak Urut',
@@ -1346,9 +1346,9 @@ export const OFFICIAL_TIMELINE = [
     {
         id: "tl-20",
         phase: "F. Rangkaian Agenda Uji Coba Lapangan / Familiarisasi Medan (Januari 2027)",
-        period: "Sabtu, 16 Januari 2027 (Pukul 07.15 - 14.15 WIB)",
+        period: "Sabtu, 16 Januari 2027 (Pukul 06.30 - 12.00 WIB)",
         title: "PELAKSANAAN UJI COBA LAPANGAN (SIMULASI GLADI HARI-H TANPA UPACARA)",
-        desc: "07.15: Masuk kampus peleton awal. 08.00: Panggilan DP 1 peleton No. 001 SD & SMP. 08.15 - 11.30: Pelaksanaan Sesi I (No. 001 s.d. 013 @15 menit). 11.30 - 12.30: ISHOMA Sholat Dhuhur di Masjid Hajah Yuliana. 12.30 - 13.45: Pelaksanaan Sesi II (No. 014 s.d. 018 @15 menit). 13.45 - 14.15: Clear area & evaluasi lapangan panitia.",
+        desc: "06.30 - 07.00: Presensi & kedatangan kontingen. 07.00 - 11.30: Pelaksanaan Uji Coba Paralel Arena 1 (SD/MI: SD-111 s.d. SD-175) & Arena 2 (SMP/MTs: SMP-222 s.d. SMP-286), 18 slot @15 menit per peleton (orientasi bersih + 5 menit transisi). 11.30 - 12.00: Evaluasi & pengosongan venue.",
         pic: "Divisi Teknis Lapangan, Divisi Acara, Divisi LO & Humas, Divisi Medis, Divisi Keamanan",
     },
     {
@@ -1378,9 +1378,9 @@ export const OFFICIAL_TIMELINE = [
     {
         id: "tl-24",
         phase: "H. Tahap Pelaksanaan Perlombaan (Hari-H: Ahad, 24 Januari 2027)",
-        period: "Ahad, 24 Januari 2027 (Pukul 06.00 - 17.00 WIB)",
+        period: "Ahad, 24 Januari 2027 (Pukul 06.00 - 17.15 WIB)",
         title: "PELAKSANAAN RESMI HARI-H LBB MU'ALLIMIN 2027",
-        desc: "06.00 - 06.45: Check-in registrasi kontingen & penempatan basecamp kelas. 06.45 - 07.00: Pengkondisian upacara di Mini Soccer & sarapan VIP 6 Dewan Juri di Perpustakaan ASM. 07.00 - 07.45: Upacara Pembukaan Resmi LBB Mu'allimin 2027. 07.45 - 08.15: Jeda kesiapan peleton awal & panggilan resmi DP 1 pukul 08.00 WIB. 08.15 - 11.30: Pelaksanaan Lomba Sesi I (No. 001 s.d. 013 di Arena 1 Basket & Arena 2 Embung). 11.30 - 12.30: ISHOMA Sholat Dhuhur di Masjid Hajah Yuliana & makan siang. 12.30 - 13.45: Pelaksanaan Lomba Sesi II (No. 014 s.d. 018 penutup). 13.45 - 14.45: Sidang Pleno Dewan Juri & Checkout Basecamp Peserta. 14.45 - 15.15: Upacara Penutupan Resmi. 15.15 - 16.00: Pengumuman Juara, Trophy & Uang Pembinaan Rp 9.600.000. 16.00 - 17.00: Masa Sanggah 60 menit, rilis nilai website & kontingen pulang.",
+        desc: "06.00 - 06.45: Check-in registrasi kontingen & penempatan basecamp kelas (registrasi tutup 09.00 WIB). 06.45 - 07.00: Sterilisasi arena, persiapan upacara di Mini Soccer & penyambutan 6 Dewan Juri di Ruang VIP. 07.00 - 07.45: Upacara Pembukaan Resmi LBB Mu'allimin 2027. 07.45 - 08.00: Jeda kesiapan peleton awal & panggilan DP 1 pukul 07.45 WIB. 08.00 - 11.30: Pelaksanaan Lomba Sesi I (14 Peleton: SD-111 s.d. SD-157 & SMP-222 s.d. SMP-268). 11.30 - 12.30: ISHOMA Sholat Dhuhur di Masjid Kampus Terpadu. 12.30 - 13.30: Pelaksanaan Lomba Sesi II (4 Peleton: SD-159 s.d. SD-175 & SMP-280 s.d. SMP-286). 13.30 - 15.00: Sidang Pleno Dewan Juri, Masa Sanggah Administrasi (tutup 15.00 WIB), & Checkout Basecamp (batas 15.00 WIB). 15.00 - 15.45: Istirahat sore & Salat Ashar. 15.45 - 16.00: Standby barisan Apel Penutupan. 16.00 - 16.30: Apel Penutupan Resmi. 16.30 - 17.15: Pengumuman Kejuaraan & Penganugerahan Hadiah. 17.15 - Selesai: Pembubaran & kepulangan kontingen.",
         pic: "Seluruh Panitia Pelaksana, Dewan Juri, Seluruh Kontingen",
     },
     {
