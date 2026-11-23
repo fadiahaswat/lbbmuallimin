@@ -867,39 +867,16 @@ export default function ParticipantDashboard() {
         {/* Notifikasi Wajib Upacara Pembukaan untuk Peleton Urutan 6 s.d. 10 (Juknis Bab D.3 & Pasal 6) */}
         {((Number(currentTeam.lotNumber) >= 6 && Number(currentTeam.lotNumber) <= 10) ||
           ['SD-131', 'SD-133', 'SD-135', 'SD-137', 'SD-139', 'SMP-242', 'SMP-244', 'SMP-246', 'SMP-248', 'SMP-260'].includes(String(currentTeam.chestNumber || '').trim())) && (
-          <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-red-950 text-white p-4 sm:p-5 rounded-2xl sm:rounded-3xl shadow-lg border-2 border-red-600/80 flex items-start gap-3.5 sm:gap-4 animate-in fade-in duration-300">
-            <div className="p-2.5 sm:p-3 bg-red-700 text-white rounded-2xl shrink-0 font-black text-lg flex items-center justify-center shadow-md">
-              🚩
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
-                <span className="text-[10px] font-black uppercase tracking-wider bg-red-600 text-white px-2.5 py-0.5 rounded-full shadow-xs">
-                  Urutan Tampil #{String(currentTeam.lotNumber || '').padStart(2, '0')} {currentTeam.chestNumber ? `(${currentTeam.chestNumber})` : ''}
-                </span>
-                <span className="text-[10px] font-black uppercase tracking-wider bg-amber-400 text-slate-950 px-2.5 py-0.5 rounded-full shadow-xs">
-                  WAJIB HADIR UPACARA PEMBUKAAN
-                </span>
-                <span className="text-[10px] font-bold text-red-300">
-                  Pasal 6 & Juknis Lapangan D.3
-                </span>
-              </div>
-              <h4 className="font-black text-white text-base sm:text-lg mt-1.5 leading-snug">
-                Peleton Anda Termasuk Dalam 5 Tim Wajib Upacara Pembukaan!
-              </h4>
-              <p className="text-xs text-slate-200 mt-1 leading-relaxed">
-                Peleton dengan <strong>urutan tampil 6 s.d. 10</strong> wajib berbaris di Lapangan Upacara pada <strong>pukul 06.45 WIB</strong> (Upacara mulai tepat 07.00 WIB) dengan komposisi: <strong>1 Komandan Peleton + 15 Anggota</strong> (5 trio lengkap) mengenakan <strong>seragam perlombaan lengkap</strong>.
-              </p>
-              <div className="mt-2.5 flex items-center gap-2 p-2 bg-black/40 border border-red-500/30 rounded-xl text-[11px] text-amber-300 font-semibold">
-                <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
-                <span>
-                  Sanksi Ketidakhadiran: Penalti pemotongan <strong>-150 poin</strong> pada nilai Peleton, atau <strong>-50 poin per kelipatan keterlambatan 5 menit</strong>.
-                </span>
-              </div>
+          <div className="rounded-2xl border border-amber-200/90 bg-amber-50/80 px-4 py-3 flex items-start gap-3">
+            <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+            <div className="min-w-0 text-xs leading-relaxed text-slate-700">
+              <span className="font-bold text-slate-900">
+                Wajib Upacara Pembukaan (Urutan #{String(currentTeam.lotNumber || '').padStart(2, '0')}):
+              </span>{' '}
+              Hadir <strong className="text-slate-900">06.45 WIB</strong> di Lapangan Upacara (1 Danton + 15 Anggota, seragam lomba lengkap). Sanksi tidak hadir <strong className="text-red-700">-150 poin</strong>, telat <strong className="text-red-700">-50 poin / 5 menit</strong>.
             </div>
           </div>
         )}
-
-
 
         {/* TAB 1: OVERVIEW */}
         {activeTab === 'overview' && (

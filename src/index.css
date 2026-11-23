@@ -375,6 +375,32 @@ video::-webkit-media-controls-panel {
   }
 }
 
+/* Smooth School Logo Marquee Strip */
+@keyframes lbb-marquee {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.lbb-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: lbb-marquee var(--marquee-duration, 42s) linear infinite;
+}
+
+.lbb-marquee-wrap:hover .lbb-marquee-track {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lbb-marquee-track {
+    animation: none;
+  }
+}
+
 /* Fullscreen Immersive QR Scanner */
 #qr-camera-viewport {
   width: 100% !important;

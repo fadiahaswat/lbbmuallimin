@@ -187,17 +187,20 @@ export default function SimpaskorSidebarLayout({
       ];
     }
 
-    // 2. Panitia / Staff
-    const baseTahapan = [
+    // 2. Panitia / Staff — Dikelompokkan Kronologis (Pra-Lomba → Hari-H Arena → Hasil & Sistem)
+    const basePraLomba = [
       { id: 'pendaftaran', index: '01', label: 'Berkas Registrasi', icon: ClipboardList, stage: 'pendaftaran', activeGradient: 'from-blue-600 to-indigo-600' },
       { id: 'tm', index: '02', label: 'Technical Meeting', icon: CalendarCheck, stage: 'tm', activeGradient: 'from-amber-500 to-orange-500' },
       { id: 'uji_coba', index: '03', label: 'Uji Coba Lapangan', icon: Compass, stage: 'uji_coba', activeGradient: 'from-cyan-600 to-teal-600' },
-      { id: 'checkin', index: '04', label: 'Basecamp', icon: Building2, stage: 'checkin', activeGradient: 'from-emerald-600 to-teal-600' },
-      { id: 'dp', index: '05', label: 'Daerah Persiapan', icon: Clock, stage: 'dp', activeGradient: 'from-violet-600 to-purple-600' },
     ];
 
-    const basePenilaian = [
+    const baseHariH = [
+      { id: 'checkin', index: '04', label: 'Basecamp', icon: Building2, stage: 'checkin', activeGradient: 'from-emerald-600 to-teal-600' },
+      { id: 'dp', index: '05', label: 'Daerah Persiapan', icon: Clock, stage: 'dp', activeGradient: 'from-violet-600 to-purple-600' },
       { id: 'penjurian', index: '06', label: 'Penjurian Lapangan', icon: Award, stage: 'penjurian', activeGradient: 'from-rose-600 to-red-600' },
+    ];
+
+    const baseHasil = [
       { id: 'rekap_nilai', index: '07', label: 'Rekap Nilai', icon: FileSpreadsheet, stage: 'rekap_nilai', activeGradient: 'from-amber-600 to-orange-600' },
       { id: 'klasemen', index: '08', label: 'Klasemen', icon: Trophy, stage: 'klasemen', activeGradient: 'from-amber-500 via-yellow-500 to-amber-600' },
     ];
@@ -207,50 +210,42 @@ export default function SimpaskorSidebarLayout({
       return list.filter(item => canAccessStage(item.stage, userRole));
     };
 
-    const sections = [
-      {
-        id: 'utama',
-        title: 'UTAMA',
-        tag: 'Ringkasan',
-        tagColor: 'text-red-700 bg-red-50 border-red-200/80',
-        items: [
-          { id: 'staff_home', index: '00', label: 'Beranda', icon: Home, view: 'staff_home', activeGradient: 'from-red-600 to-rose-600' },
-        ],
-      },
+    const sections = [];
+
+    const praLombaItems = [
+      { id: 'staff_home', index: '00', label: 'Beranda', icon: Home, view: 'staff_home', activeGradient: 'from-red-600 to-rose-600' },
+      ...filterAccessible(basePraLomba),
     ];
-    const tahapan = filterAccessible(baseTahapan);
-    if (tahapan.length > 0) {
-      sections.push({ 
-        id: 'tahapan', 
-        title: 'TAHAPAN LOMBA', 
-        tag: 'Juknis',
-        tagColor: 'text-blue-700 bg-blue-50 border-blue-200/80',
-        items: tahapan 
+    sections.push({
+      id: 'pra_lomba',
+      title: 'PRA-LOMBA',
+      tag: 'Persiapan',
+      tagColor: 'text-blue-700 bg-blue-50 border-blue-200/80',
+      items: praLombaItems,
+    });
+
+    const hariHItems = filterAccessible(baseHariH);
+    if (hariHItems.length > 0) {
+      sections.push({
+        id: 'hari_h',
+        title: 'HARI-H ARENA',
+        tag: 'Operasional',
+        tagColor: 'text-emerald-700 bg-emerald-50 border-emerald-200/80',
+        items: hariHItems,
       });
     }
 
-    const penilaian = filterAccessible(basePenilaian);
-    if (penilaian.length > 0) {
-      sections.push({ 
-        id: 'penilaian', 
-        title: 'PENILAIAN & REKAP', 
-        tag: 'Penjurian',
-        tagColor: 'text-amber-700 bg-amber-50 border-amber-200/80',
-        items: penilaian 
-      });
-    }
-
-    const sistemItems = [];
+    const hasilSistemItems = [...filterAccessible(baseHasil)];
     if (userRole === 'superadmin') {
-      sistemItems.push({ id: 'superadmin', index: '09', label: 'Master System', icon: Crown, view: 'superadmin', activeGradient: 'from-purple-700 to-indigo-700' });
+      hasilSistemItems.push({ id: 'superadmin', index: '09', label: 'Master System', icon: Crown, view: 'superadmin', activeGradient: 'from-purple-700 to-indigo-700' });
     }
-    if (sistemItems.length > 0) {
-      sections.push({ 
-        id: 'sistem', 
-        title: 'SISTEM', 
-        tag: 'Sistem',
-        tagColor: 'text-purple-700 bg-purple-50 border-purple-200/80',
-        items: sistemItems 
+    if (hasilSistemItems.length > 0) {
+      sections.push({
+        id: 'hasil_sistem',
+        title: userRole === 'superadmin' ? 'HASIL & SISTEM' : 'HASIL & REKAP',
+        tag: 'Hasil',
+        tagColor: 'text-amber-700 bg-amber-50 border-amber-200/80',
+        items: hasilSistemItems,
       });
     }
 

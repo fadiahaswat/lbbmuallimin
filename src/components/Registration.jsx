@@ -31,6 +31,7 @@ import {
 import { EVENT, COMPETITION, PAYMENT, REGISTRATION, CONTACT, SOCIAL, CLIPBOARD } from '../config.js';
 import { useCompetition } from '../context/CompetitionContext.jsx';
 import CountdownTimer from './CountdownTimer.jsx';
+import RegisteredSchoolsShowcase from './RegisteredSchoolsShowcase.jsx';
 
 export default function Registration() {
   const {
@@ -354,7 +355,14 @@ export default function Registration() {
               </div>
             </div>
           </div>
-        </div>        {/* ========================================================
+        </div>
+
+        {/* ========================================================
+            SEKOLAH TERDAFTAR (DEDUPLIKASI 2 PELETON = 1 LOGO)
+            ======================================================== */}
+        <RegisteredSchoolsShowcase variant="grid" />
+
+        {/* ========================================================
             3 OVERVIEW CARDS (TIMELINE, KUOTA & PERSONEL, BIAYA)
             ======================================================== */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-16 lg:mb-20 items-stretch">

@@ -142,7 +142,7 @@ export default function Hero() {
           <img
             src="/logo-milad-red.svg"
             alt=""
-            className="w-full h-auto object-contain opacity-10 filter drop-shadow-md"
+            className="w-full h-auto object-contain opacity-[0.09] saturate-[0.3] brightness-110 mix-blend-screen pointer-events-none select-none"
             loading="eager"
             decoding="async"
           />
@@ -286,7 +286,7 @@ export default function Hero() {
               <img
                 src="/logo-milad-red.svg"
                 alt=""
-                className="w-full h-auto object-contain opacity-10 filter drop-shadow-md"
+                className="w-full h-auto object-contain opacity-[0.09] saturate-[0.3] brightness-110 mix-blend-screen pointer-events-none select-none"
                 loading="eager"
                 decoding="async"
               />
