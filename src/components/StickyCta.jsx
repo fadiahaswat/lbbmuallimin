@@ -9,8 +9,8 @@ export default function StickyCta({ isVisible }) {
   return (
     <div
       id="sticky-cta"
-      className={`fixed bottom-0 left-0 w-full bg-white/95 backdrop-blur-md border-t border-slate-200/80 px-3 pt-2 pb-[max(0.625rem,env(safe-area-inset-bottom))] shadow-[0_-8px_20px_rgba(0,0,0,0.08)] z-40 lg:hidden flex items-center gap-2 transition-transform duration-300 ${
-        isVisible ? 'translate-y-0' : 'translate-y-full'
+      className={`fixed bottom-[max(1rem,env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 w-[calc(100%-1.75rem)] max-w-md rounded-full bg-slate-950/90 backdrop-blur-xl border border-white/15 p-1.5 shadow-[0_16px_40px_rgba(0,0,0,0.45)] z-40 lg:hidden flex items-center gap-1.5 transition-all duration-300 ${
+        isVisible ? 'translate-y-0 opacity-100' : 'translate-y-24 opacity-0 pointer-events-none'
       }`}
     >
       {/* Tombol Icon WA Resmi */}
@@ -20,12 +20,12 @@ export default function StickyCta({ isVisible }) {
         rel="noopener noreferrer"
         aria-label="Hubungi Panitia via WhatsApp"
         title="Hubungi Panitia via WhatsApp"
-        className="shrink-0 flex items-center justify-center w-11 h-10 text-white bg-[#25D366] hover:bg-[#20ba5a] active:bg-[#1caa52] rounded-xl shadow-sm shadow-[#25D366]/30 active:scale-95 transition-all text-center"
+        className="shrink-0 flex items-center justify-center w-10 h-10 text-white bg-[#25D366] hover:bg-[#20ba5a] active:bg-[#1caa52] rounded-full shadow-sm shadow-[#25D366]/30 active:scale-95 transition-all text-center"
       >
         <svg
           viewBox="0 0 24 24"
-          width="20"
-          height="20"
+          width="19"
+          height="19"
           fill="currentColor"
           className="shrink-0"
         >
@@ -38,9 +38,9 @@ export default function StickyCta({ isVisible }) {
         href={DOWNLOADS[0]?.url || "https://drive.google.com/file/d/1owEDyb680TNB3TkFvZGVfjD_OCbagffQ/view?usp=sharing"}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex-1 min-w-0 flex items-center justify-center gap-1.5 h-10 px-3 text-xs sm:text-sm font-bold text-slate-700 bg-slate-100 hover:bg-slate-200/80 active:bg-slate-200 border border-slate-200/80 rounded-xl active:scale-95 transition-all whitespace-nowrap text-center"
+        className="flex-1 min-w-0 flex items-center justify-center gap-1.5 h-10 px-3.5 text-xs sm:text-sm font-bold text-slate-100 bg-white/10 hover:bg-white/15 active:bg-white/20 border border-white/10 rounded-full active:scale-95 transition-all whitespace-nowrap text-center"
       >
-        <FileText className="w-4 h-4 text-red-600 shrink-0" />
+        <FileText className="w-4 h-4 text-amber-400 shrink-0" />
         <span>Juknis</span>
       </a>
 
@@ -48,7 +48,7 @@ export default function StickyCta({ isVisible }) {
       <button
         type="button"
         onClick={() => openModal('regWizard')}
-        className="flex-[1.6] min-w-0 flex items-center justify-center gap-1.5 h-10 px-3 text-xs sm:text-sm font-bold text-white bg-red-700 hover:bg-red-800 active:bg-red-900 rounded-xl shadow-md shadow-red-700/20 active:scale-95 transition-all whitespace-nowrap text-center"
+        className="flex-[1.55] min-w-0 flex items-center justify-center gap-1.5 h-10 px-4 text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-[#b91c1c] to-[#8B0000] hover:from-[#dc2626] hover:to-[#991b1b] rounded-full shadow-md shadow-red-900/40 active:scale-95 transition-all whitespace-nowrap text-center cursor-pointer"
       >
         <span className="truncate">{canAccessRegistration ? 'Daftar Sekarang!' : 'Buka 26 Okt'}</span>
         <ArrowRight className="w-4 h-4 shrink-0" />

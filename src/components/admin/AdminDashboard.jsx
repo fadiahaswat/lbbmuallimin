@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   Shield,
   FileSpreadsheet,
@@ -113,6 +113,22 @@ export default function AdminDashboard() {
   const [inspectingStage, setInspectingStage] = useState('registration'); // 'registration' | 'verification'
   const [, setRevisionNoteInput] = useState('');
   const [, setShowRevisionBox] = useState(false);
+
+  // Deep-link: buka langsung halaman inspeksi tim jika diarahkan dari Beranda
+  useEffect(() => {
+    try {
+      const targetId = sessionStorage.getItem('lbb_admin_inspect_team_id');
+      if (!targetId || !teams || teams.length === 0) return;
+      const found = teams.find(t => String(t.id) === String(targetId));
+      const stage = sessionStorage.getItem('lbb_admin_inspect_stage') || 'registration';
+      sessionStorage.removeItem('lbb_admin_inspect_team_id');
+      sessionStorage.removeItem('lbb_admin_inspect_stage');
+      if (found) {
+        setInspectingStage(stage);
+        setInspectingTeam(found);
+      }
+    } catch {}
+  }, [teams]);
 
   // Lot assignment state
   const [lotSuccessMsg, setLotSuccessMsg] = useState('');

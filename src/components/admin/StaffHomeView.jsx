@@ -13,7 +13,9 @@ import {
   Sparkles,
   FileCheck2,
   Radio,
-  ChevronRight
+  ChevronRight,
+  MessageCircle,
+  Users
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
 import { formatImageUrl } from '../../services/sheetService.js';
@@ -54,6 +56,8 @@ const MILESTONES = [
   },
 ];
 
+const WAVE_2_START_TS = new Date('2026-11-08T23:59:59+07:00').getTime();
+
 function computeTimeLeft(targetIso) {
   const diff = Math.max(0, new Date(targetIso).getTime() - Date.now());
   const days = Math.floor(diff / (1000 * 60 * 60 * 24));
@@ -71,6 +75,10 @@ function getGreeting() {
   return 'Selamat malam';
 }
 
+function formatSyncTime(date) {
+  return date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }).replace(':', '.');
+}
+
 function formatCompactRp(amount) {
   if (amount >= 1_000_000) {
     return `Rp${(amount / 1_000_000).toLocaleString('id-ID', { minimumFractionDigits: 1, maximumFractionDigits: 2 })}jt`;
@@ -79,6 +87,18 @@ function formatCompactRp(amount) {
     return `Rp${Math.round(amount / 1_000).toLocaleString('id-ID')}rb`;
   }
   return `Rp${amount.toLocaleString('id-ID')}`;
+}
+
+function getTeamWave(team) {
+  const fee = Number(String(team?.feeAmount || '').replace(/\D/g, '')) || 0;
+  if (fee >= 400000) return 2;
+  if (fee > 0 && fee < 400000) return 1;
+  const regDate = team?.registeredAt || team?.createdAt;
+  if (regDate) {
+    const ts = new Date(regDate).getTime();
+    if (!Number.isNaN(ts)) return ts > WAVE_2_START_TS ? 2 : 1;
+  }
+  return Number(team?.wave) || 2;
 }
 
 function hasValidFile(fileObj, legacyUrl) {
@@ -98,7 +118,33 @@ function getTeamDocScore(team) {
     done: checks.filter(Boolean).length,
     total: 4,
     checks,
+    hasRekom: hasValidFile(f.recommendationLetter, team?.file_surat_rekomendasi),
   };
+}
+
+function getTeamRosterCount(team) {
+  const members = Array.isArray(team?.roster?.members) ? team.roster.members : [];
+  const filledInti = members.filter(m => m && String(m.name || '').trim().length > 0).length;
+  return { filledInti, targetInti: 21 };
+}
+
+function buildWhatsAppFollowUpUrl(team) {
+  const raw = String(team?.waNumber || team?.officialPhone || team?.phone || '').replace(/\D/g, '');
+  if (!raw) return null;
+  const phone = raw.startsWith('0') ? `62${raw.slice(1)}` : raw.startsWith('62') ? raw : `62${raw}`;
+
+  const docs = getTeamDocScore(team);
+  const { filledInti, targetInti } = getTeamRosterCount(team);
+  const missing = [];
+  if (docs.done < docs.total) missing.push(`berkas pendaftaran awal (${docs.done}/${docs.total})`);
+  if (filledInti < targetInti) missing.push(`biodata pasukan inti (${filledInti}/${targetInti})`);
+  if (!docs.hasRekom) missing.push('surat rekomendasi kepala sekolah');
+
+  const msg = missing.length > 0
+    ? `Assalamu'alaikum Official ${team.schoolName}. Kami dari Panitia Sekretariat LBB Mu'allimin 2027 mengingatkan untuk melengkapi ${missing.join(', ')} melalui Portal Peserta sebelum batas waktu 08 Januari 2027 pukul 23.59 WIB. Terima kasih.`
+    : `Assalamu'alaikum Official ${team.schoolName}. Terima kasih telah melengkapi berkas LBB Mu'allimin 2027. Mohon pantau terus Portal Peserta untuk informasi Technical Meeting & Uji Coba Lapangan.`;
+
+  return `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
 }
 
 export default function StaffHomeView() {
@@ -121,11 +167,13 @@ export default function StaffHomeView() {
   const firstName = (currentUser?.name || 'Panitia').split(' ')[0];
 
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [lastSyncAt, setLastSyncAt] = useState(() => new Date());
   const [jenjangFilter, setJenjangFilter] = useState('ALL'); // ALL | SD | SMP
   const [chartTab, setChartTab] = useState('tahapan'); // tahapan | berkas
   const [hoveredBarIdx, setHoveredBarIdx] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
+  const [opsModeOverride, setOpsModeOverride] = useState(null); // null (auto) | 'pra_lomba' | 'hari_h'
 
   const defaultMilestoneIndex = useMemo(() => {
     const now = Date.now();
@@ -150,6 +198,7 @@ export default function StaffHomeView() {
     setIsRefreshing(true);
     try {
       if (pullFromGoogleSheet) await pullFromGoogleSheet();
+      setLastSyncAt(new Date());
     } catch (err) {
       console.warn('Gagal menyegarkan data:', err);
     } finally {
@@ -165,6 +214,17 @@ export default function StaffHomeView() {
   const goStage = (stage, fallbackView) => {
     if (navigateToStage && stage) navigateToStage(stage);
     else if (fallbackView) setActiveView(fallbackView);
+  };
+
+  const openTeamInspection = (team) => {
+    if (!canAccess('pendaftaran')) return;
+    const stage = team.status === 'pending' ? 'registration' : 'verification';
+    try {
+      sessionStorage.setItem('lbb_admin_inspect_team_id', String(team.id));
+      sessionStorage.setItem('lbb_admin_inspect_stage', stage);
+    } catch {}
+    if (setAdminActiveTab) setAdminActiveTab(stage);
+    goStage('pendaftaran', 'admin');
   };
 
   // --- Ringkasan Metrik Real (Responsif terhadap filter jenjang) ---
@@ -190,11 +250,12 @@ export default function StaffHomeView() {
     const plottedBasecampCount = scopedTeams.filter(t => Boolean(t.basecampNumber)).length;
 
     const paidTeams = scopedTeams.filter(t => t.status !== 'pending');
+    const wave1Count = paidTeams.filter(t => getTeamWave(t) === 1).length;
+    const wave2Count = paidTeams.filter(t => getTeamWave(t) === 2).length;
     const totalRevenue = paidTeams.reduce((acc, t) => {
       const fee = Number(String(t.feeAmount || '').replace(/\D/g, '')) || 400108;
       return acc + fee;
     }, 0);
-    const targetRevenue = activeQuota * 400108;
 
     let checkedInCount = 0;
     let dpCount = 0;
@@ -206,6 +267,15 @@ export default function StaffHomeView() {
     let docDanton = 0;
     let docLogo = 0;
     let docPakta = 0;
+
+    // Pra-Lomba: Kesiapan Roster & Survei UCL
+    let rosterFull = 0;
+    let rosterPartial = 0;
+    let rosterEmpty = 0;
+
+    let uclConfirmed = 0;
+    let uclDeclined = 0;
+    let uclPending = 0;
 
     const scoredList = [];
 
@@ -224,6 +294,16 @@ export default function StaffHomeView() {
       if (docs.checks[2]) docLogo += 1;
       if (docs.checks[3]) docPakta += 1;
 
+      const { filledInti, targetInti } = getTeamRosterCount(t);
+      if (filledInti >= targetInti) rosterFull += 1;
+      else if (filledInti > 0) rosterPartial += 1;
+      else rosterEmpty += 1;
+
+      const uclStatus = t?.vehicleSurveys?.trialAttendance?.status;
+      if (uclStatus === 'confirmed' || t?.fieldTrial?.interested === true) uclConfirmed += 1;
+      else if (uclStatus === 'declined' || t?.fieldTrial?.interested === false) uclDeclined += 1;
+      else uclPending += 1;
+
       const sc = scores?.[t.id];
       const numericScore = Number(sc?.peletonFinalScore || sc?.totalScore || 0);
       const hasScore = Boolean(
@@ -241,7 +321,6 @@ export default function StaffHomeView() {
           schoolName: t.schoolName,
           jenjang: t.jenjang,
           score: numericScore,
-          logoUrl: t.files?.schoolLogo?.url,
         });
       }
       if (sc?.isFinalized || sc?.locked) lockedScoreCount += 1;
@@ -259,9 +338,9 @@ export default function StaffHomeView() {
       countSMP,
       totalFilled,
       totalRevenue,
-      targetRevenue,
-      revenuePct: pctOf(totalRevenue, targetRevenue),
       paidCount: paidTeams.length,
+      wave1Count,
+      wave2Count,
       stage1Pending,
       stage2Pending,
       totalPending: stage1Pending + stage2Pending,
@@ -275,10 +354,15 @@ export default function StaffHomeView() {
       arenaCount,
       scoredCount,
       lockedScoreCount,
+      rosterFull,
+      rosterPartial,
+      rosterEmpty,
+      rosterFullPct: pctOf(rosterFull, totalFilled),
+      uclConfirmed,
+      uclDeclined,
+      uclPending,
       topThree: scoredList.slice(0, 3),
       quotaPct: pctOf(totalFilled, activeQuota),
-      sdPct: pctOf(countSD, quotaSD),
-      smpPct: pctOf(countSMP, quotaSMP),
       verifiedPct: pctOf(verifiedCount, totalFilled),
       drawnPct: pctOf(drawnCount, totalFilled),
       basecampPct: pctOf(plottedBasecampCount, totalFilled),
@@ -292,12 +376,15 @@ export default function StaffHomeView() {
     };
   }, [teams, scores, staging, settings, jenjangFilter]);
 
+  // Mode kontekstual: otomatis Hari-H jika sudah ada check-in/nilai, atau bisa diubah manual
+  const effectiveOpsMode = opsModeOverride || (metrics.checkedInCount > 0 || metrics.scoredCount > 0 ? 'hari_h' : 'pra_lomba');
+
   const tahapanBars = [
-    { label: 'Kuota', pct: metrics.quotaPct, detail: `${metrics.totalFilled}/${metrics.activeQuota} tim`, highlight: true },
-    { label: 'Sah', pct: metrics.verifiedPct, detail: `${metrics.verifiedCount}/${metrics.totalFilled} tim`, highlight: false },
-    { label: 'Undi', pct: metrics.drawnPct, detail: `${metrics.drawnCount}/${metrics.totalFilled} tim`, highlight: false },
-    { label: 'Barak', pct: metrics.basecampPct, detail: `${metrics.plottedBasecampCount}/${metrics.totalFilled} tim`, highlight: false },
-    { label: 'Nilai', pct: metrics.scoredPct, detail: `${metrics.scoredCount}/${metrics.totalFilled} tim`, highlight: false },
+    { label: 'Kuota', pct: metrics.quotaPct, detail: `${metrics.totalFilled}/${metrics.activeQuota} tim` },
+    { label: 'Sah', pct: metrics.verifiedPct, detail: `${metrics.verifiedCount}/${metrics.totalFilled} tim` },
+    { label: 'Undi', pct: metrics.drawnPct, detail: `${metrics.drawnCount}/${metrics.totalFilled} tim` },
+    { label: 'Basecamp', pct: metrics.basecampPct, detail: `${metrics.plottedBasecampCount}/${metrics.totalFilled} tim` },
+    { label: 'Nilai', pct: metrics.scoredPct, detail: `${metrics.scoredCount}/${metrics.totalFilled} tim` },
   ];
 
   const activeBars = chartTab === 'tahapan' ? tahapanBars : metrics.docBars;
@@ -351,7 +438,7 @@ export default function StaffHomeView() {
     return items.slice(0, 4);
   }, [metrics, userRole]);
 
-  // --- Tabel Pendaftar Terbaru (paling baru / terakhir di paling atas) ---
+  // --- Tabel Pendaftar Terbaru (paling baru di paling atas) ---
   const recentTeams = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
     return teams
@@ -398,7 +485,7 @@ export default function StaffHomeView() {
       hideHeader={true}
     >
       <div className="space-y-5">
-        {/* 1. HEADER BAR + GLOBAL JENJANG FILTER (Finexy / Fingoals Style) */}
+        {/* 1. HEADER BAR + GLOBAL JENJANG FILTER + SYNC TIMESTAMP */}
         <header className="flex flex-col gap-3.5 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <h1 className="text-2xl sm:text-[28px] font-bold tracking-tight text-slate-900 leading-tight">
@@ -447,23 +534,27 @@ export default function StaffHomeView() {
               type="button"
               onClick={handleRefresh}
               disabled={isRefreshing}
+              title={`Terakhir sinkron pukul ${formatSyncTime(lastSyncAt)} WIB`}
               className="inline-flex items-center gap-1.5 rounded-full bg-white hover:bg-slate-50 px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-[0_2px_10px_rgba(15,23,42,0.04)] border border-slate-100 transition-all cursor-pointer active:scale-95 disabled:opacity-50"
             >
-              <RefreshCw className={`w-3.5 h-3.5 text-slate-500 ${isRefreshing ? 'animate-spin text-red-600' : ''}`} />
+              <RefreshCw className={`w-3.5 h-3.5 text-slate-500 ${isRefreshing ? 'animate-spin text-[#8B0000]' : ''}`} />
               <span>Segarkan</span>
+              <span className="hidden sm:inline text-[10.5px] font-mono font-normal text-slate-400">
+                {formatSyncTime(lastSyncAt)}
+              </span>
             </button>
           </div>
         </header>
 
-        {/* 2. ROW 1: 3-COLUMN HERO BENTO (Finexy + Fingoals Signature) */}
+        {/* 2. ROW 1: 3-COLUMN HERO BENTO */}
         <section className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5">
           {/* COL 1 (4 cols): Penerimaan Dana & Kuota Wallet */}
           <div className="lg:col-span-4 rounded-[24px] bg-white p-5 sm:p-6 shadow-[0_2px_16px_rgba(15,23,42,0.04)] border border-slate-100 flex flex-col justify-between gap-4">
             <div>
               <div className="flex items-center justify-between gap-2">
                 <span className="text-xs font-medium text-slate-500">Penerimaan Dana</span>
-                <span className="rounded-full bg-[#F6F7F9] px-2.5 py-0.5 text-[11px] font-semibold text-slate-600">
-                  Target {formatCompactRp(metrics.targetRevenue)}
+                <span className="rounded-full bg-[#F6F7F9] px-2.5 py-0.5 text-[11px] font-semibold text-slate-600 tabular-nums">
+                  {metrics.wave1Count > 0 ? `G1: ${metrics.wave1Count} · G2: ${metrics.wave2Count}` : `${metrics.paidCount}/${metrics.activeQuota} lunas`}
                 </span>
               </div>
 
@@ -474,8 +565,8 @@ export default function StaffHomeView() {
                 >
                   {formatCompactRp(metrics.totalRevenue)}
                 </p>
-                <span className="inline-flex items-center rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-semibold text-emerald-700">
-                  {metrics.paidCount} lunas
+                <span className="inline-flex items-center rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-semibold text-emerald-700 tabular-nums">
+                  {metrics.paidCount}/{metrics.activeQuota} lunas
                 </span>
               </div>
 
@@ -663,7 +754,7 @@ export default function StaffHomeView() {
             </button>
           </div>
 
-          {/* COL 3 (4 cols): Interactive Bar Chart with Toggle + Dark Pill Tooltip */}
+          {/* COL 3 (4 cols): Interactive Bar Chart with Toggle */}
           <div className="lg:col-span-4 rounded-[24px] bg-white p-5 sm:p-6 shadow-[0_2px_16px_rgba(15,23,42,0.04)] border border-slate-100 flex flex-col justify-between">
             <div className="flex items-start justify-between gap-2">
               <div>
@@ -703,9 +794,8 @@ export default function StaffHomeView() {
               </div>
             </div>
 
-            {/* Vertical Rounded Bar Chart */}
             <div
-              className={`mt-4 grid gap-2.5 items-end h-44 pt-4 ${
+              className={`mt-4 grid gap-2 items-end h-44 pt-4 ${
                 activeBars.length === 4 ? 'grid-cols-4' : 'grid-cols-5'
               }`}
             >
@@ -718,7 +808,7 @@ export default function StaffHomeView() {
                     type="button"
                     onMouseEnter={() => setHoveredBarIdx(idx)}
                     onClick={() => setHoveredBarIdx(idx)}
-                    className="flex flex-col items-center h-full justify-end gap-1.5 cursor-pointer group"
+                    className="flex flex-col items-center h-full justify-end gap-1.5 cursor-pointer group min-w-0"
                   >
                     <span
                       className={`text-[10px] font-bold tabular-nums px-1.5 py-0.5 rounded-md transition-all ${
@@ -744,7 +834,7 @@ export default function StaffHomeView() {
                         style={{ height: `${barHeight}%` }}
                       />
                     </div>
-                    <span className={`text-[11px] font-medium truncate max-w-full ${isFocused ? 'text-slate-900 font-semibold' : 'text-slate-500'}`}>
+                    <span className={`text-[10.5px] font-medium truncate max-w-full ${isFocused ? 'text-slate-900 font-semibold' : 'text-slate-500'}`}>
                       {bar.label}
                     </span>
                   </button>
@@ -754,9 +844,9 @@ export default function StaffHomeView() {
           </div>
         </section>
 
-        {/* 3. ROW 2: 3-COLUMN OPERATIONAL INSIGHTS (Target Gauge | Fokus Tindakan | Alur & Top 3) */}
+        {/* 3. ROW 2: 3-COLUMN OPERATIONAL INSIGHTS */}
         <section className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5">
-          {/* COL 1 (4 cols): Interactive Dark Target Countdown Gauge (Moneed Style) */}
+          {/* COL 1 (4 cols): Interactive Dark Target Countdown Gauge */}
           <div className="lg:col-span-4 rounded-[24px] bg-white p-3.5 shadow-[0_2px_16px_rgba(15,23,42,0.04)] border border-slate-100 flex flex-col justify-between gap-3">
             <div className="rounded-[20px] bg-[#0d1421] p-5 text-white relative overflow-hidden">
               <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#FFD700]/40 to-transparent" />
@@ -911,89 +1001,179 @@ export default function StaffHomeView() {
             </div>
           </div>
 
-          {/* COL 3 (4 cols): Alur Hari-H + Top 3 Klasemen Sementara */}
+          {/* COL 3 (4 cols): Kartu Kontekstual (Pra-Lomba: Roster & UCL ↔ Hari-H: Alur & Top 3) */}
           <div className="lg:col-span-4 rounded-[24px] bg-white p-5 sm:p-6 shadow-[0_2px_16px_rgba(15,23,42,0.04)] border border-slate-100 flex flex-col justify-between gap-4">
-            {/* Live Field Pipeline */}
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Radio className="w-4 h-4 text-emerald-500" />
-                  <h2 className="text-base font-bold text-slate-900">Alur Hari-H</h2>
-                </div>
-                <span className="text-[11px] font-semibold text-emerald-600">Live</span>
+            {/* Header + Switcher Pra-Lomba / Hari-H */}
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2 min-w-0">
+                {effectiveOpsMode === 'pra_lomba' ? (
+                  <Users className="w-4 h-4 text-[#8B0000] shrink-0" />
+                ) : (
+                  <Radio className="w-4 h-4 text-emerald-500 shrink-0" />
+                )}
+                <h2 className="text-base font-bold text-slate-900 truncate">
+                  {effectiveOpsMode === 'pra_lomba' ? 'Roster & UCL' : 'Alur Hari-H'}
+                </h2>
               </div>
 
-              <div className="grid grid-cols-4 gap-2">
-                {[
-                  { label: 'Check-In', val: metrics.checkedInCount },
-                  { label: 'DP 1–2', val: metrics.dpCount },
-                  { label: 'Arena', val: metrics.arenaCount },
-                  { label: 'Ternilai', val: metrics.scoredCount },
-                ].map(step => (
-                  <div key={step.label} className="rounded-2xl bg-[#F6F7F9] py-2.5 px-1.5 text-center">
-                    <p className="text-lg font-bold text-slate-900 tabular-nums leading-none">
-                      {step.val}
-                    </p>
-                    <p className="mt-1.5 text-[10px] font-medium text-slate-500 truncate">
-                      {step.label}
-                    </p>
-                  </div>
-                ))}
+              <div className="inline-flex items-center rounded-full bg-[#F6F7F9] p-0.5 text-[10px] font-semibold shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setOpsModeOverride('pra_lomba')}
+                  className={`px-2 py-1 rounded-full transition-all cursor-pointer ${
+                    effectiveOpsMode === 'pra_lomba' ? 'bg-[#0d1421] text-white' : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  Pra-Lomba
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setOpsModeOverride('hari_h')}
+                  className={`px-2 py-1 rounded-full transition-all cursor-pointer ${
+                    effectiveOpsMode === 'hari_h' ? 'bg-[#0d1421] text-white' : 'text-slate-500 hover:text-slate-900'
+                  }`}
+                >
+                  Hari-H
+                </button>
               </div>
             </div>
 
-            {/* Top 3 Klasemen Preview */}
-            <div className="pt-3 border-t border-slate-100 space-y-2.5">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-slate-800">Top 3 Sementara</span>
-                <button
-                  type="button"
-                  onClick={() => canAccess('klasemen') && goStage('klasemen', 'live_leaderboard')}
-                  className="text-[11px] font-semibold text-slate-500 hover:text-slate-900 inline-flex items-center gap-0.5 cursor-pointer"
-                >
-                  <span>Klasemen</span>
-                  <ArrowUpRight className="w-3 h-3" />
-                </button>
-              </div>
-
-              {metrics.topThree.length === 0 ? (
-                <div className="rounded-2xl bg-[#F6F7F9] px-3.5 py-3 text-[11px] text-slate-500 flex items-center justify-between">
-                  <span>Belum ada nilai juri masuk.</span>
-                  <button
-                    type="button"
-                    onClick={() => canAccess('penjurian') && goStage('penjurian', 'juri')}
-                    className="font-semibold text-slate-800 hover:text-red-600 cursor-pointer shrink-0 ml-2"
-                  >
-                    Buka Juri →
-                  </button>
+            {effectiveOpsMode === 'pra_lomba' ? (
+              <>
+                {/* Progres Pengisian Roster 21 Inti */}
+                <div className="space-y-2.5">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="font-semibold text-slate-700">Kesiapan Roster (21 Inti)</span>
+                    <span className="font-mono text-[11px] font-bold text-slate-900 tabular-nums">
+                      {metrics.rosterFullPct}%
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-3 gap-2">
+                    <div className="rounded-2xl bg-emerald-50/70 border border-emerald-100 py-2.5 px-2 text-center">
+                      <p className="text-lg font-bold text-emerald-700 tabular-nums leading-none">
+                        {metrics.rosterFull}
+                      </p>
+                      <p className="mt-1 text-[10px] font-semibold text-emerald-700/80">Lengkap</p>
+                    </div>
+                    <div className="rounded-2xl bg-amber-50/70 border border-amber-100 py-2.5 px-2 text-center">
+                      <p className="text-lg font-bold text-amber-700 tabular-nums leading-none">
+                        {metrics.rosterPartial}
+                      </p>
+                      <p className="mt-1 text-[10px] font-semibold text-amber-700/80">Sebagian</p>
+                    </div>
+                    <div className="rounded-2xl bg-[#F6F7F9] py-2.5 px-2 text-center">
+                      <p className="text-lg font-bold text-slate-800 tabular-nums leading-none">
+                        {metrics.rosterEmpty}
+                      </p>
+                      <p className="mt-1 text-[10px] font-semibold text-slate-500">Belum Isi</p>
+                    </div>
+                  </div>
                 </div>
-              ) : (
-                <div className="space-y-1.5">
-                  {metrics.topThree.map((t, idx) => (
-                    <div
-                      key={t.id}
-                      className="rounded-xl bg-[#F6F7F9] px-3 py-2 flex items-center justify-between gap-2 text-xs"
+
+                {/* Ringkasan Survei Uji Coba Lapangan (UCL) */}
+                <div className="pt-3 border-t border-slate-100 space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold text-slate-700">Survei Uji Coba (UCL)</span>
+                    <button
+                      type="button"
+                      onClick={() => canAccess('uji_coba') && goStage('uji_coba', 'field_trial')}
+                      className="text-[11px] font-semibold text-slate-500 hover:text-[#8B0000] inline-flex items-center gap-0.5 cursor-pointer"
                     >
-                      <div className="flex items-center gap-2 min-w-0">
-                        <span className={`w-5 h-5 rounded-full text-[10px] font-bold flex items-center justify-center shrink-0 ${
-                          idx === 0 ? 'bg-[#FFD700] text-[#0d1421]' : 'bg-white text-slate-600'
-                        }`}>
-                          {idx + 1}
-                        </span>
-                        <span className="font-semibold text-slate-800 truncate">{t.schoolName}</span>
-                      </div>
-                      <span className="font-mono font-bold text-slate-900 shrink-0 tabular-nums">
-                        {t.score}
-                      </span>
+                      <span>Atur UCL</span>
+                      <ArrowUpRight className="w-3 h-3" />
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-3 gap-2">
+                    <div className="rounded-xl bg-[#F6F7F9] px-2.5 py-2 flex items-center justify-between text-[11px]">
+                      <span className="text-slate-500 font-medium">Ikut</span>
+                      <strong className="font-mono text-emerald-700 tabular-nums">{metrics.uclConfirmed}</strong>
+                    </div>
+                    <div className="rounded-xl bg-[#F6F7F9] px-2.5 py-2 flex items-center justify-between text-[11px]">
+                      <span className="text-slate-500 font-medium">Tidak</span>
+                      <strong className="font-mono text-rose-600 tabular-nums">{metrics.uclDeclined}</strong>
+                    </div>
+                    <div className="rounded-xl bg-[#F6F7F9] px-2.5 py-2 flex items-center justify-between text-[11px]">
+                      <span className="text-slate-500 font-medium">Belum</span>
+                      <strong className="font-mono text-slate-800 tabular-nums">{metrics.uclPending}</strong>
+                    </div>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <>
+                {/* Live Field Pipeline */}
+                <div className="grid grid-cols-4 gap-2">
+                  {[
+                    { label: 'Check-In', val: metrics.checkedInCount },
+                    { label: 'DP 1–2', val: metrics.dpCount },
+                    { label: 'Arena', val: metrics.arenaCount },
+                    { label: 'Ternilai', val: metrics.scoredCount },
+                  ].map(step => (
+                    <div key={step.label} className="rounded-2xl bg-[#F6F7F9] py-2.5 px-1.5 text-center">
+                      <p className="text-lg font-bold text-slate-900 tabular-nums leading-none">
+                        {step.val}
+                      </p>
+                      <p className="mt-1.5 text-[10px] font-medium text-slate-500 truncate">
+                        {step.label}
+                      </p>
                     </div>
                   ))}
                 </div>
-              )}
-            </div>
+
+                {/* Top 3 Klasemen Preview */}
+                <div className="pt-3 border-t border-slate-100 space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-slate-800">Top 3 Sementara</span>
+                    <button
+                      type="button"
+                      onClick={() => canAccess('klasemen') && goStage('klasemen', 'live_leaderboard')}
+                      className="text-[11px] font-semibold text-slate-500 hover:text-slate-900 inline-flex items-center gap-0.5 cursor-pointer"
+                    >
+                      <span>Klasemen</span>
+                      <ArrowUpRight className="w-3 h-3" />
+                    </button>
+                  </div>
+
+                  {metrics.topThree.length === 0 ? (
+                    <div className="rounded-2xl bg-[#F6F7F9] px-3.5 py-3 text-[11px] text-slate-500 flex items-center justify-between">
+                      <span>Belum ada nilai juri masuk.</span>
+                      <button
+                        type="button"
+                        onClick={() => canAccess('penjurian') && goStage('penjurian', 'juri')}
+                        className="font-semibold text-slate-800 hover:text-[#8B0000] cursor-pointer shrink-0 ml-2"
+                      >
+                        Buka Juri →
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="space-y-1.5">
+                      {metrics.topThree.map((t, idx) => (
+                        <div
+                          key={t.id}
+                          className="rounded-xl bg-[#F6F7F9] px-3 py-2 flex items-center justify-between gap-2 text-xs"
+                        >
+                          <div className="flex items-center gap-2 min-w-0">
+                            <span className={`w-5 h-5 rounded-full text-[10px] font-bold flex items-center justify-center shrink-0 ${
+                              idx === 0 ? 'bg-[#FFD700] text-[#0d1421]' : 'bg-white text-slate-600'
+                            }`}>
+                              {idx + 1}
+                            </span>
+                            <span className="font-semibold text-slate-800 truncate">{t.schoolName}</span>
+                          </div>
+                          <span className="font-mono font-bold text-slate-900 shrink-0 tabular-nums">
+                            {t.score}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
           </div>
         </section>
 
-        {/* 4. ROW 3: FULL-WIDTH RECENT TEAMS & DOCUMENT READINESS TABLE (Finexy / Moneed Style) */}
+        {/* 4. ROW 3: FULL-WIDTH RECENT TEAMS + DIRECT INSPECT + 1-CLICK WA FOLLOW-UP */}
         <section className="rounded-[24px] bg-white p-5 sm:p-6 shadow-[0_2px_16px_rgba(15,23,42,0.04)] border border-slate-100 space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-center gap-2.5">
@@ -1002,7 +1182,7 @@ export default function StaffHomeView() {
               </span>
               <div>
                 <h2 className="text-base font-bold text-slate-900">Pendaftar &amp; Kelengkapan Berkas</h2>
-                <p className="text-xs text-slate-400">Menampilkan {recentTeams.length} peleton terbaru</p>
+                <p className="text-xs text-slate-400">Menampilkan {recentTeams.length} peleton terbaru · klik baris untuk inspeksi langsung</p>
               </div>
             </div>
 
@@ -1052,8 +1232,8 @@ export default function StaffHomeView() {
                   <tr className="bg-[#F6F7F9] text-[11px] font-semibold text-slate-500">
                     <th className="py-2.5 pl-3.5 pr-2 rounded-l-xl">Sekolah</th>
                     <th className="py-2.5 px-2 hidden sm:table-cell">Jenjang</th>
-                    <th className="py-2.5 px-2 hidden md:table-cell">Berkas Awal</th>
-                    <th className="py-2.5 px-2 hidden lg:table-cell">Slot / Basecamp</th>
+                    <th className="py-2.5 px-2 hidden md:table-cell">Berkas</th>
+                    <th className="py-2.5 px-2 hidden lg:table-cell">Roster</th>
                     <th className="py-2.5 px-2">Status</th>
                     <th className="py-2.5 pl-2 pr-3.5 text-right rounded-r-xl">Aksi</th>
                   </tr>
@@ -1064,11 +1244,13 @@ export default function StaffHomeView() {
                     const isPending = team.status === 'pending';
                     const logoUrl = team.files?.schoolLogo?.url;
                     const docScore = getTeamDocScore(team);
+                    const rosterInfo = getTeamRosterCount(team);
+                    const waUrl = buildWhatsAppFollowUpUrl(team);
 
                     return (
                       <tr
                         key={team.id}
-                        onClick={() => canAccess('pendaftaran') && goStage('pendaftaran', 'admin')}
+                        onClick={() => openTeamInspection(team)}
                         className="group hover:bg-slate-50/80 transition-colors cursor-pointer"
                       >
                         <td className="py-3 pl-3.5 pr-2">
@@ -1081,7 +1263,7 @@ export default function StaffHomeView() {
                                 className="w-8 h-8 rounded-xl bg-white border border-slate-100 p-0.5 object-contain shrink-0"
                               />
                             ) : (
-                              <span className="w-8 h-8 rounded-xl bg-slate-900 text-white text-[10px] font-bold flex items-center justify-center shrink-0">
+                              <span className="w-8 h-8 rounded-xl bg-[#0d1421] text-white text-[10px] font-bold flex items-center justify-center shrink-0">
                                 {team.jenjang}
                               </span>
                             )}
@@ -1117,10 +1299,13 @@ export default function StaffHomeView() {
                             </span>
                           </div>
                         </td>
-                        <td className="py-3 px-2 hidden lg:table-cell whitespace-nowrap font-mono text-[11px] text-slate-600">
-                          {team.lotNumber ? `#${String(team.lotNumber).padStart(2, '0')}` : '—'}
-                          <span className="text-slate-300 mx-1.5">·</span>
-                          {team.basecampNumber ? `R.${team.basecampNumber}` : 'Belum plot'}
+                        <td className="py-3 px-2 hidden lg:table-cell whitespace-nowrap">
+                          <span className={`font-mono text-[11px] font-semibold ${
+                            rosterInfo.filledInti >= rosterInfo.targetInti ? 'text-emerald-600' : 'text-slate-600'
+                          }`}>
+                            {rosterInfo.filledInti}/{rosterInfo.targetInti}
+                          </span>
+                          <span className="text-[10.5px] text-slate-400 ml-1">inti</span>
                         </td>
                         <td className="py-3 px-2 whitespace-nowrap">
                           <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-slate-700">
@@ -1131,10 +1316,24 @@ export default function StaffHomeView() {
                           </span>
                         </td>
                         <td className="py-3 pl-2 pr-3.5 text-right whitespace-nowrap">
-                          <span className="inline-flex items-center gap-1 rounded-full bg-[#F6F7F9] group-hover:bg-[#8B0000] group-hover:text-white px-2.5 py-1 text-[11px] font-semibold text-slate-700 transition-colors">
-                            <span>Cek</span>
-                            <ArrowUpRight className="w-3 h-3" />
-                          </span>
+                          <div className="inline-flex items-center gap-1.5">
+                            {waUrl && (
+                              <a
+                                href={waUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={(e) => e.stopPropagation()}
+                                title={`Follow-up WhatsApp Official ${team.schoolName}`}
+                                className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white transition-colors"
+                              >
+                                <MessageCircle className="w-3.5 h-3.5" />
+                              </a>
+                            )}
+                            <span className="inline-flex items-center gap-1 rounded-full bg-[#F6F7F9] group-hover:bg-[#8B0000] group-hover:text-white px-2.5 py-1 text-[11px] font-semibold text-slate-700 transition-colors">
+                              <span>Cek</span>
+                              <ArrowUpRight className="w-3 h-3" />
+                            </span>
+                          </div>
                         </td>
                       </tr>
                     );

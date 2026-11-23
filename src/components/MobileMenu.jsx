@@ -138,81 +138,8 @@ export default function MobileMenu({ isOpen, onClose }) {
 
       {/* Scrollable Body */}
       <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
-        {/* Navigation Section */}
-        <div>
-          <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 block px-2 mb-3">
-            Menu Navigasi
-          </span>
-          <div className="space-y-2">
-            {links.map(item => {
-              const Icon = item.icon;
-              const isActive = activeSection === item.id;
-
-              return (
-                <a
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => {
-                    setActiveSection(item.id);
-                    onClose();
-                  }}
-                  className={`group flex items-center gap-3.5 p-3 rounded-2xl border transition-all duration-200 ${
-                    isActive
-                      ? 'bg-white/[0.08] border-white/20 shadow-sm text-white'
-                      : 'bg-white/[0.03] hover:bg-white/[0.07] border-white/5 hover:border-white/10 text-slate-300 hover:text-white'
-                  }`}
-                >
-                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors shadow-sm ${
-                    isActive
-                      ? 'bg-white/15 text-amber-400 border border-white/10'
-                      : 'bg-white/5 text-slate-400 group-hover:text-amber-400 group-hover:bg-white/10'
-                  }`}>
-                    <Icon className="w-5 h-5" />
-                  </div>
-                  
-                  <div className="flex-1 min-w-0">
-                    <span className="text-sm font-bold block leading-tight">
-                      {item.label}
-                    </span>
-                    <span className="text-[11px] text-slate-400 truncate block mt-0.5">
-                      {item.desc}
-                    </span>
-                  </div>
-
-                  <ChevronRight className={`w-4 h-4 shrink-0 transition-transform ${
-                    isActive ? 'text-amber-400 translate-x-0.5' : 'text-slate-600 group-hover:text-slate-400'
-                  }`} />
-                </a>
-              );
-            })}
-
-            {/* Rundown Link */}
-            <button
-              type="button"
-              onClick={() => {
-                onClose();
-                setActiveView('rundown');
-              }}
-              className="w-full group flex items-center gap-3.5 p-3 rounded-2xl border transition-all duration-200 bg-white/[0.03] hover:bg-white/[0.07] border-white/5 hover:border-white/10 text-slate-300 hover:text-white text-left cursor-pointer"
-            >
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors shadow-sm bg-white/5 text-slate-400 group-hover:text-amber-400 group-hover:bg-white/10">
-                <Clock className="w-5 h-5" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <span className="text-sm font-bold block leading-tight">
-                  Rundown Acara
-                </span>
-                <span className="text-[11px] text-slate-400 truncate block mt-0.5">
-                  Hari-H, TM & Uji Coba Lapangan 2027
-                </span>
-              </div>
-              <ChevronRight className="w-4 h-4 shrink-0 transition-transform text-slate-600 group-hover:text-slate-400" />
-            </button>
-          </div>
-        </div>
-
         {/* User Account / Auth Section */}
-        <div className="pt-2 border-t border-white/10">
+        <div>
           <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 block px-2 mb-3">
             {currentUser ? 'Akun & Akses Sistem' : 'Akses Portal'}
           </span>
@@ -574,9 +501,83 @@ export default function MobileMenu({ isOpen, onClose }) {
               <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-amber-400 group-hover:translate-x-0.5 transition-all shrink-0" />
             </button>
           </div>
+        </div>
 
-          {/* Social Media Links */}
-          <div className="pt-3 flex items-center justify-between px-2">
+        {/* Navigation Section */}
+        <div className="pt-4 border-t border-white/10">
+          <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 block px-2 mb-3">
+            Menu Navigasi
+          </span>
+          <div className="space-y-2">
+            {links.map(item => {
+              const Icon = item.icon;
+              const isActive = activeSection === item.id;
+
+              return (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => {
+                    setActiveSection(item.id);
+                    onClose();
+                  }}
+                  className={`group flex items-center gap-3.5 p-3 rounded-2xl border transition-all duration-200 ${
+                    isActive
+                      ? 'bg-white/[0.08] border-white/20 shadow-sm text-white'
+                      : 'bg-white/[0.03] hover:bg-white/[0.07] border-white/5 hover:border-white/10 text-slate-300 hover:text-white'
+                  }`}
+                >
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors shadow-sm ${
+                    isActive
+                      ? 'bg-white/15 text-amber-400 border border-white/10'
+                      : 'bg-white/5 text-slate-400 group-hover:text-amber-400 group-hover:bg-white/10'
+                  }`}>
+                    <Icon className="w-5 h-5" />
+                  </div>
+                  
+                  <div className="flex-1 min-w-0">
+                    <span className="text-sm font-bold block leading-tight">
+                      {item.label}
+                    </span>
+                    <span className="text-[11px] text-slate-400 truncate block mt-0.5">
+                      {item.desc}
+                    </span>
+                  </div>
+
+                  <ChevronRight className={`w-4 h-4 shrink-0 transition-transform ${
+                    isActive ? 'text-amber-400 translate-x-0.5' : 'text-slate-600 group-hover:text-slate-400'
+                  }`} />
+                </a>
+              );
+            })}
+
+            {/* Rundown Link */}
+            <button
+              type="button"
+              onClick={() => {
+                onClose();
+                setActiveView('rundown');
+              }}
+              className="w-full group flex items-center gap-3.5 p-3 rounded-2xl border transition-all duration-200 bg-white/[0.03] hover:bg-white/[0.07] border-white/5 hover:border-white/10 text-slate-300 hover:text-white text-left cursor-pointer"
+            >
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors shadow-sm bg-white/5 text-slate-400 group-hover:text-amber-400 group-hover:bg-white/10">
+                <Clock className="w-5 h-5" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <span className="text-sm font-bold block leading-tight">
+                  Rundown Acara
+                </span>
+                <span className="text-[11px] text-slate-400 truncate block mt-0.5">
+                  Hari-H, TM & Uji Coba Lapangan 2027
+                </span>
+              </div>
+              <ChevronRight className="w-4 h-4 shrink-0 transition-transform text-slate-600 group-hover:text-slate-400" />
+            </button>
+          </div>
+        </div>
+
+        {/* Social Media Links */}
+        <div className="pt-3 border-t border-white/10 flex items-center justify-between px-2">
             <span className="text-[11px] text-slate-400 font-medium">Ikuti Info Resmi:</span>
             <div className="flex items-center gap-2">
               <a
@@ -599,7 +600,6 @@ export default function MobileMenu({ isOpen, onClose }) {
               </a>
             </div>
           </div>
-        </div>
       </div>
     </div>
   );
