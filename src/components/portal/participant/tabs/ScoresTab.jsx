@@ -419,197 +419,143 @@ export default function ScoresTab({ teamScore: propTeamScore, currentTeam }) {
     <section className="space-y-5">
       {teamScore ? (
         <div className="space-y-5">
-          {/* ============================================================== */}
-          {/* 1. UNIFIED DARK OBSIDIAN SCORE COMMAND HEADER                  */}
-          {/* ============================================================== */}
-          <div className="rounded-3xl bg-slate-950 border border-slate-800/90 text-white shadow-[0_18px_46px_rgba(15,23,42,0.16)] overflow-hidden">
-            {/* Top Identity Bar — Fokus Identitas Peleton */}
+          {/* 1. RINGKASAN NILAI PELETON */}
+          <div className="rounded-2xl bg-slate-950 border border-slate-800 text-white overflow-hidden">
+            {/* Header Ringkas */}
             {(() => {
               const logoRaw = currentTeam?.files?.schoolLogo?.url || currentTeam?.file_logo_sekolah || currentTeam?.logoUrl || '';
               const schoolName = currentTeam?.schoolName || currentTeam?.nama || 'Kontingen Peserta';
-              const dantonName = currentTeam?.dantonName || currentTeam?.roster?.danton?.name || '';
               const chestNum = currentTeam?.chestNumber || (currentTeam?.lotNumber ? String(currentTeam.lotNumber).padStart(2, '0') : (currentTeam?.noUrut || '--'));
               const fallbackAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(schoolName)}&background=${isSMP ? '1d4ed8' : 'b91c1c'}&color=fff&bold=true`;
 
               return (
-                <div className="px-5 sm:px-6 py-4 border-b border-slate-800/90 flex flex-wrap items-center justify-between gap-3 bg-gradient-to-r from-slate-950 via-slate-900/90 to-slate-950">
-                  <div className="flex items-center gap-3.5 min-w-0">
+                <div className="px-4 sm:px-5 py-3.5 border-b border-slate-800/80 flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3 min-w-0">
                     <img
                       src={logoRaw ? formatImageUrl(logoRaw) : fallbackAvatar}
                       alt={schoolName}
-                      className="w-11 h-11 object-contain shrink-0 drop-shadow-[0_2px_8px_rgba(0,0,0,0.45)]"
+                      className="w-9 h-9 object-contain shrink-0"
                       onError={(e) => {
                         e.target.onerror = null;
                         e.target.src = fallbackAvatar;
                       }}
                     />
                     <div className="min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <h2 className="text-base sm:text-xl font-black tracking-tight text-white leading-tight truncate">
+                      <div className="flex items-center gap-2">
+                        <h2 className="text-sm sm:text-base font-bold tracking-tight text-white truncate">
                           {schoolName}
                         </h2>
-                        <span className={`text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md border shrink-0 ${
+                        <span className={`text-[10px] font-bold uppercase px-1.5 py-0.5 rounded shrink-0 ${
                           isSMP
-                            ? 'bg-blue-500/15 text-blue-300 border-blue-500/30'
-                            : 'bg-rose-500/15 text-rose-300 border-rose-500/30'
+                            ? 'bg-blue-500/15 text-blue-300'
+                            : 'bg-rose-500/15 text-rose-300'
                         }`}>
-                          {isSMP ? 'SMP / MTs' : 'SD / MI'}
+                          {isSMP ? 'SMP/MTs' : 'SD/MI'}
                         </span>
                       </div>
-                      <div className="flex items-center gap-2 flex-wrap text-[11.5px] text-slate-400 mt-0.5">
-                        <span className="font-mono font-bold text-amber-300">No. Dada #{chestNum}</span>
-                        {currentTeam?.platoonName && (
-                          <>
-                            <span className="text-slate-700">·</span>
-                            <span className="text-slate-300 font-semibold">{currentTeam.platoonName}</span>
-                          </>
-                        )}
-                        {dantonName && (
-                          <>
-                            <span className="text-slate-700">·</span>
-                            <span className="text-slate-300 truncate">{dantonName}</span>
-                          </>
-                        )}
-                        {currentTeam?.regCode && (
-                          <>
-                            <span className="text-slate-700 hidden sm:inline">·</span>
-                            <span className="font-mono text-slate-500 hidden sm:inline">{currentTeam.regCode}</span>
-                          </>
-                        )}
-                      </div>
+                      <p className="text-xs font-mono font-semibold text-amber-300 mt-0.5">
+                        No. Dada #{chestNum}
+                      </p>
                     </div>
                   </div>
 
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-300 text-[11px] font-bold shrink-0">
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-300 text-[11px] font-bold shrink-0">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                    <span>Disahkan Dewan Juri</span>
+                    <span>Sah</span>
                   </span>
                 </div>
               );
             })()}
 
-            {/* Integrated 3-Column Score & Telemetry Strip */}
-            <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-slate-800/90">
-              {/* Col 1: Nilai Akhir Peleton */}
-              <div className="p-5 sm:p-6 flex flex-col justify-between gap-3.5 relative">
-                <div className="flex items-center justify-between gap-2">
-                  <span className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider text-rose-300">
-                    <Shield className="w-3.5 h-3.5 text-rose-400" />
-                    <span>Nilai Akhir Peleton</span>
+            {/* Strip Nilai Ringkas (2 Kolom di Mobile + Baris Waktu) */}
+            <div className="grid grid-cols-2 md:grid-cols-3 divide-x divide-y md:divide-y-0 divide-slate-800/80">
+              {/* Col 1: Nilai Peleton */}
+              <div className="px-4 py-3.5 flex flex-col justify-between gap-1.5">
+                <div className="flex items-center justify-between gap-1">
+                  <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+                    Peleton
                   </span>
                   {teamScore.rank && (
-                    <span className="font-mono font-black text-[11px] px-2 py-0.5 rounded-md bg-amber-400/15 text-amber-300 border border-amber-400/30">
+                    <span className="font-mono font-bold text-[10px] px-1.5 py-0.5 rounded bg-amber-400/15 text-amber-300">
                       #{teamScore.rank}
                     </span>
                   )}
                 </div>
 
-                <div className="flex items-baseline gap-2">
-                  <span className="text-3xl sm:text-4xl font-black font-mono tracking-tight text-white leading-none">
+                <div className="flex items-baseline gap-1.5">
+                  <span className="text-2xl sm:text-3xl font-black font-mono tracking-tight text-white leading-none">
                     {peletonFinalScore}
                   </span>
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Poin</span>
-                </div>
-
-                <div className="flex items-center justify-between gap-2 pt-3 border-t border-slate-800/80 text-[11px]">
-                  <div className="flex items-center gap-1.5 font-mono text-slate-400">
-                    <span>J1 <strong className="text-slate-200">{totalJ1}</strong></span>
-                    <span className="text-slate-700">·</span>
-                    <span>J2 <strong className="text-slate-200">{totalJ2}</strong></span>
-                    <span className="text-slate-700">·</span>
-                    <span>J3 <strong className="text-slate-200">{totalJ3}</strong></span>
-                  </div>
-                  {peletonPenaltyTotal > 0 ? (
-                    <span className="font-mono font-bold text-rose-400">-{peletonPenaltyTotal}</span>
-                  ) : (
-                    <span className="font-mono font-semibold text-emerald-400">Murni {peletonMurniTotal}</span>
+                  {peletonPenaltyTotal > 0 && (
+                    <span className="font-mono text-[11px] font-bold text-rose-400">
+                      -{peletonPenaltyTotal}
+                    </span>
                   )}
                 </div>
+
+                <p className="font-mono text-[10.5px] text-slate-400 truncate">
+                  J1 <span className="text-slate-200">{totalJ1}</span> · J2 <span className="text-slate-200">{totalJ2}</span> · J3 <span className="text-slate-200">{totalJ3}</span>
+                </p>
               </div>
 
-              {/* Col 2: Nilai Akhir Komandan */}
-              <div className="p-5 sm:p-6 flex flex-col justify-between gap-3.5">
-                <div className="flex items-center justify-between gap-2">
-                  <span className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider text-amber-300">
-                    <Medal className="w-3.5 h-3.5 text-amber-400" />
-                    <span>Nilai Akhir Komandan</span>
+              {/* Col 2: Nilai Komandan */}
+              <div className="px-4 py-3.5 flex flex-col justify-between gap-1.5">
+                <div className="flex items-center justify-between gap-1">
+                  <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+                    Komandan
                   </span>
                   {(teamScore.dantonRank || teamScore.rank) && (
-                    <span className="font-mono font-black text-[11px] px-2 py-0.5 rounded-md bg-amber-400/15 text-amber-300 border border-amber-400/30">
+                    <span className="font-mono font-bold text-[10px] px-1.5 py-0.5 rounded bg-amber-400/15 text-amber-300">
                       #{teamScore.dantonRank || teamScore.rank}
                     </span>
                   )}
                 </div>
 
-                <div className="flex items-baseline gap-2">
-                  <span className="text-3xl sm:text-4xl font-black font-mono tracking-tight text-amber-300 leading-none">
+                <div className="flex items-baseline gap-1.5">
+                  <span className="text-2xl sm:text-3xl font-black font-mono tracking-tight text-amber-300 leading-none">
                     {dantonFinalScore}
                   </span>
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Poin</span>
-                </div>
-
-                <div className="flex items-center justify-between gap-2 pt-3 border-t border-slate-800/80 text-[11px]">
-                  <div className="flex items-center gap-1.5 font-mono text-slate-400">
-                    <span>J1 <strong className="text-slate-200">{dantonData.t1}</strong></span>
-                    <span className="text-slate-700">·</span>
-                    <span>J2 <strong className="text-slate-200">{dantonData.t2}</strong></span>
-                    <span className="text-slate-700">·</span>
-                    <span>J3 <strong className="text-slate-200">{dantonData.t3}</strong></span>
-                  </div>
-                  {dantonPenaltyTotal > 0 ? (
-                    <span className="font-mono font-bold text-rose-400">-{dantonPenaltyTotal}</span>
-                  ) : (
-                    <span className="font-mono font-semibold text-emerald-400">Murni {dantonMurniTotal}</span>
+                  {dantonPenaltyTotal > 0 && (
+                    <span className="font-mono text-[11px] font-bold text-rose-400">
+                      -{dantonPenaltyTotal}
+                    </span>
                   )}
                 </div>
+
+                <p className="font-mono text-[10.5px] text-slate-400 truncate">
+                  J1 <span className="text-slate-200">{dantonData.t1}</span> · J2 <span className="text-slate-200">{dantonData.t2}</span> · J3 <span className="text-slate-200">{dantonData.t3}</span>
+                </p>
               </div>
 
-              {/* Col 3: Catatan Waktu Arena & Penalti */}
-              <div className="p-5 sm:p-6 flex flex-col justify-between gap-3.5">
-                <div className="flex items-center justify-between gap-2">
-                  <span className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider text-slate-300">
-                    <Timer className="w-3.5 h-3.5 text-sky-400" />
-                    <span>Waktu Arena &amp; Penalti</span>
+              {/* Col 3: Waktu Arena & Penalti */}
+              <div className="col-span-2 md:col-span-1 px-4 py-3 flex items-center justify-between md:flex-col md:items-stretch md:justify-between gap-2">
+                <div>
+                  <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+                    Waktu Arena
                   </span>
-                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
-                    isOvertime
-                      ? 'bg-rose-500/15 text-rose-300 border-rose-500/30'
-                      : 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30'
-                  }`}>
-                    {isOvertime ? `Overtime +${formatTime(overtimeSeconds)}` : 'Waktu Sah'}
-                  </span>
-                </div>
-
-                <div className="space-y-2">
-                  <div className="flex items-baseline justify-between gap-2">
-                    <span className="text-2xl sm:text-3xl font-black font-mono tracking-tight text-white leading-none">
+                  <div className="flex items-baseline gap-1.5 mt-0.5">
+                    <span className="text-lg sm:text-2xl font-black font-mono tracking-tight text-white leading-none">
                       {formatTime(elapsedSeconds)}
                     </span>
-                    <span className="font-mono text-xs text-slate-400">
+                    <span className="font-mono text-[11px] text-slate-500">
                       / {formatTime(maxTimeSeconds)}
                     </span>
                   </div>
-                  <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
-                    <div
-                      className={`h-full transition-all duration-500 rounded-full ${
-                        isOvertime ? 'bg-rose-500' : 'bg-emerald-400'
-                      }`}
-                      style={{ width: `${Math.min(100, (elapsedSeconds / maxTimeSeconds) * 100)}%` }}
-                    />
-                  </div>
                 </div>
 
-                <div className="flex items-center justify-between gap-2 pt-3 border-t border-slate-800/80 text-[11px]">
-                  <span className="text-slate-400 font-medium">Total Penalti</span>
+                <div className="flex items-center gap-2 text-[11px] font-mono">
+                  {isOvertime && (
+                    <span className="px-2 py-0.5 rounded-full bg-rose-500/15 text-rose-300 font-bold text-[10px]">
+                      +{formatTime(overtimeSeconds)}
+                    </span>
+                  )}
                   {penalty > 0 ? (
-                    <span className="font-mono font-black text-rose-400 flex items-center gap-1">
-                      <AlertTriangle className="w-3 h-3" />
-                      <span>-{penalty} Poin</span>
+                    <span className="font-bold text-rose-400">
+                      Penalti -{penalty}
                     </span>
                   ) : (
-                    <span className="font-mono font-bold text-emerald-400 flex items-center gap-1">
-                      <Check className="w-3 h-3" />
-                      <span>Bebas Penalti (0)</span>
+                    <span className="font-semibold text-emerald-400">
+                      Bebas Penalti
                     </span>
                   )}
                 </div>

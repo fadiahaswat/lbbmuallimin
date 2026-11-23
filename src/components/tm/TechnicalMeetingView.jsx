@@ -642,7 +642,7 @@ export default function TechnicalMeetingView() {
 
                         {/* Team Details */}
                         <div className="min-w-0 flex-1">
-                          <h3 className="text-xs sm:text-[13px] font-extrabold text-slate-900 leading-snug line-clamp-1" title={team.schoolName}>
+                          <h3 className="text-xs sm:text-[13px] font-extrabold text-slate-900 leading-snug break-words" title={team.schoolName}>
                             {team.schoolName}
                           </h3>
                           <div className="mt-0.5 flex items-center gap-1.5 text-[11px] text-slate-500 min-w-0">

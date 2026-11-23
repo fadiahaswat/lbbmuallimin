@@ -15,7 +15,24 @@ import {
   pingSheetDatabase
 } from '../services/sheetService.js';
 
-import { EVENT } from '../config.js';
+import { EVENT, PAYMENT } from '../config.js';
+
+function normalizeEventDates(mergedDates = {}) {
+  const result = {
+    ...INITIAL_SETTINGS.eventDates,
+    ...(mergedDates || {}),
+  };
+  if (EVENT.REGISTRATION_OPEN_UNTIL_QUOTA_FULL) {
+    result.registrationDeadline = '';
+    if (!result.registrationRangeText || /22\s*Nov/i.test(result.registrationRangeText)) {
+      result.registrationRangeText = EVENT.REGISTRATION_RANGE;
+    }
+    if (!result.verificationRangeText || /22\s*Nov/i.test(result.verificationRangeText)) {
+      result.verificationRangeText = EVENT.VERIFICATION_RANGE;
+    }
+  }
+  return result;
+}
 
 // Modular helpers & actions
 import {
@@ -151,8 +168,7 @@ export function CompetitionProvider({ children }) {
       'landing', 'register', 'status_check', 'auth',
       'peserta_dashboard', 'admin', 'juri', 'superadmin', 'announcement',
       'staging', 'live_leaderboard', 'field_trial', 'tm', 'checkin', 'dp',
-      'rekap_nilai', 'checkout', 'rab', 'dokumen', 'juknis', 'tatib',
-      'rundown', 'proposal', 'timeline'
+      'rekap_nilai', 'checkout', 'rab', 'rundown'
     ]);
     try {
       const savedUser = localStorage.getItem(STORAGE_KEYS.CURRENT_USER);
@@ -219,11 +235,9 @@ export function CompetitionProvider({ children }) {
       const base = {
         ...INITIAL_SETTINGS,
         ...parsed,
+        currentWave: PAYMENT.ACTIVE_WAVE || 2,
         // Pastikan INITIAL_SETTINGS menjadi default dasar dan perubahan jadwal dari Cloud / Superadmin menjadi acuan utama
-        eventDates: {
-          ...INITIAL_SETTINGS.eventDates,
-          ...(parsed.eventDates || {}),
-        }
+        eventDates: normalizeEventDates(parsed.eventDates)
       };
 
       // Pastikan status pengesahan Juknis Penilaian & Kejuaraan valid (hanya tayang jika disahkan oleh Superadmin & ada timestamp)
@@ -310,15 +324,15 @@ export function CompetitionProvider({ children }) {
   const canAccessStage = (stageId, targetRole = role) => {
     const userR = currentUser?.role || targetRole || 'publik';
     if (userR === 'superadmin') return true;
-    if (userR === 'publik') return ['klasemen', 'uji_coba', 'dokumen'].includes(stageId);
-    if (userR === 'peserta') return ['tm', 'uji_coba', 'klasemen', 'dokumen'].includes(stageId);
-    if (userR === 'checkin') return ['checkin', 'checkout', 'klasemen', 'dokumen'].includes(stageId);
-    if (userR === 'dp' || userR === 'staging') return ['dp', 'uji_coba', 'klasemen', 'dokumen'].includes(stageId);
-    if (userR === 'juri') return ['penjurian', 'rekap_nilai', 'klasemen', 'dp', 'dokumen'].includes(stageId);
-    if (userR === 'penginput') return ['penjurian', 'rekap_nilai', 'klasemen', 'dokumen'].includes(stageId);
-    if (userR === 'verifikator') return ['rekap_nilai', 'klasemen', 'dokumen'].includes(stageId);
-    if (userR === 'finalisator') return ['rekap_nilai', 'klasemen', 'dokumen'].includes(stageId);
-    if (userR === 'admin') return ['pendaftaran', 'tm', 'uji_coba', 'checkin', 'checkout', 'dp', 'rekap_nilai', 'klasemen', 'dokumen'].includes(stageId);
+    if (userR === 'publik') return ['klasemen', 'uji_coba'].includes(stageId);
+    if (userR === 'peserta') return ['tm', 'uji_coba', 'klasemen'].includes(stageId);
+    if (userR === 'checkin') return ['checkin', 'checkout', 'klasemen'].includes(stageId);
+    if (userR === 'dp' || userR === 'staging') return ['dp', 'uji_coba', 'klasemen'].includes(stageId);
+    if (userR === 'juri') return ['penjurian', 'rekap_nilai', 'klasemen', 'dp'].includes(stageId);
+    if (userR === 'penginput') return ['penjurian', 'rekap_nilai', 'klasemen'].includes(stageId);
+    if (userR === 'verifikator') return ['rekap_nilai', 'klasemen'].includes(stageId);
+    if (userR === 'finalisator') return ['rekap_nilai', 'klasemen'].includes(stageId);
+    if (userR === 'admin') return ['pendaftaran', 'tm', 'uji_coba', 'checkin', 'checkout', 'dp', 'rekap_nilai', 'klasemen'].includes(stageId);
     return false;
   };
 
@@ -518,10 +532,8 @@ export function CompetitionProvider({ children }) {
         setSettings({
           ...INITIAL_SETTINGS,
           ...remoteSettings,
-          eventDates: {
-            ...INITIAL_SETTINGS.eventDates,
-            ...(remoteSettings.eventDates || {}),
-          },
+          currentWave: PAYMENT.ACTIVE_WAVE || 2,
+          eventDates: normalizeEventDates(remoteSettings.eventDates),
           juknisPenilaianPublished: Boolean(remoteSettings.juknisPenilaianPublished && remoteSettings.juknisPenilaianRatifiedAt),
           juknisPenilaianRatifiedAt: remoteSettings.juknisPenilaianRatifiedAt || null,
           basecampPublished: Boolean(remoteSettings.basecampPublished && remoteSettings.basecampRatifiedAt),
@@ -752,11 +764,11 @@ export function CompetitionProvider({ children }) {
           ...INITIAL_SETTINGS,
           ...prev,
           ...remoteSettings,
-          eventDates: {
-            ...INITIAL_SETTINGS.eventDates,
+          currentWave: PAYMENT.ACTIVE_WAVE || 2,
+          eventDates: normalizeEventDates({
             ...(prev?.eventDates || {}),
             ...(remoteSettings.eventDates || {}),
-          },
+          }),
           juknisPenilaianPublished: Boolean(remoteSettings.juknisPenilaianPublished && remoteSettings.juknisPenilaianRatifiedAt),
           juknisPenilaianRatifiedAt: remoteSettings.juknisPenilaianRatifiedAt || null,
           basecampPublished: Boolean(remoteSettings.basecampPublished && remoteSettings.basecampRatifiedAt),
@@ -1762,8 +1774,6 @@ export function CompetitionProvider({ children }) {
       navigateTo('register');
     } else if (modalName === 'statusCheck') {
       navigateTo('status_check');
-    } else if (modalName === 'docViewer') {
-      navigateTo('dokumen', data);
     } else if (modalName === 'auth') {
       openAuthModal(data?.tab || 'login');
     } else {

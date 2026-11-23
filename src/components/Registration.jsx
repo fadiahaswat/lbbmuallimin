@@ -149,73 +149,207 @@ export default function Registration() {
                 </div>
 
                 {/* Right Column: Slot Kuota Peleton */}
-                <div className="lg:col-span-7 flex flex-col justify-center space-y-4">
-                  <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-white/10">
-                    <span className="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
-                      <Users className="w-4 h-4 text-amber-400 shrink-0" />
-                      <span>Informasi Slot Kuota Peleton</span>
-                    </span>
-                    <span className="text-xs font-black uppercase px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300">
-                      Total Tersisa: {totalRemaining} / {totalTargetSD + totalTargetSMP} Peleton
-                    </span>
-                  </div>
+                {(() => {
+                  const totalQuota = totalTargetSD + totalTargetSMP;
+                  const pctSD = Math.min(100, Math.round((registeredSD / Math.max(1, totalTargetSD)) * 100));
+                  const pctSMP = Math.min(100, Math.round((registeredSMP / Math.max(1, totalTargetSMP)) * 100));
+                  const isSDFull = remainingSD <= 0;
+                  const isSMPFull = remainingSMP <= 0;
+                  const isLowTotal = totalRemaining > 0 && totalRemaining <= 10;
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left">
-                    {/* Slot SD */}
-                    <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-red-500/30 transition-all">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-[11px] font-extrabold uppercase tracking-wider text-red-400 block">
-                          Tingkat SD / MI
-                        </span>
-                        <span className="text-[10px] font-semibold text-slate-400">
-                          Kuota {totalTargetSD}
-                        </span>
-                      </div>
-                      <div className="flex items-baseline justify-between">
-                        <span className="text-sm font-bold text-slate-300">
-                          Tersisa <strong className="text-xl font-black text-white ml-1">{remainingSD}</strong> Slot
-                        </span>
-                        <span className="text-[11px] font-medium text-slate-400">
-                          Terisi: <span className="text-slate-200 font-bold">{registeredSD}</span>
-                        </span>
-                      </div>
-                      {/* Mini Progress Bar */}
-                      <div className="w-full bg-white/10 rounded-full h-1.5 mt-2.5 overflow-hidden">
-                        <div
-                          className="bg-red-500 h-1.5 rounded-full transition-all duration-500"
-                          style={{ width: `${Math.min(100, (registeredSD / totalTargetSD) * 100)}%` }}
-                        />
-                      </div>
-                    </div>
+                  const quotaCards = [
+                    {
+                      key: 'SD',
+                      label: 'Tingkat SD / MI',
+                      Icon: School,
+                      remaining: remainingSD,
+                      registered: registeredSD,
+                      target: totalTargetSD,
+                      pct: pctSD,
+                      isFull: isSDFull,
+                      isLow: !isSDFull && remainingSD <= 5,
+                      iconWrap: 'bg-red-500/15 border-red-500/30 text-red-400',
+                      accentText: 'text-red-400',
+                      barClass: 'bg-gradient-to-r from-red-600 via-red-500 to-amber-400 shadow-[0_0_12px_rgba(239,68,68,0.45)]',
+                      hoverBorder: 'hover:border-red-500/35',
+                    },
+                    {
+                      key: 'SMP',
+                      label: 'Tingkat SMP / MTs',
+                      Icon: GraduationCap,
+                      remaining: remainingSMP,
+                      registered: registeredSMP,
+                      target: totalTargetSMP,
+                      pct: pctSMP,
+                      isFull: isSMPFull,
+                      isLow: !isSMPFull && remainingSMP <= 5,
+                      iconWrap: 'bg-blue-500/15 border-blue-500/30 text-blue-400',
+                      accentText: 'text-blue-400',
+                      barClass: 'bg-gradient-to-r from-blue-600 via-blue-500 to-sky-400 shadow-[0_0_12px_rgba(59,130,246,0.45)]',
+                      hoverBorder: 'hover:border-blue-500/35',
+                    },
+                  ];
 
-                    {/* Slot SMP */}
-                    <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-blue-500/30 transition-all">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-[11px] font-extrabold uppercase tracking-wider text-blue-400 block">
-                          Tingkat SMP / MTs
-                        </span>
-                        <span className="text-[10px] font-semibold text-slate-400">
-                          Kuota {totalTargetSMP}
+                  return (
+                    <div className="lg:col-span-7 flex flex-col justify-center space-y-4">
+                      {/* Header */}
+                      <div className="flex flex-wrap items-center justify-between gap-3 pb-3.5 border-b border-white/10">
+                        <div className="flex items-center gap-2.5 text-left">
+                          <div className="w-8 h-8 rounded-xl bg-amber-400/10 border border-amber-400/25 text-amber-400 flex items-center justify-center shrink-0">
+                            <Users className="w-4 h-4" />
+                          </div>
+                          <div>
+                            <span className="text-xs font-extrabold uppercase tracking-wider text-white block leading-tight">
+                              Informasi Slot Kuota Peleton
+                            </span>
+                            <span className="text-[11px] text-slate-400 block mt-0.5">
+                              Update realtime · {registeredSD + registeredSMP} dari {totalQuota} peleton terdaftar
+                            </span>
+                          </div>
+                        </div>
+
+                        <span
+                          className={`inline-flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider px-3 py-1.5 rounded-full border ${
+                            isQuotaFull
+                              ? 'bg-red-500/15 border-red-500/35 text-red-300'
+                              : isLowTotal
+                              ? 'bg-amber-500/15 border-amber-400/35 text-amber-300'
+                              : 'bg-emerald-500/15 border-emerald-500/30 text-emerald-300'
+                          }`}
+                        >
+                          {!isQuotaFull && (
+                            <span
+                              className={`w-1.5 h-1.5 rounded-full animate-pulse ${
+                                isLowTotal ? 'bg-amber-400' : 'bg-emerald-400'
+                              }`}
+                            />
+                          )}
+                          <span>
+                            {isQuotaFull
+                              ? `Kuota Penuh (${totalQuota}/${totalQuota})`
+                              : `Tersisa ${totalRemaining} / ${totalQuota} Slot`}
+                          </span>
                         </span>
                       </div>
-                      <div className="flex items-baseline justify-between">
-                        <span className="text-sm font-bold text-slate-300">
-                          Tersisa <strong className="text-xl font-black text-white ml-1">{remainingSMP}</strong> Slot
-                        </span>
-                        <span className="text-[11px] font-medium text-slate-400">
-                          Terisi: <span className="text-slate-200 font-bold">{registeredSMP}</span>
-                        </span>
+
+                      {/* Category Cards */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left">
+                        {quotaCards.map((card) => {
+                          const CardIcon = card.Icon;
+                          return (
+                            <div
+                              key={card.key}
+                              className={`relative p-4 sm:p-5 rounded-2xl border transition-all duration-200 ${
+                                card.isFull
+                                  ? 'bg-white/[0.02] border-white/[0.07]'
+                                  : `bg-white/[0.04] border-white/10 ${card.hoverBorder}`
+                              }`}
+                            >
+                              {/* Top Row: Category + Status Pill */}
+                              <div className="flex items-center justify-between gap-2 mb-4">
+                                <div className="flex items-center gap-2 min-w-0">
+                                  <div
+                                    className={`w-7 h-7 rounded-lg border flex items-center justify-center shrink-0 ${
+                                      card.isFull
+                                        ? 'bg-white/[0.04] border-white/10 text-slate-400'
+                                        : card.iconWrap
+                                    }`}
+                                  >
+                                    <CardIcon className="w-3.5 h-3.5" />
+                                  </div>
+                                  <span
+                                    className={`text-xs font-extrabold uppercase tracking-wider truncate ${
+                                      card.isFull ? 'text-slate-400' : 'text-white'
+                                    }`}
+                                  >
+                                    {card.label}
+                                  </span>
+                                </div>
+
+                                {card.isFull ? (
+                                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white/[0.06] border border-white/10 text-[10px] font-black uppercase tracking-wider text-slate-300 shrink-0">
+                                    <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                                    <span>Penuh</span>
+                                  </span>
+                                ) : card.isLow ? (
+                                  <span className="px-2 py-0.5 rounded-md bg-amber-500/15 border border-amber-400/30 text-[10px] font-black uppercase tracking-wider text-amber-300 shrink-0">
+                                    Hampir Penuh
+                                  </span>
+                                ) : (
+                                  <span className="px-2 py-0.5 rounded-md bg-emerald-500/15 border border-emerald-400/25 text-[10px] font-bold uppercase tracking-wider text-emerald-300 shrink-0">
+                                    Tersedia
+                                  </span>
+                                )}
+                              </div>
+
+                              {/* Hero Metric Row */}
+                              <div className="flex items-end justify-between gap-2 mb-3.5">
+                                {card.isFull ? (
+                                  <div>
+                                    <span className="text-2xl sm:text-[26px] font-black tracking-tight text-slate-300 leading-none block">
+                                      Kuota Penuh
+                                    </span>
+                                    <span className="text-[11px] text-slate-500 mt-1 block">
+                                      Pendaftaran jenjang ini ditutup
+                                    </span>
+                                  </div>
+                                ) : (
+                                  <div className="flex items-baseline gap-1.5">
+                                    <span className="font-mono text-3xl sm:text-4xl font-black text-white leading-none tabular-nums tracking-tight">
+                                      {card.remaining}
+                                    </span>
+                                    <span className="text-xs font-semibold text-slate-400">
+                                      slot tersisa
+                                    </span>
+                                  </div>
+                                )}
+
+                                <div className="text-right shrink-0">
+                                  <span className="font-mono text-xs font-bold text-slate-200 tabular-nums block">
+                                    {card.registered}/{card.target}
+                                  </span>
+                                  <span className="text-[10px] text-slate-500 block">
+                                    terisi ({card.pct}%)
+                                  </span>
+                                </div>
+                              </div>
+
+                              {/* Progress Track */}
+                              <div className="w-full h-2 rounded-full bg-white/[0.07] overflow-hidden">
+                                <div
+                                  className={`h-full rounded-full transition-all duration-700 ${
+                                    card.isFull ? 'bg-slate-500/70' : card.barClass
+                                  }`}
+                                  style={{ width: `${card.pct}%` }}
+                                />
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
-                      {/* Mini Progress Bar */}
-                      <div className="w-full bg-white/10 rounded-full h-1.5 mt-2.5 overflow-hidden">
-                        <div
-                          className="bg-blue-500 h-1.5 rounded-full transition-all duration-500"
-                          style={{ width: `${Math.min(100, (registeredSMP / totalTargetSMP) * 100)}%` }}
-                        />
-                      </div>
+
+                      {/* Contextual Single-Category Availability Note */}
+                      {((isSMPFull && !isSDFull) || (isSDFull && !isSMPFull)) && (
+                        <div className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl bg-amber-500/[0.08] border border-amber-400/20 text-left">
+                          <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />
+                          <p className="text-[11px] text-slate-300 leading-relaxed">
+                            {isSMPFull ? (
+                              <>
+                                Kuota <strong className="text-white">SMP / MTs</strong> telah terpenuhi. Pendaftaran masih dibuka khusus untuk tingkat{' '}
+                                <strong className="text-amber-300">SD / MI ({remainingSD} slot tersisa)</strong>.
+                              </>
+                            ) : (
+                              <>
+                                Kuota <strong className="text-white">SD / MI</strong> telah terpenuhi. Pendaftaran masih dibuka khusus untuk tingkat{' '}
+                                <strong className="text-amber-300">SMP / MTs ({remainingSMP} slot tersisa)</strong>.
+                              </>
+                            )}
+                          </p>
+                        </div>
+                      )}
                     </div>
-                  </div>
-                </div>
+                  );
+                })()}
 
               </div>
             </div>
@@ -261,7 +395,7 @@ export default function Registration() {
                     </span>
                   </div>
                   <h4 className="text-xs sm:text-sm font-bold text-white">Pendaftaran Daring</h4>
-                  <p className="text-[11px] text-slate-400 mt-0.5 leading-relaxed">Unggah berkas via portal resmi s.d. 23.59 WIB.</p>
+                  <p className="text-[11px] text-slate-400 mt-0.5 leading-relaxed">Unggah berkas via portal resmi hingga kuota terpenuhi.</p>
                 </div>
 
                 {/* Step 2 */}

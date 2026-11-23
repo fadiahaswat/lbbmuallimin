@@ -47,7 +47,7 @@ const FAQ_DATA = [
     category: 'Pendaftaran',
     icon: 'FileCheck2',
     q: 'Kapan periode pendaftaran online dibuka dan ditutup?',
-    a: 'Pendaftaran daring resmi dibuka mulai Senin, 26 Oktober 2026 pukul 00.00 WIB s.d. Ahad, 22 November 2026 pukul 23.59 WIB melalui portal web resmi. Pendaftaran otomatis ditutup lebih awal apabila total kuota 36 peleton telah terpenuhi.',
+    a: 'Pendaftaran daring resmi dibuka mulai Senin, 26 Oktober 2026 pukul 00.00 WIB hingga kuota terpenuhi (total 36 peleton: 18 SD/MI dan 18 SMP/MTs) melalui portal web resmi. Pendaftaran otomatis ditutup apabila seluruh kuota telah penuh.',
   },
   {
     id: 5,
@@ -63,7 +63,7 @@ const FAQ_DATA = [
     category: 'Biaya',
     icon: 'CreditCard',
     q: 'Berapa besaran biaya pendaftaran dan bagaimana skema periodenya?',
-    a: `Biaya pendaftaran dibagi menjadi 2 gelombang: Gelombang 1 (26 Oktober – 8 November 2026) sebesar Rp350.000,- per peleton; Gelombang 2 (9 November – 22 November 2026/Kuota Penuh) sebesar Rp400.000,- per peleton. Gelombang 2 hanya dibuka jika sisa kuota masih ada. Setiap pembayaran wajib menambahkan kode unik 108 pada nominal transfer (contoh: 1 peleton Gelombang 1 mentransfer Rp350.108,-; 2 peleton Gelombang 1 mentransfer Rp700.108,-; 1 peleton Gelombang 2 mentransfer Rp400.108,-; 2 peleton Gelombang 2 mentransfer Rp800.108,-).`,
+    a: `Seluruh pendaftar mengikuti tarif biaya pendaftaran Gelombang 2 sebesar Rp400.000,- per peleton dan berlaku hingga kuota penuh. Setiap pembayaran wajib menambahkan kode unik 108 pada tiga digit terakhir nominal transfer (contoh: 1 peleton mentransfer Rp400.108,-; 2 peleton mentransfer Rp800.108,-).`,
   },
   {
     id: 7,

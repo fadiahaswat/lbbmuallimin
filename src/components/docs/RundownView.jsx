@@ -582,7 +582,7 @@ export default function RundownView({ embedded = false }) {
 
   return (
     <SimpaskorSidebarLayout
-      activeMenu="dokumen"
+      activeMenu="rundown"
       title="Rundown Resmi Kegiatan LBB Mu'allimin 2027"
       subtitle="Jadwal definitif kronologis: Hari-H Perlombaan (24 Jan), Technical Meeting (9 Jan), dan Uji Coba Lapangan 2 Arena (16 Jan)"
       rightActions={

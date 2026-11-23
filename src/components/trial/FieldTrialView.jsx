@@ -1077,125 +1077,92 @@ export default function FieldTrialView() {
             const myCheckInTime = myTeamTrialSlot?.slotInfo?.checkIn || myTeamTrialSlot?.slotInfo?.arrival || '06.30 WIB';
             const myLogoRaw = currentTeam?.files?.schoolLogo?.url || currentTeam?.file_logo_sekolah || currentTeam?.logoUrl || '';
             const myFallbackAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(currentTeam.schoolName || 'Tim')}&background=${currentTeam.jenjang === 'SMP' ? '1d4ed8' : 'b91c1c'}&color=fff&bold=true`;
-            const myDantonName = currentTeam?.dantonName || currentTeam?.roster?.danton?.name || '';
 
             return (
-              <div className="overflow-hidden rounded-3xl border border-slate-800/90 bg-slate-950 text-white shadow-[0_18px_46px_rgba(15,23,42,0.16)]">
-                {/* Top Identity Bar — Fokus Identitas Peleton */}
-                <div className="px-5 sm:px-6 py-4 border-b border-slate-800/90 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-gradient-to-r from-slate-950 via-slate-900/90 to-slate-950">
-                  <div className="flex items-center gap-3.5 min-w-0 flex-1">
+              <div className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-950 text-white">
+                {/* Header Ringkas */}
+                <div className="px-4 sm:px-5 py-3.5 border-b border-slate-800/80 flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3 min-w-0">
                     <img
                       src={myLogoRaw ? formatImageUrl(myLogoRaw) : myFallbackAvatar}
                       alt={currentTeam.schoolName}
-                      className="w-11 h-11 object-contain shrink-0 drop-shadow-[0_2px_8px_rgba(0,0,0,0.45)]"
+                      className="w-9 h-9 object-contain shrink-0"
                       onError={(e) => {
                         e.target.onerror = null;
                         e.target.src = myFallbackAvatar;
                       }}
                     />
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <h3 className="text-base sm:text-xl font-black tracking-tight text-white leading-tight truncate">
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2">
+                        <h3 className="text-sm sm:text-base font-bold tracking-tight text-white truncate">
                           {currentTeam.schoolName}
                         </h3>
                         {currentTeam.jenjang && (
-                          <span className={`rounded-md px-2 py-0.5 text-[10px] font-black uppercase tracking-wider border shrink-0 ${
+                          <span className={`rounded px-1.5 py-0.5 text-[10px] font-bold uppercase shrink-0 ${
                             currentTeam.jenjang === 'SD'
-                              ? 'bg-rose-500/15 text-rose-300 border-rose-500/30'
-                              : 'bg-blue-500/15 text-blue-300 border-blue-500/30'
+                              ? 'bg-rose-500/15 text-rose-300'
+                              : 'bg-blue-500/15 text-blue-300'
                           }`}>
-                            {currentTeam.jenjang === 'SD' ? 'SD / MI' : 'SMP / MTs'}
+                            {currentTeam.jenjang === 'SD' ? 'SD/MI' : 'SMP/MTs'}
                           </span>
                         )}
                       </div>
-                      <div className="flex items-center gap-2 flex-wrap text-[11.5px] text-slate-400 mt-0.5">
-                        {myTeamTrialSlot && (
-                          <span className="font-mono font-bold text-amber-300">
-                            Slot #{String(mySlotIndex).padStart(2, '0')}
-                          </span>
-                        )}
-                        {currentTeam.lotNumber && (
-                          <>
-                            <span className="text-slate-700">·</span>
-                            <span className="font-mono text-slate-300">TM #{String(currentTeam.lotNumber).padStart(2, '0')}</span>
-                          </>
-                        )}
-                        {myDantonName && (
-                          <>
-                            <span className="text-slate-700">·</span>
-                            <span className="text-slate-300 truncate">{myDantonName}</span>
-                          </>
-                        )}
-                      </div>
+                      {myTeamTrialSlot && (
+                        <p className="text-xs font-mono font-semibold text-amber-300 mt-0.5">
+                          Slot #{String(mySlotIndex).padStart(2, '0')}
+                        </p>
+                      )}
                     </div>
                   </div>
 
-                  {/* Status Presensi Peleton */}
-                  <div className="shrink-0 w-full sm:w-auto">
+                  {/* Status Presensi Ringkas */}
+                  <div className="shrink-0">
                     {myTeamTrialSlot?.attendance?.status === 'checked_out' ? (
-                      <span className="inline-flex w-full sm:w-auto items-center justify-center sm:justify-start gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/15 px-3.5 py-1.5 text-xs font-bold text-emerald-300">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                        <span>Gladi Selesai ({myTeamTrialSlot.attendance.checkOutTime})</span>
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 px-2.5 py-1 text-[11px] font-bold text-emerald-300">
+                        <CheckCircle2 className="w-3.5 h-3.5" />
+                        <span>Selesai</span>
                       </span>
                     ) : myTeamTrialSlot?.attendance?.status === 'checked_in' ? (
-                      <span className="inline-flex w-full sm:w-auto items-center justify-center sm:justify-start gap-1.5 rounded-full border border-emerald-400/40 bg-emerald-500/20 px-3.5 py-1.5 text-xs font-black text-emerald-200">
-                        <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-                        <span>Standby di Lokasi ({myTeamTrialSlot.attendance.checkInTime})</span>
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/20 px-2.5 py-1 text-[11px] font-bold text-emerald-200">
+                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                        <span>Hadir</span>
                       </span>
                     ) : (
-                      <span className="inline-flex w-full sm:w-auto items-center justify-center sm:justify-start gap-1.5 rounded-full border border-amber-400/30 bg-amber-400/10 px-3.5 py-1.5 text-xs font-bold text-amber-300">
-                        <Clock className="w-3.5 h-3.5 text-amber-400" />
-                        <span>Belum Tiba · Standby 30 mnt sebelumnya</span>
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-400/10 px-2.5 py-1 text-[11px] font-semibold text-amber-300">
+                        <Clock className="w-3 h-3" />
+                        <span>Belum Tiba</span>
                       </span>
                     )}
                   </div>
                 </div>
 
-                {/* Integrated 3-Column Dark Telemetry Strip */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-slate-800/90">
-                  <div className="px-5 py-4 flex flex-col justify-between gap-2">
-                    <span className="inline-flex items-center gap-1.5 text-[9.5px] uppercase font-black tracking-wider text-slate-400">
-                      <LogIn className="w-3.5 h-3.5 text-emerald-400" />
-                      <span>Target Kedatangan (Check-In)</span>
-                    </span>
-                    <div>
-                      <p className="text-lg sm:text-xl font-black text-emerald-300 font-mono leading-tight">
-                        {myTeamTrialSlot ? `${myCheckInTime}` : '06.30 WIB'}
-                      </p>
-                      <p className="text-[11px] font-medium text-slate-400 mt-0.5">
-                        Wajib presensi di Pos Gerbang
-                      </p>
-                    </div>
+                {/* Info Utama: Check-In, Gladi, Arena */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 divide-x divide-y sm:divide-y-0 divide-slate-800/80">
+                  <div className="px-4 py-3">
+                    <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+                      Check-In
+                    </p>
+                    <p className="text-base sm:text-lg font-bold text-emerald-300 font-mono mt-0.5">
+                      {myTeamTrialSlot ? `${myCheckInTime}` : '06.30 WIB'}
+                    </p>
                   </div>
 
-                  <div className="px-5 py-4 flex flex-col justify-between gap-2">
-                    <span className="inline-flex items-center gap-1.5 text-[9.5px] uppercase font-black tracking-wider text-slate-400">
-                      <Clock className="w-3.5 h-3.5 text-amber-400" />
-                      <span>Waktu &amp; Slot Gladi</span>
-                    </span>
-                    <div>
-                      <p className="text-lg sm:text-xl font-black text-white font-mono leading-tight">
-                        {myTeamTrialSlot ? `${mySlotTime} WIB` : '-'}
-                      </p>
-                      <p className="text-[11px] font-medium text-amber-300/90 mt-0.5">
-                        {myTeamTrialSlot ? `Slot #${String(mySlotIndex).padStart(2, '0')} · Durasi maksimal 15 menit` : 'Belum Terjadwal'}
-                      </p>
-                    </div>
+                  <div className="px-4 py-3">
+                    <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+                      Waktu Gladi
+                    </p>
+                    <p className="text-base sm:text-lg font-bold text-white font-mono mt-0.5">
+                      {myTeamTrialSlot ? `${mySlotTime} WIB` : '-'}
+                    </p>
                   </div>
 
-                  <div className="px-5 py-4 flex flex-col justify-between gap-2">
-                    <span className="inline-flex items-center gap-1.5 text-[9.5px] uppercase font-black tracking-wider text-slate-400">
-                      <MapPin className="w-3.5 h-3.5 text-rose-400" />
-                      <span>Arena Lapangan</span>
-                    </span>
-                    <div>
-                      <p className="text-sm sm:text-base font-black text-white leading-snug">
-                        {myTeamTrialSlot ? `Arena ${myTeamTrialSlot.jenjang} (${myTeamTrialSlot.jenjang === 'SD' ? 'Lapangan Basket' : 'Pelataran Embung'})` : (isTeamWillingToTrial(currentTeam) ? 'Sedang Dijadwalkan' : 'Menolak Gladi')}
-                      </p>
-                      <p className="text-[11px] font-medium text-slate-400 mt-0.5">
-                        Kampus Terpadu Sedayu
-                      </p>
-                    </div>
+                  <div className="col-span-2 sm:col-span-1 px-4 py-3">
+                    <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+                      Arena
+                    </p>
+                    <p className="text-sm sm:text-base font-bold text-white mt-0.5 leading-snug">
+                      {myTeamTrialSlot ? `Arena ${myTeamTrialSlot.jenjang} (${myTeamTrialSlot.jenjang === 'SD' ? 'Lapangan Basket' : 'Pelataran Embung'})` : (isTeamWillingToTrial(currentTeam) ? 'Sedang Dijadwalkan' : 'Menolak Gladi')}
+                    </p>
                   </div>
                 </div>
               </div>

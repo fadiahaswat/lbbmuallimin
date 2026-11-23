@@ -70,8 +70,8 @@ export function createTeamActions({ teams, setTeams, scores, setScores, setStagi
       drawTime: null,
       registeredAt: nowIso,
       updatedAt: nowIso,
-      wave: newTeamData.wave || 1,
-      feeAmount: newTeamData.feeAmount || 350000,
+      wave: newTeamData.wave || 2,
+      feeAmount: newTeamData.feeAmount || 400108,
       paymentStatus: 'unverified',
       files: {
         schoolLogo: newTeamData.files?.schoolLogo || null,

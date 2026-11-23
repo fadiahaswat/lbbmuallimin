@@ -16,6 +16,20 @@ import {
 } from 'lucide-react';
 import { formatImageUrl, getFallbackImageUrl } from '../../../services/sheetService.js';
 
+const WAVE_2_START_TS = new Date('2026-11-08T23:59:59+07:00').getTime();
+
+const getTeamWave = (team) => {
+  const fee = Number(String(team?.feeAmount || '').replace(/\D/g, '')) || 0;
+  if (fee >= 400000) return 2;
+  if (fee > 0 && fee < 400000) return 1;
+  const regDate = team?.registeredAt || team?.createdAt;
+  if (regDate) {
+    const ts = new Date(regDate).getTime();
+    if (!Number.isNaN(ts)) return ts > WAVE_2_START_TS ? 2 : 1;
+  }
+  return Number(team?.wave) || 2;
+};
+
 export default function RegistrationTab({
   activeTab = 'registration',
   onSelectStage,
@@ -169,58 +183,65 @@ export default function RegistrationTab({
         ) : (
           filteredTeams.map(team => {
             const fileItems = getFileItems(team);
+            const teamWave = getTeamWave(team);
             return (
               <div key={team.id} className="p-4 space-y-3 hover:bg-slate-50/60 transition-colors">
-                <div className="flex items-start justify-between gap-2.5">
-                  <div className="flex items-center gap-2.5 min-w-0">
-                    {team.files?.schoolLogo?.url && team.files.schoolLogo.url !== '#' ? (
-                      <img
-                        src={formatImageUrl(team.files.schoolLogo.url)}
-                        alt="Logo"
-                        referrerPolicy="no-referrer"
-                        className="w-10 h-10 rounded-xl border border-slate-200 bg-white p-1 object-contain shrink-0"
-                      />
-                    ) : (
-                      <div className="w-10 h-10 rounded-xl bg-slate-950 text-white flex items-center justify-center font-black text-xs shrink-0">
-                        {team.jenjang}
-                      </div>
-                    )}
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-1.5 flex-wrap">
-                        <span className="font-mono font-bold text-[10px] text-slate-700 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200">
-                          {team.regCode}
-                        </span>
-                        <span className="text-[10px] font-black text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded">
-                          {team.jenjang} • Gel. {team.wave || 1}
-                        </span>
-                      </div>
-                      <h4 className="font-black text-slate-900 text-sm leading-snug mt-0.5 truncate">
+                <div className="flex items-start gap-2.5">
+                  {team.files?.schoolLogo?.url && team.files.schoolLogo.url !== '#' ? (
+                    <img
+                      src={formatImageUrl(team.files.schoolLogo.url)}
+                      alt="Logo"
+                      referrerPolicy="no-referrer"
+                      className="w-10 h-10 rounded-xl border border-slate-200 bg-white p-1 object-contain shrink-0 mt-0.5"
+                    />
+                  ) : (
+                    <div className="w-10 h-10 rounded-xl bg-slate-950 text-white flex items-center justify-center font-black text-xs shrink-0 mt-0.5">
+                      {team.jenjang}
+                    </div>
+                  )}
+
+                  <div className="min-w-0 flex-1 space-y-1">
+                    <div className="flex items-start justify-between gap-2">
+                      <h4 className="font-black text-slate-900 text-sm leading-snug break-words">
                         {team.schoolName}
                       </h4>
+
+                      {/* Status Badge Compact */}
+                      {team.status === 'pending' && (
+                        <span className="shrink-0 text-[10px] font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded-lg border border-amber-200">
+                          Pending
+                        </span>
+                      )}
+                      {team.status === 'registered' && (
+                        <span className="shrink-0 text-[10px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-200">
+                          Terdaftar
+                        </span>
+                      )}
+                      {team.status === 'revision' && (
+                        <span className="shrink-0 text-[10px] font-bold text-rose-700 bg-rose-50 px-2 py-0.5 rounded-lg border border-rose-200">
+                          Revisi
+                        </span>
+                      )}
+                      {['verified', 'drawn'].includes(team.status) && (
+                        <span className="shrink-0 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-200">
+                          Sah
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="font-mono font-semibold text-[10px] text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200/80">
+                        {team.regCode}
+                      </span>
+                      <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
+                        teamWave === 2
+                          ? 'bg-amber-50 text-amber-800 border border-amber-200/80'
+                          : 'bg-slate-100 text-slate-600'
+                      }`}>
+                        {team.jenjang} · Gel. {teamWave}
+                      </span>
                     </div>
                   </div>
-
-                  {/* Status Badge Compact */}
-                  {team.status === 'pending' && (
-                    <span className="shrink-0 text-[10px] font-bold text-amber-800 bg-amber-50 px-2 py-1 rounded-lg border border-amber-200">
-                      Pending
-                    </span>
-                  )}
-                  {team.status === 'registered' && (
-                    <span className="shrink-0 text-[10px] font-bold text-blue-700 bg-blue-50 px-2 py-1 rounded-lg border border-blue-200">
-                      Terdaftar
-                    </span>
-                  )}
-                  {team.status === 'revision' && (
-                    <span className="shrink-0 text-[10px] font-bold text-rose-700 bg-rose-50 px-2 py-1 rounded-lg border border-rose-200">
-                      Revisi
-                    </span>
-                  )}
-                  {['verified', 'drawn'].includes(team.status) && (
-                    <span className="shrink-0 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-1 rounded-lg border border-emerald-200">
-                      Sah
-                    </span>
-                  )}
                 </div>
 
                 {/* Baris Info Danton & 4 Indikator Berkas */}
@@ -364,7 +385,7 @@ export default function RegistrationTab({
                             {team.schoolName}
                           </div>
                           <div className="text-[10.5px] text-slate-400 font-mono truncate mt-0.5">
-                            {team.regCode} · Gel. {team.wave || 1}
+                            {team.regCode} · Gel. {getTeamWave(team)}
                           </div>
                         </div>
                       </div>

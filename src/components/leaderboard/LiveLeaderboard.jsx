@@ -916,14 +916,14 @@ export default function LiveLeaderboard() {
             </div>
 
             {/* Tier 2: Balanced Dark Sub-Toolbar */}
-            <div className="px-4 sm:px-6 py-4 sm:py-5 flex flex-wrap items-center justify-between gap-3">
+            <div className="px-3.5 sm:px-6 py-3.5 sm:py-5 flex flex-col lg:flex-row lg:items-center justify-between gap-2.5 sm:gap-3">
               {/* Left Group: Jenjang Switcher + Live Telemetry */}
-              <div className="flex items-center gap-2.5 flex-wrap">
-                <div className="inline-flex items-center p-1 rounded-xl border border-slate-800 bg-slate-900">
+              <div className="flex items-center gap-2.5 w-full lg:w-auto">
+                <div className="grid grid-cols-2 sm:inline-flex items-center p-1 rounded-xl border border-slate-800 bg-slate-900 w-full sm:w-auto">
                   <button
                     type="button"
                     onClick={() => setSelectedJenjang('SD')}
-                    className={`px-3.5 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+                    className={`justify-center px-3 sm:px-3.5 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
                       selectedJenjang === 'SD'
                         ? 'bg-rose-600 text-white shadow-2xs'
                         : 'text-slate-400 hover:text-white'
@@ -940,7 +940,7 @@ export default function LiveLeaderboard() {
                   <button
                     type="button"
                     onClick={() => setSelectedJenjang('SMP')}
-                    className={`px-3.5 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+                    className={`justify-center px-3 sm:px-3.5 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
                       selectedJenjang === 'SMP'
                         ? 'bg-blue-600 text-white shadow-2xs'
                         : 'text-slate-400 hover:text-white'
@@ -957,7 +957,7 @@ export default function LiveLeaderboard() {
                 </div>
 
                 {/* Live Telemetry Chip */}
-                <div className="hidden sm:inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border border-slate-800 bg-slate-900/80 text-[11px] font-semibold text-slate-300">
+                <div className="hidden sm:inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border border-slate-800 bg-slate-900/80 text-[11px] font-semibold text-slate-300 shrink-0">
                   <span className={`w-1.5 h-1.5 rounded-full ${
                     settings?.announcementPublished ? 'bg-emerald-400' : 'bg-amber-400'
                   }`} />
@@ -975,13 +975,13 @@ export default function LiveLeaderboard() {
               </div>
 
               {/* Right Group: View Mode + Split Berita Acara */}
-              <div className="flex items-center gap-2.5 flex-wrap ml-auto">
+              <div className="flex items-center justify-between lg:justify-end gap-2 w-full lg:w-auto">
                 {/* View Mode Toggle: Podium vs Tabel */}
                 <div className="inline-flex items-center p-1 rounded-xl border border-slate-800 bg-slate-900">
                   <button
                     type="button"
                     onClick={() => setViewMode('podium')}
-                    className={`px-3.5 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+                    className={`px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
                       viewMode === 'podium'
                         ? 'bg-white text-slate-950 shadow-2xs'
                         : 'text-slate-400 hover:text-white'
@@ -994,7 +994,7 @@ export default function LiveLeaderboard() {
                   <button
                     type="button"
                     onClick={() => setViewMode('table')}
-                    className={`px-3.5 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+                    className={`px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
                       viewMode === 'table'
                         ? 'bg-white text-slate-950 shadow-2xs'
                         : 'text-slate-400 hover:text-white'
@@ -1007,11 +1007,11 @@ export default function LiveLeaderboard() {
                 </div>
 
                 {/* Unified Split Berita Acara Button */}
-                <div className="inline-flex items-center rounded-xl border border-slate-700 bg-slate-900 overflow-hidden divide-x divide-slate-800">
+                <div className="inline-flex items-center rounded-xl border border-slate-700 bg-slate-900 overflow-hidden divide-x divide-slate-800 shrink-0">
                   <button
                     type="button"
                     onClick={handleBeritaAcaraClick}
-                    className="px-3.5 py-2 text-xs font-bold text-slate-100 hover:bg-slate-800 transition-colors cursor-pointer flex items-center gap-1.5 whitespace-nowrap"
+                    className="px-2.5 sm:px-3.5 py-2 text-xs font-bold text-slate-100 hover:bg-slate-800 transition-colors cursor-pointer flex items-center gap-1.5 whitespace-nowrap"
                     title={`Unduh Berita Acara Resmi Jenjang ${selectedJenjang === 'SD' ? 'SD/MI' : 'SMP/MTs'}`}
                   >
                     <Download className="w-3.5 h-3.5 text-rose-400 shrink-0" />
@@ -1513,7 +1513,7 @@ export default function LiveLeaderboard() {
                   >
                     <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
                       {/* Rank Number / Medal Emblem */}
-                      {(item.rank <= 3 || (activeCategory === 'peleton' && item.rank <= 6)) ? (
+                      {(activeCategory !== 'juara_umum' && (item.rank <= 3 || (activeCategory === 'peleton' && item.rank <= 6))) ? (
                         <div className="w-9 h-9 sm:w-11 sm:h-11 flex items-center justify-center shrink-0">
                           <RankMedal rank={item.rank} className="w-9 h-9 sm:w-11 sm:h-11" />
                         </div>
@@ -1523,7 +1523,7 @@ export default function LiveLeaderboard() {
                             ? 'bg-slate-800 text-slate-200 border border-slate-700'
                             : 'bg-slate-100 text-slate-900 border border-slate-200'
                         }`}>
-                          #{String(item.rank).padStart(2, '0')}
+                          {activeCategory === 'juara_umum' ? item.rank : `#${String(item.rank).padStart(2, '0')}`}
                         </div>
                       )}
 
@@ -1597,7 +1597,7 @@ export default function LiveLeaderboard() {
                             <span className="whitespace-nowrap">{item.subScore}</span>
                           )}
                         </div>
-                      ) : item.scoreLabel ? (
+                      ) : item.scoreLabel && item.scoreLabel.toLowerCase() !== 'poin' ? (
                         <div className="text-[9px] sm:text-[10px] text-slate-400 font-mono mt-0.5">
                           {item.scoreLabel}
                         </div>

@@ -19,15 +19,15 @@ export const INITIAL_SETTINGS = {
   activeAcademicYear: '2027',
   quotaSD: 18,
   quotaSMP: 18,
-  currentWave: 1, // Gelombang 1
+  currentWave: 2, // Gelombang 2 (berlaku untuk seluruh pendaftar hingga kuota penuh)
   beritaAcaraUrl: '', // Link Google Drive Berita Acara Dewan Juri (General)
   beritaAcaraUrlSD: '', // Link Google Drive Berita Acara SD/MI
   beritaAcaraUrlSMP: '', // Link Google Drive Berita Acara SMP/MTs
   eventDates: {
     registrationStart: '2026-10-26T00:00:00+07:00',
-    registrationDeadline: '2026-11-22T23:59:59+07:00',
-    registrationRangeText: '26 Oktober – 22 November 2026',
-    verificationRangeText: '26 Oktober – 22 November 2026',
+    registrationDeadline: '',
+    registrationRangeText: 'Dibuka s.d. Kuota Penuh',
+    verificationRangeText: 'Dibuka s.d. Kuota Penuh',
     technicalMeetingDate: '9 Januari 2027',
     technicalMeetingTime: '12.30 - 16.30 WIB (Reg 12.30)',
     technicalMeetingFullDate: 'Sabtu, 9 Januari 2027',

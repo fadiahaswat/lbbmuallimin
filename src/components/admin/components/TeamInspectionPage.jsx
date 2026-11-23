@@ -121,7 +121,7 @@ export default function TeamInspectionPage({
     }
   };
 
-  const feeFormatted = (team.feeAmount || 350000).toLocaleString('id-ID');
+  const feeFormatted = (team.feeAmount || 400108).toLocaleString('id-ID');
   const danton = team.roster?.danton;
   const pasukan = Array.isArray(team.roster?.pasukan) ? team.roster.pasukan : [];
   const cadangan = Array.isArray(team.roster?.cadangan) ? team.roster.cadangan : [];
@@ -231,8 +231,6 @@ export default function TeamInspectionPage({
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>Daftar Peleton</span>
             </button>
-            <ChevronRight className="w-3.5 h-3.5 text-slate-600 shrink-0" />
-            <span className="text-slate-400 truncate">Verifikasi Kontingen</span>
           </div>
 
           {/* Prev / Next Team Switcher */}
@@ -262,8 +260,8 @@ export default function TeamInspectionPage({
         </div>
 
         {/* Main Identity + Decision Actions */}
-        <div className="relative z-10 px-5 sm:px-6 py-5 flex flex-col xl:flex-row xl:items-center justify-between gap-5">
-          <div className="flex items-center gap-4 min-w-0">
+        <div className="relative z-10 px-4 sm:px-6 py-4 sm:py-5 flex flex-col xl:flex-row xl:items-center justify-between gap-4">
+          <div className="flex items-start sm:items-center gap-3.5 min-w-0">
             {/* Unframed School Logo */}
             {team.files?.schoolLogo?.url && team.files.schoolLogo.url !== '#' ? (
               <img
@@ -275,20 +273,27 @@ export default function TeamInspectionPage({
                   if (fallback && e.currentTarget.src !== fallback) e.currentTarget.src = fallback;
                   else e.currentTarget.style.display = 'none';
                 }}
-                className="w-12 h-12 sm:w-14 sm:h-14 object-contain shrink-0 drop-shadow-md"
+                className="w-11 h-11 sm:w-14 sm:h-14 object-contain shrink-0 drop-shadow-md mt-0.5 sm:mt-0"
               />
             ) : (
-              <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-white/10 border border-white/10 flex items-center justify-center font-mono font-black text-base shrink-0 ${isSD ? 'text-rose-300' : 'text-blue-300'}`}>
+              <div className={`w-11 h-11 sm:w-14 sm:h-14 rounded-2xl bg-white/10 border border-white/10 flex items-center justify-center font-mono font-black text-base shrink-0 mt-0.5 sm:mt-0 ${isSD ? 'text-rose-300' : 'text-blue-300'}`}>
                 {team.jenjang}
               </div>
             )}
 
-            <div className="min-w-0 space-y-1">
+            <div className="min-w-0 flex-1 space-y-1.5">
+              <h1 className="text-base sm:text-2xl font-black text-white uppercase tracking-tight leading-snug break-words">
+                {team.schoolName}
+              </h1>
               <div className="flex items-center gap-2 flex-wrap">
+                <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold border ${statusMeta.cls}`}>
+                  <StatusIcon className="w-3 h-3" />
+                  <span>{statusMeta.label}</span>
+                </span>
                 <button
                   type="button"
                   onClick={() => handleCopy('regCode', team.regCode)}
-                  className="inline-flex items-center gap-1 font-mono text-[11px] font-bold text-slate-400 hover:text-white transition-colors cursor-pointer"
+                  className="inline-flex items-center gap-1 font-mono text-[11px] font-semibold text-slate-400 hover:text-white transition-colors cursor-pointer"
                   title="Salin kode registrasi"
                 >
                   <span>{team.regCode}</span>
@@ -299,17 +304,10 @@ export default function TeamInspectionPage({
                   )}
                 </button>
                 <span className="text-slate-700">·</span>
-                <span className="text-[11px] font-semibold text-slate-300">
+                <span className="text-[11px] font-medium text-slate-400">
                   {team.teamType || team.category || 'Homogen'}
                 </span>
-                <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10.5px] font-bold border ${statusMeta.cls}`}>
-                  <StatusIcon className="w-3 h-3" />
-                  <span>{statusMeta.label}</span>
-                </span>
               </div>
-              <h1 className="text-xl sm:text-2xl font-black text-white uppercase tracking-tight leading-tight truncate">
-                {team.schoolName}
-              </h1>
             </div>
           </div>
 
@@ -376,56 +374,52 @@ export default function TeamInspectionPage({
           </div>
         </div>
 
-        {/* Integrated Telemetry Footer Strip */}
+        {/* Compact Telemetry Footer Strip */}
         <div className="relative z-10 grid grid-cols-2 lg:grid-cols-4 gap-px bg-white/10 border-t border-white/10">
-          <div className="bg-slate-950/90 px-5 py-3 flex items-center justify-between gap-3">
-            <div>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Kelengkapan Berkas</span>
-              <span className="text-sm font-mono font-black text-white mt-0.5 block">
-                {uploadedDocsCount}<span className="text-slate-500 font-normal">/5 Dokumen</span>
-              </span>
-            </div>
-            <div className="w-10 h-1.5 rounded-full bg-white/10 overflow-hidden shrink-0">
-              <div
-                className={`h-full rounded-full ${uploadedDocsCount === 5 ? 'bg-emerald-400' : 'bg-amber-400'}`}
-                style={{ width: `${(uploadedDocsCount / 5) * 100}%` }}
-              />
-            </div>
-          </div>
-
-          <div className="bg-slate-950/90 px-5 py-3 flex items-center justify-between gap-3">
-            <div>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Pasukan Inti</span>
-              <span className="text-sm font-mono font-black text-white mt-0.5 block">
-                {filledPasukanCount}<span className="text-slate-500 font-normal">/21 · {filledCadanganCount} Cad</span>
-              </span>
-            </div>
-            <div className="w-10 h-1.5 rounded-full bg-white/10 overflow-hidden shrink-0">
-              <div
-                className={`h-full rounded-full ${filledPasukanCount >= 21 ? 'bg-emerald-400' : 'bg-blue-400'}`}
-                style={{ width: `${Math.min(100, (filledPasukanCount / 21) * 100)}%` }}
-              />
-            </div>
-          </div>
-
-          <div className="bg-slate-950/90 px-5 py-3">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Biaya &amp; Gelombang</span>
-            <span className="text-sm font-mono font-black text-white mt-0.5 block">
-              Rp{feeFormatted} <span className="text-[11px] font-sans font-semibold text-emerald-400">· Gel. {team.wave || 1}</span>
+          <div className="bg-slate-950/90 px-4 py-2.5">
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 block">Berkas</span>
+            <span className={`text-sm font-mono font-bold mt-0.5 block ${uploadedDocsCount === 5 ? 'text-emerald-400' : 'text-white'}`}>
+              {uploadedDocsCount}<span className="text-slate-500 font-normal">/5</span>
             </span>
           </div>
 
-          <div className="bg-slate-950/90 px-5 py-3">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Operasional Lapangan</span>
-            <span className="text-sm font-mono font-black text-white mt-0.5 block truncate">
+          <div className="bg-slate-950/90 px-4 py-2.5">
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 block">Pasukan</span>
+            <span className="text-sm font-mono font-bold text-white mt-0.5 block">
+              {filledPasukanCount}<span className="text-slate-500 font-normal">/21</span>
+              {filledCadanganCount > 0 && (
+                <span className="text-[11px] text-slate-400 font-normal"> +{filledCadanganCount}</span>
+              )}
+            </span>
+          </div>
+
+          <div className="bg-slate-950/90 px-4 py-2.5">
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 block">Biaya</span>
+            <span className="text-sm font-mono font-bold text-white mt-0.5 block whitespace-nowrap">
+              Rp{feeFormatted}{' '}
+              <span className="text-[10.5px] font-sans font-semibold text-emerald-400">
+                · G{(() => {
+                  const fee = Number(String(team?.feeAmount || '').replace(/\D/g, '')) || 0;
+                  if (fee >= 400000) return 2;
+                  if (fee > 0 && fee < 400000) return 1;
+                  const ts = new Date(team?.registeredAt || team?.createdAt || 0).getTime();
+                  if (!Number.isNaN(ts) && ts > 0) return ts > new Date('2026-11-08T23:59:59+07:00').getTime() ? 2 : 1;
+                  return Number(team?.wave) || 2;
+                })()}
+              </span>
+            </span>
+          </div>
+
+          <div className="bg-slate-950/90 px-4 py-2.5">
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 block">Undian</span>
+            <span className="text-sm font-mono font-bold text-white mt-0.5 block truncate">
               {team.lotNumber ? (
                 <>
                   #{String(team.lotNumber).padStart(2, '0')}
-                  {team.chestNumber ? ` · Dada ${team.chestNumber}` : ''}
-                  {team.basecampNumber ? ` · R.${team.basecampNumber}` : ''}
+                  {team.chestNumber ? ` · ${team.chestNumber}` : ''}
                 </>
               ) : (
-                <span className="text-slate-400 font-sans font-semibold text-xs">Menunggu Undian TM</span>
+                <span className="text-slate-400 font-sans font-medium text-xs">Belum Undian</span>
               )}
             </span>
           </div>

@@ -266,7 +266,7 @@ export const JUKNIS_PENDAFTARAN_CHAPTERS = [
         number: 3,
         title: 'Jadwal dan Lini Masa Pendaftaran',
         sub: [
-          `a. Dibuka mulai hari Senin, 26 Oktober 2026 pukul 00.00 WIB sampai dengan Ahad, 22 November 2026 pukul 23.59 WIB. Pendaftaran otomatis ditutup lebih awal apabila kuota 36 peleton telah terpenuhi.`,
+          `a. Dibuka mulai hari Senin, 26 Oktober 2026 pukul 00.00 WIB hingga kuota resmi 36 peleton terpenuhi (18 SD/MI dan 18 SMP/MTs). Pendaftaran otomatis ditutup apabila seluruh kuota telah terisi penuh.`,
           `b. Pertemuan Teknis (Technical Meeting) & Verifikasi Berkas Fisik: Sabtu, 9 Januari 2027 pukul 13.00–16.30 WIB di Aula Kampus Induk Madrasah Mu’allimin Wirobrajan.`,
           `c. Uji Coba Lapangan: Sabtu, 16 Januari 2027 pukul 07.00 – 13.00 WIB di Kampus Terpadu Sedayu.`,
           `d. Hari Pelaksanaan Lomba & Registrasi Ulang: Ahad, 24 Januari 2027 mulai pukul 06.00 WIB di Kampus Terpadu Sedayu.`
@@ -276,9 +276,9 @@ export const JUKNIS_PENDAFTARAN_CHAPTERS = [
         number: 4,
         title: 'Biaya Pendaftaran dan Tata Cara Pembayaran',
         sub: [
-          `a. Biaya pendaftaran per peleton terbagi ke dalam 2 (dua) gelombang berjenjang (bersifat tidak dapat ditarik kembali/non-refundable apabila tim mengundurkan diri sepihak):\n1) Gelombang 1 (26 Oktober – 8 November 2026): Rp 350.000,00 per peleton.\n2) Gelombang 2 (9 November – 22 November 2026/Kuota Penuh): Rp 400.000 per peleton (hanya dibuka jika sisa kuota masih tersedia).\n3) Setiap pembayaran wajib menambahkan kode unik transfer 108 pada tiga digit terakhir nominal pembayaran.`,
+          `a. Biaya pendaftaran per peleton mengikuti tarif Gelombang 2 sebesar Rp 400.000,00 per peleton untuk seluruh pendaftar hingga kuota penuh (bersifat tidak dapat ditarik kembali/non-refundable apabila tim mengundurkan diri sepihak). Setiap pembayaran wajib menambahkan kode unik transfer 108 pada tiga digit terakhir nominal pembayaran.`,
           `b. Pembayaran disetorkan via transfer perbankan ke rekening resmi panitia:\n1) Bank Tujuan: Bank Syariah Indonesia (BSI)\n2) Nomor Rekening: 2600051817\n3) Atas Nama: ADMISI HUMAS DAN KERJA SAMA\n4) Format Berita Transfer (Wajib): NAMA SEKOLAH_JUMLAH PELETON (Contoh: MTS MUALLIMIN YK_1).`,
-          `c. Ketentuan Nominal Pembayaran:\n1) 1 (satu) peleton Gelombang 1: Rp350.108,00\n2) 2 (dua) peleton Gelombang 1: Rp700.108,00\n3) 1 (satu) peleton Gelombang 2: Rp400.108,00\n4) 2 (dua) peleton Gelombang 2: Rp800.108,00`,
+          `c. Ketentuan Nominal Pembayaran (Tarif Gelombang 2):\n1) 1 (satu) peleton: Rp400.108,00\n2) 2 (dua) peleton: Rp800.108,00`,
           `d. Bukti transfer asli (struk ATM/teller atau tangkapan layar m-banking yang jelas) wajib diunggah pada formulir digital pendaftaran.`,
           `e. Setiap peleton terdaftar berhak mendapatkan fasilitas: ruang kelas (basecamp), 1 (satu) dus air minum kemasan botol per peleton saat registrasi ulang, 3 (tiga) buah kartu tanda pengenal (ID card) resmi (1 official dan 2 pendukung resmi), nomor dada peleton, 2 (dua) kantong sampah terpilah, akses parkir, serta sertifikat elektronik resmi bagi pemenang.`
         ]

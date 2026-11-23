@@ -585,9 +585,8 @@ export default function RegistrationWizard({ isOpen, onClose }) {
       return;
     }
 
-    const isWave2 = Date.now() > new Date('2026-11-08T23:59:59+07:00').getTime();
-    const activeTier = isWave2 ? PAYMENT.FEE_TIERS[1] : PAYMENT.FEE_TIERS[0];
-    const feeAmount = parseInt((activeTier?.amountWithCode || PAYMENT.FEE_DISPLAY).replace(/\D/g, ''), 10) || 350108;
+    const activeTier = PAYMENT.FEE_TIERS.find(t => t.wave === 2) || PAYMENT.FEE_TIERS[0];
+    const feeAmount = parseInt((activeTier?.amountWithCode || PAYMENT.FEE_DISPLAY).replace(/\D/g, ''), 10) || 400108;
 
     const teamTypeLabel = formData.teamType === 'Homogen'
       ? `Homogen (${formData.homogenGender || 'Putra'})`
@@ -615,6 +614,7 @@ export default function RegistrationWizard({ isOpen, onClose }) {
       dantonName: formData.dantonName,
       officialName: formData.officialName,
       waNumber: formData.waNumber,
+      wave: activeTier?.wave || PAYMENT.ACTIVE_WAVE || 2,
       feeAmount,
       files,
     });
@@ -627,8 +627,7 @@ export default function RegistrationWizard({ isOpen, onClose }) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  const isWave2 = Date.now() > new Date('2026-11-08T23:59:59+07:00').getTime();
-  const activeTier = isWave2 ? PAYMENT.FEE_TIERS[1] : PAYMENT.FEE_TIERS[0];
+  const activeTier = PAYMENT.FEE_TIERS.find(t => t.wave === 2) || PAYMENT.FEE_TIERS[0];
   const feeDisplay = `Rp${activeTier?.amountWithCode || PAYMENT.FEE_DISPLAY}`;
 
   // JIKA BELUM 26 OKTOBER & BUKAN LOCALHOST: TAMPILKAN LAYAR INFORMASI JADWAL PENDAFTARAN
@@ -686,23 +685,18 @@ export default function RegistrationWizard({ isOpen, onClose }) {
                 Pendaftaran Resmi LBB Mu'allimin 2027
               </h2>
               <p className="text-sm text-slate-600 max-w-xl mx-auto leading-relaxed">
-                Formulir pendaftaran digital dibuka secara serentak mulai hari{' '}
-                <strong className="text-red-700">Senin, 26 Oktober 2026 pukul 00.00 WIB</strong> s.d.{' '}
-                <strong className="text-slate-800">Ahad, 22 November 2026 pukul 23.59 WIB</strong>.
+                Formulir pendaftaran digital dibuka mulai hari{' '}
+                <strong className="text-red-700">Senin, 26 Oktober 2026 pukul 00.00 WIB</strong> hingga{' '}
+                <strong className="text-slate-800">kuota 36 peleton terpenuhi</strong>.
               </p>
             </div>
 
-            {/* Rincian Gelombang Biaya & Kuota */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 text-left pt-2">
-              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
-                <span className="text-[10px] font-bold text-blue-700 uppercase tracking-wider block">Gelombang 1 (Presale)</span>
-                <p className="text-lg font-black text-slate-900">Rp 350.108,- <span className="text-xs font-normal text-slate-500">/ peleton</span></p>
-                <p className="text-xs text-slate-600">26 Oktober – 8 November 2026</p>
-              </div>
-              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
-                <span className="text-[10px] font-bold text-amber-700 uppercase tracking-wider block">Gelombang 2 (Reguler)</span>
+            {/* Rincian Biaya & Kuota */}
+            <div className="grid grid-cols-1 gap-3.5 text-left pt-2">
+              <div className="p-4 rounded-2xl bg-amber-50/70 border border-amber-200 space-y-1">
+                <span className="text-[10px] font-bold text-amber-700 uppercase tracking-wider block">Tarif Gelombang 2 (Berlaku s.d. Kuota Penuh)</span>
                 <p className="text-lg font-black text-slate-900">Rp 400.108,- <span className="text-xs font-normal text-slate-500">/ peleton</span></p>
-                <p className="text-xs text-slate-600">9 – 22 November 2026 (jika sisa kuota ada)</p>
+                <p className="text-xs text-slate-600">Berlaku untuk seluruh pendaftar hingga kuota penuh (sudah termasuk kode unik 108)</p>
               </div>
             </div>
 

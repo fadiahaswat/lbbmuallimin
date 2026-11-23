@@ -436,10 +436,10 @@ export default function InteractiveBasecampMap({
   return (
     <div className={isPublicView ? 'space-y-3.5 text-slate-900 font-sans' : 'space-y-3.5 text-slate-900 font-sans'}>
 
-      {/* 1. Flush Underline Floor Tabs + Segmented Filter & Legenda (Zero Box-in-Box Clutter) */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-2 border-b border-slate-200">
+      {/* 1. Flush Underline Floor Tabs + Segmented Filter & Legenda */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-2.5 lg:border-b lg:border-slate-200">
         {/* Floor Tabs */}
-        <div className="flex items-center gap-1 overflow-x-auto no-scrollbar -mb-px">
+        <div className="flex items-center gap-1 overflow-x-auto no-scrollbar border-b border-slate-200 lg:border-b-0 -mb-px">
           {FLOORS_CONFIG.map(f => {
             const isActive = f.floor === selectedFloorNum;
             const occ = floorOccupancyMap.get(f.floor) || { plotted: 0, total: f.stats.classes };
@@ -484,8 +484,8 @@ export default function InteractiveBasecampMap({
           })}
         </div>
 
-        {/* Kanan: Legenda Minimalis + Segmented Toggle Semua / Basecamp */}
-        <div className="flex items-center justify-between lg:justify-end gap-3 pb-2 lg:pb-1.5 text-[11px]">
+        {/* Kanan: Legenda Ringkas + Segmented Toggle Semua / Basecamp */}
+        <div className="flex flex-wrap items-center justify-between lg:justify-end gap-x-3 gap-y-2 pb-1 lg:pb-1.5 text-[11px]">
           <div className="flex items-center gap-2.5 text-slate-500">
             <span className="inline-flex items-center gap-1">
               <span className="w-2 h-2 rounded-full bg-emerald-500" />
@@ -498,10 +498,6 @@ export default function InteractiveBasecampMap({
             <span className="inline-flex items-center gap-1">
               <span className="w-2 h-2 rounded-full bg-blue-500" />
               <span>Pulang</span>
-            </span>
-            <span className="inline-flex items-center gap-1">
-              <span className="w-2 h-2 rounded-full bg-white border border-slate-300" />
-              <span>Kosong</span>
             </span>
           </div>
 

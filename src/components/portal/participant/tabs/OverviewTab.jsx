@@ -327,68 +327,61 @@ export default function OverviewTab({
         </div>
       )}
 
-      {/* 0. COUNTDOWN BATAS ROSTER & BERKAS (H-1 TM) - ULTRA COMPACT & CLEAN */}
-      <section className="relative overflow-hidden rounded-2xl border border-slate-800 bg-gradient-to-r from-slate-950 via-[#0a0f1d] to-slate-950 px-4 sm:px-5 py-3.5 text-white shadow-xs">
-        <div className="flex flex-col gap-3.5 md:flex-row md:items-center md:justify-between">
-          {/* Kiri: Judul, Jadwal, & Inline Progres */}
-          <div className="space-y-1 min-w-0">
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="flex h-2 w-2 rounded-full bg-amber-400 animate-pulse" />
-              <span className="text-[9.5px] font-black uppercase tracking-wider text-amber-300">
-                DEADLINE H-1 TECHNICAL MEETING
-              </span>
-              <span className="text-slate-600">•</span>
-              <span className="text-xs text-slate-400 font-medium">
-                08 Jan 2027, 23.59 WIB
-              </span>
+      {/* 0. COUNTDOWN BATAS ROSTER & BERKAS (H-1 TM) */}
+      <section className="relative overflow-hidden rounded-2xl border border-slate-800/90 bg-gradient-to-br from-slate-950 via-[#0d1323] to-slate-950 px-4 py-4 sm:px-6 text-white shadow-[0_12px_32px_rgba(2,6,23,0.18)] ring-1 ring-inset ring-white/[0.05]">
+        {/* Ambient Glow & Top Hairline */}
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-amber-400/40 to-transparent" />
+        <div className="pointer-events-none absolute -top-12 -left-10 h-32 w-48 rounded-full bg-amber-500/12 blur-2xl" />
+        <div className="pointer-events-none absolute -bottom-14 -right-8 h-32 w-56 rounded-full bg-rose-600/12 blur-2xl" />
+
+        <div className="relative flex flex-col gap-3.5 md:flex-row md:items-center md:justify-between">
+          {/* Kiri: Ikon + Judul + Jadwal */}
+          <div className="flex items-center gap-3.5 min-w-0">
+            <div className="flex h-10 w-10 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-xl border border-amber-400/25 bg-gradient-to-br from-amber-400/20 to-amber-500/5 text-amber-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.12)]">
+              <Timer className="h-5 w-5" />
             </div>
-
-            <h2 className="text-base sm:text-lg font-black tracking-tight text-white truncate">
-              Batas Melengkapi Roster & Berkas Peleton
-            </h2>
-
-            {/* Inline Progres Kelengkapan - 1 Baris Bersih */}
-            <div className="flex items-center gap-2.5 pt-0.5">
-              <div className="w-24 sm:w-28 h-1.5 rounded-full bg-slate-800 overflow-hidden shrink-0">
-                <div
-                  className={`h-full rounded-full transition-all duration-700 ${
-                    readinessPercent >= 100 ? 'bg-emerald-400' : 'bg-amber-400'
-                  }`}
-                  style={{ width: `${readinessPercent}%` }}
-                />
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <h2 className="text-sm sm:text-base font-extrabold tracking-tight text-white">
+                  Batas Berkas &amp; Roster
+                </h2>
+                <span className="rounded-md border border-amber-400/20 bg-amber-400/10 px-1.5 py-0.5 text-[10px] font-bold tracking-wide text-amber-300">
+                  H-1 TM
+                </span>
               </div>
-              <span className="text-[11px] font-semibold text-slate-300">
-                Progres:{' '}
-                <strong className={readinessPercent >= 100 ? 'text-emerald-400' : 'text-amber-400'}>
-                  {readinessPercent}% ({completedItems}/{totalItems} Data Terisi)
-                </strong>
-              </span>
+              <p className="mt-0.5 text-xs font-medium text-slate-400 tabular-nums">
+                08 Jan 2027 · 23.59 WIB
+              </p>
             </div>
           </div>
 
-          {/* Kanan: 4 Kotak Waktu Sederhana */}
-          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 self-start md:self-auto">
+          {/* Kanan: 4 Tile Countdown */}
+          <div className="grid grid-cols-4 gap-2 sm:flex sm:items-center sm:gap-2.5 shrink-0">
             {[
-              { label: 'HARI', val: timeLeft.days },
-              { label: 'JAM', val: timeLeft.hours },
-              { label: 'MENIT', val: timeLeft.minutes },
-              { label: 'DETIK', val: timeLeft.seconds }
-            ].map((unit, idx, arr) => (
-              <React.Fragment key={unit.label}>
-                <div className="flex min-w-[52px] sm:min-w-[60px] flex-col items-center justify-center rounded-xl border border-slate-800/80 bg-slate-900/90 py-1.5 sm:py-2 px-1.5 text-center">
-                  <span className="font-mono text-base sm:text-xl font-black text-white leading-tight">
-                    {String(unit.val).padStart(2, '0')}
-                  </span>
-                  <span className="text-[7px] sm:text-[7.5px] font-bold tracking-widest text-slate-400 uppercase mt-0.5">
-                    {unit.label}
-                  </span>
-                </div>
-                {idx < arr.length - 1 && (
-                  <span className="font-mono text-sm sm:text-base font-bold text-slate-600 animate-pulse select-none -mx-0.5">
-                    :
-                  </span>
-                )}
-              </React.Fragment>
+              { label: 'Hari', val: timeLeft.days, accent: true },
+              { label: 'Jam', val: timeLeft.hours, accent: false },
+              { label: 'Menit', val: timeLeft.minutes, accent: false },
+              { label: 'Detik', val: timeLeft.seconds, accent: false }
+            ].map((unit) => (
+              <div
+                key={unit.label}
+                className={`flex sm:min-w-[64px] flex-col items-center justify-center rounded-xl border py-2 px-2.5 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] ${
+                  unit.accent
+                    ? 'border-amber-400/25 bg-gradient-to-b from-amber-400/15 to-slate-900/90'
+                    : 'border-white/[0.08] bg-gradient-to-b from-white/[0.06] to-slate-900/90'
+                }`}
+              >
+                <span
+                  className={`font-mono text-lg sm:text-xl font-black leading-none tabular-nums ${
+                    unit.accent ? 'text-amber-300' : 'text-white'
+                  }`}
+                >
+                  {String(unit.val).padStart(2, '0')}
+                </span>
+                <span className="mt-1 text-[9.5px] font-semibold uppercase tracking-wider text-slate-400">
+                  {unit.label}
+                </span>
+              </div>
             ))}
           </div>
         </div>

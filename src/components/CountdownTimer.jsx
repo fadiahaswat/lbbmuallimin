@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { EVENT, COMPETITION } from '../config.js';
+import { EVENT, COMPETITION, PAYMENT } from '../config.js';
 import { useCompetition } from '../context/CompetitionContext.jsx';
 
 function pad(num) {
@@ -14,20 +14,23 @@ export default function CountdownTimer() {
     hours: '00',
     minutes: '00',
     seconds: '00',
-    phase: 'open', // 'upcoming' | 'open' | 'expired' | 'full'
-    label: 'Batas Akhir Pendaftaran',
+    phase: 'open_until_full', // 'upcoming' | 'open' | 'open_until_full' | 'expired' | 'full'
+    label: 'Status Pendaftaran',
   });
 
   // Check quota fullness (SD + SMP)
   const totalTargetSD = settings?.quotaSD || COMPETITION.SD.TARGET_PLATOONS || 18;
   const totalTargetSMP = settings?.quotaSMP || COMPETITION.SMP.TARGET_PLATOONS || 18;
+  const totalQuota = totalTargetSD + totalTargetSMP;
   const registeredSD = (teams || []).filter(t => t.jenjang === 'SD' && t.status !== 'rejected').length;
   const registeredSMP = (teams || []).filter(t => t.jenjang === 'SMP' && t.status !== 'rejected').length;
   const isQuotaFull = registeredSD >= totalTargetSD && registeredSMP >= totalTargetSMP;
 
   const eventDates = settings?.eventDates || {};
   const regStartStr = eventDates.registrationStart || EVENT.REGISTRATION_START;
-  const regDeadlineStr = eventDates.registrationDeadline || EVENT.REGISTRATION_DEADLINE;
+  const regDeadlineStr = EVENT.REGISTRATION_OPEN_UNTIL_QUOTA_FULL
+    ? ''
+    : (eventDates.registrationDeadline || EVENT.REGISTRATION_DEADLINE || '');
   const isRegOpenMaster = settings?.registrationOpen !== false;
 
   useEffect(() => {
@@ -64,7 +67,6 @@ export default function CountdownTimer() {
 
       const now = Date.now();
       const start = regStartStr ? new Date(regStartStr).getTime() : null;
-      const deadline = new Date(regDeadlineStr).getTime();
 
       // Kasus 1: Belum buka
       if (start && now < start) {
@@ -85,7 +87,19 @@ export default function CountdownTimer() {
         return;
       }
 
-      // Kasus 2: Sudah lewat batas akhir
+      // Kasus 2: Mode dibuka sampai kuota habis (tanpa batas tanggal)
+      if (!regDeadlineStr) {
+        setTimerState(prev => ({
+          ...prev,
+          phase: 'open_until_full',
+          label: 'Pendaftaran Dibuka s.d. Kuota Penuh',
+        }));
+        if (intervalId) clearInterval(intervalId);
+        return;
+      }
+
+      // Kasus 3: Sudah lewat batas akhir (jika batas tanggal aktif)
+      const deadline = new Date(regDeadlineStr).getTime();
       const distance = deadline - now;
       if (distance <= 0) {
         setTimerState(prev => ({
@@ -101,7 +115,7 @@ export default function CountdownTimer() {
         return;
       }
 
-      // Kasus 3: Periode aktif pendaftaran (21 September - 5 Oktober)
+      // Kasus 4: Periode aktif pendaftaran dengan batas tanggal
       const days = Math.floor(distance / (1000 * 60 * 60 * 24));
       const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
@@ -133,6 +147,52 @@ export default function CountdownTimer() {
         <span className="text-[11px] font-bold text-amber-100/90 text-center">
           Pendaftaran otomatis ditutup karena seluruh kuota (SD & SMP) telah terisi penuh.
         </span>
+      </div>
+    );
+  }
+
+  if (timerState.phase === 'open_until_full') {
+    return (
+      <div className="w-full flex flex-col items-center lg:items-start text-center lg:text-left">
+        <div className="inline-flex items-center gap-2 mb-3">
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
+          </span>
+          <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-emerald-400">
+            Pendaftaran Aktif
+          </span>
+        </div>
+
+        <h3 className="text-2xl sm:text-[26px] font-black tracking-tight leading-[1.15] text-white">
+          Dibuka Hingga{' '}
+          <span className="text-amber-400 block sm:inline lg:block">
+            Kuota Terpenuhi
+          </span>
+        </h3>
+
+        <p className="text-xs text-slate-400 mt-2.5 leading-relaxed max-w-xs">
+          Pendaftaran otomatis ditutup setelah seluruh kuota {totalQuota} peleton terisi penuh.
+        </p>
+
+        <div className="w-full mt-5 pt-4 border-t border-white/10 flex items-center justify-between gap-3">
+          <div className="text-left">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+              Tarif Berlaku
+            </span>
+            <span className="text-xs font-semibold text-slate-200">
+              Gelombang 2 · Semua Pendaftar
+            </span>
+          </div>
+          <div className="text-right shrink-0">
+            <span className="font-mono text-lg sm:text-xl font-black text-amber-400 tracking-tight block leading-none">
+              Rp{PAYMENT.FEE_DISPLAY}
+            </span>
+            <span className="text-[10px] text-slate-400 mt-1 block">
+              / peleton (kode 108)
+            </span>
+          </div>
+        </div>
       </div>
     );
   }

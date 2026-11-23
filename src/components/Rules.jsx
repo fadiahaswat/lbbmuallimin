@@ -79,6 +79,7 @@ export default function Rules({ embedded = false }) {
 
   const isSearching = Boolean(query);
   const totalMatches = Object.values(sectionMatches).filter(Boolean).length;
+  const openCount = Object.values(openAccordions).filter(Boolean).length;
 
   function shouldShow(key) {
     return !isSearching || sectionMatches[key];
@@ -88,13 +89,59 @@ export default function Rules({ embedded = false }) {
     return isSearching ? sectionMatches[key] : openAccordions[key];
   }
 
+  function getCardClass(key) {
+    const open = isAccordionOpen(key);
+    return `group rounded-2xl overflow-hidden bg-white border transition-all duration-200 ${
+      open
+        ? 'border-red-600/35 shadow-md ring-1 ring-red-600/10'
+        : 'border-slate-200/90 hover:border-slate-300 hover:shadow-xs'
+    }`;
+  }
+
+  function getHeaderBtnClass(key) {
+    const open = isAccordionOpen(key);
+    return `w-full flex justify-between items-center gap-3 p-4 sm:p-5 text-left transition-colors cursor-pointer ${
+      open ? 'bg-red-50/40' : 'bg-white hover:bg-slate-50/80'
+    }`;
+  }
+
+  function getBadgeClass(key, isInfo = false) {
+    const open = isAccordionOpen(key);
+    if (open) {
+      return 'w-9 h-9 rounded-xl bg-red-700 text-white font-black flex items-center justify-center text-xs font-mono shadow-xs shrink-0 transition-colors';
+    }
+    if (isInfo) {
+      return 'w-9 h-9 rounded-xl bg-red-50 text-red-700 border border-red-200/80 font-black flex items-center justify-center text-[11px] font-mono shrink-0 transition-colors group-hover:bg-red-100';
+    }
+    return 'w-9 h-9 rounded-xl bg-slate-100 text-slate-700 border border-slate-200/80 font-black flex items-center justify-center text-xs font-mono shrink-0 transition-colors group-hover:bg-red-50 group-hover:text-red-700';
+  }
+
+  function getChevronWrapClass(key) {
+    const open = isAccordionOpen(key);
+    return `w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-all duration-200 ${
+      open
+        ? 'bg-red-100 text-red-700 rotate-180'
+        : 'bg-slate-100 text-slate-400 group-hover:bg-slate-200/70 group-hover:text-slate-700'
+    }`;
+  }
+
   return (
-    <section id="rules" className={`${embedded ? 'py-4' : 'py-24 lg:py-32'} bg-white relative overflow-hidden font-sans`}>
+    <section
+      id="rules"
+      className={`${embedded ? 'py-4 bg-white' : 'py-24 lg:py-32 bg-white border-t border-slate-200'} relative overflow-hidden font-sans`}
+    >
+      {!embedded && (
+        <>
+          <div className="absolute inset-0 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:20px_20px] opacity-45 pointer-events-none" />
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-red-600/80 to-transparent" />
+        </>
+      )}
+
       <div className={embedded ? 'w-full relative z-10' : 'container mx-auto px-6 relative z-10'}>
         {!embedded && (
-          <div className="mb-12 text-center">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 border border-slate-200/80 text-slate-600 text-xs font-semibold uppercase tracking-wider mb-4">
-              <span className="w-2 h-2 rounded-full bg-red-600"></span>
+          <div className="mb-10 sm:mb-12 text-center">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-slate-50 border border-slate-200/90 text-slate-600 text-xs font-semibold uppercase tracking-wider mb-4 shadow-2xs">
+              <span className="w-2 h-2 rounded-full bg-red-600" />
               Juknis Lapangan Resmi
             </div>
             <h2 className="text-3xl md:text-5xl font-black text-slate-900 uppercase tracking-tight mb-4 leading-tight">
@@ -103,7 +150,7 @@ export default function Rules({ embedded = false }) {
                 Lapangan
               </span>
             </h2>
-            <div className="w-16 h-1 bg-red-700 mx-auto rounded-full mb-4"></div>
+            <div className="w-16 h-1 bg-red-700 mx-auto rounded-full mb-4" />
             <p className="text-slate-600 max-w-3xl mx-auto text-base sm:text-lg font-normal leading-relaxed">
               Pedoman teknis alur kronologis kegiatan, dimensi arena lomba, tata tertib tampil peleton, prosedur checkout basecamp, dan protokol keadaan darurat.
             </p>
@@ -112,88 +159,163 @@ export default function Rules({ embedded = false }) {
 
         <div className="max-w-4xl mx-auto flex flex-col gap-6">
           <div className="space-y-6">
-              {/* Smart Search Bar */}
-              <div className="relative group">
-                <div className="relative flex items-center bg-slate-50 border-2 border-slate-200 focus-within:border-red-600 focus-within:bg-white focus-within:shadow-xl rounded-2xl transition-all duration-300">
-                  <div className="pl-4 pr-2 text-slate-400 group-focus-within:text-red-600 transition-colors">
-                    <Search className="w-5 h-5" />
+              {/* 3-Card Quick Highlights Strip */}
+              {!embedded && (
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-slate-50/90 border border-slate-200/90 shadow-2xs">
+                    <div className="w-9 h-9 rounded-xl bg-red-50 border border-red-100 text-red-700 flex items-center justify-center shrink-0">
+                      <Shield className="w-4 h-4" />
+                    </div>
+                    <div className="min-w-0">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+                        Pedoman Baku PBB
+                      </span>
+                      <span className="text-xs font-extrabold text-slate-900 block truncate">
+                        Perpang TNI 58 &amp; 57/2018
+                      </span>
+                    </div>
                   </div>
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Cari kata kunci juknis lapangan (contoh: kotak danton, bendera, peluit, checkout basecamp, kahar)..."
-                    className="w-full py-4 pr-12 text-slate-800 placeholder-slate-400 font-medium text-sm sm:text-base bg-transparent focus:outline-none"
-                  />
-                  {searchQuery && (
+
+                  <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-slate-50/90 border border-slate-200/90 shadow-2xs">
+                    <div className="w-9 h-9 rounded-xl bg-amber-50 border border-amber-200/80 text-amber-700 flex items-center justify-center shrink-0">
+                      <Clock className="w-4 h-4" />
+                    </div>
+                    <div className="min-w-0">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+                        Durasi Tampil Arena
+                      </span>
+                      <span className="text-xs font-extrabold text-slate-900 block truncate">
+                        8 Menit SD · 12 Menit SMP
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-slate-50/90 border border-slate-200/90 shadow-2xs">
+                    <div className="w-9 h-9 rounded-xl bg-white border border-slate-200 text-slate-700 flex items-center justify-center shrink-0">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                    </div>
+                    <div className="min-w-0">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+                        Batas Checkout Basecamp
+                      </span>
+                      <span className="text-xs font-extrabold text-slate-900 block truncate">
+                        Maksimal Pukul 15.00 WIB
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Unified Search & Accordion Toolbar */}
+              <div className="space-y-2.5">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+                  <div className="relative group flex-1">
+                    <div className="relative flex items-center bg-white border border-slate-200 focus-within:border-red-600 focus-within:ring-4 focus-within:ring-red-600/10 shadow-xs rounded-xl transition-all duration-200">
+                      <div className="pl-3.5 pr-2 text-slate-400 group-focus-within:text-red-600 transition-colors">
+                        <Search className="w-4 h-4" />
+                      </div>
+                      <input
+                        type="text"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        placeholder="Cari juknis (kotak danton, bendera, peluit, checkout, kahar)..."
+                        className="w-full py-2.5 pr-10 text-slate-800 placeholder-slate-400 font-medium text-sm bg-transparent focus:outline-none"
+                      />
+                      {searchQuery && (
+                        <button
+                          type="button"
+                          onClick={() => setSearchQuery('')}
+                          className="absolute right-2.5 p-1 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
+                          title="Hapus pencarian"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="inline-grid grid-cols-2 sm:flex items-center gap-1 p-1 rounded-xl bg-slate-100 border border-slate-200/90 shrink-0">
                     <button
                       type="button"
-                      onClick={() => setSearchQuery('')}
-                      className="absolute right-3.5 p-1.5 rounded-full hover:bg-slate-200 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
-                      title="Hapus pencarian"
+                      onClick={() => {
+                        const allOpen = Object.keys(openAccordions).reduce((acc, k) => ({ ...acc, [k]: true }), {});
+                        setOpenAccordions(allOpen);
+                      }}
+                      className="px-3 py-1.5 rounded-lg bg-white hover:bg-red-50 text-slate-700 hover:text-red-700 font-bold transition-all shadow-2xs cursor-pointer text-xs text-center whitespace-nowrap"
                     >
-                      <X className="w-4 h-4" />
+                      Buka Semua
                     </button>
-                  )}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const allClosed = Object.keys(openAccordions).reduce((acc, k) => ({ ...acc, [k]: false }), {});
+                        setOpenAccordions(allClosed);
+                      }}
+                      className="px-3 py-1.5 rounded-lg hover:bg-white text-slate-600 hover:text-slate-900 font-bold transition-all cursor-pointer text-xs text-center whitespace-nowrap"
+                    >
+                      Tutup Semua
+                    </button>
+                  </div>
                 </div>
 
                 {isSearching && (
-                  <div className="mt-3 flex items-center justify-between text-xs text-slate-500 font-medium px-1">
+                  <div className="flex items-center justify-between text-xs text-slate-500 font-medium px-1">
                     <span>
-                      Menampilkan hasil untuk: <strong className="text-red-700 font-bold">"{searchQuery}"</strong>
+                      Hasil untuk: <strong className="text-red-700 font-bold">"{searchQuery}"</strong>
                     </span>
-                    <span className="bg-red-100/80 text-red-800 px-2.5 py-0.5 rounded-full font-bold">
+                    <span className="text-red-700 font-bold">
                       {totalMatches} Bagian Ditemukan
                     </span>
                   </div>
                 )}
               </div>
 
-              {/* Quick Toggle Accordion Controls */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 text-xs px-1">
-                <span className="text-slate-500 font-semibold flex items-center gap-1.5">
-                  <BookOpen className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                  <span>8 Bab Regulasi & Ketentuan Lapangan</span>
-                </span>
-                <div className="grid grid-cols-2 sm:flex sm:items-center gap-2 w-full sm:w-auto">
+              {isSearching && totalMatches === 0 && (
+                <div className="rounded-2xl bg-slate-50 border border-slate-200 p-10 text-center space-y-3">
+                  <div className="w-12 h-12 rounded-2xl bg-white border border-slate-200 text-slate-400 flex items-center justify-center mx-auto">
+                    <Search className="w-5 h-5" />
+                  </div>
+                  <p className="text-sm font-bold text-slate-800">
+                    Tidak ada bab juknis yang cocok dengan "{searchQuery}"
+                  </p>
+                  <p className="text-xs text-slate-500">
+                    Coba kata kunci lain seperti kotak danton, bendera, peluit, atau checkout basecamp.
+                  </p>
                   <button
                     type="button"
-                    onClick={() => {
-                      const allOpen = Object.keys(openAccordions).reduce((acc, k) => ({ ...acc, [k]: true }), {});
-                      setOpenAccordions(allOpen);
-                    }}
-                    className="px-3.5 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 text-slate-700 font-bold transition-all shadow-xs cursor-pointer text-xs text-center justify-center"
+                    onClick={() => setSearchQuery('')}
+                    className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-colors cursor-pointer"
                   >
-                    Buka Semua
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const allClosed = Object.keys(openAccordions).reduce((acc, k) => ({ ...acc, [k]: false }), {});
-                      setOpenAccordions(allClosed);
-                    }}
-                    className="px-3.5 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300 text-slate-700 font-bold transition-all shadow-xs cursor-pointer text-xs text-center justify-center"
-                  >
-                    Tutup Semua
+                    Reset Pencarian
                   </button>
                 </div>
-              </div>
+              )}
 
-              <div className="space-y-4" id="rules-accordion">
+              <div className="space-y-3" id="rules-accordion">
                 {/* PENDAHULUAN */}
                 {shouldShow('intro') && (
-                  <div className="group border border-slate-200 rounded-2xl overflow-hidden bg-white hover:border-red-500/40 hover:shadow-md transition-all duration-300">
+                  <div className={getCardClass('intro')}>
                     <button
+                      type="button"
                       onClick={() => toggleAccordion('intro')}
-                      className="w-full flex justify-between items-center p-5 text-left bg-slate-50/70 hover:bg-slate-50 transition-colors cursor-pointer"
+                      className={getHeaderBtnClass('intro')}
                     >
-                      <div className="flex items-center gap-3.5">
-                        <span className="w-8 h-8 rounded-xl bg-red-100 text-red-700 font-black flex items-center justify-center text-xs shadow-xs">
+                      <div className="flex items-center gap-3.5 min-w-0">
+                        <span className={getBadgeClass('intro', true)}>
                           INFO
                         </span>
-                        <span className="font-bold text-base md:text-lg text-slate-900">Pendahuluan Petunjuk Teknis Lapangan</span>
+                        <div className="min-w-0">
+                          <span className="font-extrabold text-sm sm:text-base text-slate-900 leading-snug block">
+                            Pendahuluan Petunjuk Teknis Lapangan
+                          </span>
+                          <span className="text-[11px] font-medium text-slate-500 mt-0.5 block truncate">
+                            Landasan Perpang TNI No. 58 &amp; 57 Tahun 2018 serta alur kronologis lomba
+                          </span>
+                        </div>
                       </div>
-                      <ChevronDown className={`text-slate-400 transition-transform duration-300 w-5 h-5 ${isAccordionOpen('intro') ? 'rotate-180 text-red-600' : ''}`} />
+                      <span className={getChevronWrapClass('intro')}>
+                        <ChevronDown className="w-4 h-4" />
+                      </span>
                     </button>
                     {isAccordionOpen('intro') && (
                       <div className="bg-white border-t border-slate-100 p-6 sm:p-7 text-slate-700 text-sm leading-relaxed space-y-4 animate-fade">
@@ -215,18 +337,28 @@ export default function Rules({ embedded = false }) {
 
             {/* A. DEFINISI ISTILAH DAN KETENTUAN DASAR LAPANGAN */}
             {shouldShow('def') && (
-              <div className="group border border-slate-200 rounded-2xl overflow-hidden bg-white hover:border-red-500/40 hover:shadow-md transition-all duration-300">
+              <div className={getCardClass('def')}>
                 <button
+                  type="button"
                   onClick={() => toggleAccordion('def')}
-                  className="w-full flex justify-between items-center p-5 text-left bg-slate-50/70 hover:bg-slate-50 transition-colors cursor-pointer"
+                  className={getHeaderBtnClass('def')}
                 >
-                  <div className="flex items-center gap-3.5">
-                    <span className="w-8 h-8 rounded-xl bg-slate-200 text-slate-800 font-black flex items-center justify-center text-sm shadow-xs">
+                  <div className="flex items-center gap-3.5 min-w-0">
+                    <span className={getBadgeClass('def')}>
                       A
                     </span>
-                    <span className="font-bold text-base md:text-lg text-slate-900">A. Definisi Istilah dan Ketentuan Dasar Lapangan</span>
+                    <div className="min-w-0">
+                      <span className="font-extrabold text-sm sm:text-base text-slate-900 leading-snug block">
+                        A. Definisi Istilah dan Ketentuan Dasar Lapangan
+                      </span>
+                      <span className="text-[11px] font-medium text-slate-500 mt-0.5 block truncate">
+                        Clear Area, DP 1–2, Kotak Danton, dimensi arena, dan gerakan penyesuaian
+                      </span>
+                    </div>
                   </div>
-                  <ChevronDown className={`text-slate-400 transition-transform duration-300 w-5 h-5 ${isAccordionOpen('def') ? 'rotate-180 text-red-600' : ''}`} />
+                  <span className={getChevronWrapClass('def')}>
+                    <ChevronDown className="w-4 h-4" />
+                  </span>
                 </button>
                 {isAccordionOpen('def') && (
                   <div className="bg-white border-t border-slate-100 p-6 sm:p-7 text-slate-700 text-sm leading-relaxed space-y-4 animate-fade">
@@ -379,18 +511,28 @@ export default function Rules({ embedded = false }) {
 
             {/* B. TECHNICAL MEETING (TM) PESERTA */}
             {shouldShow('tm') && (
-              <div className="group border border-slate-200 rounded-2xl overflow-hidden bg-white hover:border-red-500/40 hover:shadow-md transition-all duration-300">
+              <div className={getCardClass('tm')}>
                 <button
+                  type="button"
                   onClick={() => toggleAccordion('tm')}
-                  className="w-full flex justify-between items-center p-5 text-left bg-slate-50/70 hover:bg-slate-50 transition-colors cursor-pointer"
+                  className={getHeaderBtnClass('tm')}
                 >
-                  <div className="flex items-center gap-3.5">
-                    <span className="w-8 h-8 rounded-xl bg-slate-200 text-slate-800 font-black flex items-center justify-center text-sm shadow-xs">
+                  <div className="flex items-center gap-3.5 min-w-0">
+                    <span className={getBadgeClass('tm')}>
                       B
                     </span>
-                    <span className="font-bold text-base md:text-lg text-slate-900">B. Technical Meeting (TM) Peserta</span>
+                    <div className="min-w-0">
+                      <span className="font-extrabold text-sm sm:text-base text-slate-900 leading-snug block">
+                        B. Technical Meeting (TM) Peserta
+                      </span>
+                      <span className="text-[11px] font-medium text-slate-500 mt-0.5 block truncate">
+                        Jadwal TM, verifikasi berkas fisik asli, dan undian nomor urut tampil
+                      </span>
+                    </div>
                   </div>
-                  <ChevronDown className={`text-slate-400 transition-transform duration-300 w-5 h-5 ${isAccordionOpen('tm') ? 'rotate-180 text-red-600' : ''}`} />
+                  <span className={getChevronWrapClass('tm')}>
+                    <ChevronDown className="w-4 h-4" />
+                  </span>
                 </button>
                 {isAccordionOpen('tm') && (
                   <div className="bg-white border-t border-slate-100 p-6 sm:p-7 text-slate-700 text-sm leading-relaxed space-y-4 animate-fade">
@@ -514,18 +656,28 @@ export default function Rules({ embedded = false }) {
 
             {/* C. UJI COBA LAPANGAN */}
             {shouldShow('trial') && (
-              <div className="group border border-slate-200 rounded-2xl overflow-hidden bg-white hover:border-red-500/40 hover:shadow-md transition-all duration-300">
+              <div className={getCardClass('trial')}>
                 <button
+                  type="button"
                   onClick={() => toggleAccordion('trial')}
-                  className="w-full flex justify-between items-center p-5 text-left bg-slate-50/70 hover:bg-slate-50 transition-colors cursor-pointer"
+                  className={getHeaderBtnClass('trial')}
                 >
-                  <div className="flex items-center gap-3.5">
-                    <span className="w-8 h-8 rounded-xl bg-slate-200 text-slate-800 font-black flex items-center justify-center text-sm shadow-xs">
+                  <div className="flex items-center gap-3.5 min-w-0">
+                    <span className={getBadgeClass('trial')}>
                       C
                     </span>
-                    <span className="font-bold text-base md:text-lg text-slate-900">C. Uji Coba Lapangan</span>
+                    <div className="min-w-0">
+                      <span className="font-extrabold text-sm sm:text-base text-slate-900 leading-snug block">
+                        C. Uji Coba Lapangan
+                      </span>
+                      <span className="text-[11px] font-medium text-slate-500 mt-0.5 block truncate">
+                        Familiarisasi medan arena Sedayu, alokasi durasi latihan, dan ketentuan pakaian
+                      </span>
+                    </div>
                   </div>
-                  <ChevronDown className={`text-slate-400 transition-transform duration-300 w-5 h-5 ${isAccordionOpen('trial') ? 'rotate-180 text-red-600' : ''}`} />
+                  <span className={getChevronWrapClass('trial')}>
+                    <ChevronDown className="w-4 h-4" />
+                  </span>
                 </button>
                 {isAccordionOpen('trial') && (
                   <div className="bg-white border-t border-slate-100 p-6 sm:p-7 text-slate-700 text-sm leading-relaxed space-y-4 animate-fade">
@@ -619,18 +771,28 @@ export default function Rules({ embedded = false }) {
 
             {/* D. REGISTRASI S.D. UPACARA PEMBUKAAN */}
             {shouldShow('reg') && (
-              <div className="group border border-slate-200 rounded-2xl overflow-hidden bg-white hover:border-red-500/40 hover:shadow-md transition-all duration-300">
+              <div className={getCardClass('reg')}>
                 <button
+                  type="button"
                   onClick={() => toggleAccordion('reg')}
-                  className="w-full flex justify-between items-center p-5 text-left bg-slate-50/70 hover:bg-slate-50 transition-colors cursor-pointer"
+                  className={getHeaderBtnClass('reg')}
                 >
-                  <div className="flex items-center gap-3.5">
-                    <span className="w-8 h-8 rounded-xl bg-slate-200 text-slate-800 font-black flex items-center justify-center text-sm shadow-xs">
+                  <div className="flex items-center gap-3.5 min-w-0">
+                    <span className={getBadgeClass('reg')}>
                       D
                     </span>
-                    <span className="font-bold text-base md:text-lg text-slate-900">D. Registrasi s.d. Upacara Pembukaan</span>
+                    <div className="min-w-0">
+                      <span className="font-extrabold text-sm sm:text-base text-slate-900 leading-snug block">
+                        D. Registrasi s.d. Upacara Pembukaan
+                      </span>
+                      <span className="text-[11px] font-medium text-slate-500 mt-0.5 block truncate">
+                        Check-in pukul 06.00 WIB, nomor dada, sterilisasi arena, dan upacara pembukaan
+                      </span>
+                    </div>
                   </div>
-                  <ChevronDown className={`text-slate-400 transition-transform duration-300 w-5 h-5 ${isAccordionOpen('reg') ? 'rotate-180 text-red-600' : ''}`} />
+                  <span className={getChevronWrapClass('reg')}>
+                    <ChevronDown className="w-4 h-4" />
+                  </span>
                 </button>
                 {isAccordionOpen('reg') && (
                   <div className="bg-white border-t border-slate-100 p-6 sm:p-7 text-slate-700 text-sm leading-relaxed space-y-4 animate-fade">
@@ -715,18 +877,28 @@ export default function Rules({ embedded = false }) {
 
             {/* E. ALUR PERSIAPAN & PELAKSANAAN TAMPIL DI ARENA */}
             {shouldShow('arena') && (
-              <div className="group border border-slate-200 rounded-2xl overflow-hidden bg-white hover:border-red-500/40 hover:shadow-md transition-all duration-300">
+              <div className={getCardClass('arena')}>
                 <button
+                  type="button"
                   onClick={() => toggleAccordion('arena')}
-                  className="w-full flex justify-between items-center p-5 text-left bg-slate-50/70 hover:bg-slate-50 transition-colors cursor-pointer"
+                  className={getHeaderBtnClass('arena')}
                 >
-                  <div className="flex items-center gap-3.5">
-                    <span className="w-8 h-8 rounded-xl bg-slate-200 text-slate-800 font-black flex items-center justify-center text-sm shadow-xs">
+                  <div className="flex items-center gap-3.5 min-w-0">
+                    <span className={getBadgeClass('arena')}>
                       E
                     </span>
-                    <span className="font-bold text-base md:text-lg text-slate-900">E. Alur Persiapan & Pelaksanaan Tampil di Arena</span>
+                    <div className="min-w-0">
+                      <span className="font-extrabold text-sm sm:text-base text-slate-900 leading-snug block">
+                        E. Alur Persiapan &amp; Pelaksanaan Tampil di Arena
+                      </span>
+                      <span className="text-[11px] font-medium text-slate-500 mt-0.5 block truncate">
+                        Laporan pembuka, kode peluit, isyarat bendera hakim garis, dan pergantian cadangan
+                      </span>
+                    </div>
                   </div>
-                  <ChevronDown className={`text-slate-400 transition-transform duration-300 w-5 h-5 ${isAccordionOpen('arena') ? 'rotate-180 text-red-600' : ''}`} />
+                  <span className={getChevronWrapClass('arena')}>
+                    <ChevronDown className="w-4 h-4" />
+                  </span>
                 </button>
                 {isAccordionOpen('arena') && (
                   <div className="bg-white border-t border-slate-100 p-6 sm:p-7 text-slate-700 text-sm leading-relaxed space-y-4 animate-fade">
@@ -845,18 +1017,28 @@ export default function Rules({ embedded = false }) {
 
             {/* F. KETENTUAN PASCA-LOMBA DAN PROSEDUR CHECKOUT BASECAMP */}
             {shouldShow('checkout') && (
-              <div className="group border border-slate-200 rounded-2xl overflow-hidden bg-white hover:border-red-500/40 hover:shadow-md transition-all duration-300">
+              <div className={getCardClass('checkout')}>
                 <button
+                  type="button"
                   onClick={() => toggleAccordion('checkout')}
-                  className="w-full flex justify-between items-center p-5 text-left bg-slate-50/70 hover:bg-slate-50 transition-colors cursor-pointer"
+                  className={getHeaderBtnClass('checkout')}
                 >
-                  <div className="flex items-center gap-3.5">
-                    <span className="w-8 h-8 rounded-xl bg-slate-200 text-slate-800 font-black flex items-center justify-center text-sm shadow-xs">
+                  <div className="flex items-center gap-3.5 min-w-0">
+                    <span className={getBadgeClass('checkout')}>
                       F
                     </span>
-                    <span className="font-bold text-base md:text-lg text-slate-900">F. Ketentuan Pasca-Lomba dan Prosedur Checkout Basecamp</span>
+                    <div className="min-w-0">
+                      <span className="font-extrabold text-sm sm:text-base text-slate-900 leading-snug block">
+                        F. Ketentuan Pasca-Lomba dan Prosedur Checkout Basecamp
+                      </span>
+                      <span className="text-[11px] font-medium text-slate-500 mt-0.5 block truncate">
+                        4 langkah kebersihan kelas, pilah sampah, inspeksi LO, dan pengambilan KTP/SIM
+                      </span>
+                    </div>
                   </div>
-                  <ChevronDown className={`text-slate-400 transition-transform duration-300 w-5 h-5 ${isAccordionOpen('checkout') ? 'rotate-180 text-red-600' : ''}`} />
+                  <span className={getChevronWrapClass('checkout')}>
+                    <ChevronDown className="w-4 h-4" />
+                  </span>
                 </button>
                 {isAccordionOpen('checkout') && (
                   <div className="bg-white border-t border-slate-100 p-6 sm:p-7 text-slate-700 text-sm leading-relaxed space-y-4 animate-fade">
@@ -913,18 +1095,28 @@ export default function Rules({ embedded = false }) {
 
             {/* G. KEADAAN KAHAR (FORCE MAJEURE) */}
             {shouldShow('force') && (
-              <div className="group border border-slate-200 rounded-2xl overflow-hidden bg-white hover:border-red-500/40 hover:shadow-md transition-all duration-300">
+              <div className={getCardClass('force')}>
                 <button
+                  type="button"
                   onClick={() => toggleAccordion('force')}
-                  className="w-full flex justify-between items-center p-5 text-left bg-slate-50/70 hover:bg-slate-50 transition-colors cursor-pointer"
+                  className={getHeaderBtnClass('force')}
                 >
-                  <div className="flex items-center gap-3.5">
-                    <span className="w-8 h-8 rounded-xl bg-slate-200 text-slate-800 font-black flex items-center justify-center text-sm shadow-xs">
+                  <div className="flex items-center gap-3.5 min-w-0">
+                    <span className={getBadgeClass('force')}>
                       G
                     </span>
-                    <span className="font-bold text-base md:text-lg text-slate-900">G. Keadaan Kahar (Force Majeure)</span>
+                    <div className="min-w-0">
+                      <span className="font-extrabold text-sm sm:text-base text-slate-900 leading-snug block">
+                        G. Keadaan Kahar (Force Majeure)
+                      </span>
+                      <span className="text-[11px] font-medium text-slate-500 mt-0.5 block truncate">
+                        Protokol hujan lebat, badai/petir, penghentian sementara, dan reset stopwatch
+                      </span>
+                    </div>
                   </div>
-                  <ChevronDown className={`text-slate-400 transition-transform duration-300 w-5 h-5 ${isAccordionOpen('force') ? 'rotate-180 text-red-600' : ''}`} />
+                  <span className={getChevronWrapClass('force')}>
+                    <ChevronDown className="w-4 h-4" />
+                  </span>
                 </button>
                 {isAccordionOpen('force') && (
                   <div className="bg-white border-t border-slate-100 p-6 sm:p-7 text-slate-700 text-sm leading-relaxed space-y-4 animate-fade">
@@ -988,18 +1180,28 @@ export default function Rules({ embedded = false }) {
 
             {/* H. PENUTUP */}
             {shouldShow('closing') && (
-              <div className="group border border-slate-200 rounded-2xl overflow-hidden bg-white hover:border-red-500/40 hover:shadow-md transition-all duration-300">
+              <div className={getCardClass('closing')}>
                 <button
+                  type="button"
                   onClick={() => toggleAccordion('closing')}
-                  className="w-full flex justify-between items-center p-5 text-left bg-slate-50/70 hover:bg-slate-50 transition-colors cursor-pointer"
+                  className={getHeaderBtnClass('closing')}
                 >
-                  <div className="flex items-center gap-3.5">
-                    <span className="w-8 h-8 rounded-xl bg-slate-200 text-slate-800 font-black flex items-center justify-center text-sm shadow-xs">
+                  <div className="flex items-center gap-3.5 min-w-0">
+                    <span className={getBadgeClass('closing')}>
                       H
                     </span>
-                    <span className="font-bold text-base md:text-lg text-slate-900">H. Penutup</span>
+                    <div className="min-w-0">
+                      <span className="font-extrabold text-sm sm:text-base text-slate-900 leading-snug block">
+                        H. Penutup
+                      </span>
+                      <span className="text-[11px] font-medium text-slate-500 mt-0.5 block truncate">
+                        Ketentuan mengikat hasil TM dan pusat layanan narahubung resmi panitia
+                      </span>
+                    </div>
                   </div>
-                  <ChevronDown className={`text-slate-400 transition-transform duration-300 w-5 h-5 ${isAccordionOpen('closing') ? 'rotate-180 text-red-600' : ''}`} />
+                  <span className={getChevronWrapClass('closing')}>
+                    <ChevronDown className="w-4 h-4" />
+                  </span>
                 </button>
                 {isAccordionOpen('closing') && (
                   <div className="bg-white border-t border-slate-100 p-6 sm:p-7 text-slate-700 text-sm leading-relaxed space-y-5 animate-fade">

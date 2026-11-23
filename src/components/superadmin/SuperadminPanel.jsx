@@ -114,9 +114,9 @@ export default function SuperadminPanel() {
 
   const defaultDates = {
     registrationStart: '2026-10-26T00:00:00+07:00',
-    registrationDeadline: '2026-11-22T23:59:59+07:00',
-    registrationRangeText: '26 Oktober – 22 November 2026',
-    verificationRangeText: '26 Oktober – 22 November 2026',
+    registrationDeadline: '',
+    registrationRangeText: 'Dibuka s.d. Kuota Penuh',
+    verificationRangeText: 'Dibuka s.d. Kuota Penuh',
     technicalMeetingDate: '9 Januari 2027',
     technicalMeetingTime: '13.00 - 16.30 WIB',
     technicalMeetingFullDate: 'Sabtu, 9 Januari 2027',
@@ -236,12 +236,12 @@ export default function SuperadminPanel() {
     const iso = val ? `${val}:59+07:00` : '';
     const startD = dateForm.registrationStart ? dateForm.registrationStart.slice(0, 10) : '';
     const endD = val ? val.slice(0, 10) : '';
-    const rangeText = (startD && endD) ? formatIndoRange(startD, endD) : dateForm.registrationRangeText;
+    const rangeText = (startD && endD) ? formatIndoRange(startD, endD) : 'Dibuka s.d. Kuota Penuh';
     setDateForm(prev => ({
       ...prev,
       registrationDeadline: iso,
-      registrationRangeText: rangeText || prev.registrationRangeText,
-      verificationRangeText: rangeText || prev.verificationRangeText,
+      registrationRangeText: rangeText,
+      verificationRangeText: rangeText,
     }));
   }
 
@@ -1057,14 +1057,15 @@ export default function SuperadminPanel() {
                 <div className="p-3.5 rounded-xl bg-slate-50/70 border border-slate-200/80 space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-slate-800">2. Penutupan Pendaftaran</span>
-                    <span className="text-[10px] font-bold text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded">Auto-Close</span>
+                    <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded">s.d. Kuota Penuh</span>
                   </div>
                   <input
                     type="datetime-local"
-                    value={toDatetimeLocal(dateForm.registrationDeadline, '2026-11-22T23:59')}
+                    value={toDatetimeLocal(dateForm.registrationDeadline, '')}
                     onChange={e => handleRegDeadlineChange(e.target.value)}
                     className="w-full px-3 py-1.5 text-xs bg-white border border-slate-200 rounded-lg outline-none focus:border-slate-900"
                   />
+                  <span className="text-[10px] text-slate-500 block">Kosongkan agar tetap dibuka hingga kuota penuh.</span>
                 </div>
 
                 {/* 3. Rentang Verifikasi */}

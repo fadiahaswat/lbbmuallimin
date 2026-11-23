@@ -72,19 +72,22 @@ export const HERO = {
 // ---------------------------------------------------------------------------
 export const EVENT = {
     /** Teks badge di hero */
-    REGISTRATION_BADGE: 'Pendaftaran: 26 Oktober – 22 November 2026',
+    REGISTRATION_BADGE: 'Pendaftaran Dibuka s.d. Kuota Penuh',
 
     /** Rentang pendaftaran daring */
-    REGISTRATION_RANGE: '26 Oktober – 22 November 2026',
+    REGISTRATION_RANGE: 'Dibuka s.d. Kuota Penuh',
 
     /** Rentang verifikasi berkas daring oleh panitia */
-    VERIFICATION_RANGE: '26 Oktober – 22 November 2026',
+    VERIFICATION_RANGE: 'Dibuka s.d. Kuota Penuh',
 
     /** Tanggal pembukaan pendaftaran daring */
     REGISTRATION_START: '2026-10-26T00:00:00+07:00',
 
-    /** Tanggal batas akhir pendaftaran – dipakai countdown timer */
-    REGISTRATION_DEADLINE: '2026-11-22T23:59:59+07:00',
+    /** Tanggal batas akhir pendaftaran – null/kosong berarti dibuka hingga kuota penuh */
+    REGISTRATION_DEADLINE: null,
+
+    /** Mode pendaftaran dibuka terus hingga kuota penuh */
+    REGISTRATION_OPEN_UNTIL_QUOTA_FULL: true,
 
     /** TM Juri */
     JURY_TM_DATE: '7 November 2026',
@@ -277,19 +280,28 @@ export const PAYMENT = {
     BANK_NAME: 'BSI (Bank Syariah Indonesia)',
 
     /** Teks biaya yang tampil di UI (tanpa "Rp") */
-    FEE_DISPLAY: '350.108',
+    FEE_DISPLAY: '400.108',
+
+    /** Gelombang aktif yang berlaku untuk seluruh pendaftar */
+    ACTIVE_WAVE: 2,
 
     /** Kode unik transfer */
     UNIQUE_CODE: '108',
 
     /** Daftar gelombang / tier biaya pendaftaran */
     FEE_TIERS: [
-        { name: 'Gelombang 1 (26 Okt – 8 Nov)', amount: '350.000', amountWithCode: '350.108', label: '26 Oktober – 8 November 2026', endDate: '2026-11-08T23:59:59+07:00' },
-        { name: 'Gelombang 2 (9 – 22 Nov)', amount: '400.000', amountWithCode: '400.108', label: '9 November – 22 November 2026/Kuota Penuh', endDate: '2026-11-22T23:59:59+07:00' },
+        {
+            wave: 2,
+            name: 'Gelombang 2 (s.d. Kuota Penuh)',
+            amount: '400.000',
+            amountWithCode: '400.108',
+            label: 'Berlaku untuk seluruh pendaftar hingga kuota penuh',
+            endDate: null,
+        },
     ],
 
     /** Teks biaya lengkap untuk FAQ */
-    FEE_FULL: 'Rp 350.000,- / peleton (Gelombang 1: 26 Oktober – 8 November 2026) dan Rp 400.000,- / peleton (Gelombang 2: 9 November – 22 November 2026/Kuota Penuh). Setiap pembayaran wajib menggunakan kode unik 108.',
+    FEE_FULL: 'Rp 400.000,- / peleton (Tarif Gelombang 2 — berlaku untuk seluruh pendaftar hingga kuota penuh). Setiap pembayaran wajib menggunakan kode unik 108 (1 peleton: Rp400.108,-; 2 peleton: Rp800.108,-).',
 
     /** Keterangan format berita transfer */
     TRANSFER_NOTE_FORMAT: 'NAMA SEKOLAH_JUMLAH PELETON',

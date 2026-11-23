@@ -93,7 +93,7 @@ export default function Step3PaymentAndPact({
                 </span>
               </div>
               <span className="text-[10px] text-slate-400 mt-0.5">
-                *Termasuk kode unik 108 (2 Peleton: Rp 700.108 Gel. 1 / Rp 800.108 Gel. 2)
+                *Tarif Gelombang 2 termasuk kode unik 108 (2 Peleton: Rp 800.108)
               </span>
             </div>
           </div>

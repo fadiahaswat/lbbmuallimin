@@ -207,7 +207,17 @@ export default function SimpaskorSidebarLayout({
       return list.filter(item => canAccessStage(item.stage, userRole));
     };
 
-    const sections = [];
+    const sections = [
+      {
+        id: 'utama',
+        title: 'UTAMA',
+        tag: 'Ringkasan',
+        tagColor: 'text-red-700 bg-red-50 border-red-200/80',
+        items: [
+          { id: 'staff_home', index: '00', label: 'Beranda', icon: Home, view: 'staff_home', activeGradient: 'from-red-600 to-rose-600' },
+        ],
+      },
+    ];
     const tahapan = filterAccessible(baseTahapan);
     if (tahapan.length > 0) {
       sections.push({ 
@@ -230,19 +240,19 @@ export default function SimpaskorSidebarLayout({
       });
     }
 
-    const regulasiItems = [
-      { id: 'dokumen', index: '09', label: 'Pusat Dokumen & Regulasi', icon: BookOpen, view: 'dokumen', activeGradient: 'from-slate-700 to-slate-900' },
-    ];
+    const sistemItems = [];
     if (userRole === 'superadmin') {
-      regulasiItems.push({ id: 'superadmin', index: '10', label: 'Master System', icon: Crown, view: 'superadmin', activeGradient: 'from-purple-700 to-indigo-700' });
+      sistemItems.push({ id: 'superadmin', index: '09', label: 'Master System', icon: Crown, view: 'superadmin', activeGradient: 'from-purple-700 to-indigo-700' });
     }
-    sections.push({ 
-      id: 'sistem', 
-      title: 'SISTEM & REGULASI', 
-      tag: 'Sistem',
-      tagColor: 'text-purple-700 bg-purple-50 border-purple-200/80',
-      items: regulasiItems 
-    });
+    if (sistemItems.length > 0) {
+      sections.push({ 
+        id: 'sistem', 
+        title: 'SISTEM', 
+        tag: 'Sistem',
+        tagColor: 'text-purple-700 bg-purple-50 border-purple-200/80',
+        items: sistemItems 
+      });
+    }
 
     return sections;
   };
@@ -280,18 +290,14 @@ export default function SimpaskorSidebarLayout({
         return Scale;
       case 'unduhan':
         return Download;
-      case 'dokumen':
       case 'materi_tema':
-      case 'juknis':
-      case 'tatib':
       case 'rundown':
-      case 'proposal':
-      case 'timeline':
         return BookOpen;
       case 'superadmin':
         return Crown;
       case 'overview':
       case 'dashboard':
+      case 'staff_home':
         return Home;
       default:
         return ShieldCheck;
@@ -407,13 +413,8 @@ export default function SimpaskorSidebarLayout({
           kicker: 'PAPAN PERINGKAT RESMI DEWAN JURI',
           accentGradient: 'from-red-600 via-amber-500 to-rose-600'
         };
-      case 'dokumen':
       case 'materi_tema':
-      case 'juknis':
-      case 'tatib':
       case 'rundown':
-      case 'proposal':
-      case 'timeline':
         return { 
           bg: 'bg-gradient-to-br from-amber-500 to-orange-600 text-white shadow-md shadow-amber-500/20 ring-1 ring-white/20', 
           iconColor: 'text-white', 
@@ -448,18 +449,6 @@ export default function SimpaskorSidebarLayout({
         };
     }
   };
-
-  const saasDocItems = useMemo(() => {
-    // Untuk peserta: Dokumen SaaS tidak perlu tampil di dasbor peserta
-    if (userRole === 'peserta') {
-      return [];
-    }
-
-    // Untuk Admin, Panitia, dan Superadmin: 1 Menu Tunggal Terpadu (Pusat Dokumen & Regulasi)
-    return [
-      { id: 'dokumen', label: 'Pusat Regulasi & Dokumen', icon: BookOpen, view: 'dokumen' },
-    ];
-  }, [userRole]);
 
   const navItems = getNavItems();
 
@@ -1083,37 +1072,54 @@ export default function SimpaskorSidebarLayout({
       </div>
 
       {/* 4. FLOATING PILL MOBILE BOTTOM NAVIGATION (Dark Mode - Dynamic Island Style) */}
-      <nav
-        aria-label="Navigasi Menu Utama Mobile"
-        className={`lg:hidden fixed bottom-3.5 left-1/2 -translate-x-1/2 z-30 bg-[#0d1421]/95 backdrop-blur-2xl border border-white/15 rounded-full p-1.5 shadow-[0_16px_40px_rgba(0,0,0,0.45),0_0_1px_1px_rgba(255,255,255,0.08)] flex items-center justify-between gap-1 max-w-[92vw] sm:max-w-md transition-all duration-300 ring-1 ring-black/40 ${
-          isMobileMenuOpen ? 'opacity-0 pointer-events-none translate-y-8 invisible' : 'opacity-100 translate-y-0 visible'
-        }`}
-      >
-        {mobileBottomNavItems.map(item => {
-          const Icon = item.icon;
-          const isActive = isItemActive(item);
-          return (
-            <button
-              key={item.id}
-              type="button"
-              onClick={() => handleNavClick(item)}
-              title={item.label}
-              className={`flex items-center gap-2 transition-all duration-300 cursor-pointer select-none active:scale-95 ${
-                isActive
-                  ? `${item.activeBg || 'bg-gradient-to-r from-red-600 to-rose-600'} text-white px-3.5 py-2 rounded-full shadow-lg ${item.activeShadow || 'shadow-red-600/30'} font-bold text-xs ring-1 ring-white/20`
-                  : 'text-slate-400 hover:text-white p-2.5 rounded-full hover:bg-white/10'
-              }`}
-            >
-              <Icon className="w-4.5 h-4.5 shrink-0" />
-              {isActive && (
-                <span className="whitespace-nowrap tracking-tight animate-in fade-in duration-200 font-bold">
-                  {item.label}
-                </span>
-              )}
-            </button>
-          );
-        })}
-      </nav>
+      {mobileBottomNavItems.length > 0 && (
+        <nav
+          aria-label="Navigasi Menu Utama Mobile"
+          className={`lg:hidden fixed bottom-3.5 left-1/2 -translate-x-1/2 z-30 bg-[#0d1421]/95 backdrop-blur-2xl border border-white/15 rounded-full p-1.5 shadow-[0_16px_40px_rgba(0,0,0,0.45),0_0_1px_1px_rgba(255,255,255,0.08)] flex items-center justify-center gap-1 max-w-[94vw] sm:max-w-md transition-all duration-300 ring-1 ring-black/40 ${
+            isMobileMenuOpen ? 'opacity-0 pointer-events-none translate-y-8 invisible' : 'opacity-100 translate-y-0 visible'
+          }`}
+        >
+          {mobileBottomNavItems.map(item => {
+            const Icon = item.icon;
+            const isActive = isItemActive(item);
+            const shortLabels = {
+              staff_home: 'Beranda',
+              pendaftaran: 'Berkas',
+              tm: 'TM',
+              uji_coba: 'UCL',
+              field_trial: 'UCL',
+              checkin: 'Basecamp',
+              checkout: 'Basecamp',
+              dp: 'DP',
+              penjurian: 'Juri',
+              rekap_nilai: 'Rekap',
+              klasemen: 'Klasemen',
+              superadmin: 'Master',
+            };
+            const shortLabel = shortLabels[item.id] || item.label.split(' ')[0];
+            return (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => handleNavClick(item)}
+                title={item.label}
+                className={`flex items-center gap-1.5 transition-all duration-300 cursor-pointer select-none active:scale-95 shrink-0 ${
+                  isActive
+                    ? `${item.activeBg || 'bg-gradient-to-r from-red-600 to-rose-600'} text-white px-3.5 py-2 rounded-full shadow-lg ${item.activeShadow || 'shadow-red-600/30'} font-bold text-xs ring-1 ring-white/20`
+                    : 'text-slate-400 hover:text-white p-2.5 rounded-full hover:bg-white/10'
+                }`}
+              >
+                <Icon className="w-4 h-4 shrink-0" />
+                {isActive && (
+                  <span className="whitespace-nowrap tracking-tight animate-in fade-in duration-200 font-bold">
+                    {shortLabel}
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </nav>
+      )}
 
       {/* Modal Konfirmasi Logout / Ganti Akun */}
       {showLogoutConfirmModal && (

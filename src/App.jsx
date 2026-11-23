@@ -27,6 +27,7 @@ const ParticipantQRStatusView = React.lazy(() => import('./components/portal/Par
 const AuthModal = React.lazy(() => import('./components/auth/AuthModal.jsx'));
 // Portals & Backoffice Dashboards (Lazy loaded on demand)
 const ParticipantDashboard = React.lazy(() => import('./components/portal/ParticipantDashboard.jsx'));
+const StaffHomeView = React.lazy(() => import('./components/admin/StaffHomeView.jsx'));
 const AdminDashboard = React.lazy(() => import('./components/admin/AdminDashboard.jsx'));
 const JuryScoringApp = React.lazy(() => import('./components/scoring/JuryScoringApp.jsx'));
 const AnnouncementPortal = React.lazy(() => import('./components/announcement/AnnouncementPortal.jsx'));
@@ -44,13 +45,8 @@ const DaerahPersiapanView = React.lazy(() => import('./components/staging/Daerah
 const RekapNilaiView = React.lazy(() => import('./components/recap/RekapNilaiView.jsx'));
 const BasecampCheckOutView = React.lazy(() => import('./components/staging/BasecampCheckOutView.jsx'));
 
-// Full SaaS Modules: RAB, Pusat Dokumen & Regulasi Terpadu
-const DokumenRegulasiPortal = React.lazy(() => import('./components/docs/DokumenRegulasiPortal.jsx'));
+// Full SaaS Modules: RAB & Rundown
 const RabFinanceView = React.lazy(() => import('./components/finance/RabFinanceView.jsx'));
-const ProposalView = React.lazy(() => import('./components/docs/ProposalView.jsx'));
-const JuknisView = React.lazy(() => import('./components/docs/JuknisView.jsx'));
-const TataTertibView = React.lazy(() => import('./components/docs/TataTertibView.jsx'));
-const TimelinePanitiaView = React.lazy(() => import('./components/docs/TimelinePanitiaView.jsx'));
 const RundownView = React.lazy(() => import('./components/docs/RundownView.jsx'));
 
 function ViewLoader() {
@@ -162,6 +158,7 @@ function MainApp() {
           {activeView === 'status_check' && <RegistrationStatusModal />}
           {activeView === 'auth' && <AuthModal />}
           {activeView === 'peserta_dashboard' && <ParticipantDashboard />}
+        {activeView === 'staff_home' && (isStaffMember ? <StaffHomeView /> : <AuthModal />)}
         {activeView === 'admin' && <AdminDashboard />}
         {activeView === 'juri' && <JuryScoringApp />}
         {activeView === 'superadmin' && <SuperadminPanel />}
@@ -175,12 +172,7 @@ function MainApp() {
         {activeView === 'rekap_nilai' && (['penginput', 'verifikator', 'finalisator', 'juri', 'admin', 'superadmin'].includes(effectiveRole) ? <RekapNilaiView /> : <AuthModal />)}
         {activeView === 'checkout' && (['checkin', 'admin', 'superadmin'].includes(effectiveRole) ? <BasecampCheckOutView /> : <AuthModal />)}
         {activeView === 'rab' && <RabFinanceView />}
-        {activeView === 'dokumen' && <DokumenRegulasiPortal initialTab="juknis" />}
-        {activeView === 'juknis' && <DokumenRegulasiPortal initialTab="juknis" />}
-        {activeView === 'tatib' && <DokumenRegulasiPortal initialTab="tatib" />}
-        {activeView === 'rundown' && <DokumenRegulasiPortal initialTab="rundown" />}
-        {activeView === 'proposal' && <DokumenRegulasiPortal initialTab="proposal" />}
-        {activeView === 'timeline' && <DokumenRegulasiPortal initialTab="timeline" />}
+        {activeView === 'rundown' && <RundownView />}
       </React.Suspense>
       )}
 

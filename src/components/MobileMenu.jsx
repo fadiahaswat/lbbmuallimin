@@ -43,6 +43,7 @@ export default function MobileMenu({ isOpen, onClose }) {
   } = useCompetition();
 
   const [activeSection, setActiveSection] = useState('home');
+  const [showSuperadminModules, setShowSuperadminModules] = useState(false);
 
   const avatarMeta = currentUser && getUserAvatar ? getUserAvatar(currentUser) : null;
   const avatarUrl = avatarMeta?.url || currentUser?.avatar;
@@ -455,42 +456,46 @@ export default function MobileMenu({ isOpen, onClose }) {
 
                 {/* 9. SUPERADMIN (KETUA PELAKSANA / IT MASTER) */}
                 {currentUser.role === 'superadmin' && (
-                  <div className="space-y-2.5">
-                    {/* Primary Highlight Master Button */}
+                  <div className="space-y-2">
                     <button
                       type="button"
                       onClick={() => {
                         onClose();
                         setActiveView('superadmin');
                       }}
-                      className="w-full flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-rose-950/40 via-slate-900 to-slate-900 border border-rose-500/30 hover:border-rose-400/60 text-left transition-all cursor-pointer group active:scale-98 shadow-sm"
+                      className="w-full flex items-center justify-between p-3 rounded-xl bg-amber-500/10 hover:bg-amber-500/15 border border-amber-400/25 text-left transition-all cursor-pointer group active:scale-98"
                     >
                       <div className="flex items-center gap-2.5">
-                        <div className="w-7 h-7 rounded-lg bg-rose-500/20 text-rose-400 flex items-center justify-center shrink-0">
+                        <div className="w-8 h-8 rounded-lg bg-amber-400/15 text-amber-400 flex items-center justify-center shrink-0">
                           <Crown className="w-4 h-4" />
                         </div>
                         <div>
-                          <span className="text-xs font-bold block text-rose-200">Superadmin Master Authority</span>
-                          <span className="text-[10px] text-rose-400/80 block font-normal">Pusat kendali & konfigurasi sistem</span>
+                          <span className="text-xs font-bold block text-white">Panel Superadmin</span>
+                          <span className="text-[10px] text-slate-400 block font-normal">Pusat kendali &amp; seluruh modul</span>
                         </div>
                       </div>
-                      <ArrowRight className="w-3.5 h-3.5 text-rose-400 group-hover:translate-x-0.5 transition-transform shrink-0" />
+                      <ArrowRight className="w-4 h-4 text-amber-400 group-hover:translate-x-0.5 transition-transform shrink-0" />
                     </button>
 
-                    {/* Compact 2-Column Grid of Panitia Tools (Calm & Organized) */}
-                    <div className="space-y-1.5 pt-0.5">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block px-1">
-                        Akses Cepat Modul:
-                      </span>
-                      <div className="grid grid-cols-2 gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() => setShowSuperadminModules(prev => !prev)}
+                      className="w-full flex items-center justify-between px-2 py-1.5 text-[11px] font-semibold text-slate-400 hover:text-slate-200 transition-colors cursor-pointer"
+                    >
+                      <span>Pintasan modul panitia</span>
+                      <ChevronRight className={`w-3.5 h-3.5 transition-transform ${showSuperadminModules ? 'rotate-90 text-amber-400' : ''}`} />
+                    </button>
+
+                    {showSuperadminModules && (
+                      <div className="grid grid-cols-2 gap-1.5 pb-1">
                         {[
-                          { view: 'admin', label: 'Verifikasi Berkas', icon: ClipboardList, color: 'text-blue-400' },
-                          { view: 'tm', label: 'Undian TM', icon: CalendarCheck, color: 'text-amber-400' },
-                          { view: 'field_trial', label: 'Uji Lapangan', icon: Compass, color: 'text-emerald-400' },
-                          { view: 'checkin', label: 'Pos Basecamp', icon: Building2, color: 'text-teal-400' },
-                          { view: 'dp', label: 'Daerah Persiapan', icon: Clock, color: 'text-orange-400' },
-                          { view: 'juri', label: 'Scoring Juri', icon: Award, color: 'text-purple-400' },
-                          { view: 'rekap_nilai', label: 'Rekap Nilai', icon: FileSpreadsheet, color: 'text-indigo-400' },
+                          { view: 'admin', label: 'Verifikasi Berkas', icon: ClipboardList },
+                          { view: 'tm', label: 'Undian TM', icon: CalendarCheck },
+                          { view: 'field_trial', label: 'Uji Lapangan', icon: Compass },
+                          { view: 'checkin', label: 'Pos Basecamp', icon: Building2 },
+                          { view: 'dp', label: 'Daerah Persiapan', icon: Clock },
+                          { view: 'juri', label: 'Scoring Juri', icon: Award },
+                          { view: 'rekap_nilai', label: 'Rekap Nilai', icon: FileSpreadsheet },
                         ].map(tool => {
                           const Icon = tool.icon;
                           return (
@@ -501,19 +506,17 @@ export default function MobileMenu({ isOpen, onClose }) {
                                 onClose();
                                 setActiveView(tool.view);
                               }}
-                              className="flex items-center gap-2 p-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] active:bg-white/[0.12] border border-white/5 hover:border-white/10 text-left transition-all active:scale-95 group cursor-pointer"
+                              className="flex items-center gap-2 px-2.5 py-2 rounded-lg bg-white/[0.03] hover:bg-white/[0.08] border border-white/[0.06] text-left transition-colors cursor-pointer group"
                             >
-                              <div className="w-6 h-6 rounded-lg bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-white/10 transition-colors">
-                                <Icon className={`w-3.5 h-3.5 ${tool.color}`} />
-                              </div>
-                              <span className="text-[11px] font-semibold text-slate-300 group-hover:text-white truncate">
+                              <Icon className="w-3.5 h-3.5 text-slate-400 group-hover:text-amber-400 shrink-0 transition-colors" />
+                              <span className="text-[11px] font-medium text-slate-300 group-hover:text-white truncate">
                                 {tool.label}
                               </span>
                             </button>
                           );
                         })}
                       </div>
-                    </div>
+                    )}
                   </div>
                 )}
               </div>
