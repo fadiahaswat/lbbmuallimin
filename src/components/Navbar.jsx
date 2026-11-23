@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
   ArrowRight,
+  Home,
   Menu,
   LogIn,
   Building2,
@@ -107,7 +108,7 @@ export default function Navbar({ onOpenMobileMenu }) {
     if (!currentUser) return;
     if (currentUser.role === 'admin') setActiveView('admin');
     else if (['penginput', 'verifikator', 'finalisator', 'juri'].includes(currentUser.role)) setActiveView('juri');
-    else if (currentUser.role === 'superadmin') setActiveView('superadmin');
+    else if (currentUser.role === 'superadmin') setActiveView('staff_home');
     else setActiveView('peserta_dashboard');
   }
 
@@ -505,13 +506,13 @@ export default function Navbar({ onOpenMobileMenu }) {
                         type="button"
                         onClick={() => {
                           setIsUserDropdownOpen(false);
-                          setActiveView('superadmin');
+                          setActiveView('staff_home');
                         }}
                         className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/25 text-left transition-colors text-rose-200 hover:text-white cursor-pointer font-bold group"
                       >
                         <div className="flex items-center gap-2.5">
-                          <Crown className="w-4 h-4 text-rose-400 shrink-0" />
-                          <span>Dashboard Superadmin</span>
+                          <Home className="w-4 h-4 text-rose-400 shrink-0" />
+                          <span>Beranda Panitia</span>
                         </div>
                         <ArrowRight className="w-3.5 h-3.5 text-rose-400 group-hover:translate-x-0.5 transition-transform" />
                       </button>

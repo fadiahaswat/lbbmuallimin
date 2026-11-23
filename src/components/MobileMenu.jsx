@@ -147,7 +147,7 @@ export default function MobileMenu({ isOpen, onClose }) {
           {currentUser ? (() => {
             const roleMap = {
               peserta: { label: 'Dashboard Peleton', view: 'peserta_dashboard', icon: LayoutDashboard },
-              superadmin: { label: 'Dashboard Superadmin', view: 'superadmin', icon: Crown },
+              superadmin: { label: 'Beranda Panitia', view: 'staff_home', icon: Home },
               admin: { label: 'Dashboard Admin', view: 'admin', icon: Shield },
               juri: { label: 'Dashboard Penjurian', view: 'juri', icon: Award },
               penginput: { label: 'Dashboard Penjurian', view: 'juri', icon: Award },

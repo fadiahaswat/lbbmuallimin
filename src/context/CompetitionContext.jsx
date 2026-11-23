@@ -181,7 +181,7 @@ export function CompetitionProvider({ children }) {
           return savedView;
         }
         if (savedRole === 'admin') return 'admin';
-        if (savedRole === 'superadmin') return 'superadmin';
+        if (savedRole === 'superadmin') return 'staff_home';
         if (savedRole === 'peserta') return 'peserta_dashboard';
         if (['juri', 'penginput', 'verifikator', 'finalisator'].includes(savedRole)) return 'juri';
       }
@@ -965,7 +965,7 @@ export function CompetitionProvider({ children }) {
       try { localStorage.removeItem(STORAGE_KEYS.CURRENT_TEAM_ID); } catch(e) {}
       let targetView = 'landing';
       if (user.role === 'admin') targetView = 'admin';
-      else if (user.role === 'superadmin') targetView = 'superadmin';
+      else if (user.role === 'superadmin') targetView = 'staff_home';
       else if (user.role === 'checkin') targetView = 'checkin';
       else if (user.role === 'dp') targetView = 'dp';
       else if (['juri', 'penginput'].includes(user.role)) targetView = 'juri';
@@ -1003,7 +1003,7 @@ export function CompetitionProvider({ children }) {
               try { localStorage.removeItem(STORAGE_KEYS.CURRENT_TEAM_ID); } catch(e) {}
               let targetView = 'landing';
               if (staffUser.role === 'admin') targetView = 'admin';
-              else if (staffUser.role === 'superadmin') targetView = 'superadmin';
+              else if (staffUser.role === 'superadmin') targetView = 'staff_home';
               else if (staffUser.role === 'checkin') targetView = 'checkin';
               else if (staffUser.role === 'dp') targetView = 'dp';
               else if (['juri', 'penginput'].includes(staffUser.role)) targetView = 'juri';
@@ -1388,7 +1388,7 @@ export function CompetitionProvider({ children }) {
       else if (targetRole === 'dp') setActiveView('dp');
       else if (['penginput', 'juri'].includes(targetRole)) setActiveView('juri');
       else if (['verifikator', 'finalisator'].includes(targetRole)) setActiveView('rekap_nilai');
-      else if (targetRole === 'superadmin') setActiveView('superadmin');
+      else if (targetRole === 'superadmin') setActiveView('staff_home');
       return true;
     }
 
