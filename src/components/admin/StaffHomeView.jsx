@@ -24,7 +24,7 @@ import SimpaskorSidebarLayout from '../navigation/SimpaskorSidebarLayout.jsx';
 const MILESTONES = [
   {
     id: 'deadline_berkas',
-    label: 'Batas Berkas & Roster',
+    label: 'Batas Berkas & Daftar Personel',
     short: 'Batas Berkas',
     dateShort: '08 Jan 2027',
     targetIso: '2027-01-08T23:59:59+07:00',
@@ -408,7 +408,7 @@ export default function StaffHomeView() {
     if (metrics.stage2Pending > 0 && canAccess('pendaftaran')) {
       items.push({
         id: 'acc_roster',
-        label: 'Verifikasi roster & rekomendasi',
+        label: 'Verifikasi Daftar Personel & rekomendasi',
         count: `${metrics.stage2Pending} tim`,
         dot: 'bg-rose-500',
         onClick: () => {
@@ -485,48 +485,69 @@ export default function StaffHomeView() {
       hideHeader={true}
     >
       <div className="space-y-5">
-        {/* 1. HEADER BAR + GLOBAL JENJANG FILTER + SYNC TIMESTAMP */}
-        <header className="flex flex-col gap-3.5 lg:flex-row lg:items-end lg:justify-between">
-          <div>
+        {/* 1. HEADER BAR + GLOBAL JENJANG FILTER + SYNC STATUS */}
+        <header className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div className="space-y-1">
+            <div className="inline-flex items-center gap-2 text-[11px] font-medium text-slate-400">
+              <span>
+                {new Date().toLocaleDateString('id-ID', {
+                  weekday: 'long',
+                  day: 'numeric',
+                  month: 'short',
+                  year: 'numeric',
+                })}
+              </span>
+              <span className="text-slate-300">·</span>
+              <span className="inline-flex items-center gap-1.5 text-slate-500">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                <span>Sync {formatSyncTime(lastSyncAt)} WIB</span>
+              </span>
+            </div>
             <h1 className="text-2xl sm:text-[28px] font-bold tracking-tight text-slate-900 leading-tight">
-              {getGreeting()}, {firstName}
+              {getGreeting()}, <span className="text-[#8B0000]">{firstName}</span>
             </h1>
-            <p className="text-xs sm:text-sm text-slate-500 mt-1">
-              Pantau progres kuota, kelengkapan berkas, dan kesiapan operasional LBB Mu’allimin 2027.
+            <p className="text-xs sm:text-[13px] text-slate-500">
+              Ringkasan kuota, verifikasi berkas, dan kesiapan operasional LBB Mu’allimin 2027.
             </p>
           </div>
 
           <div className="flex items-center gap-2 flex-wrap">
-            {/* Global Jenjang Filter Pill */}
-            <div className="inline-flex items-center rounded-full bg-white p-1 shadow-[0_2px_10px_rgba(15,23,42,0.04)] border border-slate-100 text-xs font-semibold">
+            {/* Global Jenjang Filter Pill (Uniform h-10) */}
+            <div className="inline-flex h-10 items-center rounded-full bg-white p-1 shadow-[0_2px_10px_rgba(15,23,42,0.04)] border border-slate-200/80 text-xs font-semibold">
               {[
-                { id: 'ALL', label: 'Semua' },
-                { id: 'SD', label: 'SD / MI' },
-                { id: 'SMP', label: 'SMP / MTs' },
-              ].map(opt => (
-                <button
-                  key={opt.id}
-                  type="button"
-                  onClick={() => setJenjangFilter(opt.id)}
-                  className={`px-3 py-1.5 rounded-full transition-all cursor-pointer ${
-                    jenjangFilter === opt.id
-                      ? 'bg-[#0d1421] text-white shadow-2xs'
-                      : 'text-slate-500 hover:text-slate-900'
-                  }`}
-                >
-                  {opt.label}
-                </button>
-              ))}
+                { id: 'ALL', label: 'Semua', count: metrics.countSD + metrics.countSMP },
+                { id: 'SD', label: 'SD', count: metrics.countSD },
+                { id: 'SMP', label: 'SMP', count: metrics.countSMP },
+              ].map(opt => {
+                const isActive = jenjangFilter === opt.id;
+                return (
+                  <button
+                    key={opt.id}
+                    type="button"
+                    onClick={() => setJenjangFilter(opt.id)}
+                    className={`h-8 px-3 rounded-full transition-all cursor-pointer inline-flex items-center gap-1.5 ${
+                      isActive
+                        ? 'bg-[#0d1421] text-white shadow-2xs'
+                        : 'text-slate-500 hover:text-slate-900'
+                    }`}
+                  >
+                    <span>{opt.label}</span>
+                    <span className={`font-mono text-[10px] tabular-nums ${isActive ? 'text-[#FFD700]' : 'text-slate-400'}`}>
+                      {opt.count}
+                    </span>
+                  </button>
+                );
+              })}
             </div>
 
             {exportTeamsCSV && (
               <button
                 type="button"
                 onClick={exportTeamsCSV}
-                className="inline-flex items-center gap-1.5 rounded-full bg-white hover:bg-slate-50 px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-[0_2px_10px_rgba(15,23,42,0.04)] border border-slate-100 transition-all cursor-pointer active:scale-95"
+                className="inline-flex h-10 items-center gap-1.5 rounded-full bg-white hover:bg-slate-50 px-4 text-xs font-semibold text-slate-700 shadow-[0_2px_10px_rgba(15,23,42,0.04)] border border-slate-200/80 transition-all cursor-pointer active:scale-95"
               >
                 <Download className="w-3.5 h-3.5 text-slate-500" />
-                <span className="hidden sm:inline">Ekspor</span>
+                <span>Ekspor</span>
               </button>
             )}
 
@@ -535,13 +556,10 @@ export default function StaffHomeView() {
               onClick={handleRefresh}
               disabled={isRefreshing}
               title={`Terakhir sinkron pukul ${formatSyncTime(lastSyncAt)} WIB`}
-              className="inline-flex items-center gap-1.5 rounded-full bg-white hover:bg-slate-50 px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-[0_2px_10px_rgba(15,23,42,0.04)] border border-slate-100 transition-all cursor-pointer active:scale-95 disabled:opacity-50"
+              className="inline-flex h-10 items-center gap-1.5 rounded-full bg-[#0d1421] hover:bg-[#8B0000] px-4 text-xs font-semibold text-white shadow-[0_6px_16px_rgba(13,20,33,0.14)] transition-all cursor-pointer active:scale-95 disabled:opacity-50"
             >
-              <RefreshCw className={`w-3.5 h-3.5 text-slate-500 ${isRefreshing ? 'animate-spin text-[#8B0000]' : ''}`} />
+              <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin text-[#FFD700]' : 'text-[#FFD700]'}`} />
               <span>Segarkan</span>
-              <span className="hidden sm:inline text-[10.5px] font-mono font-normal text-slate-400">
-                {formatSyncTime(lastSyncAt)}
-              </span>
             </button>
           </div>
         </header>
@@ -679,7 +697,7 @@ export default function StaffHomeView() {
                   {metrics.totalPending}
                 </p>
                 <p className="mt-2 inline-flex items-center rounded-full bg-black/20 border border-white/10 px-2 py-0.5 text-[10px] font-semibold text-[#fef08a]">
-                  {metrics.stage1Pending} daftar · {metrics.stage2Pending} roster
+                  {metrics.stage1Pending} daftar · {metrics.stage2Pending} Daftar Personel
                 </p>
               </div>
             </button>
@@ -1012,7 +1030,7 @@ export default function StaffHomeView() {
                   <Radio className="w-4 h-4 text-emerald-500 shrink-0" />
                 )}
                 <h2 className="text-base font-bold text-slate-900 truncate">
-                  {effectiveOpsMode === 'pra_lomba' ? 'Roster & UCL' : 'Alur Hari-H'}
+                  {effectiveOpsMode === 'pra_lomba' ? 'Daftar Personel & UCL' : 'Alur Hari-H'}
                 </h2>
               </div>
 
@@ -1043,7 +1061,7 @@ export default function StaffHomeView() {
                 {/* Progres Pengisian Roster 21 Inti */}
                 <div className="space-y-2.5">
                   <div className="flex items-center justify-between text-xs">
-                    <span className="font-semibold text-slate-700">Kesiapan Roster (21 Inti)</span>
+                    <span className="font-semibold text-slate-700">Kesiapan Daftar Personel (21 Inti)</span>
                     <span className="font-mono text-[11px] font-bold text-slate-900 tabular-nums">
                       {metrics.rosterFullPct}%
                     </span>
@@ -1233,7 +1251,7 @@ export default function StaffHomeView() {
                     <th className="py-2.5 pl-3.5 pr-2 rounded-l-xl">Sekolah</th>
                     <th className="py-2.5 px-2 hidden sm:table-cell">Jenjang</th>
                     <th className="py-2.5 px-2 hidden md:table-cell">Berkas</th>
-                    <th className="py-2.5 px-2 hidden lg:table-cell">Roster</th>
+                    <th className="py-2.5 px-2 hidden lg:table-cell">Daftar Personel</th>
                     <th className="py-2.5 px-2">Status</th>
                     <th className="py-2.5 pl-2 pr-3.5 text-right rounded-r-xl">Aksi</th>
                   </tr>

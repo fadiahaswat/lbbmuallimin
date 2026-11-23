@@ -209,7 +209,7 @@ export default function OverviewTab({
   const AGENDA_TARGETS = React.useMemo(() => [
     {
       id: 'deadline',
-      label: 'Batas Kelengkapan Roster & Berkas (H-1 TM)',
+      label: 'Batas Kelengkapan Daftar Personel & Berkas (H-1 TM)',
       shortLabel: 'H-1 TM (8 Jan)',
       dateText: '08 Jan 2027 • 23.59 WIB',
       location: 'Portal Online Peleton',
@@ -398,7 +398,7 @@ export default function OverviewTab({
             <div className="min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
                 <h2 className="text-sm sm:text-base font-extrabold tracking-tight text-white">
-                  Batas Berkas &amp; Roster
+                  Batas Berkas &amp; Daftar Personel
                 </h2>
                 <span className="rounded-md border border-amber-400/20 bg-amber-400/10 px-1.5 py-0.5 text-[10px] font-bold tracking-wide text-amber-300">
                   H-1 TM

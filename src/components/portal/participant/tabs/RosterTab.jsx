@@ -220,7 +220,7 @@ export default function RosterTab({
           </div>
           <div className="max-w-md mx-auto space-y-1.5">
             <h4 className="font-black text-base sm:text-lg text-slate-900 uppercase">
-              Tahap Pengisian Roster Masih Terkunci
+              Tahap Pengisian Daftar Personel Masih Terkunci
             </h4>
             <p className="text-[11px] sm:text-xs text-slate-600 leading-relaxed">
               Peleton Anda masih <strong>Menunggu Verifikasi Pendaftaran Awal</strong>. Panitia sedang memvalidasi berkas pendaftaran Anda.

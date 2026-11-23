@@ -4,7 +4,10 @@ import {
   AlertCircle,
   Clock,
   Loader2,
-  SearchCheck
+  SearchCheck,
+  QrCode,
+  CalendarCheck,
+  Trophy
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
 import logoImg from '../../assets/logo-tonti.png';
@@ -246,11 +249,11 @@ export default function AuthModal() {
         type="button"
         onClick={handleGoogleSignIn}
         disabled={isSigningIn}
-        className="w-full py-3.5 px-5 rounded-full bg-white hover:bg-slate-50 text-slate-900 font-bold text-sm border border-slate-300 hover:border-red-700 shadow-2xs hover:shadow-sm transition-all flex items-center justify-center gap-3 active:scale-[0.99] disabled:opacity-60 cursor-pointer group"
+        className="w-full py-3.5 px-5 rounded-full bg-[#0d1421] hover:bg-slate-800 text-white font-bold text-sm border border-slate-800 shadow-[0_8px_20px_rgba(13,20,33,0.18)] hover:shadow-[0_10px_24px_rgba(13,20,33,0.25)] transition-all flex items-center justify-center gap-3 active:scale-[0.99] disabled:opacity-60 cursor-pointer group"
       >
         {isSigningIn ? (
           <>
-            <Loader2 className="w-4 h-4 animate-spin text-red-700" />
+            <Loader2 className="w-4 h-4 animate-spin text-[#FFD700]" />
             <span>Menghubungkan Google...</span>
           </>
         ) : (
@@ -487,8 +490,8 @@ export default function AuthModal() {
               {/* 3 Uniform Airy Frosted Glass Tiles */}
               <div className="grid grid-cols-3 gap-2.5">
                 <div className="rounded-2xl bg-white/[0.12] border border-white/20 backdrop-blur-md text-white p-3.5 flex flex-col justify-between min-h-[104px]">
-                  <span className="w-6 h-6 rounded-full bg-white/20 text-white text-[11px] font-bold flex items-center justify-center">
-                    1
+                  <span className="w-8 h-8 rounded-xl bg-white/15 border border-white/15 text-[#FFD700] flex items-center justify-center">
+                    <QrCode className="w-4 h-4" />
                   </span>
                   <p className="text-[11.5px] font-semibold leading-snug text-white/95 mt-3">
                     Personel, Berkas &amp; QR Pass
@@ -496,8 +499,8 @@ export default function AuthModal() {
                 </div>
 
                 <div className="rounded-2xl bg-white/[0.12] border border-white/20 backdrop-blur-md text-white p-3.5 flex flex-col justify-between min-h-[104px]">
-                  <span className="w-6 h-6 rounded-full bg-white/20 text-white text-[11px] font-bold flex items-center justify-center">
-                    2
+                  <span className="w-8 h-8 rounded-xl bg-white/15 border border-white/15 text-[#FFD700] flex items-center justify-center">
+                    <CalendarCheck className="w-4 h-4" />
                   </span>
                   <p className="text-[11.5px] font-semibold leading-snug text-white/95 mt-3">
                     Jadwal UCL, Materi &amp; Basecamp
@@ -505,8 +508,8 @@ export default function AuthModal() {
                 </div>
 
                 <div className="rounded-2xl bg-white/[0.12] border border-white/20 backdrop-blur-md text-white p-3.5 flex flex-col justify-between min-h-[104px]">
-                  <span className="w-6 h-6 rounded-full bg-white/20 text-white text-[11px] font-bold flex items-center justify-center">
-                    3
+                  <span className="w-8 h-8 rounded-xl bg-white/15 border border-white/15 text-[#FFD700] flex items-center justify-center">
+                    <Trophy className="w-4 h-4" />
                   </span>
                   <p className="text-[11.5px] font-semibold leading-snug text-white/95 mt-3">
                     Rekap Nilai &amp; Klasemen Resmi

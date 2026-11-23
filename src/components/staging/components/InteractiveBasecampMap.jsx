@@ -439,7 +439,7 @@ export default function InteractiveBasecampMap({
       {/* 1. Flush Underline Floor Tabs + Segmented Filter & Legenda */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-2.5 lg:border-b lg:border-slate-200">
         {/* Floor Tabs */}
-        <div className="flex items-center gap-1 overflow-x-auto no-scrollbar border-b border-slate-200 lg:border-b-0 -mb-px">
+        <div className="grid grid-cols-4 sm:flex sm:items-center sm:gap-1 border-b border-slate-200 lg:border-b-0 -mb-px">
           {FLOORS_CONFIG.map(f => {
             const isActive = f.floor === selectedFloorNum;
             const occ = floorOccupancyMap.get(f.floor) || { plotted: 0, total: f.stats.classes };
@@ -453,14 +453,15 @@ export default function InteractiveBasecampMap({
                   setSelectedFloorNum(f.floor);
                   setSelectedRoom(null);
                 }}
-                className={`relative py-2.5 px-3 text-xs transition-colors flex items-center gap-1.5 cursor-pointer shrink-0 ${
+                className={`relative py-2.5 px-1.5 sm:px-3 text-[11px] sm:text-xs transition-colors flex items-center justify-center gap-1 sm:gap-1.5 cursor-pointer shrink-0 whitespace-nowrap ${
                   isActive
                     ? 'text-slate-950 font-extrabold'
                     : 'text-slate-500 hover:text-slate-800 font-semibold'
                 }`}
               >
-                <span>Lantai {f.floor}</span>
-                <span className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded-md leading-none ${
+                <span className="sm:hidden">Lt. {f.floor}</span>
+                <span className="hidden sm:inline">Lantai {f.floor}</span>
+                <span className={`text-[9px] sm:text-[10px] font-mono font-bold px-1 sm:px-1.5 py-0.5 rounded-md leading-none ${
                   isActive
                     ? isFull
                       ? 'bg-emerald-100 text-emerald-800'

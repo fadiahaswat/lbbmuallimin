@@ -117,17 +117,17 @@ export default function DenahSection() {
         {activeTab === 'outdoor' && (
           <div className="max-w-6xl mx-auto bg-slate-50 border border-slate-200/90 rounded-2xl p-4 sm:p-7 shadow-sm relative animate-in fade-in duration-300">
             {/* Top Bar */}
-            <div className="flex items-center justify-between pb-4 sm:pb-5 border-b border-slate-200">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-lg bg-slate-200/80 text-slate-800 flex items-center justify-center shrink-0">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 sm:pb-5 border-b border-slate-200">
+              <div className="flex items-start sm:items-center gap-3 min-w-0">
+                <div className="w-9 h-9 rounded-lg bg-slate-200/80 text-slate-800 flex items-center justify-center shrink-0 mt-0.5 sm:mt-0">
                   <Map className="w-4 h-4" />
                 </div>
-                <div>
-                  <h3 className="text-base font-bold text-slate-900 uppercase tracking-tight">
-                    Peta Tata Letak & Zona Lomba Terbuka
+                <div className="min-w-0">
+                  <h3 className="text-sm sm:text-base font-bold text-slate-900 uppercase tracking-tight leading-snug">
+                    Peta Tata Letak &amp; Zona Lomba Terbuka
                   </h3>
-                  <p className="text-xs text-slate-500 font-normal">
-                    Kampus Terpadu Madrasah Mu'allimin Sedayu, Bantul, D.I. Yogyakarta
+                  <p className="text-xs text-slate-500 font-normal mt-0.5 leading-snug">
+                    Kampus Terpadu Madrasah Mu&apos;allimin Sedayu, Bantul, D.I. Yogyakarta
                   </p>
                 </div>
               </div>
@@ -135,10 +135,10 @@ export default function DenahSection() {
               <a
                 href="/denah-perlombaan.png"
                 download="DENAH-PERLOMBAAN-LBB-MUALLIMIN-2027.png"
-                className="px-3.5 py-1.5 rounded-xl bg-yellow-500 hover:bg-yellow-400 text-slate-950 font-bold text-xs flex items-center gap-1.5 transition-all shadow-xs"
+                className="w-full sm:w-auto px-3.5 py-2 sm:py-1.5 rounded-xl bg-yellow-500 hover:bg-yellow-400 text-slate-950 font-bold text-xs flex items-center justify-center gap-1.5 transition-all shadow-xs shrink-0"
               >
                 <Download className="w-4 h-4" />
-                <span className="hidden sm:inline">Unduh HD</span>
+                <span>Unduh Denah HD</span>
               </a>
             </div>
 

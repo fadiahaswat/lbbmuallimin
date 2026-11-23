@@ -1217,7 +1217,7 @@ export default function DesignSystemPage() {
                     </div>
                     <ul className="text-xs text-slate-600 space-y-1.5 list-disc list-inside">
                       <li>Status verifikasi berkas & nomor undian dada (LOT).</li>
-                      <li>Manajemen roster 16 pasukan inti + 2 cadangan.</li>
+                      <li>Manajemen Daftar Personel 16 pasukan inti + 2 cadangan.</li>
                       <li>Generator kartu ID Card peleton siap cetak.</li>
                     </ul>
                   </div>

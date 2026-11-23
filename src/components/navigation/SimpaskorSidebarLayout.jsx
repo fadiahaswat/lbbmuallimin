@@ -30,6 +30,7 @@ import {
   Coins,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
   PanelLeftClose,
   PanelLeftOpen,
   MoreVertical,
@@ -913,115 +914,168 @@ export default function SimpaskorSidebarLayout({
       <div className={`flex-1 flex flex-col min-w-0 pb-24 lg:pb-8 transition-all duration-300 ${
         isCollapsed ? 'lg:pl-[76px]' : 'lg:pl-[280px]'
       }`}>
-        {/* Top Sticky Header Bar (Unified untuk Peserta & Panitia) */}
-        <header className="sticky top-0 z-20 flex h-16 sm:h-[72px] items-center justify-between border-b border-slate-200/80 bg-white/95 px-3 sm:px-7 lg:px-9 backdrop-blur-xl gap-2.5">
+        {/* Top Sticky Header Bar (Modern SaaS Style — Unified untuk Peserta & Panitia) */}
+        <header className="sticky top-0 z-20 flex h-16 sm:h-[68px] items-center justify-between border-b border-slate-200/70 bg-[#F8F9FA]/90 px-3 sm:px-6 lg:px-8 backdrop-blur-xl gap-3">
+          {/* Sisi Kiri: Mobile Menu + Logo (Mobile) / Breadcrumb Modul Aktif (Desktop) */}
           <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
             <button
               type="button"
               aria-label="Buka menu"
-              className="rounded-xl border border-slate-200 p-2 text-slate-700 hover:bg-slate-100 lg:hidden cursor-pointer shrink-0 active:scale-95 transition-transform"
+              className="rounded-full border border-slate-200/90 bg-white p-2 text-slate-700 hover:bg-slate-50 shadow-2xs lg:hidden cursor-pointer shrink-0 active:scale-95 transition-all"
               onClick={() => setIsMobileMenuOpen(true)}
             >
-              <Menu className="w-5 h-5" />
+              <Menu className="w-4.5 h-4.5" />
             </button>
-            {/* Logo LBB + Logo Title */}
+
+            {/* Logo hanya tampil di mobile/tablet (desktop sudah ada di sidebar) */}
             <div
               onClick={() => {
                 if (setActiveView) setActiveView('landing');
               }}
-              className="flex items-center gap-2 sm:gap-2.5 cursor-pointer min-w-0 group select-none"
+              className="flex lg:hidden items-center gap-2 cursor-pointer min-w-0 group select-none"
               title="Ke Beranda Utama LBB Mu'allimin"
             >
               <img
                 src={logoLbb}
                 alt="Logo LBB"
-                className="h-8 sm:h-9 w-auto object-contain shrink-0 group-hover:scale-105 transition-transform drop-shadow-xs"
+                className="h-8 w-auto object-contain shrink-0 group-hover:scale-105 transition-transform"
               />
               <img
                 src={titleLogoImg}
                 alt="LBB Mu'allimin 2027"
-                className="h-6 sm:h-7 w-auto object-contain max-w-[130px] sm:max-w-[160px]"
+                className="h-5.5 w-auto object-contain max-w-[125px]"
               />
+            </div>
+
+            {/* Desktop Breadcrumb & Active Module Context */}
+            <div className="hidden lg:flex items-center gap-2 min-w-0 text-xs">
+              <button
+                type="button"
+                onClick={() => {
+                  if (setActiveView) setActiveView('landing');
+                }}
+                className="font-medium text-slate-400 hover:text-slate-700 transition-colors cursor-pointer shrink-0"
+                title="Kembali ke Website Utama"
+              >
+                LBB Mu’allimin 2027
+              </button>
+              <ChevronRight className="w-3.5 h-3.5 text-slate-300 shrink-0" />
+              <span className="font-semibold text-slate-900 truncate">
+                {title || (isPeserta ? 'Portal Kontingen' : 'Dashboard Panitia')}
+              </span>
             </div>
           </div>
 
-          {/* Sisi Kanan: Identitas Akun & Tombol Keluar */}
-          <div className="flex items-center gap-2 sm:gap-3 shrink-0 min-w-0">
-            {isPeserta && currentTeam ? (
-              <div className="hidden sm:flex items-center gap-2.5 md:gap-3 shrink-0 min-w-0">
-                <div className="text-right min-w-0 max-w-[180px] md:max-w-sm">
-                  <span
-                    className="text-xs sm:text-sm font-black uppercase tracking-tight text-slate-900 leading-tight block truncate"
-                    title={currentTeam?.schoolName || displayName}
-                  >
-                    {currentTeam?.schoolName || displayName}
-                  </span>
-                </div>
-
-                {hasSchoolLogo && schoolLogoFormatted ? (
-                  <img
-                    src={schoolLogoFormatted}
-                    alt={currentTeam?.schoolName || 'Logo Sekolah'}
-                    referrerPolicy="no-referrer"
-                    className="h-8 sm:h-9 w-auto max-w-[38px] sm:max-w-[44px] object-contain shrink-0 drop-shadow-xs"
-                    onError={(e) => {
-                      const fallback = getFallbackImageUrl(rawSchoolLogo);
-                      if (fallback && e.currentTarget.src !== fallback) {
-                        e.currentTarget.src = fallback;
-                      } else {
-                        e.currentTarget.style.display = 'none';
-                        if (e.currentTarget.nextElementSibling) {
-                          e.currentTarget.nextElementSibling.style.display = 'flex';
+          {/* Sisi Kanan: Minimalist SaaS Account Menu */}
+          <div id="user-profile-menu-container" className="relative shrink-0">
+            <button
+              type="button"
+              onClick={() => setShowUserMenu(prev => !prev)}
+              className="flex items-center gap-2.5 rounded-full py-1 pl-1.5 pr-2.5 hover:bg-white hover:shadow-[0_2px_10px_rgba(15,23,42,0.05)] border border-transparent hover:border-slate-200/80 transition-all cursor-pointer group"
+              aria-expanded={showUserMenu}
+              aria-label="Menu Akun"
+            >
+              {isPeserta && currentTeam ? (
+                <>
+                  {hasSchoolLogo && schoolLogoFormatted ? (
+                    <img
+                      src={schoolLogoFormatted}
+                      alt={currentTeam?.schoolName || 'Logo Sekolah'}
+                      referrerPolicy="no-referrer"
+                      className="h-8 w-8 rounded-full bg-white border border-slate-200/80 p-0.5 object-contain shrink-0"
+                      onError={(e) => {
+                        const fallback = getFallbackImageUrl(rawSchoolLogo);
+                        if (fallback && e.target.src !== fallback) {
+                          e.target.src = fallback;
+                        } else {
+                          e.target.style.display = 'none';
+                          if (e.currentTarget.nextElementSibling) {
+                            e.currentTarget.nextElementSibling.style.display = 'flex';
+                          }
                         }
+                      }}
+                    />
+                  ) : null}
+                  <div
+                    className="h-8 w-8 rounded-full bg-[#8B0000] text-white font-bold text-[11px] flex items-center justify-center shrink-0"
+                    style={{ display: hasSchoolLogo && schoolLogoFormatted ? 'none' : 'flex' }}
+                  >
+                    {teamInitials}
+                  </div>
+                  <div className="hidden sm:block text-left min-w-0 max-w-[180px] md:max-w-[220px]">
+                    <span className="text-xs font-semibold text-slate-800 leading-tight block truncate">
+                      {currentTeam?.schoolName || displayName}
+                    </span>
+                    <span className="text-[11px] text-slate-400 block truncate">
+                      {currentTeam?.jenjang === 'SMP' ? 'SMP / MTs' : 'SD / MI'}
+                    </span>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <img
+                    src={avatarUrl}
+                    alt={displayName}
+                    className="h-8 w-8 rounded-full object-cover ring-1 ring-slate-200 shrink-0"
+                    onError={(e) => {
+                      if (currentUser?.googleAvatar && e.target.src !== currentUser.googleAvatar) {
+                        e.target.src = currentUser.googleAvatar;
+                      } else if (e.target.src !== fallbackInitialAvatar) {
+                        e.target.src = fallbackInitialAvatar;
                       }
                     }}
                   />
-                ) : null}
-                <div
-                  className="h-8 w-8 sm:h-9 sm:w-9 rounded-full bg-red-600 text-white font-black text-xs flex items-center justify-center shrink-0 shadow-xs"
-                  style={{ display: hasSchoolLogo && schoolLogoFormatted ? 'none' : 'flex' }}
-                >
-                  {teamInitials}
-                </div>
-
-                <div className="h-7 w-px bg-slate-200 shrink-0" />
-              </div>
-            ) : !isPeserta ? (
-              <div className="hidden sm:flex items-center gap-2.5 shrink-0 min-w-0">
-                <div className="text-right min-w-0 max-w-[200px]">
-                  <span className="text-xs font-black text-slate-900 leading-tight block truncate">
-                    {displayName}
-                  </span>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block truncate">
-                    {userRole === 'superadmin' ? 'Superadmin' : 'Panitia LBB'}
-                  </span>
-                </div>
-                <img
-                  src={avatarUrl}
-                  alt={displayName}
-                  className="h-8 w-8 sm:h-9 sm:w-9 rounded-xl object-cover ring-1 ring-slate-200 shrink-0"
-                  onError={(e) => {
-                    if (currentUser?.googleAvatar && e.target.src !== currentUser.googleAvatar) {
-                      e.target.src = currentUser.googleAvatar;
-                    } else if (e.target.src !== fallbackInitialAvatar) {
-                      e.target.src = fallbackInitialAvatar;
-                    }
-                  }}
-                />
-                <div className="h-7 w-px bg-slate-200 shrink-0" />
-              </div>
-            ) : null}
-
-            {/* Tombol Keluar (Paling Kanan) */}
-            <button
-              type="button"
-              onClick={handleLogout}
-              className="p-2 sm:p-2.5 rounded-xl border border-red-200 bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-700 transition-all cursor-pointer shrink-0 flex items-center justify-center shadow-2xs active:scale-95"
-              title={isPeserta ? 'Ganti Akun Tim' : 'Keluar (Logout)'}
-              aria-label={isPeserta ? 'Ganti Akun Tim' : 'Keluar (Logout)'}
-            >
-              <LogOut className="w-4 h-4 text-red-600 shrink-0" />
+                  <div className="hidden sm:block text-left min-w-0 max-w-[180px] md:max-w-[220px]">
+                    <span className="text-xs font-semibold text-slate-800 leading-tight block truncate">
+                      {displayName}
+                    </span>
+                    <span className="text-[11px] text-slate-400 block truncate">
+                      {currentUser?.email || (userRole === 'superadmin' ? 'Superadmin' : 'Panitia LBB')}
+                    </span>
+                  </div>
+                </>
+              )}
+              <ChevronDown
+                className={`w-3.5 h-3.5 text-slate-400 group-hover:text-slate-600 transition-transform duration-200 shrink-0 ${
+                  showUserMenu ? 'rotate-180' : ''
+                }`}
+              />
             </button>
+
+            {showUserMenu && (
+              <div className="absolute right-0 mt-2 w-52 rounded-2xl bg-white border border-slate-200/80 shadow-[0_14px_34px_rgba(15,23,42,0.10)] p-1.5 z-50 animate-in fade-in slide-in-from-top-1 duration-150">
+                <div className="px-3 py-2 border-b border-slate-100 sm:hidden">
+                  <p className="text-xs font-semibold text-slate-900 truncate">
+                    {isPeserta ? (currentTeam?.schoolName || displayName) : displayName}
+                  </p>
+                  <p className="text-[10.5px] text-slate-400 truncate mt-0.5">
+                    {currentUser?.email || (userRole === 'superadmin' ? 'Superadmin' : 'Panitia LBB')}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowUserMenu(false);
+                    if (setActiveView) setActiveView('landing');
+                  }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-950 transition-colors cursor-pointer"
+                >
+                  <Home className="w-3.5 h-3.5 text-slate-400" />
+                  <span>Ke Website Utama</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowUserMenu(false);
+                    handleLogout();
+                  }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                  <span>{isPeserta ? 'Ganti Akun Tim' : 'Keluar Akun'}</span>
+                </button>
+              </div>
+            )}
           </div>
         </header>
 

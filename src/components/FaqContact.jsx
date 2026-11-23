@@ -7,151 +7,215 @@ import {
   MapPin,
   Search,
   HelpCircle,
-  CreditCard,
   FileCheck2,
-  Users2,
-  Calendar,
-  Sparkles,
-  ArrowRight,
   ShieldAlert,
-  Clock,
-  Layers
+  ArrowRight,
+  X,
+  Mail,
+  Check,
+  Copy,
+  BookOpen,
+  Scale,
+  Compass,
+  Sparkles,
+  ChevronsUpDown,
+  Award,
+  AlertTriangle,
+  Building2,
 } from 'lucide-react';
-import { CONTACT, EVENT, COMPETITION, PAYMENT, VENUE, VENUE_INDUK } from '../config.js';
+import { CONTACT, EVENT, VENUE, VENUE_INDUK } from '../config.js';
+
+const CATEGORIES = [
+  { id: 'Semua', label: 'Semua Topik' },
+  { id: 'Administrasi', label: 'Administrasi & TM' },
+  { id: 'Lapangan', label: 'Lapangan & Penalti' },
+  { id: 'Logistik', label: 'Seragam & Basecamp' },
+  { id: 'Penilaian', label: 'Nilai & Sanggah' },
+];
+
+const CATEGORY_META = {
+  Administrasi: {
+    label: 'Administrasi & TM',
+    badgeClass: 'bg-blue-50 text-blue-700 border-blue-200/80',
+    icon: FileCheck2,
+  },
+  Lapangan: {
+    label: 'Lapangan & Penalti',
+    badgeClass: 'bg-red-50 text-red-700 border-red-200/80',
+    icon: ShieldAlert,
+  },
+  Logistik: {
+    label: 'Seragam & Basecamp',
+    badgeClass: 'bg-amber-50 text-amber-800 border-amber-200/80',
+    icon: Building2,
+  },
+  Penilaian: {
+    label: 'Nilai & Sanggah',
+    badgeClass: 'bg-emerald-50 text-emerald-700 border-emerald-200/80',
+    icon: Award,
+  },
+};
 
 const FAQ_DATA = [
-  // --- KATEGORI 1: PENDAFTARAN & SYARAT ---
+  // --- ADMINISTRASI & TM ---
   {
     id: 1,
-    category: 'Pendaftaran',
-    icon: 'Users2',
-    q: 'Siapa saja yang berhak mengikuti perlombaan LBB Mu\'allimin 2027?',
-    a: 'Peserta adalah siswa/i aktif tingkat SD/MI dan SMP/MTs (atau sederajat) yang terdaftar di sekolah wilayah Daerah Istimewa Yogyakarta (Kota Yogyakarta, Sleman, Bantul, Kulon Progo, dan Gunungkidul). Keabsahan dibuktikan dengan Kartu Pelajar atau Surat Keterangan Kepala Sekolah.',
+    category: 'Administrasi',
+    tag: 'Batas 8 Jan 2027',
+    q: 'Bolehkah mengganti anggota pasukan, Danton, atau susunan posisi setelah pendaftaran terverifikasi?',
+    summary: 'Boleh, maksimal H-1 Technical Meeting (8 Januari 2027 pukul 23.59 WIB) dan wajib sinkron dengan Surat Tugas Kepala Sekolah.',
+    a: 'Perubahan data personel—termasuk pergantian individu, Danton, susunan posisi, maupun pasfoto—masih diperbolehkan hingga 8 Januari 2027 pukul 23.59 WIB. Setiap perubahan wajib dilaporkan ke panitia dan disesuaikan dengan Surat Tugas/Rekomendasi resmi dari Kepala Sekolah/Madrasah. Perubahan personel yang tidak tercantum di Surat Tugas resmi dinyatakan tidak sah.',
+    ref: 'Juknis Pendaftaran Bab A.9.c',
   },
   {
     id: 2,
-    category: 'Pendaftaran',
-    icon: 'Users2',
-    q: 'Berapa jumlah maksimal peleton yang dapat dikirimkan tiap sekolah?',
-    a: `Tiap pangkalan sekolah berhak mengirimkan maksimal ${COMPETITION.MAX_PLATOONS_PER_SCHOOL} peleton (misal: Peleton A dan Peleton B). Kuota dibatasi sebanyak 18 Peleton SD/MI dan 18 Peleton SMP/MTs (total 36 peleton se-DIY).`,
+    category: 'Administrasi',
+    tag: 'Wajib Saat TM',
+    q: 'Pendaftaran sudah 100% online — apakah saat Technical Meeting (TM) masih wajib membawa berkas fisik?',
+    summary: 'Wajib. Delegasi (maks. 2 orang per sekolah) harus menyerahkan 2 dokumen fisik asli saat registrasi TM.',
+    a: `Meskipun pendaftaran awal dilakukan paperless, utusan resmi sekolah (maksimal 2 orang per sekolah, termasuk bagi sekolah yang mengirim 2 peleton) WAJIB hadir dan menyerahkan berkas fisik asli saat registrasi TM (${EVENT.TECHNICAL_MEETING_FULL_DATE}, pukul 12.30–13.00 WIB): (1) Surat Tugas/Rekomendasi Kepala Sekolah asli berstempel basah berisi daftar lengkap seluruh personel & pendamping, serta (2) Pakta Integritas fisik bertanda tangan basah Official.`,
+    ref: 'Pasal 2 & 3 Tata Tertib',
   },
   {
     id: 3,
-    category: 'Pendaftaran',
-    icon: 'Users2',
-    q: 'Apakah diperbolehkan peleton campuran (putra dan putri)?',
-    a: 'Sangat diperbolehkan. Peleton bersifat terbuka: boleh murni putra, murni putri, maupun peleton campuran (heterogen) putra dan putri dalam satu barisan.',
+    category: 'Administrasi',
+    tag: 'Akses e-Nilai',
+    q: 'Mengapa akun Gmail yang didaftarkan saat registrasi tidak boleh sembarangan atau lupa aksesnya?',
+    summary: 'Gmail terdaftar adalah satu-satunya kunci privat untuk login Dashboard Tim dan mengakses lembar e-Rekapitulasi Nilai.',
+    a: 'Akun Google (Gmail) yang didaftarkan pada formulir pendaftaran menjadi identitas login tunggal ke Dashboard Peserta sekaligus akses eksklusif untuk melihat rincian e-Rekapitulasi Nilai peleton Anda saat hari-H. Panitia tidak membuka rincian nilai tim ke publik, sehingga kehilangan akses Gmail dapat menghambat pengecekan nilai dan proses pengajuan sanggah.',
+    ref: 'Pasal 13.3 Tatib & Bab A.9 Penilaian',
   },
   {
     id: 4,
-    category: 'Pendaftaran',
-    icon: 'FileCheck2',
-    q: 'Kapan periode pendaftaran online dibuka dan ditutup?',
-    a: 'Pendaftaran daring resmi dibuka mulai Senin, 26 Oktober 2026 pukul 00.00 WIB hingga kuota terpenuhi (total 36 peleton: 18 SD/MI dan 18 SMP/MTs) melalui portal web resmi. Pendaftaran otomatis ditutup apabila seluruh kuota telah penuh.',
-  },
-  {
-    id: 5,
-    category: 'Pendaftaran',
-    icon: 'FileCheck2',
-    q: 'Bagaimana alur pendaftaran peleton secara digital?',
-    a: 'Pendaftaran 100% paperless: (1) Klik tombol "Daftar Peleton" di web; (2) Masukkan data identitas sekolah & email; (3) Masukkan data Komandan Peleton & Official; (4) Unggah bukti transfer pembayaran & bubuhkan tanda tangan digital Pakta Integritas; (5) Dapatkan Kode Registrasi resmi untuk memantau status validasi berkas.',
+    category: 'Administrasi',
+    tag: 'Mitigasi Server',
+    q: 'Bagaimana jika terjadi kendala teknis server saat mendaftar atau mengunggah berkas di portal?',
+    summary: 'Tersedia jalur verifikasi darurat manual via WhatsApp Helpdesk khusus untuk gangguan sistem portal.',
+    a: 'Apabila peserta mengalami gagal login atau gagal unggah berkas akibat gangguan teknis pada server portal resmi, panitia menyediakan mekanisme verifikasi dan pengumpulan berkas darurat secara manual melalui koordinasi WhatsApp Helpdesk resmi. Namun, keterlambatan akibat kelalaian peserta hingga melewati batas waktu atau kehabisan kuota tidak termasuk cakupan mitigasi ini.',
+    ref: 'Juknis Pendaftaran Bab A.11',
   },
 
-  // --- KATEGORI 2: BIAYA & PEMBAYARAN ---
+  // --- LAPANGAN & PENALTI ---
+  {
+    id: 5,
+    category: 'Lapangan',
+    tag: 'Insiden Medis',
+    q: 'Bagaimana jika di tengah penampilan ada anggota yang pingsan/cedera sehingga pasukan kurang dari 22 orang?',
+    summary: 'Dievakuasi medis saat tampil berlangsung TIDAK kena penalti; masuk arena < 22 orang dari awal kena -75 poin.',
+    a: 'Penalti tetap sebesar -75 poin terhadap Nilai Peleton hanya diberlakukan apabila peleton memasuki arena dengan jumlah personel kurang dari 22 orang (1 Danton + 21 Pasukan Inti). Apabila seluruh 22 personel lengkap saat masuk lalu ada anggota yang harus dievakuasi tim medis saat penampilan berlangsung, peleton TIDAK dikenai penalti pengurangan personel.',
+    ref: 'Juknis Penilaian Bab C.3',
+  },
   {
     id: 6,
-    category: 'Biaya',
-    icon: 'CreditCard',
-    q: 'Berapa besaran biaya pendaftaran dan bagaimana skema periodenya?',
-    a: `Seluruh pendaftar mengikuti tarif biaya pendaftaran Gelombang 2 sebesar Rp400.000,- per peleton dan berlaku hingga kuota penuh. Setiap pembayaran wajib menambahkan kode unik 108 pada tiga digit terakhir nominal transfer (contoh: 1 peleton mentransfer Rp400.108,-; 2 peleton mentransfer Rp800.108,-).`,
+    category: 'Lapangan',
+    tag: 'Stopwatch Jalan',
+    q: 'Kapan tepatnya pergantian pasukan cadangan diizinkan, dan apakah stopwatch dihentikan sementara?',
+    summary: 'Hanya sah pada jeda Materi "Bubar" (No. 16→17 SD / No. 19→20 SMP) dan stopwatch tetap berjalan terus.',
+    a: 'Pergantian personel inti dengan pasukan cadangan di dalam arena hanya diperbolehkan tepat pada saat Materi "Bubar" (di antara Gerakan No. 16 dan 17 untuk jenjang SD/MI; di antara No. 19 dan 20 untuk SMP/MTs). Selama proses pergantian berlangsung, stopwatch resmi tetap berjalan tanpa jeda maupun tambahan waktu.',
+    ref: 'Juknis Lapangan & Materi Lomba',
   },
   {
     id: 7,
-    category: 'Biaya',
-    icon: 'CreditCard',
-    q: 'Ke rekening mana pembayaran pendaftaran ditransfer?',
-    a: `Pembayaran dilakukan melalui transfer perbankan ke rekening resmi panitia: Bank BSI (Bank Syariah Indonesia), No. Rekening: 2600051817, a.n. ADMISI HUMAS DAN KERJA SAMA. Format Berita Transfer Wajib: NAMA SEKOLAH_JUMLAH PELETON (Contoh: MTS MU’ALLIMIN YK_1).`,
+    category: 'Lapangan',
+    tag: 'Nilai 0 vs 50',
+    q: 'Apa bedanya sanksi gerakan terlewat lalu diulang, tidak dilakukan sama sekali, atau gerakan berangkai terputus?',
+    summary: 'Diulang di luar urutan / berangkai terputus = Nilai 50; tidak dilakukan sama sekali = Nilai 0. Semuanya memotong nilai Danton.',
+    a: 'Gerakan yang terlewat tetapi dilaksanakan kemudian di luar urutan diberi Nilai Minimal (50) pada gerakan tersebut. Gerakan yang terlewat dan tidak dilaksanakan sama sekali diberi Nilai 0. Sementara itu, rangkaian gerakan bertanda penghubung (-) yang terputus jeda atau gerakan tambahan diberi Nilai Minimal (50). Ketiga jenis kesalahan tersebut sekaligus memotong skor aspek Penguasaan Materi Danton (bobot 35%).',
+    ref: 'Juknis Penilaian Bab C.6 & C.7',
   },
   {
     id: 8,
-    category: 'Biaya',
-    icon: 'CreditCard',
-    q: 'Apakah biaya pendaftaran dapat dibatalkan atau ditarik kembali (refund)?',
-    a: 'Tidak. Sesuai regulasi pada juknis, seluruh biaya pendaftaran yang telah ditransfer bersifat non-refundable (tidak dapat ditarik kembali dengan alasan apa pun) apabila pihak sekolah/peleton mengundurkan diri secara sepihak.',
+    category: 'Lapangan',
+    tag: 'Urutan 6–10',
+    q: 'Apakah semua peleton wajib ikut Upacara Pembukaan, dan apa konsekuensinya jika terlambat?',
+    summary: 'Upacara Pembukaan wajib khusus Urutan Tampil 6–10 (-150 poin jika absen). Apel Penutupan wajib seluruh kontingen.',
+    a: 'Tidak semua peleton. Upacara Pembukaan (pukul 07.00 WIB, barisan siap 06.45 WIB) WAJIB diikuti khusus peleton urutan tampil 6 s.d. 10 (SD-131 s.d. SD-139 & SMP-242 s.d. SMP-260) dengan formasi 1 Danton + 15 anggota berseragam lomba. Tidak hadir dikenai -150 poin; terlambat dikenai -50 poin per kelipatan 5 menit (maks. toleransi 15 menit). Adapun Apel Penutupan (hadir 15.45 WIB) wajib diikuti seluruh kontingen (1 Danton + 4 anggota).',
+    ref: 'Pasal 6 & 13.1 Tatib; Bab C.1 Penilaian',
   },
-
-  // --- KATEGORI 3: TEKNIS & ARENA LOMBA ---
   {
     id: 9,
-    category: 'Teknis',
-    icon: 'Layers',
-    q: 'Berapa komposisi anggota pasukan di setiap peleton?',
-    a: 'Maksimal 25 orang per peleton: terdiri dari 1 Komandan Peleton (Danton), 21 Pasukan Inti (formasi 3 saf × 7 banjar), dan 3 Pasukan Cadangan. Minimal pasukan yang tampil di lapangan adalah 22 orang (1 Danton + 21 Pasukan Inti). Tim pendamping dibatasi maksimal 1 Official (Pelatih/Pembina) dan 2 Pendukung Resmi (Medis/Dokumentasi) ber-ID Card resmi.',
+    category: 'Lapangan',
+    tag: 'Penalti -100 & Geser',
+    q: 'Apa yang terjadi jika peleton telat datang ke Daerah Persiapan (DP 1), dan bolehkah masuk sebelum dipanggil?',
+    summary: 'Dilarang masuk sebelum dipanggil mic. Lewat 3× panggilan (jeda 2 menit) = -100 poin & digeser ke urutan paling akhir.',
+    a: 'Peleton DILARANG KERAS memasuki DP 1 sebelum dipanggil resmi melalui pengeras suara. Jika peleton tidak hadir setelah 3× panggilan berturut-turut dengan jeda 2 menit antar panggilan, peleton dikenai penalti -100 poin dan urutan tampilnya digeser ke posisi paling akhir. Apabila tetap tidak hadir tanpa konfirmasi sah, peleton dikenai sanksi DISKUALIFIKASI.',
+    ref: 'Pasal 7 Tata Tertib & Bab C.2 Penilaian',
   },
+
+  // --- SERAGAM & BASECAMP ---
   {
     id: 10,
-    category: 'Teknis',
-    icon: 'Layers',
-    q: 'Berapa ukuran kotak arena dan durasi tampil masing-masing jenjang?',
-    a: 'Jenjang SD/MI: Arena 1 bertempat di Lapangan Basket berukuran 25 meter × 14 meter dengan durasi tampil maksimal 8 menit (peluit 1x panjang peringatan sisa 1 menit pada menit ke-7, peluit 2x panjang waktu habis pada menit ke-8). Jenjang SMP/MTs: Arena 2 bertempat di Pelataran Embung berukuran 26 meter × 15 meter dengan durasi tampil maksimal 12 menit (peluit 1x panjang peringatan sisa 1 menit pada menit ke-11, peluit 2x panjang waktu habis pada menit ke-12). Waktu stopwatch resmi dimulai saat aba-aba pelaksanaan penghormatan awal ("Hormat = GERAK") dan berhenti saat aba-aba pelaksanaan penghormatan penutup ("Hormat = GERAK").',
+    category: 'Logistik',
+    tag: 'Cek Fisik DP 1',
+    q: 'Apakah wajib memakai seragam Tonti khusus, dan bagaimana aturan sepatu serta peserta putri?',
+    summary: 'Boleh seragam OSIS/nasional/Tonti asal seragam. Putri ber-rok wajib legging; sol sepatu dilarang keras berpines/paku.',
+    a: 'Peserta tidak wajib memiliki seragam Tonti khusus—boleh mengenakan seragam Paskibra, OSIS, nasional, atau seragam kesepakatan sekolah asalkan seragam se-peleton dan Komandan memiliki tanda pembeda yang jelas. Ketentuan mengikat: peserta putri yang mengenakan rok WAJIB memakai legging di dalamnya, dan DILARANG KERAS menempelkan pines, paku payung, spikes, atau pul logam pada sol sepatu (diperiksa fisik di DP 1 dan berlaku juga saat Uji Coba Lapangan).',
+    ref: 'Pasal 1.5, 4.4 & 7.4 Tata Tertib',
   },
   {
     id: 11,
-    category: 'Teknis',
-    icon: 'Layers',
-    q: 'Kapan pergantian personel pasukan cadangan boleh dilakukan?',
-    a: 'Pergantian pemain di arena hanya diperbolehkan pada saat materi "Bubar", yaitu di antara Materi No. 16 dan 17 untuk SD/MI; serta di antara Materi No. 19 dan 20 untuk SMP/MTs. Waktu stopwatch tetap berjalan selama proses pergantian pemain.',
+    category: 'Logistik',
+    tag: 'Zonasi & Parkir Bus',
+    q: 'Apakah wali murid, suporter, dan bus kontingen boleh masuk ke area basecamp atau parkir di dalam kampus?',
+    summary: 'Basecamp steril dari wali murid/suporter. Bus hanya boleh drop-off lalu wajib parkir di Lapangan Hibrida Argomulyo.',
+    a: 'Area basecamp (1 ruang kelas untuk maks. 2 peleton; prioritas se-ruang bagi sekolah pengirim 2 peleton) dijaga ketat dan HANYA boleh dimasuki personel berseragam lengkap serta 1 Official + 2 Pendukung Resmi ber-ID Card (cadangan tidak diberi ID Card tapi wajib berseragam lengkap). Wali murid dan suporter dilarang keras masuk basecamp maupun area Asrama Santri. Untuk armada: bus kontingen hanya diizinkan drop-off di dalam kampus lalu wajib parkir di Lapangan Hibrida Argomulyo, sedangkan mobil/motor parkir di dalam kampus (dialihkan ke Hibrida jika penuh).',
+    ref: 'Pasal 5.3.c & Pasal 8 Tata Tertib',
   },
   {
     id: 12,
-    category: 'Teknis',
-    icon: 'Calendar',
-    q: 'Apa acuan baku peraturan baris-berbaris yang digunakan dewan juri?',
-    a: 'Unsur penilaian materi lomba mengacu pada Peraturan Panglima TNI No. 58 & 57 Tahun 2018 (serta No. 45 Tahun 2014 khusus untuk Hormat Kanan). Penilaian setiap gerakan PBB memadukan unsur Kebenaran Teknik Gerakan dan Kekompakan secara proporsional menggunakan sistem coret 5 predikat nilai baku (KS, K, C, B, BS) dalam rentang 50 s.d. 80 / 85 / 90 poin sesuai tingkat kesulitan gerakan (Sederhana, Menengah, Kompleks).',
+    category: 'Logistik',
+    tag: 'Checkout 15.00 WIB',
+    q: 'Mengapa saat check-in pagi harus menjaminkan KTP/SIM Official, dan bagaimana syarat pengambilannya?',
+    summary: 'Jaminan kebersihan & keutuhan basecamp. Checkout maks. 15.00 WIB; kotor kena -150 poin, rusak kena denda Rp500.000.',
+    a: 'Daftar ulang hari-H dibuka pukul 06.00–09.00 WIB (lewat 09.00 WIB tidak dilayani dan peleton gugur). Official wajib menjaminkan 1 KTP/SIM asli. Sebelum pukul 15.00 WIB, peleton wajib membersihkan kelas, menata ulang meja/kursi, memilah sampah ke 2 trash bag resmi (organik & anorganik) untuk diserahkan ke Pos Checkout, dan lolos inspeksi LO agar KTP/SIM dapat diambil kembali. Basecamp kotor dikenai -150 poin; kerusakan fasilitas dikenai ganti rugi penuh + denda administratif Rp500.000.',
+    ref: 'Pasal 5 & Pasal 14 Tata Tertib',
   },
   {
     id: 13,
-    category: 'Teknis',
-    icon: 'Calendar',
-    q: 'Siapa saja dewan juri yang bertugas menilai?',
-    a: 'Penilaian dilakukan secara objektif dan independen oleh 6 Dewan Juri berkompeten dari unsur TNI, POLRI, dan Profesional (3 Juri Arena 1 untuk SD/MI dan 3 Juri Arena 2 untuk SMP/MTs).',
+    category: 'Logistik',
+    tag: 'Penalti Suporter',
+    q: 'Bagaimana aturan sorakan suporter dan rokok/vape? Bisakah ulah suporter memotong nilai peleton?',
+    summary: 'Bisa. Yel-yel/alat tabuh saat tim tampil kena -50 poin (pelanggaran ke-3 dst.); rokok/vape di kampus kena -75 poin.',
+    a: 'Bisa dan berlaku langsung ke Nilai Peleton. Suporter dilarang membunyikan alat tabuh, peluit, terompet/toa, meneriakkan yel-yel saat peleton tampil, atau mencemooh tim lain—pelanggaran ke-3 dan seterusnya dikenai -50 poin (pelanggaran sengaja/berat langsung dipotong tanpa peringatan). Selain itu, seluruh kawasan kampus adalah Kawasan Bebas Rokok & Vape/Pod; pelanggaran terang-terangan di basecamp atau melibatkan personel berseragam dikenai penalti -75 poin.',
+    ref: 'Pasal 8.9 & 9 Tatib; Bab C.9–10 Penilaian',
   },
 
-  // --- KATEGORI 4: JADWAL & LOKASI ---
+  // --- PENILAIAN & SANGGAH ---
   {
     id: 14,
-    category: 'Jadwal',
-    icon: 'Calendar',
-    q: 'Kapan dan di mana pelaksanaan Technical Meeting (TM)?',
-    a: `Technical Meeting (TM) diselenggarakan pada ${EVENT.TECHNICAL_MEETING_FULL_DATE} pukul ${EVENT.TECHNICAL_MEETING_TIME_RANGE} bertempat di Kampus Induk Madrasah Mu'allimin Jl. Letjen S. Parman No. 68 Wirobrajan. Agenda wajib meliputi pengundian nomor urut tampil, verifikasi faktual berkas, dan penegasan tata tertib lomba.`,
+    category: 'Penilaian',
+    tag: 'Aturan Tie-Breaker',
+    q: 'Jika ada dua peleton atau dua sekolah memiliki total nilai/poin sama persis, bagaimana penentuannya?',
+    summary: 'Dipecah berjenjang dari Nilai Murni tertinggi, penalti paling sedikit (Juara Umum), Nilai Murni Danton, hingga Pleno Juri.',
+    a: 'Untuk seri Juara Peleton, prioritas pemecahnya: (1) Nilai Murni Peleton tertinggi sebelum penalti, (2) Nilai Murni Danton tertinggi, lalu (3) Sidang Pleno Dewan Juri. Untuk seri Juara Umum sekolah: (1) Nilai Murni Peleton terbaik sekolah tersebut, (2) akumulasi penalti paling sedikit, (3) Nilai Murni Danton tertinggi, lalu (4) Sidang Pleno Juri. Catatan penting: gelar Juara Harapan 1–3 tidak diperhitungkan dalam akumulasi poin Juara Umum.',
+    ref: 'Juknis Penilaian Bab A.5–A.8',
   },
   {
     id: 15,
-    category: 'Jadwal',
-    icon: 'Calendar',
-    q: 'Apakah ada fasilitas uji coba orientasi lapangan sebelum hari-H?',
-    a: `Ya. Uji coba orientasi kontur lapangan dijadwalkan pada ${EVENT.FIELD_TRIAL_FULL_DATE} pukul ${EVENT.FIELD_TRIAL_TIME_RANGE} di Kampus Terpadu Sedayu agar peserta dapat beradaptasi langsung dengan arena perlombaan.`,
+    category: 'Penilaian',
+    tag: 'Tutup 15.00 WIB',
+    q: 'Kapan rincian nilai bisa dilihat, dan hal apa saja yang boleh (serta tidak boleh) disanggah?',
+    summary: 'Nilai rilis ±1 jam pascatampil via Portal. Sanggah tertulis hanya untuk kesalahan administratif, ditutup serentak pukul 15.00 WIB.',
+    a: 'Rekapitulasi nilai peleton dirilis bertahap (rolling release) di Portal Peserta sekitar ±1 jam setelah penampilan selesai. Protes/sanggah HANYA dilayani untuk kekeliruan administratif non-penilaian (kesalahan penjumlahan skor, keliru input dari lembar juri, atau catatan penalti)—mutu penilaian juri bersifat mutlak. Pengajuan wajib tertulis menggunakan Formulir Sanggahan Resmi oleh 1 Official terdaftar di Ruang Informasi dengan bukti valid, dan ditutup serentak pukul 15.00 WIB.',
+    ref: 'Pasal 13 Tatib & Bab A.9–10 Penilaian',
   },
   {
     id: 16,
-    category: 'Jadwal',
-    icon: 'MapPin',
-    q: 'Di mana lokasi perlombaan pada hari-H dan fasilitas apa saja yang tersedia?',
-    a: `Hari-H dilaksanakan pada ${EVENT.COMPETITION_DATE} (mulai pukul 06.00 WIB) di Kampus Terpadu Mu'allimin Sedayu, Bantul. Fasilitas lengkap meliputi: Basecamp transit ruang kelas, Masjid Hj. Yuliana untuk ibadah, kantin & stan kuliner 1918 Foodcourt & Mart, area parkir luas, pos kesehatan & ambulans siaga, serta arena upacara mini soccer.`,
-  },
-  {
-    id: 17,
-    category: 'Teknis',
-    icon: 'FileCheck2',
-    q: 'Apakah nomor dada peleton wajib dikembalikan ke panitia setelah tampil?',
-    a: 'Nomor Dada Peleton resmi TIDAK PERLU dikembalikan kepada panitia setelah perlombaan selesai. Nomor dada tersebut sepenuhnya menjadi hak milik serta cenderamata resmi (souvenir) bagi masing-masing peleton/sekolah bersangkutan.',
+    category: 'Penilaian',
+    tag: 'Nomor Dada & Sertifikat',
+    q: 'Apakah nomor dada peleton harus dikembalikan setelah tampil, dan bagaimana penerbitan E-Sertifikat?',
+    summary: 'Nomor dada (dipasang di Saf 2 Banjar 1) menjadi suvenir resmi sekolah. E-Sertifikat dicetak sesuai nama input di Portal.',
+    a: 'Nomor Dada Peleton resmi—yang wajib disematkan pada dada personel banjar paling kanan saf kedua (Saf 2 Banjar 1 / S2B1)—TIDAK PERLU dikembalikan ke panitia dan menjadi hak milik serta cenderamata resmi sekolah. Sementara itu, seluruh pemenang (Juara I–III, Harapan I–III Peleton, serta Danton Terbaik I–III) akan menerima E-Sertifikat resmi yang diterbitkan berdasarkan nama lengkap personel di Portal Peserta, sehingga ejaan wajib disesuaikan dengan ijazah/dokumen resmi.',
+    ref: 'Pasal 5.3.b, 5.4 & 11.2 Tata Tertib',
   },
 ];
 
 export default function FaqContact() {
-  const [selectedFilter, setSelectedFilter] = useState('Semua');
+  const [selectedCategory, setSelectedCategory] = useState('Semua');
   const [searchQuery, setSearchQuery] = useState('');
-  const [openIds, setOpenIds] = useState({}); // Default semua pertanyaan tertutup
+  const [openIds, setOpenIds] = useState({});
+  const [activeCampus, setActiveCampus] = useState('sedayu'); // 'sedayu' | 'induk'
+  const [copiedEmail, setCopiedEmail] = useState(false);
 
   function toggleFaq(id) {
     setOpenIds(prev => ({
@@ -160,163 +224,326 @@ export default function FaqContact() {
     }));
   }
 
-  const categories = [
-    { label: 'Semua', count: FAQ_DATA.length },
-    { label: 'Pendaftaran', count: FAQ_DATA.filter(f => f.category === 'Pendaftaran').length },
-    { label: 'Biaya', count: FAQ_DATA.filter(f => f.category === 'Biaya').length },
-    { label: 'Teknis', count: FAQ_DATA.filter(f => f.category === 'Teknis').length },
-    { label: 'Jadwal', count: FAQ_DATA.filter(f => f.category === 'Jadwal').length },
-  ];
+  const categoryCounts = useMemo(() => {
+    const counts = { Semua: FAQ_DATA.length };
+    for (const item of FAQ_DATA) {
+      counts[item.category] = (counts[item.category] || 0) + 1;
+    }
+    return counts;
+  }, []);
 
   const filteredFaqs = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
     return FAQ_DATA.filter(item => {
-      const matchCategory = selectedFilter === 'Semua' || item.category === selectedFilter;
-      const matchSearch =
-        searchQuery.trim() === '' ||
-        item.q.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.a.toLowerCase().includes(searchQuery.toLowerCase());
-      return matchCategory && matchSearch;
+      const matchCat = selectedCategory === 'Semua' || item.category === selectedCategory;
+      if (!matchCat) return false;
+      if (!q) return true;
+      return (
+        item.q.toLowerCase().includes(q) ||
+        item.summary.toLowerCase().includes(q) ||
+        item.a.toLowerCase().includes(q) ||
+        item.tag.toLowerCase().includes(q) ||
+        item.ref.toLowerCase().includes(q)
+      );
     });
-  }, [selectedFilter, searchQuery]);
+  }, [selectedCategory, searchQuery]);
+
+  const allVisibleOpen =
+    filteredFaqs.length > 0 && filteredFaqs.every(item => Boolean(openIds[item.id]));
+
+  function handleToggleAllVisible() {
+    if (allVisibleOpen) {
+      setOpenIds(prev => {
+        const next = { ...prev };
+        for (const item of filteredFaqs) next[item.id] = false;
+        return next;
+      });
+    } else {
+      setOpenIds(prev => {
+        const next = { ...prev };
+        for (const item of filteredFaqs) next[item.id] = true;
+        return next;
+      });
+    }
+  }
+
+  function handleCopyEmail() {
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(CONTACT.EMAIL).then(() => {
+        setCopiedEmail(true);
+        setTimeout(() => setCopiedEmail(false), 2000);
+      });
+    }
+  }
+
+  const currentVenue =
+    activeCampus === 'sedayu'
+      ? {
+          name: VENUE.NAME,
+          badge: 'Hari-H Lomba & Uji Coba Lapangan',
+          badgeStyle: 'bg-red-50 text-red-700 border-red-200',
+          schedule: `${EVENT.FIELD_TRIAL_DATE} (UCL) • ${EVENT.COMPETITION_DATE} (Hari-H)`,
+          address: VENUE.ADDRESS,
+          mapsUrl: VENUE.MAPS_URL,
+          embedUrl:
+            VENUE.MAPS_EMBED_URL ||
+            'https://maps.google.com/maps?q=-7.806784,110.2683762&hl=id&z=15&output=embed',
+          title: "Peta Kampus Terpadu Mu'allimin Sedayu",
+        }
+      : {
+          name: VENUE_INDUK.NAME,
+          badge: 'Lokasi Technical Meeting (TM)',
+          badgeStyle: 'bg-blue-50 text-blue-700 border-blue-200',
+          schedule: `${EVENT.TECHNICAL_MEETING_FULL_DATE} • ${EVENT.TECHNICAL_MEETING_TIME_RANGE}`,
+          address: VENUE_INDUK.ADDRESS,
+          mapsUrl: VENUE_INDUK.MAPS_URL,
+          embedUrl: VENUE_INDUK.MAPS_EMBED_URL,
+          title: "Peta Kampus Induk Mu'allimin Wirobrajan",
+        };
 
   return (
-    <section id="contact" className="relative py-24 lg:py-32 bg-slate-50 overflow-hidden text-slate-800 border-t border-slate-200 font-sans">
-      {/* Background Ambience */}
-      <div className="absolute inset-0 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:16px_16px] opacity-60 pointer-events-none"></div>
-      <div className="absolute top-1/4 right-0 w-[550px] h-[550px] bg-red-100/40 rounded-full blur-[140px] pointer-events-none"></div>
-      <div className="absolute bottom-10 left-0 w-[550px] h-[550px] bg-amber-100/40 rounded-full blur-[140px] pointer-events-none"></div>
+    <section
+      id="contact"
+      className="relative py-20 lg:py-28 bg-slate-50 overflow-hidden text-slate-800 border-t border-slate-200 font-sans"
+    >
+      {/* Subtle Architectural Grid & Ambient Glow */}
+      <div className="absolute inset-0 bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] [background-size:20px_20px] opacity-45 pointer-events-none" />
+      <div className="absolute -top-24 right-0 w-[480px] h-[480px] bg-red-100/45 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-0 -left-24 w-[420px] h-[420px] bg-amber-100/40 rounded-full blur-[120px] pointer-events-none" />
 
-      <div className="container mx-auto px-4 sm:px-6 relative z-10">
+      <div className="container mx-auto px-4 sm:px-6 relative z-10 max-w-7xl">
         {/* Section Header */}
-        <div className="text-center mb-14 md:mb-16 max-w-3xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-slate-200/80 border border-slate-300 text-slate-700 text-xs font-semibold uppercase tracking-wider mb-4">
-            <HelpCircle className="w-3.5 h-3.5 text-slate-600" />
-            <span>Pusat Informasi & Bantuan</span>
+        <div className="text-center max-w-3xl mx-auto mb-10 lg:mb-12">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white border border-slate-200 text-slate-700 text-xs font-semibold uppercase tracking-wider mb-4 shadow-sm">
+            <HelpCircle className="w-3.5 h-3.5 text-red-700" />
+            <span>Klarifikasi Teknis &amp; Pusat Bantuan</span>
           </div>
 
-          <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tight leading-tight py-1 text-slate-900">
-            FAQ & <span className="text-red-700">Layanan Informasi</span>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight leading-tight text-slate-900">
+            FAQ &amp; <span className="text-red-700">Layanan Informasi</span>
           </h2>
-          <div className="w-16 h-1 bg-red-700 mx-auto mt-4 rounded-full"></div>
-          <p className="text-slate-600 text-base mt-4 leading-relaxed font-normal">
-            Jawaban resmi seputar pendaftaran, berkas administrasi peleton, tata tertib arena pos, dan dewan juri.
+          <div className="w-16 h-1 bg-red-700 mx-auto mt-4 rounded-full" />
+          <p className="text-slate-600 text-sm sm:text-base mt-4 leading-relaxed">
+            Kumpulan jawaban spesifik untuk situasi lapangan, batas revisi data, pengecualian penalti, prosedur basecamp, hingga mekanisme sanggah yang sering ditanyakan official &amp; pelatih.
           </p>
-
-          {/* Quick Search Input */}
-          <div className="mt-7 max-w-xl mx-auto relative w-full">
-            <div className="relative flex items-center">
-              <Search className="w-4 h-4 text-slate-400 absolute left-4 pointer-events-none" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
-                placeholder="Cari pertanyaan (contoh: biaya, durasi, danton, TM, juri)..."
-                className="w-full pl-11 pr-4 py-3 rounded-xl bg-white border border-slate-300 text-slate-900 text-sm placeholder-slate-400 focus:outline-none focus:border-slate-500 focus:ring-1 focus:ring-slate-400 transition-all shadow-sm"
-              />
-              {searchQuery && (
-                <button
-                  type="button"
-                  onClick={() => setSearchQuery('')}
-                  className="absolute right-3.5 text-xs text-slate-500 hover:text-slate-800 px-2 py-1 bg-slate-100 rounded-md cursor-pointer transition-colors"
-                >
-                  Reset
-                </button>
-              )}
-            </div>
-          </div>
         </div>
 
-        <div className="grid lg:grid-cols-12 gap-8 lg:gap-14 items-start w-full min-w-0">
-          {/* FAQ Column (Left - 8 Cols) */}
-          <div className="lg:col-span-8 w-full min-w-0 space-y-6">
-            {/* Category Filter Pills */}
-            <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1 pb-2.5 sm:flex-wrap border-b border-slate-200 w-full min-w-0">
-              {categories.map(cat => (
-                <button
-                  key={cat.label}
-                  onClick={() => setSelectedFilter(cat.label)}
-                  className={`shrink-0 whitespace-nowrap px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all flex items-center gap-2 cursor-pointer shadow-xs ${
-                    selectedFilter === cat.label
-                      ? 'bg-slate-900 text-white'
-                      : 'bg-white hover:bg-slate-100 text-slate-600 hover:text-slate-900 border border-slate-200'
-                  }`}
-                >
-                  <span>{cat.label}</span>
-                  <span
-                    className={`text-[10px] px-1.5 py-0.5 rounded-md ${
-                      selectedFilter === cat.label ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500'
-                    }`}
+        {/* Main 12-Col Grid */}
+        <div className="grid lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+          {/* LEFT COLUMN: Unified Search, Category Tabs & Editorial FAQ Accordion (8 Cols) */}
+          <div className="lg:col-span-8 space-y-5 min-w-0">
+            {/* Unified Command Bar (Search + Category Filter) */}
+            <div className="bg-white rounded-2xl border border-slate-200/90 shadow-sm p-4 sm:p-5 space-y-4">
+              {/* Search Field */}
+              <div className="relative flex items-center">
+                <Search className="w-4 h-4 text-slate-400 absolute left-3.5 pointer-events-none" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  placeholder="Cari kasus teknis (misal: pingsan, pines, checkout, sanggah, bus, revisi, tie-breaker)..."
+                  className="w-full pl-10 pr-20 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-sm placeholder-slate-400 focus:bg-white focus:outline-none focus:border-red-600 focus:ring-2 focus:ring-red-100 transition-all"
+                />
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchQuery('')}
+                    className="absolute right-2.5 inline-flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-slate-900 px-2.5 py-1 bg-slate-200/70 hover:bg-slate-200 rounded-lg cursor-pointer transition-colors"
                   >
-                    {cat.count}
-                  </span>
-                </button>
-              ))}
+                    <X className="w-3.5 h-3.5" />
+                    <span>Hapus</span>
+                  </button>
+                )}
+              </div>
+
+              {/* Category Filter Pills + Expand/Collapse Control */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
+                <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-0.5 sm:flex-wrap">
+                  {CATEGORIES.map(cat => {
+                    const isActive = selectedCategory === cat.id;
+                    return (
+                      <button
+                        key={cat.id}
+                        type="button"
+                        onClick={() => setSelectedCategory(cat.id)}
+                        className={`shrink-0 whitespace-nowrap px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                          isActive
+                            ? 'bg-slate-900 text-white shadow-sm'
+                            : 'bg-slate-100/80 text-slate-600 hover:bg-slate-200/70 hover:text-slate-900'
+                        }`}
+                      >
+                        <span>{cat.label}</span>
+                        <span
+                          className={`text-[10px] px-1.5 py-0.5 rounded-md font-extrabold ${
+                            isActive ? 'bg-red-600 text-white' : 'bg-white text-slate-500'
+                          }`}
+                        >
+                          {categoryCounts[cat.id] || 0}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {filteredFaqs.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={handleToggleAllVisible}
+                    className="self-start sm:self-auto shrink-0 inline-flex items-center gap-1.5 text-[11px] font-bold text-slate-500 hover:text-red-700 px-2.5 py-1.5 rounded-lg hover:bg-red-50 transition-colors cursor-pointer"
+                  >
+                    <ChevronsUpDown className="w-3.5 h-3.5" />
+                    <span>{allVisibleOpen ? 'Tutup Semua' : 'Buka Semua'}</span>
+                  </button>
+                )}
+              </div>
             </div>
 
-            {/* Accordion Questions List */}
+            {/* Results Counter when searching */}
+            {searchQuery.trim() !== '' && (
+              <div className="flex items-center justify-between px-1 text-xs text-slate-500">
+                <span>
+                  Menampilkan <strong className="text-slate-900">{filteredFaqs.length}</strong> klarifikasi untuk{' '}
+                  <span className="font-semibold text-red-700">"{searchQuery}"</span>
+                </span>
+                {selectedCategory !== 'Semua' && (
+                  <button
+                    type="button"
+                    onClick={() => setSelectedCategory('Semua')}
+                    className="text-red-700 font-bold hover:underline cursor-pointer"
+                  >
+                    Cari di semua topik
+                  </button>
+                )}
+              </div>
+            )}
+
+            {/* Accordion List */}
             {filteredFaqs.length === 0 ? (
               <div className="p-10 rounded-2xl bg-white border border-slate-200 text-center shadow-sm">
-                <HelpCircle className="w-10 h-10 text-slate-400 mx-auto mb-3" />
-                <h4 className="text-base font-bold text-slate-900 mb-1">Pertanyaan tidak ditemukan</h4>
-                <p className="text-xs text-slate-500 max-w-sm mx-auto">
-                  Kata kunci "{searchQuery}" tidak cocok dengan FAQ. Silakan hubungi langsung panitia resmi di samping.
+                <div className="w-12 h-12 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-3">
+                  <AlertTriangle className="w-6 h-6" />
+                </div>
+                <h4 className="text-base font-extrabold text-slate-900 mb-1">
+                  Topik tidak ditemukan di daftar FAQ
+                </h4>
+                <p className="text-xs sm:text-sm text-slate-500 max-w-md mx-auto mb-5 leading-relaxed">
+                  Kata kunci "{searchQuery}" belum tercatat di sini. Untuk kasus khusus peleton Anda, langsung konfirmasi ke Helpdesk Panitia.
                 </p>
+                <div className="flex items-center justify-center gap-2.5 flex-wrap">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSearchQuery('');
+                      setSelectedCategory('Semua');
+                    }}
+                    className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition-colors cursor-pointer"
+                  >
+                    Reset Pencarian
+                  </button>
+                  <a
+                    href={CONTACT.HELPDESK.WA_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-colors shadow-sm"
+                  >
+                    <MessageCircle className="w-3.5 h-3.5" />
+                    <span>Tanya Panitia via WhatsApp</span>
+                  </a>
+                </div>
               </div>
             ) : (
-              <div className="space-y-3.5 w-full min-w-0">
-                {filteredFaqs.map(faq => {
+              <div className="space-y-3">
+                {filteredFaqs.map((faq, idx) => {
                   const isOpen = !!openIds[faq.id];
+                  const catMeta = CATEGORY_META[faq.category] || CATEGORY_META.Administrasi;
+                  const numLabel = String(idx + 1).padStart(2, '0');
+
                   return (
                     <div
                       key={faq.id}
-                      className={`rounded-xl border transition-all duration-200 overflow-hidden w-full ${
+                      className={`rounded-2xl border transition-all duration-200 overflow-hidden ${
                         isOpen
-                          ? 'bg-white border-slate-300 shadow-sm'
-                          : 'bg-white border-slate-200 hover:border-slate-300'
+                          ? 'bg-white border-red-200 shadow-md ring-1 ring-red-100/80'
+                          : 'bg-white border-slate-200/90 hover:border-slate-300 shadow-sm'
                       }`}
                     >
                       <button
                         type="button"
                         onClick={() => toggleFaq(faq.id)}
+                        aria-expanded={isOpen}
                         className="w-full flex items-start justify-between gap-3 sm:gap-4 p-4 sm:p-5 text-left cursor-pointer group"
                       >
-                        <div className="flex items-start gap-3 flex-1 min-w-0">
+                        <div className="flex items-start gap-3.5 flex-1 min-w-0">
+                          {/* Editorial Index Number */}
                           <span
-                            className={`w-6 h-6 rounded-md text-xs font-bold flex items-center justify-center shrink-0 mt-0.5 transition-colors ${
+                            className={`text-xs font-black font-mono px-2 py-1 rounded-lg shrink-0 mt-0.5 transition-colors ${
                               isOpen
-                                ? 'bg-slate-900 text-white'
-                                : 'bg-slate-100 text-slate-600 group-hover:bg-slate-200'
+                                ? 'bg-red-700 text-white'
+                                : 'bg-slate-100 text-slate-500 group-hover:bg-slate-200 group-hover:text-slate-800'
                             }`}
                           >
-                            Q
+                            {numLabel}
                           </span>
-                          <span
-                            className={`font-semibold text-sm sm:text-base leading-snug transition-colors break-words flex-1 min-w-0 ${
-                              isOpen ? 'text-slate-950 font-bold' : 'text-slate-800 group-hover:text-slate-950'
-                            }`}
-                          >
-                            {faq.q}
-                          </span>
+
+                          <div className="flex-1 min-w-0 space-y-1.5">
+                            {/* Micro Tags Row */}
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span
+                                className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold border ${catMeta.badgeClass}`}
+                              >
+                                {catMeta.label}
+                              </span>
+                              <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-100 text-slate-600">
+                                {faq.tag}
+                              </span>
+                            </div>
+
+                            {/* Question Title */}
+                            <h3
+                              className={`text-sm sm:text-[15px] leading-snug transition-colors break-words ${
+                                isOpen
+                                  ? 'font-extrabold text-slate-950'
+                                  : 'font-bold text-slate-800 group-hover:text-slate-950'
+                              }`}
+                            >
+                              {faq.q}
+                            </h3>
+                          </div>
                         </div>
-                        <div
-                          className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-all ${
+
+                        <span
+                          className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 mt-0.5 transition-all ${
                             isOpen
-                              ? 'bg-slate-100 text-slate-800 rotate-180'
-                              : 'bg-slate-100 text-slate-500 group-hover:bg-slate-200'
+                              ? 'bg-red-50 text-red-700 rotate-180'
+                              : 'bg-slate-100 text-slate-500 group-hover:bg-slate-200 group-hover:text-slate-800'
                           }`}
                         >
-                          <ChevronDown className="w-4 h-4 transition-transform duration-200" />
-                        </div>
+                          <ChevronDown className="w-4 h-4" />
+                        </span>
                       </button>
 
                       {isOpen && (
-                        <div className="px-4 sm:px-5 pb-5 pt-1 text-slate-700 text-xs sm:text-sm leading-relaxed border-t border-slate-100 bg-slate-50/60">
-                          <div className="flex gap-3 items-start pt-3">
-                            <span className="w-6 h-6 rounded-md bg-slate-200 text-slate-800 text-xs font-bold flex items-center justify-center shrink-0">
-                              A
-                            </span>
-                            <div className="space-y-2 text-slate-700 flex-1 min-w-0 break-words">
-                              <p>{faq.a}</p>
+                        <div className="px-4 sm:px-5 pb-5 pt-0">
+                          <div className="sm:pl-11 space-y-3 border-t border-slate-100 pt-4">
+                            {/* Quick Takeaway Box */}
+                            <div className="flex items-start gap-2.5 p-3 rounded-xl bg-amber-50/80 border border-amber-200/70">
+                              <Sparkles className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                              <p className="text-xs sm:text-[13px] font-bold text-slate-900 leading-relaxed">
+                                {faq.summary}
+                              </p>
+                            </div>
+
+                            {/* Detailed Answer */}
+                            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                              {faq.a}
+                            </p>
+
+                            {/* Regulation Reference Footer */}
+                            <div className="flex items-center justify-between pt-1.5 text-[11px] text-slate-400">
+                              <span className="inline-flex items-center gap-1.5 font-semibold text-slate-500">
+                                <Scale className="w-3.5 h-3.5 text-red-600/80" />
+                                <span>Dasar Regulasi: {faq.ref}</span>
+                              </span>
                             </div>
                           </div>
                         </div>
@@ -328,184 +555,222 @@ export default function FaqContact() {
             )}
           </div>
 
-          {/* Right Column: Interactive Panitia & Quick Action Cards (4 Cols) */}
-          <div className="lg:col-span-4 w-full min-w-0 space-y-6">
-            {/* Direct Contact Card */}
-            <div className="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200 shadow-xl relative overflow-hidden">
-              <div className="flex items-center gap-3 mb-4 relative z-10">
-                <div className="w-12 h-12 rounded-2xl bg-amber-100 border border-amber-200 text-amber-800 flex items-center justify-center shadow-sm">
-                  <Headset className="w-6 h-6" />
+          {/* RIGHT COLUMN: Sticky Dark Helpdesk + Unified Campus Map Switcher + Quick Links (4 Cols) */}
+          <div className="lg:col-span-4 space-y-5 min-w-0 lg:sticky lg:top-24">
+            {/* 1. Premium Dark Helpdesk Card */}
+            <div className="bg-slate-950 text-white rounded-3xl p-6 border border-slate-800 shadow-xl relative overflow-hidden">
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-700 via-amber-400 to-red-700" />
+              <div className="absolute -top-12 -right-12 w-36 h-36 bg-red-700/20 rounded-full blur-3xl pointer-events-none" />
+
+              <div className="relative z-10 space-y-4">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-[10px] font-extrabold uppercase tracking-wider">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                    <span>Helpdesk Resmi Aktif</span>
+                  </div>
+                  <div className="w-9 h-9 rounded-xl bg-white/5 border border-white/10 text-amber-400 flex items-center justify-center">
+                    <Headset className="w-4 h-4" />
+                  </div>
                 </div>
+
                 <div>
-                  <span className="text-[10px] font-black uppercase tracking-widest text-amber-800 block">
-                    Contact Person
-                  </span>
-                  <h3 className="text-lg font-black text-slate-900 uppercase tracking-tight">
-                    Layanan Panitia
+                  <h3 className="text-lg font-black uppercase tracking-tight text-white">
+                    Butuh Konfirmasi Khusus?
                   </h3>
+                  <p className="text-xs text-slate-400 leading-relaxed mt-1.5">
+                    Untuk permintaan surat dispensasi, revisi data personel sebelum TM, atau kendala akses portal peserta, hubungi tim kesekretariatan kami.
+                  </p>
                 </div>
-              </div>
 
-              <p className="text-xs text-slate-600 leading-relaxed mb-5 relative z-10">
-                Punya pertanyaan khusus mengenai surat dispensasi, pendaftaran kontingen, atau konfirmasi berkas? Tim kami siap melayani Anda.
-              </p>
+                {/* WhatsApp Contacts */}
+                <div className="space-y-2.5 pt-1">
+                  {CONTACT.PERSONS.map((person, idx) => (
+                    <a
+                      key={idx}
+                      href={person.WA_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group flex items-center justify-between gap-2.5 p-3 sm:p-3.5 rounded-2xl bg-white/[0.06] hover:bg-emerald-500/15 border border-white/10 hover:border-emerald-400/50 transition-all duration-200 cursor-pointer"
+                    >
+                      <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                        <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                          <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5" />
+                        </div>
+                        <div className="min-w-0">
+                          <span className="font-bold text-[13px] sm:text-sm text-white block leading-snug">
+                            {person.NAME}
+                          </span>
+                          <span className="text-[11px] text-slate-400 font-mono block truncate">
+                            {person.PHONE_DISPLAY}
+                          </span>
+                        </div>
+                      </div>
+                      <span className="px-2.5 sm:px-3 py-1.5 rounded-xl bg-emerald-500 group-hover:bg-emerald-400 text-slate-950 font-extrabold text-[11px] sm:text-xs flex items-center gap-1 shrink-0 transition-colors">
+                        <span>Chat</span>
+                        <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                      </span>
+                    </a>
+                  ))}
+                </div>
 
-              <div className="space-y-3 relative z-10">
-                {CONTACT.PERSONS.map((person, idx) => (
-                  <a
-                    key={idx}
-                    href={person.WA_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group flex items-center justify-between p-3.5 sm:p-4 rounded-2xl bg-slate-50 border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/50 transition-all duration-300 shadow-sm cursor-pointer"
+                {/* Official Email Copy Row */}
+                <div className="flex items-center justify-between gap-2 px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/10">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <Mail className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                    <a
+                      href={CONTACT.EMAIL_HREF}
+                      className="text-xs font-mono text-slate-300 hover:text-white truncate transition-colors"
+                    >
+                      {CONTACT.EMAIL}
+                    </a>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleCopyEmail}
+                    className="inline-flex items-center gap-1 text-[10px] font-bold text-slate-300 hover:text-white px-2 py-1 rounded-lg bg-white/10 hover:bg-white/15 transition-colors shrink-0 cursor-pointer"
                   >
-                    <div className="flex items-center gap-3 min-w-0 flex-1">
-                      <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-emerald-100 border border-emerald-200 text-emerald-700 flex items-center justify-center group-hover:scale-105 transition-transform shrink-0">
-                        <MessageCircle className="w-5 h-5" />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <h4 className="font-bold text-slate-900 text-sm group-hover:text-emerald-700 transition-colors flex items-center gap-1.5 truncate">
-                          <span className="truncate">{person.NAME}</span>
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
-                        </h4>
-                        <p className="text-[11px] text-slate-500 font-mono mt-0.5 truncate">{person.PHONE_DISPLAY}</p>
-                      </div>
-                    </div>
-                    <span className="px-3 py-1.5 rounded-xl bg-emerald-600 text-white font-bold text-xs flex items-center gap-1 group-hover:bg-emerald-700 transition-colors shadow-sm shrink-0 ml-2">
-                      <span>Chat</span>
-                      <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
-                    </span>
-                  </a>
-                ))}
+                    {copiedEmail ? (
+                      <>
+                        <Check className="w-3 h-3 text-emerald-400" />
+                        <span className="text-emerald-300">Tersalin</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-3 h-3" />
+                        <span>Salin</span>
+                      </>
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
 
-            {/* Quick Action Navigation Links Card */}
-            <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-lg space-y-3">
-              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 flex items-center gap-2">
-                <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                <span>Akses Cepat Dokumen</span>
-              </h4>
-
-              <a
-                href="#denah"
-                className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 hover:border-slate-300 hover:bg-slate-100 transition-all flex items-center justify-between text-xs group"
-              >
-                <div className="flex items-center gap-2.5">
-                  <MapPin className="w-4 h-4 text-red-600" />
-                  <span className="font-bold text-slate-800 group-hover:text-slate-950">Denah Tata Ruang Arena</span>
+            {/* 2. Unified Interactive Dual-Campus Location Card */}
+            <div className="bg-white rounded-3xl p-5 border border-slate-200 shadow-sm space-y-4">
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <MapPin className="w-4 h-4 text-red-700" />
+                  <h4 className="text-xs font-black uppercase tracking-wider text-slate-900">
+                    Lokasi Resmi Kegiatan
+                  </h4>
                 </div>
-                <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-amber-600 group-hover:translate-x-1 transition-all" />
-              </a>
+                <span className="text-[10px] font-bold text-slate-400">2 Kampus</span>
+              </div>
+
+              {/* Campus Switcher Tabs */}
+              <div className="grid grid-cols-2 gap-1.5 p-1 bg-slate-100 rounded-xl border border-slate-200/80">
+                <button
+                  type="button"
+                  onClick={() => setActiveCampus('sedayu')}
+                  className={`py-2 px-2.5 rounded-lg text-[11px] font-extrabold transition-all cursor-pointer ${
+                    activeCampus === 'sedayu'
+                      ? 'bg-red-700 text-white shadow-sm'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  Sedayu (Hari-H &amp; UCL)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveCampus('induk')}
+                  className={`py-2 px-2.5 rounded-lg text-[11px] font-extrabold transition-all cursor-pointer ${
+                    activeCampus === 'induk'
+                      ? 'bg-slate-900 text-white shadow-sm'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  Wirobrajan (TM)
+                </button>
+              </div>
+
+              {/* Active Venue Details */}
+              <div className="space-y-2.5">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <h5 className="text-xs font-black text-slate-900 uppercase tracking-tight">
+                      {currentVenue.name}
+                    </h5>
+                    <span
+                      className={`inline-block mt-1 px-2 py-0.5 rounded-md text-[10px] font-bold border ${currentVenue.badgeStyle}`}
+                    >
+                      {currentVenue.badge}
+                    </span>
+                  </div>
+                  <a
+                    href={currentVenue.mapsUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-slate-900 hover:bg-red-700 text-white text-[10px] font-bold transition-colors shrink-0"
+                  >
+                    <span>Rute</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                </div>
+
+                <p className="text-[11px] font-semibold text-slate-700">
+                  {currentVenue.schedule}
+                </p>
+
+                <p className="text-[11px] text-slate-500 leading-relaxed p-2.5 rounded-xl bg-slate-50 border border-slate-200/80">
+                  {currentVenue.address}
+                </p>
+
+                <div className="rounded-2xl overflow-hidden border border-slate-200 bg-slate-100">
+                  <iframe
+                    key={activeCampus}
+                    title={currentVenue.title}
+                    src={currentVenue.embedUrl}
+                    className="w-full h-40 border-0"
+                    loading="lazy"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* 3. Compact Quick Reference Links */}
+            <div className="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm space-y-2">
+              <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-1 block">
+                Rujukan Dokumen Terkait
+              </span>
 
               <a
                 href="#rules"
-                className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 hover:border-slate-300 hover:bg-slate-100 transition-all flex items-center justify-between text-xs group"
+                className="flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 border border-transparent hover:border-slate-200 transition-all group"
               >
                 <div className="flex items-center gap-2.5">
-                  <FileCheck2 className="w-4 h-4 text-blue-600" />
-                  <span className="font-bold text-slate-800 group-hover:text-slate-950">Buku Juknis & Materi PBB</span>
+                  <BookOpen className="w-4 h-4 text-blue-600" />
+                  <span className="text-xs font-bold text-slate-700 group-hover:text-slate-950">
+                    Juknis Lapangan &amp; Materi PBB
+                  </span>
                 </div>
-                <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-amber-600 group-hover:translate-x-1 transition-all" />
+                <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-red-700 group-hover:translate-x-0.5 transition-all" />
               </a>
 
               <a
-                href="#registration"
-                className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 hover:border-slate-300 hover:bg-slate-100 transition-all flex items-center justify-between text-xs group"
+                href="#tata-tertib"
+                className="flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 border border-transparent hover:border-slate-200 transition-all group"
               >
                 <div className="flex items-center gap-2.5">
-                  <CreditCard className="w-4 h-4 text-amber-600" />
-                  <span className="font-bold text-slate-800 group-hover:text-slate-950">Alur Pendaftaran & Pembayaran</span>
+                  <Scale className="w-4 h-4 text-red-700" />
+                  <span className="text-xs font-bold text-slate-700 group-hover:text-slate-950">
+                    15 Pasal Tata Tertib Peserta
+                  </span>
                 </div>
-                <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-amber-600 group-hover:translate-x-1 transition-all" />
+                <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-red-700 group-hover:translate-x-0.5 transition-all" />
               </a>
-            </div>
 
-            {/* Dual Campus Location & Maps Section */}
-            <div className="space-y-4">
-              {/* KAMPUS 1: Kampus Terpadu Sedayu (Pelaksanaan Lomba & Uji Coba) */}
-              <div className="bg-white rounded-3xl p-5 border border-slate-200 shadow-md space-y-3">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-xl bg-red-100 text-red-700 border border-red-200 flex items-center justify-center shrink-0">
-                      <MapPin className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <h4 className="text-xs font-black text-slate-900 uppercase tracking-wider">
-                        {VENUE.NAME}
-                      </h4>
-                      <span className="text-[9px] font-extrabold uppercase px-2 py-0.5 rounded bg-red-100 text-red-800 border border-red-200 inline-block mt-0.5">
-                        Hari H & Uji Coba Lapangan
-                      </span>
-                    </div>
-                  </div>
-                  <a
-                    href={VENUE.MAPS_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-slate-100 border border-slate-200 text-[10px] font-bold text-red-700 hover:text-white hover:bg-red-600 transition-all shrink-0 shadow-sm"
-                  >
-                    <span>Maps</span>
-                    <ExternalLink className="w-3 h-3" />
-                  </a>
+              <a
+                href="#denah"
+                className="flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 border border-transparent hover:border-slate-200 transition-all group"
+              >
+                <div className="flex items-center gap-2.5">
+                  <Compass className="w-4 h-4 text-amber-600" />
+                  <span className="text-xs font-bold text-slate-700 group-hover:text-slate-950">
+                    Denah Arena &amp; Basecamp
+                  </span>
                 </div>
-
-                <p className="text-[10px] text-slate-500 font-mono leading-snug p-2.5 rounded-xl bg-slate-50 border border-slate-200">
-                  {VENUE.ADDRESS}
-                </p>
-
-                {/* Interactive Map Preview Terpadu */}
-                <div className="relative rounded-2xl overflow-hidden border border-slate-200 bg-slate-100 shadow-inner group">
-                  <iframe
-                    title="Peta Kampus Terpadu Mu'allimin Sedayu"
-                    src={VENUE.MAPS_EMBED_URL || "https://maps.google.com/maps?q=-7.806784,110.2683762&hl=id&z=15&output=embed"}
-                    className="w-full h-32 border-0 transition-opacity"
-                    loading="lazy"
-                  ></iframe>
-                </div>
-              </div>
-
-              {/* KAMPUS 2: Kampus Induk Wirobrajan (Technical Meeting) */}
-              <div className="bg-white rounded-3xl p-5 border border-slate-200 shadow-md space-y-3">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 border border-blue-200 flex items-center justify-center shrink-0">
-                      <MapPin className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <h4 className="text-xs font-black text-slate-900 uppercase tracking-wider">
-                        {VENUE_INDUK.NAME}
-                      </h4>
-                      <span className="text-[9px] font-extrabold uppercase px-2 py-0.5 rounded bg-blue-100 text-blue-800 border border-blue-200 inline-block mt-0.5">
-                        Technical Meeting (TM)
-                      </span>
-                    </div>
-                  </div>
-                  <a
-                    href={VENUE_INDUK.MAPS_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-slate-100 border border-slate-200 text-[10px] font-bold text-blue-700 hover:text-white hover:bg-blue-600 transition-all shrink-0 shadow-sm"
-                  >
-                    <span>Maps</span>
-                    <ExternalLink className="w-3 h-3" />
-                  </a>
-                </div>
-
-                <p className="text-[10px] text-slate-500 font-mono leading-snug p-2.5 rounded-xl bg-slate-50 border border-slate-200">
-                  {VENUE_INDUK.ADDRESS}
-                </p>
-
-                {/* Interactive Map Preview Induk */}
-                <div className="relative rounded-2xl overflow-hidden border border-slate-200 bg-slate-100 shadow-inner group">
-                  <iframe
-                    title="Peta Kampus Induk Mu'allimin Yogyakarta"
-                    src={VENUE_INDUK.MAPS_EMBED_URL}
-                    className="w-full h-32 border-0 transition-opacity"
-                    loading="lazy"
-                  ></iframe>
-                </div>
-              </div>
+                <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-red-700 group-hover:translate-x-0.5 transition-all" />
+              </a>
             </div>
           </div>
         </div>

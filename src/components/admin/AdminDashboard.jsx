@@ -285,7 +285,7 @@ export default function AdminDashboard() {
       val: String(totalPending).padStart(2, '0'),
       max: String(totalFilled || totalQuota).padStart(2, '0'),
       pct: verifiedTotalPct,
-      note: totalPending > 0 ? `${stage1PendingCount} Daftar · ${stage2PendingCount} Roster` : 'Semua Terverifikasi',
+      note: totalPending > 0 ? `${stage1PendingCount} Daftar · ${stage2PendingCount} Daftar Personel` : 'Semua Terverifikasi',
       statusColor: totalPending > 0 ? 'text-amber-400' : 'text-emerald-400',
       dotColor: totalPending > 0 ? 'bg-amber-400' : 'bg-emerald-400',
       barColor: totalPending > 0 ? 'bg-amber-400' : 'bg-emerald-400',
@@ -374,7 +374,7 @@ export default function AdminDashboard() {
                   }`}
                 >
                   <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
-                  <span>Roster &amp; Rekom</span>
+                  <span>Daftar Personel &amp; Rekom</span>
                   {stage2PendingCount > 0 && (
                     <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold leading-none bg-amber-100 text-amber-800 tabular-nums">
                       {stage2PendingCount}

@@ -40,7 +40,7 @@ export default function VerificationTab({
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <h3 className="text-sm font-black text-slate-900 tracking-tight">
-            Verifikasi Roster &amp; Rekomendasi
+            Verifikasi Daftar Personel &amp; Rekomendasi
           </h3>
           <span className="text-[10.5px] font-mono font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md">
             {filteredTeams.length}
@@ -269,7 +269,7 @@ export default function VerificationTab({
           <thead className="bg-slate-50/90 border-b border-slate-200 text-slate-500 font-bold uppercase tracking-wider text-[10px]">
             <tr>
               <th className="py-3 px-4">Peleton / Sekolah</th>
-              <th className="py-3 px-4">Roster Personel</th>
+              <th className="py-3 px-4">Daftar Personel</th>
               <th className="py-3 px-4 text-center">Surat Rekom</th>
               <th className="py-3 px-4 text-center">Status</th>
               <th className="py-3 px-4 text-right">Aksi</th>

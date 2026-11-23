@@ -313,7 +313,7 @@ export default function ParticipantQRStatusView({ regCode, onBack }) {
               <span>Status: Verifikasi Administrasi Lolos (ACC)</span>
             </p>
             <p className="text-slate-300 text-[11px] leading-relaxed">
-              Selamat! Seluruh berkas pendaftaran dan Pakta Integritas peleton Anda telah diverifikasi oleh Sekretariat LBB Mu'allimin 2027. Anda dapat langsung mengakses portal peserta untuk mengunduh QR Tiket Registrasi, mengecek nomor undian peleton, dan melengkapi data roster.
+              Selamat! Seluruh berkas pendaftaran dan Pakta Integritas peleton Anda telah diverifikasi oleh Sekretariat LBB Mu'allimin 2027. Anda dapat langsung mengakses portal peserta untuk mengunduh QR Tiket Registrasi, mengecek nomor undian peleton, dan melengkapi data Daftar Personel.
             </p>
           </div>
         ) : isPending ? (
