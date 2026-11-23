@@ -193,8 +193,16 @@ export default function OverviewTab({
 
   // LO State & Fallback logic (terhubung dummy/localStorage, selalu tampil ditetapkan di localhost)
   const loName = currentTeam?.loName || (isLocalhost ? 'Kak Rizky Fauzi (Panitia LBB)' : null);
+  const loDisplayName = loName ? loName.replace(/\s*\(Panitia LBB\)/i, '').trim() : 'Kak Rizky Fauzi';
+  const loInitials = loDisplayName
+    .replace(/^Kak\s+/i, '')
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map(w => w[0]?.toUpperCase() || '')
+    .join('') || 'LO';
   const loRole = currentTeam?.loRole || (isLocalhost ? 'LO Pendamping Peleton' : null);
-  const loPhoto = currentTeam?.loPhoto || (isLocalhost ? 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=240&auto=format&fit=crop&q=80' : null);
+  const loPhoto = currentTeam?.loPhoto || null;
   const isLoAssigned = Boolean(loName);
 
   // Agenda Countdown Timer Logic (Deadline Identitas Peleton H-1 TM -> TM -> UCL -> Hari-H)
@@ -280,11 +288,14 @@ export default function OverviewTab({
       month: 'JAN',
       year: '2027',
       label: 'Technical Meeting',
-      time: tmTime || '13.00 WIB s.d. Selesai',
+      shortLabel: 'Technical Meeting',
+      time: tmTime || '13.00 – 16.30 WIB',
       title: 'Technical Meeting & Validasi Fisik Berkas',
-      copy: 'Registrasi 12.30-13.00 WIB. Maks. 2 perwakilan per sekolah (Official dan/atau Danton). Bawa Surat Tugas asli stempel basah & Pakta Integritas ttd basah Official. Agenda: pemaparan juknis & pengundian nomor urut tampil. Nomor dada dibagikan saat daftar ulang Hari-H.',
-      badgeClass: 'bg-purple-100 text-purple-700',
-      btnClass: 'bg-purple-600 hover:bg-purple-700',
+      copy: 'Registrasi 12.30–13.00 WIB. Maks. 2 perwakilan per sekolah (Official dan/atau Danton). Bawa Surat Tugas asli stempel basah & Pakta Integritas ttd basah Official. Agenda: pemaparan juknis & pengundian nomor urut tampil.',
+      venueName: 'Aula Kampus Induk Mu’allimin Yogyakarta',
+      venueAddress: 'Jl. Letjen S. Parman No. 68, Wirobrajan, Kota Yogyakarta',
+      mapLabel: 'Kampus Induk Wirobrajan',
+      embedUrl: "https://maps.google.com/maps?q=Madrasah+Mu'allimin+Muhammadiyah+Yogyakarta+Jl.+Letjen+S.+Parman+No.+68&t=&z=16&ie=UTF8&iwloc=&output=embed",
       mapsUrl: EVENT.TECHNICAL_MEETING_MAPS_URL || "https://www.google.com/maps/dir/?api=1&destination=Madrasah+Mu'allimin+Muhammadiyah+Yogyakarta+Jl.+Letjen+S.+Parman+No.+68+Wirobrajan"
     },
     trial: {
@@ -293,11 +304,14 @@ export default function OverviewTab({
       month: 'JAN',
       year: '2027',
       label: 'Uji Coba Lapangan',
-      time: trialTime || '07.00 WIB s.d. 13.00 WIB',
+      shortLabel: 'Uji Coba (UCL)',
+      time: trialTime || '07.00 – 13.00 WIB',
       title: 'Uji Coba Lapangan (UCL) & Orientasi Arena',
-      copy: 'Pengenalan pos arena perlombaan, pos DP 1, DP 2, dan area steril demi kesiapan teknis peleton.',
-      badgeClass: 'bg-emerald-100 text-emerald-700',
-      btnClass: 'bg-emerald-600 hover:bg-emerald-700',
+      copy: 'Pengenalan pos arena perlombaan, pos DP 1, DP 2, dan area steril demi kesiapan teknis peleton sebelum Hari-H.',
+      venueName: 'Kampus Terpadu Mu’allimin Sedayu',
+      venueAddress: 'Dusun Bandut Lor, Argorejo, Kec. Sedayu, Bantul',
+      mapLabel: 'Kampus Terpadu Sedayu',
+      embedUrl: "https://maps.google.com/maps?q=Madrasah+Mu'allimin+Muhammadiyah+Yogyakarta+Kampus+Terpadu+Sedayu&t=&z=15&ie=UTF8&iwloc=&output=embed",
       mapsUrl: VENUE.MAPS_URL || "https://maps.app.goo.gl/fVMgg5xZcwRQ4kN78"
     },
     competition: {
@@ -306,16 +320,57 @@ export default function OverviewTab({
       month: 'JAN',
       year: '2027',
       label: 'Hari Perlombaan',
-      time: compTime || '06.00 WIB s.d. 17.00 WIB',
+      shortLabel: 'Hari Perlombaan',
+      time: compTime || '06.00 – 17.00 WIB',
       title: 'Hari-H Pelaksanaan LBB Mu’allimin 2027',
-      copy: 'Daftar ulang mulai 06.00 WIB, dilanjutkan upacara pembukaan dan perlombaan di lapangan utama.',
-      badgeClass: 'bg-red-100 text-red-700',
-      btnClass: 'bg-red-600 hover:bg-red-700',
+      copy: 'Daftar ulang mulai 06.00 WIB dengan pembagian nomor dada resmi, dilanjutkan upacara pembukaan dan perlombaan di lapangan utama.',
+      venueName: 'Kampus Terpadu Mu’allimin Sedayu',
+      venueAddress: 'Dusun Bandut Lor, Argorejo, Kec. Sedayu, Bantul',
+      mapLabel: 'Kampus Terpadu Sedayu',
+      embedUrl: "https://maps.google.com/maps?q=Madrasah+Mu'allimin+Muhammadiyah+Yogyakarta+Kampus+Terpadu+Sedayu&t=&z=15&ie=UTF8&iwloc=&output=embed",
       mapsUrl: VENUE.MAPS_URL || "https://maps.app.goo.gl/fVMgg5xZcwRQ4kN78"
     }
   };
 
   const activePhase = phaseConfig[currentTab] || phaseConfig.tm;
+
+  const VEHICLE_SURVEY_META = {
+    tm: {
+      title: 'Estimasi Armada Kendaraan saat TM',
+      subtitle: 'Untuk alokasi parkir Kampus Induk',
+      items: [
+        { key: 'motor', label: 'Sepeda Motor', desc: 'Roda dua · Parkir motor', icon: Bike },
+        { key: 'mobil', label: 'Mobil Pribadi', desc: 'Sedan / MPV / SUV', icon: Car },
+      ]
+    },
+    trial: {
+      title: 'Armada Kendaraan Menuju UCL (16 Jan 2027)',
+      subtitle: 'Untuk manajemen kantong parkir Sedayu',
+      items: [
+        { key: 'motor', label: 'Sepeda Motor', desc: 'Official & suporter', icon: Bike },
+        { key: 'mobil', label: 'Mobil Pribadi', desc: 'Avanza / Innova / sejenis', icon: Car },
+        { key: 'elf', label: 'Minibus / Elf / HiAce', desc: 'Kapasitas 12–19 kursi', icon: Bus },
+        { key: 'bus', label: 'Big / Medium Bus', desc: 'Bus besar rombongan', icon: Bus },
+      ]
+    },
+    competition: {
+      title: 'Armada Kendaraan Kontingen Hari-H (24 Jan 2027)',
+      subtitle: 'Pendataan stiker parkir resmi arena',
+      items: [
+        { key: 'motor', label: 'Sepeda Motor', desc: 'Suporter & Official', icon: Bike },
+        { key: 'mobil', label: 'Mobil Pribadi', desc: 'Kendaraan guru & pendamping', icon: Car },
+        { key: 'elf', label: 'Minibus / Elf / HiAce', desc: 'Kapasitas 12–19 kursi', icon: Bus },
+        { key: 'bus', label: 'Big / Medium Bus', desc: 'Bus rombongan (30–50+)', icon: Bus },
+      ]
+    }
+  };
+
+  const activeVehicleMeta = VEHICLE_SURVEY_META[currentTab] || VEHICLE_SURVEY_META.tm;
+  const activeVehicleCounts = currentTeam.vehicleSurveys?.[currentTab]?.counts || {};
+  const activeVehicleTotal = activeVehicleMeta.items.reduce(
+    (sum, item) => sum + (Number(activeVehicleCounts[item.key]) || 0),
+    0
+  );
 
   return (
     <div className="space-y-5 sm:space-y-6">
@@ -498,197 +553,192 @@ export default function OverviewTab({
       {/* 2. MAIN GRID (Kiri: Operation Timeline, Kanan: Readiness Score & Resource Dock) */}
       <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,1.7fr)_320px]">
         
-        {/* KOLOM KIRI: OPERATION TIMELINE INTERAKTIF */}
-        <section className="overflow-hidden rounded-[26px] border border-slate-200 bg-white shadow-[0_18px_46px_rgba(15,23,42,0.065)]">
+        {/* KOLOM KIRI: AGENDA KONTINGEN 2027 */}
+        <section className="overflow-hidden rounded-[26px] border border-slate-200/90 bg-white shadow-[0_14px_38px_rgba(15,23,42,0.055)]">
           {/* Header Section */}
-          <div className="border-b border-slate-100 bg-gradient-to-r from-white via-white to-slate-50/80 px-5 py-4 sm:px-6">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex items-center gap-3">
-                <span className="relative flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-950 text-white shadow-lg">
-                  <Calendar className="w-5 h-5" />
-                  <span className="absolute -right-1 -top-1 h-3 w-3 rounded-full border-2 border-white bg-red-600" />
-                </span>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <p className="section-kicker">OPERATION TIMELINE</p>
-                    <span className="rounded-full bg-red-50 px-2 py-0.5 text-[8px] font-black text-red-700 border border-red-100">
-                      WAJIB
-                    </span>
-                  </div>
-                  <h2 className="mt-0.5 text-base font-black tracking-tight text-slate-950 sm:text-lg">
-                    Agenda Kontingen 2027
-                  </h2>
-                </div>
-              </div>
-              <div className="flex items-center gap-2 self-start rounded-full border border-slate-200 bg-white px-3 py-1.5 shadow-2xs">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                <span className="text-[8px] font-black uppercase tracking-[0.12em] text-slate-500">
-                  Timeline aktif · 3 tahap
-                </span>
+          <div className="flex flex-col gap-3 border-b border-slate-100 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+            <div className="flex items-center gap-3.5">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-950 text-white shadow-sm">
+                <Calendar className="w-4.5 h-4.5" />
+              </span>
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-red-700">
+                  Jadwal Resmi · 3 Tahap
+                </p>
+                <h2 className="mt-0.5 text-base font-black tracking-tight text-slate-950 sm:text-lg">
+                  Agenda Kontingen 2027
+                </h2>
               </div>
             </div>
+            <span className="inline-flex items-center gap-1.5 self-start sm:self-center rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-[10px] font-bold text-slate-600">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+              <span>Timeline Aktif</span>
+            </span>
           </div>
 
-          <div className="p-4 sm:p-6 space-y-4">
-            {/* Stepper Tabs 3 Tahap dengan Garis Penghubung */}
-            <div className="rounded-[20px] border border-slate-200 bg-slate-50/80 p-2">
-              <div className="relative grid grid-cols-3 gap-1">
-                <div className="absolute left-[16%] right-[16%] top-6 hidden h-px bg-slate-200 sm:block" />
-                {[
-                  { key: 'tm', num: '01', label: 'Technical Meeting', date: '09 Jan', dot: 'bg-purple-600' },
-                  { key: 'trial', num: '02', label: 'Uji Coba (UCL)', date: '16 Jan', dot: 'bg-emerald-600' },
-                  { key: 'competition', num: '03', label: 'Hari Perlombaan', date: '24 Jan', dot: 'bg-red-600' },
-                ].map(item => {
-                  const isActive = currentTab === item.key;
-                  return (
-                    <button
-                      key={item.key}
-                      type="button"
-                      onClick={() => setScheduleTab(item.key)}
-                      className={`relative z-10 flex min-h-[66px] flex-col items-center justify-center rounded-2xl px-2 py-2 text-center transition sm:flex-row sm:gap-3 sm:text-left cursor-pointer ${
-                        isActive
-                          ? 'bg-white text-slate-950 shadow-[0_8px_22px_rgba(15,23,42,0.09)] ring-1 ring-slate-200'
-                          : 'text-slate-500 hover:bg-white/70'
-                      }`}
-                    >
-                      <span
-                        className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full font-mono text-[9px] font-black transition ${
-                          isActive
-                            ? `${item.dot} text-white shadow-md`
-                            : 'border border-slate-200 bg-white text-slate-400'
-                        }`}
-                      >
-                        {isActive ? <Check className="w-3.5 h-3.5 stroke-[3]" /> : item.num}
-                      </span>
-                      <span className="mt-1 min-w-0 sm:mt-0">
-                        <span
-                          className={`block truncate text-[9px] font-black ${
-                            isActive ? 'text-slate-950' : 'text-slate-600'
-                          }`}
-                        >
-                          {item.label}
-                        </span>
-                        <span className="mt-0.5 block text-[8px] text-slate-400 font-medium">
-                          {item.date} 2027
-                        </span>
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
+          {/* Flush 3-Stage Step Bar */}
+          <div className="grid grid-cols-3 divide-x divide-slate-100 border-b border-slate-100 bg-slate-50/60">
+            {[
+              { key: 'tm', num: '01', label: 'Technical Meeting', date: `${phaseConfig.tm.day} Jan 2027` },
+              { key: 'trial', num: '02', label: 'Uji Coba (UCL)', date: `${phaseConfig.trial.day} Jan 2027` },
+              { key: 'competition', num: '03', label: 'Hari Perlombaan', date: `${phaseConfig.competition.day} Jan 2027` },
+            ].map(item => {
+              const isActive = currentTab === item.key;
+              return (
+                <button
+                  key={item.key}
+                  type="button"
+                  onClick={() => setScheduleTab(item.key)}
+                  className={`group relative flex flex-col items-center gap-1 px-2.5 py-3.5 text-center transition sm:flex-row sm:items-center sm:gap-3 sm:px-5 sm:text-left cursor-pointer ${
+                    isActive
+                      ? 'bg-white text-slate-950'
+                      : 'text-slate-500 hover:bg-white/70 hover:text-slate-800'
+                  }`}
+                >
+                  <span
+                    className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg font-mono text-[11px] font-black transition ${
+                      isActive
+                        ? 'bg-red-700 text-white shadow-xs'
+                        : 'bg-slate-200/70 text-slate-500 group-hover:bg-slate-200'
+                    }`}
+                  >
+                    {item.num}
+                  </span>
+                  <span className="min-w-0">
+                    <span className={`block truncate text-[11px] sm:text-xs font-extrabold ${isActive ? 'text-slate-950' : 'text-slate-600'}`}>
+                      {item.label}
+                    </span>
+                    <span className="mt-0.5 block text-[10px] font-medium text-slate-400 tabular-nums">
+                      {item.date}
+                    </span>
+                  </span>
+                  {isActive && (
+                    <span className="absolute inset-x-0 bottom-0 h-0.5 bg-red-700" />
+                  )}
+                </button>
+              );
+            })}
+          </div>
 
-            {/* Big Dark Hero Phase Card */}
-            <div className="relative overflow-hidden rounded-[24px] bg-slate-950 text-white shadow-[0_18px_38px_rgba(15,23,42,0.2)]">
-              <div
-                className={`absolute inset-y-0 left-0 w-1.5 ${
-                  currentTab === 'tm' ? 'bg-purple-500' : currentTab === 'trial' ? 'bg-emerald-500' : 'bg-red-500'
-                }`}
-              />
-              <div
-                className={`absolute -right-16 -top-24 h-64 w-64 rounded-full blur-3xl pointer-events-none ${
-                  currentTab === 'tm'
-                    ? 'bg-purple-600/20'
-                    : currentTab === 'trial'
-                    ? 'bg-emerald-600/20'
-                    : 'bg-red-600/20'
-                }`}
-              />
-              <div className="relative grid gap-5 p-5 sm:grid-cols-[88px_minmax(0,1fr)_auto] sm:items-center sm:p-6">
-                <div className="hidden border-r border-white/10 pr-5 text-center sm:block">
-                  <p className="text-[9px] font-black tracking-[0.2em] text-slate-400">{activePhase.month}</p>
-                  <p className="mt-0.5 text-4xl font-black tracking-[-0.06em] text-white font-mono">{activePhase.day}</p>
-                  <p className="mt-0.5 text-[8px] font-bold text-slate-500">{activePhase.year}</p>
-                </div>
-                <div className="min-w-0">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className={`rounded-full px-2.5 py-1 text-[8px] font-black uppercase tracking-wider ${activePhase.badgeClass}`}>
+          {/* Stage Body */}
+          <div className="p-4 sm:p-6 space-y-4">
+            {/* Unified Dark Obsidian Stage Hero */}
+            <div className="relative overflow-hidden rounded-2xl border border-slate-800 bg-gradient-to-br from-slate-950 via-[#0d1323] to-slate-950 text-white shadow-[0_14px_32px_rgba(2,6,23,0.18)]">
+              <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-red-500/45 to-transparent" />
+              <div className="pointer-events-none absolute -right-16 -top-20 h-56 w-56 rounded-full bg-red-600/15 blur-3xl" />
+
+              <div className="relative flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:gap-6 sm:p-6">
+                {/* Date Calendar Block */}
+                <div className="flex items-center gap-3 sm:block sm:w-20 sm:shrink-0 sm:border-r sm:border-white/10 sm:pr-5 sm:text-center">
+                  <div className="flex h-12 w-12 sm:h-auto sm:w-auto flex-col items-center justify-center rounded-xl bg-white/[0.06] border border-white/10 sm:border-0 sm:bg-transparent">
+                    <span className="text-[9px] font-bold uppercase tracking-[0.18em] text-amber-300 sm:text-[10px]">
+                      {activePhase.month}
+                    </span>
+                    <span className="font-mono text-xl sm:text-4xl font-black leading-none tracking-tight text-white sm:mt-0.5">
+                      {activePhase.day}
+                    </span>
+                  </div>
+                  <div className="sm:hidden min-w-0">
+                    <span className="inline-flex items-center rounded-md bg-red-500/15 border border-red-400/25 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-red-200">
                       Tahap {activePhase.number} · {activePhase.label}
                     </span>
-                    <span className="rounded-full border border-white/10 bg-white/[0.06] px-2.5 py-1 text-[8px] font-bold text-slate-300">
+                    <p className="mt-1 text-[11px] font-semibold text-slate-300 tabular-nums">
+                      {activePhase.time}
+                    </p>
+                  </div>
+                  <p className="hidden sm:block mt-1 text-[10px] font-bold text-slate-400 tabular-nums">
+                    {activePhase.year}
+                  </p>
+                </div>
+
+                {/* Title & Copy */}
+                <div className="min-w-0 flex-1">
+                  <div className="hidden sm:flex flex-wrap items-center gap-2">
+                    <span className="inline-flex items-center rounded-md bg-red-500/15 border border-red-400/25 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-red-200">
+                      Tahap {activePhase.number} · {activePhase.label}
+                    </span>
+                    <span className="inline-flex items-center gap-1 rounded-md border border-white/10 bg-white/[0.05] px-2 py-0.5 text-[10px] font-semibold text-slate-300 tabular-nums">
+                      <Clock className="w-3 h-3 text-slate-400" />
                       {activePhase.time}
                     </span>
                   </div>
-                  <h3 className="mt-3 max-w-2xl text-lg font-black leading-tight tracking-tight text-white sm:text-2xl">
+                  <h3 className="sm:mt-2.5 text-lg sm:text-xl font-black leading-snug tracking-tight text-white">
                     {activePhase.title}
                   </h3>
-                  <p className="mt-1.5 max-w-2xl text-[10px] sm:text-xs leading-relaxed text-slate-400">
+                  <p className="mt-1.5 text-xs sm:text-[13px] leading-relaxed text-slate-300/90">
                     {activePhase.copy}
                   </p>
                 </div>
+
+                {/* Primary Maps Action */}
                 <a
                   href={activePhase.mapsUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`inline-flex shrink-0 items-center justify-center gap-2 self-start sm:self-center rounded-xl px-4 py-2.5 text-[9px] font-black text-white shadow-lg transition-transform active:scale-95 ${activePhase.btnClass}`}
+                  className="inline-flex shrink-0 items-center justify-center gap-2 self-start sm:self-center rounded-xl bg-white px-4 py-2.5 text-xs font-extrabold text-slate-950 shadow-sm transition hover:bg-slate-100 active:scale-95"
                 >
-                  <Navigation className="w-3.5 h-3.5 fill-current" />
-                  <span>{currentTab === 'trial' ? 'Buka Lokasi' : 'Buka Rute Maps'}</span>
+                  <Navigation className="w-3.5 h-3.5 text-red-700" />
+                  <span>Buka Rute Maps</span>
                 </a>
               </div>
             </div>
 
-            {/* TAB CONTENT DETAIL */}
+            {/* Stage-Specific Operational Grid */}
             {currentTab === 'tm' && (
-              <div className="space-y-4 animate-in fade-in duration-200">
-                <div className="grid gap-3 md:grid-cols-[0.8fr_1.2fr]">
-                  {/* Undian Tampil Card */}
-                  <div className="relative overflow-hidden rounded-[20px] border border-purple-100 bg-purple-50/60 p-4">
-                    <div className="absolute -right-8 -top-8 h-24 w-24 rounded-full border-[16px] border-purple-600/[0.04] pointer-events-none" />
-                    <div className="relative flex items-center gap-3">
-                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-purple-600 text-sm font-black text-white shadow-md">
-                        {currentTeam.lotNumber ? `#${currentTeam.lotNumber}` : '#'}
-                      </span>
-                      <div className="min-w-0">
-                        <p className="text-[8px] font-black uppercase tracking-wider text-purple-700">
-                          Hasil undian tampil
-                        </p>
-                        <p className="mt-0.5 text-xs font-black text-slate-900 truncate">
-                          {currentTeam.lotNumber ? `Urutan #${String(currentTeam.lotNumber).padStart(2, '0')}` : 'Belum melakukan undian'}
-                        </p>
-                        <p className="mt-0.5 text-[8px] text-slate-500">
-                          {currentTeam.chestNumber ? `No. Dada: ${currentTeam.chestNumber}` : 'Nomor terbit setelah sesi TM'}
-                        </p>
-                      </div>
+              <div className="space-y-3.5 animate-in fade-in duration-200">
+                <div className="grid gap-3.5 md:grid-cols-2">
+                  {/* Hasil Undian Tampil */}
+                  <div className="flex items-center gap-3.5 rounded-2xl border border-slate-200/80 bg-slate-50/60 p-4">
+                    <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-slate-950 font-mono text-sm font-black text-white shadow-xs">
+                      {currentTeam.lotNumber ? `#${String(currentTeam.lotNumber).padStart(2, '0')}` : '#'}
+                    </span>
+                    <div className="min-w-0">
+                      <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-slate-400">
+                        Hasil Undian Tampil
+                      </p>
+                      <p className="mt-0.5 text-sm font-black text-slate-950 truncate">
+                        {currentTeam.lotNumber ? `Urutan #${String(currentTeam.lotNumber).padStart(2, '0')}` : 'Belum melakukan undian'}
+                      </p>
+                      <p className="mt-0.5 text-[11px] font-medium text-slate-500">
+                        {currentTeam.chestNumber ? `No. Dada: ${currentTeam.chestNumber}` : 'Nomor terbit setelah sesi TM'}
+                      </p>
                     </div>
                   </div>
 
-                  {/* Location Card TM */}
-                  <div className="group relative overflow-hidden rounded-[20px] border border-slate-200 bg-slate-50/60 p-4 transition hover:border-slate-300 hover:bg-white">
-                    <div className="flex items-start gap-3">
-                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white shadow-sm ring-1 ring-slate-200 text-purple-600">
-                        <MapPin className="w-5 h-5" />
-                      </span>
-                      <div className="min-w-0">
-                        <p className="text-[8px] font-black uppercase tracking-[0.13em] text-slate-400">
-                          Lokasi agenda
-                        </p>
-                        <p className="mt-0.5 text-xs font-black text-slate-900">
-                          Aula Kampus Induk Mu’allimin Yogyakarta
-                        </p>
-                        <p className="mt-0.5 text-[9px] text-slate-500 leading-tight">
-                          Jl. Letjen S. Parman No. 68, Wirobrajan, Kota Yogyakarta
-                        </p>
-                      </div>
+                  {/* Lokasi Agenda TM */}
+                  <div className="flex items-center gap-3.5 rounded-2xl border border-slate-200/80 bg-slate-50/60 p-4">
+                    <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white text-red-700 ring-1 ring-slate-200/80">
+                      <MapPin className="w-5 h-5" />
+                    </span>
+                    <div className="min-w-0">
+                      <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-slate-400">
+                        Lokasi Agenda
+                      </p>
+                      <p className="mt-0.5 text-sm font-black text-slate-950 leading-snug">
+                        {activePhase.venueName}
+                      </p>
+                      <p className="mt-0.5 text-[11px] font-medium text-slate-500 leading-snug">
+                        {activePhase.venueAddress}
+                      </p>
                     </div>
                   </div>
                 </div>
 
-                {/* Pakta Integritas Fisik Callout */}
-                <div className="flex flex-col gap-3 rounded-[20px] border border-slate-200 bg-slate-50/70 p-4 sm:flex-row sm:items-center sm:justify-between">
+                {/* Dokumen Wajib TM */}
+                <div className="flex flex-col gap-3.5 rounded-2xl border border-slate-200/90 border-l-4 border-l-red-700 bg-white p-4 sm:flex-row sm:items-center sm:justify-between">
                   <div className="flex items-start gap-3">
-                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-red-50 text-red-600 border border-red-100">
-                      <Shield className="w-5 h-5" />
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-red-50 text-red-700">
+                      <Shield className="w-4.5 h-4.5" />
                     </span>
-                    <div>
-                      <p className="text-[8px] font-black uppercase tracking-[0.13em] text-red-700">
-                        Dokumen wajib TM
+                    <div className="min-w-0">
+                      <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-red-700">
+                        Dokumen Wajib TM · Registrasi 12.30–13.00 WIB
                       </p>
-                      <p className="mt-0.5 text-xs font-black text-slate-900">
-                        Berkas Fisik Asli TM (Registrasi 12.30–13.00 WIB)
+                      <p className="mt-0.5 text-sm font-black text-slate-950">
+                        Berkas Fisik Asli Technical Meeting
                       </p>
-                      <p className="mt-0.5 text-[9px] leading-relaxed text-slate-500">
-                        Bawa <strong>Surat Tugas/Rekomendasi Kepala Sekolah asli stempel basah</strong> &amp; <strong>Pakta Integritas Fisik (TTD basah Official)</strong> saat TM di Aula Kampus Induk Wirobrajan.
+                      <p className="mt-1 text-xs leading-relaxed text-slate-600">
+                        Bawa <strong className="text-slate-900">Surat Tugas/Rekomendasi Kepala Sekolah asli stempel basah</strong> &amp; <strong className="text-slate-900">Pakta Integritas Fisik (TTD basah Official)</strong> saat registrasi di Aula Kampus Induk.
                       </p>
                     </div>
                   </div>
@@ -697,7 +747,7 @@ export default function OverviewTab({
                       type="button"
                       onClick={onOpenPactModal}
                       disabled={isDownloadingPact}
-                      className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-xl bg-red-700 px-3.5 py-2.5 text-[9px] font-black text-white shadow-md hover:bg-red-800 transition active:scale-95 cursor-pointer disabled:opacity-50"
+                      className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-red-700 px-4 py-2.5 text-xs font-extrabold text-white shadow-xs transition hover:bg-red-800 active:scale-95 cursor-pointer disabled:opacity-50"
                     >
                       {isDownloadingPact ? (
                         <>
@@ -713,435 +763,273 @@ export default function OverviewTab({
                     </button>
                   )}
                 </div>
-
-                {/* Survei Armada TM */}
-                <div className="overflow-hidden rounded-[20px] border border-purple-200 bg-white">
-                  <div className="flex flex-col gap-2 border-b border-purple-100 bg-purple-50/60 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
-                    <div className="flex items-center gap-2.5">
-                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-purple-600 text-white shadow-xs">
-                        <Car className="w-4 h-4" />
-                      </span>
-                      <div>
-                        <p className="text-[8px] font-black uppercase tracking-wider text-purple-800">
-                          Mobilitas kontingen
-                        </p>
-                        <h4 className="text-xs font-black text-slate-950">
-                          Estimasi Armada Kendaraan saat TM
-                        </h4>
-                      </div>
-                    </div>
-                    <span className="text-[9px] font-bold text-slate-500">
-                      Untuk alokasi parkir Kampus Induk
-                    </span>
-                  </div>
-
-                  <div className="grid gap-2 p-3 sm:grid-cols-2">
-                    {[
-                      { key: 'motor', label: 'Sepeda Motor', desc: 'Roda Dua (Parkir Motor)', icon: Bike },
-                      { key: 'mobil', label: 'Mobil Pribadi', desc: 'Sedan / MPV / SUV', icon: Car },
-                    ].map(item => {
-                      const ItemIcon = item.icon;
-                      const count = currentTeam.vehicleSurveys?.tm?.counts?.[item.key] || 0;
-                      return (
-                        <div
-                          key={item.key}
-                          className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50/70 p-2.5 transition hover:border-purple-200 hover:bg-white"
-                        >
-                          <div className="flex min-w-0 items-center gap-2.5">
-                            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white text-slate-600 shadow-2xs ring-1 ring-slate-200">
-                              <ItemIcon className="w-4 h-4" />
-                            </span>
-                            <div className="min-w-0">
-                              <p className="truncate text-[10px] font-black text-slate-900">{item.label}</p>
-                              <p className="truncate text-[8px] text-slate-400">{item.desc}</p>
-                            </div>
-                          </div>
-                          <div className="ml-2 flex shrink-0 items-center gap-1 rounded-lg border border-slate-200 bg-white p-0.5">
-                            <button
-                              type="button"
-                              onClick={() => handleUpdateVehicleCount('tm', item.key, -1)}
-                              className="h-6 w-6 rounded-md text-xs font-black text-slate-500 hover:bg-slate-100 transition cursor-pointer"
-                            >
-                              −
-                            </button>
-                            <span className="w-5 text-center font-mono text-[10px] font-black text-slate-900">
-                              {count}
-                            </span>
-                            <button
-                              type="button"
-                              onClick={() => handleUpdateVehicleCount('tm', item.key, 1)}
-                              className="h-6 w-6 rounded-md bg-purple-600 hover:bg-purple-700 text-xs font-black text-white transition cursor-pointer"
-                            >
-                              +
-                            </button>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* Embedded Maps TM */}
-                <div className="relative h-60 overflow-hidden rounded-[20px] border border-slate-200 bg-slate-100 shadow-inner">
-                  <iframe
-                    title="Peta Lokasi TM"
-                    src="https://maps.google.com/maps?q=Madrasah+Mu'allimin+Muhammadiyah+Yogyakarta+Jl.+Letjen+S.+Parman+No.+68&t=&z=16&ie=UTF8&iwloc=&output=embed"
-                    className="h-full w-full border-0 block"
-                    loading="lazy"
-                  />
-                  <div className="absolute left-3 top-3 rounded-xl border border-white/80 bg-white/90 px-3 py-1.5 shadow-md backdrop-blur">
-                    <p className="text-[7px] font-black uppercase tracking-[0.14em] text-slate-400">PETA ARENA</p>
-                    <p className="text-[9px] font-black text-slate-900">Kampus Induk Wirobrajan</p>
-                  </div>
-                  <a
-                    href={EVENT.TECHNICAL_MEETING_MAPS_URL || "https://www.google.com/maps/dir/?api=1&destination=Madrasah+Mu'allimin+Muhammadiyah+Yogyakarta+Jl.+Letjen+S.+Parman+No.+68+Wirobrajan"}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="absolute bottom-3 right-3 inline-flex items-center gap-1.5 rounded-xl bg-slate-950/95 px-3 py-2 text-[8px] font-black text-white shadow-lg transition hover:bg-purple-700 cursor-pointer"
-                  >
-                    <Navigation className="w-3 h-3 fill-current" />
-                    <span>Mulai Navigasi Rute</span>
-                  </a>
-                </div>
               </div>
             )}
 
             {currentTab === 'trial' && (
-              <div className="space-y-4 animate-in fade-in duration-200">
-                <div className="grid gap-3 md:grid-cols-[1.1fr_0.9fr]">
-                  {/* RSVP Card */}
-                  <div className="overflow-hidden rounded-[20px] border border-slate-200 bg-white">
-                    <div className="border-b border-slate-100 bg-emerald-50/60 px-4 py-3">
-                      <div className="flex items-center justify-between gap-3">
-                        <div>
-                          <p className="text-[8px] font-black uppercase tracking-[0.13em] text-emerald-800">
-                            RSVP KONTINGEN
-                          </p>
-                          <p className="mt-0.5 text-xs font-black text-slate-900">
-                            Konfirmasi Kehadiran UCL
-                          </p>
-                        </div>
-                        <span
-                          className={`rounded-full border px-2.5 py-1 text-[8px] font-black uppercase ${
-                            currentTeam.vehicleSurveys?.trialAttendance?.status === 'confirmed'
-                              ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
-                              : currentTeam.vehicleSurveys?.trialAttendance?.status === 'declined'
-                              ? 'border-red-200 bg-red-50 text-red-700'
-                              : 'border-amber-200 bg-amber-50 text-amber-700'
-                          }`}
-                        >
-                          {currentTeam.vehicleSurveys?.trialAttendance?.status === 'confirmed'
-                            ? 'HADIR'
-                            : currentTeam.vehicleSurveys?.trialAttendance?.status === 'declined'
-                            ? 'TIDAK HADIR'
-                            : 'BELUM KONFIRMASI'}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="p-4">
-                      <p className="text-[10px] leading-relaxed text-slate-500">
-                        Konfirmasi maksimal <strong className="text-slate-800">10 Januari 2027, 23.59 WIB</strong> demi efisiensi slot arena.
+              <div className="grid gap-3.5 md:grid-cols-[1.15fr_0.85fr] animate-in fade-in duration-200">
+                {/* RSVP Kehadiran UCL */}
+                <div className="rounded-2xl border border-slate-200/90 bg-white p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-slate-400">
+                        RSVP Kontingen
                       </p>
-                      <div className="mt-3 flex gap-2">
-                        <button
-                          type="button"
-                          onClick={() => handleConfirmTrialAttendance(true)}
-                          className={`flex-1 py-2 px-3 rounded-xl text-xs font-black transition cursor-pointer ${
-                            currentTeam.vehicleSurveys?.trialAttendance?.status === 'confirmed'
-                              ? 'bg-emerald-600 text-white shadow-xs'
-                              : 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
-                          }`}
-                        >
-                          Hadir
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => handleConfirmTrialAttendance(false)}
-                          className={`flex-1 py-2 px-3 rounded-xl text-xs font-black transition cursor-pointer ${
-                            currentTeam.vehicleSurveys?.trialAttendance?.status === 'declined'
-                              ? 'bg-red-700 text-white shadow-xs'
-                              : 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
-                          }`}
-                        >
-                          Tidak Hadir
-                        </button>
-                      </div>
+                      <p className="mt-0.5 text-sm font-black text-slate-950">
+                        Konfirmasi Kehadiran UCL
+                      </p>
                     </div>
+                    <span
+                      className={`shrink-0 rounded-full border px-2.5 py-0.5 text-[10px] font-bold uppercase ${
+                        currentTeam.vehicleSurveys?.trialAttendance?.status === 'confirmed'
+                          ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
+                          : currentTeam.vehicleSurveys?.trialAttendance?.status === 'declined'
+                          ? 'border-red-200 bg-red-50 text-red-700'
+                          : 'border-amber-200 bg-amber-50 text-amber-700'
+                      }`}
+                    >
+                      {currentTeam.vehicleSurveys?.trialAttendance?.status === 'confirmed'
+                        ? 'Hadir'
+                        : currentTeam.vehicleSurveys?.trialAttendance?.status === 'declined'
+                        ? 'Tidak Hadir'
+                        : 'Belum Konfirmasi'}
+                    </span>
                   </div>
-
-                  {/* Location Card UCL */}
-                  <div className="group relative overflow-hidden rounded-[20px] border border-slate-200 bg-slate-50/60 p-4 transition hover:border-slate-300 hover:bg-white flex flex-col justify-center">
-                    <div className="flex items-start gap-3">
-                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white shadow-sm ring-1 ring-slate-200 text-emerald-600">
-                        <MapPin className="w-5 h-5" />
-                      </span>
-                      <div className="min-w-0">
-                        <p className="text-[8px] font-black uppercase tracking-[0.13em] text-slate-400">
-                          Lokasi arena
-                        </p>
-                        <p className="mt-0.5 text-xs font-black text-slate-900">
-                          Kampus Terpadu Mu’allimin Sedayu
-                        </p>
-                        <p className="mt-0.5 text-[9px] text-slate-500 leading-tight">
-                          Bandut Lor, Argorejo, Kec. Sedayu, Bantul
-                        </p>
-                      </div>
-                    </div>
+                  <p className="mt-2 text-xs leading-relaxed text-slate-500">
+                    Konfirmasi maksimal <strong className="text-slate-800">10 Januari 2027, 23.59 WIB</strong> demi efisiensi alokasi slot arena.
+                  </p>
+                  <div className="mt-3.5 grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => handleConfirmTrialAttendance(true)}
+                      className={`inline-flex items-center justify-center gap-1.5 rounded-xl px-3.5 py-2.5 text-xs font-extrabold transition cursor-pointer ${
+                        currentTeam.vehicleSurveys?.trialAttendance?.status === 'confirmed'
+                          ? 'bg-emerald-600 text-white shadow-xs'
+                          : 'border border-slate-200 bg-slate-50/70 text-slate-700 hover:border-slate-300 hover:bg-white'
+                      }`}
+                    >
+                      {currentTeam.vehicleSurveys?.trialAttendance?.status === 'confirmed' && (
+                        <Check className="w-3.5 h-3.5 stroke-[3]" />
+                      )}
+                      <span>Hadir</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleConfirmTrialAttendance(false)}
+                      className={`inline-flex items-center justify-center gap-1.5 rounded-xl px-3.5 py-2.5 text-xs font-extrabold transition cursor-pointer ${
+                        currentTeam.vehicleSurveys?.trialAttendance?.status === 'declined'
+                          ? 'bg-red-700 text-white shadow-xs'
+                          : 'border border-slate-200 bg-slate-50/70 text-slate-700 hover:border-slate-300 hover:bg-white'
+                      }`}
+                    >
+                      <span>Tidak Hadir</span>
+                    </button>
                   </div>
                 </div>
 
-                {/* Survei Armada UCL */}
-                <div className="overflow-hidden rounded-[20px] border border-emerald-200 bg-white">
-                  <div className="flex items-center justify-between border-b border-emerald-100 bg-emerald-50/60 px-4 py-3">
-                    <div className="flex items-center gap-2.5">
-                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-600 text-white shadow-xs">
-                        <Bus className="w-4 h-4" />
-                      </span>
-                      <div>
-                        <p className="text-[8px] font-black uppercase tracking-wider text-emerald-800">
-                          Survei armada
-                        </p>
-                        <h4 className="text-xs font-black text-slate-950">
-                          Armada Kendaraan Menuju UCL (16 Jan 2027)
-                        </h4>
-                      </div>
-                    </div>
+                {/* Lokasi Arena UCL */}
+                <div className="flex items-center gap-3.5 rounded-2xl border border-slate-200/80 bg-slate-50/60 p-4">
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white text-red-700 ring-1 ring-slate-200/80">
+                    <MapPin className="w-5 h-5" />
+                  </span>
+                  <div className="min-w-0">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-slate-400">
+                      Lokasi Arena
+                    </p>
+                    <p className="mt-0.5 text-sm font-black text-slate-950 leading-snug">
+                      {activePhase.venueName}
+                    </p>
+                    <p className="mt-0.5 text-[11px] font-medium text-slate-500 leading-snug">
+                      {activePhase.venueAddress}
+                    </p>
                   </div>
-                  <div className="grid gap-2 p-3 sm:grid-cols-2">
-                    {[
-                      { key: 'motor', label: 'Sepeda Motor', desc: 'Official & suporter', icon: Bike },
-                      { key: 'mobil', label: 'Mobil Pribadi', desc: 'Avanza / Innova', icon: Car },
-                      { key: 'elf', label: 'Minibus / Elf / HiAce', desc: 'Kapasitas 12-19 kursi', icon: Bus },
-                      { key: 'bus', label: 'Big / Medium Bus', desc: 'Bus besar rombongan', icon: Bus },
-                    ].map(item => {
-                      const ItemIcon = item.icon;
-                      const count = currentTeam.vehicleSurveys?.trial?.counts?.[item.key] || 0;
-                      return (
-                        <div
-                          key={item.key}
-                          className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50/70 p-2.5 transition hover:border-emerald-200 hover:bg-white"
-                        >
-                          <div className="flex min-w-0 items-center gap-2.5">
-                            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white text-slate-600 shadow-2xs ring-1 ring-slate-200">
-                              <ItemIcon className="w-4 h-4" />
-                            </span>
-                            <div className="min-w-0">
-                              <p className="truncate text-[10px] font-black text-slate-900">{item.label}</p>
-                              <p className="truncate text-[8px] text-slate-400">{item.desc}</p>
-                            </div>
-                          </div>
-                          <div className="ml-2 flex shrink-0 items-center gap-1 rounded-lg border border-slate-200 bg-white p-0.5">
-                            <button
-                              type="button"
-                              onClick={() => handleUpdateVehicleCount('trial', item.key, -1)}
-                              className="h-6 w-6 rounded-md text-xs font-black text-slate-500 hover:bg-slate-100 transition cursor-pointer"
-                            >
-                              −
-                            </button>
-                            <span className="w-5 text-center font-mono text-[10px] font-black text-slate-900">
-                              {count}
-                            </span>
-                            <button
-                              type="button"
-                              onClick={() => handleUpdateVehicleCount('trial', item.key, 1)}
-                              className="h-6 w-6 rounded-md bg-emerald-600 hover:bg-emerald-700 text-xs font-black text-white transition cursor-pointer"
-                            >
-                              +
-                            </button>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* Embedded Maps Sedayu */}
-                <div className="relative h-60 overflow-hidden rounded-[20px] border border-slate-200 bg-slate-100 shadow-inner">
-                  <iframe
-                    title="Peta Lokasi UCL"
-                    src="https://maps.google.com/maps?q=Madrasah+Mu'allimin+Muhammadiyah+Yogyakarta+Kampus+Terpadu+Sedayu&t=&z=15&ie=UTF8&iwloc=&output=embed"
-                    className="h-full w-full border-0 block"
-                    loading="lazy"
-                  />
-                  <div className="absolute left-3 top-3 rounded-xl border border-white/80 bg-white/90 px-3 py-1.5 shadow-md backdrop-blur">
-                    <p className="text-[7px] font-black uppercase tracking-[0.14em] text-slate-400">PETA ARENA</p>
-                    <p className="text-[9px] font-black text-slate-900">Kampus Terpadu Sedayu</p>
-                  </div>
-                  <a
-                    href={VENUE.MAPS_URL || "https://maps.app.goo.gl/fVMgg5xZcwRQ4kN78"}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="absolute bottom-3 right-3 inline-flex items-center gap-1.5 rounded-xl bg-slate-950/95 px-3 py-2 text-[8px] font-black text-white shadow-lg transition hover:bg-emerald-700 cursor-pointer"
-                  >
-                    <Navigation className="w-3 h-3 fill-current" />
-                    <span>Mulai Navigasi Rute</span>
-                  </a>
                 </div>
               </div>
             )}
 
             {currentTab === 'competition' && (
-              <div className="space-y-4 animate-in fade-in duration-200">
-                <div className="grid gap-3 md:grid-cols-[1.1fr_0.9fr]">
-                  {/* Rundown Alur Tampil */}
-                  <div className="overflow-hidden rounded-[20px] border border-slate-200 bg-white">
-                    <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
-                      <div>
-                        <p className="text-[8px] font-black uppercase tracking-[0.13em] text-red-700">
-                          Competition Flow
-                        </p>
-                        <p className="mt-0.5 text-xs font-black text-slate-950">
-                          Rundown Alur Tampil Hari-H
-                        </p>
-                      </div>
-                      <span className="rounded-full bg-slate-950 px-2.5 py-1 text-[8px] font-black text-white">
-                        {autoSchedule?.arena || (currentTeam.jenjang === 'SD' ? 'Arena 01' : 'Arena 02')}
-                      </span>
+              <div className="grid gap-3.5 md:grid-cols-[1.2fr_0.8fr] animate-in fade-in duration-200">
+                {/* Rundown Alur Tampil Hari-H */}
+                <div className="rounded-2xl border border-slate-200/90 bg-white p-4">
+                  <div className="flex items-center justify-between gap-3">
+                    <div>
+                      <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-red-700">
+                        Alur Tampil Hari-H
+                      </p>
+                      <p className="mt-0.5 text-sm font-black text-slate-950">
+                        Rundown Pergerakan Peleton
+                      </p>
                     </div>
-
-                    <div className="flex items-start px-4 py-4">
-                      {[
-                        { num: '01', label: 'Standby Basecamp', time: autoSchedule?.readyBasecamp || '06.30' },
-                        { num: '02', label: 'Pemeriksaan DP', time: autoSchedule?.checkDP1 || '07.00' },
-                        { num: '03', label: 'Masuk Arena', time: autoSchedule?.enterArena || '07.30' },
-                      ].map((step, idx) => (
-                        <div key={step.num} className="flex flex-1 items-start">
-                          <div className="min-w-0 flex-1 text-center">
-                            <span
-                              className={`mx-auto flex h-7 w-7 items-center justify-center rounded-full text-[8px] font-black ${
-                                idx === 0 ? 'bg-red-600 text-white' : 'bg-slate-100 text-slate-500'
-                              }`}
-                            >
-                              {step.num}
-                            </span>
-                            <p className="mt-1.5 text-[8px] font-bold text-slate-800 leading-tight">
-                              {step.label}
-                            </p>
-                            <p className="text-[8px] font-mono text-slate-400 mt-0.5">
-                              {step.time}
-                            </p>
-                          </div>
-                          {idx < 2 && <span className="mt-3.5 h-px w-4 shrink-0 bg-slate-200" />}
-                        </div>
-                      ))}
-                    </div>
-
-                    <div className="mx-4 mb-4 flex items-center gap-2 rounded-xl bg-amber-50 px-3 py-2 text-[8px] font-semibold text-amber-800 border border-amber-200/60">
-                      <Clock className="w-3.5 h-3.5 shrink-0 text-amber-600" />
-                      <span>Alur menit detail disahkan panitia saat pengundian nomor urut TM</span>
-                    </div>
+                    <span className="shrink-0 rounded-lg bg-slate-950 px-2.5 py-1 text-[10px] font-bold text-white">
+                      {autoSchedule?.arena || (currentTeam.jenjang === 'SD' ? 'Arena 01' : 'Arena 02')}
+                    </span>
                   </div>
 
-                  {/* Location Card Hari-H */}
-                  <div className="group relative overflow-hidden rounded-[20px] border border-slate-200 bg-slate-50/60 p-4 transition hover:border-slate-300 hover:bg-white flex flex-col justify-center">
-                    <div className="flex items-start gap-3">
-                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white shadow-sm ring-1 ring-slate-200 text-red-600">
-                        <MapPin className="w-5 h-5" />
-                      </span>
-                      <div className="min-w-0">
-                        <p className="text-[8px] font-black uppercase tracking-[0.13em] text-slate-400">
-                          Arena Perlombaan
-                        </p>
-                        <p className="mt-0.5 text-xs font-black text-slate-900">
-                          Kampus Terpadu Mu’allimin Sedayu
-                        </p>
-                        <p className="mt-0.5 text-[9px] text-slate-500 leading-tight">
-                          Dusun Bandut Lor, Argorejo, Sedayu, Bantul
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Survei Armada Hari-H */}
-                <div className="overflow-hidden rounded-[20px] border border-red-200 bg-white">
-                  <div className="flex items-center justify-between border-b border-red-100 bg-red-50/60 px-4 py-3">
-                    <div className="flex items-center gap-2.5">
-                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-red-600 text-white shadow-xs">
-                        <Bus className="w-4 h-4" />
-                      </span>
-                      <div>
-                        <p className="text-[8px] font-black uppercase tracking-wider text-red-800">
-                          Stiker parkir resmi
-                        </p>
-                        <h4 className="text-xs font-black text-slate-950">
-                          Survei Jumlah Kendaraan Kontingen Hari-H (24 Jan 2027)
-                        </h4>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="grid gap-2 p-3 sm:grid-cols-2">
+                  <div className="mt-4 grid grid-cols-3 gap-2">
                     {[
-                      { key: 'motor', label: 'Sepeda Motor', desc: 'Suporter & Official', icon: Bike },
-                      { key: 'mobil', label: 'Mobil Pribadi', desc: 'Kendaraan guru & pendamping', icon: Car },
-                      { key: 'elf', label: 'Minibus / Elf / HiAce', desc: 'Kapasitas 12-19 seat', icon: Bus },
-                      { key: 'bus', label: 'Big / Medium Bus', desc: 'Bus besar rombongan (30-50+)', icon: Bus },
-                    ].map(item => {
-                      const ItemIcon = item.icon;
-                      const count = currentTeam.vehicleSurveys?.competition?.counts?.[item.key] || 0;
-                      return (
-                        <div
-                          key={item.key}
-                          className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50/70 p-2.5 transition hover:border-red-200 hover:bg-white"
+                      { num: '01', label: 'Standby Basecamp', time: autoSchedule?.readyBasecamp || '06.30' },
+                      { num: '02', label: 'Pemeriksaan DP', time: autoSchedule?.checkDP1 || '07.00' },
+                      { num: '03', label: 'Masuk Arena', time: autoSchedule?.enterArena || '07.30' },
+                    ].map((step, idx) => (
+                      <div
+                        key={step.num}
+                        className="rounded-xl border border-slate-100 bg-slate-50/80 px-2.5 py-3 text-center"
+                      >
+                        <span
+                          className={`mx-auto flex h-6 w-6 items-center justify-center rounded-full font-mono text-[10px] font-black ${
+                            idx === 0 ? 'bg-red-700 text-white' : 'bg-slate-200 text-slate-600'
+                          }`}
                         >
-                          <div className="flex min-w-0 items-center gap-2.5">
-                            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white text-slate-600 shadow-2xs ring-1 ring-slate-200">
-                              <ItemIcon className="w-4 h-4" />
-                            </span>
-                            <div className="min-w-0">
-                              <p className="truncate text-[10px] font-black text-slate-900">{item.label}</p>
-                              <p className="truncate text-[8px] text-slate-400">{item.desc}</p>
-                            </div>
-                          </div>
-                          <div className="ml-2 flex shrink-0 items-center gap-1 rounded-lg border border-slate-200 bg-white p-0.5">
-                            <button
-                              type="button"
-                              onClick={() => handleUpdateVehicleCount('competition', item.key, -1)}
-                              className="h-6 w-6 rounded-md text-xs font-black text-slate-500 hover:bg-slate-100 transition cursor-pointer"
-                            >
-                              −
-                            </button>
-                            <span className="w-5 text-center font-mono text-[10px] font-black text-slate-900">
-                              {count}
-                            </span>
-                            <button
-                              type="button"
-                              onClick={() => handleUpdateVehicleCount('competition', item.key, 1)}
-                              className="h-6 w-6 rounded-md bg-red-700 hover:bg-red-800 text-xs font-black text-white transition cursor-pointer"
-                            >
-                              +
-                            </button>
-                          </div>
-                        </div>
-                      );
-                    })}
+                          {step.num}
+                        </span>
+                        <p className="mt-2 text-[11px] font-bold text-slate-800 leading-tight">
+                          {step.label}
+                        </p>
+                        <p className="mt-0.5 font-mono text-[11px] font-bold text-slate-500 tabular-nums">
+                          {step.time}
+                        </p>
+                      </div>
+                    ))}
                   </div>
+
+                  <p className="mt-3 flex items-center gap-1.5 text-[11px] font-medium text-slate-500">
+                    <Clock className="w-3.5 h-3.5 shrink-0 text-amber-600" />
+                    <span>Alur menit detail disahkan panitia saat pengundian nomor urut TM.</span>
+                  </p>
                 </div>
 
-                {/* Embedded Maps Hari-H */}
-                <div className="relative h-60 overflow-hidden rounded-[20px] border border-slate-200 bg-slate-100 shadow-inner">
-                  <iframe
-                    title="Peta Lokasi Hari-H"
-                    src="https://maps.google.com/maps?q=Madrasah+Mu'allimin+Muhammadiyah+Yogyakarta+Kampus+Terpadu+Sedayu&t=&z=15&ie=UTF8&iwloc=&output=embed"
-                    className="h-full w-full border-0 block"
-                    loading="lazy"
-                  />
-                  <div className="absolute left-3 top-3 rounded-xl border border-white/80 bg-white/90 px-3 py-1.5 shadow-md backdrop-blur">
-                    <p className="text-[7px] font-black uppercase tracking-[0.14em] text-slate-400">PETA ARENA</p>
-                    <p className="text-[9px] font-black text-slate-900">Kampus Terpadu Sedayu</p>
+                {/* Arena Perlombaan Hari-H */}
+                <div className="flex items-center gap-3.5 rounded-2xl border border-slate-200/80 bg-slate-50/60 p-4">
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white text-red-700 ring-1 ring-slate-200/80">
+                    <MapPin className="w-5 h-5" />
+                  </span>
+                  <div className="min-w-0">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-slate-400">
+                      Arena Perlombaan
+                    </p>
+                    <p className="mt-0.5 text-sm font-black text-slate-950 leading-snug">
+                      {activePhase.venueName}
+                    </p>
+                    <p className="mt-0.5 text-[11px] font-medium text-slate-500 leading-snug">
+                      {activePhase.venueAddress}
+                    </p>
                   </div>
-                  <a
-                    href={VENUE.MAPS_URL || "https://maps.app.goo.gl/fVMgg5xZcwRQ4kN78"}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="absolute bottom-3 right-3 inline-flex items-center gap-1.5 rounded-xl bg-slate-950/95 px-3 py-2 text-[8px] font-black text-white shadow-lg transition hover:bg-red-700 cursor-pointer"
-                  >
-                    <Navigation className="w-3 h-3 fill-current" />
-                    <span>Mulai Navigasi Rute</span>
-                  </a>
                 </div>
               </div>
             )}
+
+            {/* Unified Survei Armada Kendaraan */}
+            <div className="overflow-hidden rounded-2xl border border-slate-200/90 bg-white">
+              <div className="flex flex-col gap-1.5 border-b border-slate-100 bg-slate-50/70 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-950 text-white">
+                    {currentTab === 'tm' ? <Car className="w-4 h-4" /> : <Bus className="w-4 h-4" />}
+                  </span>
+                  <div className="min-w-0">
+                    <h4 className="text-xs sm:text-[13px] font-black text-slate-950 truncate">
+                      {activeVehicleMeta.title}
+                    </h4>
+                    <p className="text-[11px] font-medium text-slate-500 truncate">
+                      {activeVehicleMeta.subtitle}
+                    </p>
+                  </div>
+                </div>
+                <span
+                  className={`self-start sm:self-center shrink-0 rounded-full px-2.5 py-1 text-[10px] font-bold tabular-nums ${
+                    activeVehicleTotal > 0
+                      ? 'bg-red-50 text-red-700 border border-red-200/70'
+                      : 'bg-white text-slate-500 border border-slate-200'
+                  }`}
+                >
+                  {activeVehicleTotal > 0 ? `Total ${activeVehicleTotal} unit` : 'Belum diisi'}
+                </span>
+              </div>
+
+              <div className="grid gap-2.5 p-3.5 sm:grid-cols-2">
+                {activeVehicleMeta.items.map(item => {
+                  const ItemIcon = item.icon;
+                  const count = Number(activeVehicleCounts[item.key]) || 0;
+                  return (
+                    <div
+                      key={item.key}
+                      className={`flex items-center justify-between gap-2 rounded-xl border px-3 py-2.5 transition ${
+                        count > 0
+                          ? 'border-slate-300 bg-white shadow-2xs'
+                          : 'border-slate-200/70 bg-slate-50/50 hover:border-slate-300 hover:bg-white'
+                      }`}
+                    >
+                      <div className="flex min-w-0 items-center gap-2.5">
+                        <span
+                          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition ${
+                            count > 0
+                              ? 'bg-slate-950 text-white'
+                              : 'bg-white text-slate-500 ring-1 ring-slate-200'
+                          }`}
+                        >
+                          <ItemIcon className="w-4 h-4" />
+                        </span>
+                        <div className="min-w-0">
+                          <p className="truncate text-xs font-bold text-slate-900">{item.label}</p>
+                          <p className="truncate text-[10.5px] font-medium text-slate-400">{item.desc}</p>
+                        </div>
+                      </div>
+                      <div className="flex shrink-0 items-center gap-1 rounded-lg border border-slate-200 bg-white p-0.5">
+                        <button
+                          type="button"
+                          onClick={() => handleUpdateVehicleCount(currentTab, item.key, -1)}
+                          disabled={count === 0}
+                          aria-label={`Kurangi ${item.label}`}
+                          className="flex h-7 w-7 items-center justify-center rounded-md text-sm font-bold text-slate-600 transition hover:bg-slate-100 disabled:opacity-35 disabled:hover:bg-transparent cursor-pointer"
+                        >
+                          −
+                        </button>
+                        <span
+                          className={`w-6 text-center font-mono text-xs font-black tabular-nums ${
+                            count > 0 ? 'text-red-700' : 'text-slate-700'
+                          }`}
+                        >
+                          {count}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => handleUpdateVehicleCount(currentTab, item.key, 1)}
+                          aria-label={`Tambah ${item.label}`}
+                          className="flex h-7 w-7 items-center justify-center rounded-md bg-slate-900 text-sm font-bold text-white transition hover:bg-red-700 active:scale-95 cursor-pointer"
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Embedded Maps Preview */}
+            <div className="relative h-56 overflow-hidden rounded-2xl border border-slate-200/90 bg-slate-100">
+              <iframe
+                key={activePhase.embedUrl}
+                title={`Peta Lokasi ${activePhase.label}`}
+                src={activePhase.embedUrl}
+                className="block h-full w-full border-0"
+                loading="lazy"
+              />
+              <div className="pointer-events-none absolute left-3 top-3 rounded-xl border border-white/80 bg-white/95 px-3 py-1.5 shadow-sm backdrop-blur">
+                <p className="text-[9px] font-bold uppercase tracking-[0.12em] text-slate-400">
+                  Peta Lokasi
+                </p>
+                <p className="text-xs font-black text-slate-950">{activePhase.mapLabel}</p>
+              </div>
+              <a
+                href={activePhase.mapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="absolute bottom-3 right-3 inline-flex items-center gap-1.5 rounded-xl bg-slate-950/95 px-3.5 py-2 text-[11px] font-bold text-white shadow-lg transition hover:bg-red-700"
+              >
+                <Navigation className="w-3.5 h-3.5" />
+                <span>Mulai Navigasi</span>
+              </a>
+            </div>
           </div>
         </section>
 
@@ -1296,103 +1184,115 @@ export default function OverviewTab({
           </article>
 
           {/* PENDAMPING PELETON - LO & POSKO BANTUAN */}
-          <article className="overflow-hidden rounded-[24px] border border-slate-200 bg-white shadow-[0_14px_34px_rgba(15,23,42,0.055)]">
+          <article className="overflow-hidden rounded-[24px] border border-slate-200/90 bg-white shadow-[0_14px_34px_rgba(15,23,42,0.055)]">
             {/* Header Card */}
-            <div className="flex items-center gap-3 border-b border-slate-100 p-4 sm:px-5">
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-xs">
-                <UserCheck className="w-4.5 h-4.5" />
+            <div className="flex items-center gap-3 border-b border-slate-100 px-5 py-4">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-950 text-white shadow-2xs">
+                <UserCheck className="w-4 h-4" />
               </span>
-              <h4 className="text-sm font-bold tracking-tight text-slate-950">
-                LO &amp; Posko Bantuan
-              </h4>
+              <div className="min-w-0">
+                <p className="text-[9.5px] font-bold uppercase tracking-[0.14em] text-red-700">
+                  Layanan Kontingen
+                </p>
+                <h4 className="text-sm font-black tracking-tight text-slate-950">
+                  LO &amp; Posko Bantuan
+                </h4>
+              </div>
             </div>
 
-            <div className="p-4 sm:p-5 space-y-3">
-              {/* LIAISON OFFICER (LO PELETON) - STREAMLINED & ELEGANT */}
-              <div className="relative overflow-hidden rounded-2xl border border-emerald-200/80 bg-gradient-to-br from-emerald-50/60 via-white to-emerald-50/30 p-3.5 transition-all">
+            <div className="p-4 space-y-3">
+              {/* LIAISON OFFICER (LO PELETON) */}
+              <div className="rounded-2xl border border-slate-200/80 bg-slate-50/70 p-3.5">
                 {isLoAssigned ? (
                   <div className="flex items-center gap-3.5">
-                    {/* Foto LO */}
-                    <div className="relative shrink-0">
+                    {loPhoto ? (
                       <img
                         src={loPhoto}
-                        alt={loName || 'Liaison Officer'}
-                        className="h-16 w-16 sm:h-18 sm:w-18 rounded-2xl object-cover object-top border border-emerald-400 shadow-xs"
+                        alt={loDisplayName}
+                        className="h-12 w-12 shrink-0 rounded-xl object-cover object-top ring-1 ring-slate-200"
                         onError={(e) => {
                           e.currentTarget.onerror = null;
-                          e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(loName || 'Rizky Fauzi')}&background=059669&color=fff&bold=true`;
+                          e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(loDisplayName)}&background=0f172a&color=fff&bold=true`;
                         }}
                       />
-                    </div>
+                    ) : (
+                      <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-slate-900 to-slate-800 font-mono text-sm font-black text-white shadow-xs ring-1 ring-slate-950/10">
+                        {loInitials}
+                      </span>
+                    )}
 
-                    {/* Informasi LO: Bersih, Rapi & Ringkas */}
                     <div className="min-w-0 flex-1">
-                      <h5 className="text-sm sm:text-base font-bold text-slate-950 leading-snug">
-                        {loName ? loName.replace(/\s*\(Panitia LBB\)/i, '') : 'Kak Rizky Fauzi'}
+                      <span className="inline-block rounded-md bg-white border border-slate-200 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-slate-500">
+                        {loRole || 'Liaison Officer'}
+                      </span>
+                      <h5 className="mt-1 text-sm font-black text-slate-950 leading-snug truncate">
+                        {loDisplayName}
                       </h5>
-                      <p className="text-xs text-slate-500 font-medium mt-0.5">
-                        Panitia LBB • Kampus Sedayu
+                      <p className="text-[11px] font-medium text-slate-500">
+                        Panitia LBB · Kampus Sedayu
                       </p>
                     </div>
                   </div>
                 ) : (
                   <div className="flex items-center gap-3">
-                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700">
-                      <UserCheck className="w-5 h-5" />
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-slate-600 ring-1 ring-slate-200">
+                      <UserCheck className="w-4.5 h-4.5" />
                     </span>
                     <div className="min-w-0 flex-1">
-                      <h5 className="text-sm font-bold text-slate-950">
+                      <h5 className="text-xs font-black text-slate-950">
                         Penetapan saat TM
                       </h5>
-                      <p className="text-xs text-slate-500">
-                        Diperkenalkan langsung saat Technical Meeting.
+                      <p className="mt-0.5 text-[11px] text-slate-500 leading-snug">
+                        LO peleton diperkenalkan langsung saat Technical Meeting.
                       </p>
                     </div>
                   </div>
                 )}
               </div>
 
-              {/* SEKRETARIAT & PENDAFTARAN */}
-              <a
-                href="https://wa.me/6281947491505"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group flex items-center justify-between gap-3 rounded-2xl border border-slate-200/80 bg-slate-50/70 p-3 transition hover:border-blue-200 hover:bg-blue-50/40 cursor-pointer"
-              >
-                <div className="flex items-center gap-3 min-w-0">
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-100 text-blue-700">
-                    <Phone className="w-4 h-4" />
-                  </span>
-                  <div className="min-w-0">
-                    <p className="text-xs font-bold text-slate-900 group-hover:text-blue-700 transition truncate">
-                      Sekretariat &amp; Pendaftaran
-                    </p>
-                    <p className="text-[11px] text-slate-500 font-mono mt-0.5">
-                      0819-4749-1505 (Admin Tonti)
-                    </p>
+              {/* Support Channels */}
+              <div className="divide-y divide-slate-100 rounded-2xl border border-slate-200/80 bg-white overflow-hidden">
+                {/* SEKRETARIAT & PENDAFTARAN */}
+                <a
+                  href="https://wa.me/6281947491505"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex items-center justify-between gap-3 p-3.5 transition hover:bg-slate-50 cursor-pointer"
+                >
+                  <div className="flex items-start gap-3 min-w-0">
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-700 transition group-hover:bg-red-700 group-hover:text-white">
+                      <Phone className="w-4 h-4" />
+                    </span>
+                    <div className="min-w-0">
+                      <p className="text-xs font-extrabold text-slate-950 group-hover:text-red-700 transition">
+                        Sekretariat &amp; Pendaftaran
+                      </p>
+                      <p className="mt-0.5 text-[11px] font-mono text-slate-500">
+                        0819-4749-1505 · Admin Tonti
+                      </p>
+                    </div>
                   </div>
-                </div>
-                <ChevronRight className="w-4 h-4 shrink-0 text-slate-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition" />
-              </a>
+                  <ChevronRight className="w-4 h-4 shrink-0 text-slate-400 transition group-hover:translate-x-0.5 group-hover:text-red-700" />
+                </a>
 
-              {/* POSKO MEDIS & EVAKUASI */}
-              <div className="flex items-center justify-between gap-3 rounded-2xl border border-slate-200/80 bg-slate-50/70 p-3">
-                <div className="flex items-center gap-3 min-w-0">
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-red-100 text-red-700">
-                    <ShieldAlert className="w-4 h-4" />
+                {/* POSKO MEDIS & EVAKUASI */}
+                <div className="flex items-start gap-3 p-3.5">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-red-50 text-red-700">
+                    <HeartPulse className="w-4 h-4" />
                   </span>
-                  <div className="min-w-0">
-                    <p className="text-xs font-bold text-slate-900 truncate">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs font-extrabold text-slate-950 leading-snug">
                       Posko Medis &amp; Evakuasi
                     </p>
-                    <p className="text-[11px] text-slate-500 mt-0.5 truncate">
+                    <p className="mt-0.5 text-[11px] font-medium text-slate-500 leading-snug">
                       PMR / KSR Siaga Ambulans
                     </p>
+                    <span className="mt-1.5 inline-flex items-center gap-1 rounded-md bg-red-50 border border-red-200/70 px-2 py-0.5 text-[10px] font-bold text-red-700">
+                      <MapPin className="w-2.5 h-2.5" />
+                      <span>Arena Sedayu</span>
+                    </span>
                   </div>
                 </div>
-                <span className="shrink-0 rounded-full bg-red-100 border border-red-200 px-2.5 py-0.5 text-[10px] font-bold text-red-700">
-                  Arena Sedayu
-                </span>
               </div>
             </div>
           </article>
