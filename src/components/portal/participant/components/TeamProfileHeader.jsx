@@ -279,7 +279,7 @@ export default function TeamProfileHeader({
                     alt="Logo Sekolah"
                     referrerPolicy="no-referrer"
                     onError={(e) => {
-                      const fallback = getFallbackImageUrl(rawLogoUrl);
+                      const fallback = getFallbackImageUrl(rawLogoUrl, e.currentTarget.src);
                       if (fallback && e.currentTarget.src !== fallback) {
                         e.currentTarget.src = fallback;
                       } else {

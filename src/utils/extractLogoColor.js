@@ -108,6 +108,7 @@ export async function extractLogoTheme(imageUrl, schoolName = '') {
 
     const img = new Image();
     img.crossOrigin = 'anonymous';
+    img.referrerPolicy = 'no-referrer';
 
     img.onload = () => {
       clearTimeout(timeout);

@@ -45,48 +45,63 @@ export function getAppsScriptUrl() {
 }
 
 /**
+ * Ekstrak Google Drive File ID dari berbagai format URL Drive / Googleusercontent
+ */
+export function extractGoogleDriveFileId(url) {
+  if (!url || typeof url !== 'string') return '';
+  if (!url.includes('drive.google.com') && !url.includes('googleusercontent.com') && !url.includes('docs.google.com')) {
+    return '';
+  }
+  const fileIdMatch =
+    url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) ||
+    url.match(/[?&]id=([a-zA-Z0-9_-]+)/) ||
+    url.match(/googleusercontent\.com\/d\/([a-zA-Z0-9_-]+)/) ||
+    url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+  return fileIdMatch?.[1] || '';
+}
+
+/**
+ * Daftar kandidat URL gambar berurutan untuk Google Drive (primary -> fallback 1 -> fallback 2)
+ */
+export function getImageCandidateUrls(url) {
+  if (!url || typeof url !== 'string') return [];
+  if (url.startsWith('data:') || url.startsWith('blob:') || url.startsWith('/') || url.startsWith('http://') || url.includes('unsplash.com') || url.includes('ui-avatars.com')) {
+    return [url];
+  }
+
+  const fileId = extractGoogleDriveFileId(url);
+  if (fileId) {
+    return [
+      `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`,
+      `https://lh3.googleusercontent.com/d/${fileId}=w1000`,
+      `https://drive.usercontent.google.com/download?id=${fileId}&export=view`,
+    ];
+  }
+
+  return [url];
+}
+
+/**
  * Mengubah URL Google Drive View (/file/d/.../view) menjadi Direct Image Thumbnail URL
  * agar bisa ditampilkan langsung di tag <img> browser tanpa CORS/HTML preview issue.
  */
 export function formatImageUrl(url) {
-  if (!url || typeof url !== 'string') return '';
-  if (url.startsWith('data:') || url.startsWith('blob:') || url.startsWith('/') || url.startsWith('http://') || url.includes('unsplash.com') || url.includes('ui-avatars.com')) {
-    return url;
-  }
-
-  // Jika URL adalah Google Drive link
-  if (url.includes('drive.google.com') || url.includes('googleusercontent.com') || url.includes('docs.google.com')) {
-    const fileIdMatch =
-      url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) ||
-      url.match(/[?&]id=([a-zA-Z0-9_-]+)/) ||
-      url.match(/\/d\/([a-zA-Z0-9_-]+)/) ||
-      url.match(/googleusercontent\.com\/d\/([a-zA-Z0-9_-]+)/);
-    if (fileIdMatch && fileIdMatch[1]) {
-      const fileId = fileIdMatch[1];
-      // Gunakan lh3.googleusercontent.com CDN direct preview yang aman dan cepat di-render di semua tag <img> browser
-      return `https://lh3.googleusercontent.com/d/${fileId}=w1000`;
-    }
-  }
-
-  return url;
+  const candidates = getImageCandidateUrls(url);
+  return candidates[0] || '';
 }
 
 /**
- * Cadangan alternatif URL Google Drive jika primary link mengalami kendala
+ * Cadangan alternatif URL Google Drive berurutan jika primary link mengalami kendala
  */
-export function getFallbackImageUrl(url) {
-  if (!url || typeof url !== 'string') return '';
-  if (url.includes('drive.google.com') || url.includes('googleusercontent.com')) {
-    const fileIdMatch =
-      url.match(/[?&]id=([a-zA-Z0-9_-]+)/) ||
-      url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) ||
-      url.match(/\/d\/([a-zA-Z0-9_-]+)/);
-    if (fileIdMatch && fileIdMatch[1]) {
-      const fileId = fileIdMatch[1];
-      return `https://drive.usercontent.google.com/download?id=${fileId}&export=view`;
-    }
+export function getFallbackImageUrl(url, currentSrc = '') {
+  const candidates = getImageCandidateUrls(url);
+  if (candidates.length <= 1) return '';
+  if (!currentSrc) return candidates[1];
+  const idx = candidates.indexOf(currentSrc);
+  if (idx >= 0 && idx + 1 < candidates.length) {
+    return candidates[idx + 1];
   }
-  return url;
+  return '';
 }
 
 /**

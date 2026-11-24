@@ -149,7 +149,7 @@ export default function Navbar({ onOpenMobileMenu }) {
           className={`hidden lg:flex items-center p-1.5 rounded-full transition-all duration-300 ${
             isScrolled
               ? 'bg-slate-100/90 border border-slate-200/90'
-              : 'bg-black/25 backdrop-blur-md border border-white/10 shadow-[0_8px_28px_rgba(0,0,0,0.28)]'
+              : 'bg-transparent border border-transparent'
           }`}
         >
           {/* Navigation Links */}
@@ -164,10 +164,10 @@ export default function Navbar({ onOpenMobileMenu }) {
                     isActive
                       ? isScrolled
                         ? 'bg-slate-900 text-white shadow-sm'
-                        : 'bg-white/15 text-white'
+                        : 'bg-white/[0.08] text-white'
                       : isScrolled
                         ? 'text-slate-600 hover:text-slate-950 hover:bg-slate-200/60'
-                        : 'text-white/75 hover:text-white hover:bg-white/10'
+                        : 'text-white/70 hover:text-white hover:bg-white/[0.06]'
                   }`}
                 >
                   <span className="inline-flex items-center gap-1.5">
@@ -188,7 +188,7 @@ export default function Navbar({ onOpenMobileMenu }) {
           {/* Subtle Divider */}
           <div
             className={`h-5 w-px mx-2 shrink-0 ${
-              isScrolled ? 'bg-slate-300/80' : 'bg-white/15'
+              isScrolled ? 'bg-slate-300/80' : 'bg-white/10'
             }`}
           />
 
