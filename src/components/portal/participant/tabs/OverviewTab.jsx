@@ -442,113 +442,170 @@ export default function OverviewTab({
         </div>
       </section>
 
-      {/* 1. RACE CONTROL - STATUS KOMPETISI (Figma Make Signature Style) */}
-      <section className="overflow-hidden rounded-[24px] border border-slate-200 bg-white shadow-[0_12px_32px_rgba(15,23,42,0.045)]">
-        <div className="flex flex-col gap-3 border-b border-slate-100 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
-          <div>
-            <p className="section-kicker">RACE CONTROL</p>
-            <h2 className="mt-0.5 text-base font-black tracking-tight text-slate-950">
-              Status Kompetisi Peleton
-            </h2>
-          </div>
-          <div className="flex items-center gap-2 self-start rounded-full bg-amber-50 px-3 py-1.5 text-[9px] font-black uppercase tracking-[0.12em] text-amber-700 border border-amber-200/80">
-            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-amber-500" />
-            <span>
-              {currentTeam.status === 'verified' ? 'Kontingen Terverifikasi' : 'Menunggu Technical Meeting'}
-            </span>
-          </div>
-        </div>
+      {/* 1. RACE CONTROL - STATUS KOMPETISI PELETON */}
+      {(() => {
+        const hasChest = Boolean(currentTeam.chestNumber);
+        const hasTrial = Boolean(
+          displayTrialTime &&
+            displayTrialTime !== 'Menunggu Pengesahan' &&
+            displayTrialTime !== 'Berhalangan'
+        );
+        const hasEstimated = Boolean(displayEstimatedTime);
+        const hasBasecamp = Boolean(displayBasecamp);
+        const readyCount = [hasChest, hasTrial, hasEstimated, hasBasecamp].filter(Boolean).length;
 
-        <div className="grid grid-cols-2 divide-x divide-y divide-slate-100 xl:grid-cols-4 xl:divide-y-0">
-          {/* Card 1: Nomor Dada */}
-          <div className="group relative min-h-[140px] p-4 transition hover:bg-slate-50/70 sm:p-5 flex flex-col justify-between">
-            <div className="flex items-start justify-between">
-              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700">
-                <Tag className="w-4 h-4" />
-              </span>
-              <span className="text-[9px] font-black tracking-[0.14em] text-slate-300">01</span>
-            </div>
-            <div>
-              <p className="text-[9px] font-black uppercase tracking-[0.13em] text-slate-500">
-                Nomor Dada
-              </p>
-              <p className="mt-1 text-base sm:text-xl font-mono font-black text-slate-900 truncate">
-                {currentTeam.chestNumber || '—'}
-              </p>
-              <p className="mt-0.5 text-[9px] font-semibold text-slate-400">
-                {currentTeam.chestNumber ? 'Seragam peleton' : 'Ditetapkan saat TM'}
-              </p>
-            </div>
-            <span className="absolute inset-x-5 bottom-0 h-0.5 origin-left scale-x-0 bg-red-600 transition-transform group-hover:scale-x-100" />
-          </div>
+        const telemetryItems = [
+          {
+            key: 'chest',
+            label: 'Nomor Dada',
+            value: hasChest ? currentTeam.chestNumber : 'Belum Terbit',
+            sub: hasChest ? 'Disematkan di Saf 2 Banjar 1' : 'Ditetapkan saat TM (9 Jan)',
+            isReady: hasChest,
+            icon: Tag,
+            readyIconClass: 'bg-emerald-50 text-emerald-700 border-emerald-200/80',
+          },
+          {
+            key: 'ucl',
+            label: 'Jadwal UCL',
+            value: displayTrialTime || 'Belum Terbit',
+            sub:
+              displayTrialTime === 'Berhalangan'
+                ? 'Tercatat tidak hadir UCL'
+                : hasTrial
+                  ? '16 Jan 2027 · Sedayu'
+                  : 'Menunggu pengesahan panitia',
+            isReady: hasTrial,
+            icon: Clock,
+            readyIconClass: 'bg-purple-50 text-purple-700 border-purple-200/80',
+          },
+          {
+            key: 'tampil',
+            label: 'Estimasi Tampil',
+            value: hasEstimated ? displayEstimatedTime : 'Belum Tersedia',
+            sub: hasEstimated
+              ? autoSchedule?.arena
+                ? autoSchedule.arena.split(' ')[0]
+                : 'Arena Utama'
+              : 'Menunggu hasil undian TM',
+            isReady: hasEstimated,
+            icon: Timer,
+            readyIconClass: 'bg-blue-50 text-blue-700 border-blue-200/80',
+          },
+          {
+            key: 'basecamp',
+            label: 'Ruang Basecamp',
+            value: hasBasecamp ? displayBasecamp : 'Belum Ditetapkan',
+            sub: hasBasecamp ? 'Transit kontingen Hari-H' : 'Diumumkan setelah UCL',
+            isReady: hasBasecamp,
+            icon: Home,
+            readyIconClass: 'bg-amber-50 text-amber-700 border-amber-200/80',
+          },
+        ];
 
-          {/* Card 2: Jadwal UCL */}
-          <div className="group relative min-h-[140px] p-4 transition hover:bg-slate-50/70 sm:p-5 flex flex-col justify-between">
-            <div className="flex items-start justify-between">
-              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-purple-50 text-purple-700">
-                <Clock className="w-4 h-4" />
-              </span>
-              <span className="text-[9px] font-black tracking-[0.14em] text-slate-300">02</span>
-            </div>
-            <div>
-              <p className="text-[9px] font-black uppercase tracking-[0.13em] text-slate-500">
-                Jadwal UCL
-              </p>
-              <p className="mt-1 text-xs sm:text-base font-mono font-black text-slate-900 truncate">
-                {displayTrialTime || 'Belum Terbit'}
-              </p>
-              <p className="mt-0.5 text-[9px] font-semibold text-slate-400">
-                {displayTrialTime ? '16 Jan (Sedayu)' : 'Menunggu publikasi'}
-              </p>
-            </div>
-            <span className="absolute inset-x-5 bottom-0 h-0.5 origin-left scale-x-0 bg-red-600 transition-transform group-hover:scale-x-100" />
-          </div>
+        const isVerified = currentTeam.status === 'verified';
 
-          {/* Card 3: Estimasi Tampil */}
-          <div className="group relative min-h-[140px] p-4 transition hover:bg-slate-50/70 sm:p-5 flex flex-col justify-between">
-            <div className="flex items-start justify-between">
-              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-blue-700">
-                <Timer className="w-4 h-4" />
-              </span>
-              <span className="text-[9px] font-black tracking-[0.14em] text-slate-300">03</span>
-            </div>
-            <div>
-              <p className="text-[9px] font-black uppercase tracking-[0.13em] text-slate-500">
-                Estimasi Tampil
-              </p>
-              <p className="mt-1 text-xs sm:text-base font-mono font-black text-slate-900 truncate">
-                {displayEstimatedTime || 'Belum Tersedia'}
-              </p>
-              <p className="mt-0.5 text-[9px] font-semibold text-slate-400">
-                {displayEstimatedTime ? (autoSchedule?.arena ? autoSchedule.arena.split(' ')[0] : 'Arena Utama') : 'Menunggu hasil undian'}
-              </p>
-            </div>
-            <span className="absolute inset-x-5 bottom-0 h-0.5 origin-left scale-x-0 bg-red-600 transition-transform group-hover:scale-x-100" />
-          </div>
+        return (
+          <section className="overflow-hidden rounded-3xl border border-slate-200/90 bg-white shadow-sm">
+            {/* Header Bar */}
+            <div className="flex flex-col gap-3 border-b border-slate-100 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+              <div className="flex items-center gap-3">
+                <span className="w-9 h-9 rounded-xl bg-red-50 border border-red-100 text-red-700 flex items-center justify-center shrink-0">
+                  <Radio className="w-4 h-4" />
+                </span>
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-[0.16em] text-red-700 leading-none">
+                    Race Control
+                  </p>
+                  <h2 className="mt-1 text-base font-black tracking-tight text-slate-950 leading-none">
+                    Status Kompetisi Peleton
+                  </h2>
+                </div>
+              </div>
 
-          {/* Card 4: Basecamp */}
-          <div className="group relative min-h-[140px] p-4 transition hover:bg-slate-50/70 sm:p-5 flex flex-col justify-between">
-            <div className="flex items-start justify-between">
-              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-50 text-amber-700">
-                <Home className="w-4 h-4" />
-              </span>
-              <span className="text-[9px] font-black tracking-[0.14em] text-slate-300">04</span>
+              <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 border border-slate-200/80 px-2.5 py-1 text-[10px] font-mono font-extrabold text-slate-600">
+                  <span>{readyCount}/4 Terbit</span>
+                </span>
+                <span
+                  className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-[10px] font-extrabold uppercase tracking-wider ${
+                    isVerified
+                      ? 'bg-emerald-50 text-emerald-700 border-emerald-200/80'
+                      : 'bg-amber-50 text-amber-800 border-amber-200/80'
+                  }`}
+                >
+                  <span
+                    className={`h-1.5 w-1.5 rounded-full animate-pulse ${
+                      isVerified ? 'bg-emerald-500' : 'bg-amber-500'
+                    }`}
+                  />
+                  <span>
+                    {isVerified ? 'Kontingen Terverifikasi' : 'Menunggu Technical Meeting'}
+                  </span>
+                </span>
+              </div>
             </div>
-            <div>
-              <p className="text-[9px] font-black uppercase tracking-[0.13em] text-slate-500">
-                Basecamp
-              </p>
-              <p className="mt-1 text-xs sm:text-base font-mono font-black text-slate-900 truncate">
-                {displayBasecamp || 'Belum Ditetapkan'}
-              </p>
-              <p className="mt-0.5 text-[9px] font-semibold text-slate-400">
-                {displayBasecamp ? 'Transit kontingen' : 'Diumumkan setelah UCL'}
-              </p>
+
+            {/* 4 State-Aware Telemetry Cells */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 divide-x divide-y lg:divide-y-0 divide-slate-100">
+              {telemetryItems.map(item => {
+                const ItemIcon = item.icon;
+                return (
+                  <div
+                    key={item.key}
+                    className={`p-4 sm:p-5 flex flex-col justify-between gap-4 transition-colors ${
+                      item.isReady ? 'bg-white hover:bg-slate-50/70' : 'bg-slate-50/40'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <span
+                        className={`w-8 h-8 rounded-xl border flex items-center justify-center shrink-0 ${
+                          item.isReady
+                            ? item.readyIconClass
+                            : 'bg-slate-100 text-slate-400 border-slate-200/70'
+                        }`}
+                      >
+                        <ItemIcon className="w-4 h-4" />
+                      </span>
+
+                      <span
+                        className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                          item.isReady
+                            ? 'bg-emerald-50 text-emerald-700'
+                            : 'text-slate-400'
+                        }`}
+                      >
+                        {item.isReady && (
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
+                        )}
+                        <span>{item.isReady ? 'Terbit' : 'Menunggu'}</span>
+                      </span>
+                    </div>
+
+                    <div className="min-w-0">
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                        {item.label}
+                      </p>
+                      <p
+                        className={`mt-1 truncate leading-snug ${
+                          item.isReady
+                            ? 'text-base sm:text-lg font-mono font-black text-slate-950'
+                            : 'text-xs sm:text-sm font-bold text-slate-400'
+                        }`}
+                        title={item.value}
+                      >
+                        {item.value}
+                      </p>
+                      <p className="mt-1 text-[11px] font-medium text-slate-500 leading-snug">
+                        {item.sub}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
-            <span className="absolute inset-x-5 bottom-0 h-0.5 origin-left scale-x-0 bg-red-600 transition-transform group-hover:scale-x-100" />
-          </div>
-        </div>
-      </section>
+          </section>
+        );
+      })()}
 
       {/* 2. MAIN GRID (Kiri: Operation Timeline, Kanan: Readiness Score & Resource Dock) */}
       <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,1.7fr)_320px]">

@@ -237,6 +237,7 @@ export default function Navbar({ onOpenMobileMenu }) {
                 <img
                   src={avatarUrl}
                   alt={currentUser.name}
+                  referrerPolicy="no-referrer"
                   className={
                     isSchoolLogo
                       ? 'w-7 h-7 object-contain drop-shadow-sm shrink-0'
@@ -284,6 +285,7 @@ export default function Navbar({ onOpenMobileMenu }) {
                     <img
                       src={avatarUrl}
                       alt={currentUser.name}
+                      referrerPolicy="no-referrer"
                       className={
                         isSchoolLogo
                           ? 'w-10 h-10 object-contain shrink-0'

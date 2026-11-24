@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   Home,
   Shield,
@@ -147,6 +147,20 @@ export default function SimpaskorSidebarLayout({
   const rawSchoolLogo = currentTeam?.files?.schoolLogo?.url || currentTeam?.file_logo_sekolah || currentTeam?.logoUrl || (avatarMeta?.isSchoolLogo ? avatarMeta.url : '');
   const hasSchoolLogo = Boolean(rawSchoolLogo && rawSchoolLogo !== '#' && !rawSchoolLogo.startsWith('#'));
   const schoolLogoFormatted = hasSchoolLogo ? formatImageUrl(rawSchoolLogo) : '';
+
+  const [sidebarLogoFailed, setSidebarLogoFailed] = useState(false);
+  useEffect(() => {
+    setSidebarLogoFailed(false);
+  }, [rawSchoolLogo]);
+
+  const handleSchoolLogoError = (e) => {
+    const fallback = getFallbackImageUrl(rawSchoolLogo, e.currentTarget.src);
+    if (fallback && e.currentTarget.src !== fallback) {
+      e.currentTarget.src = fallback;
+    } else {
+      setSidebarLogoFailed(true);
+    }
+  };
 
   // Navigasi Terstruktur SaaS Minimalist (Sesuai Referensi Simple & Clean dengan Brand UI)
   const getNavSections = () => {
@@ -679,14 +693,13 @@ export default function SimpaskorSidebarLayout({
           {isCollapsed ? (
             <div className="flex flex-col items-center gap-2">
               <div className="relative flex h-10 w-10 shrink-0 items-center justify-center" title={displayName}>
-                {isSchoolLogo && avatarUrl ? (
+                {isSchoolLogo && schoolLogoFormatted && !sidebarLogoFailed ? (
                   <img
-                    src={avatarUrl}
+                    src={schoolLogoFormatted}
                     alt={displayName}
+                    referrerPolicy="no-referrer"
                     className="w-full h-full object-contain filter drop-shadow-md"
-                    onError={(e) => {
-                      e.target.style.display = 'none';
-                    }}
+                    onError={handleSchoolLogoError}
                   />
                 ) : !isPeserta && avatarUrl ? (
                   <img
@@ -720,14 +733,13 @@ export default function SimpaskorSidebarLayout({
             <div className="rounded-2xl border border-white/[.08] bg-white/[.035] p-3">
               <div className="flex items-center gap-3">
                 <div className="relative flex h-10 w-10 shrink-0 items-center justify-center">
-                  {isSchoolLogo && avatarUrl ? (
+                  {isSchoolLogo && schoolLogoFormatted && !sidebarLogoFailed ? (
                     <img
-                      src={avatarUrl}
+                      src={schoolLogoFormatted}
                       alt={displayName}
+                      referrerPolicy="no-referrer"
                       className="w-full h-full object-contain filter drop-shadow-md"
-                      onError={(e) => {
-                        e.target.style.display = 'none';
-                      }}
+                      onError={handleSchoolLogoError}
                     />
                   ) : !isPeserta && avatarUrl ? (
                     <img
@@ -856,14 +868,13 @@ export default function SimpaskorSidebarLayout({
               <div className="rounded-2xl border border-white/[.08] bg-white/[.035] p-3">
                 <div className="flex items-center gap-3">
                   <div className="relative flex h-10 w-10 shrink-0 items-center justify-center">
-                    {isSchoolLogo && avatarUrl ? (
+                    {isSchoolLogo && schoolLogoFormatted && !sidebarLogoFailed ? (
                       <img
-                        src={avatarUrl}
+                        src={schoolLogoFormatted}
                         alt={displayName}
+                        referrerPolicy="no-referrer"
                         className="w-full h-full object-contain filter drop-shadow-md"
-                        onError={(e) => {
-                          e.target.style.display = 'none';
-                        }}
+                        onError={handleSchoolLogoError}
                       />
                     ) : !isPeserta && avatarUrl ? (
                       <img
@@ -977,31 +988,19 @@ export default function SimpaskorSidebarLayout({
             >
               {isPeserta && currentTeam ? (
                 <>
-                  {hasSchoolLogo && schoolLogoFormatted ? (
+                  {hasSchoolLogo && schoolLogoFormatted && !sidebarLogoFailed ? (
                     <img
                       src={schoolLogoFormatted}
                       alt={currentTeam?.schoolName || 'Logo Sekolah'}
                       referrerPolicy="no-referrer"
                       className="h-8 w-8 rounded-full bg-white border border-slate-200/80 p-0.5 object-contain shrink-0"
-                      onError={(e) => {
-                        const fallback = getFallbackImageUrl(rawSchoolLogo);
-                        if (fallback && e.target.src !== fallback) {
-                          e.target.src = fallback;
-                        } else {
-                          e.target.style.display = 'none';
-                          if (e.currentTarget.nextElementSibling) {
-                            e.currentTarget.nextElementSibling.style.display = 'flex';
-                          }
-                        }
-                      }}
+                      onError={handleSchoolLogoError}
                     />
-                  ) : null}
-                  <div
-                    className="h-8 w-8 rounded-full bg-[#8B0000] text-white font-bold text-[11px] flex items-center justify-center shrink-0"
-                    style={{ display: hasSchoolLogo && schoolLogoFormatted ? 'none' : 'flex' }}
-                  >
-                    {teamInitials}
-                  </div>
+                  ) : (
+                    <div className="h-8 w-8 rounded-full bg-[#8B0000] text-white font-bold text-[11px] flex items-center justify-center shrink-0">
+                      {teamInitials}
+                    </div>
+                  )}
                   <div className="hidden sm:block text-left min-w-0 max-w-[180px] md:max-w-[220px]">
                     <span className="text-xs font-semibold text-slate-800 leading-tight block truncate">
                       {currentTeam?.schoolName || displayName}

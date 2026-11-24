@@ -112,20 +112,23 @@ function MainApp() {
   useEffect(() => {
     let lastColor = null;
     let ticking = false;
+    let settleTimer = null;
 
-    const applyThemeColor = (color) => {
-      if (color === lastColor) return;
-      lastColor = color;
-
-      let metaTheme = document.querySelector('meta[name="theme-color"]');
-      if (!metaTheme) {
-        metaTheme = document.createElement('meta');
-        metaTheme.setAttribute('name', 'theme-color');
-        document.head.appendChild(metaTheme);
-      }
+    const writeThemeMeta = (color) => {
+      // iOS Safari reliably re-tints the top bar when replacing the <meta> node rather than mutating content in-place
+      document.querySelectorAll('meta[name="theme-color"]').forEach((el) => el.remove());
+      const metaTheme = document.createElement('meta');
+      metaTheme.setAttribute('name', 'theme-color');
       metaTheme.setAttribute('content', color);
+      document.head.appendChild(metaTheme);
       document.documentElement.style.backgroundColor = color;
       document.body.style.backgroundColor = color;
+    };
+
+    const applyThemeColor = (color, force = false) => {
+      if (!force && color === lastColor) return;
+      lastColor = color;
+      writeThemeMeta(color);
     };
 
     const isLanding = !scannedRegCode && activeView === 'landing';
@@ -134,24 +137,49 @@ function MainApp() {
       return undefined;
     }
 
-    const updateThemeForScroll = () => {
+    const updateThemeForScroll = (force = false) => {
       const isAtHeroTop = window.scrollY <= NAVBAR.SCROLL_SOLID_THRESHOLD;
-      applyThemeColor(isAtHeroTop ? HERO_THEME_COLOR : SCROLLED_THEME_COLOR);
+      const targetColor = isAtHeroTop ? HERO_THEME_COLOR : SCROLLED_THEME_COLOR;
+      const changed = targetColor !== lastColor;
+      applyThemeColor(targetColor, force);
+
+      // Re-sync after Navbar's 300ms fade-out so iOS Safari doesn't stay locked on the white navbar sample
+      if (changed && isAtHeroTop) {
+        if (settleTimer) clearTimeout(settleTimer);
+        settleTimer = setTimeout(() => {
+          if (window.scrollY <= NAVBAR.SCROLL_SOLID_THRESHOLD) {
+            writeThemeMeta(HERO_THEME_COLOR);
+          }
+        }, 340);
+      }
     };
 
     const onScroll = () => {
       if (!ticking) {
         window.requestAnimationFrame(() => {
-          updateThemeForScroll();
+          updateThemeForScroll(false);
           ticking = false;
         });
         ticking = true;
       }
     };
 
-    updateThemeForScroll();
+    const onScrollSettled = () => {
+      if (window.scrollY <= NAVBAR.SCROLL_SOLID_THRESHOLD) {
+        updateThemeForScroll(true);
+      }
+    };
+
+    updateThemeForScroll(true);
     window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+    window.addEventListener('scrollend', onScrollSettled, { passive: true });
+    window.addEventListener('touchend', onScrollSettled, { passive: true });
+    return () => {
+      if (settleTimer) clearTimeout(settleTimer);
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('scrollend', onScrollSettled);
+      window.removeEventListener('touchend', onScrollSettled);
+    };
   }, [activeView, scannedRegCode]);
 
   const handleCloseScannedQR = () => {
@@ -163,7 +191,7 @@ function MainApp() {
   };
 
   return (
-    <div className="min-h-screen bg-white text-slate-900 selection:bg-red-200 font-sans">
+    <div className={`min-h-screen ${!scannedRegCode && activeView === 'landing' ? 'bg-transparent' : 'bg-white'} text-slate-900 selection:bg-red-200 font-sans`}>
       {/* Render Scanner View if URL has ?reg= */}
       {scannedRegCode && (
         <React.Suspense fallback={<ViewLoader />}>

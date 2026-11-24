@@ -156,7 +156,7 @@ export default function ParticipantDashboard() {
   const isRosterLocked = Boolean(currentTeam?.isRosterLocked || isPastTMCutoff);
 
   const [logoLoadFailed, setLogoLoadFailed] = useState(false);
-  const rawLogoUrl = currentTeam?.files?.schoolLogo?.url || '';
+  const rawLogoUrl = currentTeam?.files?.schoolLogo?.url || currentTeam?.file_logo_sekolah || currentTeam?.logoUrl || '';
   const hasLogo = Boolean(rawLogoUrl && rawLogoUrl !== '#' && !rawLogoUrl.startsWith('#'));
   const logoFormattedUrl = hasLogo ? formatImageUrl(rawLogoUrl) : '';
 

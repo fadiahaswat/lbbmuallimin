@@ -67,7 +67,9 @@ export default function RosterTab({
   updateTeamRoster,
   setUploadToast
 }) {
-    const hasSavedLocalDraft = Boolean(
+  const [selectedSaf, setSelectedSaf] = useState('all');
+
+  const hasSavedLocalDraft = Boolean(
     typeof window !== 'undefined' &&
     currentTeam?.id &&
     localStorage.getItem(`lbb_roster_draft_${currentTeam.id}`)
