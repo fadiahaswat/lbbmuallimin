@@ -61,12 +61,25 @@ export default function OverviewTab({
   const allPasukan = Array.isArray(currentTeam.roster?.pasukan) ? currentTeam.roster.pasukan : [];
   const allCadangan = Array.isArray(currentTeam.roster?.cadangan) ? currentTeam.roster.cadangan : [];
 
-  const filledPasukan = allPasukan.filter(p => p?.name && p.name !== '-' && p.name.trim() !== '').length;
-  const filledCadangan = allCadangan.filter(c => c?.name && c.name !== '-' && c.name.trim() !== '').length;
+  const hasValidRosterPhoto = (url) => {
+    if (!url || typeof url !== 'string') return false;
+    if (url === '#' || url.startsWith('#')) return false;
+    if (url.includes('ui-avatars.com')) return false;
+    if (url.includes('drive.google.com/open?id=')) return false;
+    return true;
+  };
+  const hasValidRosterName = (val) => {
+    const name = typeof val === 'string' ? val.trim() : '';
+    return name.length > 0 && name !== '-' && name.toLowerCase() !== 'belum diisi';
+  };
+
+  // Wajib hanya Foto + Nama (field lainnya opsional)
+  const filledPasukan = allPasukan.filter(p => hasValidRosterName(p?.name) && hasValidRosterPhoto(p?.photo)).length;
+  const filledCadangan = allCadangan.filter(c => hasValidRosterName(c?.name) && hasValidRosterPhoto(c?.photo)).length;
 
   const danton = currentTeam.roster?.danton;
   const dantonName = danton?.name || currentTeam.dantonName || '';
-  const hasDanton = Boolean(dantonName && dantonName.trim() !== '' && dantonName !== '-');
+  const hasDanton = hasValidRosterName(dantonName) && hasValidRosterPhoto(danton?.photo);
 
   // Count uploaded files
   const fileKeys = ['schoolLogo', 'recommendationLetter', 'paymentProof', 'dantonCard'];

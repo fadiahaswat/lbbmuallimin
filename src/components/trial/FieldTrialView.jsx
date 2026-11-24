@@ -1274,56 +1274,73 @@ export default function FieldTrialView() {
             </div>
 
             <div className="p-2.5 sm:p-4">
-              {/* Tabel Jadwal Terstruktur By Content (1 Arena Aktif: SD atau SMP) */}
-              <div className="rounded-2xl border border-slate-200/90 overflow-hidden bg-white shadow-2xs">
-                {/* Banner Arena Aktif */}
-                <div className={`px-3.5 sm:px-4 py-2.5 flex items-center justify-between gap-2 text-white ${
-                  activeJenjang === 'SD'
-                    ? 'bg-gradient-to-r from-red-600 to-red-700'
-                    : 'bg-gradient-to-r from-blue-600 to-blue-700'
-                }`}>
-                  <div className="flex items-center gap-2 min-w-0">
-                    <span className="w-2 h-2 rounded-full bg-white/80 shrink-0" />
-                    <span className="text-[11px] sm:text-xs font-black uppercase tracking-wider truncate">
+              {/* Tabel Jadwal Terstruktur (1 Arena Aktif: SD atau SMP) */}
+              <div className="rounded-2xl border border-slate-200/90 overflow-hidden bg-white shadow-sm">
+                {/* Arena Colored Header Banner */}
+                <div
+                  className={`px-4 sm:px-5 py-3 text-white flex items-center justify-between gap-3 flex-wrap ${
+                    activeJenjang === 'SD'
+                      ? 'bg-gradient-to-r from-red-700 via-red-600 to-red-700'
+                      : 'bg-gradient-to-r from-blue-700 via-blue-600 to-blue-700'
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <span className="w-2 h-2 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)] shrink-0" />
+                    <span className="font-black text-xs sm:text-[13px] tracking-wide uppercase truncate">
                       {activeJenjang === 'SD' ? 'Arena 1: SD / MI' : 'Arena 2: SMP / MTs'}
                     </span>
-                    <span className="text-[9.5px] font-bold rounded-full bg-white/20 px-2 py-0.5 shrink-0 hidden sm:inline">
+                    <span className="text-[10.5px] font-bold bg-white/15 border border-white/20 px-2.5 py-0.5 rounded-full whitespace-nowrap">
                       {activeJenjang === 'SD' ? 'Lapangan Basket' : 'Pelataran Embung'}
                     </span>
                   </div>
-                  <span className="text-[10px] font-mono font-bold bg-black/20 px-2.5 py-0.5 rounded-full shrink-0">
+                  <span className="text-[11px] font-mono font-bold tabular-nums bg-black/20 border border-white/15 px-3 py-1 rounded-full whitespace-nowrap">
                     {activeAttendanceStats.totalScheduled} / {TRIAL_TIME_SLOTS.length} Slot Terisi
                   </span>
                 </div>
 
+                {/* Structured 7-Column Timetable */}
                 <div className="overflow-x-auto">
-                  <table className="w-full text-left text-xs border-collapse table-auto">
+                  <table className="w-full text-left text-xs border-collapse">
                     <thead>
-                      <tr className="bg-slate-900 text-slate-300 uppercase text-[9.5px] tracking-wider font-black border-b border-slate-800">
-                        <th className="py-2.5 px-2.5 text-center w-[1%] whitespace-nowrap">#</th>
-                        <th className="py-2.5 px-3 text-center w-[1%] whitespace-nowrap">Check-In</th>
-                        <th className="py-2.5 px-3 text-center w-[1%] whitespace-nowrap">Waktu Gladi</th>
-                        <th className="py-2.5 px-3 text-center w-[1%] whitespace-nowrap">Check-Out</th>
-                        <th className="py-2.5 px-3">Peleton / Sekolah</th>
-                        <th className="py-2.5 px-3 hidden sm:table-cell whitespace-nowrap">Danton</th>
-                        <th className="py-2.5 px-3 text-right w-[1%] whitespace-nowrap">Status</th>
+                      <tr className="bg-slate-900 text-slate-300 uppercase text-[10px] tracking-wider font-extrabold border-b border-slate-800">
+                        <th className="py-3 pl-4 pr-2.5 text-center w-[1%] whitespace-nowrap">#</th>
+                        <th className="py-3 px-2.5 text-center w-[1%] whitespace-nowrap">Check-In</th>
+                        <th className="py-3 px-3.5 text-left w-[1%] whitespace-nowrap">Waktu Gladi</th>
+                        <th className="py-3 px-2.5 text-center w-[1%] whitespace-nowrap">Check-Out</th>
+                        <th className="py-3 px-4 text-left">Peleton / Sekolah</th>
+                        <th className="py-3 px-3.5 text-left hidden md:table-cell whitespace-nowrap">Danton</th>
+                        <th className="py-3 pl-3 pr-4 sm:pr-5 text-right w-[1%] whitespace-nowrap">Status</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
                       {TRIAL_TIME_SLOTS.map((slotInfo, slotIdx) => {
                         const teamId = currentPlan[activeJenjang]?.slots?.[slotIdx];
                         const team = teamId ? teamsMap.get(teamId) : null;
-                        const isSwapSelected = swapSource?.jenjang === activeJenjang && swapSource?.slotIdx === slotIdx;
+                        const isSwapSelected =
+                          swapSource?.jenjang === activeJenjang && swapSource?.slotIdx === slotIdx;
                         const isTeamActiveSelected = team && activeSelectedTeam?.team?.id === team.id;
-                        const isMyTeam = team && ((currentTeam?.id && team.id === currentTeam.id) || (currentUser?.teamId && team.id === currentUser.teamId));
+                        const isMyTeam =
+                          team &&
+                          ((currentTeam?.id && team.id === currentTeam.id) ||
+                            (currentUser?.teamId && team.id === currentUser.teamId));
                         const att = team ? trialAttendance[team.id] : null;
                         const isCheckedIn = att?.status === 'checked_in';
                         const isCheckedOut = att?.status === 'checked_out';
-                        const dantonName = team ? (team.dantonName || team.roster?.danton?.name || '-') : '';
-                        const logoRaw = team ? (team.files?.schoolLogo?.url || team.file_logo_sekolah || team.logoUrl) : '';
-                        const fallbackAvatar = team
-                          ? `https://ui-avatars.com/api/?name=${encodeURIComponent(team.schoolName)}&background=${activeJenjang === 'SD' ? 'b91c1c' : '1d4ed8'}&color=fff&bold=true`
+                        const dantonName = team ? team.dantonName || team.roster?.danton?.name || '-' : '';
+                        const logoRaw = team
+                          ? team.files?.schoolLogo?.url || team.file_logo_sekolah || team.logoUrl
                           : '';
+                        const fallbackAvatar = team
+                          ? `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                              team.schoolName
+                            )}&background=${activeJenjang === 'SD' ? 'b91c1c' : '1d4ed8'}&color=fff&bold=true`
+                          : '';
+                        const checkInClean = (slotInfo.checkIn || slotInfo.arrival || '-').replace(
+                          /\s*WIB/i,
+                          ''
+                        );
+                        const gladiClean = slotInfo.time.replace(/\s*WIB/i, '').replace(/\s*-\s*/, ' – ');
+                        const checkOutClean = (slotInfo.checkOut || '-').replace(/\s*WIB/i, '');
 
                         const handleRowClick = () => {
                           if (!isStaff) return;
@@ -1346,109 +1363,131 @@ export default function FieldTrialView() {
                               isStaff && (team || !isPublished) ? 'cursor-pointer' : ''
                             } ${
                               isSwapSelected
-                                ? 'bg-amber-50 ring-1 ring-inset ring-amber-400'
+                                ? 'bg-amber-50/90 shadow-[inset_3px_0_0_0_#f59e0b]'
                                 : isTeamActiveSelected
-                                ? 'bg-emerald-50/70'
-                                : isMyTeam
-                                ? 'bg-emerald-50/50'
-                                : !team
-                                ? 'bg-slate-50/40 hover:bg-slate-50'
-                                : 'bg-white hover:bg-slate-50/90'
+                                  ? 'bg-emerald-50/80 shadow-[inset_3px_0_0_0_#10b981]'
+                                  : isMyTeam
+                                    ? 'bg-emerald-50/65 shadow-[inset_3px_0_0_0_#10b981]'
+                                    : !team
+                                      ? 'bg-slate-50/35 hover:bg-slate-50/75'
+                                      : 'bg-white hover:bg-slate-50/90'
                             }`}
                           >
-                            {/* Kolom 1: Slot # */}
-                            <td className="py-2.5 px-2.5 text-center font-mono font-black text-slate-500 text-[11px] whitespace-nowrap align-middle">
-                              #{String(slotInfo.index).padStart(2, '0')}
+                            {/* Kolom 1: # */}
+                            <td className="py-3 pl-4 pr-2.5 text-center whitespace-nowrap align-middle">
+                              <span
+                                className={`font-mono text-[11px] font-bold tabular-nums ${
+                                  isMyTeam
+                                    ? 'text-emerald-700 font-black'
+                                    : team
+                                      ? 'text-slate-500'
+                                      : 'text-slate-400'
+                                }`}
+                              >
+                                #{String(slotInfo.index).padStart(2, '0')}
+                              </span>
                             </td>
 
                             {/* Kolom 2: Check-In */}
-                            <td className="py-2.5 px-3 text-center whitespace-nowrap align-middle">
-                              <span className="inline-flex items-center px-2 py-0.5 rounded-md font-mono font-bold text-[11px] text-emerald-800 bg-emerald-50 border border-emerald-200/70">
-                                {(slotInfo.checkIn || slotInfo.arrival || '-').replace(/\s*WIB/i, '')}
+                            <td className="py-3 px-2.5 text-center whitespace-nowrap align-middle">
+                              <span className="inline-block min-w-[54px] text-center font-mono text-[11px] font-bold tabular-nums px-2 py-1 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200/70">
+                                {checkInClean}
                               </span>
                             </td>
 
                             {/* Kolom 3: Waktu Gladi */}
-                            <td className="py-2.5 px-3 text-center whitespace-nowrap align-middle">
-                              <span className="font-mono font-black text-slate-900 text-[11.5px]">
-                                {slotInfo.time.replace(/\s*WIB/i, '')}
-                              </span>{' '}
-                              <span className="font-mono text-[9.5px] font-bold text-slate-400">WIB</span>
+                            <td className="py-3 px-3.5 whitespace-nowrap align-middle">
+                              <span className="font-mono text-[11.5px] font-extrabold tabular-nums text-slate-900">
+                                {gladiClean}
+                              </span>
+                              <span className="ml-1 text-[10px] font-semibold text-slate-400">WIB</span>
                             </td>
 
                             {/* Kolom 4: Check-Out */}
-                            <td className="py-2.5 px-3 text-center whitespace-nowrap align-middle">
-                              <span className="inline-flex items-center px-2 py-0.5 rounded-md font-mono font-bold text-[11px] text-slate-700 bg-slate-100 border border-slate-200/80">
-                                {(slotInfo.checkOut || '-').replace(/\s*WIB/i, '')}
+                            <td className="py-3 px-2.5 text-center whitespace-nowrap align-middle">
+                              <span className="inline-block min-w-[54px] text-center font-mono text-[11px] font-bold tabular-nums px-2 py-1 rounded-md bg-slate-100/90 text-slate-600 border border-slate-200/80">
+                                {checkOutClean}
                               </span>
                             </td>
 
                             {!team ? (
-                              <td colSpan={3} className="py-3 px-3 align-middle">
-                                <div className={`py-2 px-3 rounded-xl border border-dashed text-center text-[11px] font-bold transition-colors ${
-                                  isStaff && !isPublished
-                                    ? 'border-slate-300 text-slate-500 hover:border-slate-400 hover:text-slate-800 hover:bg-white'
-                                    : 'border-slate-200 text-slate-400 bg-white/50'
-                                }`}>
-                                  {isStaff && !isPublished ? `+ Isi Peleton ${activeJenjang} di Slot #${String(slotInfo.index).padStart(2, '0')}` : '— Slot Kosong —'}
+                              <td colSpan={3} className="py-2.5 pl-4 pr-4 sm:pr-5 align-middle">
+                                <div
+                                  className={`py-1.5 px-3 rounded-lg border border-dashed text-center text-[11px] font-medium transition-colors ${
+                                    isStaff && !isPublished
+                                      ? 'border-slate-300 text-slate-500 hover:border-slate-400 hover:text-slate-900 hover:bg-white'
+                                      : 'border-slate-200 text-slate-400'
+                                  }`}
+                                >
+                                  {isStaff && !isPublished
+                                    ? `+ Isi Peleton ${activeJenjang} di Slot #${String(
+                                        slotInfo.index
+                                      ).padStart(2, '0')}`
+                                    : '— Slot Kosong —'}
                                 </div>
                               </td>
                             ) : (
                               <>
                                 {/* Kolom 5: Peleton / Sekolah */}
-                                <td className="py-2.5 px-3 align-middle">
-                                  <div className="flex items-center gap-2.5 min-w-0">
-                                    <img
-                                      src={logoRaw ? formatImageUrl(logoRaw) : fallbackAvatar}
-                                      alt={team.schoolName}
-                                      className="w-8 h-8 object-contain shrink-0 mix-blend-multiply"
-                                      onError={(e) => {
-                                        e.target.onerror = null;
-                                        e.target.src = fallbackAvatar;
-                                      }}
-                                    />
+                                <td className="py-2.5 px-4 align-middle">
+                                  <div className="flex items-center gap-3 min-w-0">
+                                    <div className="w-8 h-8 rounded-lg bg-white border border-slate-100 flex items-center justify-center p-0.5 shrink-0">
+                                      <img
+                                        src={logoRaw ? formatImageUrl(logoRaw) : fallbackAvatar}
+                                        alt={team.schoolName}
+                                        className="w-full h-full object-contain"
+                                        onError={(e) => {
+                                          e.target.onerror = null;
+                                          e.target.src = fallbackAvatar;
+                                        }}
+                                      />
+                                    </div>
                                     <div className="min-w-0">
-                                      <div className="flex items-center gap-1.5 flex-wrap">
-                                        <span className="font-extrabold text-xs sm:text-[13px] text-slate-900 leading-snug">
+                                      <div className="flex items-center gap-2 flex-wrap">
+                                        <span className="font-extrabold text-[12.5px] sm:text-[13px] text-slate-900 leading-snug">
                                           {team.schoolName}
                                         </span>
+                                        {isMyTeam && (
+                                          <span className="px-2 py-0.5 rounded-full bg-emerald-600 text-white text-[9.5px] font-extrabold uppercase tracking-wider shrink-0">
+                                            Tim Anda
+                                          </span>
+                                        )}
                                         {team.lotNumber && (
-                                          <span className="px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-600 border border-slate-200 font-mono text-[9.5px] font-bold shrink-0">
+                                          <span className="px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-200 font-mono text-[9.5px] font-bold shrink-0">
                                             TM #{String(team.lotNumber).padStart(2, '0')}
                                           </span>
                                         )}
                                       </div>
-                                      {/* Danton tampil di bawah nama sekolah khusus layar mobile */}
-                                      <div className="text-[10.5px] text-slate-500 font-medium mt-0.5 sm:hidden truncate">
-                                        {dantonName}
-                                      </div>
+                                      <span className="md:hidden text-[10.5px] text-slate-500 font-medium block truncate mt-0.5">
+                                        Danton: {dantonName}
+                                      </span>
                                     </div>
                                   </div>
                                 </td>
 
-                                {/* Kolom 4: Danton (Desktop) */}
-                                <td className="py-2.5 px-3 hidden sm:table-cell align-middle">
-                                  <span className="text-[11.5px] font-semibold text-slate-700 leading-snug block">
+                                {/* Kolom 6: Danton */}
+                                <td className="py-2.5 px-3.5 hidden md:table-cell align-middle">
+                                  <span className="text-[11.5px] font-medium text-slate-600 leading-snug block">
                                     {dantonName}
                                   </span>
                                 </td>
 
-                                {/* Kolom 5: Status Presensi & Aksi Draft */}
-                                <td className="py-2.5 px-3 text-right whitespace-nowrap align-middle">
+                                {/* Kolom 7: Status */}
+                                <td className="py-2.5 pl-3 pr-4 sm:pr-5 text-right whitespace-nowrap align-middle">
                                   <div className="inline-flex items-center justify-end gap-1.5">
                                     {isCheckedOut ? (
-                                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-800 border border-blue-200">
-                                        <CheckCircle2 className="w-3 h-3 text-blue-600" />
+                                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10.5px] font-bold bg-blue-50 text-blue-700 border border-blue-200/80">
+                                        <CheckCircle2 className="w-3 h-3 text-blue-600 shrink-0" />
                                         <span>Selesai {att.checkOutTime?.replace(/\s*WIB/i, '')}</span>
                                       </span>
                                     ) : isCheckedIn ? (
-                                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-50 text-emerald-800 border border-emerald-300">
-                                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10.5px] font-extrabold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
                                         <span>Di Lokasi {att.checkInTime?.replace(/\s*WIB/i, '')}</span>
                                       </span>
                                     ) : (
-                                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-500 border border-slate-200/80">
-                                        <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10.5px] font-semibold bg-slate-50 text-slate-500 border border-slate-200/80">
+                                        <span className="w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0" />
                                         <span>Belum Tiba</span>
                                       </span>
                                     )}
@@ -1457,7 +1496,7 @@ export default function FieldTrialView() {
                                       <button
                                         type="button"
                                         onClick={(e) => handleRemoveFromSlot(e, activeJenjang, slotIdx)}
-                                        className="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+                                        className="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors cursor-pointer"
                                         title="Copot dari slot"
                                       >
                                         <X className="w-3.5 h-3.5" />

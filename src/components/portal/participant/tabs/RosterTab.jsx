@@ -79,12 +79,6 @@ export default function RosterTab({
   const rosterProgress = React.useMemo(() => {
     const activeRoster = isEditingRoster ? (rosterDraft || {}) : (currentTeam?.roster || {});
 
-    const isFilled = (person) => {
-      if (!person) return false;
-      const name = typeof person.name === 'string' ? person.name.trim() : '';
-      return name.length > 0 && name !== '-' && name.toLowerCase() !== 'belum diisi';
-    };
-
     const hasPhoto = (url) => {
       if (!url || typeof url !== 'string') return false;
       if (url === '#' || url.startsWith('#')) return false;
@@ -93,12 +87,23 @@ export default function RosterTab({
       return true;
     };
 
+    const hasValidName = (val) => {
+      const name = typeof val === 'string' ? val.trim() : '';
+      return name.length > 0 && name !== '-' && name.toLowerCase() !== 'belum diisi';
+    };
+
+    // Wajib hanya Foto + Nama (NISN, Kelas, TTL, Catatan Medis, Peran, WA bersifat opsional)
+    const isFilled = (person) => {
+      if (!person) return false;
+      return hasValidName(person.name) && hasPhoto(person.photo);
+    };
+
     // 1. Danton (1 orang)
     const dantonName = isEditingRoster
       ? (activeRoster?.danton?.name || '').trim()
       : (activeRoster?.danton?.name || currentTeam?.dantonName || '').trim();
-    const dantonFilled = Boolean(dantonName && dantonName !== '-' && dantonName.toLowerCase() !== 'belum diisi');
     const dantonPhoto = hasPhoto(activeRoster?.danton?.photo);
+    const dantonFilled = hasValidName(dantonName) && dantonPhoto;
 
     // 2. Pasukan Inti (21 orang)
     const pasukanList = Array.isArray(activeRoster?.pasukan) ? activeRoster.pasukan : [];
@@ -383,75 +388,81 @@ export default function RosterTab({
               const officialsList = isEditingRoster ? (rosterDraft?.officials || []) : (currentTeam.roster?.officials || []);
 
               return !isEditingRoster ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 max-w-4xl mx-auto">
                   {/* Card 1: Komandan Peleton (Danton) */}
                   {(() => {
                     const isFilled = Boolean(dantonName && dantonName.trim() !== '' && dantonName !== '-');
                     return (
-                      <div
-                        className={`rounded-2xl border p-3.5 transition-all flex items-start gap-3.5 ${
-                          isFilled
-                            ? 'bg-white border-slate-200 hover:border-red-300 shadow-xs'
-                            : 'bg-white/70 border-dashed border-slate-300/90'
-                        }`}
-                      >
-                        <div className="w-14 h-[74px] rounded-xl bg-red-50 border border-red-100 relative overflow-hidden flex items-center justify-center shrink-0">
-                          {hasDantonPhoto ? (
-                            <img
-                              src={formatImageUrl(dantonPhotoUrl)}
-                              alt={dantonName || 'Danton'}
-                              referrerPolicy="no-referrer"
-                              className="w-full h-full object-cover object-top"
-                              onError={(e) => {
-                                const fallback = getFallbackImageUrl(dantonPhotoUrl);
-                                if (fallback && e.currentTarget.src !== fallback) {
-                                  e.currentTarget.src = fallback;
-                                } else {
-                                  e.currentTarget.style.display = 'none';
-                                  if (e.currentTarget.nextElementSibling) {
-                                    e.currentTarget.nextElementSibling.style.display = 'flex';
-                                  }
+                      <div className="group/dcard relative aspect-[3/4] w-full rounded-2xl overflow-hidden border border-slate-200/90 hover:border-red-400 shadow-xs hover:shadow-lg transition-all duration-300 bg-gradient-to-b from-slate-100 to-slate-200/90">
+                        {hasDantonPhoto ? (
+                          <img
+                            src={formatImageUrl(dantonPhotoUrl)}
+                            alt={dantonName || 'Danton'}
+                            referrerPolicy="no-referrer"
+                            className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-500 group-hover/dcard:scale-105"
+                            onError={(e) => {
+                              const fallback = getFallbackImageUrl(dantonPhotoUrl);
+                              if (fallback && e.currentTarget.src !== fallback) {
+                                e.currentTarget.src = fallback;
+                              } else {
+                                e.currentTarget.style.display = 'none';
+                                if (e.currentTarget.nextElementSibling) {
+                                  e.currentTarget.nextElementSibling.style.display = 'flex';
                                 }
-                              }}
-                            />
-                          ) : null}
-                          <div
-                            className="w-full h-full flex items-center justify-center text-red-700 font-black text-base select-none"
-                            style={{ display: hasDantonPhoto ? 'none' : 'flex' }}
-                          >
-                            {isFilled ? getPersonInitials(dantonName) : <User className="w-5 h-5 text-red-300" />}
+                              }
+                            }}
+                          />
+                        ) : null}
+
+                        {/* Clean Studio Fallback (When no photo) */}
+                        <div
+                          className="absolute inset-0 flex flex-col items-center justify-center pb-14 bg-gradient-to-b from-red-50/90 via-slate-100 to-slate-200/90"
+                          style={{ display: hasDantonPhoto ? 'none' : 'flex' }}
+                        >
+                          <div className="w-14 h-14 rounded-2xl bg-white/80 border border-red-100 flex items-center justify-center shadow-xs">
+                            {isFilled ? (
+                              <span className="text-lg font-black text-red-700 select-none">
+                                {getPersonInitials(dantonName)}
+                              </span>
+                            ) : (
+                              <Camera className="w-6 h-6 text-red-300" />
+                            )}
                           </div>
                         </div>
 
-                        <div className="min-w-0 flex-1 space-y-1">
-                          <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-red-600 text-white text-[9.5px] font-extrabold uppercase tracking-wider">
-                            Danton
+                        {/* Top Badge */}
+                        <span className="absolute top-2.5 left-2.5 z-10 px-2.5 py-0.5 rounded-full bg-red-600/95 backdrop-blur-xs text-white text-[10px] font-extrabold uppercase tracking-wider shadow-sm">
+                          Danton
+                        </span>
+
+                        {dantonMedical && (
+                          <span
+                            className="absolute top-2.5 right-2.5 z-10 w-6 h-6 rounded-full bg-rose-500 text-white text-[10px] flex items-center justify-center shadow-sm"
+                            title={`Catatan Medis: ${dantonMedical}`}
+                          >
+                            🩺
                           </span>
+                        )}
+
+                        {/* Bottom Scrim & Info Overlay */}
+                        <div className="absolute inset-x-0 bottom-0 z-10 pt-14 pb-3 px-3 bg-gradient-to-t from-slate-950/95 via-slate-950/70 to-transparent text-white">
                           <p
-                            className={`text-xs sm:text-[13px] font-black leading-snug truncate ${
-                              isFilled ? 'text-slate-900 uppercase' : 'text-slate-400 font-semibold'
+                            className={`text-xs sm:text-sm leading-tight truncate ${
+                              isFilled ? 'font-black uppercase' : 'font-semibold text-white/70'
                             }`}
                             title={dantonName}
                           >
                             {isFilled ? dantonName : 'Belum diisi'}
                           </p>
-                          <p className="text-[11px] text-slate-500 truncate">
+                          <p className="text-[10px] text-slate-300 truncate mt-0.5">
                             {dantonBirthPlace
                               ? `${dantonBirthPlace}${dantonBirthDate ? `, ${dantonBirthDate}` : ''}`
                               : 'Pemimpin Barisan'}
                           </p>
-                          <div className="pt-1 border-t border-slate-100 flex items-center justify-between gap-2 text-[10px] font-mono text-slate-500">
+                          <div className="mt-1.5 pt-1.5 border-t border-white/15 flex items-center justify-between gap-1 text-[9.5px] font-mono text-slate-300">
                             <span>{formatGradeDisplay(dantonClass, 'Kls')}</span>
-                            <span className="truncate">NISN: {dantonNisn || '-'}</span>
+                            <span className="truncate">{dantonNisn ? `NISN ${dantonNisn}` : 'NISN -'}</span>
                           </div>
-                          {dantonMedical && (
-                            <div
-                              className="text-[10px] text-rose-700 bg-rose-50 px-2 py-0.5 rounded-md border border-rose-200 truncate"
-                              title={`Catatan Medis: ${dantonMedical}`}
-                            >
-                              🩺 {dantonMedical}
-                            </div>
-                          )}
                         </div>
                       </div>
                     );
@@ -475,85 +486,84 @@ export default function RosterTab({
                         !off.photo.includes('drive.google.com/open?id=');
                       const isFilled = Boolean(off.name && off.name.trim() !== '' && off.name !== '-');
                       const badgeBg = isMainOfficial
-                        ? 'bg-blue-600'
+                        ? 'bg-blue-600/95'
                         : i === 1
-                          ? 'bg-emerald-600'
-                          : 'bg-slate-700';
-                      const avatarTint = isMainOfficial
-                        ? 'bg-blue-50 border-blue-100 text-blue-700'
+                          ? 'bg-emerald-600/95'
+                          : 'bg-slate-800/95';
+                      const fallbackBg = isMainOfficial
+                        ? 'from-blue-50/90 via-slate-100 to-slate-200/90'
                         : i === 1
-                          ? 'bg-emerald-50 border-emerald-100 text-emerald-700'
-                          : 'bg-slate-100 border-slate-200 text-slate-600';
+                          ? 'from-emerald-50/90 via-slate-100 to-slate-200/90'
+                          : 'from-slate-100 via-slate-100 to-slate-200/90';
+                      const fallbackIconColor = isMainOfficial
+                        ? 'text-blue-600 border-blue-100'
+                        : i === 1
+                          ? 'text-emerald-600 border-emerald-100'
+                          : 'text-slate-500 border-slate-200';
 
                       return (
                         <div
                           key={off.id || i}
-                          className={`rounded-2xl border p-3.5 transition-all flex items-start gap-3.5 ${
-                            isFilled
-                              ? 'bg-white border-slate-200 hover:border-blue-300 shadow-xs'
-                              : 'bg-white/70 border-dashed border-slate-300/90'
-                          }`}
+                          className="group/offcard relative aspect-[3/4] w-full rounded-2xl overflow-hidden border border-slate-200/90 hover:border-blue-400 shadow-xs hover:shadow-lg transition-all duration-300 bg-slate-100"
                         >
-                          <div
-                            className={`w-14 h-[74px] rounded-xl border relative overflow-hidden flex items-center justify-center shrink-0 ${avatarTint}`}
-                          >
-                            {hasPhoto ? (
-                              <img
-                                src={formatImageUrl(off.photo)}
-                                alt={off.name}
-                                referrerPolicy="no-referrer"
-                                className="w-full h-full object-cover object-top"
-                                onError={(e) => {
-                                  const fallback = getFallbackImageUrl(off.photo);
-                                  if (fallback && e.currentTarget.src !== fallback) {
-                                    e.currentTarget.src = fallback;
-                                  } else {
-                                    e.currentTarget.style.display = 'none';
-                                    if (e.currentTarget.nextElementSibling) {
-                                      e.currentTarget.nextElementSibling.style.display = 'flex';
-                                    }
+                          {hasPhoto ? (
+                            <img
+                              src={formatImageUrl(off.photo)}
+                              alt={off.name}
+                              referrerPolicy="no-referrer"
+                              className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-500 group-hover/offcard:scale-105"
+                              onError={(e) => {
+                                const fallback = getFallbackImageUrl(off.photo);
+                                if (fallback && e.currentTarget.src !== fallback) {
+                                  e.currentTarget.src = fallback;
+                                } else {
+                                  e.currentTarget.style.display = 'none';
+                                  if (e.currentTarget.nextElementSibling) {
+                                    e.currentTarget.nextElementSibling.style.display = 'flex';
                                   }
-                                }}
-                              />
-                            ) : null}
+                                }
+                              }}
+                            />
+                          ) : null}
+
+                          <div
+                            className={`absolute inset-0 flex flex-col items-center justify-center pb-14 bg-gradient-to-b ${fallbackBg}`}
+                            style={{ display: hasPhoto ? 'none' : 'flex' }}
+                          >
                             <div
-                              className="w-full h-full flex items-center justify-center font-black text-base select-none"
-                              style={{ display: hasPhoto ? 'none' : 'flex' }}
+                              className={`w-14 h-14 rounded-2xl bg-white/85 border flex items-center justify-center shadow-xs ${fallbackIconColor}`}
                             >
                               {isFilled ? (
-                                getPersonInitials(off.name)
+                                <span className="text-lg font-black select-none">
+                                  {getPersonInitials(off.name)}
+                                </span>
                               ) : (
-                                <User className="w-5 h-5 opacity-40" />
+                                <Camera className="w-6 h-6 opacity-45" />
                               )}
                             </div>
                           </div>
 
-                          <div className="min-w-0 flex-1 space-y-1">
-                            <span
-                              className={`inline-flex items-center px-2 py-0.5 rounded-md ${badgeBg} text-white text-[9.5px] font-extrabold uppercase tracking-wider`}
-                            >
-                              {badgeLabel}
-                            </span>
+                          <span
+                            className={`absolute top-2.5 left-2.5 z-10 px-2.5 py-0.5 rounded-full ${badgeBg} backdrop-blur-xs text-white text-[10px] font-extrabold uppercase tracking-wider shadow-sm`}
+                          >
+                            {badgeLabel}
+                          </span>
+
+                          <div className="absolute inset-x-0 bottom-0 z-10 pt-14 pb-3 px-3 bg-gradient-to-t from-slate-950/95 via-slate-950/70 to-transparent text-white">
                             <p
-                              className={`text-xs sm:text-[13px] leading-snug truncate ${
-                                isFilled
-                                  ? 'font-black text-slate-900 uppercase'
-                                  : 'font-semibold text-slate-400'
+                              className={`text-xs sm:text-sm leading-tight truncate ${
+                                isFilled ? 'font-black uppercase' : 'font-semibold text-white/70'
                               }`}
                               title={off.name}
                             >
                               {isFilled ? off.name : 'Belum diisi'}
                             </p>
-                            <p className="text-[11px] text-slate-500 truncate">
+                            <p className="text-[10px] text-slate-300 truncate mt-0.5">
                               {off.role || roleSubTitle}
                             </p>
-                            <div className="pt-1 border-t border-slate-100 flex items-center justify-between gap-2 text-[10px] font-mono">
+                            <div className="mt-1.5 pt-1.5 border-t border-white/15 flex items-center justify-between gap-1 text-[9.5px] font-mono">
                               <span className="text-slate-400">WA</span>
-                              <span
-                                className={`truncate font-bold ${
-                                  off.phone && off.phone !== '-' ? 'text-emerald-700' : 'text-slate-400'
-                                }`}
-                              >
+                              <span className="text-emerald-300 font-bold truncate">
                                 {off.phone || '-'}
                               </span>
                             </div>
@@ -856,7 +866,7 @@ export default function RosterTab({
                             </span>
                           </div>
 
-                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2.5">
+                          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-2.5 sm:gap-3">
                             {safMembers.map(person => {
                               const hasPhoto =
                                 person.photo &&
@@ -872,89 +882,87 @@ export default function RosterTab({
                               return (
                                 <div
                                   key={person.id}
-                                  className={`rounded-xl border p-2.5 transition-all flex items-center gap-3 ${
+                                  className={`group/pcard relative aspect-[3/4] w-full rounded-2xl overflow-hidden border transition-all duration-300 ${
                                     isFilled
-                                      ? 'bg-white border-slate-200 hover:border-red-300 shadow-2xs'
-                                      : 'bg-white/60 border-dashed border-slate-300/80'
+                                      ? 'border-slate-200/90 hover:border-red-400 shadow-xs hover:shadow-md bg-slate-100'
+                                      : 'border-dashed border-slate-300/90 bg-gradient-to-b from-slate-50 to-slate-100/90'
                                   }`}
                                 >
-                                  {/* Compact 3:4 Mini Portrait */}
+                                  {hasPhoto ? (
+                                    <img
+                                      src={formatImageUrl(person.photo)}
+                                      alt={person.name}
+                                      referrerPolicy="no-referrer"
+                                      className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-500 group-hover/pcard:scale-105"
+                                      onError={(e) => {
+                                        e.currentTarget.style.display = 'none';
+                                        if (e.currentTarget.nextElementSibling) {
+                                          e.currentTarget.nextElementSibling.style.display = 'flex';
+                                        }
+                                      }}
+                                    />
+                                  ) : null}
+
+                                  {/* Clean Fallback Studio Frame */}
                                   <div
-                                    className={`w-11 h-14 rounded-lg border relative overflow-hidden flex items-center justify-center shrink-0 ${
-                                      isFilled
-                                        ? 'bg-slate-100 border-slate-200'
-                                        : 'bg-slate-100/80 border-slate-200/70'
-                                    }`}
+                                    className="absolute inset-0 flex flex-col items-center justify-center pb-12"
+                                    style={{ display: hasPhoto ? 'none' : 'flex' }}
                                   >
-                                    {hasPhoto ? (
-                                      <img
-                                        src={formatImageUrl(person.photo)}
-                                        alt={person.name}
-                                        referrerPolicy="no-referrer"
-                                        className="w-full h-full object-cover object-top"
-                                        onError={(e) => {
-                                          e.currentTarget.style.display = 'none';
-                                          if (e.currentTarget.nextElementSibling) {
-                                            e.currentTarget.nextElementSibling.style.display = 'flex';
-                                          }
-                                        }}
-                                      />
-                                    ) : null}
-                                    <div
-                                      className="w-full h-full flex items-center justify-center text-slate-400"
-                                      style={{ display: hasPhoto ? 'none' : 'flex' }}
-                                    >
-                                      {isFilled ? (
-                                        <span className="text-xs font-black text-slate-600">
+                                    {isFilled ? (
+                                      <div className="w-11 h-11 rounded-xl bg-white/90 border border-slate-200 flex items-center justify-center shadow-2xs">
+                                        <span className="text-sm font-black text-slate-700 select-none">
                                           {getPersonInitials(person.name)}
                                         </span>
-                                      ) : (
-                                        <Camera className="w-4 h-4 text-slate-300" />
-                                      )}
-                                    </div>
+                                      </div>
+                                    ) : (
+                                      <Camera className="w-6 h-6 text-slate-300" />
+                                    )}
                                   </div>
 
-                                  {/* Identity Details */}
-                                  <div className="min-w-0 flex-1 space-y-0.5">
-                                    <div className="flex items-center gap-1.5 flex-wrap">
-                                      <span className="text-[9.5px] font-mono font-black px-1.5 py-0.5 rounded bg-slate-900 text-white leading-none">
-                                        B{person.banjarNumber}
+                                  {/* Top Position Badges */}
+                                  <div className="absolute top-2 inset-x-2 z-10 flex items-center justify-between gap-1">
+                                    <span className="px-2 py-0.5 rounded-md bg-slate-900/85 backdrop-blur-xs text-white text-[9.5px] font-mono font-black shadow-xs">
+                                      B{person.banjarNumber}
+                                    </span>
+                                    {isChestPinSlot && (
+                                      <span className="px-1.5 py-0.5 rounded-md bg-amber-400 text-slate-950 text-[8.5px] font-black uppercase shadow-xs">
+                                        No. Dada
                                       </span>
-                                      {isChestPinSlot && (
-                                        <span className="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 border border-amber-200 leading-none">
-                                          No. Dada
-                                        </span>
-                                      )}
-                                      {person.class && (
-                                        <span className="text-[10px] font-semibold text-slate-400">
-                                          {formatGradeDisplay(person.class, 'Kls')}
-                                        </span>
-                                      )}
-                                    </div>
+                                    )}
+                                    {person.medicalHistory && !isChestPinSlot && (
+                                      <span
+                                        className="w-5 h-5 rounded-full bg-rose-500 text-white text-[9px] flex items-center justify-center shadow-xs"
+                                        title={`Riwayat Medis: ${person.medicalHistory}`}
+                                      >
+                                        🩺
+                                      </span>
+                                    )}
+                                  </div>
 
+                                  {/* Bottom Scrim & Compact Identity */}
+                                  <div
+                                    className={`absolute inset-x-0 bottom-0 z-10 pt-10 pb-2.5 px-2.5 ${
+                                      hasPhoto
+                                        ? 'bg-gradient-to-t from-slate-950/95 via-slate-950/70 to-transparent text-white'
+                                        : 'bg-gradient-to-t from-slate-900/85 via-slate-900/55 to-transparent text-white'
+                                    }`}
+                                  >
                                     <p
-                                      className={`text-xs leading-snug truncate ${
-                                        isFilled
-                                          ? 'font-extrabold text-slate-900 uppercase'
-                                          : 'font-medium text-slate-400'
+                                      className={`text-[11px] leading-tight truncate ${
+                                        isFilled ? 'font-black uppercase' : 'font-semibold text-white/75'
                                       }`}
                                       title={person.name}
                                     >
                                       {isFilled ? person.name : 'Belum diisi'}
                                     </p>
-
-                                    <p className="text-[10px] font-mono text-slate-400 truncate">
-                                      {person.nisn ? `NISN ${person.nisn}` : 'NISN belum diisi'}
-                                    </p>
-
-                                    {person.medicalHistory && (
-                                      <p
-                                        className="text-[9.5px] text-rose-700 bg-rose-50 px-1.5 py-0.5 rounded border border-rose-200 truncate"
-                                        title={`Riwayat Medis: ${person.medicalHistory}`}
-                                      >
-                                        🩺 {person.medicalHistory}
-                                      </p>
-                                    )}
+                                    <div className="mt-1 flex items-center justify-between gap-1 text-[9px] font-mono text-slate-300">
+                                      <span className="truncate">
+                                        {person.class ? formatGradeDisplay(person.class, 'Kls') : 'Kls -'}
+                                      </span>
+                                      <span className="truncate">
+                                        {person.nisn || '—'}
+                                      </span>
+                                    </div>
                                   </div>
                                 </div>
                               );
@@ -1177,7 +1185,7 @@ export default function RosterTab({
               </div>
               {!isEditingRoster ? (
                 Array.isArray(currentTeam.roster?.cadangan) && currentTeam.roster.cadangan.length > 0 ? (
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4 max-w-2xl mx-auto">
                     {currentTeam.roster.cadangan.map((c, i) => {
                       const hasCPhoto =
                         c.photo &&
@@ -1190,74 +1198,68 @@ export default function RosterTab({
                       return (
                         <div
                           key={c.id || i}
-                          className={`rounded-2xl border p-3 transition-all flex items-center gap-3 ${
+                          className={`group/cadangan relative aspect-[3/4] w-full rounded-2xl overflow-hidden border transition-all duration-300 ${
                             isFilled
-                              ? 'bg-white border-amber-200/90 hover:border-amber-400 shadow-2xs'
-                              : 'bg-white/70 border-dashed border-amber-300/80'
+                              ? 'border-amber-200 hover:border-amber-400 shadow-xs hover:shadow-md bg-amber-50'
+                              : 'border-dashed border-amber-300/90 bg-gradient-to-b from-amber-50/70 to-amber-100/60'
                           }`}
                         >
-                          <div className="w-12 h-16 rounded-xl bg-amber-50 border border-amber-200/70 relative overflow-hidden flex items-center justify-center shrink-0">
-                            {hasCPhoto ? (
-                              <img
-                                src={formatImageUrl(c.photo)}
-                                alt={c.name}
-                                referrerPolicy="no-referrer"
-                                className="w-full h-full object-cover object-top"
-                                onError={(e) => {
-                                  e.currentTarget.style.display = 'none';
-                                  if (e.currentTarget.nextElementSibling) {
-                                    e.currentTarget.nextElementSibling.style.display = 'flex';
-                                  }
-                                }}
-                              />
-                            ) : null}
-                            <div
-                              className="w-full h-full flex items-center justify-center text-amber-700"
-                              style={{ display: hasCPhoto ? 'none' : 'flex' }}
-                            >
+                          {hasCPhoto ? (
+                            <img
+                              src={formatImageUrl(c.photo)}
+                              alt={c.name}
+                              referrerPolicy="no-referrer"
+                              className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-500 group-hover/cadangan:scale-105"
+                              onError={(e) => {
+                                e.currentTarget.style.display = 'none';
+                                if (e.currentTarget.nextElementSibling) {
+                                  e.currentTarget.nextElementSibling.style.display = 'flex';
+                                }
+                              }}
+                            />
+                          ) : null}
+
+                          <div
+                            className="absolute inset-0 flex flex-col items-center justify-center pb-12"
+                            style={{ display: hasCPhoto ? 'none' : 'flex' }}
+                          >
+                            <div className="w-12 h-12 rounded-2xl bg-white/85 border border-amber-200/80 flex items-center justify-center shadow-2xs">
                               {isFilled ? (
-                                <span className="text-xs font-black">{getPersonInitials(c.name)}</span>
+                                <span className="text-base font-black text-amber-800 select-none">
+                                  {getPersonInitials(c.name)}
+                                </span>
                               ) : (
-                                <User className="w-4 h-4 text-amber-400" />
+                                <Camera className="w-5 h-5 text-amber-400" />
                               )}
                             </div>
                           </div>
 
-                          <div className="min-w-0 flex-1 space-y-0.5">
-                            <div className="flex items-center gap-1.5">
-                              <span className="text-[9.5px] font-mono font-black px-1.5 py-0.5 rounded bg-amber-500 text-slate-950 leading-none">
-                                C{i + 1}
-                              </span>
-                              {c.class && (
-                                <span className="text-[10px] font-semibold text-slate-500">
-                                  {formatGradeDisplay(c.class, 'Kls')}
-                                </span>
-                              )}
-                            </div>
+                          <span className="absolute top-2.5 left-2.5 z-10 px-2 py-0.5 rounded-full bg-amber-400 text-slate-950 text-[10px] font-black uppercase shadow-xs">
+                            Cadangan {i + 1}
+                          </span>
 
+                          {c.medicalHistory && (
+                            <span
+                              className="absolute top-2.5 right-2.5 z-10 w-6 h-6 rounded-full bg-rose-500 text-white text-[10px] flex items-center justify-center shadow-xs"
+                              title={`Riwayat Medis: ${c.medicalHistory}`}
+                            >
+                              🩺
+                            </span>
+                          )}
+
+                          <div className="absolute inset-x-0 bottom-0 z-10 pt-12 pb-2.5 px-3 bg-gradient-to-t from-slate-950/95 via-slate-950/70 to-transparent text-white">
                             <p
-                              className={`text-xs leading-snug truncate ${
-                                isFilled
-                                  ? 'font-extrabold text-slate-900 uppercase'
-                                  : 'font-medium text-slate-400'
+                              className={`text-xs leading-tight truncate ${
+                                isFilled ? 'font-black uppercase' : 'font-semibold text-white/75'
                               }`}
                               title={c.name}
                             >
                               {isFilled ? c.name : 'Belum diisi'}
                             </p>
-
-                            <p className="text-[10px] font-mono text-slate-500 truncate">
-                              {c.nisn ? `NISN ${c.nisn}` : 'Opsional · Pengganti'}
-                            </p>
-
-                            {c.medicalHistory && (
-                              <p
-                                className="text-[9.5px] text-rose-700 bg-rose-50 px-1.5 py-0.5 rounded border border-rose-200 truncate"
-                                title={`Riwayat Medis: ${c.medicalHistory}`}
-                              >
-                                🩺 {c.medicalHistory}
-                              </p>
-                            )}
+                            <div className="mt-1 flex items-center justify-between gap-1 text-[9.5px] font-mono text-slate-300">
+                              <span>{c.class ? formatGradeDisplay(c.class, 'Kls') : 'Kls -'}</span>
+                              <span className="truncate">{c.nisn || 'Opsional'}</span>
+                            </div>
                           </div>
                         </div>
                       );

@@ -431,6 +431,50 @@ export default function ParticipantDashboard() {
 
   function handleSaveRoster() {
     if (!rosterDraft) return;
+    const isPhotoValid = (url) => {
+      if (!url || typeof url !== 'string') return false;
+      if (url === '#' || url.startsWith('#')) return false;
+      if (url.includes('ui-avatars.com')) return false;
+      if (url.includes('drive.google.com/open?id=')) return false;
+      return true;
+    };
+    const isNameValid = (val) => {
+      const n = typeof val === 'string' ? val.trim() : '';
+      return n.length > 0 && n !== '-' && n.toLowerCase() !== 'belum diisi';
+    };
+
+    // Validasi: yang wajib hanya Foto & Nama (NISN, Kelas, TTL, Catatan Medis, Peran, WA opsional)
+    const incompleteSlots = [];
+    const checkPair = (label, person) => {
+      if (!person) return;
+      const hasName = isNameValid(person.name);
+      const hasPhoto = isPhotoValid(person.photo);
+      if (hasName && !hasPhoto) incompleteSlots.push(`${label} (foto belum diunggah)`);
+      else if (!hasName && hasPhoto) incompleteSlots.push(`${label} (nama belum diisi)`);
+    };
+
+    checkPair('Danton', rosterDraft.danton);
+    (rosterDraft.officials || []).forEach((off, idx) => {
+      const label = idx === 0 ? 'Official' : idx === 1 ? 'Pendukung Medis' : 'Pendukung Dokumentasi';
+      checkPair(label, off);
+    });
+    (rosterDraft.pasukan || []).forEach((p) => {
+      checkPair(`Saf ${p.safNumber} Banjar ${p.banjarNumber}`, p);
+    });
+    (rosterDraft.cadangan || []).forEach((c, idx) => {
+      checkPair(`Cadangan ${idx + 1}`, c);
+    });
+
+    if (incompleteSlots.length > 0) {
+      const preview = incompleteSlots.slice(0, 5).join(', ');
+      const more = incompleteSlots.length > 5 ? ` (+${incompleteSlots.length - 5} lainnya)` : '';
+      appAlert(
+        `Setiap personel yang diisi wajib melengkapi Foto dan Nama (data lain opsional). Lengkapi terlebih dahulu: ${preview}${more}.`,
+        { title: 'Foto & Nama Wajib Dilengkapi', variant: 'warning' }
+      );
+      return;
+    }
+
     updateTeamRoster(currentTeam.id, rosterDraft);
     try {
       localStorage.removeItem(`lbb_roster_draft_${currentTeam.id}`);
