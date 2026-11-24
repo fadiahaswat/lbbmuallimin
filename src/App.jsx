@@ -58,6 +58,9 @@ function ViewLoader() {
   );
 }
 
+const HERO_THEME_COLOR = '#0d060e';
+const SCROLLED_THEME_COLOR = '#ffffff';
+
 function MainApp() {
   const { activeView, setActiveView, currentUser, role } = useCompetition();
   const effectiveRole = currentUser?.role || role || 'publik';
@@ -104,6 +107,52 @@ function MainApp() {
     setShowStickyCta(window.scrollY > NAVBAR.STICKY_CTA_THRESHOLD);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Sync browser status bar (theme-color) & overscroll background with Hero / Scrolled Navbar
+  useEffect(() => {
+    let lastColor = null;
+    let ticking = false;
+
+    const applyThemeColor = (color) => {
+      if (color === lastColor) return;
+      lastColor = color;
+
+      let metaTheme = document.querySelector('meta[name="theme-color"]');
+      if (!metaTheme) {
+        metaTheme = document.createElement('meta');
+        metaTheme.setAttribute('name', 'theme-color');
+        document.head.appendChild(metaTheme);
+      }
+      metaTheme.setAttribute('content', color);
+      document.documentElement.style.backgroundColor = color;
+      document.body.style.backgroundColor = color;
+    };
+
+    const isLanding = !scannedRegCode && activeView === 'landing';
+    if (!isLanding) {
+      applyThemeColor(SCROLLED_THEME_COLOR);
+      return undefined;
+    }
+
+    const updateThemeForScroll = () => {
+      const isAtHeroTop = window.scrollY <= NAVBAR.SCROLL_SOLID_THRESHOLD;
+      applyThemeColor(isAtHeroTop ? HERO_THEME_COLOR : SCROLLED_THEME_COLOR);
+    };
+
+    const onScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          updateThemeForScroll();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    updateThemeForScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [activeView, scannedRegCode]);
 
   const handleCloseScannedQR = () => {
     setScannedRegCode('');

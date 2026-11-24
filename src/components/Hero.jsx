@@ -129,6 +129,9 @@ export default function Hero() {
           }}
         />
 
+        {/* Seamless Top Blend into Mobile Status Bar */}
+        <div className="absolute inset-x-0 top-0 h-20 sm:h-24 bg-gradient-to-b from-[#0d060e] via-[#0d060e]/55 to-transparent" />
+
         {/* Subtle Architectural Dot Grid */}
         <div className="absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.06)_1px,transparent_1px)] [background-size:28px_28px] opacity-25" />
 
