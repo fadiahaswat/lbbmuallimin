@@ -34,7 +34,7 @@ const buildUjiCobaSlots = (jenjang) => {
       enterArena: fmtTime(enterArenaMins),
       finishArena: fmtTime(finishArenaMins),
       exitArena: fmtTime(exitArenaMins),
-      leaveCampus: `Maks. ${fmtTime(exitArenaMins + 15)}`,
+      leaveCampus: `Maks. ${fmtTime(exitArenaMins + 30)}`,
       allocation: isSD ? '8 Mnt Bersih + 5 Mnt Transisi' : '12 Mnt Bersih + 5 Mnt Transisi',
       session: 'Uji Coba Paralel (07.00 - 11.30 WIB)',
     };

@@ -486,7 +486,7 @@ export default function StaffHomeView() {
     >
       <div className="space-y-5">
         {/* 1. HEADER BAR + GLOBAL JENJANG FILTER + SYNC STATUS */}
-        <header className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <header className="rounded-[24px] bg-white px-5 py-4 sm:px-6 sm:py-5 shadow-[0_2px_16px_rgba(15,23,42,0.04)] border border-slate-100 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div className="space-y-1">
             <div className="inline-flex items-center gap-2 text-[11px] font-medium text-slate-400">
               <span>
@@ -513,7 +513,7 @@ export default function StaffHomeView() {
 
           <div className="flex items-center gap-2 flex-wrap">
             {/* Global Jenjang Filter Pill (Uniform h-10) */}
-            <div className="inline-flex h-10 items-center rounded-full bg-white p-1 shadow-[0_2px_10px_rgba(15,23,42,0.04)] border border-slate-200/80 text-xs font-semibold">
+            <div className="inline-flex h-10 items-center rounded-full bg-[#F6F7F9] p-1 border border-slate-200/70 text-xs font-semibold">
               {[
                 { id: 'ALL', label: 'Semua', count: metrics.countSD + metrics.countSMP },
                 { id: 'SD', label: 'SD', count: metrics.countSD },
@@ -544,7 +544,7 @@ export default function StaffHomeView() {
               <button
                 type="button"
                 onClick={exportTeamsCSV}
-                className="inline-flex h-10 items-center gap-1.5 rounded-full bg-white hover:bg-slate-50 px-4 text-xs font-semibold text-slate-700 shadow-[0_2px_10px_rgba(15,23,42,0.04)] border border-slate-200/80 transition-all cursor-pointer active:scale-95"
+                className="inline-flex h-10 items-center gap-1.5 rounded-full bg-[#F6F7F9] hover:bg-slate-100 px-4 text-xs font-semibold text-slate-700 border border-slate-200/70 transition-all cursor-pointer active:scale-95"
               >
                 <Download className="w-3.5 h-3.5 text-slate-500" />
                 <span>Ekspor</span>

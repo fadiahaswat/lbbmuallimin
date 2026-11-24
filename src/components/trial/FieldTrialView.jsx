@@ -1623,7 +1623,7 @@ export default function FieldTrialView() {
                   type="text"
                   value={customCheckOutTime}
                   onChange={(e) => setCustomCheckOutTime(e.target.value)}
-                  placeholder="Contoh: 07.15 WIB"
+                  placeholder="Contoh: 07.45 WIB"
                   className="w-full px-3 py-1.5 rounded-xl border border-slate-300 font-mono text-xs focus:outline-none focus:ring-2 focus:ring-slate-900"
                 />
               </div>

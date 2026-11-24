@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { appConfirm, appToast } from '../../utils/appDialog.js';
 import {
   CalendarCheck,
@@ -53,6 +53,8 @@ export default function TechnicalMeetingView() {
   const [selectedJenjang, setSelectedJenjang] = useState('SD');
   const [searchQuery, setSearchQuery] = useState('');
   const [teamFilterTab, setTeamFilterTab] = useState('unassigned'); // 'unassigned' | 'all' | 'drawn'
+  const [slotFilter, setSlotFilter] = useState('all'); // 'all' | 'empty' | 'filled'
+  const [armedTeamId, setArmedTeamId] = useState(null); // Click-to-arm instant 2-click placement
   const [lotSuccessMsg, setLotSuccessMsg] = useState('');
   const [draggedTeam, setDraggedTeam] = useState(null);
   const [dragOverLotNumber, setDragOverLotNumber] = useState(null);
@@ -61,6 +63,22 @@ export default function TechnicalMeetingView() {
   const [activeSlotPickerTeam, setActiveSlotPickerTeam] = useState(null);
   const [activeTeamPickerSlot, setActiveTeamPickerSlot] = useState(null);
   const [modalSearch, setModalSearch] = useState('');
+
+  // Reset armed team when switching jenjang or pressing Escape
+  useEffect(() => {
+    setArmedTeamId(null);
+    setSlotFilter('all');
+  }, [selectedJenjang]);
+
+  useEffect(() => {
+    const onKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setArmedTeamId(null);
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, []);
 
   const isSD = selectedJenjang === 'SD';
 
@@ -170,6 +188,16 @@ export default function TechnicalMeetingView() {
   }, [totalSlotsCount, chestMapList, selectedJenjang, currentJenjangTeams, scheduleData]);
 
   const emptySlots = useMemo(() => slots.filter(s => !s.team), [slots]);
+  const filledSlots = useMemo(() => slots.filter(s => !!s.team), [slots]);
+  const armedTeam = useMemo(
+    () => (armedTeamId ? currentJenjangTeams.find(t => t.id === armedTeamId && !t.lotNumber) || null : null),
+    [armedTeamId, currentJenjangTeams]
+  );
+  const filteredSlots = useMemo(() => {
+    if (slotFilter === 'empty') return emptySlots;
+    if (slotFilter === 'filled') return filledSlots;
+    return slots;
+  }, [slots, emptySlots, filledSlots, slotFilter]);
 
   // Actions
   const handlePairTeamToLot = (teamId, targetLotNumber) => {
@@ -190,6 +218,7 @@ export default function TechnicalMeetingView() {
       assignLotNumber(teamId, num);
       setLotSuccessMsg(`Peleton resmi dipasangkan ke Urutan #${String(num).padStart(2, '0')}`);
       setTimeout(() => setLotSuccessMsg(''), 3000);
+      setArmedTeamId(null);
       setActiveSlotPickerTeam(null);
       setActiveTeamPickerSlot(null);
     }
@@ -478,86 +507,89 @@ export default function TechnicalMeetingView() {
         {/* ======================================================== */}
         {/* TOURNAMENT DUAL-PANE DRAW CONSOLE                        */}
         {/* ======================================================== */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
 
           {/* -------------------------------------------------------- */}
           {/* LEFT COLUMN (5 COLS): POOL PELETON (ROSTER CALON UNDIAN) */}
           {/* -------------------------------------------------------- */}
-          <div className="lg:col-span-5 bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-[0_1px_3px_rgba(0,0,0,0.04)] space-y-4 sticky lg:top-4">
+          <div className="lg:col-span-5 bg-white rounded-[24px] p-4 sm:p-5 border border-slate-200/80 shadow-[0_2px_16px_rgba(15,23,42,0.04)] space-y-3.5">
             {/* Panel Title & Count */}
-            <div className="flex items-center justify-between gap-2 pb-3 border-b border-slate-100">
-              <div className="min-w-0 flex-1">
-                <h2 className="text-sm font-black text-slate-900 uppercase tracking-tight flex items-center gap-2">
-                  <span>Daftar Peleton ({selectedJenjang})</span>
-                </h2>
-                <p className="text-[11px] text-slate-500 mt-0.5 truncate">
-                  Urutan validasi berkas awal (#1 – #{totalCount})
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <div className="flex items-center gap-2">
+                  <h2 className="text-sm sm:text-[15px] font-black text-slate-900 tracking-tight">
+                    Daftar Peleton
+                  </h2>
+                  <span
+                    className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                      isSD
+                        ? 'bg-rose-50 text-rose-700 border border-rose-200/70'
+                        : 'bg-blue-50 text-blue-700 border border-blue-200/70'
+                    }`}
+                  >
+                    {selectedJenjang}
+                  </span>
+                </div>
+                <p className="text-[11px] text-slate-500 mt-0.5">
+                  {canManageLottery
+                    ? 'Klik peleton lalu klik slot di kanan, atau seret langsung'
+                    : `Urutan validasi berkas awal (#1 – #${totalCount})`}
                 </p>
               </div>
-              <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 border border-slate-200 whitespace-nowrap shrink-0">
-                <strong className="text-slate-900 font-black">{unassignedTeams.length}</strong>{' '}
-                <span className="hidden sm:inline">Belum Diundi</span>
-                <span className="sm:hidden">Sisa</span>
+              <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-[#F6F7F9] text-slate-600 border border-slate-200/80 whitespace-nowrap shrink-0 tabular-nums">
+                <strong className="text-slate-950 font-black">{unassignedTeams.length}</strong> Sisa
               </span>
             </div>
 
             {/* Sub-Tabs Filter */}
-            <div className="flex items-center gap-1 p-1 bg-slate-100 rounded-xl text-xs font-semibold">
-              <button
-                type="button"
-                onClick={() => setTeamFilterTab('unassigned')}
-                className={`flex-1 py-1.5 px-1.5 rounded-lg transition-all cursor-pointer text-center text-xs whitespace-nowrap ${
-                  teamFilterTab === 'unassigned'
-                    ? 'bg-white text-slate-900 font-bold shadow-2xs'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                <span>Belum </span>
-                <span className="hidden sm:inline">Diundi </span>
-                <span className="text-[11px] font-mono font-bold">({unassignedTeams.length})</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setTeamFilterTab('all')}
-                className={`flex-1 py-1.5 px-1.5 rounded-lg transition-all cursor-pointer text-center text-xs whitespace-nowrap ${
-                  teamFilterTab === 'all'
-                    ? 'bg-white text-slate-900 font-bold shadow-2xs'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                <span>Semua </span>
-                <span className="text-[11px] font-mono font-bold">({totalCount})</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setTeamFilterTab('drawn')}
-                className={`flex-1 py-1.5 px-1.5 rounded-lg transition-all cursor-pointer text-center text-xs whitespace-nowrap ${
-                  teamFilterTab === 'drawn'
-                    ? 'bg-white text-slate-900 font-bold shadow-2xs'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                <span>Sudah </span>
-                <span className="hidden sm:inline">Diundi </span>
-                <span className="text-[11px] font-mono font-bold">({drawnCount})</span>
-              </button>
+            <div className="grid grid-cols-3 gap-1 p-1 bg-[#F6F7F9] rounded-xl border border-slate-200/60 text-xs font-semibold">
+              {[
+                { id: 'unassigned', label: 'Belum', fullLabel: 'Belum Diundi', count: unassignedTeams.length },
+                { id: 'all', label: 'Semua', fullLabel: 'Semua', count: totalCount },
+                { id: 'drawn', label: 'Sudah', fullLabel: 'Sudah Diundi', count: drawnCount },
+              ].map((tab) => {
+                const active = teamFilterTab === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => setTeamFilterTab(tab.id)}
+                    className={`py-1.5 px-2 rounded-lg transition-all cursor-pointer flex items-center justify-center gap-1 whitespace-nowrap ${
+                      active
+                        ? 'bg-white text-slate-950 font-bold shadow-2xs'
+                        : 'text-slate-500 hover:text-slate-900'
+                    }`}
+                  >
+                    <span className="sm:hidden">{tab.label}</span>
+                    <span className="hidden sm:inline">{tab.fullLabel}</span>
+                    <span
+                      className={`font-mono text-[10px] tabular-nums ${
+                        active ? 'text-slate-900 font-black' : 'text-slate-400'
+                      }`}
+                    >
+                      {tab.count}
+                    </span>
+                  </button>
+                );
+              })}
             </div>
 
             {/* Quick Search Field */}
             <div className="relative">
-              <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5" />
+              <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                placeholder="Cari nama sekolah, danton, atau no registrasi..."
-                className="w-full pl-8 pr-8 py-2 bg-slate-50 border border-slate-200/90 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-slate-400 outline-none transition-colors"
+                placeholder="Cari sekolah, danton, atau kode registrasi..."
+                className="w-full pl-9 pr-8 py-2 bg-[#F6F7F9] border border-slate-200/70 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-slate-400 outline-none transition-colors"
               />
               {searchQuery && (
                 <button
                   type="button"
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600 cursor-pointer"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 p-0.5 text-slate-400 hover:text-slate-700 cursor-pointer"
+                  title="Hapus pencarian"
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
@@ -565,29 +597,31 @@ export default function TechnicalMeetingView() {
             </div>
 
             {/* Team Roster List */}
-            <div className="space-y-2 max-h-[calc(100vh-290px)] overflow-y-auto pr-1">
+            <div className="space-y-1.5">
               {filteredLeftTeams.length === 0 ? (
-                <div className="py-12 text-center bg-slate-50/70 rounded-xl border border-dashed border-slate-200 p-5">
+                <div className="py-10 text-center bg-[#F6F7F9] rounded-2xl border border-dashed border-slate-200 p-5">
                   <CheckCircle2 className="w-7 h-7 text-emerald-600 mx-auto mb-2 opacity-80" />
-                  <p className="text-xs font-bold text-slate-700">
+                  <p className="text-xs font-bold text-slate-800">
                     {teamFilterTab === 'unassigned'
-                      ? 'Seluruh peleton telah terpasang ke nomor urutan tampil.'
-                      : 'Tidak ditemukan peleton yang sesuai dengan kata kunci.'}
+                      ? 'Seluruh peleton sudah terpasang.'
+                      : 'Peleton tidak ditemukan.'}
                   </p>
-                  <p className="text-[11px] text-slate-400 mt-1">
-                    {teamFilterTab === 'unassigned' ? 'Periksa susunan jadwal pada papan urutan di sisi kanan.' : 'Silakan gunakan kata kunci pencarian yang lain.'}
+                  <p className="text-[11px] text-slate-500 mt-1">
+                    {teamFilterTab === 'unassigned'
+                      ? 'Periksa susunan urutan tampil pada papan di sisi kanan.'
+                      : 'Coba kata kunci pencarian lain.'}
                   </p>
                 </div>
               ) : (
                 filteredLeftTeams.map((team) => {
                   const regIndex = sortedJenjangTeams.findIndex(t => t.id === team.id) + 1;
                   const isDrawn = !!team.lotNumber;
+                  const isArmed = armedTeam?.id === team.id;
                   const rawLogo = team.files?.schoolLogo?.url || team.file_logo_sekolah || team.logoUrl;
                   const logoSrc = rawLogo && rawLogo !== '#' && !rawLogo.startsWith('#')
                     ? formatImageUrl(rawLogo)
                     : null;
 
-                  // Initials fallback
                   const initials = team.schoolName
                     .split(' ')
                     .filter(w => !['SD', 'MI', 'SMP', 'MTS', 'DAN', 'NEGERI', 'SWASTA'].includes(w.toUpperCase()))
@@ -595,35 +629,70 @@ export default function TechnicalMeetingView() {
                     .map(w => w[0])
                     .join('') || team.schoolName.slice(0, 2).toUpperCase();
 
+                  const handleCardClick = () => {
+                    if (!canManageLottery || isDrawn || emptySlots.length === 0) return;
+                    // On mobile (<1024px), open visual slot picker directly so user doesn't have to scroll
+                    if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+                      setActiveSlotPickerTeam(team);
+                      return;
+                    }
+                    setArmedTeamId(prev => (prev === team.id ? null : team.id));
+                  };
+
                   return (
                     <div
                       key={team.id}
                       draggable={canManageLottery}
-                      onDragStart={(e) => onDragStartTeam(e, team)}
-                      className={`p-3 rounded-xl border transition-all duration-150 flex items-center justify-between gap-3 select-none ${
-                        isDrawn
-                          ? 'bg-slate-50/70 border-slate-200/70 opacity-65'
-                          : 'bg-white border-slate-200 hover:border-slate-300 hover:shadow-2xs'
-                      } ${canManageLottery ? 'cursor-grab active:cursor-grabbing' : 'cursor-default'}`}
+                      onDragStart={(e) => {
+                        setArmedTeamId(null);
+                        onDragStartTeam(e, team);
+                      }}
+                      onClick={handleCardClick}
+                      className={`group/team px-3 py-2.5 rounded-xl border transition-all duration-150 flex items-center justify-between gap-2.5 select-none ${
+                        isArmed
+                          ? 'bg-slate-950 text-white border-slate-950 shadow-md ring-2 ring-slate-950/15'
+                          : isDrawn
+                            ? 'bg-slate-50/70 border-slate-100 opacity-75'
+                            : 'bg-white border-slate-200/80 hover:border-slate-300 hover:bg-slate-50/50'
+                      } ${
+                        canManageLottery && !isDrawn
+                          ? 'cursor-pointer active:scale-[0.99]'
+                          : canManageLottery
+                            ? 'cursor-grab active:cursor-grabbing'
+                            : 'cursor-default'
+                      }`}
                     >
-                      {/* Left: Drag Handle, Registration Index, School Logo & Info */}
-                      <div className="flex items-center gap-2 sm:gap-2.5 min-w-0 flex-1">
+                      {/* Left: Drag Handle, Index, Logo & Info */}
+                      <div className="flex items-center gap-2 min-w-0 flex-1">
                         {canManageLottery && (
                           <div
-                            className="hidden sm:block text-slate-300 hover:text-slate-600 cursor-grab active:cursor-grabbing shrink-0"
-                            title="Tarik peleton ke slot urutan di sisi kanan"
+                            className={`hidden sm:block shrink-0 ${
+                              isArmed
+                                ? 'text-slate-500'
+                                : 'text-slate-300 group-hover/team:text-slate-500'
+                            }`}
+                            title="Seret ke slot urutan di kanan"
                           >
                             <GripVertical className="w-3.5 h-3.5" />
                           </div>
                         )}
 
-                        {/* Order Index Monospace */}
-                        <span className="font-mono text-[10px] font-bold text-slate-400 w-4 sm:w-5 text-right shrink-0">
-                          #{String(regIndex).padStart(2, '0')}
+                        <span
+                          className={`font-mono text-[10px] font-bold tabular-nums w-4 text-right shrink-0 ${
+                            isArmed ? 'text-amber-400' : 'text-slate-400'
+                          }`}
+                        >
+                          {String(regIndex).padStart(2, '0')}
                         </span>
 
                         {/* Logo / Monogram */}
-                        <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-slate-50 border border-slate-200/80 p-1 flex items-center justify-center shrink-0 overflow-hidden shadow-2xs">
+                        <div
+                          className={`w-9 h-9 rounded-lg p-1 flex items-center justify-center shrink-0 overflow-hidden border ${
+                            isArmed
+                              ? 'bg-white border-white/20'
+                              : 'bg-white border-slate-200/80'
+                          }`}
+                        >
                           {logoSrc ? (
                             <img
                               src={logoSrc}
@@ -634,7 +703,7 @@ export default function TechnicalMeetingView() {
                               }}
                             />
                           ) : (
-                            <span className="font-black text-xs font-mono text-slate-700 uppercase">
+                            <span className="font-black text-[11px] font-mono text-slate-700 uppercase">
                               {initials}
                             </span>
                           )}
@@ -642,50 +711,69 @@ export default function TechnicalMeetingView() {
 
                         {/* Team Details */}
                         <div className="min-w-0 flex-1">
-                          <h3 className="text-xs sm:text-[13px] font-extrabold text-slate-900 leading-snug break-words" title={team.schoolName}>
+                          <h3
+                            className={`text-xs sm:text-[12.5px] font-extrabold leading-snug truncate ${
+                              isArmed ? 'text-white' : 'text-slate-900'
+                            }`}
+                            title={team.schoolName}
+                          >
                             {team.schoolName}
                           </h3>
-                          <div className="mt-0.5 flex items-center gap-1.5 text-[11px] text-slate-500 min-w-0">
-                            <UserCheck className="w-3 h-3 text-slate-400 shrink-0" />
-                            <span className="font-medium text-slate-600 truncate">{team.dantonName || 'Belum diisi'}</span>
-                          </div>
+                          <p
+                            className={`text-[10.5px] truncate mt-0.5 ${
+                              isArmed ? 'text-slate-300' : 'text-slate-500'
+                            }`}
+                          >
+                            {team.dantonName || 'Danton belum diisi'}
+                          </p>
                         </div>
                       </div>
 
-                      {/* Right: Slot Status or Pick Button */}
-                      <div className="shrink-0 flex items-center gap-1.5 sm:gap-2">
+                      {/* Right: Action */}
+                      <div className="shrink-0 flex items-center gap-1">
                         {isDrawn ? (
-                          <div className="flex items-center gap-1.5">
-                            <span className="inline-flex items-center gap-1 text-[11px] font-mono font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200 whitespace-nowrap">
+                          <>
+                            <span className="inline-flex items-center gap-1 text-[11px] font-mono font-bold tabular-nums text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200/80 whitespace-nowrap">
                               <Check className="w-3 h-3 text-emerald-600 shrink-0" />
                               <span>#{String(team.lotNumber).padStart(2, '0')}</span>
                             </span>
                             {canManageLottery && (
                               <button
                                 type="button"
-                                onClick={() => handleUnpairTeam(team.id)}
-                                className="p-1 rounded text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer shrink-0"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleUnpairTeam(team.id);
+                                }}
+                                className="p-1 rounded-md text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
                                 title="Lepas peleton dari urutan tampil"
                               >
                                 <X className="w-3.5 h-3.5" />
                               </button>
                             )}
-                          </div>
-                        ) : canManageLottery && (
+                          </>
+                        ) : canManageLottery ? (
                           emptySlots.length === 0 ? (
-                            <span className="text-[11px] text-slate-400 italic">Penuh</span>
+                            <span className="text-[10.5px] text-slate-400 italic">Penuh</span>
+                          ) : isArmed ? (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-400 text-slate-950 text-[10.5px] font-black whitespace-nowrap">
+                              <span>Pilih Slot</span>
+                              <ArrowRight className="w-3 h-3" />
+                            </span>
                           ) : (
                             <button
                               type="button"
-                              onClick={() => setActiveSlotPickerTeam(team)}
-                              className="px-2 sm:px-2.5 py-1 rounded-lg text-[11px] sm:text-xs font-bold bg-slate-900 hover:bg-slate-800 text-white transition-all flex items-center gap-1 cursor-pointer shadow-2xs active:scale-95 whitespace-nowrap shrink-0"
-                              title="Pilih nomor urut tampil peleton"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setActiveSlotPickerTeam(team);
+                              }}
+                              className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-bold bg-[#F6F7F9] group-hover/team:bg-slate-900 text-slate-700 group-hover/team:text-white border border-slate-200/80 group-hover/team:border-slate-900 transition-all cursor-pointer whitespace-nowrap"
+                              title="Buka grid pilihan slot urutan"
                             >
-                              <span>Pilih Slot</span>
-                              <ChevronRight className="w-3 h-3 shrink-0" />
+                              <LayoutGrid className="w-3 h-3 shrink-0" />
+                              <span>Slot</span>
                             </button>
                           )
-                        )}
+                        ) : null}
                       </div>
                     </div>
                   );
@@ -697,216 +785,314 @@ export default function TechnicalMeetingView() {
           {/* -------------------------------------------------------- */}
           {/* RIGHT COLUMN (7 COLS): PAPAN URUTAN TAMPIL & NOMOR DADA  */}
           {/* -------------------------------------------------------- */}
-          <div className="lg:col-span-7 bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-[0_1px_3px_rgba(0,0,0,0.04)] space-y-4">
+          <div className="lg:col-span-7 bg-white rounded-[24px] p-4 sm:p-5 border border-slate-200/80 shadow-[0_2px_16px_rgba(15,23,42,0.04)] space-y-3.5">
             {/* Header & Arena Info */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-3 border-b border-slate-100">
-              <div>
+            <div className="flex flex-col gap-3 pb-3 border-b border-slate-100">
+              <div className="flex flex-wrap items-center justify-between gap-2">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <h2 className="text-xs sm:text-sm font-black text-slate-900 uppercase tracking-tight">
-                    Papan Urutan Tampil ({selectedJenjang})
+                  <h2 className="text-sm sm:text-[15px] font-black text-slate-900 tracking-tight">
+                    Papan Urutan Tampil
                   </h2>
-                  <span className={`shrink-0 whitespace-nowrap text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-md border ${
-                    isSD
-                      ? 'bg-rose-50 text-rose-800 border-rose-200/80'
-                      : 'bg-blue-50 text-blue-800 border-blue-200/80'
-                  }`}>
-                    {isSD ? 'Arena 1 (Basket)' : 'Arena 2 (Embung)'}
+                  <span
+                    className={`text-[10.5px] font-bold px-2.5 py-0.5 rounded-full border whitespace-nowrap ${
+                      isSD
+                        ? 'bg-rose-50 text-rose-700 border-rose-200/80'
+                        : 'bg-blue-50 text-blue-700 border-blue-200/80'
+                    }`}
+                  >
+                    {isSD ? 'Arena 1 · Basket' : 'Arena 2 · Embung'}
                   </span>
                 </div>
-                <p className="text-[10px] sm:text-[11px] text-slate-500 mt-0.5 leading-relaxed">
-                  Tarik peleton dari kolom kiri atau klik slot untuk menentukan urutan tampil
-                </p>
+
+                {/* Ceremony Info Pill */}
+                <span className="inline-flex items-center gap-1.5 text-[10.5px] font-semibold text-amber-800 bg-amber-50/90 border border-amber-200/80 px-2.5 py-1 rounded-full whitespace-nowrap">
+                  <Award className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                  <span>#06 – #10 Pasukan Upacara</span>
+                </span>
               </div>
 
-              {/* Ceremony Badge Info */}
-              <div className="self-start sm:self-auto flex items-center gap-1.5 text-[10px] sm:text-[11px] font-medium text-amber-900 bg-amber-50/80 border border-amber-200/80 px-2.5 py-1 rounded-lg shrink-0 whitespace-nowrap">
-                <Award className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-                <span>Slot #06 – #10: Pasukan Upacara</span>
+              {/* Slot Filter Bar + Quick Status */}
+              <div className="flex items-center justify-between gap-2 flex-wrap">
+                <div className="inline-flex items-center gap-1 p-1 bg-[#F6F7F9] rounded-xl border border-slate-200/60 text-[11px] font-semibold">
+                  {[
+                    { id: 'all', label: 'Semua', count: slots.length },
+                    { id: 'empty', label: 'Kosong', count: emptySlots.length },
+                    { id: 'filled', label: 'Terisi', count: filledSlots.length },
+                  ].map((f) => {
+                    const active = slotFilter === f.id;
+                    return (
+                      <button
+                        key={f.id}
+                        type="button"
+                        onClick={() => setSlotFilter(f.id)}
+                        className={`px-2.5 py-1 rounded-lg transition-all cursor-pointer inline-flex items-center gap-1 ${
+                          active
+                            ? 'bg-white text-slate-950 font-bold shadow-2xs'
+                            : 'text-slate-500 hover:text-slate-900'
+                        }`}
+                      >
+                        <span>{f.label}</span>
+                        <span className={`font-mono text-[10px] tabular-nums ${active ? 'text-slate-900' : 'text-slate-400'}`}>
+                          {f.count}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <span className="text-[11px] text-slate-400 hidden sm:inline">
+                  Seret slot terisi ke slot lain untuk menukar urutan
+                </span>
               </div>
             </div>
 
+            {/* Active Armed Team Banner (Instant 1-Click Placement Mode) */}
+            {armedTeam && canManageLottery && (
+              <div className="rounded-xl bg-slate-950 text-white px-3.5 py-2.5 flex items-center justify-between gap-3 shadow-md animate-in fade-in duration-150">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse shrink-0" />
+                  <p className="text-xs truncate">
+                    <span className="text-slate-400">Pasang </span>
+                    <strong className="font-extrabold text-white">{armedTeam.schoolName}</strong>
+                    <span className="text-slate-400 hidden sm:inline"> — klik langsung slot di bawah</span>
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setArmedTeamId(null)}
+                  className="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-[11px] font-bold text-white transition-colors cursor-pointer shrink-0"
+                >
+                  Batal
+                </button>
+              </div>
+            )}
+
             {/* 18 Slot Draw Targets */}
-            <div className="space-y-2 max-h-[calc(100vh-250px)] overflow-y-auto pr-1">
-              {slots.map((slot) => {
-                const isHovered = dragOverLotNumber === slot.lotNumber;
-                const assignedTeam = slot.team;
-                const isCeremonySlot = slot.lotNumber >= 6 && slot.lotNumber <= 10;
+            <div className="space-y-1.5">
+              {filteredSlots.length === 0 ? (
+                <div className="py-12 text-center bg-[#F6F7F9] rounded-2xl border border-dashed border-slate-200 p-5">
+                  <p className="text-xs font-bold text-slate-700">
+                    {slotFilter === 'empty'
+                      ? 'Seluruh slot urutan tampil sudah terisi.'
+                      : 'Belum ada slot yang terisi.'}
+                  </p>
+                </div>
+              ) : (
+                filteredSlots.map((slot) => {
+                  const isHovered = dragOverLotNumber === slot.lotNumber;
+                  const assignedTeam = slot.team;
+                  const isCeremonySlot = slot.lotNumber >= 6 && slot.lotNumber <= 10;
+                  const isQuickAssignable = Boolean(canManageLottery && armedTeam);
 
-                const rawLogo = assignedTeam?.files?.schoolLogo?.url || assignedTeam?.file_logo_sekolah || assignedTeam?.logoUrl;
-                const logoSrc = rawLogo && rawLogo !== '#' && !rawLogo.startsWith('#')
-                  ? formatImageUrl(rawLogo)
-                  : null;
+                  const rawLogo = assignedTeam?.files?.schoolLogo?.url || assignedTeam?.file_logo_sekolah || assignedTeam?.logoUrl;
+                  const logoSrc = rawLogo && rawLogo !== '#' && !rawLogo.startsWith('#')
+                    ? formatImageUrl(rawLogo)
+                    : null;
 
-                const initials = assignedTeam ? assignedTeam.schoolName
-                  .split(' ')
-                  .filter(w => !['SD', 'MI', 'SMP', 'MTS', 'DAN', 'NEGERI', 'SWASTA'].includes(w.toUpperCase()))
-                  .slice(0, 2)
-                  .map(w => w[0])
-                  .join('') || assignedTeam.schoolName.slice(0, 2).toUpperCase() : '';
+                  const initials = assignedTeam
+                    ? assignedTeam.schoolName
+                        .split(' ')
+                        .filter(w => !['SD', 'MI', 'SMP', 'MTS', 'DAN', 'NEGERI', 'SWASTA'].includes(w.toUpperCase()))
+                        .slice(0, 2)
+                        .map(w => w[0])
+                        .join('') || assignedTeam.schoolName.slice(0, 2).toUpperCase()
+                    : '';
 
-                return (
-                  <div
-                    key={slot.lotNumber}
-                    onDragOver={(e) => onDragOverSlot(e, slot.lotNumber)}
-                    onDragLeave={onDragLeaveSlot}
-                    onDrop={(e) => onDropOnSlot(e, slot.lotNumber)}
-                    className={`rounded-xl border transition-all duration-150 p-2.5 sm:px-3 sm:py-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 ${
-                      isCeremonySlot ? 'border-l-4 border-l-amber-400' : ''
-                    } ${
-                      isHovered
-                        ? 'bg-slate-100/90 border-slate-400 ring-2 ring-slate-400/30'
-                        : assignedTeam
-                        ? 'bg-white border-slate-200/90 shadow-2xs hover:border-slate-300'
-                        : 'bg-slate-50/40 border-slate-200/90 hover:border-slate-300'
-                    }`}
-                  >
-                    {/* Top Section on mobile, Left Side on sm+ */}
-                    <div className="flex items-center gap-2 sm:gap-2.5 min-w-0 flex-1 w-full sm:w-auto">
-                      {/* 1. Urutan Tampil & Chest Bib Unit (Integrated Sports Bib) */}
-                      <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-                        {/* Lot Draw Order */}
-                        <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-slate-900 text-white flex items-center justify-center font-mono font-black text-xs sm:text-sm shrink-0 shadow-2xs">
-                          #{String(slot.lotNumber).padStart(2, '0')}
+                  const handleSlotRowClick = () => {
+                    if (!canManageLottery) return;
+                    if (armedTeam) {
+                      handlePairTeamToLot(armedTeam.id, slot.lotNumber);
+                      return;
+                    }
+                    if (!assignedTeam && unassignedTeams.length > 0) {
+                      setActiveTeamPickerSlot(slot);
+                    }
+                  };
+
+                  return (
+                    <div
+                      key={slot.lotNumber}
+                      onDragOver={(e) => onDragOverSlot(e, slot.lotNumber)}
+                      onDragLeave={onDragLeaveSlot}
+                      onDrop={(e) => onDropOnSlot(e, slot.lotNumber)}
+                      onClick={handleSlotRowClick}
+                      className={`group/slot rounded-xl border transition-all duration-150 px-3 py-2.5 flex items-center justify-between gap-3 ${
+                        isCeremonySlot ? 'shadow-[inset_3px_0_0_0_#f59e0b]' : ''
+                      } ${
+                        isHovered
+                          ? 'bg-slate-100 border-slate-400 ring-2 ring-slate-400/25'
+                          : isQuickAssignable && !assignedTeam
+                            ? 'bg-amber-50/40 border-amber-300/80 hover:bg-amber-50 hover:border-amber-400 cursor-pointer'
+                            : assignedTeam
+                              ? 'bg-white border-slate-200/90 hover:border-slate-300'
+                              : canManageLottery && unassignedTeams.length > 0
+                                ? 'bg-[#F6F7F9]/70 border-slate-200/70 hover:bg-white hover:border-slate-300 cursor-pointer'
+                                : 'bg-[#F6F7F9]/50 border-slate-200/60'
+                      }`}
+                    >
+                      {/* Left: Integrated Lot + Bib Badge & Team/Empty Lane */}
+                      <div className="flex items-center gap-3 min-w-0 flex-1">
+                        {/* Unified Lot # + BIB Unit */}
+                        <div className="inline-flex items-stretch rounded-lg overflow-hidden border border-slate-200/90 shadow-2xs shrink-0">
+                          <span className="px-2.5 py-1.5 bg-slate-900 text-white font-mono font-black text-xs tabular-nums flex items-center justify-center min-w-[40px]">
+                            #{String(slot.lotNumber).padStart(2, '0')}
+                          </span>
+                          <div className="px-2 py-1 bg-white flex flex-col items-center justify-center min-w-[44px]">
+                            <span className="text-[7px] font-bold text-slate-400 font-mono tracking-wider leading-none">
+                              BIB
+                            </span>
+                            <span className="text-[11.5px] font-mono font-black text-slate-900 tabular-nums leading-tight">
+                              {slot.chestNumber}
+                            </span>
+                          </div>
                         </div>
 
-                        {/* Chest Bib Number Badge */}
-                        <div className="flex flex-col items-center justify-center px-1.5 sm:px-2 py-0.5 rounded-lg bg-white border border-slate-200/90 shadow-2xs shrink-0 min-w-[46px] sm:min-w-[54px]">
-                          <span className="text-[7px] sm:text-[8px] font-bold text-slate-400 font-mono tracking-wider leading-none">
-                            BIB
-                          </span>
-                          <span className="text-xs sm:text-sm font-mono font-black text-slate-900 leading-tight">
-                            {slot.chestNumber}
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* 2. Middle: Team Receptacle (Filled or Clean Empty Receptacle) */}
-                      <div className="flex-1 min-w-0">
-                      {assignedTeam ? (
-                        <div
-                          draggable={canManageLottery}
-                          onDragStart={(e) => onDragStartTeam(e, assignedTeam)}
-                          className={`flex items-center justify-between gap-3 min-w-0 ${
-                            canManageLottery ? 'cursor-grab active:cursor-grabbing' : ''
-                          }`}
-                        >
-                          <div className="flex items-center gap-2.5 min-w-0">
-                            {canManageLottery && (
-                              <GripVertical className="w-3.5 h-3.5 text-slate-300 hover:text-slate-600 shrink-0" />
-                            )}
-                            {/* School Logo */}
-                            <div className="w-8 h-8 rounded-lg bg-slate-50 border border-slate-200/80 p-0.5 flex items-center justify-center shrink-0 overflow-hidden">
-                              {logoSrc ? (
-                                <img
-                                  src={logoSrc}
-                                  alt={assignedTeam.schoolName}
-                                  className="w-full h-full object-contain"
-                                  onError={(e) => {
-                                    e.target.style.display = 'none';
-                                  }}
-                                />
-                              ) : (
-                                <span className="font-black text-[10px] font-mono text-slate-700 uppercase">
-                                  {initials}
-                                </span>
+                        {/* Middle: Filled Team or Clean Empty Lane */}
+                        <div className="flex-1 min-w-0">
+                          {assignedTeam ? (
+                            <div
+                              draggable={canManageLottery}
+                              onDragStart={(e) => {
+                                e.stopPropagation();
+                                setArmedTeamId(null);
+                                onDragStartTeam(e, assignedTeam);
+                              }}
+                              onClick={(e) => {
+                                if (!armedTeam) e.stopPropagation();
+                              }}
+                              className={`flex items-center gap-2.5 min-w-0 ${
+                                canManageLottery ? 'cursor-grab active:cursor-grabbing' : ''
+                              }`}
+                            >
+                              {canManageLottery && (
+                                <GripVertical className="w-3.5 h-3.5 text-slate-300 group-hover/slot:text-slate-500 shrink-0 hidden sm:block" />
                               )}
-                            </div>
-
-                            {/* School & Danton */}
-                            <div className="min-w-0 flex-1">
-                              <div className="flex items-center gap-1.5 flex-wrap">
-                                <h3 className="font-bold text-xs sm:text-sm text-slate-900 leading-snug break-normal line-clamp-1" title={assignedTeam.schoolName}>
-                                  {assignedTeam.schoolName}
-                                </h3>
-                                {isCeremonySlot && (
-                                  <span className="text-[8px] sm:text-[9px] font-bold text-amber-800 bg-amber-50 px-1.5 py-0.2 rounded border border-amber-200/80 shrink-0 whitespace-nowrap" title="Wajib Mengikuti Upacara Pembukaan">
-                                    ★ Upacara
+                              <div className="w-8 h-8 rounded-lg bg-white border border-slate-200/80 p-0.5 flex items-center justify-center shrink-0 overflow-hidden">
+                                {logoSrc ? (
+                                  <img
+                                    src={logoSrc}
+                                    alt={assignedTeam.schoolName}
+                                    className="w-full h-full object-contain"
+                                    onError={(e) => {
+                                      e.target.style.display = 'none';
+                                    }}
+                                  />
+                                ) : (
+                                  <span className="font-black text-[10px] font-mono text-slate-700 uppercase">
+                                    {initials}
                                   </span>
                                 )}
                               </div>
-                              <p className="text-[10px] sm:text-[11px] text-slate-500 flex items-center gap-1.5 mt-0.5 flex-wrap">
-                                <span className="font-medium text-slate-700 truncate max-w-[130px] sm:max-w-none">Danton: {assignedTeam.dantonName || '-'}</span>
-                                <span className="hidden sm:inline text-slate-300">•</span>
-                                <span className="font-mono text-[9px] sm:text-[10px] text-slate-400 shrink-0">{assignedTeam.regCode}</span>
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      ) : (
-                        <div
-                          onClick={() => {
-                            if (canManageLottery && unassignedTeams.length > 0) {
-                              setActiveTeamPickerSlot(slot);
-                            }
-                          }}
-                          className={`py-1.5 sm:py-2 px-2 sm:px-3 rounded-lg border border-dashed transition-all cursor-pointer flex items-center justify-between gap-1.5 ${
-                            isHovered
-                              ? 'border-slate-500 bg-slate-100 text-slate-900 font-bold'
-                              : 'border-slate-300/80 hover:border-slate-400 bg-white/60 hover:bg-white text-slate-500'
-                          }`}
-                          title={canManageLottery ? "Klik untuk memilih peleton atau seret peleton ke sini" : undefined}
-                        >
-                          <div className="flex items-center gap-1.5 text-xs truncate min-w-0">
-                            <ArrowDownToLine className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                            <span className="truncate text-[10px] sm:text-xs">
-                              {isHovered ? 'Lepaskan Peleton' : 'Slot Kosong'}
-                            </span>
-                          </div>
 
-                          {isCeremonySlot && (
-                            <span className="text-[8px] sm:text-[9px] font-bold text-amber-800 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200/70 shrink-0 whitespace-nowrap">
-                              ★ Upacara
-                            </span>
+                              <div className="min-w-0 flex-1">
+                                <div className="flex items-center gap-1.5 min-w-0">
+                                  <h3
+                                    className="font-extrabold text-xs sm:text-[13px] text-slate-900 leading-snug truncate"
+                                    title={assignedTeam.schoolName}
+                                  >
+                                    {assignedTeam.schoolName}
+                                  </h3>
+                                  {isCeremonySlot && (
+                                    <span
+                                      className="text-[9px] font-bold text-amber-800 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200/80 shrink-0 whitespace-nowrap"
+                                      title="Wajib Mengikuti Upacara Pembukaan"
+                                    >
+                                      ★ Upacara
+                                    </span>
+                                  )}
+                                </div>
+                                <p className="text-[10.5px] text-slate-500 truncate mt-0.5">
+                                  {assignedTeam.dantonName || '-'}
+                                  <span className="hidden sm:inline text-slate-300 mx-1.5">•</span>
+                                  <span className="hidden sm:inline font-mono text-[10px] text-slate-400">
+                                    {assignedTeam.regCode}
+                                  </span>
+                                </p>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="flex items-center justify-between gap-2 min-w-0">
+                              <div className="flex items-center gap-1.5 min-w-0">
+                                <ArrowDownToLine
+                                  className={`w-3.5 h-3.5 shrink-0 ${
+                                    isHovered || isQuickAssignable
+                                      ? 'text-amber-600'
+                                      : 'text-slate-400'
+                                  }`}
+                                />
+                                <span
+                                  className={`text-xs truncate ${
+                                    isHovered
+                                      ? 'font-bold text-slate-900'
+                                      : isQuickAssignable
+                                        ? 'font-bold text-amber-900'
+                                        : 'font-medium text-slate-400 group-hover/slot:text-slate-600'
+                                  }`}
+                                >
+                                  {isHovered
+                                    ? 'Lepaskan peleton di sini'
+                                    : isQuickAssignable
+                                      ? `Pasang ${armedTeam.schoolName}`
+                                      : 'Slot kosong'}
+                                </span>
+                              </div>
+
+                              {isCeremonySlot && (
+                                <span className="text-[9px] font-bold text-amber-800 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200/80 shrink-0 whitespace-nowrap">
+                                  ★ Upacara
+                                </span>
+                              )}
+                            </div>
                           )}
                         </div>
-                      )}
-                    </div>
-                  </div>
+                      </div>
 
-                  {/* Bottom Section on mobile, Right Side on sm+ */}
-                  <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0 pt-1.5 sm:pt-0 border-t sm:border-t-0 border-slate-100 pl-16 sm:pl-0 w-full sm:w-auto">
-                    {/* 3. Schedule Time (WIB) */}
-                    <div className="text-left sm:text-right shrink-0 whitespace-nowrap">
-                      <span className="text-[8px] sm:text-[9px] uppercase font-bold text-slate-400 block leading-none">
-                        Mulai Tampil
-                      </span>
-                      <span className="font-mono font-bold text-[11px] sm:text-xs text-slate-900 mt-0.5 block">
-                        {slot.startTampil}
-                      </span>
-                    </div>
+                      {/* Right: Time + Clean Action */}
+                      <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
+                        <span className="inline-flex items-center gap-1 font-mono text-[11px] font-bold tabular-nums text-slate-600 whitespace-nowrap">
+                          <Clock className="w-3 h-3 text-slate-400 hidden sm:inline shrink-0" />
+                          <span>{slot.startTampil}</span>
+                        </span>
 
-                    {/* 4. Action Button */}
-                    <div className="shrink-0 flex items-center justify-end">
-                      {assignedTeam ? (
-                        canManageLottery && (
+                        {assignedTeam ? (
+                          canManageLottery && (
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleUnpairTeam(assignedTeam.id);
+                              }}
+                              className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                              title="Lepas peleton dari slot ini"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          )
+                        ) : canManageLottery && unassignedTeams.length > 0 ? (
                           <button
                             type="button"
-                            onClick={() => handleUnpairTeam(assignedTeam.id)}
-                            className="px-2.5 py-1 rounded text-[11px] font-semibold text-rose-600 sm:text-slate-400 hover:text-rose-600 bg-rose-50 sm:bg-transparent hover:bg-rose-50 transition-colors cursor-pointer shrink-0"
-                            title="Lepas peleton dari slot ini"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (armedTeam) {
+                                handlePairTeamToLot(armedTeam.id, slot.lotNumber);
+                              } else {
+                                setActiveTeamPickerSlot(slot);
+                              }
+                            }}
+                            className={`px-2.5 py-1.5 rounded-lg text-[11px] font-bold transition-all cursor-pointer active:scale-95 whitespace-nowrap ${
+                              isQuickAssignable
+                                ? 'bg-slate-950 hover:bg-slate-800 text-white shadow-2xs'
+                                : 'bg-white hover:bg-slate-900 text-slate-700 hover:text-white border border-slate-200/90 hover:border-slate-900'
+                            }`}
                           >
-                            Lepas
+                            {isQuickAssignable ? 'Pasang' : '+ Pilih'}
                           </button>
-                        )
-                      ) : (
-                        canManageLottery && unassignedTeams.length > 0 ? (
-                          <button
-                            type="button"
-                            onClick={() => setActiveTeamPickerSlot(slot)}
-                            className="px-2.5 py-1 rounded-md text-[11px] font-bold bg-white hover:bg-slate-50 text-slate-700 border border-slate-200/90 shadow-2xs hover:border-slate-300 transition-all cursor-pointer active:scale-95 shrink-0 whitespace-nowrap"
-                            title="Pilih peleton untuk slot ini"
-                          >
-                            + Pasang
-                          </button>
-                        ) : (
-                          <span className="text-[11px] text-slate-300 font-mono">-</span>
-                        )
-                      )}
+                        ) : null}
+                      </div>
                     </div>
-                  </div>
-                  </div>
-                );
-              })}
+                  );
+                })
+              )}
             </div>
           </div>
 

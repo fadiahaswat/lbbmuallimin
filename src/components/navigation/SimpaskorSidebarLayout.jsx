@@ -925,14 +925,14 @@ export default function SimpaskorSidebarLayout({
       <div className={`flex-1 flex flex-col min-w-0 pb-24 lg:pb-8 transition-all duration-300 ${
         isCollapsed ? 'lg:pl-[76px]' : 'lg:pl-[280px]'
       }`}>
-        {/* Top Sticky Header Bar (Modern SaaS Style — Unified untuk Peserta & Panitia) */}
-        <header className="sticky top-0 z-20 flex h-16 sm:h-[68px] items-center justify-between border-b border-slate-200/70 bg-[#F8F9FA]/90 px-3 sm:px-6 lg:px-8 backdrop-blur-xl gap-3">
+        {/* Top Sticky Header Bar (Dark Obsidian — Menyatu dengan Sidebar) */}
+        <header className="sticky top-0 z-20 flex h-16 sm:h-[68px] items-center justify-between border-b border-white/[0.08] bg-[#0d1421]/95 px-3 sm:px-6 lg:px-8 backdrop-blur-xl gap-3 text-white">
           {/* Sisi Kiri: Mobile Menu + Logo (Mobile) / Breadcrumb Modul Aktif (Desktop) */}
           <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
             <button
               type="button"
               aria-label="Buka menu"
-              className="rounded-full border border-slate-200/90 bg-white p-2 text-slate-700 hover:bg-slate-50 shadow-2xs lg:hidden cursor-pointer shrink-0 active:scale-95 transition-all"
+              className="rounded-full border border-white/15 bg-white/10 p-2 text-white hover:bg-white/15 shadow-2xs lg:hidden cursor-pointer shrink-0 active:scale-95 transition-all"
               onClick={() => setIsMobileMenuOpen(true)}
             >
               <Menu className="w-4.5 h-4.5" />
@@ -965,13 +965,13 @@ export default function SimpaskorSidebarLayout({
                 onClick={() => {
                   if (setActiveView) setActiveView('landing');
                 }}
-                className="font-medium text-slate-400 hover:text-slate-700 transition-colors cursor-pointer shrink-0"
+                className="font-medium text-slate-400 hover:text-white transition-colors cursor-pointer shrink-0"
                 title="Kembali ke Website Utama"
               >
                 LBB Mu’allimin 2027
               </button>
-              <ChevronRight className="w-3.5 h-3.5 text-slate-300 shrink-0" />
-              <span className="font-semibold text-slate-900 truncate">
+              <ChevronRight className="w-3.5 h-3.5 text-slate-600 shrink-0" />
+              <span className="font-semibold text-white truncate">
                 {title || (isPeserta ? 'Portal Kontingen' : 'Dashboard Panitia')}
               </span>
             </div>
@@ -982,7 +982,7 @@ export default function SimpaskorSidebarLayout({
             <button
               type="button"
               onClick={() => setShowUserMenu(prev => !prev)}
-              className="flex items-center gap-2.5 rounded-full py-1 pl-1.5 pr-2.5 hover:bg-white hover:shadow-[0_2px_10px_rgba(15,23,42,0.05)] border border-transparent hover:border-slate-200/80 transition-all cursor-pointer group"
+              className="flex items-center gap-2.5 rounded-full py-1 pl-1.5 pr-2.5 hover:bg-white/10 border border-transparent hover:border-white/10 transition-all cursor-pointer group"
               aria-expanded={showUserMenu}
               aria-label="Menu Akun"
             >
@@ -993,16 +993,16 @@ export default function SimpaskorSidebarLayout({
                       src={schoolLogoFormatted}
                       alt={currentTeam?.schoolName || 'Logo Sekolah'}
                       referrerPolicy="no-referrer"
-                      className="h-8 w-8 rounded-full bg-white border border-slate-200/80 p-0.5 object-contain shrink-0"
+                      className="h-8 w-8 rounded-full bg-white border border-white/20 p-0.5 object-contain shrink-0"
                       onError={handleSchoolLogoError}
                     />
                   ) : (
-                    <div className="h-8 w-8 rounded-full bg-[#8B0000] text-white font-bold text-[11px] flex items-center justify-center shrink-0">
+                    <div className="h-8 w-8 rounded-full bg-[#8B0000] text-white font-bold text-[11px] flex items-center justify-center shrink-0 ring-1 ring-white/15">
                       {teamInitials}
                     </div>
                   )}
                   <div className="hidden sm:block text-left min-w-0 max-w-[180px] md:max-w-[220px]">
-                    <span className="text-xs font-semibold text-slate-800 leading-tight block truncate">
+                    <span className="text-xs font-semibold text-white leading-tight block truncate">
                       {currentTeam?.schoolName || displayName}
                     </span>
                     <span className="text-[11px] text-slate-400 block truncate">
@@ -1015,7 +1015,7 @@ export default function SimpaskorSidebarLayout({
                   <img
                     src={avatarUrl}
                     alt={displayName}
-                    className="h-8 w-8 rounded-full object-cover ring-1 ring-slate-200 shrink-0"
+                    className="h-8 w-8 rounded-full object-cover ring-1 ring-white/20 shrink-0"
                     onError={(e) => {
                       if (currentUser?.googleAvatar && e.target.src !== currentUser.googleAvatar) {
                         e.target.src = currentUser.googleAvatar;
@@ -1025,7 +1025,7 @@ export default function SimpaskorSidebarLayout({
                     }}
                   />
                   <div className="hidden sm:block text-left min-w-0 max-w-[180px] md:max-w-[220px]">
-                    <span className="text-xs font-semibold text-slate-800 leading-tight block truncate">
+                    <span className="text-xs font-semibold text-white leading-tight block truncate">
                       {displayName}
                     </span>
                     <span className="text-[11px] text-slate-400 block truncate">
@@ -1035,7 +1035,7 @@ export default function SimpaskorSidebarLayout({
                 </>
               )}
               <ChevronDown
-                className={`w-3.5 h-3.5 text-slate-400 group-hover:text-slate-600 transition-transform duration-200 shrink-0 ${
+                className={`w-3.5 h-3.5 text-slate-400 group-hover:text-white transition-transform duration-200 shrink-0 ${
                   showUserMenu ? 'rotate-180' : ''
                 }`}
               />

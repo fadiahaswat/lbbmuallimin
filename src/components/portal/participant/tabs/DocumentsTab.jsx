@@ -193,7 +193,7 @@ export default function DocumentsTab({
       </div>
 
       {/* Grid of Document Items */}
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-4 sm:gap-5 sm:grid-cols-2">
         {docList.map(item => {
           const rawUrl = item.file?.url;
           const isAttached = Boolean(rawUrl && rawUrl !== '#' && !rawUrl.startsWith('#'));
@@ -218,154 +218,177 @@ export default function DocumentsTab({
           return (
             <article
               key={item.id}
-              className={`group overflow-hidden rounded-[20px] border bg-white transition hover:-translate-y-0.5 hover:shadow-md flex flex-col justify-between ${
-                isAttached ? 'border-slate-200' : 'border-red-200 ring-2 ring-red-50'
+              className={`group overflow-hidden rounded-2xl border bg-white transition-all duration-200 hover:shadow-[0_12px_30px_rgba(15,23,42,0.08)] flex flex-col ${
+                isAttached
+                  ? 'border-slate-200/90 hover:border-slate-300'
+                  : 'border-red-200/90 hover:border-red-300'
               }`}
             >
-              {/* Header Box */}
-              <div className="flex items-center justify-between gap-3 border-b border-slate-100 bg-slate-50/70 px-4 py-2.5">
-                <h4 className="text-xs font-bold uppercase leading-tight text-slate-800 truncate" title={item.title}>
-                  {item.title}
-                </h4>
+              {/* Top Status Hairline */}
+              <div
+                className={`h-1 w-full ${
+                  isAttached ? 'bg-emerald-500' : 'bg-red-500'
+                }`}
+              />
+
+              {/* Full-Bleed Preview / Dropzone Stage */}
+              <div className="relative h-44 sm:h-48 w-full overflow-hidden border-b border-slate-100">
+                {/* Floating Index Badge */}
+                <span className="pointer-events-none absolute top-3 left-3 z-10 inline-flex items-center justify-center h-6 min-w-[28px] px-1.5 rounded-lg bg-white/90 backdrop-blur-sm border border-slate-200/80 font-mono text-[10.5px] font-black text-slate-700 shadow-2xs">
+                  {item.index}
+                </span>
+
+                {/* Floating Status Badge */}
+                <div className="pointer-events-none absolute top-3 right-3 z-10">
+                  {isAttached ? (
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-50/95 backdrop-blur-sm border border-emerald-200/90 text-[10px] font-extrabold text-emerald-700 shadow-2xs">
+                      <Check className="w-3 h-3 stroke-[2.75]" />
+                      <span>{isVerifiedOrDrawn ? 'Terverifikasi' : 'Terlampir'}</span>
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-red-50/95 backdrop-blur-sm border border-red-200/90 text-[10px] font-extrabold text-red-700 shadow-2xs">
+                      <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+                      <span>Wajib Diunggah</span>
+                    </span>
+                  )}
+                </div>
+
                 {isAttached ? (
-                  <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full shrink-0 flex items-center gap-1">
-                    <Check className="w-3 h-3" />
-                    <span>Terlampir</span>
-                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setPreviewDoc({ ...item, isPdf, isImageCandidate })}
+                    className="w-full h-full relative flex items-center justify-center bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] [background-size:14px_14px] bg-slate-50/80 p-5 pt-9 cursor-pointer group/preview text-left"
+                    title="Klik untuk melihat preview berkas"
+                  >
+                    {isImageCandidate && !imgErrors[item.id] ? (
+                      <img
+                        src={formatImageUrl(rawUrl)}
+                        alt={item.title}
+                        referrerPolicy="no-referrer"
+                        onError={(e) => {
+                          const fallback = getFallbackImageUrl(rawUrl);
+                          if (fallback && e.currentTarget.src !== fallback) {
+                            e.currentTarget.src = fallback;
+                          } else {
+                            setImgErrors(prev => ({ ...prev, [item.id]: true }));
+                          }
+                        }}
+                        className="max-h-full max-w-full object-contain drop-shadow-sm group-hover/preview:scale-[1.04] transition-transform duration-300"
+                      />
+                    ) : isPdf ? (
+                      <div className="flex flex-col items-center justify-center text-center">
+                        <div className="w-12 h-12 rounded-2xl bg-white text-red-600 flex items-center justify-center mb-2 border border-red-100 shadow-sm group-hover/preview:scale-105 transition-transform">
+                          <FileText className="w-6 h-6" />
+                        </div>
+                        <span className="text-[11px] font-bold text-red-700 bg-red-50 px-2.5 py-0.5 rounded-full border border-red-200/80">
+                          Dokumen PDF
+                        </span>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center justify-center text-center">
+                        <div className="w-12 h-12 rounded-2xl bg-white text-emerald-600 flex items-center justify-center mb-2 border border-emerald-100 shadow-sm group-hover/preview:scale-105 transition-transform">
+                          <Shield className="w-6 h-6" />
+                        </div>
+                        <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200/80">
+                          Berkas Terlampir
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Hover Preview Scrim */}
+                    <div className="absolute inset-0 bg-slate-950/35 backdrop-blur-[1px] opacity-0 group-hover/preview:opacity-100 transition-opacity flex items-center justify-center">
+                      <span className="px-3.5 py-1.5 rounded-full bg-slate-950/85 text-white text-[11px] font-bold flex items-center gap-1.5 shadow-lg border border-white/15">
+                        <Eye className="w-3.5 h-3.5" />
+                        <span>Perbesar Berkas</span>
+                      </span>
+                    </div>
+                  </button>
                 ) : (
-                  <span className="text-[10px] font-bold text-red-700 bg-red-50 border border-red-200 px-2 py-0.5 rounded-full shrink-0">
-                    Wajib Diunggah
-                  </span>
+                  <button
+                    type="button"
+                    onClick={() => triggerFileUpload(item.id)}
+                    className="w-full h-full flex flex-col items-center justify-center p-5 pt-9 text-center bg-gradient-to-b from-red-50/30 to-slate-50/60 hover:from-red-50/60 hover:to-red-50/30 transition-colors cursor-pointer group/drop"
+                  >
+                    <div className="w-11 h-11 rounded-2xl bg-white text-red-600 border border-red-200/80 flex items-center justify-center mb-2.5 shadow-xs group-hover/drop:scale-105 group-hover/drop:-translate-y-0.5 transition-all">
+                      <Upload className="w-5 h-5" />
+                    </div>
+                    <p className="text-xs font-extrabold text-slate-800">
+                      Belum ada berkas diunggah
+                    </p>
+                    <p className="text-[11px] text-slate-500 mt-0.5">
+                      Klik di sini untuk memilih file dari perangkat
+                    </p>
+                  </button>
                 )}
               </div>
 
-              {/* Preview Window & File Details */}
-              <div className="p-4 space-y-3 flex-1 flex flex-col justify-between">
-                {isAttached ? (
-                  <>
-                    {/* Visual Preview Container */}
-                    <div
-                      onClick={() => setPreviewDoc({ ...item, isPdf, isImageCandidate })}
-                      className="h-32 sm:h-36 w-full rounded-xl border border-slate-200/90 bg-slate-50 overflow-hidden relative flex items-center justify-center group/preview cursor-pointer shadow-2xs hover:border-slate-300 transition-all"
-                      title="Klik untuk melihat preview berkas"
-                    >
-                      {isImageCandidate && !imgErrors[item.id] ? (
-                        <div className="w-full h-full flex items-center justify-center p-2 bg-slate-50/60">
-                          <img
-                            src={formatImageUrl(rawUrl)}
-                            alt={item.title}
-                            referrerPolicy="no-referrer"
-                            onError={(e) => {
-                              const fallback = getFallbackImageUrl(rawUrl);
-                              if (fallback && e.currentTarget.src !== fallback) {
-                                e.currentTarget.src = fallback;
-                              } else {
-                                setImgErrors(prev => ({ ...prev, [item.id]: true }));
-                              }
-                            }}
-                            className="max-h-full max-w-full object-contain filter drop-shadow-sm group-hover/preview:scale-105 transition-transform duration-300"
-                          />
-                        </div>
-                      ) : isPdf ? (
-                        <div className="flex flex-col items-center justify-center text-center p-4">
-                          <div className="w-11 h-11 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center mb-1.5 border border-red-100 shadow-2xs group-hover/preview:scale-110 transition-transform">
-                            <FileText className="w-6 h-6" />
-                          </div>
-                          <span className="text-xs font-black text-slate-800 line-clamp-1 max-w-[200px]" title={fileName}>
-                            {fileName}
-                          </span>
-                          <span className="text-[9.5px] text-red-700 font-bold bg-red-50 px-2.5 py-0.5 rounded-full mt-1.5 border border-red-200">
-                            Dokumen PDF Resmi
-                          </span>
-                        </div>
-                      ) : (
-                        <div className="flex flex-col items-center justify-center text-center p-4">
-                          <div className="w-11 h-11 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-1.5 border border-emerald-100 shadow-2xs group-hover/preview:scale-110 transition-transform">
-                            <Shield className="w-6 h-6" />
-                          </div>
-                          <span className="text-xs font-black text-slate-800 line-clamp-1 max-w-[200px]" title={fileName}>
-                            {fileName}
-                          </span>
-                          <span className="text-[9.5px] text-emerald-700 font-bold bg-emerald-50 px-2.5 py-0.5 rounded-full mt-1.5 border border-emerald-200">
-                            Berkas Terlampir
-                          </span>
-                        </div>
-                      )}
-
-                      {/* Hover Overlay with Eye */}
-                      <div className="absolute inset-0 bg-slate-950/40 backdrop-blur-[1.5px] opacity-0 group-hover/preview:opacity-100 transition-opacity flex items-center justify-center gap-2 text-white">
-                        <span className="px-3 py-1.5 rounded-xl bg-white/20 backdrop-blur-md text-xs font-black flex items-center gap-1.5 shadow-md">
-                          <Eye className="w-3.5 h-3.5" />
-                          <span>Buka Preview</span>
+              {/* Card Body: Title, File Meta & Uniform Action Row */}
+              <div className="p-4 flex flex-col justify-between gap-3.5 flex-1 bg-white">
+                <div className="min-w-0">
+                  <h4 className="text-[13.5px] font-black tracking-tight text-slate-900 leading-snug">
+                    {item.title}
+                  </h4>
+                  {isAttached ? (
+                    <div className="mt-1 flex items-center gap-1.5 text-[11px] text-slate-500 min-w-0">
+                      <FileCheck2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                      <span className="truncate font-semibold text-slate-700" title={fileName}>
+                        {fileName}
+                      </span>
+                      {fileSize && (
+                        <span className="shrink-0 font-mono text-[10px] text-slate-400">
+                          • {fileSize}
                         </span>
-                      </div>
+                      )}
                     </div>
-
-                    {/* File Meta & Action Buttons */}
-                    <div className="flex items-center justify-between gap-3 pt-1">
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate text-xs font-black text-slate-900" title={fileName}>
-                          {fileName}
-                        </p>
-                        <p className="mt-0.5 text-[9px] text-slate-400 truncate">
-                          {fileSize ? `${fileSize} • ` : ''}{item.hint}
-                        </p>
-                      </div>
-
-                      <div className="flex items-center gap-1.5 shrink-0">
-                        <button
-                          type="button"
-                          onClick={() => setPreviewDoc({ ...item, isPdf, isImageCandidate })}
-                          className="inline-flex items-center gap-1 rounded-xl border border-slate-200 bg-white px-2.5 sm:px-3 py-1.5 text-[10px] font-black text-slate-700 hover:border-slate-300 hover:bg-slate-50 transition cursor-pointer active:scale-95 shadow-2xs"
-                          title="Buka dan periksa berkas ini"
-                        >
-                          <Eye className="w-3.5 h-3.5 text-slate-500" />
-                          <span>Lihat</span>
-                        </button>
-
-                        {!isVerifiedOrDrawn ? (
-                          <button
-                            type="button"
-                            onClick={() => triggerFileUpload(item.id)}
-                            className="inline-flex items-center gap-1 rounded-xl border border-slate-200 bg-slate-50 px-2.5 sm:px-3 py-1.5 text-[10px] font-black text-slate-700 hover:border-slate-300 hover:bg-slate-100 transition cursor-pointer active:scale-95 shadow-2xs"
-                            title="Ganti berkas ini dengan file baru"
-                          >
-                            <Upload className="w-3.5 h-3.5 text-slate-500" />
-                            <span>Ganti</span>
-                          </button>
-                        ) : (
-                          <span className="inline-flex items-center gap-1 rounded-xl border border-emerald-200 bg-emerald-50 px-2.5 py-1.5 text-[9.5px] font-black text-emerald-700">
-                            <Check className="w-3 h-3 stroke-[3]" />
-                            <span>Terkunci</span>
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </>
-                ) : (
-                  /* Empty / Upload State */
-                  <div
-                    onClick={() => triggerFileUpload(item.id)}
-                    className="h-32 sm:h-36 w-full rounded-xl border-2 border-dashed border-red-200 bg-red-50/20 hover:bg-red-50/40 hover:border-red-400 transition-all flex flex-col items-center justify-center p-4 text-center cursor-pointer group/drop"
-                  >
-                    <div className="w-10 h-10 rounded-2xl bg-white text-red-600 border border-red-100 flex items-center justify-center mb-1.5 shadow-2xs group-hover/drop:scale-110 group-hover/drop:-translate-y-0.5 transition-all">
-                      <Upload className="w-5 h-5" />
-                    </div>
-                    <p className="text-xs font-black text-slate-800">
-                      Belum Ada Berkas
-                    </p>
-                    <p className="text-[9.5px] text-slate-400 mt-0.5 max-w-[200px] leading-tight">
+                  ) : (
+                    <p className="mt-1 text-[11px] text-slate-500 leading-relaxed">
                       {item.hint}
                     </p>
+                  )}
+                </div>
+
+                {/* Uniform Footer Actions */}
+                <div className="flex items-center gap-2 pt-2.5 border-t border-slate-100">
+                  {isAttached ? (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => setPreviewDoc({ ...item, isPdf, isImageCandidate })}
+                        className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-700 hover:border-slate-300 hover:bg-slate-50 hover:text-slate-950 transition cursor-pointer active:scale-[0.98]"
+                        title="Buka dan periksa berkas ini"
+                      >
+                        <Eye className="w-3.5 h-3.5 text-slate-500" />
+                        <span>Lihat</span>
+                      </button>
+
+                      {!isVerifiedOrDrawn ? (
+                        <button
+                          type="button"
+                          onClick={() => triggerFileUpload(item.id)}
+                          className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-bold text-slate-700 hover:border-slate-300 hover:bg-slate-100 hover:text-slate-950 transition cursor-pointer active:scale-[0.98]"
+                          title="Ganti berkas ini dengan file baru"
+                        >
+                          <Upload className="w-3.5 h-3.5 text-slate-500" />
+                          <span>Ganti</span>
+                        </button>
+                      ) : (
+                        <span className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl border border-emerald-200/80 bg-emerald-50 px-3 py-2 text-xs font-bold text-emerald-700">
+                          <Check className="w-3.5 h-3.5 stroke-[2.75]" />
+                          <span>Terkunci</span>
+                        </span>
+                      )}
+                    </>
+                  ) : (
                     <button
                       type="button"
-                      className="mt-2 inline-flex items-center gap-1.5 rounded-xl bg-red-600 px-3 py-1 text-[9.5px] font-black text-white shadow-xs group-hover/drop:bg-red-700 transition cursor-pointer"
+                      onClick={() => triggerFileUpload(item.id)}
+                      className="w-full inline-flex items-center justify-center gap-1.5 rounded-xl bg-red-600 hover:bg-red-700 px-3.5 py-2 text-xs font-bold text-white shadow-xs transition cursor-pointer active:scale-[0.98]"
                     >
-                      <Upload className="w-3 h-3" />
+                      <Upload className="w-3.5 h-3.5" />
                       <span>{item.btnLabel}</span>
                     </button>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             </article>
           );

@@ -513,9 +513,8 @@ export default function JuryScoringApp() {
     appToast(`Kunci nilai ${selectedTeam.schoolName} dibuka kembali untuk pengeditan.`, { variant: 'info' });
   }
 
-  const isTeamCheckedIn = (teamId) => {
+  const isTeamPassedDP1 = (teamId) => {
     const st = staging?.[teamId];
-    if (scores?.[teamId]) return true;
     if (!st) return false;
     return Boolean(
       st.dp1Passed ||
@@ -530,7 +529,7 @@ export default function JuryScoringApp() {
 
   const isEligibleForScoring = (t) => {
     if (isLocalhost) return t.status !== 'rejected';
-    return (t.status === 'verified' || t.status === 'drawn') && isTeamCheckedIn(t.id);
+    return t.status === 'verified' || t.status === 'drawn' || Boolean(scores?.[t.id]);
   };
 
   const sortByChestAndLot = (a, b) => {
@@ -584,17 +583,28 @@ export default function JuryScoringApp() {
         );
       })
       .sort((a, b) => {
-        const aScored = Boolean(scores[a.id]) ? 1 : 0;
-        const bScored = Boolean(scores[b.id]) ? 1 : 0;
-        if (aScored !== bScored) return aScored - bScored;
+        const getPriority = (team) => {
+          if (scores[team.id]) return 2; // Paling akhir: sudah dinilai
+          if (isTeamPassedDP1(team.id)) return 0; // Paling atas: lolos inspeksi DP 1 & belum dinilai
+          return 1; // Tengah: belum lolos inspeksi DP 1 & belum dinilai
+        };
+        const aPrio = getPriority(a);
+        const bPrio = getPriority(b);
+        if (aPrio !== bPrio) return aPrio - bPrio;
         return sortByChestAndLot(a, b);
       });
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [jenjangEligibleTeams, scores, scoreStatusFilter, sidebarSearch]);
+  }, [jenjangEligibleTeams, scores, staging, scoreStatusFilter, sidebarSearch]);
 
-  const unscoredTeamsList = useMemo(
-    () => verifiedTeams.filter(t => !scores[t.id]),
-    [verifiedTeams, scores]
+  const unscoredPassedDP1List = useMemo(
+    () => verifiedTeams.filter(t => !scores[t.id] && isTeamPassedDP1(t.id)),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [verifiedTeams, scores, staging]
+  );
+  const unscoredNotPassedDP1List = useMemo(
+    () => verifiedTeams.filter(t => !scores[t.id] && !isTeamPassedDP1(t.id)),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [verifiedTeams, scores, staging]
   );
   const scoredTeamsList = useMemo(
     () => verifiedTeams.filter(t => Boolean(scores[t.id])),
@@ -632,7 +642,7 @@ export default function JuryScoringApp() {
   const j3FilledCount = useMemo(() => countFilledMovements(j3PbbRubric), [parsedMaterialsForProgress, j3PbbRubric]);
 
   const handleCycleScoringTeam = (delta) => {
-    const pool = teams.filter(isEligibleForScoring);
+    const pool = verifiedTeams.length > 1 ? verifiedTeams : teams.filter(isEligibleForScoring);
     if (pool.length <= 1 || !selectedTeam) return;
     const idx = pool.findIndex(t => t.id === selectedTeam.id);
     const nextIdx = idx < 0 ? 0 : (idx + delta + pool.length) % pool.length;
@@ -815,7 +825,7 @@ export default function JuryScoringApp() {
                 </div>
               </div>
 
-              {/* Grid Kartu Peleton (Urut No. Dada · Yang Sudah Dinilai Otomatis di Bawah) */}
+              {/* Grid Kartu Peleton (Urutan: Lolos Inspeksi DP 1 -> Belum DP 1 -> Sudah Dinilai) */}
               {verifiedTeams.length === 0 ? (
                 <div className="py-14 text-center space-y-2.5 bg-slate-50/70 rounded-2xl border border-dashed border-slate-200">
                   <Users className="w-9 h-9 text-slate-400 mx-auto" />
@@ -823,7 +833,7 @@ export default function JuryScoringApp() {
                     Tidak ada peleton yang cocok dengan filter / pencarian.
                   </p>
                   <p className="text-xs text-slate-500 max-w-md mx-auto">
-                    Peleton akan otomatis masuk ke daftar siap dinilai setelah lolos inspeksi personel di Pos DP 1.
+                    Peleton yang telah lolos inspeksi personel di Pos DP 1 akan tampil paling atas di daftar siap dinilai.
                   </p>
                 </div>
               ) : (() => {
@@ -832,6 +842,7 @@ export default function JuryScoringApp() {
                   const isFinal = teamScore?.isLocked || teamScore?.status === 'finalized';
                   const isDraft = teamScore?.status === 'draft';
                   const isVerified = teamScore?.status === 'verified';
+                  const passedDP1 = isTeamPassedDP1(team.id);
                   const isSD = team.jenjang === 'SD';
                   const chestNum = team.chestNumber || getChestNumberByLot(team.jenjang, team.lotNumber);
                   const totalPts = Number(teamScore?.finalScore || 0);
@@ -854,6 +865,8 @@ export default function JuryScoringApp() {
                           ? 'border-blue-200/90 hover:border-blue-400'
                           : isDraft
                           ? 'border-amber-200/90 hover:border-amber-400'
+                          : passedDP1
+                          ? 'border-teal-200/90 bg-teal-50/15 hover:border-teal-400'
                           : isSD
                           ? 'border-slate-200 hover:border-red-400 hover:bg-red-50/15'
                           : 'border-slate-200 hover:border-blue-400 hover:bg-blue-50/15'
@@ -909,10 +922,15 @@ export default function JuryScoringApp() {
                                 <FileEdit className="w-2.5 h-2.5" />
                                 <span>Draft</span>
                               </span>
+                            ) : passedDP1 ? (
+                              <span className="inline-flex items-center gap-1 text-[9.5px] font-black uppercase text-teal-800 bg-teal-50 px-2 py-0.5 rounded-full border border-teal-200 shrink-0">
+                                <ShieldCheck className="w-2.5 h-2.5 text-teal-600" />
+                                <span>Lolos DP 1</span>
+                              </span>
                             ) : (
                               <span className="inline-flex items-center gap-1 text-[9.5px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full border border-slate-200 shrink-0">
                                 <Clock className="w-2.5 h-2.5 text-slate-400" />
-                                <span>Belum</span>
+                                <span>Belum DP 1</span>
                               </span>
                             )}
                           </div>
@@ -991,20 +1009,55 @@ export default function JuryScoringApp() {
                   );
                 };
 
+                const hasMultipleGroups = [
+                  unscoredPassedDP1List.length > 0,
+                  unscoredNotPassedDP1List.length > 0,
+                  scoredTeamsList.length > 0
+                ].filter(Boolean).length > 1;
+
                 return (
                   <div className="space-y-5">
-                    {/* Bagian 1: Antrean Belum Dinilai (Prioritas di Atas) */}
-                    {unscoredTeamsList.length > 0 && (
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
-                        {unscoredTeamsList.map(renderTeamCard)}
+                    {/* Bagian 1 (Paling Atas): Lolos Inspeksi DP 1 & Belum Dinilai */}
+                    {unscoredPassedDP1List.length > 0 && (
+                      <div className="space-y-3">
+                        <div className="flex items-center gap-3">
+                          <div className="h-px flex-1 bg-teal-200/80" />
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-teal-50 border border-teal-200 text-teal-800 text-[11px] font-bold">
+                            <ShieldCheck className="w-3.5 h-3.5 text-teal-600" />
+                            <span>Lolos Inspeksi DP 1 · Siap Dinilai ({unscoredPassedDP1List.length})</span>
+                          </span>
+                          <div className="h-px flex-1 bg-teal-200/80" />
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
+                          {unscoredPassedDP1List.map(renderTeamCard)}
+                        </div>
                       </div>
                     )}
 
-                    {/* Bagian 2: Sudah Dinilai (Otomatis Pindah ke Bawah dengan Pemisah) */}
+                    {/* Bagian 2 (Tengah): Belum Lolos Inspeksi DP 1 */}
+                    {unscoredNotPassedDP1List.length > 0 && (
+                      <div className="space-y-3">
+                        {hasMultipleGroups && (
+                          <div className="flex items-center gap-3 pt-1">
+                            <div className="h-px flex-1 bg-slate-200" />
+                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-600 text-[11px] font-bold">
+                              <Clock className="w-3.5 h-3.5 text-slate-400" />
+                              <span>Belum Lolos Inspeksi DP 1 ({unscoredNotPassedDP1List.length})</span>
+                            </span>
+                            <div className="h-px flex-1 bg-slate-200" />
+                          </div>
+                        )}
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
+                          {unscoredNotPassedDP1List.map(renderTeamCard)}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Bagian 3 (Paling Akhir): Sudah Dinilai */}
                     {scoredTeamsList.length > 0 && (
                       <div className="space-y-3">
-                        {unscoredTeamsList.length > 0 && (
-                          <div className="flex items-center gap-3 pt-2">
+                        {hasMultipleGroups && (
+                          <div className="flex items-center gap-3 pt-1">
                             <div className="h-px flex-1 bg-slate-200" />
                             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-[11px] font-bold">
                               <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
