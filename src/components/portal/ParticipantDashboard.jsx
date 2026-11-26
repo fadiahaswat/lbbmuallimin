@@ -13,6 +13,7 @@ import {
   LogOut
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
+import { evaluateParticipantScoreRelease } from '../../context/scoringActions.js';
 import { EVENT } from '../../config.js';
 import { formatImageUrl } from '../../services/sheetService.js';
 import SimpaskorSidebarLayout from '../navigation/SimpaskorSidebarLayout.jsx';
@@ -43,6 +44,8 @@ export default function ParticipantDashboard() {
     updateTeamVehicleSurvey,
     scores,
     staging,
+    participantScoreMeta,
+    pullFromGoogleSheet,
     setActiveView,
     openModal,
     logoutTeam,
@@ -164,6 +167,59 @@ export default function ParticipantDashboard() {
     setLogoLoadFailed(false);
   }, [rawLogoUrl]);
 
+  const [nowMs, setNowMs] = useState(() => Date.now());
+  const autoPulledReleaseRef = useRef(false);
+
+  const rawTeamScore = currentTeam?.id
+    ? (scores[currentTeam.id] || (currentTeam.id === 'team-sd-01' ? scores['team-sd-1'] : null))
+    : null;
+  const currentStagingRecord = currentTeam?.id ? (staging?.[currentTeam.id] || null) : null;
+  const isStaffViewer = ['admin', 'superadmin', 'juri', 'penginput', 'verifikator', 'finalisator'].includes(currentUser?.role);
+
+  const scoreReleaseInfo = (() => {
+    const localEval = evaluateParticipantScoreRelease(rawTeamScore, currentStagingRecord, settings, nowMs);
+    if (rawTeamScore || !participantScoreMeta) return localEval;
+    const metaReleaseMs = participantScoreMeta.releaseAtIso ? new Date(participantScoreMeta.releaseAtIso).getTime() : NaN;
+    const hasMetaRelease = Number.isFinite(metaReleaseMs) && metaReleaseMs > 0;
+    const liveRemainingMs = hasMetaRelease ? Math.max(0, metaReleaseMs - nowMs) : 0;
+    const isWindowElapsed = hasMetaRelease && liveRemainingMs === 0;
+    return {
+      ...localEval,
+      ...participantScoreMeta,
+      remainingMs: liveRemainingMs,
+      reason: (participantScoreMeta.reason === 'waiting_release_window' && isWindowElapsed)
+        ? 'rolling_release_ready'
+        : participantScoreMeta.reason,
+    };
+  })();
+
+  const canViewTeamScore = Boolean(isStaffViewer || scoreReleaseInfo.isReleased);
+  const canShowRank = Boolean(isStaffViewer || scoreReleaseInfo.canShowRank);
+
+  // Hitung mundur live saat peserta membuka tab Nilai dan sedang menunggu jeda 1 jam pascatampil
+  useEffect(() => {
+    if (activeTab !== 'scores' || settings?.announcementPublished || isStaffViewer) return;
+    if (scoreReleaseInfo.isReleased) return;
+    const id = setInterval(() => {
+      setNowMs(Date.now());
+    }, 1000);
+    return () => clearInterval(id);
+  }, [activeTab, settings?.announcementPublished, isStaffViewer, scoreReleaseInfo.isReleased]);
+
+  // Tarik ulang skor dari server otomatis tepat saat jeda 1 jam pascatampil berakhir
+  useEffect(() => {
+    if (
+      !isStaffViewer &&
+      !rawTeamScore &&
+      scoreReleaseInfo.reason === 'rolling_release_ready' &&
+      !autoPulledReleaseRef.current &&
+      typeof pullFromGoogleSheet === 'function'
+    ) {
+      autoPulledReleaseRef.current = true;
+      pullFromGoogleSheet().catch(() => {});
+    }
+  }, [isStaffViewer, rawTeamScore, scoreReleaseInfo.reason, pullFromGoogleSheet]);
+
   // Autosave roster draft to localStorage whenever rosterDraft changes during editing
   useEffect(() => {
     if (!isEditingRoster || !rosterDraft || !currentTeam?.id) return;
@@ -219,14 +275,17 @@ export default function ParticipantDashboard() {
     );
   }
 
-  const rawTeamScore = currentTeam?.id
-    ? (scores[currentTeam.id] || (currentTeam.id === 'team-sd-01' ? scores['team-sd-1'] : null))
-    : null;
-  const isStaffViewer = ['admin', 'superadmin', 'juri', 'penginput', 'verifikator', 'finalisator'].includes(currentUser?.role);
-  const canViewTeamScore = Boolean(settings?.announcementPublished || isStaffViewer);
-
   const teamScore = (() => {
     if (!rawTeamScore || !canViewTeamScore) return null;
+    if (!canShowRank) {
+      return {
+        ...rawTeamScore,
+        rank: null,
+        dantonRank: null,
+        awardTitle: '',
+        stagingDurationSeconds: staging?.[currentTeam.id]?.durationSeconds ?? null,
+      };
+    }
     const jKey = currentTeam.jenjang || 'SMP';
     const jenjangScored = (teams || [])
       .filter(t => t.jenjang === jKey && scores[t.id])
@@ -990,7 +1049,12 @@ export default function ParticipantDashboard() {
 
         {/* TAB 5: SCORES */}
         {activeTab === 'scores' && (
-          <ScoresTab teamScore={teamScore} currentTeam={currentTeam} />
+          <ScoresTab
+            teamScore={teamScore}
+            currentTeam={currentTeam}
+            scoreReleaseInfo={scoreReleaseInfo}
+            canShowRank={canShowRank}
+          />
         )}
 
         {/* TAB 6: MATERI & TEMA LOMBA */}

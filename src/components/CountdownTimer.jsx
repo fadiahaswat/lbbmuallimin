@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { EVENT, COMPETITION, PAYMENT } from '../config.js';
 import { useCompetition } from '../context/CompetitionContext.jsx';
+import { isTestingTeam } from '../context/competitionHelpers.js';
 
 function pad(num) {
   return String(num).padStart(2, '0');
@@ -22,8 +23,8 @@ export default function CountdownTimer() {
   const totalTargetSD = settings?.quotaSD || COMPETITION.SD.TARGET_PLATOONS || 18;
   const totalTargetSMP = settings?.quotaSMP || COMPETITION.SMP.TARGET_PLATOONS || 18;
   const totalQuota = totalTargetSD + totalTargetSMP;
-  const registeredSD = (teams || []).filter(t => t.jenjang === 'SD' && t.status !== 'rejected').length;
-  const registeredSMP = (teams || []).filter(t => t.jenjang === 'SMP' && t.status !== 'rejected').length;
+  const registeredSD = (teams || []).filter(t => t.jenjang === 'SD' && t.status !== 'rejected' && !isTestingTeam(t)).length;
+  const registeredSMP = (teams || []).filter(t => t.jenjang === 'SMP' && t.status !== 'rejected' && !isTestingTeam(t)).length;
   const isQuotaFull = registeredSD >= totalTargetSD && registeredSMP >= totalTargetSMP;
 
   const eventDates = settings?.eventDates || {};

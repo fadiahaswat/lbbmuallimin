@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import {
   ChevronLeft,
   ChevronRight,
@@ -13,12 +13,16 @@ import {
   Layers,
   LayoutList,
   LayoutGrid,
-  DoorOpen
+  DoorOpen,
+  FileDown,
+  ChevronDown,
+  Loader2
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
 import { getChestNumberByLot } from '../../context/competitionHelpers.js';
 import { formatImageUrl } from '../../services/sheetService.js';
-import { appToast } from '../../utils/appDialog.js';
+import { appToast, appAlert } from '../../utils/appDialog.js';
+import { exportDP1InspectionPDF } from '../../utils/exportDP1InspectionPDF.js';
 import SimpaskorSidebarLayout from '../navigation/SimpaskorSidebarLayout.jsx';
 import PersonnelSwipeDeck from './components/PersonnelSwipeDeck.jsx';
 
@@ -172,8 +176,61 @@ export default function DaerahPersiapanView() {
   const [searchQuery, setSearchQuery] = useState('');
   const [stageFilter, setStageFilter] = useState('ALL'); // 'ALL' | 'WAITING' | 'READY'
 
+  // Ekspor PDF Lembar Inspeksi DP 1
+  const [isExportMenuOpen, setIsExportMenuOpen] = useState(false);
+  const [isExportingPdf, setIsExportingPdf] = useState(false);
+  const [exportProgressText, setExportProgressText] = useState('');
+  const exportMenuRef = useRef(null);
+
+  useEffect(() => {
+    if (!isExportMenuOpen) return;
+    const handleOutside = (e) => {
+      if (exportMenuRef.current && !exportMenuRef.current.contains(e.target)) {
+        setIsExportMenuOpen(false);
+      }
+    };
+    const handleEsc = (e) => {
+      if (e.key === 'Escape') setIsExportMenuOpen(false);
+    };
+    document.addEventListener('mousedown', handleOutside);
+    document.addEventListener('keydown', handleEsc);
+    return () => {
+      document.removeEventListener('mousedown', handleOutside);
+      document.removeEventListener('keydown', handleEsc);
+    };
+  }, [isExportMenuOpen]);
+
   const showNotice = (msg) => {
     appToast(msg, { variant: 'success' });
+  };
+
+  const handleExportDP1Pdf = async (targetTeamsList, fileLabel = '') => {
+    if (isExportingPdf) return;
+    setIsExportMenuOpen(false);
+    if (!targetTeamsList || targetTeamsList.length === 0) {
+      appAlert('Belum ada peleton yang tersedia untuk diekspor.', { title: 'Data Kosong', variant: 'warning' });
+      return;
+    }
+    setIsExportingPdf(true);
+    setExportProgressText('Menyiapkan dokumen...');
+    try {
+      const result = await exportDP1InspectionPDF({
+        teams: targetTeamsList,
+        staging,
+        fileLabel,
+        onProgress: (msg) => setExportProgressText(msg),
+      });
+      showNotice(`Lembar Inspeksi DP 1 berhasil diunduh (${result.totalPages} halaman A4).`);
+    } catch (err) {
+      console.error('Gagal ekspor PDF DP 1:', err);
+      appAlert(`Gagal membuat file PDF: ${err?.message || 'Terjadi kesalahan teknis.'}`, {
+        title: 'Ekspor PDF Gagal',
+        variant: 'danger',
+      });
+    } finally {
+      setIsExportingPdf(false);
+      setExportProgressText('');
+    }
   };
 
   const posTeams = activePosJenjang === 'SD' ? sdCheckedInTeams : smpCheckedInTeams;
@@ -309,9 +366,9 @@ export default function DaerahPersiapanView() {
         {/* SCREEN 1: ANTREAN PELETON POS DP 1 (CLEAN & ERGONOMIC)         */}
         {/* ============================================================== */}
         {showPickerScreen ? (
-          <section className="rounded-2xl border border-slate-200/90 bg-white shadow-[0_8px_30px_rgba(15,23,42,0.04)] overflow-hidden">
+          <section className="rounded-2xl border border-slate-200/90 bg-white shadow-[0_8px_30px_rgba(15,23,42,0.04)] overflow-visible">
             {/* Dark Obsidian Inspection Cockpit Header */}
-            <div className="bg-slate-950 text-white px-4 py-4 sm:px-6 sm:py-5 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div className="bg-slate-950 text-white px-4 py-4 sm:px-6 sm:py-5 rounded-t-2xl flex flex-col lg:flex-row lg:items-center justify-between gap-4">
               <div className="flex items-start sm:items-center gap-3.5 min-w-0">
                 <div className="w-11 h-11 rounded-2xl bg-white/10 border border-white/10 text-amber-400 flex items-center justify-center shrink-0">
                   <Clock className="w-5 h-5" />
@@ -336,6 +393,85 @@ export default function DaerahPersiapanView() {
                   <span className="text-[10px] uppercase font-bold text-emerald-300">Siap DP 2</span>
                   <span className="text-xs font-black font-mono text-white">{readyCount}/{posTeams.length}</span>
                 </div>
+
+                {/* Dropdown Ekspor PDF Lembar Inspeksi DP 1 (Massal / Per Jenjang) */}
+                {checkedInTeams.length > 0 && (
+                  <div className="relative" ref={exportMenuRef}>
+                    <button
+                      type="button"
+                      disabled={isExportingPdf}
+                      onClick={() => setIsExportMenuOpen((prev) => !prev)}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
+                        isExportingPdf
+                          ? 'bg-slate-800 text-slate-300 border-slate-700 cursor-wait'
+                          : 'bg-white/10 hover:bg-white/15 text-white border-white/20'
+                      }`}
+                      title="Ekspor PDF Lembar Inspeksi DP 1 lengkap pasfoto personel"
+                    >
+                      {isExportingPdf ? (
+                        <>
+                          <Loader2 className="w-3.5 h-3.5 animate-spin text-amber-400" />
+                          <span>{exportProgressText || 'Memproses PDF...'}</span>
+                        </>
+                      ) : (
+                        <>
+                          <FileDown className="w-3.5 h-3.5 text-amber-400" />
+                          <span>Ekspor PDF</span>
+                          <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${isExportMenuOpen ? 'rotate-180' : ''}`} />
+                        </>
+                      )}
+                    </button>
+
+                    {isExportMenuOpen && !isExportingPdf && (
+                      <div className="absolute right-0 mt-2 w-72 rounded-2xl bg-white text-slate-900 border border-slate-200/95 shadow-[0_16px_40px_rgba(15,23,42,0.2)] p-1.5 z-50 animate-in fade-in slide-in-from-top-1 duration-150">
+                        <div className="px-2.5 py-1.5 border-b border-slate-100 mb-1">
+                          <p className="text-[10px] font-black uppercase tracking-wider text-slate-400">
+                            Ekspor Lembar Inspeksi DP 1 (A4)
+                          </p>
+                        </div>
+
+                        {posTeams.length > 0 && (
+                          <button
+                            type="button"
+                            onClick={() => handleExportDP1Pdf(posTeams, isSDPos ? 'Pos_SD_MI' : 'Pos_SMP_MTs')}
+                            className="w-full text-left px-2.5 py-2 rounded-xl hover:bg-slate-50 transition-colors flex items-start gap-2.5 cursor-pointer"
+                          >
+                            <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 mt-0.5 border ${isSDPos ? 'bg-rose-50 text-rose-700 border-rose-200/80' : 'bg-blue-50 text-blue-700 border-blue-200/80'}`}>
+                              <FileDown className="w-3.5 h-3.5" />
+                            </div>
+                            <div className="min-w-0">
+                              <div className="text-xs font-bold text-slate-900">
+                                Semua {isSDPos ? 'SD / MI' : 'SMP / MTs'} ({posTeams.length} Tim)
+                              </div>
+                              <div className="text-[10.5px] text-slate-500 leading-snug mt-0.5">
+                                1 halaman A4 per peleton lengkap pasfoto 3×4.
+                              </div>
+                            </div>
+                          </button>
+                        )}
+
+                        <button
+                          type="button"
+                          onClick={() => handleExportDP1Pdf(checkedInTeams, 'Semua_SD_dan_SMP')}
+                          className="w-full text-left px-2.5 py-2 rounded-xl hover:bg-slate-50 transition-colors flex items-start gap-2.5 cursor-pointer"
+                        >
+                          <div className="w-7 h-7 rounded-lg bg-amber-50 text-amber-700 border border-amber-200/80 flex items-center justify-center shrink-0 mt-0.5">
+                            <FileDown className="w-3.5 h-3.5" />
+                          </div>
+                          <div className="min-w-0">
+                            <div className="text-xs font-bold text-slate-900">
+                              Semua SD &amp; SMP ({checkedInTeams.length} Tim)
+                            </div>
+                            <div className="text-[10.5px] text-slate-500 leading-snug mt-0.5">
+                              Gabungan seluruh lembar inspeksi DP 1 dalam 1 PDF.
+                            </div>
+                          </div>
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 {activeTeam && (
                   <button
                     type="button"
@@ -750,6 +886,31 @@ export default function DaerahPersiapanView() {
                     <span>Grid</span>
                   </button>
                 </div>
+
+                {/* Tombol Ekspor PDF Lembar Inspeksi DP 1 untuk Peleton Aktif */}
+                <button
+                  type="button"
+                  disabled={isExportingPdf}
+                  onClick={() => handleExportDP1Pdf([activeTeam], activeTeam.schoolName)}
+                  className={`px-3 py-1.5 rounded-xl text-[11px] font-bold border transition-all inline-flex items-center gap-1.5 cursor-pointer active:scale-95 whitespace-nowrap ${
+                    isExportingPdf
+                      ? 'bg-slate-800 text-slate-300 border-slate-700 cursor-wait'
+                      : 'bg-white/10 hover:bg-white/15 text-white border-white/20'
+                  }`}
+                  title="Ekspor PDF Lembar Inspeksi DP 1 lengkap pasfoto personel peleton ini"
+                >
+                  {isExportingPdf ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 animate-spin text-amber-400" />
+                      <span>{exportProgressText || 'Memproses...'}</span>
+                    </>
+                  ) : (
+                    <>
+                      <FileDown className="w-3.5 h-3.5 text-amber-400" />
+                      <span>Ekspor PDF</span>
+                    </>
+                  )}
+                </button>
 
                 {/* Compact DP 2 Status Pill */}
                 {isMinPersonnelMet ? (

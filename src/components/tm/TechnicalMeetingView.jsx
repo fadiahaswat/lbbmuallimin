@@ -1,5 +1,5 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { appConfirm, appToast } from '../../utils/appDialog.js';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
+import { appConfirm, appToast, appAlert } from '../../utils/appDialog.js';
 import {
   CalendarCheck,
   Trophy,
@@ -8,6 +8,9 @@ import {
   Clock,
   Printer,
   FileSpreadsheet,
+  FileDown,
+  ChevronDown,
+  Loader2,
   Search,
   MapPin,
   GripVertical,
@@ -32,6 +35,7 @@ import { EVENT, VENUE_INDUK } from '../../config.js';
 import { LOTTERY_CHEST_MAP, getChestNumberByLot, checkTeamVerificationEligibility } from '../../context/competitionHelpers.js';
 import { HARI_H_SCHEDULE } from '../../data/scheduleMatrices.js';
 import { formatImageUrl } from '../../services/sheetService.js';
+import { exportLotteryPDF } from '../../utils/exportLotteryPDF.js';
 import titleLogoImg from '../../assets/title-logo.png';
 import SimpaskorSidebarLayout from '../navigation/SimpaskorSidebarLayout.jsx';
 
@@ -40,6 +44,7 @@ export default function TechnicalMeetingView() {
     teams,
     settings,
     assignLotNumber,
+    randomizeAllLotNumbers,
     randomizeJenjangLotNumbers,
     clearJenjangLotNumbers,
     currentUser,
@@ -63,6 +68,30 @@ export default function TechnicalMeetingView() {
   const [activeSlotPickerTeam, setActiveSlotPickerTeam] = useState(null);
   const [activeTeamPickerSlot, setActiveTeamPickerSlot] = useState(null);
   const [modalSearch, setModalSearch] = useState('');
+
+  // Ekspor PDF Hasil Undian
+  const [isExportMenuOpen, setIsExportMenuOpen] = useState(false);
+  const [isExportingPdf, setIsExportingPdf] = useState(false);
+  const [exportProgressText, setExportProgressText] = useState('');
+  const exportMenuRef = useRef(null);
+
+  useEffect(() => {
+    if (!isExportMenuOpen) return;
+    const handleOutside = (e) => {
+      if (exportMenuRef.current && !exportMenuRef.current.contains(e.target)) {
+        setIsExportMenuOpen(false);
+      }
+    };
+    const handleEsc = (e) => {
+      if (e.key === 'Escape') setIsExportMenuOpen(false);
+    };
+    document.addEventListener('mousedown', handleOutside);
+    document.addEventListener('keydown', handleEsc);
+    return () => {
+      document.removeEventListener('mousedown', handleOutside);
+      document.removeEventListener('keydown', handleEsc);
+    };
+  }, [isExportMenuOpen]);
 
   // Reset armed team when switching jenjang or pressing Escape
   useEffect(() => {
@@ -152,6 +181,9 @@ export default function TechnicalMeetingView() {
   }, [sortedJenjangTeams, searchQuery, teamFilterTab]);
 
   const unassignedTeams = useMemo(() => currentJenjangTeams.filter(t => !t.lotNumber), [currentJenjangTeams]);
+  const allUnassignedSD = useMemo(() => eligibleTeams.filter(t => t.jenjang === 'SD' && !t.lotNumber), [eligibleTeams]);
+  const allUnassignedSMP = useMemo(() => eligibleTeams.filter(t => t.jenjang === 'SMP' && !t.lotNumber), [eligibleTeams]);
+  const totalUnassignedAll = allUnassignedSD.length + allUnassignedSMP.length;
   const drawnCount = useMemo(() => currentJenjangTeams.filter(t => t.lotNumber).length, [currentJenjangTeams]);
   const totalCount = currentJenjangTeams.length;
   const targetQuota = selectedJenjang === 'SD' ? (settings?.quotaSD || 18) : (settings?.quotaSMP || 18);
@@ -231,26 +263,29 @@ export default function TechnicalMeetingView() {
     setTimeout(() => setLotSuccessMsg(''), 2500);
   };
 
-  const handleRandomizeCurrentJenjang = async () => {
+  const handleRandomizeAllJenjang = async () => {
     if (!canManageLottery) return;
-    const unassignedCount = currentJenjangTeams.filter(t => !t.lotNumber).length;
-    if (unassignedCount === 0) {
-      appToast(`Seluruh peleton ${selectedJenjang} sudah terpasang di papan undian.`, { variant: 'info' });
+    if (totalUnassignedAll === 0) {
+      appToast('Seluruh peleton SD & SMP sudah terpasang di papan undian.', { variant: 'info' });
       return;
     }
-    const totalCount = currentJenjangTeams.length;
+    const sdCount = allUnassignedSD.length;
+    const smpCount = allUnassignedSMP.length;
     const ok = await appConfirm(
-      `Undi acak otomatis untuk ${unassignedCount} peleton ${selectedJenjang} yang belum terpasang?\n\n` +
+      `Undi acak otomatis sekaligus untuk seluruh peleton SD & SMP yang belum terpasang (${sdCount} SD, ${smpCount} SMP)?\n\n` +
       `Aturan:\n` +
       `1. Peleton yang sudah dipasang manual tetap dipertahankan\n` +
-      `2. Slot diisi rapat dari #01 s.d. #${String(totalCount).padStart(2, '0')} (tanpa slot bolong)`,
-      { title: 'Undi Acak Otomatis', confirmText: 'Undi Sekarang', variant: 'info' }
+      `2. Slot tiap jenjang diisi rapat dari #01 s.d. jumlah peserta (tanpa slot bolong)`,
+      { title: 'Undi Acak SD & SMP', confirmText: 'Undi SD & SMP', variant: 'info' }
     );
     if (ok) {
-      if (typeof randomizeJenjangLotNumbers === 'function') {
-        randomizeJenjangLotNumbers(selectedJenjang);
+      if (typeof randomizeAllLotNumbers === 'function') {
+        randomizeAllLotNumbers();
+      } else if (typeof randomizeJenjangLotNumbers === 'function') {
+        randomizeJenjangLotNumbers('SD');
+        randomizeJenjangLotNumbers('SMP');
       }
-      setLotSuccessMsg(`${unassignedCount} peleton ${selectedJenjang} berhasil diundi otomatis.`);
+      setLotSuccessMsg(`Berhasil mengundi otomatis ${sdCount} SD & ${smpCount} SMP sekaligus.`);
       setTimeout(() => setLotSuccessMsg(''), 3500);
     }
   };
@@ -267,6 +302,32 @@ export default function TechnicalMeetingView() {
       }
       setLotSuccessMsg(`Papan undian ${selectedJenjang} telah dikosongkan.`);
       setTimeout(() => setLotSuccessMsg(''), 3000);
+    }
+  };
+
+  // Ekspor PDF Hasil Pengundian Nomor Urut & Nomor Dada (Kop A4 penuh)
+  const handleExportPdf = async (mode = 'all') => {
+    if (isExportingPdf) return;
+    setIsExportMenuOpen(false);
+    setIsExportingPdf(true);
+    setExportProgressText('Menyiapkan dokumen...');
+    try {
+      const result = await exportLotteryPDF({
+        teams: eligibleTeams,
+        mode,
+        onProgress: (msg) => setExportProgressText(msg),
+      });
+      setLotSuccessMsg(`PDF berhasil diunduh (${result.totalPages} halaman A4).`);
+      setTimeout(() => setLotSuccessMsg(''), 3500);
+    } catch (err) {
+      console.error('Gagal ekspor PDF Undian:', err);
+      appAlert(`Gagal membuat file PDF: ${err?.message || 'Terjadi kesalahan teknis.'}`, {
+        title: 'Ekspor PDF Gagal',
+        variant: 'danger',
+      });
+    } finally {
+      setIsExportingPdf(false);
+      setExportProgressText('');
     }
   };
 
@@ -360,7 +421,7 @@ export default function TechnicalMeetingView() {
     >
       <div className="space-y-4 w-full pb-10">
         {/* MASTER HEADER + FLUSH DIVISION TABS (1 KARTU RINGKAS, TANPA BAR GANDA) */}
-        <div className="bg-white rounded-2xl border border-slate-200/90 shadow-[0_1px_3px_rgba(0,0,0,0.04)] overflow-hidden">
+        <div className="bg-white rounded-2xl border border-slate-200/90 shadow-[0_1px_3px_rgba(0,0,0,0.04)] overflow-visible">
           <div className="p-4 sm:px-6 sm:py-4 flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-slate-100">
             {/* Title */}
             <div className="flex items-start sm:items-center gap-3 min-w-0">
@@ -406,15 +467,15 @@ export default function TechnicalMeetingView() {
                 </span>
               </div>
 
-              {canManageLottery && unassignedTeams.length > 0 && (
+              {canManageLottery && totalUnassignedAll > 0 && (
                 <button
                   type="button"
-                  onClick={handleRandomizeCurrentJenjang}
+                  onClick={handleRandomizeAllJenjang}
                   className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300/80 text-xs font-black transition-all active:scale-95 cursor-pointer"
-                  title="Undi acak otomatis semua peleton jenjang ini"
+                  title="Undi acak otomatis sekaligus untuk seluruh peleton SD & SMP yang belum terpasang"
                 >
                   <Dice5 className="w-3.5 h-3.5 text-amber-600" />
-                  <span>Undi Acak</span>
+                  <span>Undi Acak SD &amp; SMP ({totalUnassignedAll})</span>
                 </button>
               )}
 
@@ -430,6 +491,92 @@ export default function TechnicalMeetingView() {
                 </button>
               )}
 
+              {/* Dropdown Ekspor PDF Hasil Undian (Kop A4) */}
+              <div className="relative" ref={exportMenuRef}>
+                <button
+                  type="button"
+                  disabled={isExportingPdf}
+                  onClick={() => setIsExportMenuOpen((prev) => !prev)}
+                  className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold border transition-all shadow-2xs active:scale-95 cursor-pointer whitespace-nowrap ${
+                    isExportingPdf
+                      ? 'bg-slate-100 text-slate-500 border-slate-200 cursor-wait'
+                      : 'bg-slate-900 hover:bg-slate-800 text-white border-slate-900'
+                  }`}
+                  title="Ekspor PDF Hasil Pengundian Nomor Urut Tampil & Nomor Dada (Kop A4)"
+                >
+                  {isExportingPdf ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 animate-spin text-amber-500" />
+                      <span>{exportProgressText || 'Memproses PDF...'}</span>
+                    </>
+                  ) : (
+                    <>
+                      <FileDown className="w-3.5 h-3.5 text-amber-400" />
+                      <span>Ekspor PDF</span>
+                      <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${isExportMenuOpen ? 'rotate-180' : ''}`} />
+                    </>
+                  )}
+                </button>
+
+                {isExportMenuOpen && !isExportingPdf && (
+                  <div className="absolute right-0 mt-2 w-64 rounded-2xl bg-white border border-slate-200/95 shadow-[0_16px_40px_rgba(15,23,42,0.14)] p-1.5 z-40 animate-in fade-in slide-in-from-top-1 duration-150">
+                    <div className="px-2.5 py-1.5 border-b border-slate-100 mb-1">
+                      <p className="text-[10px] font-black uppercase tracking-wider text-slate-400">
+                        Ekspor Dokumen A4 (Kop Resmi)
+                      </p>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => handleExportPdf('all')}
+                      className="w-full text-left px-2.5 py-2 rounded-xl hover:bg-slate-50 transition-colors flex items-start gap-2.5 cursor-pointer"
+                    >
+                      <div className="w-7 h-7 rounded-lg bg-amber-50 text-amber-700 border border-amber-200/80 flex items-center justify-center shrink-0 mt-0.5">
+                        <FileDown className="w-3.5 h-3.5" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="text-xs font-bold text-slate-900">Lengkap (SD &amp; SMP)</div>
+                        <div className="text-[10.5px] text-slate-500 leading-snug mt-0.5">
+                          Gabungan hasil undian SD/MI &amp; SMP/MTs dalam 1 file PDF.
+                        </div>
+                      </div>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => handleExportPdf('SD')}
+                      className="w-full text-left px-2.5 py-2 rounded-xl hover:bg-slate-50 transition-colors flex items-start gap-2.5 cursor-pointer"
+                    >
+                      <div className="w-7 h-7 rounded-lg bg-rose-50 text-rose-700 border border-rose-200/80 flex items-center justify-center shrink-0 mt-0.5">
+                        <FileDown className="w-3.5 h-3.5" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="text-xs font-bold text-slate-900">Jenjang SD / MI Saja</div>
+                        <div className="text-[10.5px] text-slate-500 leading-snug mt-0.5">
+                          Urutan tampil &amp; nomor dada tingkat SD / MI.
+                        </div>
+                      </div>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => handleExportPdf('SMP')}
+                      className="w-full text-left px-2.5 py-2 rounded-xl hover:bg-slate-50 transition-colors flex items-start gap-2.5 cursor-pointer"
+                    >
+                      <div className="w-7 h-7 rounded-lg bg-blue-50 text-blue-700 border border-blue-200/80 flex items-center justify-center shrink-0 mt-0.5">
+                        <FileDown className="w-3.5 h-3.5" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="text-xs font-bold text-slate-900">Jenjang SMP / MTs Saja</div>
+                        <div className="text-[10.5px] text-slate-500 leading-snug mt-0.5">
+                          Urutan tampil &amp; nomor dada tingkat SMP / MTs.
+                        </div>
+                      </div>
+                    </button>
+                  </div>
+                )}
+              </div>
+
               <button
                 type="button"
                 onClick={handleExportExcel}
@@ -443,7 +590,7 @@ export default function TechnicalMeetingView() {
           </div>
 
           {/* Dark Obsidian Division Stage Switcher: SD / MI vs SMP / MTs */}
-          <div className="grid grid-cols-2 border-t border-slate-800 bg-slate-950 text-white">
+          <div className="grid grid-cols-2 border-t border-slate-800 bg-slate-950 text-white rounded-b-2xl overflow-hidden">
             <button
               type="button"
               onClick={() => setSelectedJenjang('SD')}
@@ -686,28 +833,24 @@ export default function TechnicalMeetingView() {
                         </span>
 
                         {/* Logo / Monogram */}
-                        <div
-                          className={`w-9 h-9 rounded-lg p-1 flex items-center justify-center shrink-0 overflow-hidden border ${
-                            isArmed
-                              ? 'bg-white border-white/20'
-                              : 'bg-white border-slate-200/80'
-                          }`}
-                        >
-                          {logoSrc ? (
-                            <img
-                              src={logoSrc}
-                              alt={team.schoolName}
-                              className="w-full h-full object-contain"
-                              onError={(e) => {
-                                e.target.style.display = 'none';
-                              }}
-                            />
-                          ) : (
-                            <span className="font-black text-[11px] font-mono text-slate-700 uppercase">
-                              {initials}
-                            </span>
-                          )}
-                        </div>
+                        {logoSrc ? (
+                          <img
+                            src={logoSrc}
+                            alt={team.schoolName}
+                            className="w-8 h-8 object-contain shrink-0"
+                            onError={(e) => {
+                              e.target.style.display = 'none';
+                            }}
+                          />
+                        ) : (
+                          <span
+                            className={`w-8 h-8 flex items-center justify-center font-black text-[11px] font-mono uppercase shrink-0 ${
+                              isArmed ? 'text-amber-300' : 'text-slate-600'
+                            }`}
+                          >
+                            {initials}
+                          </span>
+                        )}
 
                         {/* Team Details */}
                         <div className="min-w-0 flex-1">
@@ -967,22 +1110,20 @@ export default function TechnicalMeetingView() {
                               {canManageLottery && (
                                 <GripVertical className="w-3.5 h-3.5 text-slate-300 group-hover/slot:text-slate-500 shrink-0 hidden sm:block" />
                               )}
-                              <div className="w-8 h-8 rounded-lg bg-white border border-slate-200/80 p-0.5 flex items-center justify-center shrink-0 overflow-hidden">
-                                {logoSrc ? (
-                                  <img
-                                    src={logoSrc}
-                                    alt={assignedTeam.schoolName}
-                                    className="w-full h-full object-contain"
-                                    onError={(e) => {
-                                      e.target.style.display = 'none';
-                                    }}
-                                  />
-                                ) : (
-                                  <span className="font-black text-[10px] font-mono text-slate-700 uppercase">
-                                    {initials}
-                                  </span>
-                                )}
-                              </div>
+                              {logoSrc ? (
+                                <img
+                                  src={logoSrc}
+                                  alt={assignedTeam.schoolName}
+                                  className="w-8 h-8 object-contain shrink-0"
+                                  onError={(e) => {
+                                    e.target.style.display = 'none';
+                                  }}
+                                />
+                              ) : (
+                                <span className="w-8 h-8 flex items-center justify-center font-black text-[10px] font-mono text-slate-600 uppercase shrink-0">
+                                  {initials}
+                                </span>
+                              )}
 
                               <div className="min-w-0 flex-1">
                                 <div className="flex items-center gap-1.5 min-w-0">
@@ -1284,15 +1425,13 @@ export default function TechnicalMeetingView() {
                       className="p-3 rounded-xl border border-slate-200 hover:border-slate-400 hover:bg-slate-50/70 transition-all cursor-pointer flex items-center justify-between gap-3 shadow-2xs"
                     >
                       <div className="flex items-center gap-3 min-w-0">
-                        <div className="w-9 h-9 rounded-lg bg-slate-50 border border-slate-200 p-0.5 flex items-center justify-center shrink-0 overflow-hidden">
-                          {logoSrc ? (
-                            <img src={logoSrc} alt={team.schoolName} className="w-full h-full object-contain" />
-                          ) : (
-                            <span className="font-black text-xs font-mono text-slate-700 uppercase">
-                              {initials}
-                            </span>
-                          )}
-                        </div>
+                        {logoSrc ? (
+                          <img src={logoSrc} alt={team.schoolName} className="w-8 h-8 object-contain shrink-0" />
+                        ) : (
+                          <span className="w-8 h-8 flex items-center justify-center font-black text-xs font-mono text-slate-600 uppercase shrink-0">
+                            {initials}
+                          </span>
+                        )}
                         <div className="min-w-0 flex-1">
                           <h4 className="font-bold text-xs sm:text-sm text-slate-900 leading-snug break-words">{team.schoolName}</h4>
                           <p className="text-[10px] text-slate-500 font-mono mt-0.5">

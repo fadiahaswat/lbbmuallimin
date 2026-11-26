@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { COMPETITION, PAYMENT, CLIPBOARD } from '../config.js';
 import { useCompetition } from '../context/CompetitionContext.jsx';
+import { isTestingTeam } from '../context/competitionHelpers.js';
 import CountdownTimer from './CountdownTimer.jsx';
 import RegisteredSchoolsShowcase from './RegisteredSchoolsShowcase.jsx';
 
@@ -98,8 +99,8 @@ export default function Registration() {
   // Perhitungan kuota & slot tersisa realtime (abaikan tim yang ditolak / rejected)
   const totalTargetSD = settings?.quotaSD || COMPETITION.SD.TARGET_PLATOONS || 18;
   const totalTargetSMP = settings?.quotaSMP || COMPETITION.SMP.TARGET_PLATOONS || 18;
-  const registeredSD = (teams || []).filter(t => t.jenjang === 'SD' && t.status !== 'rejected').length;
-  const registeredSMP = (teams || []).filter(t => t.jenjang === 'SMP' && t.status !== 'rejected').length;
+  const registeredSD = (teams || []).filter(t => t.jenjang === 'SD' && t.status !== 'rejected' && !isTestingTeam(t)).length;
+  const registeredSMP = (teams || []).filter(t => t.jenjang === 'SMP' && t.status !== 'rejected' && !isTestingTeam(t)).length;
   const remainingSD = Math.max(0, totalTargetSD - registeredSD);
   const remainingSMP = Math.max(0, totalTargetSMP - registeredSMP);
   const totalRemaining = remainingSD + remainingSMP;

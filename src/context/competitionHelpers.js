@@ -470,3 +470,79 @@ export function findTeamByEmail(email, teams = [], excludeTeamId = null) {
   }) || null;
 }
 
+/**
+ * Deteksi data dummy / testing agar tidak pernah dihitung ke kuota maupun penerimaan dana.
+ */
+export function isTestingTeam(team) {
+  if (!team || team.isDummy) return true;
+  const regCode = String(team.regCode || '').trim().toUpperCase();
+  if (regCode === 'LBB27-SD-8S1P-UQRD') return true;
+  const combined = `${team.schoolName || ''} ${team.schoolBaseName || ''} ${team.platoonName || ''}`.toUpperCase();
+  return /\b(TESTING|TEST|DUMMY|COBA)\b/.test(combined);
+}
+
+/**
+ * Rekonsiliasi nominal transfer riil untuk peleton yang pembayarannya digabung
+ * atau ditransfer tanpa kode unik 108.
+ * - SMPN 6 YOGYAKARTA A & B: digabung 1x transfer = Rp 700.108 (350.108 + 350.000)
+ * - SMPN 4 DEPOK SLEMAN A & B: masing-masing Rp 400.000 tanpa kode unik (total Rp 800.000)
+ * - SMPN 3 SLEMAN A & B: digabung 1x transfer = Rp 800.108 (400.108 + 400.000)
+ */
+const PAYMENT_RECONCILIATION_BY_CODE = {
+  'LBB27-SMP-P8OM-DG40': 350108, // SMPN 6 YOGYAKARTA A
+  'LBB27-SMP-JYLY-WVWV': 350000, // SMPN 6 YOGYAKARTA B (gabung dgn A = 700.108)
+  'LBB27-SMP-BXQH-HNO0': 400000, // SMPN 4 DEPOK SLEMAN A (tanpa kode unik)
+  'LBB27-SMP-X4DO-VDMQ': 400000, // SMPN 4 DEPOK SLEMAN B (tanpa kode unik)
+  'LBB27-SMP-BIFB-I6FX': 400108, // SMPN 3 SLEMAN A
+  'LBB27-SMP-JWJ3-5MZB': 400000, // SMPN 3 SLEMAN B (gabung dgn A = 800.108)
+};
+
+const PAYMENT_RECONCILIATION_BY_NAME = {
+  'SMPN 6 YOGYAKARTA A': 350108,
+  'SMPN 6 YOGYAKARTA B': 350000,
+  'SMPN 4 DEPOK SLEMAN A': 400000,
+  'SMPN 4 DEPOK SLEMAN B': 400000,
+  'SMPN 3 SLEMAN A': 400108,
+  'SMPN 3 SLEMAN B': 400000,
+};
+
+/**
+ * Mengembalikan nominal pembayaran riil untuk 1 peleton (0 jika data testing).
+ */
+export function getEffectiveTeamFee(team, defaultFee = 400108) {
+  if (!team || isTestingTeam(team)) return 0;
+
+  const regCode = String(team.regCode || '').trim().toUpperCase();
+  if (regCode && Object.prototype.hasOwnProperty.call(PAYMENT_RECONCILIATION_BY_CODE, regCode)) {
+    return PAYMENT_RECONCILIATION_BY_CODE[regCode];
+  }
+
+  const normalizedName = String(team.schoolName || team.platoonName || '')
+    .trim()
+    .replace(/\s+/g, ' ')
+    .toUpperCase();
+  if (normalizedName && Object.prototype.hasOwnProperty.call(PAYMENT_RECONCILIATION_BY_NAME, normalizedName)) {
+    return PAYMENT_RECONCILIATION_BY_NAME[normalizedName];
+  }
+
+  const parsed = Number(String(team.feeAmount ?? '').replace(/\D/g, ''));
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : defaultFee;
+}
+
+/**
+ * Cek apakah peleton merupakan peserta riil (bukan testing/rejected) yang sudah membayar.
+ */
+export function isPaidTeam(team) {
+  if (!team || isTestingTeam(team) || team.status === 'rejected') return false;
+  return ['registered', 'verified', 'drawn'].includes(team.status) || team.paymentStatus === 'paid';
+}
+
+/**
+ * Hitung total realisasi penerimaan dana pendaftaran (tanpa data testing & sesuai rekonsiliasi riil).
+ */
+export function calculateRegistrationRevenue(teams = []) {
+  if (!Array.isArray(teams)) return 0;
+  return teams.reduce((sum, t) => (isPaidTeam(t) ? sum + getEffectiveTeamFee(t) : sum), 0);
+}
+
+

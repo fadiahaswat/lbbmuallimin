@@ -368,10 +368,10 @@ export default function InteractiveBasecampMap({
           {statusDot}
         </div>
 
-        {/* Content: Logo Sekolah + Nama Sekolah + No. Dada / Jenjang */}
+        {/* Content: Logo Sekolah + Nama Sekolah Penuh + No. Dada / Jenjang */}
         {hasTeam ? (
-          <div className="min-w-0 flex-1 flex flex-col justify-between gap-1.5">
-            <div className="flex items-start gap-2 min-w-0">
+          <div className="min-w-0 flex-1 flex flex-col justify-between gap-2 pt-0.5">
+            <div className="flex flex-col items-start gap-1.5 min-w-0 w-full">
               <img
                 src={getTeamLogo(team)}
                 alt={displaySchoolName}
@@ -381,7 +381,7 @@ export default function InteractiveBasecampMap({
                   e.target.src = getFallbackAvatar(team);
                 }}
               />
-              <div className={`text-[11px] font-bold leading-tight line-clamp-2 min-w-0 ${isSelected ? 'text-white' : 'text-slate-900'}`}>
+              <div className={`text-[10.5px] sm:text-[11px] font-bold leading-snug break-words w-full ${isSelected ? 'text-white' : 'text-slate-900'}`}>
                 {displaySchoolName}
               </div>
             </div>
@@ -574,7 +574,7 @@ export default function InteractiveBasecampMap({
                 const rMinum = northRooms.find(r => r.code === 'R-MINUM');
                 const remaining = northRooms.filter(r => r.code !== 'KM-DPR' && r.code !== 'R-MINUM');
                 return (
-                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-2 items-stretch">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-[0.72fr_repeat(5,1fr)_0.72fr] gap-2 items-stretch">
                     {kmDpr && rMinum && (
                       <div className="flex flex-col gap-1.5 col-span-2 sm:col-span-1">
                         {renderRoomBox(kmDpr, 'flex-1')}

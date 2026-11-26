@@ -32,17 +32,42 @@ import { calculatePeletonScoreFromRubric } from '../../../../context/scoringActi
 import { useCompetition } from '../../../../context/CompetitionContext.jsx';
 import { formatImageUrl } from '../../../../services/sheetService.js';
 
-export default function ScoresTab({ teamScore: propTeamScore, currentTeam }) {
+export default function ScoresTab({ teamScore: propTeamScore, currentTeam, scoreReleaseInfo = null, canShowRank = false }) {
   const { isLocalhost } = useCompetition();
   const [activeSheetTab, setActiveSheetTab] = useState('peleton'); // 'peleton' | 'danton' | 'penalti'
   const [activeJuryPost, setActiveJuryPost] = useState('rekap'); // 'rekap' | 'pos1' | 'pos2' | 'pos3'
   const [activeDantonTab, setActiveDantonTab] = useState('rekap'); // 'rekap' | 'pos1' | 'pos2' | 'pos3'
   const [searchMovement, setSearchMovement] = useState('');
 
+  function formatWibClock(isoStr) {
+    if (!isoStr) return '-';
+    const d = new Date(isoStr);
+    if (Number.isNaN(d.getTime())) return '-';
+    return `${d.toLocaleTimeString('id-ID', {
+      hour: '2-digit',
+      minute: '2-digit',
+      timeZone: 'Asia/Jakarta',
+      hour12: false,
+    }).replace('.', ':')} WIB`;
+  }
+
+  function formatCountdownMs(ms) {
+    const totalSec = Math.max(0, Math.ceil((Number(ms) || 0) / 1000));
+    const hrs = Math.floor(totalSec / 3600);
+    const mins = Math.floor((totalSec % 3600) / 60);
+    const secs = totalSec % 60;
+    if (hrs > 0) {
+      return `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    }
+    return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+  }
+
   // Di localhost, tampilkan preview lembar penilaian resmi jika skor tim belum ada
+  // KECUALI jika tim sedang berada di status tunggu rilis bertahap (agar countdown/waiting UI bisa diuji di localhost)
   const teamScore = useMemo(() => {
     if (propTeamScore) return propTeamScore;
     if (!isLocalhost) return null;
+    if (['waiting_release_window', 'awaiting_finalization'].includes(scoreReleaseInfo?.reason)) return null;
     const smp = currentTeam?.jenjang === 'SMP';
     const murniPeleton = smp ? 6957 : 6537;
     const murniDanton = 267;
@@ -419,6 +444,22 @@ export default function ScoresTab({ teamScore: propTeamScore, currentTeam }) {
     <section className="space-y-5">
       {teamScore ? (
         <div className="space-y-5">
+          {!canShowRank && !isLocalhost && (
+            <div className="rounded-2xl bg-amber-50 border border-amber-200/90 px-4 py-3 flex items-start gap-3 text-amber-950">
+              <div className="w-8 h-8 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0 mt-0.5">
+                <Clock className="w-4 h-4" />
+              </div>
+              <div className="text-xs leading-relaxed">
+                <p className="font-bold text-amber-950">
+                  Mode Rilis Bertahap (Rolling Release ±1 Jam Pascatampil)
+                </p>
+                <p className="text-amber-800/90 mt-0.5">
+                  Rincian nilai di bawah ini telah disahkan Dewan Juri untuk pengecekan dan pengajuan sanggah administratif (ditutup serentak pukul 15.00 WIB). Peringkat &amp; gelar kejuaraan resmi diumumkan saat Apel Penutupan.
+                </p>
+              </div>
+            </div>
+          )}
+
           {/* 1. RINGKASAN NILAI PELETON */}
           <div className="rounded-2xl bg-slate-950 border border-slate-800 text-white overflow-hidden">
             {/* Header Ringkas */}
@@ -1348,21 +1389,75 @@ export default function ScoresTab({ teamScore: propTeamScore, currentTeam }) {
           </div>
         </div>
       ) : (
-        <div className="p-8 sm:p-14 text-center rounded-3xl bg-slate-50 border-2 border-dashed border-slate-200 space-y-3">
-          <div className="w-14 h-14 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mx-auto border border-amber-200">
-            <Trophy className="w-7 h-7" />
-          </div>
-          <div className="max-w-md mx-auto space-y-1.5">
-            <span className="text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full border border-amber-500/30 text-amber-800 bg-amber-100 inline-block mb-0.5">
-              Kerahasiaan Penjurian Resmi LBB 2027
-            </span>
-            <h4 className="font-black text-base text-slate-900 uppercase">
-              Penilaian Belum Tersedia
-            </h4>
-            <p className="text-xs text-slate-500 leading-relaxed">
-              Peleton Anda belum tampil di arena perlombaan atau dewan juri sedang dalam proses rekapitulasi nilai. Lembar nilai lengkap akan langsung terbit di sini sesaat setelah penampilan peleton disahkan.
-            </p>
-          </div>
+        <div className="p-8 sm:p-14 text-center rounded-3xl bg-slate-50 border-2 border-dashed border-slate-200 space-y-4">
+          {scoreReleaseInfo?.reason === 'waiting_release_window' ? (
+            <>
+              <div className="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto border border-emerald-200">
+                <Timer className="w-7 h-7" />
+              </div>
+              <div className="max-w-md mx-auto space-y-2">
+                <span className="text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full border border-emerald-500/30 text-emerald-800 bg-emerald-100 inline-block">
+                  Nilai Sudah Disahkan • Menunggu Jadwal Rilis (±1 Jam)
+                </span>
+                <h4 className="font-black text-base text-slate-900 uppercase">
+                  Rilis Otomatis Dalam
+                </h4>
+                <div className="inline-flex items-center justify-center px-5 py-2.5 rounded-2xl bg-slate-950 text-amber-300 font-mono text-2xl sm:text-3xl font-black tracking-wider shadow-xs">
+                  {formatCountdownMs(scoreReleaseInfo.remainingMs)}
+                </div>
+                <p className="text-xs text-slate-500 leading-relaxed pt-1">
+                  Dewan Juri telah mengesahkan nilai peleton Anda. Sesuai Juknis Bab A.9 (<em>rolling release</em> 1 jam pascatampil), lembar nilai akan terbuka otomatis pada{' '}
+                  <strong className="text-slate-800">{formatWibClock(scoreReleaseInfo.releaseAtIso)}</strong>
+                  {scoreReleaseInfo.finishedAtIso && (
+                    <> (selesai tampil pukul <strong className="text-slate-700">{formatWibClock(scoreReleaseInfo.finishedAtIso)}</strong>)</>
+                  )}.
+                </p>
+              </div>
+            </>
+          ) : scoreReleaseInfo?.reason === 'awaiting_finalization' ? (
+            <>
+              <div className="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mx-auto border border-blue-200">
+                <Clock className="w-7 h-7" />
+              </div>
+              <div className="max-w-md mx-auto space-y-2">
+                <span className="text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full border border-blue-500/30 text-blue-800 bg-blue-100 inline-block">
+                  Selesai Tampil • Proses Rekap &amp; Verifikasi Juri
+                </span>
+                <h4 className="font-black text-base text-slate-900 uppercase">
+                  Nilai Sedang Diverifikasi Dewan Juri
+                </h4>
+                <p className="text-xs text-slate-500 leading-relaxed">
+                  Peleton Anda tercatat selesai tampil
+                  {scoreReleaseInfo.finishedAtIso ? (
+                    <> pada pukul <strong className="text-slate-800">{formatWibClock(scoreReleaseInfo.finishedAtIso)}</strong></>
+                  ) : ''}
+                  . Saat ini tim rekap &amp; Dewan Juri sedang memverifikasi lembar nilai fisik.
+                  {scoreReleaseInfo.releaseAtIso ? (
+                    <> Estimasi rilis di portal ini sekitar pukul <strong className="text-slate-800">{formatWibClock(scoreReleaseInfo.releaseAtIso)}</strong> (±1 jam pascatampil) setelah nilai disahkan.</>
+                  ) : (
+                    <> Lembar nilai lengkap akan terbit otomatis ±1 jam setelah penampilan disahkan.</>
+                  )}
+                </p>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="w-14 h-14 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mx-auto border border-amber-200">
+                <Trophy className="w-7 h-7" />
+              </div>
+              <div className="max-w-md mx-auto space-y-1.5">
+                <span className="text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full border border-amber-500/30 text-amber-800 bg-amber-100 inline-block mb-0.5">
+                  Kerahasiaan Penjurian Resmi LBB 2027
+                </span>
+                <h4 className="font-black text-base text-slate-900 uppercase">
+                  Penilaian Belum Tersedia
+                </h4>
+                <p className="text-xs text-slate-500 leading-relaxed">
+                  Peleton Anda belum tampil di arena perlombaan atau dewan juri sedang dalam proses rekapitulasi nilai. Lembar nilai lengkap akan rilis bertahap (<em>rolling release</em>) ±1 jam setelah penampilan peleton selesai dan disahkan Dewan Juri.
+                </p>
+              </div>
+            </>
+          )}
         </div>
       )}
     </section>

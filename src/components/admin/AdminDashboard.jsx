@@ -11,6 +11,7 @@ import {
   CheckCircle2
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
+import { isTestingTeam, isPaidTeam, calculateRegistrationRevenue } from '../../context/competitionHelpers.js';
 
 import SimpaskorSidebarLayout from '../navigation/SimpaskorSidebarLayout.jsx';
 import TeamInspectionPage from './components/TeamInspectionPage.jsx';
@@ -209,20 +210,19 @@ export default function AdminDashboard() {
       });
   }, [teams, activeTab, selectedJenjang, selectedStatus, searchQuery]);
 
-  // Statistics
+  // Statistics (kecualikan data testing agar kuota & dana akurat)
+  const realTeams = teams.filter(t => t && !isTestingTeam(t));
   const targetQuotaSD = settings?.quotaSD || 18;
   const targetQuotaSMP = settings?.quotaSMP || 18;
-  const countSD = teams.filter(t => t.jenjang === 'SD' && t.status !== 'rejected').length;
-  const countSMP = teams.filter(t => t.jenjang === 'SMP' && t.status !== 'rejected').length;
-  const totalRevenue = teams
-    .filter(t => ['registered', 'verified', 'drawn'].includes(t.status) || t.paymentStatus === 'paid')
-    .reduce((sum, t) => sum + (t.feeAmount || 350000), 0);
+  const countSD = realTeams.filter(t => t.jenjang === 'SD' && t.status !== 'rejected').length;
+  const countSMP = realTeams.filter(t => t.jenjang === 'SMP' && t.status !== 'rejected').length;
+  const totalRevenue = calculateRegistrationRevenue(realTeams);
 
   // Detailed stats for 4 stages:
-  const stage1PendingCount = teams.filter(t => t.status === 'pending').length; // Butuh dicek pendaftarannya
-  const stage1AccCount = teams.filter(t => ['registered', 'revision', 'verified', 'drawn'].includes(t.status)).length;
-  const stage2PendingCount = teams.filter(t => t.status === 'registered' || t.status === 'revision').length; // Butuh dicek peleton & rekomendasi
-  const stage2VerifiedCount = teams.filter(t => ['verified', 'drawn'].includes(t.status)).length;
+  const stage1PendingCount = realTeams.filter(t => t.status === 'pending').length; // Butuh dicek pendaftarannya
+  const stage1AccCount = realTeams.filter(t => isPaidTeam(t)).length;
+  const stage2PendingCount = realTeams.filter(t => t.status === 'registered' || t.status === 'revision').length; // Butuh dicek peleton & rekomendasi
+  const stage2VerifiedCount = realTeams.filter(t => ['verified', 'drawn'].includes(t.status)).length;
 
   function handleQuickVerify(teamId, status, note = '') {
     verifyTeam(teamId, status, note);

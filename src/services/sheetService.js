@@ -285,6 +285,29 @@ export async function fetchAllDataFromSheet(includeSecretScores = false) {
 }
 
 /**
+ * Mengambil nilai privat milik satu peleton peserta (rolling release >= 1 jam pascatampil setelah disahkan)
+ * @param {string} teamId
+ * @param {string} email
+ */
+export async function fetchParticipantTeamScore(teamId, email) {
+  if (!isGoogleSheetConfigured() || !teamId || !email) {
+    return { success: false, released: false, reason: 'unconfigured' };
+  }
+
+  try {
+    const url = `${APPS_SCRIPT_URL}?action=getTeamScore&teamId=${encodeURIComponent(teamId)}&email=${encodeURIComponent(email)}&t=${Date.now()}`;
+    const response = await fetch(url, { method: 'GET', mode: 'cors' });
+    if (!response.ok) {
+      return { success: false, released: false, error: `HTTP ${response.status}` };
+    }
+    return await response.json();
+  } catch (error) {
+    console.warn('[SheetService] Gagal mengambil nilai privat peleton:', error);
+    return { success: false, released: false, error: error.message };
+  }
+}
+
+/**
  * Menghapus record dari Google Sheet berdasarkan ID
  * @param {string} table - Nama tab sheet
  * @param {string} id - ID record

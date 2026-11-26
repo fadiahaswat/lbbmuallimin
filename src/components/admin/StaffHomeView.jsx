@@ -18,6 +18,12 @@ import {
   Users
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
+import {
+  isTestingTeam,
+  getEffectiveTeamFee,
+  isPaidTeam,
+  calculateRegistrationRevenue,
+} from '../../context/competitionHelpers.js';
 import { formatImageUrl } from '../../services/sheetService.js';
 import SimpaskorSidebarLayout from '../navigation/SimpaskorSidebarLayout.jsx';
 
@@ -90,7 +96,7 @@ function formatCompactRp(amount) {
 }
 
 function getTeamWave(team) {
-  const fee = Number(String(team?.feeAmount || '').replace(/\D/g, '')) || 0;
+  const fee = getEffectiveTeamFee(team, 0);
   if (fee >= 400000) return 2;
   if (fee > 0 && fee < 400000) return 1;
   const regDate = team?.registeredAt || team?.createdAt;
@@ -234,7 +240,7 @@ export default function StaffHomeView() {
     const totalQuotaAll = quotaSD + quotaSMP;
     const activeQuota = jenjangFilter === 'SD' ? quotaSD : jenjangFilter === 'SMP' ? quotaSMP : totalQuotaAll;
 
-    const allActiveTeams = teams.filter(t => t && t.status !== 'rejected');
+    const allActiveTeams = teams.filter(t => t && t.status !== 'rejected' && !isTestingTeam(t));
     const countSD = allActiveTeams.filter(t => t.jenjang === 'SD').length;
     const countSMP = allActiveTeams.filter(t => t.jenjang === 'SMP').length;
 
@@ -249,13 +255,10 @@ export default function StaffHomeView() {
     const drawnCount = scopedTeams.filter(t => Boolean(t.lotNumber)).length;
     const plottedBasecampCount = scopedTeams.filter(t => Boolean(t.basecampNumber)).length;
 
-    const paidTeams = scopedTeams.filter(t => t.status !== 'pending');
+    const paidTeams = scopedTeams.filter(isPaidTeam);
     const wave1Count = paidTeams.filter(t => getTeamWave(t) === 1).length;
     const wave2Count = paidTeams.filter(t => getTeamWave(t) === 2).length;
-    const totalRevenue = paidTeams.reduce((acc, t) => {
-      const fee = Number(String(t.feeAmount || '').replace(/\D/g, '')) || 400108;
-      return acc + fee;
-    }, 0);
+    const totalRevenue = calculateRegistrationRevenue(paidTeams);
 
     let checkedInCount = 0;
     let dpCount = 0;

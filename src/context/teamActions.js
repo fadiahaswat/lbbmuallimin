@@ -1,6 +1,6 @@
 import { saveRecordToSheet, bulkSyncToSheet, deleteRecordFromSheet } from '../services/sheetService.js';
 import { generatePersonnels } from '../data/seedData.js';
-import { checkTeamVerificationEligibility, getChestNumberByLot, canFillRegistrationForm, findTeamByEmail, isLocalhostEnvironment } from './competitionHelpers.js';
+import { checkTeamVerificationEligibility, getChestNumberByLot, canFillRegistrationForm, findTeamByEmail, isLocalhostEnvironment, isTestingTeam } from './competitionHelpers.js';
 import { EVENT } from '../config.js';
 import { appAlert } from '../utils/appDialog.js';
 
@@ -12,7 +12,7 @@ export function createTeamActions({ teams, setTeams, scores, setScores, setStagi
 
     const jenjang = (newTeamData.jenjang || 'SMP').toUpperCase();
     const maxQuota = jenjang === 'SD' ? (settings?.quotaSD || 18) : (settings?.quotaSMP || 18);
-    const activeTeamsInJenjang = (teams || []).filter(t => t.jenjang === jenjang && t.status !== 'rejected');
+    const activeTeamsInJenjang = (teams || []).filter(t => t.jenjang === jenjang && t.status !== 'rejected' && !isTestingTeam(t));
     if (activeTeamsInJenjang.length >= maxQuota) {
       throw new Error(`Pendaftaran ditolak: Kuota peserta untuk jenjang ${jenjang}/Sederajat telah penuh (${maxQuota} peleton).`);
     }

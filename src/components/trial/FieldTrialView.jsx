@@ -1,5 +1,5 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { appConfirm } from '../../utils/appDialog.js';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
+import { appConfirm, appAlert } from '../../utils/appDialog.js';
 import {
   Compass,
   Clock,
@@ -20,6 +20,9 @@ import {
   Users,
   RotateCcw,
   FileSpreadsheet,
+  FileDown,
+  ChevronDown,
+  Loader2,
   Check,
   CalendarCheck,
   Layers,
@@ -35,6 +38,7 @@ import {
 import { useCompetition } from '../../context/CompetitionContext.jsx';
 import { EVENT, VENUE } from '../../config.js';
 import { formatImageUrl } from '../../services/sheetService.js';
+import { exportTrialSchedulePDF } from '../../utils/exportTrialSchedulePDF.js';
 import SimpaskorSidebarLayout from '../navigation/SimpaskorSidebarLayout.jsx';
 import {
   generateSmartTrialPlan,
@@ -88,6 +92,30 @@ export default function FieldTrialView() {
   const [selectedAttendanceTeam, setSelectedAttendanceTeam] = useState(null);
   const [showRecapModal, setShowRecapModal] = useState(false);
 
+  // Ekspor PDF Jadwal UCL
+  const [isExportMenuOpen, setIsExportMenuOpen] = useState(false);
+  const [isExportingPdf, setIsExportingPdf] = useState(false);
+  const [exportProgressText, setExportProgressText] = useState('');
+  const exportMenuRef = useRef(null);
+
+  useEffect(() => {
+    if (!isExportMenuOpen) return;
+    const handleOutside = (e) => {
+      if (exportMenuRef.current && !exportMenuRef.current.contains(e.target)) {
+        setIsExportMenuOpen(false);
+      }
+    };
+    const handleEsc = (e) => {
+      if (e.key === 'Escape') setIsExportMenuOpen(false);
+    };
+    document.addEventListener('mousedown', handleOutside);
+    document.addEventListener('keydown', handleEsc);
+    return () => {
+      document.removeEventListener('mousedown', handleOutside);
+      document.removeEventListener('keydown', handleEsc);
+    };
+  }, [isExportMenuOpen]);
+
   // Attendance form inputs inside modal
   const [customCheckInTime, setCustomCheckInTime] = useState('');
   const [customCheckOutTime, setCustomCheckOutTime] = useState('');
@@ -96,6 +124,32 @@ export default function FieldTrialView() {
   const showToast = (msg, duration = 3000) => {
     setToastMsg(msg);
     setTimeout(() => setToastMsg(''), duration);
+  };
+
+  // Ekspor PDF Jadwal Uji Coba Lapangan (UCL) dengan Kop A4 penuh
+  const handleExportTrialPdf = async (mode = 'all') => {
+    if (isExportingPdf) return;
+    setIsExportMenuOpen(false);
+    setIsExportingPdf(true);
+    setExportProgressText('Menyiapkan dokumen...');
+    try {
+      const result = await exportTrialSchedulePDF({
+        currentPlan,
+        teams,
+        mode,
+        onProgress: (msg) => setExportProgressText(msg),
+      });
+      showToast(`PDF Jadwal UCL berhasil diunduh (${result.totalPages} halaman A4).`, 3500);
+    } catch (err) {
+      console.error('Gagal ekspor PDF Jadwal UCL:', err);
+      appAlert(`Gagal membuat file PDF: ${err?.message || 'Terjadi kesalahan teknis.'}`, {
+        title: 'Ekspor PDF Gagal',
+        variant: 'danger',
+      });
+    } finally {
+      setIsExportingPdf(false);
+      setExportProgressText('');
+    }
   };
 
   // Helper map: teamId -> team object
@@ -606,7 +660,94 @@ export default function FieldTrialView() {
       subtitle="Jadwal gladi adaptasi kontur arena, alur lintasan, & orientasi lapangan LBB 2027"
       fullWidth={true}
       rightActions={
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
+          {(isStaff || isPublished) && (
+            <div className="relative" ref={exportMenuRef}>
+              <button
+                type="button"
+                disabled={isExportingPdf}
+                onClick={() => setIsExportMenuOpen((prev) => !prev)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-all flex items-center gap-1.5 shadow-2xs cursor-pointer whitespace-nowrap ${
+                  isExportingPdf
+                    ? 'bg-slate-100 text-slate-500 border-slate-200 cursor-wait'
+                    : 'bg-slate-900 hover:bg-slate-800 text-white border-slate-900'
+                }`}
+                title="Ekspor PDF Jadwal Uji Coba Lapangan (Kop A4)"
+              >
+                {isExportingPdf ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin text-amber-500" />
+                    <span>{exportProgressText || 'Memproses PDF...'}</span>
+                  </>
+                ) : (
+                  <>
+                    <FileDown className="w-3.5 h-3.5 text-amber-400" />
+                    <span>Ekspor PDF</span>
+                    <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${isExportMenuOpen ? 'rotate-180' : ''}`} />
+                  </>
+                )}
+              </button>
+
+              {isExportMenuOpen && !isExportingPdf && (
+                <div className="absolute right-0 mt-2 w-64 rounded-2xl bg-white border border-slate-200/95 shadow-[0_16px_40px_rgba(15,23,42,0.14)] p-1.5 z-50 animate-in fade-in slide-in-from-top-1 duration-150">
+                  <div className="px-2.5 py-1.5 border-b border-slate-100 mb-1">
+                    <p className="text-[10px] font-black uppercase tracking-wider text-slate-400">
+                      Ekspor Jadwal UCL A4 (Kop Resmi)
+                    </p>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => handleExportTrialPdf('all')}
+                    className="w-full text-left px-2.5 py-2 rounded-xl hover:bg-slate-50 transition-colors flex items-start gap-2.5 cursor-pointer"
+                  >
+                    <div className="w-7 h-7 rounded-lg bg-amber-50 text-amber-700 border border-amber-200/80 flex items-center justify-center shrink-0 mt-0.5">
+                      <FileDown className="w-3.5 h-3.5" />
+                    </div>
+                    <div className="min-w-0">
+                      <div className="text-xs font-bold text-slate-900">Lengkap (SD &amp; SMP)</div>
+                      <div className="text-[10.5px] text-slate-500 leading-snug mt-0.5">
+                        Gabungan Arena 1 (SD) &amp; Arena 2 (SMP) dalam 1 file PDF.
+                      </div>
+                    </div>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => handleExportTrialPdf('SD')}
+                    className="w-full text-left px-2.5 py-2 rounded-xl hover:bg-slate-50 transition-colors flex items-start gap-2.5 cursor-pointer"
+                  >
+                    <div className="w-7 h-7 rounded-lg bg-rose-50 text-rose-700 border border-rose-200/80 flex items-center justify-center shrink-0 mt-0.5">
+                      <FileDown className="w-3.5 h-3.5" />
+                    </div>
+                    <div className="min-w-0">
+                      <div className="text-xs font-bold text-slate-900">Arena 1: SD / MI Saja</div>
+                      <div className="text-[10.5px] text-slate-500 leading-snug mt-0.5">
+                        Jadwal gladi Lapangan Basket (SD / MI).
+                      </div>
+                    </div>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => handleExportTrialPdf('SMP')}
+                    className="w-full text-left px-2.5 py-2 rounded-xl hover:bg-slate-50 transition-colors flex items-start gap-2.5 cursor-pointer"
+                  >
+                    <div className="w-7 h-7 rounded-lg bg-blue-50 text-blue-700 border border-blue-200/80 flex items-center justify-center shrink-0 mt-0.5">
+                      <FileDown className="w-3.5 h-3.5" />
+                    </div>
+                    <div className="min-w-0">
+                      <div className="text-xs font-bold text-slate-900">Arena 2: SMP / MTs Saja</div>
+                      <div className="text-[10.5px] text-slate-500 leading-snug mt-0.5">
+                        Jadwal gladi Pelataran Embung (SMP / MTs).
+                      </div>
+                    </div>
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
           {isStaff && (
             <button
               type="button"
@@ -923,21 +1064,19 @@ export default function FieldTrialView() {
 
                           {/* Body Kotak: Logo Sekolah + Nama Sekolah & Danton */}
                           <div className="flex items-center gap-2.5 min-w-0 my-0.5">
-                            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-white border border-slate-200 p-0.5 flex items-center justify-center shrink-0 overflow-hidden shadow-2xs">
-                              <img
-                                src={
-                                  (item.team.files?.schoolLogo?.url || item.team.file_logo_sekolah || item.team.logoUrl)
-                                    ? formatImageUrl(item.team.files?.schoolLogo?.url || item.team.file_logo_sekolah || item.team.logoUrl)
-                                    : `https://ui-avatars.com/api/?name=${encodeURIComponent(item.team.schoolName)}&background=${item.jenjang === 'SD' ? 'b91c1c' : '1d4ed8'}&color=fff&bold=true`
-                                }
-                                alt={item.team.schoolName}
-                                className="w-full h-full object-contain"
-                                onError={(e) => {
-                                  e.target.onerror = null;
-                                  e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(item.team.schoolName)}&background=${item.jenjang === 'SD' ? 'b91c1c' : '1d4ed8'}&color=fff&bold=true`;
-                                }}
-                              />
-                            </div>
+                            <img
+                              src={
+                                (item.team.files?.schoolLogo?.url || item.team.file_logo_sekolah || item.team.logoUrl)
+                                  ? formatImageUrl(item.team.files?.schoolLogo?.url || item.team.file_logo_sekolah || item.team.logoUrl)
+                                  : `https://ui-avatars.com/api/?name=${encodeURIComponent(item.team.schoolName)}&background=${item.jenjang === 'SD' ? 'b91c1c' : '1d4ed8'}&color=fff&bold=true`
+                              }
+                              alt={item.team.schoolName}
+                              className="w-8 h-8 sm:w-9 sm:h-9 object-contain shrink-0"
+                              onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(item.team.schoolName)}&background=${item.jenjang === 'SD' ? 'b91c1c' : '1d4ed8'}&color=fff&bold=true`;
+                              }}
+                            />
                             <div className="min-w-0 flex-1">
                               <h5 className="font-bold text-xs text-slate-900 leading-snug line-clamp-1" title={item.team.schoolName}>
                                 {item.team.schoolName}
@@ -1431,17 +1570,15 @@ export default function FieldTrialView() {
                                 {/* Kolom 5: Peleton / Sekolah */}
                                 <td className="py-2.5 px-4 align-middle">
                                   <div className="flex items-center gap-3 min-w-0">
-                                    <div className="w-8 h-8 rounded-lg bg-white border border-slate-100 flex items-center justify-center p-0.5 shrink-0">
-                                      <img
-                                        src={logoRaw ? formatImageUrl(logoRaw) : fallbackAvatar}
-                                        alt={team.schoolName}
-                                        className="w-full h-full object-contain"
-                                        onError={(e) => {
-                                          e.target.onerror = null;
-                                          e.target.src = fallbackAvatar;
-                                        }}
-                                      />
-                                    </div>
+                                    <img
+                                      src={logoRaw ? formatImageUrl(logoRaw) : fallbackAvatar}
+                                      alt={team.schoolName}
+                                      className="w-8 h-8 object-contain shrink-0"
+                                      onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = fallbackAvatar;
+                                      }}
+                                    />
                                     <div className="min-w-0">
                                       <div className="flex items-center gap-2 flex-wrap">
                                         <span className="font-extrabold text-[12.5px] sm:text-[13px] text-slate-900 leading-snug">
@@ -1926,21 +2063,19 @@ export default function FieldTrialView() {
                   >
                     <div className="flex items-center gap-3 min-w-0 flex-1">
                       {/* Logo */}
-                      <div className="w-10 h-10 rounded-xl bg-white border border-slate-200 p-0.5 flex items-center justify-center shrink-0 overflow-hidden shadow-2xs">
-                        <img
-                          src={
-                            (team.files?.schoolLogo?.url || team.file_logo_sekolah || team.logoUrl)
-                              ? formatImageUrl(team.files?.schoolLogo?.url || team.file_logo_sekolah || team.logoUrl)
-                              : `https://ui-avatars.com/api/?name=${encodeURIComponent(team.schoolName)}&background=${teamPickerTarget.jenjang === 'SD' ? 'dc2626' : '2563eb'}&color=fff&bold=true`
-                          }
-                          alt={team.schoolName}
-                          className="w-full h-full object-contain"
-                          onError={(e) => {
-                            e.target.onerror = null;
-                            e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(team.schoolName)}&background=${teamPickerTarget.jenjang === 'SD' ? 'dc2626' : '2563eb'}&color=fff&bold=true`;
-                          }}
-                        />
-                      </div>
+                      <img
+                        src={
+                          (team.files?.schoolLogo?.url || team.file_logo_sekolah || team.logoUrl)
+                            ? formatImageUrl(team.files?.schoolLogo?.url || team.file_logo_sekolah || team.logoUrl)
+                            : `https://ui-avatars.com/api/?name=${encodeURIComponent(team.schoolName)}&background=${teamPickerTarget.jenjang === 'SD' ? 'dc2626' : '2563eb'}&color=fff&bold=true`
+                        }
+                        alt={team.schoolName}
+                        className="w-9 h-9 object-contain shrink-0"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(team.schoolName)}&background=${teamPickerTarget.jenjang === 'SD' ? 'dc2626' : '2563eb'}&color=fff&bold=true`;
+                        }}
+                      />
 
                       {/* Info Tim & Danton */}
                       <div className="min-w-0 flex-1">

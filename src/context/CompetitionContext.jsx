@@ -10,6 +10,7 @@ import {
   saveRecordToSheet,
   bulkSyncToSheet,
   fetchAllDataFromSheet,
+  fetchParticipantTeamScore,
   deleteRecordFromSheet,
   isGoogleSheetConfigured,
   pingSheetDatabase
@@ -45,7 +46,8 @@ import {
   isLocalhostEnvironment,
   isRegistrationDateReached,
   canFillRegistrationForm,
-  getChestNumberByLot
+  getChestNumberByLot,
+  isTestingTeam
 } from './competitionHelpers.js';
 import {
   generate36DummyTeams,
@@ -55,7 +57,7 @@ import {
   generateDummyTrialPlan
 } from '../data/dummyTestingData.js';
 import { useFieldTimer } from './useFieldTimer.js';
-import { createScoringActions } from './scoringActions.js';
+import { createScoringActions, evaluateParticipantScoreRelease } from './scoringActions.js';
 import { createStagingActions } from './stagingActions.js';
 import { createTeamActions } from './teamActions.js';
 
@@ -416,12 +418,21 @@ export function CompetitionProvider({ children }) {
     const isStaffOrJury = ['admin', 'juri', 'superadmin', 'penginput', 'verifikator', 'finalisator'].includes(role);
     if (isStaffOrJury || settings.announcementPublished) {
       safeSetItem(STORAGE_KEYS.SCORES, JSON.stringify(scores));
+    } else if (role === 'peserta' && currentTeamId && scores[currentTeamId]) {
+      const rel = evaluateParticipantScoreRelease(scores[currentTeamId], staging?.[currentTeamId], settings);
+      if (rel.isReleased) {
+        safeSetItem(STORAGE_KEYS.SCORES, JSON.stringify({ [currentTeamId]: scores[currentTeamId] }));
+      } else {
+        try {
+          localStorage.removeItem(STORAGE_KEYS.SCORES);
+        } catch (e) {}
+      }
     } else {
       try {
         localStorage.removeItem(STORAGE_KEYS.SCORES);
       } catch (e) {}
     }
-  }, [scores, role, settings.announcementPublished]);
+  }, [scores, role, currentTeamId, staging, settings]);
 
   useEffect(() => {
     safeSetItem(STORAGE_KEYS.SETTINGS, JSON.stringify(settings));
@@ -486,23 +497,125 @@ export function CompetitionProvider({ children }) {
   const lastCloudFetchMsRef = useRef(0);
   const [cloudSyncStatus, setCloudSyncStatus] = useState('idle'); // 'idle' | 'syncing' | 'synced' | 'error'
   const [lastSyncedAt, setLastSyncedAt] = useState(null);
+  const [participantScoreMeta, setParticipantScoreMeta] = useState(null);
 
   // Fungsi Terpusat Sinkronisasi Cloud Database (Single Source of Truth)
-  const applyCloudSnapshot = React.useCallback((res, allowScoresSync, isSandboxClone = false) => {
+  const applyCloudSnapshot = React.useCallback((res, allowScoresSync, isSandboxClone = false, participantTeamId = null) => {
     if (!res || !res.success || !res.data) return;
     const { teams: sheetTeams, scores: sheetScores, settings: sheetSettings, staging: sheetStaging, users: sheetUsers } = res.data;
+    const remoteSettingsObj = Array.isArray(sheetSettings) && sheetSettings.length > 0 ? sheetSettings[0] : {};
+
+    const syncParticipantRollingScore = () => {
+      if (!participantTeamId || !Array.isArray(sheetScores)) return;
+      const myScore = sheetScores.find(sc => sc?.teamId === participantTeamId || sc?.id === participantTeamId) || null;
+      const myStaging = Array.isArray(sheetStaging)
+        ? (sheetStaging.find(st => (st?.teamId || st?.id) === participantTeamId) || null)
+        : null;
+      const rel = evaluateParticipantScoreRelease(myScore, myStaging, remoteSettingsObj);
+      setParticipantScoreMeta(rel);
+      if (rel.isReleased && myScore) {
+        setScores({ [participantTeamId]: myScore });
+      } else {
+        setScores({});
+      }
+    };
+
+    const mergeStagingPreservingLocal = (prevStaging, incomingMap, preferLocalWhenNewer = true) => {
+      const merged = { ...incomingMap };
+      if (!prevStaging || typeof prevStaging !== 'object') return merged;
+      Object.entries(prevStaging).forEach(([teamId, localRec]) => {
+        if (!teamId || !localRec || typeof localRec !== 'object') return;
+        const remoteRec = merged[teamId];
+        if (!remoteRec) {
+          // Di localhost sandbox (write ke sheet diblokir) atau jika data lokal punya timestamp, pertahankan
+          if (preferLocalWhenNewer) {
+            merged[teamId] = localRec;
+          }
+          return;
+        }
+        const localTime = localRec.updatedAt ? new Date(localRec.updatedAt).getTime() : 0;
+        const remoteTime = remoteRec.updatedAt ? new Date(remoteRec.updatedAt).getTime() : 0;
+        const hasLocalBasecamp = Boolean(
+          localRec?.basecamp?.roomName || localRec?.roomName || localRec?.basecampRoom || localRec?.room
+        );
+        const hasRemoteBasecamp = Boolean(
+          remoteRec?.basecamp?.roomName || remoteRec?.roomName || remoteRec?.basecampRoom || remoteRec?.room
+        );
+        if (localTime > remoteTime || (preferLocalWhenNewer && hasLocalBasecamp && !hasRemoteBasecamp)) {
+          merged[teamId] = {
+            ...remoteRec,
+            ...localRec,
+            basecamp: localRec.basecamp || remoteRec.basecamp,
+          };
+        }
+      });
+      return merged;
+    };
 
     if (isSandboxClone) {
       localhostSyncedModeRef.current = { done: true, withScores: allowScoresSync };
       if (Array.isArray(sheetTeams)) {
-        setTeams(sheetTeams.map(normalizeTeamData));
+        setTeams(prev => {
+          const prevMap = new Map();
+          if (Array.isArray(prev)) {
+            prev.forEach(t => {
+              if (t?.id) prevMap.set(t.id, normalizeTeamData(t));
+            });
+          }
+          return sheetTeams.map(rawSheetTeam => {
+            const incoming = normalizeTeamData(rawSheetTeam);
+            const existing = prevMap.get(incoming.id);
+            if (!existing) return incoming;
+
+            const existingTime = existing.updatedAt ? new Date(existing.updatedAt).getTime() : 0;
+            const sheetTime = incoming.updatedAt ? new Date(incoming.updatedAt).getTime() : 0;
+            const localIsNewer = existingTime > sheetTime;
+
+            // Pertahankan hasil undian lokal (no. urut, no. dada) & penempatan basecamp lokal saat reload di localhost
+            const keepLottery =
+              localIsNewer ||
+              (Boolean(existing.lotNumber) && !incoming.lotNumber) ||
+              (Boolean(existing.chestNumber) && !incoming.chestNumber);
+            const keepBasecamp =
+              localIsNewer ||
+              (Boolean(existing.basecampRoom || existing.basecampNumber) &&
+                !incoming.basecampRoom &&
+                !incoming.basecampNumber);
+
+            return {
+              ...incoming,
+              ...(keepLottery
+                ? {
+                    lotNumber: existing.lotNumber ?? null,
+                    chestNumber: existing.chestNumber ?? '',
+                    drawTime: existing.drawTime ?? null,
+                    status: existing.lotNumber ? 'drawn' : (localIsNewer ? existing.status : incoming.status),
+                  }
+                : {}),
+              ...(keepBasecamp
+                ? {
+                    basecampRoom: existing.basecampRoom ?? '',
+                    basecampNumber: existing.basecampNumber ?? '',
+                  }
+                : {}),
+              updatedAt: localIsNewer ? existing.updatedAt : incoming.updatedAt,
+            };
+          });
+        });
       }
       if (allowScoresSync && Array.isArray(sheetScores)) {
         const nextScores = {};
         sheetScores.forEach(sc => {
           if (sc?.teamId) nextScores[sc.teamId] = sc;
         });
-        setScores(nextScores);
+        setScores(prev => {
+          if (isSandboxClone && prev && Object.keys(prev).length > 0 && Object.keys(nextScores).length === 0) {
+            return prev;
+          }
+          return isSandboxClone ? { ...(prev || {}), ...nextScores } : nextScores;
+        });
+      } else if (!allowScoresSync && participantTeamId) {
+        syncParticipantRollingScore();
       }
       if (Array.isArray(sheetStaging)) {
         const nextStaging = {};
@@ -510,7 +623,7 @@ export function CompetitionProvider({ children }) {
           const stId = st?.teamId || st?.id;
           if (stId) nextStaging[stId] = st;
         });
-        setStaging(nextStaging);
+        setStaging(prev => mergeStagingPreservingLocal(prev, nextStaging, true));
       }
       if (Array.isArray(sheetUsers) && sheetUsers.length > 0) {
         setUsers(prev => {
@@ -529,16 +642,19 @@ export function CompetitionProvider({ children }) {
       }
       if (Array.isArray(sheetSettings) && sheetSettings.length > 0 && sheetSettings[0]) {
         const remoteSettings = sheetSettings[0];
-        setSettings({
+        setSettings(prev => ({
           ...INITIAL_SETTINGS,
           ...remoteSettings,
           currentWave: PAYMENT.ACTIVE_WAVE || 2,
           eventDates: normalizeEventDates(remoteSettings.eventDates),
           juknisPenilaianPublished: Boolean(remoteSettings.juknisPenilaianPublished && remoteSettings.juknisPenilaianRatifiedAt),
           juknisPenilaianRatifiedAt: remoteSettings.juknisPenilaianRatifiedAt || null,
-          basecampPublished: Boolean(remoteSettings.basecampPublished && remoteSettings.basecampRatifiedAt),
-          basecampRatifiedAt: remoteSettings.basecampRatifiedAt || null,
-        });
+          basecampPublished:
+            prev?.basecampPublished !== undefined
+              ? Boolean(prev.basecampPublished && prev.basecampRatifiedAt)
+              : Boolean(remoteSettings.basecampPublished && remoteSettings.basecampRatifiedAt),
+          basecampRatifiedAt: prev?.basecampRatifiedAt || remoteSettings.basecampRatifiedAt || null,
+        }));
       }
       setLastSyncedAt(new Date().toISOString());
       setCloudSyncStatus('synced');
@@ -678,10 +794,16 @@ export function CompetitionProvider({ children }) {
               const existingTime = existing.updatedAt ? new Date(existing.updatedAt).getTime() : 0;
               const sheetTime = normalizedSheetTeam.updatedAt ? new Date(normalizedSheetTeam.updatedAt).getTime() : 0;
 
-              if (existingTime > sheetTime && existing.status) {
-                mergedTeam.status = existing.status;
+              if (existingTime > sheetTime) {
+                if (existing.status) mergedTeam.status = existing.status;
                 mergedTeam.paymentStatus = existing.paymentStatus || mergedTeam.paymentStatus;
                 mergedTeam.revisionNote = existing.revisionNote ?? mergedTeam.revisionNote;
+                mergedTeam.lotNumber = existing.lotNumber ?? null;
+                mergedTeam.chestNumber = existing.chestNumber ?? '';
+                mergedTeam.drawTime = existing.drawTime ?? null;
+                mergedTeam.basecampRoom = existing.basecampRoom ?? '';
+                mergedTeam.basecampNumber = existing.basecampNumber ?? '';
+                mergedTeam.updatedAt = existing.updatedAt;
               } else if (normalizedSheetTeam.status) {
                 mergedTeam.status = normalizedSheetTeam.status;
               } else if (existing.status) {
@@ -730,6 +852,8 @@ export function CompetitionProvider({ children }) {
         if (sc?.teamId) nextScores[sc.teamId] = sc;
       });
       setScores(nextScores);
+    } else if (!allowScoresSync && participantTeamId) {
+      syncParticipantRollingScore();
     }
 
     if (Array.isArray(sheetStaging)) {
@@ -738,7 +862,7 @@ export function CompetitionProvider({ children }) {
         const stId = st?.teamId || st?.id;
         if (stId) nextStaging[stId] = st;
       });
-      setStaging(nextStaging);
+      setStaging(prev => mergeStagingPreservingLocal(prev, nextStaging, false));
     }
 
     if (Array.isArray(sheetUsers) && sheetUsers.length > 0) {
@@ -809,8 +933,30 @@ export function CompetitionProvider({ children }) {
       try {
         const res = await fetchAllDataFromSheet(allowScoresSync);
         if (!isMounted) return;
+        const participantTeamId = role === 'peserta' ? (currentUser?.teamId || currentTeamId || null) : null;
         if (res && res.success && res.data) {
-          applyCloudSnapshot(res, allowScoresSync, isLocalhostEnvironment());
+          applyCloudSnapshot(res, allowScoresSync, isLocalhostEnvironment(), participantTeamId);
+          // Fallback ke endpoint privat getTeamScore jika sheetScores tidak disertakan di getAll
+          if (!allowScoresSync && participantTeamId && currentUser?.email && !Array.isArray(res.data.scores)) {
+            const teamScoreRes = await fetchParticipantTeamScore(participantTeamId, currentUser.email);
+            if (isMounted && teamScoreRes?.success) {
+              setParticipantScoreMeta({
+                isReleased: Boolean(teamScoreRes.released),
+                canShowRank: Boolean(teamScoreRes.canShowRank),
+                isFinalized: Boolean(teamScoreRes.isFinalized),
+                hasPerformed: Boolean(teamScoreRes.finishedAt || teamScoreRes.isFinalized),
+                reason: teamScoreRes.reason || 'not_performed',
+                finishedAtIso: teamScoreRes.finishedAt || null,
+                releaseAtIso: teamScoreRes.releaseAt || null,
+                remainingMs: Number(teamScoreRes.remainingMs || 0),
+              });
+              if (teamScoreRes.released && teamScoreRes.data) {
+                setScores({ [participantTeamId]: teamScoreRes.data });
+              } else {
+                setScores({});
+              }
+            }
+          }
         } else {
           setCloudSyncStatus('error');
         }
@@ -850,7 +996,7 @@ export function CompetitionProvider({ children }) {
         document.removeEventListener('visibilitychange', handleVisibilityOrFocus);
       }
     };
-  }, [role, settings.announcementPublished, applyCloudSnapshot]);
+  }, [role, currentTeamId, currentUser?.teamId, currentUser?.email, settings.announcementPublished, applyCloudSnapshot]);
 
   function navigateTo(targetView, data = null) {
     setPreviousView(activeView);
@@ -1607,7 +1753,142 @@ export function CompetitionProvider({ children }) {
     return { success: true };
   }
 
-  // Khusus Testing TM: Undi otomatis acak semua nomor dada 18 SD & 18 SMP (hanya untuk tim verified/drawn)
+  // Khusus Localhost Sandbox: Isi nilai simulasi realistis untuk seluruh peleton SD & SMP aktif (tidak pernah menyentuh Google Sheet)
+  function seedLocalhostSampleScores(sourceTeams = teams) {
+    if (!isLocalhostEnvironment()) return { success: false, count: 0 };
+    const activeTeams = (sourceTeams || []).filter(t => t && t.status !== 'rejected' && !isTestingTeam(t));
+    if (activeTeams.length === 0) return { success: false, count: 0 };
+
+    const nowIso = new Date().toISOString();
+    const generated = {};
+
+    ['SD', 'SMP'].forEach((jKey) => {
+      const isSD = jKey === 'SD';
+      const jTeams = activeTeams.filter(t => t.jenjang === jKey);
+      if (jTeams.length === 0) return;
+
+      // Urutan Danton dibuat sedikit berbeda dari Peleton agar simulasi Juara Umum terlihat realistis
+      const dantonOrder = jTeams.map((_, i) => i);
+      if (dantonOrder.length >= 4) {
+        [dantonOrder[0], dantonOrder[1]] = [dantonOrder[1], dantonOrder[0]];
+        [dantonOrder[2], dantonOrder[3]] = [dantonOrder[3], dantonOrder[2]];
+      }
+      const dantonRankByIndex = new Map();
+      dantonOrder.forEach((origIdx, rankIdx) => {
+        dantonRankByIndex.set(origIdx, rankIdx);
+      });
+
+      jTeams.forEach((team, idx) => {
+        const basePerJury = isSD ? 2920 : 3760;
+        const step = isSD ? 42 : 34;
+        const j1P = Math.max(1800, basePerJury - idx * step + ((idx % 3) * 4));
+        const j2P = Math.max(1800, basePerJury - idx * step - 6 + ((idx % 2) * 5));
+        const j3P = Math.max(1800, basePerJury - idx * step - 3 + (((idx + 1) % 3) * 3));
+        const nilaiMurniPeleton = j1P + j2P + j3P;
+
+        // Simulasi penalti realistis pada beberapa peleton agar kolom Penalti terlihat jelas
+        const peletonPenalty = idx === 3 ? 50 : idx === 5 ? 25 : idx === 7 ? 50 : 0;
+        const nilaiAkhirPeleton = Math.max(0, nilaiMurniPeleton - peletonPenalty);
+
+        const dRank = dantonRankByIndex.get(idx) ?? idx;
+        const baseDantonJury = 88.8 - dRank * 1.45;
+        const j1D = parseFloat(Math.max(52, baseDantonJury + 0.4).toFixed(2));
+        const j2D = parseFloat(Math.max(52, baseDantonJury - 0.3).toFixed(2));
+        const j3D = parseFloat(Math.max(52, baseDantonJury + 0.1).toFixed(2));
+        const nilaiMurniDanton = parseFloat((j1D + j2D + j3D).toFixed(2));
+        const dantonPenalty = dRank === 4 ? 10 : 0;
+        const nilaiAkhirDanton = Math.max(0, parseFloat((nilaiMurniDanton - dantonPenalty).toFixed(2)));
+
+        const matScore = Math.max(54, 90 - dRank * 2);
+        const vokScore = Math.max(54, 88 - dRank * 2);
+        const sikScore = Math.max(54, 86 - dRank * 2);
+        const lapScore = Math.max(54, 88 - dRank * 2);
+
+        generated[team.id] = {
+          teamId: team.id,
+          jenjang: team.jenjang,
+          schoolName: team.schoolName,
+          juries: {
+            pos1: {
+              peletonTotal: j1P,
+              total: j1P,
+              dantonTotal: j1D,
+              dantonRubricScores: { materi: matScore, vokal: vokScore, sikap: sikScore, lapangan: lapScore },
+            },
+            pos2: {
+              peletonTotal: j2P,
+              total: j2P,
+              dantonTotal: j2D,
+              dantonRubricScores: { materi: matScore, vokal: vokScore, sikap: sikScore, lapangan: lapScore },
+            },
+            pos3: {
+              peletonTotal: j3P,
+              total: j3P,
+              dantonTotal: j3D,
+              dantonRubricScores: { materi: matScore, vokal: vokScore, sikap: sikScore, lapangan: lapScore },
+            },
+          },
+          pbb: { j1: j1P, j2: j2P, j3: j3P, total: nilaiMurniPeleton },
+          danton: { total: nilaiMurniDanton, rubricScores: { materi: matScore * 3, vokal: vokScore * 3 } },
+          nilaiMurniPeleton,
+          peletonPenalty,
+          nilaiAkhirPeleton,
+          nilaiMurniDanton,
+          dantonPenalty,
+          nilaiAkhirDanton,
+          penalties: {
+            peletonPenalty,
+            dantonPenalty,
+            totalPenalty: peletonPenalty + dantonPenalty,
+            injakGaris: peletonPenalty >= 50 ? 1 : 0,
+          },
+          penaltiesTotal: peletonPenalty,
+          finalScore: parseFloat((nilaiAkhirPeleton + nilaiAkhirDanton).toFixed(2)),
+          performanceDuration: isSD ? '08:42' : '09:35',
+          durationSeconds: isSD ? 522 : 575,
+          status: 'finalized',
+          isVerified: true,
+          isLocked: true,
+          scoredAt: nowIso,
+          updatedAt: nowIso,
+          isLocalhostSample: true,
+        };
+      });
+    });
+
+    try {
+      localStorage.removeItem('lbb_localhost_scores_cleared');
+    } catch {}
+    setScores(generated);
+    return { success: true, count: Object.keys(generated).length };
+  }
+
+  function clearLocalhostSampleScores() {
+    if (!isLocalhostEnvironment()) return { success: false };
+    try {
+      localStorage.setItem('lbb_localhost_scores_cleared', '1');
+      localStorage.removeItem(STORAGE_KEYS.SCORES);
+    } catch {}
+    setScores({});
+    return { success: true };
+  }
+
+  // Auto-isi nilai simulasi di Localhost saat skor masih kosong (aman, lokal saja, tidak pernah sync ke Google Sheet)
+  useEffect(() => {
+    if (!isLocalhost) return;
+    try {
+      if (localStorage.getItem('lbb_localhost_scores_cleared') === '1') return;
+    } catch {}
+    const activeCount = (teams || []).filter(t => t && t.status !== 'rejected' && !isTestingTeam(t)).length;
+    if (activeCount > 0 && Object.keys(scores || {}).length === 0) {
+      seedLocalhostSampleScores(teams);
+    }
+  }, [isLocalhost, teams, scores]);
+
+  // Undi otomatis acak sekaligus untuk seluruh peleton SD & SMP yang belum terpasang
+  // Aturan:
+  // 1. Pertahankan peleton yang sudah dipasang manual di masing-masing jenjang
+  // 2. Slot tiap jenjang diisi rapat dari #01 s.d. #N (tanpa slot bolong)
   function randomizeAllLotNumbers() {
     const shuffle = arr => {
       const copy = [...arr];
@@ -1617,19 +1898,49 @@ export function CompetitionProvider({ children }) {
       }
       return copy;
     };
-    const eligibleSD = teams.filter(t => t.jenjang === 'SD' && ['verified', 'drawn'].includes(t.status));
-    const eligibleSMP = teams.filter(t => t.jenjang === 'SMP' && ['verified', 'drawn'].includes(t.status));
-    const sdLots = shuffle(Array.from({ length: Math.max(eligibleSD.length, 18) }, (_, i) => i + 1));
-    const smpLots = shuffle(Array.from({ length: Math.max(eligibleSMP.length, 18) }, (_, i) => i + 1));
 
-    let sdIdx = 0;
-    let smpIdx = 0;
+    const isEligibleForLottery = (t) =>
+      isLocalhostEnvironment() ? t.status !== 'rejected' : ['verified', 'drawn'].includes(t.status);
+
+    const assignedLotsByTeamId = new Map();
+    let sdCount = 0;
+    let smpCount = 0;
+
+    ['SD', 'SMP'].forEach((jenjangKey) => {
+      const eligible = teams.filter(t => t.jenjang === jenjangKey && isEligibleForLottery(t));
+      const alreadyAssigned = eligible.filter(t => Boolean(t.lotNumber));
+      const unassigned = eligible.filter(t => !t.lotNumber);
+      if (unassigned.length === 0) return;
+
+      const usedLots = new Set(alreadyAssigned.map(t => Number(t.lotNumber)));
+      const availableLots = [];
+      let slotCursor = 1;
+      while (availableLots.length < unassigned.length) {
+        if (!usedLots.has(slotCursor)) {
+          availableLots.push(slotCursor);
+        }
+        slotCursor++;
+      }
+
+      const shuffledLots = shuffle(availableLots);
+      unassigned.forEach((team, idx) => {
+        assignedLotsByTeamId.set(team.id, shuffledLots[idx]);
+      });
+
+      if (jenjangKey === 'SD') sdCount = unassigned.length;
+      if (jenjangKey === 'SMP') smpCount = unassigned.length;
+    });
+
+    if (assignedLotsByTeamId.size === 0) {
+      return { sdCount: 0, smpCount: 0, totalCount: 0 };
+    }
+
     const nowIso = new Date().toISOString();
     const updatedList = [];
 
     const nextTeams = teams.map(team => {
-      if (!['verified', 'drawn'].includes(team.status)) return team;
-      const lot = team.jenjang === 'SD' ? sdLots[sdIdx++] : smpLots[smpIdx++];
+      if (!assignedLotsByTeamId.has(team.id)) return team;
+      const lot = assignedLotsByTeamId.get(team.id);
       const chest = lot ? getChestNumberByLot(team.jenjang, lot) : '';
       const updated = {
         ...team,
@@ -1649,6 +1960,7 @@ export function CompetitionProvider({ children }) {
         console.warn('[CompetitionContext] Sync randomizeAllLotNumbers failed:', err)
       );
     }
+    return { sdCount, smpCount, totalCount: updatedList.length };
   }
 
   // Undi acak hanya untuk jenjang tertentu ('SD' atau 'SMP')
@@ -1993,10 +2305,29 @@ export function CompetitionProvider({ children }) {
       pullFromGoogleSheet: async () => {
         const isStaffOrJury = ['admin', 'juri', 'superadmin', 'penginput', 'verifikator', 'finalisator'].includes(role);
         const allowScoresSync = isStaffOrJury || Boolean(settings.announcementPublished);
+        const participantTeamId = role === 'peserta' ? (currentUser?.teamId || currentTeamId || null) : null;
         setCloudSyncStatus('syncing');
         const res = await fetchAllDataFromSheet(allowScoresSync);
         if (res && res.success && res.data) {
-          applyCloudSnapshot(res, allowScoresSync, isLocalhostEnvironment());
+          applyCloudSnapshot(res, allowScoresSync, isLocalhostEnvironment(), participantTeamId);
+          if (!allowScoresSync && participantTeamId && currentUser?.email && !Array.isArray(res.data.scores)) {
+            const teamScoreRes = await fetchParticipantTeamScore(participantTeamId, currentUser.email);
+            if (teamScoreRes?.success) {
+              setParticipantScoreMeta({
+                isReleased: Boolean(teamScoreRes.released),
+                canShowRank: Boolean(teamScoreRes.canShowRank),
+                isFinalized: Boolean(teamScoreRes.isFinalized),
+                hasPerformed: Boolean(teamScoreRes.finishedAt || teamScoreRes.isFinalized),
+                reason: teamScoreRes.reason || 'not_performed',
+                finishedAtIso: teamScoreRes.finishedAt || null,
+                releaseAtIso: teamScoreRes.releaseAt || null,
+                remainingMs: Number(teamScoreRes.remainingMs || 0),
+              });
+              if (teamScoreRes.released && teamScoreRes.data) {
+                setScores({ [participantTeamId]: teamScoreRes.data });
+              }
+            }
+          }
           if (isLocalhostEnvironment()) {
             return { ...res, sandboxClone: true };
           }
@@ -2005,6 +2336,8 @@ export function CompetitionProvider({ children }) {
         }
         return res;
       },
+
+      participantScoreMeta,
 
       openModal,
       closeModal,
@@ -2022,6 +2355,8 @@ export function CompetitionProvider({ children }) {
       isLocalhost,
       isRegistrationStarted,
       canAccessRegistration,
+      seedLocalhostSampleScores,
+      clearLocalhostSampleScores,
     }),
     [
       role,
@@ -2048,6 +2383,7 @@ export function CompetitionProvider({ children }) {
       canAccessRegistration,
       cloudSyncStatus,
       lastSyncedAt,
+      participantScoreMeta,
       applyCloudSnapshot,
     ]
   );

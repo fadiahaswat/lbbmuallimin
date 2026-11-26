@@ -85,3 +85,12 @@ export const HARI_H_SCHEDULE = {
   SD: buildHariHSlots('SD'),
   SMP: buildHariHSlots('SMP'),
 };
+
+export function getScheduleMatrixForJenjang(jenjang = 'SD') {
+  const key = String(jenjang || 'SD').toUpperCase().includes('SMP') ? 'SMP' : 'SD';
+  return (HARI_H_SCHEDULE[key] || []).map((slot) => ({
+    ...slot,
+    dp1: slot.callDP1,
+    tampil: slot.startTampil,
+  }));
+}

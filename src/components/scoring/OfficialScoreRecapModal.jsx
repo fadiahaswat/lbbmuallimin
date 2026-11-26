@@ -5,6 +5,7 @@ import {
   FileCheck2
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
+import { isTestingTeam } from '../../context/competitionHelpers.js';
 import { SITE, VENUE, TIMELINE, JURY_POSTS, PRIZES } from '../../config.js';
 import logoImg from '../../assets/logo-tonti.png';
 
@@ -15,9 +16,9 @@ export default function OfficialScoreRecapModal({ isOpen, onClose, initialJenjan
 
   if (!isOpen) return null;
 
-  // Filter & hitung skor tim
+  // Filter & hitung skor tim (selalu kecualikan data TESTING / dummy)
   const targetTeams = teams
-    .filter(t => t.status === 'verified' || t.status === 'drawn')
+    .filter(t => !isTestingTeam(t) && (t.status === 'verified' || t.status === 'drawn'))
     .filter(t => selectedJenjang === 'ALL' || t.jenjang === selectedJenjang);
 
   // Komputasi Skor sesuai Juknis Bab A.3.c

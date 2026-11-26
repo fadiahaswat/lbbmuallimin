@@ -125,6 +125,117 @@ function doGet(e) {
       });
     }
 
+    // Endpoint privat peserta: mengambil nilai milik tim sendiri (rolling release >= 1 jam pascatampil setelah disahkan)
+    if (action === 'getTeamScore') {
+      var reqTeamId = String(params.teamId || '').trim();
+      var reqEmail = String(params.email || '').trim().toLowerCase();
+      var reqNormEmail = normalizeGmailAddress(reqEmail);
+
+      if (!reqTeamId || !reqEmail) {
+        return jsonResponse({
+          success: false,
+          released: false,
+          error: 'Parameter teamId dan email wajib disertakan.'
+        });
+      }
+
+      var teamsSh = getOrCreateSheet(ss, 'teams');
+      var allTeamsList = readSheetData(teamsSh);
+      var verifiedTeam = null;
+      for (var tIdx = 0; tIdx < allTeamsList.length; tIdx++) {
+        var rowT = allTeamsList[tIdx];
+        if (String(rowT.id || '').trim() === reqTeamId) {
+          var rowEmail = String(rowT.email || '').trim().toLowerCase();
+          if (rowEmail && (rowEmail === reqEmail || normalizeGmailAddress(rowEmail) === reqNormEmail)) {
+            verifiedTeam = rowT;
+          }
+          break;
+        }
+      }
+
+      if (!verifiedTeam) {
+        return jsonResponse({
+          success: false,
+          released: false,
+          error: 'Akses ditolak: Akun tidak cocok dengan peleton yang diminta.'
+        });
+      }
+
+      var settingsSh = ss.getSheetByName('settings');
+      var settingsRows = settingsSh ? readSheetData(settingsSh) : [];
+      var currentSettings = settingsRows.length > 0 ? settingsRows[0] : {};
+      var isGlobalPublished = currentSettings.announcementPublished === true || currentSettings.announcementPublished === 'true';
+
+      var stagingSh = ss.getSheetByName('staging');
+      var stagingRows = stagingSh ? readSheetData(stagingSh) : [];
+      var teamStaging = null;
+      for (var stIdx = 0; stIdx < stagingRows.length; stIdx++) {
+        var stRow = stagingRows[stIdx];
+        if (String(stRow.teamId || stRow.id || '').trim() === reqTeamId) {
+          teamStaging = stRow;
+          break;
+        }
+      }
+
+      var scoresSh = ss.getSheetByName('scores');
+      var scoreRows = scoresSh ? readSheetData(scoresSh) : [];
+      var teamScoreRow = null;
+      for (var scIdx = 0; scIdx < scoreRows.length; scIdx++) {
+        var scRow = scoreRows[scIdx];
+        if (String(scRow.teamId || scRow.id || '').trim() === reqTeamId) {
+          teamScoreRow = scRow;
+          break;
+        }
+      }
+
+      var isFinalized = Boolean(
+        teamScoreRow &&
+        (teamScoreRow.status === 'finalized' || teamScoreRow.isLocked === true || teamScoreRow.isLocked === 'true')
+      );
+      var finishedAtStr = (teamStaging && teamStaging.finishedAt) || (teamScoreRow && teamScoreRow.finishedAt) || '';
+      var finishedMs = finishedAtStr ? new Date(finishedAtStr).getTime() : NaN;
+      var hasFinishedAt = !isNaN(finishedMs) && finishedMs > 0;
+      var delayMs = 60 * 60 * 1000; // 1 jam pascatampil
+      var releaseAtMs = hasFinishedAt ? (finishedMs + delayMs) : null;
+      var nowMs = new Date().getTime();
+      var forceReleased = Boolean(
+        teamScoreRow &&
+        (teamScoreRow.forceReleased === true || teamScoreRow.forceReleased === 'true' || teamScoreRow.releasedToParticipantAt)
+      );
+
+      var canRelease = false;
+      var releaseReason = 'not_performed';
+
+      if (isGlobalPublished && teamScoreRow) {
+        canRelease = true;
+        releaseReason = 'announcement_published';
+      } else if (isFinalized) {
+        if (forceReleased || !hasFinishedAt || nowMs >= releaseAtMs) {
+          canRelease = true;
+          releaseReason = forceReleased ? 'manual_release' : (hasFinishedAt ? 'rolling_release_ready' : 'finalized_no_staging_timestamp');
+        } else {
+          canRelease = false;
+          releaseReason = 'waiting_release_window';
+        }
+      } else {
+        canRelease = false;
+        releaseReason = hasFinishedAt || (teamStaging && teamStaging.stage === 'finished') ? 'awaiting_finalization' : 'not_performed';
+      }
+
+      return jsonResponse({
+        success: true,
+        released: canRelease,
+        canShowRank: isGlobalPublished,
+        isFinalized: isFinalized,
+        reason: releaseReason,
+        finishedAt: hasFinishedAt ? finishedAtStr : null,
+        releaseAt: releaseAtMs ? new Date(releaseAtMs).toISOString() : null,
+        remainingMs: releaseAtMs ? Math.max(0, releaseAtMs - nowMs) : 0,
+        data: canRelease ? teamScoreRow : null,
+        timestamp: new Date().toISOString()
+      });
+    }
+
     if (action === 'getAll') {
       var sheets = ss.getSheets();
       var allData = {};

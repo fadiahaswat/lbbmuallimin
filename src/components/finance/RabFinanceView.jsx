@@ -25,6 +25,7 @@ import {
   ArrowLeft
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
+import { isPaidTeam, calculateRegistrationRevenue } from '../../context/competitionHelpers.js';
 import { COMPETITION, PAYMENT, OFFICIAL_RAB } from '../../config.js';
 import SimpaskorSidebarLayout from '../navigation/SimpaskorSidebarLayout.jsx';
 
@@ -72,8 +73,9 @@ export default function RabFinanceView() {
 
   const [activeTab, setActiveTab] = useState('pengeluaran'); // 'pengeluaran' | 'pemasukan'
   const [expandedDiv, setExpandedDiv] = useState(null);
-  const realizedPaidTeams = (teams || []).filter(t => ['registered', 'verified', 'drawn'].includes(t.status)).length;
-  const realizedRegistrationRevenue = realizedPaidTeams * (PAYMENT?.REGISTRATION_FEE || 400000);
+  const paidTeamsList = (teams || []).filter(isPaidTeam);
+  const realizedPaidTeams = paidTeamsList.length;
+  const realizedRegistrationRevenue = calculateRegistrationRevenue(paidTeamsList);
 
   const toggleDivision = (id) => {
     setExpandedDiv(expandedDiv === id ? null : id);

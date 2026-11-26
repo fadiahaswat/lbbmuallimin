@@ -1,5 +1,5 @@
-import React, { useState, useMemo } from 'react';
-import { appPrompt, appToast } from '../../utils/appDialog.js';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
+import { appPrompt, appToast, appAlert } from '../../utils/appDialog.js';
 import {
   CheckCircle2,
   AlertTriangle,
@@ -16,11 +16,16 @@ import {
   FileEdit,
   ShieldCheck,
   ArrowUpDown,
-  FileSpreadsheet
+  FileSpreadsheet,
+  FileDown,
+  ChevronDown,
+  Loader2
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
-import { getChestNumberByLot } from '../../context/competitionHelpers.js';
+import { getChestNumberByLot, isTestingTeam } from '../../context/competitionHelpers.js';
 import { formatImageUrl, getFallbackImageUrl } from '../../services/sheetService.js';
+import { exportScoreRecapPDF } from '../../utils/exportScoreRecapPDF.js';
+import { exportBARekapNilaiDOCX } from '../../utils/exportDocxFromTemplate.js';
 import SimpaskorSidebarLayout from '../navigation/SimpaskorSidebarLayout.jsx';
 import OfficialScoreRecapModal from '../scoring/OfficialScoreRecapModal.jsx';
 
@@ -124,12 +129,86 @@ export default function RekapNilaiView() {
   const [detailTeamId, setDetailTeamId] = useState(null);
   const [isRecapModalOpen, setIsRecapModalOpen] = useState(false);
 
+  // Ekspor PDF Rekap Nilai (Kop A4 penuh)
+  const [isExportMenuOpen, setIsExportMenuOpen] = useState(false);
+  const [isExportingPdf, setIsExportingPdf] = useState(false);
+  const [exportProgressText, setExportProgressText] = useState('');
+  const exportMenuRef = useRef(null);
+
+  useEffect(() => {
+    if (!isExportMenuOpen) return;
+    const handleOutside = (e) => {
+      if (exportMenuRef.current && !exportMenuRef.current.contains(e.target)) {
+        setIsExportMenuOpen(false);
+      }
+    };
+    const handleEsc = (e) => {
+      if (e.key === 'Escape') setIsExportMenuOpen(false);
+    };
+    document.addEventListener('mousedown', handleOutside);
+    document.addEventListener('keydown', handleEsc);
+    return () => {
+      document.removeEventListener('mousedown', handleOutside);
+      document.removeEventListener('keydown', handleEsc);
+    };
+  }, [isExportMenuOpen]);
+
+  const handleExportRecapDocx = async () => {
+    if (isExportingPdf) return;
+    setIsExportMenuOpen(false);
+    setIsExportingPdf(true);
+    setExportProgressText('Menyusun BA (.docx)...');
+    try {
+      const result = await exportBARekapNilaiDOCX({
+        teams: competitionTeams,
+        scores,
+      });
+      appToast(`Berita Acara Word (.docx) berhasil diunduh (${result.fileName}).`, { variant: 'success' });
+    } catch (err) {
+      console.error('Gagal ekspor BA Word:', err);
+      appAlert(`Gagal membuat Berita Acara Word: ${err?.message || 'Terjadi kesalahan teknis.'}`, {
+        title: 'Ekspor Word Gagal',
+        variant: 'danger',
+      });
+    } finally {
+      setIsExportingPdf(false);
+      setExportProgressText('');
+    }
+  };
+
+  const handleExportRecapPdf = async (jenjangScope = 'all', sectionMode = 'both') => {
+    if (isExportingPdf) return;
+    setIsExportMenuOpen(false);
+    setIsExportingPdf(true);
+    setExportProgressText('Menyiapkan dokumen...');
+    try {
+      const result = await exportScoreRecapPDF({
+        teams: competitionTeams,
+        scores,
+        jenjangScope,
+        sectionMode,
+        onProgress: (msg) => setExportProgressText(msg),
+      });
+      appToast(`PDF Rekap Nilai berhasil diunduh (${result.totalPages} halaman A4).`, { variant: 'success' });
+    } catch (err) {
+      console.error('Gagal ekspor PDF Rekap Nilai:', err);
+      appAlert(`Gagal membuat file PDF: ${err?.message || 'Terjadi kesalahan teknis.'}`, {
+        title: 'Ekspor PDF Gagal',
+        variant: 'danger',
+      });
+    } finally {
+      setIsExportingPdf(false);
+      setExportProgressText('');
+    }
+  };
+
   const hasAccess = ['superadmin', 'admin', 'finalisator', 'verifikator', 'penginput', 'juri'].includes(userRole);
 
-  // Eligible teams
+  // Eligible teams (selalu kecualikan data TESTING / dummy)
   const competitionTeams = useMemo(() => {
     return teams.filter(t =>
-      isLocalhost ? t.status !== 'rejected' : (['verified', 'drawn'].includes(t.status) || t.lotNumber)
+      !isTestingTeam(t) &&
+      (isLocalhost ? t.status !== 'rejected' : (['verified', 'drawn'].includes(t.status) || t.lotNumber))
     );
   }, [teams, isLocalhost]);
 
@@ -469,7 +548,7 @@ export default function RekapNilaiView() {
     >
       <div className="space-y-4">
         {/* Unified Dark Obsidian Command Header + 4-Column Interactive Telemetry Strip */}
-        <section className="rounded-2xl bg-slate-950 text-white border border-slate-800/90 overflow-hidden shadow-[0_14px_32px_rgba(15,23,42,0.12)]">
+        <section className="rounded-2xl bg-slate-950 text-white border border-slate-800/90 overflow-visible shadow-[0_14px_32px_rgba(15,23,42,0.12)]">
           {/* Top Header Row */}
           <div className="px-4 py-4 sm:px-6 flex flex-col lg:flex-row lg:items-center justify-between gap-3.5">
             <div className="flex items-start sm:items-center gap-3.5 min-w-0">
@@ -502,20 +581,128 @@ export default function RekapNilaiView() {
                 </button>
               )}
 
-              <button
-                type="button"
-                onClick={() => setIsRecapModalOpen(true)}
-                className="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-100 text-slate-950 text-xs font-bold transition-all flex items-center gap-1.5 shadow-2xs cursor-pointer"
-                title="Buka & Cetak Berita Acara Rekapitulasi Resmi PDF"
-              >
-                <Printer className="w-3.5 h-3.5" />
-                <span>Berita Acara PDF</span>
-              </button>
+              {/* Dropdown Ekspor PDF Rekap Nilai Resmi (Kop A4) */}
+              <div className="relative" ref={exportMenuRef}>
+                <button
+                  type="button"
+                  disabled={isExportingPdf}
+                  onClick={() => setIsExportMenuOpen((prev) => !prev)}
+                  className={`px-3.5 py-2 rounded-xl text-xs font-bold border transition-all flex items-center gap-1.5 shadow-2xs cursor-pointer whitespace-nowrap ${
+                    isExportingPdf
+                      ? 'bg-slate-800 text-slate-300 border-slate-700 cursor-wait'
+                      : 'bg-white hover:bg-slate-100 text-slate-950 border-white'
+                  }`}
+                  title="Ekspor Berita Acara Rekapitulasi Nilai (Kop A4)"
+                >
+                  {isExportingPdf ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 animate-spin text-amber-500" />
+                      <span>{exportProgressText || 'Memproses PDF...'}</span>
+                    </>
+                  ) : (
+                    <>
+                      <FileDown className="w-3.5 h-3.5 text-amber-600" />
+                      <span>Berita Acara PDF</span>
+                      <ChevronDown className={`w-3.5 h-3.5 text-slate-500 transition-transform ${isExportMenuOpen ? 'rotate-180' : ''}`} />
+                    </>
+                  )}
+                </button>
+
+                {isExportMenuOpen && !isExportingPdf && (
+                  <div className="absolute right-0 mt-2 w-72 rounded-2xl bg-white text-slate-900 border border-slate-200/95 shadow-[0_16px_40px_rgba(15,23,42,0.2)] p-1.5 z-50 animate-in fade-in slide-in-from-top-1 duration-150">
+                    <div className="px-2.5 py-1.5 border-b border-slate-100 mb-1">
+                      <p className="text-[10px] font-black uppercase tracking-wider text-slate-400">
+                        Berita Acara Rekapitulasi Nilai
+                      </p>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={handleExportRecapDocx}
+                      className="w-full text-left px-2.5 py-2 rounded-xl hover:bg-blue-50/70 transition-colors flex items-start gap-2.5 cursor-pointer border border-blue-100 bg-blue-50/30 mb-1"
+                    >
+                      <div className="w-7 h-7 rounded-lg bg-blue-600 text-white flex items-center justify-center shrink-0 mt-0.5">
+                        <FileDown className="w-3.5 h-3.5" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="text-xs font-bold text-blue-950">Word (.docx) — Dari Template BA.001</div>
+                        <div className="text-[10.5px] text-blue-700/80 leading-snug mt-0.5">
+                          Otomatis membaca template public/templates/05_BA_Rekapitulasi_Nilai.docx
+                        </div>
+                      </div>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => handleExportRecapPdf('all', 'both')}
+                      className="w-full text-left px-2.5 py-2 rounded-xl hover:bg-slate-50 transition-colors flex items-start gap-2.5 cursor-pointer"
+                    >
+                      <div className="w-7 h-7 rounded-lg bg-amber-50 text-amber-700 border border-amber-200/80 flex items-center justify-center shrink-0 mt-0.5">
+                        <FileDown className="w-3.5 h-3.5" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="text-xs font-bold text-slate-900">Rekap Lengkap (SD &amp; SMP)</div>
+                        <div className="text-[10.5px] text-slate-500 leading-snug mt-0.5">
+                          Bagian awal khusus Peleton, bagian akhir khusus Danton.
+                        </div>
+                      </div>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => handleExportRecapPdf('SD', 'both')}
+                      className="w-full text-left px-2.5 py-2 rounded-xl hover:bg-slate-50 transition-colors flex items-start gap-2.5 cursor-pointer"
+                    >
+                      <div className="w-7 h-7 rounded-lg bg-rose-50 text-rose-700 border border-rose-200/80 flex items-center justify-center shrink-0 mt-0.5">
+                        <FileDown className="w-3.5 h-3.5" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="text-xs font-bold text-slate-900">Rekap Jenjang SD / MI Saja</div>
+                        <div className="text-[10.5px] text-slate-500 leading-snug mt-0.5">
+                          Rekap terpisah Peleton &amp; Danton tingkat SD / MI.
+                        </div>
+                      </div>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => handleExportRecapPdf('SMP', 'both')}
+                      className="w-full text-left px-2.5 py-2 rounded-xl hover:bg-slate-50 transition-colors flex items-start gap-2.5 cursor-pointer"
+                    >
+                      <div className="w-7 h-7 rounded-lg bg-blue-50 text-blue-700 border border-blue-200/80 flex items-center justify-center shrink-0 mt-0.5">
+                        <FileDown className="w-3.5 h-3.5" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="text-xs font-bold text-slate-900">Rekap Jenjang SMP / MTs Saja</div>
+                        <div className="text-[10.5px] text-slate-500 leading-snug mt-0.5">
+                          Rekap terpisah Peleton &amp; Danton tingkat SMP / MTs.
+                        </div>
+                      </div>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => handleExportRecapPdf('all', 'danton')}
+                      className="w-full text-left px-2.5 py-2 rounded-xl hover:bg-slate-50 transition-colors flex items-start gap-2.5 cursor-pointer"
+                    >
+                      <div className="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200/80 flex items-center justify-center shrink-0 mt-0.5">
+                        <FileDown className="w-3.5 h-3.5" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="text-xs font-bold text-slate-900">Khusus Rekap Danton Saja</div>
+                        <div className="text-[10.5px] text-slate-500 leading-snug mt-0.5">
+                          Hanya tabel peringkat Komandan Peleton SD &amp; SMP.
+                        </div>
+                      </div>
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
           {/* Integrated 4-Column Telemetry Strip */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-px bg-slate-800/80 border-t border-slate-800">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-px bg-slate-800/80 border-t border-slate-800 rounded-b-2xl overflow-hidden">
             {summaryMetrics.map(m => {
               const isSelected = statusFilter === m.id && m.id !== 'ALL';
               return (

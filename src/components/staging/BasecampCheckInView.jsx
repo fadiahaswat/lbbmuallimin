@@ -16,11 +16,17 @@ import {
   Wand2,
   Table2,
   Map as MapIcon,
-  RotateCcw
+  RotateCcw,
+  FileDown,
+  ChevronDown,
+  Loader2,
+  FileSpreadsheet,
+  Layers
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
 import { formatImageUrl } from '../../services/sheetService.js';
 import { appAlert, appConfirm } from '../../utils/appDialog.js';
+import { exportBasecampPDF } from '../../utils/exportBasecampPDF.js';
 import { FLOORS_CONFIG, getAllRoomsFlat } from '../../data/basecampFloorplanData.js';
 import SimpaskorSidebarLayout from '../navigation/SimpaskorSidebarLayout.jsx';
 import QRScannerModal from '../common/QRScannerModal.jsx';
@@ -79,6 +85,30 @@ export default function BasecampCheckInView({ initialTab = 'checkin' }) {
 
   const [toastMsg, setToastMsg] = useState('');
   const toastTimerRef = useRef(null);
+
+  // State Ekspor PDF Basecamp & Denah
+  const [isExportMenuOpen, setIsExportMenuOpen] = useState(false);
+  const [isExportingPdf, setIsExportingPdf] = useState(false);
+  const [exportProgressText, setExportProgressText] = useState('');
+  const exportMenuRef = useRef(null);
+
+  useEffect(() => {
+    if (!isExportMenuOpen) return;
+    const handleClickOutside = (e) => {
+      if (exportMenuRef.current && !exportMenuRef.current.contains(e.target)) {
+        setIsExportMenuOpen(false);
+      }
+    };
+    const handleEsc = (e) => {
+      if (e.key === 'Escape') setIsExportMenuOpen(false);
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleEsc);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleEsc);
+    };
+  }, [isExportMenuOpen]);
 
   useEffect(() => {
     if (initialTab === 'checkout') {
@@ -314,6 +344,33 @@ export default function BasecampCheckInView({ initialTab = 'checkin' }) {
 
   // Status pengesahan Denah Basecamp
   const isBasecampPublished = Boolean(settings?.basecampPublished && settings?.basecampRatifiedAt);
+
+  // Ekspor PDF Daftar Lokasi Basecamp & Denah Lantai 1-4 (Kop A4 penuh)
+  const handleExportBasecampPdf = async (mode = 'all') => {
+    if (isExportingPdf) return;
+    setIsExportMenuOpen(false);
+    setIsExportingPdf(true);
+    setExportProgressText('Menyiapkan dokumen...');
+    try {
+      const result = await exportBasecampPDF({
+        teams: competitionTeams,
+        staging,
+        isPublished: isBasecampPublished,
+        mode,
+        onProgress: (msg) => setExportProgressText(msg),
+      });
+      showToast(`PDF berhasil diunduh (${result.totalPages} halaman A4): ${result.fileName}`);
+    } catch (err) {
+      console.error('Gagal ekspor PDF Basecamp:', err);
+      appAlert(`Gagal membuat file PDF: ${err?.message || 'Terjadi kesalahan teknis.'}`, {
+        title: 'Ekspor PDF Gagal',
+        variant: 'danger',
+      });
+    } finally {
+      setIsExportingPdf(false);
+      setExportProgressText('');
+    }
+  };
 
   const handleTogglePublishBasecamp = async () => {
     if (!canManagePlacement) return;
@@ -823,6 +880,99 @@ export default function BasecampCheckInView({ initialTab = 'checkin' }) {
                     <span className="text-[10px] uppercase font-bold text-slate-500">Terplot</span>
                     <span className="text-xs font-black font-mono text-slate-900">{globalStats.assigned}/{globalStats.total}</span>
                   </div>
+
+                  {/* Dropdown Ekspor PDF Lokasi Basecamp & Denah (Kop A4) */}
+                  <div className="relative" ref={exportMenuRef}>
+                    <button
+                      type="button"
+                      disabled={isExportingPdf}
+                      onClick={() => setIsExportMenuOpen((prev) => !prev)}
+                      className={`px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 border transition-all cursor-pointer active:scale-95 whitespace-nowrap ${
+                        isExportingPdf
+                          ? 'bg-slate-100 text-slate-500 border-slate-200 cursor-wait'
+                          : 'bg-slate-900 hover:bg-slate-800 text-white border-slate-900 shadow-2xs'
+                      }`}
+                      title="Ekspor PDF Daftar Lokasi Basecamp & Denah Lantai 1-4 dengan Kop A4"
+                    >
+                      {isExportingPdf ? (
+                        <>
+                          <Loader2 className="w-3.5 h-3.5 animate-spin text-amber-500" />
+                          <span>{exportProgressText || 'Memproses PDF...'}</span>
+                        </>
+                      ) : (
+                        <>
+                          <FileDown className="w-3.5 h-3.5 text-amber-400" />
+                          <span>Ekspor PDF</span>
+                          <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${isExportMenuOpen ? 'rotate-180' : ''}`} />
+                        </>
+                      )}
+                    </button>
+
+                    {isExportMenuOpen && !isExportingPdf && (
+                      <div className="absolute right-0 mt-2 w-72 rounded-2xl bg-white border border-slate-200/95 shadow-[0_16px_40px_rgba(15,23,42,0.14)] p-1.5 z-40 animate-in fade-in slide-in-from-top-1 duration-150">
+                        <div className="px-2.5 py-1.5 border-b border-slate-100 mb-1">
+                          <p className="text-[10px] font-black uppercase tracking-wider text-slate-400">
+                            Ekspor Dokumen A4 (Kop Resmi)
+                          </p>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => handleExportBasecampPdf('all')}
+                          className="w-full text-left px-2.5 py-2 rounded-xl hover:bg-slate-50 transition-colors flex items-start gap-2.5 cursor-pointer group"
+                        >
+                          <div className="w-7 h-7 rounded-lg bg-amber-50 text-amber-700 border border-amber-200/80 flex items-center justify-center shrink-0 mt-0.5">
+                            <FileDown className="w-3.5 h-3.5" />
+                          </div>
+                          <div className="min-w-0">
+                            <div className="text-xs font-bold text-slate-900 group-hover:text-slate-950">
+                              Paket Lengkap (Lokasi + Denah)
+                            </div>
+                            <div className="text-[10.5px] text-slate-500 leading-snug mt-0.5">
+                              Tabel daftar ruang SD &amp; SMP beserta denah lantai terpakai dalam 1 file PDF.
+                            </div>
+                          </div>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => handleExportBasecampPdf('locations')}
+                          className="w-full text-left px-2.5 py-2 rounded-xl hover:bg-slate-50 transition-colors flex items-start gap-2.5 cursor-pointer group"
+                        >
+                          <div className="w-7 h-7 rounded-lg bg-blue-50 text-blue-700 border border-blue-200/80 flex items-center justify-center shrink-0 mt-0.5">
+                            <FileSpreadsheet className="w-3.5 h-3.5" />
+                          </div>
+                          <div className="min-w-0">
+                            <div className="text-xs font-bold text-slate-900 group-hover:text-slate-950">
+                              Daftar Lokasi Basecamp Saja
+                            </div>
+                            <div className="text-[10.5px] text-slate-500 leading-snug mt-0.5">
+                              Tabel resmi alokasi ruang basecamp &amp; danton per jenjang.
+                            </div>
+                          </div>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => handleExportBasecampPdf('floorplan')}
+                          className="w-full text-left px-2.5 py-2 rounded-xl hover:bg-slate-50 transition-colors flex items-start gap-2.5 cursor-pointer group"
+                        >
+                          <div className="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200/80 flex items-center justify-center shrink-0 mt-0.5">
+                            <Layers className="w-3.5 h-3.5" />
+                          </div>
+                          <div className="min-w-0">
+                            <div className="text-xs font-bold text-slate-900 group-hover:text-slate-950">
+                              Denah Basecamp (Per Lantai)
+                            </div>
+                            <div className="text-[10.5px] text-slate-500 leading-snug mt-0.5">
+                              Peta tata letak kelas tiap lantai yang digunakan, siap tempel.
+                            </div>
+                          </div>
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
                   {canManagePlacement && (
                     <button
                       type="button"
@@ -1206,17 +1356,15 @@ export default function BasecampCheckInView({ initialTab = 'checkin' }) {
                                 {/* Peleton / Sekolah */}
                                 <td className="py-2 px-3 align-middle">
                                   <div className="flex items-center gap-2.5 min-w-0">
-                                    <div className="w-7 h-7 rounded-lg bg-white border border-slate-200/90 p-0.5 flex items-center justify-center shrink-0 overflow-hidden">
-                                      <img
-                                        src={getTeamLogo(team)}
-                                        alt={team.schoolName}
-                                        className="w-full h-full object-contain"
-                                        onError={(e) => {
-                                          e.target.onerror = null;
-                                          e.target.src = getFallbackAvatar(team);
-                                        }}
-                                      />
-                                    </div>
+                                    <img
+                                      src={getTeamLogo(team)}
+                                      alt={team.schoolName}
+                                      className="w-7 h-7 object-contain shrink-0"
+                                      onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = getFallbackAvatar(team);
+                                      }}
+                                    />
                                     <div className="min-w-0">
                                       <div className="font-bold text-xs sm:text-[13px] text-slate-900 leading-snug truncate">
                                         {team.schoolName}
@@ -1367,191 +1515,334 @@ export default function BasecampCheckInView({ initialTab = 'checkin' }) {
       {/* ============================================================== */}
       {modalTeam && (
         <div
-          className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in"
+          className="fixed inset-0 z-50 bg-slate-950/65 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 animate-in fade-in duration-150"
           onClick={() => setModalTeamId(null)}
         >
-          <div
-            className="bg-white rounded-3xl max-w-2xl w-full shadow-2xl border border-slate-200 overflow-hidden max-h-[90vh] flex flex-col"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Modal Header */}
-            <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between gap-3 bg-slate-50/70">
-              <div className="flex items-center gap-3 min-w-0">
-                <div className="w-11 h-11 rounded-xl bg-white border border-slate-200 p-1 flex items-center justify-center shrink-0 overflow-hidden">
-                  <img
-                    src={getTeamLogo(modalTeam)}
-                    alt={modalTeam.schoolName}
-                    className="w-full h-full object-contain"
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src = getFallbackAvatar(modalTeam);
-                    }}
-                  />
-                </div>
-                <div className="min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-md border ${
-                      modalMode === 'checkin'
-                        ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                        : 'bg-rose-50 text-rose-700 border-rose-200'
-                    }`}>
-                      {modalMode === 'checkin' ? 'Formulir Check-In' : 'Formulir Check-Out'}
-                    </span>
-                    <span className="font-mono text-[11px] text-slate-500">
-                      {modalTeam.regCode}
-                    </span>
-                    {modalTeamRoom && (
-                      <span className="font-mono text-[10px] font-bold bg-slate-200/80 text-slate-800 px-1.5 py-0.5 rounded">
-                        Ruang {modalTeamRoom}
-                      </span>
-                    )}
-                  </div>
-                  <h3 className="text-sm sm:text-base font-black text-slate-900 truncate mt-0.5">
-                    {modalTeam.schoolName}
-                  </h3>
-                </div>
-              </div>
+          {(() => {
+            const isCheckIn = modalMode === 'checkin';
+            const logisticsItems = [
+              { key: 'waterBox', title: '1 Dus Air Minum Botol', desc: 'Konsumsi hidrasi peleton' },
+              { key: 'chestNumber', title: '1 Nomor Dada Peleton', desc: 'Dipasang di S2B1 · Souvenir' },
+              { key: 'cocardOfficial', title: '3 ID Card Resmi', desc: '1 Official + 2 Pendukung Resmi' },
+              { key: 'trashBag', title: '2 Kantong Sampah Terpilah', desc: 'Organik & Anorganik' },
+            ];
+            const checkoutItems = [
+              { key: 'roomCleanChecked', title: 'Ruang Basecamp Bersih & Utuh', desc: 'Rapi, bersih, dan inventaris kelas lengkap' },
+              { key: 'sortedTrashReturned', title: '2 Kantong Sampah Disetorkan', desc: 'Organik & Anorganik diserahkan ke pos checkout' },
+              { key: 'ktpReturned', title: 'Verifikasi Lolos & KTP Dikembalikan', desc: 'KTP/SIM asli diserahkan kembali ke Official' },
+            ];
+            const checkedLogisticsCount = logisticsItems.filter(i => logisticsChecklist[i.key]).length;
+            const checkedCheckoutCount = checkoutItems.filter(i => checkoutChecklist[i.key]).length;
 
-              <button
-                type="button"
-                onClick={() => setModalTeamId(null)}
-                className="p-2 rounded-xl bg-white hover:bg-slate-100 text-slate-500 border border-slate-200 cursor-pointer shrink-0"
+            return (
+              <div
+                className="bg-white rounded-[26px] max-w-2xl w-full shadow-[0_24px_60px_rgba(15,23,42,0.28)] border border-slate-200/80 overflow-hidden max-h-[92vh] flex flex-col"
+                onClick={(e) => e.stopPropagation()}
               >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
+                {/* Top Status Accent Hairline */}
+                <div
+                  className={`h-1 w-full shrink-0 ${
+                    isCheckIn
+                      ? 'bg-gradient-to-r from-emerald-500 via-emerald-400 to-teal-400'
+                      : 'bg-gradient-to-r from-rose-600 via-rose-500 to-amber-400'
+                  }`}
+                />
 
-            {/* Modal Body */}
-            <div className="p-5 overflow-y-auto">
-              {modalMode === 'checkin' ? (
-                <form onSubmit={handleProcessCheckIn} className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-3">
-                      <label className="text-[11px] font-black uppercase text-slate-700 tracking-wider block">
-                        1. Identitas Jaminan Pembina (KTP)
-                      </label>
-                      <div>
-                        <span className="text-[11px] font-bold text-slate-600 block mb-1">
-                          Nama Lengkap Sesuai Identitas:
+                {/* Dark Obsidian Modal Header */}
+                <div className="px-5 py-4 bg-[#0d1421] text-white flex items-center justify-between gap-3 shrink-0">
+                  <div className="flex items-center gap-3.5 min-w-0">
+                    <img
+                      src={getTeamLogo(modalTeam)}
+                      alt={modalTeam.schoolName}
+                      className="w-11 h-11 object-contain shrink-0 drop-shadow-sm"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = getFallbackAvatar(modalTeam);
+                      }}
+                    />
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span
+                          className={`inline-flex items-center gap-1 text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-full border ${
+                            isCheckIn
+                              ? 'bg-emerald-500/15 text-emerald-300 border-emerald-400/30'
+                              : 'bg-rose-500/15 text-rose-300 border-rose-400/30'
+                          }`}
+                        >
+                          {isCheckIn ? <LogIn className="w-3 h-3" /> : <LogOut className="w-3 h-3" />}
+                          <span>{isCheckIn ? 'Check-In Basecamp' : 'Check-Out Basecamp'}</span>
                         </span>
-                        <input
-                          type="text"
-                          value={ktpOfficialName}
-                          onChange={e => setKtpOfficialName(e.target.value)}
-                          placeholder="Contoh: Budi Santoso, S.Pd."
-                          required
-                          className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:bg-white focus:border-emerald-600 outline-none"
-                        />
+                        {modalTeamRoom && (
+                          <span className="inline-flex items-center gap-1 font-mono text-[10.5px] font-bold bg-white/10 text-amber-300 border border-white/10 px-2 py-0.5 rounded-full">
+                            <Building2 className="w-3 h-3" />
+                            <span>Ruang {modalTeamRoom}</span>
+                          </span>
+                        )}
                       </div>
-                      <div>
-                        <span className="text-[11px] font-bold text-slate-600 block mb-1">
-                          Jenis Kartu Identitas:
-                        </span>
-                        <div className="grid grid-cols-2 gap-2">
-                          {['KTP Fisik', 'SIM'].map(type => (
-                            <button
-                              key={type}
-                              type="button"
-                              onClick={() => setKtpType(type)}
-                              className={`py-2 px-2 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
-                                ktpType === type
-                                  ? 'bg-emerald-600 text-white border-emerald-600 shadow-2xs'
-                                  : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
+                      <h3 className="text-sm sm:text-base font-black text-white truncate mt-1 leading-tight">
+                        {modalTeam.schoolName}
+                      </h3>
+                      <p className="font-mono text-[10.5px] text-slate-400 mt-0.5 truncate">
+                        {modalTeam.regCode}
+                      </p>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => setModalTeamId(null)}
+                    className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white border border-white/10 transition-colors cursor-pointer shrink-0"
+                    aria-label="Tutup formulir"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+
+                {/* Modal Body */}
+                <div className="overflow-y-auto flex-1">
+                  {isCheckIn ? (
+                    <form onSubmit={handleProcessCheckIn} className="flex flex-col">
+                      <div className="p-5 sm:p-6 grid grid-cols-1 md:grid-cols-2 gap-5">
+                        {/* Column 1: Identitas Jaminan */}
+                        <div className="flex flex-col justify-between gap-4">
+                          <div className="space-y-4">
+                            <div className="flex items-center gap-2">
+                              <span className="w-5 h-5 rounded-md bg-slate-900 text-white font-mono text-[10px] font-black flex items-center justify-center shrink-0">
+                                01
+                              </span>
+                              <h4 className="text-xs font-black uppercase tracking-wider text-slate-900">
+                                Identitas Jaminan Pembina
+                              </h4>
+                            </div>
+
+                            <div className="space-y-1.5">
+                              <label className="text-[11px] font-bold text-slate-600 block">
+                                Nama Lengkap Sesuai Identitas
+                              </label>
+                              <input
+                                type="text"
+                                value={ktpOfficialName}
+                                onChange={e => setKtpOfficialName(e.target.value)}
+                                placeholder="Contoh: Budi Santoso, S.Pd."
+                                required
+                                className="w-full px-3.5 py-2.5 bg-[#F6F7F9] border border-slate-200/90 rounded-xl text-xs font-semibold text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/15 outline-none transition-all"
+                              />
+                            </div>
+
+                            <div className="space-y-1.5">
+                              <label className="text-[11px] font-bold text-slate-600 block">
+                                Jenis Kartu Jaminan
+                              </label>
+                              <div className="grid grid-cols-2 gap-1.5 p-1 bg-[#F6F7F9] rounded-xl border border-slate-200/70">
+                                {['KTP Fisik', 'SIM'].map(type => {
+                                  const active = ktpType === type;
+                                  return (
+                                    <button
+                                      key={type}
+                                      type="button"
+                                      onClick={() => setKtpType(type)}
+                                      className={`py-2 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                                        active
+                                          ? 'bg-emerald-600 text-white shadow-xs'
+                                          : 'text-slate-600 hover:text-slate-950'
+                                      }`}
+                                    >
+                                      {type}
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Subtle Security Note to balance column visually */}
+                          <div className="rounded-xl bg-slate-50 border border-slate-200/70 p-3 text-[11px] text-slate-500 leading-relaxed flex items-start gap-2.5">
+                            <FileCheck className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                            <span>
+                              Kartu <strong className="text-slate-700">{ktpType}</strong> disimpan panitia selama kegiatan dan dikembalikan saat Check-Out setelah verifikasi ruang.
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Column 2: Serah Terima Logistik */}
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between gap-2">
+                            <div className="flex items-center gap-2">
+                              <span className="w-5 h-5 rounded-md bg-slate-900 text-white font-mono text-[10px] font-black flex items-center justify-center shrink-0">
+                                02
+                              </span>
+                              <h4 className="text-xs font-black uppercase tracking-wider text-slate-900">
+                                Serah Terima Logistik
+                              </h4>
+                            </div>
+                            <span
+                              className={`text-[10.5px] font-mono font-bold tabular-nums px-2 py-0.5 rounded-full border ${
+                                checkedLogisticsCount === logisticsItems.length
+                                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                  : 'bg-slate-100 text-slate-600 border-slate-200'
                               }`}
                             >
-                              {type}
-                            </button>
-                          ))}
+                              {checkedLogisticsCount}/{logisticsItems.length}
+                            </span>
+                          </div>
+
+                          <div className="space-y-2">
+                            {logisticsItems.map(item => {
+                              const checked = Boolean(logisticsChecklist[item.key]);
+                              return (
+                                <button
+                                  key={item.key}
+                                  type="button"
+                                  onClick={() =>
+                                    setLogisticsChecklist(prev => ({ ...prev, [item.key]: !prev[item.key] }))
+                                  }
+                                  className={`w-full text-left flex items-start gap-3 p-3 rounded-xl border transition-all cursor-pointer active:scale-[0.99] ${
+                                    checked
+                                      ? 'bg-emerald-50/55 border-emerald-200/90 hover:bg-emerald-50/80'
+                                      : 'bg-[#F6F7F9]/70 border-slate-200/80 hover:bg-white hover:border-slate-300'
+                                  }`}
+                                >
+                                  <span
+                                    className={`mt-0.5 w-5 h-5 rounded-md flex items-center justify-center shrink-0 transition-colors border ${
+                                      checked
+                                        ? 'bg-emerald-600 border-emerald-600 text-white'
+                                        : 'bg-white border-slate-300 text-transparent'
+                                    }`}
+                                  >
+                                    <CheckCircle2 className="w-3.5 h-3.5" />
+                                  </span>
+                                  <div className="min-w-0 flex-1">
+                                    <p className="text-xs font-bold text-slate-900 leading-snug">
+                                      {item.title}
+                                    </p>
+                                    <p className="text-[10.5px] text-slate-500 mt-0.5 leading-snug">
+                                      {item.desc}
+                                    </p>
+                                  </div>
+                                </button>
+                              );
+                            })}
+                          </div>
                         </div>
                       </div>
-                    </div>
 
-                    <div className="space-y-3">
-                      <label className="text-[11px] font-black uppercase text-slate-700 tracking-wider block">
-                        2. Serah Terima Paket Logistik
-                      </label>
-                      <div className="space-y-2 text-xs">
-                        {[
-                          { key: 'waterBox', label: '1 Dus Air Minum Kemasan Botol' },
-                          { key: 'chestNumber', label: '1 Nomor Dada Peleton (Dipasang di S2B1, Souvenir)' },
-                          { key: 'cocardOfficial', label: '3 ID Card Resmi (1 Official + 2 Pendukung Resmi)' },
-                          { key: 'trashBag', label: '2 Kantong Sampah Terpilah (Organik & Anorganik)' },
-                        ].map(item => (
-                          <label key={item.key} className="flex items-center gap-2.5 p-2.5 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer hover:bg-slate-100">
-                            <input
-                              type="checkbox"
-                              checked={logisticsChecklist[item.key]}
-                              onChange={e => setLogisticsChecklist(prev => ({ ...prev, [item.key]: e.target.checked }))}
-                              className="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500"
-                            />
-                            <span className="font-bold text-slate-800">{item.label}</span>
-                          </label>
-                        ))}
+                      {/* Sticky-feel Footer Bar */}
+                      <div className="px-5 sm:px-6 py-3.5 bg-slate-50/90 border-t border-slate-100 flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-2.5">
+                        <span className="text-[11px] text-slate-500 text-center sm:text-left">
+                          {checkedLogisticsCount === logisticsItems.length
+                            ? 'Semua paket logistik tercentang lengkap.'
+                            : `${logisticsItems.length - checkedLogisticsCount} item logistik belum dicentang.`}
+                        </span>
+                        <div className="flex items-center justify-end gap-2">
+                          <button
+                            type="button"
+                            onClick={() => setModalTeamId(null)}
+                            className="px-4 py-2.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs font-bold transition-colors cursor-pointer"
+                          >
+                            Batal
+                          </button>
+                          <button
+                            type="submit"
+                            disabled={!canProcess}
+                            className="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs rounded-xl shadow-[0_6px_16px_rgba(5,150,105,0.25)] transition-all cursor-pointer active:scale-95 disabled:opacity-50"
+                          >
+                            <LogIn className="w-3.5 h-3.5" />
+                            <span>Konfirmasi Check-In &amp; Terima {ktpType === 'SIM' ? 'SIM' : 'KTP'}</span>
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  </div>
+                    </form>
+                  ) : (
+                    <form onSubmit={handleProcessCheckOut} className="flex flex-col">
+                      <div className="p-5 sm:p-6 space-y-4">
+                        <div className="p-3.5 rounded-xl bg-rose-50/80 border border-rose-200/90 text-xs text-rose-900 leading-relaxed">
+                          <strong className="font-extrabold">Pemeriksaan Kliring (Batas 15.00 WIB):</strong> Pastikan ruang basecamp bersih &amp; fasilitas utuh (kerusakan aset dikenai ganti rugi + denda Rp 500.000), 2 kantong sampah terpilah disetorkan ke pos kebersihan, dan KTP/SIM jaminan dikembalikan ke Official.
+                        </div>
 
-                  <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-100">
-                    <button
-                      type="button"
-                      onClick={() => setModalTeamId(null)}
-                      className="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold cursor-pointer"
-                    >
-                      Batal
-                    </button>
-                    <button
-                      type="submit"
-                      disabled={!canProcess}
-                      className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs uppercase tracking-wider rounded-xl shadow-sm transition-all cursor-pointer active:scale-95 disabled:opacity-50"
-                    >
-                      Konfirmasi Check-In &amp; Terima KTP
-                    </button>
-                  </div>
-                </form>
-              ) : (
-                <form onSubmit={handleProcessCheckOut} className="space-y-4">
-                  <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-900 leading-relaxed">
-                    <strong>Pemeriksaan Kliring (Batas 15.00 WIB):</strong> Pastikan ruang basecamp bersih &amp; fasilitas utuh (kerusakan aset dikenai ganti rugi + denda Rp 500.000), 2 kantong sampah terpilah disetorkan ke pos kebersihan, dan KTP/SIM jaminan dikembalikan ke Official.
-                  </div>
+                        <div className="flex items-center justify-between gap-2">
+                          <h4 className="text-xs font-black uppercase tracking-wider text-slate-900">
+                            Daftar Verifikasi Kliring
+                          </h4>
+                          <span
+                            className={`text-[10.5px] font-mono font-bold tabular-nums px-2 py-0.5 rounded-full border ${
+                              checkedCheckoutCount === checkoutItems.length
+                                ? 'bg-rose-50 text-rose-700 border-rose-200'
+                                : 'bg-slate-100 text-slate-600 border-slate-200'
+                            }`}
+                          >
+                            {checkedCheckoutCount}/{checkoutItems.length}
+                          </span>
+                        </div>
 
-                  <div className="space-y-2 text-xs">
-                    {[
-                      { key: 'roomCleanChecked', label: '1. Ruang Basecamp Bersih, Rapi & Inventaris/Fasilitas Kelas Utuh' },
-                      { key: 'sortedTrashReturned', label: '2. 2 Kantong Sampah Terpilah (Organik & Anorganik) Disetorkan ke Pos Checkout' },
-                      { key: 'ktpReturned', label: '3. Bukti Lolos Verifikasi Diterbitkan & KTP/SIM Asli Diserahkan Kembali ke Official' },
-                    ].map(item => (
-                      <label key={item.key} className="flex items-center gap-2.5 p-3 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer hover:bg-slate-100">
-                        <input
-                          type="checkbox"
-                          checked={checkoutChecklist[item.key]}
-                          onChange={e => setCheckoutChecklist(prev => ({ ...prev, [item.key]: e.target.checked }))}
-                          className="w-4 h-4 rounded text-rose-600 focus:ring-rose-500"
-                        />
-                        <span className="font-bold text-slate-900">{item.label}</span>
-                      </label>
-                    ))}
-                  </div>
+                        <div className="space-y-2">
+                          {checkoutItems.map((item, idx) => {
+                            const checked = Boolean(checkoutChecklist[item.key]);
+                            return (
+                              <button
+                                key={item.key}
+                                type="button"
+                                onClick={() =>
+                                  setCheckoutChecklist(prev => ({ ...prev, [item.key]: !prev[item.key] }))
+                                }
+                                className={`w-full text-left flex items-start gap-3 p-3.5 rounded-xl border transition-all cursor-pointer active:scale-[0.99] ${
+                                  checked
+                                    ? 'bg-rose-50/55 border-rose-200/90 hover:bg-rose-50/80'
+                                    : 'bg-[#F6F7F9]/70 border-slate-200/80 hover:bg-white hover:border-slate-300'
+                                }`}
+                              >
+                                <span
+                                  className={`mt-0.5 w-5 h-5 rounded-md flex items-center justify-center shrink-0 transition-colors border ${
+                                    checked
+                                      ? 'bg-rose-600 border-rose-600 text-white'
+                                      : 'bg-white border-slate-300 text-transparent'
+                                  }`}
+                                >
+                                  <CheckCircle2 className="w-3.5 h-3.5" />
+                                </span>
+                                <div className="min-w-0 flex-1">
+                                  <p className="text-xs font-bold text-slate-900 leading-snug">
+                                    {idx + 1}. {item.title}
+                                  </p>
+                                  <p className="text-[10.5px] text-slate-500 mt-0.5 leading-snug">
+                                    {item.desc}
+                                  </p>
+                                </div>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
 
-                  <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-100">
-                    <button
-                      type="button"
-                      onClick={() => setModalTeamId(null)}
-                      className="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold cursor-pointer"
-                    >
-                      Batal
-                    </button>
-                    <button
-                      type="submit"
-                      disabled={!canProcess}
-                      className="px-5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-black text-xs uppercase tracking-wider rounded-xl shadow-sm transition-all cursor-pointer active:scale-95 disabled:opacity-50"
-                    >
-                      Konfirmasi Check-Out &amp; Kembalikan KTP
-                    </button>
-                  </div>
-                </form>
-              )}
-            </div>
-          </div>
+                      <div className="px-5 sm:px-6 py-3.5 bg-slate-50/90 border-t border-slate-100 flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-2.5">
+                        <span className="text-[11px] text-slate-500 text-center sm:text-left">
+                          {checkedCheckoutCount === checkoutItems.length
+                            ? 'Seluruh syarat kliring telah terverifikasi.'
+                            : `${checkoutItems.length - checkedCheckoutCount} syarat kliring belum dicentang.`}
+                        </span>
+                        <div className="flex items-center justify-end gap-2">
+                          <button
+                            type="button"
+                            onClick={() => setModalTeamId(null)}
+                            className="px-4 py-2.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs font-bold transition-colors cursor-pointer"
+                          >
+                            Batal
+                          </button>
+                          <button
+                            type="submit"
+                            disabled={!canProcess}
+                            className="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-xs rounded-xl shadow-[0_6px_16px_rgba(225,29,72,0.25)] transition-all cursor-pointer active:scale-95 disabled:opacity-50"
+                          >
+                            <LogOut className="w-3.5 h-3.5" />
+                            <span>Konfirmasi Check-Out &amp; Kembalikan KTP</span>
+                          </button>
+                        </div>
+                      </div>
+                    </form>
+                  )}
+                </div>
+              </div>
+            );
+          })()}
         </div>
       )}
 

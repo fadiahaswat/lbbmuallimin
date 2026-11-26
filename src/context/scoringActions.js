@@ -2,6 +2,126 @@ import { saveRecordToSheet } from '../services/sheetService.js';
 import { parseMaterialsList } from '../config.js';
 import { appAlert } from '../utils/appDialog.js';
 
+// Jeda rilis bertahap (rolling release) nilai ke dasbor peserta: 1 jam setelah selesai tampil (Juknis Bab A.9)
+export const SCORE_RELEASE_DELAY_MS = 60 * 60 * 1000;
+
+/**
+ * Mengevaluasi apakah nilai suatu peleton sudah boleh ditampilkan ke dasbor peserta.
+ * - Jika `settings.announcementPublished` aktif -> langsung tampil beserta peringkat.
+ * - Jika belum -> mode rolling release privat:
+ *   1. Nilai wajib sudah disahkan (`status === 'finalized'` atau `isLocked === true`).
+ *   2. Jika ada `finishedAt` dari staging arena (dan belum di-override `forceReleased`),
+ *      tunggu hingga `finishedAt + 1 jam` (`SCORE_RELEASE_DELAY_MS`).
+ *   3. Peringkat/Juara (`canShowRank`) tetap disembunyikan sampai `announcementPublished === true`.
+ */
+export function evaluateParticipantScoreRelease(score, stagingRecord = null, settings = {}, nowMs = Date.now()) {
+  const announcementPublished = Boolean(settings?.announcementPublished);
+  const finishedAtIso = stagingRecord?.finishedAt || score?.finishedAt || null;
+  const parsedFinishedMs = finishedAtIso ? new Date(finishedAtIso).getTime() : NaN;
+  const hasValidFinishedAt = Number.isFinite(parsedFinishedMs) && parsedFinishedMs > 0;
+  const releaseAtMs = hasValidFinishedAt ? parsedFinishedMs + SCORE_RELEASE_DELAY_MS : null;
+  const releaseAtIso = releaseAtMs ? new Date(releaseAtMs).toISOString() : null;
+  const remainingMs = releaseAtMs ? Math.max(0, releaseAtMs - nowMs) : 0;
+  const isFinalized = Boolean(score && (score.status === 'finalized' || score.isLocked === true));
+  const hasPerformed = Boolean(
+    hasValidFinishedAt ||
+    stagingRecord?.stage === 'finished' ||
+    stagingRecord?.status === 'finished'
+  );
+
+  // 1. Pengumuman resmi sudah dibuka secara global
+  if (announcementPublished) {
+    if (score) {
+      return {
+        isReleased: true,
+        canShowRank: true,
+        isFinalized,
+        hasPerformed: true,
+        reason: 'announcement_published',
+        finishedAtIso,
+        releaseAtIso,
+        remainingMs: 0,
+      };
+    }
+    return {
+      isReleased: false,
+      canShowRank: true,
+      isFinalized: false,
+      hasPerformed,
+      reason: hasPerformed ? 'awaiting_finalization' : 'not_performed',
+      finishedAtIso,
+      releaseAtIso,
+      remainingMs,
+    };
+  }
+
+  // 2. Belum ada nilai atau belum disahkan oleh Finalisator
+  if (!isFinalized) {
+    return {
+      isReleased: false,
+      canShowRank: false,
+      isFinalized: false,
+      hasPerformed,
+      reason: hasPerformed ? 'awaiting_finalization' : 'not_performed',
+      finishedAtIso,
+      releaseAtIso,
+      remainingMs,
+    };
+  }
+
+  // 3. Nilai sudah disahkan + ada override rilis langsung oleh Finalisator/Superadmin
+  if (score.forceReleased || score.releasedToParticipantAt) {
+    return {
+      isReleased: true,
+      canShowRank: false,
+      isFinalized: true,
+      hasPerformed: true,
+      reason: 'manual_release',
+      finishedAtIso,
+      releaseAtIso: score.releasedToParticipantAt || releaseAtIso,
+      remainingMs: 0,
+    };
+  }
+
+  // 4. Nilai sudah disahkan + cek jeda 1 jam pascatampil dari finishedAt
+  if (hasValidFinishedAt) {
+    if (nowMs >= releaseAtMs) {
+      return {
+        isReleased: true,
+        canShowRank: false,
+        isFinalized: true,
+        hasPerformed: true,
+        reason: 'rolling_release_ready',
+        finishedAtIso,
+        releaseAtIso,
+        remainingMs: 0,
+      };
+    }
+    return {
+      isReleased: false,
+      canShowRank: false,
+      isFinalized: true,
+      hasPerformed: true,
+      reason: 'waiting_release_window',
+      finishedAtIso,
+      releaseAtIso,
+      remainingMs,
+    };
+  }
+
+  // 5. Fallback aman: sudah disahkan tetapi staging finishedAt tidak tercatat
+  return {
+    isReleased: true,
+    canShowRank: false,
+    isFinalized: true,
+    hasPerformed: true,
+    reason: 'finalized_no_staging_timestamp',
+    finishedAtIso: null,
+    releaseAtIso: score.finalizedAt || null,
+    remainingMs: 0,
+  };
+}
+
 export function calculatePenalties(penalties = {}) {
   let peletonPenalty = 0;
   let dantonPenalty = 0;

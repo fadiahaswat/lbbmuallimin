@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import {
   Trophy,
   Medal,
@@ -25,13 +25,17 @@ import {
   FileText,
   Settings,
   Check,
-  AlertCircle
+  AlertCircle,
+  Loader2
 } from 'lucide-react';
 import { useCompetition } from '../../context/CompetitionContext.jsx';
 import { VENUE } from '../../config.js';
 import SimpaskorSidebarLayout from '../navigation/SimpaskorSidebarLayout.jsx';
-import { formatImageUrl } from '../../services/sheetService.js';
-import { getChestNumberByLot } from '../../context/competitionHelpers.js';
+import { formatImageUrl, getFallbackImageUrl } from '../../services/sheetService.js';
+import { getChestNumberByLot, isTestingTeam } from '../../context/competitionHelpers.js';
+import { exportBeritaAcaraPDF } from '../../utils/exportBeritaAcaraPDF.js';
+import { exportSKPemenangDOCX } from '../../utils/exportDocxFromTemplate.js';
+import { appToast, appAlert } from '../../utils/appDialog.js';
 import GoldConfetti from '../common/GoldConfetti.jsx';
 import RankMedal from '../common/RankMedal.jsx';
 
@@ -96,6 +100,152 @@ function SchoolLogo({ team, schoolName, size = 'table', className = '', isDark =
             : 'w-10 h-10 sm:w-12 sm:h-12 text-slate-400'
         } stroke-[1.5] drop-shadow-xs`}
       />
+    </div>
+  );
+}
+
+function getRawDantonPhoto(team) {
+  return (
+    team?.roster?.danton?.photo ||
+    team?.dantonPhoto ||
+    team?.files?.dantonPhoto?.url ||
+    (typeof team?.files?.dantonPhoto === 'string' ? team.files.dantonPhoto : null) ||
+    team?.file_foto_danton ||
+    null
+  );
+}
+
+function hasValidPhotoUrl(val) {
+  return Boolean(
+    val &&
+      typeof val === 'string' &&
+      val.trim() !== '' &&
+      val !== '#' &&
+      !val.startsWith('#') &&
+      !val.includes('drive.google.com/open?id=')
+  );
+}
+
+// Komponen Foto Danton dengan Lencana Logo Sekolah di Pojok Kanan Bawah
+function DantonAvatar({ team, dantonName, schoolName, size = 'card', rank = null, isDark = false, showSchoolBadge = true, className = '' }) {
+  const rawPhoto = getRawDantonPhoto(team);
+
+  const rawLogo =
+    team?.files?.schoolLogo?.url ||
+    team?.file_logo_sekolah ||
+    team?.logoUrl ||
+    team?.schoolLogo?.url ||
+    (typeof team?.schoolLogo === 'string' ? team.schoolLogo : null) ||
+    team?.logo ||
+    team?.avatar ||
+    null;
+
+  const isValidRaw = hasValidPhotoUrl;
+
+  const [photoSrc, setPhotoSrc] = useState(() => (isValidRaw(rawPhoto) ? formatImageUrl(rawPhoto) : ''));
+  const [photoError, setPhotoError] = useState(false);
+
+  const [logoSrc, setLogoSrc] = useState(() => (isValidRaw(rawLogo) ? formatImageUrl(rawLogo) : ''));
+  const [logoError, setLogoError] = useState(false);
+
+  useEffect(() => {
+    setPhotoSrc(isValidRaw(rawPhoto) ? formatImageUrl(rawPhoto) : '');
+    setPhotoError(false);
+  }, [rawPhoto]);
+
+  useEffect(() => {
+    setLogoSrc(isValidRaw(rawLogo) ? formatImageUrl(rawLogo) : '');
+    setLogoError(false);
+  }, [rawLogo]);
+
+  const handlePhotoError = () => {
+    const nextUrl = getFallbackImageUrl(rawPhoto, photoSrc);
+    if (nextUrl && nextUrl !== photoSrc) {
+      setPhotoSrc(nextUrl);
+    } else {
+      setPhotoError(true);
+    }
+  };
+
+  const handleLogoError = () => {
+    const nextUrl = getFallbackImageUrl(rawLogo, logoSrc);
+    if (nextUrl && nextUrl !== logoSrc) {
+      setLogoSrc(nextUrl);
+    } else {
+      setLogoError(true);
+    }
+  };
+
+  const displayName = dantonName || team?.roster?.danton?.name || team?.dantonName || 'Komandan Peleton';
+  const displaySchool = schoolName || team?.schoolName || 'Sekolah';
+
+  let containerSize = 'w-10 h-10 sm:w-11 sm:h-11';
+  let iconSize = 'w-5 h-5';
+  let badgeSize = 'w-5 h-5 sm:w-5 sm:h-5 -bottom-0.5 -right-0.5';
+
+  if (size === 'podium-lg') {
+    containerSize = 'w-18 h-18 sm:w-24 sm:h-24';
+    iconSize = 'w-9 h-9 sm:w-12 sm:h-12';
+    badgeSize = 'w-7 h-7 sm:w-9 sm:h-9 -bottom-1 -right-1';
+  } else if (size === 'podium-md') {
+    containerSize = 'w-14 h-14 sm:w-20 sm:h-20';
+    iconSize = 'w-7 h-7 sm:w-10 sm:h-10';
+    badgeSize = 'w-6 h-6 sm:w-8 sm:h-8 -bottom-0.5 -right-0.5';
+  } else if (size === 'table') {
+    containerSize = 'w-9 h-9';
+    iconSize = 'w-4 h-4';
+    badgeSize = 'w-4 h-4 -bottom-0.5 -right-0.5';
+  }
+
+  let ringClass = isDark
+    ? 'ring-2 ring-slate-700 bg-slate-800'
+    : 'ring-2 ring-slate-200 bg-slate-100';
+
+  if (size === 'podium-lg' || rank === 1) {
+    ringClass = 'ring-3 sm:ring-4 ring-amber-400/90 shadow-md bg-amber-50 dark:bg-slate-800';
+  } else if (rank === 2) {
+    ringClass = 'ring-2 sm:ring-3 ring-slate-300 shadow-sm bg-slate-100 dark:bg-slate-800';
+  } else if (rank === 3) {
+    ringClass = 'ring-2 sm:ring-3 ring-amber-700/60 shadow-sm bg-amber-50/60 dark:bg-slate-800';
+  }
+
+  const hasPhoto = Boolean(photoSrc && !photoError);
+
+  return (
+    <div
+      className={`relative shrink-0 select-none ${containerSize} ${className}`}
+      title={`${displayName} — ${displaySchool}`}
+    >
+      {/* Foto Danton (tanpa outline/ring saat ada foto) */}
+      <div className={`w-full h-full rounded-full overflow-hidden flex items-center justify-center ${hasPhoto ? '' : ringClass}`}>
+        {hasPhoto ? (
+          <img
+            src={photoSrc}
+            alt={displayName}
+            referrerPolicy="no-referrer"
+            loading="lazy"
+            decoding="async"
+            onError={handlePhotoError}
+            className="w-full h-full object-cover object-top"
+          />
+        ) : (
+          <User className={`${iconSize} ${isDark ? 'text-slate-500' : 'text-slate-400'} stroke-[1.75]`} />
+        )}
+      </div>
+
+      {/* Logo Sekolah Bersih (Tanpa Wadah) di Pojok Kanan Bawah */}
+      {showSchoolBadge && size !== 'table' && logoSrc && !logoError && (
+        <img
+          src={logoSrc}
+          alt={displaySchool}
+          referrerPolicy="no-referrer"
+          loading="lazy"
+          decoding="async"
+          onError={handleLogoError}
+          title={displaySchool}
+          className={`absolute ${badgeSize} object-contain pointer-events-none select-none`}
+        />
+      )}
     </div>
   );
 }
@@ -180,14 +330,36 @@ export default function LiveLeaderboard() {
   const isStaffOrJury = !isPeserta && userRole !== 'publik' && ['admin', 'juri', 'superadmin', 'penginput', 'verifikator', 'finalisator'].includes(userRole);
   const isOfficialScoreVisible = isLocalhost || isStaffOrJury || Boolean(settings?.announcementPublished);
 
-  // State Modal & Link Berita Acara (Google Drive)
+  // State Modal, Link Google Drive, & Ekspor PDF Berita Acara
   const [isBeritaAcaraModalOpen, setIsBeritaAcaraModalOpen] = useState(false);
+  const [isBeritaAcaraMenuOpen, setIsBeritaAcaraMenuOpen] = useState(false);
+  const [isExportingBeritaAcara, setIsExportingBeritaAcara] = useState(false);
+  const [beritaAcaraProgress, setBeritaAcaraProgress] = useState('');
+  const beritaAcaraMenuRef = useRef(null);
   const [beritaAcaraForm, setBeritaAcaraForm] = useState({
     sd: settings?.beritaAcaraUrlSD || '',
     smp: settings?.beritaAcaraUrlSMP || ''
   });
   const [isSavingBeritaAcara, setIsSavingBeritaAcara] = useState(false);
   const [saveSuccessNotice, setSaveSuccessNotice] = useState(false);
+
+  useEffect(() => {
+    if (!isBeritaAcaraMenuOpen) return;
+    const handleOutside = (e) => {
+      if (beritaAcaraMenuRef.current && !beritaAcaraMenuRef.current.contains(e.target)) {
+        setIsBeritaAcaraMenuOpen(false);
+      }
+    };
+    const handleEsc = (e) => {
+      if (e.key === 'Escape') setIsBeritaAcaraMenuOpen(false);
+    };
+    document.addEventListener('mousedown', handleOutside);
+    document.addEventListener('keydown', handleEsc);
+    return () => {
+      document.removeEventListener('mousedown', handleOutside);
+      document.removeEventListener('keydown', handleEsc);
+    };
+  }, [isBeritaAcaraMenuOpen]);
 
   // Link aktif sesuai jenjang yang dipilih
   const currentBeritaAcaraUrl = useMemo(() => {
@@ -199,6 +371,7 @@ export default function LiveLeaderboard() {
   }, [settings, selectedJenjang]);
 
   const openBeritaAcaraModal = () => {
+    setIsBeritaAcaraMenuOpen(false);
     setBeritaAcaraForm({
       sd: settings?.beritaAcaraUrlSD || settings?.beritaAcaraUrl || '',
       smp: settings?.beritaAcaraUrlSMP || settings?.beritaAcaraUrl || ''
@@ -207,8 +380,57 @@ export default function LiveLeaderboard() {
     setIsBeritaAcaraModalOpen(true);
   };
 
+  const handleExportBeritaAcaraPdf = async () => {
+    if (isExportingBeritaAcara) return;
+    setIsBeritaAcaraMenuOpen(false);
+    setIsExportingBeritaAcara(true);
+    setBeritaAcaraProgress('Menyusun SK Pemenang...');
+    try {
+      const result = await exportBeritaAcaraPDF({
+        teams: verifiedTeams,
+        scores,
+        onProgress: (msg) => setBeritaAcaraProgress(msg),
+      });
+      appToast(`SK Pemenang PDF (SD & SMP) berhasil diunduh (${result.totalPages} halaman A4).`, { variant: 'success' });
+    } catch (err) {
+      console.error('Gagal ekspor SK Pemenang PDF:', err);
+      appAlert(`Gagal membuat SK Pemenang PDF: ${err?.message || 'Terjadi kesalahan teknis.'}`, {
+        title: 'Ekspor SK Pemenang Gagal',
+        variant: 'danger',
+      });
+    } finally {
+      setIsExportingBeritaAcara(false);
+      setBeritaAcaraProgress('');
+    }
+  };
+
+  const handleExportSKDocx = async () => {
+    if (isExportingBeritaAcara) return;
+    setIsExportingBeritaAcara(true);
+    setBeritaAcaraProgress('Menyusun SK (.docx)...');
+    try {
+      const result = await exportSKPemenangDOCX({
+        teams: verifiedTeams,
+        scores,
+      });
+      appToast(`SK Pemenang Word (.docx) berhasil diunduh dari template (${result.fileName}).`, { variant: 'success' });
+    } catch (err) {
+      console.error('Gagal ekspor SK Pemenang Word:', err);
+      appAlert(`Gagal membuat SK Pemenang Word: ${err?.message || 'Terjadi kesalahan teknis.'}`, {
+        title: 'Ekspor SK Word Gagal',
+        variant: 'danger',
+      });
+    } finally {
+      setIsExportingBeritaAcara(false);
+      setBeritaAcaraProgress('');
+    }
+  };
+
   const handleBeritaAcaraClick = () => {
-    if (currentBeritaAcaraUrl && currentBeritaAcaraUrl.trim() !== '') {
+    if (isExportingBeritaAcara) return;
+    if (isStaffOrJury || isLocalhost || isOfficialScoreVisible) {
+      handleExportSKDocx();
+    } else if (currentBeritaAcaraUrl && currentBeritaAcaraUrl.trim() !== '') {
       window.open(currentBeritaAcaraUrl.trim(), '_blank', 'noopener,noreferrer');
     } else {
       openBeritaAcaraModal();
@@ -238,9 +460,12 @@ export default function LiveLeaderboard() {
     }
   };
 
-  // Filter tim terverifikasi/terundi (khusus localhost: bypass kelengkapan, tampilkan semua non-rejected)
+  // Filter tim terverifikasi/terundi (selalu kecualikan data TESTING / dummy)
   const verifiedTeams = useMemo(() => {
-    return teams.filter(t => isLocalhost ? t.status !== 'rejected' : (t.status === 'verified' || t.status === 'drawn' || t.lotNumber));
+    return teams.filter(t =>
+      !isTestingTeam(t) &&
+      (isLocalhost ? t.status !== 'rejected' : (t.status === 'verified' || t.status === 'drawn' || t.lotNumber))
+    );
   }, [teams, isLocalhost]);
 
   // Ekstraksi data nilai murni, penalti, dan nilai akhir per tim sesuai Formula Juknis Bab A.3
@@ -373,7 +598,11 @@ export default function LiveLeaderboard() {
       if (b.nilaiMurniDanton !== a.nilaiMurniDanton) return b.nilaiMurniDanton - a.nilaiMurniDanton;
       if (a.dantonPenalty !== b.dantonPenalty) return a.dantonPenalty - b.dantonPenalty;
       if (b.dantonMateri !== a.dantonMateri) return b.dantonMateri - a.dantonMateri;
-      return b.dantonVokal - a.dantonVokal;
+      if (b.dantonVokal !== a.dantonVokal) return b.dantonVokal - a.dantonVokal;
+      // Fallback saat nilai masih sama (misal semua 0 poin): prioritaskan danton yang sudah memiliki foto
+      const aHasPhoto = hasValidPhotoUrl(getRawDantonPhoto(a.team)) ? 1 : 0;
+      const bHasPhoto = hasValidPhotoUrl(getRawDantonPhoto(b.team)) ? 1 : 0;
+      return bHasPhoto - aHasPhoto;
     });
 
     return list.map((item, idx) => {
@@ -858,9 +1087,9 @@ export default function LiveLeaderboard() {
         const isSD = selectedJenjang === 'SD';
 
         return (
-          <div className="rounded-2xl border border-slate-800 bg-slate-950 text-white shadow-[0_14px_34px_rgba(15,23,42,0.16)] overflow-hidden">
+          <div className="rounded-2xl border border-slate-800 bg-slate-950 text-white shadow-[0_14px_34px_rgba(15,23,42,0.16)] overflow-visible">
             {/* Tier 1: Dark Flush Underline Category Tabs */}
-            <div className="grid grid-cols-3 border-b border-slate-800/90 bg-slate-900/60">
+            <div className="grid grid-cols-3 border-b border-slate-800/90 bg-slate-900/60 rounded-t-2xl overflow-hidden">
               {[
                 {
                   id: 'peleton',
@@ -1006,31 +1235,35 @@ export default function LiveLeaderboard() {
                   </button>
                 </div>
 
-                {/* Unified Split Berita Acara Button */}
-                <div className="inline-flex items-center rounded-xl border border-slate-700 bg-slate-900 overflow-hidden divide-x divide-slate-800 shrink-0">
-                  <button
-                    type="button"
-                    onClick={handleBeritaAcaraClick}
-                    className="px-2.5 sm:px-3.5 py-2 text-xs font-bold text-slate-100 hover:bg-slate-800 transition-colors cursor-pointer flex items-center gap-1.5 whitespace-nowrap"
-                    title={`Unduh Berita Acara Resmi Jenjang ${selectedJenjang === 'SD' ? 'SD/MI' : 'SMP/MTs'}`}
-                  >
-                    <Download className="w-3.5 h-3.5 text-rose-400 shrink-0" />
-                    <span>Berita Acara</span>
-                    <span className="hidden sm:inline font-mono text-[10.5px] font-semibold text-slate-400">
-                      {selectedJenjang}
-                    </span>
-                  </button>
-
-                  {isSuperOrAdmin && (
+                {/* Unified Split Berita Acara Button (1-Klik PDF SD & SMP) */}
+                <div className="relative shrink-0" ref={beritaAcaraMenuRef}>
+                  <div className="inline-flex items-center rounded-xl border border-slate-700 bg-slate-900 overflow-hidden divide-x divide-slate-800">
                     <button
                       type="button"
-                      onClick={openBeritaAcaraModal}
-                      className="px-2.5 py-2 text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer flex items-center justify-center"
-                      title="Kelola Link Google Drive Berita Acara (Admin / Superadmin)"
+                      onClick={handleBeritaAcaraClick}
+                      disabled={isExportingBeritaAcara}
+                      className="px-2.5 sm:px-3.5 py-2 text-xs font-bold text-slate-100 hover:bg-slate-800 disabled:opacity-60 transition-colors cursor-pointer flex items-center gap-1.5 whitespace-nowrap"
+                      title="Unduh Surat Keputusan (SK) Penetapan Pemenang format Word (.docx) dari template public/templates/06_SK_Penetapan_Pemenang.docx"
                     >
-                      <Settings className="w-3.5 h-3.5 shrink-0" />
+                      {isExportingBeritaAcara ? (
+                        <Loader2 className="w-3.5 h-3.5 text-rose-400 animate-spin shrink-0" />
+                      ) : (
+                        <Download className="w-3.5 h-3.5 text-rose-400 shrink-0" />
+                      )}
+                      <span>{isExportingBeritaAcara ? (beritaAcaraProgress || 'Menyusun...') : 'SK Pemenang (.docx)'}</span>
                     </button>
-                  )}
+
+                    {isSuperOrAdmin && (
+                      <button
+                        type="button"
+                        onClick={openBeritaAcaraModal}
+                        className="px-2.5 py-2 text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer flex items-center justify-center"
+                        title="Kelola Link Google Drive Berita Acara (Admin / Superadmin)"
+                      >
+                        <Settings className="w-3.5 h-3.5 shrink-0" />
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
@@ -1171,7 +1404,7 @@ export default function LiveLeaderboard() {
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent pointer-events-none" />
                   <div className="flex flex-col items-center text-center">
                     <RankMedal rank={1} className="w-16 h-16 sm:w-20 sm:h-20 mb-2 drop-shadow-[0_6px_12px_rgba(120,53,15,0.45)]" />
-                    <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-slate-950 bg-white/95 px-4 sm:px-6 py-1 rounded-full shadow-xs whitespace-nowrap">
+                    <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-amber-100 bg-amber-950/75 border border-amber-200/50 backdrop-blur-xs px-4 sm:px-6 py-1 rounded-full shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_2px_8px_rgba(120,53,15,0.28)] whitespace-nowrap">
                       JUARA UMUM
                     </span>
                   </div>
@@ -1190,7 +1423,18 @@ export default function LiveLeaderboard() {
                   {/* Top Avatar & Identity */}
                   <div className="flex flex-col items-center mb-2.5 sm:mb-3 text-center w-full">
                     <div className="w-14 h-14 sm:w-20 sm:h-20 mb-2 flex items-center justify-center hover:scale-105 transition-transform">
-                      <SchoolLogo team={currentPodiumData[1].team} schoolName={currentPodiumData[1].schoolName} size="podium-md" isDark={effectiveDark} />
+                      {activeCategory === 'danton' ? (
+                        <DantonAvatar
+                          team={currentPodiumData[1].team}
+                          dantonName={currentPodiumData[1].mainTitle}
+                          schoolName={currentPodiumData[1].schoolName}
+                          size="podium-md"
+                          rank={2}
+                          isDark={effectiveDark}
+                        />
+                      ) : (
+                        <SchoolLogo team={currentPodiumData[1].team} schoolName={currentPodiumData[1].schoolName} size="podium-md" isDark={effectiveDark} />
+                      )}
                     </div>
 
                     <h4 className={`font-black text-[11px] sm:text-xs md:text-sm line-clamp-2 leading-snug w-full px-1 break-words ${
@@ -1213,7 +1457,7 @@ export default function LiveLeaderboard() {
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent pointer-events-none" />
                     <div className="flex flex-col items-center relative z-10">
                       <RankMedal rank={2} className="w-14 h-14 sm:w-20 sm:h-20 drop-shadow-[0_6px_12px_rgba(39,39,42,0.45)]" />
-                      <span className="text-[7.5px] sm:text-[10px] font-black uppercase tracking-wider text-zinc-900 bg-white/95 px-1.5 sm:px-2.5 py-0.5 rounded-full mt-1 sm:mt-1.5 shadow-2xs whitespace-nowrap">
+                      <span className="text-[7.5px] sm:text-[10px] font-black uppercase tracking-wider text-zinc-100 bg-zinc-900/70 border border-white/40 backdrop-blur-xs px-2 sm:px-3 py-0.5 sm:py-1 rounded-full mt-1 sm:mt-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.22),0_2px_8px_rgba(39,39,42,0.25)] whitespace-nowrap">
                         {activeCategory === 'peleton' ? 'JUARA 2 UTAMA' : 'DANTON TERBAIK 2'}
                       </span>
                     </div>
@@ -1227,7 +1471,18 @@ export default function LiveLeaderboard() {
                   {/* Top Avatar & Identity */}
                   <div className="flex flex-col items-center mb-2.5 sm:mb-3 text-center w-full">
                     <div className="w-18 h-18 sm:w-24 sm:h-24 mb-2 flex items-center justify-center hover:scale-105 transition-transform">
-                      <SchoolLogo team={currentPodiumData[0].team} schoolName={currentPodiumData[0].schoolName} size="podium-lg" isDark={effectiveDark} />
+                      {activeCategory === 'danton' ? (
+                        <DantonAvatar
+                          team={currentPodiumData[0].team}
+                          dantonName={currentPodiumData[0].mainTitle}
+                          schoolName={currentPodiumData[0].schoolName}
+                          size="podium-lg"
+                          rank={1}
+                          isDark={effectiveDark}
+                        />
+                      ) : (
+                        <SchoolLogo team={currentPodiumData[0].team} schoolName={currentPodiumData[0].schoolName} size="podium-lg" isDark={effectiveDark} />
+                      )}
                     </div>
 
                     <h4 className={`font-black text-xs sm:text-sm md:text-base line-clamp-2 leading-snug w-full px-1 break-words ${
@@ -1251,7 +1506,7 @@ export default function LiveLeaderboard() {
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent pointer-events-none" />
                     <div className="flex flex-col items-center">
                       <RankMedal rank={1} className="w-16 h-16 sm:w-24 sm:h-24 drop-shadow-[0_8px_16px_rgba(120,53,15,0.45)]" />
-                      <span className="text-[8px] sm:text-[11px] font-black uppercase tracking-wider text-slate-950 bg-white/95 px-2 sm:px-3 py-0.5 rounded-full mt-1.5 sm:mt-2 shadow-xs whitespace-nowrap">
+                      <span className="text-[8px] sm:text-[11px] font-black uppercase tracking-wider text-amber-100 bg-amber-950/75 border border-amber-200/50 backdrop-blur-xs px-2.5 sm:px-3.5 py-0.5 sm:py-1 rounded-full mt-1.5 sm:mt-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_2px_8px_rgba(120,53,15,0.28)] whitespace-nowrap">
                         {activeCategory === 'peleton' ? 'JUARA 1 UTAMA' : 'DANTON TERBAIK 1'}
                       </span>
                     </div>
@@ -1265,7 +1520,18 @@ export default function LiveLeaderboard() {
                   {/* Top Avatar & Identity */}
                   <div className="flex flex-col items-center mb-2.5 sm:mb-3 text-center w-full">
                     <div className="w-14 h-14 sm:w-20 sm:h-20 mb-2 flex items-center justify-center hover:scale-105 transition-transform">
-                      <SchoolLogo team={currentPodiumData[2].team} schoolName={currentPodiumData[2].schoolName} size="podium-md" isDark={effectiveDark} />
+                      {activeCategory === 'danton' ? (
+                        <DantonAvatar
+                          team={currentPodiumData[2].team}
+                          dantonName={currentPodiumData[2].mainTitle}
+                          schoolName={currentPodiumData[2].schoolName}
+                          size="podium-md"
+                          rank={3}
+                          isDark={effectiveDark}
+                        />
+                      ) : (
+                        <SchoolLogo team={currentPodiumData[2].team} schoolName={currentPodiumData[2].schoolName} size="podium-md" isDark={effectiveDark} />
+                      )}
                     </div>
 
                     <h4 className={`font-black text-[11px] sm:text-xs md:text-sm line-clamp-2 leading-snug w-full px-1 break-words ${
@@ -1288,7 +1554,7 @@ export default function LiveLeaderboard() {
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent pointer-events-none" />
                     <div className="flex flex-col items-center relative z-10">
                       <RankMedal rank={3} className="w-12 h-12 sm:w-18 sm:h-18 drop-shadow-[0_6px_12px_rgba(45,22,8,0.5)]" />
-                      <span className="text-[7.5px] sm:text-[10px] font-black uppercase tracking-wider text-[#4a2b14] bg-white/95 px-1.5 sm:px-2.5 py-0.5 rounded-full mt-1 sm:mt-1.5 shadow-2xs whitespace-nowrap">
+                      <span className="text-[7.5px] sm:text-[10px] font-black uppercase tracking-wider text-[#f7e2d0] bg-[#3a1f0e]/75 border border-[#e0b899]/45 backdrop-blur-xs px-2 sm:px-3 py-0.5 sm:py-1 rounded-full mt-1 sm:mt-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.16),0_2px_8px_rgba(45,22,8,0.35)] whitespace-nowrap">
                         {activeCategory === 'peleton' ? 'JUARA 3 UTAMA' : 'DANTON TERBAIK 3'}
                       </span>
                     </div>
@@ -1374,7 +1640,7 @@ export default function LiveLeaderboard() {
                   <div className="w-full h-28 sm:h-40 rounded-t-2xl sm:rounded-t-3xl bg-gradient-to-b from-slate-500 via-slate-700 to-slate-900 border-t-4 border-slate-400/80 shadow-[0_12px_28px_rgba(15,23,42,0.32)] flex flex-col items-center justify-center gap-1.5 sm:gap-2 p-1.5 sm:p-3 relative overflow-hidden">
                     <div className="absolute inset-0 bg-gradient-to-tr from-black/25 via-white/10 to-transparent pointer-events-none" />
                     <RankMedal rank={5} className="w-12 h-12 sm:w-18 sm:h-18 relative z-10 drop-shadow-[0_6px_12px_rgba(0,0,0,0.55)]" />
-                    <span className="relative z-10 text-[7.5px] sm:text-[10px] font-black uppercase tracking-wider text-slate-900 bg-slate-100/95 px-2 sm:px-2.5 py-0.5 rounded-full shadow-2xs whitespace-nowrap">
+                    <span className="relative z-10 text-[7.5px] sm:text-[10px] font-black uppercase tracking-wider text-slate-100 bg-slate-950/75 border border-slate-300/35 backdrop-blur-xs px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full shadow-[inset_0_1px_0_rgba(255,255,255,0.16),0_2px_8px_rgba(15,23,42,0.4)] whitespace-nowrap">
                       HARAPAN 2
                     </span>
                   </div>
@@ -1406,7 +1672,7 @@ export default function LiveLeaderboard() {
                     <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/35 to-white/10 pointer-events-none" />
                     <div className="absolute -top-10 -left-10 w-36 h-36 bg-white/45 rounded-full blur-2xl pointer-events-none" />
                     <RankMedal rank={4} className="w-14 h-14 sm:w-22 sm:h-22 relative z-10 drop-shadow-[0_6px_14px_rgba(30,41,59,0.42)]" />
-                    <span className="relative z-10 text-[8px] sm:text-[10.5px] font-black uppercase tracking-wider text-slate-900 bg-white/95 border border-white px-2.5 sm:px-3 py-0.5 rounded-full shadow-xs whitespace-nowrap">
+                    <span className="relative z-10 text-[8px] sm:text-[10.5px] font-black uppercase tracking-wider text-slate-100 bg-slate-900/70 border border-white/45 backdrop-blur-xs px-2.5 sm:px-3.5 py-0.5 sm:py-1 rounded-full shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_2px_8px_rgba(30,41,59,0.25)] whitespace-nowrap">
                       HARAPAN 1
                     </span>
                   </div>
@@ -1436,7 +1702,7 @@ export default function LiveLeaderboard() {
                   <div className="w-full h-24 sm:h-36 rounded-t-2xl sm:rounded-t-3xl bg-gradient-to-b from-[#a46a3e] via-[#7c4926] to-[#4f2d16] border-t-4 border-[#d4a373]/90 shadow-[0_12px_26px_rgba(92,51,23,0.3)] flex flex-col items-center justify-center gap-1.5 sm:gap-2 p-1.5 sm:p-3 relative overflow-hidden">
                     <div className="absolute inset-0 bg-gradient-to-r from-black/15 via-amber-200/10 to-black/20 pointer-events-none" />
                     <RankMedal rank={6} className="w-11 h-11 sm:w-16 sm:h-16 relative z-10 drop-shadow-[0_6px_12px_rgba(38,19,8,0.55)]" />
-                    <span className="relative z-10 text-[7.5px] sm:text-[10px] font-black uppercase tracking-wider text-amber-950 bg-amber-100/95 px-2 sm:px-2.5 py-0.5 rounded-full shadow-2xs whitespace-nowrap">
+                    <span className="relative z-10 text-[7.5px] sm:text-[10px] font-black uppercase tracking-wider text-amber-100 bg-[#2d180a]/75 border border-[#d4a373]/45 backdrop-blur-xs px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full shadow-[inset_0_1px_0_rgba(255,255,255,0.15),0_2px_8px_rgba(38,19,8,0.4)] whitespace-nowrap">
                       HARAPAN 3
                     </span>
                   </div>
@@ -1541,14 +1807,25 @@ export default function LiveLeaderboard() {
                         </div>
                       )}
 
-                      {/* School Logo (Tanpa Wadah) */}
-                      <SchoolLogo
-                        team={item.team}
-                        schoolName={item.schoolName}
-                        size="table"
-                        isDark={effectiveDark}
-                        className="w-9 h-9 sm:w-10 sm:h-10 shrink-0"
-                      />
+                      {/* Avatar: Foto Danton + Logo Sekolah (untuk Danton) atau Logo Sekolah */}
+                      {activeCategory === 'danton' ? (
+                        <DantonAvatar
+                          team={item.team}
+                          dantonName={item.mainTitle}
+                          schoolName={item.schoolName}
+                          size="card"
+                          rank={item.rank <= 3 ? item.rank : null}
+                          isDark={effectiveDark}
+                        />
+                      ) : (
+                        <SchoolLogo
+                          team={item.team}
+                          schoolName={item.schoolName}
+                          size="table"
+                          isDark={effectiveDark}
+                          className="w-9 h-9 sm:w-10 sm:h-10 shrink-0"
+                        />
+                      )}
 
                       {/* Info Tim & Sekolah */}
                       <div className="min-w-0 flex-1">
@@ -1913,12 +2190,23 @@ export default function LiveLeaderboard() {
                           </span>
                         </td>
                         <td className="py-2.5 px-4">
-                          <div
-                            className={`font-semibold text-xs sm:text-sm ${
-                              effectiveDark ? 'text-white' : 'text-slate-900'
-                            }`}
-                          >
-                            {item.team.dantonName || 'Komandan Peleton'}
+                          <div className="flex items-center gap-2.5">
+                            <DantonAvatar
+                              team={item.team}
+                              dantonName={item.team.dantonName || 'Komandan Peleton'}
+                              schoolName={item.team.schoolName}
+                              size="table"
+                              rank={item.rank <= 3 ? item.rank : null}
+                              isDark={effectiveDark}
+                              showSchoolBadge={false}
+                            />
+                            <div
+                              className={`font-semibold text-xs sm:text-sm ${
+                                effectiveDark ? 'text-white' : 'text-slate-900'
+                              }`}
+                            >
+                              {item.team.dantonName || 'Komandan Peleton'}
+                            </div>
                           </div>
                         </td>
                         <td className="py-2.5 px-4">
